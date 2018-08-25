@@ -2543,7 +2543,7 @@
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
              "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -2602,7 +2602,14 @@
                "m_label": "Style:",
                "m_value": ""
               }],
-             "m_events": [],
+             "m_events": [{
+               "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+               "m_eventClass": "wxDataViewEvent",
+               "m_eventHandler": "wxDataViewEventHandler",
+               "m_functionNameAndSignature": "OnContainerContextMenu(wxDataViewEvent& event)",
+               "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
+               "m_noBody": false
+              }],
              "m_children": [{
                "m_type": 4472,
                "proportion": 0,
@@ -3070,7 +3077,7 @@
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
              "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",

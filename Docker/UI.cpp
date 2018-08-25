@@ -345,7 +345,7 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     m_dvListCtrlContainers = new wxDataViewListCtrl(m_containersPage, wxID_ANY, wxDefaultPosition,
                                                     wxDLG_UNIT(m_containersPage, wxSize(-1, -1)),
-                                                    wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+                                                    wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
     boxSizer78->Add(m_dvListCtrlContainers, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -378,7 +378,7 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     m_dvListCtrlImages =
         new wxDataViewListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)),
-                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
     boxSizer90->Add(m_dvListCtrlImages, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -396,6 +396,14 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
     SetName(wxT("DockerOutputPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
+    // Connect events
+    m_dvListCtrlContainers->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                    wxDataViewEventHandler(DockerOutputPaneBase::OnContainerContextMenu), NULL, this);
 }
 
-DockerOutputPaneBase::~DockerOutputPaneBase() {}
+DockerOutputPaneBase::~DockerOutputPaneBase()
+{
+    m_dvListCtrlContainers->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                       wxDataViewEventHandler(DockerOutputPaneBase::OnContainerContextMenu), NULL,
+                                       this);
+}

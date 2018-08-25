@@ -9,8 +9,9 @@
 #include "globals.h"
 #include "imanager.h"
 
-DockerOutputPane::DockerOutputPane(wxWindow* parent)
+DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t driver)
     : DockerOutputPaneBase(parent)
+    , m_driver(driver)
 {
     m_stc->SetReadOnly(true);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
@@ -56,44 +57,14 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent)
     // ===-------------------------
     // Containers toolbar
     // ===-------------------------
-    m_toolbarContainers->AddTool(XRCID("restart_container"), _("Restart Container"),
-                                 bmps->LoadBitmap("debugger_start"));
-    m_toolbarContainers->AddTool(XRCID("stop_container"), _("Stop Container"), bmps->LoadBitmap("debugger_stop"));
-    m_toolbarContainers->AddTool(XRCID("pause_container"), _("Pause Container"), bmps->LoadBitmap("interrupt"));
-    m_toolbarContainers->AddSeparator();
-    m_toolbarContainers->AddTool(XRCID("container_terminal"), _("Attach a terminal to container"),
-                                 bmps->LoadBitmap("console"));
-    m_toolbarContainers->AddSeparator();
     m_toolbarContainers->AddTool(wxID_REFRESH, _("Refresh"), bmps->LoadBitmap("debugger_restart"));
     m_toolbarContainers->AddSeparator();
-    m_toolbarContainers->AddTool(wxID_CLEAR, _("Remove selected container"), bmps->LoadBitmap("minus"));
     m_toolbarContainers->AddTool(wxID_CLOSE_ALL, _("Remove all containers"), bmps->LoadBitmap("clean"));
 
     m_toolbarContainers->Realize();
-    m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnKillContainer, this, wxID_CLEAR);
-    m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnKillContainerUI, this, wxID_CLEAR);
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnKillAllContainers, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnKillAllContainersUI, this, wxID_CLOSE_ALL);
     m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnRefreshContainersView, this, wxID_REFRESH);
-    m_toolbarContainers->Bind(wxEVT_TOOL, &DockerOutputPane::OnAttachTerminal, this, XRCID("container_terminal"));
-    m_toolbarContainers->Bind(wxEVT_UPDATE_UI, &DockerOutputPane::OnAttachTerminalUI, this,
-                              XRCID("container_terminal"));
-
-    m_toolbarContainers->Bind(wxEVT_MENU, &DockerOutputPane::OnRestartContainer, this, XRCID("restart_container"));
-    m_toolbarContainers->Bind(
-        wxEVT_UPDATE_UI,
-        [&](wxUpdateUIEvent& evt) { evt.Enable(m_dvListCtrlContainers->GetSelectedItemsCount() == 1); },
-        XRCID("restart_container"));
-    m_toolbarContainers->Bind(wxEVT_MENU, &DockerOutputPane::OnStopContainer, this, XRCID("stop_container"));
-    m_toolbarContainers->Bind(
-        wxEVT_UPDATE_UI,
-        [&](wxUpdateUIEvent& evt) { evt.Enable(m_dvListCtrlContainers->GetSelectedItemsCount() == 1); },
-        XRCID("stop_container"));
-    m_toolbarContainers->Bind(wxEVT_MENU, &DockerOutputPane::OnPauseContainer, this, XRCID("pause_container"));
-    m_toolbarContainers->Bind(
-        wxEVT_UPDATE_UI,
-        [&](wxUpdateUIEvent& evt) { evt.Enable(m_dvListCtrlContainers->GetSelectedItemsCount() == 1); },
-        XRCID("pause_container"));
 
     // ===-------------------------
     // Images toolbar
@@ -114,11 +85,9 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent)
     m_notebook->Bind(wxEVT_BOOK_PAGE_CHANGED, [&](wxBookCtrlEvent& event) {
         wxString selectedPage = m_notebook->GetPageText(m_notebook->GetSelection());
         if(selectedPage == _("Containers")) {
-            clCommandEvent evt(wxEVT_DOCKER_LIST_CONTAINERS);
-            EventNotifier::Get()->AddPendingEvent(evt);
+            m_driver->ListContainers();
         } else if(selectedPage == _("Images")) {
-            clCommandEvent evt(wxEVT_DOCKER_LIST_IMAGES);
-            EventNotifier::Get()->AddPendingEvent(evt);
+            m_driver->ListImages();
         }
     });
 }
@@ -147,32 +116,8 @@ void DockerOutputPane::AddOutputTextRaw(const wxString& msg)
     m_stc->ScrollToEnd();
 }
 
-void DockerOutputPane::OnKillContainer(wxCommandEvent& event)
-{
-    clCommandEvent evt(wxEVT_DOCKER_KILL_CONTAINER);
-
-    wxDataViewItemArray items;
-    m_dvListCtrlContainers->GetSelections(items);
-    wxArrayString ids;
-
-    // Get the list of ids to kill
-    for(int i = 0; i < items.GetCount(); ++i) {
-        clDockerContainer* cd =
-            reinterpret_cast<clDockerContainer*>(m_dvListCtrlContainers->GetItemData(items.Item(i)));
-        ids.Add(cd->GetId());
-    }
-    evt.SetStrings(ids);
-    EventNotifier::Get()->AddPendingEvent(evt);
-}
-
-void DockerOutputPane::OnKillContainerUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dvListCtrlContainers->GetSelectedItemsCount());
-}
-
 void DockerOutputPane::OnKillAllContainers(wxCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_DOCKER_KILL_CONTAINER);
     // Get the list of ids to kill
     wxArrayString ids;
     for(int i = 0; i < m_dvListCtrlContainers->GetItemCount(); ++i) {
@@ -180,8 +125,7 @@ void DockerOutputPane::OnKillAllContainers(wxCommandEvent& event)
             m_dvListCtrlContainers->GetItemData(m_dvListCtrlContainers->RowToItem(i)));
         ids.Add(cd->GetId());
     }
-    evt.SetStrings(ids);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    m_driver->RemoveContainers(ids);
 }
 
 void DockerOutputPane::OnKillAllContainersUI(wxUpdateUIEvent& event)
@@ -191,8 +135,8 @@ void DockerOutputPane::OnKillAllContainersUI(wxUpdateUIEvent& event)
 
 void DockerOutputPane::OnRefreshContainersView(wxCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_DOCKER_LIST_CONTAINERS);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    wxUnusedVar(event);
+    m_driver->ListContainers();
 }
 
 void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers)
@@ -245,14 +189,14 @@ void DockerOutputPane::SelectTab(const wxString& label) { m_notebook->SetSelecti
 
 void DockerOutputPane::OnRefreshImagesView(wxCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_DOCKER_LIST_IMAGES);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    wxUnusedVar(event);
+    m_driver->ListImages();
 }
 
 void DockerOutputPane::OnClearUnusedImages(wxCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    wxUnusedVar(event);
+    m_driver->ClearUnusedImages();
 }
 
 void DockerOutputPane::OnClearUnusedImagesUI(wxUpdateUIEvent& event)
@@ -276,32 +220,6 @@ void DockerOutputPane::OnClearUnusedImagesMenu(wxCommandEvent& event)
     m_toolbarImages->ShowMenuForButton(event.GetId(), &menu);
 }
 
-void DockerOutputPane::OnAttachTerminal(wxCommandEvent& event)
-{
-    wxDataViewItemArray items;
-    m_dvListCtrlContainers->GetSelections(items);
-    wxArrayString ids; // Get the list of ids to kill
-    for(int i = 0; i < items.GetCount(); ++i) {
-        clDockerContainer* cd =
-            reinterpret_cast<clDockerContainer*>(m_dvListCtrlContainers->GetItemData(items.Item(i)));
-        ids.Add(cd->GetName());
-    }
-    clCommandEvent evt(wxEVT_DOCKER_ATTACH_TERMINAL);
-    evt.SetStrings(ids);
-    EventNotifier::Get()->AddPendingEvent(evt);
-}
-
-void DockerOutputPane::OnAttachTerminalUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dvListCtrlContainers->GetSelectedItemsCount() == 1);
-}
-
-void DockerOutputPane::OnRestartContainer(wxCommandEvent& event) { DoContainerCommand("restart"); }
-
-void DockerOutputPane::OnStopContainer(wxCommandEvent& event) { DoContainerCommand("stop"); }
-
-void DockerOutputPane::OnPauseContainer(wxCommandEvent& event) { DoContainerCommand("pause"); }
-
 size_t DockerOutputPane::GetSelectedContainers(clDockerContainer::Vect_t& containers)
 {
     containers.clear();
@@ -319,12 +237,66 @@ void DockerOutputPane::DoContainerCommand(const wxString& command)
 {
     clDockerContainer::Vect_t containers;
     if(GetSelectedContainers(containers) != 1) return;
-    clCommandEvent evt(wxEVT_DOCKER_CONTAINER_CMD);
-    evt.GetStrings().Add(containers[0].GetName()); // container name
-    evt.GetStrings().Add(command);                 // command name
-    EventNotifier::Get()->AddPendingEvent(evt);
-    
-    // Trigger a refresh
-    wxCommandEvent dummy;
-    OnRefreshContainersView(dummy);
+    m_driver->ExecContainerCommand(containers[0].GetName(), command);
+    m_driver->ListContainers();
+}
+
+void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
+{
+    clDockerContainer::Vect_t containers;
+    if(GetSelectedContainers(containers) == 0) { return; }
+
+    wxMenu menu;
+    menu.Append(wxID_EXECUTE, _("Restart"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  for(size_t i = 0; i < containers.size(); ++i) {
+                      m_driver->ExecContainerCommand(containers[i].GetName(), "restart");
+                  }
+                  m_driver->ListContainers();
+              },
+              wxID_EXECUTE);
+    menu.Append(wxID_STOP, _("Stop"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  for(size_t i = 0; i < containers.size(); ++i) {
+                      m_driver->ExecContainerCommand(containers[i].GetName(), "stop");
+                  }
+                  m_driver->ListContainers();
+              },
+              wxID_STOP);
+    menu.Append(XRCID("pause_container"), _("Pause"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  for(size_t i = 0; i < containers.size(); ++i) {
+                      m_driver->ExecContainerCommand(containers[i].GetName(), "pause");
+                  }
+                  m_driver->ListContainers();
+              },
+              XRCID("pause_container"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("attach_terminal"), _("Attach Terminal"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  wxArrayString names;
+                  for(size_t i = 0; i < containers.size(); ++i) {
+                      names.Add(containers[i].GetName());
+                  }
+                  m_driver->AttachTerminal(names);
+                  m_driver->ListContainers();
+              },
+              XRCID("attach_terminal"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("delete_container"), _("Delete Container"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  wxArrayString ids;
+                  for(size_t i = 0; i < containers.size(); ++i) {
+                      ids.Add(containers[i].GetId());
+                  }
+                  m_driver->RemoveContainers(ids);
+                  m_driver->ListContainers();
+              },
+              XRCID("delete_container"));
+    m_dvListCtrlContainers->PopupMenu(&menu);
 }

@@ -18,24 +18,12 @@ clDockerDriver::clDockerDriver(Docker* plugin)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_KILL_CONTAINER, &clDockerDriver::OnKillContainers, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_LIST_CONTAINERS, &clDockerDriver::OnListContainers, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
-    EventNotifier::Get()->Bind(wxEVT_DOCKER_CONTAINER_CMD, &clDockerDriver::OnContainerCommand, this);
 }
 
 clDockerDriver::~clDockerDriver()
 {
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_KILL_CONTAINER, &clDockerDriver::OnKillContainers, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_LIST_CONTAINERS, &clDockerDriver::OnListContainers, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_LIST_IMAGES, &clDockerDriver::OnListImages, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_CLEAR_UNUSED_IMAGES, &clDockerDriver::OnClearUnusedImages, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_ATTACH_TERMINAL, &clDockerDriver::OnAttachTerminal, this);
-    EventNotifier::Get()->Unbind(wxEVT_DOCKER_CONTAINER_CMD, &clDockerDriver::OnContainerCommand, this);
 }
 
 void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
@@ -130,22 +118,16 @@ void clDockerDriver::OnBuildTerminated(clProcessEvent& event)
     }
 }
 
-void clDockerDriver::OnListContainers(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoListContainers();
-}
+void clDockerDriver::ListContainers() { DoListContainers(); }
 
-void clDockerDriver::OnKillContainers(clCommandEvent& event)
+void clDockerDriver::RemoveContainers(const wxArrayString& ids)
 {
     // Sanity
     if(IsRunning()) return;
-    if(event.GetStrings().IsEmpty()) return;
+    if(ids.IsEmpty()) return;
 
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
-
-    const wxArrayString& ids = event.GetStrings();
 
     wxString message;
     message << _("Choosing 'Yes' will remove ") << ids.size() << _(" container(s)\nContinue?");
@@ -223,11 +205,7 @@ void clDockerDriver::DoListContainers()
     StartProcessAsync(command, "", IProcessCreateDefault, kListContainers);
 }
 
-void clDockerDriver::OnListImages(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoListImages();
-}
+void clDockerDriver::ListImages() { DoListImages(); }
 
 void clDockerDriver::DoListImages()
 {
@@ -243,7 +221,7 @@ void clDockerDriver::DoListImages()
     StartProcessAsync(command, "", IProcessCreateDefault, kListImages);
 }
 
-void clDockerDriver::OnClearUnusedImages(clCommandEvent& event)
+void clDockerDriver::ClearUnusedImages()
 {
     // Build the command
     if(IsRunning()) return;
@@ -259,16 +237,15 @@ void clDockerDriver::OnClearUnusedImages(clCommandEvent& event)
     StartProcessAsync(command, "", IProcessCreateDefault, kDeleteUnusedImages);
 }
 
-void clDockerDriver::OnAttachTerminal(clCommandEvent& event)
+void clDockerDriver::AttachTerminal(const wxArrayString& names)
 {
     // Sanity
     if(IsRunning()) return;
-    if(event.GetStrings().IsEmpty()) return;
+    if(names.IsEmpty()) return;
 
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
 
-    const wxArrayString& names = event.GetStrings();
     for(size_t i = 0; i < names.size(); ++i) {
         wxString message;
         command << " exec -i " << names.Item(i) << " /bin/bash -i";
@@ -284,13 +261,8 @@ wxString clDockerDriver::StartProcessSync(const wxString& command, const wxStrin
     return outputString;
 }
 
-void clDockerDriver::OnContainerCommand(clCommandEvent& event)
+void clDockerDriver::ExecContainerCommand(const wxString& containerName, const wxString& containerCommand)
 {
-    const wxArrayString& arr = event.GetStrings();
-    if(arr.size() != 2) return;
-    const wxString& containerName = arr.Item(0);
-    const wxString& containerCommand = arr.Item(1);
-
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
 

@@ -3,6 +3,7 @@
 
 #include "UI.h"
 #include "clDockerContainer.h"
+#include "clDockerDriver.h"
 #include "clDockerImage.h"
 #include "clGenericSTCStyler.h"
 
@@ -11,29 +12,24 @@ class DockerOutputPane : public DockerOutputPaneBase
     clGenericSTCStyler::Ptr_t m_styler;
     clDockerContainer::Vect_t m_containers;
     clDockerImage::Vect_t m_images;
+    clDockerDriver::Ptr_t m_driver;
 
 protected:
-    void OnKillContainer(wxCommandEvent& event);
-    void OnKillContainerUI(wxUpdateUIEvent& event);
+    virtual void OnContainerContextMenu(wxDataViewEvent& event);
     void OnKillAllContainers(wxCommandEvent& event);
-    void OnAttachTerminal(wxCommandEvent& event);
     void OnKillAllContainersUI(wxUpdateUIEvent& event);
-    void OnAttachTerminalUI(wxUpdateUIEvent& event);
     void OnRefreshContainersView(wxCommandEvent& event);
     void OnRefreshImagesView(wxCommandEvent& event);
     void OnClearUnusedImages(wxCommandEvent& event);
     void OnClearUnusedImagesUI(wxUpdateUIEvent& event);
     void OnClearUnusedImagesMenu(wxCommandEvent& event);
-    void OnRestartContainer(wxCommandEvent& event);
-    void OnStopContainer(wxCommandEvent& event);
-    void OnPauseContainer(wxCommandEvent& event);
 
 protected:
     size_t GetSelectedContainers(clDockerContainer::Vect_t& containers);
     void DoContainerCommand(const wxString& command);
-    
+
 public:
-    DockerOutputPane(wxWindow* parent);
+    DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t driver);
     virtual ~DockerOutputPane();
 
     void Clear();

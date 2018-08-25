@@ -5,6 +5,7 @@
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
 #include "ctags_manager.h"
+#include "docker.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "tags_options_data.h"
@@ -16,9 +17,9 @@
     if(!IsOpen()) { return; } \
     e.Skip(false);
 
-clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin)
+clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin, clDockerDriver::Ptr_t driver)
     : m_bindEvents(bindEvents)
-    , m_driver(plugin)
+    , m_driver(driver)
     , m_plugin(plugin)
 {
     SetWorkspaceType("Docker");
@@ -85,7 +86,7 @@ clDockerWorkspace* clDockerWorkspace::Get() { return g_workspace; }
 
 void clDockerWorkspace::Initialise(Docker* plugin)
 {
-    if(!g_workspace) { g_workspace = new clDockerWorkspace(true, plugin); }
+    if(!g_workspace) { g_workspace = new clDockerWorkspace(true, plugin, plugin->GetDriver()); }
 }
 
 void clDockerWorkspace::Shutdown() { wxDELETE(g_workspace); }
@@ -238,7 +239,7 @@ void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
 void clDockerWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    event.SetIsRunning(m_driver.IsRunning());
+    event.SetIsRunning(m_driver->IsRunning());
 }
 
 void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
@@ -248,7 +249,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullName() == "Dockerfile") {
         if(event.GetKind() == "build") {
-            m_driver.BuildDockerfile(editor->GetFileName(), m_settings);
+            m_driver->BuildDockerfile(editor->GetFileName(), m_settings);
         } else {
             // clean
         }
@@ -258,7 +259,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
 void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_driver.IsRunning()) { m_driver.Stop(); }
+    if(m_driver->IsRunning()) { m_driver->Stop(); }
 }
 
 void clDockerWorkspace::OnRun(clExecuteEvent& event)
@@ -267,12 +268,12 @@ void clDockerWorkspace::OnRun(clExecuteEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     if(editor->GetFileName().GetFullName() == "Dockerfile") {
-        m_driver.ExecuteDockerfile(editor->GetFileName(), m_settings);
+        m_driver->ExecuteDockerfile(editor->GetFileName(), m_settings);
     }
 }
 
 void clDockerWorkspace::OnStop(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_driver.IsRunning()) { m_driver.Stop(); }
+    if(m_driver->IsRunning()) { m_driver->Stop(); }
 }

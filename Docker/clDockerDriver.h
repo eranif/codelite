@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include <wx/event.h>
 #include <wx/filename.h>
+#include <wx/sharedptr.h>
 
 class Docker;
 class IProcess;
@@ -30,12 +31,6 @@ protected:
 protected:
     void OnBuildOutput(clProcessEvent& event);
     void OnBuildTerminated(clProcessEvent& event);
-    void OnListContainers(clCommandEvent& event);
-    void OnListImages(clCommandEvent& event);
-    void OnKillContainers(clCommandEvent& event);
-    void OnClearUnusedImages(clCommandEvent& event);
-    void OnAttachTerminal(clCommandEvent& event);
-    void OnContainerCommand(clCommandEvent& event);
 
 protected:
     void StartProcessAsync(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
@@ -47,6 +42,7 @@ protected:
     void DoListImages();
 
 public:
+    typedef wxSharedPtr<clDockerDriver> Ptr_t;
     clDockerDriver(Docker* plugin);
     virtual ~clDockerDriver();
     void BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
@@ -54,6 +50,20 @@ public:
 
     bool IsRunning() const { return m_process != nullptr; }
     void Stop();
+
+    //===------------------
+    //  Images API
+    //===------------------
+    void ClearUnusedImages();
+    void ListImages();
+
+    //===------------------
+    //  Containers API
+    //===------------------
+    void ListContainers();
+    void RemoveContainers(const wxArrayString& ids);
+    void ExecContainerCommand(const wxString& containerName, const wxString& containerCommand);
+    void AttachTerminal(const wxArrayString& names);
 };
 
 #endif // CLDOCKERBUILDER_H

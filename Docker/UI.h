@@ -134,6 +134,8 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlImages;
 
 protected:
+    virtual void OnContainerContextMenu(wxDataViewEvent& event) { event.Skip(); }
+
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
     wxStyledTextCtrl* GetStc() { return m_stc; }

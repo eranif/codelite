@@ -15,7 +15,7 @@ class clDockerWorkspace : public IWorkspace
     bool m_isOpen = false;
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
-    clDockerDriver m_driver;
+    clDockerDriver::Ptr_t m_driver;
     Docker* m_plugin = nullptr;
 
 public:
@@ -56,7 +56,7 @@ protected:
     void RestoreSession();
 
 public:
-    clDockerWorkspace(bool bindEvents, Docker* plugin);
+    clDockerWorkspace(bool bindEvents, Docker* plugin, clDockerDriver::Ptr_t driver);
     virtual ~clDockerWorkspace();
 
     clDockerWorkspaceView* GetView() { return m_view; }

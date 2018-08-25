@@ -37,13 +37,14 @@ Docker::Docker(IManager* manager)
 {
     m_longName = _("Docker for CodeLite");
     m_shortName = wxT("Docker");
-
-    clWorkspaceManager::Get().RegisterWorkspace(new clDockerWorkspace(false, nullptr));
+    m_driver.reset(new clDockerDriver(this));
+    
+    clWorkspaceManager::Get().RegisterWorkspace(new clDockerWorkspace(false, nullptr, m_driver));
     clDockerWorkspace::Initialise(this);
     clDockerWorkspace::Get(); // Make sure that the workspace instance is up and all events are hooked
 
     Notebook* book = m_mgr->GetOutputPaneNotebook();
-    m_outputView = new DockerOutputPane(book);
+    m_outputView = new DockerOutputPane(book, m_driver);
     book->AddPage(m_outputView, _("Docker"), false, m_mgr->GetStdIcons()->LoadBitmap("docker"));
 
     m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", NULL));

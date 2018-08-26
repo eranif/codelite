@@ -26,10 +26,12 @@
 #ifndef __webupdatethread__
 #define __webupdatethread__
 
-#include "job.h"
+#include "SocketAPI/clSocketClientAsync.h"
+#include "cl_command_event.h"
 
-extern const wxEventType wxEVT_CMD_NEW_VERSION_AVAILABLE;
-extern const wxEventType wxEVT_CMD_VERSION_UPTODATE;
+wxDECLARE_EVENT(wxEVT_CMD_NEW_VERSION_AVAILABLE, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CMD_VERSION_UPTODATE, wxCommandEvent);
+wxDECLARE_EVENT(wxEVT_CMD_VERSION_CHECK_ERROR, wxCommandEvent);
 
 class WebUpdateJobData
 {
@@ -41,12 +43,8 @@ class WebUpdateJobData
     bool m_showMessage;
 
 public:
-    WebUpdateJobData(const wxString& url,
-                     const wxString& releaseNotes,
-                     wxString curVersion,
-                     wxString newVersion,
-                     bool upToDate,
-                     bool showMessage)
+    WebUpdateJobData(const wxString& url, const wxString& releaseNotes, wxString curVersion, wxString newVersion,
+                     bool upToDate, bool showMessage)
         : m_url(url.c_str())
         , m_curVersion(curVersion)
         , m_newVersion(newVersion)
@@ -69,25 +67,45 @@ public:
     bool GetShowMessage() const { return m_showMessage; }
 };
 
-class WebUpdateJob : public Job
+class WebUpdateJob : public wxEvtHandler
 {
+    wxEvtHandler* m_parent;
+    clSocketClientAsync m_socket;
     wxString m_dataRead;
     bool m_userRequest;
+    bool m_onlyRelease;
+    bool m_eventsConnected;
+    clSocketClientAsync m_testSocket;
+    bool m_testingConnection;
 
 protected:
     /**
      * @brief get the current platform details
      */
     void GetPlatformDetails(wxString& os, wxString& codename, wxString& arch) const;
+    void OnConnected(clCommandEvent& e);
+    void OnConnectionLost(clCommandEvent& e);
+    void OnConnectionError(clCommandEvent& e);
+    void OnSocketError(clCommandEvent& e);
+    void OnSocketInput(clCommandEvent& e);
+
+    void Clear();
+    void NotifyError(const wxString& errmsg);
 
 public:
-    WebUpdateJob(wxEvtHandler* parent, bool userRequest);
+    WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease);
     virtual ~WebUpdateJob();
     void ParseFile();
+    bool IsUserRequest() const { return m_userRequest; }
 
-    static size_t WriteData(void* buffer, size_t size, size_t nmemb, void* obj);
+protected:
+    /**
+     * @brief check the connectivity to the internet
+     */
+    void CheckConnectivity();
+    void RealCheck();
 
 public:
-    virtual void Process(wxThread* thread);
+    virtual void Check();
 };
 #endif // __webupdatethread__

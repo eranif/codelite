@@ -166,7 +166,7 @@ enum {
     T_PLUS_PLUS,
     T_MINUS_MINUS,
     T_LS, // left Shift
-    T_RS, // Right Shift
+//    T_RS, // Right Shift
     T_LE, // less equal
     T_GE, // greater than-equal
     T_EQUAL,

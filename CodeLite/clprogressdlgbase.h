@@ -33,6 +33,7 @@
 #ifndef __clprogressdlgbase__
 #define __clprogressdlgbase__
 
+#if wxUSE_GUI
 #include <wx/intl.h>
 
 #include <wx/string.h>
@@ -65,5 +66,5 @@ class clProgressDlgBase : public wxDialog
 		~clProgressDlgBase();
 	
 };
-
+#endif // #if wxUSE_GUI
 #endif //__clprogressdlgbase__

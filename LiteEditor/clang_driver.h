@@ -28,13 +28,14 @@
 
 #if HAS_LIBCLANG
 
-#include <wx/event.h>
 #include "asyncprocess.h"
-#include <map>
-#include "clangpch_cache.h"
-#include "clang_pch_maker_thread.h"
-#include <clang-c/Index.h>
 #include "clang_cleaner_thread.h"
+#include "clang_pch_maker_thread.h"
+#include "clangpch_cache.h"
+#include <clang-c/Index.h>
+#include <map>
+#include <wx/event.h>
+#include "macros.h"
 
 class IEditor;
 class ClangDriverCleaner;
@@ -54,19 +55,14 @@ protected:
     IEditor* m_activeEditor;
     int m_position;
     ClangCleanerThread m_clangCleanerThread;
+    wxStringMap_t m_filesTable;
 
 protected:
     void DoCleanup();
-    FileTypeCmpArgs_t DoPrepareCompilationArgs(const wxString& projectName,
-                                               const wxString& sourceFile,
-                                               wxString& projectPath,
-                                               wxString& pchfile);
-    void DoParseCompletionString(CXCompletionString str,
-                                 int depth,
-                                 wxString& entryName,
-                                 wxString& signature,
-                                 wxString& completeString,
-                                 wxString& returnValue);
+    FileTypeCmpArgs_t DoPrepareCompilationArgs(const wxString& projectName, const wxString& sourceFile,
+                                               wxString& projectPath);
+    void DoParseCompletionString(CXCompletionString str, int depth, wxString& entryName, wxString& signature,
+                                 wxString& completeString, wxString& returnValue);
     void DoGotoDefinition(ClangThreadReply* reply);
     ClangThreadRequest* DoMakeClangThreadRequest(IEditor* editor, WorkingContext context);
     ClangThreadRequest::List_t DoCreateListOfModifiedBuffers(IEditor* excludeEditor);

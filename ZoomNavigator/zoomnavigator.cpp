@@ -30,17 +30,17 @@
 //  the Free Software Foundation; either version 2 of the License, or
 //  (at your option) any later version.
 
-#include <wx/menu.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/stc/stc.h>
-#include "dockablepane.h"
 #include "detachedpanesinfo.h"
-#include "zoomnavigator.h"
+#include "dockablepane.h"
 #include "event_notifier.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
+#include "zoomnavigator.h"
+#include <wx/menu.h>
 #include <wx/msgdlg.h>
+#include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include <wx/xrc/xmlres.h>
 
 static ZoomNavigator* thePlugin = NULL;
 #define CHECK_CONDITION(cond) \
@@ -51,9 +51,7 @@ const wxString ZOOM_PANE_TITLE(_("Zoom Navigator"));
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new ZoomNavigator(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new ZoomNavigator(manager); }
     return thePlugin;
 }
 
@@ -89,13 +87,10 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     m_topWindow->Connect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
-    m_topWindow->Connect(XRCID("zn_settings"),
-                         wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(ZoomNavigator::OnSettings),
-                         NULL,
-                         this);
+    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
+                                  NULL, this);
+    m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
     DoInitialize();
 }
@@ -105,33 +100,23 @@ ZoomNavigator::~ZoomNavigator() {}
 void ZoomNavigator::UnPlug()
 {
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(ZoomNavigator::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomNavigator::OnSettingsChanged),
+                                     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ZoomNavigator::OnFileSaved), NULL, this);
 
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), NULL, this);
-    m_topWindow->Disconnect(XRCID("zn_settings"),
-                            wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(ZoomNavigator::OnSettings),
-                            NULL,
-                            this);
+    m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(ZoomNavigator::OnSettings), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &ZoomNavigator::OnToggleTab, this);
 
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
-    if(index != wxNOT_FOUND) {
-        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
-    }
+    if(index != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(index); }
     zoompane->Destroy();
 }
 
-clToolBar* ZoomNavigator::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void ZoomNavigator::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void ZoomNavigator::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -147,16 +132,14 @@ void ZoomNavigator::OnShowHideClick(wxCommandEvent& e) {}
 void ZoomNavigator::DoInitialize()
 {
     znConfigItem data;
-    if(m_config->ReadItem(&data)) {
-        m_enabled = data.IsEnabled();
-    }
+    if(m_config->ReadItem(&data)) { m_enabled = data.IsEnabled(); }
 
     // create tab (possibly detached)
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap,
+                                            wxSize(200, 200));
         zoompane = new wxPanel(cp);
         cp->SetChildNoReparent(zoompane);
 
@@ -177,8 +160,8 @@ void ZoomNavigator::DoInitialize()
     cbEnablePlugin->SetValue(data.IsEnabled());
     bs->Add(cbEnablePlugin, 0, wxEXPAND);
 
-    cbEnablePlugin->Connect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL, this);
+    cbEnablePlugin->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(ZoomNavigator::OnEnablePlugin), NULL,
+                            this);
     zoompane->SetSizer(bs);
 }
 
@@ -197,17 +180,13 @@ void ZoomNavigator::DoUpdate()
     CHECK_CONDITION(!m_mgr->IsShutdownInProgress());
 
     IEditor* curEditor = m_mgr->GetActiveEditor();
-    if(!curEditor && !m_text->IsEmpty()) {
-        DoCleanup();
-    }
+    if(!curEditor && !m_text->IsEmpty()) { DoCleanup(); }
     CHECK_CONDITION(curEditor);
 
     wxStyledTextCtrl* stc = curEditor->GetCtrl();
     CHECK_CONDITION(stc);
 
-    if(curEditor->GetFileName().GetFullPath() != m_curfile) {
-        SetEditorText(curEditor);
-    }
+    if(curEditor->GetFileName().GetFullPath() != m_curfile) { SetEditorText(curEditor); }
 
     int first = stc->GetFirstVisibleLine();
     int last = stc->LinesOnScreen() + first;
@@ -253,8 +232,6 @@ void ZoomNavigator::PatchUpHighlights(const int first, const int last)
 
 void ZoomNavigator::HookPopupMenu(wxMenu* menu, MenuType type) {}
 
-void ZoomNavigator::UnHookPopupMenu(wxMenu* menu, MenuType type) {}
-
 void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 {
     IEditor* curEditor = m_mgr->GetActiveEditor();
@@ -266,9 +243,7 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 
     // the first line is taken from the preview
     int pos = m_text->PositionFromPoint(e.GetPosition());
-    if(pos == wxSTC_INVALID_POSITION) {
-        return;
-    }
+    if(pos == wxSTC_INVALID_POSITION) { return; }
     int first = m_text->LineFromPosition(pos);
     int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
     first -= (nLinesOnScreen / 2);
@@ -353,6 +328,7 @@ void ZoomNavigator::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
     m_startupCompleted = true;
+    m_text->Startup();
 }
 
 void ZoomNavigator::OnIdle(wxIdleEvent& e)
@@ -370,11 +346,9 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, zoompane, ZOOM_PANE_TITLE, true);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(ZOOM_PANE_TITLE);
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
-        }
+        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
     }
 }

@@ -39,19 +39,18 @@
 struct sftp_session_struct;
 typedef struct sftp_session_struct* SFTPSession_t;
 
-
 class WXDLLIMPEXP_CL clSFTP
 {
-    clSSH::Ptr_t  m_ssh;
+    clSSH::Ptr_t m_ssh;
     SFTPSession_t m_sftp;
-    bool          m_connected;
-    wxString      m_currentFolder;
-    wxString      m_account;
+    bool m_connected;
+    wxString m_currentFolder;
+    wxString m_account;
 
 public:
     typedef wxSharedPtr<clSFTP> Ptr_t;
     enum {
-        SFTP_BROWSE_FILES   = 0x00000001,
+        SFTP_BROWSE_FILES = 0x00000001,
         SFTP_BROWSE_FOLDERS = 0x00000002,
     };
 
@@ -60,26 +59,23 @@ public:
     virtual ~clSFTP();
     
     /**
+     * @brief return the default download folder
+     */
+    static wxString GetDefaultDownloadFolder();
+    
+    /**
      * @brief return the underlying ssh session
      */
-    clSSH::Ptr_t GetSsh() const {
-        return m_ssh;
-    }
-    
-    bool IsConnected() const {
-        return m_connected;
-    }
+    clSSH::Ptr_t GetSsh() const { return m_ssh; }
 
-    void SetAccount(const wxString& account) {
-        this->m_account = account;
-    }
-    const wxString& GetAccount() const {
-        return m_account;
-    }
+    bool IsConnected() const { return m_connected; }
+
+    void SetAccount(const wxString& account) { this->m_account = account; }
+    const wxString& GetAccount() const { return m_account; }
     /**
      * @brief intialize the scp over ssh
      */
-    void Initialize() throw (clException);
+    void Initialize() ;
 
     /**
      * @brief close the scp channel
@@ -91,19 +87,23 @@ public:
      * @param localFile the local file
      * @param remotePath the remote path (abs path)
      */
-    void Write(const wxFileName& localFile, const wxString &remotePath) throw (clException);
+    void Write(const wxFileName& localFile,
+               const wxString& remotePath,
+               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) ;
 
     /**
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
-    void Write(const wxMemoryBuffer &fileContent, const wxString &remotePath) throw (clException);
+    void Write(const wxMemoryBuffer& fileContent,
+               const wxString& remotePath,
+               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL)) ;
 
     /**
      * @brief read remote file and return its content
-     * @return the file content.
+     * @return the file content + the file attributes
      */
-    void Read(const wxString &remotePath, wxMemoryBuffer& buffer) throw (clException);
-    
+    SFTPAttribute::Ptr_t Read(const wxString& remotePath, wxMemoryBuffer& buffer) ;
+
     /**
      * @brief list the content of a folder
      * @param folder
@@ -111,64 +111,72 @@ public:
      * @param filter filter out files that do not match the filter
      * @throw clException incase an error occurred
      */
-    SFTPAttribute::List_t List(const wxString &folder, size_t flags, const wxString &filter = "") throw (clException);
+    SFTPAttribute::List_t List(const wxString& folder, size_t flags, const wxString& filter = "") ;
 
     /**
      * @brief create a directory
      * @param dirname
      */
-    void CreateDir(const wxString &dirname) throw (clException);
-    
+    void CreateDir(const wxString& dirname) ;
+
     /**
      * @brief create a file. This function also creates the path to the file (by calling internally to Mkpath)
      */
-    void CreateRemoteFile(const wxString& remoteFullPath, const wxString &content) throw (clException);
+    void CreateRemoteFile(const wxString& remoteFullPath,
+                          const wxString& content,
+                          SFTPAttribute::Ptr_t attr) ;
 
     /**
      * @brief this version create a copy of the local file on the remote server. Similar to the previous
      * version, it also creates the path to the file if needed
      */
-    void CreateRemoteFile(const wxString& remoteFullPath, const wxFileName &localFile) throw (clException);
-    
+    void CreateRemoteFile(const wxString& remoteFullPath,
+                          const wxFileName& localFile,
+                          SFTPAttribute::Ptr_t attr) ;
+
     /**
      * @brief create path . If the directory does not exist, create it (all sub paths if needed)
      */
-    void Mkpath(const wxString& remoteDirFullpath) throw (clException);
-    
+    void Mkpath(const wxString& remoteDirFullpath) ;
+
     /**
      * @brief Remove a directoy.
      * @param dirname
      */
-    void RemoveDir(const wxString &dirname) throw (clException);
+    void RemoveDir(const wxString& dirname) ;
 
     /**
      * @brief Unlink (delete) a file.
      * @param dirname
      */
-    void UnlinkFile(const wxString &path) throw (clException);
+    void UnlinkFile(const wxString& path) ;
 
     /**
      * @brief Rename or move a file or directory
      * @param oldpath
      * @param newpath
      */
-    void Rename(const wxString &oldpath, const wxString &newpath) throw (clException);
+    void Rename(const wxString& oldpath, const wxString& newpath) ;
     /**
      * @brief cd up and list the content of the directory
      * @return
      */
-    SFTPAttribute::List_t CdUp(size_t flags, const wxString &filter) throw (clException);
+    SFTPAttribute::List_t CdUp(size_t flags, const wxString& filter) ;
 
     /**
      * @brief stat the path
      */
-    SFTPAttribute::Ptr_t Stat(const wxString& path) throw (clException);
+    SFTPAttribute::Ptr_t Stat(const wxString& path) ;
+
+    /**
+     * @brief change remote file permissions
+     */
+    void Chmod(const wxString& remotePath, size_t permissions) ;
+
     /**
      * @brief return the current folder
      */
-    const wxString& GetCurrentFolder() const {
-        return m_currentFolder;
-    }
+    const wxString& GetCurrentFolder() const { return m_currentFolder; }
 };
 
 #endif // USE_SFTP

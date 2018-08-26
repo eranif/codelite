@@ -62,9 +62,9 @@ int CppToken::store(wxSQLite3Database* db, wxLongLong fileID) const
     return wxNOT_FOUND;
 }
 
-CppToken::List_t CppToken::loadByNameAndFile(wxSQLite3Database* db, const wxString& name, wxLongLong fileID)
+CppToken::Vec_t CppToken::loadByNameAndFile(wxSQLite3Database* db, const wxString& name, wxLongLong fileID)
 {
-    CppToken::List_t matches;
+    CppToken::Vec_t matches;
     try {
         wxSQLite3Statement st = db->PrepareStatement("select * from TOKENS_TABLE where FILE_ID=? AND NAME=?");
         st.Bind(1, fileID);
@@ -89,23 +89,23 @@ CppToken::CppToken(wxSQLite3ResultSet& res)
     setLineNumber(res.GetInt(4));
 }
 
-CppToken::List_t CppToken::loadByName(wxSQLite3Database* db, const wxString& name)
+CppToken::Vec_t CppToken::loadByName(wxSQLite3Database* db, const wxString& name)
 {
-    CppToken::List_t matches;
-    std::map<wxLongLong, wxString> fileIdToFile;
+    CppToken::Vec_t matches;
+    std::unordered_map<size_t, wxString> fileIdToFile;
     try {
         wxSQLite3Statement st = db->PrepareStatement("select * from TOKENS_TABLE where NAME=?");
         st.Bind(1, name);
         wxSQLite3ResultSet res = st.ExecuteQuery();
         while(res.NextRow()) {
             CppToken token(res);
-            wxLongLong fileID = res.GetInt64(3);
+            size_t fileID = res.GetInt64(3).ToLong();
             if(fileIdToFile.count(fileID)) {
                 token.setFilename(fileIdToFile.find(fileID)->second);
             } else {
                 // load from the db
                 wxSQLite3Statement st1 = db->PrepareStatement("SELECT FILE_NAME FROM FILES WHERE ID=? LIMIT 1");
-                st1.Bind(1, fileID);
+                st1.Bind(1, wxLongLong(fileID));
                 wxSQLite3ResultSet res1 = st1.ExecuteQuery();
                 if(res1.NextRow()) {
                     token.setFilename(res1.GetString(0));
@@ -128,16 +128,16 @@ CppTokensMap::CppTokensMap() {}
 
 CppTokensMap::~CppTokensMap() { clear(); }
 
-void CppTokensMap::addToken(const wxString& name, const CppToken::List_t& list)
+void CppTokensMap::addToken(const wxString& name, const CppToken::Vec_t& list)
 {
     // try to locate an entry with this name
-    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
-    std::list<CppToken>* tokensList(NULL);
+    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(name);
+    std::vector<CppToken>* tokensList(NULL);
     if(iter != m_tokens.end()) {
         tokensList = iter->second;
     } else {
         // create new list and add it to the map
-        tokensList = new std::list<CppToken>;
+        tokensList = new std::vector<CppToken>;
         m_tokens.insert(std::make_pair(name, tokensList));
     }
     tokensList->insert(tokensList->end(), list.begin(), list.end());
@@ -146,13 +146,13 @@ void CppTokensMap::addToken(const wxString& name, const CppToken::List_t& list)
 void CppTokensMap::addToken(const CppToken& token)
 {
     // try to locate an entry with this name
-    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(token.getName());
-    std::list<CppToken>* tokensList(NULL);
+    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(token.getName());
+    std::vector<CppToken>* tokensList(NULL);
     if(iter != m_tokens.end()) {
         tokensList = iter->second;
     } else {
         // create new list and add it to the map
-        tokensList = new std::list<CppToken>;
+        tokensList = new std::vector<CppToken>;
         m_tokens[token.getName()] = tokensList;
     }
     tokensList->push_back(token);
@@ -160,21 +160,21 @@ void CppTokensMap::addToken(const CppToken& token)
 
 bool CppTokensMap::contains(const wxString& name)
 {
-    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
+    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(name);
     return iter != m_tokens.end();
 }
 
-void CppTokensMap::findTokens(const wxString& name, std::list<CppToken>& tokens)
+void CppTokensMap::findTokens(const wxString& name, std::vector<CppToken>& tokens)
 {
-    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.find(name);
-    //	std::list<CppToken> *tokensList(NULL);
+    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(name);
+    //	std::vector<CppToken> *tokensList(NULL);
     if(iter != m_tokens.end()) {
         tokens = *(iter->second);
     }
 }
 void CppTokensMap::clear()
 {
-    std::map<wxString, std::list<CppToken>*>::iterator iter = m_tokens.begin();
+    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.begin();
     for(; iter != m_tokens.end(); ++iter) {
         delete iter->second;
     }

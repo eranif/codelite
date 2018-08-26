@@ -9,6 +9,8 @@
   "m_outputFileName": "reconcileprojectbase",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -2646,7 +2648,7 @@
           }, {
            "type": "bool",
            "m_label": "Focused",
-           "m_value": false
+           "m_value": true
           }, {
            "type": "string",
            "m_label": "Class Name:",

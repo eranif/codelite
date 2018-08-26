@@ -23,7 +23,7 @@ extern "C" int yywrap(void*) { return 1; }
 #define YY_FATAL_ERROR(x)
 #define YYSTYPE char*
 #define ECHO
-#define P(s) fprintf(stderr, "%s\n", s)
+#define P(s) 
 
 #define YY_NO_UNISTD_H
 #define YY_USER_ACTION  yycolumn += yyleng;
@@ -180,7 +180,6 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"++"                { return T_PLUS_PLUS; }
 <INITIAL>"--"                { return T_MINUS_MINUS; }
 <INITIAL>"<<"                { return T_LS; }
-<INITIAL>">>"                { return T_RS; }
 <INITIAL>"<="                { return T_LE; }
 <INITIAL>">="                { return T_GE; }
 <INITIAL>"=="                { return T_EQUAL; }
@@ -284,6 +283,8 @@ horizontal_white [ ]|{h_tab}
 }
 <INITIAL>"#" { 
     BEGIN(PREPR);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(true);
 }
 <INITIAL>. { 
     return yytext[0];
@@ -300,6 +301,8 @@ horizontal_white [ ]|{h_tab}
 }
 <PREPR>"\n" { 
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 <PREPR>"define" { 
@@ -377,6 +380,8 @@ horizontal_white [ ]|{h_tab}
 }
 <INCLUDE>\n {
     BEGIN(INITIAL);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
 <INCLUDE>[ \t]* { RETURN_WHITESPACE(); }
@@ -451,36 +456,36 @@ void LexerUnget(void* scanner)
 
 bool LexerNext(void* scanner, CxxLexerToken& token)
 {
-    token.column = 0;
-    token.type = yylex(scanner);
-    if(token.type != 0) {
+    token.SetColumn(0);
+    token.SetType(yylex(scanner));
+    if(!token.IsEOF()) {
         struct yyguts_t * yyg = (struct yyguts_t*)scanner;
         CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
-        switch(token.type) {
+        switch(token.GetType()) {
         case T_CXX_COMMENT:
             // One line up for CXX comments
-            token.lineNumber = userData->GetCommentStartLine();
-            token.comment = userData->GetComment();
+            token.SetLineNumber(userData->GetCommentStartLine());
+            token.SetComment(userData->GetComment());
             userData->ClearComment();
             break;
         case T_C_COMMENT:
-            token.comment = userData->GetComment();
+            token.SetComment(userData->GetComment());
             userData->ClearComment();
-            token.lineNumber = userData->GetCommentStartLine();
+            token.SetLineNumber(userData->GetCommentStartLine());
             break;
         default:
-            token.lineNumber = yylineno;
-            token.text = yytext;
-            token.column = yycolumn;
+            token.SetLineNumber(yylineno);
+            token.SetText(yytext);
+            token.SetColumn(yycolumn);
             break;
         }
 
     } else {
-        token.text = NULL;
-        token.lineNumber = 0;
-        token.column = 0;
+        token.SetText(NULL);
+        token.SetLineNumber(0);
+        token.SetColumn(0);
     }
-    return token.type != 0;
+    return !token.IsEOF();
 }
 
 wxString LexerCurrentToken(void* scanner)

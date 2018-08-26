@@ -38,7 +38,7 @@ class WordCompletionPlugin : public IPlugin
     WordCompletionDictionary* m_dictionary;
 
 public:
-    void OnWordComplete(wxCommandEvent& event);
+    void OnWordComplete(clCodeCompletionEvent& event);
     void OnSettings(wxCommandEvent& event);
 
 public:
@@ -48,7 +48,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void UnPlug();
 };

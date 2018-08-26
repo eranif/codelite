@@ -1,31 +1,38 @@
 #include "Notebook.h"
-#include <wx/sizer.h>
-#include <wx/dcbuffer.h>
-#include <wx/dcgraph.h>
-#include <wx/wupdlock.h>
-#include <algorithm>
-#include <wx/image.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/menu.h>
-#include <algorithm>
-#include <wx/dnd.h>
-#include <wx/regex.h>
+#include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
+#include "json_node.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
+#include <wx/dnd.h>
+#include <wx/image.h>
+#include <wx/menu.h>
+#include <wx/regex.h>
+#include <wx/sizer.h>
+#include <wx/wupdlock.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
 #endif
 
 #if CL_BUILD
-#include "file_logger.h"
+#include "ColoursAndFontsManager.h"
 #include "cl_command_event.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
+#include "lexer_configuration.h"
 #endif
+#include "wxStringHash.h"
 
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
@@ -33,18 +40,70 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_NAVIGATING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 
 extern void Notebook_Init_Bitmaps();
 
-Notebook::Notebook(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+struct DnD_Data {
+    clTabCtrl* srcTabCtrl;
+    int tabIndex;
+    
+    DnD_Data() : srcTabCtrl(NULL), tabIndex(wxNOT_FOUND) {}
+    void Clear() {
+        srcTabCtrl = NULL;
+        tabIndex = wxNOT_FOUND;
+    }
+};
+
+static DnD_Data s_clTabCtrlDnD_Data;
+
+void Notebook::PositionControls()
+{
+    size_t style = GetStyle();
+    wxRect rect = GetClientRect();
+    wxPoint point(GetPosition());
+    if(style & kNotebook_BottomTabs) {
+        // Bottom tabs
+        m_windows->SetSize(rect.GetWidth(), (rect.GetHeight() - m_tabCtrl->GetSize().GetHeight()));
+        m_windows->Move(point);
+
+        // Update the remainder size
+        rect.SetHeight(m_tabCtrl->GetRect().GetHeight());
+        m_tabCtrl->SetSize(rect.GetSize());
+        m_tabCtrl->Move(m_windows->GetRect().GetBottomLeft());
+
+    } else if(style & kNotebook_LeftTabs) {
+        m_tabCtrl->SetSize(m_tabCtrl->GetSize().GetWidth(), rect.GetHeight());
+        m_tabCtrl->Move(point);
+
+        // Left tabs
+        m_windows->SetSize(rect.GetWidth() - m_tabCtrl->GetSize().GetWidth(), rect.GetHeight());
+        m_windows->Move(m_tabCtrl->GetRect().GetTopRight());
+    } else if(style & kNotebook_RightTabs) {
+        // Left tabs
+        m_windows->SetSize(rect.GetWidth() - m_tabCtrl->GetSize().GetWidth(), rect.GetHeight());
+        m_windows->Move(point);
+
+        m_tabCtrl->SetSize(m_tabCtrl->GetSize().GetWidth(), rect.GetHeight());
+        m_tabCtrl->Move(m_windows->GetRect().GetTopRight());
+    } else {
+        // Top tabs
+        m_tabCtrl->SetSize(rect.GetWidth(), m_tabCtrl->GetSize().GetHeight());
+        m_tabCtrl->Move(point);
+
+        // Update the remainder size
+        rect.SetHeight(rect.GetHeight() - m_tabCtrl->GetSize().GetHeight());
+        m_windows->SetSize(rect.GetSize());
+        m_windows->Move(m_tabCtrl->GetRect().GetBottomLeft());
+    }
+}
+
+Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
+                   const wxString& name)
     : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
 {
     static bool once = false;
-
     if(!once) {
         // Add PNG and Bitmap handler
         wxImage::AddHandler(new wxPNGHandler);
@@ -53,27 +112,11 @@ Notebook::Notebook(
         once = true;
     }
 
+    Bind(wxEVT_SIZE, &Notebook::OnSize, this);
+    Bind(wxEVT_SIZING, &Notebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);
     m_windows = new WindowStack(this);
-
-    wxBoxSizer* sizer;
-    if(IsVerticalTabs()) {
-        sizer = new wxBoxSizer(wxHORIZONTAL);
-    } else {
-        sizer = new wxBoxSizer(wxVERTICAL);
-    }
-
-    SetSizer(sizer);
-
-    if(GetStyle() & kNotebook_BottomTabs) {
-        sizer->Add(m_windows, 1, wxEXPAND);
-        sizer->Add(m_tabCtrl, 0, wxEXPAND);
-
-    } else {
-        sizer->Add(m_tabCtrl, 0, wxEXPAND);
-        sizer->Add(m_windows, 1, wxEXPAND);
-    }
-    Layout();
+    PositionControls();
 }
 
 Notebook::~Notebook() {}
@@ -97,27 +140,7 @@ bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, b
 void Notebook::SetStyle(size_t style)
 {
     m_tabCtrl->SetStyle(style);
-    GetSizer()->Detach(m_windows);
-    GetSizer()->Detach(m_tabCtrl);
-    wxSizer* sz = NULL;
-
-    // Replace the sizer
-    if(IsVerticalTabs()) {
-        sz = new wxBoxSizer(wxHORIZONTAL);
-    } else {
-        sz = new wxBoxSizer(wxVERTICAL);
-    }
-
-    if((style & kNotebook_BottomTabs) || (style & kNotebook_RightTabs)) {
-        sz->Add(m_windows, 1, wxEXPAND);
-        sz->Add(m_tabCtrl, 0, wxEXPAND);
-
-    } else {
-        sz->Add(m_tabCtrl, 0, wxEXPAND);
-        sz->Add(m_windows, 1, wxEXPAND);
-    }
-    SetSizer(sz);
-    Layout();
+    PositionControls();
     m_tabCtrl->Refresh();
 }
 
@@ -167,6 +190,17 @@ void Notebook::SetTabDirection(wxDirection d)
     SetStyle(flags);
 }
 
+bool Notebook::MoveActivePage(int newIndex)
+{
+    return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
+}
+
+void Notebook::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
+    CallAfter(&Notebook::PositionControls);
+}
+
 //----------------------------------------------------------
 // Notebook header
 //----------------------------------------------------------
@@ -179,17 +213,11 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_style(style)
     , m_closeButtonClickedIndex(wxNOT_FOUND)
     , m_contextMenu(NULL)
+    , m_dragStartTime((time_t)-1)
 {
+    SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-#if CL_BUILD
-    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_TabStyleMinimal) {
-        m_art.reset(new clTabRendererSquare);
-    } else {
-        m_art.reset(new clTabRendererCurved);
-    }
-#else
-    m_art.reset(new clTabRendererCurved); // Default art
-#endif
+    m_art = clTabRenderer::CreateRenderer(m_style);
     DoSetBestSize();
 
     SetDropTarget(new clTabCtrlDropTarget(this));
@@ -201,16 +229,16 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_LEFT_UP, &clTabCtrl::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Bind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
+    Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
-    Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
 
-    notebook->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     if(m_style & kNotebook_DarkTabs) {
         m_colours.InitDarkColours();
     } else {
         m_colours.InitLightColours();
     }
+    SetStyle(m_style);
     // The history object
     m_history.reset(new clTabHistory());
 }
@@ -218,26 +246,25 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 void clTabCtrl::DoSetBestSize()
 {
     wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDC.SetFont(font);
+    wxMemoryDC memoryDC(bmp);
+    wxGCDC gcdc(memoryDC);
 
-    wxSize sz = memDC.GetTextExtent("Tp");
+    wxFont font = clTabRenderer::GetTabFont();
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    gcdc.SetFont(font);
+    wxSize sz = gcdc.GetTextExtent("_WORKSPACE_");
+    int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
-    m_height = sz.GetHeight() + (4 * GetArt()->ySpacer);
-    m_vTabsWidth = sz.GetHeight() + (5 * GetArt()->ySpacer);
-#ifdef __WXGTK__
-    // On GTK, limit the tab height
-    if(m_height >= 30) {
-        m_height = 30;
-    }
-#endif
+    m_nHeight = sz.GetHeight() + (4 * GetArt()->ySpacer);
+    m_nHeight = wxMax(m_nHeight, bmpHeight);
+    m_nWidth = sz.GetWidth();
+
     if(IsVerticalTabs()) {
-        SetSizeHints(wxSize(m_vTabsWidth, -1));
-        SetSize(m_vTabsWidth, -1);
+        SetSizeHints(wxSize(m_nWidth, -1));
+        SetSize(m_nWidth, -1);
     } else {
-        SetSizeHints(wxSize(-1, m_height));
-        SetSize(-1, m_height);
+        SetSizeHints(wxSize(-1, m_nHeight));
+        SetSize(-1, m_nHeight);
     }
 }
 
@@ -271,15 +298,26 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
     if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
-        clientRect.SetWidth(clientRect.GetWidth() - 30);
+        clientRect.SetWidth(clientRect.GetWidth() - CHEVRON_SIZE);
     } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
         // Vertical tabs
-        clientRect.SetHeight(clientRect.GetHeight() - 30);
+        clientRect.SetHeight(clientRect.GetHeight() - CHEVRON_SIZE);
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(t->IsActive() && clientRect.Intersects(t->GetRect())) return true;
+        if(IsVerticalTabs()) {
+            if(t->IsActive() && clientRect.Intersects(t->GetRect())) {
+                return true;
+            }
+        } else {
+            wxRect tabRect = t->GetRect();
+            tabRect.SetWidth(tabRect.GetWidth() *
+                             0.5); // The tab does not need to be fully shown, but at least 50% of it
+            if(t->IsActive() && clientRect.Contains(tabRect)) {
+                return true;
+            }
+        }
     }
     return false;
 }
@@ -296,39 +334,8 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_MOTION, &clTabCtrl::OnMouseMotion, this);
     Unbind(wxEVT_MIDDLE_UP, &clTabCtrl::OnMouseMiddleClick, this);
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
-    Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
-    GetParent()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
-}
-
-void clTabCtrl::OnWindowKeyDown(wxKeyEvent& event)
-{
-    if(GetStyle() & kNotebook_EnableNavigationEvent) {
-#ifdef __WXOSX__
-        if(event.AltDown())
-#else
-        if(event.CmdDown())
-#endif
-        {
-            switch(event.GetUnicodeKey()) {
-            case WXK_TAB:
-            case WXK_PAGEDOWN:
-            case WXK_PAGEUP: {
-#if CL_BUILD
-                CL_DEBUG("Firing navigation event");
-#endif
-                // Fire the navigation event
-                wxBookCtrlEvent e(wxEVT_BOOK_NAVIGATING);
-                e.SetEventObject(GetParent());
-                GetParent()->GetEventHandler()->AddPendingEvent(e);
-                return;
-            }
-            default:
-                break;
-            }
-        }
-    }
-    event.Skip();
+    Unbind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
 }
 
 void clTabCtrl::OnSize(wxSizeEvent& event)
@@ -342,8 +349,15 @@ void clTabCtrl::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
     PrepareDC(dc);
+
+#ifdef __WXGTK3__
+    wxDC& gcdc = dc;
+#else
+    wxGCDC gcdc(dc);
+    PrepareDC(gcdc);
+#endif
 
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
@@ -354,33 +368,21 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         if(IsVerticalTabs()) {
-            rect.SetHeight(rect.GetHeight() - 16);
-            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), 20));
-            if(GetStyle() & kNotebook_RightTabs) {
-                m_chevronRect.x += GetArt()->bottomAreaHeight;
-            } else {
-                m_chevronRect.x -= 2;
-            }
-            m_chevronRect.SetWidth(m_chevronRect.GetWidth() - GetArt()->bottomAreaHeight);
-            rect.SetHeight(rect.GetHeight() + 16);
+            m_chevronRect = wxRect(rect.GetTopLeft(), wxSize(rect.GetWidth(), CHEVRON_SIZE));
+            rect.y = m_chevronRect.GetBottomLeft().y;
         } else {
-            // Reduce the length of the tabs bitmap by 16 pixels (we will draw there the drop down
-            // button)
-            rect.SetWidth(rect.GetWidth() - 16);
-            m_chevronRect = wxRect(rect.GetTopRight(), wxSize(20, rect.GetHeight()));
-            if(GetStyle() & kNotebook_BottomTabs) {
-                m_chevronRect.y += GetArt()->bottomAreaHeight;
-            }
-            m_chevronRect.SetHeight(m_chevronRect.GetHeight() - GetArt()->bottomAreaHeight);
-            rect.SetWidth(rect.GetWidth() + 16);
+            wxPoint rightPoint = rect.GetRightTop();
+            rightPoint.x -= CHEVRON_SIZE;
+            m_chevronRect = wxRect(rightPoint, wxSize(CHEVRON_SIZE, rect.GetHeight()));
+            rect.SetWidth(rect.GetWidth() - CHEVRON_SIZE);
         }
     }
 
     if(m_tabs.empty()) {
         // Draw the default bg colour
-        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.DrawRectangle(GetClientRect());
+        gcdc.SetPen(DrawingUtils::GetPanelBgColour());
+        gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
+        gcdc.DrawRectangle(GetClientRect());
         return;
     }
 
@@ -401,108 +403,101 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 #endif
 
-    // Draw background
-    dc.SetPen(tabAreaBgCol);
-    dc.SetBrush(tabAreaBgCol);
+// Draw background
 #ifdef __WXOSX__
     clientRect.Inflate(1, 1);
 #endif
-    dc.DrawRectangle(clientRect);
 
+    GetArt()->DrawBackground(this, gcdc, clientRect, m_colours, m_style);
     for(size_t i = 0; i < m_tabs.size(); ++i) {
-        m_tabs.at(i)->CalculateOffsets(GetStyle());
+        m_tabs[i]->CalculateOffsets(GetStyle());
     }
 
-    if(rect.GetSize().x > 0 && rect.GetSize().y > 0) {
-        // wxBitmap bmpTabs(rect.GetSize());
-        // wxMemoryDC memDC(bmpTabs);
-        wxGCDC gcdc(dc);
-        PrepareDC(gcdc);
-
-        gcdc.SetPen(tabAreaBgCol);
-        gcdc.SetBrush(tabAreaBgCol);
-        gcdc.DrawRectangle(rect.GetSize());
-
-        UpdateVisibleTabs();
-
-        int activeTabInex = wxNOT_FOUND;
-        for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
-            clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
-            if(tab->IsActive()) {
-                activeTabInex = i;
-            }
-
-#if CL_BUILD
-            // send event per tab to get their colours
-            clColourEvent colourEvent(wxEVT_COLOUR_TAB);
-            colourEvent.SetPage(tab->GetWindow());
-            if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
-                clTabColours colours;
-                colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-                m_art->Draw(gcdc, *tab.get(), colours, m_style);
-            } else {
-                m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
-            }
-
-#else
-            m_art->Draw(gcdc, *tab.get(), m_colours, m_style);
-#endif
-        }
-
-        // Redraw the active tab
-        if(activeTabInex != wxNOT_FOUND) {
-            clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            m_art->Draw(gcdc, *activeTab.get(), activeTabColours, m_style);
-        }
-
-        if(activeTabInex != wxNOT_FOUND) {
-            clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-            if(!(GetStyle() & kNotebook_VerticalButtons)) {
-                DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
-            }
-        }
-
-        if((GetStyle() & kNotebook_ShowFileListButton)) {
-            // Draw the chevron
-            wxCoord chevronX = m_chevronRect.GetTopLeft().x +
-                ((m_chevronRect.GetWidth() - m_colours.chevronDown.GetScaledHeight()) / 2);
-            wxCoord chevronY = m_chevronRect.GetTopLeft().y +
-                ((m_chevronRect.GetHeight() - m_colours.chevronDown.GetScaledHeight()) / 2);
-            // dc.SetPen(activeTabColours.tabAreaColour);
-            // dc.SetBrush(*wxTRANSPARENT_BRUSH);
-            // dc.DrawRectangle(m_chevronRect);
-            dc.DrawBitmap(m_colours.chevronDown, chevronX, chevronY);
-        }
-
-    } else {
+    // Sanity
+    if(!(rect.GetSize().x > 0 && rect.GetSize().y > 0)) {
         m_visibleTabs.clear();
+        return;
     }
+
+    if(!IsVerticalTabs()) {
+        gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - CHEVRON_SIZE, clientRect.height);
+    }
+
+    GetArt()->DrawBackground(this, gcdc, rect, m_colours, m_style);
+    UpdateVisibleTabs();
+
+    int activeTabInex = wxNOT_FOUND;
+    for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
+        clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
+        if(tab->IsActive()) {
+            activeTabInex = i;
+        }
+
+        // send event per tab to get their colours
+        clColourEvent colourEvent(wxEVT_COLOUR_TAB);
+        colourEvent.SetPage(tab->GetWindow());
+        clTabColours* pColours = &m_colours;
+        clTabColours user_colours;
+        if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
+            user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
+            pColours = &user_colours;
+        }
+#ifdef __WXGTK3__
+        m_art->Draw(this, gcdc, dc, *tab.get(), (*pColours), m_style);
+#else
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
+#endif
+    }
+
+    // Redraw the active tab
+    if(activeTabInex != wxNOT_FOUND) {
+        clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
+        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style);
+    }
+    if(!IsVerticalTabs()) {
+        gcdc.DestroyClippingRegion();
+    }
+    if(activeTabInex != wxNOT_FOUND) {
+        clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
+        if(!(GetStyle() & kNotebook_VerticalButtons)) {
+            DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
+        }
+    }
+
+    if((GetStyle() & kNotebook_ShowFileListButton)) {
+        // Draw the chevron
+        if(IsVerticalTabs()) {
+            gcdc.SetBrush(m_colours.inactiveTabBgColour);
+            gcdc.SetPen(m_colours.inactiveTabBgColour);
+            gcdc.DrawRectangle(m_chevronRect);
+        }
+        gcdc.SetPen(m_colours.inactiveTabPenColour);
+        m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
+    }
+    m_art->FinaliseBackground(this, gcdc, clientRect, m_colours, m_style);
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
-    int majorDimension = GetArt()->majorCurveWidth ? 5 : 0;
-    if(IsVerticalTabs()) {
-        majorDimension = 0;
+    int majorDimension = 0;
+    if(IsVerticalTabs() && GetStyle() & kNotebook_ShowFileListButton) {
+        majorDimension = CHEVRON_SIZE;
     }
 
+    wxRect clientRect = GetClientRect();
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = tabs.at(i);
         if(IsVerticalTabs()) {
-            if(GetStyle() & kNotebook_VerticalButtons) {
-                tab->GetRect().SetX(0);
-            } else {
-                tab->GetRect().SetX(GetStyle() & kNotebook_LeftTabs ? 1 : 0);
-            }
+            tab->GetRect().SetX(0);
             tab->GetRect().SetY(majorDimension);
-            tab->GetRect().SetWidth(tab->GetWidth());
+            tab->GetRect().SetWidth(clientRect.GetWidth());
             tab->GetRect().SetHeight(tab->GetHeight());
-            majorDimension += tab->GetHeight() - GetArt()->verticalOverlapWidth;
+            majorDimension += tab->GetHeight();
         } else {
             tab->GetRect().SetX(majorDimension);
             tab->GetRect().SetY(0);
             tab->GetRect().SetWidth(tab->GetWidth());
-            tab->GetRect().SetHeight(tab->GetHeight());
+            tab->GetRect().SetHeight(clientRect.GetHeight());
             majorDimension += tab->GetWidth() - GetArt()->overlapWidth;
         }
     }
@@ -542,7 +537,8 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     }
 
     int tabHit, realPos;
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    eDirection align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) return;
 
     // Did we hit the active tab?
@@ -552,7 +548,6 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     // tab as the new selection and leave this function
     if(!clickWasOnActiveTab) {
         SetSelection(realPos);
-        return;
     }
 
     // If we clicked on the active and we have a close button - handle it here
@@ -566,22 +561,17 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         }
     }
 
-    // We clicked on the active tab, start DnD operation
-    if((m_style & kNotebook_AllowDnD) && clickWasOnActiveTab) {
-        // We simply drag the active tab index
-        wxString dragText;
-        dragText << "{Class:Notebook,TabIndex:" << GetSelection() << "}";
-        wxTextDataObject dragContent(dragText);
-        wxDropSource dragSource(this);
-        dragSource.SetData(dragContent);
-        wxDragResult result = dragSource.DoDragDrop(true);
-        wxUnusedVar(result);
+    // We clicked on a tab, so prepare to start DnD operation
+    if((m_style & kNotebook_AllowDnD)) {
+        wxCHECK_RET(!m_dragStartTime.IsValid(), "A leftdown event when Tab DnD was already starting/started");
+        m_dragStartTime = wxDateTime::UNow();
+        m_dragStartPos = wxPoint(event.GetX(), event.GetY());
     }
 }
 
 int clTabCtrl::ChangeSelection(size_t tabIdx)
 {
-    wxWindowUpdateLocker locker(GetParent());
+    // wxWindowUpdateLocker locker(GetParent());
     int oldSelection = GetSelection();
     if(!IsIndexValid(tabIdx)) return oldSelection;
 
@@ -602,11 +592,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
 
 int clTabCtrl::SetSelection(size_t tabIdx)
 {
-#ifdef __WXMSW__
     DoChangeSelection(tabIdx);
-#else
-    CallAfter(&clTabCtrl::DoChangeSelection, tabIdx);
-#endif
     return wxNOT_FOUND;
 }
 
@@ -644,9 +630,31 @@ bool clTabCtrl::SetPageText(size_t page, const wxString& text)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(page);
     if(!tab) return false;
+
+    int oldWidth = tab->GetWidth();
     tab->SetLabel(text, GetStyle());
+    int newWidth = tab->GetWidth();
+    int diff = (newWidth - oldWidth);
+
+    // Update the width of the tabs from the current tab by "diff"
+    DoUpdateXCoordFromPage(tab->GetWindow(), diff);
+
+    // Redraw the tab control
     Refresh();
     return true;
+}
+
+void clTabCtrl::DoUpdateXCoordFromPage(wxWindow* page, int diff)
+{
+    // Update the coordinates starting from the current tab
+    bool foundActiveTab = false;
+    for(size_t i = 0; i < m_tabs.size(); ++i) {
+        if(!foundActiveTab && (m_tabs.at(i)->GetWindow() == page)) {
+            foundActiveTab = true;
+        } else if(foundActiveTab) {
+            m_tabs.at(i)->GetRect().SetX(m_tabs.at(i)->GetRect().GetX() + diff);
+        }
+    }
 }
 
 clTabInfo::Ptr_t clTabCtrl::GetActiveTabInfo()
@@ -682,9 +690,8 @@ bool clTabCtrl::InsertPage(size_t index, clTabInfo::Ptr_t tab)
         event.SetOldSelection(oldSelection);
         GetParent()->GetEventHandler()->ProcessEvent(event);
     }
-
-    tab->GetWindow()->Bind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
     m_history->Push(tab->GetWindow());
+    // DoSetBestSize();
     Refresh();
     return true;
 }
@@ -706,30 +713,27 @@ wxBitmap clTabCtrl::GetPageBitmap(size_t index) const
 void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
-    if(tab) {
+    if(!tab) return;
 
-        int oldWidth = tab->GetWidth();
-        tab->SetBitmap(bmp, GetStyle());
-        int newWidth = tab->GetWidth();
-        int diff = (newWidth - oldWidth);
+    // Set the new bitmap and calc the difference
+    int oldWidth = tab->GetWidth();
+    tab->SetBitmap(bmp, GetStyle());
+    int newWidth = tab->GetWidth();
+    int diff = (newWidth - oldWidth);
 
-        // Update the coordinates starting from the current tab
-        clTabInfo::Vec_t tabsToUpdate;
-        bool foundActiveTab = false;
-        for(size_t i = 0; i < m_tabs.size(); ++i) {
-            if(!foundActiveTab && (m_tabs.at(i)->GetWindow() == tab->GetWindow())) {
-                foundActiveTab = true;
-            } else if(foundActiveTab) {
-                m_tabs.at(i)->GetRect().SetX(m_tabs.at(i)->GetRect().GetX() + diff);
-            }
-        }
-        Refresh();
-    }
+    // Update the width of the tabs from the current tab by "diff"
+    DoUpdateXCoordFromPage(tab->GetWindow(), diff);
+
+    // Redraw the tab control
+    Refresh();
 }
 
 void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
+
+    m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
+    m_dragStartPos = wxPoint();
 
     // First check if the chevron was clicked. We do this because the chevron could overlap the buttons drawing
     // area
@@ -739,7 +743,8 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 
     } else {
         int tabHit, realPos;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        eDirection align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(tabHit != wxNOT_FOUND) {
             if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && m_visibleTabs.at(tabHit)->IsActive()) {
                 // we clicked on the selected index
@@ -768,7 +773,8 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     event.Skip();
     int realPos, tabHit;
     wxString curtip = GetToolTipText();
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    eDirection align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND || realPos == wxNOT_FOUND) {
         if(!curtip.IsEmpty()) {
             SetToolTip("");
@@ -779,12 +785,21 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
             SetToolTip(pagetip);
         }
     }
+
+    if(m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
+        wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
+        if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
+           ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))) {
+            OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
+        }
+    }
 }
 
-void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
+void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDirection& align)
 {
     realPosition = wxNOT_FOUND;
     tabHit = wxNOT_FOUND;
+    align = eDirection::kInvalid;
 
     if(m_visibleTabs.empty()) return;
 
@@ -803,7 +818,23 @@ void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit)
 
     for(size_t i = 0; i < m_visibleTabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
-        if(tab->GetRect().Contains(pt)) {
+        wxRect r(tab->GetRect());
+        if(r.Contains(pt)) {
+            if(IsVerticalTabs()) {
+                if(pt.y > ((r.GetHeight() / 2) + r.GetY())) {
+                    // the point is on the RIGHT side
+                    align = eDirection::kUp;
+                } else {
+                    align = eDirection::kDown;
+                }
+            } else {
+                if(pt.x > ((r.GetWidth() / 2) + r.GetX())) {
+                    // the point is on the RIGHT side
+                    align = eDirection::kRight;
+                } else {
+                    align = eDirection::kLeft;
+                }
+            }
             tabHit = i;
             realPosition = DoGetPageIndex(tab->GetWindow());
             return;
@@ -815,11 +846,11 @@ void clTabCtrl::SetStyle(size_t style)
 {
     this->m_style = style;
     if(IsVerticalTabs()) {
-        SetSizeHints(wxSize(m_vTabsWidth, -1));
-        SetSize(m_vTabsWidth, -1);
+        SetSizeHints(wxSize(m_nWidth, -1));
+        SetSize(m_nWidth, -1);
     } else {
-        SetSizeHints(wxSize(-1, m_height));
-        SetSize(-1, m_height);
+        SetSizeHints(wxSize(-1, m_nHeight));
+        SetSize(-1, m_nHeight);
     }
 
     if(style & kNotebook_DarkTabs) {
@@ -831,6 +862,28 @@ void clTabCtrl::SetStyle(size_t style)
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
+
+#if CL_BUILD
+    if(m_style & kNotebook_DynamicColours) {
+        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
+        if(!globalTheme.IsEmpty()) {
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
+            if(lexer && lexer->IsDark()) {
+                // Dark theme, update all the colours
+                m_colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                m_colours.activeTabInnerPenColour = m_colours.activeTabBgColour;
+                m_colours.activeTabPenColour = m_colours.activeTabBgColour.ChangeLightness(110);
+                m_colours.activeTabTextColour = *wxWHITE;
+            } else if(lexer) {
+                // Light theme
+                m_colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                m_colours.activeTabInnerPenColour = m_colours.activeTabBgColour;
+                m_colours.activeTabTextColour = *wxBLACK;
+            }
+        }
+    }
+#endif
+
     m_visibleTabs.clear();
     Layout();
     Refresh();
@@ -878,7 +931,6 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
 
     // Remove this page from the history
     m_history->Pop(tab->GetWindow());
-    tab->GetWindow()->Unbind(wxEVT_KEY_DOWN, &clTabCtrl::OnWindowKeyDown, this);
 
     // Remove the tabs from the visible tabs list
     clTabInfo::Vec_t::iterator iter = std::find_if(m_visibleTabs.begin(), m_visibleTabs.end(), [&](clTabInfo::Ptr_t t) {
@@ -903,7 +955,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     // Choose a new selection, but only if we are deleting the active tab
     nextSelection = NULL;
     if(deletingSelection) {
-        while(!m_history->GetHistory().IsEmpty() && !nextSelection) {
+        while(!m_history->GetHistory().empty() && !nextSelection) {
             nextSelection = m_history->PrevPage();
             if(!GetTabInfo(nextSelection)) {
                 // The history contains a tab that no longer exists
@@ -920,6 +972,9 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     if(deletePage) {
         // Destory the page
         tab->GetWindow()->Destroy();
+    } else {
+        // Just hide it
+        tab->GetWindow()->Hide();
     }
 
     if(notify) {
@@ -927,12 +982,11 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         event.SetEventObject(GetParent());
         event.SetSelection(GetSelection());
         GetParent()->GetEventHandler()->ProcessEvent(event);
-        if(!event.IsAllowed()) {
-            // Vetoed
-            return false;
-        }
     }
 
+    // When removing a tab from the vertical tabs, we need to call
+    // DoSetBestSize() to calcaulte the tab control again
+    // if(IsVerticalTabs()) { DoSetBestSize(); }
     // Choose the next page
     if(deletingSelection) {
         // Always make sure we have something to select...
@@ -982,13 +1036,15 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
     event.Skip();
     if(GetStyle() & kNotebook_MouseMiddleClickClosesTab) {
         int realPos, tabHit;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        eDirection align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(realPos != wxNOT_FOUND) {
             CallAfter(&clTabCtrl::DoDeletePage, realPos);
         }
     } else if(GetStyle() & kNotebook_MouseMiddleClickFireEvent) {
         int realPos, tabHit;
-        TestPoint(event.GetPosition(), realPos, tabHit);
+        eDirection align;
+        TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(realPos != wxNOT_FOUND) {
             // Just fire an event
             wxBookCtrlEvent e(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
@@ -1001,8 +1057,8 @@ void clTabCtrl::OnMouseMiddleClick(wxMouseEvent& event)
 
 void clTabCtrl::GetAllPages(std::vector<wxWindow*>& pages)
 {
-    std::for_each(
-        m_tabs.begin(), m_tabs.end(), [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
+    std::for_each(m_tabs.begin(), m_tabs.end(),
+                  [&](clTabInfo::Ptr_t tabInfo) { pages.push_back(tabInfo->GetWindow()); });
 }
 
 void clTabCtrl::SetMenu(wxMenu* menu)
@@ -1018,7 +1074,8 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
     wxPoint pt = ::wxGetMousePosition();
     pt = ScreenToClient(pt);
     int realPos, tabHit;
-    TestPoint(pt, realPos, tabHit);
+    eDirection align;
+    TestPoint(pt, realPos, tabHit, align);
 
     if((realPos != wxNOT_FOUND)) {
         // Show context menu for active tabs only
@@ -1027,7 +1084,7 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
         } else {
             // fire an event for the selected tab
             wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
-            menuEvent.SetEventObject(this);
+            menuEvent.SetEventObject(GetParent());
             menuEvent.SetSelection(realPos);
             GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
         }
@@ -1038,12 +1095,26 @@ void clTabCtrl::DoShowTabList()
 {
     if(m_tabs.empty()) return;
 
-    int curselection = GetSelection();
+    const int curselection = GetSelection();
     wxMenu menu;
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
-    for(size_t i = 0; i < m_tabs.size(); ++i) {
-        clTabInfo::Ptr_t tab = m_tabs.at(i);
+
+    // Optionally make a sorted view of tabs.
+    std::vector<size_t> sortedIndexes(m_tabs.size());
+    {
+        // std is C++11 at the moment, so no generalized capture.
+        size_t index = 0;
+        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+    }
+
+    if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
+        std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+                  [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+    }
+
+    for(auto sortedIndex : sortedIndexes) {
+        clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
@@ -1053,9 +1124,13 @@ void clTabCtrl::DoShowTabList()
     int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;
-        // don't change the selection unless the selection is really changing
-        if(curselection != selection) {
-            SetSelection(selection);
+        if(selection < (int)sortedIndexes.size()) {
+            const int newSelection = sortedIndexes[selection];
+
+            // don't change the selection unless the selection is really changing
+            if(curselection != newSelection) {
+                SetSelection(newSelection);
+            }
         }
     }
 }
@@ -1116,15 +1191,23 @@ void clTabCtrl::DoChangeSelection(size_t index)
     }
 }
 
-bool clTabCtrl::MoveActiveToIndex(int newIndex)
+bool clTabCtrl::MoveActiveToIndex(int newIndex, eDirection direction)
 {
     int activeTabInex = GetSelection();
 
     // Sanity
     if(newIndex == wxNOT_FOUND) return false;
     if(activeTabInex == wxNOT_FOUND) return false;
+    if((newIndex < 0) || (newIndex >= (int)m_tabs.size())) return false;
 
-    bool movingTabRight = (newIndex > activeTabInex);
+    bool movingTabRight;
+    if(direction == eDirection::kInvalid) {
+        movingTabRight = (newIndex > activeTabInex);
+    } else if((direction == eDirection::kRight) || (direction == eDirection::kUp)) {
+        movingTabRight = true;
+    } else {
+        movingTabRight = false;
+    }
 
     clTabInfo::Ptr_t movingTab = GetActiveTabInfo();
     clTabInfo::Ptr_t insertBeforeTab = m_tabs.at(newIndex);
@@ -1210,7 +1293,8 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
 {
     event.Skip();
     int realPos, tabHit;
-    TestPoint(event.GetPosition(), realPos, tabHit);
+    eDirection align;
+    TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) {
         // Fire background d-clicked event
         wxBookCtrlEvent e(wxEVT_BOOK_TABAREA_DCLICKED);
@@ -1225,10 +1309,10 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(
-    clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours)
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                const clTabColours& colours)
 {
-    GetArt()->DrawBottomRect(activeTab, clientRect, dc, colours, GetStyle());
+    GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle());
 }
 
 bool clTabCtrl::IsVerticalTabs() const { return (m_style & kNotebook_RightTabs) || (m_style & kNotebook_LeftTabs); }
@@ -1253,48 +1337,64 @@ bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 
 void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 
-// ----------------------------------------------------------------------
-// clTabHistory
-// ----------------------------------------------------------------------
-
-clTabHistory::clTabHistory() {}
-
-clTabHistory::~clTabHistory() {}
-
-void clTabHistory::Clear() { m_history.clear(); }
-
-void clTabHistory::Pop(wxWindow* page)
+void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
 {
-    if(!page) return;
-
-    int where = m_history.Index(page);
-    if(where != wxNOT_FOUND) {
-        m_history.Remove((void*)page);
+    m_art = art;
+    if((m_style & kNotebook_DarkTabs)) {
+        m_colours.InitDarkColours();
+    } else {
+        m_colours.InitLightColours();
     }
+    DoSetBestSize();
+    Refresh();
 }
 
-wxWindow* clTabHistory::PrevPage()
+void clTabCtrl::OnMouseScroll(wxMouseEvent& event)
 {
-    if(m_history.empty()) {
-        return NULL;
+    event.Skip();
+    if(GetStyle() & kNotebook_MouseScrollSwitchTabs) {
+        size_t curSelection = GetSelection();
+        if(event.GetWheelRotation() > 0) {
+            if(curSelection > 0) {
+                SetSelection(curSelection - 1);
+            }
+        } else {
+            if(curSelection < GetTabs().size()) {
+                SetSelection(curSelection + 1);
+            }
+        }
     }
-    // return the top of the heap
-    return static_cast<wxWindow*>(m_history.Item(0));
-}
-
-void clTabHistory::Push(wxWindow* page)
-{
-    if(page == NULL) return;
-    Pop(page);
-    m_history.Insert((void*)page, 0);
 }
 
 // ---------------------------------------------------------------------------
 // DnD
 // ---------------------------------------------------------------------------
 
+void clTabCtrl::OnBeginDrag()
+{
+    m_dragStartTime.Set((time_t)-1); // Reset the saved values
+    m_dragStartPos = wxPoint();
+
+    // We simply drag the active tab index
+    s_clTabCtrlDnD_Data.srcTabCtrl = this;
+    s_clTabCtrlDnD_Data.tabIndex = GetSelection();
+    
+    wxTextDataObject dragContent("clTabCtrl");
+    wxDropSource dragSource(this);
+    dragSource.SetData(dragContent);
+    wxDragResult result = dragSource.DoDragDrop(true);
+    wxUnusedVar(result);
+}
+
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)
     : m_tabCtrl(tabCtrl)
+    , m_notebook(NULL)
+{
+}
+
+clTabCtrlDropTarget::clTabCtrlDropTarget(Notebook* notebook)
+    : m_tabCtrl(NULL)
+    , m_notebook(notebook)
 {
 }
 
@@ -1302,22 +1402,64 @@ clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
 
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {
-    // Extract the content dragged using regular expression
-    wxRegEx re("\\{Class:Notebook,TabIndex:([0-9]+)\\}");
-    if(!re.Matches(data)) return false;
-    wxString tabIndex = re.GetMatch(data, 1);
-    long nTabIndex = wxNOT_FOUND;
-    tabIndex.ToCLong(&nTabIndex);
-    // Sanity
-    if(nTabIndex == wxNOT_FOUND) return false;
+    int nTabIndex = s_clTabCtrlDnD_Data.tabIndex;
+    clTabCtrl* ctrl = s_clTabCtrlDnD_Data.srcTabCtrl;
+    s_clTabCtrlDnD_Data.Clear();
+    
+    if(m_tabCtrl == ctrl) {
+        // Test the drop tab index
+        int realPos, tabHit;
+        eDirection align;
+        m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
 
-    // Test the drop tab index
-    int realPos, tabHit;
-    m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit);
+        // if the tab being dragged and the one we drop it on are the same
+        // return false
+        if(nTabIndex == realPos) return false;
+        m_tabCtrl->MoveActiveToIndex(realPos, align);
+    } else if(ctrl) {
+        int realPos, tabHit;
+        eDirection align;
+        m_tabCtrl->TestPoint(wxPoint(x, y), realPos, tabHit, align);
 
-    // if the tab being dragged and the one we drop it on are the same
-    // return false
-    if(nTabIndex == realPos) return false;
-    m_tabCtrl->MoveActiveToIndex(realPos);
+        // DnD to another notebook control
+        clTabInfo::Ptr_t movingTab = ctrl->GetTabInfo(nTabIndex);
+        Notebook* sourceBook = dynamic_cast<Notebook*>(ctrl->GetParent());
+        Notebook* targetBook = dynamic_cast<Notebook*>(m_tabCtrl->GetParent());
+        if(!sourceBook || !targetBook) return false;
+
+        // To allow moving tabs betwen notebooks, both must have the kNotebook_AllowForeignDnD style bit enabled
+        if(!(sourceBook->GetStyle() & kNotebook_AllowForeignDnD)) return false;
+        if(!(targetBook->GetStyle() & kNotebook_AllowForeignDnD)) return false;
+
+        sourceBook->RemovePage(nTabIndex, false);
+        if(realPos == wxNOT_FOUND) {
+            targetBook->AddPage(movingTab->GetWindow(), movingTab->GetLabel(), true, movingTab->GetBitmap());
+        } else {
+            targetBook->InsertPage(realPos, movingTab->GetWindow(), movingTab->GetLabel(), true,
+                                   movingTab->GetBitmap());
+        }
+        return true;
+    } else if(m_notebook) {
+        wxWindowUpdateLocker locker(wxTheApp->GetTopWindow());
+        int where = m_notebook->HitTest(m_notebook->ScreenToClient(wxGetMousePosition()));
+        // If the drop tab and the source tab are the same, do nothing
+        if(where == nTabIndex) {
+            return false;
+        }
+        // Get the tab info before we remove it
+        wxWindow* movingPage = m_notebook->GetPage(nTabIndex);
+        wxWindow* dropPage = m_notebook->GetPage(where);
+        if(!movingPage || !dropPage) {
+            return false;
+        }
+        wxString label = m_notebook->GetPageText(nTabIndex);
+        wxBitmap bmp = m_notebook->GetPageBitmap(nTabIndex);
+
+        // Remove the page and insert it at the drop index
+        m_notebook->RemovePage(nTabIndex, false);
+        // Locate the drop index (since we removed a page, the drop index is no longer correct)
+        where = m_notebook->GetPageIndex(dropPage);
+        m_notebook->InsertPage(where, movingPage, label, true, bmp);
+    }
     return true;
 }

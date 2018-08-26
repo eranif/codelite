@@ -27,7 +27,7 @@
 
 #include "context_base.h"
 
-class LEditor;
+class clEditor;
 
 /**
  * \ingroup LiteEditor
@@ -48,14 +48,14 @@ public:
     //---------------------------------------
     // ctors-dtor
     //---------------------------------------
-    ContextGeneric(LEditor* container, const wxString& name);
+    ContextGeneric(clEditor* container, const wxString& name);
     ContextGeneric()
         : ContextBase(wxT("Text")){};
     ContextGeneric(const wxString& name)
         : ContextBase(name){};
 
     virtual ~ContextGeneric();
-    virtual ContextBase* NewInstance(LEditor* container);
+    virtual ContextBase* NewInstance(clEditor* container);
 
     //---------------------------------------
     // Operations

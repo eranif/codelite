@@ -32,13 +32,14 @@
 class WXDLLIMPEXP_SDK CompilerLocatorMinGW : public ICompilerLocator
 {
     wxStringSet_t m_locatedFolders;
-    
+
 protected:
     void AddTools(const wxString &binFolder, const wxString &name = "");
     void AddTool(CompilerPtr compiler, const wxString &toolname, const wxString &toolpath, const wxString &extraArgs = "");
     wxString FindBinFolder(const wxString &parentPath);
     wxString GetGCCVersion(const wxString &gccBinary);
-    
+    void CheckRegKey(const wxString& displayName, const wxString& installFolder);
+
 public:
     CompilerLocatorMinGW();
     virtual ~CompilerLocatorMinGW();

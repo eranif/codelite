@@ -242,6 +242,7 @@ bool Archive::Write(const wxString& name, const StringMap& str_map)
     return true;
 }
 
+#if wxUSE_GUI
 bool Archive::Write(const wxString& name, wxSize size)
 {
     if(!m_root) {
@@ -260,7 +261,6 @@ bool Archive::Write(const wxString& name, wxSize size)
     node->AddProperty(wxT("y"), ystr);
     return true;
 }
-
 bool Archive::Write(const wxString& name, wxPoint pt)
 {
     if(!m_root) {
@@ -279,6 +279,7 @@ bool Archive::Write(const wxString& name, wxPoint pt)
     node->AddProperty(wxT("y"), ystr);
     return true;
 }
+#endif
 
 bool Archive::Read(const wxString& name, wxArrayString& arr)
 {
@@ -381,7 +382,7 @@ bool Archive::Read(const wxString& name, StringMap& str_map)
     }
     return false;
 }
-
+#if wxUSE_GUI
 bool Archive::Read(const wxString& name, wxSize& size)
 {
     if(!m_root) {
@@ -425,6 +426,7 @@ bool Archive::Read(const wxString& name, wxPoint& pt)
     }
     return false;
 }
+#endif
 
 bool Archive::Write(const wxString& name, int value) { return WriteSimple(value, wxT("int"), name); }
 
@@ -567,6 +569,7 @@ bool Archive::ReadSimple(long& value, const wxString& typeName, const wxString& 
     return false;
 }
 
+#if wxUSE_GUI
 bool Archive::Read(const wxString& name, wxColour& colour)
 {
     if(!m_root) {
@@ -586,7 +589,6 @@ bool Archive::Read(const wxString& name, wxColour& colour)
     colour = wxColour(value);
     return true;
 }
-
 bool Archive::Write(const wxString& name, const wxColour& colour)
 {
     if(!m_root) {
@@ -598,8 +600,9 @@ bool Archive::Write(const wxString& name, const wxColour& colour)
     node->AddProperty(wxT("Name"), name);
     return true;
 }
+#endif
 
-bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& strinMap)
+bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
 {
     if(!m_root) {
         return false;
@@ -610,8 +613,8 @@ bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& st
     node->AddProperty(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    std::map<wxString, wxString>::const_iterator iter = strinMap.begin();
-    for(; iter != strinMap.end(); iter++) {
+    wxStringMap_t::const_iterator iter = strinMap.begin();
+    for(; iter != strinMap.end(); ++iter) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
         child->AddProperty(wxT("Key"), iter->first);
@@ -620,7 +623,7 @@ bool Archive::Write(const wxString& name, const std::map<wxString, wxString>& st
     return true;
 }
 
-bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
+bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
 {
     if(!m_root) {
         return false;
@@ -646,7 +649,7 @@ bool Archive::Read(const wxString& name, std::map<wxString, wxString>& strinMap)
     return false;
 }
 
-bool Archive::Read(const wxString& name, std::set<wxString>& s)
+bool Archive::Read(const wxString& name, wxStringSet_t& s)
 {
     if(!m_root) {
         return false;
@@ -670,7 +673,7 @@ bool Archive::Read(const wxString& name, std::set<wxString>& s)
     return false;
 }
 
-bool Archive::Write(const wxString& name, const std::set<wxString>& s)
+bool Archive::Write(const wxString& name, const wxStringSet_t& s)
 {
     if(!m_root) {
         return false;
@@ -681,16 +684,16 @@ bool Archive::Write(const wxString& name, const std::set<wxString>& s)
     node->AddProperty(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    std::set<wxString>::const_iterator iter = s.begin();
-    for(; iter != s.end(); iter++) {
+    wxStringSet_t::const_iterator iter = s.begin();
+    for(; iter != s.end(); ++iter) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
         node->AddChild(child);
         SetNodeContent(child, *iter);
     }
     return true;
 }
-
-bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont) 
+#if wxUSE_GUI
+bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont)
 {
     wxString strFont;
     bool res = Read(name, strFont);
@@ -702,7 +705,5 @@ bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont
     return true;
 }
 
-bool Archive::Write(const wxString& name, const wxFont& font) 
-{
-    return Write(name, clFontHelper::ToString(font));
-}
+bool Archive::Write(const wxString& name, const wxFont& font) { return Write(name, clFontHelper::ToString(font)); }
+#endif

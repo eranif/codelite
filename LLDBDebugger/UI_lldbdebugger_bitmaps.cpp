@@ -443,6 +443,6 @@ void wxCrafternz79PnInitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/UI_lldbdebugger_bitmaps.cpp$.._bitmaps_16-plus.png"), xml_res_file_6, xml_res_size_6, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/UI_lldbdebugger_bitmaps.cpp$.._bitmaps_16-plus@2x.png"), xml_res_file_7, xml_res_size_7, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/UI_lldbdebugger_bitmaps.cpp$.._LiteEditor_res_breakpoint.png"), xml_res_file_8, xml_res_size_8, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/UI_lldbdebugger_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LLDBDebugger_UI_lldbdebugger_bitmaps.xrc"), xml_res_file_9, xml_res_size_9, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_lldbdebugger_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_LLDBDebugger_UI_lldbdebugger_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_lldbdebugger_bitmaps.cpp$_home_eran_devl_codelite_LLDBDebugger_UI_lldbdebugger_bitmaps.xrc"), xml_res_file_9, xml_res_size_9, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_lldbdebugger_bitmaps.cpp$_home_eran_devl_codelite_LLDBDebugger_UI_lldbdebugger_bitmaps.xrc"));
 }

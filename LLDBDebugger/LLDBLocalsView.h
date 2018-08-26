@@ -36,32 +36,49 @@ class LLDBPlugin;
 class LLDBLocalsView : public LLDBLocalsViewBase
 {
     typedef std::map<int, wxTreeItemId> IntItemMap_t;
-    
-    LLDBPlugin *m_plugin;
+
+    LLDBPlugin* m_plugin;
     clTreeListCtrl* m_treeList;
+    wxTreeItemId m_dragItem;
     LLDBLocalsView::IntItemMap_t m_pendingExpandItems;
-    
+    wxStringSet_t m_expandedItems;
+    std::map<wxString, wxTreeItemId> m_pathToItem;
+
 private:
     void DoAddVariableToView(const LLDBVariable::Vect_t& variables, wxTreeItemId parent);
-    LLDBVariableClientData *GetItemData(const wxTreeItemId &id);
+    void ExpandPreviouslyExpandedItems();
+    LLDBVariableClientData* GetItemData(const wxTreeItemId& id) const;
     void Cleanup();
-    void GetWatchesFromSelections(wxArrayTreeItemIds& items);
-    
+    void GetWatchesFromSelections(wxArrayTreeItemIds& items) const;
+    void GetWatchesFromSelections(const wxArrayTreeItemIds& selections, wxArrayTreeItemIds& items) const;
+    wxString GetItemPath(const wxTreeItemId& item);
+    bool DoDelete();
+    void AddWatch();
+    bool AddWatch(const wxTreeItemId& item);
+    bool EditVariable();
+    void SetVariableDisplayFormat(const eLLDBFormat format);
+    LLDBVariable::Ptr_t GetVariableFromItem(const wxTreeItemId& item) const;
+
 protected:
     virtual void OnDelete(wxCommandEvent& event);
     virtual void OnDeleteUI(wxUpdateUIEvent& event);
     virtual void OnNewWatch(wxCommandEvent& event);
     // events coming from LLDB
-    void OnLLDBStarted(LLDBEvent &event);
-    void OnLLDBExited(LLDBEvent &event);
-    void OnLLDBLocalsUpdated(LLDBEvent &event);
-    void OnLLDBRunning(LLDBEvent &event);
-    void OnLLDBVariableExpanded(LLDBEvent &event);
-    
+    void OnLLDBStarted(LLDBEvent& event);
+    void OnLLDBExited(LLDBEvent& event);
+    void OnLLDBLocalsUpdated(LLDBEvent& event);
+    void OnLLDBRunning(LLDBEvent& event);
+    void OnLLDBVariableExpanded(LLDBEvent& event);
+
     // UI events
-    void OnItemExpanding(wxTreeEvent &event);
-    void OnLocalsContextMenu(wxContextMenuEvent &event);
-    
+    void OnItemExpanding(wxTreeEvent& event);
+    void OnItemCollapsed(wxTreeEvent& event);
+    void OnLocalsContextMenu(wxTreeEvent& event);
+    void OnBeginDrag(wxTreeEvent& event);
+    void OnEndDrag(wxTreeEvent& event);
+    void OnEndEdit(wxTreeEvent& event);
+    void OnKeyDown(wxTreeEvent& event);
+
 public:
     LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin);
     virtual ~LLDBLocalsView();

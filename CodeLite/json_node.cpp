@@ -226,8 +226,7 @@ void JSONElement::append(const JSONElement& element)
         break;
 
     case cJSON_String:
-        cJSON_AddStringToObject(_json,
-                                element.getName().mb_str(wxConvUTF8).data(),
+        cJSON_AddStringToObject(_json, element.getName().mb_str(wxConvUTF8).data(),
                                 element.getValue().GetString().mb_str(wxConvUTF8).data());
         break;
 
@@ -296,22 +295,22 @@ char* JSONElement::FormatRawString(bool formatted) const
     if(!_json) {
         return NULL;
     }
-    
+
     if(formatted) {
         return cJSON_Print(_json);
-        
+
     } else {
         return cJSON_PrintUnformatted(_json);
     }
 }
 
-wxString JSONElement::format() const
+wxString JSONElement::format(bool formatted) const
 {
     if(!_json) {
         return wxT("");
     }
-
-    char* p = cJSON_Print(_json);
+    
+    char* p = formatted ? cJSON_Print(_json) : cJSON_PrintUnformatted(_json);
     wxString output(p, wxConvUTF8);
     free(p);
     return output;
@@ -434,7 +433,7 @@ bool JSONElement::hasNamedObject(const wxString& name) const
     cJSON* obj = cJSON_GetObjectItem(_json, name.mb_str(wxConvUTF8).data());
     return obj != NULL;
 }
-
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxPoint& pt)
 {
     wxString szStr;
@@ -447,15 +446,6 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
     wxString szStr;
     szStr << sz.x << "," << sz.y;
     return addProperty(name, szStr);
-}
-
-JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
-{
-    if(!_json) {
-        return *this;
-    }
-    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
-    return *this;
 }
 
 wxPoint JSONElement::toPoint() const
@@ -487,7 +477,6 @@ wxColour JSONElement::toColour(const wxColour& defaultColour) const
     if(_json->type != cJSON_String) {
         return defaultColour;
     }
-
     return wxColour(_json->valuestring);
 }
 
@@ -495,6 +484,16 @@ wxSize JSONElement::toSize() const
 {
     wxPoint pt = toPoint();
     return wxSize(pt.x, pt.y);
+}
+#endif
+
+JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
+{
+    if(!_json) {
+        return *this;
+    }
+    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
+    return *this;
 }
 
 void JSONElement::removeProperty(const wxString& name)
@@ -505,13 +504,13 @@ void JSONElement::removeProperty(const wxString& name)
     }
     cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
 }
-
-JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement::wxStringMap_t& stringMap)
+#if wxUSE_GUI
+JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t& stringMap)
 {
     if(!_json) return *this;
 
     JSONElement arr = JSONElement::createArray(name);
-    JSONElement::wxStringMap_t::const_iterator iter = stringMap.begin();
+    wxStringMap_t::const_iterator iter = stringMap.begin();
     for(; iter != stringMap.end(); ++iter) {
         JSONElement obj = JSONElement::createObject();
         obj.addProperty("key", iter->first);
@@ -521,10 +520,10 @@ JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement::w
     append(arr);
     return *this;
 }
-
-JSONElement::wxStringMap_t JSONElement::toStringMap() const
+#endif
+wxStringMap_t JSONElement::toStringMap() const
 {
-    JSONElement::wxStringMap_t res;
+    wxStringMap_t res;
     if(!_json) {
         return res;
     }
@@ -540,9 +539,9 @@ JSONElement::wxStringMap_t JSONElement::toStringMap() const
     }
     return res;
 }
-
 JSONElement& JSONElement::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
 
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colour)
 {
     wxString colourValue;
@@ -551,7 +550,7 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colo
     }
     return addProperty(name, colourValue);
 }
-
+#endif
 JSONElement JSONElement::firstChild()
 {
     _walker = NULL;
@@ -577,12 +576,12 @@ JSONElement JSONElement::nextChild()
     _walker = _walker->next;
     return element;
 }
-
 JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
 }
 
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxFont& font)
 {
     return addProperty(name, clFontHelper::ToString(font));
@@ -595,6 +594,7 @@ wxFont JSONElement::toFont(const wxFont& defaultFont) const
     wxFont f = clFontHelper::FromString(str);
     return f;
 }
+#endif
 
 bool JSONElement::isArray() const
 {

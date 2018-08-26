@@ -28,17 +28,19 @@
 
 #include "outputtabwindow.h" // Base class OutputTabWindow
 #include "cpptoken.h"
+#include "wxStringHash.h"
 
-typedef std::map<int, CppToken> UsageResultsMap;
+typedef std::unordered_map<int, CppToken> UsageResultsMap;
 
 class FindUsageTab : public OutputTabWindow
 {
     UsageResultsMap m_matches;
+
 protected:
     void DoOpenResult(const CppToken& token);
 
 public:
-    FindUsageTab(wxWindow* parent, const wxString &name);
+    FindUsageTab(wxWindow* parent, const wxString& name);
     virtual ~FindUsageTab();
 
 public:
@@ -48,10 +50,11 @@ public:
     virtual void OnMouseDClick(wxStyledTextEvent& e);
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
     virtual void OnStyleNeeded(wxStyledTextEvent& e);
-    virtual void OnThemeChanged(wxCommandEvent &e);
-public:
-    void ShowUsage(const std::list<CppToken> &matches, const wxString &searchWhat);
+    virtual void OnThemeChanged(wxCommandEvent& e);
+    void OnWorkspaceClosed(wxCommandEvent& event);
 
+public:
+    void ShowUsage(const CppToken::Vec_t& matches, const wxString& searchWhat);
 };
 
 #endif // FINDUSAGETAB_H

@@ -1,3 +1,4 @@
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -48,47 +49,46 @@
 /* ************************************************************************ */
 
 // Declaration
-#include "CMakePlugin.h"
-#include "processreaderthread.h"
-#include "asyncprocess.h"
 #include "CMakeBuilder.h"
+#include "CMakePlugin.h"
+#include "asyncprocess.h"
+#include "processreaderthread.h"
 
 // wxWidgets
 #include <wx/app.h>
-#include <wx/stdpaths.h>
-#include <wx/msgdlg.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/mimetype.h>
-#include <wx/menu.h>
+#include <wx/busyinfo.h>
 #include <wx/dir.h>
 #include <wx/event.h>
-#include <wx/busyinfo.h>
+#include <wx/menu.h>
+#include <wx/mimetype.h>
+#include <wx/msgdlg.h>
+#include <wx/stdpaths.h>
+#include <wx/xrc/xmlres.h>
 
 // CodeLite
+#include "async_executable_cmd.h"
+#include "build_config.h"
+#include "build_settings_config.h"
+#include "build_system.h"
+#include "detachedpanesinfo.h"
+#include "dirsaver.h"
+#include "dockablepane.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
-#include "dirsaver.h"
+#include "macromanager.h"
 #include "procutils.h"
 #include "project.h"
 #include "workspace.h"
-#include "build_settings_config.h"
-#include "build_config.h"
-#include "build_system.h"
-#include "file_logger.h"
-#include "macromanager.h"
-#include "async_executable_cmd.h"
-#include "dockablepane.h"
-#include "detachedpanesinfo.h"
 
 // CMakePlugin
 #include "CMake.h"
 #include "CMakeGenerator.h"
+#include "CMakeHelpTab.h"
+#include "CMakeProjectSettings.h"
 #include "CMakeSettingsDialog.h"
 #include "CMakeSettingsManager.h"
-#include "CMakeProjectSettings.h"
-#include "CMakeGenerator.h"
-#include "CMakeHelpTab.h"
 
 /* ************************************************************************ */
 /* VARIABLES                                                                */
@@ -117,9 +117,7 @@ static const wxString HELP_TAB_NAME = _("CMake Help");
  */
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(!g_plugin) {
-        g_plugin = new CMakePlugin(manager);
-    }
+    if(!g_plugin) { g_plugin = new CMakePlugin(manager); }
 
     return g_plugin;
 }
@@ -165,8 +163,8 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_shortName = "CMakePlugin";
 
     // Create CMake configuration file
-    m_configuration.reset(new CMakeConfiguration(
-        clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config/cmake.ini"));
+    m_configuration.reset(new CMakeConfiguration(clStandardPaths::Get().GetUserDataDir() +
+                                                 wxFileName::GetPathSeparator() + "config/cmake.ini"));
 
     // Create cmake application
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
@@ -190,6 +188,8 @@ CMakePlugin::CMakePlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_PROJECT, &CMakePlugin::OnProjectContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_WORKSPACE, &CMakePlugin::OnWorkspaceContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &CMakePlugin::OnFileAdded, this);
+    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_REMOVED, &CMakePlugin::OnFileRemoved, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &CMakePlugin::OnCMakeTerminated, this);
 }
@@ -283,11 +283,7 @@ bool CMakePlugin::IsPaneDetached() const
 
 /* ************************************************************************ */
 
-clToolBar* CMakePlugin::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void CMakePlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 /* ************************************************************************ */
 
@@ -312,9 +308,7 @@ void CMakePlugin::UnPlug()
     int pos = notebook->GetPageIndex("CMake Help");
     if(pos != wxNOT_FOUND) {
         CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(notebook->GetPage(pos));
-        if(helpTab) {
-            helpTab->Stop();
-        }
+        if(helpTab) { helpTab->Stop(); }
         notebook->RemovePage(pos);
     }
 
@@ -323,6 +317,9 @@ void CMakePlugin::UnPlug()
 
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &CMakePlugin::OnToggleHelpTab, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_PROJECT, &CMakePlugin::OnProjectContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_WORKSPACE, &CMakePlugin::OnWorkspaceContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &CMakePlugin::OnFileAdded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_REMOVED, &CMakePlugin::OnFileRemoved, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CMakePlugin::OnCMakeOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CMakePlugin::OnCMakeTerminated, this);
 }
@@ -345,7 +342,7 @@ void CMakePlugin::OpenCMakeLists(wxFileName filename) const
 
     if(!m_mgr->OpenFile(filename.GetFullPath()))
         wxMessageBox("Unable to open \"" + filename.GetFullPath() + "\"", wxMessageBoxCaptionStr,
-            wxOK | wxCENTER | wxICON_ERROR);
+                     wxOK | wxCENTER | wxICON_ERROR);
 }
 
 /* ************************************************************************ */
@@ -377,12 +374,10 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
         // show it
         cmakeImages images;
         const wxBitmap& bmp = images.Bitmap("cmake_16");
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_helpTab, HELP_TAB_NAME, true, bmp);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_helpTab, HELP_TAB_NAME, false, bmp);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(HELP_TAB_NAME);
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
-        }
+        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
     }
 }
 
@@ -411,12 +406,8 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t curpos = 0;
     wxMenuItemList::const_iterator iter = items.begin();
     for(; iter != items.end(); ++iter) {
-        if((*iter)->GetId() == XRCID("build_project")) {
-            buildPos = curpos;
-        }
-        if((*iter)->GetId() == XRCID("project_properties")) {
-            settingsPos = curpos;
-        }
+        if((*iter)->GetId() == XRCID("build_project")) { buildPos = curpos; }
+        if((*iter)->GetId() == XRCID("project_properties")) { settingsPos = curpos; }
         ++curpos;
     }
 
@@ -438,64 +429,11 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
 
 void CMakePlugin::OnRunCMake(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
+
     // first, some sanity
     ProjectPtr p = GetSelectedProject();
-    CHECK_PTR_RET(p);
-
-    BuildConfigPtr buildConf = p->GetBuildConfiguration();
-    CHECK_COND_RET(buildConf);
-
-// Apply the environment variables before we do anything here
-#ifdef __WXMSW__
-    // On Windows, we need to set the bin folder of the selected compiler
-    wxFileName fnCxx(buildConf->GetCompiler()->GetTool("CXX"));
-    wxStringMap_t om;
-    wxString pathvar;
-    pathvar << fnCxx.GetPath() << clPATH_SEPARATOR << "$PATH";
-    om["PATH"] = pathvar;
-    EnvSetter es(NULL, &om, p->GetName(), buildConf->GetName());
-#else
-    EnvSetter es(p);
-#endif
-
-    CMakeGenerator generator;
-    if(generator.CanGenerate(p)) {
-        generator.Generate(p);
-    }
-
-    const wxString& args = buildConf->GetBuildSystemArguments();
-    wxString cmakeExe = GetCMake()->GetPath().GetFullPath();
-    // Did the user provide a generator to use?
-    bool hasGeneratorInArgs = (args.Find(" -G") != wxNOT_FOUND);
-
-    // Build the working directory
-    wxFileName fnWorkingDirectory(CMakeBuilder::GetWorkspaceBuildFolder(false), "");
-    wxString workingDirectory = fnWorkingDirectory.GetPath();
-
-    // Ensure that the build directory exists
-    fnWorkingDirectory.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    ::WrapWithQuotes(cmakeExe);
-
-    wxString command;
-    command << cmakeExe << " .. " << args;
-    if(!hasGeneratorInArgs) {
-#ifdef __WXMSW__
-        // On Windows, generate MinGW makefiles
-        command << " -G\"MinGW Makefiles\"";
-#endif
-    }
-    ::WrapInShell(command);
-
-    // Execute it
-    IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateDefault, fnWorkingDirectory.GetPath());
-    if(!proc) {
-        ::wxMessageBox(_("Failed to execute:\n") + command, "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
-            EventNotifier::Get()->TopFrame());
-        return;
-    }
-    m_mgr->ShowOutputPane(_("Build"));
-    m_mgr->ClearOutputTab(kOutputTab_Build);
-    m_mgr->AppendOutputTabText(kOutputTab_Build, command + "\n");
+    DoRunCMake(p);
 }
 
 void CMakePlugin::OnCMakeOutput(clProcessEvent& event)
@@ -525,23 +463,19 @@ void CMakePlugin::OnOpenCMakeLists(wxCommandEvent& event)
     }
 
     cmakelists.SetFullName(CMAKELISTS_FILE);
-    if(cmakelists.FileExists()) {
-        m_mgr->OpenFile(cmakelists.GetFullPath());
-    }
+    if(cmakelists.FileExists()) { m_mgr->OpenFile(cmakelists.GetFullPath()); }
 }
 
 void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
 {
-    ProjectPtr proj = (event.GetId() == XRCID("cmake_export_active_project")) ?
-        clCxxWorkspaceST::Get()->GetActiveProject() :
-        GetSelectedProject();
+    ProjectPtr proj = (event.GetId() == XRCID("cmake_export_active_project"))
+                          ? clCxxWorkspaceST::Get()->GetActiveProject()
+                          : GetSelectedProject();
 
     CHECK_PTR_RET(proj);
 
     CMakeGenerator generator;
-    if(generator.Generate(proj)) {
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent();
-    }
+    if(generator.Generate(proj)) { EventNotifier::Get()->PostReloadExternallyModifiedEvent(); }
 }
 
 void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
@@ -565,16 +499,100 @@ void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
     wxFileName workspaceFile = clCxxWorkspaceST::Get()->GetFileName();
     workspaceFile.SetFullName(CMAKELISTS_FILE);
 
-    menu->InsertSeparator(0);
+    menu->AppendSeparator();
     if(workspaceFile.FileExists()) {
         wxMenuItem* item = new wxMenuItem(NULL, XRCID("cmake_open_active_project_cmake"), _("Open CMakeLists.txt"));
         item->SetBitmap(m_mgr->GetStdIcons()->LoadBitmap("cmake"));
-        menu->Insert(0, item);
+        menu->Append(item);
     }
-    menu->Insert(0, XRCID("cmake_export_active_project"), _("Export CMakeLists.txt"));
-
+    menu->Append(XRCID("cmake_export_active_project"), _("Export CMakeLists.txt"));
     menu->Bind(wxEVT_MENU, &CMakePlugin::OnOpenCMakeLists, this, XRCID("cmake_open_active_project_cmake"));
     menu->Bind(wxEVT_MENU, &CMakePlugin::OnExportCMakeLists, this, XRCID("cmake_export_active_project"));
+}
+
+void CMakePlugin::OnFileRemoved(clCommandEvent& event)
+{
+    event.Skip();
+    CHECK_COND_RET(clCxxWorkspaceST::Get()->IsOpen());
+
+    // The affected project is passed in the string member of the event
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(event.GetString());
+    CHECK_PTR_RET(p);
+
+    BuildConfigPtr buildConf = p->GetBuildConfiguration();
+    CHECK_COND_RET(buildConf);
+
+    // Ensure we are a CMake project
+    CHECK_COND_RET(buildConf->GetBuilder()->GetName() == "CMake");
+
+    DoRunCMake(p);
+}
+
+void CMakePlugin::OnFileAdded(clCommandEvent& event) { OnFileRemoved(event); }
+
+void CMakePlugin::DoRunCMake(ProjectPtr p)
+{
+    CHECK_PTR_RET(p);
+
+    BuildConfigPtr buildConf = p->GetBuildConfiguration();
+    CHECK_COND_RET(buildConf);
+
+// Apply the environment variables before we do anything here
+#ifdef __WXMSW__
+    // On Windows, we need to set the bin folder of the selected compiler
+    wxFileName fnCxx(buildConf->GetCompiler()->GetTool("CXX"));
+    wxStringMap_t om;
+    wxString pathvar;
+    pathvar << fnCxx.GetPath() << clPATH_SEPARATOR << "$PATH";
+    om["PATH"] = pathvar;
+    EnvSetter es(NULL, &om, p->GetName(), buildConf->GetName());
+#else
+    EnvSetter es(p);
+#endif
+
+    CMakeGenerator generator;
+    if(generator.CanGenerate(p)) { generator.Generate(p); }
+
+    wxString args = buildConf->GetBuildSystemArguments();
+
+    // Expand CodeLite macros
+    args = MacroManager::Instance()->Expand(args, m_mgr, p->GetName(), buildConf->GetName());
+    wxString cmakeExe = GetCMake()->GetPath().GetFullPath();
+
+    // Did the user provide a generator to use?
+    bool hasGeneratorInArgs = (args.Find("-G") != wxNOT_FOUND);
+    wxUnusedVar(hasGeneratorInArgs);
+
+    // Build the working directory
+    wxFileName fnWorkingDirectory(CMakeBuilder::GetProjectBuildFolder(p->GetName(), false), "");
+
+    // Ensure that the build directory exists
+    fnWorkingDirectory.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    ::WrapWithQuotes(cmakeExe);
+
+    // We run the cmake
+    wxString command;
+    wxString projectFolder = p->GetFileName().GetPath();
+    ::WrapWithQuotes(projectFolder);
+
+    command << cmakeExe << " " << projectFolder << " " << args;
+#ifdef __WXMSW__
+    if(!hasGeneratorInArgs) {
+        // On Windows, generate MinGW makefiles
+        command << " -G\"MinGW Makefiles\"";
+    }
+#endif
+
+    // Execute it
+    IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateDefault, fnWorkingDirectory.GetPath());
+    if(!proc) {
+        ::wxMessageBox(_("Failed to execute:\n") + command, "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
+                       EventNotifier::Get()->TopFrame());
+        return;
+    }
+    m_mgr->ShowOutputPane(_("Build"));
+    m_mgr->ClearOutputTab(kOutputTab_Build);
+    m_mgr->AppendOutputTabText(kOutputTab_Build, command + "\n");
 }
 
 /* ************************************************************************ */

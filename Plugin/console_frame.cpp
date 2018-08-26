@@ -30,57 +30,118 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include <wx/app.h>
 #include "console_frame.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
-#include "plugin.h"
-#include "windowattrmanager.h"
 #include "globals.h"
 #include "imanager.h"
+#include "plugin.h"
+#include "windowattrmanager.h"
+#include <wx/app.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-ConsoleFrame::ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id)
-    : wxPanel(parent, id, wxDefaultPosition, wxSize(300, 200))
-    , m_manager(manager)
+ConsoleFrame::ConsoleFrame(wxWindow* parent)
+    : wxFrame(parent, wxID_ANY, _("Console"))
 {
-    wxBoxSizer* bSizer1;
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
-
-    SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-    m_terminal = new wxTerminal(this);
-    bSizer1->Add(m_terminal, 1, wxEXPAND | wxALL);
-
-    this->SetSizer(bSizer1);
-    this->Layout();
-
-    // Connect Events
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
+    CreateGUIControls();
 }
+
+#if USE_SFTP
+ConsoleFrame::ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh)
+    : wxFrame(parent, wxID_ANY, _("Console"))
+    , m_ssh(ssh)
+{
+    CreateGUIControls();
+    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &ConsoleFrame::OnExecuteRemoteCommand, this);
+    m_channel.reset(new clSSHChannel(m_ssh));
+    Bind(wxEVT_SSH_CHANNEL_CLOSED, &ConsoleFrame::OnChannelClosed, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &ConsoleFrame::OnChannelReadError, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &ConsoleFrame::OnChannelRead, this);
+}
+#endif
 
 ConsoleFrame::~ConsoleFrame()
 {
-    // Disconnect Events
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &ConsoleFrame::OnDebuggerEnded, this);
+    m_terminal->Unbind(wxEVT_TERMINAL_EXIT_WHEN_DONE, &ConsoleFrame::OnExitWhenDone, this);
+    m_terminal->Unbind(wxEVT_TERMINAL_CTRL_C, &ConsoleFrame::OnTerminalCtrlC, this);
 }
 
-wxString ConsoleFrame::StartTTY()
+void ConsoleFrame::CreateGUIControls()
 {
-#ifndef __WXMSW__
-    wxString tty = m_terminal->StartTTY();
-    return tty;
-#else
-    return wxT("");
-#endif
+    wxBoxSizer* bSizer1;
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    m_terminal = new wxTerminal(this);
+    m_terminal->SetInteractive(true);
+    bSizer1->Add(m_terminal, 1, wxEXPAND);
+
+    this->SetSizer(bSizer1);
+    this->Layout();
+    m_terminal->Focus();
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetName("ConsoleFrame");
+    CenterOnScreen();
+    WindowAttrManager::Load(this);
+    m_terminal->Bind(wxEVT_TERMINAL_EXIT_WHEN_DONE, &ConsoleFrame::OnExitWhenDone, this);
+    m_terminal->Bind(wxEVT_TERMINAL_CTRL_C, &ConsoleFrame::OnTerminalCtrlC, this);
 }
 
-void ConsoleFrame::OnDebuggerEnded(clDebugEvent& e)
+#if USE_SFTP
+void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
 {
-#ifndef __WXMSW__
-    m_manager->GetDockingManager()->DetachPane(this);
-    Destroy();
-    m_manager->GetDockingManager()->Update();
+    try {
+        if(m_channel->IsOpen()) {
+            return;
+        }
+        if(!m_channel->IsOpen()) {
+            m_channel->Open();
+        }
+        m_channel->Execute(event.GetString(), this);
+
+    } catch(clException& e) {
+        m_terminal->AddTextWithEOL(e.What());
+    }
+}
+
+void ConsoleFrame::OnChannelReadError(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->AddTextRaw("\n");
+    m_terminal->CaretToEnd();
+    m_channel->Close();
+}
+
+void ConsoleFrame::OnChannelRead(clCommandEvent& event)
+{
+    m_terminal->AddTextRaw(event.GetString());
+    m_terminal->CaretToEnd();
+}
+
+void ConsoleFrame::OnChannelClosed(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_terminal->AddTextRaw("\n");
+    m_terminal->CaretToEnd();
+    m_channel->Close();
+}
 #endif
-    e.Skip();
+
+void ConsoleFrame::Execute(const wxString& command, const wxString& wd) { m_terminal->Execute(command, true, wd); }
+
+void ConsoleFrame::OnExitWhenDone(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    Close();
+}
+
+void ConsoleFrame::OnTerminalCtrlC(clCommandEvent& event)
+{
+    event.Skip();
+#if USE_SFTP
+    if(m_channel->IsOpen()) {
+        m_channel->Close();
+        m_terminal->AddTextWithEOL(_("\nInterrupted"));
+        event.Skip(false); // No need for the default action
+    }
+#endif
 }

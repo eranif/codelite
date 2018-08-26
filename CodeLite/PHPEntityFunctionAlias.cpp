@@ -1,5 +1,7 @@
 #include "PHPEntityFunctionAlias.h"
 #include "file_logger.h"
+#include "PHPLookupTable.h"
+#include "PHPEntityFunction.h"
 
 PHPEntityFunctionAlias::PHPEntityFunctionAlias() {}
 
@@ -18,9 +20,10 @@ void PHPEntityFunctionAlias::FromResultSet(wxSQLite3ResultSet& res)
     SetScope(res.GetString("SCOPE"));
 }
 
-void PHPEntityFunctionAlias::Store(wxSQLite3Database& db)
+void PHPEntityFunctionAlias::Store(PHPLookupTable* lookup)
 {
     try {
+        wxSQLite3Database& db = lookup->Database();
         wxSQLite3Statement statement = db.PrepareStatement(
             "INSERT OR REPLACE INTO FUNCTION_ALIAS_TABLE VALUES(NULL, :SCOPE_ID, :NAME, :REALNAME, :FULLNAME, :SCOPE, "
             ":LINE_NUMBER, :FILE_NAME)");
@@ -39,10 +42,10 @@ void PHPEntityFunctionAlias::Store(wxSQLite3Database& db)
     }
 }
 
-wxString PHPEntityFunctionAlias::FormatPhpDoc() const
+wxString PHPEntityFunctionAlias::FormatPhpDoc(const CommentConfigData& data) const
 {
     if(m_func) {
-        return m_func->FormatPhpDoc();
+        return m_func->FormatPhpDoc(data);
     }
     return "";
 }
@@ -57,4 +60,28 @@ wxString PHPEntityFunctionAlias::Type() const
         return m_func->Type();
     }
     return "";
+}
+
+void PHPEntityFunctionAlias::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+    m_realname = json.namedObject("realName").toString();
+    m_scope = json.namedObject("scope").toString();
+    if(json.hasNamedObject("func")) {
+        JSONElement func = json.namedObject("func");
+        m_func.Reset(new PHPEntityFunction());
+        m_func->FromJSON(func);
+    }
+}
+
+JSONElement PHPEntityFunctionAlias::ToJSON() const
+{
+    JSONElement json = BaseToJSON("a");
+    json.addProperty("realName", m_realname);
+    json.addProperty("scope", m_scope);
+    if(m_func) {
+        JSONElement func = m_func->ToJSON();
+        json.addProperty("func", func);
+    }
+    return json;
 }

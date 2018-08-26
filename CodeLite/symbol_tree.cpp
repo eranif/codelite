@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
 #include "fileutils.h"
-
+#if wxUSE_GUI
 #ifdef __VISUALC__
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,9 +36,14 @@
 #include <wx/wupdlock.h>
 #include "tokenizer.h"
 
-SymbolTree::SymbolTree() { InitialiseSymbolMap(); }
+SymbolTree::SymbolTree()
+    : m_sortByLineNumber(true)
+{
+    InitialiseSymbolMap();
+}
 
 SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : m_sortByLineNumber(true)
 {
     InitialiseSymbolMap();
     Create(parent, id, pos, size, style);
@@ -91,6 +96,7 @@ void SymbolTree::InitialiseSymbolMap()
     m_imagesMap[wxT("macro_protected")] = 12;
     m_imagesMap[wxT("macro_public")] = 12;
     m_imagesMap[wxT("enum")] = 13;
+    m_imagesMap[wxT("cenum")] = 13;
     m_imagesMap[wxT("enum_private")] = 13;
     m_imagesMap[wxT("enum_public")] = 13;
     m_imagesMap[wxT("enum_protected")] = 13;
@@ -119,13 +125,13 @@ void SymbolTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& po
 #endif
 
     wxTreeCtrl::Create(parent, id, pos, size, style);
-    BuildTree(wxFileName());
+    BuildTree(wxFileName(), TagEntryPtrVector_t());
 }
 
-void SymbolTree::BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags /*NULL*/)
+void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t& tags, bool forceBuild)
 {
     TagEntryPtrVector_t newTags;
-    if(!tags) {
+    if(tags.empty()) {
 
         // Get the current database
         ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
@@ -135,8 +141,9 @@ void SymbolTree::BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags
         }
         // Load the new tags from the database
         db->SelectTagsByFile(fileName.GetFullPath(), newTags);
+        
         // Compare the new tags with the old ones
-        if(TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
+        if(!forceBuild && TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
 
         m_currentTags.clear();
         m_currentTags.insert(m_currentTags.end(), newTags.begin(), newTags.end());
@@ -144,7 +151,7 @@ void SymbolTree::BuildTree(const wxFileName& fileName, TagEntryPtrVector_t* tags
     } else {
 
         m_currentTags.clear();
-        m_currentTags.insert(m_currentTags.end(), tags->begin(), tags->end());
+        m_currentTags.insert(m_currentTags.end(), tags.begin(), tags.end());
     }
 
     wxWindowUpdateLocker locker(this);
@@ -289,10 +296,13 @@ void SymbolTree::SortTree(std::map<void*, bool>& nodes)
 
 int SymbolTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
-    // Get the items and compare their icons
+    // Line number compare
     MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(GetItemData(item1));
     MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(GetItemData(item2));
-    if(!cd1 || !cd2) {
+    if(m_sortByLineNumber && cd1 && cd2) {
+        return cd1->GetLine() > cd2->GetLine();
+    } else {
+        // ABC compare
         int img1, img2;
         img1 = GetItemImage(item1);
         img2 = GetItemImage(item2);
@@ -304,8 +314,6 @@ int SymbolTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& it
             // Items  has the same icons, compare text
             return wxTreeCtrl::OnCompareItems(item1, item2);
         }
-    } else {
-        return cd1->GetLine() > cd2->GetLine();
     }
 }
 
@@ -469,3 +477,4 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
     }
     return false;
 }
+#endif // LIBCODELITE_BASE

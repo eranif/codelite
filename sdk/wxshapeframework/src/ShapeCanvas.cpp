@@ -3390,9 +3390,9 @@ void wxSFShapeCanvas::Print(wxSFPrintout *printout, bool prompt)
         /*else
             wxMessageBox(wxT("You canceled printing"), _T("wxSF Printing"), wxOK | wxICON_WARNING);*/
     }
-    else
+    else {
         (*g_printData) = printer.GetPrintDialogData().GetPrintData();
-
+    }
 	delete printout;
 }
 

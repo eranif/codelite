@@ -28,17 +28,18 @@
 
 #include "codelite_exports.h"
 #include <wx/aui/framemanager.h>
+#include "Notebook.h"
 
-class Notebook;
 class WXDLLIMPEXP_SDK clDockingManager : public wxAuiManager
 {
 protected:
     void OnRender(wxAuiManagerEvent& event);
     void OnButtonClicked(wxAuiManagerEvent& event);
-    
+    void OnAuiPaneActivated(wxAuiManagerEvent& e);
+
     void ShowWorkspaceOpenTabMenu();
     void ShowOutputViewOpenTabMenu();
-    
+
     /**
      * @brief show a popup menu and return the selected string
      * return an empty string if no selection was made

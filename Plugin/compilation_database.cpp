@@ -24,18 +24,18 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "compilation_database.h"
-#include <wx/filename.h>
-#include "workspace.h"
-#include <wx/tokenzr.h>
-#include <wx/log.h>
-#include <wx/ffile.h>
+#include "file_logger.h"
 #include "fileextmanager.h"
-#include "project.h"
+#include "fileutils.h"
 #include "json_node.h"
 #include "project.h"
-#include <wx/dir.h>
+#include "workspace.h"
 #include <algorithm>
-#include "file_logger.h"
+#include <wx/dir.h>
+#include <wx/ffile.h>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/tokenzr.h>
 
 const wxString DB_VERSION = "2.0";
 
@@ -62,9 +62,7 @@ CompilationDatabase::~CompilationDatabase() { Close(); }
 void CompilationDatabase::Open()
 {
     // Close the old database
-    if(m_db) {
-        Close();
-    }
+    if(m_db) { Close(); }
 
     // Create new one
     try {
@@ -164,9 +162,7 @@ void CompilationDatabase::Initialize()
     clCustomCompileFile.SetExt("db.txt");
     if(clCustomCompileFile.Exists()) {
         wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake(clCustomCompileFile);
-        if(compile_commands.IsOk()) {
-            files.push_back(compile_commands);
-        }
+        if(compile_commands.IsOk()) { files.push_back(compile_commands); }
     }
     // Sort the files by modification time
     std::sort(files.begin(), files.end(), wxFileNameSorter());
@@ -250,9 +246,7 @@ bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
         wxSQLite3Statement st = db.PrepareStatement(sql);
         wxSQLite3ResultSet rs = st.ExecuteQuery();
 
-        if(rs.NextRow()) {
-            return rs.GetString(0) == DB_VERSION;
-        }
+        if(rs.NextRow()) { return rs.GetString(0) == DB_VERSION; }
         return false;
 
     } catch(wxSQLite3Exception& e) {
@@ -390,9 +384,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         {
             wxLogNull nl;
             fp.Close();
-            if(compile_file.Exists()) {
-                ::wxRemoveFile(compile_file.GetFullPath());
-            }
+            if(compile_file.Exists()) { clRemoveFile(compile_file.GetFullPath()); }
         }
         return fn;
     }

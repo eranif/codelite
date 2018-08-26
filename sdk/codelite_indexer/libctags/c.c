@@ -239,7 +239,8 @@ typedef enum eTagType {
     TAG_UNION,       /* union name */
     TAG_VARIABLE,    /* variable definition */
     TAG_EXTERN_VAR,  /* external variable declaration */
-    TAG_COUNT        /* must be last */
+    TAG_CLASS_ENUM,  /* class enum */
+    TAG_COUNT,       /* must be last */
 } tagType;
 
 typedef struct sParenInfo {
@@ -281,7 +282,7 @@ typedef enum {
     CK_CLASS, CK_DEFINE, CK_ENUMERATOR, CK_FUNCTION,
     CK_ENUMERATION, CK_LOCAL, CK_MEMBER, CK_NAMESPACE, CK_PROTOTYPE,
     CK_STRUCT, CK_TYPEDEF, CK_UNION, CK_VARIABLE,
-    CK_EXTERN_VARIABLE
+    CK_EXTERN_VARIABLE, CK_CLASS_ENUM,
 } cKind;
 
 static kindOption CKinds [] = {
@@ -299,6 +300,7 @@ static kindOption CKinds [] = {
     { TRUE,  'u', "union",      "union names"},
     { TRUE,  'v', "variable",   "variable definitions"},
     { FALSE, 'x', "externvar",  "external and forward variable declarations"},
+    { TRUE,  'r', "cenum",      "class enumeration names (C++11)"},
 };
 
 typedef enum {
@@ -819,6 +821,9 @@ static cKind cTagKind (const tagType type)
 {
     cKind result = CK_UNDEFINED;
     switch (type) {
+    case TAG_CLASS_ENUM:
+        result = CK_CLASS_ENUM;
+        break;
     case TAG_CLASS:
         result = CK_CLASS;
         break;
@@ -1050,8 +1055,10 @@ static tagType declToTagType (const declType declaration)
     case DECL_CLASS:
         type = TAG_CLASS;
         break;
-    case DECL_ENUM:
     case DECL_STRONG_ENUM:
+        type = TAG_CLASS_ENUM;
+        break;
+    case DECL_ENUM:
         type = TAG_ENUM;
         break;
     case DECL_EVENT:

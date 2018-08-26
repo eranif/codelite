@@ -33,13 +33,16 @@
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
-
+    
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
 protected:
     // The local variabels defined in this function of type
     // PHPEntityVariable
@@ -62,12 +65,18 @@ public:
      * @brief format function signature
      */
     wxString GetSignature() const;
-
+    
+    /**
+     * @brief return the full path for this function
+     * Example: \path\toClass::functionName($a, $b)
+     */
+    wxString GetFullPath() const;
+    
     /**
      * @brief write this object into the database
      * @param db
      */
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
 };
 
 #endif // PHPENTITYFUNCTION_H

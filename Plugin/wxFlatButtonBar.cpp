@@ -1,5 +1,6 @@
 #include "wxFlatButtonBar.h"
 #include <wx/dcbuffer.h>
+#include "drawingutils.h"
 
 wxFlatButtonBar::wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme theme, int rows, int cols)
     : wxFlatButtonBarBase(parent)
@@ -10,8 +11,8 @@ wxFlatButtonBar::wxFlatButtonBar(wxWindow* parent, const wxFlatButton::eTheme th
     m_mainSizer = new wxFlexGridSizer(rows, cols, 0, 0);
     SetSizer(m_mainSizer);
     
-    SetBgColour(wxFlatButton::GetBarBgColour(theme));
-    SetPenColour(wxFlatButton::GetBarBgColour(theme));
+    SetBgColour(DrawingUtils::GetPanelBgColour());
+    SetPenColour(DrawingUtils::GetPanelBgColour());
 }
 
 wxFlatButtonBar::~wxFlatButtonBar() {}
@@ -49,7 +50,9 @@ void wxFlatButtonBar::OnIdle(wxIdleEvent& event) { event.Skip(); }
 
 void wxFlatButtonBar::AddSpacer(int size)
 {
-    m_mainSizer->Add(size, 0, 1, wxEXPAND, 0);
+    wxPanel* spacer = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(size, -1));
+    spacer->SetBackgroundColour(DrawingUtils::GetPanelBgColour());
+    m_mainSizer->Add(spacer, 0, wxEXPAND, 0);
 }
 
 void wxFlatButtonBar::SetExpandableColumn(int col)

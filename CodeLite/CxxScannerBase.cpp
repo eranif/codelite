@@ -8,7 +8,7 @@ CxxScannerBase::CxxScannerBase(CxxPreProcessor* preProcessor, const wxFileName& 
     , m_preProcessor(preProcessor)
 {
     wxString content;
-    FileUtils::ReadFileContent(filename, content);
+    FileUtils::ReadFileContent(filename, content, wxConvISO8859_1);
     m_scanner = ::LexerNew(content, m_preProcessor->GetOptions());
 }
 

@@ -1,41 +1,40 @@
-#include "php_workspace_view.h"
-#include "php_strings.h"
-#include "php_project_settings_dlg.h"
-#include <wx/busyinfo.h>
-#include <globals.h>
-#include <bitmap_loader.h>
-#include <imanager.h>
-#include "php_workspace.h"
-#include "new_file_dlg.h"
-#include <wx/imaglist.h>
-#include <plugin.h>
-#include <fileextmanager.h>
-#include <event_notifier.h>
-#include "NewPHPClass.h"
-#include <editor_config.h>
-#include <cl_command_event.h>
-#include <ssh_account_info.h>
-#include <SSHAccountManagerDlg.h>
-#include <sftp_settings.h>
-#include <SFTPBrowserDlg.h>
-#include "ssh_workspace_settings.h"
-#include "cl_aui_tool_stickness.h"
-#include <macros.h>
-#include "tree_item_data.h"
-#include <bitmap_loader.h>
-#include "PHPLookupTable.h"
-#include <wx/wupdlock.h>
-#include "PHPDebugStartDlg.h"
-#include "file_logger.h"
 #include "FilesCollector.h"
+#include "NewPHPClass.h"
+#include "PHPDebugStartDlg.h"
+#include "PHPLookupTable.h"
+#include "XDebugManager.h"
+#include "clFileOrFolderDropTarget.h"
+#include "clFileSystemEvent.h"
+#include "clWorkspaceView.h"
+#include "cl_aui_tool_stickness.h"
+#include "file_logger.h"
 #include "fileutils.h"
+#include "new_file_dlg.h"
+#include "php_configuration_data.h"
+#include "php_project_settings_dlg.h"
+#include "php_strings.h"
+#include "php_workspace.h"
+#include "php_workspace_view.h"
+#include "ssh_workspace_settings.h"
+#include "tree_item_data.h"
+#include <SFTPBrowserDlg.h>
+#include <SSHAccountManagerDlg.h>
+#include <bitmap_loader.h>
+#include <cl_command_event.h>
+#include <editor_config.h>
+#include <event_notifier.h>
+#include <fileextmanager.h>
+#include <globals.h>
+#include <imanager.h>
+#include <macros.h>
+#include <plugin.h>
+#include <sftp_settings.h>
+#include <ssh_account_info.h>
 #include <wx/busyinfo.h>
 #include <wx/filedlg.h>
-#include "clFileOrFolderDropTarget.h"
-#include "php_configuration_data.h"
+#include <wx/imaglist.h>
 #include <wx/msgdlg.h>
-#include "clWorkspaceView.h"
-#include "php_strings.h"
+#include <wx/wupdlock.h>
 
 #define CHECK_ID_FOLDER(id) \
     if(!id->IsFolder()) return
@@ -66,30 +65,38 @@ EVT_MENU(XRCID("rename_php_workspace"), PHPWorkspaceView::OnRenameWorkspace)
 EVT_MENU(XRCID("php_project_settings"), PHPWorkspaceView::OnProjectSettings)
 EVT_MENU(XRCID("php_run_project"), PHPWorkspaceView::OnRunProject)
 EVT_MENU(XRCID("make_index"), PHPWorkspaceView::OnMakeIndexPHP)
-EVT_MENU(XRCID("php_synch_with_filesystem"), PHPWorkspaceView::OnSyncProjectWithFileSystem)
+EVT_MENU(XRCID("php_synch_with_filesystem"), PHPWorkspaceView::OnSyncWorkspaceWithFileSystem)
+EVT_MENU(XRCID("php_sync_project_with_filesystem"), PHPWorkspaceView::OnSyncProjectWithFileSystem)
+EVT_MENU(XRCID("php_sync_folder_with_filesystem"), PHPWorkspaceView::OnSyncFolderWithFileSystem)
 EVT_MENU(XRCID("php_open_with_default_app"), PHPWorkspaceView::OnOpenWithDefaultApp)
 END_EVENT_TABLE()
 
 PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     : PHPWorkspaceViewBase(parent)
     , m_mgr(mgr)
+    , m_scanInProgress(true)
 {
     MSWSetNativeTheme(m_treeCtrlView);
+    // SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
+                                  clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &PHPWorkspaceView::OnIsProgramRunning, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged),
+                                  NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
+    Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
+
     BitmapLoader* bl = m_mgr->GetStdIcons();
     wxImageList* imageList = bl->MakeStandardMimeImageList();
     m_treeCtrlView->AssignImageList(imageList);
@@ -98,25 +105,75 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
+    m_treeCtrlView->Bind(wxEVT_TREE_BEGIN_DRAG, &PHPWorkspaceView::OnDragBegin, this);
+    m_treeCtrlView->Bind(wxEVT_TREE_END_DRAG, &PHPWorkspaceView::OnDragEnd, this);
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
+
+    // Build the toolbar
+    m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
+                        _("Open active project settings"), wxITEM_NORMAL);
+    m_auibar29
+        ->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("remote-folder"),
+                  _("Setup automatic upload"), wxITEM_NORMAL)
+        ->SetHasDropDown(true);
+    m_auibar29->AddSeparator();
+    m_auibar29->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
+                        wxITEM_NORMAL);
+    m_auibar29->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
+                        _("Sync workspace with file system..."), wxITEM_NORMAL);
+    m_auibar29->AddSeparator();
+    m_auibar29->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
+                        bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
+    m_auibar29->Realize();
+
+    // Bind events
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnActiveProjectSettingsUI, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
+
+#if USE_SFTP
+    Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
+         XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+#endif
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSetupRemoteUploadUI, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+
+    Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
+    Bind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
+
+    Bind(wxEVT_MENU, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystem, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
+    Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
 }
 
 PHPWorkspaceView::~PHPWorkspaceView()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
+                                     clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &PHPWorkspaceView::OnIsProgramRunning, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                     wxCommandEventHandler(PHPWorkspaceView::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_PHP_FILE_RENAMED, PHPEventHandler(PHPWorkspaceView::OnFileRenamed), NULL,
+                                     this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPWorkspaceView::OnPhpParserDone, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
+    Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
+    Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
+    Unbind(wxEVT_MENU, &PHPWorkspaceView::OnStartDebuggerListener, this, XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    Unbind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnStartDebuggerListenerUI, this,
+           XRCID("ID_TOOL_START_DEBUGGER_LISTENER"));
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
+    Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
+
+    Unbind(wxEVT_MENU, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystem, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
+    Unbind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI, this, XRCID("ID_TOOL_SYNC_WORKSPACE"));
 }
 
 void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -149,9 +206,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
         workspaceFileName.SetName(workspaceFileName.GetDirs().Last());
         workspaceFileName.SetExt("workspace");
 
-        if(!workspaceFile.IsEmpty()) {
-            workspaceFileName = wxFileName(workspaceFile);
-        }
+        if(!workspaceFile.IsEmpty()) { workspaceFileName = wxFileName(workspaceFile); }
 
         if(!workspaceFileName.IsDirWritable()) {
             wxString message;
@@ -161,7 +216,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
             return;
         }
         // Create an empty workspace
-        if(!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), true)) {
+        if(!PHPWorkspace::Get()->Open(workspaceFileName.GetFullPath(), this, true)) {
             wxString message;
             message << _("Failed to open workspace '") << workspaceFileName.GetFullPath() << "'\n" << _("File exists");
             ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
@@ -170,7 +225,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
         // // We just created and opened a new workspace, add it to the "Recently used"
         // m_mgr->AddWorkspaceToRecentlyUsedList(workspaceFileName);
-        LoadWorkspace();
+        LoadWorkspaceView();
 
         // Ensure that the view is visible
         m_mgr->GetWorkspaceView()->SelectPage(PHPStrings::PHP_WORKSPACE_VIEW_LABEL);
@@ -192,9 +247,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
     }
 
     // Make sure that this folder is not part of any of the existing projects
-    if(!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFileName, true)) {
-        return;
-    }
+    if(!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFileName, true)) { return; }
 
     // We can safely create the project
     PHPConfigurationData conf;
@@ -211,8 +264,7 @@ void PHPWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
 void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 {
-    wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("toolbars/16/search/find_in_files");
-    PHPImages images;
+    wxBitmap bmpFiF = m_mgr->GetStdIcons()->LoadBitmap("find_in_files");
     wxTreeItemId item = event.GetItem();
     if(item.IsOk()) {
         // Ensure that the item is selected
@@ -260,6 +312,12 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
+
+                menuItem =
+                    new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Sync workspace with file system..."));
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
+                menu.Append(menuItem);
+                menu.AppendSeparator();
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
@@ -275,6 +333,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_new_folder"), _("New Folder..."));
                 menu.Append(XRCID("php_new_file"), _("New File..."));
                 menu.AppendSeparator();
+
                 menuItem = new wxMenuItem(NULL, XRCID("php_folder_find_in_files"), _("Find In Files"));
                 menuItem->SetBitmap(bmpFiF);
                 menu.Append(menuItem);
@@ -283,15 +342,16 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_open_shell"), _("Open Shell"));
                 menu.AppendSeparator();
 
-                menuItem =
-                    new wxMenuItem(NULL, XRCID("php_synch_with_filesystem"), _("Sync project with file system..."));
-                menuItem->SetBitmap(images.Bitmap("m_bmpSync"));
+                menuItem = new wxMenuItem(NULL, XRCID("php_sync_project_with_filesystem"),
+                                          _("Sync project with file system..."));
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
                 menu.Append(menuItem);
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_run_project"), _("Run project..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_project_settings"), _("Project settings..."));
 
+                // Let other plugins add content here
                 clContextMenuEvent folderMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
                 folderMenuEvent.SetMenu(&menu);
                 folderMenuEvent.SetPath(wxFileName(data->GetFile()).GetPath());
@@ -309,6 +369,11 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
                 menu.Append(XRCID("php_rename_folder"), _("Rename..."));
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_remove_file"), _("Delete"));
+                menu.AppendSeparator();
+                menuItem = new wxMenuItem(NULL, XRCID("php_sync_folder_with_filesystem"),
+                                          _("Sync folder with file system..."));
+                menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart"));
+                menu.Append(menuItem);
                 menu.AppendSeparator();
                 menu.Append(XRCID("php_open_folder_in_explorer"), _("Open Containing Folder"));
                 menu.Append(XRCID("php_open_shell"), _("Open Shell"));
@@ -331,7 +396,7 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
     }
 }
 
-void PHPWorkspaceView::LoadWorkspace()
+void PHPWorkspaceView::LoadWorkspaceView()
 {
     m_itemsToSort.Clear();
     m_filesItems.clear();
@@ -343,6 +408,12 @@ void PHPWorkspaceView::LoadWorkspace()
     wxWindowUpdateLocker locker(m_treeCtrlView);
     m_treeCtrlView->DeleteAllItems();
 
+    if(m_scanInProgress) {
+        m_treeCtrlView->AddRoot("Scanning for workspace files...");
+        m_treeCtrlView->Enable(false);
+        return;
+    }
+
     // Add the root item
     BitmapLoader* bl = m_mgr->GetStdIcons();
 
@@ -350,11 +421,12 @@ void PHPWorkspaceView::LoadWorkspace()
     data->SetFile(workspaceName);
     wxTreeItemId root =
         m_treeCtrlView->AddRoot(workspaceName, bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()),
-            bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()), data);
+                                bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()), data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
     m_itemsToSort.PushBack(root, true);
 
-    wxBusyInfo busy(_("Loading Workspace View..."), EventNotifier::Get()->TopFrame());
+    wxBusyCursor bc;
+    wxBusyInfo info(_("Building workspace tree view"), FRAME);
     wxYieldIfNeeded();
 
     // add projects
@@ -369,23 +441,18 @@ void PHPWorkspaceView::LoadWorkspace()
         data->SetActive(iter_project->second->IsActive());
 
         wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(root, iter_project->second->GetName(),
-            bl->GetMimeImageId(FileExtManager::TypeProject), bl->GetMimeImageId(FileExtManager::TypeProject), data);
-        if(data->IsActive()) {
-            m_treeCtrlView->SetItemBold(projectItemId, true);
-        }
+                                                                bl->GetMimeImageId(FileExtManager::TypeProject),
+                                                                bl->GetMimeImageId(FileExtManager::TypeProject), data);
+        if(data->IsActive()) { m_treeCtrlView->SetItemBold(projectItemId, true); }
 
         // The project is also a folder for the project folder
         m_foldersItems.insert(std::make_pair(iter_project->second->GetFilename().GetPath(), projectItemId));
         m_itemsToSort.PushBack(projectItemId, true);
         DoBuildProjectNode(projectItemId, iter_project->second);
-        if(data->IsActive()) {
-            activeProjectId = projectItemId;
-        }
+        if(data->IsActive()) { activeProjectId = projectItemId; }
     }
 
-    if(m_treeCtrlView->HasChildren(root)) {
-        m_treeCtrlView->Expand(root);
-    }
+    if(m_treeCtrlView->HasChildren(root)) { m_treeCtrlView->Expand(root); }
 
     if(activeProjectId.IsOk() && m_treeCtrlView->ItemHasChildren(activeProjectId)) {
         m_treeCtrlView->Expand(activeProjectId);
@@ -395,18 +462,23 @@ void PHPWorkspaceView::LoadWorkspace()
     OnEditorChanged(dummy);
 }
 
-void PHPWorkspaceView::UnLoadWorkspace() { m_treeCtrlView->DeleteAllItems(); }
+void PHPWorkspaceView::UnLoadWorkspaceView()
+{
+    m_treeCtrlView->DeleteAllItems();
+    m_scanInProgress = true;
+}
 
 void PHPWorkspaceView::CreateNewProject(PHPProject::CreateData cd)
 {
     PHPWorkspace::Get()->CreateProject(cd);
     // Update the UI
-    LoadWorkspace();
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::OnCloseWorkspace(wxCommandEvent& e)
 {
     wxUnusedVar(e);
+    m_scanInProgress = true;
     m_treeCtrlView->DeleteAllItems();
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
     event.SetEventObject(wxTheApp->GetTopWindow());
@@ -415,9 +487,8 @@ void PHPWorkspaceView::OnCloseWorkspace(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnReloadWorkspace(wxCommandEvent& e)
 {
-    wxUnusedVar(e);
-    UnLoadWorkspace();
-    LoadWorkspace();
+    // sync the file view and rebuild the tree
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
@@ -427,9 +498,9 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
     if(selection.IsOk()) {
         ItemData* itemData = DoGetItemData(selection);
         if(itemData && itemData->IsProject()) {
-            if(wxMessageBox(
-                   wxString() << _("Are you sure you want to remove project '") << itemData->GetProjectName() << "'?",
-                   _("CodeLite"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, wxTheApp->GetTopWindow()) == wxYES) {
+            if(wxMessageBox(wxString() << _("Are you sure you want to remove project '") << itemData->GetProjectName()
+                                       << "'?",
+                            _("CodeLite"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, wxTheApp->GetTopWindow()) == wxYES) {
                 PHPWorkspace::Get()->DeleteProject(itemData->GetProjectName());
                 m_treeCtrlView->Delete(selection);
 
@@ -492,9 +563,7 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
         m_itemsToSort.PushBack(folderItem, true);
         DoSortItems();
         // Expand the node
-        if(!m_treeCtrlView->IsExpanded(parent)) {
-            m_treeCtrlView->Expand(parent);
-        }
+        if(!m_treeCtrlView->IsExpanded(parent)) { m_treeCtrlView->Expand(parent); }
     }
 }
 
@@ -509,9 +578,7 @@ void PHPWorkspaceView::OnSetProjectActive(wxCommandEvent& e)
 wxString PHPWorkspaceView::DoGetSelectedProject()
 {
     wxTreeItemId item = m_treeCtrlView->GetFocusedItem();
-    if(!item.IsOk()) {
-        return wxEmptyString;
-    }
+    if(!item.IsOk()) { return wxEmptyString; }
 
     ItemData* id = DoGetItemData(item);
     if(!id) return wxEmptyString;
@@ -523,9 +590,7 @@ ItemData* PHPWorkspaceView::DoGetItemData(const wxTreeItemId& item)
     if(item.IsOk() == false) return NULL;
 
     wxTreeItemData* data = m_treeCtrlView->GetItemData(item);
-    if(!data) {
-        return NULL;
-    }
+    if(!data) { return NULL; }
     return dynamic_cast<ItemData*>(data);
 }
 
@@ -534,9 +599,7 @@ const ItemData* PHPWorkspaceView::DoGetItemData(const wxTreeItemId& item) const
     if(item.IsOk() == false) return NULL;
 
     wxTreeItemData* data = m_treeCtrlView->GetItemData(item);
-    if(!data) {
-        return NULL;
-    }
+    if(!data) { return NULL; }
     return dynamic_cast<ItemData*>(data);
 }
 
@@ -559,9 +622,7 @@ void PHPWorkspaceView::OnNewFile(wxCommandEvent& e)
         }
         wxTreeItemId fileItem = DoCreateFile(folderId, fn.GetFullPath());
         if(fileItem.IsOk()) {
-            if(!m_treeCtrlView->IsExpanded(folderId)) {
-                m_treeCtrlView->Expand(folderId);
-            }
+            if(!m_treeCtrlView->IsExpanded(folderId)) { m_treeCtrlView->Expand(folderId); }
             CallAfter(&PHPWorkspaceView::DoOpenFile, fileItem);
         }
     }
@@ -598,6 +659,7 @@ void PHPWorkspaceView::OnDeleteFolder(wxCommandEvent& e)
         // Update the UI
         m_treeCtrlView->Delete(folderItem);
     }
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::OnRetagWorkspace(wxCommandEvent& e)
@@ -611,9 +673,7 @@ void PHPWorkspaceView::OnRetagWorkspace(wxCommandEvent& e)
 int PHPWorkspaceView::DoGetItemImgIdx(const wxString& filename)
 {
     int idx = m_mgr->GetStdIcons()->GetMimeImageId(filename);
-    if(idx == wxNOT_FOUND) {
-        idx = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText);
-    }
+    if(idx == wxNOT_FOUND) { idx = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText); }
     return idx;
 }
 
@@ -627,9 +687,7 @@ void PHPWorkspaceView::OnOpenFile(wxCommandEvent& e)
     for(size_t i = 0; i < items.GetCount(); ++i) {
         const wxTreeItemId& item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
-        if(itemData->IsFile()) {
-            DoOpenFile(item);
-        }
+        if(itemData->IsFile()) { DoOpenFile(item); }
     }
 }
 
@@ -691,10 +749,10 @@ void PHPWorkspaceView::OnRenameFile(wxCommandEvent& e)
 
         // Open the file if it was opened earlier
         // old_file_name now contains the new full path to the new file
-        if(reopenFile) {
-            m_mgr->OpenFile(newFileName.GetFullPath());
-        }
+        if(reopenFile) { m_mgr->OpenFile(newFileName.GetFullPath()); }
     }
+
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::DoDeleteSelectedFileItem()
@@ -706,10 +764,11 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
     wxString msg;
     msg = wxString::Format(_("This operation will delete the selected items.\nContinue?"), (int)items.GetCount());
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(msg, "PHPDeleteFiles", _("Yes"), _("No"),
-        _("Remember my answer and don't ask me again"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
+                                                          _("Remember my answer and don't ask me again"),
+                                                          wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
     if(res != wxID_YES) return;
-    wxArrayTreeItemIds filesDeleted;
-    bool reloadWorkspaceNeeded = false;
+
+    wxArrayString removedFiles, removedFolders;
     for(size_t i = 0; i < items.GetCount(); ++i) {
         ItemData* itemData = static_cast<ItemData*>(m_treeCtrlView->GetItemData(items.Item(i)));
         if(!itemData || (!itemData->IsFile() && !itemData->IsFolder())) continue;
@@ -721,28 +780,34 @@ void PHPWorkspaceView::DoDeleteSelectedFileItem()
                 _("'%s' is a folder.\nThis operation will delete the folder and its content.\nContinue?"),
                 itemData->GetFolderPath());
             res = ::PromptForYesNoDialogWithCheckbox(msg, "PHPDeleteFolder", _("Yes"), _("No"),
-                _("Remember my answer and don't ask me again"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
+                                                     _("Remember my answer and don't ask me again"),
+                                                     wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT);
             if(res != wxID_YES) continue; // Don't delete the folder
+            removedFolders.Add(itemData->GetFolderPath());
             wxFileName::Rmdir(itemData->GetFolderPath(), wxPATH_RMDIR_RECURSIVE);
-            reloadWorkspaceNeeded = true;
 
         } else {
-            ::wxRemoveFile(itemData->GetFile());
-            filesDeleted.Add(items.Item(i));
+            clRemoveFile(itemData->GetFile());
+            removedFiles.Add(itemData->GetFile());
         }
     }
 
     // Sync the workspace with the file system
-    PHPWorkspace::Get()->SyncWithFileSystem();
-    if(reloadWorkspaceNeeded) {
-        // If a folder was deleted, reload the workspace view
-        LoadWorkspace();
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 
-    } else {
-        // Just delete the file items, no folders were deleted
-        for(size_t i = 0; i < filesDeleted.GetCount(); ++i) {
-            m_treeCtrlView->Delete(filesDeleted.Item(i));
-        }
+    // Notify about the file/folder deletion
+    {
+        clFileSystemEvent evt(wxEVT_FILE_DELETED);
+        evt.SetPaths(removedFiles);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
+
+    {
+        clFileSystemEvent evt(wxEVT_FOLDER_DELETED);
+        evt.SetPaths(removedFolders);
+        evt.SetEventObject(this);
+        EventNotifier::Get()->AddPendingEvent(evt);
     }
 }
 
@@ -751,9 +816,7 @@ void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)
     // Test which file we want to debug
     PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
     debugDlg.SetLabel("Run Project");
-    if(debugDlg.ShowModal() != wxID_OK) {
-        return;
-    }
+    if(debugDlg.ShowModal() != wxID_OK) { return; }
 
     PHPWorkspace::Get()->RunProject(false, debugDlg.GetPath(), DoGetSelectedProject());
 }
@@ -765,9 +828,7 @@ wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
              << "." << ext;
 
     FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(type == FileExtManager::TypeOther) {
-        type = FileExtManager::TypeText;
-    }
+    if(type == FileExtManager::TypeOther) { type = FileExtManager::TypeText; }
     return m_bitmaps.find(type)->second;
 }
 
@@ -775,19 +836,13 @@ void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
 {
     if(!PHPWorkspace::Get()->GetActiveProject()) {
         ::wxMessageBox(_("No active project is set !?\nPlease set an active project and try again"), "CodeLite",
-            wxICON_ERROR | wxOK | wxCENTER, FRAME);
+                       wxICON_ERROR | wxOK | wxCENTER, FRAME);
         return;
     }
     PHPProjectSettingsDlg settingsDlg(FRAME, PHPWorkspace::Get()->GetActiveProjectName());
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
-        PHPWorkspace::Get()->GetActiveProject()->SynchWithFileSystem();
-
-        // Incase files were added - reparse
-        PHPWorkspace::Get()->ParseWorkspace(false);
-
-        // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
     }
 }
 
@@ -802,13 +857,7 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
     PHPProjectSettingsDlg settingsDlg(FRAME, selectedProject);
     if(settingsDlg.ShowModal() == wxID_OK && settingsDlg.IsResyncNeeded()) {
         // Re-sync the project with the file system
-        PHPWorkspace::Get()->GetProject(selectedProject)->SynchWithFileSystem();
-
-        // Incase files were added - reparse
-        PHPWorkspace::Get()->ParseWorkspace(false);
-
-        // reload the workspace
-        CallAfter(&PHPWorkspaceView::LoadWorkspace);
+        PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
     }
 }
 
@@ -820,9 +869,7 @@ void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
         // Test which file we want to debug
         PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);
         dlg.SetLabel("Run Project");
-        if(dlg.ShowModal() != wxID_OK) {
-            return;
-        }
+        if(dlg.ShowModal() != wxID_OK) { return; }
         PHPWorkspace::Get()->RunProject(false, dlg.GetPath());
 
     } else {
@@ -856,22 +903,7 @@ void PHPWorkspaceView::OnStopExecutedProgram(clExecuteEvent& e)
 void PHPWorkspaceView::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        IEditor* editor = m_mgr->GetActiveEditor();
-        CHECK_PTR_RET(editor);
-
-        if(m_filesItems.count(editor->GetFileName().GetFullPath())) {
-            const wxTreeItemId& item = m_filesItems.find(editor->GetFileName().GetFullPath())->second;
-            CHECK_ITEM_RET(item);
-
-            wxArrayTreeItemIds items;
-            if(m_treeCtrlView->GetSelections(items)) {
-                m_treeCtrlView->UnselectAll();
-            }
-            m_treeCtrlView->SelectItem(item);
-            m_treeCtrlView->EnsureVisible(item);
-        }
-    }
+    if(PHPWorkspace::Get()->IsOpen()) { DoExpandToActiveEditor(); }
 }
 
 void PHPWorkspaceView::OnFileRenamed(PHPEvent& e) { e.Skip(); }
@@ -907,9 +939,7 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
     wxTreeItemId folderId = items.Item(0);
 
     ItemData* data = DoGetItemData(folderId);
-    if(!data->IsFolder() && !data->IsProject()) {
-        return;
-    }
+    if(!data->IsFolder() && !data->IsProject()) { return; }
 
     PHPProject::Ptr_t pProject;
     if(data->IsFolder()) {
@@ -927,7 +957,7 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
 
         wxString fileContent;
         wxString eolString = EditorConfigST::Get()->GetOptions()->GetEOLAsString();
-        fileContent << "<?php" << eolString << pcd.ToString(eolString, " ");
+        fileContent << "<?php" << eolString << eolString << pcd.ToString(eolString, "    ");
 
         // Beautify the file
         clSourceFormatEvent event(wxEVT_FORMAT_STRING);
@@ -937,12 +967,16 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         // which formatter tool to use (PHP/JS/C++ etc)
         event.SetFileName(pcd.GetFilepath().GetFullPath());
         EventNotifier::Get()->ProcessEvent(event);
-        if(!event.GetFormattedString().IsEmpty()) {
-            fileContent = event.GetFormattedString();
-        }
+        if(!event.GetFormattedString().IsEmpty()) { fileContent = event.GetFormattedString(); }
 
-        DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
+        wxTreeItemId fileItem = DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
         DoSortItems();
+
+        // Set the focus the new class
+        if(fileItem.IsOk()) {
+            if(!m_treeCtrlView->IsExpanded(folderId)) { m_treeCtrlView->Expand(folderId); }
+            CallAfter(&PHPWorkspaceView::DoOpenFile, fileItem);
+        }
 
         // Trigger parsing
         PHPWorkspace::Get()->ParseWorkspace(false);
@@ -954,9 +988,7 @@ void PHPWorkspaceView::OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Enable(
 void PHPWorkspaceView::OnRenameWorkspace(wxCommandEvent& e)
 {
     wxString new_name = ::wxGetTextFromUser(_("New workspace name:"), _("Rename workspace"));
-    if(!new_name.IsEmpty()) {
-        PHPWorkspace::Get()->Rename(new_name);
-    }
+    if(!new_name.IsEmpty()) { PHPWorkspace::Get()->Rename(new_name); }
 }
 
 #if USE_SFTP
@@ -980,7 +1012,7 @@ void PHPWorkspaceView::OnSetupRemoteUpload(wxAuiToolBarEvent& event)
             menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
             menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, settings.IsRemoteUploadEnabled());
             menu.Connect(ID_TOGGLE_AUTOMATIC_UPLOAD, wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
+                         wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
         }
 
         wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
@@ -1010,8 +1042,8 @@ void PHPWorkspaceView::DoOpenSSHAccountManager()
     settings.Load();
 
     SFTPBrowserDlg dlg(EventNotifier::Get()->TopFrame(),
-        _("Select the remote folder corrseponding to the current workspace file"), "",
-        clSFTP::SFTP_BROWSE_FOLDERS); // Browse for folders only
+                       _("Select the remote folder corrseponding to the current workspace file"), "",
+                       clSFTP::SFTP_BROWSE_FOLDERS); // Browse for folders only
     dlg.Initialize(settings.GetAccount(), settings.GetRemoteFolder());
 
     if(dlg.ShowModal() == wxID_OK) {
@@ -1026,9 +1058,9 @@ void PHPWorkspaceView::ReloadWorkspace(bool saveBeforeReload)
 {
     wxFileName fnWorkspace = PHPWorkspace::Get()->GetFilename();
     PHPWorkspace::Get()->Close(saveBeforeReload, true);
-    PHPWorkspace::Get()->Open(fnWorkspace.GetFullPath());
-    UnLoadWorkspace();
-    LoadWorkspace();
+    PHPWorkspace::Get()->Open(fnWorkspace.GetFullPath(), this);
+    UnLoadWorkspaceView();
+    LoadWorkspaceView();
 }
 
 void PHPWorkspaceView::ReportParseThreadProgress(size_t curIndex, size_t total)
@@ -1090,11 +1122,9 @@ void PHPWorkspaceView::DoSortItems()
     m_itemsToSort.Clear();
 }
 
-void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
+void PHPWorkspaceView::OnSyncWorkspaceWithFileSystem(wxCommandEvent& e)
 {
-    PHPWorkspace::Get()->SyncWithFileSystem();
-    PHPWorkspace::Get()->ParseWorkspace(false);
-    CallAfter(&PHPWorkspaceView::LoadWorkspace);
+    PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
 }
 
 void PHPWorkspaceView::DoBuildProjectNode(const wxTreeItemId& projectItem, PHPProject::Ptr_t project)
@@ -1126,9 +1156,7 @@ void PHPWorkspaceView::DoGetSelectedItems(wxArrayTreeItemIds& items) { m_treeCtr
 wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxString& path)
 {
     // Check the cache
-    if(m_foldersItems.count(path)) {
-        return m_foldersItems.find(path)->second;
-    }
+    if(m_foldersItems.count(path)) { return m_foldersItems.find(path)->second; }
 
     wxTreeItemId projectItem = DoGetProject(project);
     if(!projectItem.IsOk()) return wxTreeItemId();
@@ -1172,9 +1200,7 @@ wxTreeItemId PHPWorkspaceView::DoGetProject(const wxString& project)
     wxTreeItemIdValue cookie;
     wxTreeItemId item = m_treeCtrlView->GetFirstChild(root, cookie);
     while(item.IsOk()) {
-        if(m_treeCtrlView->GetItemText(item) == project) {
-            return item;
-        }
+        if(m_treeCtrlView->GetItemText(item) == project) { return item; }
         item = m_treeCtrlView->GetNextChild(root, cookie);
     }
     return wxTreeItemId();
@@ -1187,8 +1213,8 @@ void PHPWorkspaceView::OnWorkspaceRenamed(PHPEvent& e)
     m_treeCtrlView->SetItemText(m_treeCtrlView->GetRootItem(), newName.GetName());
 }
 
-wxTreeItemId PHPWorkspaceView::DoCreateFile(
-    const wxTreeItemId& parent, const wxString& fullpath, const wxString& content)
+wxTreeItemId PHPWorkspaceView::DoCreateFile(const wxTreeItemId& parent, const wxString& fullpath,
+                                            const wxString& content)
 {
     PHPProject::Ptr_t proj = DoGetProjectForItem(parent);
     if(!proj) return wxTreeItemId();
@@ -1202,11 +1228,10 @@ wxTreeItemId PHPWorkspaceView::DoCreateFile(
         ItemData* itemData = new ItemData(ItemData::Kind_File);
         itemData->SetFile(file.GetFullPath());
         PHPProject::Ptr_t pProj = PHPWorkspace::Get()->GetProjectForFile(file);
-        if(pProj) {
-            itemData->SetProjectName(pProj->GetName());
-        }
-        wxTreeItemId fileItem = m_treeCtrlView->AppendItem(parent, file.GetFullName(),
-            DoGetItemImgIdx(file.GetFullName()), DoGetItemImgIdx(file.GetFullName()), itemData);
+        if(pProj) { itemData->SetProjectName(pProj->GetName()); }
+        wxTreeItemId fileItem =
+            m_treeCtrlView->AppendItem(parent, file.GetFullName(), DoGetItemImgIdx(file.GetFullName()),
+                                       DoGetItemImgIdx(file.GetFullName()), itemData);
 
         // Cache the result
         m_filesItems.insert(std::make_pair(file.GetFullPath(), fileItem));
@@ -1325,9 +1350,7 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
     for(size_t i = 0; i < items.GetCount(); ++i) {
         wxTreeItemId item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
-        if(itemData->IsFile()) {
-            ::wxLaunchDefaultApplication(itemData->GetFile());
-        }
+        if(itemData->IsFile()) { ::wxLaunchDefaultApplication(itemData->GetFile()); }
     }
 }
 void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
@@ -1348,9 +1371,7 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
     for(size_t i = 0; i < items.GetCount(); ++i) {
         const wxTreeItemId& item = items.Item(i);
         ItemData* itemData = DoGetItemData(item);
-        if(itemData->IsFile()) {
-            files.Add(itemData->GetFile());
-        }
+        if(itemData->IsFile()) { files.Add(itemData->GetFile()); }
     }
 }
 
@@ -1367,6 +1388,10 @@ void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
+void PHPWorkspaceView::OnStartDebuggerListenerUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!XDebugManager::Get().IsDebugSessionRunning());
+}
 
 void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
 {
@@ -1386,17 +1411,15 @@ void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
     // Prompt user for project path
     const wxString ALL("CodeLite PHP Projects (*.phprj)|*.phprj");
     wxFileDialog dlg(this, _("Open Project"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST,
-        wxDefaultPosition);
+                     wxDefaultPosition);
     if(dlg.ShowModal() == wxID_OK && !dlg.GetPath().IsEmpty()) {
         wxString projectToAdd = dlg.GetPath();
         wxString errmsg;
         if(!PHPWorkspace::Get()->AddProject(projectToAdd, errmsg)) {
-            if(!errmsg.IsEmpty()) {
-                ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-            }
+            if(!errmsg.IsEmpty()) { ::wxMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER); }
             return;
         }
-        LoadWorkspace();
+        LoadWorkspaceView();
     }
 }
 
@@ -1462,16 +1485,223 @@ void PHPWorkspaceView::OnRenameFolder(wxCommandEvent& e)
 void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
 {
     e.Skip();
-    
+
     if(!PHPWorkspace::Get()->IsOpen()) return;
     if(!IsShownOnScreen()) return;
-    
+
     // Get list of selected folders
     wxArrayString paths;
     DoGetSelectedFolders(paths);
     CHECK_COND_RET(!paths.IsEmpty());
-    
+
     // PHP workspace is opened and visible
-    wxArrayString &outPaths = e.GetStrings();
+    wxArrayString& outPaths = e.GetStrings();
     outPaths.insert(outPaths.end(), paths.begin(), paths.end());
+}
+
+void PHPWorkspaceView::OnWorkspaceSyncStart(clCommandEvent& event)
+{
+    m_scanInProgress = true;
+    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, "Scanning for PHP files...", wxNOT_FOUND);
+    m_treeCtrlView->Enable(false);
+}
+
+void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
+{
+    m_scanInProgress = false;
+    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, "Scanning for PHP files completed", 3);
+    PHPWorkspace::Get()->ParseWorkspace(false);
+    CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
+    m_treeCtrlView->Enable(true);
+}
+
+void PHPWorkspaceView::DoSetStatusBarText(const wxString& text, int timeOut)
+{
+    clGetManager()->GetStatusBar()->SetMessage(text, timeOut);
+}
+
+void PHPWorkspaceView::OnFileSaveAs(clFileSystemEvent& event)
+{
+    event.Skip();
+    // File "Save as"
+    if(PHPWorkspace::Get()->IsOpen()) { PHPWorkspace::Get()->SyncWithFileSystemAsync(this); }
+}
+
+void PHPWorkspaceView::OnStartDebuggerListener(wxCommandEvent& e) { XDebugManager::Get().StartListener(); }
+
+void PHPWorkspaceView::OnSyncProjectWithFileSystem(wxCommandEvent& e)
+{
+    wxString project = DoGetSelectedProject();
+    if(project.IsEmpty()) return;
+
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(project);
+    CHECK_PTR_RET(pProject);
+
+    pProject->SyncWithFileSystemAsync(this);
+    m_pendingSync.insert(pProject->GetName());
+}
+
+void PHPWorkspaceView::OnProjectSyncCompleted(clCommandEvent& event)
+{
+    wxString projectName = event.GetString();
+    if(m_pendingSync.count(projectName) == 0) return;
+    m_pendingSync.erase(projectName);
+
+    PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProject(projectName);
+    CHECK_PTR_RET(pProject);
+
+    // Update the project files
+    pProject->SetFiles(event.GetStrings());
+
+    // Rebuild the project tree node
+    wxTreeItemId item = DoGetProject(pProject->GetName());
+    CHECK_ITEM_RET(item);
+
+    // Use the UI to fetch the folders and files
+    wxArrayString folders, files;
+    DoGetFilesAndFolders(pProject->GetName(), folders, files);
+
+    // Clear these items from the cache
+    std::for_each(files.begin(), files.end(), [&](const wxString& s) {
+        if(m_filesItems.count(s)) { m_filesItems.erase(s); }
+    });
+
+    std::for_each(folders.begin(), folders.end(), [&](const wxString& s) {
+        if(m_foldersItems.count(s)) { m_foldersItems.erase(s); }
+    });
+
+    wxWindowUpdateLocker locker(m_treeCtrlView);
+    // Now we can delete the subtree
+    m_treeCtrlView->DeleteChildren(item);
+
+    // And finally, rebuild the project node
+    DoBuildProjectNode(item, pProject);
+
+    DoSortItems();
+    m_itemsToSort.Clear();
+
+    DoExpandToActiveEditor();
+}
+
+void PHPWorkspaceView::DoGetFilesAndFolders(const wxString& projectName, wxArrayString& folders, wxArrayString& files)
+{
+    folders.Clear();
+    files.Clear();
+    wxTreeItemId item = DoGetProject(projectName);
+    DoGetFilesAndFolders(item, folders, files);
+}
+
+void PHPWorkspaceView::DoGetFilesAndFolders(const wxTreeItemId& item, wxArrayString& folders, wxArrayString& files)
+{
+    if(m_treeCtrlView->HasChildren(item)) {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
+        while(child.IsOk()) {
+            DoGetFilesAndFolders(child, folders, files);
+            child = m_treeCtrlView->GetNextChild(item, cookie);
+        }
+    }
+
+    ItemData* id = DoGetItemData(item);
+    CHECK_PTR_RET(id);
+
+    if(id->IsFile()) {
+        files.Add(id->GetFile());
+    } else if(id->IsFolder()) {
+        folders.Add(id->GetFolderPath());
+    }
+}
+
+void PHPWorkspaceView::DoExpandToActiveEditor()
+{
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    if(m_filesItems.count(editor->GetFileName().GetFullPath())) {
+        const wxTreeItemId& item = m_filesItems.find(editor->GetFileName().GetFullPath())->second;
+        CHECK_ITEM_RET(item);
+
+        wxArrayTreeItemIds items;
+        if(m_treeCtrlView->GetSelections(items)) { m_treeCtrlView->UnselectAll(); }
+        m_treeCtrlView->SelectItem(item);
+        m_treeCtrlView->EnsureVisible(item);
+    }
+}
+
+void PHPWorkspaceView::OnSyncFolderWithFileSystem(wxCommandEvent& e)
+{
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+
+    if(items.GetCount() > 1) return;
+
+    wxTreeItemId item = items.Item(0);
+    CHECK_ITEM_RET(item);
+
+    PHPProject::Ptr_t pProject = DoGetProjectForItem(item);
+    CHECK_PTR_RET(pProject);
+
+    pProject->SyncWithFileSystemAsync(this);
+    m_pendingSync.insert(pProject->GetName());
+}
+
+void PHPWorkspaceView::OnSyncWorkspaceWithFileSystemUI(wxUpdateUIEvent& e) { e.Enable(PHPWorkspace::Get()->IsOpen()); }
+
+void PHPWorkspaceView::OnDragBegin(wxTreeEvent& event)
+{
+    event.Allow();
+    m_draggedFiles.clear();
+    wxArrayTreeItemIds items;
+    DoGetSelectedItems(items);
+    for(size_t i = 0; i < items.GetCount(); ++i) {
+        ItemData* data = DoGetItemData(items.Item(i));
+        if(!data || !data->IsFile()) { return; }
+        m_draggedFiles.Add(data->GetFile());
+    }
+}
+
+void PHPWorkspaceView::OnDragEnd(wxTreeEvent& event)
+{
+    if(m_draggedFiles.IsEmpty()) { return; }
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    ItemData* data = DoGetItemData(item);
+    if(data) {
+        bool syncNeeded = false;
+        wxString targetFolder;
+        if(data->IsFolder()) {
+            targetFolder = data->GetFolderPath();
+        } else if(data->IsProject()) {
+            targetFolder = wxFileName(data->GetFile()).GetPath();
+        }
+
+        if(!targetFolder.IsEmpty()) {
+            // Move the files from their current folder to the new folder
+            for(size_t i = 0; i < m_draggedFiles.size(); ++i) {
+                const wxString& srcfile = m_draggedFiles.Item(i);
+                wxFileName newFile = srcfile;
+                newFile.SetPath(targetFolder);
+                if(newFile.FileExists()) {
+                    wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(
+                        _("A file with this name already exists in the target folder\nOverwrite it?"), "dndphpview",
+                        _("Yes"), _("No"), _("Do this for all files"),
+                        wxCANCEL_DEFAULT | wxCENTRE | wxYES_NO | wxCANCEL | wxICON_WARNING, false);
+                    if(answer != wxID_YES) { continue; }
+                }
+                if(::wxCopyFile(srcfile, newFile.GetFullPath(), true)) {
+                    if(clRemoveFile(srcfile)) {
+                        syncNeeded = true;
+                        clFileSystemEvent rmEvent(wxEVT_FILE_DELETED);
+                        rmEvent.GetPaths().Add(srcfile);
+                        rmEvent.SetEventObject(this);
+                        EventNotifier::Get()->AddPendingEvent(rmEvent);
+                    }
+                }
+            }
+
+            if(syncNeeded) { PHPWorkspace::Get()->SyncWithFileSystemAsync(this); }
+        }
+    }
+    m_draggedFiles.Clear();
 }

@@ -1852,7 +1852,7 @@ YY_BUFFER_STATE xml_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yys
 static void yy_fatal_error (yyconst char* msg , yyscan_t yyscanner)
 {
     	(void) fprintf( stderr, "%s\n", msg );
-	exit( YY_EXIT_FAILURE );
+	
 }
 
 /* Redefine yyless() so it works in section 3 code. */

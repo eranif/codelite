@@ -32,6 +32,9 @@
 #ifndef CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
 #define CODELITE_CODELITE_TERMINALEMULATORUI_BASE_CLASSES_H
 
+#include <wx/setup.h>
+
+#if wxUSE_GUI
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -77,5 +80,5 @@ public:
     TerminalEmulatorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Terminal"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT|wxRESIZE_BORDER);
     virtual ~TerminalEmulatorFrameBase();
 };
-
+#endif // LIBCODELITE_BASE
 #endif

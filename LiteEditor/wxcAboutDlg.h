@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_ABOUTDLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -30,6 +30,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 
 class AboutDlgBase : public wxDialog
 {

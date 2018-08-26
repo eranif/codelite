@@ -23,34 +23,34 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "DebuggerCallstackView.h"
-#include "manager.h"
 #include "globals.h"
+#include "manager.h"
 #include "pluginmanager.h"
 
-#include <wx/xrc/xmlres.h>
-#include <wx/imaglist.h>
-#include <memory>
-#include "globals.h"
-#include <wx/wupdlock.h>
-#include "event_notifier.h"
-#include "debuggermanager.h"
 #include "debugger.h"
+#include "debuggermanager.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include <memory>
+#include <wx/imaglist.h>
+#include <wx/wupdlock.h>
+#include <wx/xrc/xmlres.h>
 
 DebuggerCallstackView::DebuggerCallstackView(wxWindow* parent)
     : ListCtrlPanelBase(parent)
     , m_currLevel(0)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_LIST_FRAMES, clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_LIST_FRAMES,
+                                  clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_FRAME_SELECTED,
+                                  clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
 }
 DebuggerCallstackView::~DebuggerCallstackView()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_LIST_FRAMES, clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_LIST_FRAMES,
+                                     clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_FRAME_SELECTED,
+                                     clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
 }
 
 void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
@@ -60,9 +60,7 @@ void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
     StackEntry* entry = reinterpret_cast<StackEntry*>(m_dvListCtrl->GetItemData(event.GetItem()));
     if(entry) {
         long frame, frameLine;
-        if(!entry->level.ToLong(&frame)) {
-            frame = 0;
-        }
+        if(!entry->level.ToLong(&frame)) { frame = 0; }
 
         // Remove the currently selected item
         wxDataViewItem curitem = m_dvListCtrl->RowToItem(m_currLevel);
@@ -98,24 +96,20 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
             bool isactive = (i == m_currLevel);
             StackEntry entry = m_stack.at(i);
             wxVector<wxVariant> cols;
-            cols.push_back(::MakeIconText(
-                entry.level, isactive ? m_images.Bitmap("arrowActive") : m_images.Bitmap("arrowInactive")));
-            cols.push_back(entry.address);
+            cols.push_back(::MakeIconText(entry.level, isactive ? m_images.Bitmap("arrowActive")
+                                                                : m_images.Bitmap("arrowInactive")));
             cols.push_back(entry.function);
             cols.push_back(entry.file);
             cols.push_back(entry.line);
+            cols.push_back(entry.address);
             StackEntry* d = new StackEntry(entry);
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
 
-            if(isactive) {
-                activeFrame = i;
-            }
+            if(isactive) { activeFrame = i; }
         }
         if(activeFrame != wxNOT_FOUND) {
             wxDataViewItem item = m_dvListCtrl->RowToItem(activeFrame);
-            if(item.IsOk()) {
-                m_dvListCtrl->EnsureVisible(item);
-            }
+            if(item.IsOk()) { m_dvListCtrl->EnsureVisible(item); }
         }
     }
 }
@@ -133,9 +127,7 @@ void DebuggerCallstackView::Clear()
         wxDataViewItem item = m_dvListCtrl->GetStore()->GetItem(i);
         if(item.IsOk()) {
             StackEntry* entry = reinterpret_cast<StackEntry*>(m_dvListCtrl->GetItemData(item));
-            if(entry) {
-                delete entry;
-            }
+            if(entry) { delete entry; }
         }
     }
     m_dvListCtrl->DeleteAllItems();
@@ -146,11 +138,8 @@ void DebuggerCallstackView::OnMenu(wxDataViewEvent& event)
     wxMenu menu;
 
     menu.Append(XRCID("stack_copy_backtrace"), _("Copy Backtrace to Clipboard"));
-    menu.Connect(XRCID("stack_copy_backtrace"),
-                 wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace),
-                 NULL,
-                 this);
+    menu.Connect(XRCID("stack_copy_backtrace"), wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(DebuggerCallstackView::OnCopyBacktrace), NULL, this);
     m_dvListCtrl->PopupMenu(&menu);
 }
 

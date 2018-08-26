@@ -60,6 +60,7 @@ copy codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y
 copy patch.exe "%TARGET_DIR%\CodeLite\" /Y
 copy rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy astyle.sample "%TARGET_DIR%\CodeLite\" /Y
+copy php.sample "%TARGET_DIR%\CodeLite\" /Y
 copy pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
 copy ..\sdk\wxconfig\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 

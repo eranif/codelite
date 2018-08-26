@@ -31,7 +31,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     
     bSizer7->Add(m_auibar6, 0, wxEXPAND, 5);
     
-    m_auibar6->AddLabel(wxID_ANY, _("Edit the line too add:"), -1);
+    m_auibar6->AddLabel(wxID_ANY, _("Edit the line to add:"), -1);
     
     m_auibar6->AddStretchSpacer(1);
     

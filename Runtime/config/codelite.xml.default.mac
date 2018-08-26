@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite Version="2.0.2">
-  <Options DisplayFoldMargin="yes" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="yes" CaretLineColour="#BFD8D8" CaretColour="#000000" AutoAdjustHScrollBarWidth="yes"/>
+  <Options DisplayFoldMargin="no" UnderlineFoldedLine="yes" FoldStyle="Arrows" DisplayBookmarkMargin="yes" BookmarkShape="Small Arrow" BookmarkBgColour="#FF0080" BookmarkFgColour="#FF0080" HighlightCaretLine="no" ShowLineNumber="yes" IndentationGuides="no" CaretLineColour="#BFD8D8" CaretColour="#000000" AutoAdjustHScrollBarWidth="no"/>
   <ArchiveObject Name="LexerTheme">
     <wxString Value="Default" Name="m_value"/>
   </ArchiveObject>

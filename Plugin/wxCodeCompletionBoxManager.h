@@ -119,6 +119,11 @@ public:
      * @brief do we have a completion box shown?
      */
     bool IsShown() const { return m_box != NULL; }
+    
+    /**
+     * @brief return the code completion box
+     */
+    wxCodeCompletionBox* GetCCWindow() { return m_box; }
 };
 
 #endif // WXCODECOMPLETIONBOXMANAGER_H

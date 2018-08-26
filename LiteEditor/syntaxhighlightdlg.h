@@ -42,6 +42,8 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
 {
     bool m_isModified;
     bool m_globalThemeChanged;
+    bool m_globalBgColourChanged;
+    static bool m_globalBgColourChangedTooltipShown;
     LexerConf::Ptr_t m_lexer;
 
 protected:
@@ -54,7 +56,6 @@ protected:
     virtual void OnToolExportAll(wxAuiToolBarEvent& event);
     virtual void OnExportSelective(wxCommandEvent& event);
     virtual void OnImport(wxCommandEvent& event);
-    virtual void OnExport(wxCommandEvent& event);
     virtual void OnNewTheme(wxCommandEvent& event);
     virtual void OnSelTextFgChanged(wxColourPickerEvent& event);
     virtual void OnUseCustomFgTextColour(wxCommandEvent& event);
@@ -75,25 +76,28 @@ protected:
     virtual void OnStyleWithinPreprocessor(wxCommandEvent& event);
     virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
     virtual void OnText(wxCommandEvent& event);
-    
+
     // Handlers for SyntaxHighlightBaseDlg events.
-    void OnButtonOK( wxCommandEvent& event );
-    void OnButtonCancel( wxCommandEvent& event );
-    void OnButtonApply( wxCommandEvent& event );
+    void OnButtonOK(wxCommandEvent& event);
+    void OnButtonCancel(wxCommandEvent& event);
+    void OnButtonApply(wxCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
 
-    void LoadLexer(const wxString &themeName);
+    void LoadLexer(const wxString& themeName);
     void SaveChanges();
     void Clear();
     void CreateLexerPage();
     StyleProperty::Map_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
-    
+
     void DoUpdatePreview();
-    
+    void DoSetGlobalBgColour(const wxColour& colour);
+    void DoShowTooltipForGlobalBgColourChanged();
+    void DoExport(const wxArrayString& lexers = wxArrayString());
+
 public:
     /** Constructor */
-    SyntaxHighlightDlg( wxWindow* parent );
+    SyntaxHighlightDlg(wxWindow* parent);
     virtual ~SyntaxHighlightDlg();
 
     bool restartRequired;

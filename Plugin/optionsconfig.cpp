@@ -22,14 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "editor_config.h"
-#include "optionsconfig.h"
-#include <wx/intl.h>
-#include <wx/fontmap.h>
-#include "xmlutils.h"
-#include "macros.h"
 #include "cl_defs.h"
+#include "editor_config.h"
+#include "macros.h"
+#include "optionsconfig.h"
 #include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+#include <wx/fontmap.h>
+#include <wx/intl.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -56,8 +56,8 @@ wxString SetDefaultBookmarkColours()
 }
 
 OptionsConfig::OptionsConfig(wxXmlNode* node)
-    : m_displayFoldMargin(true)
-    , m_underlineFoldLine(false)
+    : m_displayFoldMargin(false)
+    , m_underlineFoldLine(true)
     , m_scrollBeyondLastLine(true)
     , m_foldStyle(wxT("Arrows with Background Colour"))
     , m_displayBookmarkMargin(true)
@@ -67,17 +67,13 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_bookmarkLabels(defaultBookmarkLabels)
     , m_highlightCaretLine(true)
     , m_clearHighlitWordsOnFind(true)
-    , m_displayLineNumbers(false)
+    , m_displayLineNumbers(true)
     , m_showIndentationGuidelines(false)
     , m_caretLineColour(wxT("LIGHT BLUE"))
     , m_indentUsesTabs(true)
     , m_indentWidth(4)
     , m_tabWidth(4)
-#ifdef __WXGTK__
     , m_iconsSize(16)
-#else
-    , m_iconsSize(24)
-#endif
     , m_showWhitspaces(0 /*wxSCI_WS_INVISIBLE*/)
     , m_foldCompact(false)
     , m_foldAtElse(false)
@@ -87,9 +83,10 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_edgeColour(wxColour(wxT("LIGHT GREY")))
     , m_highlightMatchedBraces(true)
     , m_foldBgColour(wxColour(240, 240, 240))
-    , m_autoAdjustHScrollBarWidth(true)
+    , m_autoAdjustHScrollBarWidth(false)
     , m_caretWidth(1)
     , m_caretBlinkPeriod(500)
+    , m_copyLineEmptySelection(true)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
     , m_hideChangeMarkerMargin(false)
@@ -116,6 +113,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_disableSemicolonShift(false)
     , m_caretLineAlpha(30)
     , m_dontAutoFoldResults(true)
+    , m_dontOverrideSearchStringWithSelection(false)
     , m_showDebugOnRun(true)
     , m_caretUseCamelCase(true)
     , m_wordWrap(false)
@@ -124,23 +122,17 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_useLocale(0)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
-          Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock | Opt_WrapCmdWithDoubleQuotes |
-          Opt_TabStyleMinimal)
+                Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
+                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleMinimal)
+    , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
+    , m_nbTabHeight(nbTabHt_Medium)
+    , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
-#ifdef __WXMSW__
-    int major, minor;
-    wxGetOsVersion(&major, &minor);
-
-    if(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */) {
-        m_mswTheme = true;
-    }
-#endif
-
     // set the default font name to be wxFONTENCODING_UTF8
     SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
     if(node) {
@@ -179,6 +171,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
         m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
         m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
+        m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
@@ -204,17 +197,20 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
         m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
+        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
         m_dockingStyle = XmlUtils::ReadLong(node, wxT("m_dockingStyle"), m_dockingStyle);
+        m_nbTabHeight = XmlUtils::ReadLong(node, wxT("m_nbTabHeight"), m_nbTabHeight);
         m_mswTheme = XmlUtils::ReadBool(node, wxT("m_mswTheme"), m_mswTheme);
         m_preferredLocale = XmlUtils::ReadString(node, wxT("m_preferredLocale"), m_preferredLocale);
         m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
         m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
         m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
-        m_debuggerMarkerLine = XmlUtils::ReadString(
-            node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
+        m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
+                                                    m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
         m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
         // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
@@ -232,12 +228,13 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
             (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
         m_workspaceTabsDirection =
             (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
-    }
-#ifdef __WXMSW__
-    if(!(wxUxThemeEngine::GetIfActive() && major >= 6 /* Win 7 and up */)) {
-        m_mswTheme = false;
-    }
+#ifdef __WXOSX__
+        if(m_workspaceTabsDirection == wxLEFT) { m_workspaceTabsDirection = wxTOP; }
+        if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
 #endif
+
+        m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
+    }
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
     if(m_bookmarkFgColours.empty()) {
@@ -300,12 +297,14 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("DisableSmartIndent"), BoolToString(m_disableSmartIndent));
     n->AddProperty(wxT("DisableSemicolonShift"), BoolToString(m_disableSemicolonShift));
     n->AddProperty(wxT("DontAutoFoldResults"), BoolToString(m_dontAutoFoldResults));
+    n->AddProperty(wxT("DontOverrideSearchStringWithSelection"), BoolToString(m_dontOverrideSearchStringWithSelection));
     n->AddProperty(wxT("ShowDebugOnRun"), BoolToString(m_showDebugOnRun));
     n->AddProperty(wxT("ConsoleCommand"), m_programConsoleCommand);
     n->AddProperty(wxT("EOLMode"), m_eolMode);
     n->AddProperty(wxT("m_caretUseCamelCase"), BoolToString(m_caretUseCamelCase));
     n->AddProperty(wxT("m_wordWrap"), BoolToString(m_wordWrap));
     n->AddProperty(wxT("m_dockingStyle"), wxString::Format(wxT("%d"), m_dockingStyle));
+    n->AddProperty(wxT("m_nbTabHeight"), wxString::Format(wxT("%d"), m_nbTabHeight));
     n->AddProperty(wxT("m_mswTheme"), BoolToString(m_mswTheme));
     n->AddProperty(wxT("m_preferredLocale"), m_preferredLocale);
     n->AddProperty(wxT("m_useLocale"), BoolToString(m_useLocale));
@@ -314,6 +313,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("OutputTabsDirection"), wxString() << (int)m_outputTabsDirection);
     n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
     n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
+    n->AddProperty(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
 
     wxString tmp;
     tmp << m_indentWidth;
@@ -360,6 +360,13 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.Clear();
     tmp << m_options;
     n->AddProperty(wxT("m_options"), tmp);
+
+    tmp.Clear();
+    tmp << m_options2;
+    n->AddProperty(wxT("m_options2"), tmp);
+
+    n->AddProperty(wxT("m_webSearchPrefix"), m_webSearchPrefix);
+
     return n;
 }
 
@@ -367,9 +374,7 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 {
     this->m_fileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
-    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
-        this->m_fileFontEncoding = wxFONTENCODING_UTF8;
-    }
+    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) { this->m_fileFontEncoding = wxFONTENCODING_UTF8; }
 }
 
 wxString OptionsConfig::GetEOLAsString() const
@@ -392,9 +397,7 @@ wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
-    if(index < arr.GetCount()) {
-        return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -412,9 +415,7 @@ wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
-    if(index < arr.GetCount()) {
-        return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -431,9 +432,7 @@ void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
 wxString OptionsConfig::GetBookmarkLabel(size_t index) const
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
-    if(index < arr.GetCount()) {
-        return arr.Item(index);
-    }
+    if(index < arr.GetCount()) { return arr.Item(index); }
 
     return "";
 }
@@ -445,4 +444,44 @@ void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
         arr.Item(index) = label;
         m_bookmarkLabels = wxJoin(arr, ';');
     }
+}
+
+void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
+{
+    if(section.IsInsertFinalNewlineSet()) { this->SetAppendLF(section.IsInsertFinalNewline()); }
+    if(section.IsSetEndOfLineSet()) {
+        // Convert .editorconfig to CodeLite strings
+        wxString eolMode = "Unix (LF)"; // default
+        if(section.GetEndOfLine() == "crlf") {
+            eolMode = "Windows (CRLF)";
+        } else if(section.GetEndOfLine() == "cr") {
+            eolMode = "Mac (CR)";
+        }
+        this->SetEolMode(eolMode);
+    }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentStyleSet()) { this->SetIndentUsesTabs(section.GetIndentStyle() == "tab"); }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentSizeSet()) { this->SetIndentWidth(section.GetIndentSize()); }
+    if(section.IsCharsetSet()) {
+        // TODO: fix the locale here
+    }
+}
+
+bool OptionsConfig::IsTabColourDark() const
+{
+#if USE_AUI_NOTEBOOK
+    return false;
+#else
+    return HasOption(Opt_TabColourDark);
+#endif
+}
+
+bool OptionsConfig::IsTabColourMatchesTheme() const
+{
+#if USE_AUI_NOTEBOOK
+    return true;
+#else
+    return !HasOption(Opt_TabColourPersistent);
+#endif
 }

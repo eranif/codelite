@@ -34,6 +34,8 @@
 #include "project.h"
 #include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
+#include "clFileSystemEvent.h"
+#include "SvnShowFileChangesHandler.h"
 
 class SubversionView;
 class SvnConsole;
@@ -87,6 +89,7 @@ protected:
     void OnBlame(wxCommandEvent& event);
     void OnIgnoreFile(wxCommandEvent& event);
     void OnIgnoreFilePattern(wxCommandEvent& event);
+    void OnShowFileChanges(wxCommandEvent& event);
     void OnSelectAsView(wxCommandEvent& event);
     void OnSwitchURL(wxCommandEvent& event);
     void OnLockFile(wxCommandEvent& event);
@@ -99,10 +102,13 @@ protected:
     ///////////////////////////////////////////////////////////
     void OnGetCompileLine(clBuildEvent& event);
     void OnWorkspaceConfigChanged(wxCommandEvent& event);
-    void OnFileRemoved(clCommandEvent& event);
+    void OnProjectFileRemoved(clCommandEvent& event);
+    void OnFileDeleted(clFileSystemEvent& event);
+    void OnFolderDeleted(clFileSystemEvent& event);
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
-        
+    void OnGotoAnythingShowing(clGotoEvent& e);
+    
     wxMenu* CreateFileExplorerPopMenu(bool isFile);
     bool IsSubversionViewDetached();
     wxMenu* CreateProjectPopMenu();
@@ -115,7 +121,8 @@ public:
     void
     DoRename(const wxString& workingDirectory, const wxString& oldname, const wxString& newname, wxCommandEvent& event);
     void DoCommit(const wxArrayString& files, const wxString& workingDirectory, wxCommandEvent& event);
-
+    void DoFilesDeleted(const wxArrayString& files, bool isFolder = false);
+    
 public:
     Subversion2(IManager* manager);
     ~Subversion2();
@@ -123,7 +130,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
@@ -136,8 +143,8 @@ public:
 
     SvnSettingsData GetSettings();
     void SetSettings(SvnSettingsData& ssd);
-    wxString GetSvnExeName(bool nonInteractive = true);
-    wxString GetSvnExeNameNoConfigDir(bool nonInteractive = true);
+    wxString GetSvnExeName();
+    wxString GetSvnExeNameNoConfigDir();
     wxString GetUserConfigDir();
     void RecreateLocalSvnConfigFile();
     void Patch(bool dryRun, const wxString& workingDirectory, wxEvtHandler* owner, int id);
@@ -160,7 +167,10 @@ public:
                            const wxString& output);
 
     void AddCommandLineOption(wxString& command, Subversion2::eCommandLineOption opt);
-
+    
+    void ShowRecentChanges(const wxString& file);
+    void ShowRecentChangesDialog(const SvnShowDiffChunk::List_t& changes);
+    
 protected:
     void DoInitialize();
     void DoSetSSH();

@@ -49,7 +49,7 @@
 //#endif
 //}
 
-ContextBase::ContextBase(LEditor* container)
+ContextBase::ContextBase(clEditor* container)
     : m_container(container)
     , m_name(wxEmptyString)
 {
@@ -65,7 +65,7 @@ ContextBase::~ContextBase() {}
 // provide basic indentation
 void ContextBase::AutoIndent(const wxChar& ch)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     int prevpos(wxNOT_FOUND);
     int curpos = rCtrl.GetCurrentPos();
     int line = rCtrl.LineFromPosition(curpos);
@@ -99,7 +99,7 @@ void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetC
 
 int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);
@@ -151,7 +151,7 @@ void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
 int ContextBase::DoGetCalltipParamterIndex()
 {
     int index(0);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     int pos = ctrl.DoGetOpenBracePos();
     if(pos != wxNOT_FOUND) {
 
@@ -208,15 +208,15 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
             // This is ugly, since CodeLite should not be calling
             // the plugins... we take comfort in the fact that it
             // merely fires an event and not calling it directly
-            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("word_complete_no_single_insert"));
-            wxTheApp->ProcessEvent(wordCompleteEvent);
+            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
+            EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
         }
     }
 }
 
 void ContextBase::AutoAddComment()
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
@@ -252,7 +252,7 @@ void ContextBase::AutoAddComment()
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(textTyped == "/**" && data.IsAutoInsertAfterSlash2Stars()) {
+            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsertAfterSlash2Stars()) {
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
                 clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
@@ -273,7 +273,7 @@ void ContextBase::AutoAddComment()
                     }
 
                     // Join the lines back
-                    wxString doxyBlock = ::wxJoin(lines, '\n');
+                    wxString doxyBlock = ::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
 
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);

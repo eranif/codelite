@@ -1,5 +1,4 @@
-#include <wx/init.h>	//wxInitializer
-#include <wx/string.h>	//wxString
+#include <wx/wx.h>	// Includes all the standard things
 
 int main(int argc, char **argv) 
 {

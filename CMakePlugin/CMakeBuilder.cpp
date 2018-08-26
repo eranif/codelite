@@ -11,7 +11,7 @@ CMakeBuilder::CMakeBuilder()
 CMakeBuilder::~CMakeBuilder() {}
 
 bool CMakeBuilder::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
-    bool isProjectOnly, bool force, wxString& errMsg)
+                          bool isProjectOnly, bool force, wxString& errMsg)
 {
     wxUnusedVar(project);
     wxUnusedVar(confToBuild);
@@ -26,7 +26,7 @@ wxString CMakeBuilder::GetCleanCommand(const wxString& project, const wxString& 
 {
     // The build folder is set to the workspace-path/workspace-config
     wxString command;
-    command << "cd " << GetWorkspaceBuildFolder(true) << " && " << GetBuildToolCommand(project, confToBuild)
+    command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
             << " clean";
     return command;
 }
@@ -35,12 +35,12 @@ wxString CMakeBuilder::GetBuildCommand(const wxString& project, const wxString& 
 {
     // The build folder is set to the workspace-path/workspace-config
     wxString command;
-    command << "cd " << GetWorkspaceBuildFolder(true) << " && " << GetBuildToolCommand(project, confToBuild);
+    command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild);
     return command;
 }
 
-wxString CMakeBuilder::GetPOCleanCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString CMakeBuilder::GetPOCleanCommand(const wxString& project, const wxString& confToBuild,
+                                         const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
@@ -48,16 +48,16 @@ wxString CMakeBuilder::GetPOCleanCommand(
     return command;
 }
 
-wxString CMakeBuilder::GetPOBuildCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString CMakeBuilder::GetPOBuildCommand(const wxString& project, const wxString& confToBuild,
+                                         const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild);
     return command;
 }
 
-wxString CMakeBuilder::GetPORebuildCommand(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments)
+wxString CMakeBuilder::GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
+                                           const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
@@ -65,14 +65,14 @@ wxString CMakeBuilder::GetPORebuildCommand(
     return command;
 }
 
-wxString CMakeBuilder::GetSingleFileCmd(
-    const wxString& project, const wxString& confToBuild, const wxString& arguments, const wxString& fileName)
+wxString CMakeBuilder::GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+                                        const wxString& fileName)
 {
     return wxEmptyString;
 }
 
 wxString CMakeBuilder::GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
-    const wxString& arguments, const wxString& fileName, wxString& errMsg)
+                                            const wxString& arguments, const wxString& fileName, wxString& errMsg)
 {
     return wxEmptyString;
 }
@@ -84,9 +84,7 @@ wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes)
 
     fn.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
     wxString folder = fn.GetPath();
-    if(wrapWithQuotes) {
-        ::WrapWithQuotes(folder);
-    }
+    if(wrapWithQuotes) { ::WrapWithQuotes(folder); }
     return folder;
 }
 
@@ -95,19 +93,13 @@ wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapW
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(project);
     wxASSERT(p);
 
-    wxFileName fnProject = p->GetFileName();
-    wxFileName fnWorkspace = clCxxWorkspaceST::Get()->GetFileName();
-    fnProject.MakeRelativeTo(fnWorkspace.GetPath());
-
-    wxString workspaceConfig = clCxxWorkspaceST::Get()->GetBuildMatrix()->GetSelectedConfigurationName();
-    fnWorkspace.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
+    wxString workspaceFolder = GetWorkspaceBuildFolder(wrapWithQuotes);
+    wxFileName fn(workspaceFolder, "");
+    fn.AppendDir(p->GetName());
 
     wxString folder;
-    folder = fnWorkspace.GetPath();
-    folder << wxFileName::GetPathSeparator() << fnProject.GetPath();
-    if(wrapWithQuotes) {
-        ::WrapWithQuotes(folder);
-    }
+    folder = fn.GetPath();
+    if(wrapWithQuotes) { ::WrapWithQuotes(folder); }
     return folder;
 }
 
@@ -121,11 +113,16 @@ wxString CMakeBuilder::GetBuildToolCommand(const wxString& project, const wxStri
     if(!compiler) return wxEmptyString;
 
     wxString buildTool = compiler->GetTool("MAKE");
-    return buildTool + " -e ";
+    if(buildTool.Lower().Contains("make")) {
+        return buildTool + " -e ";
+
+    } else {
+        return buildTool + " ";
+    }
 }
 wxString CMakeBuilder::GetOutputFile() const
 {
     wxChar sep = wxFileName::GetPathSeparator();
     return wxString() << "$(WorkspacePath)" << sep << CMAKE_BUILD_FOLDER_PREFIX << "$(WorkspaceConfiguration)" << sep
-                      << "bin" << sep << "$(ProjectName)";
+                      << "output" << sep << "$(ProjectName)";
 }

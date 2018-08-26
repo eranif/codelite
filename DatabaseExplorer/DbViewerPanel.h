@@ -28,6 +28,7 @@
 
 #include "../Interfaces/imanager.h"
 #include "GUI.h" // Base class: _DbExplorerPanel
+#include "clToolBar.h"
 #include "theme_handler_helper.h"
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>
@@ -39,37 +40,41 @@
 #include <wx/wxsf/wxShapeFramework.h>
 
 // wx classes
-#include <wx/wx.h>
-#include <wx/hashmap.h>
 #include <wx/aui/aui.h>
+#include <wx/hashmap.h>
 #include <wx/textdlg.h>
 #include <wx/txtstrm.h>
+#include <wx/wx.h>
 
 // other
 #include "IDbItem.h"
 
 #include "DnDTableShape.h"
-#include "dbconnection.h"
-#include "database.h"
-#include "table.h"
-#include "column.h"
-#include "view.h"
-#include "dumpclass.h"
 #include "IDbAdapter.h"
+#include "column.h"
+#include "database.h"
+#include "dbconnection.h"
+#include "dumpclass.h"
+#include "table.h"
+#include "view.h"
 //#include "MySqlDbAdapter.h"
-#include "dbitem.h"
-#include "LogDialog.h"
 #include "ClassGenerateDialog.h"
+#include "LogDialog.h"
+#include "dbitem.h"
+#include <unordered_set>
 
+class DbExplorerFrame;
 WX_DECLARE_HASH_MAP(wxString, wxTreeItemId, wxStringHash, wxStringEqual, TableHashMap);
 
 class MainBook;
 /*! \brief Main application panel. It show database tree and can open special editors. */
 class DbViewerPanel : public _DbViewerPanel
 {
+    std::unordered_set<DbExplorerFrame*> m_frames;
+
 protected:
     virtual void OnContextMenu(wxTreeEvent& event);
-    
+
 private:
     xsSerializable* m_pConnections;
     IDbAdapter* m_pDbAdapter;
@@ -82,10 +87,10 @@ private:
     Database* m_pEditedDatabase;
     DbConnection* m_pEditedConnection;
     wxSFThumbnail* m_pThumbnail;
-    wxArrayString m_pagesAdded;
     wxWindow* m_pPrevPanel;
     bool m_SuppressUpdate;
     ThemeHandlerHelper* m_themeHelper;
+    clToolBar* m_toolbar;
 
 public:
     DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pManager);
@@ -114,10 +119,11 @@ public:
     void OnPageClosing(wxBookCtrlEvent& event);
     void OnPageChanged(wxBookCtrlEvent& event);
 
-    void OnERDSelected(wxAuiToolBarEvent& event);
+    void OnERDSelected(wxCommandEvent& event);
 
     void OnPopupClick(wxCommandEvent& evt);
     void RefreshDbView();
+    void RemoveFrame(DbExplorerFrame* frame);
     static void InitStyledTextCtrl(wxStyledTextCtrl* sci);
 
 protected:

@@ -182,10 +182,10 @@ wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayStri
     return output;
 }
 
-JSONElement::wxStringMap_t clConfig::MergeStringMaps(
-    const JSONElement::wxStringMap_t& map1, const JSONElement::wxStringMap_t& map2) const
+wxStringMap_t clConfig::MergeStringMaps(
+    const wxStringMap_t& map1, const wxStringMap_t& map2) const
 {
-    JSONElement::wxStringMap_t output;
+    wxStringMap_t output;
     output.insert(map1.begin(), map1.end());
     output.insert(map2.begin(), map2.end());
     return output;
@@ -301,6 +301,28 @@ void clConfig::ClearAnnoyingDlgAnswers()
     DoDeleteProperty("AnnoyingDialogsAnswers");
     Save();
     Reload();
+}
+
+void clConfig::SetQuickFindSearchItems(const wxArrayString& items)
+{
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
+    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    if(quickFindBar.hasNamedObject("SearchHistory")) {
+        quickFindBar.removeProperty("SearchHistory");
+    }
+    quickFindBar.addProperty("SearchHistory", items);
+    Save();
+}
+
+void clConfig::SetQuickFindReplaceItems(const wxArrayString& items)
+{
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
+    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    if(quickFindBar.hasNamedObject("ReplaceHistory")) {
+        quickFindBar.removeProperty("ReplaceHistory");
+    }
+    quickFindBar.addProperty("ReplaceHistory", items);
+    Save();
 }
 
 void clConfig::AddQuickFindReplaceItem(const wxString& str)
@@ -474,7 +496,7 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
     }
     return recentItems;
 }
-
+#if wxUSE_GUI
 wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
 {
     JSONElement general = GetGeneralSetting();
@@ -510,8 +532,10 @@ void clConfig::Write(const wxString& name, const wxFont& value)
 wxColour clConfig::Read(const wxString& name, const wxColour& defaultValue)
 {
     wxString strValue;
-    if(!Read(name, strValue)) return defaultValue;
-
+    strValue = Read(name, wxString());
+    if(strValue.IsEmpty()) {
+        return defaultValue;
+    }
     wxColour col(strValue);
     return col;
 }
@@ -522,3 +546,5 @@ void clConfig::Write(const wxString& name, const wxColour& value)
     Write(name, strValue);
     Save();
 }
+
+#endif

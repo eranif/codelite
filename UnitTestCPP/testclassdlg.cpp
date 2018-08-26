@@ -32,13 +32,16 @@
 #include "imanager.h"
 #include "ctags_manager.h"
 #include "windowattrmanager.h"
+#include <algorithm>
 
 TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     : TestClassBaseDlg(parent)
     , m_manager(mgr)
     , m_plugin(plugin)
 {
-    m_manager->GetTagsManager()->GetClasses(m_tags);
+    TagEntryPtrVector_t tags;
+    m_manager->GetTagsManager()->GetClasses(tags);
+    std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr t) { m_tags[t->GetName()].push_back(t); });
 
     // populate the unit tests project list
     std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();
@@ -53,13 +56,7 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     WindowAttrManager::Load(this);
 }
 
-TestClassDlg::~TestClassDlg() {  }
-
-void TestClassDlg::OnRefreshFunctions(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoRefreshFunctions();
-}
+TestClassDlg::~TestClassDlg() {}
 
 void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)
 {
@@ -72,11 +69,6 @@ void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)
     } else {
         m_textCtrlFileName->Enable(false);
     }
-}
-
-void TestClassDlg::OnRefreshButtonUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_textCtrlClassName->GetValue().IsEmpty() ? false : true);
 }
 
 void TestClassDlg::OnCheckAll(wxCommandEvent& e)
@@ -126,10 +118,10 @@ void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
     m_textCtrlClassName->SetFocus();
     OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager, "");
-    if(dlg.ShowModal() == wxID_OK && dlg.GetSelection()) {
-
+    if(dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
+        OpenResourceDialogItemData* item = dlg.GetSelections().at(0);
         // do something with the selected text
-        m_textCtrlClassName->SetValue(dlg.GetSelection()->m_name);
+        m_textCtrlClassName->SetValue(item->m_name);
 
         // display the class methods
         DoRefreshFunctions();
@@ -138,25 +130,16 @@ void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 
 void TestClassDlg::DoRefreshFunctions(bool repportError)
 {
-    std::vector<TagEntryPtr> matches;
-
-    // search m_tags for suitable name
-    for(size_t i = 0; i < m_tags.size(); i++) {
-        TagEntryPtr tag = m_tags.at(i);
-        if(tag->GetName() == m_textCtrlClassName->GetValue()) {
-            matches.push_back(tag);
-        }
-    }
-
-    if(matches.empty()) {
+    if(m_tags.count(m_textCtrlClassName->GetValue()) == 0) {
         if(repportError) {
             wxMessageBox(_("Could not find match for class '") + m_textCtrlClassName->GetValue() + wxT("'"),
-                         _("CodeLite"),
-                         wxICON_WARNING | wxOK);
+                         _("CodeLite"), wxICON_WARNING | wxOK);
         }
+        m_checkListMethods->Clear();
         return;
     }
 
+    std::vector<TagEntryPtr> matches = m_tags[m_textCtrlClassName->GetValue()];
     wxString theClass;
     if(matches.size() == 1) {
         // single match we are good
@@ -165,7 +148,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
         // suggest the user a multiple choice
         wxArrayString choices;
 
-        for(size_t i = 0; i < matches.size(); i++) {
+        for(size_t i = 0; i < matches.size(); ++i) {
             wxString option;
             TagEntryPtr t = matches.at(i);
             choices.Add(t->GetPath());
@@ -180,19 +163,25 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 
     // get list of methods for the given path
     matches.clear();
-    m_manager->GetTagsManager()->TagsByScope(theClass, wxT("prototype"), matches, false, true);
+    wxArrayString kind;
+    kind.push_back("prototype");
+    kind.push_back("function");
+    m_manager->GetTagsManager()->TagsByScope(theClass, kind, matches);
 
-    // populate the list control
+    wxStringSet_t uniqueNames;
     wxArrayString methods;
-    for(size_t i = 0; i < matches.size(); i++) {
-        TagEntryPtr t = matches.at(i);
-        methods.Add(t->GetName() + t->GetSignature());
-    }
+    std::for_each(matches.begin(), matches.end(), [&](TagEntryPtr m) {
+        if(uniqueNames.count(m->GetName()) == 0) {
+            methods.push_back(m->GetName());
+            uniqueNames.insert(m->GetName());
+        }
+    });
+
     m_checkListMethods->Clear();
     m_checkListMethods->Append(methods);
 
     // check all items
-    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
+    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); ++idx) {
         m_checkListMethods->Check(idx, true);
     }
 }
@@ -210,4 +199,9 @@ void TestClassDlg::EscapeName(wxString& name)
     name.Replace(wxT("="), wxT("Shave"));
     name.Replace(wxT(">"), wxT("Gadol"));
     name.Replace(wxT("<"), wxT("Katan"));
+}
+void TestClassDlg::OnClassNameUpdated(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoRefreshFunctions(false);
 }

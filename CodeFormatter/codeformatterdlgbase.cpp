@@ -28,73 +28,246 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizerMain = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerMain);
     
-    m_treebook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
-    m_treebook->SetName(wxT("m_treebook"));
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+    wxImageList* m_notebook_il = new wxImageList(16, 16);
+    m_notebook->AssignImageList(m_notebook_il);
     
-    bSizerMain->Add(m_treebook, 1, wxALL|wxEXPAND, 5);
+    bSizerMain->Add(m_notebook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel133 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->AddPage(m_panel133, _("General"), true, wxNOT_FOUND);
+    m_panelGeneral = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    int m_panelGeneralImgIndex;
+    m_panelGeneralImgIndex = m_notebook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-cog")));
+    m_notebook->AddPage(m_panelGeneral, _("General"), true, m_panelGeneralImgIndex);
     
     wxBoxSizer* boxSizer179 = new wxBoxSizer(wxVERTICAL);
-    m_panel133->SetSizer(boxSizer179);
+    m_panelGeneral->SetSizer(boxSizer179);
     
     wxFlexGridSizer* flexGridSizer158 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer158->SetFlexibleDirection( wxBOTH );
     flexGridSizer158->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer158->AddGrowableCol(1);
     
-    boxSizer179->Add(flexGridSizer158, 1, wxALL|wxEXPAND, 2);
+    boxSizer179->Add(flexGridSizer158, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    flexGridSizer158->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer158->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxFormatOnSave = new wxCheckBox(m_panel133, wxID_ANY, _("Format editor on file save"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxFormatOnSave = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Format editor on file save"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
     m_checkBoxFormatOnSave->SetValue(false);
     m_checkBoxFormatOnSave->SetToolTip(_("When saving a file, automatically format it"));
     
-    flexGridSizer158->Add(m_checkBoxFormatOnSave, 0, wxALL|wxALIGN_LEFT, 5);
+    flexGridSizer158->Add(m_checkBoxFormatOnSave, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
     
-    m_staticText115 = new wxStaticText(m_panel133, wxID_ANY, _("C++ formatter:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText115 = new wxStaticText(m_panelGeneral, wxID_ANY, _("C++ formatter:"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
     
-    flexGridSizer158->Add(m_staticText115, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer158->Add(m_staticText115, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceCxxEngineArr;
     m_choiceCxxEngineArr.Add(wxT("AStyle"));
     m_choiceCxxEngineArr.Add(wxT("clang-format"));
-    m_choiceCxxEngine = new wxChoice(m_panel133, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceCxxEngineArr, 0);
+    m_choiceCxxEngine = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), m_choiceCxxEngineArr, 0);
     m_choiceCxxEngine->SetToolTip(_("Select the formatter engine for C/C++\nNote that JavaScript, clang-format is always used"));
     m_choiceCxxEngine->SetSelection(1);
     
-    flexGridSizer158->Add(m_choiceCxxEngine, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer158->Add(m_choiceCxxEngine, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText198 = new wxStaticText(m_panel133, wxID_ANY, _("PHP formatter:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText198 = new wxStaticText(m_panelGeneral, wxID_ANY, _("PHP formatter:"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), 0);
     
-    flexGridSizer158->Add(m_staticText198, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer158->Add(m_staticText198, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choicePhpFormatterArr;
     m_choicePhpFormatterArr.Add(wxT("Builtin"));
     m_choicePhpFormatterArr.Add(wxT("PHP-CS-Fixer"));
-    m_choicePhpFormatter = new wxChoice(m_panel133, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choicePhpFormatterArr, 0);
+    m_choicePhpFormatterArr.Add(wxT("PHPCBF"));
+    m_choicePhpFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1,-1)), m_choicePhpFormatterArr, 0);
     m_choicePhpFormatter->SetToolTip(_("Select the formatter engine for PHP files"));
     m_choicePhpFormatter->SetSelection(0);
     
-    flexGridSizer158->Add(m_choicePhpFormatter, 0, wxALL|wxEXPAND, 5);
+    flexGridSizer158->Add(m_choicePhpFormatter, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_treebook->AddPage(NULL, _("C++"), false, wxNOT_FOUND);
+    m_panelCxx = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    int m_panelCxxImgIndex;
+    m_panelCxxImgIndex = m_notebook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-mime-cpp")));
+    m_notebook->AddPage(m_panelCxx, _("C++"), false, m_panelCxxImgIndex);
     
-    m_panelAstyle = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->InsertSubPage(1, m_panelAstyle, _("AStyle"), false, wxNOT_FOUND);
+    wxBoxSizer* boxSizer229 = new wxBoxSizer(wxVERTICAL);
+    m_panelCxx->SetSizer(boxSizer229);
+    
+    m_notebookCxx = new wxNotebook(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebookCxx->SetName(wxT("m_notebookCxx"));
+    
+    boxSizer229->Add(m_notebookCxx, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_panelClangFormat = new wxPanel(m_notebookCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebookCxx->AddPage(m_panelClangFormat, _("clang-format"), false);
+    
+    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
+    m_panelClangFormat->SetSizer(boxSizer97);
+    
+    m_splitter165 = new wxSplitterWindow(m_panelClangFormat, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelClangFormat, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
+    m_splitter165->SetSashGravity(0.5);
+    m_splitter165->SetMinimumPaneSize(10);
+    
+    boxSizer97->Add(m_splitter165, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_splitterPage169 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter165, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer175 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage169->SetSizer(boxSizer175);
+    
+    wxArrayString m_pgMgrClangArr;
+    wxUnusedVar(m_pgMgrClangArr);
+    wxArrayInt m_pgMgrClangIntArr;
+    wxUnusedVar(m_pgMgrClangIntArr);
+    m_pgMgrClang = new wxPropertyGridManager(m_splitterPage169, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage169, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    
+    boxSizer175->Add(m_pgMgrClang, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_pgPropClangFormat = m_pgMgrClang->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
+    m_pgPropClangFormat->SetHelpString(wxT(""));
+    
+    m_pgPropClangFormatExePath = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
+    #if !defined(__WXOSX__) && !defined(_WIN64)
+    m_pgPropClangFormatExePath->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
+    #endif // !defined(__WXOSX__) && !defined(_WIN64)
+    m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
+    
+    m_pgPropColumnLimit = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );
+    m_pgPropColumnLimit->SetHelpString(_("The column limit\nA column limit of 0 means that there is no column limit.\nIn this case, clang-format will respect the input's line breaking decisions within statements unless they contradict other rules"));
+    
+    m_pgMgrClangArr.Clear();
+    m_pgMgrClangIntArr.Clear();
+    m_pgMgrClangArr.Add(_("Linux"));
+    m_pgMgrClangArr.Add(_("Attach"));
+    m_pgMgrClangArr.Add(_("Stroustrup"));
+    m_pgMgrClangArr.Add(_("Allman"));
+    m_pgMgrClangArr.Add(_("GNU"));
+    m_pgMgrClangIntArr.Add(kLinux);
+    m_pgMgrClangIntArr.Add(kAttach);
+    m_pgMgrClangIntArr.Add(kStroustrup);
+    m_pgMgrClangIntArr.Add(kAllman);
+    m_pgMgrClangIntArr.Add(kGNU);
+    m_pgPropClangBraceBreakStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Brace breaking style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
+    m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
+    
+    m_pgMgrClangArr.Clear();
+    m_pgMgrClangIntArr.Clear();
+    m_pgMgrClangArr.Add(_("LLVM"));
+    m_pgMgrClangArr.Add(_("Google"));
+    m_pgMgrClangArr.Add(_("WebKit"));
+    m_pgMgrClangArr.Add(_("Chromium"));
+    m_pgMgrClangArr.Add(_("Mozilla"));
+    m_pgMgrClangIntArr.Add(kClangFormatLLVM);
+    m_pgMgrClangIntArr.Add(kClangFormatGoogle);
+    m_pgMgrClangIntArr.Add(kClangFormatWebKit);
+    m_pgMgrClangIntArr.Add(kClangFormatChromium);
+    m_pgMgrClangIntArr.Add(kClangFormatMozilla);
+    m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
+    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
+    
+    m_pgPropClangUseFile = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxBoolProperty( _("Use .clang-format file"), wxPG_LABEL, 1) );
+    m_pgPropClangUseFile->SetHelpString(_("Use .clang-format file if exists"));
+    
+    m_pgMgrClangArr.Clear();
+    m_pgMgrClangIntArr.Clear();
+    m_pgMgrClangArr.Add(_("Align Escaped Newlines Left"));
+    m_pgMgrClangArr.Add(_("Align Trailing Comments"));
+    m_pgMgrClangArr.Add(_("Allow All Parameters Of Declaration On Next Line"));
+    m_pgMgrClangArr.Add(_("Allow Short Functions On A Single Line"));
+    m_pgMgrClangArr.Add(_("Allow Short Blocks On A Single Line"));
+    m_pgMgrClangArr.Add(_("Allow Short Loops On A Single Line"));
+    m_pgMgrClangArr.Add(_("Allow Short If Statements On A SingleLine"));
+    m_pgMgrClangArr.Add(_("Always Break Before Multiline Strings"));
+    m_pgMgrClangArr.Add(_("Always Break Template Declarations"));
+    m_pgMgrClangArr.Add(_("Bin Pack Parameters"));
+    m_pgMgrClangArr.Add(_("Break Before Binary Operators"));
+    m_pgMgrClangArr.Add(_("Break Before Ternary Operators"));
+    m_pgMgrClangArr.Add(_("Break Constructor Initializers Before Comma"));
+    m_pgMgrClangArr.Add(_("Indent Case Labels"));
+    m_pgMgrClangArr.Add(_("Indent Function DeclarationAfterType"));
+    m_pgMgrClangArr.Add(_("Space Before Assignment Operators"));
+    m_pgMgrClangArr.Add(_("Space Before Parentheses"));
+    m_pgMgrClangArr.Add(_("Spaces In Parentheses"));
+    m_pgMgrClangArr.Add(_("Pointer And Reference Aligned to the Right"));
+    m_pgMgrClangIntArr.Add(kAlignEscapedNewlinesLeft);
+    m_pgMgrClangIntArr.Add(kAlignTrailingComments);
+    m_pgMgrClangIntArr.Add(kAllowAllParametersOfDeclarationOnNextLine);
+    m_pgMgrClangIntArr.Add(kAllowShortFunctionsOnASingleLine);
+    m_pgMgrClangIntArr.Add(kAllowShortBlocksOnASingleLine);
+    m_pgMgrClangIntArr.Add(kAllowShortLoopsOnASingleLine);
+    m_pgMgrClangIntArr.Add(kAllowShortIfStatementsOnASingleLine);
+    m_pgMgrClangIntArr.Add(kAlwaysBreakBeforeMultilineStrings);
+    m_pgMgrClangIntArr.Add(kAlwaysBreakTemplateDeclarations);
+    m_pgMgrClangIntArr.Add(kBinPackParameters);
+    m_pgMgrClangIntArr.Add(kBreakBeforeBinaryOperators);
+    m_pgMgrClangIntArr.Add(kBreakBeforeTernaryOperators);
+    m_pgMgrClangIntArr.Add(kBreakConstructorInitializersBeforeComma);
+    m_pgMgrClangIntArr.Add(kIndentCaseLabels);
+    m_pgMgrClangIntArr.Add(kIndentFunctionDeclarationAfterType);
+    m_pgMgrClangIntArr.Add(kSpaceBeforeAssignmentOperators);
+    m_pgMgrClangIntArr.Add(kSpaceBeforeParens);
+    m_pgMgrClangIntArr.Add(kSpacesInParentheses);
+    m_pgMgrClangIntArr.Add(kPointerAlignmentRight);
+    m_pgPropClangFormattingOptions = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
+    m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
+    
+    m_splitterPage173 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter165, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_splitter165->SplitVertically(m_splitterPage169, m_splitterPage173, 0);
+    
+    wxBoxSizer* boxSizer177 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage173->SetSizer(boxSizer177);
+    
+    m_textCtrlPreview_Clang = new wxStyledTextCtrl(m_splitterPage173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage173, wxSize(-1,-1)), 0);
+    // Configure the fold margin
+    m_textCtrlPreview_Clang->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_Clang->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_textCtrlPreview_Clang->SetMarginSensitive(4, true);
+    m_textCtrlPreview_Clang->SetMarginWidth    (4, 0);
+    
+    // Configure the tracker margin
+    m_textCtrlPreview_Clang->SetMarginWidth(1, 0);
+    
+    // Configure the symbol margin
+    m_textCtrlPreview_Clang->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_Clang->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlPreview_Clang->SetMarginWidth(2, 0);
+    m_textCtrlPreview_Clang->SetMarginSensitive(2, true);
+    
+    // Configure the line numbers margin
+    m_textCtrlPreview_Clang->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlPreview_Clang->SetMarginWidth(0,0);
+    
+    // Configure the line symbol margin
+    m_textCtrlPreview_Clang->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlPreview_Clang->SetMarginMask(3, 0);
+    m_textCtrlPreview_Clang->SetMarginWidth(3,0);
+    // Select the lexer
+    m_textCtrlPreview_Clang->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlPreview_Clang->StyleClearAll();
+    m_textCtrlPreview_Clang->SetWrapMode(0);
+    m_textCtrlPreview_Clang->SetIndentationGuides(0);
+    m_textCtrlPreview_Clang->SetKeyWords(0, wxT(""));
+    m_textCtrlPreview_Clang->SetKeyWords(1, wxT(""));
+    m_textCtrlPreview_Clang->SetKeyWords(2, wxT(""));
+    m_textCtrlPreview_Clang->SetKeyWords(3, wxT(""));
+    m_textCtrlPreview_Clang->SetKeyWords(4, wxT(""));
+    
+    boxSizer177->Add(m_textCtrlPreview_Clang, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_panelAstyle = new wxPanel(m_notebookCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCxx, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebookCxx->AddPage(m_panelAstyle, _("AStyle"), false);
     
     wxBoxSizer* boxSizer95 = new wxBoxSizer(wxVERTICAL);
     m_panelAstyle->SetSizer(boxSizer95);
     
-    m_splitter145 = new wxSplitterWindow(m_panelAstyle, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter145 = new wxSplitterWindow(m_panelAstyle, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelAstyle, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
     m_splitter145->SetSashGravity(0.5);
     m_splitter145->SetMinimumPaneSize(10);
     
-    boxSizer95->Add(m_splitter145, 1, wxEXPAND, 5);
+    boxSizer95->Add(m_splitter145, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage149 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage149 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter145, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer155 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage149->SetSizer(boxSizer155);
@@ -103,9 +276,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrAstyleArr);
     wxArrayInt m_pgMgrAstyleIntArr;
     wxUnusedVar(m_pgMgrAstyleIntArr);
-    m_pgMgrAstyle = new wxPropertyGridManager(m_splitterPage149, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrAstyle = new wxPropertyGridManager(m_splitterPage149, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage149, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer155->Add(m_pgMgrAstyle, 1, wxALL|wxEXPAND, 2);
+    boxSizer155->Add(m_pgMgrAstyle, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_pgPropAstyleOptions = m_pgMgrAstyle->Append(  new wxPropertyCategory( _("AStyle Options") ) );
     m_pgPropAstyleOptions->SetHelpString(wxT(""));
@@ -184,36 +357,36 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     
     wxBoxSizer* bCustomSettingsSizer = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer155->Add(bCustomSettingsSizer, 0, wxALL|wxEXPAND, 2);
+    boxSizer155->Add(bCustomSettingsSizer, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
     
-    bCustomSettingsSizer->Add(boxSizer57, 0, wxEXPAND, 5);
+    bCustomSettingsSizer->Add(boxSizer57, 0, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText59 = new wxStaticText(m_splitterPage149, wxID_ANY, _("AStyle Only:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText59 = new wxStaticText(m_splitterPage149, wxID_ANY, _("AStyle Only:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage149, wxSize(-1,-1)), 0);
     wxFont m_staticText59Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText59Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText59->SetFont(m_staticText59Font);
     
-    boxSizer57->Add(m_staticText59, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+    boxSizer57->Add(m_staticText59, 0, wxRIGHT|wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
     
-    m_staticText3 = new wxStaticText(m_splitterPage149, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_staticText3 = new wxStaticText(m_splitterPage149, wxID_ANY, _("Custom user settings"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage149, wxSize(-1, -1)), 0);
     
-    boxSizer57->Add(m_staticText3, 0, wxALL, 5);
+    boxSizer57->Add(m_staticText3, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage149, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,80), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
+    m_textCtrlUserFlags = new wxTextCtrl(m_splitterPage149, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPage149, wxSize(-1,80)), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
     wxFont m_textCtrlUserFlagsFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Sans"));
     m_textCtrlUserFlags->SetFont(m_textCtrlUserFlagsFont);
     
-    bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxEXPAND, 5);
+    bCustomSettingsSizer->Add(m_textCtrlUserFlags, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage153 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage153 = new wxPanel(m_splitter145, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter145, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter145->SplitVertically(m_splitterPage149, m_splitterPage153, 0);
     
     wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage153->SetSizer(boxSizer157);
     
-    m_textCtrlPreview = new wxStyledTextCtrl(m_splitterPage153, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlPreview = new wxStyledTextCtrl(m_splitterPage153, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage153, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_textCtrlPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_textCtrlPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -249,178 +422,34 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_textCtrlPreview->SetKeyWords(3, wxT(""));
     m_textCtrlPreview->SetKeyWords(4, wxT(""));
     
-    boxSizer157->Add(m_textCtrlPreview, 1, wxALL|wxEXPAND, 2);
+    boxSizer157->Add(m_textCtrlPreview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_panelClang = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->InsertSubPage(1, m_panelClang, _("clang-format"), false, wxNOT_FOUND);
+    m_panelPhp = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    int m_panelPhpImgIndex;
+    m_panelPhpImgIndex = m_notebook_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-mime-php")));
+    m_notebook->AddPage(m_panelPhp, _("PHP"), false, m_panelPhpImgIndex);
     
-    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxVERTICAL);
-    m_panelClang->SetSizer(boxSizer97);
+    wxBoxSizer* boxSizer237 = new wxBoxSizer(wxVERTICAL);
+    m_panelPhp->SetSizer(boxSizer237);
     
-    m_splitter165 = new wxSplitterWindow(m_panelClang, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
-    m_splitter165->SetSashGravity(0.5);
-    m_splitter165->SetMinimumPaneSize(10);
+    m_notebookPhp = new wxNotebook(m_panelPhp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPhp, wxSize(-1,-1)), wxBK_DEFAULT);
+    m_notebookPhp->SetName(wxT("m_notebookPhp"));
     
-    boxSizer97->Add(m_splitter165, 1, wxEXPAND, 5);
+    boxSizer237->Add(m_notebookPhp, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage169 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    
-    wxBoxSizer* boxSizer175 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage169->SetSizer(boxSizer175);
-    
-    wxArrayString m_pgMgrClangArr;
-    wxUnusedVar(m_pgMgrClangArr);
-    wxArrayInt m_pgMgrClangIntArr;
-    wxUnusedVar(m_pgMgrClangIntArr);
-    m_pgMgrClang = new wxPropertyGridManager(m_splitterPage169, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    boxSizer175->Add(m_pgMgrClang, 1, wxALL|wxEXPAND, 2);
-    
-    m_pgPropClangFormat = m_pgMgrClang->Append(  new wxPropertyCategory( _("ClangFormat Options") ) );
-    m_pgPropClangFormat->SetHelpString(wxT(""));
-    
-    m_pgPropClangFormatExePath = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFileProperty( _("clang-format path"), wxPG_LABEL, wxT("")) );
-    #if !defined(__WXOSX__) && !defined(_WIN64)
-    m_pgPropClangFormatExePath->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
-    #endif // !defined(__WXOSX__) && !defined(_WIN64)
-    m_pgPropClangFormatExePath->SetHelpString(_("Select the path to clang-format executable tool"));
-    
-    m_pgPropColumnLimit = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxIntProperty( _("Column Limit"), wxPG_LABEL, 0) );
-    m_pgPropColumnLimit->SetHelpString(_("The column limit\nA column limit of 0 means that there is no column limit.\nIn this case, clang-format will respect the input's line breaking decisions within statements unless they contradict other rules"));
-    
-    m_pgMgrClangArr.Clear();
-    m_pgMgrClangIntArr.Clear();
-    m_pgMgrClangArr.Add(_("Linux"));
-    m_pgMgrClangArr.Add(_("Attach"));
-    m_pgMgrClangArr.Add(_("Stroustrup"));
-    m_pgMgrClangArr.Add(_("Allman"));
-    m_pgMgrClangArr.Add(_("GNU"));
-    m_pgMgrClangIntArr.Add(kLinux);
-    m_pgMgrClangIntArr.Add(kAttach);
-    m_pgMgrClangIntArr.Add(kStroustrup);
-    m_pgMgrClangIntArr.Add(kAllman);
-    m_pgMgrClangIntArr.Add(kGNU);
-    m_pgPropClangBraceBreakStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Brace breaking style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
-    m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
-    
-    m_pgMgrClangArr.Clear();
-    m_pgMgrClangIntArr.Clear();
-    m_pgMgrClangArr.Add(_("LLVM"));
-    m_pgMgrClangArr.Add(_("Google"));
-    m_pgMgrClangArr.Add(_("WebKit"));
-    m_pgMgrClangArr.Add(_("Chromium"));
-    m_pgMgrClangArr.Add(_("Mozilla"));
-    m_pgMgrClangIntArr.Add(kClangFormatLLVM);
-    m_pgMgrClangIntArr.Add(kClangFormatGoogle);
-    m_pgMgrClangIntArr.Add(kClangFormatWebKit);
-    m_pgMgrClangIntArr.Add(kClangFormatChromium);
-    m_pgMgrClangIntArr.Add(kClangFormatMozilla);
-    m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxEnumProperty( _("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
-    m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
-    
-    m_pgMgrClangArr.Clear();
-    m_pgMgrClangIntArr.Clear();
-    m_pgMgrClangArr.Add(_("Align Escaped Newlines Left"));
-    m_pgMgrClangArr.Add(_("Align Trailing Comments"));
-    m_pgMgrClangArr.Add(_("Allow All Parameters Of Declaration On Next Line"));
-    m_pgMgrClangArr.Add(_("Allow Short Functions On A Single Line"));
-    m_pgMgrClangArr.Add(_("Allow Short Blocks On A Single Line"));
-    m_pgMgrClangArr.Add(_("Allow Short Loops On A Single Line"));
-    m_pgMgrClangArr.Add(_("Allow Short If Statements On A SingleLine"));
-    m_pgMgrClangArr.Add(_("Always Break Before Multiline Strings"));
-    m_pgMgrClangArr.Add(_("Always Break Template Declarations"));
-    m_pgMgrClangArr.Add(_("Bin Pack Parameters"));
-    m_pgMgrClangArr.Add(_("Break Before Binary Operators"));
-    m_pgMgrClangArr.Add(_("Break Before Ternary Operators"));
-    m_pgMgrClangArr.Add(_("Break Constructor Initializers Before Comma"));
-    m_pgMgrClangArr.Add(_("Indent Case Labels"));
-    m_pgMgrClangArr.Add(_("Indent Function DeclarationAfterType"));
-    m_pgMgrClangArr.Add(_("Space Before Assignment Operators"));
-    m_pgMgrClangArr.Add(_("Space Before Parentheses"));
-    m_pgMgrClangArr.Add(_("Spaces In Parentheses"));
-    m_pgMgrClangArr.Add(_("Pointer And Reference Aligned to the Right"));
-    m_pgMgrClangIntArr.Add(kAlignEscapedNewlinesLeft);
-    m_pgMgrClangIntArr.Add(kAlignTrailingComments);
-    m_pgMgrClangIntArr.Add(kAllowAllParametersOfDeclarationOnNextLine);
-    m_pgMgrClangIntArr.Add(kAllowShortFunctionsOnASingleLine);
-    m_pgMgrClangIntArr.Add(kAllowShortBlocksOnASingleLine);
-    m_pgMgrClangIntArr.Add(kAllowShortLoopsOnASingleLine);
-    m_pgMgrClangIntArr.Add(kAllowShortIfStatementsOnASingleLine);
-    m_pgMgrClangIntArr.Add(kAlwaysBreakBeforeMultilineStrings);
-    m_pgMgrClangIntArr.Add(kAlwaysBreakTemplateDeclarations);
-    m_pgMgrClangIntArr.Add(kBinPackParameters);
-    m_pgMgrClangIntArr.Add(kBreakBeforeBinaryOperators);
-    m_pgMgrClangIntArr.Add(kBreakBeforeTernaryOperators);
-    m_pgMgrClangIntArr.Add(kBreakConstructorInitializersBeforeComma);
-    m_pgMgrClangIntArr.Add(kIndentCaseLabels);
-    m_pgMgrClangIntArr.Add(kIndentFunctionDeclarationAfterType);
-    m_pgMgrClangIntArr.Add(kSpaceBeforeAssignmentOperators);
-    m_pgMgrClangIntArr.Add(kSpaceBeforeParens);
-    m_pgMgrClangIntArr.Add(kSpacesInParentheses);
-    m_pgMgrClangIntArr.Add(kPointerAlignmentRight);
-    m_pgPropClangFormattingOptions = m_pgMgrClang->AppendIn( m_pgPropClangFormat,  new wxFlagsProperty( _("Clang Formatting Options"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0) );
-    m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
-    
-    m_splitterPage173 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_splitter165->SplitVertically(m_splitterPage169, m_splitterPage173, 0);
-    
-    wxBoxSizer* boxSizer177 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage173->SetSizer(boxSizer177);
-    
-    m_textCtrlPreview_Clang = new wxStyledTextCtrl(m_splitterPage173, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    // Configure the fold margin
-    m_textCtrlPreview_Clang->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlPreview_Clang->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_textCtrlPreview_Clang->SetMarginSensitive(4, true);
-    m_textCtrlPreview_Clang->SetMarginWidth    (4, 0);
-    
-    // Configure the tracker margin
-    m_textCtrlPreview_Clang->SetMarginWidth(1, 0);
-    
-    // Configure the symbol margin
-    m_textCtrlPreview_Clang->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlPreview_Clang->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_textCtrlPreview_Clang->SetMarginWidth(2, 0);
-    m_textCtrlPreview_Clang->SetMarginSensitive(2, true);
-    
-    // Configure the line numbers margin
-    m_textCtrlPreview_Clang->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_textCtrlPreview_Clang->SetMarginWidth(0,0);
-    
-    // Configure the line symbol margin
-    m_textCtrlPreview_Clang->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_textCtrlPreview_Clang->SetMarginMask(3, 0);
-    m_textCtrlPreview_Clang->SetMarginWidth(3,0);
-    // Select the lexer
-    m_textCtrlPreview_Clang->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_textCtrlPreview_Clang->StyleClearAll();
-    m_textCtrlPreview_Clang->SetWrapMode(0);
-    m_textCtrlPreview_Clang->SetIndentationGuides(0);
-    m_textCtrlPreview_Clang->SetKeyWords(0, wxT(""));
-    m_textCtrlPreview_Clang->SetKeyWords(1, wxT(""));
-    m_textCtrlPreview_Clang->SetKeyWords(2, wxT(""));
-    m_textCtrlPreview_Clang->SetKeyWords(3, wxT(""));
-    m_textCtrlPreview_Clang->SetKeyWords(4, wxT(""));
-    
-    boxSizer177->Add(m_textCtrlPreview_Clang, 1, wxALL|wxEXPAND, 2);
-    
-    m_panelPHP = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->AddPage(m_panelPHP, _("PHP"), false, wxNOT_FOUND);
-    
-    m_panelBuiltIn = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->InsertSubPage(4, m_panelBuiltIn, _("Builtin"), false, wxNOT_FOUND);
+    m_panelBuiltIn = new wxPanel(m_notebookPhp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookPhp, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebookPhp->AddPage(m_panelBuiltIn, _("BuiltIn"), true);
     
     wxBoxSizer* boxSizer99 = new wxBoxSizer(wxVERTICAL);
     m_panelBuiltIn->SetSizer(boxSizer99);
     
-    m_splitter119 = new wxSplitterWindow(m_panelBuiltIn, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE);
+    m_splitter119 = new wxSplitterWindow(m_panelBuiltIn, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelBuiltIn, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
     m_splitter119->SetSashGravity(0.5);
     m_splitter119->SetMinimumPaneSize(10);
     
-    boxSizer99->Add(m_splitter119, 1, wxEXPAND, 5);
+    boxSizer99->Add(m_splitter119, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_splitterPage123 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage123 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter119, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer129 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage123->SetSizer(boxSizer129);
@@ -429,9 +458,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrPhpArr);
     wxArrayInt m_pgMgrPhpIntArr;
     wxUnusedVar(m_pgMgrPhpIntArr);
-    m_pgMgrPhp = new wxPropertyGridManager(m_splitterPage123, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    m_pgMgrPhp = new wxPropertyGridManager(m_splitterPage123, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage123, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    boxSizer129->Add(m_pgMgrPhp, 1, wxALL|wxEXPAND, 2);
+    boxSizer129->Add(m_pgMgrPhp, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     m_pgPropPhpFormatter = m_pgMgrPhp->Append(  new wxPropertyCategory( _("PHP") ) );
     m_pgPropPhpFormatter->SetHelpString(_("PHP related settings"));
@@ -457,13 +486,13 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgPropPhpFormatterOptions = m_pgMgrPhp->AppendIn( m_pgPropPhpFormatter,  new wxFlagsProperty( _("PHPFormatter Options"), wxPG_LABEL, m_pgMgrPhpArr, m_pgMgrPhpIntArr, 0) );
     m_pgPropPhpFormatterOptions->SetHelpString(wxT(""));
     
-    m_splitterPage127 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPage127 = new wxPanel(m_splitter119, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter119, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter119->SplitVertically(m_splitterPage123, m_splitterPage127, 0);
     
     wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage127->SetSizer(boxSizer131);
     
-    m_stcPhpPreview = new wxStyledTextCtrl(m_splitterPage127, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_stcPhpPreview = new wxStyledTextCtrl(m_splitterPage127, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage127, wxSize(-1,-1)), 0);
     // Configure the fold margin
     m_stcPhpPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
     m_stcPhpPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
@@ -499,159 +528,365 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_stcPhpPreview->SetKeyWords(3, wxT(""));
     m_stcPhpPreview->SetKeyWords(4, wxT(""));
     
-    boxSizer131->Add(m_stcPhpPreview, 1, wxALL|wxEXPAND, 2);
+    boxSizer131->Add(m_stcPhpPreview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_panel185 = new wxPanel(m_treebook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_treebook->InsertSubPage(4, m_panel185, _("PHP-CS-Fixer"), false, wxNOT_FOUND);
+    m_panelPhpCSFixer = new wxPanel(m_notebookPhp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookPhp, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebookPhp->AddPage(m_panelPhpCSFixer, _("PHP-CS-Fixer"), false);
     
-    wxBoxSizer* boxSizer209 = new wxBoxSizer(wxVERTICAL);
-    m_panel185->SetSizer(boxSizer209);
+    wxBoxSizer* boxSizer97217 = new wxBoxSizer(wxVERTICAL);
+    m_panelPhpCSFixer->SetSizer(boxSizer97217);
     
-    wxFlexGridSizer* flexGridSizer190 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer190->SetFlexibleDirection( wxBOTH );
-    flexGridSizer190->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    flexGridSizer190->AddGrowableCol(1);
+    m_splitter165318 = new wxSplitterWindow(m_panelPhpCSFixer, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPhpCSFixer, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
+    m_splitter165318->SetSashGravity(0.5);
+    m_splitter165318->SetMinimumPaneSize(10);
     
-    boxSizer209->Add(flexGridSizer190, 0, wxALL|wxEXPAND, 5);
+    boxSizer97217->Add(m_splitter165318, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText192 = new wxStaticText(m_panel185, wxID_ANY, _("PHP Executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_splitterPage169419 = new wxPanel(m_splitter165318, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter165318, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
-    flexGridSizer190->Add(m_staticText192, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    wxBoxSizer* boxSizer175520 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage169419->SetSizer(boxSizer175520);
     
-    m_filePickerPhpExec = new wxFilePickerCtrl(m_panel185, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpExec->SetToolTip(_("Select the PHP executable to use"));
-    m_filePickerPhpExec->SetFocus();
+    wxArrayString m_pgMgrPHPCsFixerArr;
+    wxUnusedVar(m_pgMgrPHPCsFixerArr);
+    wxArrayInt m_pgMgrPHPCsFixerIntArr;
+    wxUnusedVar(m_pgMgrPHPCsFixerIntArr);
+    m_pgMgrPHPCsFixer = new wxPropertyGridManager(m_splitterPage169419, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage169419, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
     
-    flexGridSizer190->Add(m_filePickerPhpExec, 0, wxALL|wxEXPAND, 5);
+    boxSizer175520->Add(m_pgMgrPHPCsFixer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_staticText202 = new wxStaticText(m_panel185, wxID_ANY, _("PHP-CS-Fixer phar file:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_pgPropPhpCSFixer = m_pgMgrPHPCsFixer->Append(  new wxPropertyCategory( _("PhpCSFixer Options") ) );
+    m_pgPropPhpCSFixer->SetHelpString(wxT(""));
     
-    flexGridSizer190->Add(m_staticText202, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    m_filePickerPHPCsFixerPhar = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxFileProperty( _("PHP-CS-Fixer parh path"), wxPG_LABEL, wxT("")) );
+    #if !defined(__WXOSX__) && !defined(_WIN64)
+    m_filePickerPHPCsFixerPhar->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
+    #endif // !defined(__WXOSX__) && !defined(_WIN64)
+    m_filePickerPHPCsFixerPhar->SetHelpString(_("Select the PHP-CS-Fixer phar file location"));
     
-    m_filePickerPHPCsFixerPhar = new wxFilePickerCtrl(m_panel185, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPHPCsFixerPhar->SetToolTip(_("Select the PHP-CS-Fixer phar file location"));
+    m_pgPropPHPCsFixerOptions = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxStringProperty( _("Parameters"), wxPG_LABEL, wxT("")) );
+    m_pgPropPHPCsFixerOptions->SetHelpString(_("Manually enter parameters.\nIf filled CodeLite will ignore all other options and use the"));
     
-    flexGridSizer190->Add(m_filePickerPHPCsFixerPhar, 0, wxALL|wxEXPAND, 5);
+    m_pgPropPHPCsFixerUseFile = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxBoolProperty( _("Use .php_cs file"), wxPG_LABEL, 1) );
+    m_pgPropPHPCsFixerUseFile->SetHelpString(_("Use .php_cs file if exists"));
     
-    m_staticText217 = new wxStaticText(m_panel185, wxID_ANY, _("Options:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("PSR1"));
+    m_pgMgrPHPCsFixerArr.Add(_("PSR2"));
+    m_pgMgrPHPCsFixerArr.Add(_("Symfony"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPSR1);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPSR2);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfSymfony);
+    m_pgPropPHPCsFixerStandard = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Standard"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerStandard->SetHelpString(_("Coding standard."));
     
-    boxSizer209->Add(m_staticText217, 0, wxALL, 5);
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 5.6"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 7.0"));
+    m_pgMgrPHPCsFixerArr.Add(_("PHP 7.1"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP56Migration);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP70Migration);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfPHP71Migration);
+    m_pgPropPHPCsFixerMigration = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Migration"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerMigration->SetHelpString(_("Migrate old code to use features by newer versions of php."));
     
-    m_stc = new wxStyledTextCtrl(m_panel185, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
-    m_stc->SetToolTip(_("Set here list of options to pass to PHP-CS-Fixer\nClick the Help button to view documentation page"));
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Align"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Ignore"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAlignDoubleArrow);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfStripDoubleArrow);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfIgnoreDoubleArrow);
+    m_pgPropPHPCsFixerDoubleArrows = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Double arrows"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerDoubleArrows->SetHelpString(_("Double arrows alignment"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Align"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Ignore"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAlignEquals);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfStripEquals);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfIgnoreEquals);
+    m_pgPropPHPCsFixerEquals = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Equals"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerEquals->SetHelpString(_("Equals alignment"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Short"));
+    m_pgMgrPHPCsFixerArr.Add(_("Long"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfShortArray);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfLongArray);
+    m_pgPropPHPCsFixerArrays = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Arrays"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerArrays->SetHelpString(_("Array style"));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("Strip"));
+    m_pgMgrPHPCsFixerArr.Add(_("Keep"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfEmptyReturnStrip);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfEmptyReturnKeep);
+    m_pgPropPHPCsFixerEmptyReturn = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Empty return"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerEmptyReturn->SetHelpString(_("Remove @return void|null from phpdoc."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Default"));
+    m_pgMgrPHPCsFixerArr.Add(_("None"));
+    m_pgMgrPHPCsFixerArr.Add(_("One"));
+    m_pgMgrPHPCsFixerIntArr.Add(0);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceNone);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceOne);
+    m_pgPropPHPCsFixerConcatSpace = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Concat space"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerConcatSpace->SetHelpString(_("Spacing around concatination dots."));
+    
+    m_pgMgrPHPCsFixerArr.Clear();
+    m_pgMgrPHPCsFixerIntArr.Clear();
+    m_pgMgrPHPCsFixerArr.Add(_("Allow risky"));
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line after namespace"));
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line after opening tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("Blank line before return"));
+    m_pgMgrPHPCsFixerArr.Add(_("Combine consecutive unsets"));
+    m_pgMgrPHPCsFixerArr.Add(_("Linebreak after opening tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("Use mb_str functions"));
+    m_pgMgrPHPCsFixerArr.Add(_("No blank lines before namespace"));
+    m_pgMgrPHPCsFixerArr.Add(_("No multiline whitespace before semicolons"));
+    m_pgMgrPHPCsFixerArr.Add(_("No null property initialization"));
+    m_pgMgrPHPCsFixerArr.Add(_("No PHP 4 constructor"));
+    m_pgMgrPHPCsFixerArr.Add(_("No short echo tag"));
+    m_pgMgrPHPCsFixerArr.Add(_("No unreachable default argument value"));
+    m_pgMgrPHPCsFixerArr.Add(_("No useless else"));
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfAllowRisky);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineAfterNamespace);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineAfterOpeningTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfBlankLineBeforeReturn);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfCombineConsecutiveUnsets);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfLinebreakAfterOpeningTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfMbStrFunctions);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoBlankLinesBeforeNamespace);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoMultilineWhitespaceBeforeSemicolons);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoNullPropertyInitialization);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoPhp4Constructor);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoShortEchoTag);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoUnreachableDefaultArgumentValue);
+    m_pgMgrPHPCsFixerIntArr.Add(kPcfNoUselessElse);
+    m_pgPropPHPCsFixerRules = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxFlagsProperty( _("Rules"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
+    m_pgPropPHPCsFixerRules->SetHelpString(wxT(""));
+    
+    m_splitterPage1731328 = new wxPanel(m_splitter165318, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter165318, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_splitter165318->SplitVertically(m_splitterPage169419, m_splitterPage1731328, 0);
+    
+    wxBoxSizer* boxSizer1771429 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage1731328->SetSizer(boxSizer1771429);
+    
+    m_textCtrlPreview_PhpCSFixer = new wxStyledTextCtrl(m_splitterPage1731328, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage1731328, wxSize(-1,-1)), 0);
     // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_PhpCSFixer->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_textCtrlPreview_PhpCSFixer->SetMarginSensitive(4, true);
+    m_textCtrlPreview_PhpCSFixer->SetMarginWidth    (4, 0);
     
     // Configure the tracker margin
-    m_stc->SetMarginWidth(1, 0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginWidth(1, 0);
     
     // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 0);
-    m_stc->SetMarginSensitive(2, true);
+    m_textCtrlPreview_PhpCSFixer->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_PhpCSFixer->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlPreview_PhpCSFixer->SetMarginWidth(2, 0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlPreview_PhpCSFixer->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
-    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlPreview_PhpCSFixer->SetMarginMask(3, 0);
+    m_textCtrlPreview_PhpCSFixer->SetMarginWidth(3,0);
     // Select the lexer
-    m_stc->SetLexer(wxSTC_LEX_NULL);
+    m_textCtrlPreview_PhpCSFixer->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
-    m_stc->StyleClearAll();
-    m_stc->SetWrapMode(1);
-    m_stc->SetIndentationGuides(0);
-    m_stc->SetEOLMode(2);
-    m_stc->SetKeyWords(0, wxT(""));
-    m_stc->SetKeyWords(1, wxT(""));
-    m_stc->SetKeyWords(2, wxT(""));
-    m_stc->SetKeyWords(3, wxT(""));
-    m_stc->SetKeyWords(4, wxT(""));
+    m_textCtrlPreview_PhpCSFixer->StyleClearAll();
+    m_textCtrlPreview_PhpCSFixer->SetWrapMode(0);
+    m_textCtrlPreview_PhpCSFixer->SetIndentationGuides(0);
+    m_textCtrlPreview_PhpCSFixer->SetKeyWords(0, wxT(""));
+    m_textCtrlPreview_PhpCSFixer->SetKeyWords(1, wxT(""));
+    m_textCtrlPreview_PhpCSFixer->SetKeyWords(2, wxT(""));
+    m_textCtrlPreview_PhpCSFixer->SetKeyWords(3, wxT(""));
+    m_textCtrlPreview_PhpCSFixer->SetKeyWords(4, wxT(""));
     
-    boxSizer209->Add(m_stc, 1, wxALL|wxEXPAND, 5);
+    boxSizer1771429->Add(m_textCtrlPreview_PhpCSFixer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_stcFixerPreview = new wxStyledTextCtrl(m_panel185, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_panelPhpcbf = new wxPanel(m_notebookPhp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookPhp, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_notebookPhp->AddPage(m_panelPhpcbf, _("PHPCBF"), false);
+    
+    wxBoxSizer* boxSizer972 = new wxBoxSizer(wxVERTICAL);
+    m_panelPhpcbf->SetSizer(boxSizer972);
+    
+    m_splitter1653 = new wxSplitterWindow(m_panelPhpcbf, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPhpcbf, wxSize(-1,-1)), wxSP_LIVE_UPDATE);
+    m_splitter1653->SetSashGravity(0.5);
+    m_splitter1653->SetMinimumPaneSize(10);
+    
+    boxSizer972->Add(m_splitter1653, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_splitterPage1694 = new wxPanel(m_splitter1653, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1653, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    
+    wxBoxSizer* boxSizer1755 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage1694->SetSizer(boxSizer1755);
+    
+    wxArrayString m_pgMgrPhpcbfArr;
+    wxUnusedVar(m_pgMgrPhpcbfArr);
+    wxArrayInt m_pgMgrPhpcbfIntArr;
+    wxUnusedVar(m_pgMgrPhpcbfIntArr);
+    m_pgMgrPhpcbf = new wxPropertyGridManager(m_splitterPage1694, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage1694, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
+    
+    boxSizer1755->Add(m_pgMgrPhpcbf, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
+    
+    m_pgPropPhpcbf = m_pgMgrPhpcbf->Append(  new wxPropertyCategory( _("PHPCBF Options") ) );
+    m_pgPropPhpcbf->SetHelpString(wxT(""));
+    
+    m_filePickerPhpcbfPhar = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxFileProperty( _("PHPCBF path"), wxPG_LABEL, wxT("")) );
+    #if !defined(__WXOSX__) && !defined(_WIN64)
+    m_filePickerPhpcbfPhar->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
+    #endif // !defined(__WXOSX__) && !defined(_WIN64)
+    m_filePickerPhpcbfPhar->SetHelpString(_("Select the PHPCBF phar file location"));
+    
+    m_pgPropPhpcbfSeverity = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxIntProperty( _("Severity"), wxPG_LABEL, 0) );
+    m_pgPropPhpcbfSeverity->SetHelpString(_("The minimum severity required to fix an error or warning"));
+    
+    m_pgMgrPhpcbfArr.Clear();
+    m_pgMgrPhpcbfIntArr.Clear();
+    m_pgMgrPhpcbfArr.Add(_("UTF-8"));
+    m_pgMgrPhpcbfArr.Add(_("iso-8859-1"));
+    m_pgPropPhpcbfEncoding = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxEnumProperty( _("Encoding"), wxPG_LABEL, m_pgMgrPhpcbfArr, m_pgMgrPhpcbfIntArr, 0) );
+    m_pgPropPhpcbfEncoding->SetHelpString(_("The encoding of the files being fixed"));
+    
+    m_pgPropPhpcbfUseFile = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxBoolProperty( _("Use phpcs.xml file"), wxPG_LABEL, 1) );
+    m_pgPropPhpcbfUseFile->SetHelpString(_("Use phpcs.xml file if exists"));
+    
+    m_pgMgrPhpcbfArr.Clear();
+    m_pgMgrPhpcbfIntArr.Clear();
+    m_pgMgrPhpcbfArr.Add(_("MySource"));
+    m_pgMgrPhpcbfArr.Add(_("PEAR"));
+    m_pgMgrPhpcbfArr.Add(_("PSR1"));
+    m_pgMgrPhpcbfArr.Add(_("PSR2"));
+    m_pgMgrPhpcbfArr.Add(_("Squiz"));
+    m_pgMgrPhpcbfArr.Add(_("Zend"));
+    m_pgPropPhpcbfStandard = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxEnumProperty( _("Standard"), wxPG_LABEL, m_pgMgrPhpcbfArr, m_pgMgrPhpcbfIntArr, 0) );
+    m_pgPropPhpcbfStandard->SetHelpString(_("Coding standard."));
+    
+    m_pgMgrPhpcbfArr.Clear();
+    m_pgMgrPhpcbfIntArr.Clear();
+    m_pgMgrPhpcbfArr.Add(_("Do not fix warnings"));
+    m_pgMgrPhpcbfIntArr.Add(kWarningSeverity0);
+    m_pgPropPhpcbfOptions = m_pgMgrPhpcbf->AppendIn( m_pgPropPhpcbf,  new wxFlagsProperty( _("Options"), wxPG_LABEL, m_pgMgrPhpcbfArr, m_pgMgrPhpcbfIntArr, 0) );
+    m_pgPropPhpcbfOptions->SetHelpString(wxT(""));
+    
+    m_splitterPage17313 = new wxPanel(m_splitter1653, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1653, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_splitter1653->SplitVertically(m_splitterPage1694, m_splitterPage17313, 0);
+    
+    wxBoxSizer* boxSizer17714 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage17313->SetSizer(boxSizer17714);
+    
+    m_textCtrlPreview_Phpcbf = new wxStyledTextCtrl(m_splitterPage17313, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage17313, wxSize(-1,-1)), 0);
     // Configure the fold margin
-    m_stcFixerPreview->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcFixerPreview->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
-    m_stcFixerPreview->SetMarginSensitive(4, true);
-    m_stcFixerPreview->SetMarginWidth    (4, 0);
+    m_textCtrlPreview_Phpcbf->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_Phpcbf->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_textCtrlPreview_Phpcbf->SetMarginSensitive(4, true);
+    m_textCtrlPreview_Phpcbf->SetMarginWidth    (4, 0);
     
     // Configure the tracker margin
-    m_stcFixerPreview->SetMarginWidth(1, 0);
+    m_textCtrlPreview_Phpcbf->SetMarginWidth(1, 0);
     
     // Configure the symbol margin
-    m_stcFixerPreview->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcFixerPreview->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
-    m_stcFixerPreview->SetMarginWidth(2, 0);
-    m_stcFixerPreview->SetMarginSensitive(2, true);
+    m_textCtrlPreview_Phpcbf->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlPreview_Phpcbf->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlPreview_Phpcbf->SetMarginWidth(2, 0);
+    m_textCtrlPreview_Phpcbf->SetMarginSensitive(2, true);
     
     // Configure the line numbers margin
-    m_stcFixerPreview->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcFixerPreview->SetMarginWidth(0,0);
+    m_textCtrlPreview_Phpcbf->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlPreview_Phpcbf->SetMarginWidth(0,0);
     
     // Configure the line symbol margin
-    m_stcFixerPreview->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stcFixerPreview->SetMarginMask(3, 0);
-    m_stcFixerPreview->SetMarginWidth(3,0);
+    m_textCtrlPreview_Phpcbf->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlPreview_Phpcbf->SetMarginMask(3, 0);
+    m_textCtrlPreview_Phpcbf->SetMarginWidth(3,0);
     // Select the lexer
-    m_stcFixerPreview->SetLexer(wxSTC_LEX_NULL);
+    m_textCtrlPreview_Phpcbf->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
-    m_stcFixerPreview->StyleClearAll();
-    m_stcFixerPreview->SetWrapMode(1);
-    m_stcFixerPreview->SetIndentationGuides(0);
-    m_stcFixerPreview->SetKeyWords(0, wxT(""));
-    m_stcFixerPreview->SetKeyWords(1, wxT(""));
-    m_stcFixerPreview->SetKeyWords(2, wxT(""));
-    m_stcFixerPreview->SetKeyWords(3, wxT(""));
-    m_stcFixerPreview->SetKeyWords(4, wxT(""));
+    m_textCtrlPreview_Phpcbf->StyleClearAll();
+    m_textCtrlPreview_Phpcbf->SetWrapMode(0);
+    m_textCtrlPreview_Phpcbf->SetIndentationGuides(0);
+    m_textCtrlPreview_Phpcbf->SetKeyWords(0, wxT(""));
+    m_textCtrlPreview_Phpcbf->SetKeyWords(1, wxT(""));
+    m_textCtrlPreview_Phpcbf->SetKeyWords(2, wxT(""));
+    m_textCtrlPreview_Phpcbf->SetKeyWords(3, wxT(""));
+    m_textCtrlPreview_Phpcbf->SetKeyWords(4, wxT(""));
     
-    boxSizer209->Add(m_stcFixerPreview, 1, wxALL|wxEXPAND, 5);
+    boxSizer17714->Add(m_textCtrlPreview_Phpcbf, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     
-    bSizerMain->Add(bSizerButtons, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    bSizerMain->Add(bSizerButtons, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer30 = new wxStdDialogButtonSizer();
     
-    bSizerButtons->Add(m_stdBtnSizer30, 0, wxALL, 5);
+    bSizerButtons->Add(m_stdBtnSizer30, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer30->AddButton(m_buttonOK);
     
-    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer30->AddButton(m_buttonApply);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer30->AddButton(m_buttonCancel);
     
-    m_buttonHelp = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonHelp = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer30->AddButton(m_buttonHelp);
     m_stdBtnSizer30->Realize();
     
     
     #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook)){
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook);
+    if(!wxPersistenceManager::Get().Find(m_notebook)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
-        wxPersistenceManager::Get().Restore(m_treebook);
+        wxPersistenceManager::Get().Restore(m_notebook);
     }
     #endif
-    m_treebook->ExpandNode( 0, true );
-    m_treebook->ExpandNode( 1, true );
-    m_treebook->ExpandNode( 2, true );
-    m_treebook->ExpandNode( 3, true );
-    m_treebook->ExpandNode( 4, true );
-    m_treebook->ExpandNode( 5, true );
-    m_treebook->ExpandNode( 6, true );
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebookCxx)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebookCxx);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebookCxx);
+    }
+    #endif
+    
+    #if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebookPhp)){
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebookPhp);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebookPhp);
+    }
+    #endif
     
     SetName(wxT("CodeFormatterBaseDlg"));
     SetSize(-1,-1);
@@ -671,16 +906,16 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     }
 #endif
     // Connect events
+    m_notebook->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(CodeFormatterBaseDlg::UpdatePreviewUI), NULL, this);
     m_checkBoxFormatOnSave->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnFormatOnSave), NULL, this);
     m_choiceCxxEngine->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicecxxengineChoiceSelected), NULL, this);
     m_choicePhpFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected), NULL, this);
+    m_pgMgrClang->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged), NULL, this);
     m_pgMgrAstyle->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged), NULL, this);
     m_textCtrlUserFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
-    m_pgMgrClang->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged), NULL, this);
     m_pgMgrPhp->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrphpPgChanged), NULL, this);
-    m_filePickerPhpExec->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPhpFileSelected), NULL, this);
-    m_filePickerPHPCsFixerPhar->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPharFileSelected), NULL, this);
-    m_stc->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeFormatterBaseDlg::OnPHPCSFixerOptionsUpdated), NULL, this);
+    m_pgMgrPHPCsFixer->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrPHPCsFixerPgChanged), NULL, this);
+    m_pgMgrPhpcbf->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrPhpcbfPgChanged), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
     m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);
@@ -690,16 +925,16 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
 CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
 {
+    m_notebook->Disconnect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(CodeFormatterBaseDlg::UpdatePreviewUI), NULL, this);
     m_checkBoxFormatOnSave->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnFormatOnSave), NULL, this);
     m_choiceCxxEngine->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicecxxengineChoiceSelected), NULL, this);
     m_choicePhpFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected), NULL, this);
+    m_pgMgrClang->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged), NULL, this);
     m_pgMgrAstyle->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged), NULL, this);
     m_textCtrlUserFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeFormatterBaseDlg::OnCustomAstyleFlags), NULL, this);
-    m_pgMgrClang->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged), NULL, this);
     m_pgMgrPhp->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrphpPgChanged), NULL, this);
-    m_filePickerPhpExec->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPhpFileSelected), NULL, this);
-    m_filePickerPHPCsFixerPhar->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(CodeFormatterBaseDlg::OnPharFileSelected), NULL, this);
-    m_stc->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeFormatterBaseDlg::OnPHPCSFixerOptionsUpdated), NULL, this);
+    m_pgMgrPHPCsFixer->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrPHPCsFixerPgChanged), NULL, this);
+    m_pgMgrPhpcbf->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrPhpcbfPgChanged), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnOK), NULL, this);
     m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CodeFormatterBaseDlg::OnApplyUI), NULL, this);
     m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnApply), NULL, this);

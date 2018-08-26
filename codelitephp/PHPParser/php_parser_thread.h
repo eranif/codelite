@@ -55,7 +55,8 @@ public:
 class PHPParserThread : public WorkerThread
 {
     static PHPParserThread* ms_instance;
-
+    static bool ms_goingDown;
+    
 public:
     static PHPParserThread* Instance();
     static void Release();
@@ -68,6 +69,7 @@ private:
 
 public:
     virtual void ProcessRequest(ThreadRequest* request);
+    static void Clear();
 };
 
 #endif // PHPPARSERTHREAD_H

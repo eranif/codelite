@@ -28,21 +28,6 @@
 #include <wx/string.h>
 #include "codelite_exports.h"
 
-// Possible search data options:
-enum {
-    wxSD_MATCHCASE = 0x00000001,
-    wxSD_MATCHWHOLEWORD = 0x00000002,
-    wxSD_REGULAREXPRESSION = 0x00000004,
-    wxSD_SEARCH_BACKWARD = 0x00000008,
-    wxSD_USE_EDITOR_ENCODING = 0x00000010,
-    wxSD_PRINT_SCOPE = 0x00000020,
-    wxSD_SKIP_COMMENTS = 0x00000040,
-    wxSD_SKIP_STRINGS = 0x00000080,
-    wxSD_COLOUR_COMMENTS = 0x00000100,
-    wxSD_WILDCARD = 0x00000200,
-    wxSD_ENABLE_PIPE_SUPPORT = 0x00000400,
-};
-
 class WXDLLIMPEXP_SDK StringFindReplacer
 {
 

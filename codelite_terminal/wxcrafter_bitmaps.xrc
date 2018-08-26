@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resource xmlns="http://www.wxwidgets.org/wxxrc">
-  <object class="wxBitmap" name="terminal-16">terminal-16.png</object>
-  <object class="wxBitmap" name="terminal-32">terminal-32.png</object>
-</resource>

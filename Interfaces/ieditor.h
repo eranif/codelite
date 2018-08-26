@@ -35,6 +35,7 @@
 #include "cl_calltip.h"
 #include <list>
 #include <map>
+#include "optionsconfig.h"
 
 class wxStyledTextCtrl;
 
@@ -95,6 +96,11 @@ public:
     virtual bool IsModified() = 0;
 
     /**
+	 * @brief Get the editor's modification count
+	 */
+    virtual wxUint64 GetModificationCount() const = 0;
+
+    /**
      * \brief return the current editor content
      */
     virtual wxString GetEditorText() = 0;
@@ -133,18 +139,23 @@ public:
      * \brief reload the current file from disk - this function discards all changes made
      * to the  current file
      */
-    virtual void ReloadFile() = 0;
+    virtual void OpenFile() = 0;
 
+    /**
+     * @brief reload file content from the disk
+     * @param keepUndoHistory
+     */
+    virtual void ReloadFromDisk(bool keepUndoHistory = false) = 0;
     /**
      * @brief save the editor
      */
     virtual bool Save() = 0;
-    
+
     /**
      * @brief save the current editor with a different name
      */
     virtual bool SaveAs(const wxString& defaultName = wxEmptyString, const wxString& savePath = wxEmptyString) = 0;
-    
+
     /**
      * \brief return the current position of the caret
      */
@@ -493,6 +504,24 @@ public:
      * @brief return a string representing all the local variables coloured by this editor
      */
     virtual const wxString& GetKeywordLocals() const = 0;
+
+    /**
+     * @brief get the options associated with this editor
+     */
+    virtual OptionsConfigPtr GetOptions() = 0;
+
+    /**
+     * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
+     */
+    virtual void ApplyEditorConfig() = 0;
+
+    /**
+     * @brief return list of bookmarks for a given editor
+     * @param editor the editor
+     * @param bookmarksVector output, contains pairs of: LINE:SNIPPET
+     * @return number of bookmarks found
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector) = 0;
 };
 
 #endif // IEDITOR_H

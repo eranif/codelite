@@ -51,7 +51,7 @@ DBG_BREAK_PROC_FUNC_PTR DebugBreakProcessFunc = NULL;
 HINSTANCE Kernel32Dll = NULL;
 
 // define a dummy control handler
-BOOL CtrlHandler(DWORD fdwCtrlType)
+static BOOL CtrlHandler(DWORD fdwCtrlType)
 {
     wxUnusedVar(fdwCtrlType);
 
@@ -59,12 +59,12 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
     return FALSE;
 }
 
-static WINBOOL SigHandler(DWORD CtrlType)
+static BOOL SigHandler(DWORD CtrlType)
 {
-	if (CtrlType == CTRL_C_EVENT) {
-		return true;
-	}
-	return false;
+    if(CtrlType == CTRL_C_EVENT) {
+        return TRUE;
+    }
+    return FALSE;
 }
 
 #endif
@@ -153,11 +153,11 @@ DbgGdb::DbgGdb()
     } else {
         // we dont have DebugBreakProcess, try to work with Control handlers
         if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
-            wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+            clLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
         }
     }
     if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
-        wxLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
+        clLogMessage(wxString::Format(wxT("failed to install ConsoleCtrlHandler: %d"), GetLastError()));
     }
 #endif
 
@@ -248,26 +248,30 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
     m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), si.cwd.c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
+
 #ifdef __WXMSW__
     // When using remote debugging on Windows we need a console window, as this is the only
     // mechanism to send a Ctrl-C event and signal a SIGINT to interrupt the target.
-    bool needs_console = GetIsRemoteDebugging() | m_info.showTerminal;
+    bool needs_console = GetIsRemoteDebugging() || m_info.showTerminal;
 #else
     bool needs_console = m_info.showTerminal;
 #endif
-    m_gdbProcess = CreateAsyncProcess(this,
-                                      cmd,
-                                      // show console?
-                                      needs_console ? IProcessCreateConsole : IProcessCreateDefault,
-                                      si.cwd);
+
+    size_t flags = needs_console ? IProcessCreateConsole : IProcessCreateDefault;
+    if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+        flags |= IProcessCreateAsSuperuser;
+    }
+
+    m_gdbProcess = CreateAsyncProcess(this, cmd, flags, si.cwd);
     if(!m_gdbProcess) {
         return false;
     }
+
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
         // This doesn't really make sense, but AttachConsole fails without it...
-		wxMilliSleep(1000);
-		
+        wxMilliSleep(1000);
+
         if(!AttachConsole(m_gdbProcess->GetPid()))
             m_observer->UpdateAddLine(wxString::Format(wxT("AttachConsole returned error %d"), GetLastError()));
 
@@ -275,7 +279,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
         if(!m_info.showTerminal) SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
 
         // Finally we ignore SIGINT so we don't get killed by our own signal
-		SetConsoleCtrlHandler(SigHandler, true);
+        SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, TRUE);
     }
 #endif
     m_gdbProcess->SetHardKill(true);
@@ -329,8 +333,8 @@ void DbgGdb::DoCleanup()
 {
 #ifdef __WXMSW__
     if(GetIsRemoteDebugging()) {
-		SetConsoleCtrlHandler(SigHandler, false);
-		FreeConsole(); // Disconnect any existing console window.
+        SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, FALSE);
+        FreeConsole(); // Disconnect any existing console window.
     }
 #endif
 
@@ -359,8 +363,7 @@ bool DbgGdb::Stop()
     m_goingDown = true;
 
     if(!m_attachedMode) {
-
-        wxKill(m_debuggeePid, wxSIGKILL, NULL, wxKILL_CHILDREN);
+        clKill((int)m_debuggeePid, wxSIGKILL, true, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
     }
 
     wxCommandEvent event(wxEVT_GDB_STOP_DEBUGGER);
@@ -552,6 +555,8 @@ bool DbgGdb::Continue() { return WriteCommand("-exec-continue", new DbgCmdHandle
 
 bool DbgGdb::StepIn() { return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
+bool DbgGdb::StepInInstruction() { return WriteCommand(wxT("-exec-step-instruction"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+
 bool DbgGdb::StepOut() { return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
 bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
@@ -580,7 +585,9 @@ bool DbgGdb::Interrupt()
         // debuggee process
         return false;
 #else
-        kill(m_debuggeePid, SIGINT);
+        // Send SIGINT to the process to interrupt it
+        clKill((int)m_debuggeePid, wxSIGINT, false, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
+        // kill(m_debuggeePid, SIGINT);
         return true;
 #endif
     } else {
@@ -642,7 +649,7 @@ bool DbgGdb::FilterMessage(const wxString& msg)
     }
 
     if(tmpmsg.Contains(wxT("mi_cmd_var_create: unable to create variable object")) ||
-       msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
+        msg.Contains(wxT("mi_cmd_var_create: unable to create variable object"))) {
         return true;
     }
 
@@ -651,7 +658,7 @@ bool DbgGdb::FilterMessage(const wxString& msg)
     }
 
     if(tmpmsg.Contains(wxT("No symbol \"this\" in current context")) ||
-       msg.Contains(wxT("No symbol \"this\" in current context"))) {
+        msg.Contains(wxT("No symbol \"this\" in current context"))) {
         return true;
     }
 
@@ -690,7 +697,7 @@ void DbgGdb::Poke()
             if(curline.IsEmpty() == false && !tmpline.StartsWith(wxT(">"))) {
                 wxString strdebug(wxT("DEBUG>>"));
                 strdebug << curline;
-                CL_DEBUG(strdebug);
+                clDEBUG() << strdebug << clEndl;
                 m_observer->UpdateAddLine(strdebug);
             }
         }
@@ -1062,11 +1069,11 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
         ExecuteCmd(wxT("break assert"));
     }
 #endif
-    
+
     if(!(m_info.flags & DebuggerInformation::kPrintObjectOff)) {
         ExecuteCmd("set print object on");
     }
-    
+
     ExecuteCmd(wxT("set width 0"));
     ExecuteCmd(wxT("set height 0"));
 
@@ -1290,7 +1297,6 @@ bool DbgGdb::UpdateWatch(const wxString& name)
     wxString cmd;
     cmd << wxT("-var-update \"") << name << wxT("\" ");
     return WriteCommand(cmd, new DbgVarObjUpdate(m_observer, this, name, DBG_USERR_WATCHTABLE));
-    return true;
 }
 
 void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
@@ -1385,7 +1391,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     if(/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
         // Use the $pc
         if(!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",
-                         new DbgCmdHandlerDisasseble(m_observer, this)))
+               new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
 
     } else {
@@ -1394,13 +1400,13 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
         tmpfile.Replace("\\", "/"); // gdb does not like backslashes...
 
         if(!WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0",
-                         new DbgCmdHandlerDisasseble(m_observer, this)))
+               new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
     }
 
     // get the current instruction
-    if(!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
-                     new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
+    if(!WriteCommand(
+           "-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
         return false;
 
     return true;
@@ -1435,13 +1441,18 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     m_attachedMode = true;
     m_debuggeePid = si.PID;
     cmd << wxT(" --pid=") << m_debuggeePid;
-    wxLogMessage(cmd);
+    clLogMessage(cmd);
 
     m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), wxGetCwd().c_str()));
     m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
-
-    m_gdbProcess = CreateAsyncProcess(this, cmd);
+    
+    // Build the process creation flags
+    size_t createFlags = IProcessCreateDefault;
+    if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+        createFlags |= IProcessCreateAsSuperuser;
+    }
+    m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags);
     if(!m_gdbProcess) {
         return false;
     }
@@ -1465,7 +1476,7 @@ void DbgGdb::EnableRecording(bool b)
         WriteCommand("target record-full", new DbgCmdRecordHandler(m_observer, this));
     } else {
         WriteCommand("record stop", NULL);
-        
+
         // If recording is OFF, disable the reverse-debugging switch
         SetIsRecording(false);
         m_reverseDebugging = false;

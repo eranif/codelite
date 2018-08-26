@@ -1,26 +1,25 @@
 #include "ClangOutputTab.h"
-#include "event_notifier.h"
 #include "ColoursAndFontsManager.h"
-#include "lexer_configuration.h"
-#include <codelite_events.h>
-#include "tags_options_data.h"
-#include "frame.h"
+#include "clToolBarButtonBase.h"
+#include "cl_config.h"
 #include "clang_code_completion.h"
 #include "ctags_manager.h"
-#include "cl_config.h"
+#include "event_notifier.h"
+#include "frame.h"
 #include "globals.h"
+#include "lexer_configuration.h"
+#include "tags_options_data.h"
+#include <codelite_events.h>
 
 ClangOutputTab::ClangOutputTab(wxWindow* parent)
     : ClangOutputTabBase(parent)
 {
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ClangOutputTab::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(ClangOutputTab::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CLANG_CODE_COMPLETE_MESSAGE, clCommandEventHandler(ClangOutputTab::OnClangOutput), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CLANG_CODE_COMPLETE_MESSAGE,
+                                  clCommandEventHandler(ClangOutputTab::OnClangOutput), NULL, this);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_stc);
-    }
+    if(lexer) { lexer->Apply(m_stc); }
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ClangOutputTab::OnFileSaved, this);
     ::clRecalculateSTCHScrollBar(m_stc);
 
@@ -29,15 +28,21 @@ ClangOutputTab::ClangOutputTab(wxWindow* parent)
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem(&tod);
     m_checkBoxEnableClang->SetValue(tod.GetClangOptions() & CC_CLANG_ENABLED);
+    m_toolbar578->FindById(ID_TOOL_CLEAR_ALL)->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+    m_toolbar578->FindById(ID_TOOL_CLEAR_LOG)->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    m_toolbar578->Realize();
+
+    SetSize(-1, -1);
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
 ClangOutputTab::~ClangOutputTab()
 {
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(ClangOutputTab::OnInitDone), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_STARTED, clBuildEventHandler(ClangOutputTab::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CLANG_CODE_COMPLETE_MESSAGE, clCommandEventHandler(ClangOutputTab::OnClangOutput), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(ClangOutputTab::OnBuildStarted), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_CLANG_CODE_COMPLETE_MESSAGE,
+                                     clCommandEventHandler(ClangOutputTab::OnClangOutput), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ClangOutputTab::OnFileSaved, this);
 }
 
@@ -67,9 +72,7 @@ void ClangOutputTab::OnClangOutput(clCommandEvent& event)
 void ClangOutputTab::DoAppendText(const wxString& text)
 {
     m_stc->SetReadOnly(false);
-    if(!m_stc->IsEmpty() && m_stc->GetCharAt(m_stc->GetLastPosition() - 1) != '\n') {
-        m_stc->AppendText("\n");
-    }
+    if(!m_stc->IsEmpty() && m_stc->GetCharAt(m_stc->GetLastPosition() - 1) != '\n') { m_stc->AppendText("\n"); }
     m_stc->AppendText(text);
     int pos = m_stc->GetLastPosition();
     m_stc->SetCurrentPos(pos);
@@ -89,9 +92,7 @@ void ClangOutputTab::DoClear()
 
     // Clear editor annotations
     IEditor* editor = ::clGetManager()->GetActiveEditor();
-    if(editor) {
-        editor->GetCtrl()->AnnotationClearAll();
-    }
+    if(editor) { editor->GetCtrl()->AnnotationClearAll(); }
 }
 
 void ClangOutputTab::OnInitDone(wxCommandEvent& event)
@@ -162,9 +163,7 @@ void ClangOutputTab::OnShowAnnotations(wxCommandEvent& event)
 
     // Clear any annotations we have
     IEditor* editor = ::clGetManager()->GetActiveEditor();
-    if(editor) {
-        editor->GetCtrl()->AnnotationClearAll();
-    }
+    if(editor) { editor->GetCtrl()->AnnotationClearAll(); }
 }
 
 void ClangOutputTab::OnShowAnnotationsUI(wxUpdateUIEvent& event)
@@ -178,7 +177,5 @@ void ClangOutputTab::OnFileSaved(clCommandEvent& event)
     event.Skip();
     // Clear editor annotations
     IEditor* editor = ::clGetManager()->GetActiveEditor();
-    if(editor) {
-        editor->GetCtrl()->AnnotationClearAll();
-    }
+    if(editor) { editor->GetCtrl()->AnnotationClearAll(); }
 }

@@ -37,9 +37,9 @@ LLDBBreakpoint::~LLDBBreakpoint()
 LLDBBreakpoint::LLDBBreakpoint(const wxFileName& filename, int line)
     : m_id(wxNOT_FOUND)
     , m_type(kFileLine)
-    , m_filename(filename.GetFullPath())
     , m_lineNumber(line)
 {
+    SetFilename(filename.GetFullPath());
 }
 
 LLDBBreakpoint::LLDBBreakpoint(const wxString& name)
@@ -53,13 +53,13 @@ LLDBBreakpoint::LLDBBreakpoint(const wxString& name)
 bool LLDBBreakpoint::SameAs(LLDBBreakpoint::Ptr_t other) const
 {
     if ( m_type == kFunction ) {
-        return  m_type == other->m_type && 
-                m_filename == other->m_filename && 
-                m_lineNumber == other->m_lineNumber 
+        return  m_type == other->m_type &&
+                m_filename == other->m_filename &&
+                m_lineNumber == other->m_lineNumber
                 && m_name == other->m_name;
     } else {
-        return  m_type == other->m_type && 
-                m_filename == other->m_filename && 
+        return  m_type == other->m_type &&
+                m_filename == other->m_filename &&
                 m_lineNumber == other->m_lineNumber;
     }
 }
@@ -146,7 +146,7 @@ void LLDBBreakpoint::FromJSON(const JSONElement& json)
     m_id = json.namedObject("m_id").toInt(wxNOT_FOUND);
     m_type = json.namedObject("m_type").toInt(kInvalid);
     m_name = json.namedObject("m_name").toString();
-    m_filename = json.namedObject("m_filename").toString();
+    SetFilename(json.namedObject("m_filename").toString());
     m_lineNumber = json.namedObject("m_lineNumber").toInt();
     JSONElement arr = json.namedObject("m_children");
     for(int i=0; i<arr.arraySize(); ++i) {
@@ -164,7 +164,7 @@ JSONElement LLDBBreakpoint::ToJSON() const
     json.addProperty("m_name", m_name);
     json.addProperty("m_filename", m_filename);
     json.addProperty("m_lineNumber", m_lineNumber);
-    
+
     JSONElement arr = JSONElement::createArray("m_children");
     json.append( arr );
     for(size_t i=0; i<m_children.size(); ++i) {

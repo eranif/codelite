@@ -51,7 +51,7 @@ public:
 protected:
     virtual void OnItemActivated(wxTreeEvent& event);
     bool DoItemActivated(wxTreeItemId item, wxEvent& event, bool notify);
-    void FindAndSelect(LEditor* editor, wxString& pattern, const wxString& name);
+    void FindAndSelect(clEditor* editor, wxString& pattern, const wxString& name);
 
     DECLARE_DYNAMIC_CLASS(CppSymbolTree)
 };

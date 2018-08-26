@@ -66,6 +66,11 @@ public:
 #define kConfigMaxOpenedTabs "MaxOpenedTabs"
 #define kConfigRestoreLastSession "RestoreLastSession"
 #define kConfigFrameTitlePattern "FrameTitlePattern"
+#define kConfigStatusbarShowLine "StatusbarShowLine"
+#define kConfigStatusbarShowColumn "StatusbarShowColumn"
+#define kConfigStatusbarShowPosition "StatusbarShowPosition"
+#define kConfigStatusbarShowLength "StatusbarShowLength"
+#define kConfigStatusbarShowSelectedChars "StatusbarShowSelChars"
 #define kConfigAutoDetectCompilerOnStartup "AutoDetectCompilerOnStartup"
 #define kConfigBootstrapCompleted "BootstrapCompleted"
 #define kConfigUpdateParserPaths "updateParserPaths"
@@ -110,8 +115,8 @@ public:
 
     // Merge 2 arrays of strings into a single array with all duplicate entries removed
     wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const;
-    JSONElement::wxStringMap_t MergeStringMaps(const JSONElement::wxStringMap_t& map1,
-                                               const JSONElement::wxStringMap_t& map2) const;
+    wxStringMap_t MergeStringMaps(const wxStringMap_t& map1,
+                                               const wxStringMap_t& map2) const;
     // Workspace history
     void AddRecentWorkspace(const wxString& filename) { DoAddRecentItem("RecentWorkspaces", filename); }
     wxArrayString GetRecentWorkspaces() const { return DoGetRecentItems("RecentWorkspaces"); }
@@ -163,6 +168,8 @@ public:
     void AddQuickFindReplaceItem(const wxString& str);
     wxArrayString GetQuickFindSearchItems() const;
     wxArrayString GetQuickFindReplaceItems() const;
+    void SetQuickFindSearchItems(const wxArrayString& items);
+    void SetQuickFindReplaceItems(const wxArrayString& items);
 
     // standard IDs for annoying dialogs
     int GetAnnoyingDlgAnswer(const wxString& name, int defaultValue = wxNOT_FOUND);

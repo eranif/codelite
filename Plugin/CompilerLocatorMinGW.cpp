@@ -30,6 +30,8 @@
 #include <globals.h>
 #include "file_logger.h"
 #include "procutils.h"
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 
 #ifdef __WXMSW__
 #   include <wx/msw/registry.h>
@@ -58,7 +60,7 @@ CompilerPtr CompilerLocatorMinGW::Locate(const wxString& folder)
         gcc.AppendDir("bin");
         found = gcc.FileExists();
     }
-    
+
     if ( found ) {
         AddTools(gcc.GetPath(), GetGCCVersion(gcc.GetFullPath() ));
         return *m_compilers.begin();
@@ -80,13 +82,13 @@ wxString CompilerLocatorMinGW::GetGCCVersion(const wxString& gccBinary)
 }
 
 bool CompilerLocatorMinGW::Locate()
-{   
+{
     m_compilers.clear();
     m_locatedFolders.clear();
-    
+
     // for wxRegKey
-#ifdef __WXMSW__ 
-    
+#ifdef __WXMSW__
+
     {
         // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
         wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\codelite\\settings");
@@ -101,7 +103,7 @@ bool CompilerLocatorMinGW::Locate()
             }
         }
     }
-    
+
     {
         // HKEY_LOCAL_MACHINE\SOFTWARE\codelite\settings
         wxRegKey regClMinGW(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\codelite\\settings");
@@ -116,25 +118,7 @@ bool CompilerLocatorMinGW::Locate()
             }
         }
     }
-    // Check registry for TDM-GCC-64 
-    wxRegKey regTDM(wxRegKey::HKCU, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TDM-GCC");
-    wxString tdmInstallFolder;
-    tdmInstallFolder.Clear();
-    if ( regTDM.QueryValue("InstallLocation", tdmInstallFolder) && wxFileName::DirExists(tdmInstallFolder)) {
-        wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
-        fnTDMBinFolder.AppendDir("bin");
-        AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC-64");
-    }
-    
-    // Check for 32 bit
-    wxRegKey regTDM_32(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\TDM-GCC");
-    tdmInstallFolder.Clear();
-    if ( regTDM_32.QueryValue("InstallLocation", tdmInstallFolder) && wxFileName::DirExists(tdmInstallFolder)) {
-        wxFileName fnTDMBinFolder( tdmInstallFolder, "" );
-        fnTDMBinFolder.AppendDir("bin");
-        AddTools(fnTDMBinFolder.GetPath(), "TDM-GCC-32");
-    }
-    
+
     // locate codeblock's MinGW
     wxRegKey regCB(wxRegKey::HKCU, "SOFTWARE\\CodeBlocks");
     wxString cbInstallPath;
@@ -147,7 +131,69 @@ bool CompilerLocatorMinGW::Locate()
         }
     }
     
-    // Last: many people install MinGW by simply extracting it into the 
+    // TDM-GCC installations in %ProgramData%/TDM-GCC/installations.txt
+    wxString programDataDir;
+    wxGetEnv("ProgramData", &programDataDir);
+    wxFileName tdmgccInstall(programDataDir, "installations.txt");
+    tdmgccInstall.AppendDir("TDM-GCC");
+    
+    if (tdmgccInstall.FileExists()) {
+        wxFileInputStream input(tdmgccInstall.GetFullPath());
+        wxTextInputStream text(input);
+        while (input.IsOk() && !input.Eof()) {
+            wxString instDir = text.ReadLine();
+            if (!instDir.IsEmpty() && wxDirExists(instDir)) {
+                wxFileName tdmBinDir(instDir, "g++.exe");
+                tdmBinDir.AppendDir("bin");
+                if (tdmBinDir.FileExists())
+                    AddTools(tdmBinDir.GetPath());
+            }
+        }
+    }
+
+    // check uninstall keys
+    std::vector<wxString> unInstKey;
+    unInstKey.push_back("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+    unInstKey.push_back("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+
+    std::vector<wxRegKey::StdKey> regBase;
+    regBase.push_back(wxRegKey::HKCU);
+    regBase.push_back(wxRegKey::HKLM);
+
+    for (size_t i = 0; i < regBase.size(); ++i) {
+        for (size_t j = 0; j < unInstKey.size(); ++j) {
+            wxRegKey regKey(regBase[i], unInstKey[j]);
+            if (!regKey.Exists() || !regKey.Open(wxRegKey::Read))
+                continue;
+
+            size_t subkeys = 0;
+            regKey.GetKeyInfo(&subkeys, NULL, NULL, NULL);
+            wxString keyName;
+            long keyIndex = 0;
+            regKey.GetFirstKey(keyName, keyIndex);
+
+            for (size_t k = 0; k < subkeys; ++k) {
+                wxRegKey subKey(regKey, keyName);
+                if (!subKey.Exists() || !subKey.Open(wxRegKey::Read))
+                    continue;
+
+                wxString displayName, installFolder;
+                if (subKey.HasValue("DisplayName")
+                    && subKey.HasValue("InstallLocation")
+                    && subKey.QueryValue("DisplayName", displayName)
+                    && subKey.QueryValue("InstallLocation", installFolder))
+                {
+                    CheckRegKey(displayName, installFolder);
+                }
+
+                subKey.Close();
+                regKey.GetNextKey(keyName, keyIndex);
+            }
+            regKey.Close();
+        }
+    }
+
+    // Last: many people install MinGW by simply extracting it into the
     // root folder:
     // C:\MinGW-X.Y.Z
     wxArrayString volumes = wxFSVolume::GetVolumes();
@@ -167,19 +213,19 @@ bool CompilerLocatorMinGW::Locate()
             }
         }
     }
-    
+
     for(size_t i=0; i<mingwFolderArr.GetCount(); ++i) {
         wxString binFolder = FindBinFolder( mingwFolderArr.Item(i) );
         if ( binFolder.IsEmpty() )
             continue;
-        
+
         wxFileName gcc(binFolder, "gcc.exe");
         if( gcc.FileExists() ) {
             AddTools(gcc.GetPath());
         }
     }
 #endif
-    
+
     // try to find MinGW in environment variable PATH (last)
     wxString pathValues;
     wxGetEnv("PATH", &pathValues);
@@ -192,7 +238,7 @@ bool CompilerLocatorMinGW::Locate()
                 // We found gcc.exe
                 wxString pathToGcc = gccComp.GetPath();
                 pathToGcc.MakeLower();
-                
+
                 // Don't mix cygwin and mingw
                 if ( !pathToGcc.Contains("cygwin") ) {
                     AddTools( gccComp.GetPath() );
@@ -204,6 +250,33 @@ bool CompilerLocatorMinGW::Locate()
     return !m_compilers.empty();
 }
 
+void CompilerLocatorMinGW::CheckRegKey(const wxString& displayName, const wxString& installFolder)
+{
+    if (displayName.StartsWith("TDM-GCC")) {
+        wxFileName fnTDMBinFolder(installFolder, "");
+        fnTDMBinFolder.AppendDir("bin");
+        fnTDMBinFolder.SetFullName("g++.exe");
+        if (fnTDMBinFolder.FileExists())
+            AddTools(fnTDMBinFolder.GetPath(), displayName);
+    }
+
+    else if (displayName.StartsWith("MSYS2")) {
+        wxFileName fnMingw32BinFolder(installFolder, "");
+        fnMingw32BinFolder.AppendDir("mingw32");
+        fnMingw32BinFolder.AppendDir("bin");
+        fnMingw32BinFolder.SetFullName("g++.exe");
+        if (fnMingw32BinFolder.FileExists())
+            AddTools(fnMingw32BinFolder.GetPath(), "MinGW 32bit ( " + displayName + " )");
+
+        wxFileName fnMingw64BinFolder(installFolder, "");
+        fnMingw64BinFolder.AppendDir("mingw64");
+        fnMingw64BinFolder.AppendDir("bin");
+        fnMingw64BinFolder.SetFullName("g++.exe");
+        if (fnMingw64BinFolder.FileExists())
+            AddTools(fnMingw64BinFolder.GetPath(), "MinGW 64bit ( " + displayName + " )");
+    }
+}
+
 void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& name)
 {
     wxFileName masterPath(binFolder, "");
@@ -211,30 +284,30 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
     if ( m_locatedFolders.count(masterPath.GetPath()) ) {
         return;
     }
-    
+
     // Create an empty compiler
     CompilerPtr compiler( new Compiler(NULL) );
     compiler->SetCompilerFamily(COMPILER_FAMILY_MINGW);
     compiler->SetGenerateDependeciesFile(true);
     m_compilers.push_back( compiler );
     m_locatedFolders.insert( masterPath.GetPath() );
-    
-    if ( name.IsEmpty() ) {
-        compiler->SetName("MinGW ( " + masterPath.GetDirs().Last() + " )");
 
-    } else {
+    if ( name.IsEmpty() )
+        compiler->SetName("MinGW ( " + masterPath.GetDirs().Last() + " )");
+    else if (!name.Lower().Contains("mingw"))
         compiler->SetName("MinGW ( " + name + " )");
-    }
+    else
+        compiler->SetName(name);
     compiler->SetInstallationPath( masterPath.GetPath() );
-    
+
     CL_DEBUG("Found MinGW compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
     wxFileName toolFile(binFolder, "");
-    
+
     toolFile.SetFullName("g++.exe");
     AddTool(compiler, "CXX", toolFile.GetFullPath());
     AddTool(compiler, "LinkerName", toolFile.GetFullPath());
     AddTool(compiler, "SharedObjectLinkerName", toolFile.GetFullPath(), "-shared -fPIC");
-    
+
     toolFile.SetFullName("gcc.exe");
     AddTool(compiler, "CC", toolFile.GetFullPath());
 
@@ -243,29 +316,29 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
 
     toolFile.SetFullName("windres.exe");
     AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
-    
+
     toolFile.SetFullName("as.exe");
     AddTool(compiler, "AS", toolFile.GetFullPath());
-    
+
     toolFile.SetFullName("make.exe");
     wxString makeExtraArgs;
     if ( wxThread::GetCPUCount() > 1 ) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
-    
+
     // This is needed under MinGW
     makeExtraArgs <<  " SHELL=cmd.exe ";
-    
+
     if ( toolFile.FileExists() ) {
         AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
-        
+
     } else {
         toolFile.SetFullName("mingw32-make.exe");
         if ( toolFile.FileExists() ) {
             AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
         }
     }
-    
+
     toolFile.SetFullName("gdb.exe");
     if(toolFile.Exists()) {
         AddTool(compiler, "Debugger", toolFile.GetFullPath());
@@ -286,18 +359,18 @@ wxString CompilerLocatorMinGW::FindBinFolder(const wxString& parentPath)
 {
     std::queue<wxString> dirs;
     dirs.push( parentPath );
-    
+
     while ( !dirs.empty() ) {
         wxString curdir = dirs.front();
         dirs.pop();
-        
+
         wxFileName fn(curdir, "" );
         fn.AppendDir("bin");
-        
+
         if ( fn.DirExists() && fn.GetDirCount() && fn.GetDirs().Last() == "bin") {
             return fn.GetPath();
         }
-        
+
         // Check to see if there are more directories to recurse
         wxDir dir;
         if ( dir.Open( curdir ) ) {

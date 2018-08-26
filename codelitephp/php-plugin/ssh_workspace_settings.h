@@ -65,6 +65,7 @@ public:
     const wxString& GetRemoteFolder() const {
         return m_remoteFolder;
     }
+    void Reset();
 };
 
 #endif // SSHWORKSPACESETTINGS_H

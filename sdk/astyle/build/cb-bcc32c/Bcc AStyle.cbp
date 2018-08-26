@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Bcc AStyle" />
+		<Option pch_mode="2" />
+		<Option compiler="embarcadero_compiler_x86_bcc32c" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/AStyled.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Option parameters="c:\users\jimp\projects\astyledev\test-data\*.cpp  -v " />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-tWM" />
+					<Add option="-tWC" />
+					<Add option="-v" />
+				</Compiler>
+				<Linker>
+					<Add option="-c" />
+					<Add option="-Gn" />
+					<Add option="-x" />
+					<Add library="cw32mt" />
+					<Add library="import32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/AStyle.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Option parameters="c:\users\jimp\projects\astyledev\test-data\*.cpp  -v " />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-tWM" />
+					<Add option="-tWC" />
+					<Add option="-v-" />
+					<Add option="-O2" />
+					<Add option="-DNDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add option="-c" />
+					<Add option="-Gn" />
+					<Add option="-x" />
+					<Add library="cw32mt" />
+					<Add library="import32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../src/ASBeautifier.cpp" />
+		<Unit filename="../../src/ASEnhancer.cpp" />
+		<Unit filename="../../src/ASFormatter.cpp" />
+		<Unit filename="../../src/ASLocalizer.cpp" />
+		<Unit filename="../../src/ASLocalizer.h" />
+		<Unit filename="../../src/ASResource.cpp" />
+		<Unit filename="../../src/astyle.h" />
+		<Unit filename="../../src/astyle_main.cpp" />
+		<Unit filename="../../src/astyle_main.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

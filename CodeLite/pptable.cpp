@@ -145,8 +145,8 @@ void TokenizeWords(const wxString& str, std::list<wxString>& outputList)
     if(scanner) {
         CxxLexerToken token;
         while(::LexerNext(scanner, token)) {
-            if(token.type == T_IDENTIFIER || token.type == T_PP_IDENTIFIER) {
-                outputList.push_back(token.text);
+            if(token.GetType() == T_IDENTIFIER || token.GetType() == T_PP_IDENTIFIER) {
+                outputList.push_back(token.GetWXString());
                 // put a limit or we might run into memory issues
                 if(outputList.size() >= 1000) {
                     break;

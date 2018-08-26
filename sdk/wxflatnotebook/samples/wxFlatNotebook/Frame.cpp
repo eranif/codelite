@@ -305,11 +305,11 @@ bool Frame::Create(wxFrame * parent, wxWindowID id, const wxString& caption, con
 	Freeze();
 	wxTextCtrl *text = new wxTextCtrl(secondBook, wxID_ANY, wxT("Second Book Page 1"), wxDefaultPosition, wxDefaultSize, 
 		wxTE_MULTILINE);
-	bool ret = secondBook->AddPage(text,  wxT("Second Book Page 1"));
+	secondBook->AddPage(text,  wxT("Second Book Page 1"));
 
 	text = new wxTextCtrl(secondBook, wxID_ANY, wxT("Second Book Page 2"), wxDefaultPosition, wxDefaultSize, 
 		wxTE_MULTILINE);
-	ret = secondBook->AddPage(text,  wxT("Second Book Page 2"));
+	secondBook->AddPage(text,  wxT("Second Book Page 2"));
 
 	Thaw();	
 

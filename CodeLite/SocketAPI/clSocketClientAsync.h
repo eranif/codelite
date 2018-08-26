@@ -26,12 +26,13 @@
 #ifndef CLSOCKETCLIENTASYNC_H
 #define CLSOCKETCLIENTASYNC_H
 
+#include "SocketAPI/clSocketBase.h"
+#include "SocketAPI/clSocketClient.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "worker_thread.h"
-#include <wx/msgqueue.h>
 #include <wx/event.h>
-#include "SocketAPI/clSocketClient.h"
+#include <wx/msgqueue.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
@@ -54,10 +55,15 @@ public:
 
 protected:
     wxEvtHandler* m_sink;
-    wxString m_host;
     wxString m_keepAliveMessage;
-    int m_port;
+    wxString m_connectionString;
     wxMessageQueue<MyRequest> m_queue;
+    bool m_nonBlockingMode;
+    bool m_messageMode;
+    
+protected:
+    void MessageLoop(clSocketBase::Ptr_t socket);
+    void BufferLoop(clSocketBase::Ptr_t socket);
 
 public:
     virtual void AddRequest(const MyRequest& req) { m_queue.Post(req); }
@@ -85,10 +91,8 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink,
-                                    const wxString& host,
-                                    int port,
-                                    const wxString& keepAliveMessage = "");
+    clSocketClientAsyncHelperThread(wxEvtHandler* sink, bool messageMode, const wxString& connectionString,
+                                    bool nonBlockingMode, const wxString& keepAliveMessage = "");
     virtual ~clSocketClientAsyncHelperThread();
 };
 
@@ -96,12 +100,17 @@ class WXDLLIMPEXP_CL clSocketClientAsync
 {
     wxEvtHandler* m_owner;
     clSocketClientAsyncHelperThread* m_thread;
+    bool m_messageMode;
 
 public:
-    clSocketClientAsync(wxEvtHandler* owner);
+    clSocketClientAsync(wxEvtHandler* owner, bool messageMode = false);
     ~clSocketClientAsync();
 
-    void Connect(const wxString& host, int port, const wxString& keepAliveMessage = "");
+    /**
+     * @brief connect using connection string
+     */
+    void Connect(const wxString& connectionString, const wxString& keepAliveMessage = "");
+    void ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage = "");
     void Send(const wxString& buffer);
     void Disconnect();
 };

@@ -27,6 +27,7 @@
 #define __dockablepanemenumanager__
 
 #include <wx/menu.h>
+#include <wx/aui/framemanager.h>
 #include <map>
 #include "codelite_exports.h"
 

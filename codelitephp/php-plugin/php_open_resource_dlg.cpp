@@ -11,10 +11,10 @@
 #include <wx/tokenzr.h>
 #include "FilesCollector.h"
 #include "fileutils.h"
+#include "cl_config.h"
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
-static wxBitmap FILE_IMG_ID = wxNullBitmap;
 static wxBitmap FUNC_IMG_ID = wxNullBitmap;
 static wxBitmap CONST_IMG_ID = wxNullBitmap;
 static wxBitmap DEFINE_IMG_ID = wxNullBitmap;
@@ -50,8 +50,8 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     PHPWorkspace::Get()->GetWorkspaceFiles(files);
     m_table.Open(PHPWorkspace::Get()->GetFilename().GetPath());
     m_allFiles.reserve(files.size());
-    std::set<wxString>::iterator iter = files.begin();
-    for(; iter != files.end(); iter++) {
+    wxStringSet_t::iterator iter = files.begin();
+    for(; iter != files.end(); ++iter) {
         wxFileName fn((*iter));
         if(fn.GetFullName() == FOLDER_MARKER) {
             // fake item
@@ -72,9 +72,15 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     SetName("OpenResourceDlg");
     WindowAttrManager::Load(this);
 
-    if(m_mgr->GetActiveEditor()) {
+    wxString lastStringTyped = clConfig::Get().Read("PHP/OpenResourceDialog/SearchString", wxString());
+
+    if(m_mgr->GetActiveEditor() && !m_mgr->GetActiveEditor()->GetSelection().IsEmpty()) {
         wxString sel = m_mgr->GetActiveEditor()->GetSelection();
         m_textCtrlFilter->ChangeValue(sel);
+        m_textCtrlFilter->SelectAll();
+
+    } else if(!lastStringTyped.IsEmpty()) {
+        m_textCtrlFilter->ChangeValue(lastStringTyped);
         m_textCtrlFilter->SelectAll();
     }
 }
@@ -82,9 +88,9 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 void OpenResourceDlg::DoInitialize()
 {
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    m_fileImages = bmpLoader->MakeStandardMimeMap();
 
     CLASS_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-    FILE_IMG_ID = bmpLoader->LoadBitmap(wxT("mime/16/php"));
     FUNC_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
     CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
     DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
@@ -106,6 +112,7 @@ OpenResourceDlg::~OpenResourceDlg()
         wxDELETE(data);
     }
     m_dvListCtrl->DeleteAllItems();
+    clConfig::Get().Write("PHP/OpenResourceDialog/SearchString", m_textCtrlFilter->GetValue());
 }
 
 void OpenResourceDlg::OnFilterEnter(wxCommandEvent& event)
@@ -293,8 +300,16 @@ wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
         return CLASS_IMG_ID;
     case ResourceItem::kRI_Constant:
         return CONST_IMG_ID;
-    case ResourceItem::kRI_File:
-        return FILE_IMG_ID;
+    case ResourceItem::kRI_File: {
+        FileExtManager::FileType fileType = FileExtManager::GetType(item->filename.GetFullName());
+        if(m_fileImages.count(fileType)) {
+            // CodeLite has a knowledge about this file type, return the associated image
+            return m_fileImages.find(fileType)->second;
+        } else {
+            // Default text file image
+            return m_fileImages.find(FileExtManager::TypeText)->second;
+        }
+    }
     case ResourceItem::kRI_Function:
         return FUNC_IMG_ID;
     default:

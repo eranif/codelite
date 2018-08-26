@@ -32,6 +32,8 @@ class WXDLLIMPEXP_CL clFileSystemEvent : public clCommandEvent
 {
 protected:
     wxString m_path;
+    wxString m_newpath;
+    wxArrayString m_paths;
 
 public:
     clFileSystemEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -42,6 +44,11 @@ public:
     virtual wxEvent* Clone() const { return new clFileSystemEvent(*this); }
     void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetPath() const { return m_path; }
+    void SetNewpath(const wxString& newpath) { this->m_newpath = newpath; }
+    const wxString& GetNewpath() const { return m_newpath; }
+    void SetPaths(const wxArrayString& paths) { this->m_paths = paths; }
+    const wxArrayString& GetPaths() const { return m_paths; }
+    wxArrayString& GetPaths() { return m_paths; }
 };
 
 typedef void (wxEvtHandler::*clFileSystemEventFunction)(clFileSystemEvent&);

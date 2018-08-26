@@ -36,13 +36,16 @@ protected:
     void DoEnsureNamespacePathExists(wxSQLite3Database& db, const wxString& path);
 
 public:
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
     wxString GetParentNamespace() const;
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
     PHPEntityNamespace();
     virtual ~PHPEntityNamespace();

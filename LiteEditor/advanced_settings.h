@@ -34,19 +34,19 @@
 
 #include <wx/wx.h>
 
-#include <wx/button.h>
-#include "compiler.h"
-#include <wx/statline.h>
-#include <wx/treebook.h>
-#include <wx/panel.h>
+#include "CompilerMainPage.h"
+#include "advance_settings_base.h"
 #include "build_page.h"
-#include <wx/toolbook.h>
+#include "compiler.h"
+#include <CompilersDetectorManager.h>
+#include <ICompilerLocator.h>
 #include <map>
 #include <vector>
-#include "advance_settings_base.h"
-#include <ICompilerLocator.h>
-#include <CompilersDetectorManager.h>
-#include "CompilerMainPage.h"
+#include <wx/button.h>
+#include <wx/panel.h>
+#include <wx/statline.h>
+#include <wx/toolbook.h>
+#include <wx/treebook.h>
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -63,40 +63,41 @@ public:
     virtual void Save(CompilerPtr cmp) = 0;
 };
 
-class AdvancedDlg : public AdvancedDlgBase
+class BuildSettingsDialog : public AdvancedDlgBase
 {
     std::map<wxString, std::vector<ICompilerSubPage*> > m_compilerPagesMap;
-    
+
 protected:
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnApplyUI(wxUpdateUIEvent& event);
     wxPanel* m_compilersMainPanel;
     CompilerMainPage* m_compilersPage;
-    
+
     wxStaticText* m_staticText1;
     wxStaticLine* m_staticline2;
     wxStaticLine* m_staticline10;
-    BuildPage *m_buildPage;
-    BuildTabSetting *m_buildSettings;
-    wxMenu *m_rightclickMenu;
+    BuildPage* m_buildPage;
+    BuildTabSetting* m_buildSettings;
+    wxMenu* m_rightclickMenu;
     CompilersDetectorManager m_compilersDetector;
-    
+
 public:
     void OnButtonNewClicked();
     void OnScanAndSuggestCompilers();
     void OnAddExistingCompiler();
-    void OnButtonOKClicked(wxCommandEvent &);
-    void OnContextMenu(wxContextMenuEvent &e);
+    void OnButtonOKClicked(wxCommandEvent&);
+    void OnContextMenu(wxContextMenuEvent& e);
 
     void LoadCompilers();
-    bool CreateNewCompiler(const wxString &name, const wxString &copyFrom);
-    bool DeleteCompiler(const wxString &name);
+    bool CreateNewCompiler(const wxString& name, const wxString& copyFrom);
+    bool DeleteCompiler(const wxString& name);
     void SaveCompilers();
     void OnCompilersDetected(const ICompilerLocator::CompilerVec_t& compilers);
-    
+
 public:
-    AdvancedDlg( wxWindow* parent, size_t selected_page, int id = wxID_ANY, wxString title = _("Build Settings"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
-    ~AdvancedDlg();
+    BuildSettingsDialog(wxWindow* parent, size_t selected_page, int id = wxID_ANY, wxString title = _("Build Settings"),
+                wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE);
+    ~BuildSettingsDialog();
     void OnAutoDetectCompilers(wxButton* btn);
 };
 

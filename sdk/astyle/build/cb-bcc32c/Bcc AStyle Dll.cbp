@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Bcc AStyle Dll" />
+		<Option pch_mode="2" />
+		<Option compiler="embarcadero_compiler_x86_bcc32c" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/AStyle301d.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="objDll/Debug/" />
+				<Option type="3" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-tWD" />
+					<Add option="-v" />
+					<Add option="-DASTYLE_LIB" />
+				</Compiler>
+				<Linker>
+					<Add option="-c" />
+					<Add option="-Gn" />
+					<Add option="-x" />
+					<Add option="-Gi" />
+					<Add library="cw32mt" />
+					<Add library="import32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/AStyle301.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="objDll/Release/" />
+				<Option type="3" />
+				<Option compiler="embarcadero_compiler_x86_bcc32c" />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-tWD" />
+					<Add option="-v-" />
+					<Add option="-O2" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DASTYLE_LIB" />
+				</Compiler>
+				<Linker>
+					<Add option="-c" />
+					<Add option="-Gn" />
+					<Add option="-x" />
+					<Add option="-Gi" />
+					<Add library="cw32mt" />
+					<Add library="import32" />
+				</Linker>
+			</Target>
+		</Build>
+		<ExtraCommands>
+			<Add after="cmd /c  del  bin\*.tds" />
+		</ExtraCommands>
+		<Unit filename="../../src/ASBeautifier.cpp" />
+		<Unit filename="../../src/ASEnhancer.cpp" />
+		<Unit filename="../../src/ASFormatter.cpp" />
+		<Unit filename="../../src/ASResource.cpp" />
+		<Unit filename="../../src/astyle.h" />
+		<Unit filename="../../src/astyle_main.cpp" />
+		<Unit filename="../../src/astyle_main.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

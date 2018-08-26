@@ -222,7 +222,7 @@ void ErdPanel::Init(wxWindow* parent, IDbAdapter* dbAdapter)
                           NULL);
     m_toolBarErd->AddTool(XRCID("IDT_ERD_LINE"),
                           _("Constraint 1:N"),
-                          wxXmlResource::Get()->LoadBitmap(wxT("link_editor")),
+                          bmpLoader->LoadBitmap(wxT("link_editor")),
                           wxNullBitmap,
                           wxITEM_RADIO,
                           _("Foreign key connection"),

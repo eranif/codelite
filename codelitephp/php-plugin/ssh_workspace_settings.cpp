@@ -45,3 +45,10 @@ bool SSHWorkspaceSettings::IsRemoteUploadSet() const
 {
     return !m_remoteFolder.IsEmpty() && !m_account.IsEmpty();
 }
+
+void SSHWorkspaceSettings::Reset()
+{
+    m_remoteFolder.clear();
+    m_account.clear();
+    m_remoteUploadEnabled = false;
+}

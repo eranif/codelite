@@ -1,16 +1,8 @@
 #include "attribute_style.h"
 
-StyleProperty::StyleProperty(int id,
-                             const wxString& fgColour,
-                             const wxString& bgColour,
-                             const int fontSize,
-                             const wxString& name,
-                             const wxString& face,
-                             bool bold,
-                             bool italic,
-                             bool underline,
-                             bool eolFilled,
-                             int alpha)
+StyleProperty::StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize,
+                             const wxString& name, const wxString& face, bool bold, bool italic, bool underline,
+                             bool eolFilled, int alpha)
     : m_id(id)
     , m_fgColour(fgColour)
     , m_bgColour(bgColour)
@@ -63,14 +55,14 @@ void StyleProperty::FromJSON(JSONElement json)
     m_fontSize = json.namedObject("Size").toInt(10);
 }
 
-JSONElement StyleProperty::ToJSON() const
+JSONElement StyleProperty::ToJSON(bool portable) const
 {
     JSONElement json = JSONElement::createObject();
     json.addProperty("Id", GetId());
     json.addProperty("Name", GetName());
     json.addProperty("Flags", m_flags);
     json.addProperty("Alpha", GetAlpha());
-    json.addProperty("Face", GetFaceName());
+    json.addProperty("Face", portable ? wxString() : GetFaceName());
     json.addProperty("Colour", GetFgColour());
     json.addProperty("BgColour", GetBgColour());
     json.addProperty("Size", GetFontSize());

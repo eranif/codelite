@@ -1,11 +1,16 @@
 #include "FilesCollector.h"
-#include <wx/tokenzr.h>
+#include "fileutils.h"
+#include <algorithm>
+#include <queue>
+#include <wx/dir.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
-#include "fileutils.h"
+#include <wx/tokenzr.h>
 
-FilesCollector::FilesCollector(const wxString& filespec, const wxString& excludeFolders, wxProgressDialog* progress)
-    : m_progress(progress)
+FilesCollector::FilesCollector(wxArrayString& filesAndFolders, const wxString& filespec, const wxString& excludeFolders,
+                               wxProgressDialog* progress)
+    : m_filesAndFolders(filesAndFolders)
+    , m_progress(progress)
 {
     m_specArray = ::wxStringTokenize(filespec.Lower(), ";", wxTOKEN_STRTOK);
     wxArrayString arrFolders = ::wxStringTokenize(excludeFolders, ";", wxTOKEN_STRTOK);
@@ -14,29 +19,50 @@ FilesCollector::FilesCollector(const wxString& filespec, const wxString& exclude
 
 FilesCollector::~FilesCollector() {}
 
-wxDirTraverseResult FilesCollector::OnDir(const wxString& dirname)
+bool FilesCollector::IsFileOK(const wxString& filename) const
 {
-    wxFileName fndir(dirname, "");
-    wxString lastPart = fndir.GetDirs().Last();
-
-    if(m_excludeFolders.count(lastPart)) {
-        return wxDIR_IGNORE;
-    }
-
-    wxFileName fn(dirname, FOLDER_MARKER);
-    m_filesAndFolders.Add(fn.GetFullPath());
-    if(m_progress) {
-        m_progress->Pulse(wxString::Format("Scanning folder...\n%s", dirname));
-    }
-
-    return wxDIR_CONTINUE;
+    if(FileUtils::WildMatch(m_specArray, filename)) { return true; }
+    return false;
 }
 
-wxDirTraverseResult FilesCollector::OnFile(const wxString& filename)
+void FilesCollector::Collect(const wxString& rootFolder)
 {
-    wxFileName fn(filename);
-    if(FileUtils::WildMatch(m_specArray, fn.GetFullName())) {
-        m_filesAndFolders.Add(filename);
+    if(!wxFileName::DirExists(rootFolder)) {
+        m_filesAndFolders.clear();
+        return;
     }
-    return wxDIR_CONTINUE;
+    std::queue<wxString> Q;
+    Q.push(rootFolder);
+
+    std::vector<wxString> V;
+    while(!Q.empty()) {
+        wxString dirpath = Q.front();
+        Q.pop();
+
+        wxDir dir(dirpath);
+        if(!dir.IsOpened()) { continue; }
+
+        wxString filename;
+        bool cont = dir.GetFirst(&filename);
+        while(cont) {
+            // Check to see if this is a folder
+            wxString fullpath;
+            fullpath << dir.GetNameWithSep() << filename;
+            bool isDirectory = wxFileName::DirExists(fullpath);
+            if(isDirectory && (m_excludeFolders.count(filename) == 0)) {
+                // A directory
+                Q.push(fullpath);
+                fullpath << wxFileName::GetPathSeparator() << FOLDER_MARKER;
+                V.push_back(fullpath);
+
+            } else if(!isDirectory && IsFileOK(filename)) {
+                // A file
+                V.push_back(fullpath);
+            }
+            cont = dir.GetNext(&filename);
+        }
+    }
+
+    m_filesAndFolders.Alloc(V.size());
+    std::for_each(V.begin(), V.end(), [&](const wxString& f) { m_filesAndFolders.push_back(f); });
 }

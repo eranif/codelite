@@ -68,7 +68,9 @@ public:
     int GetPort() const;
     wxString GetHost() const;
     void CenterEditor(wxStyledTextCtrl* ctrl, int lineNo);
-
+    
+    void StartListener();
+    
     void SetConnected(bool connected);
     bool IsConnected() const { return m_connected; }
     void DoSocketWrite(const wxString& command);
@@ -114,7 +116,7 @@ public:
     wxStringMap_t GetFileMapping(PHPProject::Ptr_t pProject) const;
 
 protected:
-    void DoStartDebugger();
+    void DoStartDebugger(bool ideInitiate = true);
     void DoStopDebugger();
     void DoRefreshBreakpointsMarkersForEditor(IEditor* editor);
     void DoHandleResponse(wxXmlNode* xml);

@@ -7,8 +7,10 @@
   "m_bitmapsFile": "breakpoint_dlg_liteeditor_bitmaps.cpp",
   "m_GenerateCodeTypes": -24015,
   "m_outputFileName": "breakpointdlgbase",
-  "m_firstWindowId": 1000,
-  "m_useEnum": false,
+  "m_firstWindowId": 8000,
+  "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -78,7 +80,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "CL:LiteEditor"
+     "m_path": "CodeLiteIDE:Debugger"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -176,7 +178,7 @@
         }, {
          "type": "bool",
          "m_label": "Focused",
-         "m_value": false
+         "m_value": true
         }, {
          "type": "string",
          "m_label": "Class Name:",
@@ -205,29 +207,29 @@
          "m_description": "The item has been deselected",
          "m_noBody": false
         }, {
-         "m_eventName": "wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK",
-         "m_eventClass": "wxListEvent",
-         "m_eventHandler": "wxListEventHandler",
-         "m_functionNameAndSignature": "OnItemRightClick(wxListEvent& event)",
-         "m_description": "The right mouse button has been clicked on an item",
-         "m_noBody": false
-        }, {
          "m_eventName": "wxEVT_COMMAND_LIST_ITEM_SELECTED",
          "m_eventClass": "wxListEvent",
          "m_eventHandler": "wxListEventHandler",
          "m_functionNameAndSignature": "OnItemSelected(wxListEvent& event)",
          "m_description": "The item has been selected",
          "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_CONTEXT_MENU",
+         "m_eventClass": "wxContextMenuEvent",
+         "m_eventHandler": "wxContextMenuEventHandler",
+         "m_functionNameAndSignature": "OnContextMenu(wxContextMenuEvent& event)",
+         "m_description": "A right click (or other context menu command depending on platform) has been detected",
+         "m_noBody": false
         }],
        "m_children": []
       }, {
        "m_type": 4401,
        "proportion": 0,
-       "border": 25,
+       "border": 5,
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxTOP", "wxEXPAND"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "string",
          "m_label": "Minimum Size:",
@@ -254,7 +256,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -349,7 +351,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -444,7 +446,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -539,7 +541,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -634,7 +636,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
@@ -796,7 +798,7 @@
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
-     "m_path": "CL:LiteEditor"
+     "m_path": "CodeLiteIDE:Debugger"
     }, {
      "type": "choice",
      "m_label": "Centre:",
@@ -3306,80 +3308,13 @@
           }]
         }]
       }, {
-       "m_type": 4418,
-       "proportion": 0,
-       "border": 5,
-       "gbSpan": ",",
-       "gbPosition": ",",
-       "m_styles": ["wxLI_HORIZONTAL"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
-       "m_properties": [{
-         "type": "winid",
-         "m_label": "ID:",
-         "m_winid": "wxID_ANY"
-        }, {
-         "type": "string",
-         "m_label": "Size:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Minimum Size:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Name:",
-         "m_value": "m_staticline4"
-        }, {
-         "type": "multi-string",
-         "m_label": "Tooltip:",
-         "m_value": ""
-        }, {
-         "type": "colour",
-         "m_label": "Bg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "colour",
-         "m_label": "Fg Colour:",
-         "colour": "<Default>"
-        }, {
-         "type": "font",
-         "m_label": "Font:",
-         "m_value": ""
-        }, {
-         "type": "bool",
-         "m_label": "Hidden",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Disabled",
-         "m_value": false
-        }, {
-         "type": "bool",
-         "m_label": "Focused",
-         "m_value": false
-        }, {
-         "type": "string",
-         "m_label": "Class Name:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Include File:",
-         "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Style:",
-         "m_value": ""
-        }],
-       "m_events": [],
-       "m_children": []
-      }, {
        "m_type": 4401,
        "proportion": 0,
        "border": 5,
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
        "m_properties": [{
          "type": "string",
          "m_label": "Minimum Size:",

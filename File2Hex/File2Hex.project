@@ -6,12 +6,12 @@
   <Dependencies/>
   <Dependencies Name="DebugUnicode"/>
   <Settings Type="Executable">
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="">
+    <Configuration Name="DebugUnicode" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="">
       <General OutputFile="$(IntermediateDirectory)/File2Hex" IntermediateDirectory="./DebugUnicode" Command="./File2Hex" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
-      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)">
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags --unicode=yes )">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);"/>
+      <Linker Required="yes" Options="-O2;$(shell wx-config  --libs --unicode=yes);"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort=""/>
       <ResourceCompiler Required="yes" Options="$(shell wx-config --rcflags)"/>
       <PreBuild/>
@@ -29,7 +29,7 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+    <Configuration Name="ReleaseUnicode" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="../Runtime/File2Hex" IntermediateDirectory="./ReleaseUnicode" Command="./File2Hex" CommandArguments="about.html contributers.h" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2">
         <Preprocessor Value="__WX__"/>

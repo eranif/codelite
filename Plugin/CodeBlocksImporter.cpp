@@ -2,6 +2,7 @@
 #include <wx/xml/xml.h>
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
+#include "macros.h"
 
 bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -21,8 +22,9 @@ bool CodeBlocksImporter::isSupportedWorkspace()
     wxXmlDocument codeBlocksProject;
     if(codeBlocksProject.Load(wsInfo.GetFullPath())) {
         wxXmlNode* root = codeBlocksProject.GetRoot();
+        CHECK_PTR_RET_FALSE(root);
         wxString nodeName = root->GetName();
-        if(root && (nodeName == wxT("CodeBlocks_workspace_file") || nodeName == wxT("CodeBlocks_project_file")))
+        if((nodeName == wxT("CodeBlocks_workspace_file") || nodeName == wxT("CodeBlocks_project_file")))
             return true;
     }
     return false;

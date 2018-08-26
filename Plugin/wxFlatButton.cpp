@@ -10,18 +10,7 @@
 
 static wxBitmap ConvertToDisabled(const wxBitmap& bmp)
 {
-#if wxVERSION_NUMBER >= 3100 && !defined(__WXMSW__)
-    // Convert the image to disabled
-    // It seems that m_bitmap.ConvertToDisabled() looses the scale
-    // factor, so use this kind of conversion
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToDisabled();
-    // Keep the original m_bitmap scale factor
-    wxBitmap disabledBmp = wxBitmap(img, -1, bmp.GetScaleFactor());
-    return disabledBmp;
-#else
-    return bmp.ConvertToDisabled();
-#endif
+    return DrawingUtils::CreateDisabledBitmap(bmp);
 }
 
 wxDEFINE_EVENT(wxEVT_CMD_FLATBUTTON_CLICK, wxFlatButtonEvent);
@@ -105,8 +94,8 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
 
     } else {
-        wxColour paneColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        wxColour bgColour = paneColour.ChangeLightness(150);
+        wxColour paneColour = DrawingUtils::GetButtonBgColour();
+        wxColour bgColour = paneColour;
         wxColour penColour = paneColour.ChangeLightness(90);
 
         SetPenNormalColour(penColour);
@@ -125,7 +114,7 @@ wxFlatButton::wxFlatButton(wxWindow* parent,
         }
     }
 
-    SetTextFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    SetTextFont(DrawingUtils::GetDefaultGuiFont());
     if(size != wxDefaultSize) {
         SetMinSize(size);
     } else {
@@ -389,18 +378,12 @@ bool wxFlatButton::Enable(bool enable)
 
 wxColour wxFlatButton::GetBarBgColour(wxFlatButton::eTheme theme)
 {
-    if(theme == wxFlatButton::kThemeDark) {
-        return wxColour("rgb(87, 87, 87)");
-    } else {
-        return wxColour(DrawingUtils::GetPanelBgColour());
-    }
+    wxUnusedVar(theme);
+    return DrawingUtils::GetPanelBgColour();
 }
 
 wxColour wxFlatButton::GetBarTextColour(wxFlatButton::eTheme theme)
 {
-    if(theme == wxFlatButton::kThemeDark) {
-        return *wxWHITE;
-    } else {
-        return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    }
+    wxUnusedVar(theme);
+    return DrawingUtils::GetPanelTextColour();
 }

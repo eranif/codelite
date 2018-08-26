@@ -13,15 +13,15 @@ CIncludeStatementCollector::~CIncludeStatementCollector() {}
 void CIncludeStatementCollector::OnToken(CxxLexerToken& token)
 {
     // Pre Processor state
-    switch(token.type) {
+    switch(token.GetType()) {
     case T_PP_INCLUDE_FILENAME: {
         // we found an include statement, recurse into it
         wxFileName include;
-        if(m_preProcessor->ExpandInclude(m_filename, token.text, include)) {
+        if(m_preProcessor->ExpandInclude(m_filename, token.GetWXString(), include)) {
             CIncludeStatementCollector* scanner = new CIncludeStatementCollector(m_preProcessor, include);
             scanner->Parse();
             wxDELETE(scanner);
-            DEBUGMSG("<== Resuming parser on file: %s\n", m_filename.GetFullPath());
+            clDEBUG1() << "<== Resuming parser on file:" << m_filename << clEndl;
         }
         break;
     }

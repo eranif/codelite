@@ -31,6 +31,7 @@
 #include "breakpointpropertiesdlg.h"
 #include "breakpointdlg.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 
 //---------------------------------------------------------
 
@@ -103,7 +104,7 @@ void BreakptMgr::AddBreakpoint()
     BreakptPropertiesDlg dlg(NULL);
     dlg.SetTitle(_("Create a breakpoint or watchpoint"));
 
-    LEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     BreakpointInfo bp;
     bp.Create(
         editor ? editor->GetFileName().GetFullPath() : wxString(), editor ? editor->GetCurrentLine() : -1, GetNextID());
@@ -214,7 +215,7 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
 // Done before refreshing after a delete or edit, lest it was the last bp in a file
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
-    LEditor::Vec_t editors;
+    clEditor::Vec_t editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     for(size_t i = 0; i < editors.size(); ++i) {
         editors.at(i)->DelAllBreakpointMarkers();
@@ -224,7 +225,7 @@ void BreakptMgr::DeleteAllBreakpointMarkers()
 // Refresh all line-type breakpoint markers in all editors
 void BreakptMgr::RefreshBreakpointMarkers()
 {
-    std::vector<LEditor*> editors;
+    std::vector<clEditor*> editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
 
     for(size_t i = 0; i < editors.size(); i++) {
@@ -233,7 +234,7 @@ void BreakptMgr::RefreshBreakpointMarkers()
 }
 
 // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
-void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
+void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
 {
     // Load the file's line-type bps into fi, and make a set of their line-numbers
     std::multimap<int, BreakpointInfo> bps;
@@ -268,7 +269,7 @@ void BreakptMgr::DoRefreshFileBreakpoints(LEditor* editor)
 }
 
 // Given a list of bps, tell the editor which is the most significant (in marker terms)
-void BreakptMgr::DoProvideBestBP_Type(LEditor* editor, const std::vector<BreakpointInfo>& li)
+void BreakptMgr::DoProvideBestBP_Type(clEditor* editor, const std::vector<BreakpointInfo>& li)
 {
     if((editor == NULL) || (li.size() == 0)) {
         return;
@@ -535,7 +536,7 @@ void BreakptMgr::SetBreakpointDebuggerID(const int internal_id, const int debugg
             return;
         }
     }
-    wxLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
+    clLogMessage(wxT("SetBreakpointDebuggerID(): Failed to match internal_id to debugger_id"));
 }
 
 // Set a breakpoint's ignore count
@@ -593,7 +594,7 @@ void BreakptMgr::EditBreakpoint(int index, bool& bpExist)
     // sanity
     bpExist = true;
     if(index < 0 || index >= (int)m_bps.size()) {
-        wxLogMessage(wxT("BreakptMgr::EditBreakpoint: Insane index"));
+        clLogMessage(wxT("BreakptMgr::EditBreakpoint: Insane index"));
         bpExist = false;
         return;
     }
@@ -958,7 +959,7 @@ void BreakptMgr::LoadSession(const SessionEntry& session)
     RefreshBreakpointMarkers();
 }
 
-void BreakptMgr::DragBreakpoint(LEditor* editor, int line, wxBitmap bitmap)
+void BreakptMgr::DragBreakpoint(clEditor* editor, int line, wxBitmap bitmap)
 {
     // See if there's a bp marker under the cursor. If so, let the user drag it
     BreakpointInfo& bp = GetBreakpoint(editor->GetFileName().GetFullPath(), line + 1);
@@ -981,7 +982,7 @@ void BreakptMgr::DropBreakpoint(const BreakpointInfo& bp, int newline)
 
 //---------------------------------------------------------
 
-myDragImage::myDragImage(LEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp)
+myDragImage::myDragImage(clEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp)
     : wxDragImage(bitmap, wxCURSOR_POINT_LEFT)
     , editor(ed)
     , m_bp(bp)
@@ -1031,7 +1032,7 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
     }
 }
 
-void BreakptMgr::RefreshBreakpointsForEditor(LEditor* editor) { DoRefreshFileBreakpoints(editor); }
+void BreakptMgr::RefreshBreakpointsForEditor(clEditor* editor) { DoRefreshFileBreakpoints(editor); }
 
 bool BreakptMgr::IsDuplicate(const BreakpointInfo& bp, const std::vector<BreakpointInfo>& bpList)
 {

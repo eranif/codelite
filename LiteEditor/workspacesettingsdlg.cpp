@@ -43,11 +43,11 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
 
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);
-    std::map<wxString, wxString> envSets = vars.GetEnvVarSets();
+    const wxStringMap_t& envSets = vars.GetEnvVarSets();
     wxString activePage = vars.GetActiveSet();
     m_choiceEnvSets->Clear();
 
-    std::map<wxString, wxString>::iterator iter = envSets.begin();
+    wxStringMap_t::const_iterator iter = envSets.begin();
     int useActiveSetIndex = m_choiceEnvSets->Append(wxGetTranslation(USE_GLOBAL_SETTINGS));
 
     for(; iter != envSets.end(); iter++) {

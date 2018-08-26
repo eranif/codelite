@@ -26,66 +26,81 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_banner1 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBORDER_THEME);
     m_banner1->SetBitmap(wxNullBitmap);
     m_banner1->SetText(_("Import Files"), _("Select the directories to import from"));
     m_banner1->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE), wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     m_banner1->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     
-    mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_banner1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dirPicker = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    m_dirPicker->SetToolTip(_("Select the base folder for importing"));
-    m_dirPicker->SetFocus();
+    wxBoxSizer* boxSizer12 = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(m_dirPicker, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(boxSizer12, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+    m_textCtrlDir = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
+    #if wxVERSION_NUMBER >= 3000
+    m_textCtrlDir->SetHint(wxT(""));
+    #endif
+    
+    boxSizer12->Add(m_textCtrlDir, 1, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    
+    m_buttonBrowse = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBU_EXACTFIT);
+    
+    boxSizer12->Add(m_buttonBrowse, 0, wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
+    
+    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,200)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
     m_dataview->SetToolTip(_("Check the folders you wish to import\nfiles from"));
     
     m_dataviewModel = new FolderModel;
     m_dataviewModel->SetColCount( 2 );
     m_dataview->AssociateModel(m_dataviewModel.get() );
     
-    mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 20, wxALIGN_LEFT);
-    m_dataview->AppendIconTextColumn(_("Folder"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 500, wxALIGN_LEFT);
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Files extension to import (semicolon delimited):"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(30), wxALIGN_LEFT);
+    m_dataview->AppendIconTextColumn(_("Folder"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(500), wxALIGN_LEFT);
+    m_dataview->SetMinSize(wxSize(-1,200));
     
-    mainSizer->Add(m_staticText1, 0, wxALL|wxEXPAND, 5);
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Files extension to import (semicolon delimited):"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    m_textCtrSpec = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    mainSizer->Add(m_staticText1, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_textCtrSpec = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrSpec->SetHint(wxT(""));
     #endif
     
-    mainSizer->Add(m_textCtrSpec, 0, wxALL|wxEXPAND, 5);
+    mainSizer->Add(m_textCtrSpec, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxFilesWOExt = new wxCheckBox(this, wxID_ANY, _("Import files without extensions"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_checkBoxFilesWOExt = new wxCheckBox(this, wxID_ANY, _("Import files without extensions"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxFilesWOExt->SetValue(false);
     m_checkBoxFilesWOExt->SetToolTip(_("If you wish to import files without extensions, tick this option"));
     
-    mainSizer->Add(m_checkBoxFilesWOExt, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_checkBoxFilesWOExt, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer7 = new wxStdDialogButtonSizer();
     
-    mainSizer->Add(m_stdBtnSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    mainSizer->Add(m_stdBtnSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer7->AddButton(m_buttonOK);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer7->AddButton(m_buttonCancel);
     m_stdBtnSizer7->Realize();
     
     SetName(wxT("ImportFilesDialogNewBase"));
-    SetSizeHints(400,400);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -94,7 +109,8 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_dirPicker->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_textCtrlDir->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportFilesDialogNewBase::OnBrowse), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(ImportFilesDialogNewBase::OnValueChanged), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(ImportFilesDialogNewBase::OnItemExpanding), NULL, this);
     
@@ -102,7 +118,8 @@ ImportFilesDialogNewBase::ImportFilesDialogNewBase(wxWindow* parent, wxWindowID 
 
 ImportFilesDialogNewBase::~ImportFilesDialogNewBase()
 {
-    m_dirPicker->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_textCtrlDir->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(ImportFilesDialogNewBase::OnDirChanged), NULL, this);
+    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ImportFilesDialogNewBase::OnBrowse), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(ImportFilesDialogNewBase::OnValueChanged), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(ImportFilesDialogNewBase::OnItemExpanding), NULL, this);
     

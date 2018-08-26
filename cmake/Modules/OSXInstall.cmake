@@ -211,7 +211,13 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         foreach(WXLIB ${WXLIBS})
             file(COPY ${WXLIB} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
         endforeach()
-        
+
+        ## Copy Terminal.app launcher script
+        file(COPY ${CL_SRC_ROOT}/Runtime/osx-terminal.sh 
+             DESTINATION 
+             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS 
+             FILE_PERMISSIONS ${EXE_PERM})
+
         ## Copy pre-built binaries
         file(COPY ${CL_SRC_ROOT}/Runtime/debugserver 
              DESTINATION 

@@ -17,11 +17,18 @@
 #define WXDLLIMPEXP_SDK
 #endif
 
-#include <wx/colour.h>
+#include "clTabRenderer.h"
+#include "cl_defs.h"
+#include "drawingutils.h"
+#include <vector>
+#include <wx/arrstr.h>
 #include <wx/bitmap.h>
+#include <wx/colour.h>
 #include <wx/dc.h>
 #include <wx/sharedptr.h>
-#include <vector>
+
+#define CHEVRON_SIZE 20
+#define CLOSE_BUTTON_SIZE 12
 
 class clTabCtrl;
 enum NotebookStyle {
@@ -54,12 +61,22 @@ enum NotebookStyle {
     kNotebook_LeftTabs = (1 << 12),
     /// Vertical tabs as buttons
     kNotebook_VerticalButtons = (1 << 13),
-    
+
     /// Underline the active tab with a 2 pixel line
     kNotebook_UnderlineActiveTab = (1 << 14),
 
+    /// When scrolling with the mouse button when hovering the tab control, switch between tabs
+    kNotebook_MouseScrollSwitchTabs = (1 << 15),
+
+    /// The notebook colours are changing based on the current editor theme
+    kNotebook_DynamicColours = (1 << 16),
+    
+    /// Allow DnD between different book controls
+    kNotebook_AllowForeignDnD = (1 << 17),
+
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
+
 };
 
 #define IS_VERTICAL_TABS(style) ((style & kNotebook_RightTabs) || (style & kNotebook_LeftTabs))
@@ -83,15 +100,9 @@ public:
     // the tab area colours
     wxColour tabAreaColour;
 
-    // close button bitmaps (MUST be 12x12)
-    wxBitmap closeButton;
-
-    /// Chevron down arrow used as the button for showing tab list
-    wxBitmap chevronDown;
-    
     /// Marker colour
     wxColour markerColour;
-    
+
     clTabColours();
     virtual ~clTabColours() {}
 
@@ -108,6 +119,8 @@ public:
      * @brief initialize the light colours
      */
     virtual void InitLightColours();
+
+    bool IsDarkColours() const;
 };
 
 /**
@@ -117,10 +130,12 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabInfo
 {
+    wxBitmap m_bitmap;
+    wxBitmap m_disabledBitmp;
+
 public:
     clTabCtrl* m_tabCtrl;
     wxString m_label;
-    wxBitmap m_bitmap;
     wxString m_tooltip;
     wxWindow* m_window;
     wxRect m_rect;
@@ -134,17 +149,19 @@ public:
     int m_width;
     int m_height;
     int m_vTabsWidth;
+    int m_textWidth;
 
 public:
     void CalculateOffsets(size_t style);
+    void CalculateOffsets(size_t style, wxDC& dc);
 
 public:
     typedef wxSharedPtr<clTabInfo> Ptr_t;
     typedef std::vector<clTabInfo::Ptr_t> Vec_t;
 
     clTabInfo(clTabCtrl* tabCtrl);
-    clTabInfo(
-        clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp = wxNullBitmap);
+    clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text,
+              const wxBitmap& bmp = wxNullBitmap);
     virtual ~clTabInfo() {}
 
     bool IsValid() const { return m_window != NULL; }
@@ -166,6 +183,7 @@ public:
     int GetWidth() const { return m_width; }
     void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
+    const wxBitmap& GetDisabledBitmp() const { return m_disabledBitmp; }
 };
 
 class WXDLLIMPEXP_SDK clTabRenderer
@@ -181,22 +199,60 @@ public:
     int verticalOverlapWidth; // V_OVERLAP_WIDTH = 3;
     int xSpacer;
     int ySpacer;
+    wxString m_name;
+
+protected:
+    void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
 
 public:
-    clTabRenderer()
-        : bottomAreaHeight(0)
-        , majorCurveWidth(0)
-        , smallCurveWidth(0)
-        , overlapWidth(0)
-        , verticalOverlapWidth(0)
-        , xSpacer(5)
-        , ySpacer(3)
-    {
-    }
+    clTabRenderer(const wxString& name);
     virtual ~clTabRenderer() {}
-    virtual void Draw(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style) = 0;
-    virtual void DrawBottomRect(
-        clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc, const clTabColours& colours, size_t style) = 0;
-};
+    virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
+                      size_t style) = 0;
+    virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+                                const clTabColours& colours, size_t style) = 0;
 
+    virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                size_t style);
+
+    /**
+     * @brief finalise the background after all elements have been drawn on the tab area colour. Default is
+     * to do nothing
+     */
+    virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                    size_t style);
+    /**
+     * @brief reutrn font suitable for drawing the tab label
+     */
+    static wxFont GetTabFont();
+
+    /**
+     * @brief draw a button in a given state at a give location
+     */
+    static void DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state);
+
+    /**
+     * @brief draw cheveron button
+     */
+    static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
+
+    static int GetDefaultBitmapHeight(int Y_spacer);
+
+    /**
+     * @brief allocate new renderer based on CodeLite's settings
+     */
+    static clTabRenderer::Ptr_t CreateRenderer(size_t tabStyle);
+    /**
+     * @brief return list of availale renderers
+     */
+    static wxArrayString GetRenderers();
+
+    /**
+     * @brief return the marker pen width
+     * @return
+     */
+    static int GetMarkerWidth();
+    void SetName(const wxString& name) { this->m_name = name; }
+    const wxString& GetName() const { return m_name; }
+};
 #endif // CLTABRENDERER_H

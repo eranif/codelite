@@ -26,48 +26,60 @@
 #ifndef OPTIONS_CONFIG_H
 #define OPTIONS_CONFIG_H
 
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+#include "clEditorConfig.h"
+#include "codelite_exports.h"
+#include "configuration_object.h"
 #include "wx/colour.h"
 #include "wx/font.h"
-#include "configuration_object.h"
-#include "codelite_exports.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
 
 class WXDLLIMPEXP_SDK OptionsConfig : public ConfObject
 {
 public:
     enum {
-        Opt_Unused10 = 0x00000001,
-        Opt_Unused11 = 0x00000002,
-        Opt_Unused12 = 0x00000004,
-        Opt_AutoCompleteCurlyBraces = 0x00000008,
-        Opt_AutoCompleteNormalBraces = 0x00000010,
-        Opt_SmartAddFiles = 0x00000020,
-        Opt_IconSet_FreshFarm = 0x00000040,
-        Opt_IconSet_Classic = 0x00000100,
-        Opt_AutoCompleteDoubleQuotes = 0x00000200,
-        Opt_NavKey_Shift = 0x00000400, // (No longer actively used)
-        Opt_NavKey_Alt = 0x00000800,
-        Opt_NavKey_Control = 0x00001000,
-        Opt_IconSet_Classic_Dark = 0x00002000,
-        Opt_Mark_Debugger_Line = 0x00004000,
-        Opt_TabNoXButton = 0x00008000,
-        Opt_TabColourPersistent = 0x00010000,
-        Opt_Unused3 = 0x00020000,
-        Opt_Use_CodeLite_Terminal = 0x00040000,
-        Opt_Unused6 = 0x00080000,
-        Opt_Unused5 = 0x00100000,
-        Opt_AllowCaretAfterEndOfLine = 0x00200000,
-        Opt_HideDockingWindowCaption = 0x00400000,
-        Opt_WrapQuotes = 0x00800000,
-        Opt_WrapBrackets = 0x01000000,
-        Opt_WrapCmdWithDoubleQuotes = 0x02000000,
-        Opt_FoldHighlightActiveBlock = 0x04000000,
-        Opt_EnsureCaptionsVisible = 0x08000000,
-        Opt_DisableMouseCtrlZoom = 0x10000000,
-        Opt_UseBlockCaret =   0x20000000,
-        Opt_TabStyleMinimal = 0x40000000,
+        Opt_Unused10 = (1 << 0),
+        Opt_Unused11 = (1 << 1),
+        Opt_Unused12 = (1 << 2),
+        Opt_AutoCompleteCurlyBraces = (1 << 3),
+        Opt_AutoCompleteNormalBraces = (1 << 4),
+        Opt_SmartAddFiles = (1 << 5),
+        Opt_IconSet_FreshFarm = (1 << 6),
+        Opt_TabStyleTRAPEZOID = (1 << 7),
+        Opt_IconSet_Classic = (1 << 8),
+        Opt_AutoCompleteDoubleQuotes = (1 << 9),
+        Opt_NavKey_Shift = (1 << 10), // (No longer actively used)
+        Opt_NavKey_Alt = (1 << 11),
+        Opt_NavKey_Control = (1 << 12),
+        Opt_IconSet_Classic_Dark = (1 << 13),
+        Opt_Mark_Debugger_Line = (1 << 14),
+        Opt_TabNoXButton = (1 << 15),
+        Opt_TabColourPersistent = (1 << 16),
+        Opt_TabColourDark = (1 << 17),
+        Opt_Use_CodeLite_Terminal = (1 << 18),
+        Opt_Unused14 = (1 << 19),
+        Opt_Unused15 = (1 << 20),
+        Opt_AllowCaretAfterEndOfLine = (1 << 21),
+        Opt_HideDockingWindowCaption = (1 << 22),
+        Opt_WrapQuotes = (1 << 23),
+        Opt_WrapBrackets = (1 << 24),
+        Opt_WrapCmdWithDoubleQuotes = (1 << 25),
+        Opt_FoldHighlightActiveBlock = (1 << 26),
+        Opt_EnsureCaptionsVisible = (1 << 27),
+        Opt_DisableMouseCtrlZoom = (1 << 28),
+        Opt_UseBlockCaret = (1 << 29),
+        Opt_TabStyleMinimal = (1 << 30),
     };
+
+    enum {
+        Opt2_MouseScrollSwitchTabs = (1 << 0),
+        Opt2_SortTabsDropdownAlphabetically = (1 << 1),
+        Opt2_PlaceNavBarAtTheTop = (1 << 2),
+        Opt2_DisableCtrlTabForTabSwitching = (1 << 3),
+        Opt2_SortNavBarDropdown = (1 << 4),
+    };
+
+    enum { nbTabHt_Tiny = 1, nbTabHt_Short, nbTabHt_Medium, nbTabHt_Tall };
 
 protected:
     bool m_displayFoldMargin;
@@ -101,6 +113,7 @@ protected:
     bool m_autoAdjustHScrollBarWidth;
     int m_caretWidth;
     int m_caretBlinkPeriod;
+    bool m_copyLineEmptySelection;
     wxString m_programConsoleCommand;
     wxString m_eolMode;
     bool m_hideChangeMarkerMargin;
@@ -127,6 +140,7 @@ protected:
     bool m_disableSemicolonShift;
     int m_caretLineAlpha;
     bool m_dontAutoFoldResults;
+    bool m_dontOverrideSearchStringWithSelection;
     bool m_showDebugOnRun;
     bool m_caretUseCamelCase;
     bool m_dontTrimCaretLine;
@@ -137,10 +151,13 @@ protected:
     bool m_useLocale;
     bool m_trimOnlyModifiedLines;
     size_t m_options;
+    size_t m_options2;
     wxColour m_debuggerMarkerLine;
     wxDirection m_workspaceTabsDirection; // Up/Down/Left/Right
     wxDirection m_outputTabsDirection;    // Up/Down
     bool m_indentedComments;
+    int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
+    wxString m_webSearchPrefix;
 
 public:
     // Helpers
@@ -154,6 +171,16 @@ public:
     }
 
     bool HasOption(size_t flag) const { return m_options & flag; }
+    void EnableOption2(size_t flag, bool b)
+    {
+        if(b) {
+            m_options2 |= flag;
+        } else {
+            m_options2 &= ~flag;
+        }
+    }
+
+    bool HasOption2(size_t flag) const { return m_options2 & flag; }
 
 public:
     OptionsConfig() {}
@@ -175,9 +202,21 @@ public:
     // Setters/Getters
     //-------------------------------------
     void SetTabColourMatchesTheme(bool b) { EnableOption(Opt_TabColourPersistent, !b); }
-    bool IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
+    bool IsTabColourMatchesTheme() const;
+    void SetTabColourDark(bool b) { EnableOption(Opt_TabColourDark, b); }
+    bool IsTabColourDark() const;
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
+    bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }
+    void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
+    bool IsSortTabsDropdownAlphabetically() const { return HasOption2(Opt2_SortTabsDropdownAlphabetically); }
+    void SetSortTabsDropdownAlphabetically(bool b) { EnableOption2(Opt2_SortTabsDropdownAlphabetically, b); }
+    bool IsNavBarTop() const { return HasOption2(Opt2_PlaceNavBarAtTheTop); }
+    void SetNavBarTop(bool b) { EnableOption2(Opt2_PlaceNavBarAtTheTop, b); }
+    bool IsCtrlTabEnabled() const { return !HasOption2(Opt2_DisableCtrlTabForTabSwitching); }
+    void SetCtrlTabEnabled(bool b) { EnableOption2(Opt2_DisableCtrlTabForTabSwitching, !b); }
+    bool IsSortNavBarDropdown() const { return HasOption2(Opt2_SortNavBarDropdown); }
+    void SetSortNavBarDropdown(bool b) { EnableOption2(Opt2_SortNavBarDropdown, b); }
 
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }
@@ -195,6 +234,8 @@ public:
     bool GetCaretUseCamelCase() const { return m_caretUseCamelCase; }
     void SetDontAutoFoldResults(bool dontAutoFoldResults) { this->m_dontAutoFoldResults = dontAutoFoldResults; }
     bool GetDontAutoFoldResults() const { return m_dontAutoFoldResults; }
+    void SetDontOverrideSearchStringWithSelection(bool dontOverrideSearchStringWithSelection) { m_dontOverrideSearchStringWithSelection = dontOverrideSearchStringWithSelection; }
+    bool GetDontOverrideSearchStringWithSelection() const { return m_dontOverrideSearchStringWithSelection; }
     void SetShowDebugOnRun(bool showDebugOnRun) { this->m_showDebugOnRun = showDebugOnRun; }
     bool GetShowDebugOnRun() const { return m_showDebugOnRun; }
     bool GetDisableSemicolonShift() const { return m_disableSemicolonShift; }
@@ -394,6 +435,9 @@ public:
     const int& GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
     const int& GetCaretWidth() const { return m_caretWidth; }
 
+    void SetCopyLineEmptySelection(const bool copyLineEmptySelection) { m_copyLineEmptySelection = copyLineEmptySelection; }
+    bool GetCopyLineEmptySelection() const { return m_copyLineEmptySelection; }
+
     void SetProgramConsoleCommand(const wxString& programConsoleCommand)
     {
         this->m_programConsoleCommand = programConsoleCommand;
@@ -421,11 +465,19 @@ public:
     bool IsWrapSelectionBrackets() const { return HasOption(Opt_WrapBrackets); }
     void SetWrapSelectionWithQuotes(bool b) { return EnableOption(Opt_WrapQuotes, b); }
     void SetWrapSelectionBrackets(bool b) { return EnableOption(Opt_WrapBrackets, b); }
+    void SetNotebookTabHeight(int nbTabHeight) { m_nbTabHeight = nbTabHeight; }
+    int GetNotebookTabHeight() const { return m_nbTabHeight; }
 
     void MSWWrapCmdWithDoubleQuotes(bool b) { EnableOption(Opt_WrapCmdWithDoubleQuotes, b); }
     bool MSWIsWrapCmdWithDoubleQuotes() const { return true; }
     bool IsMouseZoomEnabled() const { return !HasOption(Opt_DisableMouseCtrlZoom); }
     void SetMouseZoomEnabled(bool b) { EnableOption(Opt_DisableMouseCtrlZoom, !b); }
+
+    const wxString& GetWebSearchPrefix() const { return m_webSearchPrefix; }
+    void SetWebSearchPrefix(const wxString& webSearchPrefix) { this->m_webSearchPrefix = webSearchPrefix; }
+
+    void UpdateFromEditorConfig(const clEditorConfigSection& section);
+
     /**
      * Return an XML representation of this object
      * \return XML node

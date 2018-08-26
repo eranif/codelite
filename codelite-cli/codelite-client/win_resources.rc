@@ -1,0 +1,6 @@
+#include "wx/msw/wx.rc"
+#ifdef WIN64
+1 24 "wx/msw/amd64.manifest"
+#else
+1 24 "wx/msw/wx.manifest"
+#endif

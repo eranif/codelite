@@ -30,15 +30,17 @@
 #include <wx/filename.h>
 #include <map>
 #include <wx/clntdata.h>
+#include "wxStringHash.h"
 
 class RemoteFileInfo : public wxClientData
 {
     SSHAccountInfo m_account; // the account for which this file belongs to
     wxString m_localFile;
     wxString m_remoteFile;
+    size_t m_premissions;
 
 public:
-    typedef std::map<wxString, RemoteFileInfo> Map_t;
+    typedef std::unordered_map<wxString, RemoteFileInfo> Map_t;
 
 public:
     RemoteFileInfo();
@@ -49,6 +51,8 @@ public:
     const wxString& GetLocalFile() const { return m_localFile; }
     void SetRemoteFile(const wxString& remoteFile);
     const wxString& GetRemoteFile() const { return m_remoteFile; }
+    void SetPremissions(size_t premissions) { this->m_premissions = premissions; }
+    size_t GetPremissions() const { return m_premissions; }
 
     static wxString GetTempFolder();
 };

@@ -257,7 +257,7 @@ void clKeyboardManager::Initialize()
 
             if(canDeleteOldSettings) {
                 wxLogNull noLog;
-                ::wxRemoveFile(fnFileToLoad.GetFullPath());
+                clRemoveFile(fnFileToLoad.GetFullPath());
             }
         }
     } else {
@@ -265,6 +265,14 @@ void clKeyboardManager::Initialize()
         m_menuTable = config.GetBindings();
     }
 
+    // Load the default settings and add any new entries
+    MenuItemDataMap_t defaultEntries = DoLoadDefaultAccelerators();
+    std::for_each(defaultEntries.begin(), defaultEntries.end(), [&](const MenuItemDataMap_t::value_type& vt) {
+        if(m_menuTable.count(vt.first) == 0) {
+            m_menuTable.insert(vt);
+        }
+    });
+    
     // Store the correct configuration
     config.SetBindings(m_menuTable, m_globalTable).Save();
 
@@ -356,8 +364,9 @@ bool clKeyboardManager::Exists(const wxString& accel) const
     return false;
 }
 
-void clKeyboardManager::AddGlobalAccelerator(
-    const wxString& resourceID, const wxString& keyboardShortcut, const wxString& description)
+void clKeyboardManager::AddGlobalAccelerator(const wxString& resourceID,
+                                             const wxString& keyboardShortcut,
+                                             const wxString& description)
 {
     MenuItemData mid;
     mid.action = description;
@@ -377,11 +386,11 @@ void clKeyboardManager::RestoreDefaults()
 
     wxLogNull nl;
     if(fnOldSettings.Exists()) {
-        ::wxRemoveFile(fnOldSettings.GetFullPath());
+        clRemoveFile(fnOldSettings.GetFullPath());
     }
 
     if(fnNewSettings.Exists()) {
-        ::wxRemoveFile(fnNewSettings.GetFullPath());
+        clRemoveFile(fnNewSettings.GetFullPath());
     }
 
     // Call initialize again
@@ -417,9 +426,40 @@ wxArrayString clKeyboardManager::GetAllUnasignedKeyboardShortcuts() const
 
     // Remove all duplicate entries
     wxArrayString allUnasigned;
-    std::set_difference(m_allShorcuts.begin(), m_allShorcuts.end(), usedShortcuts.begin(), usedShortcuts.end(),
-        std::back_inserter(allUnasigned));
+    std::set_difference(m_allShorcuts.begin(),
+                        m_allShorcuts.end(),
+                        usedShortcuts.begin(),
+                        usedShortcuts.end(),
+                        std::back_inserter(allUnasigned));
     return allUnasigned;
+}
+
+MenuItemDataMap_t clKeyboardManager::DoLoadDefaultAccelerators()
+{
+    MenuItemDataMap_t entries;
+    wxFileName fnDefaultOldSettings(clStandardPaths::Get().GetDataDir(), "accelerators.conf.default");
+    fnDefaultOldSettings.AppendDir("config");
+
+    if(fnDefaultOldSettings.Exists()) {
+        wxString content;
+        if(!FileUtils::ReadFileContent(fnDefaultOldSettings, content)) {
+            return entries;
+        }
+        wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
+        for(size_t i = 0; i < lines.GetCount(); ++i) {
+            wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
+            if(parts.GetCount() < 3) continue;
+            MenuItemData binding;
+            binding.resourceID = parts.Item(0);
+            binding.parentMenu = parts.Item(1);
+            binding.action = parts.Item(2);
+            if(parts.GetCount() == 4) {
+                binding.accel = parts.Item(3);
+            }
+            entries.insert(std::make_pair(binding.resourceID, binding));
+        }
+    }
+    return entries;
 }
 
 void clKeyboardShortcut::Clear()

@@ -87,9 +87,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stc->StyleClearAll();
+#ifndef __WXOSX__
     for(int i=0; i<wxSTC_STYLE_MAX; ++i) {
         m_stc->StyleSetFont(i, m_stcFont);
     }
+#endif
     m_stc->SetWrapMode(0);
     m_stc->SetIndentationGuides(0);
     m_stc->SetKeyWords(0, wxT(""));

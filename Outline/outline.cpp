@@ -23,29 +23,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "ctags_manager.h"
+#include "detachedpanesinfo.h"
+#include "event_notifier.h"
+#include "fileextmanager.h"
+#include "iconfigtool.h"
+#include "macros.h"
+#include "outline.h"
+#include "outline_settings.h"
+#include "outline_symbol_tree.h"
+#include "parse_thread.h"
+#include "workspace.h"
 #include <set>
 #include <wx/app.h>
-#include <wx/wupdlock.h>
-#include "event_notifier.h"
-#include <wx/settings.h>
-#include "outline_settings.h"
-#include "iconfigtool.h"
-#include "detachedpanesinfo.h"
-#include <wx/menu.h>
-#include <wx/log.h>
-#include <wx/tokenzr.h>
-#include "macros.h"
-#include "workspace.h"
-#include "ctags_manager.h"
-#include "outline.h"
-#include "fileextmanager.h"
 #include <wx/busyinfo.h>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/settings.h>
+#include <wx/tokenzr.h>
 #include <wx/utils.h>
+#include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-#include "parse_thread.h"
-#include "outline_symbol_tree.h"
-#include "codelite_events.h"
-#include "cl_command_event.h"
 
 //--------------------------------------------
 // Plugin Interface
@@ -56,9 +56,7 @@ static SymbolViewPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new SymbolViewPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new SymbolViewPlugin(manager); }
     return thePlugin;
 }
 
@@ -94,24 +92,26 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
             new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNullBitmap, wxSize(200, 200));
         m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
-
+        m_view->m_isEnabled = true; // Enabled when detached
     } else {
         m_view = new OutlineTab(book, m_mgr);
         book->AddPage(m_view, _("Outline"), false);
     }
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
     m_mgr->AddWorkspaceTab(_("Outline"));
+    m_mgr->GetWorkspacePaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &SymbolViewPlugin::OnPageChanged, this);
 }
 
 SymbolViewPlugin::~SymbolViewPlugin() { thePlugin = NULL; }
 
-clToolBar* SymbolViewPlugin::CreateToolBar(wxWindow* parent) { return NULL; }
+void SymbolViewPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 
 void SymbolViewPlugin::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
+    m_mgr->GetWorkspacePaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &SymbolViewPlugin::OnPageChanged, this);
     int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(m_view);
     if(where != wxNOT_FOUND) {
         // this window might be floating
@@ -141,11 +141,32 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->InsertPage(0, m_view, _("Outline"), true);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_view, _("Outline"), false);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
-        if(where != wxNOT_FOUND) {
-            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
+    }
+}
+
+void SymbolViewPlugin::OnPageChanged(wxBookCtrlEvent& e)
+{
+    e.Skip();
+    if(m_view->IsShown()) {
+        m_view->m_isEnabled = true;
+        m_view->EditorChanged();
+    } else if(IsPaneDetached()) {
+        m_view->m_isEnabled = true;
+        m_view->EditorChanged();
+    } else {
+        m_view->m_isEnabled = false;
+        int sel = m_mgr->GetWorkspacePaneNotebook()->GetSelection();
+        if(sel != wxNOT_FOUND) {
+            wxString seletionText = m_mgr->GetWorkspacePaneNotebook()->GetPageText(sel);
+            m_view->m_isEnabled = (seletionText == _("Outline"));
+            if(m_view->m_isEnabled) { m_view->EditorChanged(); }
+        } else {
+            // the page is detached
+            m_view->m_isEnabled = true; // just mark as active
         }
     }
 }

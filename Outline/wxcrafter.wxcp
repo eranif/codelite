@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 21,
+  "m_objCounter": 29,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC682BInitBitmapResources",
   "m_bitmapsFile": "wxcrafter_outline_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -128,11 +130,11 @@
      "m_children": [{
        "m_type": 4406,
        "proportion": 0,
-       "border": 2,
+       "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxTE_RICH2", "wxTE_PROCESS_ENTER"],
-       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -152,7 +154,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
-         "m_value": "Search a symbol"
+         "m_value": ""
         }, {
          "type": "colour",
          "m_label": "Bg Colour:",
@@ -211,18 +213,18 @@
          "m_value": false
         }],
        "m_events": [{
-         "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
-         "m_eventClass": "wxCommandEvent",
-         "m_eventHandler": "wxCommandEventHandler",
-         "m_functionNameAndSignature": "OnSearchSymbol(wxCommandEvent& event)",
-         "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
-         "m_noBody": false
-        }, {
          "m_eventName": "wxEVT_COMMAND_TEXT_ENTER",
          "m_eventClass": "wxCommandEvent",
          "m_eventHandler": "wxCommandEventHandler",
          "m_functionNameAndSignature": "OnSearchEnter(wxCommandEvent& event)",
          "m_description": "Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
+         "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_TEXT_UPDATED",
+         "m_eventClass": "wxCommandEvent",
+         "m_eventHandler": "wxCommandEventHandler",
+         "m_functionNameAndSignature": "OnSearchSymbol(wxCommandEvent& event)",
+         "m_description": "Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
          "m_noBody": false
         }],
        "m_children": []

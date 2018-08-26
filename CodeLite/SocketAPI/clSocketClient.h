@@ -32,6 +32,7 @@
 class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
 {
     wxString m_path;
+
 public:
     clSocketClient();
     virtual ~clSocketClient();
@@ -39,13 +40,25 @@ public:
     /**
      * @brief connect to a remote socket, using unix-domain socket
      */
-    bool ConnectLocal(const wxString &socketPath);
+    bool ConnectLocal(const wxString& socketPath);
     /**
      * @brief connect to a remote server using ip/port
      * when using non-blocking mode, wouldBlock will be set to true
      * incase the connect fails
      */
-    bool ConnectRemote(const wxString &address, int port, bool &wouldBlock, bool nonBlockingMode = false);
+    bool ConnectRemote(const wxString& address, int port, bool& wouldBlock, bool nonBlockingMode = false);
+
+    /**
+     * @brief connect using connection string
+     * @param connectionString in the format of unix:///path/to/unix/socket or tcp://127.0.0.1:1234
+     * @return
+     */
+    bool Connect(const wxString& connectionString, bool nonBlockingMode = false);
+
+    /**
+     * @brief connect using non-blocking method
+     */
+    bool ConnectNonBlocking(const wxString& connectionString, bool& wouldBlock);
 };
 
 #endif // CLSOCKETCLIENT_H

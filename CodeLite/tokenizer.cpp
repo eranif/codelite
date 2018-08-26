@@ -53,7 +53,7 @@ StringTokenizer::StringTokenizer(const wxString& str,
 		if( nEnd != nStart)
 			token = str.substr(nStart, nEnd-nStart);
 		else
-			token.empty();
+			token.Empty();
 
 		if(!token.empty())
 			m_tokensArr.push_back(token);

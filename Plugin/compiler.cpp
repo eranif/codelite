@@ -22,21 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "compiler.h"
-#include "xmlutils.h"
-#include <wx/log.h>
-#include "macros.h"
-#include "wx_xml_compatibility.h"
-#include "build_system.h"
-#include "build_settings_config.h"
-#include <ICompilerLocator.h>
-#include <wx/regex.h>
-#include <procutils.h>
-#include "globals.h"
-#include <wx/tokenzr.h>
-#include "file_logger.h"
 #include "CxxPreProcessor.h"
 #include "asyncprocess.h"
+#include "build_settings_config.h"
+#include "build_system.h"
+#include "compiler.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "macros.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+#include <ICompilerLocator.h>
+#include <procutils.h>
+#include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)
@@ -183,9 +184,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         if(GetTool("MAKE").IsEmpty()) {
             BuilderConfigPtr bldr = BuildSettingsConfigST::Get()->GetBuilderConfig("");
-            if(bldr) {
-                SetTool("MAKE", wxString() << bldr->GetToolPath() << " -j " << bldr->GetToolJobs());
-            }
+            if(bldr) { SetTool("MAKE", wxString() << bldr->GetToolPath() << " -j " << bldr->GetToolJobs()); }
         }
 
         // Default values for the assembler
@@ -197,13 +196,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         }
 
         // For backward compatibility, if the compiler / linker options are empty - add them
-        if(IsGnuCompatibleCompiler()) {
-            AddDefaultGnuComplierOptions();
-        }
+        if(IsGnuCompatibleCompiler()) { AddDefaultGnuComplierOptions(); }
 
-        if(IsGnuCompatibleCompiler()) {
-            AddDefaultGnuLinkerOptions();
-        }
+        if(IsGnuCompatibleCompiler()) { AddDefaultGnuLinkerOptions(); }
 
     } else {
         // Create a default compiler: g++
@@ -228,52 +223,37 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
                        "error)|(error)|(undefined reference)|([\\t ]*required from))",
-                       1,
-                       3,
-                       4);
+                       1, 3, 4);
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
-                       3,
-                       1,
-                       -1);
+                       3, 1, -1);
             AddPattern(eErrorPattern,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)([0-9]+)(:)",
-                       3,
-                       1,
-                       -1);
+                       3, 1, -1);
             AddPattern(eErrorPattern, "undefined reference to", -1, -1, -1);
             AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
             AddPattern(eWarningPattern,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( warning)",
-                       1,
-                       3,
-                       4);
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ ]*(warning|required)", 1,
+                       3, 4);
+            AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
+                       1, 3, -1);
             AddPattern(eWarningPattern,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
-                       1,
-                       3,
-                       -1);
-            AddPattern(eWarningPattern,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)",
-                       1,
-                       3,
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3,
                        -1);
             AddPattern(eWarningPattern,
                        "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?",
-                       2,
-                       4,
-                       -1);
+                       2, 4, -1);
 
             AddDefaultGnuComplierOptions();
             AddDefaultGnuLinkerOptions();
 
         } else {
 
-            AddPattern(
-                eErrorPattern, "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error", 1, 2);
+            AddPattern(eErrorPattern, "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error",
+                       1, 2);
             AddPattern(eErrorPattern, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(error)", 1, 3);
             AddPattern(eErrorPattern, "(LINK : fatal error)", 1, 1);
             AddPattern(eErrorPattern, "(NMAKE : fatal error)", 1, 1);
@@ -309,58 +289,47 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_objectNameIdenticalToFileName = false;
     }
 
-    if(m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
-        m_dependSuffix = m_objectSuffix + wxT(".d");
-    }
+    if(m_generateDependeciesFile && m_dependSuffix.IsEmpty()) { m_dependSuffix = m_objectSuffix + wxT(".d"); }
 
     if(!m_switches[wxT("PreprocessOnly")].IsEmpty() && m_preprocessSuffix.IsEmpty()) {
         m_preprocessSuffix = m_objectSuffix + wxT(".i");
     }
 
     if(m_fileTypes.empty()) {
-        AddCmpFileType("cpp",
-                       CmpFileKindSource,
+        AddCmpFileType("cpp", CmpFileKindSource,
                        "$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("cxx",
-                       CmpFileKindSource,
+        AddCmpFileType("cxx", CmpFileKindSource,
                        "$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("c++",
-                       CmpFileKindSource,
+        AddCmpFileType("c++", CmpFileKindSource,
                        "$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("c",
-                       CmpFileKindSource,
+        AddCmpFileType("c", CmpFileKindSource,
                        "$(CC) $(SourceSwitch) \"$(FileFullPath)\" $(CFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("cc",
-                       CmpFileKindSource,
+        AddCmpFileType("cc", CmpFileKindSource,
                        "$(CXX) $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("m",
-                       CmpFileKindSource,
+        AddCmpFileType("m", CmpFileKindSource,
                        "$(CXX) -x objective-c $(SourceSwitch) \"$(FileFullPath)\" $(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("mm",
-                       CmpFileKindSource,
+        AddCmpFileType("mm", CmpFileKindSource,
                        "$(CXX) -x objective-c++ $(SourceSwitch) \"$(FileFullPath)\" "
                        "$(CXXFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "$(IncludePath)");
-        AddCmpFileType("s",
-                       CmpFileKindSource,
+        AddCmpFileType("s", CmpFileKindSource,
                        "$(AS) \"$(FileFullPath)\" $(ASFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "-I$(IncludePath)");
-        AddCmpFileType("rc",
-                       CmpFileKindResource,
+        AddCmpFileType("rc", CmpFileKindResource,
                        "$(RcCompilerName) -i \"$(FileFullPath)\" $(RcCmpOptions)   "
                        "$(ObjectSwitch)$(IntermediateDirectory)/"
                        "$(ObjectName)$(ObjectSuffix) $(RcIncludePath)");
@@ -368,8 +337,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
     // Add support for assembler file
     if(m_fileTypes.count("s") == 0) {
-        AddCmpFileType("s",
-                       CmpFileKindSource,
+        AddCmpFileType("s", CmpFileKindSource,
                        "$(AS) \"$(FileFullPath)\" $(ASFLAGS) "
                        "$(ObjectSwitch)$(IntermediateDirectory)/$(ObjectName)$(ObjectSuffix) "
                        "-I$(IncludePath)");
@@ -497,9 +465,7 @@ wxXmlNode* Compiler::ToXml() const
 wxString Compiler::GetSwitch(const wxString& name) const
 {
     std::map<wxString, wxString>::const_iterator iter = m_switches.find(name);
-    if(iter == m_switches.end()) {
-        return wxEmptyString;
-    }
+    if(iter == m_switches.end()) { return wxEmptyString; }
     return iter->second;
 }
 
@@ -513,9 +479,7 @@ wxString Compiler::GetTool(const wxString& name) const
         }
         return wxEmptyString;
     }
-    if(name == wxT("CC") && iter->second.empty()) {
-        return GetTool(wxT("CXX"));
-    }
+    if(name == wxT("CC") && iter->second.empty()) { return GetTool(wxT("CXX")); }
     wxString tool = iter->second;
     tool.Replace("\\", "/");
     return tool;
@@ -524,9 +488,7 @@ wxString Compiler::GetTool(const wxString& name) const
 bool Compiler::GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo& ft)
 {
     std::map<wxString, Compiler::CmpFileTypeInfo>::iterator iter = m_fileTypes.find(extension.Lower());
-    if(iter == m_fileTypes.end()) {
-        return false;
-    }
+    if(iter == m_fileTypes.end()) { return false; }
     ft = iter->second;
     return true;
 }
@@ -535,9 +497,7 @@ void Compiler::AddCmpFileType(const wxString& extension, CmpFileKind type, const
 {
     Compiler::CmpFileTypeInfo ft;
     ft.extension = extension.Lower();
-    if(m_fileTypes.count(ft.extension)) {
-        m_fileTypes.erase(ft.extension);
-    }
+    if(m_fileTypes.count(ft.extension)) { m_fileTypes.erase(ft.extension); }
 
     ft.compilation_line = compile_line;
     ft.kind = type;
@@ -546,9 +506,7 @@ void Compiler::AddCmpFileType(const wxString& extension, CmpFileKind type, const
 
 void Compiler::SetSwitch(const wxString& switchName, const wxString& switchValue)
 {
-    if(m_switches.count(switchName)) {
-        m_switches.erase(switchName);
-    }
+    if(m_switches.count(switchName)) { m_switches.erase(switchName); }
     m_switches.insert(std::make_pair(switchName, switchValue));
 }
 
@@ -569,9 +527,7 @@ void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, 
 
 void Compiler::SetTool(const wxString& toolname, const wxString& cmd)
 {
-    if(m_tools.count(toolname)) {
-        m_tools.erase(toolname);
-    }
+    if(m_tools.count(toolname)) { m_tools.erase(toolname); }
     m_tools.insert(std::make_pair(toolname, cmd));
 }
 
@@ -625,6 +581,7 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-std=c99", "Enable ANSI C99 features");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
     AddCompilerOption("-std=c++14", "Enable C++14 features");
+	AddCompilerOption("-std=c++17", "Enable C++17 features");
 }
 
 void Compiler::AddDefaultGnuLinkerOptions()
@@ -643,15 +600,11 @@ wxArrayString Compiler::GetDefaultIncludePaths()
     gccCompilers.Add(COMPILER_FAMILY_MINGW);
     gccCompilers.Add(COMPILER_FAMILY_CLANG);
     gccCompilers.Add(COMPILER_FAMILY_GCC);
-    
-    // Only add the cygwin 
-    if(::clIsCygwinEnvironment()) {
-        gccCompilers.Add(COMPILER_FAMILY_CYGWIN);
-    }
-    
-    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) {
-        defaultPaths = POSIXGetIncludePaths();
-    }
+
+    // Only add the cygwin
+    if(::clIsCygwinEnvironment()) { gccCompilers.Add(COMPILER_FAMILY_CYGWIN); }
+
+    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) { defaultPaths = POSIXGetIncludePaths(); }
     return defaultPaths;
 }
 
@@ -663,13 +616,9 @@ wxString Compiler::GetGCCVersion() const
     command << GetTool("CXX") << " --version";
     wxArrayString out;
     ProcUtils::SafeExecuteCommand(command, out);
-    if(out.IsEmpty()) {
-        return "";
-    }
+    if(out.IsEmpty()) { return ""; }
 
-    if(reVersion.Matches(out.Item(0))) {
-        return reVersion.GetMatch(out.Item(0));
-    }
+    if(reVersion.Matches(out.Item(0))) { return reVersion.GetMatch(out.Item(0)); }
     return "";
 }
 
@@ -693,10 +642,10 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 #else
     command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
 #endif
-    
+
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command));
-    proc->WaitForTerminate(outputStr);
+    if(proc) proc->WaitForTerminate(outputStr);
 
     wxArrayString arr;
     wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
@@ -709,9 +658,7 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
             continue;
         }
 
-        if(outputArr[i].Contains(wxT("End of search list."))) {
-            break;
-        }
+        if(outputArr[i].Contains(wxT("End of search list."))) { break; }
 
         if(collect) {
 
@@ -721,16 +668,14 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
             // but it is harmless to use it under all OSs
             file.Replace(wxT("(framework directory)"), wxT(""));
             file.Trim().Trim(false);
-            
+
             // Fix cygwin paths to use Windows native paths
 #ifdef __WXMSW__
             if(GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
                 const wxString& cygdriveRoot = GetInstallationPath();
-                
+
                 // For reasons beyond me, /usr/lib is mapped to /lib
-                if(file.StartsWith("/usr/lib")) {
-                    file.Replace("/usr/lib", "/lib");
-                }
+                if(file.StartsWith("/usr/lib")) { file.Replace("/usr/lib", "/lib"); }
                 file.Prepend(cygdriveRoot + "/");
             }
 #endif
@@ -738,8 +683,6 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
             wxFileName includePath(file, "");
             includePath.Normalize();
 
-            
-            
             arr.Add(includePath.GetPath());
         }
     }
@@ -748,9 +691,7 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 
 const wxArrayString& Compiler::GetBuiltinMacros()
 {
-    if(!m_compilerBuiltinDefinitions.IsEmpty()) {
-        return m_compilerBuiltinDefinitions;
-    }
+    if(!m_compilerBuiltinDefinitions.IsEmpty()) { return m_compilerBuiltinDefinitions; }
 
     wxArrayString definitions;
     // Command example: "echo | clang -dM -E - > /tmp/pp"
@@ -783,8 +724,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
 
             {
                 // Delete the file
-                wxLogNull n;
-                ::wxRemoveFile(cmpMacrosFile.GetFullPath());
+                clRemoveFile(cmpMacrosFile.GetFullPath());
             }
         }
     }

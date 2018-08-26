@@ -28,23 +28,28 @@
 
 #include "codelite_exports.h"
 #include "PHPEntityBase.h" // Base class: PHPEntityBase
+#include "PHPDocVar.h"
 
 class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
 {
     wxString m_extends;
     wxArrayString m_implements;
     wxArrayString m_traits;
+    PHPDocVar::List_t m_varPhpDocs; // List of @var defined inside the class body
 
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
     // Save the class into teh database
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
-
+    
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
     /**
      * @brief return an array of inheritance (extends, implementes and traits)
      */
@@ -60,6 +65,10 @@ public:
     const wxArrayString& GetTraits() const { return m_traits; }
     wxString GetImplementsAsString() const { return ::wxJoin(m_implements, ';'); }
     wxString GetTraitsAsString() const { return ::wxJoin(m_traits, ';'); }
+
+    const PHPDocVar::List_t& GetVarPhpDocs() const { return m_varPhpDocs; }
+    PHPDocVar::List_t& GetVarPhpDocs() { return m_varPhpDocs; }
+    void AddVarPhpDoc(PHPDocVar::Ptr_t doc) { GetVarPhpDocs().push_back(doc); }
 
     // Aliases
     void SetIsInterface(bool b) { SetFlag(kClass_Interface, b); }

@@ -49,32 +49,33 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
 
-OptionsDlg2::OptionsDlg2(wxWindow* parent)
+PreferencesDialog::PreferencesDialog(wxWindow* parent)
     : OptionsBaseDlg2(parent)
     , m_contentObjects()
     , restartRquired(false)
 {
     Initialize();
-    SetName("OptionsDlg2");
+    SetName("PreferencesDialog");
     WindowAttrManager::Load(this);
-    CenterOnParent();
     MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
+    GetSizer()->Fit(this);
     GetSizer()->Layout();
+    CenterOnParent();
 }
 
-OptionsDlg2::~OptionsDlg2() {}
+PreferencesDialog::~PreferencesDialog() {}
 
-void OptionsDlg2::OnButtonOK(wxCommandEvent&)
+void PreferencesDialog::OnButtonOK(wxCommandEvent&)
 {
     DoSave();
     EndModal(wxID_OK);
 }
 
-void OptionsDlg2::OnButtonCancel(wxCommandEvent&) { EndModal(wxID_CANCEL); }
+void PreferencesDialog::OnButtonCancel(wxCommandEvent&) { EndModal(wxID_CANCEL); }
 
-void OptionsDlg2::OnButtonApply(wxCommandEvent&) { DoSave(); }
+void PreferencesDialog::OnButtonApply(wxCommandEvent&) { DoSave(); }
 
-void OptionsDlg2::DoSave()
+void PreferencesDialog::DoSave()
 {
     // construct an OptionsConfig object and update the configuration
     OptionsConfigPtr options(new OptionsConfig(NULL));
@@ -103,20 +104,16 @@ void OptionsDlg2::DoSave()
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 }
 
-void OptionsDlg2::Initialize()
+void PreferencesDialog::Initialize()
 {
-    m_treeBook->AddPage(0, _("Editor"));
-    AddSubPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
-    AddSubPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
-    AddSubPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
-    AddSubPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
-    AddSubPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
-    AddSubPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
-
-    m_treeBook->AddPage(0, wxT("Tweaks"));
-    AddSubPage(new EditorSettingsComments(m_treeBook), _("Code"));
-    AddSubPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Doxygen"));
-
+    AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
+    AddPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
+    AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
+    AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
+    AddPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
+    AddPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
+    AddPage(new EditorSettingsComments(m_treeBook), _("Code"));
+    AddPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Documentation"));
     AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows & Tabs"));
@@ -124,6 +121,5 @@ void OptionsDlg2::Initialize()
     // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
-
     SetMinSize(wxSize(300, 200));
 }

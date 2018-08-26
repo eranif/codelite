@@ -45,18 +45,20 @@ class XDebugComThread : public wxThread
     int m_port;
     clSocketServer m_server;
     wxString m_host;
-
+    int m_waitForConnTimeout;
+    
 protected:
     void DoSendCommand(const wxString& command, clSocketBase::Ptr_t client);
     bool DoReadReply(std::string& reply, clSocketBase::Ptr_t client);
     void Stop();
 
 public:
-    XDebugComThread(XDebugManager* xdebugMgr, int port, const wxString& host)
+    XDebugComThread(XDebugManager* xdebugMgr, int port, const wxString& host, int waitForConnTimeout = 5)
         : wxThread(wxTHREAD_JOINABLE)
         , m_xdebugMgr(xdebugMgr)
         , m_port(port)
         , m_host(host)
+        , m_waitForConnTimeout(waitForConnTimeout)
     {
     }
 

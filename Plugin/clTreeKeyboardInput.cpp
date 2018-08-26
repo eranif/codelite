@@ -4,6 +4,7 @@
 #include "macros.h"
 #include "fileutils.h"
 #include <algorithm>
+#include <wx/uiaction.h>
 
 clTreeKeyboardInput::clTreeKeyboardInput(wxTreeCtrl* tree)
     : m_tree(tree)
@@ -79,12 +80,8 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
         DoShowTextBox();
     }
 
-    wxString chStr(event.GetUnicodeKey());
-    if(!event.ShiftDown()) {
-        chStr.MakeLower();
-    }
-    m_text->ChangeValue(chStr);
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
+    CallAfter(&clTreeKeyboardInput::SimulateKeyDown, event);
 }
 
 void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
@@ -302,4 +299,13 @@ void clTreeKeyboardInput::OnTreeSize(wxSizeEvent& event)
     if(m_text->IsShown()) {
         DoShowTextBox(); // Adjust the box size and position
     }
+}
+
+void clTreeKeyboardInput::SimulateKeyDown(const wxKeyEvent& event)
+{
+    // must be called after SetTextFocus() function to ensure that the simulation is running
+    // on the input text control
+    wxUIActionSimulator sim;
+    sim.KeyDown(event.GetKeyCode(), event.GetModifiers());
+    wxYield();
 }

@@ -27,8 +27,12 @@
 #define CLSOCKETBASE_H
 
 #include <string>
+#include <wx/msgqueue.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
+#ifdef __WXOSX__
+#include <sys/errno.h>
+#endif
 #include "codelite_exports.h"
 
 #ifdef _WIN32
@@ -51,9 +55,12 @@ public:
     clSocketException(const std::string& what)
         : m_what(what)
     {
+        // trim whitespaces
+        static std::string trimString("\r\n\t\v ");
+        m_what.erase(0, m_what.find_first_not_of(trimString));
+        m_what.erase(m_what.find_last_not_of(trimString) + 1);
     }
     ~clSocketException() {}
-
     const std::string& what() const { return m_what; }
 };
 
@@ -65,6 +72,7 @@ protected:
 
 public:
     typedef wxSharedPtr<clSocketBase> Ptr_t;
+    typedef wxMessageQueue<clSocketBase::Ptr_t> Queue_t;
 
     enum {
         kSuccess = 1,
@@ -72,7 +80,15 @@ public:
         kError = 3,
     };
 
-    std::string error() const;
+#ifdef _WIN32
+    static const int eWouldBlock = WSAEWOULDBLOCK;
+#else
+    static const int eWouldBlock = EWOULDBLOCK;
+#endif
+
+    static int GetLastError();
+    static std::string error();
+    static std::string error(const int errorCode);
 
 public:
     /**
@@ -102,54 +118,54 @@ public:
      * @brief
      * @param msg
      */
-    void Send(const std::string& msg) throw(clSocketException);
-    void Send(const wxMemoryBuffer& msg) throw(clSocketException);
-    void Send(const wxString& msg, const wxMBConv& conv = wxConvUTF8) throw(clSocketException);
+    void Send(const std::string& msg);
+    void Send(const wxMemoryBuffer& msg);
+    void Send(const wxString& msg, const wxMBConv& conv = wxConvUTF8);
 
     /**
      * @brief
      * @return
      */
-    int Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout = -1) throw(clSocketException);
+    int Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout = -1);
     /**
      * @brief read string content from remote server
      * @param content [output]
      * @param timeout seconds to wait
      */
-    int Read(wxString& content, const wxMBConv& conv = wxConvUTF8, long timeout = -1) throw(clSocketException);
-    
+    int Read(wxString& content, const wxMBConv& conv = wxConvUTF8, long timeout = -1);
+
     /**
      * @brief read a buffer from the socket
      * @param content [output]
      * @param timeout seconds to wait
      */
-    int Read(wxMemoryBuffer& content, long timeout = -1) throw(clSocketException);
+    int Read(wxMemoryBuffer& content, long timeout = -1);
 
     /**
      * @brief
      * @param seconds
      * @return
      */
-    int SelectRead(long seconds = -1) throw(clSocketException);
-    
+    int SelectRead(long seconds = -1);
+
     /**
      * @brief select for read. Same as above, but use milli seconds instead
      * @param milliSeconds number of _milliseconds_ to wait
-     * @return 
+     * @return
      */
-    int SelectReadMS(long milliSeconds = -1) throw(clSocketException);
-    
+    int SelectReadMS(long milliSeconds = -1);
+
     /**
      * @brief select for write
      * @return
      */
-    int SelectWrite(long seconds = -1) throw(clSocketException);
-    
+    int SelectWrite(long seconds = -1);
+
     /**
      * @brief select for write (milli seconds version)
      * @return
      */
-    int SelectWriteMS(long milliSeconds = -1) throw(clSocketException);
+    int SelectWriteMS(long milliSeconds = -1);
 
     /**
      * @brief read a full message that was sent with 'SendMessage'
@@ -157,13 +173,13 @@ public:
      * @param timeout seconds to wait
      * @return kSuccess, kTimeout or kError
      */
-    int ReadMessage(wxString& message, int timeout) throw(clSocketException);
+    int ReadMessage(wxString& message, int timeout);
 
     /**
      * @brief write a full message
      * @param message
      */
-    void WriteMessage(const wxString& message) throw(clSocketException);
+    void WriteMessage(const wxString& message);
 
 protected:
     /**

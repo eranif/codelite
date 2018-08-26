@@ -42,7 +42,6 @@
 #include "TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
 
-class AsyncExeCmd;
 class MemCheckOutputView;
 
 class MemCheckPlugin : public IPlugin
@@ -55,10 +54,9 @@ public:
     // Abstract methods
     //--------------------------------------------
 
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 
     MemCheckSettings* const GetSettings()

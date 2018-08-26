@@ -342,8 +342,8 @@ DatabaseResultSet* MysqlDatabaseLayer::RunQueryWithResults(const wxString& strQu
     {
       wxCharBuffer sqlBuffer = ConvertToUnicodeStream(strCurrentQuery);
       //puts(sqlBuffer);
-      wxString sqlUTF8((const char*)sqlBuffer, wxConvUTF8);
-      if (m_pInterface->GetMysqlStmtPrepare()(pMysqlStatement, sqlBuffer, sqlUTF8.Length()) == 0)
+      //wxString sqlUTF8((const char*)sqlBuffer, wxConvUTF8);
+      if (m_pInterface->GetMysqlStmtPrepare()(pMysqlStatement, sqlBuffer, sqlBuffer.length()) == 0)
       {
         int nReturn = m_pInterface->GetMysqlStmtExecute()(pMysqlStatement);
         if (nReturn != 0)

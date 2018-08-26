@@ -52,6 +52,8 @@
 #include "clTabTogglerHelper.h"
 
 class clCommandProcessor;
+class GitBlameDlg;
+
 class gitAction
 {
 public:
@@ -97,7 +99,8 @@ class GitPlugin : public IPlugin
 {
     friend class GitConsole;
     friend class GitCommitListDlg;
-    
+    friend class GitCommitDlg;
+
     typedef std::map<int, int> IntMap_t;
     enum {
         gitNone = 0,
@@ -122,6 +125,8 @@ class GitPlugin : public IPlugin
         gitBranchSwitch,
         gitBranchSwitchRemote,
         gitCommitList,
+        gitBlame,
+        gitRevlist,
         gitRebase,
         gitGarbageCollection,
         gitClone,
@@ -132,6 +137,7 @@ class GitPlugin : public IPlugin
         gitRevertCommit,
         gitStash,
         gitStashPop,
+        gitConfig,
     };
 
     wxArrayString m_localBranchList;
@@ -156,7 +162,6 @@ class GitPlugin : public IPlugin
     wxWindow* m_topWindow;
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
-    GitImages m_images;
     IntMap_t m_treeImageMapping;
     int m_baseImageCount;
     GitConsole* m_console;
@@ -166,6 +171,7 @@ class GitPlugin : public IPlugin
     wxString m_selectedFolder;
     clCommandProcessor* m_commandProcessor;
     clTabTogglerHelper::Ptr_t m_tabToggler;
+    GitBlameDlg* m_gitBlameDlg;
 
 private:
     void DoCreateTreeImages();
@@ -181,7 +187,8 @@ private:
     void ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
-
+    void DoRefreshView(bool ensureVisible);
+    
     /// Workspace management
     bool IsWorkspaceOpened() const;
     wxString GetWorkspaceName() const;
@@ -239,11 +246,14 @@ private:
     void OnStartGitk(wxCommandEvent& e);
     void OnStartGitkUI(wxUpdateUIEvent& e);
     void OnListModified(wxCommandEvent& e);
+    void OnGitBlame(wxCommandEvent& e);
     void OnRefresh(wxCommandEvent& e);
     void OnGarbageColletion(wxCommandEvent& e);
     void OnOpenMSYSGit(wxCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
-
+    void OnFileGitBlame(wxCommandEvent& event);
+    void OnAppActivated(wxCommandEvent& event);
+    
 #if 0
     void OnBisectStart(wxCommandEvent& e);
     void OnBisectGood(wxCommandEvent& e);
@@ -264,17 +274,22 @@ private:
 public:
     GitPlugin(IManager* manager);
     ~GitPlugin();
-    
+
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();
+    
+    /**
+     * @brief is git enabled for the current workspace?
+     */
+    bool IsGitEnabled() const;
     
     /**
      * @brief fetch the next 100 commits (skip 'skip' first commits)
      * and show them in the commit list dialog
      * @param skip number of first commits to skip
      */
-    void FetchNextCommits(int skip);
-    
+    void FetchNextCommits(int skip, const wxString& args);
+
     GitConsole* GetConsole() { return m_console; }
     const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }
@@ -294,6 +309,17 @@ public:
     void UndoAddFiles(const wxArrayString& files);
 
     void RefreshFileListView();
+    /**
+     * @brief display a message in the console
+     * used by outside classes e.g. GitDiffDlg
+     * @param message to display
+     */
+    void DisplayMessage(const wxString& message) const;
+
+    void DoGitBlame(const wxString& args);      // Called by OnGitBlame or the git blame dialog
+    wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog
+    void OnGitBlameRevList(
+        const wxString& arg, const wxString& filepath, const wxString& commit = ""); // Called by the git blame dialog
 
     /**
      * @brief simple git command executioin completed. Display its output etc
@@ -304,7 +330,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();

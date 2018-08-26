@@ -31,16 +31,18 @@
 class SubversionView;
 class Subversion2;
 
-class SvnStatusHandler : public SvnCommandHandler {
-	bool     m_fileExplorerOnly;
-	wxString m_rootDir;
-	
-public:
-	SvnStatusHandler(Subversion2 *plugin, int commandId, wxEvtHandler *owner, bool fileExplorerOnly = false, const wxString &rootDir = wxT(""));
-	virtual ~SvnStatusHandler();
+class SvnStatusHandler : public SvnCommandHandler
+{
+    bool m_fileExplorerOnly;
+    wxString m_rootDir;
 
 public:
-	virtual void Process(const wxString &output);
+    SvnStatusHandler(Subversion2* plugin, int commandId, wxEvtHandler* owner, bool fileExplorerOnly = false,
+                     const wxString& rootDir = wxT(""));
+    virtual ~SvnStatusHandler();
+
+public:
+    virtual void Process(const wxString& output);
 };
 
 #endif // SVNSTATUSHANDLER_H

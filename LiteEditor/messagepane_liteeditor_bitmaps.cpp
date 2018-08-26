@@ -21,13 +21,15 @@
         wxMemoryFSHandler::AddFile(name, data, size)
 #endif
 
-static size_t xml_res_size_0 = 90;
+static size_t xml_res_size_0 = 137;
 static unsigned char xml_res_file_0[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
-47,47,119,119,119,46,119,120,119,105,110,100,111,119,115,46,111,114,103,
-47,119,120,120,114,99,34,47,62,10};
+47,47,119,119,119,46,119,120,119,105,100,103,101,116,115,46,111,114,103,
+47,119,120,120,114,99,34,62,10,32,32,60,33,45,45,32,72,97,110,100,108,101,
+114,32,71,101,110,101,114,97,116,105,111,110,32,105,115,32,79,78,32,45,
+45,62,10,60,47,114,101,115,111,117,114,99,101,62,10};
 
 void wxC2A73InitBitmapResources()
 {
@@ -42,6 +44,6 @@ void wxC2A73InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/messagepane_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_messagepane_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/messagepane_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_messagepane_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/messagepane_liteeditor_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_messagepane_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/messagepane_liteeditor_bitmaps.cpp$_home_eran_devl_codelite_LiteEditor_messagepane_liteeditor_bitmaps.xrc"));
 }

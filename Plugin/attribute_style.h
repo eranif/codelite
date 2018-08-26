@@ -129,8 +129,9 @@ public:
 
     /**
      * @brief serialize this style property into a JSON object
+     * @param portable set to true to avoid serializing non portables properties (e.g. face name)
      */
-    JSONElement ToJSON() const;
+    JSONElement ToJSON(bool portable = false) const;
 
     // Accessors
 

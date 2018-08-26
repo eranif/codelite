@@ -3,20 +3,25 @@
 #include <wx/dirdlg.h>
 #include <windowattrmanager.h>
 #include <event_notifier.h>
+#include "lexer_configuration.h"
+#include "ColoursAndFontsManager.h"
 
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
 {
-    clConfig conf("php.conf");
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("Default");
+    if(lexer) {
+        lexer->Apply(m_stcIncludePaths);
+    }
+    
     PHPConfigurationData data;
-    conf.ReadItem(&data);
+    data.Load();
 
     m_textCtrlErrorReporting->ChangeValue(data.GetErrorReporting());
     m_filePickerPHPPath->SetPath(data.GetPhpExe());
-    m_textCtrlIncludePath->ChangeValue(data.GetIncludePathsAsString());
+    m_stcIncludePaths->SetText(data.GetIncludePathsAsString());
     m_textCtrCClIncludePath->ChangeValue(data.GetCCIncludePathsAsString());
     m_textCtrlIdeKey->ChangeValue(data.GetXdebugIdeKey());
-    m_checkBoxRunLint->SetValue(data.IsRunLint());
     wxString strPort;
     strPort << data.GetXdebugPort();
     m_textCtrlXDebugPort->ChangeValue(strPort);
@@ -25,19 +30,19 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-PHPSettingsDlg::~PHPSettingsDlg() {  }
+PHPSettingsDlg::~PHPSettingsDlg() {}
 
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 {
     wxString path = wxDirSelector();
     if(path.IsEmpty() == false) {
-        wxString curpath = m_textCtrlIncludePath->GetValue();
+        wxString curpath = m_stcIncludePaths->GetText();
         curpath.Trim().Trim(false);
         if(curpath.IsEmpty() == false) {
             curpath << wxT("\n");
         }
         curpath << path;
-        m_textCtrlIncludePath->SetValue(curpath);
+        m_stcIncludePaths->SetText(curpath);
     }
 }
 
@@ -45,11 +50,10 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
 {
     PHPConfigurationData data;
     data.SetErrorReporting(m_textCtrlErrorReporting->GetValue());
-    data.SetIncludePaths(wxStringTokenize(m_textCtrlIncludePath->GetValue(), wxT("\n\r"), wxTOKEN_STRTOK));
+    data.SetIncludePaths(wxStringTokenize(m_stcIncludePaths->GetText(), wxT("\n\r"), wxTOKEN_STRTOK));
     data.SetCcIncludePath(wxStringTokenize(m_textCtrCClIncludePath->GetValue(), wxT("\n\n"), wxTOKEN_STRTOK));
     data.SetPhpExe(m_filePickerPHPPath->GetPath());
     data.SetXdebugIdeKey(m_textCtrlIdeKey->GetValue());
-    data.SetRunLint(m_checkBoxRunLint->IsChecked());
     data.SetXdebugHost(m_textCtrlHost->GetValue());
     wxString xdebugPort = m_textCtrlXDebugPort->GetValue();
     long port(0);
@@ -57,8 +61,7 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
         data.SetXdebugPort(port);
     }
 
-    clConfig conf("php.conf");
-    conf.WriteItem(&data);
+    data.Save();
 
     // Send an event to trigger a retag
     wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));

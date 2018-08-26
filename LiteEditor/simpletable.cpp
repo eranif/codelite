@@ -363,6 +363,8 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
 
                 // set the type
                 m_listTable->SetItemText(item, 2, event.m_variableObject.typeName);
+                if (dbgr->GetDebuggerInformation().defaultHexDisplay == true)
+                  dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
                 // refresh this item only
                 if(dbgr) DoRefreshItem(dbgr, item, true);
 
@@ -500,19 +502,21 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
     } else if(event.GetId() == XRCID("watches_df_decimal")) {
         df = DBG_DF_DECIMAL;
     }
-
-    wxTreeItemId item = m_listTable->GetSelection();
+    wxArrayTreeItemIds arr;
+    m_listTable->GetSelections(arr);
     IDebugger* dbgr = DoGetDebugger();
-    if(!dbgr || !item.IsOk()) {
-        return;
+    if (!dbgr) return;
+    for (size_t i = 0; i < arr.GetCount();i++){
+        wxTreeItemId item = arr.Item(i);
+        if (!item.IsOk()) return;
+        wxString gdbId = DoGetGdbId(item);
+        if(gdbId.IsEmpty() == false) {
+            dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
+            dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
+            DoRefreshItem(dbgr, item, true);
+        }       
     }
-
-    wxString gdbId = DoGetGdbId(item);
-    if(gdbId.IsEmpty() == false) {
-        dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
-        dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
-        DoRefreshItem(dbgr, item, true);
-    }
+ 
 }
 
 void WatchesTable::OnUpdateVariableObject(const DebuggerEventData& event)

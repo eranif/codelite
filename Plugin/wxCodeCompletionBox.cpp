@@ -20,10 +20,10 @@
 #include "CxxTemplateFunction.h"
 #include <wx/app.h>
 
-#define LINES_PER_PAGE 8
-#define Y_SPACER 2
-#define SCROLLBAR_WIDTH 12
-#define BOX_WIDTH (400 + SCROLLBAR_WIDTH)
+static int LINES_PER_PAGE = 8;
+static int Y_SPACER = 2;
+static int SCROLLBAR_WIDTH = 12;
+static int BOX_WIDTH = 400 + SCROLLBAR_WIDTH;
 
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 
@@ -38,9 +38,22 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    
     m_ccFont = DrawingUtils::GetDefaultFixedFont();
+    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - 1);
     SetCursor(wxCURSOR_HAND);
+
+    // Update the BOX_WIDTH to contains at least 30 chars
+    static int once = false;
+    if(!once) {
+        once = true;
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        memDC.SetFont(m_ccFont);
+        wxString sampleString('X', 50);
+        wxSize sz = memDC.GetTextExtent(sampleString);
+        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    }
 
     // Calculate the size of the box
     int singleLineHeight = GetSingleLineHeight();
@@ -69,6 +82,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
 
     InitializeDefaultBitmaps();
 
@@ -78,30 +92,30 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_canvas->Bind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+    m_canvas->Bind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
 
     // Default colorus (dark theme)
     clColourPalette palette = DrawingUtils::GetColourPalette();
 
-    m_lightBorder = wxColour("rgb(77, 77, 77)");
-    m_darkBorder = wxColour("rgb(54, 54, 54)");
-    m_penColour = palette.penColour;
+    // Default colours
+    wxColour baseColour = DrawingUtils::GetPanelBgColour();
     m_bgColour = palette.bgColour;
+    m_penColour = palette.penColour;
+    m_separatorColour = m_bgColour.ChangeLightness(98);
     m_textColour = palette.textColour;
     m_selectedTextColour = palette.selecteTextColour;
-    m_selection = palette.selectionBgColour;
-    m_scrollBgColour = wxColour("rgb(50, 50, 50)");
+    m_selectedTextBgColour = palette.selectionBgColour;
+    m_useLightColours = true;
 
     IManager* manager = ::clGetManager();
     if(manager) {
         IEditor* editor = manager->GetActiveEditor();
         if(editor) {
             wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(!DrawingUtils::IsDark(bgColour)) {
-                m_useLightColours = true;
-                // Need bright colours
-                m_lightBorder = *wxWHITE;
-                m_darkBorder = wxColour("rgb(207, 207, 207)");
-                m_scrollBgColour = wxColour("rgb(198, 198, 198)");
+            if(DrawingUtils::IsDark(bgColour)) {
+                // Dark colour
+                m_separatorColour = m_bgColour.ChangeLightness(102);
+                m_useLightColours = false;
             }
         }
     }
@@ -134,6 +148,7 @@ wxCodeCompletionBox::~wxCodeCompletionBox()
 {
     m_canvas->Unbind(wxEVT_LEFT_DOWN, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Unbind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
+    m_canvas->Unbind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
     DoDestroyTipWindow();
 }
 
@@ -143,26 +158,22 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 {
     // Paint the background colour
     wxAutoBufferedPaintDC dc(m_canvas);
-    
+
     // Invalidate all item rects before we draw them
     for(size_t i = 0; i < m_entries.size(); ++i) {
         m_entries.at(i)->m_itemRect = wxRect();
     }
 
     wxRect rect = GetClientRect();
-    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x,
-                          rect.GetTopLeft().y,
-                          SCROLLBAR_WIDTH,
+    m_scrollArea = wxRect(rect.GetWidth() - SCROLLBAR_WIDTH + rect.GetTopLeft().x, rect.GetTopLeft().y, SCROLLBAR_WIDTH,
                           rect.GetHeight());
 
     dc.SetFont(m_ccFont);
-
-    wxSize textSize = dc.GetTextExtent("Tp");
     int singleLineHeight = GetSingleLineHeight();
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
-    dc.SetBrush(m_useLightColours ? m_bgColour : m_lightBorder);
+    dc.SetBrush(m_bgColour);
     dc.SetPen(m_penColour);
 #ifdef __WXOSX__
     rect.Inflate(1, 1);
@@ -171,7 +182,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     // Shrink the rectangle by 2 to provide a 2 pixle
     // border
-    rect.Deflate(2, 2);
+    rect.Deflate(1, 1);
     dc.SetBrush(m_bgColour);
     dc.SetPen(m_bgColour);
     dc.DrawRectangle(rect);
@@ -192,32 +203,37 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     }
 
     // Paint the entries, starting from m_index => m_index + 7
-    wxCoord y = 2;
-    wxCoord x = m_bitmaps.empty() ? 2 : 20;
+    wxCoord y = 1; // Initial coord for drawing the first line
+    wxCoord textX = m_bitmaps.empty() ? 2 : clGetScaledSize(20);
+    wxCoord bmpX = clGetScaledSize(2);
 
     // Draw all items from firstIndex => lastIndex
     for(int i = firstIndex; i < lastIndex; ++i) {
         bool isSelected = (i == m_index);
-        wxRect itemRect(2, y, rect.GetWidth(), singleLineHeight);
+        bool isLast = ((firstIndex + 1) == lastIndex);
+        wxRect itemRect(0, y, rect.GetWidth(), singleLineHeight);
         if(isSelected) {
             // highlight the selection
-            dc.SetBrush(m_selection);
-            dc.SetPen(m_selection);
+            dc.SetBrush(m_selectedTextBgColour);
+            dc.SetPen(m_selectedTextBgColour);
             dc.DrawRectangle(itemRect);
         }
 
-        dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
-        dc.SetPen(m_lightBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
-        y += 1;
-        y += Y_SPACER;
+        dc.SetPen(m_separatorColour);
 
         // If this item has a bitmap, draw it
         wxCodeCompletionBoxEntry::Ptr_t entry = m_entries.at(i);
         if(entry->GetImgIndex() != wxNOT_FOUND && entry->GetImgIndex() < (int)m_bitmaps.size()) {
+            // Use a stock bitmap image
             const wxBitmap& bmp = m_bitmaps.at(entry->GetImgIndex());
             wxCoord bmpY = ((singleLineHeight - bmp.GetScaledHeight()) / 2) + itemRect.y;
-            dc.DrawBitmap(bmp, 2, bmpY);
+
+            dc.DrawBitmap(bmp, bmpX, bmpY);
+        } else if(entry->GetAlternateBitmap().IsOk()) {
+            // We have an alternate bitmap, use it
+            const wxBitmap& bmp = entry->GetAlternateBitmap();
+            wxCoord bmpY = ((singleLineHeight - bmp.GetScaledHeight()) / 2) + itemRect.y;
+            dc.DrawBitmap(bmp, bmpX, bmpY);
         }
 
         // Draw the text
@@ -227,13 +243,16 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         wxString choppedText;
         DrawingUtils::TruncateText(entry->GetText(), itemRect.GetWidth(), dc, choppedText);
 
-        dc.DrawText(choppedText, x, y);
+        wxSize itemTextSize = dc.GetTextExtent(choppedText);
+        wxCoord textY = ((singleLineHeight - itemTextSize.GetHeight()) / 2) + itemRect.y;
+        dc.SetTextForeground(isSelected ? m_selectedTextColour : m_textColour);
+        dc.DrawText(choppedText, textX, textY);
         dc.DestroyClippingRegion();
-        y += textSize.y;
-        y += Y_SPACER;
-        dc.SetPen(m_darkBorder);
-        dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
-        y += 1;
+        y += singleLineHeight;
+        dc.SetPen(m_separatorColour);
+        if(!isLast) {
+            dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
+        }
         entry->m_itemRect = itemRect;
     }
 
@@ -242,9 +261,9 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     //===================--------------------------------------
 
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
-    dc.GradientFillLinear(scrollRect, m_scrollBgColour, m_scrollBgColour);
+    dc.SetPen(m_penColour);
+    dc.SetBrush(m_penColour);
+    dc.DrawRectangle(scrollRect);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
 }
@@ -260,8 +279,18 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
     }
 
+    // Fire "Showing" event
+    if(!(m_flags & kNoShowingEvent)) {
+        clCodeCompletionEvent ccEvent(wxEVT_CCBOX_SHOWING);
+        ccEvent.SetEntries(m_allEntries);
+        ccEvent.SetEventObject(this);
+        ccEvent.SetWord(GetFilter());
+        EventNotifier::Get()->ProcessEvent(ccEvent);
+        m_allEntries.swap(ccEvent.GetEntries());
+    }
     // Filter all duplicate entries from the list (based on simple string match)
     RemoveDuplicateEntries();
+
     // Filter results based on user input
     FilterResults();
 
@@ -273,6 +302,11 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
         return;
     }
 
+    // Let the plugins modify the list of the entries
+    int start = m_startPos;
+    int end = m_stc->GetCurrentPos();
+
+    wxString word = m_stc->GetTextRange(start, end); // the current word
     if(m_entries.empty()) {
         // no entries to display
         DoDestroy();
@@ -358,29 +392,11 @@ void wxCodeCompletionBox::StcKeyDown(wxKeyEvent& event)
         DoScrollDown();
         break;
     case WXK_PAGEDOWN: {
-        int newindex = m_index + (LINES_PER_PAGE - 1);
-        if(newindex >= (int)m_entries.size()) {
-            newindex = (int)m_entries.size() - 1;
-        }
-        // only refresh if there was an actual change
-        if(m_index != newindex) {
-            m_index = newindex;
-            DoDisplayTipWindow();
-            Refresh();
-        }
+        DoPgDown();
         break;
     }
     case WXK_PAGEUP: {
-        int newindex = m_index - (LINES_PER_PAGE - 1);
-        if(newindex < 0) {
-            newindex = 0;
-        }
-        // only refresh if there was an actual change
-        if(m_index != newindex) {
-            m_index = newindex;
-            DoDisplayTipWindow();
-            Refresh();
-        }
+        DoPgUp();
         break;
     }
     case WXK_ESCAPE:
@@ -415,21 +431,18 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     memDC.SetFont(m_ccFont);
+    m_canvas->PrepareDC(memDC);
     wxSize size = memDC.GetTextExtent("Tp");
-
-    int singleLineHeight = size.y + (2 * Y_SPACER) + 2; // the extra pixel is for the border line
-    if(singleLineHeight < 16) {
-        singleLineHeight = 16; // at least 16 pixels for image
+    int singleLineHeight = size.y + (2 * Y_SPACER) + clGetScaledSize(2); // the extra pixel is for the border line
+    if(singleLineHeight < clGetScaledSize(16)) {
+        singleLineHeight = clGetScaledSize(16) + clGetScaledSize(2); // at least 16 pixels for image
     }
     return singleLineHeight;
 }
 
 bool wxCodeCompletionBox::FilterResults()
 {
-    int start = m_startPos;
-    int end = m_stc->GetCurrentPos();
-
-    wxString word = m_stc->GetTextRange(start, end); // the current word
+    wxString word = GetFilter();
     if(word.IsEmpty()) {
         m_entries = m_allEntries;
         return false;
@@ -442,7 +455,6 @@ bool wxCodeCompletionBox::FilterResults()
     // Exact matches
     // Starts with
     // Contains
-
     wxCodeCompletionBoxEntry::Vec_t exactMatches, exactMatchesI, startsWith, startsWithI, contains, containsI;
     for(size_t i = 0; i < m_allEntries.size(); ++i) {
         wxString entryText = m_allEntries.at(i)->GetText().BeforeFirst('(');
@@ -489,6 +501,7 @@ void wxCodeCompletionBox::InsertSelection()
         clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
         e.SetWord(match->GetText());
         e.SetEventObject(m_eventObject);
+        e.SetEntry(match);
         if(!EventNotifier::Get()->ProcessEvent(e)) {
             // execute the default behavior
             if(match->m_tag && match->m_tag->IsTemplateFunction()) {
@@ -566,6 +579,7 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
     if(kind == wxT("enum")) return 12;
     if(kind == wxT("enumerator")) return 13;
     if(kind == wxT("cpp_keyword")) return 17;
+    if(kind == "cenum") return 18;
     return wxNOT_FOUND;
 }
 
@@ -598,6 +612,7 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     wxString text = tag->GetDisplayName().Trim().Trim(false);
     int imgIndex = GetImageId(tag);
     wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
+    entry->m_tag = tag;
     return entry;
 }
 
@@ -624,22 +639,11 @@ void wxCodeCompletionBox::DoDestroy() { wxCodeCompletionBoxManager::Get().Destro
 void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 {
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollBottomRect =
         wxRect(wxPoint(scrollRect.GetTopLeft().x, scrollRect.GetTopLeft().y + scrollRect.GetHeight() / 2),
                wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-#if 0
-    wxPoint topRight;
-    topRight = m_scrollBottomRect.GetTopRight();
-    topRight.x += 1;
-
-    dc.SetPen(m_lightBorder);
-    dc.DrawLine(m_scrollBottomRect.GetTopLeft(), topRight);
-#endif
-
     // Draw the up arrow
     wxCoord x, y;
     x = m_scrollBottomRect.x + ((m_scrollBottomRect.GetWidth() - m_bmpDown.GetWidth()) / 2);
@@ -652,19 +656,9 @@ void wxCodeCompletionBox::DoDrawBottomScrollButton(wxDC& dc)
 void wxCodeCompletionBox::DoDrawTopScrollButton(wxDC& dc)
 {
     wxRect scrollRect = m_scrollArea;
-    scrollRect.Deflate(0, 2);
-    scrollRect.SetWidth(scrollRect.GetWidth() - 2);
 
     // Separate the scrollbar area into 2 big buttons: up and down
     m_scrollTopRect = wxRect(scrollRect.GetTopLeft(), wxSize(scrollRect.GetWidth(), scrollRect.GetHeight() / 2));
-#if 0
-    wxPoint bottomRight;
-    bottomRight = m_scrollTopRect.GetBottomRight();
-    bottomRight.x += 1;
-
-    dc.SetPen(m_darkBorder);
-    dc.DrawLine(m_scrollTopRect.GetBottomLeft(), bottomRight);
-#endif
 
     // Draw the up arrow
     wxCoord x, y;
@@ -772,5 +766,55 @@ void wxCodeCompletionBox::InitializeDefaultBitmaps()
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
         m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
+        m_defaultBitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
     }
+}
+
+void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event) { DoMouseScroll(event); }
+
+void wxCodeCompletionBox::DoPgUp()
+{
+    int newindex = m_index - (LINES_PER_PAGE - 1);
+    if(newindex < 0) {
+        newindex = 0;
+    }
+    // only refresh if there was an actual change
+    if(m_index != newindex) {
+        m_index = newindex;
+        DoDisplayTipWindow();
+        Refresh();
+    }
+}
+
+void wxCodeCompletionBox::DoPgDown()
+{
+    int newindex = m_index + (LINES_PER_PAGE - 1);
+    if(newindex >= (int)m_entries.size()) {
+        newindex = (int)m_entries.size() - 1;
+    }
+    // only refresh if there was an actual change
+    if(m_index != newindex) {
+        m_index = newindex;
+        DoDisplayTipWindow();
+        Refresh();
+    }
+}
+
+void wxCodeCompletionBox::DoMouseScroll(wxMouseEvent& event)
+{
+    if(event.GetWheelRotation() < 0) {
+        // down
+        DoScrollDown();
+    } else {
+        DoScrollUp();
+    }
+}
+
+wxString wxCodeCompletionBox::GetFilter()
+{
+    if(!m_stc) return "";
+    int start = m_startPos;
+    int end = m_stc->GetCurrentPos();
+
+    return m_stc->GetTextRange(start, end);
 }

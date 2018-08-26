@@ -45,8 +45,10 @@ void LLDBThread::FromJSON(const JSONElement& json)
     m_file = json.namedObject("m_file").toString();
     m_line = json.namedObject("m_line").toInt();
     m_active = json.namedObject("m_active").toBool();
+    m_suspended = json.namedObject("m_suspended").toBool();
     m_stopReason = json.namedObject("m_stopReason").toInt();
     m_stopReasonString = json.namedObject("m_stopReasonString").toString();
+    m_name = json.namedObject("m_name").toString();
 }
 
 JSONElement LLDBThread::ToJSON() const
@@ -57,8 +59,10 @@ JSONElement LLDBThread::ToJSON() const
     json.addProperty("m_file", m_file);
     json.addProperty("m_line", m_line);
     json.addProperty("m_active", m_active);
+    json.addProperty("m_suspended", m_suspended);
     json.addProperty("m_stopReason", m_stopReason);
     json.addProperty("m_stopReasonString", m_stopReasonString);
+    json.addProperty("m_name", m_name);
     return json;
 }
 

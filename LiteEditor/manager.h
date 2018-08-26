@@ -43,7 +43,8 @@
 #include "cl_command_event.h"
 #include "clKeyboardManager.h"
 
-class LEditor;
+class clEditor;
+class IProcess;
 
 // ====================================================================
 // The Manager class
@@ -95,7 +96,7 @@ protected:
     wxString m_originalCwd;
     FileHistory m_recentWorkspaces;
     ShellCommand* m_shellProcess;
-    AsyncExeCmd* m_asyncExeCmd;
+    IProcess* m_programProcess;
     BreakptMgr* m_breakptsmgr;
     bool m_isShutdown;
     bool m_workspceClosing;
@@ -147,7 +148,8 @@ public:
     void OnCmdRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
     void OnFindInFilesDismissed(clCommandEvent &event);
-    
+    void OnUpdateDebuggerActiveView(clDebugEvent &event);
+    void OnDebuggerSetMemory(clDebugEvent &event);
     
 protected:
     void DoRestartCodeLite();
@@ -217,7 +219,7 @@ public:
      * and the workspace specifc ones
      * @return true if the paths were modified, false otherwise
      */
-    void UpdateParserPaths(bool notify = false);
+    void UpdateParserPaths(bool notify);
 
 protected:
     void DoSetupWorkspace(const wxString& path);
@@ -236,12 +238,9 @@ public:
     void AddToRecentlyOpenedWorkspaces(const wxString& fileName);
     
     /**
-     * \brief create an empty project
-     * \param name project name
-     * \param path project file path
-     * \param type project type, Project::STATIC_LIBRARY, Project::DYNAMIC_LIBRARY or Project::EXECUTABLE
+     * @brief create an empty project
      */
-    void CreateProject(ProjectData& data);
+    void CreateProject(ProjectData& data, const wxString& workspaceFolder);
 
     /**
      * Add an existing project to the workspace. If no workspace is open,
@@ -356,7 +355,7 @@ public:
      * \brief Launch the ParseThread to update the preprocessor vizualisation
      * \param filename
      */
-    void UpdatePreprocessorFile(LEditor* editor);
+    void UpdatePreprocessorFile(clEditor* editor);
 
 protected:
     wxFileName FindFile(const wxArrayString& files, const wxFileName& fn);
@@ -566,7 +565,8 @@ public:
     void KillProgram();
 
 protected:
-    void OnProcessEnd(wxProcessEvent& event);
+    void OnProcessEnd(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
     void OnBuildEnded(clBuildEvent& event);
 
     /**
@@ -713,6 +713,13 @@ public:
      * or incase it is detached and visible
      */
     bool IsDebuggerViewVisible(const wxString& name);
+    
+    /**
+     * @brief show the new project wizard.
+     * @param workspaceFolder the new project will be placed inside this workspace folder. 
+     * If left empty (the default) place the new project directly under the workspace
+     */
+    void ShowNewProjectWizard(const wxString &workspaceFolder = wxEmptyString);
     
 protected:
     void DoBuildProject(const QueueCommand& buildInfo);

@@ -125,9 +125,8 @@ int main(int argc, char **argv)
         }
     }
 
-    int exitCode = 0;
 #ifdef _WIN32
-    exitCode = ::ExecuteProcessWIN(commandline);
+    int exitCode = ::ExecuteProcessWIN(commandline);
     return exitCode;
 #else
     return execvp(argv[1], argv+1);

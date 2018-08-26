@@ -26,13 +26,13 @@
 #ifndef __abbreviationentry__
 #define __abbreviationentry__
 
-#include "serialized_object.h"
 #include "cl_config.h"
 #include "json_node.h"
+#include "serialized_object.h"
 
 class AbbreviationEntry : public SerializedObject
 {
-    std::map<wxString, wxString> m_entries;
+    wxStringMap_t m_entries;
     bool m_autoInsert;
 
 public:
@@ -40,52 +40,39 @@ public:
     virtual ~AbbreviationEntry();
 
 public:
-    virtual void DeSerialize(Archive &arch);
-    virtual void Serialize(Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 
-    //Setters
-    void SetEntries(const std::map<wxString, wxString>& entries) {
-        this->m_entries = entries;
-    }
-    void SetAutoInsert(const bool& autoInsert) {
-        this->m_autoInsert = autoInsert;
-    }
+    // Setters
+    void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
+    void SetAutoInsert(const bool& autoInsert) { this->m_autoInsert = autoInsert; }
 
-    //Getters
-    const std::map<wxString, wxString>& GetEntries() const {
-        return m_entries;
-    }
-    const bool& GetAutoInsert() const {
-        return m_autoInsert;
-    }
+    // Getters
+    const wxStringMap_t& GetEntries() const { return m_entries; }
+    const bool& GetAutoInsert() const { return m_autoInsert; }
 };
 
 class AbbreviationJSONEntry : public clConfigItem
 {
-    JSONElement::wxStringMap_t m_entries;
-    bool                       m_autoInsert;
-public:
-    AbbreviationJSONEntry() : clConfigItem("Abbreviations"), m_autoInsert(false)
-    {}
+    wxStringMap_t m_entries;
+    bool m_autoInsert;
 
-    virtual ~AbbreviationJSONEntry()
-    {}
+public:
+    AbbreviationJSONEntry()
+        : clConfigItem("Abbreviations")
+        , m_autoInsert(false)
+    {
+    }
+
+    virtual ~AbbreviationJSONEntry() {}
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 
-    void SetEntries(const JSONElement::wxStringMap_t& entries) {
-        this->m_entries = entries;
-    }
-    const JSONElement::wxStringMap_t& GetEntries() const {
-        return m_entries;
-    }
-    void SetAutoInsert(bool autoInsert) {
-        this->m_autoInsert = autoInsert;
-    }
-    bool IsAutoInsert() const {
-        return m_autoInsert;
-    }
+    void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
+    const wxStringMap_t& GetEntries() const { return m_entries; }
+    void SetAutoInsert(bool autoInsert) { this->m_autoInsert = autoInsert; }
+    bool IsAutoInsert() const { return m_autoInsert; }
 };
 
 #endif // __abbreviationentry__

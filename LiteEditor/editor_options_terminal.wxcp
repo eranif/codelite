@@ -9,6 +9,8 @@
   "m_outputFileName": "editorsettings_terminal_base",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -192,13 +194,20 @@
         }, {
          "type": "string",
          "m_label": "Label:",
-         "m_value": "Use CodeLite built in terminal emulator"
+         "m_value": "Use CodeLite's built-in terminal emulator"
         }, {
          "type": "bool",
          "m_label": "Value:",
          "m_value": false
         }],
-       "m_events": [],
+       "m_events": [{
+         "m_eventName": "wxEVT_UPDATE_UI",
+         "m_eventClass": "wxUpdateUIEvent",
+         "m_eventHandler": "wxUpdateUIEventHandler",
+         "m_functionNameAndSignature": "OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)",
+         "m_description": "Process a wxEVT_UPDATE_UI event",
+         "m_noBody": false
+        }],
        "m_children": []
       }, {
        "m_type": 4405,

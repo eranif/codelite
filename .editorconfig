@@ -1,0 +1,9 @@
+root = true
+
+[*]
+indent_size = 4
+tab_width = 4
+indent_style = space
+
+[*.mk,Makefile]
+indent_style = tab

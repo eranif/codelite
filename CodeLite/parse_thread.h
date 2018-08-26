@@ -71,6 +71,7 @@ public:
         PR_PARSE_FILE_NO_INCLUDES,
         PR_PARSE_INCLUDE_STATEMENTS,
         PR_SUGGEST_HIGHLIGHT_WORDS,
+        PR_SOURCE_TO_TAGS,
     };
 
 public:
@@ -86,50 +87,23 @@ public:
 
     // accessors
 
-    void SetDefinitions(const wxArrayString& definitions)
-    {
-        this->m_definitions = definitions;
-    }
-    void SetIncludePaths(const wxArrayString& includePaths)
-    {
-        this->m_includePaths = includePaths;
-    }
-    const wxArrayString& GetDefinitions() const
-    {
-        return m_definitions;
-    }
-    const wxArrayString& GetIncludePaths() const
-    {
-        return m_includePaths;
-    }
+    void SetDefinitions(const wxArrayString& definitions) { this->m_definitions = definitions; }
+    void SetIncludePaths(const wxArrayString& includePaths) { this->m_includePaths = includePaths; }
+    const wxArrayString& GetDefinitions() const { return m_definitions; }
+    const wxArrayString& GetIncludePaths() const { return m_includePaths; }
     void setFile(const wxString& file);
     void setDbFile(const wxString& dbfile);
     void setTags(const wxString& tags);
 
     // Getters
-    const wxString& getDbfile() const
-    {
-        return _dbfile;
-    }
+    const wxString& getDbfile() const { return _dbfile; }
 
-    const wxString& getFile() const
-    {
-        return _file;
-    }
+    const wxString& getFile() const { return _file; }
 
-    const wxString& getTags() const
-    {
-        return _tags;
-    }
+    const wxString& getTags() const { return _tags; }
 
-    void setType(int _type)
-    {
-        this->_type = _type;
-    }
-    int getType() const
-    {
-        return _type;
-    }
+    void setType(int _type) { this->_type = _type; }
+    int getType() const { return _type; }
     // copy ctor
     ParseRequest(const ParseRequest& rhs);
 
@@ -152,12 +126,13 @@ class WXDLLIMPEXP_CL ParseThread : public WorkerThread
     wxArrayString m_excludePaths;
     bool m_crawlerEnabled;
     wxCriticalSection m_cs;
-    
+
 public:
     void SetCrawlerEnabeld(bool b);
     void SetSearchPaths(const wxArrayString& paths, const wxArrayString& exlucdePaths);
     void GetSearchPaths(wxArrayString& paths, wxArrayString& excludePaths);
     bool IsCrawlerEnabled();
+
 private:
     /**
      * Default constructor.
@@ -188,13 +163,13 @@ private:
     void ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db);
 
     void ProcessSimple(ParseRequest* req);
+    void ProcessSourceToTags(ParseRequest* req);
     void ProcessIncludes(ParseRequest* req);
     void ProcessParseAndStore(ParseRequest* req);
     void ProcessDeleteTagsOfFiles(ParseRequest* req);
     void ProcessSimpleNoIncludes(ParseRequest* req);
     void ProcessIncludeStatements(ParseRequest* req);
     void ProcessColourRequest(ParseRequest* req);
-    void ProcessMacroRequest(ParseRequest* req);
     void GetFileListToParse(const wxString& filename, wxArrayString& arrFiles);
     void ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db);
 
@@ -208,13 +183,16 @@ public:
     static ParseThread* Get();
 };
 
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_MESSAGE;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_PROGRESS;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_RETAGGING_COMPLETED;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_INCLUDE_STATEMENTS_DONE;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_READY;
-extern WXDLLIMPEXP_CL const wxEventType wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS;
+// ClientData is set to wxString* which must be deleted by the handler
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_MESSAGE, wxCommandEvent);
+// ClientData is set to std::set<std::string> *newSet which must deleted by the handler
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_READY, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SOURCE_TAGS, clCommandEvent);
 
 #endif // CODELITE_PARSE_THREAD_H

@@ -26,10 +26,10 @@
 #ifndef CLSTATUSBAR_H
 #define CLSTATUSBAR_H
 
-#include "wxCustomStatusBar.h" // Base class: wxCustomStatusBar
-#include "codelite_exports.h"
-#include <wx/bitmap.h>
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+#include "wxCustomStatusBar.h" // Base class: wxCustomStatusBar
+#include <wx/bitmap.h>
 
 class IManager;
 class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
@@ -39,6 +39,8 @@ class WXDLLIMPEXP_SDK clStatusBar : public wxCustomStatusBar
     wxBitmap m_bmpBuildWarnings;
     wxBitmap m_bmpSourceControl;
     wxString m_sourceControlTabName;
+    wxStringMap_t m_gotoAnythingTableThemes;
+    wxStringMap_t m_gotoAnythingTableSyntax;
 
 protected:
     void OnPageChanged(wxCommandEvent& event);
@@ -48,11 +50,16 @@ protected:
     void OnBuildEnded(clBuildEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnFieldClicked(clCommandEvent& event);
-
+    void OnEditorSettingsChanged(wxCommandEvent& event);
+    void OnGotoAnythingShowing(clGotoEvent& e);
+    void OnActionSelected(clGotoEvent& e);
     void DoUpdateColour();
     void DoSetLinePosColumn(const wxString& message);
 
     void SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip);
+
+    void DoUpdateView();
+    void DoFieldClicked(int fieldIndex);
 
 public:
     clStatusBar(wxWindow* parent, IManager* mgr);
@@ -72,16 +79,21 @@ public:
      * @brief set the whitespace information (Tabs vs Spaces)
      */
     void SetWhitespaceInfo();
-    
+
     /**
      * @brief clear the whitespace info fields
      */
     void ClearWhitespaceInfo();
-    
+
     /**
      * @brief update the language field
      */
     void SetLanguage(const wxString& lang);
+
+    /**
+     * @brief Update the encoding field
+     */
+    void SetEncoding(const wxString& enc);
 
     /**
      * @brief update the line / column / pos field

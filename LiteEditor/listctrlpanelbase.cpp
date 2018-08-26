@@ -26,22 +26,21 @@ ListCtrlPanelBase::ListCtrlPanelBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_SINGLE);
+    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_SINGLE);
     
-    mainSizer->Add(m_dvListCtrl, 1, wxEXPAND, 5);
+    mainSizer->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_dvListCtrl->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Address"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, -1, wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-1), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-1), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Address"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-1), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     
     SetName(wxT("ListCtrlPanelBase"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
+    SetSize(500,300);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(ListCtrlPanelBase::OnItemActivated), NULL, this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(ListCtrlPanelBase::OnMenu), NULL, this);
@@ -57,6 +56,8 @@ ListCtrlPanelBase::~ListCtrlPanelBase()
 
 DebuggerBtImgList::DebuggerBtImgList()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -69,18 +70,13 @@ DebuggerBtImgList::DebuggerBtImgList()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowActive"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("arrowActive"), bmp ) );
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("arrowInactive"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("arrowInactive"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("arrowActive"), bmp));
+        }
     }
     
 }

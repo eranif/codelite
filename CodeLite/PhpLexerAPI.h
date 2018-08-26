@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CppLexerAPI_H__
-#define CppLexerAPI_H__
+#ifndef PhpLexerAPI_H__
+#define PhpLexerAPI_H__
 
 #include <string>
 #include <vector>
@@ -33,21 +33,24 @@
 #include "codelite_exports.h"
 #include "PHPScannerTokens.h"
 
-enum eLexerOptions {
+enum ePhpLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
     kPhpLexerOpt_ReturnComments = 0x00000001,
     kPhpLexerOpt_ReturnWhitespace = 0x00000002,
     kPhpLexerOpt_ReturnAllNonPhp = 0x00000004,
 };
 
-struct WXDLLIMPEXP_CL phpLexerToken
-{
-    int type;
+struct WXDLLIMPEXP_CL phpLexerToken {
+private:
     std::string text;
+    wxString wtext;
+
+public:
+    int type;
     int lineNumber;
     int endLineNumber; // Usually, this is the same as lineNumber. Unless a multiple line token is found (heredoc,
                        // c-style comment etc)
-
+public:
     phpLexerToken()
         : type(-1)
         , lineNumber(-1)
@@ -55,6 +58,31 @@ struct WXDLLIMPEXP_CL phpLexerToken
     {
     }
 
+    /**
+     * @brief clear the token, i.e. IsNull() return true
+     */
+    void Clear()
+    {
+        type = -1;
+        lineNumber = -1;
+        endLineNumber = -1;
+        text.clear();
+        wtext.clear();
+    }
+
+    void ClearText()
+    {
+        text.clear();
+        wtext.clear();
+    }
+
+    void SetText(const std::string& t)
+    {
+        text = t;
+        wtext = wxString(text.c_str(), wxConvUTF8);
+    }
+
+    const wxString& Text() const { return wtext; }
     bool IsNull() const { return type == -1; }
     /**
      * @brief is the current token a comment? (c++ or c comment)
@@ -70,8 +98,7 @@ struct WXDLLIMPEXP_CL phpLexerToken
 /**
  * @class phpLexerUserData
  */
-struct WXDLLIMPEXP_CL phpLexerUserData
-{
+struct WXDLLIMPEXP_CL phpLexerUserData {
 private:
     size_t m_flags;
     std::string m_comment;
@@ -145,7 +172,7 @@ public:
     void ClearComment()
     {
         m_comment.clear();
-        m_commentEndLine = wxNOT_FOUND;
+        m_commentStartLine = wxNOT_FOUND;
         m_commentEndLine = wxNOT_FOUND;
     }
 };
@@ -191,8 +218,7 @@ WXDLLIMPEXP_CL void phpLexerUnget(PHPScanner_t scanner);
  * @class PHPScannerLocker
  * @brief a wrapper around the C API for PHPScanner
  */
-struct WXDLLIMPEXP_CL PHPScannerLocker
-{
+struct WXDLLIMPEXP_CL PHPScannerLocker {
     PHPScanner_t scanner;
     PHPScannerLocker(const wxString& content, size_t options = kPhpLexerOpt_None)
     {

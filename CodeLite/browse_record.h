@@ -34,10 +34,19 @@ public:
     wxString project;
     int lineno;
     int position;
+    int firstLineInView;
+
 public:
-    BrowseRecord() : filename(wxEmptyString), project(wxEmptyString), lineno(wxNOT_FOUND), position(wxNOT_FOUND) {}
+    BrowseRecord()
+        : filename(wxEmptyString)
+        , project(wxEmptyString)
+        , lineno(wxNOT_FOUND)
+        , position(wxNOT_FOUND)
+        , firstLineInView(wxNOT_FOUND)
+    {
+    }
 
     ~BrowseRecord() {}
 };
 
-#endif //BROWSE_HISTORY_H
+#endif // BROWSE_HISTORY_H

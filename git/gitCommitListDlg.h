@@ -49,16 +49,20 @@ class GitCommitListDlg : public GitCommitListDlgBase
     IProcess* m_process;
     wxString m_gitPath;
     wxString m_commitList;
+    wxString m_Filter;
     int m_skip;
     std::map<int, wxString> m_history;
 
 protected:
+    virtual void OnNextUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnExtraArgsTextEnter(wxCommandEvent& event);
     virtual void OnNext(wxCommandEvent& event);
     virtual void OnPrevious(wxCommandEvent& event);
     virtual void OnPreviousUI(wxUpdateUIEvent& event);
     virtual void OnSearchCommitList(wxCommandEvent& event);
     void DoLoadCommits(const wxString& filter);
-    bool IsMatchFilter(const wxArrayString& filters, const wxArrayString& columns);
+	void ClearAll(bool includingCommitlist = true);
+    wxString GetFilterString() const;
 
 public:
     GitCommitListDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* git);

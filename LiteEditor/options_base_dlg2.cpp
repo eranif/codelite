@@ -28,30 +28,30 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
     
     wxBoxSizer* innerSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(innerSizer, 1, wxEXPAND, 5);
+    mainSizer->Add(innerSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_treeBook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(500,400), wxBK_DEFAULT);
+    m_treeBook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_treeBook->SetFocus();
     m_treeBook->SetName(wxT("m_treeBook"));
     
-    innerSizer->Add(m_treeBook, 1, wxALL|wxEXPAND, 5);
+    innerSizer->Add(m_treeBook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* btnSizer = new wxBoxSizer(wxHORIZONTAL);
     
-    mainSizer->Add(btnSizer, 0, wxALL|wxALIGN_CENTER, 10);
+    mainSizer->Add(btnSizer, 0, wxALL|wxALIGN_CENTER, WXC_FROM_DIP(10));
     
-    m_okButton = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_okButton = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_okButton->SetDefault();
     
-    btnSizer->Add(m_okButton, 0, wxALL, 5);
+    btnSizer->Add(m_okButton, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_cancelButton = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_cancelButton = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    btnSizer->Add(m_cancelButton, 0, wxALL, 5);
+    btnSizer->Add(m_cancelButton, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_applyButton = new wxButton(this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_applyButton = new wxButton(this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     
-    btnSizer->Add(m_applyButton, 0, wxALL, 5);
+    btnSizer->Add(m_applyButton, 0, wxALL, WXC_FROM_DIP(5));
     
     
     #if wxVERSION_NUMBER >= 2900
@@ -63,11 +63,15 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
     #endif
     
     SetName(wxT("OptionsBaseDlg2"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(-1,-1);
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

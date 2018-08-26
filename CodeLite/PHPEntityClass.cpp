@@ -1,5 +1,7 @@
 #include "PHPEntityClass.h"
 #include <wx/tokenzr.h>
+#include <algorithm>
+#include "PHPLookupTable.h"
 
 PHPEntityClass::PHPEntityClass() {}
 
@@ -26,14 +28,15 @@ void PHPEntityClass::PrintStdout(int indent) const
     }
 }
 
-void PHPEntityClass::Store(wxSQLite3Database& db)
+void PHPEntityClass::Store(PHPLookupTable* lookup)
 {
     try {
-        wxSQLite3Statement statement =
-            db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
-                                "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
-                                "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
-                                ":IMPLEMENTS, :USING_TRAITS, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+        wxSQLite3Database& db = lookup->Database();
+        wxSQLite3Statement statement = db.PrepareStatement(
+            "REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
+            "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
+            "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
+            ":IMPLEMENTS, :USING_TRAITS, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
 
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
@@ -41,12 +44,17 @@ void PHPEntityClass::Store(wxSQLite3Database& db)
         statement.Bind(statement.GetParamIndex(":EXTENDS"), GetExtends());
         statement.Bind(statement.GetParamIndex(":IMPLEMENTS"), GetImplementsAsString());
         statement.Bind(statement.GetParamIndex(":USING_TRAITS"), GetTraitsAsString());
-        statement.Bind(statement.GetParamIndex(":FLAGS"), (int) GetFlags());
+        statement.Bind(statement.GetParamIndex(":FLAGS"), (int)GetFlags());
         statement.Bind(statement.GetParamIndex(":DOC_COMMENT"), GetDocComment());
         statement.Bind(statement.GetParamIndex(":LINE_NUMBER"), GetLine());
         statement.Bind(statement.GetParamIndex(":FILE_NAME"), GetFilename().GetFullPath());
         statement.ExecuteUpdate();
         SetDbId(db.GetLastRowId());
+
+        // Now that we got the class saved, store any PHPDocVar
+        std::for_each(
+            m_varPhpDocs.begin(), m_varPhpDocs.end(), [&](PHPDocVar::Ptr_t doc) { doc->Store(db, GetDbId()); });
+        lookup->UpdateClassCache(GetFullName());
     } catch(wxSQLite3Exception& exc) {
         wxUnusedVar(exc);
     }
@@ -85,12 +93,29 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
 wxString PHPEntityClass::Type() const { return GetFullName(); }
 bool PHPEntityClass::Is(eEntityType type) const { return type == kEntityTypeClass; }
 wxString PHPEntityClass::GetDisplayName() const { return GetShortName(); }
-wxString PHPEntityClass::FormatPhpDoc() const
+wxString PHPEntityClass::FormatPhpDoc(const CommentConfigData& data) const
 {
     wxString doc;
-    doc << "/**\n"
+    doc << data.GetCommentBlockPrefix() << "\n"
         << " * @class " << GetFullName() << "\n"
         << " * @brief \n"
         << " */";
     return doc;
+}
+
+void PHPEntityClass::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+    m_extends = json.namedObject("extends").toString();
+    m_implements = json.namedObject("implements").toArrayString();
+    m_traits = json.namedObject("traits").toArrayString();
+}
+
+JSONElement PHPEntityClass::ToJSON() const
+{
+    JSONElement json = BaseToJSON("c");
+    json.addProperty("extends", m_extends);
+    json.addProperty("implements", m_implements);
+    json.addProperty("traits", m_traits);
+    return json;
 }

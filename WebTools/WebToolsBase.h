@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
-#define CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
+#ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
+#define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -39,6 +39,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 
 class WebToolsSettingsBase : public wxDialog
 {
@@ -158,15 +168,12 @@ protected:
     wxPanel* m_splitterPage176;
     Notebook* m_notebook;
     wxPanel* m_panelConsoleLog;
-    wxStyledTextCtrl* m_consoleLog;
-    wxTextCtrl* m_textCtrlExpression;
     wxPanel* m_panelBreakpoints;
     wxDataViewListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
     virtual void OnLocalExpanding(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnEvaluateExpression(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
@@ -174,8 +181,6 @@ public:
     wxPanel* GetSplitterPage112() { return m_splitterPage112; }
     wxDataViewListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetSplitterPage172() { return m_splitterPage172; }
-    wxStyledTextCtrl* GetConsoleLog() { return m_consoleLog; }
-    wxTextCtrl* GetTextCtrlExpression() { return m_textCtrlExpression; }
     wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
     wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
@@ -225,6 +230,10 @@ class WebToolsImages : public wxImageList
 protected:
     // Maintain a map of all bitmaps representd by their name
     std::map<wxString, wxBitmap> m_bitmaps;
+    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)
+    wxString m_resolution;
+    int m_imagesWidth;
+    int m_imagesHeight;
 
 
 protected:
@@ -232,10 +241,15 @@ protected:
 public:
     WebToolsImages();
     const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
+        if ( !m_bitmaps.count(name + m_resolution) )
             return wxNullBitmap;
-        return m_bitmaps.find(name)->second;
+        return m_bitmaps.find(name + m_resolution)->second;
     }
+
+    void SetBitmapResolution(const wxString &res = wxEmptyString) {
+        m_resolution = res;
+    }
+
     virtual ~WebToolsImages();
 };
 

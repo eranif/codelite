@@ -30,9 +30,12 @@
 #include <wx/event.h>
 #include "codelite_exports.h"
 #include <map>
+#include <vector>
 #include "cl_defs.h"
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
+#include <unordered_map>
+#include "ieditor.h"
 
 #define MAX_BOOKMARK CL_N0_OF_BOOKMARK_TYPES
 
@@ -91,7 +94,7 @@ enum marker_mask_type {
 class WXDLLIMPEXP_SDK BookmarkManager : public wxEvtHandler
 {
 public:
-    typedef std::map<int, wxString> Map_t;
+    typedef std::unordered_map<int, wxString> Map_t;
 
 private:
     int m_activeBookmarkType;
@@ -112,7 +115,6 @@ public:
     int GetActiveBookmarkType() const { return m_activeBookmarkType; }
 
     wxString GetMarkerLabel(int index) const;
-
     wxMenu* CreateBookmarksSubmenu(wxMenu* parentMenu);
 };
 

@@ -33,7 +33,7 @@
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
 {
 public:
-    virtual wxString FormatPhpDoc() const;
+    virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
     virtual bool Is(eEntityType type) const;
     virtual wxString Type() const;
@@ -53,8 +53,12 @@ public:
      * @return
      */
     wxString GetScope() const;
-    virtual void Store(wxSQLite3Database& db);
+    virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
+    
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
     /**
      * @brief format this variable
      */
@@ -70,6 +74,8 @@ public:
     void SetDefaultValue(const wxString& defaultValue) { this->m_defaultValue = defaultValue; }
     const wxString& GetDefaultValue() const { return m_defaultValue; }
     wxString GetNameNoDollar() const;
+    virtual wxString ToTooltip() const;
+    
     // Aliases
     void SetIsReference(bool isReference) { SetFlag(kVar_Reference, isReference); }
     bool IsMember() const { return HasFlag(kVar_Member); }

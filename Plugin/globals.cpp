@@ -22,68 +22,68 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "debuggermanager.h"
-#include "debugger.h"
-#include <wx/wfstream.h>
-#include <wx/log.h>
-#include <wx/imaglist.h>
-#include <wx/xrc/xmlres.h>
-#include "event_notifier.h"
-#include "dirtraverser.h"
-#include <wx/regex.h>
-#include "imanager.h"
-#include "environmentconfig.h"
-#include "environmentconfig.h"
-#include <wx/dataobj.h>
-#include <wx/stdpaths.h>
-#include "drawingutils.h"
-#include <wx/dir.h>
-#include "editor_config.h"
-#include "workspace.h"
-#include "project.h"
-#include "wx/tokenzr.h"
-#include "globals.h"
-#include "wx/app.h"
-#include "wx/window.h"
-#include "wx/listctrl.h"
-#include "wx/ffile.h"
-#include "procutils.h"
-#include <wx/clipbrd.h>
-#include "ieditor.h"
-#include <wx/tokenzr.h>
-#include <set>
-#include <wx/fontmap.h>
-#include <wx/zipstrm.h>
-#include <wx/filename.h>
-#include <algorithm>
-#include "project.h"
-#include <wx/icon.h>
-#include <wx/dataview.h>
-#include "drawingutils.h"
-#include <wx/settings.h>
-#include <wx/dcmemory.h>
-#include "environmentconfig.h"
-#include "wxmd5.h"
-#include <wx/graphics.h>
-#include <wx/dcmemory.h>
-#include <wx/richmsgdlg.h>
 #include "asyncprocess.h"
-#include "file_logger.h"
-#include <wx/stc/stc.h>
-#include "cpp_scanner.h"
-#include "macros.h"
-#include <wx/sstream.h>
-#include "cl_standard_paths.h"
 #include "clGetTextFromUserDialog.h"
+#include "cl_standard_paths.h"
+#include "cpp_scanner.h"
+#include "ctags_manager.h"
+#include "debugger.h"
+#include "debuggermanager.h"
+#include "dirtraverser.h"
+#include "drawingutils.h"
+#include "editor_config.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
 #include "macromanager.h"
+#include "macros.h"
+#include "precompiled_header.h"
+#include "procutils.h"
+#include "project.h"
+#include "workspace.h"
+#include "wx/app.h"
+#include "wx/ffile.h"
+#include "wx/listctrl.h"
+#include "wx/tokenzr.h"
+#include "wx/window.h"
+#include "wxmd5.h"
+#include <algorithm>
+#include <set>
+#include <wx/clipbrd.h>
+#include <wx/dataobj.h>
+#include <wx/dataview.h>
+#include <wx/dcmemory.h>
+#include <wx/dcscreen.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
+#include <wx/fontmap.h>
+#include <wx/graphics.h>
+#include <wx/icon.h>
+#include <wx/imaglist.h>
+#include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/richmsgdlg.h>
+#include <wx/settings.h>
+#include <wx/sstream.h>
+#include <wx/stc/stc.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
+#include <wx/wfstream.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/zipstrm.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
 #else
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#endif
+#ifdef __WXGTK20__
+#include <gtk/gtk.h>
 #endif
 
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
@@ -126,17 +126,17 @@ public:
     clInternalEventHandler()
     {
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
+                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Connect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
+                                      wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     virtual ~clInternalEventHandler()
     {
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_0_ARGS,
-            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
+                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent0), NULL, this);
         EventNotifier::Get()->Disconnect(wxEVT_COMMAND_CL_INTERNAL_1_ARGS,
-            wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
+                                         wxCommandEventHandler(clInternalEventHandler::OnInternalEvent1), NULL, this);
     }
 
     /**
@@ -181,7 +181,7 @@ clInternalEventHandler clEventHandlerHelper;
 // --------------------------------------------------------
 
 static wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-    const wxString& confToBuild, const wxString& fileName);
+                                     const wxString& confToBuild, const wxString& fileName);
 
 #ifdef __WXMAC__
 #include <mach-o/dyld.h>
@@ -209,8 +209,8 @@ static wxString MacGetInstallPath()
 #endif
 
 #if defined(__WXGTK__)
-#include <unistd.h>
 #include <dirent.h>
+#include <unistd.h>
 #endif
 
 struct ProjListCompartor {
@@ -268,9 +268,7 @@ static bool ReadBOMFile(const char* file_name, wxString& content, BOM& bom)
                     ptr += bom.Len();
                     content = wxString(ptr, conv);
 
-                    if(content.IsEmpty()) {
-                        content = wxString::From8BitData(ptr);
-                    }
+                    if(content.IsEmpty()) { content = wxString::From8BitData(ptr); }
                 }
             }
             delete[] buffer;
@@ -341,18 +339,14 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     if(file.IsOpened()) {
 
         // If we got a BOM pointer, test to see whether the file is BOM file
-        if(bom && IsBOMFile(name.data())) {
-            return ReadBOMFile(name.data(), content, *bom);
-        }
+        if(bom && IsBOMFile(name.data())) { return ReadBOMFile(name.data(), content, *bom); }
 
         if(encoding == wxFONTENCODING_DEFAULT) encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
 
         // first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
         if(encoding != wxFONTENCODING_UTF8) {
             wxCSConv fontEncConv(encoding);
-            if(fontEncConv.IsOk()) {
-                file.ReadAll(&content, fontEncConv);
-            }
+            if(fontEncConv.IsOk()) { file.ReadAll(&content, fontEncConv); }
         }
 
         if(content.IsEmpty()) {
@@ -381,9 +375,7 @@ bool RemoveDirectory(const wxString& path)
 
 bool IsValidCppIndetifier(const wxString& id)
 {
-    if(id.IsEmpty()) {
-        return false;
-    }
+    if(id.IsEmpty()) { return false; }
     // first char can be only _A-Za-z
     wxString first(id.Mid(0, 1));
     if(first.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")) != wxString::npos) {
@@ -411,9 +403,7 @@ long AppendListCtrlRow(wxListCtrl* list)
 
 bool IsValidCppFile(const wxString& id)
 {
-    if(id.IsEmpty()) {
-        return false;
-    }
+    if(id.IsEmpty()) { return false; }
 
     // make sure that rest of the id contains only a-zA-Z0-9_
     if(id.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) != wxString::npos) {
@@ -426,15 +416,13 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 {
     wxString project_name(proj->GetName());
     wxString file = filename;
-    if(file.IsEmpty() && editor) {
-        file = editor->GetFileName().GetFullPath();
-    }
+    if(file.IsEmpty() && editor) { file = editor->GetFileName().GetFullPath(); }
     return ExpandAllVariables(expression, clCxxWorkspaceST::Get(), project_name, wxEmptyString, file);
 }
 
 // This functions accepts expression and expand all variables in it
 wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-    const wxString& selConf, const wxString& fileName)
+                            const wxString& selConf, const wxString& fileName)
 {
     // add support for backticks commands
     wxString tmpExp;
@@ -456,7 +444,7 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
 
             if(!found) {
                 // dont replace anything
-                wxLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
+                clLogMessage(wxT("Syntax error in expression: ") + expression + wxT(": expecting '`'"));
                 return expression;
             } else {
                 // expand the backtick statement
@@ -484,7 +472,7 @@ wxString ExpandAllVariables(const wxString& expression, clCxxWorkspace* workspac
 }
 
 wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* workspace, const wxString& projectName,
-    const wxString& confToBuild, const wxString& fileName)
+                              const wxString& confToBuild, const wxString& fileName)
 {
     wxString errMsg;
     wxString output(expression);
@@ -527,10 +515,10 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                 }
 
                 if(output.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
-                    output.Replace(wxT("$(ProjectFiles)"), proj->GetFiles());
+                    output.Replace(wxT("$(ProjectFiles)"), proj->GetFilesAsString(false));
 
                 if(output.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
-                    output.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFiles(true));
+                    output.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFilesAsString(true));
             }
         }
 
@@ -555,9 +543,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
         output.Replace(wxT("$(User)"), wxGetUserName());
         output.Replace(wxT("$(Date)"), now.FormatDate());
 
-        if(workspace) {
-            output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
-        }
+        if(workspace) { output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir()); }
 
         // call the environment & workspace variables expand function
         output = EnvironmentConfig::Instance()->ExpandVariables(output, true);
@@ -568,9 +554,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 {
     wxFFile file(fileName, wxT("w+b"));
-    if(!file.IsOpened()) {
-        return false;
-    }
+    if(!file.IsOpened()) { return false; }
 
     // first try the Utf8
     return file.Write(content, wxConvUTF8);
@@ -579,9 +563,7 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 bool CompareFileWithString(const wxString& filePath, const wxString& str)
 {
     wxString content;
-    if(!ReadFileWithConversion(filePath, content)) {
-        return false;
-    }
+    if(!ReadFileWithConversion(filePath, content)) { return false; }
 
     wxString diskMD5 = wxMD5::GetDigest(content);
     wxString mem_MD5 = wxMD5::GetDigest(str);
@@ -597,14 +579,10 @@ bool CopyDir(const wxString& src, const wxString& target)
 
     // append a slash if there is not one (for easier parsing)
     // because who knows what people will pass to the function.
-    if(to.EndsWith(SLASH) == false) {
-        to << SLASH;
-    }
+    if(to.EndsWith(SLASH) == false) { to << SLASH; }
 
     // for both dirs
-    if(from.EndsWith(SLASH) == false) {
-        from << SLASH;
-    }
+    if(from.EndsWith(SLASH) == false) { from << SLASH; }
 
     // first make sure that the source dir exists
     if(!wxDir::Exists(from)) {
@@ -612,9 +590,7 @@ bool CopyDir(const wxString& src, const wxString& target)
         return false;
     }
 
-    if(!wxDir::Exists(to)) {
-        Mkdir(to);
-    }
+    if(!wxDir::Exists(to)) { Mkdir(to); }
 
     wxDir dir(from);
     wxString filename;
@@ -648,7 +624,7 @@ bool WriteFileWithBackup(const wxString& file_name, const wxString& content, boo
         wxString backup_name(file_name);
         backup_name << wxT(".bak");
         if(!wxCopyFile(file_name, backup_name, true)) {
-            wxLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
+            clLogMessage(wxString::Format(wxT("Failed to backup file %s, skipping it"), file_name.c_str()));
             return false;
         }
     }
@@ -657,7 +633,7 @@ bool WriteFileWithBackup(const wxString& file_name, const wxString& content, boo
     if(file.IsOpened() == false) {
         // Nothing to be done
         wxString msg = wxString::Format(wxT("Failed to open file %s"), file_name.c_str());
-        wxLogMessage(msg);
+        clLogMessage(msg);
         return false;
     }
 
@@ -675,9 +651,7 @@ bool CopyToClipboard(const wxString& text)
 #if wxUSE_CLIPBOARD
     if(wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
-        if(!wxTheClipboard->SetData(new wxTextDataObject(text))) {
-            ret = false;
-        }
+        if(!wxTheClipboard->SetData(new wxTextDataObject(text))) { ret = false; }
         wxTheClipboard->Close();
     } else {
         ret = false;
@@ -713,9 +687,7 @@ void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
 
         wxString token = tkz.NextToken();
         token.Trim().Trim(false);
-        if(token.IsEmpty()) {
-            continue;
-        }
+        if(token.IsEmpty()) { continue; }
         arr.Add(token.Trim());
     }
 }
@@ -741,8 +713,7 @@ wxString NormalizePath(const wxString& path)
     wxString normalized_path(path);
     normalized_path.Trim().Trim(false);
     normalized_path.Replace(wxT("\\"), wxT("/"));
-    while(normalized_path.Replace("//", "/")) {
-    }
+    while(normalized_path.Replace("//", "/")) {}
     return normalized_path;
 }
 
@@ -752,9 +723,7 @@ time_t GetFileModificationTime(const wxString& filename)
 {
     struct stat buff;
     const wxCharBuffer cname = _C(filename);
-    if(stat(cname.data(), &buff) < 0) {
-        return 0;
-    }
+    if(stat(cname.data(), &buff) < 0) { return 0; }
     return buff.st_mtime;
 }
 
@@ -812,16 +781,11 @@ void WrapInShell(wxString& cmd)
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
     if(!shell) shell = (wxChar*)wxT("CMD.EXE");
     command << shell << wxT(" /C ");
-#if 0
-    command << "\"" << cmd << "\"";
-#else
-    if(cmd.StartsWith("\"")) {
-        command << "\"" << cmd << "\"\"";
+    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+        command << "\"" << cmd << "\"";
     } else {
         command << cmd;
     }
-#endif
-
     cmd = command;
 #else
     command << wxT("/bin/sh -c '");
@@ -852,8 +816,8 @@ wxString clGetUserName()
     return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
 
-static void DoReadProjectTemplatesFromFolder(
-    const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
+static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list,
+                                             bool loadDefaults = true)
 {
     // read all files under this directory
     wxArrayString files;
@@ -869,7 +833,7 @@ static void DoReadProjectTemplatesFromFolder(
                 ProjectPtr proj(new Project());
                 if(!proj->Load(files.Item(i))) {
                     // corrupted xml file?
-                    wxLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
+                    clLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
                     continue;
                 }
                 list.push_back(proj);
@@ -894,9 +858,9 @@ static void DoReadProjectTemplatesFromFolder(
         ProjectPtr exeProj(new Project());
         ProjectPtr libProj(new Project());
         ProjectPtr dllProj(new Project());
-        libProj->Create(wxT("Static Library"), wxEmptyString, folder, Project::STATIC_LIBRARY);
-        dllProj->Create(wxT("Dynamic Library"), wxEmptyString, folder, Project::DYNAMIC_LIBRARY);
-        exeProj->Create(wxT("Executable"), wxEmptyString, folder, Project::EXECUTABLE);
+        libProj->Create(wxT("Static Library"), wxEmptyString, folder, PROJECT_TYPE_STATIC_LIBRARY);
+        dllProj->Create(wxT("Dynamic Library"), wxEmptyString, folder, PROJECT_TYPE_DYNAMIC_LIBRARY);
+        exeProj->Create(wxT("Executable"), wxEmptyString, folder, PROJECT_TYPE_EXECUTABLE);
         list.push_back(libProj);
         list.push_back(dllProj);
         list.push_back(exeProj);
@@ -987,8 +951,8 @@ bool IsCppKeyword(const wxString& word)
     return words.count(word) != 0;
 }
 
-bool ExtractFileFromZip(
-    const wxString& zipPath, const wxString& filename, const wxString& targetDir, wxString& targetFileName)
+bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir,
+                        wxString& targetFileName)
 {
     wxZipEntry* entry(NULL);
     wxFFileInputStream in(zipPath);
@@ -1026,8 +990,8 @@ void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 #endif
 }
 
-void StringManager::AddStrings(
-    size_t size, const wxString* strings, const wxString& current, wxControlWithItems* control)
+void StringManager::AddStrings(size_t size, const wxString* strings, const wxString& current,
+                               wxControlWithItems* control)
 {
     m_size = size;
     m_unlocalisedStringArray = wxArrayString(size, strings);
@@ -1048,18 +1012,14 @@ wxString StringManager::GetStringSelection() const
     wxString selection;
     // Find which localised string was selected
     int sel = p_control->GetSelection();
-    if(sel != wxNOT_FOUND) {
-        selection = m_unlocalisedStringArray.Item(sel);
-    }
+    if(sel != wxNOT_FOUND) { selection = m_unlocalisedStringArray.Item(sel); }
 
     return selection;
 }
 
 void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*/)
 {
-    if(str.IsEmpty() || m_size == 0) {
-        return;
-    }
+    if(str.IsEmpty() || m_size == 0) { return; }
     int sel = m_unlocalisedStringArray.Index(str);
     if(sel != wxNOT_FOUND) {
         p_control->SetSelection(sel);
@@ -1080,9 +1040,7 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
         // This avoids duplication, and allows us to prepend the current string
         // As a result, the array will be suitable for 'recently-used-strings' situations
         int index = array.Index(str);
-        if(index != wxNOT_FOUND) {
-            array.RemoveAt(index);
-        }
+        if(index != wxNOT_FOUND) { array.RemoveAt(index); }
         array.Insert(str, 0);
     }
 
@@ -1099,9 +1057,7 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
 // Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
 bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 {
-    if(reference_path.IsEmpty() || !fn.IsOk()) {
-        return false;
-    }
+    if(reference_path.IsEmpty() || !fn.IsOk()) { return false; }
 
 #if defined(__WXGTK__)
     // Normalize() doesn't account for symlinks in wxGTK
@@ -1137,9 +1093,7 @@ wxString wxImplode(const wxArrayString& arr, const wxString& glue)
         str << arr.Item(i) << glue;
     }
 
-    if(str.EndsWith(glue, &tmp)) {
-        str = tmp;
-    }
+    if(str.EndsWith(glue, &tmp)) { str = tmp; }
     return str;
 }
 
@@ -1156,11 +1110,9 @@ wxString wxShellExec(const wxString& cmd, const wxString& projectName)
 
     wxString content;
     wxFFile fp(filename, wxT("r"));
-    if(fp.IsOpened()) {
-        fp.ReadAll(&content);
-    }
+    if(fp.IsOpened()) { fp.ReadAll(&content); }
     fp.Close();
-    wxRemoveFile(filename);
+    clRemoveFile(filename);
     return content;
 }
 
@@ -1171,7 +1123,8 @@ bool wxIsFileSymlink(const wxFileName& filename)
 #else
     wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
     struct stat stat_buff;
-    if(::stat(cb.data(), &stat_buff) < 0) return false;
+    // use lstat() otherwise, stat() will follow the actual file
+    if(::lstat(cb.data(), &stat_buff) < 0) return false;
     return S_ISLNK(stat_buff.st_mode);
 #endif
 }
@@ -1180,6 +1133,11 @@ wxFileName wxReadLink(const wxFileName& filename)
 {
 #ifndef __WXMSW__
     if(wxIsFileSymlink(filename)) {
+    #if defined(__WXGTK__)
+        // Use 'realpath' on Linux, otherwise this breaks on relative symlinks, and (untested) on symlinks-to-symlinks
+        return wxFileName(CLRealPath(filename.GetFullPath()));
+
+    #else // OSX
         wxFileName realFileName;
         char _tmp[512];
         memset(_tmp, 0, sizeof(_tmp));
@@ -1188,6 +1146,7 @@ wxFileName wxReadLink(const wxFileName& filename)
             realFileName = wxFileName(wxString(_tmp, wxConvUTF8, len));
             return realFileName;
         }
+    #endif // !OSX
     }
     return filename;
 
@@ -1216,9 +1175,7 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
 {
     long v;
-    if(!str.ToLong(&v)) {
-        return defval;
-    }
+    if(!str.ToLong(&v)) { return defval; }
 
     if(minval != -1 && v < minval) return defval;
 
@@ -1588,9 +1545,7 @@ wxArrayString SplitString(const wxString& inString, bool trim)
             break;
         case '\\':
             curline << ch;
-            if((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
-                inContinuation = true;
-            }
+            if((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) { inContinuation = true; }
             break;
         default:
             curline << ch;
@@ -1623,16 +1578,13 @@ static bool search_process_by_command(const wxString& name, wxString& tty, long&
     for(size_t i = 0; i < arrOutput.GetCount(); ++i) {
         wxString curline = arrOutput.Item(i).Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
-        if(tokens.GetCount() < 3) {
-            continue;
-        }
+        if(tokens.GetCount() < 3) { continue; }
 
         // replace tabs with spaces
         curline.Replace("\t", " ");
 
         // remove any duplicate spaces
-        while(curline.Replace("  ", " ")) {
-        }
+        while(curline.Replace("  ", " ")) {}
 
         wxString tmp_pid = curline.BeforeFirst(' ');
         curline = curline.AfterFirst(' ');
@@ -1666,9 +1618,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 
     // We can't rely on the terminal's string being "sleep" here:
     // konsole's is the full path e.g. "/bin/sleep", which would never be found
-    if(SLEEP_COMMAND_BASE.empty()) {
-        ProcUtils::Locate("sleep", SLEEP_COMMAND_BASE);
-    }
+    if(SLEEP_COMMAND_BASE.empty()) { ProcUtils::Locate("sleep", SLEEP_COMMAND_BASE); }
     if(SLEEP_COMMAND_BASE.empty()) {
         SLEEP_COMMAND_BASE = "sleep"; // Sensible default, which might even work
     }
@@ -1707,8 +1657,8 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     grepcommand << consoleCommand.BeforeFirst('\'');
     wxString CCcontents = ProcUtils::SafeExecuteCommand(grepcommand);
     if(CCcontents.Contains("konsole") ||
-        (CCcontents.Contains("x-terminal-emulator") &&
-            CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
+       (CCcontents.Contains("x-terminal-emulator") &&
+        CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
         // konsole hangs when the debugger stops and we kill the contained 'sleep' instance, warning that 'sleep' has
         // crashed.
         // So we have to kill it manually. However by default konsole opens new instances of itself as threads of
@@ -1737,9 +1687,7 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;
             lnCommand << "ln -sf " << tty << " " << symlinkName;
-            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) {
-                tty.swap(symlinkName);
-            }
+            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) { tty.swap(symlinkName); }
 #endif
             return;
         }
@@ -1770,9 +1718,7 @@ IProcess* LaunchTerminal(const wxString& title, bool forDebugger, IProcessCallba
     // command << " --always-on-top ";
     command << " --print-info ";
 
-    if(forDebugger) {
-        command << " --dbg-terminal ";
-    }
+    if(forDebugger) { command << " --dbg-terminal "; }
     command << " --title \"" << title << "\"";
 
     CL_DEBUG("Launching Terminal: %s", command);
@@ -1796,9 +1742,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 #if defined(__WXMAC__)
     wxString newCommand;
     newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-    if(waitForAnyKey) {
-        newCommand << " --wait ";
-    }
+    if(waitForAnyKey) { newCommand << " --wait "; }
     newCommand << " --cmd " << title;
     execLine = newCommand;
 
@@ -1808,9 +1752,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
     if(opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
         wxString newCommand;
         newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-        if(waitForAnyKey) {
-            newCommand << " --wait ";
-        }
+        if(waitForAnyKey) { newCommand << " --wait "; }
         newCommand << " --cmd " << title;
         execLine = newCommand;
 
@@ -1847,9 +1789,7 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 
         wxString newCommand;
         newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-        if(waitForAnyKey) {
-            newCommand << " --wait";
-        }
+        if(waitForAnyKey) { newCommand << " --wait"; }
 
         newCommand << " --cmd " << commandToRun;
         execLine = newCommand;
@@ -1862,8 +1802,9 @@ wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool wa
 }
 
 wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, const wxString& dlgId,
-    const wxString& yesLabel, const wxString& noLabel, const wxString& cancelLabel, const wxString& checkboxLabel,
-    long style, bool checkboxInitialValue)
+                                                    const wxString& yesLabel, const wxString& noLabel,
+                                                    const wxString& cancelLabel, const wxString& checkboxLabel,
+                                                    long style, bool checkboxInitialValue)
 {
     int res = clConfig::Get().GetAnnoyingDlgAnswer(dlgId, wxNOT_FOUND);
     if(res == wxNOT_FOUND) {
@@ -1887,10 +1828,11 @@ wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, con
 }
 
 wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message, const wxString& dlgId, const wxString& yesLabel,
-    const wxString& noLabel, const wxString& checkboxLabel, long style, bool checkboxInitialValue)
+                                              const wxString& noLabel, const wxString& checkboxLabel, long style,
+                                              bool checkboxInitialValue)
 {
-    return PromptForYesNoCancelDialogWithCheckbox(
-        message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
+    return PromptForYesNoCancelDialogWithCheckbox(message, dlgId, yesLabel, noLabel, "", checkboxLabel, style,
+                                                  checkboxInitialValue);
 }
 
 static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool wantWhitespace)
@@ -1944,9 +1886,9 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         // Comment?
         int style = ctrl->GetStyleAt(position);
         if(style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
-            style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
-            style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
-            style == wxSTC_C_CHARACTER) {
+           style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
+           style == wxSTC_C_COMMENTDOCKEYWORDERROR || style == wxSTC_C_STRING || style == wxSTC_C_STRINGEOL ||
+           style == wxSTC_C_CHARACTER) {
             continue;
         }
 
@@ -2061,9 +2003,7 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
 }
 wxString& WrapWithQuotes(wxString& str)
 {
-    if(str.Contains(" ")) {
-        str.Prepend("\"").Append("\"");
-    }
+    if(str.Contains(" ")) { str.Prepend("\"").Append("\""); }
     return str;
 }
 
@@ -2079,9 +2019,7 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
 
     wxString content;
     wxStringOutputStream sos(&content);
-    if(doc->Save(sos)) {
-        return ::WriteFileUTF8(filename, content);
-    }
+    if(doc->Save(sos)) { return ::WriteFileUTF8(filename, content); }
     return false;
 }
 
@@ -2132,14 +2070,12 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
         ctrl->SetScrollWidth(maxPixel);
     }
 }
-wxString clGetTextFromUser(
-    const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
+wxString clGetTextFromUser(const wxString& title, const wxString& message, const wxString& initialValue,
+                           int charsToSelect, wxWindow* parent)
 {
-    clGetTextFromUserDialog dialog(
-        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
-    if(dialog.ShowModal() == wxID_OK) {
-        return dialog.GetValue();
-    }
+    clGetTextFromUserDialog dialog(parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message,
+                                   initialValue, charsToSelect);
+    if(dialog.ShowModal() == wxID_OK) { return dialog.GetValue(); }
     return "";
 }
 
@@ -2185,4 +2121,136 @@ void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 bool clIsVaidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
+}
+
+double clGetContentScaleFactor()
+{
+    static bool once = false;
+    static double res = 1.0;
+    if(!once) {
+        once = true;
+#ifdef __WXGTK__
+        GdkScreen* screen = gdk_screen_get_default();
+        if(screen) { res = gdk_screen_get_resolution(screen) / 96.; }
+#else
+        res = (wxScreenDC().GetPPI().y / 96.);
+#endif
+    }
+    return res;
+}
+
+int clGetScaledSize(int size)
+{
+    if(clGetContentScaleFactor() >= 1.5) {
+        return size * 2;
+    } else {
+        return size;
+    }
+}
+
+void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superuser)
+{
+#ifdef __WXMSW__
+    wxUnusedVar(as_superuser);
+    ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+#else
+    wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
+    if(as_superuser && wxFileName::Exists("/usr/bin/sudo") && wxFileName::Exists(sudoAskpass)) {
+        wxString cmd;
+        cmd << "/usr/bin/sudo --askpass kill -" << (int)signo << " ";
+        if(kill_whole_group) { cmd << "-"; }
+        cmd << processID;
+        int rc = system(cmd.mb_str(wxConvUTF8).data());
+        wxUnusedVar(rc);
+    } else {
+        ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+    }
+#endif
+}
+
+void clSetEditorFontEncoding(const wxString& encoding)
+{
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    options->SetFileFontEncoding(encoding);
+    TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
+    EditorConfigST::Get()->SetOptions(options);
+}
+
+bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
+{
+    wxString path;
+    if(!::wxGetEnv("PATH", &path)) {
+        clWARNING() << "Could not read environment variable PATH" << clEndl;
+        return false;
+    }
+
+    wxArrayString mergedPaths = hint;
+    wxArrayString paths = ::wxStringTokenize(path, clPATH_SEPARATOR, wxTOKEN_STRTOK);
+    std::for_each(paths.begin(), paths.end(), [&](const wxString& p) { mergedPaths.Add(p); });
+    mergedPaths.swap(paths);
+
+    for(size_t i = 0; i < paths.size(); ++i) {
+        wxString curpath = paths.Item(i);
+        wxFileName fnPath(curpath, name);
+        if(fnPath.FileExists()) {
+            exepath = fnPath;
+            return true;
+        }
+#ifdef __WXMSW__
+        // on Windows, an executable can have a list of known extensions defined in the
+        // environment variable PATHEXT
+        wxString pathext;
+        ::wxGetEnv("PATHEXT", &pathext);
+        wxArrayString exts = ::wxStringTokenize(pathext, ";", wxTOKEN_STRTOK);
+
+        for(size_t j = 0; j < exts.size(); ++j) {
+            wxString ext = exts.Item(j).AfterFirst('.'); // remove the . from the extension
+            wxFileName fnFileWithExt(curpath, name);
+            fnFileWithExt.SetExt(ext);
+            if(fnFileWithExt.FileExists()) {
+                exepath = fnFileWithExt;
+                return true;
+            }
+        }
+#endif
+    }
+    return false;
+}
+
+int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
+{
+    if(!menu) return wxNOT_FOUND;
+
+    const wxMenuItemList& list = menu->GetMenuItems();
+    wxMenuItemList::const_iterator iter = list.begin();
+    for(int pos = 0; iter != list.end(); ++iter, ++pos) {
+        if((*iter)->GetId() == menuItemId) { return pos; }
+    }
+    return wxNOT_FOUND;
+}
+
+bool clNextWord(const wxString& str, size_t& offset, wxString& word) { return FileUtils::NextWord(str, offset, word); }
+
+wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
+{
+    wxString glue = "\n";
+    switch(eol) {
+    case wxSTC_EOL_CRLF:
+        glue = "\r\n";
+        break;
+    case wxSTC_EOL_CR:
+        glue = "\r";
+        break;
+    default:
+        glue = "\n";
+        break;
+    }
+    wxString result;
+    for(size_t i = 0; i < lines.size(); ++i) {
+        if(!result.IsEmpty()) {
+            result << glue;
+        }
+        result << lines.Item(i);
+    }
+    return result;
 }

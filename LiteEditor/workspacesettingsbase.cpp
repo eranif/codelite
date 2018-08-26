@@ -212,6 +212,11 @@ CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, 
     m_checkBoxCpp14->SetValue(false);
     
     boxSizer3->Add(m_checkBoxCpp14, 0, wxALL, 5);
+	
+	m_checkBoxCpp17 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++17 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCpp17->SetValue(false);
+    
+    boxSizer3->Add(m_checkBoxCpp17, 0, wxALL, 5);
     
     m_checkBoxSWTLW = new wxCheckBox(m_panel6, wxID_ANY, _("Sync to Workspace File"), wxDefaultPosition, wxSize(-1,-1), 0);
     m_checkBoxSWTLW->SetValue(false);

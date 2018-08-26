@@ -60,6 +60,7 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel* parent, wxWindow* pWindowParent)
 #endif
     SetName("DbSettingDialog");
     WindowAttrManager::Load(this);
+    CentreOnParent();
 }
 
 DbSettingDialog::~DbSettingDialog() {}

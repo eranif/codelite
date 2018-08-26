@@ -301,17 +301,22 @@ void clEditorTipWindow::Deactivate()
 wxSize clEditorTipWindow::DoGetTipSize()
 {
     wxDC* dc;
-
+    
     wxGCDC gdc;
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
 
+#ifdef __WXGTK__
+    dc = (wxDC*)&memDC;
+#else
     if(!DrawingUtils::GetGCDC(memDC, gdc)) {
         dc = (wxDC*)&memDC;
     } else {
         dc = (wxDC*)&gdc;
     }
-
+#endif
+    PrepareDC(*dc);
+    
     wxFont f = m_font;
     f.SetWeight(wxFONTWEIGHT_BOLD);
 
@@ -324,6 +329,7 @@ wxSize clEditorTipWindow::DoGetTipSize()
         // Multiple signatures
         minLineWidth = dc->GetTextExtent(m_footer).x;
     }
+    
     if(!m_header.IsEmpty()) {
         wxSize headerSize = dc->GetTextExtent(m_header);
         minLineWidth = headerSize.x > minLineWidth ? headerSize.x : minLineWidth;

@@ -39,6 +39,7 @@ protected:
     void OnTabContextMenu(clContextMenuEvent& event);
     void OnDiff(wxCommandEvent& event);
     void DoClear();
+    wxFileName SaveEditorToTmpfile(IEditor* editor) const;
 
 public:
     CodeLiteDiff(IManager* manager);
@@ -47,7 +48,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void UnPlug();
 };

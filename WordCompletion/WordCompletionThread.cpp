@@ -53,9 +53,12 @@ void WordCompletionThread::ParseBuffer(const wxString& buffer, wxStringSet_t& su
             curword.clear();
             break;
 
-        case kWordNumber:
-            curword.clear();
+        case kWordNumber: {
+            if(!curword.empty()) {
+                curword += token.text;
+            }
             break;
+        }
         default:
             curword += token.text;
             break;

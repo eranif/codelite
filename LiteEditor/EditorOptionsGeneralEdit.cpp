@@ -11,6 +11,7 @@ EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     m_pgPropSmartCurly->SetValue(options->GetAutoAddMatchedCurlyBraces());
     m_pgPropSmartParentheses->SetValue(options->GetAutoAddMatchedNormalBraces());
     m_pgPropSmartQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
+    m_pgPropCopyLineEmptySelection->SetValue(options->GetCopyLineEmptySelection());
     m_pgPropWrapBrackets->SetValue(options->IsWrapSelectionBrackets());
     m_pgPropWrapQuotes->SetValue(options->IsWrapSelectionWithQuotes());
     m_pgPropZoomUsingCtrlScroll->SetValue(options->IsMouseZoomEnabled());
@@ -31,6 +32,7 @@ void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)
     options->SetAutoAddMatchedCurlyBraces(m_pgPropSmartCurly->GetValue().GetBool());
     options->SetAutoAddMatchedNormalBraces(m_pgPropSmartParentheses->GetValue().GetBool());
     options->SetAutoCompleteDoubleQuotes(m_pgPropSmartQuotes->GetValue().GetBool());
+    options->SetCopyLineEmptySelection(m_pgPropCopyLineEmptySelection->GetValue().GetBool());
     options->SetWrapSelectionBrackets(m_pgPropWrapBrackets->GetValue().GetBool());
     options->SetWrapSelectionWithQuotes(m_pgPropWrapQuotes->GetValue().GetBool());
     options->SetMouseZoomEnabled(m_pgPropZoomUsingCtrlScroll->GetValue().GetBool());

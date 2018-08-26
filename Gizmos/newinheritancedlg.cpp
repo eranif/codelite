@@ -42,10 +42,8 @@ NewIneritanceDlg::NewIneritanceDlg(wxWindow* parent, IManager* mgr, const wxStri
         m_choiceAccess->SetStringSelection(access);
     }
     m_textCtrlInhertiance->SetValue(parentName);
+    GetSizer()->Fit(this);
     CentreOnParent();
-
-    SetName("NewIneritanceDlg");
-    WindowAttrManager::Load(this);
 }
 
 NewIneritanceDlg::~NewIneritanceDlg() {}
@@ -56,17 +54,18 @@ void NewIneritanceDlg::OnButtonMore(wxCommandEvent& event)
     OpenResourceDialog dlg(this, m_mgr, "");
 
     // Open the resource dialog with 'class' and 'struct' only
-    dlg.GetFilters().Add(TagEntry::KIND_CLASS);
-    dlg.GetFilters().Add(TagEntry::KIND_STRUCT);
+    dlg.GetFilters().Add(KIND_CLASS);
+    dlg.GetFilters().Add(KIND_STRUCT);
 
-    if((dlg.ShowModal() == wxID_OK) && (dlg.GetSelection() != NULL)) {
+    if((dlg.ShowModal() == wxID_OK) && !dlg.GetSelections().empty()) {
+        OpenResourceDialogItemData* item = dlg.GetSelections().at(0);
         wxString parentName;
-        if(dlg.GetSelection()->m_scope.IsEmpty() == false && dlg.GetSelection()->m_scope != wxT("<global>")) {
-            parentName << dlg.GetSelection()->m_scope << wxT("::");
+        if(item->m_scope.IsEmpty() == false && item->m_scope != wxT("<global>")) {
+            parentName << item->m_scope << wxT("::");
         }
-        parentName << dlg.GetSelection()->m_name;
+        parentName << item->m_name;
         m_textCtrlInhertiance->SetValue(parentName);
 
-        m_fileName = dlg.GetSelection()->m_file;
+        m_fileName = item->m_file;
     }
 }

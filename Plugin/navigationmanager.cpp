@@ -29,21 +29,18 @@ NavMgr::NavMgr()
 {
 }
 
-NavMgr::~NavMgr()
-{
-	Clear();
-}
+NavMgr::~NavMgr() { Clear(); }
 
-NavMgr *NavMgr::Get()
+NavMgr* NavMgr::Get()
 {
-	static NavMgr theManager;
-	return &theManager;
+    static NavMgr theManager;
+    return &theManager;
 }
 
 void NavMgr::Clear()
 {
-	m_cur = 0;
-	m_jumps.clear();
+    m_cur = 0;
+    m_jumps.clear();
 }
 
 bool NavMgr::ValidLocation(const BrowseRecord& rec) const
@@ -53,39 +50,28 @@ bool NavMgr::ValidLocation(const BrowseRecord& rec) const
     return (!rec.filename.IsEmpty()) && (rec.lineno > 1);
 }
 
-bool NavMgr::CanNext() const
-{
-    return m_cur+1 < m_jumps.size();
-}
+bool NavMgr::CanNext() const { return m_cur + 1 < m_jumps.size(); }
 
-bool NavMgr::CanPrev() const
-{
-    return m_cur > 0;
-}
+bool NavMgr::CanPrev() const { return m_cur > 0; }
 
-BrowseRecord NavMgr::GetNext()
-{
-    return CanNext() ? m_jumps[++m_cur] : BrowseRecord();
-}
+BrowseRecord NavMgr::GetNext() { return CanNext() ? m_jumps[++m_cur] : BrowseRecord(); }
 
-BrowseRecord NavMgr::GetPrev()
-{
-    return CanPrev() ? m_jumps[--m_cur] : BrowseRecord();
-}
+BrowseRecord NavMgr::GetPrev() { return CanPrev() ? m_jumps[--m_cur] : BrowseRecord(); }
 
-void NavMgr::AddJump(const BrowseRecord &from, const BrowseRecord &to)
+void NavMgr::AddJump(const BrowseRecord& from, const BrowseRecord& to)
 {
-    if (ValidLocation(from)) {
+    if(ValidLocation(from)) {
         // keep previous location only if it's not at position 0, and it is not equal to from
-        if ( (m_cur > 0) && (!( (m_jumps[m_cur].filename == from.filename) && (m_jumps[m_cur].lineno == from.lineno)))) {
+        if((m_cur > 0) && (!((m_jumps[m_cur].filename == from.filename) && (m_jumps[m_cur].lineno == from.lineno)))) {
             m_cur++;
         }
         m_jumps.resize(m_cur);
         m_jumps.push_back(from);
     }
-    if (ValidLocation(to)) {
+    if(ValidLocation(to)) {
         // only add if there's an actual jump
-        if ((!m_jumps.empty()) && (!( (m_jumps[m_cur].filename == to.filename) && (m_jumps[m_cur].lineno == to.lineno)))) {
+        if((!m_jumps.empty()) &&
+           (!((m_jumps[m_cur].filename == to.filename) && (m_jumps[m_cur].lineno == to.lineno)))) {
             m_cur++;
             m_jumps.resize(m_cur);
             m_jumps.push_back(to);
@@ -93,13 +79,6 @@ void NavMgr::AddJump(const BrowseRecord &from, const BrowseRecord &to)
     }
 }
 
-bool NavMgr::NavigateBackward(IManager *mgr)
-{
-    return CanPrev() && mgr->OpenFile(GetPrev());
-}
+bool NavMgr::NavigateBackward(IManager* mgr) { return CanPrev() && mgr->OpenFile(GetPrev()); }
 
-bool NavMgr::NavigateForward(IManager *mgr)
-{
-    return CanNext() && mgr->OpenFile(GetNext());
-}
-
+bool NavMgr::NavigateForward(IManager* mgr) { return CanNext() && mgr->OpenFile(GetNext()); }

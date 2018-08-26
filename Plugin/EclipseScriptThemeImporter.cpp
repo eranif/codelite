@@ -14,14 +14,14 @@ LexerConf::Ptr_t EclipseScriptThemeImporter::Import(const wxFileName& eclipseXml
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_BASH);
     AddProperty(lexer, wxSTC_SH_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    
+
     wxString errorColour;
     if(lexer->IsDark()) {
         errorColour = "PINK";
     } else {
         errorColour = "RED";
     }
-    
+
     AddProperty(lexer, wxSTC_SH_ERROR, "Error", errorColour, m_background.colour);
     AddProperty(lexer, wxSTC_SH_COMMENTLINE, "Line comment", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SH_NUMBER, "Number", m_number.colour, m_background.colour);

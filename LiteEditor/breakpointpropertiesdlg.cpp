@@ -36,6 +36,7 @@ BreakptPropertiesDlg::BreakptPropertiesDlg(wxWindow* parent)
     whichBreakcheck = wbc_line; // and assume it'll be a line-number type
     SetName("BreakptPropertiesDlg");
     WindowAttrManager::Load(this);
+    CentreOnParent();
 }
 
 BreakptPropertiesDlg::~BreakptPropertiesDlg() {}

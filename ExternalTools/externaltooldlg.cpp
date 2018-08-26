@@ -23,12 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "externaltooldlg.h"
+#include "externaltoolsdata.h"
 #include "globals.h"
+#include "newtooldlg.h"
 #include <wx/clntdata.h>
 #include <wx/msgdlg.h>
-#include "externaltoolsdata.h"
-#include "newtooldlg.h"
-#include "externaltooldlg.h"
 
 ExternalToolDlg::ExternalToolDlg(wxWindow* parent, IManager* mgr)
     : ExternalToolBaseDlg(parent)
@@ -61,15 +61,8 @@ void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
 {
     NewToolDlg dlg(this, m_mgr, NULL);
     if(dlg.ShowModal() == wxID_OK) {
-        DoUpdateEntry(dlg.GetToolId(),
-                      dlg.GetToolName(),
-                      dlg.GetPath(),
-                      dlg.GetWorkingDirectory(),
-                      dlg.GetArguments(),
-                      dlg.GetIcon16(),
-                      dlg.GetIcon24(),
-                      dlg.GetCaptureOutput(),
-                      dlg.GetSaveAllFiles());
+        DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetIcon16(),
+                      dlg.GetIcon24(), dlg.GetCaptureOutput(), dlg.GetSaveAllFiles(), dlg.IsCallOnFileSave());
     }
 }
 
@@ -107,15 +100,9 @@ void ExternalToolDlg::Initialize()
     m_listCtrlTools->SetColumnWidth(2, 200);
 }
 
-void ExternalToolDlg::DoUpdateEntry(const wxString& id,
-                                    const wxString& name,
-                                    const wxString& path,
-                                    const wxString& workingDirectory,
-                                    const wxString& arguments,
-                                    const wxString& icon16,
-                                    const wxString& icon24,
-                                    bool captureOutput,
-                                    bool saveAllFiles)
+void ExternalToolDlg::DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path,
+                                    const wxString& workingDirectory, const wxString& icon16, const wxString& icon24,
+                                    bool captureOutput, bool saveAllFiles, bool callOnFileSave)
 {
     // try to see if 'id' already exist in the list control
     long item(wxNOT_FOUND);
@@ -132,16 +119,14 @@ void ExternalToolDlg::DoUpdateEntry(const wxString& id,
     }
 
     // append new row
-    if(item == wxNOT_FOUND) {
-        item = AppendListCtrlRow(m_listCtrlTools);
-    }
+    if(item == wxNOT_FOUND) { item = AppendListCtrlRow(m_listCtrlTools); }
 
     SetColumnText(m_listCtrlTools, item, 0, id);
     SetColumnText(m_listCtrlTools, item, 1, name);
     SetColumnText(m_listCtrlTools, item, 2, path);
 
-    ExternalToolData* data =
-        new ExternalToolData(id, name, path, workingDirectory, arguments, icon16, icon24, captureOutput, saveAllFiles);
+    ExternalToolData* data = new ExternalToolData(id, name, path, workingDirectory, icon16, icon24, captureOutput,
+                                                  saveAllFiles, callOnFileSave);
     m_listCtrlTools->SetItemPtrData(item, wxUIntPtr(data));
 }
 
@@ -150,15 +135,8 @@ void ExternalToolDlg::DoEditEntry(long item)
     ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(item);
     NewToolDlg dlg(this, m_mgr, data);
     if(dlg.ShowModal() == wxID_OK) {
-        DoUpdateEntry(dlg.GetToolId(),
-                      dlg.GetToolName(),
-                      dlg.GetPath(),
-                      dlg.GetWorkingDirectory(),
-                      dlg.GetArguments(),
-                      dlg.GetIcon16(),
-                      dlg.GetIcon24(),
-                      dlg.GetCaptureOutput(),
-                      dlg.GetSaveAllFiles());
+        DoUpdateEntry(dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(), dlg.GetIcon16(),
+                      dlg.GetIcon24(), dlg.GetCaptureOutput(), dlg.GetSaveAllFiles(), dlg.IsCallOnFileSave());
     }
 }
 
@@ -174,12 +152,12 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
             ti.SetId(data->m_id);
             ti.SetName(data->m_name);
             ti.SetPath(data->m_path);
-            ti.SetArguments(data->m_args);
             ti.SetWd(data->m_workingDirectory);
             ti.SetIcon16(data->m_icon16);
             ti.SetIcon24(data->m_icon24);
             ti.SetCaptureOutput(data->m_captureOutput);
             ti.SetSaveAllFiles(data->m_saveAllFiles);
+            ti.SetCallOnFileSave(data->m_callOnFileSave);
             tools.push_back(ti);
         }
     }
@@ -191,10 +169,9 @@ void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
     m_listCtrlTools->Freeze();
     for(size_t i = 0; i < (size_t)m_listCtrlTools->GetItemCount(); i++) {
         ExternalToolData* data = (ExternalToolData*)m_listCtrlTools->GetItemData(i);
-        if(data) {
-            delete data;
-        }
+        wxDELETE(data);
     }
+
     m_listCtrlTools->DeleteAllItems();
 
     for(size_t i = 0; i < tools.size(); i++) {

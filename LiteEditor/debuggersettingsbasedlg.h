@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -14,7 +14,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
@@ -24,8 +24,9 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
-#include <wx/statbox.h>
+#include <wx/imaglist.h>
 #include <wx/spinctrl.h>
+#include <wx/statbox.h>
 #include <wx/choicebk.h>
 #include <wx/splitter.h>
 #include <wx/dataview.h>
@@ -43,20 +44,30 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+
 class DebuggerSettingsBaseDlg : public wxDialog
 {
 protected:
-    wxTreebook* m_treebook2;
+    wxNotebook* m_notebook;
+    wxStdDialogButtonSizer* m_stdBtnSizer92;
     wxButton* m_buttonOK;
-    wxButton* m_buttonCancel;
+    wxButton* m_button96;
 
 protected:
+    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxTreebook* GetTreebook2() { return m_treebook2; }
-    wxButton* GetButtonOK() { return m_buttonOK; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };
@@ -134,6 +145,8 @@ class DbgPageGeneralBase : public wxPanel
 {
 protected:
     wxPanel* m_panel6;
+    wxNotebook* m_notebook73;
+    wxPanel* m_panelGeneral;
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textCtrDbgPath;
     wxButton* m_buttonBrowse;
@@ -142,8 +155,12 @@ protected:
     wxCheckBox* m_checkBreakAtWinMain;
     wxCheckBox* m_catchThrow;
     wxCheckBox* m_raiseOnBpHit;
+    wxCheckBox* m_checkBoxRunAsSuperuser;
+    wxCheckBox* m_checkBoxDefaultHexDisplay;
+    wxPanel* m_panelTooltip;
     wxCheckBox* m_showTooltipsRequiresControl;
     wxCheckBox* m_checkBoxAutoExpand;
+    wxPanel* m_panelDisplay;
     wxStaticText* m_staticText2;
     wxSpinCtrl* m_spinCtrlNumElements;
     wxCheckBox* m_checkBoxExpandLocals;
@@ -153,6 +170,7 @@ protected:
 
 protected:
     virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSuperuserUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
@@ -163,14 +181,20 @@ public:
     wxCheckBox* GetCheckBreakAtWinMain() { return m_checkBreakAtWinMain; }
     wxCheckBox* GetCatchThrow() { return m_catchThrow; }
     wxCheckBox* GetRaiseOnBpHit() { return m_raiseOnBpHit; }
+    wxCheckBox* GetCheckBoxRunAsSuperuser() { return m_checkBoxRunAsSuperuser; }
+    wxCheckBox* GetCheckBoxDefaultHexDisplay() { return m_checkBoxDefaultHexDisplay; }
+    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxCheckBox* GetShowTooltipsRequiresControl() { return m_showTooltipsRequiresControl; }
     wxCheckBox* GetCheckBoxAutoExpand() { return m_checkBoxAutoExpand; }
+    wxPanel* GetPanelTooltip() { return m_panelTooltip; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxSpinCtrl* GetSpinCtrlNumElements() { return m_spinCtrlNumElements; }
     wxCheckBox* GetCheckBoxExpandLocals() { return m_checkBoxExpandLocals; }
     wxCheckBox* GetCheckBoxCharArrAsPtr() { return m_checkBoxCharArrAsPtr; }
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
     wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
+    wxPanel* GetPanelDisplay() { return m_panelDisplay; }
+    wxNotebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }
     DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageGeneralBase();

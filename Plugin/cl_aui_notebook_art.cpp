@@ -30,7 +30,7 @@
 #include "event_notifier.h"
 
 clAuiGlossyTabArt::clAuiGlossyTabArt()
-    : clAuiMainNotebookTabArt(NULL)
+    : clAuiMainNotebookTabArt()
 {
 }
 
@@ -38,14 +38,6 @@ clAuiGlossyTabArt::~clAuiGlossyTabArt() {}
 
 void clAuiGlossyTabArt::DoSetColours()
 {
-    // adjust some colours
-    wxColour panelColour = DrawingUtils::GetPanelBgColour();
-    if(DrawingUtils::IsDark(panelColour)) {
-        SetDarkColours();
-    } else {
-        SetLightColours();
-    }
-    
     // And finally let the plugins override the colours
     clColourEvent tabColourEvent(wxEVT_COLOUR_TAB);
     if(EventNotifier::Get()->ProcessEvent(tabColourEvent)) {
@@ -59,6 +51,5 @@ void clAuiGlossyTabArt::DoSetColours()
     if(EventNotifier::Get()->ProcessEvent(tabPenColour)) {
         m_activeTabPenColour = tabPenColour.GetBorderColour();
         m_penColour = m_activeTabPenColour.ChangeLightness(120);
-        m_innerPenColour = m_activeTabPenColour.ChangeLightness(150);
     }
 }

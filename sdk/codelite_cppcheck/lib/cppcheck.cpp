@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,21 @@
 #include "cppcheck.h"
 
 #include "preprocessor.h" // Preprocessor
+#include "simplecpp.h"
 #include "tokenize.h" // Tokenizer
 
 #include "check.h"
 #include "path.h"
 
+#include "checkunusedfunctions.h"
+#include "timer.h"
+#include "version.h"
+
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include "timer.h"
-#include "version.h"
+#include <tinyxml2.h>
 
 #ifdef HAVE_RULES
 #define PCRE_STATIC
@@ -39,6 +43,9 @@ static const char Version[] = CPPCHECK_VERSION_STRING;
 static const char ExtraVersion[] = "";
 
 static TimerResults S_timerResults;
+
+// CWE ids used
+static const CWE CWE398(398U);  // Indicator of Poor Code Quality
 
 CppCheck::CppCheck(ErrorLogger &errorLogger, bool useGlobalSuppressions)
     : _errorLogger(errorLogger), exitcode(0), _useGlobalSuppressions(useGlobalSuppressions), tooManyConfigs(false), _simplify(true)
@@ -51,7 +58,7 @@ CppCheck::~CppCheck()
         delete fileInfo.back();
         fileInfo.pop_back();
     }
-    S_timerResults.ShowResults(_settings._showtime);
+    S_timerResults.ShowResults(_settings.showtime);
 }
 
 const char * CppCheck::version()
@@ -67,74 +74,30 @@ const char * CppCheck::extraVersion()
 unsigned int CppCheck::check(const std::string &path)
 {
     std::ifstream fin(path.c_str());
-    return processFile(path, fin);
+    return processFile(path, emptyString, fin);
 }
 
 unsigned int CppCheck::check(const std::string &path, const std::string &content)
 {
     std::istringstream iss(content);
-    return processFile(path, iss);
+    return processFile(path, emptyString, iss);
 }
 
-void CppCheck::replaceAll(std::string& code, const std::string &from, const std::string &to)
+unsigned int CppCheck::check(const ImportProject::FileSettings &fs)
 {
-    std::size_t pos = 0;
-    while ((pos = code.find(from, pos)) != std::string::npos) {
-        code.replace(pos, from.length(), to);
-        pos += to.length();
+    CppCheck temp(_errorLogger, _useGlobalSuppressions);
+    temp._settings = _settings;
+    temp._settings.userDefines = fs.defines;
+    temp._settings.includePaths = fs.includePaths;
+    // TODO: temp._settings.userUndefs = fs.undefs;
+    if (fs.platformType != Settings::Unspecified) {
+        temp._settings.platform(fs.platformType);
     }
+    std::ifstream fin(fs.filename.c_str());
+    return temp.processFile(fs.filename, fs.cfg, fin);
 }
 
-bool CppCheck::findError(std::string code, const char FileName[])
-{
-    std::set<unsigned long long> checksums;
-    // First make sure that error occurs with the original code
-    checkFile(code, FileName, checksums);
-    if (_errorList.empty()) {
-        // Error does not occur with this code
-        return false;
-    }
-
-    std::string previousCode = code;
-    std::string error = _errorList.front();
-    for (;;) {
-
-        // Try to remove included files from the source
-        std::size_t found = previousCode.rfind("\n#endfile");
-        if (found == std::string::npos) {
-            // No modifications can be done to the code
-        } else {
-            // Modify code and re-check it to see if error
-            // is still there.
-            code = previousCode.substr(found+9);
-            _errorList.clear();
-            checksums.clear();
-            checkFile(code, FileName, checksums);
-        }
-
-        if (_errorList.empty()) {
-            // Latest code didn't fail anymore. Fall back
-            // to previous code
-            code = previousCode;
-        } else {
-            error = _errorList.front();
-        }
-
-        // Add '\n' so that "\n#file" on first line would be found
-        code = "// " + error + "\n" + code;
-        replaceAll(code, "\n#file", "\n// #file");
-        replaceAll(code, "\n#endfile", "\n// #endfile");
-
-        // We have reduced the code as much as we can. Print out
-        // the code and quit.
-        _errorLogger.reportOut(code);
-        break;
-    }
-
-    return true;
-}
-
-unsigned int CppCheck::processFile(const std::string& filename, std::istream& fileStream)
+unsigned int CppCheck::processFile(const std::string& filename, const std::string &cfgname, std::istream& fileStream)
 {
     exitcode = 0;
 
@@ -145,55 +108,132 @@ unsigned int CppCheck::processFile(const std::string& filename, std::istream& fi
     if (_settings.terminated())
         return exitcode;
 
-    if (_settings._errorsOnly == false) {
+    if (_settings.quiet == false) {
         std::string fixedpath = Path::simplifyPath(filename);
         fixedpath = Path::toNativeSeparators(fixedpath);
-        _errorLogger.reportOut(std::string("Checking ") + fixedpath + std::string("..."));
+        _errorLogger.reportOut(std::string("Checking ") + fixedpath + ' ' + cfgname + std::string("..."));
+
+        if (_settings.verbose) {
+            _errorLogger.reportOut("Defines: " + _settings.userDefines);
+            std::string includePaths;
+            for (std::list<std::string>::const_iterator I = _settings.includePaths.begin(); I != _settings.includePaths.end(); ++I)
+                includePaths += " -I" + *I;
+            _errorLogger.reportOut("Includes:" + includePaths);
+            _errorLogger.reportOut(std::string("Platform:") + _settings.platformString());
+        }
     }
 
+    CheckUnusedFunctions checkUnusedFunctions(0,0,0);
+
+    bool internalErrorFound(false);
     try {
-        Preprocessor preprocessor(&_settings, this);
-        std::list<std::string> configurations;
-        std::string filedata = "";
+        Preprocessor preprocessor(_settings, this);
+        std::set<std::string> configurations;
 
-        {
-            Timer t("Preprocessor::preprocess", _settings._showtime, &S_timerResults);
-            preprocessor.preprocess(fileStream, filedata, configurations, filename, _settings._includePaths);
-        }
+        simplecpp::OutputList outputList;
+        std::vector<std::string> files;
+        simplecpp::TokenList tokens1(fileStream, files, filename, &outputList);
+        preprocessor.loadFiles(tokens1, files);
 
-        if (_settings.checkConfiguration) {
-            return 0;
-        }
-
-        // Run rules on this code
-        for (std::list<Settings::Rule>::const_iterator it = _settings.rules.begin(); it != _settings.rules.end(); ++it) {
-            if (it->tokenlist == "define") {
-                Tokenizer tokenizer2(&_settings, this);
-                std::istringstream istr2(filedata);
-                tokenizer2.list.createTokens(istr2, filename);
-
-                for (const Token *tok = tokenizer2.list.front(); tok; tok = tok->next()) {
-                    if (tok->str() == "#define") {
-                        std::string code = std::string(tok->linenr()-1U, '\n');
-                        for (const Token *tok2 = tok; tok2 && tok2->linenr() == tok->linenr(); tok2 = tok2->next())
-                            code += " " + tok2->str();
-                        Tokenizer tokenizer3(&_settings, this);
-                        std::istringstream istr3(code);
-                        tokenizer3.list.createTokens(istr3, tokenizer2.list.file(tok));
-                        executeRules("define", tokenizer3);
-                    }
+        // write dump file xml prolog
+        std::ofstream fdump;
+        if (_settings.dump) {
+            const std::string dumpfile(filename + ".dump");
+            fdump.open(dumpfile.c_str());
+            if (fdump.is_open()) {
+                fdump << "<?xml version=\"1.0\"?>" << std::endl;
+                fdump << "<dumps>" << std::endl;
+                fdump << "  <platform"
+                      << " name=\"" << _settings.platformString() << '\"'
+                      << " char_bit=\"" << _settings.char_bit << '\"'
+                      << " short_bit=\"" << _settings.short_bit << '\"'
+                      << " int_bit=\"" << _settings.int_bit << '\"'
+                      << " long_bit=\"" << _settings.long_bit << '\"'
+                      << " long_long_bit=\"" << _settings.long_long_bit << '\"'
+                      << " pointer_bit=\"" << (_settings.sizeof_pointer * _settings.char_bit) << '\"'
+                      << "/>\n";
+                fdump << "  <rawtokens>" << std::endl;
+                for (unsigned int i = 0; i < files.size(); ++i)
+                    fdump << "    <file index=\"" << i << "\" name=\"" << ErrorLogger::toxml(files[i]) << "\"/>" << std::endl;
+                for (const simplecpp::Token *tok = tokens1.cfront(); tok; tok = tok->next) {
+                    fdump << "    <tok "
+                          << "fileIndex=\"" << tok->location.fileIndex << "\" "
+                          << "linenr=\"" << tok->location.line << "\" "
+                          << "str=\"" << ErrorLogger::toxml(tok->str) << "\""
+                          << "/>" << std::endl;
                 }
-                break;
+                fdump << "  </rawtokens>" << std::endl;
             }
         }
 
-        if (!_settings.userDefines.empty() && _settings._maxConfigs==1U) {
-            configurations.clear();
-            configurations.push_back(_settings.userDefines);
+        // Parse comments and then remove them
+        preprocessor.inlineSuppressions(tokens1);
+        tokens1.removeComments();
+        preprocessor.removeComments();
+
+        if (!_settings.buildDir.empty()) {
+            // Get toolinfo
+            std::string toolinfo;
+            toolinfo += CPPCHECK_VERSION_STRING;
+            toolinfo += _settings.isEnabled(Settings::WARNING) ? 'w' : ' ';
+            toolinfo += _settings.isEnabled(Settings::STYLE) ? 's' : ' ';
+            toolinfo += _settings.isEnabled(Settings::PERFORMANCE) ? 'p' : ' ';
+            toolinfo += _settings.isEnabled(Settings::PORTABILITY) ? 'p' : ' ';
+            toolinfo += _settings.isEnabled(Settings::INFORMATION) ? 'i' : ' ';
+            toolinfo += _settings.userDefines;
+
+            // Calculate checksum so it can be compared with old checksum / future checksums
+            const unsigned int checksum = preprocessor.calculateChecksum(tokens1, toolinfo);
+            std::list<ErrorLogger::ErrorMessage> errors;
+            if (!analyzerInformation.analyzeFile(_settings.buildDir, filename, cfgname, checksum, &errors)) {
+                while (!errors.empty()) {
+                    reportErr(errors.front());
+                    errors.pop_front();
+                }
+                return exitcode;  // known results => no need to reanalyze file
+            }
         }
 
-        if (!_settings._force && configurations.size() > _settings._maxConfigs) {
-            if (_settings.isEnabled("information")) {
+        // Get directives
+        preprocessor.setDirectives(tokens1);
+
+        preprocessor.setPlatformInfo(&tokens1);
+
+        // Get configurations..
+        if (_settings.userDefines.empty() || _settings.force) {
+            Timer t("Preprocessor::getConfigs", _settings.showtime, &S_timerResults);
+            configurations = preprocessor.getConfigs(tokens1);
+        } else {
+            configurations.insert(_settings.userDefines);
+        }
+
+        if (_settings.checkConfiguration) {
+            for (std::set<std::string>::const_iterator it = configurations.begin(); it != configurations.end(); ++it)
+                (void)preprocessor.getcode(tokens1, *it, files, true);
+
+            return 0;
+        }
+
+        // Run define rules on raw code
+        for (std::list<Settings::Rule>::const_iterator it = _settings.rules.begin(); it != _settings.rules.end(); ++it) {
+            if (it->tokenlist != "define")
+                continue;
+
+            std::string code;
+            const std::list<Directive> &directives = preprocessor.getDirectives();
+            for (std::list<Directive>::const_iterator dir = directives.begin(); dir != directives.end(); ++dir) {
+                if (dir->str.compare(0,8,"#define ") == 0)
+                    code += "#line " + MathLib::toString(dir->linenr) + " \"" + dir->file + "\"\n" + dir->str + '\n';
+            }
+            Tokenizer tokenizer2(&_settings, this);
+            std::istringstream istr2(code);
+            tokenizer2.list.createTokens(istr2);
+            executeRules("define", tokenizer2);
+            break;
+        }
+
+        if (!_settings.force && configurations.size() > _settings.maxConfigs) {
+            if (_settings.isEnabled(Settings::INFORMATION)) {
                 tooManyConfigsError(Path::toNativeSeparators(filename),configurations.size());
             } else {
                 tooManyConfigs = true;
@@ -202,16 +242,20 @@ unsigned int CppCheck::processFile(const std::string& filename, std::istream& fi
 
         std::set<unsigned long long> checksums;
         unsigned int checkCount = 0;
-        for (std::list<std::string>::const_iterator it = configurations.begin(); it != configurations.end(); ++it) {
+        for (std::set<std::string>::const_iterator it = configurations.begin(); it != configurations.end(); ++it) {
+            // bail out if terminated
+            if (_settings.terminated())
+                break;
+
             // Check only a few configurations (default 12), after that bail out, unless --force
             // was used.
-            if (!_settings._force && ++checkCount > _settings._maxConfigs)
+            if (!_settings.force && ++checkCount > _settings.maxConfigs)
                 break;
 
             cfg = *it;
 
             // If only errors are printed, print filename after the check
-            if (_settings._errorsOnly == false && it != configurations.begin()) {
+            if (_settings.quiet == false && (!cfg.empty() || it != configurations.begin())) {
                 std::string fixedpath = Path::simplifyPath(filename);
                 fixedpath = Path::toNativeSeparators(fixedpath);
                 _errorLogger.reportOut("Checking " + fixedpath + ": " + cfg + "...");
@@ -223,47 +267,162 @@ unsigned int CppCheck::processFile(const std::string& filename, std::istream& fi
                 cfg = _settings.userDefines + cfg;
             }
 
-            Timer t("Preprocessor::getcode", _settings._showtime, &S_timerResults);
-            std::string codeWithoutCfg = preprocessor.getcode(filedata, cfg, filename);
-            t.Stop();
-
+            std::string codeWithoutCfg;
+            {
+                Timer t("Preprocessor::getcode", _settings.showtime, &S_timerResults);
+                codeWithoutCfg = preprocessor.getcode(tokens1, cfg, files, true);
+            }
             codeWithoutCfg += _settings.append();
 
-            if (_settings.debugFalsePositive) {
-                if (findError(codeWithoutCfg, filename.c_str())) {
-                    return exitcode;
+            if (_settings.preprocessOnly) {
+                if (codeWithoutCfg.compare(0,5,"#file") == 0)
+                    codeWithoutCfg.insert(0U, "//");
+                std::string::size_type pos = 0;
+                while ((pos = codeWithoutCfg.find("\n#file",pos)) != std::string::npos)
+                    codeWithoutCfg.insert(pos+1U, "//");
+                pos = 0;
+                while ((pos = codeWithoutCfg.find("\n#endfile",pos)) != std::string::npos)
+                    codeWithoutCfg.insert(pos+1U, "//");
+                pos = 0;
+                while ((pos = codeWithoutCfg.find(Preprocessor::macroChar,pos)) != std::string::npos)
+                    codeWithoutCfg[pos] = ' ';
+                reportOut(codeWithoutCfg);
+                continue;
+            }
+
+            Tokenizer _tokenizer(&_settings, this);
+            if (_settings.showtime != SHOWTIME_NONE)
+                _tokenizer.setTimerResults(&S_timerResults);
+
+            try {
+                // Create tokens, skip rest of iteration if failed
+                std::istringstream istr(codeWithoutCfg);
+                Timer timer("Tokenizer::createTokens", _settings.showtime, &S_timerResults);
+                bool result = _tokenizer.createTokens(istr, filename);
+                timer.Stop();
+                if (!result)
+                    continue;
+
+                // skip rest of iteration if just checking configuration
+                if (_settings.checkConfiguration)
+                    continue;
+
+                // Check raw tokens
+                checkRawTokens(_tokenizer);
+
+                // Simplify tokens into normal form, skip rest of iteration if failed
+                Timer timer2("Tokenizer::simplifyTokens1", _settings.showtime, &S_timerResults);
+                result = _tokenizer.simplifyTokens1(cfg);
+                timer2.Stop();
+                if (!result)
+                    continue;
+
+                // dump xml if --dump
+                if (_settings.dump && fdump.is_open()) {
+                    fdump << "<dump cfg=\"" << cfg << "\">" << std::endl;
+                    preprocessor.dump(fdump);
+                    _tokenizer.dump(fdump);
+                    fdump << "</dump>" << std::endl;
                 }
-            } else {
-                if (!checkFile(codeWithoutCfg, filename.c_str(), checksums)) {
-                    if (_settings.isEnabled("information") && (_settings.debug || _settings._verbose))
-                        purgedConfigurationMessage(filename, cfg);
+
+                // Skip if we already met the same simplified token list
+                if (_settings.force || _settings.maxConfigs > 1) {
+                    const unsigned long long checksum = _tokenizer.list.calculateChecksum();
+                    if (checksums.find(checksum) != checksums.end()) {
+                        if (_settings.isEnabled(Settings::INFORMATION) && (_settings.debug || _settings.verbose))
+                            purgedConfigurationMessage(filename, cfg);
+                        continue;
+                    }
+                    checksums.insert(checksum);
                 }
+
+                // Check normal tokens
+                checkNormalTokens(_tokenizer);
+
+                // Analyze info..
+                if (!_settings.buildDir.empty())
+                    checkUnusedFunctions.parseTokens(_tokenizer, filename.c_str(), &_settings, false);
+
+                // simplify more if required, skip rest of iteration if failed
+                if (_simplify) {
+                    // if further simplification fails then skip rest of iteration
+                    Timer timer3("Tokenizer::simplifyTokenList2", _settings.showtime, &S_timerResults);
+                    result = _tokenizer.simplifyTokenList2();
+                    timer3.Stop();
+                    if (!result)
+                        continue;
+
+                    // Check simplified tokens
+                    checkSimplifiedTokens(_tokenizer);
+                }
+
+            } catch (const InternalError &e) {
+                internalErrorFound=true;
+                std::list<ErrorLogger::ErrorMessage::FileLocation> locationList;
+                ErrorLogger::ErrorMessage::FileLocation loc;
+                if (e.token) {
+                    loc.line = e.token->linenr();
+                    const std::string fixedpath = Path::toNativeSeparators(_tokenizer.list.file(e.token));
+                    loc.setfile(fixedpath);
+                } else {
+                    ErrorLogger::ErrorMessage::FileLocation loc2;
+                    loc2.setfile(Path::toNativeSeparators(filename));
+                    locationList.push_back(loc2);
+                    loc.setfile(_tokenizer.list.getSourceFilePath());
+                }
+                locationList.push_back(loc);
+                ErrorLogger::ErrorMessage errmsg(locationList,
+                                                 _tokenizer.list.getSourceFilePath(),
+                                                 Severity::error,
+                                                 e.errorMessage,
+                                                 e.id,
+                                                 false);
+
+                reportErr(errmsg);
             }
         }
+
+        // dumped all configs, close root </dumps> element now
+        if (_settings.dump && fdump.is_open())
+            fdump << "</dumps>" << std::endl;
+
     } catch (const std::runtime_error &e) {
+        internalError(filename, e.what());
+    } catch (const std::bad_alloc &e) {
         internalError(filename, e.what());
     } catch (const InternalError &e) {
         internalError(filename, e.errorMessage);
+        exitcode=1; // e.g. reflect a syntax error
     }
 
-    if (_settings.isEnabled("information") || _settings.checkConfiguration)
-        reportUnmatchedSuppressions(_settings.nomsg.getUnmatchedLocalSuppressions(filename, _settings._jobs == 1 && _settings.isEnabled("unusedFunction")));
+    analyzerInformation.setFileInfo("CheckUnusedFunctions", checkUnusedFunctions.analyzerInfo());
+    analyzerInformation.close();
+
+    // In jointSuppressionReport mode, unmatched suppressions are
+    // collected after all files are processed
+    if (!_settings.jointSuppressionReport && (_settings.isEnabled(Settings::INFORMATION) || _settings.checkConfiguration)) {
+        reportUnmatchedSuppressions(_settings.nomsg.getUnmatchedLocalSuppressions(filename, isUnusedFunctionCheckEnabled()));
+    }
 
     _errorList.clear();
+    if (internalErrorFound && (exitcode==0)) {
+        exitcode=1;
+    }
     return exitcode;
 }
 
 void CppCheck::internalError(const std::string &filename, const std::string &msg)
 {
     const std::string fixedpath = Path::toNativeSeparators(filename);
-    const std::string fullmsg("Bailing out from checking " + fixedpath + " since there was a internal error: " + msg);
+    const std::string fullmsg("Bailing out from checking " + fixedpath + " since there was an internal error: " + msg);
 
-    if (_settings.isEnabled("information")) {
+    if (_settings.isEnabled(Settings::INFORMATION)) {
         const ErrorLogger::ErrorMessage::FileLocation loc1(filename, 0);
         std::list<ErrorLogger::ErrorMessage::FileLocation> callstack;
         callstack.push_back(loc1);
 
         ErrorLogger::ErrorMessage errmsg(callstack,
+                                         emptyString,
                                          Severity::information,
                                          fullmsg,
                                          "internalError",
@@ -277,147 +436,66 @@ void CppCheck::internalError(const std::string &filename, const std::string &msg
     }
 }
 
-void CppCheck::analyseFile(std::istream &fin, const std::string &filename)
+//---------------------------------------------------------------------------
+// CppCheck - A function that checks a raw token list
+//---------------------------------------------------------------------------
+void CppCheck::checkRawTokens(const Tokenizer &tokenizer)
 {
-    // Preprocess file..
-    Preprocessor preprocessor(&_settings, this);
-    std::list<std::string> configurations;
-    std::string filedata = "";
-    preprocessor.preprocess(fin, filedata, configurations, filename, _settings._includePaths);
-    const std::string code = preprocessor.getcode(filedata, "", filename);
-
-    if (_settings.checkConfiguration) {
-        return;
-    }
-
-    // Tokenize..
-    Tokenizer tokenizer(&_settings, this);
-    std::istringstream istr(code);
-    tokenizer.tokenize(istr, filename.c_str());
-    tokenizer.simplifyTokenList2();
+    // Execute rules for "raw" code
+    executeRules("raw", tokenizer);
 }
 
 //---------------------------------------------------------------------------
-// CppCheck - A function that checks a specified file
+// CppCheck - A function that checks a normal token list
 //---------------------------------------------------------------------------
-bool CppCheck::checkFile(const std::string &code, const char FileName[], std::set<unsigned long long>& checksums)
+
+void CppCheck::checkNormalTokens(const Tokenizer &tokenizer)
 {
-    if (_settings.terminated() || _settings.checkConfiguration)
-        return true;
-
-    Tokenizer _tokenizer(&_settings, this);
-    if (_settings._showtime != SHOWTIME_NONE)
-        _tokenizer.setTimerResults(&S_timerResults);
-    try {
-        // Execute rules for "raw" code
-        for (std::list<Settings::Rule>::const_iterator it = _settings.rules.begin(); it != _settings.rules.end(); ++it) {
-            if (it->tokenlist == "raw") {
-                Tokenizer tokenizer2(&_settings, this);
-                std::istringstream istr(code);
-                tokenizer2.list.createTokens(istr, FileName);
-                executeRules("raw", tokenizer2);
-                break;
-            }
-        }
-
-        // Tokenize the file
-        std::istringstream istr(code);
-
-        Timer timer("Tokenizer::tokenize", _settings._showtime, &S_timerResults);
-        bool result = _tokenizer.tokenize(istr, FileName, cfg);
-        timer.Stop();
-
-        if (_settings._force || _settings._maxConfigs > 1) {
-            unsigned long long checksum = _tokenizer.list.calculateChecksum();
-            if (checksums.find(checksum) != checksums.end())
-                return false;
-            checksums.insert(checksum);
-        }
-
-        if (!result) {
-            // File had syntax errors, abort
-            return true;
-        }
-
-        // dump
-        if (_settings.dump) {
-            std::string dumpfile = std::string(FileName) + ".dump";
-            std::ofstream fdump(dumpfile.c_str());
-            if (fdump.is_open()) {
-                fdump << "<?xml version=\"1.0\"?>" << std::endl;
-                fdump << "<dump cfg=\"" << cfg << "\">" << std::endl;
-                _tokenizer.dump(fdump);
-                fdump << "</dump>" << std::endl;
-            }
-            return true;
-        }
-
-        // call all "runChecks" in all registered Check classes
-        for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
-            if (_settings.terminated())
-                return true;
-
-            Timer timerRunChecks((*it)->name() + "::runChecks", _settings._showtime, &S_timerResults);
-            (*it)->runChecks(&_tokenizer, &_settings, this);
-        }
-
-        // Analyse the tokens..
-        for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
-            Check::FileInfo *fi = (*it)->getFileInfo(&_tokenizer, &_settings);
-            if (fi != nullptr)
-                fileInfo.push_back(fi);
-        }
-
-        executeRules("normal", _tokenizer);
-
-        if (!_simplify)
-            return true;
-
-        Timer timer3("Tokenizer::simplifyTokenList2", _settings._showtime, &S_timerResults);
-        result = _tokenizer.simplifyTokenList2();
-        timer3.Stop();
-        if (!result)
-            return true;
-
-        // call all "runSimplifiedChecks" in all registered Check classes
-        for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
-            if (_settings.terminated())
-                return true;
-
-            Timer timerSimpleChecks((*it)->name() + "::runSimplifiedChecks", _settings._showtime, &S_timerResults);
-            (*it)->runSimplifiedChecks(&_tokenizer, &_settings, this);
-        }
-
+    // call all "runChecks" in all registered Check classes
+    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
         if (_settings.terminated())
-            return true;
+            return;
 
-        executeRules("simple", _tokenizer);
+        if (tokenizer.isMaxTime())
+            return;
 
-        if (_settings.terminated())
-            return true;
-    } catch (const InternalError &e) {
-        std::list<ErrorLogger::ErrorMessage::FileLocation> locationList;
-        ErrorLogger::ErrorMessage::FileLocation loc;
-        if (e.token) {
-            loc.line = e.token->linenr();
-            const std::string fixedpath = Path::toNativeSeparators(_tokenizer.list.file(e.token));
-            loc.setfile(fixedpath);
-        } else {
-            ErrorLogger::ErrorMessage::FileLocation loc2;
-            loc2.setfile(Path::toNativeSeparators(FileName));
-            locationList.push_back(loc2);
-            loc.setfile(_tokenizer.list.getSourceFilePath());
-        }
-        locationList.push_back(loc);
-        const ErrorLogger::ErrorMessage errmsg(locationList,
-                                               Severity::error,
-                                               e.errorMessage,
-                                               e.id,
-                                               false);
-
-        _errorLogger.reportErr(errmsg);
+        Timer timerRunChecks((*it)->name() + "::runChecks", _settings.showtime, &S_timerResults);
+        (*it)->runChecks(&tokenizer, &_settings, this);
     }
-    return true;
+
+    // Analyse the tokens..
+    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
+        Check::FileInfo *fi = (*it)->getFileInfo(&tokenizer, &_settings);
+        if (fi != nullptr) {
+            fileInfo.push_back(fi);
+            analyzerInformation.setFileInfo((*it)->name(), fi->toString());
+        }
+    }
+
+    executeRules("normal", tokenizer);
+}
+
+//---------------------------------------------------------------------------
+// CppCheck - A function that checks a simplified token list
+//---------------------------------------------------------------------------
+
+void CppCheck::checkSimplifiedTokens(const Tokenizer &tokenizer)
+{
+    // call all "runSimplifiedChecks" in all registered Check classes
+    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
+        if (_settings.terminated())
+            return;
+
+        if (tokenizer.isMaxTime())
+            return;
+
+        Timer timerSimpleChecks((*it)->name() + "::runSimplifiedChecks", _settings.showtime, &S_timerResults);
+        (*it)->runSimplifiedChecks(&tokenizer, &_settings, this);
+        timerSimpleChecks.Stop();
+    }
+
+    if (!_settings.terminated())
+        executeRules("simple", tokenizer);
 }
 
 void CppCheck::executeRules(const std::string &tokenlist, const Tokenizer &tokenizer)
@@ -445,7 +523,7 @@ void CppCheck::executeRules(const std::string &tokenlist, const Tokenizer &token
 
     for (std::list<Settings::Rule>::const_iterator it = _settings.rules.begin(); it != _settings.rules.end(); ++it) {
         const Settings::Rule &rule = *it;
-        if (rule.pattern.empty() || rule.id.empty() || rule.severity.empty() || rule.tokenlist != tokenlist)
+        if (rule.pattern.empty() || rule.id.empty() || rule.severity == Severity::none || rule.tokenlist != tokenlist)
             continue;
 
         const char *error = nullptr;
@@ -454,6 +532,7 @@ void CppCheck::executeRules(const std::string &tokenlist, const Tokenizer &token
         if (!re) {
             if (error) {
                 ErrorLogger::ErrorMessage errmsg(std::list<ErrorLogger::ErrorMessage::FileLocation>(),
+                                                 emptyString,
                                                  Severity::error,
                                                  error,
                                                  "pcre_compile",
@@ -465,10 +544,10 @@ void CppCheck::executeRules(const std::string &tokenlist, const Tokenizer &token
         }
 
         int pos = 0;
-        int ovector[30];
+        int ovector[30]= {0};
         while (pos < (int)str.size() && 0 <= pcre_exec(re, nullptr, str.c_str(), (int)str.size(), pos, 0, ovector, 30)) {
-            unsigned int pos1 = (unsigned int)ovector[0];
-            unsigned int pos2 = (unsigned int)ovector[1];
+            const unsigned int pos1 = (unsigned int)ovector[0];
+            const unsigned int pos2 = (unsigned int)ovector[1];
 
             // jump to the end of the match for the next pcre_exec
             pos = (int)pos2;
@@ -496,7 +575,7 @@ void CppCheck::executeRules(const std::string &tokenlist, const Tokenizer &token
                 summary = "found '" + str.substr(pos1, pos2 - pos1) + "'";
             else
                 summary = rule.summary;
-            const ErrorLogger::ErrorMessage errmsg(callStack, Severity::fromString(rule.severity), summary, rule.id, false);
+            const ErrorLogger::ErrorMessage errmsg(callStack, tokenizer.list.getSourceFilePath(), rule.severity, summary, rule.id, false);
 
             // Report error
             reportErr(errmsg);
@@ -514,12 +593,12 @@ Settings &CppCheck::settings()
 
 void CppCheck::tooManyConfigsError(const std::string &file, const std::size_t numberOfConfigurations)
 {
-    if (!_settings.isEnabled("information") && !tooManyConfigs)
+    if (!_settings.isEnabled(Settings::INFORMATION) && !tooManyConfigs)
         return;
 
     tooManyConfigs = false;
 
-    if (_settings.isEnabled("information") && file.empty())
+    if (_settings.isEnabled(Settings::INFORMATION) && file.empty())
         return;
 
     std::list<ErrorLogger::ErrorMessage::FileLocation> loclist;
@@ -530,8 +609,8 @@ void CppCheck::tooManyConfigsError(const std::string &file, const std::size_t nu
     }
 
     std::ostringstream msg;
-    msg << "Too many #ifdef configurations - cppcheck only checks " << _settings._maxConfigs;
-    if (numberOfConfigurations > _settings._maxConfigs)
+    msg << "Too many #ifdef configurations - cppcheck only checks " << _settings.maxConfigs;
+    if (numberOfConfigurations > _settings.maxConfigs)
         msg << " of " << numberOfConfigurations << " configurations. Use --force to check all configurations.\n";
     if (file.empty())
         msg << " configurations. Use --force to check all configurations. For more details, use --enable=information.\n";
@@ -544,9 +623,10 @@ void CppCheck::tooManyConfigsError(const std::string &file, const std::size_t nu
 
 
     ErrorLogger::ErrorMessage errmsg(loclist,
+                                     emptyString,
                                      Severity::information,
                                      msg.str(),
-                                     "toomanyconfigs",
+                                     "toomanyconfigs", CWE398,
                                      false);
 
     reportErr(errmsg);
@@ -554,10 +634,9 @@ void CppCheck::tooManyConfigsError(const std::string &file, const std::size_t nu
 
 void CppCheck::purgedConfigurationMessage(const std::string &file, const std::string& configuration)
 {
-
     tooManyConfigs = false;
 
-    if (_settings.isEnabled("information") && file.empty())
+    if (_settings.isEnabled(Settings::INFORMATION) && file.empty())
         return;
 
     std::list<ErrorLogger::ErrorMessage::FileLocation> loclist;
@@ -568,6 +647,7 @@ void CppCheck::purgedConfigurationMessage(const std::string &file, const std::st
     }
 
     ErrorLogger::ErrorMessage errmsg(loclist,
+                                     emptyString,
                                      Severity::information,
                                      "The configuration '" + configuration + "' was not checked because its code equals another one.",
                                      "purgedConfiguration",
@@ -583,19 +663,13 @@ void CppCheck::reportErr(const ErrorLogger::ErrorMessage &msg)
     if (!_settings.library.reportErrors(msg.file0))
         return;
 
-    std::string errmsg = msg.toString(_settings._verbose);
+    const std::string errmsg = msg.toString(_settings.verbose);
     if (errmsg.empty())
         return;
 
     // Alert only about unique errors
     if (std::find(_errorList.begin(), _errorList.end(), errmsg) != _errorList.end())
         return;
-
-    if (_settings.debugFalsePositive) {
-        // Don't print out error
-        _errorList.push_back(errmsg);
-        return;
-    }
 
     std::string file;
     unsigned int line(0);
@@ -612,12 +686,13 @@ void CppCheck::reportErr(const ErrorLogger::ErrorMessage &msg)
             return;
     }
 
-    if (!_settings.nofail.isSuppressed(msg._id, file, line))
+    if (!_settings.nofail.isSuppressed(msg._id, file, line) && !_settings.nomsg.isSuppressed(msg._id, file, line))
         exitcode = 1;
 
     _errorList.push_back(errmsg);
 
     _errorLogger.reportErr(msg);
+    analyzerInformation.reportErr(msg, _settings.verbose);
 }
 
 void CppCheck::reportOut(const std::string &outmsg)
@@ -657,21 +732,84 @@ void CppCheck::reportStatus(unsigned int /*fileindex*/, unsigned int /*filecount
 
 void CppCheck::getErrorMessages()
 {
+    Settings s(_settings);
+    s.addEnabled("warning");
+    s.addEnabled("style");
+    s.addEnabled("portability");
+    s.addEnabled("performance");
+    s.addEnabled("information");
+
     tooManyConfigs = true;
     tooManyConfigsError("",0U);
 
     // call all "getErrorMessages" in all registered Check classes
     for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
-        (*it)->getErrorMessages(this, &_settings);
+        (*it)->getErrorMessages(this, &s);
 
-    Tokenizer::getErrorMessages(this, &_settings);
-    Preprocessor::getErrorMessages(this, &_settings);
+    Preprocessor::getErrorMessages(this, &s);
 }
 
 void CppCheck::analyseWholeProgram()
 {
-    // Analyse the tokens..
+    // Analyse the tokens
     for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
-        (*it)->analyseWholeProgram(fileInfo, *this);
+        (*it)->analyseWholeProgram(fileInfo, _settings, *this);
 }
 
+void CppCheck::analyseWholeProgram(const std::string &buildDir, const std::map<std::string, std::size_t> &files)
+{
+    (void)files;
+    if (buildDir.empty())
+        return;
+    if (_settings.isEnabled(Settings::UNUSED_FUNCTION))
+        CheckUnusedFunctions::analyseWholeProgram(this, buildDir);
+    std::list<Check::FileInfo*> fileInfoList;
+
+    // Load all analyzer info data..
+    const std::string filesTxt(buildDir + "/files.txt");
+    std::ifstream fin(filesTxt.c_str());
+    std::string filesTxtLine;
+    while (std::getline(fin, filesTxtLine)) {
+        const std::string::size_type firstColon = filesTxtLine.find(':');
+        if (firstColon == std::string::npos)
+            continue;
+        const std::string::size_type lastColon = filesTxtLine.rfind(':');
+        if (firstColon == lastColon)
+            continue;
+        const std::string xmlfile = buildDir + '/' + filesTxtLine.substr(0,firstColon);
+        //const std::string sourcefile = filesTxtLine.substr(lastColon+1);
+
+        tinyxml2::XMLDocument doc;
+        tinyxml2::XMLError error = doc.LoadFile(xmlfile.c_str());
+        if (error != tinyxml2::XML_SUCCESS)
+            continue;
+
+        const tinyxml2::XMLElement * const rootNode = doc.FirstChildElement();
+        if (rootNode == nullptr)
+            continue;
+
+        for (const tinyxml2::XMLElement *e = rootNode->FirstChildElement(); e; e = e->NextSiblingElement()) {
+            if (std::strcmp(e->Name(), "FileInfo") != 0)
+                continue;
+            const char *checkClassAttr = e->Attribute("check");
+            if (!checkClassAttr)
+                continue;
+            for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it) {
+                if (checkClassAttr == (*it)->name())
+                    fileInfoList.push_back((*it)->loadFileInfoFromXml(e));
+            }
+        }
+    }
+
+    // Analyse the tokens
+    for (std::list<Check *>::const_iterator it = Check::instances().begin(); it != Check::instances().end(); ++it)
+        (*it)->analyseWholeProgram(fileInfoList, _settings, *this);
+
+    for (std::list<Check::FileInfo*>::iterator fi = fileInfoList.begin(); fi != fileInfoList.end(); ++fi)
+        delete(*fi);
+}
+
+bool CppCheck::isUnusedFunctionCheckEnabled() const
+{
+    return (_settings.jobs == 1 && _settings.isEnabled(Settings::UNUSED_FUNCTION));
+}

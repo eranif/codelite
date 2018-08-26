@@ -455,7 +455,7 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
         return GetOptions()->GetHideOutputPaneNotIfSvn();
     } else if(caption == _("CScope")) {
         return GetOptions()->GetHideOutputPaneNotIfCscope();
-    } else if(caption == _("git")) {
+    } else if(caption == _("Git")) {
         return GetOptions()->GetHideOutputPaneNotIfGit();
     } else if(caption == _("MemCheck")) {
         return GetOptions()->GetHideOutputPaneNotIfMemCheck();
@@ -492,7 +492,7 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
         options->SetHideOutputPaneNotIfSvn(stickiness);
     } else if(caption == _("Cscope")) {
         options->SetHideOutputPaneNotIfCscope(stickiness);
-    } else if(caption == _("git")) {
+    } else if(caption == _("Git")) {
         options->SetHideOutputPaneNotIfGit(stickiness);
     } else if(caption == _("MemCheck")) {
         options->SetHideOutputPaneNotIfMemCheck(stickiness);

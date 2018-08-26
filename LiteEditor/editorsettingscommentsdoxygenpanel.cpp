@@ -38,6 +38,7 @@ EditorSettingsCommentsDoxygenPanel::EditorSettingsCommentsDoxygenPanel(wxWindow*
     m_pgPropDoxyClassPrefix->SetValueFromString(data.GetClassPattern());
     m_pgPropDoxyFunctionPrefix->SetValueFromString(data.GetFunctionPattern());
     m_pgPropAutoGen->SetValue(data.IsAutoInsertAfterSlash2Stars());
+    m_pgPropCommentBlockPrefix->SetValue(data.GetUseSlash2Stars() ? 0 : 1);
 }
 
 void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
@@ -47,12 +48,14 @@ void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
 
     wxString classPattern = m_pgPropDoxyClassPrefix->GetValue().GetString();
     wxString funcPattern = m_pgPropDoxyFunctionPrefix->GetValue().GetString();
+    int blockPrefixIndex = m_pgPropCommentBlockPrefix->GetValue().GetInteger();
     classPattern.Replace("\\n", "\n");
     funcPattern.Replace("\\n", "\n");
 
     data.SetClassPattern(classPattern);
     data.SetFunctionPattern(funcPattern);
     data.SetAutoInsertAfterSlash2Stars(m_pgPropAutoGen->GetValue().GetBool());
+    data.SetUseSlash2Stars(blockPrefixIndex == 0 ? true : false);
     EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
 }
 

@@ -445,7 +445,7 @@ void* phpLexerNew(const wxFileName& filename, size_t options )
         fn.MakeAbsolute();
     }
     
-    FILE* fp = ::fopen(fn.GetFullPath().mb_str(wxConvUTF8).data(), "rb");
+    FILE* fp = ::fopen(fn.GetFullPath().mb_str().data(), "rb");
     if(!fp) {
         return NULL;
     }

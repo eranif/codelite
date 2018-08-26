@@ -27,8 +27,8 @@
 #define NOTEBOOKNAVIGATIONDLG_H
 #include "wxcrafter_plugin.h"
 #include "codelite_exports.h"
+#include "Notebook.h"
 
-class Notebook;
 class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
 {
     Notebook* m_book;

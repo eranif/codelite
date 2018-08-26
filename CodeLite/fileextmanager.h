@@ -33,6 +33,7 @@
 #include <wx/regex.h>
 #include "smart_ptr.h"
 #include <vector>
+#include "wxStringHash.h"
 
 class WXDLLIMPEXP_CL FileExtManager
 {
@@ -71,6 +72,7 @@ public:
         TypeFolderExpanded, // For UI purposes only
         TypeProjectActive,  // For UI purposes only
         TypeWorkspacePHP,
+        TypeWorkspaceDocker,
         TypeWorkspaceNodeJS,
         TypeWorkspacePHPTags,
         TypeWorkspaceDatabase,
@@ -78,6 +80,7 @@ public:
         TypeJava,
         TypeQMake,
         TypeCMake,
+        TypeDockerfile,
         TypeOther = wxNOT_FOUND
     };
 
@@ -108,7 +111,7 @@ public:
     };
 
 private:
-    static std::map<wxString, FileType> m_map;
+    static std::unordered_map<wxString, FileType> m_map;
     static std::vector<FileExtManager::Matcher::Ptr_t> m_matchers;
 
 public:
@@ -140,9 +143,27 @@ public:
     static bool IsJavaFile(const wxFileName& filename) { return IsJavaFile(filename.GetFullPath()); }
 
     /**
+     * @param return true if the file is of type 'type'
+     */
+    static bool IsFileType(const wxString& filename, FileExtManager::FileType type);
+    static bool IsFileType(const wxFileName& filename, FileExtManager::FileType type)
+    {
+        return IsFileType(filename.GetFullPath(), type);
+    }
+
+    /**
      * @brief attempt to autodetect the file type by examining its content
      */
     static bool AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType);
+
+    /**
+     * @brief return the file type only by checking its extension
+     */
+    static FileExtManager::FileType GetTypeFromExtension(const wxString& filename)
+    {
+        return GetTypeFromExtension(wxFileName(filename));
+    }
+    static FileExtManager::FileType GetTypeFromExtension(const wxFileName& filename);
 };
 
 #endif // __fileextmanager__

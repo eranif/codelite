@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "TerminalEmulatorUIBase.h"
+#if wxUSE_GUI
 #include "codelite_exports.h"
 
 
@@ -121,3 +122,4 @@ TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowI
 TerminalEmulatorFrameBase::~TerminalEmulatorFrameBase()
 {
 }
+#endif // LIBCODELITE_WITH_UI

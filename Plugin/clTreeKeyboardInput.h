@@ -60,6 +60,7 @@ protected:
     void DoGetChildren(const wxTreeItemId& parent);
     void Clear();
     void DoShowTextBox();
+    void SimulateKeyDown(const wxKeyEvent& event);
 
 public:
     clTreeKeyboardInput(wxTreeCtrl* tree);

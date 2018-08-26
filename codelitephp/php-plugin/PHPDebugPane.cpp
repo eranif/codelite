@@ -22,7 +22,14 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, &PHPDebugPane::OnRefreshBreakpointsView, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
     m_console = new TerminalEmulatorUI(m_auiBook);
+
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_auiBook->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
+    } else {
+        m_auiBook->SetStyle(kNotebook_Default);
+    }
 
     m_auiBook->AddPage(m_console, _("Console"), true);
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
@@ -38,6 +45,7 @@ PHPDebugPane::~PHPDebugPane()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTING, &PHPDebugPane::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_BREAKPOINTS_UPDATED, &PHPDebugPane::OnRefreshBreakpointsView, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
 }
 
 void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
@@ -201,3 +209,12 @@ void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
     }
 }
 void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event) {}
+
+void PHPDebugPane::OnSettingsChanged(wxCommandEvent& event) {
+    event.Skip();
+    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
+    } else {
+        m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
+    }
+}

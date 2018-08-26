@@ -63,7 +63,7 @@ public:
     /**
      * @brief launch a tool
      */
-    void StartTool(const ToolInfo& ti);
+    void StartTool(const ToolInfo& ti, const wxString& filename = "");
     /**
      * @brief a tool process terminated, remove it from our internal tracking table
      */

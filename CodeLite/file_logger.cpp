@@ -23,27 +23,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "file_logger.h"
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <sys/time.h>
-#include <wx/log.h>
-#include <wx/crt.h>
 #include "cl_standard_paths.h"
+#include "file_logger.h"
+#include <sys/time.h>
+#include <wx/crt.h>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 
-static FileLogger theLogger;
-static bool initialized = false;
+int FileLogger::m_verbosity = FileLogger::Error;
+wxString FileLogger::m_logfile;
+std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
+wxCriticalSection FileLogger::m_cs;
 
-FileLogger::FileLogger()
-    : m_verbosity(FileLogger::Error)
-    , _requestedLogLevel(FileLogger::Developer)
+FileLogger::FileLogger(int requestedVerbo)
+    : _requestedLogLevel(requestedVerbo)
     , m_fp(NULL)
 {
+    m_fp = wxFopen(m_logfile, wxT("a+"));
 }
 
 FileLogger::~FileLogger()
 {
     if(m_fp) {
+        // flush any content that remain
+        Flush();
         fclose(m_fp);
         m_fp = NULL;
     }
@@ -61,8 +66,6 @@ void FileLogger::AddLogLine(const wxString& msg, int verbosity)
         fflush(m_fp);
     }
 }
-
-FileLogger& FileLogger::Get() { return theLogger; }
 
 void FileLogger::SetVerbosity(int level)
 {
@@ -114,17 +117,13 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
     }
 }
 
-void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(FileLogger::GetVerbosityAsNumber(verbosity)); }
+void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(GetVerbosityAsNumber(verbosity)); }
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
-    if(!initialized) {
-        wxString filename;
-        filename << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
-        theLogger.m_fp = wxFopen(filename, wxT("a+"));
-        theLogger.m_verbosity = verbosity;
-        initialized = true;
-    }
+    m_logfile.Clear();
+    m_logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
+    m_verbosity = verbosity;
 }
 
 void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
@@ -136,26 +135,21 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 
 void FileLogger::Flush()
 {
-    if(m_buffer.IsEmpty()) {
-        return;
-    }
+    if(m_buffer.IsEmpty()) { return; }
     wxFprintf(m_fp, "%s\n", m_buffer);
     fflush(m_fp);
     m_buffer.Clear();
 }
 
-wxString FileLogger::Prefix(int verbosity) const
+wxString FileLogger::Prefix(int verbosity)
 {
     wxString prefix;
-
     timeval tim;
     gettimeofday(&tim, NULL);
     int ms = (int)tim.tv_usec / 1000.0;
 
     wxString msStr = wxString::Format(wxT("%03d"), ms);
-
     prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
-
     switch(verbosity) {
     case System:
         prefix << wxT(" SYS]");
@@ -177,5 +171,34 @@ wxString FileLogger::Prefix(int verbosity) const
         prefix << wxT(" DVL]");
         break;
     }
+    
+    wxString thread_name = GetCurrentThreadName();
+    if(!thread_name.IsEmpty()) {
+        prefix << " [" << thread_name << "]";
+    }
     return prefix;
+}
+
+wxString FileLogger::GetCurrentThreadName()
+{
+    if(wxThread::IsMain()) { return "Main"; }
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(wxThread::GetCurrentId());
+    if(iter != m_threads.end()) { return iter->second; }
+    return "";
+}
+
+void FileLogger::RegisterThread(wxThreadIdType id, const wxString& name)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) { m_threads.erase(iter); }
+    m_threads[id] = name;
+}
+
+void FileLogger::UnRegisterThread(wxThreadIdType id)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) { m_threads.erase(iter); }
 }

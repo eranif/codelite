@@ -1,5 +1,5 @@
 #include "TerminalEmulatorFrame.h"
-
+#if wxUSE_GUI
 TerminalEmulatorFrame::TerminalEmulatorFrame(wxWindow* parent)
     : TerminalEmulatorFrameBase(parent)
 {
@@ -12,3 +12,4 @@ TerminalEmulatorFrame::~TerminalEmulatorFrame()
 {
 }
 
+#endif // LIBCODELITE_WITH_UI

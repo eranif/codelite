@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "fileextmanager.h"
-#include <wx/filename.h>
 #include "fileutils.h"
+#include "json_node.h"
+#include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
-#include "json_node.h"
 
-std::map<wxString, FileExtManager::FileType> FileExtManager::m_map;
+std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::m_map;
 std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
 
 void FileExtManager::Init()
@@ -44,7 +44,8 @@ void FileExtManager::Init()
         m_map[wxT("cpp")] = TypeSourceCpp;
         m_map[wxT("cxx")] = TypeSourceCpp;
         m_map[wxT("c++")] = TypeSourceCpp;
-        m_map[wxT("as")] = TypeSourceCpp; // AngelScript files are handled as C++ source files in CodeLite
+        m_map[wxT("as")] = TypeSourceCpp;  // AngelScript files are handled as C++ source files in CodeLite
+        m_map[wxT("ino")] = TypeSourceCpp; // Arduino sketches
         m_map[wxT("c")] = TypeSourceC;
 
         m_map[wxT("h")] = TypeHeader;
@@ -73,10 +74,12 @@ void FileExtManager::Init()
         m_map[wxT("php5")] = TypePhp;
         m_map[wxT("inc")] = TypePhp;
         m_map[wxT("phtml")] = TypePhp;
+        m_map[wxT("ctp")] = TypePhp;
 
         m_map[wxT("xml")] = TypeXml;
         m_map[wxT("xrc")] = TypeXRC;
         m_map[wxT("css")] = TypeCSS;
+        m_map[wxT("less")] = TypeCSS;
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("py")] = TypePython;
@@ -160,19 +163,19 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     Init();
 
     wxFileName fn(filename);
-    if(fn.IsOk() == false) {
-        return defaultType;
-    }
+    if(fn.IsOk() == false) { return defaultType; }
 
     wxString e(fn.GetExt());
     e.MakeLower();
     e.Trim().Trim(false);
 
-    std::map<wxString, FileType>::iterator iter = m_map.find(e);
+    std::unordered_map<wxString, FileType>::iterator iter = m_map.find(e);
     if(iter == m_map.end()) {
         // try to see if the file is a makefile
         if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
             return TypeMakefile;
+        } else if(fn.GetFullName().Lower() == "dockerfile") {
+            return TypeDockerfile;
         }
         return defaultType;
     } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
@@ -190,6 +193,8 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
                 if(!root.isOk()) return TypeWorkspace;
                 if(root.toElement().hasNamedObject("NodeJS")) {
                     return TypeWorkspaceNodeJS;
+                } else if(root.toElement().hasNamedObject("Docker")) {
+                    return TypeWorkspaceDocker;
                 } else {
                     return TypeWorkspacePHP;
                 }
@@ -206,35 +211,9 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
+        if(!AutoDetectByContent(filename, ft)) { return false; }
     }
-    return ft == TypeSourceC || ft == TypeSourceCpp || ft == TypeHeader;
-}
-
-bool FileExtManager::IsJavascriptFile(const wxString& filename)
-{
-    FileType ft = GetType(filename);
-    if(ft == TypeOther) {
-        // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
-    }
-    return ft == TypeJS;
-}
-
-bool FileExtManager::IsPHPFile(const wxString& filename)
-{
-    FileType ft = GetType(filename);
-    if(ft == TypeOther) {
-        // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
-    }
-    return ft == TypePhp;
+    return (ft == TypeSourceC) || (ft == TypeSourceCpp) || (ft == TypeHeader);
 }
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
@@ -243,9 +222,7 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
     if(!FileUtils::ReadFileContent(filename, fileContent)) return false;
 
     // Use only the first 4K bytes from the input file (tested with default STL headers)
-    if(fileContent.length() > 4096) {
-        fileContent.Truncate(4096);
-    }
+    if(fileContent.length() > 4096) { fileContent.Truncate(4096); }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers.at(i)->Matches(fileContent)) {
@@ -256,14 +233,25 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
     return false;
 }
 
-bool FileExtManager::IsJavaFile(const wxString& filename)
+bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileType type)
 {
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) {
-            return false;
-        }
+        if(!AutoDetectByContent(filename, ft)) { return false; }
     }
-    return ft == TypeJava;
+    return (ft == type);
+}
+
+bool FileExtManager::IsJavascriptFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJS); }
+
+bool FileExtManager::IsPHPFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypePhp); }
+
+bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManager::IsFileType(filename, TypeJava); }
+
+FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& filename)
+{
+    std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
+    if(iter == m_map.end()) return TypeOther;
+    return iter->second;
 }

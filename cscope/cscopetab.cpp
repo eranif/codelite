@@ -39,6 +39,7 @@
 #include <set>
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)
@@ -233,10 +234,23 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
             wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
             wxFileName fn(iter->second.GetFile());
             if(!fn.MakeAbsolute(wsp_path)) {
-                wxLogMessage(wxT("CScope: failed to convert file to absolute path"));
+                clLogMessage(wxT("CScope: failed to convert file to absolute path"));
                 return;
             }
             m_mgr->OpenFile(fn.GetFullPath(), "", iter->second.GetLine() - 1);
+
+        // In theory this isn't needed as it happened in OpenFile()
+        // In practice there's a timing issue: if the file needs to be loaded,
+        // the CenterLine() call arrives too soon. So repeat it here, delayed.
+        CallAfter(&CscopeTab::CenterEditorLine, iter->second.GetLine() - 1);
         }
+    }
+}
+
+void CscopeTab::CenterEditorLine(int lineno)
+{
+    IEditor* editor = m_mgr->GetActiveEditor();
+    if (editor) {
+        editor->CenterLine(lineno);
     }
 }

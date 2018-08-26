@@ -11,7 +11,11 @@
 #include "commandlineparser.h"
 
 #ifdef __WXMAC__
-#   include <ApplicationServices/ApplicationServices.h>
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+#ifdef __WXMSW__
+typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
 #endif
 
 // Define the MainApp
@@ -21,7 +25,8 @@ public:
     MainApp() {}
     virtual ~MainApp() {}
 
-    void PrintUsage() {
+    void PrintUsage()
+    {
         wxPrintf("%s [-t <title>] [-e] [-w] [-d <working directory>] [--cmd <command to execute>]\n", wxApp::argv[0]);
         wxPrintf("-t | --title             Set the console title\n");
         wxPrintf("-e | --exit              Exit when execution of command terminates\n");
@@ -34,18 +39,31 @@ public:
         exit(1);
     }
 
-    virtual bool OnInit() {
+    virtual bool OnInit()
+    {
+
+#ifdef __WXMSW__
+        HINSTANCE m_user32Dll = LoadLibrary(L"User32.dll");
+        if(m_user32Dll) {
+            SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
+            if(pFunc) {
+                pFunc();
+            }
+            FreeLibrary(m_user32Dll);
+            m_user32Dll = NULL;
+        }
+#endif
 
         SetAppName("codelite-terminal");
 
         CommandLineParser parser(wxApp::argc, wxApp::argv);
-        parser.AddOption("t", "title", CommandLineParser::kOptionWithValue|CommandLineParser::kOptional);
-        parser.AddOption("d", "working-directory", CommandLineParser::kOptionWithValue|CommandLineParser::kOptional);
-        parser.AddOption("e", "exit"); // optional, no value
-        parser.AddOption("w", "wait"); // optional, no value
-        parser.AddOption("p", "print-info"); // optional
+        parser.AddOption("t", "title", CommandLineParser::kOptionWithValue | CommandLineParser::kOptional);
+        parser.AddOption("d", "working-directory", CommandLineParser::kOptionWithValue | CommandLineParser::kOptional);
+        parser.AddOption("e", "exit");          // optional, no value
+        parser.AddOption("w", "wait");          // optional, no value
+        parser.AddOption("p", "print-info");    // optional
         parser.AddOption("z", "always-on-top"); // optional
-        parser.AddOption("g", "dbg-terminal"); // optional
+        parser.AddOption("g", "dbg-terminal");  // optional
         parser.Parse();
 
         {
@@ -55,44 +73,44 @@ public:
         }
 
         // Add the common image handlers
-        wxImage::AddHandler( new wxPNGHandler );
-        wxImage::AddHandler( new wxJPEGHandler );
+        wxImage::AddHandler(new wxPNGHandler);
+        wxImage::AddHandler(new wxJPEGHandler);
 
         TerminalOptions options;
         wxString commandToRun, title, workingDirectory;
         commandToRun = parser.GetCommand();
         workingDirectory = parser.GetArg("d", "working-directory");
 
-        if ( parser.HasOption("t", "title") ) {
-            options.SetTitle( parser.GetArg("t", "title") );
+        if(parser.HasOption("t", "title")) {
+            options.SetTitle(parser.GetArg("t", "title"));
 
-        } else if ( !parser.GetCommand().IsEmpty() ) {
-            options.SetTitle( parser.GetCommand() );
+        } else if(!parser.GetCommand().IsEmpty()) {
+            options.SetTitle(parser.GetCommand());
         }
-        
-        if ( !workingDirectory.IsEmpty() ) {
-            ::wxSetWorkingDirectory( workingDirectory );
+
+        if(!workingDirectory.IsEmpty()) {
+            ::wxSetWorkingDirectory(workingDirectory);
         }
-        
-        options.EnableFlag( TerminalOptions::kExitWhenInfiriorTerminates,   parser.HasOption("e", "exit") );
-        options.EnableFlag( TerminalOptions::kPauseBeforeExit,              parser.HasOption("w", "wait") );
-        options.EnableFlag( TerminalOptions::kPrintInfo,                    parser.HasOption("p", "print-info") );
-        options.EnableFlag( TerminalOptions::kAlwaysOnTop,                  parser.HasOption("z", "always-on-top") );
-        options.EnableFlag( TerminalOptions::kDebuggerTerminal,             parser.HasOption("g", "dbg-terminal") );
-        options.SetCommand( commandToRun );
+
+        options.EnableFlag(TerminalOptions::kExitWhenInfiriorTerminates, parser.HasOption("e", "exit"));
+        options.EnableFlag(TerminalOptions::kPauseBeforeExit, parser.HasOption("w", "wait"));
+        options.EnableFlag(TerminalOptions::kPrintInfo, parser.HasOption("p", "print-info"));
+        options.EnableFlag(TerminalOptions::kAlwaysOnTop, parser.HasOption("z", "always-on-top"));
+        options.EnableFlag(TerminalOptions::kDebuggerTerminal, parser.HasOption("g", "dbg-terminal"));
+        options.SetCommand(commandToRun);
 
         long style = wxDEFAULT_FRAME_STYLE;
-        if ( options.HasFlag(TerminalOptions::kAlwaysOnTop) ) {
+        if(options.HasFlag(TerminalOptions::kAlwaysOnTop)) {
             style = wxSTAY_ON_TOP;
         }
-        
-        MainFrame *mainFrame = new MainFrame(NULL, options, style);
+
+        MainFrame* mainFrame = new MainFrame(NULL, options, style);
         SetTopWindow(mainFrame);
 
 #ifdef __WXMAC__
         ProcessSerialNumber PSN;
         GetCurrentProcess(&PSN);
-        TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+        TransformProcessType(&PSN, kProcessTransformToForegroundApplication);
 #endif
         return GetTopWindow()->Show();
     }

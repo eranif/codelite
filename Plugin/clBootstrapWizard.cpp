@@ -1,26 +1,77 @@
-#include "clBootstrapWizard.h"
 #include "ColoursAndFontsManager.h"
-#include "globals.h"
 #include "CompilersDetectorManager.h"
 #include "build_settings_config.h"
-#include <wx/wupdlock.h>
-#include <wx/dcmemory.h>
+#include "clBootstrapWizard.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
 #include "plugindata.h"
 #include <algorithm>
-#include "macros.h"
+#include <vector>
+#include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
+#include <wx/wupdlock.h>
+
+static std::vector<wxString> GetCxxPlugins()
+{
+    static std::vector<wxString> cxxPlugins;
+    if(cxxPlugins.empty()) {
+        cxxPlugins.push_back("CMakePlugin");
+        cxxPlugins.push_back("CScope");
+        cxxPlugins.push_back("CallGraph");
+        cxxPlugins.push_back("ContinuousBuild");
+        cxxPlugins.push_back("CppChecker");
+        cxxPlugins.push_back("LLDBDebuggerPlugin");
+#ifdef __WXGTK__
+        cxxPlugins.push_back("MemCheck");
+#endif
+        cxxPlugins.push_back("QMakePlugin");
+        cxxPlugins.push_back("UnitTestPP");
+        cxxPlugins.push_back("Wizards");
+        cxxPlugins.push_back("wxFormBuilder");
+        cxxPlugins.push_back("wxcrafter");
+    }
+    return cxxPlugins;
+}
+
+static std::vector<wxString> GetAllPlugins()
+{
+    static std::vector<wxString> allPlugins;
+    if(allPlugins.empty()) {
+
+        clConfig conf("plugins.conf");
+        PluginInfoArray plugins;
+        conf.ReadItem(&plugins);
+
+        const PluginInfo::PluginMap_t& pluginsInfo = plugins.GetPlugins();
+        std::for_each(pluginsInfo.begin(), pluginsInfo.end(),
+                      [&](const std::pair<wxString, PluginInfo>& item) { allPlugins.push_back(item.first); });
+    }
+    return allPlugins;
+}
 
 class clBootstrapWizardPluginData : public wxClientData
 {
 public:
     bool checked;
+    PluginInfo pluginInfo;
 
 public:
-    clBootstrapWizardPluginData()
+    clBootstrapWizardPluginData(const PluginInfo& pi)
         : checked(true)
+        , pluginInfo(pi)
     {
     }
     virtual ~clBootstrapWizardPluginData() {}
+
+    wxString GetPluginSummary() const
+    {
+        wxString summary;
+        summary << pluginInfo.GetName() << " " << pluginInfo.GetVersion() << "\n"
+                << _("By: ") << pluginInfo.GetAuthor() << "\n\n"
+                << pluginInfo.GetDescription();
+        return summary;
+    }
 };
 
 const wxString sampleText = "class Demo {\n"
@@ -34,67 +85,57 @@ const wxString sampleText = "class Demo {\n"
                             "     * @param o The object\n"
                             "     */\n"
                             "    Demo(const Demo &other) {\n"
+                            "        // Initialise with Zero\n"
+                            "        int number = 0;\n"
                             "        m_str = other.m_str;\n"
                             "        m_integer = other.m_integer;\n"
                             "    }\n"
-                            "}";
+                            "};";
 
 clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
     : clBoostrapWizardBase(parent)
+    , m_developmentProfile(0)
 {
-    wxArrayString themes = ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++");
+    wxArrayString themes = ColoursAndFontsManager::Get().GetAllThemes();
     m_choiceTheme->Append(themes);
-    m_choiceTheme->SetSelection(m_choiceTheme->FindString("Monokai_2"));
+    m_choiceTheme->SetSelection(m_choiceTheme->FindString("One Dark Like"));
     m_stc24->SetText(sampleText);
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", "Monokai_2");
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", "One Dark Like");
+    if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
-    m_stc24->SetKeyWords(3, "other");
+    m_stc24->SetKeyWords(3, "other number");
 
     ::clRecalculateSTCHScrollBar(m_stc24);
     m_stc24->SetEditable(false);
 
-    clConfig conf("plugins.conf");
-    PluginInfoArray plugins;
-    conf.ReadItem(&plugins);
-
-    const PluginInfo::PluginMap_t& allPlugins = plugins.GetPlugins();
-
-    wxArrayString pluginsArray;
-    std::for_each(allPlugins.begin(), allPlugins.end(), [&](const std::pair<wxString, PluginInfo>& item) {
-        wxVector<wxVariant> cols;
-        cols.push_back(true);
-        cols.push_back(item.first);
-        wxString desc = item.second.GetDescription();
-        desc.Replace("\n", " ");
-        desc.Replace("\r", "");
-        cols.push_back(desc);
-        m_dvListCtrlPlugins->AppendItem(cols, (wxUIntPtr) new clBootstrapWizardPluginData());
-    });
+    m_developmentProfile = clConfig::Get().Read("DevelopmentProfile", m_developmentProfile);
+    m_radioBoxProfile->SetSelection(m_developmentProfile);
+    
+#if PHP_BUILD
+    m_radioBoxProfile->SetSelection(3); // PHP
+    m_radioBoxProfile->Enable(false);
+#endif
 }
 
-clBootstrapWizard::~clBootstrapWizard() {}
+clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
 
 void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
 {
     m_stc24->SetEditable(true);
     wxString selection = m_choiceTheme->GetStringSelection();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", selection);
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
+    if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
     m_stc24->SetKeyWords(3, "other");
     ::clRecalculateSTCHScrollBar(m_stc24);
     m_stc24->SetEditable(false);
 }
+
 void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
 {
     wxBusyCursor bc;
     m_compilers.clear();
-    
+
 #ifndef __WXGTK__
     wxWindowUpdateLocker locker(m_wizardPageCompilers);
 #endif
@@ -113,9 +154,7 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
             m_dvListCtrlCompilers->AppendItem(cols);
         }
 
-        if(!detector.FoundMinGWCompiler()) {
-            CompilersDetectorManager::MSWSuggestToDownloadMinGW(true);
-        }
+        if(!detector.FoundMinGWCompiler()) { CompilersDetectorManager::MSWSuggestToDownloadMinGW(true); }
 
     } else {
         // nothing found on this machine, offer to download
@@ -193,114 +232,56 @@ void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
     event.Enable(false);
 #endif
 }
-void clBootstrapWizard::OnCheckAllPlugins(wxCommandEvent& event)
+
+bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
 {
-    wxVariant value(true);
-    for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
-        m_dvListCtrlPlugins->SetValue(value, i, 0);
+    if(m_radioBoxProfile->GetSelection() == 0) {
+        // Default, dont change anything
+        return false;
+    } else if(m_radioBoxProfile->GetSelection() == 1) {
+        // Enable all
+        plugins.Clear();
+        return true;
+    } else if(m_radioBoxProfile->GetSelection() == 2) {
+        // C/C++ developer
+        std::vector<wxString> cxxPlugins = GetCxxPlugins();
+        std::vector<wxString> allPlugins = GetAllPlugins();
+        std::vector<wxString> webPlugins;
+        std::sort(cxxPlugins.begin(), cxxPlugins.end());
+        std::sort(allPlugins.begin(), allPlugins.end());
+        std::set_difference(allPlugins.begin(), allPlugins.end(), cxxPlugins.begin(), cxxPlugins.end(),
+                            std::back_inserter(webPlugins));
+        plugins.Clear();
+        std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
+        return true;
+    } else {
+        // Web developer
+        const std::vector<wxString>& cxxPlugins = GetCxxPlugins();
+        std::for_each(cxxPlugins.begin(), cxxPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
+        return true;
     }
 }
 
-void clBootstrapWizard::OnCheckAllPluginsUI(wxUpdateUIEvent& event)
-{
-    wxArrayString enabledPlugins = GetSelectedPlugins();
-    event.Enable((int)enabledPlugins.size() != m_dvListCtrlPlugins->GetItemCount());
-}
+bool clBootstrapWizard::IsRestartRequired() { return m_developmentProfile != m_radioBoxProfile->GetSelection(); }
 
-void clBootstrapWizard::OnToggleCxxPlugins(wxCommandEvent& event)
-{
-    static bool enablePlugins = false;
-    wxArrayString cxxPlugins;
-    cxxPlugins.Add("CMakePlugin");
-    cxxPlugins.Add("CScope");
-    cxxPlugins.Add("CallGraph");
-    cxxPlugins.Add("ContinuousBuild");
-    cxxPlugins.Add("CppChecker");
-    cxxPlugins.Add("LLDBDebuggerPlugin");
-    cxxPlugins.Add("QMakePlugin");
-    cxxPlugins.Add("UnitTestPP");
-    cxxPlugins.Add("Wizards");
-    cxxPlugins.Add("wxFormBuilder");
-    cxxPlugins.Add("wxcrafter");
-
-    for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
-        wxVariant newState(enablePlugins);
-        wxVariant pluginName;
-        m_dvListCtrlPlugins->GetValue(pluginName, i, 1);
-        if(cxxPlugins.Index(pluginName.GetString()) != wxNOT_FOUND) {
-            m_dvListCtrlPlugins->SetValue(newState, i, 0);
-        }
-    }
-    enablePlugins = !enablePlugins;
-}
-
-void clBootstrapWizard::OnUnCheckAllPlugins(wxCommandEvent& event)
-{
-    wxVariant value(false);
-    for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
-        m_dvListCtrlPlugins->SetValue(value, i, 0);
-    }
-}
-
-void clBootstrapWizard::OnUnCheckAllPluginsUI(wxUpdateUIEvent& event)
-{
-    wxArrayString enabledPlugins = GetSelectedPlugins();
-    event.Enable(!enabledPlugins.IsEmpty());
-}
-
-wxArrayString clBootstrapWizard::GetSelectedPlugins()
-{
-    wxArrayString enabledPlugins;
-    for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
-        wxVariant value;
-        m_dvListCtrlPlugins->GetValue(value, i, 0);
-        if(value.GetBool()) {
-            wxVariant pluginName;
-            m_dvListCtrlPlugins->GetValue(pluginName, i, 1);
-            enabledPlugins.Add(pluginName.GetString());
-        }
-    }
-    return enabledPlugins;
-}
-
-wxArrayString clBootstrapWizard::GetUnSelectedPlugins()
-{
-    wxArrayString enabledPlugins;
-    for(int i = 0; i < m_dvListCtrlPlugins->GetItemCount(); ++i) {
-        wxVariant value;
-        m_dvListCtrlPlugins->GetValue(value, i, 0);
-        if(!value.GetBool()) {
-            wxVariant pluginName;
-            m_dvListCtrlPlugins->GetValue(pluginName, i, 1);
-            enabledPlugins.Add(pluginName.GetString());
-        }
-    }
-    return enabledPlugins;
-}
-
-bool clBootstrapWizard::IsRestartRequired()
-{
-    return GetSelectedPlugins().GetCount() != (size_t)m_dvListCtrlPlugins->GetItemCount();
-}
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
     event.Skip();
-    if(IsRestartRequired()) {
+    wxArrayString pluginsToDisable;
+    if(IsRestartRequired() && GetUnSelectedPlugins(pluginsToDisable)) {
         // user changed plugins
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;
         conf.ReadItem(&plugins);
 
-        plugins.DisablePugins(GetUnSelectedPlugins());
+        plugins.DisablePugins(pluginsToDisable);
         conf.WriteItem(&plugins);
     }
 }
 
 void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
 {
-    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"),
-                   "CodeLite",
-                   wxOK | wxCENTER | wxICON_INFORMATION,
-                   this);
+    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
+                   wxOK | wxCENTER | wxICON_INFORMATION, this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
 }

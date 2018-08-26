@@ -9,6 +9,8 @@
   "m_outputFileName": "options_base_dlg2",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -78,7 +80,7 @@
     }, {
      "type": "string",
      "m_label": "Title:",
-     "m_value": "Editor Settings"
+     "m_value": "Preferences"
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
@@ -205,7 +207,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "500,400"
+           "m_value": "-1,-1"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",

@@ -24,15 +24,32 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_standard_paths.h"
-#include <wx/stdpaths.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
+#include <wx/datetime.h>
 
-clStandardPaths::clStandardPaths()
+static wxString __get_user_name()
 {
-#ifdef USE_POSIX_LAYOUT
-    wxStandardPaths::Get().IgnoreAppSubDir("bin");
-#endif
+    wxString squashedname, name = wxGetUserName();
+
+    // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
+    // So try to make it more suitable to be an extension
+    name.MakeLower();
+    name.Replace(wxT(" "), wxT("_"));
+    for(size_t i = 0; i < name.Len(); ++i) {
+        wxChar ch = name.GetChar(i);
+        if((ch < wxT('a') || ch > wxT('z')) && ch != wxT('_')) {
+            // Non [a-z_] character: skip it
+        } else {
+            squashedname << ch;
+        }
+    }
+
+    return (squashedname.IsEmpty() ? wxString(wxT("someone")) : squashedname);
 }
+
+clStandardPaths::clStandardPaths() { IgnoreAppSubDir("bin"); }
 
 clStandardPaths::~clStandardPaths() {}
 
@@ -45,9 +62,7 @@ clStandardPaths& clStandardPaths::Get()
 wxString clStandardPaths::GetUserDataDir() const
 {
     // If the user has provided an alternative datadir, use it
-    if(!m_path.empty()) {
-        return m_path;
-    }
+    if(!m_path.empty()) { return m_path; }
 
 #ifdef __WXGTK__
 
@@ -76,7 +91,7 @@ wxString clStandardPaths::GetPluginsDirectory() const
     wxString pluginsDir = PLUGINS_DIR;
 #else
 #ifdef USE_POSIX_LAYOUT
-    wxFileName path(GetDataDir() + wxT(PLUGINS_DIR), "");
+    wxFileName path(GetInstallDir() + wxT(PLUGINS_DIR), "");
 #else
     wxFileName path(GetDataDir(), "");
     path.AppendDir("plugins");
@@ -86,7 +101,15 @@ wxString clStandardPaths::GetPluginsDirectory() const
     return pluginsDir;
 }
 
-wxString clStandardPaths::GetDataDir() const { return wxStandardPaths::Get().GetDataDir(); }
+wxString clStandardPaths::GetDataDir() const
+{
+#ifdef USE_POSIX_LAYOUT
+    wxFileName path(wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
+    return path.GetPath();
+#else
+    return wxStandardPaths::Get().GetDataDir();
+#endif
+}
 
 wxString clStandardPaths::GetBinFolder() const
 {
@@ -106,22 +129,14 @@ wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname) const
 
 wxString clStandardPaths::GetLexersDir() const
 {
-#ifdef USE_POSIX_LAYOUT
-    wxFileName fn(GetDataDir() + wxT(INSTALL_DIR), "");
-#else
     wxFileName fn(GetDataDir(), "");
-#endif
     fn.AppendDir("lexers");
     return fn.GetPath();
 }
 
 wxString clStandardPaths::GetProjectTemplatesDir() const
 {
-#ifdef USE_POSIX_LAYOUT
-    wxFileName fn(GetDataDir() + wxT(INSTALL_DIR), "");
-#else
     wxFileName fn(GetDataDir(), "");
-#endif
     fn.AppendDir("templates");
     fn.AppendDir("projects");
     return fn.GetPath();
@@ -136,11 +151,7 @@ wxString clStandardPaths::GetUserLexersDir() const
 
 wxString clStandardPaths::GetUserProjectTemplatesDir() const
 {
-#ifdef USE_POSIX_LAYOUT
-    wxFileName fn(GetUserDataDir() + wxT(INSTALL_DIR), "");
-#else
     wxFileName fn(GetUserDataDir(), "");
-#endif
     fn.AppendDir("templates");
     fn.AppendDir("projects");
     return fn.GetPath();
@@ -148,7 +159,24 @@ wxString clStandardPaths::GetUserProjectTemplatesDir() const
 
 wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
 
-wxString clStandardPaths::GetTempDir() const { return wxStandardPaths::Get().GetTempDir(); }
+wxString clStandardPaths::GetTempDir() const
+{
+    static bool once = true;
+    static wxString tmpdir;
+    if(once) {
+        wxString username = __get_user_name();
+#if defined(__WXGTK__) || defined(__WXOSX__)
+        tmpdir << "/tmp/CodeLite." << username;
+#else
+        tmpdir << wxStandardPaths::Get().GetTempDir() << "\\CodeLite." << username;
+#endif
+        tmpdir << wxDateTime::Now().GetTicks();
+        // Create the temp folder
+        wxFileName::Mkdir(tmpdir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        once = false;
+    }
+    return tmpdir;
+}
 
 wxString clStandardPaths::GetDocumentsDir() const
 {
@@ -158,9 +186,30 @@ wxString clStandardPaths::GetDocumentsDir() const
     // but what we really want is ~/Documents
     wxFileName fp(path, "");
     fp.AppendDir("Documents");
-    if(fp.DirExists()) {
-        return fp.GetPath();
-    }
+    if(fp.DirExists()) { return fp.GetPath(); }
 #endif
     return path;
 }
+
+wxString clStandardPaths::GetInstallDir() const
+{
+#ifdef __WXGTK__
+    return GetBinFolder();
+#else
+#ifdef USE_POSIX_LAYOUT
+    wxFileName path(wxStandardPaths::Get().GetDataDir(), "");
+    return path.GetPath();
+#else
+    return GetBinFolder();
+#endif
+#endif
+}
+
+void clStandardPaths::IgnoreAppSubDir(const wxString& subdirPattern)
+{
+#ifdef USE_POSIX_LAYOUT
+    wxStandardPaths::Get().IgnoreAppSubDir(subdirPattern);
+#endif
+}
+
+void clStandardPaths::RemoveTempDir() { wxFileName::Rmdir(GetTempDir(), wxPATH_RMDIR_RECURSIVE); }

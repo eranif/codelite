@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ public:
     void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
         CheckNullPointer checkNullPointer(tokenizer, settings, errorLogger);
         checkNullPointer.nullPointer();
+        checkNullPointer.arithmetic();
     }
 
     /** @brief Run checks against the simplified token list */
@@ -60,13 +61,10 @@ public:
      * @param tok first token
      * @param var variables that the function read / write.
      * @param library --library files data
-     * @param value 0 => invalid with null pointers as parameter.
-     *              non-zero => invalid with uninitialized data.
      */
     static void parseFunctionCall(const Token &tok,
                                   std::list<const Token *> &var,
-                                  const Library *library,
-                                  unsigned char value);
+                                  const Library *library);
 
     /**
      * Is there a pointer dereference? Everything that should result in
@@ -86,15 +84,17 @@ public:
     void nullConstantDereference();
 
     void nullPointerError(const Token *tok);  // variable name unknown / doesn't exist
-    void nullPointerError(const Token *tok, const std::string &varname, bool inconclusive=false);
-    void nullPointerError(const Token *tok, const std::string &varname, const Token* nullcheck, bool inconclusive = false);
-    void nullPointerDefaultArgError(const Token *tok, const std::string &varname);
+    void nullPointerError(const Token *tok, const std::string &varname, bool inconclusive, bool defaultArg, bool possible);
+    void nullPointerError(const Token *tok, const std::string &varname, const Token* nullCheck, bool inconclusive);
 private:
 
     /** Get error messages. Used by --errorlist */
     void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
-        CheckNullPointer c(0, settings, errorLogger);
-        c.nullPointerError(0, "pointer");
+        CheckNullPointer c(nullptr, settings, errorLogger);
+        c.nullPointerError(nullptr);
+        c.nullPointerError(nullptr, "pointer", false, true, true);
+        c.nullPointerError(nullptr, "pointer", nullptr, false);
+        c.arithmeticError(nullptr, nullptr);
     }
 
     /** Name of check */
@@ -105,7 +105,8 @@ private:
     /** class info in WIKI format. Used by --doc */
     std::string classInfo() const {
         return "Null pointers\n"
-               "- null pointer dereferencing\n";
+               "- null pointer dereferencing\n"
+               "- undefined null pointer arithmetic\n";
     }
 
     /**
@@ -120,25 +121,9 @@ private:
      */
     void nullPointerByDeRefAndChec();
 
-    /**
-     * @brief Does one part of the check for nullPointer().
-     * -# initialize pointer to 0
-     * -# conditionally assign pointer
-     * -# dereference pointer
-     */
-    void nullPointerConditionalAssignment();
-
-    /**
-     * @brief Does one part of the check for nullPointer().
-     * -# default argument that sets a pointer to 0
-     * -# dereference pointer
-     */
-    void nullPointerDefaultArgument();
-
-    /**
-     * @brief Removes any variable that may be assigned from pointerArgs.
-     */
-    static void removeAssignedVarFromSet(const Token* tok, std::set<unsigned int>& pointerArgs);
+    /** undefined null pointer arithmetic */
+    void arithmetic();
+    void arithmeticError(const Token *tok, const ValueFlow::Value *value);
 };
 /// @}
 //---------------------------------------------------------------------------

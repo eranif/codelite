@@ -31,37 +31,37 @@ CMakeSettingsDialogBase::CMakeSettingsDialogBase(wxWindow* parent, wxWindowID id
     flexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer->AddGrowableCol(1);
     
-    boxSizerMain->Add(flexGridSizer, 1, wxALL|wxEXPAND, 5);
+    boxSizerMain->Add(flexGridSizer, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticTextProgram = new wxStaticText(this, wxID_ANY, _("CMake program:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextProgram = new wxStaticText(this, wxID_ANY, _("CMake program:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer->Add(m_staticTextProgram, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer->Add(m_staticTextProgram, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerProgram = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerProgram = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerProgram->SetToolTip(_("Path to cmake executable."));
     
-    flexGridSizer->Add(m_filePickerProgram, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer->Add(m_filePickerProgram, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     m_filePickerProgram->SetMinSize(wxSize(200,-1));
     
-    m_staticTextDefaultGenerator = new wxStaticText(this, wxID_ANY, _("Default Generator:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextDefaultGenerator = new wxStaticText(this, wxID_ANY, _("Default Generator:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer->Add(m_staticTextDefaultGenerator, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer->Add(m_staticTextDefaultGenerator, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceDefaultGeneratorArr;
-    m_choiceDefaultGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceDefaultGeneratorArr, 0);
+    m_choiceDefaultGenerator = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceDefaultGeneratorArr, 0);
     m_choiceDefaultGenerator->SetToolTip(_("You can specify default generator for all projects (if is not overridden by project settings). If generator is not selected the CMake uses platform's default."));
     
-    flexGridSizer->Add(m_choiceDefaultGenerator, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer->Add(m_choiceDefaultGenerator, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     m_stdBtnSizer = new wxStdDialogButtonSizer();
     
-    boxSizerMain->Add(m_stdBtnSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizerMain->Add(m_stdBtnSizer, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
     m_stdBtnSizer->AddButton(m_buttonOk);
     
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer->AddButton(m_buttonCancel);
     m_stdBtnSizer->Realize();
     
@@ -107,63 +107,62 @@ CMakeHelpTabBase::CMakeHelpTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer225->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer225->AddGrowableCol(1);
     
-    boxSizerMain->Add(flexGridSizer225, 0, wxALL|wxEXPAND, 0);
+    boxSizerMain->Add(flexGridSizer225, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_staticTextVersion = new wxStaticText(this, wxID_ANY, _("Version:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextVersion = new wxStaticText(this, wxID_ANY, _("Version:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer225->Add(m_staticTextVersion, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer225->Add(m_staticTextVersion, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticTextVersionValue = new wxStaticText(this, wxID_ANY, _("?"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextVersionValue = new wxStaticText(this, wxID_ANY, _("?"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     wxFont m_staticTextVersionValueFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextVersionValueFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextVersionValue->SetFont(m_staticTextVersionValueFont);
     
-    flexGridSizer225->Add(m_staticTextVersionValue, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer225->Add(m_staticTextVersionValue, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    flexGridSizer225->Add(0, 0, 1, wxALL, 5);
+    flexGridSizer225->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticText222 = new wxStaticText(this, wxID_ANY, _("Select Topic:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText222 = new wxStaticText(this, wxID_ANY, _("Select Topic:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    flexGridSizer225->Add(m_staticText222, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer225->Add(m_staticText222, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceTopicsArr;
     m_choiceTopicsArr.Add(wxT("Modules"));
     m_choiceTopicsArr.Add(wxT("Commands"));
     m_choiceTopicsArr.Add(wxT("Properties"));
     m_choiceTopicsArr.Add(wxT("Variables"));
-    m_choiceTopics = new wxChoice(this, wxID_REFRESH, wxDefaultPosition, wxSize(-1,-1), m_choiceTopicsArr, 0);
+    m_choiceTopics = new wxChoice(this, wxID_REFRESH, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceTopicsArr, 0);
     m_choiceTopics->SetSelection(0);
     
-    flexGridSizer225->Add(m_choiceTopics, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer225->Add(m_choiceTopics, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_buttonReload = new wxButton(this, wxID_REFRESH, _("Reload"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonReload = new wxButton(this, wxID_REFRESH, _("Reload"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_buttonReload->SetToolTip(_("Reloads Help from CMake"));
     
-    flexGridSizer225->Add(m_buttonReload, 0, wxALL, 5);
+    flexGridSizer225->Add(m_buttonReload, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_gaugeLoad = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxSize(-1,-1), wxGA_HORIZONTAL);
+    m_gaugeLoad = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxGA_HORIZONTAL);
     m_gaugeLoad->Hide();
     m_gaugeLoad->SetValue(0);
     
-    boxSizerMain->Add(m_gaugeLoad, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizerMain->Add(m_gaugeLoad, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizerList = new wxBoxSizer(wxVERTICAL);
     
-    boxSizerMain->Add(boxSizerList, 1, wxALL|wxEXPAND, 5);
+    boxSizerMain->Add(boxSizerList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_searchCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_searchCtrlFilter = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_searchCtrlFilter->SetFocus();
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
     
-    boxSizerList->Add(m_searchCtrlFilter, 0, wxBOTTOM|wxEXPAND, 5);
-    m_searchCtrlFilter->SetMinSize(wxSize(-1,22));
+    boxSizerList->Add(m_searchCtrlFilter, 0, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
     wxArrayString m_listBoxListArr;
-    m_listBoxList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxListArr, wxLB_SINGLE);
+    m_listBoxList = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_listBoxListArr, wxLB_SINGLE);
     m_listBoxList->SetToolTip(_("Double click to insert in the current editor."));
     
-    boxSizerList->Add(m_listBoxList, 1, wxALL|wxEXPAND, 0);
+    boxSizerList->Add(m_listBoxList, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     m_listBoxList->SetMinSize(wxSize(100,200));
     
     SetName(wxT("CMakeHelpTabBase"));
@@ -210,6 +209,8 @@ CMakeHelpTabBase::~CMakeHelpTabBase()
 
 cmakeImages::cmakeImages()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -222,9 +223,13 @@ cmakeImages::cmakeImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake_16"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("cmake_16"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("cmake_16"), bmp));
+        }
     }
     
 }

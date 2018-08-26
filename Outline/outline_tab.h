@@ -26,29 +26,45 @@
 #ifndef SYMBOLVIEWTABPANEL_H
 #define SYMBOLVIEWTABPANEL_H
 
-#include "wxcrafter.h"
-#include "theme_handler_helper.h"
+#include "clTreeKeyboardInput.h"
 #include "cl_command_event.h"
+#include "theme_handler_helper.h"
+#include "wxcrafter.h"
 
+class clToolBar;
 class IManager;
 class svSymbolTree;
 
 class OutlineTab : public OutlineTabBaseClass
 {
 protected:
-    virtual void OnPhpItemActivated(wxTreeEvent& event);
-    virtual void OnPhpItemSelected(wxTreeEvent& event);
     IManager* m_mgr;
     svSymbolTree* m_tree;
     ThemeHandlerHelper* m_themeHelper;
-    bool IsIncludeFileNode();
     wxFileName m_phpFile;
+    clTreeKeyboardInput::Ptr_t m_phpKeyboardHelper;
+    clTreeKeyboardInput::Ptr_t m_cxxKeyboardHelper;
+    bool m_sortCxxTreeAlphabetically;
+    clToolBar* m_toolbar;
+
+public:
+    bool m_isEnabled;
+
+protected:
+    virtual void OnSortAlpha(wxCommandEvent& event);
+    virtual void OnSortAlphaUI(wxUpdateUIEvent& event);
+    virtual void OnPhpItemActivated(wxTreeEvent& event);
+    virtual void OnPhpItemSelected(wxTreeEvent& event);
+    bool IsIncludeFileNode();
+
+    void DoRefreshCxxView();
 
 public:
     OutlineTab(wxWindow* parent, IManager* mgr);
     virtual ~OutlineTab();
     void OnSearchSymbol(wxCommandEvent& event);
     void OnSearchEnter(wxCommandEvent& event);
+    void EditorChanged();
 
     // Event Handlers
     ////////////////////////////////////////////////

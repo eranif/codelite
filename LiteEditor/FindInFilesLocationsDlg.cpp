@@ -8,6 +8,8 @@ FindInFilesLocationsDlg::FindInFilesLocationsDlg(wxWindow* parent, const wxArray
 {
     // Add the default locations
     // Populate the
+    DoAppendItem(SEARCH_IN_WORKSPACE_FOLDER);
+    m_initialLocations.Remove(SEARCH_IN_WORKSPACE_FOLDER);
     DoAppendItem(SEARCH_IN_WORKSPACE);
     m_initialLocations.Remove(SEARCH_IN_WORKSPACE);
     DoAppendItem(SEARCH_IN_PROJECT);

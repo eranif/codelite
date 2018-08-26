@@ -358,3 +358,12 @@ void NodeJSWorkspace::GetWorkspaceFiles(wxArrayString& files) const
     // Return all the files
     wxDir::GetAllFiles(GetFilename().GetPath(), &files);
 }
+wxString NodeJSWorkspace::GetActiveProjectName() const { return wxEmptyString; }
+
+wxFileName NodeJSWorkspace::GetProjectFileName(const wxString& projectName) const
+{
+    wxUnusedVar(projectName);
+    return wxFileName();
+}
+
+wxArrayString NodeJSWorkspace::GetWorkspaceProjects() const { return wxArrayString(); }

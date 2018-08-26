@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2015 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2016 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,41 +27,58 @@
 #include <set>
 #include "config.h"
 #include "library.h"
+#include "platform.h"
+#include "importproject.h"
 #include "suppressions.h"
 #include "standards.h"
+#include "errorlogger.h"
 #include "timer.h"
 
 /// @addtogroup Core
 /// @{
-
 
 /**
  * @brief This is just a container for general settings so that we don't need
  * to pass individual values to functions or constructors now or in the
  * future when we might have even more detailed settings.
  */
-class CPPCHECKLIB Settings {
+class CPPCHECKLIB Settings : public cppcheck::Platform {
+public:
+    enum EnabledGroup {
+        WARNING = 0x1,
+        STYLE = 0x2,
+        PERFORMANCE = 0x4,
+        PORTABILITY = 0x8,
+        INFORMATION = 0x10,
+        UNUSED_FUNCTION = 0x20,
+        MISSING_INCLUDE = 0x40,
+        INTERNAL = 0x80
+    };
+
 private:
     /** @brief Code to append in the checks */
     std::string _append;
 
     /** @brief enable extra checks by id */
-    std::set<std::string> _enabled;
+    int _enabled;
 
     /** @brief terminate checking */
-    bool _terminate;
+    static bool _terminated;
 
 public:
     Settings();
 
+    /** @brief --cppcheck-build-dir */
+    std::string buildDir;
+
     /** @brief Is --debug given? */
     bool debug;
 
+    /** @brief Is --debug-normal given? */
+    bool debugnormal;
+
     /** @brief Is --debug-warnings given? */
     bool debugwarnings;
-
-    /** @brief Is --debug-fp given? */
-    bool debugFalsePositive;
 
     /** @brief Is --dump given? */
     bool dump;
@@ -72,6 +89,11 @@ public:
     /** @brief Inconclusive checks */
     bool inconclusive;
 
+    /** @brief Collect unmatched suppressions in one run.
+      * This delays the reporting until all files are checked.
+      * It is needed by checks that analyse the whole code base. */
+    bool jointSuppressionReport;
+
     /**
      * When this flag is false (default) then experimental
      * heuristics and checks are disabled.
@@ -81,60 +103,63 @@ public:
     bool experimental;
 
     /** @brief Is --quiet given? */
-    bool _errorsOnly;
+    bool quiet;
 
     /** @brief Is --inline-suppr given? */
-    bool _inlineSuppressions;
+    bool inlineSuppressions;
 
     /** @brief Is --verbose given? */
-    bool _verbose;
+    bool verbose;
 
     /** @brief Request termination of checking */
-    void terminate() {
-        _terminate = true;
+    static void terminate(bool t = true) {
+        Settings::_terminated = t;
     }
 
     /** @brief termination requested? */
-    bool terminated() const {
-        return _terminate;
+    static bool terminated() {
+        return Settings::_terminated;
     }
 
     /** @brief Force checking the files with "too many" configurations (--force). */
-    bool _force;
+    bool force;
 
     /** @brief Use relative paths in output. */
-    bool _relativePaths;
+    bool relativePaths;
 
     /** @brief Paths used as base for conversion to relative paths. */
-    std::vector<std::string> _basePaths;
+    std::vector<std::string> basePaths;
 
     /** @brief write XML results (--xml) */
-    bool _xml;
+    bool xml;
 
     /** @brief XML version (--xmlver=..) */
-    int _xml_version;
+    int xml_version;
 
     /** @brief How many processes/threads should do checking at the same
         time. Default is 1. (-j N) */
-    unsigned int _jobs;
+    unsigned int jobs;
 
     /** @brief Load average value */
-    unsigned int _loadAverage;
+    unsigned int loadAverage;
 
     /** @brief If errors are found, this value is returned from main().
         Default value is 0. */
-    int _exitCode;
+    int exitCode;
 
     /** @brief The output format in which the errors are printed in text mode,
         e.g. "{severity} {file}:{line} {message} {id}" */
-    std::string _outputFormat;
+    std::string outputFormat;
 
     /** @brief show timing information (--showtime=file|summary|top5) */
-    SHOWTIME_MODES _showtime;
+    SHOWTIME_MODES showtime;
+
+    /** @brief Using -E for debugging purposes */
+    bool preprocessOnly;
 
     /** @brief List of include paths, e.g. "my/includes/" which should be used
         for finding include files inside source files. (-I) */
-    std::list<std::string> _includePaths;
+    std::list<std::string> includePaths;
 
     /** @brief assign append code (--append) */
     bool append(const std::string &filename);
@@ -144,18 +169,23 @@ public:
 
     /** @brief Maximum number of configurations to check before bailing.
         Default is 12. (--max-configs=N) */
-    unsigned int _maxConfigs;
+    unsigned int maxConfigs;
 
     /**
      * @brief Returns true if given id is in the list of
      * enabled extra checks (--enable)
-     * @param str id for the extra check, e.g. "style"
+     * @param group group to be enabled
      * @return true if the check is enabled.
      */
-    template<typename T>
-    bool isEnabled(T&& str) const {
-        return bool(_enabled.find(str) != _enabled.end());
+    bool isEnabled(EnabledGroup group) const {
+        return (_enabled & group) == group;
     }
+
+    /**
+    * @brief Returns true if given severity is enabled
+    * @return true if the check is enabled.
+    */
+    bool isEnabled(Severity::SeverityType severity) const;
 
     /**
      * @brief Enable extra checks by id. See isEnabled()
@@ -169,7 +199,7 @@ public:
      * @brief Disables all severities, except from error.
      */
     void clearEnabled() {
-        _enabled.clear();
+        _enabled = 0;
     }
 
     enum Language {
@@ -208,16 +238,16 @@ public:
     class CPPCHECKLIB Rule {
     public:
         Rule()
-            : tokenlist("simple") // use simple tokenlist
-            , id("rule")          // default id
-            , severity("style") { // default severity
+            : tokenlist("simple")         // use simple tokenlist
+            , id("rule")                  // default id
+            , severity(Severity::style) { // default severity
         }
 
         std::string tokenlist;
         std::string pattern;
         std::string id;
-        std::string severity;
         std::string summary;
+        Severity::SeverityType severity;
     };
 
     /**
@@ -234,49 +264,10 @@ public:
     /** Struct contains standards settings */
     Standards standards;
 
-    /** size of standard types */
-    unsigned int sizeof_bool;
-    unsigned int sizeof_short;
-    unsigned int sizeof_int;
-    unsigned int sizeof_long;
-    unsigned int sizeof_long_long;
-    unsigned int sizeof_float;
-    unsigned int sizeof_double;
-    unsigned int sizeof_long_double;
-    unsigned int sizeof_wchar_t;
-    unsigned int sizeof_size_t;
-    unsigned int sizeof_pointer;
-
-    enum PlatformType {
-        Unspecified, // whatever system this code was compiled on
-        Win32A,
-        Win32W,
-        Win64,
-        Unix32,
-        Unix64
-    };
-
-    /** platform type */
-    PlatformType platformType;
-
-    /** set the platform type for predefined platforms */
-    bool platform(PlatformType type);
-
-    /** set the platform type for user specified platforms */
-    bool platformFile(const std::string &filename);
+    ImportProject project;
 
     /**
-     * @brief Returns true if platform type is Windows
-     * @return true if Windows platform type.
-     */
-    bool isWindowsPlatform() const {
-        return platformType == Win32A ||
-               platformType == Win32W ||
-               platformType == Win64;
-    }
-
-    /**
-     * @brief return true if a file is to be excluded from configuration checking
+     * @brief return true if a included file is to be excluded in Preprocessor::getConfigs
      * @return true for the file to be excluded.
      */
     bool configurationExcluded(const std::string &file) const {
@@ -287,7 +278,6 @@ public:
         }
         return false;
     }
-
 };
 
 /// @}

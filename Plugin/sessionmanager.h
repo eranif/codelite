@@ -25,11 +25,11 @@
 #ifndef SESSIONMANAGER_H
 #define SESSIONMANAGER_H
 
+#include "codelite_exports.h"
 #include "debugger.h"
 #include "serialized_object.h"
 #include "wx/xml/xml.h"
 #include <vector>
-#include "codelite_exports.h"
 
 namespace
 {
@@ -52,6 +52,7 @@ protected:
     wxString m_workspaceName;
     std::vector<TabInfo> m_vTabInfoArr;
     BreakpointInfoArray m_breakpoints;
+    wxString m_findInFilesMask;
 
 public:
     // Setters
@@ -68,6 +69,9 @@ public:
     const std::vector<TabInfo>& GetTabInfoArr() { return m_vTabInfoArr; }
     const std::vector<BreakpointInfo>& GetBreakpoints() const { return m_breakpoints.GetBreakpoints(); }
 
+    void SetFindInFilesMask(const wxString& findInFilesMask) { this->m_findInFilesMask = findInFilesMask; }
+    const wxString& GetFindInFilesMask() const { return m_findInFilesMask; }
+    
     SessionEntry();
     virtual ~SessionEntry();
 
@@ -111,14 +115,14 @@ private:
 public:
     static SessionManager& Get();
     bool Load(const wxString& fileName);
-    bool
-    Save(const wxString& name, SessionEntry& session, const wxString& suffix = wxT(""), const wxChar* Tag = sessionTag);
-    bool GetSession(const wxString& workspaceFile,
-                    SessionEntry& session,
-                    const wxString& suffix = wxT(""),
+    bool Save(const wxString& name, SessionEntry& session, const wxString& suffix = wxT(""),
+              const wxChar* Tag = sessionTag);
+    bool GetSession(const wxString& workspaceFile, SessionEntry& session, const wxString& suffix = wxT(""),
                     const wxChar* Tag = sessionTag);
     void SetLastSession(const wxString& name);
     wxString GetLastSession();
+    void UpdateFindInFilesMaskForCurrentWorkspace(const wxString& mask);
+    wxString GetFindInFilesMaskForCurrentWorkspace();
 
 private:
     wxFileName GetSessionFileName(const wxString& name, const wxString& suffix = wxT("")) const;

@@ -29,6 +29,7 @@
 #include "macros.h"
 #include "wx/log.h"
 #include <wx/dirdlg.h>
+#include "file_logger.h"
 
 BEGIN_EVENT_TABLE(DirPicker, wxPanel)
 EVT_TEXT(wxID_ANY, DirPicker::OnText)
@@ -93,7 +94,7 @@ void DirPicker::OnButtonClicked(wxCommandEvent& event)
     if(work_dir.IsEmpty() == false) {
         if(wxDir::Exists(work_dir)) {
             wxFileName fn(work_dir, wxEmptyString);
-            wxLogMessage(work_dir + wxT(" exists"));
+            clLogMessage(work_dir + wxT(" exists"));
             fn.MakeAbsolute();
             m_defaultPos = fn.GetFullPath();
         }
@@ -103,7 +104,7 @@ void DirPicker::OnButtonClicked(wxCommandEvent& event)
         m_defaultPos = wxGetCwd();
     }
 
-    wxLogMessage(wxT("setting working dir to : ") + m_defaultPos);
+    clLogMessage(wxT("setting working dir to : ") + m_defaultPos);
 
     wxDirDialog* dlg = new wxDirDialog(this, m_dlgCaption, m_defaultPos);
     if(dlg->ShowModal() == wxID_OK) {

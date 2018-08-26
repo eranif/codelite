@@ -22,18 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "debuggersettingsdlg.h"
-#include "windowattrmanager.h"
+#include "ColoursAndFontsManager.h"
+#include "dbgcommanddlg.h"
 #include "debugger_predefined_types_page.h"
-#include "editor_config.h"
+#include "debuggerconfigtool.h"
 #include "debuggermanager.h"
+#include "debuggersettingsdlg.h"
+#include "editor_config.h"
+#include "globals.h"
+#include "lexer_configuration.h"
 #include "macros.h"
 #include "manager.h"
-#include "globals.h"
-#include "dbgcommanddlg.h"
-#include "debuggerconfigtool.h"
-#include "ColoursAndFontsManager.h"
-#include "lexer_configuration.h"
+#include "windowattrmanager.h"
 
 ///////////////////////////////////////////////////
 // Misc Page
@@ -81,7 +81,7 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
     if(lexer) {
         lexer->Apply(m_textCtrlStartupCommands);
     }
-    
+
     DebuggerInformation info;
     if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
         m_textCtrlStartupCommands->SetText(info.startupCommands);
@@ -113,6 +113,8 @@ DebuggerPage::DebuggerPage(wxWindow* parent, wxString title)
         m_checkBoxCharArrAsPtr->SetValue(info.charArrAsPtr);
         m_checkBoxUsePrettyPrinting->SetValue(info.enableGDBPrettyPrinting);
         m_checkBoxPrintObjectOn->SetValue(!(info.flags & DebuggerInformation::kPrintObjectOff));
+        m_checkBoxRunAsSuperuser->SetValue(info.flags & DebuggerInformation::kRunAsSuperuser);
+        m_checkBoxDefaultHexDisplay->SetValue(info.defaultHexDisplay);
     }
 }
 
@@ -159,8 +161,8 @@ DbgPagePreDefTypes::DbgPagePreDefTypes(wxWindow* parent)
 
     std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = data.GePreDefinedTypesMap().begin();
     for(; iter != data.GePreDefinedTypesMap().end(); iter++) {
-        m_notebookPreDefTypes->AddPage(
-            new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first, iter->second.IsActive());
+        m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first,
+                                       iter->second.IsActive());
     }
 }
 
@@ -195,9 +197,7 @@ void DbgPagePreDefTypes::OnDeleteSet(wxCommandEvent& event)
     wxString name = m_notebookPreDefTypes->GetPageText((size_t)sel);
     if(wxMessageBox(
            wxString::Format(wxT("You are about to delete 'PreDefined Types' set '%s'\nContinue ?"), name.c_str()),
-           wxT("Confirm deleting 'PreDefined Types' set"),
-           wxYES_NO | wxCENTER | wxICON_QUESTION,
-           this) == wxYES) {
+           wxT("Confirm deleting 'PreDefined Types' set"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
         m_notebookPreDefTypes->DeletePage((size_t)sel);
     }
 }
@@ -231,8 +231,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
         // Make sure that a set with this name does not already exists
         for(size_t i = 0; i < m_notebookPreDefTypes->GetPageCount(); i++) {
             if(m_notebookPreDefTypes->GetPageText((size_t)i) == newName) {
-                wxMessageBox(wxT("A set with this name already exist"),
-                             wxT("Name Already Exists"),
+                wxMessageBox(wxT("A set with this name already exist"), wxT("Name Already Exists"),
                              wxICON_WARNING | wxOK | wxCENTER);
                 return;
             }
@@ -252,8 +251,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
 
         initialValues.SetName(newName);
         m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, initialValues),
-                                       initialValues.GetName(),
-                                       dlg.GetCheckBoxMakeActive()->IsChecked());
+                                       initialValues.GetName(), dlg.GetCheckBoxMakeActive()->IsChecked());
     }
 }
 
@@ -265,36 +263,42 @@ DebuggerSettingsDlg::DebuggerSettingsDlg(wxWindow* parent)
 {
     // fill the notebook with the available debuggers
     Initialize();
-    ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
 
     GetSizer()->Fit(this);
     CenterOnParent();
-    
+
     SetName("DebuggerSettingsDlg");
     WindowAttrManager::Load(this);
 }
 
 void DebuggerSettingsDlg::Initialize()
 {
-    MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
-
-    // create page per-debugger
-    m_treebook2->AddPage(0, "GNU gdb debugger", true);
-
     // for each debugger, add page
-    m_treebook2->AddSubPage(new DebuggerPage(m_treebook2, "GNU gdb debugger"), wxT("General"), true);
-    m_treebook2->AddSubPage(new DebuggerPageMisc(m_treebook2, "GNU gdb debugger"), wxT("Misc"), false);
-    m_treebook2->AddSubPage(
-        new DebuggerPageStartupCmds(m_treebook2, "GNU gdb debugger"), wxT("Startup Commands"), false);
-    m_treebook2->AddPage(new DbgPagePreDefTypes(m_treebook2), wxT("Pre Defined Types"), false);
+    m_pages.clear();
+    DebuggerPage* p = new DebuggerPage(m_notebook, "GNU gdb debugger");
+    m_notebook->AddPage(p, wxT("GNU gdb debugger"), true);
+    m_pages.push_back(p);
+
+    wxNotebook* innerBook = p->GetNotebook73();
+    DebuggerPageMisc* misc = new DebuggerPageMisc(innerBook, "GNU gdb debugger");
+    innerBook->AddPage(misc, wxT("Misc"), false);
+    m_pages.push_back(misc);
+
+    DebuggerPageStartupCmds* cmds = new DebuggerPageStartupCmds(innerBook, "GNU gdb debugger");
+    innerBook->AddPage(cmds, wxT("Startup Commands"), false);
+    m_pages.push_back(cmds);
+
+    DbgPagePreDefTypes* types = new DbgPagePreDefTypes(m_notebook);
+    m_notebook->AddPage(types, wxT("Pre-Defined Types"), false);
+    m_pages.push_back(types);
 }
 
 void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // go over the debuggers and set the debugger path
-    for(size_t i = 0; i < (size_t)m_treebook2->GetPageCount(); i++) {
-        wxWindow* win = m_treebook2->GetPage(i);
+    for(size_t i = 0; i < (size_t)m_pages.size(); ++i) {
+        wxWindow* win = m_pages[i];
         if(!win) continue;
 
         DebuggerPage* page = dynamic_cast<DebuggerPage*>(win);
@@ -318,10 +322,18 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             info.whenBreakpointHitRaiseCodelite = page->m_raiseOnBpHit->IsChecked();
             info.charArrAsPtr = page->m_checkBoxCharArrAsPtr->IsChecked();
             info.enableGDBPrettyPrinting = page->m_checkBoxUsePrettyPrinting->IsChecked();
+            info.defaultHexDisplay = page->m_checkBoxDefaultHexDisplay->IsChecked();
+
+            // Update the flags
             if(page->m_checkBoxPrintObjectOn->IsChecked()) {
                 info.flags &= ~DebuggerInformation::kPrintObjectOff;
             } else {
                 info.flags |= DebuggerInformation::kPrintObjectOff;
+            }
+            if(page->m_checkBoxRunAsSuperuser->IsChecked()) {
+                info.flags |= DebuggerInformation::kRunAsSuperuser;
+            } else {
+                info.flags &= ~DebuggerInformation::kRunAsSuperuser;
             }
             DebuggerMgr::Get().SetDebuggerInformation(page->m_title, info);
         }
@@ -368,4 +380,10 @@ void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent& e)
     EndModal(wxID_CANCEL);
 }
 
-DebuggerSettingsDlg::~DebuggerSettingsDlg() {  }
+DebuggerSettingsDlg::~DebuggerSettingsDlg() {}
+
+void DebuggerPage::OnSuperuserUI(wxUpdateUIEvent& event)
+{
+    event.Check(false);
+    event.Enable(false);
+}

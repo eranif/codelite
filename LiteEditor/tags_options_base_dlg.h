@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
-#define CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#ifndef _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
+#define _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -17,13 +17,14 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
+#include <wx/statbox.h>
 #include <wx/slider.h>
 #include <wx/bannerwindow.h>
 #include <wx/stc/stc.h>
@@ -37,6 +38,16 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
 #include "tags_options_data.h"
 
 class TagsOptionsBaseDlg : public wxDialog
@@ -46,11 +57,14 @@ protected:
     wxPanel* m_paneDisplayAndBehavior;
     wxStaticText* m_staticText14;
     wxTextCtrl* m_spinCtrlNumberOfCCItems;
-    wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
+    wxStaticText* m_staticText123;
+    wxTextCtrl* m_textCtrlFileSpec;
+    wxStaticLine* m_staticLine129;
     wxCheckBox* m_checkDisplayTypeInfo;
+    wxCheckBox* m_checkBoxEnableCaseSensitiveCompletion;
     wxCheckBox* m_checkDisplayFunctionTip;
-    wxCheckBox* m_checkCppKeywordAssist;
     wxCheckBox* m_checkBoxKeepFunctionSignature;
+    wxCheckBox* m_checkCppKeywordAssist;
     wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
     wxCheckBox* m_checkDisableParseOnSave;
     wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
@@ -58,7 +72,6 @@ protected:
     wxPropertyGridManager* m_pgMgrColouring;
     wxPGProperty* m_pgPropTrackPreProcessors;
     wxPGProperty* m_pgPropColourLocalVariables;
-    wxPGProperty* m_pgPropColourWorkspaceSymbols;
     wxPanel* m_paneTriggering;
     wxCheckBox* m_checkWordAssist;
     wxStaticText* m_staticTextMinWordLen;
@@ -100,9 +113,8 @@ protected:
     wxButton* m_buttonClearCache;
     wxStaticText* m_staticText12;
     wxChoice* m_choiceCachePolicy;
-    wxStdDialogButtonSizer* m_stdBtnSizer95;
-    wxButton* m_button97;
-    wxButton* m_button99;
+    wxButton* m_button104;
+    wxButton* m_button106;
 
 protected:
     virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -116,16 +128,20 @@ protected:
     virtual void OnSuggestSearchPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearClangCache(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearClangCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText14() { return m_staticText14; }
     wxTextCtrl* GetSpinCtrlNumberOfCCItems() { return m_spinCtrlNumberOfCCItems; }
-    wxCheckBox* GetCheckBoxEnableCaseSensitiveCompletion() { return m_checkBoxEnableCaseSensitiveCompletion; }
+    wxStaticText* GetStaticText123() { return m_staticText123; }
+    wxTextCtrl* GetTextCtrlFileSpec() { return m_textCtrlFileSpec; }
+    wxStaticLine* GetStaticLine129() { return m_staticLine129; }
     wxCheckBox* GetCheckDisplayTypeInfo() { return m_checkDisplayTypeInfo; }
+    wxCheckBox* GetCheckBoxEnableCaseSensitiveCompletion() { return m_checkBoxEnableCaseSensitiveCompletion; }
     wxCheckBox* GetCheckDisplayFunctionTip() { return m_checkDisplayFunctionTip; }
-    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
     wxCheckBox* GetCheckBoxKeepFunctionSignature() { return m_checkBoxKeepFunctionSignature; }
+    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
     wxCheckBox* GetCheckBoxretagWorkspaceOnStartup() { return m_checkBoxretagWorkspaceOnStartup; }
     wxCheckBox* GetCheckDisableParseOnSave() { return m_checkDisableParseOnSave; }
     wxCheckBox* GetCheckBoxDeepUsingNamespaceResolving() { return m_checkBoxDeepUsingNamespaceResolving; }
@@ -174,6 +190,8 @@ public:
     wxNotebook* GetNotebookClang() { return m_notebookClang; }
     wxPanel* GetPanelClang() { return m_panelClang; }
     wxNotebook* GetNotebook87() { return m_notebook87; }
+    wxButton* GetButton104() { return m_button104; }
+    wxButton* GetButton106() { return m_button106; }
     TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~TagsOptionsBaseDlg();
 };

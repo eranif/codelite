@@ -25,25 +25,24 @@
 
 #include "editor_config.h"
 #include "windowattrmanager.h"
-#include <wx/settings.h>
+#include <wx/persist.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
-#include <wx/persist.h>
+#include <wx/settings.h>
 
 void WindowAttrManager::Load(wxTopLevelWindow* win)
 {
-    if(win->GetName().IsEmpty()) {
-        return;
-    }
-    
+    if(win->GetName().IsEmpty()) { return; }
+
     // Is this object already registered?
     if(wxPersistenceManager::Get().Find(win)) {
         wxPersistenceManager::Get().Restore(win);
     } else {
         // Register and restore the object and recurse into its children
         wxPersistenceManager::Get().RegisterAndRestore(win);
-    }    
+    }
     DoLoad(win, win->GetName(), 0);
+    if(win->GetParent()) { win->CentreOnParent(); }
 }
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)

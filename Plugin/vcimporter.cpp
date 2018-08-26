@@ -200,20 +200,20 @@ bool VcImporter::ConvertProject(VcProjectData& data)
     wxString errMsg;
     switch(type) {
     case 2: // dll
-        projectType = Project::DYNAMIC_LIBRARY;
+        projectType = PROJECT_TYPE_DYNAMIC_LIBRARY;
         break;
     case 4: // static library
-        projectType = Project::STATIC_LIBRARY;
+        projectType = PROJECT_TYPE_STATIC_LIBRARY;
         break;
     case 1: // exe
     default:
-        projectType = Project::EXECUTABLE;
+        projectType = PROJECT_TYPE_EXECUTABLE;
         break;
     }
     // now we can create the project
     wxFileName fn(data.filepath);
     fn.MakeAbsolute();
-    if(!clCxxWorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, true, errMsg)) {
+    if(!clCxxWorkspaceST::Get()->CreateProject(data.name, fn.GetPath(), projectType, "", true, errMsg)) {
         return false;
     }
 
@@ -266,22 +266,22 @@ void VcImporter::AddConfiguration(ProjectSettingsPtr settings, wxXmlNode* config
     wxString errMsg;
     switch(type) {
     case 2: // dll
-        projectType = Project::DYNAMIC_LIBRARY;
+        projectType = PROJECT_TYPE_DYNAMIC_LIBRARY;
         break;
     case 4: // static library
-        projectType = Project::STATIC_LIBRARY;
+        projectType = PROJECT_TYPE_STATIC_LIBRARY;
         break;
     case 1: // exe
     default:
-        projectType = Project::EXECUTABLE;
+        projectType = PROJECT_TYPE_EXECUTABLE;
         break;
     }
 
     le_conf->SetProjectType(projectType);
 
     // if project type is DLL or Executable, copy linker settings as well
-    if(settings->GetProjectType(le_conf->GetName()) == Project::EXECUTABLE ||
-       settings->GetProjectType(le_conf->GetName()) == Project::DYNAMIC_LIBRARY) {
+    if(settings->GetProjectType(le_conf->GetName()) == PROJECT_TYPE_EXECUTABLE ||
+       settings->GetProjectType(le_conf->GetName()) == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         wxXmlNode* linkNode = XmlUtils::FindNodeByName(config, wxT("Tool"), wxT("VCLinkerTool"));
         if(linkNode) {
             wxString outputFileName(XmlUtils::ReadString(linkNode, wxT("OutputFile")));

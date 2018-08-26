@@ -43,9 +43,12 @@ class SymbolViewPlugin : public IPlugin
 {
 protected:
     OutlineTab* m_view;
+
+protected:
     bool IsPaneDetached();
     int DoFindTabIndex();
     void OnToggleTab(clCommandEvent& event);
+    void OnPageChanged(wxBookCtrlEvent& e);
 
 public:
     //--------------------------------------------
@@ -57,7 +60,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void UnPlug();
 };

@@ -46,6 +46,7 @@ char* loadFile(const char* fileName)
     if(bytes != len) {
         fclose(fp);
         printf("failed to read from file 'test.h': %s\n", strerror(errno));
+		free(buf);
         return NULL;
     }
 

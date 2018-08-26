@@ -36,7 +36,6 @@
 #include <macros.h>
 #include "php_project_settings_data.h"
 #include "php_project.h"
-#include "php_folder.h"
 #include <wx/event.h>
 #include "XDebugBreakpoint.h"
 #include "imanager.h"
@@ -65,9 +64,12 @@ protected:
     PHPProject::Map_t m_projects;
     PHPExecutor m_executor;
     IManager* m_manager;
-
+    wxStringSet_t m_inSyncProjects;
+    wxEvtHandler* m_projectSyncOwner;
     // IWorkspace API
 public:
+    virtual wxFileName GetProjectFileName(const wxString& projectName) const;
+    virtual wxArrayString GetWorkspaceProjects() const;
     virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
     virtual void GetWorkspaceFiles(wxArrayString& files) const;
     virtual wxString GetProjectFromFile(const wxFileName& filename) const;
@@ -89,6 +91,7 @@ public:
 protected:
     void DoNotifyFilesRemoved(const wxArrayString& files);
     void DoPromptWorkspaceModifiedDialog();
+    void OnProjectSyncEnd(clCommandEvent& event);
 
 public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
@@ -104,9 +107,9 @@ public:
     bool CanCreateProjectAtPath(const wxFileName& projectFileName, bool prompt) const;
 
     /**
-     * @brief sync the workspace with the file system
+     * @brief sync the workspace with the file system, but do this in a background thread
      */
-    void SyncWithFileSystem();
+    void SyncWithFileSystemAsync(wxEvtHandler* owner);
 
     /**
      * @brief return the project that owns filename
@@ -140,8 +143,9 @@ public:
 
     /**
      * @brief open a workspace
+     * @param view the view that will receive the start/end events
      */
-    bool Open(const wxString& filename, bool createIfMissing = false);
+    bool Open(const wxString& filename, wxEvtHandler* view, bool createIfMissing = false);
 
     /**
      * @brief create an empty workspace
@@ -228,12 +232,12 @@ public:
     ////////////////////////////////////////////
     // Project execution
     ////////////////////////////////////////////
-    bool RunProject(bool debugging,
-        const wxString& urlOrFilePath,
-        const wxString& projectName = wxEmptyString,
-        const wxString& xdebugSessionName = wxEmptyString);
+    bool RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName = wxEmptyString,
+                    const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }
 };
 
+wxDECLARE_EVENT(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, clCommandEvent);
 #endif // PHPWORKSPACE_H

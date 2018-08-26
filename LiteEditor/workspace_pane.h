@@ -25,13 +25,15 @@
 #ifndef WORKSPACE_PANE_H
 #define WORKSPACE_PANE_H
 
-#include <wx/filename.h>
 #include "Notebook.h"
-#include <wx/panel.h>
-#include <wx/timer.h>
 #include "clAuiCaptionEnabler.h"
+#include "clTabRenderer.h"
+#include "cl_defs.h"
 #include <map>
 #include <wx/bitmap.h>
+#include <wx/filename.h>
+#include <wx/panel.h>
+#include <wx/timer.h>
 
 // Forward Declarations
 class FileViewTree;
@@ -88,6 +90,10 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
+    
+#if !USE_AUI_NOTEBOOK
+    clTabRenderer::Ptr_t GetNotebookRenderer();
+#endif
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

@@ -45,7 +45,7 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
         }
     } else {
         // create new settings with default values
-        m_projectType = Project::EXECUTABLE;
+        m_projectType = PROJECT_TYPE_EXECUTABLE;
         BuildConfig *conf(NULL);
         
         conf = new BuildConfig(NULL);
@@ -57,7 +57,7 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
 
     // Create global settings if it's not been loaded or by default
     if(!m_globalSettings) {
-        // wxLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
+        // clLogMessage(wxT("ProjectSettings : Create global settings because it doesn't exists"));
         m_globalSettings = new BuildConfigCommon(NULL, wxT("GlobalSettings"));
     }
 }

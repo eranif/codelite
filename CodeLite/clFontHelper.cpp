@@ -1,4 +1,5 @@
 #include "clFontHelper.h"
+#if wxUSE_GUI
 #include <wx/tokenzr.h>
 
 wxFont clFontHelper::FromString(const wxString& str)
@@ -29,3 +30,4 @@ wxString clFontHelper::ToString(const wxFont& font)
         << (int)font.GetWeight() << ";" << (int)font.GetStyle();
     return str;
 }
+#endif

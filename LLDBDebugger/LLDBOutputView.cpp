@@ -102,9 +102,9 @@ void LLDBOutputView::Initialize()
         wxVector<wxVariant> cols;
         LLDBBreakpoint::Ptr_t bp = breakpoints.at(i);
         cols.push_back(wxString() << bp->GetId());
-        cols.push_back(bp->GetFilename());
-        cols.push_back(wxString() << bp->GetLineNumber());
         cols.push_back(bp->GetName());
+        cols.push_back(m_plugin->GetFilenameForDisplay(bp->GetFilename()));
+        cols.push_back(wxString() << bp->GetLineNumber());
         wxDataViewItem parent =
             m_dataviewModel->AppendItem(wxDataViewItem(NULL), cols, new LLDBBreakpointClientData(bp));
 
@@ -115,9 +115,9 @@ void LLDBOutputView::Initialize()
                 cols.clear();
                 LLDBBreakpoint::Ptr_t breakpoint = children.at(i);
                 cols.push_back("");
-                cols.push_back(breakpoint->GetFilename());
-                cols.push_back(wxString() << breakpoint->GetLineNumber());
                 cols.push_back(breakpoint->GetName());
+                cols.push_back(m_plugin->GetFilenameForDisplay(breakpoint->GetFilename()));
+                cols.push_back(wxString() << breakpoint->GetLineNumber());
                 m_dataviewModel->AppendItem(parent, cols, new LLDBBreakpointClientData(breakpoint));
             }
         }
@@ -237,7 +237,7 @@ void LLDBOutputView::OnConsoleOutput(LLDBEvent& event)
     m_stcConsole->SetSelectionStart(lastPos);
     m_stcConsole->SetSelectionEnd(lastPos);
     m_stcConsole->ScrollToEnd();
-    
+
     // give the focus back to the console text control
     m_textCtrlConsoleSend->CallAfter(&wxTextCtrl::SetFocus);
 }

@@ -23,27 +23,36 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "SFTPStatusPage.h"
-#include "sftp_worker_thread.h"
-#include <wx/menu.h>
-#include <wx/log.h>
+#include "event_notifier.h"
+#include "lexer_configuration.h"
 #include "sftp.h"
 #include "sftp_item_comparator.h"
-
-static const int ID_CLEAR_SFTP_LOG = ::wxNewId();
+#include "sftp_worker_thread.h"
+#include <wx/log.h>
+#include <wx/menu.h>
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
     , m_plugin(plugin)
 {
-    m_dvListCtrl->Connect(ID_CLEAR_SFTP_LOG, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SFTPStatusPage::OnClearLog), NULL, this);
+    m_stcOutput->Bind(wxEVT_MENU, &SFTPStatusPage::OnClearLog, this, wxID_CLEAR);
+    m_stcOutput->Bind(wxEVT_MENU, &SFTPStatusPage::OnCopy, this, wxID_COPY);
+    m_stcOutput->Bind(wxEVT_MENU, &SFTPStatusPage::OnSelectAll, this, wxID_SELECTALL);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &SFTPStatusPage::OnThemeChanged, this);
+    m_stcOutput->SetReadOnly(true);
 }
 
 SFTPStatusPage::~SFTPStatusPage()
 {
+    m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnClearLog, this, wxID_CLEAR);
+    m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnCopy, this, wxID_COPY);
+    m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnSelectAll, this, wxID_SELECTALL);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &SFTPStatusPage::OnThemeChanged, this);
 }
 
-void SFTPStatusPage::OnContentMenu(wxDataViewEvent& event)
+void SFTPStatusPage::OnContentMenu(wxContextMenuEvent& event)
 {
     wxUnusedVar(event);
     ShowContextMenu();
@@ -51,50 +60,65 @@ void SFTPStatusPage::OnContentMenu(wxDataViewEvent& event)
 
 void SFTPStatusPage::AddLine(SFTPThreadMessage* message)
 {
-    wxVector<wxVariant> cols;
-    cols.push_back( wxDateTime::Now().FormatISOTime() );
+    wxString msg;
+    msg << "[ " << wxDateTime::Now().FormatISOTime() << " ]";
     wxBitmap bmp;
-    switch (message->GetStatus()) {
+    switch(message->GetStatus()) {
     case SFTPThreadMessage::STATUS_ERROR:
-        bmp = m_bitmaps.Bitmap("sftp_error");
+        msg << " [ERR]";
         break;
     case SFTPThreadMessage::STATUS_OK:
-        bmp = m_bitmaps.Bitmap("sftp_ok");
+        msg << " [OK ]";
         break;
     default:
-        bmp = m_bitmaps.Bitmap("sftp_info");
+        msg << " [INF]";
         break;
     }
-    
-    wxVariant varBmp;
-    varBmp << bmp;
-    cols.push_back( varBmp );
-    cols.push_back( message->GetAccount());
-    cols.push_back( message->GetMessage() );
-    m_dvListCtrl->AppendItem( cols );
+
+    msg << " [" << message->GetAccount() << "] " << message->GetMessage();
     wxDELETE(message);
-    
-    // Ensure that the last item is visible
-    wxDataViewItem item = m_dvListCtrl->RowToItem(m_dvListCtrl->GetItemCount()-1);
-    m_dvListCtrl->Select( item );
-    m_dvListCtrl->EnsureVisible( item );
+    m_stcOutput->SetReadOnly(false);
+    m_stcOutput->AppendText(msg + "\n");
+    m_stcOutput->SetReadOnly(true);
+    m_stcOutput->ScrollToEnd();
 }
 
 void SFTPStatusPage::ShowContextMenu()
 {
     wxMenu menu;
-    menu.Append(ID_CLEAR_SFTP_LOG, _("Clear Log"));
-    menu.Enable(ID_CLEAR_SFTP_LOG, m_dvListCtrl->GetItemCount());
-    m_dvListCtrl->PopupMenu( &menu );
+    menu.Append(wxID_COPY);
+    menu.Append(wxID_SELECTALL);
+    menu.AppendSeparator();
+    menu.Append(wxID_CLEAR);
+    menu.Enable(wxID_CLEAR, !m_stcOutput->IsEmpty());
+    m_stcOutput->PopupMenu(&menu);
 }
 
 void SFTPStatusPage::OnClearLog(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_dvListCtrl->DeleteAllItems();
+    m_stcOutput->SetReadOnly(false);
+    m_stcOutput->ClearAll();
+    m_stcOutput->SetReadOnly(true);
 }
 
-void SFTPStatusPage::SetStatusBarMessage(const wxString& message)
+void SFTPStatusPage::SetStatusBarMessage(const wxString& message) { m_plugin->GetManager()->SetStatusMessage(message); }
+
+void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
 {
-    m_plugin->GetManager()->SetStatusMessage(message);
+    event.Skip();
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_stcOutput); }
+}
+
+void SFTPStatusPage::OnCopy(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_stcOutput->CanCopy()) { m_stcOutput->Copy(); }
+}
+
+void SFTPStatusPage::OnSelectAll(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_stcOutput->SelectAll();
 }

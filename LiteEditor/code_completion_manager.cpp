@@ -46,8 +46,8 @@ static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
 // Helper class
 struct EditorDimmerDisabler {
-    LEditor* m_editor;
-    EditorDimmerDisabler(LEditor* editor)
+    clEditor* m_editor;
+    EditorDimmerDisabler(clEditor* editor)
         : m_editor(editor)
     {
         if(m_editor) {
@@ -117,7 +117,7 @@ CodeCompletionManager::~CodeCompletionManager()
         wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
 }
 
-void CodeCompletionManager::WordCompletion(LEditor* editor, const wxString& expr, const wxString& word)
+void CodeCompletionManager::WordCompletion(clEditor* editor, const wxString& expr, const wxString& word)
 {
     wxString expression = expr;
     wxString tmp;
@@ -152,7 +152,7 @@ CodeCompletionManager& CodeCompletionManager::Get()
     return *ms_CodeCompletionManager;
 }
 
-bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxString& expr, const wxString& word)
+bool CodeCompletionManager::DoCtagsWordCompletion(clEditor* editor, const wxString& expr, const wxString& word)
 {
     std::vector<TagEntryPtr> candidates;
     // get the full text of the current page
@@ -167,7 +167,7 @@ bool CodeCompletionManager::DoCtagsWordCompletion(LEditor* editor, const wxStrin
     return false;
 }
 
-void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
+void CodeCompletionManager::DoClangWordCompletion(clEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
@@ -178,7 +178,7 @@ void CodeCompletionManager::DoClangWordCompletion(LEditor* editor)
 }
 
 bool CodeCompletionManager::DoCtagsCalltip(
-    LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
+    clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
 {
     // Get the calltip
     clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(editor->GetFileName(), line, expr, text, word);
@@ -190,7 +190,7 @@ bool CodeCompletionManager::DoCtagsCalltip(
     return true;
 }
 
-void CodeCompletionManager::DoClangCalltip(LEditor* editor)
+void CodeCompletionManager::DoClangCalltip(clEditor* editor)
 {
 #if HAS_LIBCLANG
     DoUpdateOptions();
@@ -201,7 +201,7 @@ void CodeCompletionManager::DoClangCalltip(LEditor* editor)
 }
 
 void CodeCompletionManager::Calltip(
-    LEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
+    clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
 {
     bool res(false);
     DoUpdateOptions();
@@ -217,7 +217,7 @@ void CodeCompletionManager::Calltip(
     }
 }
 
-void CodeCompletionManager::CodeComplete(LEditor* editor, int line, const wxString& expr, const wxString& text)
+void CodeCompletionManager::CodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text)
 {
     bool res(false);
     DoUpdateOptions();
@@ -230,7 +230,7 @@ void CodeCompletionManager::CodeComplete(LEditor* editor, int line, const wxStri
     }
 }
 
-void CodeCompletionManager::DoClangCodeComplete(LEditor* editor)
+void CodeCompletionManager::DoClangCodeComplete(clEditor* editor)
 {
 #if HAS_LIBCLANG
     ClangCodeCompletion::Instance()->CodeComplete(editor);
@@ -239,7 +239,7 @@ void CodeCompletionManager::DoClangCodeComplete(LEditor* editor)
 #endif
 }
 
-bool CodeCompletionManager::DoCtagsCodeComplete(LEditor* editor, int line, const wxString& expr, const wxString& text)
+bool CodeCompletionManager::DoCtagsCodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text)
 {
     std::vector<TagEntryPtr> candidates;
     if(TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates) &&
@@ -264,7 +264,7 @@ void CodeCompletionManager::DoUpdateOptions()
     }
 }
 
-void CodeCompletionManager::ProcessMacros(LEditor* editor)
+void CodeCompletionManager::ProcessMacros(clEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
@@ -280,7 +280,7 @@ void CodeCompletionManager::ProcessMacros(LEditor* editor)
     m_preProcessorThread.QueueFile(editor->GetFileName().GetFullPath(), macros, includePaths);
 }
 
-void CodeCompletionManager::GotoImpl(LEditor* editor)
+void CodeCompletionManager::GotoImpl(clEditor* editor)
 {
     DoUpdateOptions();
     bool res = false;
@@ -292,7 +292,7 @@ void CodeCompletionManager::GotoImpl(LEditor* editor)
     }
 }
 
-void CodeCompletionManager::DoClangGotoImpl(LEditor* editor)
+void CodeCompletionManager::DoClangGotoImpl(clEditor* editor)
 {
     wxUnusedVar(editor);
 #if HAS_LIBCLANG
@@ -300,11 +300,11 @@ void CodeCompletionManager::DoClangGotoImpl(LEditor* editor)
 #endif
 }
 
-bool CodeCompletionManager::DoCtagsGotoImpl(LEditor* editor)
+bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
 {
     TagEntryPtr tag = editor->GetContext()->GetTagAtCaret(true, true);
     if(tag) {
-        LEditor* editor =
+        clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
         if(!editor) {
             return false;
@@ -317,7 +317,7 @@ bool CodeCompletionManager::DoCtagsGotoImpl(LEditor* editor)
     return false;
 }
 
-void CodeCompletionManager::DoClangGotoDecl(LEditor* editor)
+void CodeCompletionManager::DoClangGotoDecl(clEditor* editor)
 {
     wxUnusedVar(editor);
 #if HAS_LIBCLANG
@@ -325,11 +325,11 @@ void CodeCompletionManager::DoClangGotoDecl(LEditor* editor)
 #endif
 }
 
-bool CodeCompletionManager::DoCtagsGotoDecl(LEditor* editor)
+bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
 {
     TagEntryPtr tag = editor->GetContext()->GetTagAtCaret(true, false);
     if(tag) {
-        LEditor* editor =
+        clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
         if(!editor) {
             return false;
@@ -345,7 +345,7 @@ bool CodeCompletionManager::DoCtagsGotoDecl(LEditor* editor)
     return false;
 }
 
-void CodeCompletionManager::GotoDecl(LEditor* editor)
+void CodeCompletionManager::GotoDecl(clEditor* editor)
 {
     DoUpdateOptions();
     bool res = false;
@@ -403,7 +403,7 @@ void CodeCompletionManager::OnParseThreadCollectedMacros(const wxArrayString& de
         // CL_DEBUG("%s\n", definitions.Item(i));
         macrosAsString << definitions.Item(i) << " ";
     }
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filename);
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filename);
     if(editor) {
         CL_DEBUG("Updating editor colours...");
         // its the same file that triggered the request, update its pre processor colouring
@@ -428,7 +428,7 @@ void CodeCompletionManager::OnFileSaved(clCommandEvent& event)
 void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
 {
     event.Skip();
-    LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName());
+    clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
 
     // Handle Pre Processor block colouring
@@ -450,18 +450,18 @@ void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
 void CodeCompletionManager::RefreshPreProcessorColouring()
 {
     bool enableBlockColouring = TagsManagerST::Get()->GetCtagsOptions().GetCcColourFlags() & CC_COLOUR_MACRO_BLOCKS;
-    LEditor::Vec_t editors;
+    clEditor::Vec_t editors;
     clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
     if(!enableBlockColouring) {
         for(size_t i = 0; i < editors.size(); ++i) {
-            LEditor* editor = editors.at(i);
+            clEditor* editor = editors.at(i);
             editor->SetPreProcessorsWords("");
             editor->SetProperty("lexer.cpp.track.preprocessor", "0");
             editor->SetProperty("lexer.cpp.update.preprocessor", "0");
         }
     } else {
         for(size_t i = 0; i < editors.size(); ++i) {
-            LEditor* editor = editors.at(i);
+            clEditor* editor = editors.at(i);
             editor->SetProperty("lexer.cpp.track.preprocessor", "0");
             editor->SetProperty("lexer.cpp.update.preprocessor", "0");
             ProcessMacros(editor);
@@ -491,7 +491,7 @@ void CodeCompletionManager::OnFindUsingNamespaceDone(const wxArrayString& usingN
     LanguageST::Get()->UpdateAdditionalScopesCache(filename, additionalScopes);
 }
 
-void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
+void CodeCompletionManager::ProcessUsingNamespace(clEditor* editor)
 {
     // Sanity
     CHECK_PTR_RET(editor);
@@ -509,7 +509,7 @@ void CodeCompletionManager::ProcessUsingNamespace(LEditor* editor)
 }
 
 bool CodeCompletionManager::GetDefinitionsAndSearchPaths(
-    LEditor* editor, wxArrayString& searchPaths, wxArrayString& definitions)
+    clEditor* editor, wxArrayString& searchPaths, wxArrayString& definitions)
 {
     // Sanity
     CHECK_PTR_RET_FALSE(editor);

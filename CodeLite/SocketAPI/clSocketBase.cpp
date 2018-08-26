@@ -27,6 +27,7 @@
 #include <cerrno>
 #include <cstdio>
 #include <sstream>
+#include <memory>
 
 #ifndef _WIN32
 #include <fcntl.h>
@@ -54,7 +55,7 @@ void clSocketBase::Initialize()
 }
 
 // Read API
-int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketException)
+int clSocketBase::Read(wxMemoryBuffer& content, long timeout)
 {
     content.Clear();
 
@@ -67,8 +68,12 @@ int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketExce
             memset(buffer, 0x0, sizeof(buffer));
             int bytesRead = recv(m_socket, buffer, sizeof(buffer), 0);
             if(bytesRead < 0) {
-                // Error
-                throw clSocketException("Read failed: " + error());
+                const int err = GetLastError();
+
+                if(eWouldBlock != err) {
+                    // Error
+                    throw clSocketException("Read failed: " + error(err));
+                }
 
             } else if(bytesRead == 0) {
                 // connection closed
@@ -88,7 +93,7 @@ int clSocketBase::Read(wxMemoryBuffer& content, long timeout) throw(clSocketExce
     return kTimeout;
 }
 
-int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) throw(clSocketException)
+int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout)
 {
     wxMemoryBuffer mb;
     int rc = Read(mb, timeout);
@@ -98,17 +103,31 @@ int clSocketBase::Read(wxString& content, const wxMBConv& conv, long timeout) th
     return rc;
 }
 
-int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout) throw(clSocketException)
+int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long timeout)
 {
     if(SelectRead(timeout) == kTimeout) {
         return kTimeout;
     }
     memset(buffer, 0, bufferSize);
-    bytesRead = recv(m_socket, buffer, bufferSize, 0);
+    const int res = recv(m_socket, buffer, bufferSize, 0);
+
+    if(res < 0) {
+        const int err = GetLastError();
+        if(eWouldBlock == err) {
+            return kTimeout;
+        }
+
+        throw clSocketException("Read failed: " + error(err));
+    }
+    else if(0 == res) {
+        throw clSocketException("Read failed: " + error());
+    }
+
+    bytesRead = static_cast<size_t>(res);
     return kSuccess;
 }
 
-int clSocketBase::SelectRead(long seconds) throw(clSocketException)
+int clSocketBase::SelectRead(long seconds)
 {
     if(seconds == -1) {
         return kSuccess;
@@ -139,7 +158,7 @@ int clSocketBase::SelectRead(long seconds) throw(clSocketException)
 }
 
 // Send API
-void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocketException)
+void clSocketBase::Send(const wxString& msg, const wxMBConv& conv)
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -150,7 +169,7 @@ void clSocketBase::Send(const wxString& msg, const wxMBConv& conv) throw(clSocke
     Send(mb);
 }
 
-void clSocketBase::Send(const std::string& msg) throw(clSocketException)
+void clSocketBase::Send(const std::string& msg)
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -160,7 +179,7 @@ void clSocketBase::Send(const std::string& msg) throw(clSocketException)
     Send(mb);
 }
 
-void clSocketBase::Send(const wxMemoryBuffer& msg) throw(clSocketException)
+void clSocketBase::Send(const wxMemoryBuffer& msg)
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -176,19 +195,32 @@ void clSocketBase::Send(const wxMemoryBuffer& msg) throw(clSocketException)
     }
 }
 
-std::string clSocketBase::error() const
+int clSocketBase::GetLastError()
+{
+#ifdef _WIN32
+    return ::WSAGetLastError();
+#else
+    return errno;
+#endif
+}
+
+std::string clSocketBase::error()
+{
+    return error(GetLastError());
+}
+
+std::string clSocketBase::error(const int errorCode)
 {
     std::string err;
 #ifdef _WIN32
     // Get the error message, if any.
-    DWORD errorMessageID = ::WSAGetLastError();
-    if(errorMessageID == 0) return "No error message has been recorded";
+    if(errorCode == 0) return "No error message has been recorded";
 
     LPSTR messageBuffer = nullptr;
     size_t size =
         FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                        NULL,
-                       errorMessageID,
+                       errorCode,
                        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                        (LPSTR)&messageBuffer,
                        0,
@@ -200,7 +232,7 @@ std::string clSocketBase::error() const
     LocalFree(messageBuffer);
     err = message;
 #else
-    err = strerror(errno);
+    err = strerror(errorCode);
 #endif
     return err;
 }
@@ -221,7 +253,7 @@ void clSocketBase::DestroySocket()
     m_socket = INVALID_SOCKET;
 }
 
-int clSocketBase::ReadMessage(wxString& message, int timeout) throw(clSocketException)
+int clSocketBase::ReadMessage(wxString& message, int timeout)
 {
     // send the length in string form to avoid binary / arch differences between remote and local machine
     char msglen[11];
@@ -239,22 +271,15 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw(clSocketExce
     message_len = ::atoi(msglen);
 
     bytesRead = 0;
-    char* buff = new char[message_len + 1];
-    memset(buff, 0, message_len + 1);
+    std::unique_ptr<char> pBuff(new char[message_len]);
 
     // read the entire amount we need
     int bytesLeft = message_len;
     int totalRead = 0;
     while(bytesLeft > 0) {
-        rc = Read(buff + totalRead, bytesLeft, bytesRead, timeout);
+        rc = Read(pBuff.get() + totalRead, bytesLeft, bytesRead, timeout);
         if(rc != kSuccess) {
-            wxDELETEA(buff);
             return rc;
-
-        } else if(rc == 0) {
-            // session was closed
-            wxDELETEA(buff);
-            throw clSocketException("connection closed by peer");
 
         } else {
             bytesLeft -= bytesRead;
@@ -263,12 +288,11 @@ int clSocketBase::ReadMessage(wxString& message, int timeout) throw(clSocketExce
         }
     }
 
-    buff[message_len] = '\0';
-    message = buff;
+    message.assign(pBuff.get(), message_len);
     return kSuccess;
 }
 
-void clSocketBase::WriteMessage(const wxString& message) throw(clSocketException)
+void clSocketBase::WriteMessage(const wxString& message)
 {
     if(m_socket == INVALID_SOCKET) {
         throw clSocketException("Invalid socket!");
@@ -282,7 +306,10 @@ void clSocketBase::WriteMessage(const wxString& message) throw(clSocketException
     char msglen[11];
     memset(msglen, 0, sizeof(msglen));
     sprintf(msglen, "%010d", len);
-    ::send(m_socket, msglen, sizeof(msglen) - 1, 0); // send it without the NULL byte
+    // send it without the NULL byte
+    if(::send(m_socket, msglen, sizeof(msglen) - 1, 0) < 0) {
+        throw clSocketException("Send error: " + error(errno));
+    }
 
     // now send the actual data
     Send(c_str);
@@ -313,7 +340,7 @@ void clSocketBase::MakeSocketBlocking(bool blocking)
 #endif
 }
 
-int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
+int clSocketBase::SelectWriteMS(long milliSeconds)
 {
     if(milliSeconds == -1) {
         return kSuccess;
@@ -346,7 +373,7 @@ int clSocketBase::SelectWriteMS(long milliSeconds) throw(clSocketException)
     }
 }
 
-int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
+int clSocketBase::SelectWrite(long seconds)
 {
     if(seconds == -1) {
         return kSuccess;
@@ -377,7 +404,7 @@ int clSocketBase::SelectWrite(long seconds) throw(clSocketException)
     }
 }
 
-int clSocketBase::SelectReadMS(long milliSeconds) throw(clSocketException)
+int clSocketBase::SelectReadMS(long milliSeconds)
 {
     if(milliSeconds == -1) {
         return kSuccess;

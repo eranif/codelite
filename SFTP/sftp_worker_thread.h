@@ -26,26 +26,39 @@
 #ifndef SFTPWRITERTHREAD_H
 #define SFTPWRITERTHREAD_H
 
-#include "worker_thread.h" // Base class: WorkerThread
 #include "cl_sftp.h"
-#include "ssh_account_info.h"
 #include "remote_file_info.h"
+#include "ssh_account_info.h"
+#include "worker_thread.h" // Base class: WorkerThread
 
 class SFTP;
+
+enum class eSFTPActions {
+    kUpload,
+    kDownload,
+    kConnect,
+    kDownloadAndOpenWithDefaultApp,
+    kDownloadAndOpenContainingFolder,
+    kRename,
+    kDelete,
+};
+
 class SFTPThreadRequet : public ThreadRequest
 {
     SSHAccountInfo m_account;
     wxString m_remoteFile;
     wxString m_localFile;
-    size_t m_retryCounter;
-    bool m_uploadSuccess;
-    int m_direction;
+    size_t m_retryCounter = 0;
+    bool m_uploadSuccess = false;
+    eSFTPActions m_action;
+    size_t m_permissions = 0;
+    wxString m_newRemoteFile;
 
 public:
-    enum { kUpload, kDownload, kConnect, kDownloadAndOpenWithDefaultApp, kDownloadAndOpenContainingFolder };
-
-public:
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile);
+    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
+                     size_t persmissions);
+    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
+    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
     SFTPThreadRequet(const RemoteFileInfo& remoteFile);
     SFTPThreadRequet(const SSHAccountInfo& accountInfo);
     SFTPThreadRequet(const SFTPThreadRequet& other);
@@ -62,9 +75,13 @@ public:
     const SSHAccountInfo& GetAccount() const { return m_account; }
     const wxString& GetRemoteFile() const { return m_remoteFile; }
     const wxString& GetLocalFile() const { return m_localFile; }
-    int GetDirection() const { return m_direction; }
-    void SetDirection(int d) { m_direction = d; }
+    eSFTPActions GetAction() const { return m_action; }
+    void SetAction(eSFTPActions d) { m_action = d; }
+    void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
+    size_t GetPermissions() const { return m_permissions; }
     ThreadRequest* Clone() const;
+    void SetNewRemoteFile(const wxString& newRemoteFile) { this->m_newRemoteFile = newRemoteFile; }
+    const wxString& GetNewRemoteFile() const { return m_newRemoteFile; }
 };
 
 class SFTPThreadMessage

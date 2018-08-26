@@ -42,6 +42,7 @@ class ContextCpp : public ContextBase
 
     static wxBitmap m_cppFileBmp;
     static wxBitmap m_hFileBmp;
+    static wxBitmap m_otherFileBmp;
 
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);
@@ -59,7 +60,7 @@ private:
     void DoUpdateCalltipHighlight();
 
 public:
-    virtual void ColourContextTokens(const wxArrayString& workspaceTokens);
+    virtual void ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr);
     /**
      * @brief
      * @return
@@ -70,12 +71,12 @@ public:
      * @return
      */
     virtual bool IsAtLineComment() const;
-    ContextCpp(LEditor* container);
+    ContextCpp(clEditor* container);
     virtual bool IsDefaultContext() const;
 
     virtual ~ContextCpp();
     ContextCpp();
-    virtual ContextBase* NewInstance(LEditor* container);
+    virtual ContextBase* NewInstance(clEditor* container);
     virtual void CompleteWord();
     virtual void CodeComplete(long pos = wxNOT_FOUND);
     virtual void GotoDefinition();
@@ -143,7 +144,7 @@ private:
     wxString GetWordUnderCaret();
     wxString GetFileImageString(const wxString& ext);
     wxString GetImageString(const TagEntry& entry);
-    wxString GetExpression(long pos, bool onlyWord, LEditor* editor = NULL, bool forCC = true);
+    wxString GetExpression(long pos, bool onlyWord, clEditor* editor = NULL, bool forCC = true);
     void DoGotoSymbol(TagEntryPtr tag);
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
     void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
@@ -151,10 +152,10 @@ private:
     void MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags);
     void DoOpenWorkspaceFile();
     void DoSetProjectPaths();
-    bool DoGetSingatureRange(int line, int& start, int& end, LEditor* ctrl);
+    bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
 
 public:
-    void DoMakeDoxyCommentString(DoxygenComment& dc);
+    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix);
 
 private:
     /**
@@ -172,13 +173,13 @@ private:
      * \param li
      * \return
      */
-    void ReplaceInFiles(const wxString& word, const std::list<CppToken>& li);
+    void ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li);
 
     /**
      * @brief format editor
      * @param editor
      */
-    void DoFormatEditor(LEditor* editor);
+    void DoFormatEditor(clEditor* editor);
 };
 
 #endif // CONTEXT_CPP_H

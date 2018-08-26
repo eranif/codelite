@@ -30,9 +30,7 @@ AbbreviationEntry::AbbreviationEntry()
 {
 }
 
-AbbreviationEntry::~AbbreviationEntry()
-{
-}
+AbbreviationEntry::~AbbreviationEntry() {}
 
 void AbbreviationEntry::DeSerialize(Archive& arch)
 {

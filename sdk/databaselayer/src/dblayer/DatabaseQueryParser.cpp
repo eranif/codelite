@@ -10,22 +10,30 @@ bool IsEmptyQuery(const wxString& strQuery)
 wxArrayString ParseQueries(const wxString& strQuery)
 {
   wxArrayString returnArray;
-  bool bInQuote = false;
+  bool bInDQuote = false;
+  bool bInSQuote = false;
   int nLast = 0;
 
-  for ( int i=0; i<(int)strQuery.Length(); i++ )
-  {
-      if ( strQuery.SubString(i, i) == _T("'") )
-          bInQuote = !bInQuote;
-      else if ( strQuery.SubString(i, i) == _T(";") && !bInQuote )
-      {
-          wxString str;
-          str << strQuery.SubString(nLast, i);
-          if (!IsEmptyQuery(str))
+  for (int i = 0; i < (int) strQuery.Length(); i++) {
+    if (!bInDQuote && strQuery.SubString(i, i) == _T("'")) {
+        if(!bInSQuote || strQuery.SubString(i - 1, i - 1) != _T("\\")) {
+            bInSQuote = !bInSQuote;
+        }
+            
+    }
+    else if (!bInSQuote && strQuery.SubString(i, i) == _T("\"")) {
+        if(!bInDQuote || strQuery.SubString(i - 1, i - 1) != _T("\\")) {
+          bInDQuote = !bInDQuote;
+        }
+    }
+    else if ( strQuery.SubString(i, i) == _T(";") && (!bInSQuote && !bInDQuote)) {
+        wxString str;
+        str << strQuery.SubString(nLast, i);
+        if (!IsEmptyQuery(str))
             returnArray.Add( str );
 
-          nLast = i + 1;
-      }
+        nLast = i + 1;
+    }
   }
 
   if ( nLast < (int)strQuery.Length() -1 )

@@ -9,6 +9,8 @@
   "m_outputFileName": "wxCodeCompletionBoxBase",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{

@@ -61,19 +61,9 @@ class FindUsageTab;
  */
 class OutputPane : public wxPanel
 {
-public:
-    static const wxString FIND_IN_FILES_WIN;
-    static const wxString BUILD_WIN;
-    static const wxString OUTPUT_WIN;
-    static const wxString OUTPUT_DEBUG;
-    static const wxString REPLACE_IN_FILES;
-    static const wxString TASKS;
-    static const wxString TRACE_TAB;
-    static const wxString SHOW_USAGE;
-    static const wxString CLANG_TAB;
-    
 protected:
-    struct Tab {
+    struct Tab
+    {
         wxString m_label;
         wxWindow* m_window;
         wxBitmap m_bmp;
@@ -91,11 +81,9 @@ protected:
         }
     };
     std::map<wxString, Tab> m_tabs;
-    
+
 private:
     wxString m_caption;
-    wxLog* m_logTargetOld;
-
     Notebook* m_book;
     FindResultsTab* m_findResultsTab;
     ReplaceInFilesPanel* m_replaceResultsTab;
@@ -123,7 +111,7 @@ protected:
     void OnBuildEnded(clBuildEvent& e);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleTab(clCommandEvent& event);
-    
+
 public:
     /**
      * Constructor

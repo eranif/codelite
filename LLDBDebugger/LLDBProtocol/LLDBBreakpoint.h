@@ -71,29 +71,29 @@ public:
     LLDBBreakpoint(const wxFileName& filename, int line);
     bool SameAs(LLDBBreakpoint::Ptr_t other) const;
     virtual ~LLDBBreakpoint();
-    
+
     /**
      * @brief copy breakpoint from other
      * @param other
      */
     void Copy(LLDBBreakpoint::Ptr_t other);
-    
+
     bool IsLocation() const {
         return m_type == kLocation;
     }
-    
+
     size_t GetNumChildren() const {
         return m_children.size();
     }
-    
+
     LLDBBreakpoint::Vec_t& GetChildren() {
         return m_children;
     }
-    
+
     const LLDBBreakpoint::Vec_t& GetChildren() const {
         return m_children;
     }
-    
+
     /**
      * @brief convert list of gdb breakpoints into LLDBBreakpoint vector
      */
@@ -121,7 +121,9 @@ public:
     void Invalidate() ;
 
     void SetFilename(const wxString& filename) {
-        this->m_filename = filename;
+        wxFileName normalizedFilename(filename);
+        normalizedFilename.Normalize();
+        this->m_filename = normalizedFilename.GetFullPath();
     }
     void SetLineNumber(int lineNumber) {
         this->m_lineNumber = lineNumber;
@@ -150,11 +152,11 @@ public:
     int GetId() const {
         return m_id;
     }
-    
+
     // Serialization API
     void FromJSON(const JSONElement& json);
     JSONElement ToJSON() const;
-    
+
 };
 
 #endif // LLDBBREAKPOINT_H

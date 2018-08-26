@@ -65,7 +65,7 @@ static unsigned char xml_res_file_0[] = {
 30,131,107,72,242,181,148,158,152,75,138,242,31,78,252,47,183,191,5,89,
 119,238,104,246,0,0,0,0,73,69,78,68,174,66,96,130};
 
-static size_t xml_res_size_1 = 228;
+static size_t xml_res_size_1 = 256;
 static unsigned char xml_res_file_1[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
@@ -76,9 +76,10 @@ static unsigned char xml_res_file_1[] = {
 45,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,
 120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,99,109,97,107,101,
 95,49,54,34,62,67,77,97,107,101,80,108,117,103,105,110,85,105,95,98,105,
-116,109,97,112,115,46,99,112,112,36,99,109,97,107,101,45,49,54,46,112,110,
-103,60,47,111,98,106,101,99,116,62,10,60,47,114,101,115,111,117,114,99,
-101,62,10};
+116,109,97,112,115,46,99,112,112,36,67,95,95,115,114,99,95,99,111,100,101,
+108,105,116,101,95,67,77,97,107,101,80,108,117,103,105,110,95,99,109,97,
+107,101,45,49,54,46,112,110,103,60,47,111,98,106,101,99,116,62,10,60,47,
+114,101,115,111,117,114,99,101,62,10};
 
 void wxCrafterR3nJ3cInitBitmapResources()
 {
@@ -93,7 +94,7 @@ void wxCrafterR3nJ3cInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$cmake-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
+    XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelite_CMakePlugin_cmake-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelite_CMakePlugin_CMakePluginUi_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
     wxXmlResource::Get()->Load(wxT("memory:XRC_resource/CMakePluginUi_bitmaps.cpp$C__src_codelite_CMakePlugin_CMakePluginUi_bitmaps.xrc"));
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags">
+<CodeLite_Workspace Name="codelite_utils" Database="./codelite_utils.tags" Version="10.0.0">
   <Project Name="build_all" Path="build_all.project" Active="Yes"/>
   <Project Name="codelite_launcher" Path="../codelite_launcher/codelite_launcher.project" Active="No"/>
   <Project Name="makedir" Path="../TestDir/makedir.project" Active="No"/>
@@ -50,13 +50,13 @@
       <Project Name="build_all" ConfigName="Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Release"/>
       <Project Name="codelite_echo" ConfigName="Release"/>
-      <Project Name="codelite_indexer" ConfigName="Release_Win"/>
+      <Project Name="codelite_indexer" ConfigName="Release"/>
       <Project Name="codelite_launcher" ConfigName="Release"/>
       <Project Name="codelite_make" ConfigName="Release"/>
       <Project Name="codelite_terminal" ConfigName="Release"/>
       <Project Name="codelitegcc" ConfigName="Release"/>
       <Project Name="le_exec" ConfigName="Release"/>
-      <Project Name="makedir" ConfigName="ReleaseUnicode"/>
+      <Project Name="makedir" ConfigName="Release"/>
       <Project Name="wx-config" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

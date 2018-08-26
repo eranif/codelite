@@ -15,8 +15,8 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent, bool createProjectFro
     m_filePickerPhpExe->SetPath(conf.GetPhpExe());
     if(createProjectFromWorkspaceFolder) {
         m_radioBoxCreateMethod->SetSelection(1);
-        m_dirPickerPath->SetPath(PHPWorkspace::Get()->GetFilename().GetPath());
     }
+    m_dirPickerPath->SetPath(PHPWorkspace::Get()->GetFilename().GetPath());
 }
 
 NewPHPProjectWizard::~NewPHPProjectWizard() {}

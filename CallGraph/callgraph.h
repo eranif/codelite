@@ -74,7 +74,7 @@ public:
      * @param parent
      * @return
      */
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     /**
      * @brief Function create plugin menu for Call graph used in menu Plugins of Codelite.
      * @param pluginsMenu
@@ -85,9 +85,8 @@ public:
      * @brief Function unplug the plugin from CodeLite IDE.
      */
     virtual void UnPlug();
-    
+
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
-    virtual void UnHookPopupMenu(wxMenu* menu, MenuType type);
 
     /**
      * @brief Return string with value path for external application gprof which is stored in configuration data.

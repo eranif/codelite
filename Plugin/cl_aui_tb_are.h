@@ -38,17 +38,17 @@
 
 class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt, public wxEvtHandler
 {
-    bool m_mswWithThemeEnabled;
+    bool m_isMainBook;
 
 public:
-    CLMainAuiTBArt();
+    CLMainAuiTBArt(bool isMainBook = false);
     virtual ~CLMainAuiTBArt();
     wxAuiToolBarArt* Clone() { return new CLMainAuiTBArt(); }
     virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     virtual void DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     virtual void DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
     virtual void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
-
+    virtual void DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     void OnThemeChanged(wxCommandEvent& event);
 };
 

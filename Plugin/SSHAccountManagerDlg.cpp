@@ -27,8 +27,8 @@
 #if USE_SFTP
 
 #include "AddSSHAcountDlg.h"
-#include "ssh_account_info.h"
 #include "sftp_settings.h"
+#include "ssh_account_info.h"
 #include "windowattrmanager.h"
 #include <wx/msgdlg.h>
 
@@ -43,6 +43,9 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     for(; iter != accounts.end(); ++iter) {
         DoAddAccount(*iter);
     }
+    m_dvListCtrlAccounts->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrlAccounts->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrlAccounts->GetColumn(2)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     SetName("SSHAccountManagerDlg");
     WindowAttrManager::Load(this);
 }
@@ -56,7 +59,6 @@ SSHAccountManagerDlg::~SSHAccountManagerDlg()
         m_dvListCtrlAccounts->SetItemData(item, (wxUIntPtr)NULL);
     }
     m_dvListCtrlAccounts->DeleteAllItems();
-    
 }
 
 void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
@@ -74,8 +76,7 @@ void SSHAccountManagerDlg::OnDeleteAccount(wxCommandEvent& event)
     wxDataViewItemArray sels;
     m_dvListCtrlAccounts->GetSelections(sels);
 
-    if(::wxMessageBox(_("Are you sure you want to delete the selected accounts?"),
-                      "SFTP",
+    if(::wxMessageBox(_("Are you sure you want to delete the selected accounts?"), "SFTP",
                       wxYES_NO | wxCENTER | wxCANCEL | wxICON_QUESTION | wxNO_DEFAULT) != wxYES) {
         return;
     }
@@ -92,9 +93,7 @@ void SSHAccountManagerDlg::OnEditAccount(wxCommandEvent& event)
 {
     wxDataViewItemArray sels;
     m_dvListCtrlAccounts->GetSelections(sels);
-    if(sels.GetCount() == 1) {
-        DoEditAccount(sels.Item(0));
-    }
+    if(sels.GetCount() == 1) { DoEditAccount(sels.Item(0)); }
 }
 
 void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
@@ -120,15 +119,12 @@ void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
     event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
 }
 
-void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event) 
+void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
 }
 
-void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event)
-{
-    DoEditAccount(event.GetItem());
-}
+void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event) { DoEditAccount(event.GetItem()); }
 
 void SSHAccountManagerDlg::DoEditAccount(const wxDataViewItem& item)
 {

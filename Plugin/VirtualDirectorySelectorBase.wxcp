@@ -9,6 +9,8 @@
   "m_outputFileName": "VirtualDirectorySelectorBase",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -17,16 +19,16 @@
    "border": 0,
    "gbSpan": ",",
    "gbPosition": ",",
-   "m_styles": ["wxDEFAULT_DIALOG_STYLE"],
+   "m_styles": ["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
    "m_sizerFlags": [],
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": ""
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": ""
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -156,7 +158,7 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_LEFT"],
        "m_properties": [{
          "type": "winid",
          "m_label": "ID:",
@@ -164,11 +166,11 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": ""
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
-         "m_value": ""
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Name:",
@@ -188,7 +190,7 @@
         }, {
          "type": "font",
          "m_label": "Font:",
-         "m_value": "wxSYS_DEFAULT_GUI_FONT,normal,bold,normal"
+         "m_value": ""
         }, {
          "type": "bool",
          "m_label": "Hidden",
@@ -216,7 +218,7 @@
         }, {
          "type": "multi-string",
          "m_label": "Label:",
-         "m_value": "Select Virtual Directory:"
+         "m_value": "Select Virtual Folder:"
         }, {
          "type": "string",
          "m_label": "Wrap:",
@@ -239,7 +241,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "300,300"
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",

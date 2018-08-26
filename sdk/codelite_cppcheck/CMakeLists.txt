@@ -15,6 +15,7 @@ set(ADDITIONAL_LIBRARIES "-lshlwapi")
 endif(WIN32)
 
 include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/externals/tinyxml")
+include_directories("${CL_SRC_ROOT}/sdk/codelite_cppcheck/externals/simplecpp")
 FILE(GLOB SRCS "cli/*.cpp" "lib/*.cpp" "externals/*/*.cpp")
 
 # CppChecker 1.63 requires files stored in cfg/ at run-time.  For some daft reason, it only looks for this by default inside ${BINDIR/},

@@ -2,8 +2,14 @@
 
 EclipsePythonThemeImporter::EclipsePythonThemeImporter()
 {
-    SetKeywords0("and assert break class continue def del elif else except exec finally for from global if import in "
-                 "is lambda None not or pass print raise return try while yield");
+    SetKeywords0("and as assert break class continue def del elif else except exec finally for from global if import in "
+                 "is lambda not or pass print raise return try while with yield");
+    SetKeywords1("bool bytes bytearray dict float frozenset int list long set str tuple type unicode");
+    SetKeywords2("__import__ abs all any ascii bin callable chr classmethod compile complex delattr dir divmod "
+                 "enumerate eval filter format getattr globals hasattr hash help hex id input isinstance issubclass "
+                 "iter len locals map max memoryview min next object oct open ord pow property range raw_input repr "
+                 "reversed round setattr slice sorted staticmethod sum super vars zip");
+    SetKeywords3("True False None");
     SetFileExtensions("*.py;waf;wscript;wscript_build");
     m_langName = "python";
 }

@@ -25,10 +25,13 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "wx/filename.h"
 #include "codelite_exports.h"
+#include "macros.h"
+#include "wx/filename.h"
 #include <wx/filename.h>
 #include <wx/log.h>
+
+#define clRemoveFile(filename) FileUtils::RemoveFile(filename, (wxString() << __FILE__ << ":" << __LINE__))
 
 class WXDLLIMPEXP_CL FileUtils
 {
@@ -45,10 +48,7 @@ public:
 
         ~Deleter()
         {
-            if(m_filename.Exists()) {
-                wxLogNull noLog;
-                ::wxRemoveFile(m_filename.GetFullPath());
-            }
+            if(m_filename.Exists()) { clRemoveFile(m_filename); }
         }
     };
 
@@ -73,7 +73,7 @@ public:
     /**
      * @brief launch the OS default terminal at a given path
      */
-    static void OpenTerminal(const wxString& path);
+    static void OpenTerminal(const wxString& path, const wxString& user_command = "");
 
     /**
      * @brief open ssh terminal
@@ -82,8 +82,8 @@ public:
      * @param password the password
      * @param port ssh port
      */
-    static void OpenSSHTerminal(
-        const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
+    static void OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
+                                int port = 22);
 
     /**
      * @brief OSX only: open Terminal and return its TTY
@@ -91,6 +91,11 @@ public:
      * @param [output] tty the TTY of the launched terminal
      */
     static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
+
+    /**
+     * @brief return the command needed to open OSX terminal at a given directory and launch a command
+     */
+    static wxString GetOSXTerminalCommand(const wxString& command, const wxString& workingDirectory);
 
     /**
      * @brief file masking search
@@ -114,6 +119,28 @@ public:
     static bool FuzzyMatch(const wxString& needle, const wxString& haystack);
 
     /**
+     * @brief an efficient way to tokenize string into words (separated by SPACE and/or TAB)
+     * @code
+     * wxString str = "My String That Requires Tokenize";
+     * wxString word; // The output
+     * size_t offset = 0;
+     * while(clNextWord(str, offset, word)) {
+     *      // Do something with "word" here
+     * }
+     * @codeend
+     * @param str the string to tokenize
+     * @param offset used internally, allocate one on the stack and initialise it to 0
+     * @param word [output]
+     * @return true if a word was found
+     */
+    static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
+
+    /**
+     * @brief split a string by whitespace
+     */
+    static size_t SplitWords(const wxString& str, wxStringSet_t& outputSet, bool makeLower = false);
+
+    /**
      * @brief decode URI using percent encoding
      */
     static wxString DecodeURI(const wxString& uri);
@@ -124,6 +151,11 @@ public:
     static wxString EncodeURI(const wxString& uri);
 
     /**
+     * @brief escape string. Each space and double quotes marker is escaped with backslash
+     */
+    static wxString EscapeString(const wxString& str);
+
+    /**
      * @brief is the file or folder a hidden file?
      */
     static bool IsHidden(const wxFileName& path);
@@ -131,5 +163,55 @@ public:
      * @brief is the file or folder a hidden file?
      */
     static bool IsHidden(const wxString& path);
+
+    /**
+     * @brief set permissions to filename
+     */
+    static bool SetFilePermissions(const wxFileName& filename, mode_t perm);
+
+    /**
+     * @brief get file permissions
+     */
+    static bool GetFilePermissions(const wxFileName& filename, mode_t& perm);
+
+    /**
+     * @brief return the file modification time
+     */
+    static time_t GetFileModificationTime(const wxFileName& filename);
+
+    /**
+     * @brief return the file size, in bytes
+     */
+    static size_t GetFileSize(const wxFileName& filename);
+
+    /**
+     * @brief replace any unwanted characters with underscore
+     * The chars that we replace are:
+     * @-^%&$#@!(){}[]+=;,.
+     * @param name
+     * @return modified name excluding the above chars (will be replaced with _)
+     */
+    static wxString NormaliseName(const wxString& name);
+
+    /**
+     * @brief remove a file from the file system
+     * @param filename file name to remove
+     * @param context unique context string which will be logged to the log file
+     */
+    static bool RemoveFile(const wxFileName& filename, const wxString& context = "")
+    {
+        return RemoveFile(filename.GetFullPath(), context);
+    }
+    /**
+     * @brief same as above
+     */
+    static bool RemoveFile(const wxString& filename, const wxString& context = "");
+    
+    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
+    
+    /**
+     * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
+     */
+    static wxString RealPath(const wxString& filepath);
 };
 #endif // FILEUTILS_H

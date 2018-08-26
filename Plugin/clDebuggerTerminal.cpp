@@ -47,7 +47,7 @@ void clDebuggerTerminalPOSIX::Launch(const wxString &title)
     wxString symblink;
     ::LaunchTerminalForDebugger(m_title, symblink, m_tty, m_pid);
     wxUnusedVar(symblink);
-    
+
     if ( IsValid() ) {
         CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty);
     }
@@ -75,14 +75,14 @@ void clDebuggerTerminalPOSIX::Clear()
         if (result.Trim().ToLong(&parentID)) {
             wxString command(wxString::Format("ps -o command= -p %i", (int)parentID));
             wxString name = ProcUtils::SafeExecuteCommand(command);
-            if (name.Contains("--separate")) { 
+            if (name.Contains("--separate")) {
                 killParent = true; //It _is_ konsole, which will have been launched with --separate as an option
             }
         }
-        
+
         // terminate the process
         ::wxKill(m_pid, wxSIGTERM);
-        
+
         if (killParent) {
             ::wxKill(parentID, wxSIGTERM);
         }
@@ -91,4 +91,19 @@ void clDebuggerTerminalPOSIX::Clear()
     m_pid = wxNOT_FOUND;
     m_tty.Clear();
     m_title.Clear();
+}
+
+wxString clDebuggerTerminalPOSIX::MakeExeTitle(const wxString &exePath, const wxString &args)
+{
+    return wxString(wxT("Debugging: ")) << exePath << wxT(" ") << args;
+}
+
+wxString clDebuggerTerminalPOSIX::MakeCoreTitle(const wxString &coreFile)
+{
+    return wxString(wxT("Debugging core: ")) << coreFile;
+}
+
+wxString clDebuggerTerminalPOSIX::MakePidTitle(const int pid)
+{
+    return wxString(wxT("Debugging console pid: ")) << pid;
 }

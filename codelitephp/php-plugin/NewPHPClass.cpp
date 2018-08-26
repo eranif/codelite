@@ -116,53 +116,52 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         classString.RemoveLast(2).Append(" ");
     }
 
-    classString << "{" << EOL;
-    
+    classString  << EOL << "{" << EOL;
+
     if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
-        classString << indent << indent << "/** @var " << GetNamespace() << "\\" << GetName() << "*/" << EOL;
-        classString << indent << indent << "protected static $instance = null;" << EOL;
+        classString << indent << "/** @var self */" << EOL;
+        classString << indent << "protected static $instance;" << EOL;
     }
-    
-    if(IsClass() && (GetFlags() & GEN_CTOR)) {
+
+    if(IsClass() && (GetFlags() & (GEN_CTOR | GEN_SINGLETON))) {
         if(GetFlags() & GEN_SINGLETON) {
-            classString << indent << "protected function __construct() {" << EOL;
-        } else {
-            classString << indent << "public function __construct() {" << EOL;
+            classString << EOL;
         }
-        classString << indent << indent << EOL;
-        classString << indent << "}" << EOL << EOL;
+        if(GetFlags() & GEN_SINGLETON) {
+            classString << indent << "protected function __construct()" << EOL;
+        } else {
+            classString << indent << "public function __construct()" << EOL;
+        }
+        classString << indent << "{" << EOL;
+        if(!(GetFlags() & GEN_SINGLETON)) {
+            classString << indent << indent << EOL;
+        }
+        classString << indent << "}" << EOL;
     }
-    
+
     if(IsClass() && (GetFlags() & GEN_DTOR)) {
-        if(GetFlags() & GEN_SINGLETON) {
-            classString << indent << "protected function __destruct() {" << EOL;
-        } else {
-            classString << indent << "public function __destruct() {" << EOL;
+        if (GetFlags() & (GEN_CTOR | GEN_SINGLETON)) {
+            classString << EOL;
         }
-        classString << indent << "public function __destruct() {" << EOL;
+        classString << indent << "public function __destruct()" << EOL;
+        classString << indent << "{" << EOL;
         classString << indent << indent << EOL;
-        classString << indent << "}" << EOL << EOL;
+        classString << indent << "}" << EOL;
     }
 
     if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
-        wxString returnType;
-        if(GetNamespace().IsEmpty()) {
-            returnType = GetName();
-        } else {
-            // user provided a namespace
-            returnType << GetNamespace() << "\\" << GetName();
-        }
-
-        // Remove duplicate backslahes
-        while(returnType.Replace("\\\\", "\\")) {
-        }
-        classString << indent << "/** @return " << returnType << " **/" << EOL;
-        classString << indent << "static public function getInstance() {" << EOL;
-        classString << indent << indent << "if (is_null(self::$instance)) {" << EOL;
-        classString << indent << indent << indent << "self::$instance = new " << GetName() << "();" << EOL;
+        classString << EOL;
+        classString << indent << "/**" << EOL;
+        classString << indent << " * @return self" << EOL;
+        classString << indent << " */" << EOL;
+        classString << indent << "public static function getInstance()" << EOL;
+        classString << indent << "{" << EOL;
+        classString << indent << indent << "if (!self::$instance) {" << EOL;
+        classString << indent << indent << indent << "self::$instance = new self();" << EOL;
         classString << indent << indent << "}" << EOL;
+        classString << EOL;
         classString << indent << indent << "return self::$instance;" << EOL;
-        classString << indent << "}" << EOL << EOL;
+        classString << indent << "}" << EOL;
     }
     classString << "}" << EOL;
     return classString;

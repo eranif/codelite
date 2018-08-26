@@ -35,6 +35,7 @@
 #include "event_notifier.h"
 #include "debuggermanager.h"
 #include "cl_command_event.h"
+#include <algorithm>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -380,9 +381,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
                     // {name="argv",value="0x602420"}],file="C:/src/TestArea/TestEXE/main.cpp",fullname="C:\\src\\TestArea\\TestEXE\\main.cpp",line="5"},thread-id="1",stopped-threads="all"
 
                     // try to locate the file name + line number:
-                    int length = -1;
                     int filePos = line.Find(wxT("fullname=\""));
-                    length = wxStrlen(wxT("fullname=\""));
+                    int length = wxStrlen(wxT("fullname=\""));
                     wxString filename;
                     long curline = -1;
                     wxFileName curfile;
@@ -1059,6 +1059,16 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
         li.push_back(breakpoint);
     }
 
+    // Filter duplicate file:line breakpoints
+    std::vector<BreakpointInfo> uniqueBreakpoints;
+    std::for_each(li.begin(), li.end(), [&](const BreakpointInfo& bp) {
+        if(bp.debugger_id == (long)bp.debugger_id) {
+            // real breakpoint ID
+            uniqueBreakpoints.push_back(bp);
+        }
+    });
+    
+    li.swap(uniqueBreakpoints);
     m_observer->ReconcileBreakpoints(li);
     return true;
 }

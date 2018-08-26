@@ -26,42 +26,54 @@
 #ifndef CLTREECTRLPANEL_H
 #define CLTREECTRLPANEL_H
 
-#include "wxcrafter_plugin.h"
 #include "bitmap_loader.h"
-#include "cl_command_event.h"
 #include "clFileViwerTreeCtrl.h"
-#include <imanager.h>
+#include "cl_command_event.h"
 #include "cl_config.h"
+#include "wxcrafter_plugin.h"
+#include <imanager.h>
 
+class clToolBar;
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
 {
 protected:
+    virtual void OnLinkEditor(wxCommandEvent& event);
+    virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
     BitmapLoader* m_bmpLoader;
     clConfig* m_config;
     wxString m_viewName;
     clTreeCtrlPanelDefaultPage* m_defaultView;
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen;
-    size_t m_options;
+    int m_options;
+    clToolBar* m_toolbar;
 
 public:
     enum {
         kShowHiddenFiles = (1 << 0),
         kShowHiddenFolders = (1 << 1),
+        kLinkToEditor = (1 << 2),
+        kShowRootFullPath = (1 << 3),
     };
 
 protected:
     void ToggleView();
+    void RefreshNonTopLevelFolder(const wxTreeItemId& item);
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
 
     /**
+     * @brief getter for the toolbar
+     */
+    clToolBar* GetToolBar() { return m_toolbar; }
+
+    /**
      * @brief set the tree options
      */
-    void SetOptions(size_t options) { m_options = options; }
+    void SetOptions(int options) { m_options = options; }
 
     /**
      * @brief set the new file template (default is "Untitled.txt")
@@ -107,9 +119,14 @@ public:
      */
     bool ExpandToFile(const wxFileName& filename);
 
+    /**
+     * @brief return true if a folder is opened in this view
+     */
+    bool IsFolderOpened() const;
+
 protected:
     void UpdateItemDeleted(const wxTreeItemId& item);
-    void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items);
+    void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;
 
     /**
      * @brief ensure that item is selected (single selection)
@@ -120,9 +137,7 @@ protected:
      * tree ctrl items. You can always assume that the folders and the folderItems are of the same
      * size. Same for the file arrays
      */
-    void GetSelections(wxArrayString& folders,
-                       wxArrayTreeItemIds& folderItems,
-                       wxArrayString& files,
+    void GetSelections(wxArrayString& folders, wxArrayTreeItemIds& folderItems, wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
 
     // Make the event handler functions virtual
@@ -140,6 +155,7 @@ protected:
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnRenameFile(wxCommandEvent& event);
     virtual void OnDeleteSelections(wxCommandEvent& event);
+    virtual void OnRenameFolder(wxCommandEvent& event);
     virtual void OnFindInFilesFolder(wxCommandEvent& event);
     virtual void OnOpenContainingFolder(wxCommandEvent& event);
     virtual void OnOpenShellFolder(wxCommandEvent& event);
@@ -152,7 +168,7 @@ protected:
 
     bool IsTopLevelFolder(const wxTreeItemId& item);
 
-    clTreeCtrlData* GetItemData(const wxTreeItemId& item);
+    clTreeCtrlData* GetItemData(const wxTreeItemId& item) const;
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
     void DoCloseFolder(const wxTreeItemId& item);

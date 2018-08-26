@@ -44,7 +44,7 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
 {
     m_strings.clear();
     m_ptr = src.m_ptr;
-    for(size_t i=0; i<src.m_strings.size(); ++i) {
+    for(size_t i = 0; i < src.m_strings.size(); ++i) {
         m_strings.Add(src.m_strings.Item(i).c_str());
     }
     m_fileName = src.m_fileName;
@@ -110,7 +110,6 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     // Call parent operator =
     clCommandEvent::operator=(src);
     // Implement our copy c tor
-    m_tags = src.m_tags;
     m_editor = src.m_editor;
     m_word = src.m_word;
     m_position = src.m_position;
@@ -118,6 +117,7 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     m_insideCommentOrString = src.m_insideCommentOrString;
     m_entry = src.m_entry;
     m_definitions = src.m_definitions;
+    m_entries = src.m_entries;
     return *this;
 }
 
@@ -129,7 +129,9 @@ clColourEvent::clColourEvent(const clColourEvent& event) { *this = event; }
 
 clColourEvent::clColourEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
+#if wxUSE_GUI
     , m_page(NULL)
+#endif
     , m_isActiveTab(false)
 {
 }
@@ -140,11 +142,13 @@ clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 {
     // Call parent operator =
     clCommandEvent::operator=(src);
+#if wxUSE_GUI
     m_bgColour = src.m_bgColour;
     m_fgColour = src.m_fgColour;
     m_page = src.m_page;
-    m_isActiveTab = src.m_isActiveTab;
     m_borderColour = src.m_borderColour;
+#endif
+    m_isActiveTab = src.m_isActiveTab;
     return *this;
 }
 
@@ -159,6 +163,7 @@ clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
     , m_projectOnly(false)
     , m_warningCount(0)
     , m_errorCount(0)
+    , m_isRunning(false)
 {
 }
 
@@ -174,6 +179,8 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
     m_projectOnly = src.m_projectOnly;
     m_errorCount = src.m_errorCount;
     m_warningCount = src.m_warningCount;
+    m_kind = src.m_kind;
+    m_isRunning = src.m_isRunning;
     return *this;
 }
 
@@ -183,6 +190,7 @@ clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
 clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
     , m_features(kAllFeatures)
+    , m_memoryBlockSize(32)
 {
 }
 
@@ -203,6 +211,9 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_workingDirectory = other.m_workingDirectory; // wxEVT_DBG_UI_CORE_FILE, wxEVT_DBG_UI_QUICK_DEBUG
     m_arguments = other.m_arguments;               // wxEVT_DBG_UI_QUICK_DEBUG
     m_startupCommands = other.m_startupCommands;   // wxEVT_DBG_UI_QUICK_DEBUG
+    m_memoryBlockSize = other.m_memoryBlockSize;
+    m_memoryAddress = other.m_memoryAddress;
+    m_memoryBlockValue = other.m_memoryBlockValue;
     return *this;
 }
 
@@ -276,15 +287,21 @@ clSourceFormatEvent& clSourceFormatEvent::operator=(const clSourceFormatEvent& s
 
 clContextMenuEvent::clContextMenuEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
+#if wxUSE_GUI
+    , m_menu(NULL)
+#endif
     , m_editor(NULL)
 {
 }
+
 clContextMenuEvent::clContextMenuEvent(const clContextMenuEvent& event) { *this = event; }
 clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
 {
     clCommandEvent::operator=(src);
     m_editor = src.m_editor;
+#if wxUSE_GUI
     m_menu = src.m_menu;
+#endif
     m_path = src.m_path;
     return *this;
 }
@@ -330,6 +347,26 @@ clProjectSettingsEvent::clProjectSettingsEvent(wxEventType commandType, int wini
 clProjectSettingsEvent::~clProjectSettingsEvent() {}
 
 //------------------------------------------------------------------------
+// clFindEvent
+//------------------------------------------------------------------------
+clFindEvent& clFindEvent::operator=(const clFindEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_ctrl = src.m_ctrl;
+    return *this;
+}
+
+clFindEvent::clFindEvent(const clFindEvent& event) { *this = event; }
+
+clFindEvent::clFindEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+    , m_ctrl(NULL)
+{
+}
+
+clFindEvent::~clFindEvent() {}
+
+//------------------------------------------------------------------------
 // clParseEvent
 //------------------------------------------------------------------------
 
@@ -371,5 +408,45 @@ clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
     clCommandEvent::operator=(src);
     m_process = src.m_process;
     m_output = src.m_output;
+    return *this;
+}
+
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+clEditorConfigEvent::~clEditorConfigEvent() {}
+
+clEditorConfigEvent::clEditorConfigEvent(const clEditorConfigEvent& event) { *this = event; }
+
+clEditorConfigEvent::clEditorConfigEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clEditorConfigEvent& clEditorConfigEvent::operator=(const clEditorConfigEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_editorConfigSection = src.m_editorConfigSection;
+    return *this;
+}
+
+// --------------------------------------------------------------
+// Compiler event
+// --------------------------------------------------------------
+clGotoEvent::clGotoEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clGotoEvent::clGotoEvent(const clGotoEvent& src) { *this = src; }
+
+clGotoEvent::~clGotoEvent() {}
+
+clGotoEvent& clGotoEvent::operator=(const clGotoEvent& src)
+{
+    if(this == &src) { return *this; }
+    clCommandEvent::operator=(src);
+    m_entries = src.m_entries;
+    m_entry = src.m_entry;
     return *this;
 }

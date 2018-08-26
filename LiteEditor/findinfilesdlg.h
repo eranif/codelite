@@ -37,6 +37,7 @@ class FindInFilesDialog : public FindInFilesDialogBase
     wxStringSet_t m_nonPersistentSearchPaths;
     
 protected:
+    virtual void OnLookInKeyDown(wxKeyEvent& event);
     virtual void OnReplaceUI(wxUpdateUIEvent& event);
     virtual void OnClearSelectedPathUI(wxUpdateUIEvent& event);
     virtual void OnClearSelectedPath(wxCommandEvent& event);
@@ -54,7 +55,8 @@ protected:
     // Append new search path, ensure singularity
     void DoAddSearchPath(const wxString& path);
     void DoAddSearchPaths(const wxArrayString& paths);
-
+    void DoDeletedSelectedPaths();
+    
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnAddPath(wxCommandEvent& event);

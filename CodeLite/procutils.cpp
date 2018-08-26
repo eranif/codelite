@@ -359,7 +359,6 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     }
 
     for(i = 0; i < nof_procs; i++) {
-        ProcessEntry entry;
         if(ki[i].ki_ppid == pid) proclist.push_back(ki[i].ki_pid);
     }
 

@@ -62,6 +62,8 @@ protected:
     bool       m_scanC;
     bool       m_scanD1;
     bool       m_scanD2;
+    bool       m_caseSensitiveUserDictionary;
+    bool       m_ignoreSymbolsInTagsDatabase;
 
 public:
     const wxString& GetDictionaryPath() const {
@@ -92,6 +94,12 @@ public:
     void            SetScanStrings( const bool& scanStrings ) {
         this->m_scanStrings = scanStrings;
     }
+    void            SetCaseSensitiveUserDictionary( const bool& caseSensitiveUserDictionary ) {
+        this->m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
+	}
+    void            SetIgnoreSymbolsInTagsDatabase( const bool& ignoreSymbolsInTagsDatabase ) {
+        this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
+    }
 
     bool GetScanC() const {
         return m_scanC;
@@ -107,6 +115,12 @@ public:
     }
     bool GetScanStrings() const {
         return m_scanStrings;
+    }
+    bool GetCaseSensitiveUserDictionary() const {
+        return m_caseSensitiveUserDictionary;
+	}
+    bool GetIgnoreSymbolsInTagsDatabase() const {
+        return m_ignoreSymbolsInTagsDatabase;
     }
     /** Constructor */
     SpellCheckerSettings( wxWindow* parent );

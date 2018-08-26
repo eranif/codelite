@@ -77,7 +77,7 @@ bool EnvironmentConfig::Load()
 
                 // this is an old version, convert it to the new format
                 EvnVarList vars;
-                std::map<wxString, wxString> envSets;
+                wxStringMap_t envSets;
                 wxString content;
 
                 wxXmlNode* child = node->GetChildren();

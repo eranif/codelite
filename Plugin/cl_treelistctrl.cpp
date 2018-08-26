@@ -59,6 +59,7 @@
 #include <wx/renderer.h>
 #include "codelite_exports.h"
 #include "drawingutils.h"
+#include "globals.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -74,11 +75,9 @@
 
 #include <wx/log.h> // only required for debugging purpose
 
-#ifndef __WXOSX__
 #if wxVERSION_NUMBER > 3100
     // The 'Tree' of wxTreeItemAttr no longer exists
     #define wxTreeItemAttr wxItemAttr
-#endif
 #endif
 
 // ---------------------------------------------------------------------------
@@ -1070,7 +1069,7 @@ bool clEditTextCtrl::Destroy()
     // I don't think this is needed any longer in >=2.9 (and it doesn't compile)
     wxTheApp->GetTraits()->ScheduleForDestroy(this);
 #endif
-    return true;
+    return wxTextCtrl::Destroy();
 }
 
 void clEditTextCtrl::OnChar(wxKeyEvent& event)
@@ -3573,7 +3572,6 @@ void clTreeListMainWindow::OnChar(wxKeyEvent& event)
         int col = 0;
         wxPoint abs_p = CalcUnscrolledPosition(wxPoint(1, 1));
         // PAGE-UP: first go the the first visible row
-        newItem = m_rootItem->HitTest(abs_p, this, flags, col, 0);
         newItem = GetFirstVisible(false, true);
         // if we are already there then scroll back one page
         if(newItem == m_curItem) {
@@ -3657,7 +3655,6 @@ void clTreeListMainWindow::OnChar(wxKeyEvent& event)
         int col = 0;
         wxPoint abs_p = CalcUnscrolledPosition(wxPoint(1, GetClientSize().GetHeight() - m_curItem->GetHeight()));
         // PAGE-UP: first go the the first visible row
-        newItem = m_rootItem->HitTest(abs_p, this, flags, col, 0);
         newItem = GetLastVisible(false, true);
         // if we are already there then scroll down one page
         if(newItem == m_curItem) {
@@ -3859,7 +3856,7 @@ void clTreeListMainWindow::OnMouse(wxMouseEvent& event)
 
     // ---------- DETERMINE EVENT ----------
     /*
-    wxLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> dragging=<%d>",
+    clLogMessage("OnMouse: LMR down=<%d, %d, %d> up=<%d, %d, %d> LDblClick=<%d> dragging=<%d>",
         event.LeftDown(), event.MiddleDown(), event.RightDown(),
         event.LeftUp(), event.MiddleUp(), event.RightUp(),
         event.LeftDClick(), event.Dragging());
@@ -4476,29 +4473,13 @@ bool clTreeListCtrl::Create(wxWindow* parent,
     if(!wxControl::Create(parent, id, pos, size, ctrl_style, validator, name)) {
         return false;
     }
-#ifdef __WXMSW__
-    wxUxThemeEngine* theme = /*wxUxThemeEngine::GetIfActive()*/ NULL;
-#endif
-
-#ifdef __WXMSW__
-    if(theme) {
-        theme->SetWindowTheme(GetHwndOf(this), L"EXPLORER", NULL);
-    }
-#endif
+    MSWSetNativeTheme(this);
 
     m_main_win = new clTreeListMainWindow(this, -1, wxPoint(0, 0), size, main_style, validator);
-#ifdef __WXMSW__
-    if(theme) {
-        theme->SetWindowTheme(GetHwndOf(m_main_win), L"EXPLORER", NULL);
-    }
-#endif
+    MSWSetNativeTheme(m_main_win);
 
     m_header_win = new clTreeListHeaderWindow(this, -1, m_main_win, wxPoint(0, 0), wxDefaultSize, wxTAB_TRAVERSAL);
-#ifdef __WXMSW__
-    if(theme) {
-        theme->SetWindowTheme(GetHwndOf(m_header_win), L"EXPLORER", NULL);
-    }
-#endif
+    MSWSetNativeTheme(m_header_win);
     CalculateAndSetHeaderHeight();
     return true;
 }

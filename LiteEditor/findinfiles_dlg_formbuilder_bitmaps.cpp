@@ -184,6 +184,6 @@ void wxCABC4InitBitmapResources()
 
     XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$.._bitmaps_16-find_in_files.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$.._bitmaps_16-find_in_files@2x.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_mnt_SanDisk128-common_david_devel_git_CL_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_home_eran_devl_codelite_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_home_eran_devl_codelite_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"));
 }

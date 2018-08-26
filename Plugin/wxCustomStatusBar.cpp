@@ -13,11 +13,11 @@ wxDEFINE_EVENT(wxEVT_STATUSBAR_CLICKED, clCommandEvent);
 wxCustomStatusBarArt::wxCustomStatusBarArt(const wxString& name)
     : m_name(name)
 {
-    m_penColour = wxColour(125, 125, 125);
-    m_bgColour = wxColour(86, 86, 86);
-    m_separatorColour = wxColour(50, 50, 50);
-    m_textColour = *wxWHITE;
-    m_textShadowColour = *wxBLACK;
+    m_bgColour = wxColour(171, 177, 186);
+    m_penColour = m_bgColour;//wxColour(125, 125, 125);
+    m_separatorColour = m_bgColour;//wxColour(50, 50, 50);
+    m_textColour = wxColour(67, 74, 86);
+    m_textShadowColour = m_bgColour;//*wxBLACK;
 }
 
 void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text)
@@ -88,7 +88,6 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 
             memDc.SelectObject(bmp);
             wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-            font.SetPointSize(10);
             memDc.SetFont(font);
             wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
 
@@ -116,10 +115,11 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
             Render(memDc, rect, art);
             m_rect = origRect;
             memDc.SelectObject(wxNullBitmap);
+            
             // bmp contains the field content, draw it
             wxClientDC dc(m_parent);
             m_parent->PrepareDC(dc);
-            dc.DrawBitmap(bmp, m_rect.GetTopLeft());
+            dc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
         }
     }
 }

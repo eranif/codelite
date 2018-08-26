@@ -22,42 +22,33 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include "frame.h"
+#include "clStrings.h"
+#include "clTabTogglerHelper.h"
+#include "dockablepanemenumanager.h"
 #include "editor_config.h"
-#include "new_build_tab.h"
-#include <wx/dcbuffer.h>
 #include "event_notifier.h"
-#include "pluginmanager.h"
-#include "output_pane.h"
 #include "findresultstab.h"
 #include "findusagetab.h"
-#include "dockablepanemenumanager.h"
-#include "replaceinfilespanel.h"
+#include "frame.h"
 #include "new_build_tab.h"
+#include "output_pane.h"
+#include "pluginmanager.h"
+#include "replaceinfilespanel.h"
 #include "shelltab.h"
 #include "taskpanel.h"
 #include "wxcl_log_text_ctrl.h"
 #include <algorithm>
+#include <wx/aui/framemanager.h>
+#include <wx/dcbuffer.h>
+#include <wx/xrc/xmlres.h>
 
 #if HAS_LIBCLANG
 #include "ClangOutputTab.h"
 #endif
 
-const wxString OutputPane::FIND_IN_FILES_WIN = _("Search");
-const wxString OutputPane::BUILD_WIN = _("Build");
-const wxString OutputPane::OUTPUT_WIN = _("Output");
-const wxString OutputPane::OUTPUT_DEBUG = _("Debug");
-const wxString OutputPane::REPLACE_IN_FILES = _("Replace");
-const wxString OutputPane::TASKS = _("Tasks");
-const wxString OutputPane::TRACE_TAB = _("Trace");
-const wxString OutputPane::SHOW_USAGE = _("References");
-const wxString OutputPane::CLANG_TAB = _("Clang");
-
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
     , m_caption(caption)
-    , m_logTargetOld(NULL)
     , m_buildInProgress(false)
 {
     CreateGUIControls();
@@ -71,9 +62,8 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
 
 OutputPane::~OutputPane()
 {
-    delete wxLog::SetActiveTarget(m_logTargetOld);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL,
+                                     this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(OutputPane::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &OutputPane::OnSettingsChanged, this);
@@ -86,25 +76,27 @@ void OutputPane::CreateGUIControls()
     SetSizer(mainSizer);
     SetMinClientSize(wxSize(-1, 250));
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxBOTTOM) {
+    if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM) {
         style |= kNotebook_BottomTabs;
-    } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxLEFT) {
-
+    } else if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxLEFT) {
 #ifdef __WXOSX__
         style &= ~(kNotebook_BottomTabs | kNotebook_LeftTabs | kNotebook_RightTabs);
 #else
         style |= kNotebook_LeftTabs;
 #endif
-
-    } else if(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection() == wxRIGHT) {
+    } else if(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxRIGHT) {
 #ifdef __WXOSX__
         style |= kNotebook_BottomTabs;
 #else
         style |= kNotebook_RightTabs;
 #endif
     }
-    //style |= kNotebook_UnderlineActiveTab;
-    
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        style &= ~kNotebook_LightTabs;
+        style |= kNotebook_DarkTabs;
+    }
+    style |= kNotebook_UnderlineActiveTab;
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
@@ -121,10 +113,14 @@ void OutputPane::CreateGUIControls()
 
     // Build tab
     m_buildWin = new NewBuildTab(m_book);
+#if PHP_BUILD
+    m_buildWin->Hide();
+#else
     m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("build")));
     m_tabs.insert(std::make_pair(wxGetTranslation(BUILD_WIN),
                                  Tab(wxGetTranslation(BUILD_WIN), m_buildWin, bmpLoader->LoadBitmap(wxT("build")))));
     mgr->AddOutputTab(wxGetTranslation(BUILD_WIN));
+#endif
 
     // Find in files
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN));
@@ -136,57 +132,42 @@ void OutputPane::CreateGUIControls()
 
     // Replace In Files
     m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
-    m_book->AddPage(
-        m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false, bmpLoader->LoadBitmap(wxT("find_and_replace")));
+    m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false,
+                    bmpLoader->LoadBitmap(wxT("find_and_replace")));
     m_tabs.insert(std::make_pair(
         REPLACE_IN_FILES, Tab(REPLACE_IN_FILES, m_replaceResultsTab, bmpLoader->LoadBitmap(wxT("find_and_replace")))));
     mgr->AddOutputTab(REPLACE_IN_FILES);
 
     // Show Usage ("References")
     m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
+#if PHP_BUILD
+    m_showUsageTab->Hide();
+#else
     m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("find")));
-    m_tabs.insert(
-        std::make_pair(wxGetTranslation(SHOW_USAGE),
-                       Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab, bmpLoader->LoadBitmap(wxT("find")))));
+    m_tabs.insert(std::make_pair(wxGetTranslation(SHOW_USAGE), Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab,
+                                                                   bmpLoader->LoadBitmap(wxT("find")))));
     mgr->AddOutputTab(wxGetTranslation(SHOW_USAGE));
-
+#endif
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
     m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("console")));
-    m_tabs.insert(
-        std::make_pair(wxGetTranslation(OUTPUT_WIN),
-                       Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind, bmpLoader->LoadBitmap(wxT("console")))));
+    m_tabs.insert(std::make_pair(wxGetTranslation(OUTPUT_WIN), Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind,
+                                                                   bmpLoader->LoadBitmap(wxT("console")))));
     mgr->AddOutputTab(wxGetTranslation(OUTPUT_WIN));
 
 #if HAS_LIBCLANG
     // Clang tab
     NewProjImgList images;
     m_clangOutputTab = new ClangOutputTab(m_book);
-    m_book->AddPage(m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, images.Bitmap("clang16"));
+#if PHP_BUILD
+    m_clangOutputTab->Hide();
+#else
+    m_book->AddPage(m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, bmpLoader->LoadBitmap("clang"));
     m_tabs.insert(std::make_pair(wxGetTranslation(CLANG_TAB),
-                                 Tab(wxGetTranslation(CLANG_TAB), m_clangOutputTab, images.Bitmap("clang16"))));
+                                 Tab(wxGetTranslation(CLANG_TAB), m_clangOutputTab, bmpLoader->LoadBitmap("clang"))));
     mgr->AddOutputTab(wxGetTranslation(CLANG_TAB));
 #endif
-
-    wxTextCtrl* text = new wxTextCtrl(m_book,
-                                      wxID_ANY,
-                                      wxEmptyString,
-                                      wxDefaultPosition,
-                                      wxDefaultSize,
-                                      wxTE_RICH2 | wxTE_MULTILINE | wxTE_READONLY | wxHSCROLL);
-
-    /////////////////////////////////////
-    // Set the trace's font & colors
-    /////////////////////////////////////
-
-    m_book->AddPage(text, wxGetTranslation(TRACE_TAB), false, bmpLoader->LoadBitmap("log"));
-    m_logTargetOld = wxLog::SetActiveTarget(new wxclTextCtrl(text));
-    m_tabs.insert(std::make_pair(wxGetTranslation(TRACE_TAB),
-                                 Tab(wxGetTranslation(TRACE_TAB), text, bmpLoader->LoadBitmap("log"))));
-    mgr->AddOutputTab(wxGetTranslation(TRACE_TAB));
-
-    // Now that we set up our own log target, re-enable the logging
-    wxLog::EnableLogging(true);
+#endif
 
     // Tasks panel
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
@@ -206,9 +187,7 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
         int cursel(m_book->GetSelection());
-        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
-            return;
-        }
+        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) { return; }
 
         if(m_buildInProgress) return;
 
@@ -231,10 +210,14 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 
 void OutputPane::SaveTabOrder()
 {
+#if USE_AUI_NOTEBOOK
+    wxArrayString panes = m_book->GetAllTabsLabels();
+#else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
     std::for_each(tabs.begin(), tabs.end(), [&](clTabInfo::Ptr_t t) { panes.Add(t->GetLabel()); });
+#endif
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 
@@ -254,9 +237,7 @@ void OutputPane::ApplySavedTabOrder() const
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if(title.empty()) {
-            continue;
-        }
+        if(title.empty()) { continue; }
         for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
             if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
@@ -296,6 +277,13 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
+#if !USE_AUI_NOTEBOOK
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
+    } else {
+        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
+    }
+#endif
 }
 
 void OutputPane::OnToggleTab(clCommandEvent& event)
@@ -309,12 +297,15 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
     const Tab& t = m_tabs.find(event.GetString())->second;
     if(event.IsSelected()) {
         // Insert the page
-        GetNotebook()->InsertPage(0, t.m_window, t.m_label, true, t.m_bmp);
+        int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
+        if(where == wxNOT_FOUND) {
+            GetNotebook()->AddPage(t.m_window, t.m_label, false, t.m_bmp);
+        } else {
+            GetNotebook()->SetSelection(where);
+        }
     } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) {
-            GetNotebook()->RemovePage(where);
-        }
+        if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
     }
 }

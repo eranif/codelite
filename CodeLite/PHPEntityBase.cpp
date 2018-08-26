@@ -1,4 +1,5 @@
 #include "PHPEntityBase.h"
+#include <algorithm>
 
 PHPEntityBase::PHPEntityBase()
     : m_parent(NULL)
@@ -11,6 +12,7 @@ PHPEntityBase::PHPEntityBase()
 
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
+    // Add the child to this entity
     if(m_childrenMap.count(child->GetFullName()) == 0) {
         m_children.push_back(child);
         m_childrenMap.insert(std::make_pair(child->GetFullName(), child));
@@ -41,13 +43,14 @@ PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrep
     return PHPEntityBase::Ptr_t(NULL);
 }
 
-void PHPEntityBase::StoreRecursive(wxSQLite3Database& db)
+void PHPEntityBase::StoreRecursive(PHPLookupTable* lookup)
 {
-    Store(db);
+    Store(lookup);
+    
     // save the children
     PHPEntityBase::List_t::iterator iter = m_children.begin();
     for(; iter != m_children.end(); ++iter) {
-        (*iter)->StoreRecursive(db);
+        (*iter)->StoreRecursive(lookup);
     }
 }
 
@@ -65,4 +68,51 @@ void PHPEntityBase::SetFullName(const wxString& fullname)
 {
     m_fullname = fullname;
     m_shortName = m_fullname.AfterLast('\\');
+}
+
+void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
+{
+    // Remove the child from the map
+    if(m_childrenMap.count(child->GetFullName())) {
+        m_childrenMap.erase(child->GetFullName());
+    }
+    
+    // Remove the child from the list as well
+    PHPEntityBase::List_t::iterator iter =
+        std::find_if(m_children.begin(), m_children.end(), [&](PHPEntityBase::Ptr_t c) {
+            if(c->GetFullName() == child->GetFullName()) {
+                return true;
+            }
+            return false;
+        });
+
+    if(iter != m_children.end()) {
+        m_children.erase(iter);
+    }
+    child->m_parent = NULL;
+}
+
+JSONElement PHPEntityBase::BaseToJSON(const wxString& entityType) const
+{
+    JSONElement json = JSONElement::createObject();
+    json.addProperty("type", entityType);
+    json.addProperty("file", m_filename.GetFullPath());
+    json.addProperty("name", m_shortName);
+    json.addProperty("fullname", m_fullname);
+    json.addProperty("doc", m_docComment);
+    json.addProperty("line", m_line);
+    json.addProperty("col", m_column);
+    json.addProperty("flags", m_flags);
+    return json;
+}
+
+void PHPEntityBase::BaseFromJSON(const JSONElement& json)
+{
+    m_filename = json.namedObject("file").toString();
+    m_shortName = json.namedObject("name").toString();
+    m_fullname = json.namedObject("fullname").toString();
+    m_docComment = json.namedObject("doc").toString();
+    m_line = json.namedObject("line").toInt(0);
+    m_column = json.namedObject("col").toInt(0);
+    m_flags = json.namedObject("flags").toSize_t(0);
 }

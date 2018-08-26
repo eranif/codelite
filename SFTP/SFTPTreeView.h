@@ -26,12 +26,14 @@
 #ifndef SFTPTREEVIEW_H
 #define SFTPTREEVIEW_H
 
+#include "SFTPSessionInfo.h"
 #include "UI.h"
-#include "cl_sftp.h"
 #include "bitmap_loader.h"
+#include "clTreeKeyboardInput.h"
+#include "cl_command_event.h"
+#include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
-#include "cl_command_event.h"
 
 class MyClientData;
 class SFTP;
@@ -45,6 +47,8 @@ class SFTPTreeView : public SFTPTreeViewBase
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
+    SFTPSessionInfoList m_sessions;
 
 public:
     enum {
@@ -60,20 +64,21 @@ public:
 
 protected:
     virtual void OnSftpSettings(wxCommandEvent& event);
-    virtual void OnOpenTerminal(wxAuiToolBarEvent& event);
+    virtual void OnOpenTerminal(wxCommandEvent& event);
+    virtual void OnOpenTerminalMenu(wxCommandEvent& event);
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
-    virtual void OnSelectionChanged(wxTreeListEvent& event);
+    virtual void OnSelectionChanged(wxTreeEvent& event);
     virtual void OnChoiceAccount(wxCommandEvent& event);
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
     virtual void OnGotoLocation(wxCommandEvent& event);
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
-    virtual void OnAddBookmark(wxAuiToolBarEvent& event);
+    virtual void OnAddBookmark(wxCommandEvent& event);
+    virtual void OnAddBookmarkMenu(wxCommandEvent& event);
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
-    virtual void OnContextMenu(wxTreeListEvent& event);
+    virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
     virtual void OnDisconnectUI(wxUpdateUIEvent& event);
-    virtual void OnConnectUI(wxUpdateUIEvent& event);
     virtual void OnConnect(wxCommandEvent& event);
     virtual void OnMenuNew(wxCommandEvent& event);
     virtual void OnMenuOpen(wxCommandEvent& event);
@@ -83,7 +88,9 @@ protected:
     virtual void OnMenuOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
+    virtual void OnExecuteCommand(wxCommandEvent& event);
     void OnFileDropped(clCommandEvent& event);
+    void OnEditorClosing(wxCommandEvent& evt);
 
     // Edit events
     void OnCopy(wxCommandEvent& event);
@@ -95,21 +102,29 @@ protected:
 
     void DoCloseSession();
     void DoOpenSession();
-    bool DoExpandItem(const wxTreeListItem& item);
+    bool DoExpandItem(const wxTreeItemId& item);
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
+    /**
+     * @brief open remote file path
+     * @param path the remote file path
+     */
+    void DoOpenFile(const wxString& path);
 
-    wxTreeListItem DoAddFolder(const wxTreeListItem& parent, const wxString& path);
-    wxTreeListItem DoAddFile(const wxTreeListItem& parent, const wxString& path);
+    wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
+    wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
 
-    MyClientData* GetItemData(const wxTreeListItem& item);
+    MyClientData* GetItemData(const wxTreeItemId& item);
     MyClientDataVect_t GetSelectionsItemData();
-    bool DoOpenFile(const wxTreeListItem& item);
+    bool DoOpenFile(const wxTreeItemId& item);
     void DoDeleteColumn(int colIdx);
-
+    bool GetAccountFromUser(SSHAccountInfo& account);
+    SFTPSessionInfo& GetSession(bool createIfMissing);
+    void DoLoadSession();
+    
 protected:
-    virtual void OnItemActivated(wxTreeListEvent& event);
-    virtual void OnItemExpanding(wxTreeListEvent& event);
+    virtual void OnItemActivated(wxTreeEvent& event);
+    virtual void OnItemExpanding(wxTreeEvent& event);
     virtual void OnOpenAccountManager(wxCommandEvent& event);
 };
 #endif // SFTPTREEVIEW_H

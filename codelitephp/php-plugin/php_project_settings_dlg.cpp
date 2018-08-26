@@ -37,8 +37,8 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
         m_filePickerPhpIni->SetPath(data.GetPhpIniFile());
     }
 
-    const JSONElement::wxStringMap_t& mapping = data.GetFileMapping();
-    JSONElement::wxStringMap_t::const_iterator iter = mapping.begin();
+    const wxStringMap_t& mapping = data.GetFileMapping();
+    wxStringMap_t::const_iterator iter = mapping.begin();
     for(; iter != mapping.end(); ++iter) {
         wxVector<wxVariant> cols;
         cols.push_back(iter->first);
@@ -153,7 +153,7 @@ void PHPProjectSettingsDlg::Save()
     data.SetCcIncludePath(m_textCtrlCCIncludePath->GetValue());
 
     // Save the file mapping
-    JSONElement::wxStringMap_t mapping;
+    wxStringMap_t mapping;
     int itemCount = m_dvListCtrlFileMapping->GetItemCount();
     for(int i = 0; i < itemCount; ++i) {
         wxVariant source, target;

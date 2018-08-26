@@ -25,28 +25,28 @@
 #ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
-#include <wx/stc/stc.h>
+#include "bookmark_manager.h"
+#include "browse_record.h"
+#include "clEditorStateLocker.h"
+#include "cl_calltip.h"
+#include "cl_defs.h"
+#include "cl_unredo.h"
+#include "context_base.h"
+#include "debuggermanager.h"
+#include "entry.h"
+#include "findreplacedlg.h"
+#include "globals.h"
+#include "navigationmanager.h"
+#include "plugin.h"
+#include "stringhighlighterjob.h"
+#include "wx/filename.h"
+#include "wx/menu.h"
+#include <map>
 #include <stack>
 #include <vector>
-#include <map>
-#include "entry.h"
-#include "stringhighlighterjob.h"
-#include "cl_calltip.h"
-#include "wx/filename.h"
-#include "findreplacedlg.h"
-#include "context_base.h"
-#include "wx/menu.h"
-#include "browse_record.h"
-#include "navigationmanager.h"
-#include "debuggermanager.h"
-#include "breakpointsmgr.h"
-#include "plugin.h"
-#include "globals.h"
-#include "cl_defs.h"
-#include "bookmark_manager.h"
-#include "cl_unredo.h"
-#include "clEditorStateLocker.h"
+#include <wx/bitmap.h>
 #include <wx/cmndata.h>
+#include <wx/stc/stc.h>
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -55,6 +55,17 @@
 #define HYPERLINK_INDICATOR 4
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
 #define MARKER_CONTEXT_WORD_HIGHLIGHT 6
+
+#if(wxVERSION_NUMBER < 3101) || defined(__WXOSX__)
+// Some wxSTC keycodes names were altered in 311, & the old versions deprecated
+// So, to avoid deprecation-warning spam, #define for older versions
+#define wxSTC_KEYMOD_NORM wxSTC_SCMOD_NORM
+#define wxSTC_KEYMOD_SHIFT wxSTC_SCMOD_SHIFT
+#define wxSTC_KEYMOD_CTRL wxSTC_SCMOD_CTRL
+#define wxSTC_KEYMOD_ALT wxSTC_SCMOD_ALT
+#define wxSTC_KEYMOD_SUPER wxSTC_SCMOD_SUPER
+#define wxSTC_KEYMOD_META wxSTC_SCMOD_META
+#endif
 
 class wxRichToolTip;
 class CCBoxTipWindow;
@@ -70,9 +81,9 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
 /**************** NB: enum sci_marker_types has now moved to bookmark_manager.h ****************/
 
 /**
-* @class BPtoMarker
-* Holds which marker and mask are associated with each breakpoint type
-*/
+ * @class BPtoMarker
+ * Holds which marker and mask are associated with each breakpoint type
+ */
 typedef struct _BPtoMarker {
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
@@ -81,13 +92,13 @@ typedef struct _BPtoMarker {
     marker_mask_type mask_disabled;
 } BPtoMarker;
 
-extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
-extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
+wxDECLARE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
+wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
 /**
  * \ingroup LiteEditor
- * LEditor CodeLite editing component based on Scintilla
- * LEditor provides most of the C++/C editing capablities including:
+ * clEditor CodeLite editing component based on Scintilla
+ * clEditor provides most of the C++/C editing capablities including:
  * -# Auto Completion
  * -# Find and replace
  * -# Bookmarks
@@ -103,7 +114,7 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
  * \author Eran
  *
  */
-class LEditor : public wxStyledTextCtrl, public IEditor
+class clEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
     struct SelectionInfo {
@@ -185,6 +196,14 @@ private:
         const wxString& GetWord() const { return m_word; }
     };
 
+    enum eStatusBarFields {
+        kShowLine = (1 << 0),
+        kShowColumn = (1 << 1),
+        kShowPosition = (1 << 2),
+        kShowLen = (1 << 3),
+        kShowSelectedChars = (1 << 4),
+    };
+
 protected:
     wxFileName m_fileName;
     wxString m_project;
@@ -200,6 +219,7 @@ protected:
     bool m_popupIsOn;
     bool m_isDragging;
     time_t m_modifyTime;
+    wxUint64 m_modificationCount;
     std::map<int, wxString> m_customCmds;
     bool m_isVisible;
     int m_hyperLinkIndicatroStart;
@@ -238,21 +258,32 @@ protected:
     wxString m_keywordClasses;
     /// A space delimited list of all the variables in this editor
     wxString m_keywordLocals;
+    wxBitmap m_editorBitmap;
+    size_t m_statusBarFields;
 
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
 
-    typedef std::vector<LEditor*> Vec_t;
+    typedef std::vector<clEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
 
+    /**
+     * @brief CodeLite preferences updated
+     */
+    void PreferencesChanged();
     /**
      * @brief are the CC annotations visible?
      */
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
     void ClearCCAnnotations();
+
+    void SetEditorBitmap(const wxBitmap& editorBitmap) { this->m_editorBitmap = editorBitmap; }
+    const wxBitmap& GetEditorBitmap() const { return m_editorBitmap; }
+
+    void NotifyMarkerChanged(int lineNumber = wxNOT_FOUND);
 
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
@@ -270,11 +301,11 @@ public:
     CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
 
 public:
-    /// Construct a LEditor object
-    LEditor(wxWindow* parent);
+    /// Construct a clEditor object
+    clEditor(wxWindow* parent);
 
     /// Default destructor
-    virtual ~LEditor();
+    virtual ~clEditor();
 
     // Save the editor data into file
     virtual bool SaveFile();
@@ -478,6 +509,11 @@ public:
     void FindPrevMarker();
 
     /**
+     * @brief return list of bookmarks (active type)
+     */
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector);
+
+    /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type
      */
     void SetFindBookmarksActive(bool findBookmarksActive) { m_findBookmarksActive = findBookmarksActive; }
@@ -526,10 +562,10 @@ public:
      */
     void ToggleAllFoldsInSelection();
     void DoRecursivelyExpandFolds(bool expand, int startline,
-        int endline); // Helper function for ToggleAllFoldsInSelection()
-                      /**
-                       *  Find the topmost fold level within the selection, and toggle all selected folds of that level
-                       */
+                                  int endline); // Helper function for ToggleAllFoldsInSelection()
+                                                /**
+                                                 *  Find the topmost fold level within the selection, and toggle all selected folds of that level
+                                                 */
     void ToggleTopmostFoldsInSelection();
     /**
      * Load collapsed folds from a vector
@@ -563,13 +599,18 @@ public:
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
     void FindAndSelectV(const wxString& pattern, const wxString& name, int pos = 0,
-        NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
+                        NavMgr* unused = NULL); // The same but returns void, so usable with CallAfter()
     void DoFindAndSelectV(const wxArrayString& strings, int pos); // Called with CallAfter()
 
     bool Replace();
     bool Replace(const FindReplaceData& data);
 
     void RecalcHorizontalScrollbar();
+
+    /**
+     * Get editor options. Takes any workspace/project overrides into account
+     */
+    virtual OptionsConfigPtr GetOptions() { return m_options; }
 
     /**
      * Add marker to the current line
@@ -649,7 +690,7 @@ public:
      * Optionally make it temporary, disabled or conditional
      */
     void AddBreakpoint(int lineno = -1, const wxString& conditions = wxT(""), const bool is_temp = false,
-        const bool is_disabled = false);
+                       const bool is_disabled = false);
 
     /**
      * Delete the breakpoint at the current line & file, or lineno if from ToggleBreakpoint()
@@ -677,8 +718,8 @@ public:
     //--------------------------------
     // breakpoint visualisation
     //--------------------------------
-    virtual void SetBreakpointMarker(
-        int lineno, BreakpointType bptype, bool is_disabled, const std::vector<BreakpointInfo>& li);
+    virtual void SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
+                                     const std::vector<BreakpointInfo>& li);
     virtual void DelAllBreakpointMarkers();
 
     virtual void HighlightLine(int lineno);
@@ -708,6 +749,11 @@ public:
      */
     time_t GetEditorLastModifiedTime() const { return m_modifyTime; }
     void SetEditorLastModifiedTime(time_t modificationTime) { m_modifyTime = modificationTime; }
+
+    /**
+     * @brief Get the editor's modification count
+     */
+    virtual wxUint64 GetModificationCount() const { return m_modificationCount; }
 
     /**
      * \brief run through the file content and update colours for the
@@ -757,7 +803,8 @@ public:
 
     virtual wxString GetEditorText() { return GetText(); }
     virtual void SetEditorText(const wxString& text);
-    virtual void ReloadFile();
+    virtual void OpenFile();
+    virtual void ReloadFromDisk(bool keepUndoHistory = false);
     virtual void SetCaretAt(long pos);
     virtual long GetCurrentPosition() { return GetCurrentPos(); }
     virtual const wxFileName& GetFileName() const { return m_fileName; }
@@ -864,6 +911,11 @@ public:
     virtual int GetCharAtPos(int pos);
 
     /**
+     * @brief apply editor configuration (TAB vs SPACES, tab size, EOL mode etc)
+     */
+    virtual void ApplyEditorConfig();
+
+    /**
      * @brief return true if the current editor is detached from the mainbook
      */
     bool IsDetached() const;
@@ -882,11 +934,6 @@ public:
 
     //----------------------------------------------------------------------------
     //----------------------------------------------------------------------------
-
-    /**
-     * Get editor options. Takes any workspace/project overrides into account
-     */
-    OptionsConfigPtr GetOptions() { return m_options; }
 
     void SetIsVisible(const bool& isVisible) { this->m_isVisible = isVisible; }
     const bool& GetIsVisible() const { return m_isVisible; }
@@ -944,7 +991,8 @@ private:
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
-    DECLARE_EVENT_TABLE()
+    // Event handlers
+    void OpenURL(wxCommandEvent& event);
     void OnHighlightWordChecked(wxCommandEvent& e);
     void OnRemoveMatchInidicator(wxCommandEvent& e);
     void OnSavePoint(wxStyledTextEvent& event);

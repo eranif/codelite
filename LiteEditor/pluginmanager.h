@@ -38,6 +38,8 @@
 #include <map>
 #include "plugindata.h"
 
+class clToolBar;
+class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
 class JobQueue;
@@ -78,12 +80,15 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b);
     IEditor* GetActiveEditor();
+    clToolBar* GetToolBar();
     IConfigTool* GetConfigTool();
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
     wxTreeCtrl* GetTree(TreeType type);
     Notebook* GetOutputPaneNotebook();
     Notebook* GetWorkspacePaneNotebook();
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
+    IEditor* OpenFile(
+        const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString);
     IEditor* OpenFile(const BrowseRecord& rec);
     wxString GetStartupDirectory() const;
     void AddProject(const wxString& path);
@@ -158,10 +163,10 @@ public:
     void ShowOutputPane(const wxString& selectedWindow = "");
     void ToggleOutputPane(const wxString& selectedWindow = "");
     clStatusBar* GetStatusBar();
+    clEditorBar* GetNavigationBar();
     clWorkspaceView* GetWorkspaceView();
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
-
     //------------------------------------
     // End of IManager interface
     //------------------------------------

@@ -24,7 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "externaltoolsdata.h"
-ToolInfo::ToolInfo() {}
+
+ToolInfo::ToolInfo()
+    : m_flags(0)
+{
+}
 
 ToolInfo::~ToolInfo() {}
 
@@ -32,7 +36,6 @@ void ToolInfo::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_id"), m_id);
     arch.Read(wxT("m_path"), m_path);
-    arch.Read(wxT("m_arguments"), m_arguments);
     arch.Read(wxT("m_wd"), m_wd);
     arch.Read(wxT("m_name"), m_name);
     arch.Read(wxT("m_icon16"), m_icon16);
@@ -43,19 +46,22 @@ void ToolInfo::DeSerialize(Archive& arch)
 
     m_saveAllFiles = false;
     arch.Read(wxT("m_saveAllFiles"), m_saveAllFiles);
+
+    m_flags = 0;
+    arch.Read("m_flags", m_flags);
 }
 
 void ToolInfo::Serialize(Archive& arch)
 {
     arch.Write(wxT("m_id"), m_id);
     arch.Write(wxT("m_path"), m_path);
-    arch.Write(wxT("m_arguments"), m_arguments);
     arch.Write(wxT("m_wd"), m_wd);
     arch.Write(wxT("m_name"), m_name);
     arch.Write(wxT("m_icon16"), m_icon16);
     arch.Write(wxT("m_icon24"), m_icon24);
     arch.Write(wxT("m_captureOutput"), m_captureOutput);
     arch.Write(wxT("m_saveAllFiles"), m_saveAllFiles);
+    arch.Write("m_flags", m_flags);
 }
 
 //----------------------------------------------------------------

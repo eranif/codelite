@@ -37,95 +37,83 @@ class LLDBSettings
     size_t m_flags;
     wxString m_types;
     wxString m_proxyIp;
-    int      m_proxyPort;
+    int m_proxyPort;
     wxString m_lastLocalFolder;
     wxString m_lastRemoteFolder;
+    wxString m_debugserver;
 
 public:
     LLDBSettings();
     virtual ~LLDBSettings();
 
-    void SetLastLocalFolder(const wxString& lastLocalFolder) {
-        this->m_lastLocalFolder = lastLocalFolder;
-    }
-    void SetLastRemoteFolder(const wxString& lastRemoteFolder) {
-        this->m_lastRemoteFolder = lastRemoteFolder;
-    }
-    const wxString& GetLastLocalFolder() const {
-        return m_lastLocalFolder;
-    }
-    const wxString& GetLastRemoteFolder() const {
-        return m_lastRemoteFolder;
-    }
-    bool IsRaiseWhenBreakpointHit() const {
-        return m_flags & kLLDBOptionRaiseCodeLite;
-    }
+    void SetLastLocalFolder(const wxString& lastLocalFolder) { this->m_lastLocalFolder = lastLocalFolder; }
+    void SetLastRemoteFolder(const wxString& lastRemoteFolder) { this->m_lastRemoteFolder = lastRemoteFolder; }
+    const wxString& GetLastLocalFolder() const { return m_lastLocalFolder; }
+    const wxString& GetLastRemoteFolder() const { return m_lastRemoteFolder; }
+    bool IsRaiseWhenBreakpointHit() const { return m_flags & kLLDBOptionRaiseCodeLite; }
 
-    bool HasFlag(int flag) const {
-        return m_flags & flag;
-    }
+    bool HasFlag(int flag) const { return m_flags & flag; }
 
-    void EnableFlag(int flag, bool enable) {
-        if ( enable ) {
+    void EnableFlag(int flag, bool enable)
+    {
+        if(enable) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;
         }
     }
 
-    void SetMaxArrayElements(size_t maxArrayElements) {
-        this->m_arrItems = maxArrayElements;
-    }
-    void SetMaxCallstackFrames(size_t maxCallstackFrames) {
-        this->m_stackFrames = maxCallstackFrames;
-    }
-    void SetTypes(const wxString& types) {
-        this->m_types = types;
-    }
-    size_t GetMaxArrayElements() const {
-        return m_arrItems;
-    }
-    size_t GetMaxCallstackFrames() const {
-        return m_stackFrames;
-    }
-    const wxString& GetTypes() const {
-        return m_types;
-    }
+    void SetMaxArrayElements(size_t maxArrayElements) { this->m_arrItems = maxArrayElements; }
+    void SetMaxCallstackFrames(size_t maxCallstackFrames) { this->m_stackFrames = maxCallstackFrames; }
+    void SetTypes(const wxString& types) { this->m_types = types; }
+    size_t GetMaxArrayElements() const { return m_arrItems; }
+    size_t GetMaxCallstackFrames() const { return m_stackFrames; }
+    const wxString& GetTypes() const { return m_types; }
 
-    bool IsUsingRemoteProxy() const {
-        return HasFlag( kLLDBOptionUseRemoteProxy );
-    }
+    bool IsUsingRemoteProxy() const { return HasFlag(kLLDBOptionUseRemoteProxy); }
 
-    void SetUseRemoteProxy( bool b ) {
-        EnableFlag( kLLDBOptionUseRemoteProxy, b );
-    }
+    void SetUseRemoteProxy(bool b) { EnableFlag(kLLDBOptionUseRemoteProxy, b); }
 
-    void SetProxyIp(const wxString& proxyIp) {
-        this->m_proxyIp = proxyIp;
-    }
-    void SetProxyPort(int proxyPort) {
-        this->m_proxyPort = proxyPort;
-    }
-    const wxString& GetProxyIp() const {
-        return m_proxyIp;
-    }
-    int GetProxyPort() const {
-        return m_proxyPort;
-    }
+    void SetProxyIp(const wxString& proxyIp) { this->m_proxyIp = proxyIp; }
+    void SetProxyPort(int proxyPort) { this->m_proxyPort = proxyPort; }
+    const wxString& GetProxyIp() const { return m_proxyIp; }
+    int GetProxyPort() const { return m_proxyPort; }
     LLDBSettings& Load();
     LLDBSettings& Save();
-    
-    wxString GetTcpConnectString() const {
-        return (wxString() << m_proxyIp << ":" << m_proxyPort);
-    }
-    
+
+    wxString GetTcpConnectString() const { return (wxString() << m_proxyIp << ":" << m_proxyPort); }
+
     // Helpers
     static wxString LoadPerspective();
-    static void SavePerspective(const wxString &perspective);
+    static void SavePerspective(const wxString& perspective);
 
     // Serialization API
     JSONElement ToJSON() const;
-    void FromJSON( const JSONElement &json );
+    void FromJSON(const JSONElement& json);
+    LLDBSettings& SetArrItems(size_t arrItems)
+    {
+        this->m_arrItems = arrItems;
+        return *this;
+    }
+    LLDBSettings& SetDebugserver(const wxString& debugserver)
+    {
+        this->m_debugserver = debugserver;
+        return *this;
+    }
+    LLDBSettings& SetFlags(size_t flags)
+    {
+        this->m_flags = flags;
+        return *this;
+    }
+    LLDBSettings& SetStackFrames(size_t stackFrames)
+    {
+        this->m_stackFrames = stackFrames;
+        return *this;
+    }
+    size_t GetArrItems() const { return m_arrItems; }
+    const wxString& GetDebugserver() const { return m_debugserver; }
+    size_t GetFlags() const { return m_flags; }
+    size_t GetStackFrames() const { return m_stackFrames; }
 };
 
 #endif // LLDBSETTINGS_H

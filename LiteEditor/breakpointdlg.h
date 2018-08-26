@@ -30,7 +30,8 @@
 
 // Since a breakpoint will always have an internal id, but a valid debugger one only when the debugger's running, store
 // both here
-struct bpd_IDs {
+struct bpd_IDs
+{
     double debugger_id;
     double internal_id;
     bpd_IDs(const BreakpointInfo& bp)
@@ -55,6 +56,7 @@ class BreakpointDlg : public BreakpointTabBase
     long m_selectedItem;
 
 protected:
+    virtual void OnContextMenu(wxContextMenuEvent& event);
     void OnAdd(wxCommandEvent& e);
     void OnEdit(wxCommandEvent& e);
     void OnDelete(wxCommandEvent& e);
@@ -63,7 +65,6 @@ protected:
     void OnItemActivated(wxListEvent& e);
     void OnItemSelected(wxListEvent& e);
     void OnItemDeselected(wxListEvent& e);
-    void OnItemRightClick(wxListEvent& e);
 
     std::vector<bpd_IDs> m_ids;
 

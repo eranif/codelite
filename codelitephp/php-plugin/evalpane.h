@@ -41,6 +41,7 @@ protected:
     virtual void OnSendUI(wxUpdateUIEvent& event);
     void OnExpressionEvaluate(XDebugEvent &e);
     void OnDBGPCommandEvaluated(XDebugEvent &e);
+    void OnSettingsChanged(wxCommandEvent& event);
 
 };
 #endif // EVALPANE_H

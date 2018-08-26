@@ -54,6 +54,7 @@ public:
         kNone = 0,
         kInsertSingleMatch = (1 << 0),
         kRefreshOnKeyType = (1 << 1),
+        kNoShowingEvent = (1 << 2), // Dont send the wxEVT_CCBOX_SHOWING event
     };
 
 protected:
@@ -61,7 +62,7 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     wxCodeCompletionBox::BmpVec_t m_bitmaps;
     static wxCodeCompletionBox::BmpVec_t m_defaultBitmaps;
-    
+
     int m_index;
     wxString m_displayedTip;
     wxStyledTextCtrl* m_stc;
@@ -86,14 +87,13 @@ protected:
     wxRect m_scrollBottomRect;
 
     /// Colours used by this class
-    wxColour m_lightBorder;
-    wxColour m_darkBorder;
+    wxColour m_penColour;
     wxColour m_bgColour;
+    wxColour m_separatorColour;
     wxColour m_textColour;
     wxColour m_selectedTextColour;
-    wxColour m_selection;
-    wxColour m_penColour;
-    wxColour m_scrollBgColour;
+    wxColour m_selectedTextBgColour;
+    
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
     wxBitmap m_bmpDown;
@@ -108,17 +108,20 @@ protected:
 
     // Event handlers
     void OnLeftDClick(wxMouseEvent& event);
+    void OnMouseScroll(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
     void OnPaint(wxPaintEvent& event);
-    
+
     static void InitializeDefaultBitmaps();
-    
+    void DoPgUp();
+    void DoPgDown();
+
 public:
     /**
      * @brief return the bitamp associated with this tag entry
      */
     static wxBitmap GetBitmap(TagEntryPtr tag);
-    
+
     virtual ~wxCodeCompletionBox();
     /**
      * @brief construct a code completion box
@@ -153,6 +156,11 @@ public:
     void SetStartPos(int startPos) { this->m_startPos = startPos; }
     int GetStartPos() const { return m_startPos; }
 
+    void ScrollDown() { DoScrollDown(); }
+    void ScrollUp() { DoScrollUp(); }
+
+    void DoMouseScroll(wxMouseEvent& event);
+
 protected:
     int GetSingleLineHeight() const;
     /**
@@ -162,6 +170,7 @@ protected:
     bool FilterResults();
     void RemoveDuplicateEntries();
     void InsertSelection();
+    wxString GetFilter();
 
     // For backward compatability, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr

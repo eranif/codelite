@@ -26,28 +26,39 @@
 #ifndef BITMAP_LOADER_H
 #define BITMAP_LOADER_H
 
-#include <wx/filename.h>
-#include <wx/bitmap.h>
-#include <wx/imaglist.h>
-#include <map>
-#include "fileextmanager.h"
 #include "codelite_exports.h"
+#include "fileextmanager.h"
+#include "wxStringHash.h"
 #include <vector>
+#include <wx/bitmap.h>
+#include <wx/filename.h>
+#include <wx/imaglist.h>
+
+#ifndef __WXMSW__
+namespace std
+{
+    template <>
+    struct hash<FileExtManager::FileType>
+    {
+        std::size_t operator()(const FileExtManager::FileType& t) const { return hash<int>{}((int)t); }
+    };
+}
+#endif
 
 class WXDLLIMPEXP_SDK BitmapLoader
 {
 public:
-    typedef std::map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
+    typedef std::unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
 
 protected:
     wxFileName m_zipPath;
-    static std::map<wxString, wxBitmap> m_toolbarsBitmaps;
-    static std::map<wxString, wxString> m_manifest;
-    std::map<FileExtManager::FileType, int> m_fileIndexMap;
+    static std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
+    static std::unordered_map<wxString, wxString> m_manifest;
+    std::unordered_map<FileExtManager::FileType, int> m_fileIndexMap;
     bool m_bMapPopulated;
     static BitmapMap_t m_userBitmaps;
     size_t m_toolbarIconSize;
-    
+
 protected:
     void AddImage(int index, FileExtManager::FileType type);
     wxIcon GetIcon(const wxBitmap& bmp) const;
@@ -55,10 +66,10 @@ protected:
 private:
     BitmapLoader();
     ~BitmapLoader();
-    
+
 public:
     static BitmapLoader* Create() { return new BitmapLoader(); }
-    
+
     /**
      * @brief register a user defined image to a given file type
      */
@@ -87,10 +98,10 @@ protected:
     void doLoadManifest();
     void doLoadBitmaps();
     wxBitmap doLoadBitmap(const wxString& filepath);
-    
+
 private:
     void initialize();
-    
+
 public:
     const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
 };

@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 2.6.2)
 
 find_library(LIBHUNSPELL 
             # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name
-            NAMES hunspell hunspell-1.3
+            NAMES hunspell hunspell-1.3  hunspell-1.4 hunspell-1.5 hunspell-1.6 hunspell-1.7
+			if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+				HINTS /usr/lib /usr/lib/x86_64-linux-gnu/ /usr/lib64/
+			endif()
             PATH_SUFFIXES lib)
 
 find_path(  HUNSPELL_H
@@ -88,7 +91,7 @@ else ()
     if(APPLE)
         install(
           DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics
-          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/dics
+          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport
           USE_SOURCE_PERMISSIONS
           PATTERN ".svn" EXCLUDE
           PATTERN ".git" EXCLUDE

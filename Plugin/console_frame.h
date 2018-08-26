@@ -26,39 +26,52 @@
 #ifndef __console_frame__
 #define __console_frame__
 
-#include <wx/intl.h>
-
-#include <wx/sizer.h>
-#include "wxterminal.h"
-#include <wx/gdicmn.h>
-#include <wx/string.h>
-#include <wx/frame.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include "codelite_exports.h"
+#include "clSSHChannel.h"
 #include "cl_command_event.h"
+#include "cl_ssh.h"
+#include "codelite_exports.h"
+#include "wxterminal.h"
+#include <wx/colour.h>
+#include <wx/font.h>
+#include <wx/frame.h>
+#include <wx/gdicmn.h>
+#include <wx/intl.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/string.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class ConsoleFrame
 ///////////////////////////////////////////////////////////////////////////////
-class IManager;
-class WXDLLIMPEXP_SDK ConsoleFrame : public wxPanel
+class WXDLLIMPEXP_SDK ConsoleFrame : public wxFrame
 {
-private:
-    IManager* m_manager;
+protected:
     wxTerminal* m_terminal;
+#if USE_SFTP
+    clSSH::Ptr_t m_ssh;
+    clSSHChannel::Ptr_t m_channel;
+#endif
 
 protected:
-    // Virtual event handlers, overide them in your derived class
-    virtual void OnDebuggerEnded(clDebugEvent& e);
+    void CreateGUIControls();
+#if USE_SFTP
+    void OnExecuteRemoteCommand(clCommandEvent& event);
+    void OnChannelReadError(clCommandEvent& event);
+    void OnChannelRead(clCommandEvent& event);
+    void OnChannelClosed(clCommandEvent& event);
+#endif
+    void OnExitWhenDone(clCommandEvent& event);
+    void OnTerminalCtrlC(clCommandEvent& event);
 
 public:
-    ConsoleFrame(wxWindow* parent, IManager* manager, wxWindowID id = wxNOT_FOUND);
-    ~ConsoleFrame();
-    wxString StartTTY();
+    ConsoleFrame(wxWindow* parent);
+#if USE_SFTP
+    ConsoleFrame(wxWindow* parent, clSSH::Ptr_t ssh);
+#endif
+    virtual ~ConsoleFrame();
+    void Execute(const wxString& command, const wxString& wd);
 };
 
 #endif //__console_frame__

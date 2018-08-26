@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="codelite_make" Database="">
+<CodeLite_Workspace Name="codelite_make" Database="" Version="10.0.0">
   <Project Name="codelite_make" Path="codelite_make.project" Active="Yes"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Environment/>
       <Project Name="codelite_make" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
+      <Environment/>
       <Project Name="codelite_make" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux" Selected="no">
+    <WorkspaceConfiguration Name="Debug_Linux" Selected="yes">
+      <Environment/>
       <Project Name="codelite_make" ConfigName="Debug_Linux"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

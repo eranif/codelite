@@ -120,11 +120,10 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 #ifdef __WXMSW__
     //go over the process modules and get the full path of
     //the executeable
-    HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
     MODULEENTRY32 me32;
 
     //  Take a snapshot of all modules in the specified process.
-    hModuleSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, (DWORD)pid );
+    HANDLE hModuleSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, (DWORD)pid );
     if ( hModuleSnap == INVALID_HANDLE_VALUE ) {
         return wxEmptyString;
     }
@@ -363,7 +362,6 @@ void ProcUtils::GetChildren(long pid, std::vector<long> &proclist)
     }
 
     for (i=0; i<nof_procs; i++) {
-        ProcessEntry entry;
         if (ki[i].ki_ppid == pid)
             proclist.push_back(ki[i].ki_pid);
     }

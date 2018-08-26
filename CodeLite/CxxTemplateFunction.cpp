@@ -26,16 +26,16 @@ void CxxTemplateFunction::ParseDefinitionList()
     
     // scan until we find 'template' keyword
     while(::LexerNext(m_scanner, token)) {
-        if(token.type == T_TEMPLATE) {
+        if(token.GetType() == T_TEMPLATE) {
             break;
         }
     }
     
-    if(!token.type) return; // EOF
+    if(!token.GetType()) return; // EOF
     
     // Loop until we found the open brace '<'
     while(::LexerNext(m_scanner, token)) {
-        if(token.type == '<') {
+        if(token.GetType() == '<') {
             ++depth;
             break;
         }
@@ -47,7 +47,7 @@ void CxxTemplateFunction::ParseDefinitionList()
     bool cont = true;
     wxString currentToken;
     while(cont && ::LexerNext(m_scanner, token)) {
-        switch(token.type) {
+        switch(token.GetType()) {
         case T_TYPENAME:
         case T_CLASS:
             // ignore these keywords
@@ -68,15 +68,15 @@ void CxxTemplateFunction::ParseDefinitionList()
                 }
                 cont = false;
             } else {
-                currentToken << token.text << " ";
+                currentToken << token.GetWXString() << " ";
             }
             break;
         case '<':
             ++depth;
-            currentToken << token.text << " ";
+            currentToken << token.GetWXString() << " ";
             break;
         default:
-            currentToken << token.text << " ";
+            currentToken << token.GetWXString() << " ";
             break;
         }
     }
@@ -91,8 +91,8 @@ bool CxxTemplateFunction::CanTemplateArgsDeduced()
     
     // Collect all the identifiers and keep them inside a set
     while(::LexerNext(m_sigScanner, token)) {
-        if(token.type == T_IDENTIFIER) {
-            words.insert(wxString(token.text));
+        if(token.GetType() == T_IDENTIFIER) {
+            words.insert(token.GetWXString());
         }
     }
     

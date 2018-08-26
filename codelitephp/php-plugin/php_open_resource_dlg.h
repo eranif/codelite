@@ -31,6 +31,7 @@
 #include "PHPEntityVariable.h"
 #include "PHPEntityBase.h"
 #include "PHPLookupTable.h"
+#include "bitmap_loader.h"
 
 struct ResourceItem {
     enum { kRI_Invalid = -1, kRI_File, kRI_Class, kRI_Constant, kRI_Function, kRI_Member, kRI_Variable, kRI_Namespace };
@@ -101,10 +102,11 @@ public:
     ResourceVector_t m_resources;
     ResourceItem* m_selectedItem;
     PHPLookupTable m_table;
-    
+    BitmapLoader::BitmapMap_t m_fileImages;
+
 protected:
     virtual void OnDVItemActivated(wxDataViewEvent& event);
-    
+
     bool IsMatchesFilter(const wxString& filter, const wxString& key);
     ResourceVector_t DoGetFiles(const wxString& filter);
     void DoGetResources(const wxString& filter);

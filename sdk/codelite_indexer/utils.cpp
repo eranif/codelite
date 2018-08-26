@@ -26,6 +26,16 @@
 #include <sys/user.h>
 #endif
 
+#ifdef _WIN32
+#define CURRENT_GCC_VERSION ((__GNUC__*1000)+(__GNUC_MINOR__*100))
+#define GCC_VERSION(major, minor) ((major*1000)+(minor*100))
+
+#if CURRENT_GCC_VERSION < GCC_VERSION(4,9)
+#include <string.h>
+#define strdup _strdup
+#endif
+#endif
+
 /**
  * helper string methods
  */

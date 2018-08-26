@@ -23,27 +23,27 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "sftp.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/menu.h>
-#include <wx/msgdlg.h>
-#include "SSHAccountManagerDlg.h"
-#include "sftp_settings.h"
 #include "SFTPBrowserDlg.h"
-#include "event_notifier.h"
-#include "sftp_workspace_settings.h"
-#include "sftp_worker_thread.h"
-#include <wx/xrc/xmlres.h>
-#include "cl_command_event.h"
-#include "json_node.h"
+#include "SFTPSettingsDialog.h"
 #include "SFTPStatusPage.h"
 #include "SFTPTreeView.h"
-#include <wx/log.h>
-#include "sftp_settings.h"
-#include "SFTPSettingsDialog.h"
-#include "fileutils.h"
-#include "dockablepane.h"
+#include "SSHAccountManagerDlg.h"
+#include "cl_command_event.h"
 #include "detachedpanesinfo.h"
+#include "dockablepane.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "json_node.h"
+#include "sftp.h"
+#include "sftp_settings.h"
+#include "sftp_worker_thread.h"
+#include "sftp_workspace_settings.h"
+#include <algorithm>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
@@ -66,9 +66,7 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new SFTP(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new SFTP(manager); }
     return thePlugin;
 }
 
@@ -90,35 +88,28 @@ SFTP::SFTP(IManager* manager)
     m_longName = _("SFTP plugin for codelite IDE");
     m_shortName = wxT("SFTP");
 
-    wxTheApp->Connect(
-        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager),
+                      NULL, this);
     wxTheApp->Connect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
-    wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
-                      wxEVT_MENU,
-                      wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
-                      NULL,
-                      this);
-    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                      wxEVT_MENU,
-                      wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
-                      NULL,
-                      this);
-    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                      wxEVT_UPDATE_UI,
-                      wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
-                      NULL,
-                      this);
+    wxTheApp->Connect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_MENU,
+                      wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_MENU,
+                      wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring), NULL, this);
+    wxTheApp->Connect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_UPDATE_UI,
+                      wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI), NULL, this);
 
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SFTP::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SFTP::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &SFTP::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &SFTP::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_RENAMED, &SFTP::OnFileRenamed, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_DELETED, &SFTP::OnFileDeleted, this);
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
-    EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
 
     // API support
     EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
-
-    SFTPImages images;
+    EventNotifier::Get()->Bind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
 
     // Add the "SFTP" page to the workspace pane
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
@@ -136,16 +127,17 @@ SFTP::SFTP(IManager* manager)
 
     // Add the "SFTP Log" page to the output pane
     book = m_mgr->GetOutputPaneNotebook();
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("upload");
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(
-            book->GetParent()->GetParent(), book, _("SFTP Log"), false, images.Bitmap("sftp_tab"), wxSize(200, 200));
+        DockablePane* cp =
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, bmp, wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
     } else {
         m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false, images.Bitmap("sftp_tab"));
+        book->AddPage(m_outputPane, _("SFTP Log"), false, bmp);
     }
 
     // Create the helper for adding our tabs in the "more" menu
@@ -159,23 +151,15 @@ SFTP::SFTP(IManager* manager)
 
 SFTP::~SFTP() {}
 
-clToolBar* SFTP::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void SFTP::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu,
-                          wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER,
-                          _("Open SSH Account Manager"),
-                          _("Open SSH Account Manager"),
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(menu, wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager"),
+                          _("Open SSH Account Manager"), wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, wxEVT_SFTP_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
@@ -190,12 +174,12 @@ void SFTP::HookPopupMenu(wxMenu* menu, MenuType type)
         wxMenuItem* item(NULL);
 
         wxMenu* sftpMenu = new wxMenu();
-        item = new wxMenuItem(
-            sftpMenu, wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, _("&Setup..."), wxEmptyString, wxITEM_NORMAL);
+        item = new wxMenuItem(sftpMenu, wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, _("&Setup..."), wxEmptyString,
+                              wxITEM_NORMAL);
         sftpMenu->Append(item);
 
-        item = new wxMenuItem(
-            sftpMenu, wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, _("&Disable"), wxEmptyString, wxITEM_NORMAL);
+        item = new wxMenuItem(sftpMenu, wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, _("&Disable"), wxEmptyString,
+                              wxITEM_NORMAL);
         sftpMenu->Append(item);
 
         item = new wxMenuItem(menu, wxID_SEPARATOR);
@@ -210,12 +194,6 @@ bool SFTP::IsPaneDetached(const wxString& name) const
     m_mgr->GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
     const wxArrayString& detachedPanes = dpi.GetPanes();
     return detachedPanes.Index(name) != wxNOT_FOUND;
-}
-
-void SFTP::UnHookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(menu);
-    wxUnusedVar(type);
 }
 
 void SFTP::UnPlug()
@@ -239,35 +217,32 @@ void SFTP::UnPlug()
     m_treeView->Destroy();
 
     SFTPWorkerThread::Release();
-    wxTheApp->Disconnect(
-        wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER, wxEVT_MENU, wxCommandEventHandler(SFTP::OnAccountManager),
+                         NULL, this);
     wxTheApp->Disconnect(wxEVT_SFTP_SETTINGS, wxEVT_MENU, wxCommandEventHandler(SFTP::OnSettings), NULL, this);
-    wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING,
-                         wxEVT_MENU,
-                         wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                         wxEVT_MENU,
-                         wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring),
-                         NULL,
-                         this);
-    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING,
-                         wxEVT_UPDATE_UI,
-                         wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI),
-                         NULL,
-                         this);
+    wxTheApp->Disconnect(wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING, wxEVT_MENU,
+                         wxCommandEventHandler(SFTP::OnSetupWorkspaceMirroring), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_MENU,
+                         wxCommandEventHandler(SFTP::OnDisableWorkspaceMirroring), NULL, this);
+    wxTheApp->Disconnect(wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING, wxEVT_UPDATE_UI,
+                         wxUpdateUIEventHandler(SFTP::OnDisableWorkspaceMirroringUI), NULL, this);
 
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SFTP::OnWorkspaceOpened), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SFTP::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SFTP::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(SFTP::OnEditorClosed), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &SFTP::OnWorkspaceOpened, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &SFTP::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &SFTP::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &SFTP::OnFileRenamed, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &SFTP::OnFileDeleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &SFTP::OnEditorClosed, this);
 
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &SFTP::OnReplaceInFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
+
     m_tabToggler.reset(NULL);
+
+    // Delete the temporary files
+    wxFileName::Rmdir(clSFTP::GetDefaultDownloadFolder(), wxPATH_RMDIR_RECURSIVE);
 }
 
 void SFTP::OnAccountManager(wxCommandEvent& e)
@@ -320,9 +295,9 @@ void SFTP::OnFileSaved(clCommandEvent& e)
     DoFileSaved(local_file);
 }
 
-void SFTP::OnFileWriteOK(const wxString& message) { wxLogMessage(message); }
+void SFTP::OnFileWriteOK(const wxString& message) { clLogMessage(message); }
 
-void SFTP::OnFileWriteError(const wxString& errorMessage) { wxLogMessage(errorMessage); }
+void SFTP::OnFileWriteError(const wxString& errorMessage) { clLogMessage(errorMessage); }
 
 void SFTP::OnDisableWorkspaceMirroring(wxCommandEvent& e)
 {
@@ -346,30 +321,48 @@ void SFTP::OnSaveFile(clSFTPEvent& e)
 
     SSHAccountInfo account;
     if(settings.GetAccount(accName, account)) {
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, localFile));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, localFile, 0));
 
     } else {
         wxString msg;
-        msg << _("Failed to synchronize file '") << localFile << "'\n" << _("with remote server\n")
-            << _("Could not locate account: ") << accName;
+        msg << _("Failed to synchronize file '") << localFile << "'\n"
+            << _("with remote server\n") << _("Could not locate account: ") << accName;
         ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
     }
 }
 
 void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
 {
-    SFTPWorkerThread::Instance()->Add(
-        new SFTPThreadRequet(remoteFile.GetAccount(), remoteFile.GetRemoteFile(), remoteFile.GetLocalFile()));
+    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(remoteFile.GetAccount(), remoteFile.GetRemoteFile(),
+                                                           remoteFile.GetLocalFile(), remoteFile.GetPremissions()));
 }
 
-void SFTP::FileDownloadedSuccessfully(const wxString& localFileName) { m_mgr->OpenFile(localFileName); }
+void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
+{
+    wxString tooltip;
+    tooltip << "Local: " << cd.GetLocalPath() << "\n"
+            << "Remote: " << cd.GetRemotePath();
+
+    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("download");
+    IEditor* editor = m_mgr->OpenFile(cd.GetLocalPath(), bmp, tooltip);
+    if(editor) {
+        // Tag this editor as a remote file
+        SFTPClientData* pcd = new SFTPClientData(cd);
+        editor->SetClientData("sftp", pcd);
+    }
+
+    // Now that the file was downloaded, update the file permissions
+    if(m_remoteFiles.count(cd.GetLocalPath())) {
+        RemoteFileInfo& info = m_remoteFiles[cd.GetLocalPath()];
+        info.SetPremissions(cd.GetPermissions());
+    }
+}
+
 void SFTP::OpenWithDefaultApp(const wxString& localFileName) { ::wxLaunchDefaultApplication(localFileName); }
 
 void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 {
-    if(m_remoteFiles.count(remoteFile.GetLocalFile())) {
-        m_remoteFiles.erase(remoteFile.GetLocalFile());
-    }
+    if(m_remoteFiles.count(remoteFile.GetLocalFile())) { m_remoteFiles.erase(remoteFile.GetLocalFile()); }
     m_remoteFiles.insert(std::make_pair(remoteFile.GetLocalFile(), remoteFile));
 }
 
@@ -384,7 +377,7 @@ void SFTP::OnEditorClosed(wxCommandEvent& e)
             wxLogNull noLog;
 
             // Remove the file from our cache
-            ::wxRemoveFile(localFile);
+            clRemoveFile(localFile);
             m_remoteFiles.erase(localFile);
         }
     }
@@ -428,29 +421,21 @@ void SFTP::DoFileSaved(const wxString& filename)
         // Not a remote file, see if have a sychronization setup between this workspace and a remote one
         // ----------------------------------------------------------------------------------------------
 
-        // check if we got a workspace file opened
-        if(!m_workspaceFile.IsOk()) return;
-
-        // check if mirroring is setup for this workspace
-        if(!m_workspaceSettings.IsOk()) return;
-
-        wxFileName file(filename);
-        file.MakeRelativeTo(m_workspaceFile.GetPath());
-        file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
-        wxString remoteFile = file.GetFullPath(wxPATH_UNIX);
+        wxString remoteFile = GetRemotePath(filename);
+        if(remoteFile.IsEmpty()) { return; }
 
         SFTPSettings settings;
         settings.Load();
 
         SSHAccountInfo account;
         if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
-            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, filename));
+            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, filename, 0));
 
         } else {
 
             wxString msg;
-            msg << _("Failed to synchronize file '") << filename << "'\n" << _("with remote server\n")
-                << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+            msg << _("Failed to synchronize file '") << filename << "'\n"
+                << _("with remote server\n") << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
             ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
 
             // Disable the workspace mirroring for this workspace
@@ -470,3 +455,118 @@ void SFTP::OnReplaceInFiles(clFileSystemEvent& e)
 }
 
 void SFTP::OpenContainingFolder(const wxString& localFileName) { FileUtils::OpenFileExplorerAndSelect(localFileName); }
+
+void SFTP::OnFileRenamed(clFileSystemEvent& e)
+{
+    e.Skip();
+
+    // Convert local paths to remote paths
+    wxString remoteFile = GetRemotePath(e.GetPath());
+    wxString remoteNew = GetRemotePath(e.GetNewpath());
+    if(remoteFile.IsEmpty() || remoteNew.IsEmpty()) { return; }
+
+    SFTPSettings settings;
+    settings.Load();
+
+    SSHAccountInfo account;
+    if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+        clDEBUG() << "SFTP: Renaming remote file:" << remoteFile << "->" << remoteNew;
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, remoteNew));
+
+    } else {
+
+        wxString msg;
+        msg << _("Failed to rename file '") << e.GetPath() << "'\n"
+            << _("with remote server\n") << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+
+        // Disable the workspace mirroring for this workspace
+        m_workspaceSettings.Clear();
+        SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+    }
+}
+
+void SFTP::OnFileDeleted(clFileSystemEvent& e)
+{
+    e.Skip();
+    const wxArrayString& files = e.GetPaths();
+    for(size_t i = 0; i < files.size(); ++i) {
+        DoFileDeleted(files.Item(i));
+    }
+}
+
+bool SFTP::IsCxxWorkspaceMirrorEnabled() const { return m_workspaceFile.IsOk() && m_workspaceSettings.IsOk(); }
+
+void SFTP::OnRenameFile(clSFTPEvent& e)
+{
+    SFTPSettings settings;
+    settings.Load();
+
+    wxString accName = e.GetAccount();
+    wxString remoteOld = e.GetRemoteFile();
+    wxString remoteNew = e.GetNewRemoteFile();
+
+    SSHAccountInfo account;
+    if(settings.GetAccount(accName, account)) {
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteOld, remoteNew));
+
+    } else {
+        wxString msg;
+        msg << _("Failed to rename file '") << remoteOld << "'\n"
+            << _("with remote server\n") << _("Could not locate account: ") << accName;
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+    }
+}
+
+void SFTP::OnDeleteFile(clSFTPEvent& e)
+{
+    SFTPSettings settings;
+    settings.Load();
+
+    wxString accName = e.GetAccount();
+    wxString path = e.GetRemoteFile();
+
+    SSHAccountInfo account;
+    if(settings.GetAccount(accName, account)) {
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, path));
+
+    } else {
+        wxString msg;
+        msg << _("Failed to delete remote file '") << path << _("'\nCould not locate account: ") << accName;
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+    }
+}
+
+void SFTP::DoFileDeleted(const wxString& filepath)
+{
+    wxString remoteFile = GetRemotePath(filepath);
+    if(remoteFile.IsEmpty()) { return; }
+
+    SFTPSettings settings;
+    settings.Load();
+
+    SSHAccountInfo account;
+    if(settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile));
+
+    } else {
+
+        wxString msg;
+        msg << _("Failed to delete remote file: ") << remoteFile << "'\n"
+            << _("Could not locate account: ") << m_workspaceSettings.GetAccount();
+        ::wxMessageBox(msg, _("SFTP"), wxOK | wxICON_ERROR);
+
+        // Disable the workspace mirroring for this workspace
+        m_workspaceSettings.Clear();
+        SFTPWorkspaceSettings::Save(m_workspaceSettings, m_workspaceFile);
+    }
+}
+
+wxString SFTP::GetRemotePath(const wxString& localpath) const
+{
+    if(!IsCxxWorkspaceMirrorEnabled()) { return ""; }
+    wxFileName file(localpath);
+    file.MakeRelativeTo(m_workspaceFile.GetPath());
+    file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
+    return file.GetFullPath(wxPATH_UNIX);
+}

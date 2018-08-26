@@ -26,17 +26,16 @@
 #ifndef NODEJSDEBUGGER_H
 #define NODEJSDEBUGGER_H
 
-#include <wx/event.h>
-#include "cl_command_event.h"
-#include <wx/socket.h>
-#include "NodeJSSocket.h"
-#include "NodeJSDebuggerBreakpointManager.h"
-#include "TerminalEmulator.h"
 #include "NodeJS.h"
+#include "NodeJSDebuggerBreakpointManager.h"
+#include "NodeJSSocket.h"
+#include "cl_command_event.h"
+#include <wx/event.h>
+#include <wx/socket.h>
 
+class IProcess;
 class NodeJSDebuggerTooltip;
-struct NodeJSDebuggerException
-{
+struct NodeJSDebuggerException {
     wxString message;
     wxString script;
     int line;
@@ -52,11 +51,11 @@ struct NodeJSDebuggerException
 class NodeJSDebugger : public wxEvtHandler
 {
     NodeJSSocket::Ptr_t m_socket;
-    TerminalEmulator m_node;
     NodeJSBptManager m_bptManager;
     bool m_canInteract;
     wxStringSet_t m_tempFiles;
     NodeJSDebuggerTooltip* m_tooltip;
+    IProcess* m_nodeProcess;
 
 public:
     typedef SmartPtr<NodeJSDebugger> Ptr_t;
@@ -82,8 +81,8 @@ protected:
     void OnEditorChanged(wxCommandEvent& event);
 
     // Process event
-    void OnNodeTerminated(clCommandEvent& event);
-    void OnNodeOutput(clCommandEvent& event);
+    void OnNodeTerminated(clProcessEvent& event);
+    void OnNodeOutput(clProcessEvent& event);
     void OnHighlightLine(clDebugEvent& event);
     void OnEvalExpression(clDebugEvent& event);
 
@@ -93,6 +92,7 @@ protected:
 protected:
     void DoHighlightLine(const wxString& filename, int lineNo);
     void DoDeleteTempFiles(const wxStringSet_t& files);
+    void DoCleanup();
 
 public:
     NodeJSDebugger();

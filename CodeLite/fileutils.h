@@ -74,7 +74,12 @@ public:
      * @brief launch the OS default terminal at a given path
      */
     static void OpenTerminal(const wxString& path, const wxString& user_command = "");
-
+    
+    /**
+     * @brief open the built-in terminal
+     */
+    static void OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit = false);
+    
     /**
      * @brief open ssh terminal
      * @param sshClient ssh client to use (putty, ssh etc)

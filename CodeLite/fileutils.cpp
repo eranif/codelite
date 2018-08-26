@@ -639,3 +639,25 @@ wxString FileUtils::RealPath(const wxString& filepath)
 
     return filepath;
 }
+
+void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit)
+{
+    wxString title(user_command);
+    
+    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
+    fnCodeliteTerminal.SetFullName("codelite-terminal");
+    
+    wxString newCommand;
+    newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+    if(pause_when_exit) { newCommand << " --wait "; }
+    if(wxDirExists(wd)) {
+        wxString workingDirectory = wd;
+        workingDirectory.Trim().Trim(false);
+        if(workingDirectory.Contains(" ") && !workingDirectory.StartsWith("\"")) {
+            workingDirectory.Prepend("\"").Append("\"");
+        }
+        newCommand << " --working-directory=" << wd;
+    }
+    newCommand << " --cmd " << title;
+    ::wxExecute(newCommand, wxEXEC_ASYNC);
+}

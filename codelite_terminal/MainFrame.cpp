@@ -64,6 +64,8 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions& options, long styl
     SetCartAtEnd();
     m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
     m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
+    m_stc->SetWrapMode(wxSTC_WRAP_CHAR);
+    
     // m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize(m_config.GetTerminalSize());
     SetPosition(m_config.GetTerminalPosition());

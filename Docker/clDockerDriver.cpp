@@ -71,7 +71,7 @@ void clDockerDriver::ExecuteDockerfile(const wxFileName& dockerfile, const clDoc
     runOptions.Trim().Trim(false);
     if(!runOptions.StartsWith("run")) { command << " run "; }
     command << info.GetRunOptions();
-    FileUtils::OpenTerminal(dockerfile.GetPath(), command);
+    FileUtils::OpenBuiltInTerminal(dockerfile.GetPath(), command, true);
 }
 
 void clDockerDriver::Stop()

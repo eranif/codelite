@@ -132,6 +132,8 @@ void FileExtManager::Init()
         m_map["pri"] = TypeQMake;
         m_map["cmake"] = TypeCMake;
         m_map["s"] = TypeAsm;
+        m_map["yaml"] = TypeYAML;
+        m_map["yml"] = TypeYAML;
 
         // Initialize regexes:
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript)));

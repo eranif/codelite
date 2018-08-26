@@ -3,9 +3,12 @@
 
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
+#include "cl_config.h"
 
 class clDockerWorkspaceView : public clTreeCtrlPanel
 {
+    clConfig m_config;
+    
 public:
     clDockerWorkspaceView(wxWindow* parent);
     ~clDockerWorkspaceView();

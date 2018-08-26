@@ -9,14 +9,16 @@
 
 clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     : clTreeCtrlPanel(parent)
+    , m_config("docker-view.conf")
 {
     // Set the view options
+    SetConfig(&m_config);
     clDockerSettings settings;
     size_t options = 0;
     settings.Load();
     if(settings.IsLinkEditor()) { options |= kLinkToEditor; }
     SetOptions(options);
-
+    
     SetViewName("Docker");
     SetNewFileTemplate("Untitled", wxStrlen("Untitled"));
 

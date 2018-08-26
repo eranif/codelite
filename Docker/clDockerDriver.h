@@ -20,6 +20,8 @@ protected:
         kKillContainers,
         kListImages,
         kDeleteUnusedImages,
+        kContext_StartContainer,
+        kContext_StopContainer,
     };
 
 protected:
@@ -29,8 +31,8 @@ protected:
     wxString m_output;
 
 protected:
-    void OnBuildOutput(clProcessEvent& event);
-    void OnBuildTerminated(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 
 protected:
     void StartProcessAsync(const wxString& command, const wxString& wd, size_t flags, clDockerDriver::eContext context);
@@ -64,6 +66,8 @@ public:
     void RemoveContainers(const wxArrayString& ids);
     void ExecContainerCommand(const wxString& containerName, const wxString& containerCommand);
     void AttachTerminal(const wxArrayString& names);
+    void StopContainer(const wxString& containerName);
+    void StartContainer(const wxString& containerName);
 };
 
 #endif // CLDOCKERBUILDER_H

@@ -251,18 +251,16 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
     menu.Bind(wxEVT_MENU,
               [&](wxCommandEvent& event) {
                   for(size_t i = 0; i < containers.size(); ++i) {
-                      m_driver->ExecContainerCommand(containers[i].GetName(), "restart");
+                      m_driver->StartContainer(containers[i].GetName());
                   }
-                  m_driver->ListContainers();
               },
               wxID_EXECUTE);
     menu.Append(wxID_STOP, _("Stop"));
     menu.Bind(wxEVT_MENU,
               [&](wxCommandEvent& event) {
                   for(size_t i = 0; i < containers.size(); ++i) {
-                      m_driver->ExecContainerCommand(containers[i].GetName(), "stop");
+                      m_driver->StopContainer(containers[i].GetName());
                   }
-                  m_driver->ListContainers();
               },
               wxID_STOP);
     menu.Append(XRCID("pause_container"), _("Pause"));

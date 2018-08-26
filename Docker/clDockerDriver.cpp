@@ -16,14 +16,14 @@
 clDockerDriver::clDockerDriver(Docker* plugin)
     : m_plugin(plugin)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnProcessTerminated, this);
 }
 
 clDockerDriver::~clDockerDriver()
 {
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnBuildOutput, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnBuildTerminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clDockerDriver::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnProcessTerminated, this);
 }
 
 void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
@@ -79,7 +79,7 @@ void clDockerDriver::Stop()
     if(IsRunning()) { m_process->Terminate(); }
 }
 
-void clDockerDriver::OnBuildOutput(clProcessEvent& event)
+void clDockerDriver::OnProcessOutput(clProcessEvent& event)
 {
     switch(m_context) {
     case kNone:
@@ -97,7 +97,7 @@ void clDockerDriver::OnBuildOutput(clProcessEvent& event)
     }
 }
 
-void clDockerDriver::OnBuildTerminated(clProcessEvent& event)
+void clDockerDriver::OnProcessTerminated(clProcessEvent& event)
 {
     wxDELETE(m_process);
     switch(m_context) {
@@ -112,6 +112,10 @@ void clDockerDriver::OnBuildTerminated(clProcessEvent& event)
         break;
     case kDeleteUnusedImages:
         CallAfter(&clDockerDriver::DoListImages);
+        break;
+    case kContext_StartContainer:
+    case kContext_StopContainer:
+        CallAfter(&clDockerDriver::DoListContainers);
         break;
     default:
         break;
@@ -269,4 +273,28 @@ void clDockerDriver::ExecContainerCommand(const wxString& containerName, const w
     command << " " << containerCommand << " " << containerName;
     ::WrapInShell(command);
     StartProcessSync(command, "", IProcessCreateDefault);
+}
+
+void clDockerDriver::StopContainer(const wxString& containerName)
+{
+    if(IsRunning()) return;
+    
+    wxString command = GetDockerExe();
+    if(command.IsEmpty()) return;
+
+    command << " stop " << containerName;
+    ::WrapInShell(command);
+    StartProcessAsync(command, "", IProcessCreateDefault, kContext_StopContainer);
+}
+
+void clDockerDriver::StartContainer(const wxString& containerName)
+{
+    if(IsRunning()) return;
+    
+    wxString command = GetDockerExe();
+    if(command.IsEmpty()) return;
+
+    command << " restart " << containerName;
+    ::WrapInShell(command);
+    StartProcessAsync(command, "", IProcessCreateDefault, kContext_StartContainer);
 }

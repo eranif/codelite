@@ -81,6 +81,7 @@ public:
         TypeQMake,
         TypeCMake,
         TypeDockerfile,
+        TypeYAML,
         TypeOther = wxNOT_FOUND
     };
 

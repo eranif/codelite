@@ -214,6 +214,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(LoadBitmap(wxT("cmake"))), FileExtManager::TypeCMake);
     AddImage(imageList->Add(LoadBitmap(wxT("qt"))), FileExtManager::TypeQMake);
     AddImage(imageList->Add(LoadBitmap(wxT("docker"))), FileExtManager::TypeDockerfile);
+    AddImage(imageList->Add(LoadBitmap(wxT("yml"))), FileExtManager::TypeYAML);
 
     std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
                   [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
@@ -267,6 +268,7 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeCMake] = LoadBitmap(wxT("cmake"));
     images[FileExtManager::TypeQMake] = LoadBitmap(wxT("qt"));
     images[FileExtManager::TypeDockerfile] = LoadBitmap(wxT("docker"));
+    images[FileExtManager::TypeYAML] = LoadBitmap(wxT("yml"));
 
     BitmapLoader::BitmapMap_t merged;
     merged.insert(m_userBitmaps.begin(), m_userBitmaps.end());

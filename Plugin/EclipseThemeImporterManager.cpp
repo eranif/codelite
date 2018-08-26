@@ -23,6 +23,7 @@
 #include "EclipseTextThemeImporter.h"
 #include "EclipseThemeImporterManager.h"
 #include "EclipseXMLThemeImporter.h"
+#include "EclipseYAMLThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -49,6 +50,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseSQLThemeImporter());
     m_importers.push_back(new EclipseSCSSThemeImporter());
     m_importers.push_back(new EclipseDockerfileThemeImporter());
+    m_importers.push_back(new EclipseYAMLThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

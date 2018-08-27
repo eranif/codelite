@@ -1,17 +1,17 @@
-#include "php_open_resource_dlg.h"
-#include <globals.h>
-#include <windowattrmanager.h>
-#include <imanager.h>
-#include <wx/imaglist.h>
-#include <ieditor.h>
-#include <bitmap_loader.h>
-#include "php_workspace.h"
-#include <macros.h>
-#include "PHPLookupTable.h"
-#include <wx/tokenzr.h>
 #include "FilesCollector.h"
-#include "fileutils.h"
+#include "PHPLookupTable.h"
 #include "cl_config.h"
+#include "fileutils.h"
+#include "php_open_resource_dlg.h"
+#include "php_workspace.h"
+#include <bitmap_loader.h>
+#include <globals.h>
+#include <ieditor.h>
+#include <imanager.h>
+#include <macros.h>
+#include <windowattrmanager.h>
+#include <wx/imaglist.h>
+#include <wx/tokenzr.h>
 
 static int TIMER_ID = 5647;
 static wxBitmap CLASS_IMG_ID = wxNullBitmap;
@@ -187,14 +187,15 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
         cols.push_back(items.at(i).TypeAsString());
         cols.push_back(items.at(i).filename.GetFullPath());
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(items.at(i))));
-        if(!selection.IsOk()) {
-            selection = m_dvListCtrl->RowToItem(0);
-        }
+        if(!selection.IsOk()) { selection = m_dvListCtrl->RowToItem(0); }
     }
 
     if(selection.IsOk()) {
         m_dvListCtrl->Select(selection);
         m_dvListCtrl->EnsureVisible(selection);
+    }
+    for(size_t i = 0; i < m_dvListCtrl->GetColumnCount(); ++i) {
+        m_dvListCtrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     }
 }
 

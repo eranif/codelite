@@ -31,18 +31,19 @@ void clDockingManager::OnRender(wxAuiManagerEvent& event) { event.Skip(); }
 
 void clDockingManager::OnButtonClicked(wxAuiManagerEvent& event)
 {
-    if(event.GetButton() != wxAUI_BUTTON_PIN) {
-        event.Skip();
-        return;
-    }
-    event.Veto();
-    event.Skip(false);
-
-    if(event.GetPane()->name == OUTPUT_VIEW) {
-        CallAfter(&clDockingManager::ShowOutputViewOpenTabMenu);
-    } else {
-        CallAfter(&clDockingManager::ShowWorkspaceOpenTabMenu);
-    }
+    event.Skip();
+    // if(event.GetButton() != wxAUI_BUTTON_PIN) {
+    //     event.Skip();
+    //     return;
+    // }
+    // event.Veto();
+    // event.Skip(false);
+    // 
+    // if(event.GetPane()->name == OUTPUT_VIEW) {
+    //     CallAfter(&clDockingManager::ShowOutputViewOpenTabMenu);
+    // } else {
+    //     CallAfter(&clDockingManager::ShowWorkspaceOpenTabMenu);
+    // }
 }
 
 void clDockingManager::OnAuiPaneActivated(wxAuiManagerEvent& e)

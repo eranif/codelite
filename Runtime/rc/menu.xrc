@@ -276,7 +276,7 @@
                 <checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-<!--
+            <!--
             <object class="wxMenu" name="toolbars_menu">
                 <label>Tool&amp;bars</label>
                 <style>wxMENU_TEAROFF</style>
@@ -949,7 +949,6 @@
             <label>Clear Background Colour</label>
         </object>
     </object>
-
     <!-- Workspace popup menu -->
     <object class="wxMenu" name="workspace_popup_menu">
         <object class="wxMenu" name="wxID_ANY">
@@ -1004,6 +1003,11 @@
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="hide_wv_tab">
+            <label>Hide</label>
+        </object>
+    </object>
+    <object class="wxMenu" name="workspace_view_rmenu">
+        <object class="wxMenuItem" name="hide_ov_tab">
             <label>Hide</label>
         </object>
     </object>
@@ -1095,6 +1099,7 @@
 
 
 
+    
     <object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">
             <label>Refresh</label>

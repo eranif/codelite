@@ -602,6 +602,7 @@ EVT_UPDATE_UI(wxID_BACKWARD, clMainFrame::OnBackwardForwardUI)
 //-------------------------------------------------------
 EVT_MENU(XRCID("detach_wv_tab"), clMainFrame::OnDetachWorkspaceViewTab)
 EVT_MENU(XRCID("hide_wv_tab"), clMainFrame::OnHideWorkspaceViewTab)
+EVT_MENU(XRCID("hide_ov_tab"), clMainFrame::OnHideOutputViewTab)
 
 //-------------------------------------------------------
 // Debugger Pane tab context menu
@@ -1071,7 +1072,6 @@ void clMainFrame::CreateGUIControls()
     // Add the explorer pane
     m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
-                                       .PinButton()
                                        .CaptionVisible(true)
                                        .MinimizeButton()
                                        .MaximizeButton()
@@ -1123,7 +1123,6 @@ void clMainFrame::CreateGUIControls()
     m_outputPane = new OutputPane(m_mainPanel, wxT("Output View"));
     wxAuiPaneInfo paneInfo;
     m_mgr.AddPane(m_outputPane, paneInfo.CaptionVisible(true)
-                                    .PinButton()
                                     .Name(wxT("Output View"))
                                     .Caption(wxT("Output View"))
                                     .Bottom()
@@ -3534,6 +3533,16 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     GetWorkspacePane()->GetNotebook()->RemovePage(sel);
     pane->SetChildNoReparent(page);
     wxUnusedVar(e);
+}
+
+void clMainFrame::OnHideOutputViewTab(wxCommandEvent& e)
+{
+    size_t sel = GetOutputPane()->GetNotebook()->GetSelection();
+    wxString text = GetOutputPane()->GetNotebook()->GetPageText(sel);
+
+    clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
+    eventHide.SetSelected(false).SetString(text);
+    EventNotifier::Get()->AddPendingEvent(eventHide);  
 }
 
 void clMainFrame::OnHideWorkspaceViewTab(wxCommandEvent& e)

@@ -31,6 +31,7 @@
 
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
+#include "cl_command_event.h"
 #include "windowstack.h"
 #include <list>
 #include <vector>
@@ -429,4 +430,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 #endif // NOTEBOOK_H

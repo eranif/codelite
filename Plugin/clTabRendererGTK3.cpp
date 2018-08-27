@@ -194,7 +194,7 @@ void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
                 colours.activeTabInnerPenColour = colours.activeTabBgColour;
                 colours.activeTabPenColour = colours.activeTabBgColour.ChangeLightness(110);
                 colours.activeTabTextColour = *wxWHITE;
-                colours.inactiveTabTextColour = wxColour("#808B96");
+                colours.inactiveTabTextColour = wxColour("#909497");
                 colours.tabAreaColour = colours.activeTabBgColour.ChangeLightness(110);
                 useDefaults = false;
             }

@@ -42,6 +42,7 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 
 extern void Notebook_Init_Bitmaps();
 
@@ -1100,7 +1101,13 @@ void clTabCtrl::DoShowTabList()
         item->Check(tab->IsActive());
         pageMenuID++;
     }
-
+    
+    // Let others handle this event as well
+    clContextMenuEvent menuEvent(wxEVT_BOOK_FILELIST_BUTTON_CLICKED);
+    menuEvent.SetMenu(&menu);
+    menuEvent.SetEventObject(GetParent()); // The Notebook
+    GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
+    
     int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;

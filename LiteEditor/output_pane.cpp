@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "clStrings.h"
 #include "clTabTogglerHelper.h"
+#include "detachedpanesinfo.h"
 #include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -98,6 +99,7 @@ void OutputPane::CreateGUIControls()
     style |= kNotebook_UnderlineActiveTab;
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &OutputPane::OnOutputBookFileListMenu, this);
 
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
@@ -299,7 +301,7 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         // Insert the page
         int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
         if(where == wxNOT_FOUND) {
-            GetNotebook()->AddPage(t.m_window, t.m_label, false, t.m_bmp);
+            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmp);
         } else {
             GetNotebook()->SetSelection(where);
         }
@@ -308,4 +310,39 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         int where = GetNotebook()->GetPageIndex(t.m_label);
         if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
     }
+}
+
+void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
+{
+    wxMenu* menu = event.GetMenu();
+    menu->AppendSeparator();
+
+    DetachedPanesInfo dpi;
+    EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
+
+    wxMenu* hiddenTabsMenu = new wxMenu();
+    const wxArrayString& tabs = clGetManager()->GetOutputTabs();
+    for(size_t i = 0; i < tabs.size(); ++i) {
+        const wxString& label = tabs.Item(i);
+        if((m_book->GetPageIndex(label) != wxNOT_FOUND)) {
+            // Tab is visible, dont show it
+            continue;
+        }
+        int tabId = wxXmlResource::GetXRCID(wxString() << "output_tab_" << label);
+        wxMenuItem* item = new wxMenuItem(hiddenTabsMenu, tabId, label, "", wxITEM_CHECK);
+        hiddenTabsMenu->Append(item);
+        item->Check((m_book->GetPageIndex(label) != wxNOT_FOUND));
+
+        // Output pane does not support "detach"
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { item->Enable(false); }
+        menu->Bind(wxEVT_MENU,
+                   // Use lambda by value here so we make a copy
+                   [=](wxCommandEvent& e) {
+                       clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
+                       eventShow.SetSelected(e.IsChecked()).SetString(label);
+                       EventNotifier::Get()->AddPendingEvent(eventShow);
+                   },
+                   tabId);
+    }
+    menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
 }

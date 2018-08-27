@@ -40,6 +40,7 @@
 #include <wx/string.h>
 #include <wx/variant.h>
 
+class wxDataViewCtrl;
 class IManager;
 class wxStyledTextCtrl;
 class IProcess;
@@ -604,5 +605,10 @@ WXDLLIMPEXP_SDK bool clNextWord(const wxString& str, size_t& offset, wxString& w
  * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
  */
 WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
+
+/**
+ * @brief fit the dataview columns width to match their content
+ */
+WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
 
 #endif // GLOBALS_H

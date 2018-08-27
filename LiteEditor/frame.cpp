@@ -3152,6 +3152,7 @@ void clMainFrame::CompleteInitialization()
     // Register C++ keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator("swap_files", "F12", "C++::Swap Header/Implementation file");
     clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");
+    clKeyboardManager::Get()->AddGlobalAccelerator("open_include_file", "", "Open Include File");
 
     // Load the plugins
     PluginManager::Get()->Load();

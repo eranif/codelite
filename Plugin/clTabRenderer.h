@@ -70,7 +70,7 @@ enum NotebookStyle {
 
     /// The notebook colours are changing based on the current editor theme
     kNotebook_DynamicColours = (1 << 16),
-    
+
     /// Allow DnD between different book controls
     kNotebook_AllowForeignDnD = (1 << 17),
 
@@ -235,7 +235,13 @@ public:
      * @brief draw cheveron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
-
+    
+    /**
+     * @brief Adjust colours per renderer
+     * @param colours [in/out]
+     * @param style the notebook style
+     */
+    virtual void AdjustColours(clTabColours& colours, size_t style);
     static int GetDefaultBitmapHeight(int Y_spacer);
 
     /**

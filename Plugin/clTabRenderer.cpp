@@ -2,6 +2,7 @@
 #include "cl_defs.h"
 #include "globals.h"
 
+#include "ColoursAndFontsManager.h"
 #include "Notebook.h"
 #include "clTabRenderer.h"
 #include "clTabRendererClassic.h"
@@ -139,7 +140,6 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
     wxFont font = clTabRenderer::GetTabFont();
-    font.SetWeight(wxFONTWEIGHT_BOLD);
     dc.SetFont(font);
 
     wxSize sz = dc.GetTextExtent(m_label);
@@ -234,7 +234,12 @@ clTabRenderer::clTabRenderer(const wxString& name)
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
 
-wxFont clTabRenderer::GetTabFont() { return DrawingUtils::GetDefaultGuiFont(); }
+wxFont clTabRenderer::GetTabFont()
+{
+    wxFont f = DrawingUtils::GetDefaultGuiFont();
+    // f.SetWeight(wxFONTWEIGHT_BOLD);
+    return f;
+}
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -301,7 +306,13 @@ void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours&
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)
 {
-    DrawingUtils::DrawDropDownArrow(win, dc, rect, colours.tabAreaColour.ChangeLightness(50));
+    wxColour buttonColour;
+    if(DrawingUtils::IsDark(colours.tabAreaColour)) {
+        buttonColour = *wxWHITE;
+    } else {
+        buttonColour = *wxBLACK;
+    }
+    DrawingUtils::DrawDropDownArrow(win, dc, rect, buttonColour);
 }
 
 int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
@@ -373,4 +384,26 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     wxUnusedVar(style);
     wxUnusedVar(dc);
     wxUnusedVar(clientRect);
+}
+
+void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)
+{
+    if(style & kNotebook_DynamicColours) {
+        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
+        if(!globalTheme.IsEmpty()) {
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
+            if(lexer && lexer->IsDark()) {
+                // Dark theme, update all the colours
+                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                colours.activeTabInnerPenColour = colours.activeTabBgColour;
+                colours.activeTabPenColour = colours.activeTabBgColour.ChangeLightness(110);
+                colours.activeTabTextColour = *wxWHITE;
+            } else if(lexer) {
+                // Light theme
+                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                colours.activeTabInnerPenColour = colours.activeTabBgColour;
+                colours.activeTabTextColour = *wxBLACK;
+            }
+        }
+    }
 }

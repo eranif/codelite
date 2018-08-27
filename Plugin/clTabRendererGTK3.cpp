@@ -1,5 +1,6 @@
 #include "clTabRendererGTK3.h"
 
+#include "ColoursAndFontsManager.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include <wx/dcmemory.h>
@@ -34,14 +35,12 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
                              const clTabColours& colours, size_t style)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
-
-    wxColour bgColour(colours.inactiveTabBgColour);
-    wxColour penColour(colours.inactiveTabBgColour);
+    wxColour bgColour(colours.tabAreaColour);
+    wxColour penColour(colours.tabAreaColour);
 
     wxFont font = GetTabFont();
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.inactiveTabTextColour
-                                                : colours.inactiveTabBgColour.ChangeLightness(60));
-    font.SetWeight(wxFONTWEIGHT_BOLD);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    //font.SetWeight(wxFONTWEIGHT_BOLD);
     fontDC.SetFont(font);
 
     wxRect rr = tabInfo.m_rect;
@@ -126,7 +125,7 @@ void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t active
 void clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                                        size_t style)
 {
-    wxColour bgColour(colours.inactiveTabBgColour);
+    wxColour bgColour(colours.tabAreaColour);
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
@@ -165,19 +164,49 @@ void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxR
 #endif
     wxPoint p1, p2;
     if((style & kNotebook_LeftTabs)) {
-        dc.SetPen(colours.activeTabPenColour);
+        dc.SetPen(colours.tabAreaColour);
         dc.DrawLine(rr.GetRightTop(), rr.GetRightBottom());
     } else if(style & kNotebook_RightTabs) {
         // Right tabs
-        dc.SetPen(colours.activeTabPenColour);
+        dc.SetPen(colours.tabAreaColour);
         dc.DrawLine(rr.GetLeftTop(), rr.GetLeftBottom());
     } else if(style & kNotebook_BottomTabs) {
         // Bottom tabs
-        dc.SetPen(colours.activeTabPenColour);
+        dc.SetPen(colours.tabAreaColour);
         dc.DrawLine(rr.GetTopRight(), rr.GetTopLeft());
     } else {
         // Top tabs
-        dc.SetPen(colours.activeTabPenColour);
+        dc.SetPen(colours.tabAreaColour);
         dc.DrawLine(rr.GetBottomRight(), rr.GetBottomLeft());
+    }
+}
+
+void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
+{
+    bool useDefaults = true;
+    if(style & kNotebook_DynamicColours) {
+        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
+        if(!globalTheme.IsEmpty()) {
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
+            if(lexer && lexer->IsDark()) {
+                // Dark theme, update all the colours
+                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
+                colours.activeTabInnerPenColour = colours.activeTabBgColour;
+                colours.activeTabPenColour = colours.activeTabBgColour.ChangeLightness(110);
+                colours.activeTabTextColour = *wxWHITE;
+                colours.inactiveTabTextColour = wxColour("#808B96");
+                colours.tabAreaColour = colours.activeTabBgColour.ChangeLightness(110);
+                useDefaults = false;
+            }
+        }
+    }
+
+    if(useDefaults) {
+        colours.activeTabBgColour = wxColour("#a6acaf");
+        colours.activeTabInnerPenColour = colours.activeTabBgColour;
+        colours.tabAreaColour = colours.inactiveTabBgColour;
+        colours.activeTabPenColour = colours.activeTabBgColour;
+        colours.inactiveTabTextColour = wxColour("#808b96");
+        colours.activeTabTextColour = wxColour("#17202A");
     }
 }

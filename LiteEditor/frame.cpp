@@ -4940,10 +4940,11 @@ void clMainFrame::OnLoadSession(wxCommandEvent& e)
 void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 {
     // Show the build menu
-    wxUnusedVar(e);
+    clToolBar* toolbar = dynamic_cast<clToolBar*>(e.GetEventObject());
+    CHECK_PTR_RET(toolbar);
     wxMenu menu;
     DoCreateBuildDropDownMenu(&menu);
-    m_toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
+    toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
 }
 
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)

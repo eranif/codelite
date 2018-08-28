@@ -1382,15 +1382,6 @@ void clMainFrame::CreateToolBar(int toolSize)
                        bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
 
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
-
-    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", wxArrayString());
-    std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
-    for(size_t i = 0; i < hiddenItems.size(); ++i) {
-        const wxString& label = hiddenItems.Item(i);
-        std::vector<clToolBarButtonBase*>::iterator iter = std::find_if(
-            buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
-        if(iter != buttons.end()) { (*iter)->Show(false); }
-    }
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
@@ -3229,6 +3220,17 @@ void clMainFrame::CompleteInitialization()
     }
 
     clGotoAnythingManager::Get().Initialise();
+    
+    // Update the toolbar view
+    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", wxArrayString());
+    std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
+    for(size_t i = 0; i < hiddenItems.size(); ++i) {
+        const wxString& label = hiddenItems.Item(i);
+        std::vector<clToolBarButtonBase*>::iterator iter = std::find_if(
+            buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
+        if(iter != buttons.end()) { (*iter)->Show(false); }
+    }
+
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)

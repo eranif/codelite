@@ -89,7 +89,7 @@ void clTabColours::InitLightColours()
     if(DrawingUtils::IsDark(activeTabBgColour)) { activeTabTextColour = *wxWHITE; }
 
     tabAreaColour = faceColour;
-    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff"));
+    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
 
 #ifdef __WXMSW__
     inactiveTabBgColour = faceColour.ChangeLightness(90);

@@ -135,7 +135,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
 #endif
 #endif
     // Set the marker colour
-    m_colourPickerMarker->SetColour(clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#80ccff")));
+    m_colourPickerMarker->SetColour(clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633")));
     m_checkBoxHideOutputPaneNotIfDebug->Connect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindows::OnHideOutputPaneNotIfDebugUI), NULL,
         this);

@@ -123,7 +123,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_trimOnlyModifiedLines(true)
     , m_options(Opt_AutoCompleteCurlyBraces | Opt_AutoCompleteNormalBraces | Opt_NavKey_Shift | Opt_WrapBrackets |
                 Opt_WrapQuotes | Opt_AutoCompleteDoubleQuotes | Opt_FoldHighlightActiveBlock |
-                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleMinimal)
+                Opt_WrapCmdWithDoubleQuotes | Opt_TabStyleMinimal | Opt_HideDockingWindowCaption)
     , m_options2(0)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)

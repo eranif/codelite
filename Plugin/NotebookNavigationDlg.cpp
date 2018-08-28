@@ -117,7 +117,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     }
 
     m_dvListCtrl->CallAfter(&wxDataViewCtrl::SetFocus);
-    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    clFitColumnWidth(m_dvListCtrl);
     
     SetMinClientSize(wxSize(500, 300));
 #ifdef __WXOSX__

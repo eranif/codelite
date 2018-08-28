@@ -400,7 +400,7 @@ protected:
     void OnBuildEnded(clCommandEvent& event);
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCloseEvent& event);
-
+    void OnCustomiseToolbar(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event);
     void OnDuplicateTab(wxCommandEvent& event);
     void OnFileSaveUI(wxUpdateUIEvent& event);

@@ -1378,6 +1378,8 @@ void clMainFrame::CreateToolBar(int toolSize)
                        bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
     m_toolbar->Realize();
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+
+    m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 
 bool clMainFrame::StartSetupWizard()
@@ -3542,7 +3544,7 @@ void clMainFrame::OnHideOutputViewTab(wxCommandEvent& e)
 
     clCommandEvent eventHide(wxEVT_SHOW_OUTPUT_TAB);
     eventHide.SetSelected(false).SetString(text);
-    EventNotifier::Get()->AddPendingEvent(eventHide);  
+    EventNotifier::Get()->AddPendingEvent(eventHide);
 }
 
 void clMainFrame::OnHideWorkspaceViewTab(wxCommandEvent& e)
@@ -5659,4 +5661,10 @@ void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
     }
     if(selection.IsEmpty()) return;
     OnFindSelectionPrev(event);
+}
+
+void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event) 
+{
+    const std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
+    if(buttons.empty()) return;
 }

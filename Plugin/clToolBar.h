@@ -21,6 +21,7 @@ public:
     enum eFlags {
         kShowLabels = (1 << 0),
         kThemedColour = (1 << 1),
+        kShowCustomiseMenu = (1 << 2),
     };
 
 protected:
@@ -75,7 +76,9 @@ public:
      */
     void ShowLabels(bool show) { EnableFlag(kShowLabels, show); }
     bool IsShowLabels() const { return m_flags & kShowLabels; }
-
+    void EnableCustomisation(bool b) { EnableFlag(kShowCustomiseMenu, b); }
+    bool IsCustomisationEnabled() const { return HasFlag(kShowCustomiseMenu); }
+    
     /**
      * @brief add toolbar button
      */
@@ -163,5 +166,5 @@ public:
     // Compatibility API
     bool DeleteTool(wxWindowID id) { return DeleteById(id); }
 };
-
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 #endif // CLTOOLBAR_H

@@ -12,7 +12,9 @@
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
 
+wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
                      const wxString& name)
     : wxPanel(parent, winid, pos, size, style, name)
@@ -70,19 +72,21 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kThemedColour));
     int xx = 0;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
-        wxSize buttonSize = button->CalculateSize(gcdc);
-        if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
-            if(button->IsControl()) {
-                clToolBarControl* control = button->Cast<clToolBarControl>();
-                control->GetControl()->Hide();
+        if(!button->IsHidden()) {
+            wxSize buttonSize = button->CalculateSize(gcdc);
+            if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
+                if(button->IsControl()) {
+                    clToolBarControl* control = button->Cast<clToolBarControl>();
+                    control->GetControl()->Hide();
+                }
+                m_overflowButtons.push_back(button);
+            } else {
+                wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
+                button->Render(gcdc, r);
+                m_visibleButtons.push_back(button);
             }
-            m_overflowButtons.push_back(button);
-        } else {
-            wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
-            button->Render(gcdc, r);
-            m_visibleButtons.push_back(button);
+            xx += buttonSize.GetWidth();
         }
-        xx += buttonSize.GetWidth();
     });
 
     wxRect chevronRect = GetClientRect();
@@ -90,7 +94,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     chevronRect.SetWidth(CL_TOOL_BAR_CHEVRON_SIZE);
 
     // If we have overflow buttons, draw an arrow to the right
-    if(!m_overflowButtons.empty()) {
+    if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
         wxRendererNative::Get().DrawDropArrow(this, gcdc, chevronRect, wxCONTROL_CURRENT);
         m_chevronRect = chevronRect;
     }
@@ -124,7 +128,7 @@ void clToolBar::Realize()
 void clToolBar::OnLeftUp(wxMouseEvent& event)
 {
     wxPoint pos = event.GetPosition();
-    if(!m_overflowButtons.empty() && m_chevronRect.Contains(pos)) {
+    if(m_chevronRect.Contains(pos)) {
         DoShowOverflowMenu();
     } else {
         for(size_t i = 0; i < m_visibleButtons.size(); ++i) {
@@ -351,13 +355,23 @@ void clToolBar::DoShowOverflowMenu()
             // Show all non-control buttons
             wxMenuItem* menuItem = new wxMenuItem(&menu, button->GetId(), button->GetLabel(), button->GetLabel(),
                                                   button->IsToggle() ? wxITEM_CHECK : wxITEM_NORMAL);
-            if(button->GetBmp().IsOk()) { menuItem->SetBitmap(button->GetBmp()); }
+            if(button->GetBmp().IsOk() && !button->IsToggle()) { menuItem->SetBitmap(button->GetBmp()); }
             if(button->IsToggle() && button->IsChecked()) { checkedItems.push_back(button->GetId()); }
             menuItem->Enable(button->IsEnabled());
             menu.Append(menuItem);
         }
     }
-
+    if(IsCustomisationEnabled()) {
+        menu.AppendSeparator();
+        menu.Append(XRCID("customise_toolbar"), _("Customise..."));
+        menu.Bind(wxEVT_MENU,
+                  [&](wxCommandEvent& event) {
+                      wxCommandEvent evtCustomise(wxEVT_TOOLBAR_CUSTOMISE);
+                      evtCustomise.SetEventObject(this);
+                      GetEventHandler()->AddPendingEvent(evtCustomise);
+                  },
+                  XRCID("customise_toolbar"));
+    }
     // Show the menu
     m_popupShown = true;
     wxPoint menuPos = m_chevronRect.GetBottomLeft();

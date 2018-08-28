@@ -37,6 +37,7 @@ public:
         kDisabled = (1 << 3),
         kSeparator = (1 << 4),
         kControl = (1 << 5),
+        kHidden = (1 << 6),
     };
 
     enum eRenderFlags {
@@ -124,6 +125,10 @@ public:
         EnableFlag(kDisabled, !b);
         return true;
     }
+    bool IsHidden() const { return m_flags & kHidden; }
+    bool IsShown() const { return !IsHidden(); }
+    void Show(bool b) { EnableFlag(kHidden, !b); }
+    
     template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
 };
 

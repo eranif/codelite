@@ -235,6 +235,7 @@ void GitCommitListDlg::DoLoadCommits(const wxString& filter)
             m_dvListCtrlCommitList->AppendItem(cols);
         }
     }
+    ::clFitColumnWidth(m_dvListCtrlCommitList);
 }
 
 void GitCommitListDlg::ClearAll(bool includingCommitlist /*=true*/)

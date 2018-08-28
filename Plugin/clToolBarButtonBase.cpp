@@ -85,20 +85,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
             dc.DrawLine(wxPoint(xx, rect.GetY() + 2), wxPoint(xx, rect.GetY() + rect.GetHeight() - 2));
         }
         xx += CL_TOOL_BAR_X_MARGIN;
-
-        wxPoint points[3];
-        points[0].x = xx;
-        points[0].y = (rect.GetHeight() - CL_TOOL_BAR_DROPDOWN_ARROW_SIZE) / 2 + rect.GetY();
-
-        points[1].x = xx + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
-        points[1].y = points[0].y;
-
-        points[2].x = xx + (CL_TOOL_BAR_DROPDOWN_ARROW_SIZE / 2);
-        points[2].y = points[0].y + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
-        dc.SetPen(textColour);
-        dc.SetBrush(textColour);
-        dc.DrawPolygon(3, points);
-
+        DrawingUtils::DrawDropDownArrow(nullptr, dc, m_dropDownArrowRect, textColour);
         xx += CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
         xx += CL_TOOL_BAR_X_MARGIN;
     }

@@ -45,6 +45,15 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="clToolBar">
+    <VirtualDirectory Name="UI">
+      <File Name="clCustomiseToolBarDlg.cpp"/>
+      <File Name="clCustomiseToolBarDlg.h"/>
+      <File Name="ToolBarUI.h"/>
+      <File Name="ToolBarUI.cpp"/>
+      <File Name="ToolBar_liteeditor_bitmaps.xrc"/>
+      <File Name="ToolBar_liteeditor_bitmaps.cpp"/>
+      <File Name="ToolBar.wxcp"/>
+    </VirtualDirectory>
     <File Name="cLToolBarControl.h"/>
     <File Name="cLToolBarControl.cpp"/>
     <File Name="clToolBarToggleButton.h"/>

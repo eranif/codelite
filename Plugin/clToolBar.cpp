@@ -32,6 +32,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     Bind(wxEVT_MOTION, &clToolBar::OnMotion, this);
     Bind(wxEVT_ENTER_WINDOW, &clToolBar::OnEnterWindow, this);
     Bind(wxEVT_LEAVE_WINDOW, &clToolBar::OnLeaveWindow, this);
+    Bind(wxEVT_SIZE, &clToolBar::OnSize, this);
 }
 
 clToolBar::~clToolBar()
@@ -43,6 +44,7 @@ clToolBar::~clToolBar()
     Unbind(wxEVT_ENTER_WINDOW, &clToolBar::OnEnterWindow, this);
     Unbind(wxEVT_LEAVE_WINDOW, &clToolBar::OnLeaveWindow, this);
     Unbind(wxEVT_LEFT_DOWN, &clToolBar::OnLeftDown, this);
+    Unbind(wxEVT_SIZE, &clToolBar::OnSize, this);
 
     for(size_t i = 0; i < m_buttons.size(); ++i) {
         delete m_buttons[i];
@@ -71,21 +73,28 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kThemedColour));
     int xx = 0;
+    bool last_was_separator = false;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
-        if(!button->IsHidden()) {
-            wxSize buttonSize = button->CalculateSize(gcdc);
-            if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
-                if(button->IsControl()) {
-                    clToolBarControl* control = button->Cast<clToolBarControl>();
-                    control->GetControl()->Hide();
-                }
-                m_overflowButtons.push_back(button);
+        if(button->IsShown()) {
+            if(button->IsSeparator() && last_was_separator) {
+                button->Show(false);
             } else {
-                wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
-                button->Render(gcdc, r);
-                m_visibleButtons.push_back(button);
+                wxSize buttonSize = button->CalculateSize(gcdc);
+                if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
+                    if(button->IsControl()) {
+                        clToolBarControl* control = button->Cast<clToolBarControl>();
+                        control->GetControl()->Hide();
+                    }
+                    m_overflowButtons.push_back(button);
+                } else {
+                    wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
+                    button->Render(gcdc, r);
+                    m_visibleButtons.push_back(button);
+                }
+                xx += buttonSize.GetWidth();
             }
-            xx += buttonSize.GetWidth();
+            // Dont draw two separators one after the other
+            last_was_separator = button->IsSeparator();
         }
     });
 
@@ -95,7 +104,10 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 
     // If we have overflow buttons, draw an arrow to the right
     if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
-        wxRendererNative::Get().DrawDropArrow(this, gcdc, chevronRect, wxCONTROL_CURRENT);
+        DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+        wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+        gcdc.SetPen(c.ChangeLightness(150));
+        gcdc.DrawLine(chevronRect.GetTopLeft(), chevronRect.GetBottomLeft());
         m_chevronRect = chevronRect;
     }
 }
@@ -362,7 +374,7 @@ void clToolBar::DoShowOverflowMenu()
         }
     }
     if(IsCustomisationEnabled()) {
-        menu.AppendSeparator();
+        if(menu.GetMenuItemCount()) { menu.AppendSeparator(); }
         menu.Append(XRCID("customise_toolbar"), _("Customise..."));
         menu.Bind(wxEVT_MENU,
                   [&](wxCommandEvent& event) {
@@ -406,8 +418,8 @@ void clToolBar::OnOverflowItem(wxCommandEvent& event)
 
 void clToolBar::OnSize(wxSizeEvent& event)
 {
-    event.Skip();
     Refresh();
+    event.Skip();
 }
 
 clToolBarButtonBase* clToolBar::AddControl(wxWindow* control) { return Add(new clToolBarControl(this, control)); }

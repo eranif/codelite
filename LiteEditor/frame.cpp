@@ -33,10 +33,12 @@
 #include "bookmark_manager.h"
 #include "build_custom_targets_menu_manager.h"
 #include "clBootstrapWizard.h"
+#include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
 #include "clGotoAnythingManager.h"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
+#include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
 #include "cl_aui_tb_are.h"
@@ -68,6 +70,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
+#include <algorithm>
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>
 #include <wx/richmsgdlg.h>
@@ -1297,6 +1300,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     }
 
     m_toolbar = new clToolBar(this, wxID_ANY);
+    m_toolbar->EnableCustomisation(true);
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
     m_toolbar->AddTool(XRCID("new_file"), _("New"), bmpLoader.LoadBitmap(wxT("file_new"), toolSize), _("New File"));
@@ -1376,9 +1380,18 @@ void clMainFrame::CreateToolBar(int toolSize)
                        bmpLoader.LoadBitmap("rewind", toolSize), _("Toggle Rewind Commands"), wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
                        bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
-    m_toolbar->Realize();
+
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
+    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", wxArrayString());
+    std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
+    for(size_t i = 0; i < hiddenItems.size(); ++i) {
+        const wxString& label = hiddenItems.Item(i);
+        std::vector<clToolBarButtonBase*>::iterator iter = std::find_if(
+            buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
+        if(iter != buttons.end()) { (*iter)->Show(false); }
+    }
+    m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 
@@ -5663,8 +5676,17 @@ void clMainFrame::OnFindWordAtCaretPrev(wxCommandEvent& event)
     OnFindSelectionPrev(event);
 }
 
-void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event) 
+void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
 {
+    clCustomiseToolBarDlg dlg(this, m_toolbar);
+    if(dlg.ShowModal() != wxID_OK) { return; }
+    m_toolbar->Realize();
+    m_toolbar->Refresh();
+
+    wxArrayString hiddenItems;
     const std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
-    if(buttons.empty()) return;
+    for(size_t i = 0; i < buttons.size(); ++i) {
+        if(buttons[i]->IsHidden() && !buttons[i]->IsSeparator()) { hiddenItems.Add(buttons[i]->GetLabel()); }
+    }
+    clConfig::Get().Write("ToolBarHiddenItems", hiddenItems);
 }

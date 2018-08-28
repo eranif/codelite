@@ -1200,9 +1200,9 @@ bool VimCommand::Command_call()
     case COMMANDVI::P:
         this->m_saveCommand = false;
         if(this->m_newLineCopy) {
-            m_ctrl->LineUp();
-            m_ctrl->LineEnd();
+            m_ctrl->Home();
             m_ctrl->NewLine();
+            m_ctrl->LineUp();
             m_ctrl->DelLineLeft();
             wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
             if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();

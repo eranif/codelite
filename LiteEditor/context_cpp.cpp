@@ -510,7 +510,7 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString fileName;
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     wxString line = rCtrl.GetCurLine();
     if(IsIncludeStatement(line, &fileName)) {
         m_selectedWord = fileName;

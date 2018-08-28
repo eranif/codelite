@@ -1088,9 +1088,8 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
         ctrl->SearchAnchor();
         pos = ctrl->SearchNext(flags, find);
         if(pos == wxNOT_FOUND) {
-            if(SHOW_STATUS_MESSAGES(search_flags)) {
-                clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
-            } else if(search_flags & kBreakWhenWrapSearch) {
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
+            if(search_flags & kBreakWhenWrapSearch) {
                 // Stop searching
                 return false;
             }
@@ -1104,9 +1103,8 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
         ctrl->SearchAnchor();
         pos = ctrl->SearchPrev(flags, find);
         if(pos == wxNOT_FOUND) {
-            if(SHOW_STATUS_MESSAGES(search_flags)) {
-                clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
-            } else if(search_flags & kBreakWhenWrapSearch) {
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
+            if(search_flags & kBreakWhenWrapSearch) {
                 // Stop searching
                 return false;
             }

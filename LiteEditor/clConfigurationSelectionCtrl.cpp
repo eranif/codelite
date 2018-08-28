@@ -16,6 +16,8 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
     : wxPanel(parent, winid, pos, size, style)
     , m_state(eButtonState::kNormal)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    
     Bind(wxEVT_PAINT, &clConfigurationSelectionCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clConfigurationSelectionCtrl::OnEraseBG, this);
     Bind(wxEVT_LEFT_DOWN, &clConfigurationSelectionCtrl::OnLeftDown, this);

@@ -200,12 +200,41 @@ bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)
 {
     wxString filename = fn.GetFullPath();
-    wxFFile file(filename, wxT("rb"));
-    if(file.IsOpened() == false) {
+    data.clear();
+    const char* cfile = filename.mb_str(wxConvUTF8).data();
+    FILE *fp = fopen(cfile, "rb");
+    if(!fp) {
         // Nothing to be done
+        clERROR() << "Failed to open file:" << fn << "." << strerror(errno);
         return false;
     }
-    return file.ReadAll(&data, conv);
+    
+    // Get the file size
+    fseek(fp, 0, SEEK_END);
+    long fsize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    
+    // Allocate buffer for the read
+    char *buffer = (char*)malloc(fsize + 1);
+    size_t bytes_read = fread(buffer, 1, fsize, fp);
+    if(bytes_read != fsize) {
+        // failed to read
+        clERROR() << "Failed to read file content:" << fn << "." << strerror(errno);
+        fclose(fp);
+        free(buffer);
+        return false;
+    }
+    buffer[fsize] = 0;
+    
+    // Close the handle
+    fclose(fp);
+    
+    // Convert it into wxString
+    data = wxString(buffer, conv, fsize);
+    
+    // Release the C-buffer allocated earlier
+    free(buffer);
+    return true;
 }
 
 void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)

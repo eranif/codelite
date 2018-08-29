@@ -23,11 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clFontHelper.h"
+#include "fileutils.h"
 #include "json_node.h"
 #include <stdlib.h>
-#include <wx/filename.h>
 #include <wx/ffile.h>
-#include "clFontHelper.h"
+#include <wx/filename.h>
 
 JSONRoot::JSONRoot(const wxString& text)
     : _json(NULL)
@@ -48,12 +49,10 @@ JSONRoot::JSONRoot(const wxFileName& filename)
     : _json(NULL)
 {
     wxString content;
-    wxFFile fp(filename.GetFullPath(), wxT("rb"));
-    if(fp.IsOpened()) {
-        if(fp.ReadAll(&content, wxConvUTF8)) {
-            _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
-        }
+    if(!FileUtils::ReadFileContent(filename, content)) {
+        return;
     }
+    _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
 
     if(!_json) {
         _json = cJSON_CreateObject();
@@ -309,7 +308,7 @@ wxString JSONElement::format(bool formatted) const
     if(!_json) {
         return wxT("");
     }
-    
+
     char* p = formatted ? cJSON_Print(_json) : cJSON_PrintUnformatted(_json);
     wxString output(p, wxConvUTF8);
     free(p);

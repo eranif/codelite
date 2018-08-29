@@ -16,6 +16,9 @@ DbExplorerFrame::DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxStrin
 
     // If this instance does not exists, set the default size
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(parent) {
+        CentreOnParent();
+    }
 }
 
 DbExplorerFrame::~DbExplorerFrame() { Unbind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this); }

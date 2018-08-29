@@ -229,6 +229,8 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
     }
 
     wxFileOffset size = thefile.Length();
+    thefile.Close();
+    
     wxString fileData;
     fileData.Alloc(size);
 
@@ -236,12 +238,12 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
     // support for other encoding
     wxFontEncoding enc = wxFontMapper::GetEncodingFromName(data->GetEncoding().c_str());
     wxCSConv fontEncConv(enc);
-    if(!thefile.ReadAll(&fileData, fontEncConv)) {
+    if(!FileUtils::ReadFileContent(fileName, fileData, fontEncConv)) {
         m_summary.GetFailedFiles().Add(fileName);
         return;
     }
 #else
-    if(!thefile.ReadAll(&fileData, wxConvLibc)) {
+    if(!FileUtils::ReadFileContent(fileName, fileData, wxConvLibc)) {
         m_summary.GetFailedFiles().Add(fileName);
         return;
     }
@@ -315,6 +317,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
     }
 }
+
 void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
                                   const wxString& fileName, const SearchData* data, TextStatesPtr statesPtr)
 {

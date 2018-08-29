@@ -464,20 +464,22 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
             continue;
         }
         int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
-        hiddenTabsMenu->Append(tabId, label, label, wxITEM_CHECK);
+        hiddenTabsMenu->Append(tabId, label);
 
         // If the tab is detached, disable it's menu entry
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { hiddenTabsMenu->Enable(tabId, false); }
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+            hiddenTabsMenu->Enable(tabId, false);
+        }
 
         // Bind the event
-        menu->Bind(wxEVT_MENU,
-                   // Use lambda by value here so we make a copy
-                   [=](wxCommandEvent& e) {
-                       clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
-                       eventShow.SetSelected(e.IsChecked()).SetString(label);
-                       EventNotifier::Get()->AddPendingEvent(eventShow);
-                   },
-                   tabId);
+        hiddenTabsMenu->Bind(wxEVT_MENU,
+                             // Use lambda by value here so we make a copy
+                             [=](wxCommandEvent& e) {
+                                 clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
+                                 eventShow.SetSelected(true).SetString(label);
+                                 EventNotifier::Get()->AddPendingEvent(eventShow);
+                             },
+                             tabId);
     }
     menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
 }

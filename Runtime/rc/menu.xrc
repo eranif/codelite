@@ -1006,7 +1006,7 @@
             <label>Hide</label>
         </object>
     </object>
-    <object class="wxMenu" name="workspace_view_rmenu">
+    <object class="wxMenu" name="outputview_view_rmenu">
         <object class="wxMenuItem" name="hide_ov_tab">
             <label>Hide</label>
         </object>

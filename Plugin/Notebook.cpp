@@ -1096,19 +1096,30 @@ void clTabCtrl::DoShowTabList()
 
     for(auto sortedIndex : sortedIndexes) {
         clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
+        wxString tab_label = tab->GetLabel();
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
+        menu.Bind(wxEVT_MENU,
+                  [=](wxCommandEvent& event) {
+                      Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
+                      int newSelection = book->GetPageIndex(tab_label);
+                      if(newSelection != curselection) {
+                          book->SetSelection(newSelection);
+                      }
+                  },
+                  pageMenuID);
         pageMenuID++;
     }
-    
+     
     // Let others handle this event as well
     clContextMenuEvent menuEvent(wxEVT_BOOK_FILELIST_BUTTON_CLICKED);
     menuEvent.SetMenu(&menu);
     menuEvent.SetEventObject(GetParent()); // The Notebook
     GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
     
-    int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
+    PopupMenu(&menu, m_chevronRect.GetBottomLeft());
+/*    int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
     if(selection != wxID_NONE) {
         selection -= firstTabPageID;
         if(selection < (int)sortedIndexes.size()) {
@@ -1119,7 +1130,7 @@ void clTabCtrl::DoShowTabList()
                 SetSelection(newSelection);
             }
         }
-    }
+    }*/
 }
 
 bool clTabCtrl::SetPageToolTip(size_t page, const wxString& tooltip)

@@ -329,20 +329,22 @@ void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
             continue;
         }
         int tabId = wxXmlResource::GetXRCID(wxString() << "output_tab_" << label);
-        wxMenuItem* item = new wxMenuItem(hiddenTabsMenu, tabId, label, "", wxITEM_CHECK);
+        wxMenuItem* item = new wxMenuItem(hiddenTabsMenu, tabId, label);
         hiddenTabsMenu->Append(item);
-        item->Check((m_book->GetPageIndex(label) != wxNOT_FOUND));
-
+        
         // Output pane does not support "detach"
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { item->Enable(false); }
-        menu->Bind(wxEVT_MENU,
-                   // Use lambda by value here so we make a copy
-                   [=](wxCommandEvent& e) {
-                       clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
-                       eventShow.SetSelected(e.IsChecked()).SetString(label);
-                       EventNotifier::Get()->AddPendingEvent(eventShow);
-                   },
-                   tabId);
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+            item->Enable(false);
+        }
+        
+        hiddenTabsMenu->Bind(wxEVT_MENU,
+                             // Use lambda by value here so we make a copy
+                             [=](wxCommandEvent& e) {
+                                 clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
+                                 eventShow.SetSelected(true).SetString(label);
+                                 EventNotifier::Get()->AddPendingEvent(eventShow);
+                             },
+                             tabId);
     }
     menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
 }

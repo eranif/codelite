@@ -289,7 +289,7 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
+        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), true);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
         if(where != wxNOT_FOUND) { clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where); }

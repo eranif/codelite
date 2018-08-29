@@ -68,7 +68,7 @@ void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
         int where = IsTabInNotebook(book, m_workspaceTabName);
         if(where == wxNOT_FOUND) {
             // Only show it if it does not exists in the notebook
-            clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_workspaceTab, m_workspaceTabName, false,
+            clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_workspaceTab, m_workspaceTabName, true,
                                                                 m_workspaceTabBmp);
         } else {
             // The tab already in the notebook, just select it

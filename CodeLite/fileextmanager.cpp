@@ -146,6 +146,7 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("SQLite format 3", TypeDatabase, false)));
 
         // STL sources places "-*- C++ -*-" at the top of their headers
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("-*- C++ -*-", TypeSourceCpp, false)));
@@ -223,7 +224,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
-    if(!FileUtils::ReadFileContent(filename, fileContent)) return false;
+    if(!FileUtils::ReadFileContent(filename, fileContent, wxConvLibc)) return false;
 
     // Use only the first 4K bytes from the input file (tested with default STL headers)
     if(fileContent.length() > 4096) { fileContent.Truncate(4096); }

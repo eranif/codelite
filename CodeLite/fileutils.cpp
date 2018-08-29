@@ -231,6 +231,10 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
     
     // Convert it into wxString
     data = wxString(buffer, conv, fsize);
+    if(data.IsEmpty() && fsize != 0) {
+        // Conversion failed
+        data = wxString::From8BitData(buffer, fsize);
+    }
     
     // Release the C-buffer allocated earlier
     free(buffer);

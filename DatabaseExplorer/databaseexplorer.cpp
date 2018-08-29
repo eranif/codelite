@@ -220,7 +220,7 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
 {
     // get the file name
     e.Skip();
-    if(FileExtManager::GetType(e.GetFileName()) == FileExtManager::TypeDatabase) {
+    if(FileExtManager::IsFileType(e.GetFileName(), FileExtManager::TypeDatabase)) {
         e.Skip(false);
         // Open the databse file
         DoOpenFile(e.GetFileName());

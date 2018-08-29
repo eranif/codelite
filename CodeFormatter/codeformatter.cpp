@@ -684,7 +684,7 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
             filesToFormat.push_back(vt.second->GetFilename());
         }
     });
-    BatchFormat(filesToFormat);
+    BatchFormat(filesToFormat, false);
 }
 
 void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files, bool silent)

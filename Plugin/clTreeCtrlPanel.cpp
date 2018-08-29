@@ -609,9 +609,15 @@ void clTreeCtrlPanel::OnOpenFile(wxCommandEvent& event)
 {
     wxArrayString folders, files;
     GetSelections(folders, files);
-
+    
     for(size_t i = 0; i < files.size(); ++i) {
-        clGetManager()->OpenFile(files.Item(i));
+        // Fire an event before resolving to the default action
+        clCommandEvent fileEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED);
+        fileEvent.SetEventObject(this);
+        fileEvent.SetFileName(files.Item(i));
+        if(!EventNotifier::Get()->ProcessEvent(fileEvent)) {
+            clGetManager()->OpenFile(files.Item(i));
+        }
     }
 }
 

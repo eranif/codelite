@@ -31,6 +31,7 @@
 #include "window_locker.h"
 
 #include "DbExplorerFrame.h"
+#include "SqliteDbAdapter.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
@@ -253,10 +254,7 @@ void DbViewerPanel::RefreshDbView()
 
 void DbViewerPanel::OnItemSelectionChange(wxTreeEvent& event) { wxUnusedVar(event); }
 
-void DbViewerPanel::OnDnDStart(wxTreeEvent& event)
-{
-    event.Skip();
-}
+void DbViewerPanel::OnDnDStart(wxTreeEvent& event) { event.Skip(); }
 
 void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 {
@@ -323,11 +321,11 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
         } else if(evt.GetId() == XRCID("IDT_DBE_CLOSE_CONNECTION")) {
             OnToolCloseClick(evt);
             return;
-            
+
         } else if(evt.GetId() == XRCID("IDT_DBE_REFRESH")) {
             OnRefreshClick(evt);
             return;
-            
+
         } else if(evt.GetId() == XRCID("IDR_DBVIEWER_ADD_DATABASE")) {
             if(m_pEditedConnection) {
                 // TODO:LANG:
@@ -641,10 +639,7 @@ void DbViewerPanel::OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
 
 void DbViewerPanel::OnPageClosing(wxBookCtrlEvent& event) { event.Skip(); }
 
-wxString DbViewerPanel::CreatePanelName(Database* d)
-{
-    return wxT("SQL [") + d->GetName() + wxT("]");
-}
+wxString DbViewerPanel::CreatePanelName(Database* d) { return wxT("SQL [") + d->GetName() + wxT("]"); }
 
 wxString DbViewerPanel::CreatePanelName(Table* t)
 {
@@ -775,5 +770,29 @@ void DbViewerPanel::RemoveFrame(DbExplorerFrame* frame)
 {
     if(m_frames.count(frame)) {
         m_frames.erase(frame);
+    }
+}
+
+void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultSQLPanel)
+{
+    try {
+        IDbAdapter* pAdapt = new SQLiteDbAdapter(fileName.GetFullPath());
+        wxString serverName = fileName.GetFullPath();
+        DbConnection* connection = new DbConnection(pAdapt, serverName);
+        AddDbConnection(connection);
+        SetServer(serverName);
+        RefreshDbView();
+        if(openDefaultSQLPanel) {
+            // Open an SQL panel view
+            SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, pAdapt->Clone(), fileName.GetFullPath(), "");
+            CallAfter(&DbViewerPanel::AddEditorPage, sqlpage, fileName.GetFullPath());
+        }
+
+    } catch(DatabaseLayerException& e) {
+        wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
+        ::wxMessageBox(errorMessage, "CodeLite", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
+    } catch(...) {
+        ::wxMessageBox(_("Unknown error."), "CodeLite", wxICON_ERROR | wxCENTER | wxOK,
+                       EventNotifier::Get()->TopFrame());
     }
 }

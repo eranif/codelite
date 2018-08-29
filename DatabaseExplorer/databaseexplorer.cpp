@@ -229,7 +229,9 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
 
 void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
 {
-    wxUnusedVar(filename);
+    if(m_dbViewerPanel) {
+        m_dbViewerPanel->OpenSQLiteFile(filename, true);
+    }
 }
 
 void DatabaseExplorer::OnToggleTab(clCommandEvent& event)

@@ -98,7 +98,8 @@ public:
 
     void AddDbConnection(DbConnection* pDbCon) { m_pConnections->AddChild(pDbCon); }
     void SetServer(wxString& server) { m_server = server; }
-
+    void OpenSQLiteFile(const wxFileName& fileName, bool openDefaultSQLPanel);
+    
     virtual void OnConnectClick(wxCommandEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
     virtual void OnItemActivate(wxTreeEvent& event);

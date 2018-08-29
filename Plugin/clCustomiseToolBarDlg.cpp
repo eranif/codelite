@@ -13,7 +13,7 @@ clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBar* tb)
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     const wxBitmap& bmp = clGetManager()->GetStdIcons()->LoadBitmap("cog", options->GetIconsSize());
-    m_dvListCtrlItems->SetRowHeight(bmp.GetScaledHeight());
+    m_dvListCtrlItems->SetRowHeight(bmp.GetScaledHeight() + 8);
 
     for(size_t i = 0; i < m_buttons.size(); ++i) {
         clToolBarButtonBase* button = m_buttons[i];

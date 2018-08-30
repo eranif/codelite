@@ -47,57 +47,13 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer11 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer11);
 
-    m_stc = new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
-#ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
-    // wxFONTFAMILY_TELETYPE
-    wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_stcFont.SetFamily(wxFONTFAMILY_TELETYPE);
-#else
-    wxFont m_stcFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_stcFont.SetFamily(wxFONTFAMILY_TELETYPE);
+    m_textCtrl = new clTerminalTextCtrl(m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
+                                        wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_RICH);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrl->SetHint(wxT(""));
 #endif
-    m_stc->SetFont(m_stcFont);
-    m_stc->SetFocus();
-    // Configure the fold margin
-    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth(4, 0);
 
-    // Configure the tracker margin
-    m_stc->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 16);
-    m_stc->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_stc->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stc->StyleClearAll();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_stc->StyleSetFont(i, m_stcFont);
-    }
-    m_stc->SetWrapMode(2);
-    m_stc->SetIndentationGuides(0);
-    m_stc->SetKeyWords(0, wxT(""));
-    m_stc->SetKeyWords(1, wxT(""));
-    m_stc->SetKeyWords(2, wxT(""));
-    m_stc->SetKeyWords(3, wxT(""));
-    m_stc->SetKeyWords(4, wxT(""));
-
-    boxSizer11->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer11->Add(m_textCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_menuBar = new wxMenuBar(0);
     this->SetMenuBar(m_menuBar);
@@ -155,8 +111,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     }
     // Connect events
     this->Connect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
-    m_stc->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
-    m_stc->Connect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Connect(m_menuItemClear->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                   wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
     this->Connect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
@@ -179,8 +133,6 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 MainFrameBaseClass::~MainFrameBaseClass()
 {
     this->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MainFrameBaseClass::OnIdle), NULL, this);
-    m_stc->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(MainFrameBaseClass::OnKeyDown), NULL, this);
-    m_stc->Disconnect(wxEVT_STC_UPDATEUI, wxStyledTextEventHandler(MainFrameBaseClass::OnStcUpdateUI), NULL, this);
     this->Disconnect(m_menuItemClear->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(MainFrameBaseClass::OnClearView), NULL, this);
     this->Disconnect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,

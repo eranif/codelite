@@ -47,6 +47,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="clSTCTerminalStyler.cpp"/>
+    <File Name="clSTCTerminalStyler.h"/>
     <File Name="main.cpp"/>
     <File Name="MainFrame.cpp"/>
     <File Name="wxcrafter.cpp"/>
@@ -104,7 +106,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--exit  --wait  --working-directory C:\\Users\\PC\\Documents\\CodeLite\\DOCKER\\DockerTest --cmd &quot;D:\\software\\Docker Toolbox\\docker-compose.EXE&quot; up&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="--exit  --wait  --working-directory C:\\Users\\PC\\Documents\\CodeLite\\DOCKER\\DockerTest --cmd &quot;D:\\software\\Docker Toolbox\\docker-compose.EXE&quot; up&quot;" UseSeparateDebugArgs="yes" DebugArguments="--exit  --wait  --working-directory C:\\Users\\PC\\Documents\\CodeLite\\DOCKER\\DockerTest --cmd &quot;D:\\software\\Docker Toolbox\\docker-compose.EXE&quot; up&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

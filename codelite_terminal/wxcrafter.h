@@ -7,6 +7,7 @@
 #ifndef _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 
+#include "clTerminalTextCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/clrpicker.h>
@@ -19,7 +20,7 @@
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/timer.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
@@ -51,7 +52,7 @@ public:
 
 protected:
     wxPanel* m_mainPanel;
-    wxStyledTextCtrl* m_stc;
+    clTerminalTextCtrl* m_textCtrl;
     wxMenuBar* m_menuBar;
     wxMenu* m_File;
     wxMenuItem* m_menuItemSave;
@@ -71,8 +72,6 @@ protected:
 
 protected:
     virtual void OnIdle(wxIdleEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnClearView(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
@@ -81,7 +80,7 @@ protected:
     virtual void OnAddMarker(wxTimerEvent& event) { event.Skip(); }
 
 public:
-    wxStyledTextCtrl* GetStc() { return m_stc; }
+    clTerminalTextCtrl* GetTextCtrl() { return m_textCtrl; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
     wxTimer* GetTimerMarker() { return m_timerMarker; }

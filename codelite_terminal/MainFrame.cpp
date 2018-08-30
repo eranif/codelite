@@ -1,21 +1,21 @@
 #include "MainFrame.h"
-#include <wx/aboutdlg.h>
-#include <wx/regex.h>
-#include <errno.h>
-#include <wx/settings.h>
-#include <wx/colordlg.h>
 #include "SettingsDlg.h"
-#include <wx/filedlg.h>
+#include <errno.h>
+#include <wx/aboutdlg.h>
 #include <wx/clipbrd.h>
+#include <wx/colordlg.h>
 #include <wx/ffile.h>
+#include <wx/filedlg.h>
 #include <wx/filename.h>
+#include <wx/regex.h>
+#include <wx/settings.h>
 
 #ifndef __WXMSW__
 #if defined(__FreeBSD__)
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <termios.h>
 #include <libutil.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <termios.h>
 #elif defined(__WXGTK__)
 #include <pty.h>
 #else
@@ -65,7 +65,17 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions& options, long styl
     m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
     m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
     m_stc->SetWrapMode(wxSTC_WRAP_CHAR);
-    
+
+#if defined(__WXMSW__)
+    m_stc->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+#elif defined(__WXGTK__)
+    m_stc->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    m_stc->SetDoubleBuffered(false);
+#if wxCHECK_VERSION(3, 1, 1)
+    m_stc->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
+#endif
+#endif
+
     // m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize(m_config.GetTerminalSize());
     SetPosition(m_config.GetTerminalPosition());
@@ -155,9 +165,7 @@ void MainFrame::OnKeyDown(wxKeyEvent& event)
         event.Skip();
 
     } else if(event.GetKeyCode() == WXK_BACK) {
-        if((m_stc->GetCurrentPos() - 1) < m_fromPos) {
-            return;
-        }
+        if((m_stc->GetCurrentPos() - 1) < m_fromPos) { return; }
         event.Skip();
 
     } else {
@@ -176,9 +184,7 @@ void MainFrame::DoExecuteCurrentLine(const wxString& command)
         async = true;
     }
 
-    if(command.IsEmpty()) {
-        AppendNewLine();
-    }
+    if(command.IsEmpty()) { AppendNewLine(); }
 
     if(cmd.IsEmpty()) {
         SetCartAtEnd();
@@ -190,7 +196,7 @@ void MainFrame::DoExecuteCurrentLine(const wxString& command)
     if(reCD.Matches(cmd)) {
         reCD.Replace(&cmd, "");
         if(::wxSetWorkingDirectory(cmd)) {
-            m_stc->AppendText("current directory: " + ::wxGetCwd() + "\n");
+            m_stc->AppendText(::wxGetCwd() + "\n");
 
         } else {
             m_stc->AppendText(wxString(strerror(errno)) + "\n");
@@ -324,9 +330,7 @@ void MainFrame::OnClearView(wxCommandEvent& event)
 
 void MainFrame::OnTerminateInfirior(wxCommandEvent& event)
 {
-    if(m_process) {
-        m_process->Terminate();
-    }
+    if(m_process) { m_process->Terminate(); }
 }
 
 void MainFrame::OnTerminateInfiriorUI(wxUpdateUIEvent& event) { event.Enable(m_process != NULL); }
@@ -412,16 +416,9 @@ void MainFrame::DoApplySettings()
 void MainFrame::OnSaveContent(wxCommandEvent& event)
 {
     const wxString ALL(wxT("All Files (*)|*"));
-    wxFileDialog dlg(this,
-                     _("Save As"),
-                     ::wxGetCwd(),
-                     "codelite-terminal.txt",
-                     ALL,
-                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
+    wxFileDialog dlg(this, _("Save As"), ::wxGetCwd(), "codelite-terminal.txt", ALL, wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
                      wxDefaultPosition);
-    if(dlg.ShowModal() == wxID_OK) {
-        m_stc->SaveFile(dlg.GetPath());
-    }
+    if(dlg.ShowModal() == wxID_OK) { m_stc->SaveFile(dlg.GetPath()); }
 }
 
 void MainFrame::OnSaveContentUI(wxUpdateUIEvent& event) { event.Enable(!m_stc->IsEmpty()); }
@@ -437,9 +434,7 @@ void MainFrame::OnIdle(wxIdleEvent& event)
 void MainFrame::AppendOutputText(const wxString& text)
 {
     m_outoutBuffer << text;
-    if(m_outoutBuffer.length() > wxMEGA_BYTE) {
-        FlushOutputBuffer();
-    }
+    if(m_outoutBuffer.length() > wxMEGA_BYTE) { FlushOutputBuffer(); }
 }
 
 void MainFrame::FlushOutputBuffer()

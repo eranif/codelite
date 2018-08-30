@@ -272,12 +272,16 @@ void clDockerWorkspace::OnStop(clExecuteEvent& event)
     if(m_driver->IsRunning()) { m_driver->Stop(); }
 }
 
-void clDockerWorkspace::BuildDockerfile(const wxFileName& dockerfile)
+void clDockerWorkspace::BuildDockerfile(const wxFileName& dockerfile) { m_driver->Build(dockerfile, m_settings); }
+
+void clDockerWorkspace::RunDockerfile(const wxFileName& dockerfile) { m_driver->Run(dockerfile, m_settings); }
+
+void clDockerWorkspace::BuildDockerCompose(const wxFileName& docker_compose)
 {
-    m_driver->BuildDockerfile(dockerfile, m_settings);
+    m_driver->Build(docker_compose, m_settings);
 }
 
-void clDockerWorkspace::RunDockerfile(const wxFileName& dockerfile)
+void clDockerWorkspace::RunDockerCompose(const wxFileName& docker_compose)
 {
-    m_driver->ExecuteDockerfile(dockerfile, m_settings);
+    m_driver->Run(docker_compose, m_settings);
 }

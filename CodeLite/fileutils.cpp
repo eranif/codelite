@@ -216,7 +216,7 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
     
     // Allocate buffer for the read
     char *buffer = (char*)malloc(fsize + 1);
-    size_t bytes_read = fread(buffer, 1, fsize, fp);
+    long bytes_read = fread(buffer, 1, fsize, fp);
     if(bytes_read != fsize) {
         // failed to read
         clERROR() << "Failed to read file content:" << fn << "." << strerror(errno);
@@ -689,7 +689,7 @@ void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_com
         if(workingDirectory.Contains(" ") && !workingDirectory.StartsWith("\"")) {
             workingDirectory.Prepend("\"").Append("\"");
         }
-        newCommand << " --working-directory=" << wd;
+        newCommand << " --working-directory " << wd;
     }
     newCommand << " --cmd " << title;
     ::wxExecute(newCommand, wxEXEC_ASYNC);

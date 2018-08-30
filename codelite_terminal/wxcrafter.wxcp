@@ -9,6 +9,8 @@
   "m_outputFileName": "wxcrafter",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -164,7 +166,7 @@
      "m_children": [{
        "m_type": 4408,
        "proportion": 1,
-       "border": 5,
+       "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
        "m_styles": ["wxTAB_TRAVERSAL"],
@@ -325,7 +327,7 @@
             }, {
              "type": "choice",
              "m_label": "Wrap Text",
-             "m_selection": 0,
+             "m_selection": 2,
              "m_options": ["None", "Word", "Char"]
             }, {
              "type": "choice",

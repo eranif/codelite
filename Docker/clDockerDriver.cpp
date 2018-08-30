@@ -26,54 +26,6 @@ clDockerDriver::~clDockerDriver()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clDockerDriver::OnProcessTerminated, this);
 }
 
-void clDockerDriver::BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
-{
-    if(IsRunning()) return;
-    clDockerfile info;
-    if(!settings.GetFileInfo(dockerfile, info) || info.GetBuildOptions().IsEmpty()) {
-        wxMessageBox(wxString() << _("Don't know how to build '") << dockerfile.GetFullPath() << "'\n"
-                                << _("Please set the 'Build' options for this file"),
-                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        return;
-    }
-
-    wxString command = GetDockerExe();
-    if(command.IsEmpty()) return;
-
-    clGetManager()->ShowOutputPane(_("Docker"));
-
-    wxString buildOptions = info.GetBuildOptions();
-    buildOptions.Trim().Trim(false);
-    if(!buildOptions.StartsWith("build")) { buildOptions.Prepend("build "); }
-
-    command << " " << buildOptions;
-    ::WrapInShell(command);
-    m_plugin->GetTerminal()->Clear();
-    m_plugin->GetTerminal()->SelectTab("Output");
-    m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
-    StartProcessAsync(command, dockerfile.GetPath(), IProcessCreateDefault, kBuild);
-}
-
-void clDockerDriver::ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings)
-{
-    clDockerfile info;
-    if(!settings.GetFileInfo(dockerfile, info) || info.GetRunOptions().IsEmpty()) {
-        wxMessageBox(wxString() << _("Don't know how to execute '") << dockerfile.GetFullPath() << "'\n"
-                                << _("Please set the 'Run' options for this file"),
-                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        return;
-    }
-
-    wxString command = GetDockerExe();
-    if(command.IsEmpty()) { return; }
-
-    wxString runOptions = info.GetBuildOptions();
-    runOptions.Trim().Trim(false);
-    if(!runOptions.StartsWith("run")) { command << " run "; }
-    command << info.GetRunOptions();
-    FileUtils::OpenBuiltInTerminal(dockerfile.GetPath(), command, true);
-}
-
 void clDockerDriver::Stop()
 {
     if(IsRunning()) { m_process->Terminate(); }
@@ -278,7 +230,7 @@ void clDockerDriver::ExecContainerCommand(const wxString& containerName, const w
 void clDockerDriver::StopContainer(const wxString& containerName)
 {
     if(IsRunning()) return;
-    
+
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
 
@@ -290,11 +242,57 @@ void clDockerDriver::StopContainer(const wxString& containerName)
 void clDockerDriver::StartContainer(const wxString& containerName)
 {
     if(IsRunning()) return;
-    
+
     wxString command = GetDockerExe();
     if(command.IsEmpty()) return;
 
     command << " restart " << containerName;
     ::WrapInShell(command);
     StartProcessAsync(command, "", IProcessCreateDefault, kContext_StartContainer);
+}
+
+void clDockerDriver::Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings)
+{
+    if(IsRunning()) return;
+    clDockerBuildableFile::Ptr_t info = settings.GetFileInfo(filepath);
+    if(!info) {
+        wxMessageBox(wxString() << _("Don't know how to build '") << filepath.GetFullPath() << "'\n"
+                                << _("Please set the 'Build' options for this file"),
+                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        return;
+    }
+
+    wxString command = info->GetBuildBaseCommand();
+    if(command.IsEmpty()) { return; }
+
+    clGetManager()->ShowOutputPane(_("Docker"));
+
+    wxString buildOptions = info->GetBuildOptions();
+    buildOptions.Trim().Trim(false);
+
+    command << " " << buildOptions;
+    ::WrapInShell(command);
+    m_plugin->GetTerminal()->Clear();
+    m_plugin->GetTerminal()->SelectTab("Output");
+    m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
+    StartProcessAsync(command, filepath.GetPath(), IProcessCreateDefault, kBuild);
+}
+
+void clDockerDriver::Run(const wxFileName& filepath, const clDockerWorkspaceSettings& settings)
+{
+    clDockerBuildableFile::Ptr_t info = settings.GetFileInfo(filepath);
+    if(!info) {
+        wxMessageBox(wxString() << _("Don't know how to execute '") << filepath.GetFullPath() << "'\n"
+                                << _("Please set the 'Run' options for this file"),
+                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        return;
+    }
+
+    wxString command = info->GetRunBaseCommand();
+    if(command.IsEmpty()) { return; }
+
+    wxString runOptions = info->GetRunOptions();
+    runOptions.Trim().Trim(false);
+    command << " " << runOptions;
+    FileUtils::OpenBuiltInTerminal(filepath.GetPath(), command, true);
 }

@@ -88,7 +88,9 @@ public:
     bool Create(const wxFileName& filename);
 
     void BuildDockerfile(const wxFileName& dockerfile);
+    void BuildDockerCompose(const wxFileName& dockerfile);
     void RunDockerfile(const wxFileName& dockerfile);
+    void RunDockerCompose(const wxFileName& dockerfile);
 };
 
 #endif // CLDOCKERWORKSPACE_H

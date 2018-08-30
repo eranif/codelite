@@ -47,8 +47,8 @@ public:
     typedef wxSharedPtr<clDockerDriver> Ptr_t;
     clDockerDriver(Docker* plugin);
     virtual ~clDockerDriver();
-    void BuildDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
-    void ExecuteDockerfile(const wxFileName& dockerfile, const clDockerWorkspaceSettings& settings);
+    void Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
+    void Run(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
 
     bool IsRunning() const { return m_process != nullptr; }
     void Stop();

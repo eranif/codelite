@@ -1,14 +1,14 @@
-#include <wx/app.h>
-#include <wx/event.h>
 #include "MainFrame.h"
-#include <wx/image.h>
-#include <wx/cmdline.h>
+#include "commandlineparser.h"
 #include "terminal_options.h"
+#include <wx/app.h>
+#include <wx/cmdline.h>
+#include <wx/crt.h>
 #include <wx/dir.h>
+#include <wx/event.h>
+#include <wx/image.h>
 #include <wx/log.h>
 #include <wx/stdpaths.h>
-#include <wx/crt.h>
-#include "commandlineparser.h"
 
 #ifdef __WXMAC__
 #include <ApplicationServices/ApplicationServices.h>
@@ -46,9 +46,7 @@ public:
         HINSTANCE m_user32Dll = LoadLibrary(L"User32.dll");
         if(m_user32Dll) {
             SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
-            if(pFunc) {
-                pFunc();
-            }
+            if(pFunc) { pFunc(); }
             FreeLibrary(m_user32Dll);
             m_user32Dll = NULL;
         }
@@ -88,9 +86,7 @@ public:
             options.SetTitle(parser.GetCommand());
         }
 
-        if(!workingDirectory.IsEmpty()) {
-            ::wxSetWorkingDirectory(workingDirectory);
-        }
+        if(!workingDirectory.IsEmpty()) { ::wxSetWorkingDirectory(workingDirectory); }
 
         options.EnableFlag(TerminalOptions::kExitWhenInfiriorTerminates, parser.HasOption("e", "exit"));
         options.EnableFlag(TerminalOptions::kPauseBeforeExit, parser.HasOption("w", "wait"));
@@ -100,9 +96,7 @@ public:
         options.SetCommand(commandToRun);
 
         long style = wxDEFAULT_FRAME_STYLE;
-        if(options.HasFlag(TerminalOptions::kAlwaysOnTop)) {
-            style = wxSTAY_ON_TOP;
-        }
+        if(options.HasFlag(TerminalOptions::kAlwaysOnTop)) { style = wxSTAY_ON_TOP; }
 
         MainFrame* mainFrame = new MainFrame(NULL, options, style);
         SetTopWindow(mainFrame);

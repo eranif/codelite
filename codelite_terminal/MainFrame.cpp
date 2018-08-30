@@ -62,25 +62,12 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions& options, long styl
     m_stc->SetFont(wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT));
     wxString tty = StartTTY();
     SetCartAtEnd();
-    m_stc->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
-    m_stc->MarkerSetBackground(MARKER_ID, *wxBLACK);
-    m_stc->SetWrapMode(wxSTC_WRAP_CHAR);
-
-#if defined(__WXMSW__)
-    m_stc->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-#elif defined(__WXGTK__)
-    m_stc->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    m_stc->SetDoubleBuffered(false);
-#if wxCHECK_VERSION(3, 1, 1)
-    m_stc->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
-#endif
-#endif
 
     // m_stc->MarkerSetAlpha(MARKER_ID, 5);
     SetSize(m_config.GetTerminalSize());
     SetPosition(m_config.GetTerminalPosition());
 
-    DoApplySettings();
+    // DoApplySettings();
     CallAfter(&MainFrame::DoExecStartCommand);
 
     // Connect color menu items
@@ -90,6 +77,7 @@ MainFrame::MainFrame(wxWindow* parent, const TerminalOptions& options, long styl
     Connect(ID_SIGINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
     Connect(ID_SIGTERM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
     Connect(ID_SIGHUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrame::OnSignal), NULL, this);
+    DoApplySettings();
 }
 
 MainFrame::~MainFrame()
@@ -408,9 +396,7 @@ void MainFrame::OnSettings(wxCommandEvent& event)
 
 void MainFrame::DoApplySettings()
 {
-    DoSetColour(m_config.GetFgColour(), false);
-    DoSetColour(m_config.GetBgColour(), true);
-    DoSetFont(m_config.GetFont());
+    m_stc->SetPreferences(m_config.GetFont(), m_config.GetFgColour(), m_config.GetBgColour());
 }
 
 void MainFrame::OnSaveContent(wxCommandEvent& event)

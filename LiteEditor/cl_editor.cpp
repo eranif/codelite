@@ -272,12 +272,7 @@ static bool MSWRemoveROFileAttribute(const wxFileName& fileName)
 
 //=====================================================================
 clEditor::clEditor(wxWindow* parent)
-#ifdef __WXGTK3__
-    : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxBORDER_DEFAULT)
-#else
-    : wxStyledTextCtrl(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), wxNO_BORDER)
-#endif
-    , m_popupIsOn(false)
+    : m_popupIsOn(false)
     , m_isDragging(false)
     , m_modifyTime(0)
     , m_modificationCount(0)
@@ -302,6 +297,13 @@ clEditor::clEditor(wxWindow* parent)
     , m_hasCCAnnotation(false)
     , m_richTooltip(NULL)
 {
+    Hide();
+#ifdef __WXGTK3__
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_DEFAULT);
+#else
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
+#endif
+
     Bind(wxEVT_STC_CHARADDED, &clEditor::OnCharAdded, this);
     Bind(wxEVT_STC_MARGINCLICK, &clEditor::OnMarginClick, this);
     Bind(wxEVT_STC_CALLTIP_CLICK, &clEditor::OnCallTipClick, this);

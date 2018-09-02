@@ -301,7 +301,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
 
 void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state)
 {
-    DrawingUtils::DrawButtonX(dc, nullptr, rect, colours.markerColour, state);
+    DrawingUtils::DrawButtonX(dc, nullptr, rect, colours.activeTabTextColour, state);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)

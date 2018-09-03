@@ -369,8 +369,8 @@ void clToolBar::DoShowOverflowMenu()
                                                   button->IsToggle() ? wxITEM_CHECK : wxITEM_NORMAL);
             if(button->GetBmp().IsOk() && !button->IsToggle()) { menuItem->SetBitmap(button->GetBmp()); }
             if(button->IsToggle() && button->IsChecked()) { checkedItems.push_back(button->GetId()); }
-            menuItem->Enable(button->IsEnabled());
             menu.Append(menuItem);
+            menuItem->Enable(button->IsEnabled());
         }
     }
     if(IsCustomisationEnabled()) {

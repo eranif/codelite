@@ -4,6 +4,7 @@
 #include "clToolBarButtonBase.h"
 #include "clToolBarMenuButton.h"
 #include "clToolBarSeparator.h"
+#include "clToolBarSpacer.h"
 #include "clToolBarToggleButton.h"
 #include "drawingutils.h"
 #include "macros.h"
@@ -311,6 +312,8 @@ bool clToolBar::DeleteById(wxWindowID id)
 
 clToolBarButtonBase* clToolBar::AddSeparator() { return Add(new clToolBarSeparator(this)); }
 
+clToolBarButtonBase* clToolBar::AddSpacer() { return Add(new clToolBarSpacer(this)); }
+
 void clToolBar::SetDropdownMenu(wxWindowID buttonID, wxMenu* menu)
 {
     clToolBarButtonBase* button = FindById(buttonID);
@@ -363,7 +366,7 @@ void clToolBar::DoShowOverflowMenu()
         clToolBarButtonBase* button = m_overflowButtons[i];
         if(button->IsSeparator()) {
             menu.AppendSeparator();
-        } else if(!button->IsControl()) {
+        } else if(!button->IsControl() && !button->IsSpacer()) {
             // Show all non-control buttons
             wxMenuItem* menuItem = new wxMenuItem(&menu, button->GetId(), button->GetLabel(), button->GetLabel(),
                                                   button->IsToggle() ? wxITEM_CHECK : wxITEM_NORMAL);

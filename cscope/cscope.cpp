@@ -118,6 +118,7 @@ void Cscope::CreateToolBar(clToolBar* toolbar)
     
     // use the large icons set
     toolbar->AddSeparator();
+    toolbar->AddSpacer();
     toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
                      _("Find this C symbol"));
     toolbar->AddTool(XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"),

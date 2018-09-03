@@ -60,6 +60,8 @@
     <File Name="clToolBarToggleButton.cpp"/>
     <File Name="clToolBarSeparator.h"/>
     <File Name="clToolBarSeparator.cpp"/>
+    <File Name="clToolBarSpacer.h"/>
+    <File Name="clToolBarSpacer.cpp"/>
     <File Name="clToolBarMenuButton.h"/>
     <File Name="clToolBarMenuButton.cpp"/>
     <File Name="clToolBarButtonBase.h"/>

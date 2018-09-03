@@ -99,6 +99,7 @@ public:
     clToolBarButtonBase* AddMenuButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddToggleButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddSeparator();
+    clToolBarButtonBase* AddSpacer();
 
     /**
      * @brief add control to the toolbar

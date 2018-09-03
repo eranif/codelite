@@ -38,6 +38,7 @@ public:
         kSeparator = (1 << 4),
         kControl = (1 << 5),
         kHidden = (1 << 6),
+        kSpacer = (1 << 7),
     };
 
     enum eRenderFlags {
@@ -118,6 +119,7 @@ public:
     void Check(bool b) { EnableFlag(kChecked, b); }
     bool IsToggle() const { return (m_flags & kToggleButton); }
     bool IsSeparator() const { return m_flags & kSeparator; }
+    bool IsSpacer() const { return m_flags & kSpacer; }
     bool IsEnabled() const { return !(m_flags & kDisabled); }
     bool IsControl() const { return m_flags & kControl; }
     bool Enable(bool b)

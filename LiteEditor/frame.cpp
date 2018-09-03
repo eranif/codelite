@@ -1312,15 +1312,18 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close"), toolSize),
                        _("Close File"));
     m_toolbar->AddSeparator();
+    m_toolbar->AddSpacer();
     m_toolbar->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("cut"), toolSize), _("Cut"));
     m_toolbar->AddTool(wxID_COPY, _("Copy"), bmpLoader.LoadBitmap(wxT("copy"), toolSize), _("Copy"));
     m_toolbar->AddTool(wxID_PASTE, _("Paste"), bmpLoader.LoadBitmap(wxT("paste"), toolSize), _("Paste"));
     m_toolbar->AddTool(wxID_UNDO, _("Undo"), bmpLoader.LoadBitmap(wxT("undo"), toolSize), _("Undo"), wxITEM_DROPDOWN);
     m_toolbar->AddTool(wxID_REDO, _("Redo"), bmpLoader.LoadBitmap(wxT("redo"), toolSize), _("Redo"), wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
+    m_toolbar->AddSpacer();
     m_toolbar->AddTool(wxID_BACKWARD, _("Backward"), bmpLoader.LoadBitmap(wxT("back"), toolSize), _("Backward"));
     m_toolbar->AddTool(wxID_FORWARD, _("Forward"), bmpLoader.LoadBitmap(wxT("forward"), toolSize), _("Forward"));
     m_toolbar->AddSeparator();
+    m_toolbar->AddSpacer();
 
     //----------------------------------------------
     // create the search toolbar
@@ -1339,6 +1342,7 @@ void clMainFrame::CreateToolBar(int toolSize)
                        _("Highlight Matching Words"), wxITEM_CHECK);
     m_toolbar->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     m_toolbar->AddSeparator();
+    m_toolbar->AddSpacer();
 
     //----------------------------------------------
     // create the build toolbar
@@ -1355,6 +1359,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("stop_executed_program"), _("Stop Running Program"),
                        bmpLoader.LoadBitmap(wxT("execute_stop"), toolSize), _("Stop Running Program"));
     m_toolbar->AddSeparator();
+    m_toolbar->AddSpacer();
 
     //----------------------------------------------
     // create the debugger toolbar

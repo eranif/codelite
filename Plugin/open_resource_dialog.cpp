@@ -116,10 +116,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         m_textCtrlResourceName->SetValue(lastStringTyped);
         m_textCtrlResourceName->SelectAll();
     }
-
-    m_dataview->GetColumn(0)->SetWidth(400);
-    m_dataview->GetColumn(1)->SetWidth(60);
-    m_dataview->GetColumn(2)->SetWidth(500);
+    clFitColumnWidth(m_dataview);
 
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
@@ -195,9 +192,7 @@ void OpenResourceDialog::DoPopulateList()
     // Build the filter class
     if(m_checkBoxFiles->IsChecked()) { DoPopulateWorkspaceFile(); }
     if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) { DoPopulateTags(); }
-    for(size_t i = 0; i < 3; ++i) {
-        m_dataview->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    }
+    clFitColumnWidth(m_dataview);
 }
 
 void OpenResourceDialog::DoPopulateTags()

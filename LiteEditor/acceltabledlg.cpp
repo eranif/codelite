@@ -104,10 +104,8 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
     });
 
     m_dvListCtrl->GetColumn(0)->SetSortable(true);
-    m_dvListCtrl->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-
     m_dvListCtrl->GetColumn(1)->SetSortable(true);
-    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    clFitColumnWidth(m_dvListCtrl);
 }
 
 void AccelTableDlg::OnButtonOk(wxCommandEvent& e)

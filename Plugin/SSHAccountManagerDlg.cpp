@@ -26,6 +26,7 @@
 #include "SSHAccountManagerDlg.h"
 #if USE_SFTP
 
+#include "globals.h"
 #include "AddSSHAcountDlg.h"
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
@@ -43,9 +44,7 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     for(; iter != accounts.end(); ++iter) {
         DoAddAccount(*iter);
     }
-    m_dvListCtrlAccounts->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    m_dvListCtrlAccounts->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    m_dvListCtrlAccounts->GetColumn(2)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+    clFitColumnWidth(m_dvListCtrlAccounts);
     SetName("SSHAccountManagerDlg");
     WindowAttrManager::Load(this);
 }

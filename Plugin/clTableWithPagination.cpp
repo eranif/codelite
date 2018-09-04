@@ -3,6 +3,7 @@
 #include "macros.h"
 #include <wx/dataview.h>
 #include <wx/sizer.h>
+#include "globals.h"
 
 clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
                                              long style, const wxString& name)
@@ -90,11 +91,8 @@ void clTableWithPagination::ShowPage(int nPage)
         }
         m_ctrl->AppendItem(cols, (wxUIntPtr)&items);
     }
-
-    for(size_t i = 0; i < m_columns.size(); ++i) {
-        m_ctrl->GetColumn(i)->SetWidth(-2); // Set the column width _after_ we set the data
-    }
-
+    
+    clFitColumnWidth(m_ctrl);
     m_staticText->SetLabel(wxString() << _("Showing entries from: ") << startIndex << _(":") << lastIndex
                                       << " Total of: " << m_data.size() << _(" entries"));
 }

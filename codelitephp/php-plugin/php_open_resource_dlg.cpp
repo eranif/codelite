@@ -194,9 +194,7 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
         m_dvListCtrl->Select(selection);
         m_dvListCtrl->EnsureVisible(selection);
     }
-    for(size_t i = 0; i < m_dvListCtrl->GetColumnCount(); ++i) {
-        m_dvListCtrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    }
+    clFitColumnWidth(m_dvListCtrl);
 }
 
 void OpenResourceDlg::DoGetResources(const wxString& filter)

@@ -362,10 +362,12 @@ void clToolBar::DoShowOverflowMenu()
     // Show the drop down menu
     wxMenu menu;
     std::vector<int> checkedItems;
+    bool last_was_separator = false;
     for(size_t i = 0; i < m_overflowButtons.size(); ++i) {
         clToolBarButtonBase* button = m_overflowButtons[i];
-        if(button->IsSeparator()) {
+        if(button->IsSeparator() && !last_was_separator) {
             menu.AppendSeparator();
+            last_was_separator = true;
         } else if(!button->IsControl() && !button->IsSpacer()) {
             // Show all non-control buttons
             wxMenuItem* menuItem = new wxMenuItem(&menu, button->GetId(), button->GetLabel(), button->GetLabel(),
@@ -374,10 +376,14 @@ void clToolBar::DoShowOverflowMenu()
             if(button->IsToggle() && button->IsChecked()) { checkedItems.push_back(button->GetId()); }
             menu.Append(menuItem);
             menuItem->Enable(button->IsEnabled());
+            if (button->IsEnabled()) {
+                // Don't draw two separators one after the other
+                last_was_separator = false;
+            }
         }
     }
     if(IsCustomisationEnabled()) {
-        if(menu.GetMenuItemCount()) { menu.AppendSeparator(); }
+        if(menu.GetMenuItemCount() && !last_was_separator) { menu.AppendSeparator(); }
         menu.Append(XRCID("customise_toolbar"), _("Customise..."));
         menu.Bind(wxEVT_MENU,
                   [&](wxCommandEvent& event) {

@@ -12273,7 +12273,7 @@
         }, {
          "type": "string",
          "m_label": "Sash Gravity:",
-         "m_value": "0"
+         "m_value": "0.5"
         }, {
          "type": "string",
          "m_label": "Minimum Pane Size:",
@@ -12281,7 +12281,7 @@
         }, {
          "type": "string",
          "m_label": "Sash Position:",
-         "m_value": "250"
+         "m_value": ""
         }],
        "m_events": [],
        "m_children": [{

@@ -2315,7 +2315,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                       wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter->SetSashGravity(0);
+    m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
 
     boxSizer36->Add(m_splitter, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -2368,7 +2368,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                                               wxDATAVIEW_COL_RESIZABLE);
     m_splitterPage96 =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 250);
+    m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 0);
 
     wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage96->SetSizer(boxSizer92);

@@ -29,6 +29,7 @@
 #include "buildmanager.h"
 #include "clEditorBar.h"
 #include "clKeyboardManager.h"
+#include "clToolBarButtonBase.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "clang_code_completion.h"

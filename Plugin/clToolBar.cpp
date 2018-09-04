@@ -74,10 +74,12 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kThemedColour));
     int xx = 0;
-    bool last_was_separator = false;
+    int last_button_added = 0;
     std::for_each(m_buttons.begin(), m_buttons.end(), [&](clToolBarButtonBase* button) {
         if(button->IsShown()) {
-            if(button->IsSeparator() && last_was_separator) {
+            if(button->IsSeparator() && (last_button_added == clToolBarButtonBase::kSeparator)) {
+                button->Show(false);
+            } else if(button->IsSpacer() && (last_button_added == clToolBarButtonBase::kSpacer)) {
                 button->Show(false);
             } else {
                 wxSize buttonSize = button->CalculateSize(gcdc);
@@ -93,9 +95,15 @@ void clToolBar::OnPaint(wxPaintEvent& event)
                     m_visibleButtons.push_back(button);
                 }
                 xx += buttonSize.GetWidth();
+                // Dont draw two separators one after the other
+                if(button->IsSeparator()) {
+                    last_button_added = clToolBarButtonBase::kSeparator;
+                } else if(button->IsSpacer()) {
+                    last_button_added = clToolBarButtonBase::kSpacer;
+                } else {
+                    last_button_added = 0;
+                }
             }
-            // Dont draw two separators one after the other
-            last_was_separator = button->IsSeparator();
         }
     });
 
@@ -106,9 +114,6 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     // If we have overflow buttons, draw an arrow to the right
     if(!m_overflowButtons.empty() || IsCustomisationEnabled()) {
         DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-        wxColour c = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-        gcdc.SetPen(c.ChangeLightness(150));
-        gcdc.DrawLine(chevronRect.GetTopLeft(), chevronRect.GetBottomLeft());
         m_chevronRect = chevronRect;
     }
 }
@@ -195,19 +200,25 @@ void clToolBar::OnMotion(wxMouseEvent& event)
     wxPoint pos = event.GetPosition();
     bool refreshNeeded = false;
     for(size_t i = 0; i < m_visibleButtons.size(); ++i) {
-        if(m_visibleButtons[i]->Contains(pos)) {
-            if(!m_visibleButtons[i]->IsHover()) {
+        clToolBarButtonBase* button = m_visibleButtons[i];
+        if(button->Contains(pos)) {
+            if(!button->IsHover()) {
                 // a refresh is needed
                 refreshNeeded = true;
             }
-            m_visibleButtons[i]->SetHover(true);
-            SetToolTip(m_visibleButtons[i]->GetLabel());
+            if(button->IsSeparator() || button->IsSpacer()) {
+                // No tooltip for UI elements
+                SetToolTip(" ");
+            } else {
+                button->SetHover(true);
+                SetToolTip(button->GetLabel());
+            }
         } else {
-            if(m_visibleButtons[i]->IsHover()) {
+            if(button->IsHover()) {
                 // a refresh is needed
                 refreshNeeded = true;
             }
-            m_visibleButtons[i]->ClearRenderFlags();
+            button->ClearRenderFlags();
         }
     }
     if(refreshNeeded) { Refresh(); }
@@ -376,7 +387,7 @@ void clToolBar::DoShowOverflowMenu()
             if(button->IsToggle() && button->IsChecked()) { checkedItems.push_back(button->GetId()); }
             menu.Append(menuItem);
             menuItem->Enable(button->IsEnabled());
-            if (button->IsEnabled()) {
+            if(button->IsEnabled()) {
                 // Don't draw two separators one after the other
                 last_was_separator = false;
             }

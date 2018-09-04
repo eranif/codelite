@@ -117,7 +117,6 @@ void Cscope::CreateToolBar(clToolBar* toolbar)
     BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
     
     // use the large icons set
-    toolbar->AddSeparator();
     toolbar->AddSpacer();
     toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
                      _("Find this C symbol"));

@@ -1,10 +1,10 @@
 #include "vimCommands.h"
 
-#include "macros.h"
-#include "imanager.h"
-#include "globals.h"
-#include "codelite_events.h"
 #include "clMainFrameHelper.h"
+#include "codelite_events.h"
+#include "globals.h"
+#include "imanager.h"
+#include "macros.h"
 /*EXPERIMENTAL*/
 #include "wx/uiaction.h"
 
@@ -198,9 +198,7 @@ void VimCommand::normal_modus(wxChar ch)
 
     completing_command(ch);
 
-    if(m_currentCommandPart == COMMAND_PART::REPLACING) {
-        m_actionCommand = ch;
-    }
+    if(m_currentCommandPart == COMMAND_PART::REPLACING) { m_actionCommand = ch; }
 }
 
 void VimCommand::visual_modus(wxChar ch) { completing_command(ch); }
@@ -253,16 +251,14 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
         m_tmpbuf.Clear();
         ResetCommand();
         m_currentModus = VIM_MODI::NORMAL_MODUS;
-    } else if (m_currentModus == VIM_MODI::NORMAL_MODUS){
+    } else if(m_currentModus == VIM_MODI::NORMAL_MODUS) {
         m_ctrl->LineDown();
         skip_event = false;
     }
     return skip_event;
 }
 
-wxString VimCommand::getSearchedWord() {
-    return m_searchWord;
-}
+wxString VimCommand::getSearchedWord() { return m_searchWord; }
 
 void VimCommand::parse_cmd_string()
 {
@@ -277,9 +273,7 @@ void VimCommand::parse_cmd_string()
     for(size_t i = 0; i < len_buf; ++i) {
         switch(m_tmpbuf[i].GetValue()) {
         case '%':
-            if(i + 1 < len_buf && m_tmpbuf[i + 1].GetValue() == 's') {
-                all_file = true;
-            }
+            if(i + 1 < len_buf && m_tmpbuf[i + 1].GetValue() == 's') { all_file = true; }
             break;
         case '/':
             replace = search_forward;
@@ -303,13 +297,13 @@ void VimCommand::parse_cmd_string()
         long pos = -1L;
         if(all_file) pos = 0L;
         search_word(SEARCH_DIRECTION::FORWARD, pos);
-        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos);
+        // m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos);
     } else if(search_backward && !replace) {
         m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         long pos = -1L;
         if(all_file) pos = 0L;
         search_word(SEARCH_DIRECTION::BACKWARD, pos);
-        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos)
+        // m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos)
     }
 }
 
@@ -325,15 +319,12 @@ void VimCommand::command_modus(wxChar ch) { m_tmpbuf.Append(ch); }
 bool VimCommand::Command_call()
 {
 
-    if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
-        return Command_call_visual_mode();
-    }
+    if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
 
-    wxUIActionSimulator sim;
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
-    /*======= MOVEMENT ===========*/
+        /*======= MOVEMENT ===========*/
 
     case COMMANDVI::j:
         m_ctrl->LineDown();
@@ -521,9 +512,7 @@ bool VimCommand::Command_call()
         break;          /*~~~~~~~ END G ~~~~~~~~*/
     case COMMANDVI::gg: /*====== START G =======*/
         this->m_saveCommand = false;
-        if(m_repeat == 0) {
-            m_repeat = 1;
-        }
+        if(m_repeat == 0) { m_repeat = 1; }
         m_ctrl->GotoLine(m_repeat - 1);
         repeat_command = false;
         break;
@@ -596,17 +585,17 @@ bool VimCommand::Command_call()
         break;
     case COMMANDVI::cw:
         this->m_tmpbuf.Clear();
-        for( int i = 0; i < m_actions; ++i )
+        for(int i = 0; i < m_actions; ++i)
             m_ctrl->DelWordRight();
         break;
     case COMMANDVI::cb:
         this->m_tmpbuf.Clear();
-        for( int i = 0; i < m_actions; ++i )
+        for(int i = 0; i < m_actions; ++i)
             m_ctrl->DelWordLeft();
         break;
     case COMMANDVI::ce:
         this->m_tmpbuf.Clear();
-        for( int i = 0; i < m_actions; ++i )
+        for(int i = 0; i < m_actions; ++i)
             m_ctrl->DelWordRightEnd();
         break;
 
@@ -847,11 +836,10 @@ bool VimCommand::Command_call()
 bool VimCommand::Command_call_visual_mode()
 {
 
-    wxUIActionSimulator sim;
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
-    /*======= MOVEMENT ===========*/
+        /*======= MOVEMENT ===========*/
 
     case COMMANDVI::j:
         m_ctrl->LineDownExtend();
@@ -1042,9 +1030,9 @@ bool VimCommand::Command_call_visual_mode()
         //     m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
         //     repeat_command = false;
     } break;
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    /*========== DELETE AND COPY =======================*/
+        /*========== DELETE AND COPY =======================*/
 
     case COMMANDVI::d:
         this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
@@ -1080,16 +1068,12 @@ wxString VimCommand::get_text_at_position(VimCommand::eTypeTextSearch typeTextTo
     case kFromPosToEndWord:
         start = pos;
         end = m_ctrl->WordEndPosition(pos, true);
-        if(start == end) {
-            end++;
-        }
+        if(start == end) { end++; }
         break;
     case kFromPosToBeginWord:
         end = pos;
         start = m_ctrl->WordStartPosition(pos, true);
-        if(start == end) {
-            start--;
-        }
+        if(start == end) { start--; }
         break;
     case kFromPositionToEndLine:
         start = pos;
@@ -1326,32 +1310,24 @@ bool VimCommand::is_cmd_complete()
         case 'f':
             possible_command = true;
             m_commandID = COMMANDVI::f;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 'F':
             possible_command = true;
             m_commandID = COMMANDVI::F;
             command_complete = false;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 't':
             possible_command = true;
             m_commandID = COMMANDVI::t;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 'T':
             possible_command = true;
             m_commandID = COMMANDVI::T;
             command_complete = false;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
 
         case 'G':
@@ -1456,7 +1432,7 @@ bool VimCommand::is_cmd_complete()
         }
         break;
 
-    /*===================== DELETE TEXT ===============*/
+        /*===================== DELETE TEXT ===============*/
 
     case 'c': /*~~~~~~ c[...] ~~~~~~~*/
         possible_command = true;
@@ -1728,9 +1704,17 @@ bool VimCommand::DeleteLastCommandChar()
 long VimCommand::goToMatchingParentesis(long start_pos)
 {
     const wxChar parentesis[] = {
-        '(', ')', '[',  ']',  '{', '}',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
         /*NOT VIM STANDARD, but useful*/
-        '<', '>', '\"', '\"',
+        '<',
+        '>',
+        '\"',
+        '\"',
     };
     SEARCH_DIRECTION direction;
     long pos = start_pos;

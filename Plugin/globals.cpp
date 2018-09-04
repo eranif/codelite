@@ -2255,7 +2255,9 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 
 void clFitColumnWidth(wxDataViewCtrl* ctrl)
 {
+#ifndef __WXOSX__
     for(size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
         ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     }
+#endif
 }

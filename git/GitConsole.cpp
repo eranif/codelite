@@ -199,7 +199,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     conf.ReadItem(&data);
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
-    m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
+//    m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
 
     // Toolbar
     m_toolbar = new clToolBar(this, wxID_ANY);

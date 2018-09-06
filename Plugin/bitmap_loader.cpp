@@ -63,7 +63,9 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     }
 
     iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end()) { return iter->second; }
+    if(iter != m_toolbarsBitmaps.end()) {
+        return iter->second;
+    }
 
     return wxNullBitmap;
 }
@@ -168,8 +170,95 @@ int BitmapLoader::GetMimeImageId(const wxString& filename)
 
     FileExtManager::FileType type = FileExtManager::GetType(filename);
     std::unordered_map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) { return wxNOT_FOUND; }
+    if(iter == m_fileIndexMap.end()) {
+        return wxNOT_FOUND;
+    }
     return iter->second;
+}
+
+BitmapLoader::Vec_t BitmapLoader::MakeStandardMimeBitmapList()
+{
+    BitmapLoader::Vec_t V;
+    m_fileIndexMap.clear();
+    V.push_back(LoadBitmap(wxT("console")));
+    AddImage(V.size() - 1, FileExtManager::TypeExe);
+    V.push_back(LoadBitmap(wxT("mime-html")));
+    AddImage(V.size() - 1, FileExtManager::TypeHtml);
+    V.push_back(LoadBitmap(wxT("archive")));
+    AddImage(V.size() - 1, FileExtManager::TypeArchive);
+    V.push_back(LoadBitmap(wxT("mime-php")));
+    AddImage(V.size() - 1, FileExtManager::TypePhp);
+    V.push_back(LoadBitmap(wxT("dll")));
+    AddImage(V.size() - 1, FileExtManager::TypeDll);
+    V.push_back(LoadBitmap(wxT("blocks")));
+    AddImage(V.size() - 1, FileExtManager::TypeFormbuilder);
+    V.push_back(LoadBitmap(wxT("mime-txt")));
+    AddImage(V.size() - 1, FileExtManager::TypeCodedesigner);
+    V.push_back(LoadBitmap(wxT("mime-bmp")));
+    AddImage(V.size() - 1, FileExtManager::TypeBmp);
+    V.push_back(LoadBitmap(wxT("cog")));
+    AddImage(V.size() - 1, FileExtManager::TypeMakefile);
+    V.push_back(LoadBitmap(wxT("mime-c")));
+    AddImage(V.size() - 1, FileExtManager::TypeSourceC);
+    V.push_back(LoadBitmap(wxT("mime-cpp")));
+    AddImage(V.size() - 1, FileExtManager::TypeSourceCpp);
+    V.push_back(LoadBitmap(wxT("mime-h")));
+    AddImage(V.size() - 1, FileExtManager::TypeHeader);
+    V.push_back(LoadBitmap(wxT("mime-txt")));
+    AddImage(V.size() - 1, FileExtManager::TypeText);
+    V.push_back(LoadBitmap(wxT("execute")));
+    AddImage(V.size() - 1, FileExtManager::TypeScript);
+    V.push_back(LoadBitmap(wxT("mime-xml")));
+    AddImage(V.size() - 1, FileExtManager::TypeXml);
+    V.push_back(LoadBitmap(wxT("mime-txt")));
+    AddImage(V.size() - 1, FileExtManager::TypeErd);
+    V.push_back(LoadBitmap(wxT("mime-python")));
+    AddImage(V.size() - 1, FileExtManager::TypePython);
+    V.push_back(LoadBitmap(wxT("mime-css")));
+    AddImage(V.size() - 1, FileExtManager::TypeCSS);
+    V.push_back(LoadBitmap(wxT("mime-js")));
+    AddImage(V.size() - 1, FileExtManager::TypeJS);
+    V.push_back(LoadBitmap(wxT("cxx-workspace")));
+    AddImage(V.size() - 1, FileExtManager::TypeWorkspace);
+    V.push_back(LoadBitmap(wxT("php-workspace")));
+    AddImage(V.size() - 1, FileExtManager::TypeWorkspacePHP);
+    V.push_back(LoadBitmap(wxT("docker")));
+    AddImage(V.size() - 1, FileExtManager::TypeWorkspaceDocker);
+    V.push_back(LoadBitmap(wxT("nodejs-workspace")));
+    AddImage(V.size() - 1, FileExtManager::TypeWorkspaceNodeJS);
+    V.push_back(LoadBitmap(wxT("project")));
+    AddImage(V.size() - 1, FileExtManager::TypeProject);
+    V.push_back(LoadBitmap(wxT("blocks")));
+    AddImage(V.size() - 1, FileExtManager::TypeWxCrafter);
+    V.push_back(LoadBitmap(wxT("mime-xml")));
+    AddImage(V.size() - 1, FileExtManager::TypeXRC);
+    V.push_back(LoadBitmap(wxT("tools")));
+    AddImage(V.size() - 1, FileExtManager::TypeResource);
+    V.push_back(LoadBitmap(wxT("mime-sql")));
+    AddImage(V.size() - 1, FileExtManager::TypeSQL);
+    V.push_back(LoadBitmap(wxT("folder-yellow")));
+    AddImage(V.size() - 1, FileExtManager::TypeFolder);
+    V.push_back(LoadBitmap(wxT("folder-yellow-opened")));
+    AddImage(V.size() - 1, FileExtManager::TypeFolderExpanded);
+    V.push_back(LoadBitmap(wxT("mime-as")));
+    AddImage(V.size() - 1, FileExtManager::TypeAsm);
+    V.push_back(LoadBitmap(wxT("cmake")));
+    AddImage(V.size() - 1, FileExtManager::TypeCMake);
+    V.push_back(LoadBitmap(wxT("qt")));
+    AddImage(V.size() - 1, FileExtManager::TypeQMake);
+    V.push_back(LoadBitmap(wxT("docker")));
+    AddImage(V.size() - 1, FileExtManager::TypeDockerfile);
+    V.push_back(LoadBitmap(wxT("yml")));
+    AddImage(V.size() - 1, FileExtManager::TypeYAML);
+    V.push_back(LoadBitmap(wxT("database")));
+    AddImage(V.size() - 1, FileExtManager::TypeDatabase);
+
+    std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
+                  [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
+                      V.push_back(p.second);
+                      AddImage(V.size() - 1, p.first);
+                  });
+    return V;
 }
 
 wxImageList* BitmapLoader::MakeStandardMimeImageList()
@@ -288,7 +377,9 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 void BitmapLoader::RegisterImage(FileExtManager::FileType type, const wxBitmap& bmp)
 {
     BitmapMap_t::iterator iter = m_userBitmaps.find(type);
-    if(iter != m_userBitmaps.end()) { m_userBitmaps.erase(iter); }
+    if(iter != m_userBitmaps.end()) {
+        m_userBitmaps.erase(iter);
+    }
     m_userBitmaps.insert(std::make_pair(type, bmp));
 }
 
@@ -336,7 +427,9 @@ void BitmapLoader::initialize()
         bitmapFolder << "." << clGetUserName();
 
         tmpFolder.AppendDir(bitmapFolder);
-        if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
+        if(tmpFolder.DirExists()) {
+            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
+        }
 
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 

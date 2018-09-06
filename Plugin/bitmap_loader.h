@@ -49,6 +49,7 @@ class WXDLLIMPEXP_SDK BitmapLoader
 {
 public:
     typedef std::unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
+    typedef std::vector<wxBitmap> Vec_t;
 
 protected:
     wxFileName m_zipPath;
@@ -80,6 +81,7 @@ public:
      * the FileExtManager content. It is the CALLER responsibility for deleting the memory
      */
     wxImageList* MakeStandardMimeImageList();
+    BitmapLoader::Vec_t MakeStandardMimeBitmapList();
     BitmapMap_t MakeStandardMimeMap();
 
     /**

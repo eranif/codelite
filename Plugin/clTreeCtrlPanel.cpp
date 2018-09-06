@@ -51,7 +51,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
     GetTreeCtrl()->AddRoot(_("Folders"), wxNOT_FOUND, wxNOT_FOUND, new clTreeCtrlData(clTreeCtrlData::kRoot));
-    GetTreeCtrl()->AssignImageList(m_bmpLoader->MakeStandardMimeImageList());
+    GetTreeCtrl()->SetBitmaps(m_bmpLoader->MakeStandardMimeBitmapList());
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
@@ -76,11 +76,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    GetTreeCtrl()->SetFocusedItem(event.GetItem());
-    GetTreeCtrl()->SelectItem(event.GetItem());
-
     clTreeCtrlData* cd = GetItemData(item);
-
     if(cd && cd->IsFolder()) {
         // Prepare a folder context menu
         wxMenu menu;
@@ -257,7 +253,6 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
 
     // Sort the parent
     if(GetTreeCtrl()->ItemHasChildren(parent)) {
-        GetTreeCtrl()->SortChildren(parent);
         if(expand) {
             GetTreeCtrl()->Expand(parent);
         }
@@ -277,7 +272,6 @@ void clTreeCtrlPanel::AddFolder(const wxString& path)
     wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), path);
     DoExpandItem(itemFolder, false);
     ToggleView();
-    GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
 }
 
 wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxString& path)
@@ -704,7 +698,7 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 void clTreeCtrlPanel::GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const
 {
     wxTreeItemIdValue cookie;
-    const wxTreeCtrl* tree = m_treeCtrl;
+    const clTreeCtrl* tree = m_treeCtrl;
     wxTreeItemId child = tree->GetFirstChild(tree->GetRootItem(), cookie);
     while(child.IsOk()) {
         clTreeCtrlData* clientData = GetItemData(child);

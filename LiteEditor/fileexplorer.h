@@ -56,7 +56,7 @@ public:
     virtual ~FileExplorer();
     const wxString& GetCaption() const { return m_caption; }
     TreeItemInfo GetItemInfo() { return m_view->GetSelectedItemInfo(); }
-    wxTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
+    clTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
     void OpenFolder(const wxString& path);
 };
 

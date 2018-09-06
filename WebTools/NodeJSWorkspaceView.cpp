@@ -28,7 +28,7 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
-    m_keyboardHelper.reset(new clTreeKeyboardInput(GetTreeCtrl()));
+    //m_keyboardHelper.reset(new clTreeKeyboardInput(GetTreeCtrl()));
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
@@ -295,7 +295,6 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
         wxFileName packageJSON(cd->GetPath(), "package.json");
         if(packageJSON.FileExists()) {
             GetTreeCtrl()->SetItemImage(item, imageIndex);
-            GetTreeCtrl()->SetItemImage(item, imageIndex, wxTreeItemIcon_Selected);
         }
     }
 
@@ -308,7 +307,6 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
             if(packageJSON.FileExists()) {
                 // A project
                 GetTreeCtrl()->SetItemImage(child, imageIndex);
-                GetTreeCtrl()->SetItemImage(child, imageIndex, wxTreeItemIcon_Selected);
             }
         }
         child = GetTreeCtrl()->GetNextChild(item, cookie);

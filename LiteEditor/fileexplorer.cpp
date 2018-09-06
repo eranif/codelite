@@ -52,7 +52,7 @@ FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
 {
     CreateGUIControls();
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_view->GetTreeCtrl()));
+    //m_keyboardHelper.reset(new clTreeKeyboardInput(m_view->GetTreeCtrl()));
 
     m_themeHelper = new ThemeHandlerHelper(this);
     SetDropTarget(new clFileOrFolderDropTarget(this));

@@ -357,16 +357,14 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo(TreeType type)
     }
 }
 
-wxTreeCtrl* PluginManager::GetTree(TreeType type)
+wxTreeCtrl* PluginManager::GetWorkspaceTree()
 {
-    switch(type) {
-    case TreeFileExplorer:
-        return clMainFrame::Get()->GetFileExplorer()->GetTree();
-    case TreeFileView:
-        return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
-    default:
-        return NULL;
-    }
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
+}
+
+clTreeCtrl* PluginManager::GetFileExplorerTree()
+{
+    return clMainFrame::Get()->GetFileExplorer()->GetTree();
 }
 
 Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }

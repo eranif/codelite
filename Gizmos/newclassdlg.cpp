@@ -65,7 +65,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-        wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
+        wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
         if(path.IsEmpty() == false) { m_textCtrlVD->ChangeValue(path); }
     }
 

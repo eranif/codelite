@@ -77,7 +77,7 @@ void TemplateClassDlg::Initialize()
     }
     TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-        m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath(m_pManager->GetTree(TreeFileView), item.m_item, false);
+        m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath(m_pManager->GetWorkspaceTree(), item.m_item, false);
         m_projectPath = item.m_fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
     }
     m_textCtrlVD->SetValue(m_virtualFolder);

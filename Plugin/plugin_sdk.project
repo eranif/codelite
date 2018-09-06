@@ -44,6 +44,20 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clScrollBar.cpp"/>
+    <File Name="clScrollBar.h"/>
+    <File Name="clThemedTreeCtrl.cpp"/>
+    <File Name="clThemedTreeCtrl.h"/>
+    <File Name="clTreeCtrl.cpp"/>
+    <File Name="clTreeCtrl.h"/>
+    <File Name="clTreeCtrlModel.cpp"/>
+    <File Name="clTreeCtrlModel.h"/>
+    <File Name="clTreeCtrlNode.cpp"/>
+    <File Name="clTreeCtrlNode.h"/>
+    <File Name="clTreeNodeVisitor.cpp"/>
+    <File Name="clTreeNodeVisitor.h"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="clToolBar">
     <VirtualDirectory Name="UI">
       <File Name="clCustomiseToolBarDlg.cpp"/>
@@ -60,8 +74,6 @@
     <File Name="clToolBarToggleButton.cpp"/>
     <File Name="clToolBarSeparator.h"/>
     <File Name="clToolBarSeparator.cpp"/>
-    <File Name="clToolBarSpacer.h"/>
-    <File Name="clToolBarSpacer.cpp"/>
     <File Name="clToolBarMenuButton.h"/>
     <File Name="clToolBarMenuButton.cpp"/>
     <File Name="clToolBarButtonBase.h"/>

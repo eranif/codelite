@@ -52,7 +52,7 @@ public:
 };
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clScrolledPanel(parent, wxID_ANY, pos, size, wxWANTS_CHARS | wxTAB_TRAVERSAL)
+    : clScrolledPanel(parent, wxID_ANY, pos, size, wxWANTS_CHARS)
     , m_model(this)
     , m_treeStyle(style)
     , m_dragStartTime((time_t)-1)
@@ -109,8 +109,8 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxGCDC dc(pdc);
 
     wxRect clientRect = GetClientRect();
-    dc.SetPen(m_colours.bgColour);
-    dc.SetBrush(m_colours.bgColour);
+    dc.SetPen(m_colours.GetBgColour());
+    dc.SetBrush(m_colours.GetBgColour());
     dc.DrawRectangle(clientRect);
 
     if(!m_model.GetRoot()) {
@@ -204,7 +204,7 @@ void clTreeCtrl::Collapse(const wxTreeItemId& item)
 void clTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 {
     CHECK_ITEM_RET(item);
-    if(GetFocusedItem() == item) { return; }
+    if((select && m_model.IsItemSelected(item)) || (!select && !m_model.IsItemSelected(item))) { return; }
     m_model.SelectItem(item, select, false, true);
     Refresh();
 }
@@ -212,8 +212,6 @@ void clTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    CallAfter(&clTreeCtrl::GrabFocus);
-
     CHECK_ROOT_RET();
 
     // Not considering D'n'D so reset any saved values
@@ -548,7 +546,7 @@ void clTreeCtrl::OnLeaveWindow(wxMouseEvent& event)
     Refresh();
 }
 
-void clTreeCtrl::SetColours(const clTreeCtrlColours& colours)
+void clTreeCtrl::SetColours(const clColours& colours)
 {
     m_colours = colours;
     Refresh();
@@ -687,6 +685,7 @@ int clTreeCtrl::GetNumLineCanFitOnScreen() const
 
 void clTreeCtrl::Delete(const wxTreeItemId& item)
 {
+    CHECK_ITEM_RET(item);
     // delete the item + its children
     // fires event
     m_model.DeleteItem(item);
@@ -988,4 +987,9 @@ void clTreeCtrl::OnEnterWindow(wxMouseEvent& event)
     event.Skip();
     CallAfter(&clTreeCtrl::SetFocus);
     CallAfter(&clTreeCtrl::SetFocusFromKbd);
+}
+
+wxRect clTreeCtrl::GetItemsRect() const
+{
+    return GetClientRect();
 }

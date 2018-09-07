@@ -3,7 +3,7 @@
 
 #include "clTreeCtrl.h"
 
-class clThemedTreeCtrl : public clTreeCtrl
+class WXDLLIMPEXP_SDK clThemedTreeCtrl : public clTreeCtrl
 {
 public:
     clThemedTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

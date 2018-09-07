@@ -21,7 +21,7 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
     int m_scrollTick = 3;
 #endif
     std::vector<wxBitmap> m_bitmaps;
-    clTreeCtrlColours m_colours;
+    clColours m_colours;
     long m_treeStyle = 0;
     // clScrollBarHelper* m_vsb = nullptr;
     wxDirection m_lastScrollDir = wxDOWN;
@@ -41,7 +41,11 @@ private:
 
 protected:
     void OnBeginDrag();
-
+    /**
+     * @brief get the rectangle for drawing items
+     */
+    wxRect GetItemsRect() const;
+    
 public:
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0);
@@ -81,7 +85,7 @@ public:
     /**
      * @brief set the colours used for drawing items
      */
-    void SetColours(const clTreeCtrlColours& colours);
+    void SetColours(const clColours& colours);
 
     /**
      * @brief enable style on the tree
@@ -96,7 +100,7 @@ public:
     /**
      * @brief get the colours used for drawing items
      */
-    const clTreeCtrlColours& GetColours() const { return m_colours; }
+    const clColours& GetColours() const { return m_colours; }
 
     /**
      * @brief return line height
@@ -302,7 +306,12 @@ public:
      * @brief Returns the previous sibling of the specified item; call GetNextSibling() for the next sibling
      */
     wxTreeItemId GetPrevSibling(const wxTreeItemId& item) const;
-
+    
+    /**
+     * @brief delete all items in tree
+     */
+    void DeleteAllItems() { Delete(GetRootItem()); }
+    
 protected:
     virtual bool DoKeyDown(const wxKeyEvent& event);
     void DoEnsureVisible(const wxTreeItemId& item);

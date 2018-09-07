@@ -98,10 +98,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
 
     BitmapLoader* bl = m_mgr->GetStdIcons();
-    wxImageList* imageList = bl->MakeStandardMimeImageList();
-    m_treeCtrlView->AssignImageList(imageList);
-
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
+    BitmapLoader::Vec_t bitmaps = bl->MakeStandardMimeBitmapList();
+    m_treeCtrlView->SetBitmaps(bitmaps);
 
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -398,7 +396,6 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 
 void PHPWorkspaceView::LoadWorkspaceView()
 {
-    m_itemsToSort.Clear();
     m_filesItems.clear();
     m_foldersItems.clear();
 
@@ -423,7 +420,6 @@ void PHPWorkspaceView::LoadWorkspaceView()
         m_treeCtrlView->AddRoot(workspaceName, bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()),
                                 bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()), data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-    m_itemsToSort.PushBack(root, true);
 
     wxBusyCursor bc;
     wxBusyInfo info(_("Building workspace tree view"), FRAME);
@@ -447,17 +443,15 @@ void PHPWorkspaceView::LoadWorkspaceView()
 
         // The project is also a folder for the project folder
         m_foldersItems.insert(std::make_pair(iter_project->second->GetFilename().GetPath(), projectItemId));
-        m_itemsToSort.PushBack(projectItemId, true);
         DoBuildProjectNode(projectItemId, iter_project->second);
         if(data->IsActive()) { activeProjectId = projectItemId; }
     }
 
-    if(m_treeCtrlView->HasChildren(root)) { m_treeCtrlView->Expand(root); }
+    if(m_treeCtrlView->ItemHasChildren(root)) { m_treeCtrlView->Expand(root); }
 
     if(activeProjectId.IsOk() && m_treeCtrlView->ItemHasChildren(activeProjectId)) {
         m_treeCtrlView->Expand(activeProjectId);
     }
-    DoSortItems();
     wxCommandEvent dummy;
     OnEditorChanged(dummy);
 }
@@ -551,17 +545,10 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
         wxWindowUpdateLocker locker(m_treeCtrlView);
 
         // Add folder to the tree view
-        int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
         ItemData* itemData = new ItemData(ItemData::Kind_Folder);
         itemData->SetFolderName(name);
         itemData->SetFolderPath(newfolder.GetPath());
         itemData->SetProjectName(proj->GetName());
-
-        m_itemsToSort.Clear();
-        m_itemsToSort.PushBack(parent, true);
-        wxTreeItemId folderItem = m_treeCtrlView->AppendItem(parent, name, imgId, imgId, itemData);
-        m_itemsToSort.PushBack(folderItem, true);
-        DoSortItems();
         // Expand the node
         if(!m_treeCtrlView->IsExpanded(parent)) { m_treeCtrlView->Expand(parent); }
     }
@@ -953,7 +940,6 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
     if(dlg.ShowModal() == wxID_OK) {
         PHPClassDetails pcd = dlg.GetDetails();
         wxWindowUpdateLocker locker(m_treeCtrlView);
-        m_itemsToSort.Clear();
 
         wxString fileContent;
         wxString eolString = EditorConfigST::Get()->GetOptions()->GetEOLAsString();
@@ -970,7 +956,6 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         if(!event.GetFormattedString().IsEmpty()) { fileContent = event.GetFormattedString(); }
 
         wxTreeItemId fileItem = DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
-        DoSortItems();
 
         // Set the focus the new class
         if(fileItem.IsOk()) {
@@ -1113,15 +1098,6 @@ void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event)
 
 void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) { event.Skip(); }
 
-void PHPWorkspaceView::DoSortItems()
-{
-    wxOrderedMap<wxTreeItemId, bool>::const_iterator iter = m_itemsToSort.begin();
-    for(; iter != m_itemsToSort.end(); ++iter) {
-        m_treeCtrlView->SortItem(iter->first);
-    }
-    m_itemsToSort.Clear();
-}
-
 void PHPWorkspaceView::OnSyncWorkspaceWithFileSystem(wxCommandEvent& e)
 {
     PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
@@ -1167,7 +1143,6 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
     int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     wxString curpath;
     wxTreeItemId parent = projectItem;
-    m_itemsToSort.PushBack(parent, true);
     wxFileName fnFolder(path, "dummy.txt");
     fnFolder.MakeRelativeTo(pProject->GetFilename().GetPath());
     if(fnFolder.GetDirCount() == 0) {
@@ -1186,7 +1161,6 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
             itemData->SetFolderName(parts.Item(i));
             parent = m_treeCtrlView->AppendItem(parent, parts.Item(i), imgId, imgId, itemData);
             m_foldersItems.insert(std::make_pair(curdir.GetPath(), parent));
-            m_itemsToSort.PushBack(parent, true);
         } else {
             parent = m_foldersItems.find(curdir.GetPath())->second;
         }
@@ -1219,7 +1193,6 @@ wxTreeItemId PHPWorkspaceView::DoCreateFile(const wxTreeItemId& parent, const wx
     PHPProject::Ptr_t proj = DoGetProjectForItem(parent);
     if(!proj) return wxTreeItemId();
 
-    m_itemsToSort.Clear();
     wxFileName file(fullpath);
     // Write the file content
     if(FileUtils::WriteFileContent(file, content)) {
@@ -1235,9 +1208,7 @@ wxTreeItemId PHPWorkspaceView::DoCreateFile(const wxTreeItemId& parent, const wx
 
         // Cache the result
         m_filesItems.insert(std::make_pair(file.GetFullPath(), fileItem));
-        m_itemsToSort.PushBack(parent, true);
         proj->FileAdded(file.GetFullPath(), true);
-        DoSortItems();
         return fileItem;
     }
     return wxTreeItemId();
@@ -1576,10 +1547,6 @@ void PHPWorkspaceView::OnProjectSyncCompleted(clCommandEvent& event)
 
     // And finally, rebuild the project node
     DoBuildProjectNode(item, pProject);
-
-    DoSortItems();
-    m_itemsToSort.Clear();
-
     DoExpandToActiveEditor();
 }
 
@@ -1593,7 +1560,7 @@ void PHPWorkspaceView::DoGetFilesAndFolders(const wxString& projectName, wxArray
 
 void PHPWorkspaceView::DoGetFilesAndFolders(const wxTreeItemId& item, wxArrayString& folders, wxArrayString& files)
 {
-    if(m_treeCtrlView->HasChildren(item)) {
+    if(m_treeCtrlView->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
         while(child.IsOk()) {

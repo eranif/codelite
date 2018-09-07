@@ -92,6 +92,9 @@ public:
      */
     bool ClearSelections(bool notify);
 
+    bool IsItemSelected(const wxTreeItemId& item) const { return IsItemSelected(ToPtr(item)); }
+    bool IsItemSelected(const clTreeCtrlNode* item) const;
+
     /**
      * @brief select the children of 'item' this functin fires the changing and changed events
      */

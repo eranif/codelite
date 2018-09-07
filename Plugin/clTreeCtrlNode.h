@@ -1,6 +1,7 @@
 #ifndef CLTREECTRLNODE_H
 #define CLTREECTRLNODE_H
 
+#include "clColours.h"
 #include "codelite_exports.h"
 #include <vector>
 #include <wx/colour.h>
@@ -19,23 +20,6 @@ enum clTreeCtrlNodeFlags {
     kNF_Selected = (1 << 4),
     kNF_Hovered = (1 << 5),
     kNF_Hidden = (1 << 6),
-};
-
-struct WXDLLIMPEXP_SDK clTreeCtrlColours {
-    wxColour hoverBgColour;       // Background colour of an hovered item
-    wxColour itemTextColour;      // item text colour
-    wxColour itemBgColour;        // item bg colour
-    wxColour selItemTextColour;   // text colour for the selected item
-    wxColour selItemBgColour;     // selected item background colour
-    wxColour buttonColour;        // expand/collapse button colour
-    wxColour bgColour;            // background colour for the control
-    wxColour scrolBarButton;      // The scrollbar thumb button colour
-    wxColour scrollBarBgColour;   // The scrollbar background colour
-    wxColour alternateColourOdd;  // Colour to draw odd items background (wxTR_ROW_LINES)
-    wxColour alternateColourEven; // Colour to draw even items background (wxTR_ROW_LINES)
-    clTreeCtrlColours() { InitDefaults(); }
-    void InitDefaults();
-    void InitDarkDefaults();
 };
 
 class WXDLLIMPEXP_SDK clTreeCtrlNode
@@ -116,7 +100,7 @@ public:
      * @brief remove all children items
      */
     void DeleteAllChildren();
-    void Render(wxDC& dc, const clTreeCtrlColours& colours, int visibileIndex);
+    void Render(wxDC& dc, const clColours& colours, int visibileIndex);
     void SetHovered(bool b) { SetFlag(kNF_Hovered, b); }
     bool IsHovered() const { return m_flags & kNF_Hovered; }
 

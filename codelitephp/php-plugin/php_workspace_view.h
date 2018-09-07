@@ -44,7 +44,6 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
 {
     IManager* m_mgr;
     BitmapLoader::BitmapMap_t m_bitmaps;
-    wxOrderedMap<wxTreeItemId, bool> m_itemsToSort;
     std::unordered_map<wxString, wxTreeItemId> m_filesItems;
     std::unordered_map<wxString, wxTreeItemId> m_foldersItems;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
@@ -80,7 +79,6 @@ protected:
     void DoSetStatusBarText(const wxString& text, int timeOut);
 
     // Helpers
-    void DoSortItems();
     wxTreeItemId DoAddFolder(const wxString& project, const wxString& path);
     wxTreeItemId DoCreateFile(const wxTreeItemId& parent, const wxString& fullpath, const wxString& content = "");
     wxTreeItemId DoGetProject(const wxString& project);

@@ -5,7 +5,7 @@
 #include <wx/panel.h>
 #include <wx/scrolbar.h>
 
-class WXDLLIMPEXP_SDK clScrolledPanel : public wxPanel
+class WXDLLIMPEXP_SDK clScrolledPanel : public wxWindow
 {
 private:
     wxScrollBar* m_vsb = nullptr;
@@ -47,11 +47,6 @@ public:
      * will adjust its position
      */
     void UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize);
-
-    /**
-     * @brief force the focus to this window
-     */
-    void GrabFocus();
 
     /**
      * @brief called by the scrolled window whenver a key is down

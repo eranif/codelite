@@ -1,5 +1,5 @@
-#include "clTreeCtrlNode.h"
 #include "clTreeCtrl.h"
+#include "clTreeCtrlNode.h"
 #include <functional>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -188,28 +188,30 @@ void clTreeCtrlNode::ClearRects()
     m_itemRect = wxRect();
 }
 
-void clTreeCtrlNode::Render(wxDC& dc, const clTreeCtrlColours& c, int visibileIndex)
+void clTreeCtrlNode::Render(wxDC& dc, const clColours& c, int visibileIndex)
 {
     wxRect itemRect = GetItemRect();
     bool zebraColouring = (m_tree->GetTreeStyle() & wxTR_ROW_LINES);
     bool even_row = ((visibileIndex % 2) == 0);
 
-    clTreeCtrlColours colours = c;
+    clColours colours = c;
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     if(GetFont().IsOk()) { f = GetFont(); }
-    if(GetTextColour().IsOk()) { colours.itemTextColour = GetTextColour(); }
-    if(GetBgColour().IsOk()) { colours.itemBgColour = GetBgColour(); }
+    if(GetTextColour().IsOk()) { colours.SetItemTextColour(GetTextColour()); }
+    if(GetBgColour().IsOk()) { colours.SetItemBgColour(GetBgColour()); }
     dc.SetFont(f);
 
-    if(zebraColouring) { colours.itemBgColour = even_row ? colours.alternateColourEven : colours.alternateColourOdd; }
+    if(zebraColouring) {
+        colours.SetItemBgColour(even_row ? colours.GetAlternateColourEven() : colours.GetAlternateColourOdd());
+    }
 
     if(IsSelected() || IsHovered()) {
-        dc.SetBrush(IsSelected() ? colours.selItemBgColour : colours.hoverBgColour);
-        dc.SetPen(IsSelected() ? colours.selItemBgColour : colours.hoverBgColour);
+        dc.SetBrush(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
+        dc.SetPen(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
         dc.DrawRoundedRectangle(itemRect, 1.5);
-    } else if(colours.itemBgColour.IsOk()) {
-        dc.SetBrush(colours.itemBgColour);
-        dc.SetPen(colours.itemBgColour);
+    } else if(colours.GetItemBgColour().IsOk()) {
+        dc.SetBrush(colours.GetItemBgColour());
+        dc.SetPen(colours.GetItemBgColour());
         dc.DrawRectangle(itemRect);
     }
 
@@ -226,8 +228,8 @@ void clTreeCtrlNode::Render(wxDC& dc, const clTreeCtrlColours& c, int visibileIn
             pts[0] = buttonRect.GetTopRight();
             pts[1] = buttonRect.GetBottomRight();
             pts[2] = buttonRect.GetBottomLeft();
-            dc.SetBrush(colours.buttonColour);
-            dc.SetPen(colours.buttonColour);
+            dc.SetBrush(colours.GetButtonColour());
+            dc.SetPen(colours.GetButtonColour());
             dc.DrawPolygon(3, pts);
         } else {
             pts[0] = buttonRect.GetTopLeft();
@@ -235,7 +237,7 @@ void clTreeCtrlNode::Render(wxDC& dc, const clTreeCtrlColours& c, int visibileIn
             pts[2].x = buttonRect.GetRight();
             pts[2].y = (buttonRect.GetY() + (buttonRect.GetHeight() / 2));
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
-            dc.SetPen(colours.buttonColour);
+            dc.SetPen(colours.GetButtonColour());
             dc.DrawPolygon(3, pts);
         }
     } else {
@@ -258,7 +260,7 @@ void clTreeCtrlNode::Render(wxDC& dc, const clTreeCtrlColours& c, int visibileIn
             textXOffset += X_SPACER;
         }
     }
-    dc.SetTextForeground(IsSelected() ? colours.selItemTextColour : colours.itemTextColour);
+    dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
     dc.DrawText(GetLabel(), itemIndent + textXOffset, textY);
 }
 
@@ -315,7 +317,7 @@ void clTreeCtrlNode::SetHidden(bool b)
     }
 }
 
-void clTreeCtrlColours::InitDefaults()
+void clColours::InitDefaults()
 {
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     selItemTextColour = itemTextColour;
@@ -330,7 +332,7 @@ void clTreeCtrlColours::InitDefaults()
     alternateColourOdd = bgColour.ChangeLightness(95);
 }
 
-void clTreeCtrlColours::InitDarkDefaults()
+void clColours::InitDarkDefaults()
 {
     bgColour = wxColour("#1c2833");
     itemTextColour = wxColour("#eaecee");

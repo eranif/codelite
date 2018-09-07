@@ -1,5 +1,5 @@
-#include "clTreeCtrlModel.h"
 #include "clTreeCtrl.h"
+#include "clTreeCtrlModel.h"
 #include <algorithm>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -450,4 +450,12 @@ bool clTreeCtrlModel::ClearSelections(bool notify)
     }
     UnselectAll();
     return true;
+}
+
+bool clTreeCtrlModel::IsItemSelected(const clTreeCtrlNode* item) const
+{
+    if(m_selectedItems.empty()) { return false; }
+    clTreeCtrlNode::Vec_t::const_iterator iter
+        = std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clTreeCtrlNode* p) { return (p == item); });
+    return (iter != m_selectedItems.end());
 }

@@ -59,8 +59,6 @@
     <File Name="clTreeNodeVisitor.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clToolBar">
-    <File Name="clToolBarSpacer.h"/>
-    <File Name="clToolBarSpacer.cpp"/>
     <VirtualDirectory Name="UI">
       <File Name="clCustomiseToolBarDlg.cpp"/>
       <File Name="clCustomiseToolBarDlg.h"/>

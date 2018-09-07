@@ -163,16 +163,16 @@ bool clTreeCtrlNode::SetExpanded(bool b)
         // Hidden root can not be hidden
         return false;
     }
-
+    
     if(IsHidden()) {
         // Hidden node do not fire events
         SetFlag(kNF_Expanded, b);
         return true;
     }
-
+    
     // Already expanded?
     if(b && IsExpanded()) { return true; }
-
+    
     // Already collapsed?
     if(!b && !IsExpanded()) { return true; }
     if(!m_model->NodeExpanding(this, b)) { return false; }
@@ -193,16 +193,18 @@ void clTreeCtrlNode::Render(wxDC& dc, const clTreeCtrlColours& c, int visibileIn
     wxRect itemRect = GetItemRect();
     bool zebraColouring = (m_tree->GetTreeStyle() & wxTR_ROW_LINES);
     bool even_row = ((visibileIndex % 2) == 0);
-
+    
     clTreeCtrlColours colours = c;
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     if(GetFont().IsOk()) { f = GetFont(); }
     if(GetTextColour().IsOk()) { colours.itemTextColour = GetTextColour(); }
     if(GetBgColour().IsOk()) { colours.itemBgColour = GetBgColour(); }
     dc.SetFont(f);
-
-    if(zebraColouring) { colours.itemBgColour = even_row ? colours.alternateColourEven : colours.alternateColourOdd; }
-
+    
+    if(zebraColouring) {
+        colours.itemBgColour = even_row ? colours.alternateColourEven : colours.alternateColourOdd;
+    }
+    
     if(IsSelected() || IsHovered()) {
         dc.SetBrush(IsSelected() ? colours.selItemBgColour : colours.hoverBgColour);
         dc.SetPen(IsSelected() ? colours.selItemBgColour : colours.hoverBgColour);
@@ -320,7 +322,7 @@ void clTreeCtrlColours::InitDefaults()
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     selItemTextColour = itemTextColour;
     selItemBgColour = wxColour("rgb(199,203,209)");
-    buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
     hoverBgColour = wxColour("rgb(219,221,224)");
     bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     scrolBarButton = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);

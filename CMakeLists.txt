@@ -660,7 +660,7 @@ if(NOT NO_CORE_PLUGINS)
 endif(NOT NO_CORE_PLUGINS)
 
 # wxCrafter is not a core plugin so we include it we find the directory
-if(IS_DIRECTORY "${CL_SRC_ROOT}/wxcrafter" AND NOT DISABLE_CXX)
+if(IS_DIRECTORY "${CL_SRC_ROOT}/wxcrafter" AND NOT DISABLE_CXX AND NOT NO_CORE_PLUGINS)
     add_subdirectory(wxcrafter)
 endif()
 

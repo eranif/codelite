@@ -1,16 +1,17 @@
 #ifndef CLTREECTRL_H
 #define CLTREECTRL_H
 
+#include "clScrolledPanel.h"
 #include "clTreeCtrlModel.h"
+#include "codelite_exports.h"
 #include <wx/arrstr.h>
+#include <wx/datetime.h>
 #include <wx/dc.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
-#include <wx/datetime.h>
-#include "codelite_exports.h"
 
 class clScrollBarHelper;
-class WXDLLIMPEXP_SDK clTreeCtrl : public wxPanel
+class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
 {
     int m_lineHeight = 0;
     clTreeCtrlModel m_model;
@@ -22,7 +23,7 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public wxPanel
     std::vector<wxBitmap> m_bitmaps;
     clTreeCtrlColours m_colours;
     long m_treeStyle = 0;
-    clScrollBarHelper* m_sb;
+    // clScrollBarHelper* m_vsb = nullptr;
     wxDirection m_lastScrollDir = wxDOWN;
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
@@ -35,7 +36,7 @@ private:
     int GetNumLineCanFitOnScreen() const;
     clTreeCtrlNode* GetFirstItemOnScreen();
     void SetFirstItemOnScreen(clTreeCtrlNode* item);
-    void UpdateScrollBar(wxDC& dc);
+    void UpdateScrollBar();
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
 
 protected:
@@ -136,12 +137,12 @@ public:
      * @brief return the root item
      */
     wxTreeItemId GetRootItem() const;
-    
+
     /**
      * @brief return the item's parent
      */
     wxTreeItemId GetItemParent(const wxTreeItemId& item) const;
-    
+
     /**
      * @brief Expands the given item
      */
@@ -211,17 +212,17 @@ public:
      */
     wxTreeItemId GetFirstChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const;
     wxTreeItemId GetNextChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const;
-    
+
     /**
      * @brief for compatibility, we dont really need to call this method manually
      */
     void SortChildren(const wxTreeItemId& item) { wxUnusedVar(item); }
-    
+
     /**
      * @brief set item's image index
      */
     void SetItemImage(const wxTreeItemId& item, int imageId, int openImageId = wxNOT_FOUND);
-    
+
     /**
      * @brief return the associated image id with this item
      */
@@ -303,6 +304,7 @@ public:
     wxTreeItemId GetPrevSibling(const wxTreeItemId& item) const;
 
 protected:
+    virtual bool DoKeyDown(const wxKeyEvent& event);
     void DoEnsureVisible(const wxTreeItemId& item);
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
@@ -314,10 +316,11 @@ protected:
     void OnMouseScroll(wxMouseEvent& event);
     void OnIdle(wxIdleEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
+    void OnEnterWindow(wxMouseEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
-    void OnScroll(wxScrollEvent& event);
-    void OnKeyScroll(wxScrollEvent& event);
+    
+    void ScrollLines(int steps, wxDirection direction);
+    void ScrollToLine(int firstLine);
 };
 
 #endif // CLTREECTRL_H

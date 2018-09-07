@@ -2,13 +2,13 @@
 #define CLTREECTRLMODEL_H
 
 #include "clTreeCtrlNode.h"
+#include "codelite_exports.h"
 #include <functional>
 #include <vector>
 #include <wx/colour.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
-#include "codelite_exports.h"
 
 class clTreeCtrl;
 struct WXDLLIMPEXP_SDK clTreeItemIdValue {
@@ -86,12 +86,12 @@ public:
      * this function fires an event
      */
     void AddSelection(const wxTreeItemId& item);
-    
+
     /**
      * @brief clear all selections, return true on sucess, this function fires the changing event
      */
     bool ClearSelections(bool notify);
-    
+
     /**
      * @brief select the children of 'item' this functin fires the changing and changed events
      */

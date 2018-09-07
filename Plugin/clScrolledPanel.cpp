@@ -3,6 +3,10 @@
 #include <wx/log.h>
 #include <wx/sizer.h>
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
@@ -127,6 +131,11 @@ int clScrolledPanel::GetPageSize() const { return m_pageSize; }
 
 void clScrolledPanel::GrabFocus()
 {
+#ifdef __WXGTK__
+    gtk_widget_set_can_focus(GTK_WIDGET(this->GetHandle()), true);
+    gtk_widget_grab_focus(GTK_WIDGET(this->GetHandle()));
+#else
     SetCanFocus(true);
     SetFocus();
+#endif
 }

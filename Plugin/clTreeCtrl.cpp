@@ -212,7 +212,7 @@ void clTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    GrabFocus();
+    CallAfter(&clTreeCtrl::GrabFocus);
 
     CHECK_ROOT_RET();
 

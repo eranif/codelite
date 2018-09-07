@@ -1,13 +1,13 @@
 #ifndef CLTREECTRLNODE_H
 #define CLTREECTRLNODE_H
 
+#include "codelite_exports.h"
 #include <vector>
 #include <wx/colour.h>
 #include <wx/gdicmn.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
-#include "codelite_exports.h"
 
 class clTreeCtrlModel;
 class clTreeCtrl;
@@ -88,7 +88,7 @@ protected:
 public:
     clTreeCtrlNode* GetLastChild() const;
     clTreeCtrlNode* GetFirstChild() const;
-    
+
     clTreeCtrlNode(clTreeCtrl* tree);
     clTreeCtrlNode(
         clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND, int bitmapSelectedIndex = wxNOT_FOUND);
@@ -96,10 +96,10 @@ public:
 
     clTreeCtrlNode* GetNext() const { return m_next; }
     clTreeCtrlNode* GetPrev() const { return m_prev; }
-    
+
     void SetHidden(bool b);
     bool IsHidden() const { return HasFlag(kNF_Hidden); }
-    
+
     bool IsVisible() const;
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetFont(const wxFont& font) { this->m_font = font; }

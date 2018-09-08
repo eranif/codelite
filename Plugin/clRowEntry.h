@@ -1,6 +1,7 @@
 #ifndef CLTREECTRLNODE_H
 #define CLTREECTRLNODE_H
 
+#include "clCellValue.h"
 #include "clColours.h"
 #include "codelite_exports.h"
 #include <vector>
@@ -22,35 +23,27 @@ enum clTreeCtrlNodeFlags {
     kNF_Hidden = (1 << 6),
 };
 
-class WXDLLIMPEXP_SDK clTreeCtrlNode
+class WXDLLIMPEXP_SDK clRowEntry
 {
+
 public:
-    typedef std::vector<clTreeCtrlNode*> Vec_t;
-#ifdef __WXOSX__
+    typedef std::vector<clRowEntry*> Vec_t;
     static const int Y_SPACER = 1;
     static const int X_SPACER = 1;
-#else
-    static const int Y_SPACER = 2;
-    static const int X_SPACER = 2;
-#endif
+
 protected:
     clTreeCtrl* m_tree = nullptr;
     clTreeCtrlModel* m_model = nullptr;
-    wxString m_label;
-    int m_bitmapIndex = wxNOT_FOUND;
-    int m_bitmapSelectedIndex = wxNOT_FOUND;
+    clCellValue::Vect_t m_cells;
     size_t m_flags = 0;
     wxTreeItemData* m_clientData = nullptr;
-    clTreeCtrlNode* m_parent = nullptr;
-    clTreeCtrlNode::Vec_t m_children;
-    clTreeCtrlNode* m_next = nullptr;
-    clTreeCtrlNode* m_prev = nullptr;
+    clRowEntry* m_parent = nullptr;
+    clRowEntry::Vec_t m_children;
+    clRowEntry* m_next = nullptr;
+    clRowEntry* m_prev = nullptr;
     int m_indentsCount = 0;
-    wxRect m_itemRect;
+    wxRect m_rowRect;
     wxRect m_buttonRect;
-    wxFont m_font;
-    wxColour m_textColour;
-    wxColour m_bgColour;
 
 protected:
     void SetFlag(clTreeCtrlNodeFlags flag, bool b)
@@ -67,63 +60,69 @@ protected:
     /**
      * @brief return the nth visible item
      */
-    clTreeCtrlNode* GetVisibleItem(int index);
+    clRowEntry* GetVisibleItem(int index);
+    clCellValue& GetColumn(size_t col = 0);
+    const clCellValue& GetColumn(size_t col = 0) const;
 
 public:
-    clTreeCtrlNode* GetLastChild() const;
-    clTreeCtrlNode* GetFirstChild() const;
+    clRowEntry* GetLastChild() const;
+    clRowEntry* GetFirstChild() const;
 
-    clTreeCtrlNode(clTreeCtrl* tree);
-    clTreeCtrlNode(
+    clRowEntry(
         clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND, int bitmapSelectedIndex = wxNOT_FOUND);
-    ~clTreeCtrlNode();
+    ~clRowEntry();
 
-    clTreeCtrlNode* GetNext() const { return m_next; }
-    clTreeCtrlNode* GetPrev() const { return m_prev; }
+    clRowEntry* GetNext() const { return m_next; }
+    clRowEntry* GetPrev() const { return m_prev; }
 
     void SetHidden(bool b);
     bool IsHidden() const { return HasFlag(kNF_Hidden); }
 
+    /**
+     * @brief using wxDC, calculate the item's width
+     */
+    int CalcItemWidth(wxDC& dc, int rowHeight, size_t col = 0);
+
     bool IsVisible() const;
-    void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
-    void SetFont(const wxFont& font) { this->m_font = font; }
-    void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
-    const wxColour& GetBgColour() const { return m_bgColour; }
-    const wxFont& GetFont() const { return m_font; }
-    const wxColour& GetTextColour() const { return m_textColour; }
+    void SetBgColour(const wxColour& bgColour, size_t col = 0);
+    void SetFont(const wxFont& font, size_t col = 0);
+    void SetTextColour(const wxColour& textColour, size_t col = 0);
+    const wxColour& GetBgColour(size_t col = 0) const;
+    const wxFont& GetFont(size_t col = 0) const;
+    const wxColour& GetTextColour(size_t col = 0) const;
     /**
      * @brief remove and delete a single child
      * @param child
      */
-    void DeleteChild(clTreeCtrlNode* child);
+    void DeleteChild(clRowEntry* child);
     /**
      * @brief remove all children items
      */
     void DeleteAllChildren();
-    void Render(wxDC& dc, const clColours& colours, int visibileIndex);
+    void Render(wxDC& dc, const clColours& colours, int row_index);
     void SetHovered(bool b) { SetFlag(kNF_Hovered, b); }
     bool IsHovered() const { return m_flags & kNF_Hovered; }
 
     void ClearRects();
     void SetRects(const wxRect& rect, const wxRect& buttonRect)
     {
-        m_itemRect = rect;
+        m_rowRect = rect;
         m_buttonRect = buttonRect;
     }
-    const wxRect& GetItemRect() const { return m_itemRect; }
+    const wxRect& GetItemRect() const { return m_rowRect; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
 
-    void AddChild(clTreeCtrlNode* child);
+    void AddChild(clRowEntry* child);
 
     /**
      * @brief insert item at 'where'. The new item is placed after 'prev'
      */
-    void InsertChild(clTreeCtrlNode* child, clTreeCtrlNode* prev);
+    void InsertChild(clRowEntry* child, clRowEntry* prev);
 
     /**
      * @brief insert this node between first and second
      */
-    void ConnectNodes(clTreeCtrlNode* first, clTreeCtrlNode* second);
+    void ConnectNodes(clRowEntry* first, clRowEntry* second);
 
     bool IsBold() const { return HasFlag(kNF_FontBold); }
     void SetBold(bool b) { SetFlag(kNF_FontBold, b); }
@@ -134,27 +133,29 @@ public:
     bool IsExpanded() const { return HasFlag(kNF_Expanded) || HasFlag(kNF_Hidden); }
     bool SetExpanded(bool b);
     bool IsRoot() const { return GetParent() == nullptr; }
-    void SetBitmapIndex(int bitmapIndex) { this->m_bitmapIndex = bitmapIndex; }
-    int GetBitmapIndex() const { return m_bitmapIndex; }
-    void SetBitmapSelectedIndex(int bitmapIndex) { this->m_bitmapSelectedIndex = bitmapIndex; }
-    int GetBitmapSelectedIndex() const { return m_bitmapSelectedIndex; }
 
-    const std::vector<clTreeCtrlNode*>& GetChildren() const { return m_children; }
+    // Cell accessors
+    void SetBitmapIndex(int bitmapIndex, size_t col = 0);
+    void SetBitmapSelectedIndex(int bitmapIndex, size_t col = 0);
+    void SetLabel(const wxString& label, size_t col = 0);
+    int GetBitmapIndex(size_t col = 0) const;
+    int GetBitmapSelectedIndex(size_t col = 0) const;
+    const wxString& GetLabel(size_t col = 0) const;
+
+    const std::vector<clRowEntry*>& GetChildren() const { return m_children; }
     wxTreeItemData* GetClientObject() const { return m_clientData; }
-    void SetParent(clTreeCtrlNode* parent);
-    clTreeCtrlNode* GetParent() const { return m_parent; }
+    void SetParent(clRowEntry* parent);
+    clRowEntry* GetParent() const { return m_parent; }
     bool HasChildren() const { return !m_children.empty(); }
     void SetClientData(wxTreeItemData* clientData)
     {
         wxDELETE(m_clientData);
         this->m_clientData = clientData;
     }
-    void SetLabel(const wxString& label) { this->m_label = label; }
-    const wxString& GetLabel() const { return m_label; }
     size_t GetChildrenCount(bool recurse) const;
     int GetExpandedLines() const;
-    void GetNextItems(int count, clTreeCtrlNode::Vec_t& items);
-    void GetPrevItems(int count, clTreeCtrlNode::Vec_t& items);
+    void GetNextItems(int count, clRowEntry::Vec_t& items);
+    void GetPrevItems(int count, clRowEntry::Vec_t& items);
     void SetIndentsCount(int count) { this->m_indentsCount = count; }
     int GetIndentsCount() const { return m_indentsCount; }
 

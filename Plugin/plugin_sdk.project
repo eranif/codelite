@@ -45,6 +45,16 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clHeaderItem.h"/>
+    <File Name="clHeaderItem.cpp"/>
+    <File Name="clHeaderBar.h"/>
+    <File Name="clHeaderBar.cpp"/>
+    <File Name="clCellValue.h"/>
+    <File Name="clCellValue.cpp"/>
+    <File Name="clRowEntry.h"/>
+    <File Name="clRowEntry.cpp"/>
+    <File Name="clColours.h"/>
+    <File Name="clColours.cpp"/>
     <File Name="clScrolledPanel.h"/>
     <File Name="clScrolledPanel.cpp"/>
     <File Name="clScrollBar.cpp"/>
@@ -55,8 +65,6 @@
     <File Name="clTreeCtrl.h"/>
     <File Name="clTreeCtrlModel.cpp"/>
     <File Name="clTreeCtrlModel.h"/>
-    <File Name="clTreeCtrlNode.cpp"/>
-    <File Name="clTreeCtrlNode.h"/>
     <File Name="clTreeNodeVisitor.cpp"/>
     <File Name="clTreeNodeVisitor.h"/>
   </VirtualDirectory>

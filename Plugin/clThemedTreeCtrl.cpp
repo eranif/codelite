@@ -1,5 +1,4 @@
 #include "clThemedTreeCtrl.h"
-#include "clTreeCtrlNode.h"
 #include <clColours.h>
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

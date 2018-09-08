@@ -8,7 +8,7 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-    m_vsb = new clScrollBarHelper(this, wxVERTICAL);
+    m_vsb = new clScrollBar(this, wxVERTICAL);
     GetSizer()->Add(0, 0, 1, wxALL | wxEXPAND);
     GetSizer()->Add(m_vsb, 0, wxEXPAND | wxALIGN_RIGHT);
     GetSizer()->Layout();
@@ -21,6 +21,7 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
     m_vsb->Bind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
     Bind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
+    Bind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
 
 #ifdef __WXGTK__
     /// On GTK, UP/DOWN arrows is used to navigate between controls
@@ -33,10 +34,17 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
         }
     });
 #endif
+    m_tmpBmp = wxBitmap(1, 1);
+    m_memDC = new wxMemoryDC(m_tmpBmp);
+    m_gcdc = new wxGCDC(*m_memDC);
 }
 
 clScrolledPanel::~clScrolledPanel()
 {
+    // Destory the DCs in the reverse order of their creation
+    wxDELETE(m_gcdc);
+    wxDELETE(m_memDC);
+
     m_vsb->Unbind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_LINEUP, &clScrolledPanel::OnVScroll, this);
@@ -45,6 +53,7 @@ clScrolledPanel::~clScrolledPanel()
     m_vsb->Unbind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
     Unbind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
+    Unbind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
 }
 
 void clScrolledPanel::OnVScroll(wxScrollEvent& event)
@@ -75,9 +84,9 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
     }
 
     if(steps) {
-        ScrollLines(steps, direction);
+        ScrollRows(steps, direction);
     } else if(newTopLine != wxNOT_FOUND) {
-        ScrollToLine(newTopLine);
+        ScrollToRow(newTopLine);
     }
 }
 
@@ -108,23 +117,42 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
 
     // Always process the HOME/END buttons
     if(event.GetKeyCode() == WXK_HOME) {
-        ScrollLines(0, wxUP);
+        ScrollRows(0, wxUP);
     } else if(event.GetKeyCode() == WXK_END) {
-        ScrollLines(0, wxDOWN);
+        ScrollRows(0, wxDOWN);
     }
-    
+
     // The following can be processed only once
     if(event.GetEventObject() == this) {
         if(event.GetKeyCode() == WXK_UP) {
-            ScrollLines(1, wxUP);
+            ScrollRows(1, wxUP);
         } else if(event.GetKeyCode() == WXK_DOWN) {
-            ScrollLines(1, wxDOWN);
+            ScrollRows(1, wxDOWN);
         } else if(event.GetKeyCode() == WXK_PAGEUP) {
-            ScrollLines(GetPageSize(), wxUP);
+            ScrollRows(GetPageSize(), wxUP);
         } else if(event.GetKeyCode() == WXK_PAGEDOWN) {
-            ScrollLines(GetPageSize(), wxDOWN);
+            ScrollRows(GetPageSize(), wxDOWN);
         }
     }
 }
 
 int clScrolledPanel::GetPageSize() const { return m_pageSize; }
+
+void clScrolledPanel::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_vsb && m_showSBOnFocus) {
+        wxWindow* focus_win = wxWindow::FindFocus();
+        bool inOurWindows = IsDescendant(focus_win);
+        if(ShouldShowScrollBar() && !m_vsb->IsShown() && inOurWindows) {
+            m_vsb->Show();
+            GetSizer()->Layout();
+        } else if(!inOurWindows && m_vsb->IsShown()) {
+            m_vsb->Hide();
+            GetSizer()->Layout();
+        }
+    }
+    ProcessIdle();
+}
+
+bool clScrolledPanel::ShouldShowScrollBar() const { return m_vsb && m_vsb->ShouldShow(); }

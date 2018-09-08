@@ -1,6 +1,7 @@
 #ifndef CLTREECTRL_H
 #define CLTREECTRL_H
 
+#include "clHeaderBar.h"
 #include "clScrolledPanel.h"
 #include "clTreeCtrlModel.h"
 #include "codelite_exports.h"
@@ -10,7 +11,7 @@
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
 
-class clScrollBarHelper;
+class clScrollBar;
 class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
 {
     int m_lineHeight = 0;
@@ -23,21 +24,26 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
     std::vector<wxBitmap> m_bitmaps;
     clColours m_colours;
     long m_treeStyle = 0;
-    // clScrollBarHelper* m_vsb = nullptr;
+    // clScrollBar* m_vsb = nullptr;
     wxDirection m_lastScrollDir = wxDOWN;
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
+    clHeaderBar m_header;
 
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
-    bool IsItemVisible(clTreeCtrlNode* item) const;
-    void EnsureItemVisible(clTreeCtrlNode* item, bool fromTop);
+    bool IsItemVisible(clRowEntry* item) const;
+    void EnsureItemVisible(clRowEntry* item, bool fromTop);
     int GetNumLineCanFitOnScreen() const;
-    clTreeCtrlNode* GetFirstItemOnScreen();
-    void SetFirstItemOnScreen(clTreeCtrlNode* item);
+    clRowEntry* GetFirstItemOnScreen();
+    void SetFirstItemOnScreen(clRowEntry* item);
     void UpdateScrollBar();
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
+    /**
+     * @brief update the header size
+     */
+    void DoUpdateHeader(const wxTreeItemId& item);
 
 protected:
     void OnBeginDrag();
@@ -45,11 +51,22 @@ protected:
      * @brief get the rectangle for drawing items
      */
     wxRect GetItemsRect() const;
-    
+
+    wxSize GetTextSize(const wxString& label) const;
+
 public:
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clTreeCtrl();
+
+    const clHeaderBar& GetHeader() const { return m_header; }
+    //===--------------------
+    // table view support
+    //===--------------------
+    /**
+     * @param header
+     */
+    void SetHeader(const clHeaderBar& header);
 
     /**
      * @brief the drop action
@@ -225,12 +242,12 @@ public:
     /**
      * @brief set item's image index
      */
-    void SetItemImage(const wxTreeItemId& item, int imageId, int openImageId = wxNOT_FOUND);
+    void SetItemImage(const wxTreeItemId& item, int imageId, int openImageId = wxNOT_FOUND, size_t col = 0);
 
     /**
      * @brief return the associated image id with this item
      */
-    int GetItemImage(const wxTreeItemId& item, bool selectedImage = false) const;
+    int GetItemImage(const wxTreeItemId& item, bool selectedImage = false, size_t col = 0) const;
     /**
      * @brief Returns the first visible item
      */
@@ -252,19 +269,19 @@ public:
     wxTreeItemData* GetItemData(const wxTreeItemId& item) const;
     void SetItemData(const wxTreeItemId& item, wxTreeItemData* data);
 
-    void SetItemBackgroundColour(const wxTreeItemId& item, const wxColour& colour);
-    wxColour GetItemBackgroudColour(const wxTreeItemId& item) const;
+    void SetItemBackgroundColour(const wxTreeItemId& item, const wxColour& colour, size_t col = 0);
+    wxColour GetItemBackgroudColour(const wxTreeItemId& item, size_t col = 0) const;
 
-    void SetItemTextColour(const wxTreeItemId& item, const wxColour& colour);
-    wxColour GetItemTextColour(const wxTreeItemId& item) const;
+    void SetItemTextColour(const wxTreeItemId& item, const wxColour& colour, size_t col = 0);
+    wxColour GetItemTextColour(const wxTreeItemId& item, size_t col = 0) const;
 
-    void SetItemText(const wxTreeItemId& item, const wxString& text);
-    wxString GetItemText(const wxTreeItemId& item) const;
+    void SetItemText(const wxTreeItemId& item, const wxString& text, size_t col = 0);
+    wxString GetItemText(const wxTreeItemId& item, size_t col = 0) const;
 
-    void SetItemBold(const wxTreeItemId& item, bool bold);
+    void SetItemBold(const wxTreeItemId& item, bool bold, size_t col = 0);
 
-    void SetItemFont(const wxTreeItemId& item, const wxFont& font);
-    wxFont GetItemFont(const wxTreeItemId& item) const;
+    void SetItemFont(const wxTreeItemId& item, const wxFont& font, size_t col = 0);
+    wxFont GetItemFont(const wxTreeItemId& item, size_t col = 0) const;
 
     /**
      * @brief expand this item and all its children
@@ -306,12 +323,12 @@ public:
      * @brief Returns the previous sibling of the specified item; call GetNextSibling() for the next sibling
      */
     wxTreeItemId GetPrevSibling(const wxTreeItemId& item) const;
-    
+
     /**
      * @brief delete all items in tree
      */
     void DeleteAllItems() { Delete(GetRootItem()); }
-    
+
 protected:
     virtual bool DoKeyDown(const wxKeyEvent& event);
     void DoEnsureVisible(const wxTreeItemId& item);
@@ -323,13 +340,13 @@ protected:
     void OnMotion(wxMouseEvent& event);
     void OnMouseLeftDClick(wxMouseEvent& event);
     void OnMouseScroll(wxMouseEvent& event);
-    void OnIdle(wxIdleEvent& event);
+    void ProcessIdle();
     void OnLeaveWindow(wxMouseEvent& event);
     void OnEnterWindow(wxMouseEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
-    
-    void ScrollLines(int steps, wxDirection direction);
-    void ScrollToLine(int firstLine);
+
+    void ScrollRows(int steps, wxDirection direction);
+    void ScrollToRow(int firstLine);
 };
 
 #endif // CLTREECTRL_H

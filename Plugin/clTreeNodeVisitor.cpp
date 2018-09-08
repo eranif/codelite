@@ -5,9 +5,9 @@ clTreeNodeVisitor::clTreeNodeVisitor() {}
 clTreeNodeVisitor::~clTreeNodeVisitor() {}
 
 void clTreeNodeVisitor::Visit(
-    clTreeCtrlNode* item, bool expandedItemsOnly, std::function<bool(clTreeCtrlNode*, bool)>& func)
+    clRowEntry* item, bool expandedItemsOnly, std::function<bool(clRowEntry*, bool)>& func)
 {
-    clTreeCtrlNode* current = item;
+    clRowEntry* current = item;
     while(current) {
         bool isVisible = current->IsVisible();
         if(expandedItemsOnly && isVisible) {

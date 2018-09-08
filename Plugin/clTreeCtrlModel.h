@@ -1,7 +1,7 @@
 #ifndef CLTREECTRLMODEL_H
 #define CLTREECTRLMODEL_H
 
-#include "clTreeCtrlNode.h"
+#include "clRowEntry.h"
 #include "codelite_exports.h"
 #include <functional>
 #include <vector>
@@ -18,10 +18,10 @@ struct WXDLLIMPEXP_SDK clTreeItemIdValue {
 class WXDLLIMPEXP_SDK clTreeCtrlModel
 {
     clTreeCtrl* m_tree = nullptr;
-    clTreeCtrlNode* m_root = nullptr;
-    clTreeCtrlNode::Vec_t m_selectedItems;
-    clTreeCtrlNode::Vec_t m_onScreenItems;
-    clTreeCtrlNode* m_firstItemOnScreen = nullptr;
+    clRowEntry* m_root = nullptr;
+    clRowEntry::Vec_t m_selectedItems;
+    clRowEntry::Vec_t m_onScreenItems;
+    clRowEntry* m_firstItemOnScreen = nullptr;
     int m_indentSize = 16;
     bool m_shutdown = false;
     std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> m_shouldInsertBeforeFunc = nullptr;
@@ -36,8 +36,8 @@ public:
     clTreeCtrlModel(clTreeCtrl* tree);
     ~clTreeCtrlModel();
 
-    void SetFirstItemOnScreen(clTreeCtrlNode* firstItemOnScreen) { this->m_firstItemOnScreen = firstItemOnScreen; }
-    clTreeCtrlNode* GetFirstItemOnScreen() { return m_firstItemOnScreen; }
+    void SetFirstItemOnScreen(clRowEntry* firstItemOnScreen) { this->m_firstItemOnScreen = firstItemOnScreen; }
+    clRowEntry* GetFirstItemOnScreen() { return m_firstItemOnScreen; }
 
     void SetSortFunction(const std::function<bool(const wxTreeItemId&, const wxTreeItemId&)>& CompareFunc)
     {
@@ -47,12 +47,12 @@ public:
     void CollapseAllChildren(const wxTreeItemId& item);
 
     // Notifications from the node
-    void NodeDeleted(clTreeCtrlNode* node);
-    void NodeExpanded(clTreeCtrlNode* node, bool expanded);
-    bool NodeExpanding(clTreeCtrlNode* node, bool expanding);
+    void NodeDeleted(clRowEntry* node);
+    void NodeExpanded(clRowEntry* node, bool expanded);
+    bool NodeExpanding(clRowEntry* node, bool expanding);
 
-    void GetNextItems(clTreeCtrlNode* from, int count, clTreeCtrlNode::Vec_t& items) const;
-    void GetPrevItems(clTreeCtrlNode* from, int count, clTreeCtrlNode::Vec_t& items) const;
+    void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
+    void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
     wxTreeItemId AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data);
     wxTreeItemId AppendItem(
         const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data);
@@ -70,10 +70,10 @@ public:
 
     wxTreeItemId GetItemBefore(const wxTreeItemId& item, bool visibleItem) const;
     wxTreeItemId GetItemAfter(const wxTreeItemId& item, bool visibleItem) const;
-    clTreeCtrlNode* ToPtr(const wxTreeItemId& item) const
+    clRowEntry* ToPtr(const wxTreeItemId& item) const
     {
         if(!m_root || !item.IsOk()) { return nullptr; }
-        return reinterpret_cast<clTreeCtrlNode*>(item.GetID());
+        return reinterpret_cast<clRowEntry*>(item.GetID());
     }
 
     /**
@@ -93,7 +93,7 @@ public:
     bool ClearSelections(bool notify);
 
     bool IsItemSelected(const wxTreeItemId& item) const { return IsItemSelected(ToPtr(item)); }
-    bool IsItemSelected(const clTreeCtrlNode* item) const;
+    bool IsItemSelected(const clRowEntry* item) const;
 
     /**
      * @brief select the children of 'item' this functin fires the changing and changed events
@@ -102,11 +102,11 @@ public:
 
     void Clear();
 
-    void SetOnScreenItems(const clTreeCtrlNode::Vec_t& items);
+    void SetOnScreenItems(const clRowEntry::Vec_t& items);
 
-    const clTreeCtrlNode::Vec_t& GetOnScreenItems() const { return m_onScreenItems; }
-    clTreeCtrlNode::Vec_t& GetOnScreenItems() { return m_onScreenItems; }
-    const clTreeCtrlNode::Vec_t& GetSelections() const { return m_selectedItems; }
+    const clRowEntry::Vec_t& GetOnScreenItems() const { return m_onScreenItems; }
+    clRowEntry::Vec_t& GetOnScreenItems() { return m_onScreenItems; }
+    const clRowEntry::Vec_t& GetSelections() const { return m_selectedItems; }
     bool ExpandToItem(const wxTreeItemId& item);
     wxTreeItemId GetSingleSelection() const;
     size_t GetSelectionsCount() const { return m_selectedItems.size(); }
@@ -116,7 +116,7 @@ public:
      */
     bool IsEmpty() const { return m_root == nullptr; }
 
-    clTreeCtrlNode* GetRoot() const { return m_root; }
+    clRowEntry* GetRoot() const { return m_root; }
 
     /**
      * @brief delete subtree starting from 'item', including item
@@ -124,19 +124,19 @@ public:
      * @param item
      */
     void DeleteItem(const wxTreeItemId& item);
-    int GetItemIndex(clTreeCtrlNode* item) const;
-    clTreeCtrlNode* GetItemFromIndex(int index) const;
+    int GetItemIndex(clRowEntry* item) const;
+    clRowEntry* GetItemFromIndex(int index) const;
 
     /**
      * @brief get range of items from -> to
      * Or from: to->from (incase 'to' has a lower index)
      */
-    bool GetRange(clTreeCtrlNode* from, clTreeCtrlNode* to, clTreeCtrlNode::Vec_t& items) const;
+    bool GetRange(clRowEntry* from, clRowEntry* to, clRowEntry::Vec_t& items) const;
 
     size_t GetExpandedLines() const;
 
-    clTreeCtrlNode* GetNextSibling(clTreeCtrlNode* item) const;
-    clTreeCtrlNode* GetPrevSibling(clTreeCtrlNode* item) const;
+    clRowEntry* GetNextSibling(clRowEntry* item) const;
+    clRowEntry* GetPrevSibling(clRowEntry* item) const;
 };
 
 #endif // CLTREECTRLMODEL_H

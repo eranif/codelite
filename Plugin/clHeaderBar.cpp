@@ -47,19 +47,21 @@ void clHeaderBar::Render(wxDC& dc, const wxRect& rect, const clColours& colours)
 {
     wxColour barBgColour = colours.GetBgColour().ChangeLightness(140);
     clColours _colours = colours;
-    _colours.SetBgColour(barBgColour);
+    _colours.SetBgColour(_colours.GetHeaderBgColour());
 
     dc.SetPen(_colours.GetBgColour());
     dc.SetBrush(_colours.GetBgColour());
     dc.DrawRectangle(rect);
     for(size_t i = 0; i < size(); ++i) {
-        bool is_last = (i == (size() - 1));
+        bool is_first = (i == 0);
         Item(i).Render(dc, _colours);
-        if(!is_last) {
-            dc.SetPen(_colours.GetHoverBgColour());
-            dc.DrawLine(Item(i).GetRect().GetTopRight(), Item(i).GetRect().GetBottomRight());
+        if(!is_first) {
+            dc.SetPen(wxPen(_colours.GetHeaderVBorderColour(), 1, wxPENSTYLE_LONG_DASH));
+            dc.DrawLine(Item(i).GetRect().GetTopLeft(), Item(i).GetRect().GetBottomLeft());
         }
     }
+    dc.SetPen(_colours.GetHeaderHBorderColour());
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 }
 
 void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
@@ -67,10 +69,10 @@ void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
     if(col >= m_columns.size()) { return; }
     clHeaderItem& column = m_columns[col];
     column.SetWidth(force ? width : wxMax(column.GetWidth(), width));
-    
+
     // Update the offsets
     int xx = 0;
-    for(size_t i=0; i<m_columns.size(); ++i) {
+    for(size_t i = 0; i < m_columns.size(); ++i) {
         clHeaderItem& column = m_columns[i];
         column.SetX(xx);
         xx += column.GetWidth();

@@ -1,4 +1,5 @@
 #include "clCellValue.h"
+#include "clHeaderItem.h"
 #include "clRowEntry.h"
 #include "clTreeCtrl.h"
 #include <functional>
@@ -212,10 +213,13 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
         if(cell.GetBgColour().IsOk()) { colours.SetItemBgColour(cell.GetBgColour()); }
         dc.SetFont(f);
 
+        wxColour buttonColour = IsSelected() ? colours.GetSelbuttonColour() : colours.GetButtonColour();
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
         // Draw the button
-        int textXOffset = m_tree->GetHeader().empty() ? rowRect.GetX() : m_tree->GetHeader().Item(i).GetRect().GetX();
+        wxRect cellRect = m_tree->GetHeader().empty() ? rowRect : m_tree->GetHeader().Item(i).GetRect();
+        cellRect.SetY(rowRect.GetY());
+        int textXOffset = cellRect.GetX();
         if(i == 0) {
             // The expand button is only make sense for the first cell
             if(HasChildren()) {
@@ -227,8 +231,8 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
                     pts[0] = buttonRect.GetTopRight();
                     pts[1] = buttonRect.GetBottomRight();
                     pts[2] = buttonRect.GetBottomLeft();
-                    dc.SetBrush(colours.GetButtonColour());
-                    dc.SetPen(colours.GetButtonColour());
+                    dc.SetBrush(buttonColour);
+                    dc.SetPen(buttonColour);
                     dc.DrawPolygon(3, pts);
                 } else {
                     pts[0] = buttonRect.GetTopLeft();
@@ -236,7 +240,7 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
                     pts[2].x = buttonRect.GetRight();
                     pts[2].y = (buttonRect.GetY() + (buttonRect.GetHeight() / 2));
                     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-                    dc.SetPen(colours.GetButtonColour());
+                    dc.SetPen(buttonColour);
                     dc.DrawPolygon(3, pts);
                 }
             } else {
@@ -262,7 +266,12 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
         dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
 
         // Draw the indentation only for the first cell
-        dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : 0) + textXOffset, textY);
+        dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY);
+
+        if(i > 0) {
+            dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, wxPENSTYLE_LONG_DASH));
+            dc.DrawLine(cellRect.GetTopLeft(), cellRect.GetBottomLeft());
+        }
     }
 }
 
@@ -347,10 +356,12 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
             item_width += X_SPACER;
         }
     }
-    int itemIndent = (GetIndentsCount() * m_tree->GetIndent());
-    item_width += itemIndent;
+    if(col == 0) {
+        int itemIndent = (GetIndentsCount() * m_tree->GetIndent());
+        item_width += itemIndent;
+    }
     item_width += textSize.GetWidth();
-    item_width += 5;
+    item_width += (clHeaderItem::X_SPACER * 2);
     return item_width;
 }
 

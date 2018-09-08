@@ -14,9 +14,12 @@ class WXDLLIMPEXP_SDK clColours
     wxColour buttonColour;        // expand/collapse button colour
     wxColour bgColour;            // background colour for the control
     wxColour scrolBarButton;      // The scrollbar thumb button colour
-    wxColour scrollBarBgColour;   // The scrollbar background colour
     wxColour alternateColourOdd;  // Colour to draw odd items background (wxTR_ROW_LINES)
     wxColour alternateColourEven; // Colour to draw even items background (wxTR_ROW_LINES)
+    wxColour headerBgColour;      // Header background colour
+    wxColour headerHBorderColour; // The line to use for drawing a horizontal header border
+    wxColour headerVBorderColour; // The line to use for drawing a vertical header border
+    wxColour selbuttonColour;     // The colour of the button ("Expand") when on a selected row
 
 public:
     clColours() { InitDefaults(); }
@@ -34,7 +37,6 @@ public:
     void SetItemBgColour(const wxColour& itemBgColour) { this->itemBgColour = itemBgColour; }
     void SetItemTextColour(const wxColour& itemTextColour) { this->itemTextColour = itemTextColour; }
     void SetScrolBarButton(const wxColour& scrolBarButton) { this->scrolBarButton = scrolBarButton; }
-    void SetScrollBarBgColour(const wxColour& scrollBarBgColour) { this->scrollBarBgColour = scrollBarBgColour; }
     void SetSelItemBgColour(const wxColour& selItemBgColour) { this->selItemBgColour = selItemBgColour; }
     void SetSelItemTextColour(const wxColour& selItemTextColour) { this->selItemTextColour = selItemTextColour; }
     const wxColour& GetAlternateColourEven() const { return alternateColourEven; }
@@ -45,9 +47,22 @@ public:
     const wxColour& GetItemBgColour() const { return itemBgColour; }
     const wxColour& GetItemTextColour() const { return itemTextColour; }
     const wxColour& GetScrolBarButton() const { return scrolBarButton; }
-    const wxColour& GetScrollBarBgColour() const { return scrollBarBgColour; }
     const wxColour& GetSelItemBgColour() const { return selItemBgColour; }
     const wxColour& GetSelItemTextColour() const { return selItemTextColour; }
+    void SetHeaderBgColour(const wxColour& headerBgColour) { this->headerBgColour = headerBgColour; }
+    const wxColour& GetHeaderBgColour() const { return headerBgColour; }
+    void SetHeaderHBorderColour(const wxColour& headerHBorderColour)
+    {
+        this->headerHBorderColour = headerHBorderColour;
+    }
+    void SetHeaderVBorderColour(const wxColour& headerVBorderColour)
+    {
+        this->headerVBorderColour = headerVBorderColour;
+    }
+    const wxColour& GetHeaderHBorderColour() const { return headerHBorderColour; }
+    const wxColour& GetHeaderVBorderColour() const { return headerVBorderColour; }
+    void SetSelbuttonColour(const wxColour& selbuttonColour) { this->selbuttonColour = selbuttonColour; }
+    const wxColour& GetSelbuttonColour() const { return selbuttonColour; }
 };
 
 #endif // CLCOLOURS_H

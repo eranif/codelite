@@ -190,6 +190,7 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     if(!child) return;
     child->SetExpanded(true);
     UpdateScrollBar();
+    DoUpdateHeader(item);
     Refresh();
 }
 
@@ -200,6 +201,7 @@ void clTreeCtrl::Collapse(const wxTreeItemId& item)
     if(!child) return;
     child->SetExpanded(false);
     UpdateScrollBar();
+    DoUpdateHeader(item);
     Refresh();
 }
 
@@ -410,6 +412,7 @@ void clTreeCtrl::DeleteChildren(const wxTreeItemId& item)
     if(!item.GetID()) return;
     clRowEntry* node = m_model.ToPtr(item);
     node->DeleteAllChildren();
+    Refresh();
 }
 
 wxTreeItemId clTreeCtrl::GetFirstChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const
@@ -558,6 +561,7 @@ void clTreeCtrl::ExpandAllChildren(const wxTreeItemId& item)
     wxBusyCursor bc;
     m_model.ExpandAllChildren(item);
     UpdateScrollBar();
+    DoUpdateHeader(item);
     Refresh();
 }
 
@@ -568,6 +572,7 @@ void clTreeCtrl::CollapseAllChildren(const wxTreeItemId& item)
     SetFirstItemOnScreen(m_model.ToPtr(item));
     SelectItem(item);
     UpdateScrollBar();
+    DoUpdateHeader(item);
     Refresh();
 }
 
@@ -746,7 +751,7 @@ void clTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold, size_t col)
     if(!f.IsOk()) { f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT); }
     f.SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
     node->SetFont(f, col);
-    
+
     // Changing font can change the width of the text, so update the header if needed
     DoUpdateHeader(item);
     Refresh();
@@ -926,6 +931,8 @@ void clTreeCtrl::EnableStyle(int style, bool enable, bool refresh)
         };
         clTreeNodeVisitor V;
         V.Visit(m_model.GetRoot(), false, UpdateIndentsFunc);
+        wxTreeItemId newRoot(m_model.GetRoot()->GetFirstChild());
+        if(newRoot) { DoUpdateHeader(newRoot); }
     }
     if(refresh) { Refresh(); }
 }
@@ -1022,11 +1029,11 @@ void clTreeCtrl::DoUpdateHeader(const wxTreeItemId& item)
 {
     // do we have header?
     if(m_header.empty()) { return; }
-    
+
     clRowEntry* pNode = m_model.ToPtr(item);
     CHECK_PTR_RET(pNode);
     wxDC& dc = GetTempDC();
-    
+
     // Use bold font, to get the maximum width needed
     for(size_t i = 0; i < m_header.size(); ++i) {
         int row_width = pNode->CalcItemWidth(dc, m_lineHeight, i);

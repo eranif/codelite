@@ -10,7 +10,7 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 
     m_vsb = new clScrollBar(this, wxVERTICAL);
     GetSizer()->Add(0, 0, 1, wxALL | wxEXPAND);
-    GetSizer()->Add(m_vsb, 0, wxEXPAND | wxALIGN_RIGHT);
+    GetSizer()->Add(m_vsb, 0, wxEXPAND);
     GetSizer()->Layout();
 
     m_vsb->Bind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);

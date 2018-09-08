@@ -100,7 +100,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     BitmapLoader* bl = m_mgr->GetStdIcons();
     BitmapLoader::Vec_t bitmaps = bl->MakeStandardMimeBitmapList();
     m_treeCtrlView->SetBitmaps(bitmaps);
-
+    m_treeCtrlView->SetShowScrollBarOnFocus(true); // dont show the scrollbar, unless needed
+    
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     m_treeCtrlView->Bind(wxEVT_TREE_BEGIN_DRAG, &PHPWorkspaceView::OnDragBegin, this);

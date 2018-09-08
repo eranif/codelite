@@ -6,6 +6,12 @@
 #include <wx/dc.h>
 #include <wx/settings.h>
 
+#ifdef __WXMSW__
+#define PEN_STYLE wxPENSTYLE_SHORT_DASH
+#else
+#define PEN_STYLE wxPENSTYLE_DOT
+#endif
+
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
     : m_tree(tree)
     , m_model(tree ? &tree->GetModel() : nullptr)
@@ -269,7 +275,7 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
         dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY);
 
         if(i > 0) {
-            dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, wxPENSTYLE_LONG_DASH));
+            dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
             dc.DrawLine(cellRect.GetTopLeft(), cellRect.GetBottomLeft());
         }
     }

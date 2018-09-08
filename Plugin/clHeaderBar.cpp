@@ -3,6 +3,12 @@
 #include <wx/font.h>
 #include <wx/settings.h>
 
+#ifdef __WXMSW__
+#define PEN_STYLE wxPENSTYLE_SHORT_DASH
+#else
+#define PEN_STYLE wxPENSTYLE_DOT
+#endif
+
 clHeaderBar::clHeaderBar() {}
 
 clHeaderBar::~clHeaderBar() {}
@@ -56,7 +62,7 @@ void clHeaderBar::Render(wxDC& dc, const wxRect& rect, const clColours& colours)
         bool is_first = (i == 0);
         Item(i).Render(dc, _colours);
         if(!is_first) {
-            dc.SetPen(wxPen(_colours.GetHeaderVBorderColour(), 1, wxPENSTYLE_LONG_DASH));
+            dc.SetPen(wxPen(_colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
             dc.DrawLine(Item(i).GetRect().GetTopLeft(), Item(i).GetRect().GetBottomLeft());
         }
     }

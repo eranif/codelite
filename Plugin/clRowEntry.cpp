@@ -1,6 +1,6 @@
 #include "clCellValue.h"
-#include "clTreeCtrl.h"
 #include "clRowEntry.h"
+#include "clTreeCtrl.h"
 #include <functional>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -12,7 +12,7 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
     // Fill the verctor with items constructed using the _non_ default constructor
     // to makes sure that IsOk() returns TRUE
     m_cells.resize(
-        m_tree->GetHeader().size() ? m_tree->GetHeader().size() : 1, clCellValue("", -1, -1)); // at least one column
+        m_tree->GetHeader().empty() ? 1 : m_tree->GetHeader().size(), clCellValue("", -1, -1)); // at least one column
     clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
     m_cells[0] = cv;
 }
@@ -70,10 +70,7 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     child->ConnectNodes(nodeBefore, nodeBefore->m_next);
 }
 
-void clRowEntry::AddChild(clRowEntry* child)
-{
-    InsertChild(child, m_children.empty() ? nullptr : m_children.back());
-}
+void clRowEntry::AddChild(clRowEntry* child) { InsertChild(child, m_children.empty() ? nullptr : m_children.back()); }
 
 void clRowEntry::SetParent(clRowEntry* parent)
 {
@@ -218,7 +215,7 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
         // Draw the button
-        int textXOffset = m_tree->GetHeader().Item(i).GetRect().GetX();
+        int textXOffset = m_tree->GetHeader().empty() ? rowRect.GetX() : m_tree->GetHeader().Item(i).GetRect().GetX();
         if(i == 0) {
             // The expand button is only make sense for the first cell
             if(HasChildren()) {
@@ -263,7 +260,7 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
             }
         }
         dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
-        
+
         // Draw the indentation only for the first cell
         dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : 0) + textXOffset, textY);
     }

@@ -229,6 +229,9 @@ void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
 {
     clTreeCtrlNode* node = ToPtr(item);
     if(!node) { return; }
+    
+    // If we are deleting the root item, disable all events from being sent
+    if(node == m_root) { m_shutdown = true; }
     node->DeleteAllChildren();
 
     // Send the delete event
@@ -242,7 +245,8 @@ void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
         node->GetParent()->DeleteChild(node);
     } else {
         // The root item
-        m_root = nullptr;
+        wxDELETE(m_root);
+        m_shutdown = false;
     }
 }
 

@@ -542,7 +542,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -603,7 +603,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>

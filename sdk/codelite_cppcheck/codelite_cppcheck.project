@@ -233,7 +233,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">strip -s  Release\codelite_cppcheck.exe</Command>
+        <Command Enabled="yes">strip   Release\codelite_cppcheck.exe</Command>
         <Command Enabled="yes">copy Release\codelite_cppcheck.exe ..\..\Runtime\codelite_cppcheck.exe</Command>
       </PostBuild>
       <CustomBuild Enabled="no">

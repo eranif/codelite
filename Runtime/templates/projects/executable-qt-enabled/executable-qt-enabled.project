@@ -42,7 +42,7 @@
         <IncludePath Value="/usr/include/qt4"/>
         <IncludePath Value="/usr/include/qt4/QtGui"/>
       </Compiler>
-      <Linker Required="yes" Options="-s">
+      <Linker Required="yes" Options="">
         <LibraryPath Value="/usr/lib/qt4"/>
         <Library Value="QtCore"/>
         <Library Value="QtGui"/>

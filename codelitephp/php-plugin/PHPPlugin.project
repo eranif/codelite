@@ -210,6 +210,10 @@
   <Dependencies Name="Win_x86_Release">
     <Project Name="PHPParser"/>
   </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -431,7 +435,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <LibraryPath Value="../lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -492,7 +496,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <LibraryPath Value="../lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -539,8 +543,4 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
 </CodeLite_Project>

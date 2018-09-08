@@ -207,7 +207,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="./hunspell/lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -313,7 +313,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="./hunspell/lib"/>
         <Library Value="libplugin_sdku.dll"/>

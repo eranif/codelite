@@ -16,10 +16,7 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     m_stc->SetReadOnly(true);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->Apply(m_stc);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, [&](wxCommandEvent& event) {
-        event.Skip();
-        Clear();
-    });
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
 
     m_styler.reset(new clGenericSTCStyler(m_stc));
     {
@@ -92,7 +89,10 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     });
 }
 
-DockerOutputPane::~DockerOutputPane() {}
+DockerOutputPane::~DockerOutputPane()
+{
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
+}
 
 void DockerOutputPane::Clear()
 {
@@ -291,4 +291,10 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
               },
               XRCID("delete_container"));
     m_dvListCtrlContainers->PopupMenu(&menu);
+}
+
+void DockerOutputPane::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
 }

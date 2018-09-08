@@ -30,7 +30,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Required="yes" Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)"/>
+      <Linker Required="yes" Options=";$(shell wx-config --libs --debug=no --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>

@@ -159,8 +159,13 @@ void PluginManager::Load()
         for(size_t i = 0; i < files.GetCount(); i++) {
 
             wxString fileName(files.Item(i));
-#if defined(__WXMSW__)
-            // filter old debug plugins naming convention (ends with "-dbg")
+#if defined(__WXMSW__) && CL_DEBUG_BUILD
+
+            // Under MSW loading a release plugin while in debug mode will cause a crash
+            if(!fileName.EndsWith("-dbg.dll")) { continue; }
+#elif defined(__WXMSW__)
+
+            // filter debug plugins
             if(fileName.EndsWith("-dbg.dll")) { continue; }
 #endif
 
@@ -257,13 +262,13 @@ void PluginManager::Load()
 
             // Load the toolbar
             plugin->CreateToolBar(GetToolBar());
-
+            
             // Keep the dynamic load library
             m_dl.push_back(dl);
         }
         clMainFrame::Get()->GetDockingManager().Update();
         GetToolBar()->Realize();
-
+        
         // Let the plugins plug their menu in the 'Plugins' menu at the menu bar
         // the create menu will be placed as a sub menu of the 'Plugin' menu
         wxMenu* pluginsMenu = NULL;

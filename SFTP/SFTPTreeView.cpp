@@ -618,7 +618,7 @@ void SFTPTreeView::DoOpenSession()
     if(!GetAccountFromUser(m_account)) { return; }
 
     wxString message;
-    wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
+    wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10, EventNotifier::Get()->TopFrame());
     dlg.Show();
     dlg.Update(1, wxString() << _("Connecting to: ") << m_account.GetAccountName() << "..."
                              << _("\n(this may take a few seconds)"));

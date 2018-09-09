@@ -12,7 +12,7 @@
     <Dependencies/>
     <Settings Type="Dynamic Library">
         <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
-            <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" 
+            <General OutputFile="$(IntermediateDirectory)/$(ProjectName)-dbg.dll" 
                      IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
             <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags)">
                 <IncludePath Value="."/>
@@ -36,7 +36,7 @@
             <ResourceCompiler Required="no" Options=""/>
             <PreBuild/>
             <PostBuild>
-                <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName).dll" ..\Runtime\plugins</Command>
+                <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\plugins</Command>
             </PostBuild>
             <CustomBuild Enabled="no">
                 <CleanCommand/>

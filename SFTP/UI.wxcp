@@ -858,11 +858,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",

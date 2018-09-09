@@ -2522,9 +2522,9 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnTimer(wxTimerEvent& event)
 {
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(this);
-#endif
+//#ifdef __WXMSW__
+//    wxWindowUpdateLocker locker(this);
+//#endif
 
     clLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
     clLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));

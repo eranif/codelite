@@ -29,7 +29,7 @@ class WXDLLIMPEXP_SDK clRowEntry
 public:
     typedef std::vector<clRowEntry*> Vec_t;
     static const int Y_SPACER = 1;
-    static const int X_SPACER = 1;
+    static const int X_SPACER = 3;
 
 protected:
     clTreeCtrl* m_tree = nullptr;

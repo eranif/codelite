@@ -92,11 +92,15 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 
 void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
+    // Sanity
+    if(pageSize < 0 || position < 0 || thumbSize < 0 || rangeSize < 0) { return; }
+    
     // Hide the scrollbar if needed
-    if(rangeSize <= thumbSize) {
+    bool should_show = thumbSize < rangeSize;
+    if(!should_show && m_vsb && m_vsb->IsShown()) {
         m_vsb->Hide();
         GetSizer()->Layout();
-    } else {
+    } else if(should_show && m_vsb && !m_vsb->IsShown()){
         m_vsb->Show();
         GetSizer()->Layout();
     }

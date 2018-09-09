@@ -451,8 +451,18 @@ bool clTreeCtrlModel::ClearSelections(bool notify)
 
 bool clTreeCtrlModel::IsItemSelected(const clRowEntry* item) const
 {
+    if(item == nullptr) { return false; }
     if(m_selectedItems.empty()) { return false; }
     clRowEntry::Vec_t::const_iterator iter
         = std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == item); });
     return (iter != m_selectedItems.end());
+}
+
+bool clTreeCtrlModel::IsVisible(const wxTreeItemId& item) const
+{
+    if(!item.IsOk()) { return false; }
+    clRowEntry* entry = ToPtr(item);
+    clRowEntry::Vec_t::const_iterator iter
+        = std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* p) { return (p == entry); });
+    return (iter != m_onScreenItems.end());
 }

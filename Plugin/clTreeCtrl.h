@@ -56,7 +56,7 @@ protected:
 
 public:
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0);
+               const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clTreeCtrl();
 
     const clHeaderBar& GetHeader() const { return m_header; }
@@ -143,7 +143,7 @@ public:
      * @brief ppends an item to the end of the branch identified by parent, return a new item id.
      */
     wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image = -1, int selImage = -1,
-        wxTreeItemData* data = NULL);
+                            wxTreeItemData* data = NULL);
     /**
      * @brief Adds the root node to the tree, returning the new item.
      */
@@ -153,7 +153,7 @@ public:
      * @brief insert item after 'previous'
      */
     wxTreeItemId InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
-        int image = -1, int selImage = -1, wxTreeItemData* data = NULL);
+                            int image = -1, int selImage = -1, wxTreeItemData* data = NULL);
     /**
      * @brief return the root item
      */
@@ -203,6 +203,7 @@ public:
      * @brief Returns true if the item has children.
      */
     bool ItemHasChildren(const wxTreeItemId& item) const;
+    bool HasChildren(const wxTreeItemId& item) const { return ItemHasChildren(item); }
 
     /**
      * @brief set the item's indent size
@@ -270,7 +271,7 @@ public:
     void SetItemData(const wxTreeItemId& item, wxTreeItemData* data);
 
     void SetItemBackgroundColour(const wxTreeItemId& item, const wxColour& colour, size_t col = 0);
-    wxColour GetItemBackgroudColour(const wxTreeItemId& item, size_t col = 0) const;
+    wxColour GetItemBackgroundColour(const wxTreeItemId& item, size_t col = 0) const;
 
     void SetItemTextColour(const wxTreeItemId& item, const wxColour& colour, size_t col = 0);
     wxColour GetItemTextColour(const wxTreeItemId& item, size_t col = 0) const;
@@ -301,7 +302,7 @@ public:
     /**
      * @brief expand the entire tree
      */
-    void CollapAll() { CollapseAllChildren(GetRootItem()); }
+    void CollapseAll() { CollapseAllChildren(GetRootItem()); }
 
     /**
      * @brief Deletes the specified item.
@@ -328,6 +329,15 @@ public:
      * @brief delete all items in tree
      */
     void DeleteAllItems() { Delete(GetRootItem()); }
+
+    /**
+     * @brief is this item visible?
+     */
+    bool IsVisible(const wxTreeItemId& item) const;
+    /**
+     * @brief is item selected?
+     */
+    bool IsSelected(const wxTreeItemId& item) const;
 
 protected:
     virtual bool DoKeyDown(const wxKeyEvent& event);

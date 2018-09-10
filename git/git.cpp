@@ -49,6 +49,7 @@
 #include "GitApplyPatchDlg.h"
 #include "GitConsole.h"
 #include "GitLocator.h"
+#include "GitUserEmailDialog.h"
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
@@ -66,7 +67,6 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
-#include "GitUserEmailDialog.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -1834,7 +1834,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
+void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
     GitEntry data;
@@ -1868,7 +1868,7 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, Ove
 
 void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
 {
-    wxTreeCtrl* tree = m_mgr->GetWorkspaceTree();
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) { return; }
 
     IDs.clear();
@@ -1983,7 +1983,7 @@ void GitPlugin::DoCreateTreeImages()
 #endif
 }
 
-void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
+void GitPlugin::DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
     GitEntry data;
@@ -2001,10 +2001,7 @@ void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, O
         int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
 
         // the below condition should never met, but I am paranoid..
-        if(ctrl->GetImageList()->GetImageCount() > newImg) {
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected);
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
-        }
+        if(ctrl->GetBitmaps().size() > newImg) { ctrl->SetItemImage(item, newImg); }
     }
 }
 
@@ -2086,7 +2083,7 @@ void GitPlugin::RefreshFileListView()
 void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo)
 {
     files.Clear();
-    wxTreeCtrl* tree = m_mgr->GetWorkspaceTree();
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) return;
 
     wxArrayTreeItemIds items;

@@ -213,7 +213,7 @@ public:
      * @sa TreeType
      */
     virtual clTreeCtrl* GetFileExplorerTree() = 0;
-    virtual wxTreeCtrl* GetWorkspaceTree() = 0;
+    virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**
      * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)

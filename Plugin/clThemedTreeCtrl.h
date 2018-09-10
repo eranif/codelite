@@ -5,6 +5,8 @@
 
 class WXDLLIMPEXP_SDK clThemedTreeCtrl : public clTreeCtrl
 {
+    void OnThemeChanged(wxCommandEvent& event);
+
 public:
     clThemedTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = 0);

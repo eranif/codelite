@@ -1,7 +1,6 @@
 #include "clScrollBar.h"
 
-clScrollBar::clScrollBar(
-    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+clScrollBar::clScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxScrollBar(parent, id, pos, size, style)
 {
     Hide();

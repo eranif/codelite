@@ -81,6 +81,7 @@ void clRowEntry::AddChild(clRowEntry* child) { InsertChild(child, m_children.emp
 
 void clRowEntry::SetParent(clRowEntry* parent)
 {
+    if(m_parent == parent) { return; }
     if(m_parent) { m_parent->DeleteChild(this); }
     m_parent = parent;
 }
@@ -375,7 +376,7 @@ void clRowEntry::SetBitmapIndex(int bitmapIndex, size_t col)
 {
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) { return; }
-    return cell.SetBitmapIndex(bitmapIndex);
+    cell.SetBitmapIndex(bitmapIndex);
 }
 
 int clRowEntry::GetBitmapIndex(size_t col) const
@@ -389,7 +390,7 @@ void clRowEntry::SetBitmapSelectedIndex(int bitmapIndex, size_t col)
 {
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) { return; }
-    return cell.SetBitmapSelectedIndex(bitmapIndex);
+    cell.SetBitmapSelectedIndex(bitmapIndex);
 }
 
 int clRowEntry::GetBitmapSelectedIndex(size_t col) const
@@ -403,7 +404,7 @@ void clRowEntry::SetLabel(const wxString& label, size_t col)
 {
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) { return; }
-    return cell.SetText(label);
+    cell.SetText(label);
 }
 
 const wxString& clRowEntry::GetLabel(size_t col) const

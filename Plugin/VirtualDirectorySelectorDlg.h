@@ -27,8 +27,10 @@
 #define VIRTUALDIRECTORYSELECTORDLG_H
 
 #include "VirtualDirectorySelectorBase.h"
-#include "codelite_exports.h"
+#include "bitmap_loader.h"
+#include "clTreeCtrl.h"
 #include "clTreeKeyboardInput.h"
+#include "codelite_exports.h"
 
 class clCxxWorkspace;
 
@@ -39,12 +41,12 @@ class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelec
     wxString m_projectName;
     wxString m_initialPath;
     wxString m_suggestedName;
-    wxImageList* m_images;
+    BitmapLoader::Vec_t m_images;
     bool m_reloadTreeNeeded;
     clTreeKeyboardInput::Ptr_t m_treeCtrlSearchHelper;
 
 public:
-    static wxString DoGetPath(wxTreeCtrl* tree, const wxTreeItemId& item, bool validateFolder);
+    static wxString DoGetPath(clTreeCtrl* tree, const wxTreeItemId& item, bool validateFolder);
 
 protected:
     virtual void OnNewVDUI(wxUpdateUIEvent& event);

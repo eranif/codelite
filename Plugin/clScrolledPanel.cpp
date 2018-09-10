@@ -5,6 +5,7 @@
 
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxWindow(parent, id, pos, size, style)
+    , m_dragStartTime((time_t)-1)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -22,6 +23,10 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
     m_vsb->Bind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
     Bind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Bind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
+    Bind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
+    Bind(wxEVT_LEFT_UP, &clScrolledPanel::OnLeftUp, this);
+    Bind(wxEVT_MOTION, &clScrolledPanel::OnMotion, this);
+    Bind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
 
 #ifdef __WXGTK__
     /// On GTK, UP/DOWN arrows is used to navigate between controls
@@ -54,6 +59,10 @@ clScrolledPanel::~clScrolledPanel()
     m_vsb->Unbind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
     Unbind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Unbind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
+    Unbind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
+    Unbind(wxEVT_LEFT_UP, &clScrolledPanel::OnLeftUp, this);
+    Unbind(wxEVT_MOTION, &clScrolledPanel::OnMotion, this);
+    Unbind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
 }
 
 void clScrolledPanel::OnVScroll(wxScrollEvent& event)
@@ -93,18 +102,24 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
     // Sanity
-    if(pageSize < 0 || position < 0 || thumbSize < 0 || rangeSize < 0) { return; }
+    if(pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) { return; }
+    
+    // Keep the values
+    m_pageSize = pageSize;
+    m_position = position;
+    m_thumbSize = thumbSize;
+    m_rangeSize = rangeSize;
     
     // Hide the scrollbar if needed
     bool should_show = thumbSize < rangeSize;
     if(!should_show && m_vsb && m_vsb->IsShown()) {
         m_vsb->Hide();
         GetSizer()->Layout();
-    } else if(should_show && m_vsb && !m_vsb->IsShown()){
+    } else if(should_show && m_vsb && !m_vsb->IsShown()) {
         m_vsb->Show();
         GetSizer()->Layout();
     }
-    m_pageSize = pageSize;
+
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_vsb->Refresh();
 }
@@ -149,8 +164,10 @@ void clScrolledPanel::OnIdle(wxIdleEvent& event)
         wxWindow* focus_win = wxWindow::FindFocus();
         bool inOurWindows = IsDescendant(focus_win);
         if(ShouldShowScrollBar() && !m_vsb->IsShown() && inOurWindows) {
+            // Update the scrollbar with the latest values
             m_vsb->Show();
             GetSizer()->Layout();
+            m_vsb->SetScrollbar(m_position, m_thumbSize, m_rangeSize, m_pageSize);
         } else if(!inOurWindows && m_vsb->IsShown()) {
             m_vsb->Hide();
             GetSizer()->Layout();
@@ -160,3 +177,76 @@ void clScrolledPanel::OnIdle(wxIdleEvent& event)
 }
 
 bool clScrolledPanel::ShouldShowScrollBar() const { return m_vsb && m_vsb->ShouldShow(); }
+
+void clScrolledPanel::OnLeftDown(wxMouseEvent& event)
+{
+    event.Skip();
+    // Not considering D'n'D so reset any saved values
+    DoCancelDrag();
+
+    // Prepare to DnDclTreeCtrl_DnD
+    if(event.LeftIsDown()) {
+        m_dragStartTime = wxDateTime::UNow();
+        m_dragStartPos = wxPoint(event.GetX(), event.GetY());
+    }
+}
+
+void clScrolledPanel::OnLeftUp(wxMouseEvent& event)
+{
+    event.Skip();
+    if(m_dragging) {
+        wxTreeItemId dropTarget = GetRow(event.GetPosition());
+        if(dropTarget.IsOk()) {
+            wxTreeEvent event(wxEVT_TREE_END_DRAG);
+            event.SetEventObject(this);
+            event.SetItem(dropTarget);
+            GetEventHandler()->ProcessEvent(event);
+        }
+    }
+    DoCancelDrag();
+}
+
+void clScrolledPanel::OnMotion(wxMouseEvent& event)
+{
+    event.Skip();
+    if(m_dragStartTime.IsValid() && event.LeftIsDown()
+        && !m_dragging) { // If we're tugging on the tab, consider starting D'n'D
+        wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
+        if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
+            ((abs(m_dragStartPos.x - event.GetX()) > 5) || (abs(m_dragStartPos.y - event.GetY()) > 5))) {
+            DoBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
+        }
+    }
+}
+
+void clScrolledPanel::OnLeaveWindow(wxMouseEvent& event)
+{
+    event.Skip();
+    wxLogMessage("Left window, dnd cancelled");
+    DoCancelDrag();
+}
+
+void clScrolledPanel::DoBeginDrag()
+{
+    if(!GetRow(m_dragStartPos).IsOk()) {
+        DoCancelDrag();
+        return;
+    }
+
+    wxTreeEvent event(wxEVT_TREE_BEGIN_DRAG);
+    event.SetEventObject(this);
+    GetEventHandler()->ProcessEvent(event);
+    if(!event.IsAllowed()) { return; }
+
+    // Change the cursor indicating DnD in progress
+    SetCursor(wxCURSOR_HAND );
+    m_dragging = true;
+}
+
+void clScrolledPanel::DoCancelDrag()
+{
+    m_dragStartTime.Set((time_t)-1); // Reset the saved values
+    m_dragStartPos = wxPoint();
+    SetCursor(wxCURSOR_DEFAULT);
+    m_dragging = false;
+}

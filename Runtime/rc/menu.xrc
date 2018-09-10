@@ -933,10 +933,6 @@
             <label>New Virtual Folder</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="sort_item">
-            <label>Sort Item</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="remove_virtual_folder">
             <label>Remove Virtual Folder</label>
         </object>

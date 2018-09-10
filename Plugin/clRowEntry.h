@@ -74,6 +74,8 @@ public:
 
     clRowEntry* GetNext() const { return m_next; }
     clRowEntry* GetPrev() const { return m_prev; }
+    void SetNext(clRowEntry* p) { m_next = p; }
+    void SetPrev(clRowEntry* p) { m_prev = p; }
 
     void SetHidden(bool b);
     bool IsHidden() const { return HasFlag(kNF_Hidden); }
@@ -142,7 +144,8 @@ public:
     int GetBitmapSelectedIndex(size_t col = 0) const;
     const wxString& GetLabel(size_t col = 0) const;
 
-    const std::vector<clRowEntry*>& GetChildren() const { return m_children; }
+    const clRowEntry::Vec_t& GetChildren() const { return m_children; }
+    clRowEntry::Vec_t& GetChildren() { return m_children; }
     wxTreeItemData* GetClientObject() const { return m_clientData; }
     void SetParent(clRowEntry* parent);
     clRowEntry* GetParent() const { return m_parent; }

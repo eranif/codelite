@@ -31,31 +31,10 @@
 #define CHECK_ROOT_RET() \
     if(!m_model.GetRoot()) { return; }
 
-// DnD support of tabs
-class clTreeCtrlDropTarget : public wxTextDropTarget
-{
-    clTreeCtrl* m_tree;
-
-public:
-    clTreeCtrlDropTarget(clTreeCtrl* tree)
-        : m_tree(tree)
-    {
-    }
-    virtual ~clTreeCtrlDropTarget() {}
-    virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data)
-    {
-        int flags = 0;
-        wxTreeItemId where = m_tree->HitTest(wxPoint(x, y), flags);
-        if(where.IsOk()) { m_tree->DropOnItem(where); }
-        return true;
-    }
-};
-
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clScrolledPanel(parent, wxID_ANY, pos, size, wxWANTS_CHARS)
     , m_model(this)
     , m_treeStyle(style)
-    , m_dragStartTime((time_t)-1)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     wxSize textSize = GetTextSize("Tp");
@@ -73,12 +52,9 @@ clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     Bind(wxEVT_ENTER_WINDOW, &clTreeCtrl::OnEnterWindow, this);
     Bind(wxEVT_CONTEXT_MENU, &clTreeCtrl::OnContextMenu, this);
     Bind(wxEVT_RIGHT_DOWN, &clTreeCtrl::OnRightDown, this);
-    Bind(wxEVT_MOTION, &clTreeCtrl::OnMotion, this);
 
     // Initialise default colours
     m_colours.InitDefaults();
-    // Enable DnD
-    SetDropTarget(new clTreeCtrlDropTarget(this));
 }
 
 clTreeCtrl::~clTreeCtrl()
@@ -95,7 +71,6 @@ clTreeCtrl::~clTreeCtrl()
     Unbind(wxEVT_ENTER_WINDOW, &clTreeCtrl::OnEnterWindow, this);
     Unbind(wxEVT_CONTEXT_MENU, &clTreeCtrl::OnContextMenu, this);
     Unbind(wxEVT_RIGHT_DOWN, &clTreeCtrl::OnRightDown, this);
-    Unbind(wxEVT_MOTION, &clTreeCtrl::OnMotion, this);
 }
 
 void clTreeCtrl::OnPaint(wxPaintEvent& event)
@@ -217,11 +192,6 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
 {
     event.Skip();
     CHECK_ROOT_RET();
-
-    // Not considering D'n'D so reset any saved values
-    m_dragStartTime.Set((time_t)-1);
-    m_dragStartPos = wxPoint();
-
     int flags = 0;
     wxPoint pt = DoFixPoint(event.GetPosition());
     wxTreeItemId where = HitTest(pt, flags);
@@ -266,12 +236,6 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                 }
             }
         }
-
-        // Prepare to DnDclTreeCtrl_DnD
-        if(event.LeftIsDown()) {
-            m_dragStartTime = wxDateTime::UNow();
-            m_dragStartPos = wxPoint(event.GetX(), event.GetY());
-        }
         Refresh();
     }
 }
@@ -279,9 +243,6 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
 void clTreeCtrl::OnMouseLeftUp(wxMouseEvent& event)
 {
     event.Skip();
-    m_dragStartTime.Set((time_t)-1); // Reset the saved values
-    m_dragStartPos = wxPoint();
-
     int flags = 0;
     wxPoint pt = DoFixPoint(event.GetPosition());
     wxTreeItemId where = HitTest(pt, flags);
@@ -549,7 +510,7 @@ void clTreeCtrl::OnLeaveWindow(wxMouseEvent& event)
     for(size_t i = 0; i < items.size(); ++i) {
         items[i]->SetHovered(false);
     }
-    Refresh();
+    Update();
 }
 
 void clTreeCtrl::SetColours(const clColours& colours)
@@ -646,11 +607,11 @@ bool clTreeCtrl::DoKeyDown(const wxKeyEvent& event)
             Expand(selectedItem);
             return true;
         }
-    } else if(event.GetKeyCode() == WXK_NUMPAD_DELETE || event.GetKeyCode() == WXK_DELETE) {
-        // Delete the item (this will also fire
-        // wxEVT_TREE_DELETE_ITEM
-        Delete(selectedItem);
-        return true;
+        //    } else if(event.GetKeyCode() == WXK_NUMPAD_DELETE || event.GetKeyCode() == WXK_DELETE) {
+        //        // Delete the item (this will also fire
+        //        // wxEVT_TREE_DELETE_ITEM
+        //        Delete(selectedItem);
+        //        return true;
     } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
         wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
         evt.SetEventObject(this);
@@ -941,40 +902,6 @@ void clTreeCtrl::EnableStyle(int style, bool enable, bool refresh)
     if(refresh) { Refresh(); }
 }
 
-void clTreeCtrl::OnBeginDrag()
-{
-    wxTreeEvent event(wxEVT_TREE_BEGIN_DRAG);
-    event.SetEventObject(this);
-    GetEventHandler()->ProcessEvent(event);
-    if(!event.IsAllowed()) { return; }
-
-    wxTextDataObject dragContent("clTreeCtrl_DnD");
-    wxDropSource dragSource(this);
-    dragSource.SetData(dragContent);
-    wxDragResult result = dragSource.DoDragDrop(true);
-    wxUnusedVar(result);
-}
-
-void clTreeCtrl::DropOnItem(const wxTreeItemId& item)
-{
-    wxTreeEvent event(wxEVT_TREE_END_DRAG);
-    event.SetEventObject(this);
-    event.SetItem(item);
-    GetEventHandler()->ProcessEvent(event);
-}
-
-void clTreeCtrl::OnMotion(wxMouseEvent& event)
-{
-    event.Skip();
-    if(m_dragStartTime.IsValid() && event.LeftIsDown()) { // If we're tugging on the tab, consider starting D'n'D
-        wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
-        if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
-           ((abs(m_dragStartPos.x - event.GetX()) > 5) || (abs(m_dragStartPos.y - event.GetY()) > 5))) {
-            OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
-        }
-    }
-}
-
 wxTreeItemId clTreeCtrl::GetItemParent(const wxTreeItemId& item) const
 {
     CHECK_ITEM_RET_INVALID_ITEM(item);
@@ -1048,3 +975,11 @@ void clTreeCtrl::DoUpdateHeader(const wxTreeItemId& item)
 bool clTreeCtrl::IsVisible(const wxTreeItemId& item) const { return m_model.IsVisible(item); }
 
 bool clTreeCtrl::IsSelected(const wxTreeItemId& item) const { return m_model.IsItemSelected(item); }
+
+wxTreeItemId clTreeCtrl::GetRow(const wxPoint& pt) const
+{
+    int flags = 0;
+    wxTreeItemId item = HitTest(pt, flags);
+    if(item.IsOk() && (flags & wxTREE_HITTEST_ONITEM)) { return item; }
+    return wxTreeItemId();
+}

@@ -8,24 +8,43 @@
 #include <wx/dcmemory.h>
 #include <wx/panel.h>
 #include <wx/scrolbar.h>
+#include <wx/treebase.h>
 
 class WXDLLIMPEXP_SDK clScrolledPanel : public wxWindow
 {
 private:
     clScrollBar* m_vsb = nullptr;
     int m_pageSize = 0;
+    int m_position = 0;
+    int m_thumbSize = 0;
+    int m_rangeSize = 0;
+    
     wxBitmap m_tmpBmp;
     wxMemoryDC* m_memDC = nullptr;
     wxGCDC* m_gcdc = nullptr;
     bool m_showSBOnFocus = false;
+    wxDateTime m_dragStartTime;
+    wxPoint m_dragStartPos;
+    bool m_dragging = false;
 
 protected:
     virtual void OnVScroll(wxScrollEvent& event);
     virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnIdle(wxIdleEvent& event);
+    void OnLeftDown(wxMouseEvent& event);
+    void OnLeftUp(wxMouseEvent& event);
+    void OnMotion(wxMouseEvent& event);
+    void OnLeaveWindow(wxMouseEvent& event);
+    void DoBeginDrag();
+    void DoCancelDrag();
 
 protected:
     bool ShouldShowScrollBar() const;
+
+    /**
+     * @brief return true row from a position
+     */
+    virtual wxTreeItemId GetRow(const wxPoint& pt) const { return wxTreeItemId(); }
 
 public:
     clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -51,6 +51,7 @@
 #include <vector>
 #include "clTabTogglerHelper.h"
 
+class clTreeCtrl;
 class clCommandProcessor;
 class GitBlameDlg;
 
@@ -179,12 +180,12 @@ private:
     void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);
     bool DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
 
-    void DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
+    void DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
     void AddDefaultActions();
     void LoadDefaultGitCommands(GitEntry& data, bool overwrite = false);
     void ProcessGitActionQueue();
-    void ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
+    void ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
     void DoRefreshView(bool ensureVisible);

@@ -203,16 +203,12 @@ void WorkspaceTab::OnCollapseAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(!m_fileView->GetRootItem().IsOk()) return;
-    m_fileView->Freeze();
     m_fileView->CollapseAll();
-    m_fileView->Expand(m_fileView->GetRootItem());
     // count will probably be 0 below, so ensure we can at least see the root item
     m_fileView->EnsureVisible(m_fileView->GetRootItem());
-    m_fileView->Thaw();
 
     wxArrayTreeItemIds arr;
     size_t count = m_fileView->GetSelections(arr);
-
     if(count == 1) {
         wxTreeItemId sel = arr.Item(0);
         if(sel.IsOk()) { m_fileView->EnsureVisible(sel); }

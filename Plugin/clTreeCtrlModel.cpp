@@ -57,7 +57,9 @@ wxTreeItemId clTreeCtrlModel::GetRootItem() const
 
 void clTreeCtrlModel::UnselectAll()
 {
-    for(size_t i = 0; i < m_selectedItems.size(); ++i) { m_selectedItems[i]->SetSelected(false); }
+    for(size_t i = 0; i < m_selectedItems.size(); ++i) {
+        m_selectedItems[i]->SetSelected(false);
+    }
     m_selectedItems.clear();
 }
 
@@ -71,16 +73,16 @@ void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select, bool add
     if(clear_old_selection && !ClearSelections(item != GetSingleSelection())) { return; }
 
     if(select) {
-        clRowEntry::Vec_t::iterator iter = std::find_if(
-            m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
+        clRowEntry::Vec_t::iterator iter =
+            std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
         // If the item is already selected, don't select it again
         if(iter != m_selectedItems.end()) { return; }
     }
 
     if(IsMultiSelection() && addSelection) {
         // If we are unselecting it, remove it from the array
-        clRowEntry::Vec_t::iterator iter = std::find_if(
-            m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
+        clRowEntry::Vec_t::iterator iter =
+            std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
         if(iter != m_selectedItems.end() && !select) { m_selectedItems.erase(iter); }
     } else {
         if(!ClearSelections(item != GetSingleSelection())) { return; }
@@ -98,7 +100,9 @@ void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select, bool add
 void clTreeCtrlModel::Clear()
 {
     m_selectedItems.clear();
-    for(size_t i = 0; i < m_onScreenItems.size(); ++i) { m_onScreenItems[i]->ClearRects(); }
+    for(size_t i = 0; i < m_onScreenItems.size(); ++i) {
+        m_onScreenItems[i]->ClearRects();
+    }
     m_onScreenItems.clear();
 }
 
@@ -107,8 +111,8 @@ void clTreeCtrlModel::SetOnScreenItems(const clRowEntry::Vec_t& items)
     // Clear the old visible items. But only, if the item does not appear in both lists
     for(size_t i = 0; i < m_onScreenItems.size(); ++i) {
         clRowEntry* visibleItem = m_onScreenItems[i];
-        clRowEntry::Vec_t::const_iterator iter
-            = std::find_if(items.begin(), items.end(), [&](clRowEntry* item) { return item == visibleItem; });
+        clRowEntry::Vec_t::const_iterator iter =
+            std::find_if(items.begin(), items.end(), [&](clRowEntry* item) { return item == visibleItem; });
         if(iter == items.end()) { m_onScreenItems[i]->ClearRects(); }
     }
     m_onScreenItems = items;
@@ -127,8 +131,8 @@ bool clTreeCtrlModel::ExpandToItem(const wxTreeItemId& item)
     return true;
 }
 
-wxTreeItemId clTreeCtrlModel::AppendItem(
-    const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data)
+wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
+                                         wxTreeItemData* data)
 {
     clRowEntry* parentNode = nullptr;
     if(!parent.IsOk()) { return wxTreeItemId(); }
@@ -157,7 +161,7 @@ wxTreeItemId clTreeCtrlModel::AppendItem(
 }
 
 wxTreeItemId clTreeCtrlModel::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
-    int image, int selImage, wxTreeItemData* data)
+                                         int image, int selImage, wxTreeItemData* data)
 {
     if(!parent.IsOk()) { return wxTreeItemId(); }
     if(!previous.IsOk()) { return wxTreeItemId(); }
@@ -247,8 +251,8 @@ void clTreeCtrlModel::NodeDeleted(clRowEntry* node)
 {
     // Clear the various caches
     {
-        clRowEntry::Vec_t::iterator iter = std::find_if(
-            m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* n) { return n == node; });
+        clRowEntry::Vec_t::iterator iter =
+            std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* n) { return n == node; });
         if(iter != m_selectedItems.end()) {
             m_selectedItems.erase(iter);
             if(m_selectedItems.empty()) {
@@ -259,8 +263,8 @@ void clTreeCtrlModel::NodeDeleted(clRowEntry* node)
     }
 
     {
-        clRowEntry::Vec_t::iterator iter = std::find_if(
-            m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* n) { return n == node; });
+        clRowEntry::Vec_t::iterator iter =
+            std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* n) { return n == node; });
         if(iter != m_onScreenItems.end()) { m_onScreenItems.erase(iter); }
     }
     {
@@ -379,15 +383,15 @@ void clTreeCtrlModel::SelectChildren(const wxTreeItemId& item)
 
     if(!ClearSelections(true)) { return; }
     std::for_each(parent->GetChildren().begin(), parent->GetChildren().end(),
-        [&](clRowEntry* child) { AddSelection(wxTreeItemId(child)); });
+                  [&](clRowEntry* child) { AddSelection(wxTreeItemId(child)); });
 }
 
 clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
 {
     if(!item->GetParent()) { return nullptr; }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    clRowEntry::Vec_t::const_iterator iter
-        = std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
+    clRowEntry::Vec_t::const_iterator iter =
+        std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
     // If we got a match, move to the next item
     if(iter != children.end()) { ++iter; }
     return ((iter == children.end()) ? nullptr : (*iter));
@@ -397,8 +401,8 @@ clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
 {
     if(!item->GetParent()) { return nullptr; }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    clRowEntry::Vec_t::const_iterator iter
-        = std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
+    clRowEntry::Vec_t::const_iterator iter =
+        std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
     // If we got a match, move to the next item
     if((iter != children.end()) && (iter != children.begin())) { --iter; }
     return ((iter == children.end()) ? nullptr : (*iter));
@@ -410,8 +414,8 @@ void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
     if(!child) return;
     if(child->IsHidden()) { return; }
 
-    clRowEntry::Vec_t::iterator iter
-        = std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
+    clRowEntry::Vec_t::iterator iter =
+        std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
     // If the item is already selected, don't select it again
     if(iter != m_selectedItems.end()) { return; }
 
@@ -453,8 +457,8 @@ bool clTreeCtrlModel::IsItemSelected(const clRowEntry* item) const
 {
     if(item == nullptr) { return false; }
     if(m_selectedItems.empty()) { return false; }
-    clRowEntry::Vec_t::const_iterator iter
-        = std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == item); });
+    clRowEntry::Vec_t::const_iterator iter =
+        std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == item); });
     return (iter != m_selectedItems.end());
 }
 
@@ -462,7 +466,7 @@ bool clTreeCtrlModel::IsVisible(const wxTreeItemId& item) const
 {
     if(!item.IsOk()) { return false; }
     clRowEntry* entry = ToPtr(item);
-    clRowEntry::Vec_t::const_iterator iter
-        = std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* p) { return (p == entry); });
+    clRowEntry::Vec_t::const_iterator iter =
+        std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* p) { return (p == entry); });
     return (iter != m_onScreenItems.end());
 }

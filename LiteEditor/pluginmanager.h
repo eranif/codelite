@@ -84,7 +84,7 @@ public:
     IConfigTool* GetConfigTool();
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
     clTreeCtrl* GetFileExplorerTree();
-    wxTreeCtrl* GetWorkspaceTree();
+    clTreeCtrl* GetWorkspaceTree();
     Notebook* GetOutputPaneNotebook();
     Notebook* GetWorkspacePaneNotebook();
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);

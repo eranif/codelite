@@ -24,10 +24,7 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
     std::vector<wxBitmap> m_bitmaps;
     clColours m_colours;
     long m_treeStyle = 0;
-    // clScrollBar* m_vsb = nullptr;
     wxDirection m_lastScrollDir = wxDOWN;
-    wxDateTime m_dragStartTime;
-    wxPoint m_dragStartPos;
     clHeaderBar m_header;
 
 private:
@@ -46,7 +43,6 @@ private:
     void DoUpdateHeader(const wxTreeItemId& item);
 
 protected:
-    void OnBeginDrag();
     /**
      * @brief get the rectangle for drawing items
      */
@@ -67,11 +63,6 @@ public:
      * @param header
      */
     void SetHeader(const clHeaderBar& header);
-
-    /**
-     * @brief the drop action
-     */
-    void DropOnItem(const wxTreeItemId& item);
 
     // For internal use, dont use these two methods
     const clTreeCtrlModel& GetModel() const { return m_model; }
@@ -136,6 +127,7 @@ public:
      *  wxTREE_HITTEST_ONITEMBUTTON: On the button associated with an item.
      *  wxTREE_HITTEST_ONITEMICON: On the bitmap associated with an item.
      *  wxTREE_HITTEST_ONITEMLABEL: On the label (string) associated with an item.
+     * wxTREE_HITTEST_ONITEM
      */
     wxTreeItemId HitTest(const wxPoint& point, int& flags) const;
 
@@ -347,7 +339,6 @@ protected:
     void OnMouseLeftDown(wxMouseEvent& event);
     void OnMouseLeftUp(wxMouseEvent& event);
     void OnRightDown(wxMouseEvent& event);
-    void OnMotion(wxMouseEvent& event);
     void OnMouseLeftDClick(wxMouseEvent& event);
     void OnMouseScroll(wxMouseEvent& event);
     void ProcessIdle();
@@ -357,6 +348,8 @@ protected:
 
     void ScrollRows(int steps, wxDirection direction);
     void ScrollToRow(int firstLine);
+    
+    wxTreeItemId GetRow(const wxPoint& pt) const;
 };
 
 #endif // CLTREECTRL_H

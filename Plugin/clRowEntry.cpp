@@ -5,6 +5,7 @@
 #include <functional>
 #include <wx/dc.h>
 #include <wx/settings.h>
+#include <algorithm>
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH

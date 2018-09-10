@@ -1002,7 +1002,14 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxColour pen_light = *wxWHITE;
     
     wxColour arrowColour = *wxBLACK;
+    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     
+    // Handle dark themes
+    if(IsDark(face_light)) {
+        penColour = *wxBLACK;
+        pen_light = face.ChangeLightness(120);
+        arrowColour = *wxWHITE;
+    }
     dc.SetPen(face);
     dc.SetBrush(face);
     dc.DrawRectangle(rect);

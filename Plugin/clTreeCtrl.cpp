@@ -304,6 +304,7 @@ void clTreeCtrl::DoEnsureVisible(const wxTreeItemId& item)
     clRowEntry* pNode = m_model.ToPtr(item);
     if(IsItemVisible(pNode)) { return; }
     EnsureItemVisible(pNode, false); // make it visible at the bottom
+    UpdateScrollBar(); // Make sure that the scrollbar fits the view
     Refresh();
 }
 

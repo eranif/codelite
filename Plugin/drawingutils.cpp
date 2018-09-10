@@ -995,18 +995,72 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-    wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
-    int xx = rect.GetX() + X_MARGIN;
-    wxRect textRect(rect);
-    textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight() - X_MARGIN);
-    textRect.SetX(xx);
+    wxColour face_light = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour face = face_light.ChangeLightness(95);
+
+    wxColour penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    wxColour pen_light = *wxWHITE;
+    
+    wxColour arrowColour = *wxBLACK;
+    
+    dc.SetPen(face);
+    dc.SetBrush(face);
+    dc.DrawRectangle(rect);
+
+    wxRect choiceRect = rect;
+    wxRect upperRect = rect;
+    upperRect.SetHeight(upperRect.GetHeight() / 2);
+    
+    // Draw the choice rect with face_light colour (the darker one)
+    dc.SetPen(face);
+    dc.SetBrush(face);
+    dc.DrawRectangle(choiceRect);
+    
+    // Now draw the upper rect
+    dc.SetPen(face_light);
+    dc.SetBrush(face_light);
+    dc.DrawRectangle(upperRect);
+    
+    // Draw the outer border with the darker pen
+    dc.SetPen(penColour);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRoundedRectangle(choiceRect, 1.5);
+    
+    // Draw the inner bother with the lighter pen
+    choiceRect.Deflate(1);
+    dc.SetPen(pen_light);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRoundedRectangle(choiceRect, 1.5);
+    
+    wxRect textRect = choiceRect;
+    textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight());
+    dc.SetClippingRegion(textRect);
+
+    int xx = textRect.GetX() + X_MARGIN;
     if(bmp.IsOk()) {
         // Draw bitmap first
-        int bmpY = rect.GetY() + ((rect.GetHeight() - bmp.GetScaledHeight()) / 2);
+        int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
         dc.DrawBitmap(bmp, xx, bmpY);
         xx += bmp.GetScaledWidth() + X_MARGIN;
-        textRect.SetWidth(textRect.GetWidth() - bmp.GetScaledWidth());
-        textRect.SetX(xx);
     }
-    wxRendererNative::Get().DrawItemText(win, dc, label, textRect, align);
+    wxSize textSize = dc.GetTextExtent(label);
+    int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
+    dc.DrawText(label, xx, textY);
+    
+    // Draw separator on the right side
+    wxPoint p1 = textRect.GetTopRight();
+    wxPoint p2 = textRect.GetBottomRight();
+    dc.SetPen(pen_light);
+    dc.DrawLine(p1, p2);
+    p1.x -= 1;
+    p2.x -= 1;
+    dc.SetPen(penColour);
+    dc.DrawLine(p1, p2);
+    dc.DestroyClippingRegion();
+    
+    wxRect dropDownRect = choiceRect;
+    dropDownRect.SetWidth(choiceRect.GetHeight());
+    dropDownRect.SetX(textRect.GetX() + textRect.GetWidth());
+    DrawDropDownArrow(win, dc, dropDownRect, arrowColour);
+    
 }

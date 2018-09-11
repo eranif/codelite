@@ -995,6 +995,10 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
+#ifdef __WXOSX__
+    wxRect choiceRect = rect;
+    wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+#else
     wxColour face_light = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     wxColour face = face_light.ChangeLightness(95);
 
@@ -1038,7 +1042,8 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.SetPen(pen_light);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRoundedRectangle(choiceRect, 1.5);
-    
+#endif
+
     wxRect textRect = choiceRect;
     textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight());
     dc.SetClippingRegion(textRect);
@@ -1053,7 +1058,8 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxSize textSize = dc.GetTextExtent(label);
     int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
     dc.DrawText(label, xx, textY);
-    
+
+#ifndef __WXOSX__
     // Draw separator on the right side
     wxPoint p1 = textRect.GetTopRight();
     wxPoint p2 = textRect.GetBottomRight();
@@ -1063,11 +1069,14 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     p2.x -= 1;
     dc.SetPen(penColour);
     dc.DrawLine(p1, p2);
+#endif
+
     dc.DestroyClippingRegion();
-    
+
+#ifndef __WXOSX__    
     wxRect dropDownRect = choiceRect;
     dropDownRect.SetWidth(choiceRect.GetHeight());
     dropDownRect.SetX(textRect.GetX() + textRect.GetWidth());
     DrawDropDownArrow(win, dc, dropDownRect, arrowColour);
-    
+#endif
 }

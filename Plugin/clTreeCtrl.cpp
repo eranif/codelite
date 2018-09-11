@@ -483,24 +483,24 @@ void clTreeCtrl::SetBitmaps(const std::vector<wxBitmap>& bitmaps)
 
 void clTreeCtrl::ProcessIdle()
 {
-    CHECK_ROOT_RET();
-#ifndef __WXOSX__
-    int flags = 0;
-    wxPoint pt = ScreenToClient(::wxGetMousePosition());
-    wxTreeItemId item = HitTest(pt, flags);
-    if(item.IsOk()) {
-        clRowEntry::Vec_t& items = m_model.GetOnScreenItems();
-        clRowEntry* hoveredNode = m_model.ToPtr(item);
-        bool refreshNeeded = false;
-        for(size_t i = 0; i < items.size(); ++i) {
-            bool new_state = hoveredNode == items[i];
-            bool old_state = items[i]->IsHovered();
-            if(!refreshNeeded) { refreshNeeded = (new_state != old_state); }
-            items[i]->SetHovered(hoveredNode == items[i]);
+    if(HasStyle(wxTR_FULL_ROW_HIGHLIGHT)) {
+        CHECK_ROOT_RET();
+        int flags = 0;
+        wxPoint pt = ScreenToClient(::wxGetMousePosition());
+        wxTreeItemId item = HitTest(pt, flags);
+        if(item.IsOk()) {
+            clRowEntry::Vec_t& items = m_model.GetOnScreenItems();
+            clRowEntry* hoveredNode = m_model.ToPtr(item);
+            bool refreshNeeded = false;
+            for(size_t i = 0; i < items.size(); ++i) {
+                bool new_state = hoveredNode == items[i];
+                bool old_state = items[i]->IsHovered();
+                if(!refreshNeeded) { refreshNeeded = (new_state != old_state); }
+                items[i]->SetHovered(hoveredNode == items[i]);
+            }
+            if(refreshNeeded) { Refresh(); }
         }
-        if(refreshNeeded) { Refresh(); }
     }
-#endif
 }
 
 void clTreeCtrl::OnLeaveWindow(wxMouseEvent& event)

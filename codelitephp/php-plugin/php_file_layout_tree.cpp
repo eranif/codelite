@@ -14,7 +14,7 @@
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager* manager)
     : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-          wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+          wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(editor)
     , m_manager(manager)
 {
@@ -24,7 +24,7 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
     : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-          wxTR_DEFAULT_STYLE | wxTR_FULL_ROW_HIGHLIGHT | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+          wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(NULL)
     , m_manager(NULL)
 {

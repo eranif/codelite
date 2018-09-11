@@ -200,7 +200,15 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
 
     // Not cell related
     clColours colours = c;
-    if(zebraColouring) { colours.SetItemBgColour(even_row ? c.GetAlternateColourEven() : c.GetAlternateColourOdd()); }
+    if(zebraColouring) {
+        // Set Zebra colouring, only if no user colour was provided for the given line
+        colours.SetItemBgColour(even_row ? c.GetAlternateColourEven() : c.GetAlternateColourOdd());
+    }
+    
+    // Override default item bg colour with the user's one
+    if(GetBgColour().IsOk()) {
+        colours.SetItemBgColour(GetBgColour());
+    }
     if(IsSelected() || IsHovered()) {
         dc.SetBrush(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
         dc.SetPen(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());

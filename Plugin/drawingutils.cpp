@@ -507,19 +507,18 @@ wxColour DrawingUtils::GetMenuBarBgColour()
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool themed)
 {
 #if defined(__WXOSX__)
+    wxColour lineColour("rgb(180,180,180)");
     if(themed) {
-        wxColour startColour("rgb(231, 229, 231)");
-        wxColour endColour("rgb(180, 180, 180)");
-        dc.GradientFillLinear(rect, startColour, endColour, wxSOUTH);
-        endColour = endColour.ChangeLightness(90);
-        dc.SetPen(endColour);
-        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-
+        wxColour startColour("rgb(232, 230, 232)");
+        wxColour endColour("rgb(211, 209, 211)");
+        dc.GradientFillLinear(rect, endColour, startColour, wxUP);
     } else {
         dc.SetPen(GetPanelBgColour());
         dc.SetBrush(GetPanelBgColour());
         dc.DrawRectangle(rect);
     }
+    dc.SetPen(lineColour);
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #elif defined(__WXMSW__)
     if(themed) {
         wxColour topColour(*wxWHITE);

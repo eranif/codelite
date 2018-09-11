@@ -17,8 +17,10 @@ void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxCol
     wxColour bgColour = currentBgColour;
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
     if(iter != coloursMap.end()) { bgColour = iter->second.GetColour(); }
-
-    if(bgColour.IsOk()) { m_tree->SetItemBackgroundColour(item, bgColour); }
+    
+    // It's OK for the colour to be "invalid", it will get reset to the tree's default
+    // colouring
+    m_tree->SetItemBackgroundColour(item, bgColour);
 
     if(m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
@@ -37,7 +39,7 @@ void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item, const wxC
     wxString path = GetItemPath(item);
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
     if(iter != coloursMap.end()) { coloursMap.erase(iter); }
-    if(colourToSet.IsOk()) { m_tree->SetItemBackgroundColour(item, colourToSet); }
+    m_tree->SetItemBackgroundColour(item, colourToSet);
     if(m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
@@ -54,7 +56,7 @@ void clTreeCtrlColourHelper::ResetBgColour(const wxTreeItemId& item, FolderColou
     wxTreeItemId itemParent = m_tree->GetItemParent(item);
     wxColour col = (itemParent.IsOk() && m_tree->GetItemBackgroundColour(itemParent).IsOk())
                        ? m_tree->GetItemBackgroundColour(itemParent)
-                       : m_tree->GetBackgroundColour();
+                       : wxNullColour;
 
     DoClearBgColour(item, col, coloursMap);
 }

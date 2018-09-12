@@ -2,10 +2,10 @@
 #include "clCellValue.h"
 #include "clHeaderItem.h"
 #include "clTreeCtrl.h"
+#include <algorithm>
 #include <functional>
 #include <wx/dc.h>
 #include <wx/settings.h>
-#include <algorithm>
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
@@ -19,8 +19,8 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
 {
     // Fill the verctor with items constructed using the _non_ default constructor
     // to makes sure that IsOk() returns TRUE
-    m_cells.resize(
-        m_tree->GetHeader().empty() ? 1 : m_tree->GetHeader().size(), clCellValue("", -1, -1)); // at least one column
+    m_cells.resize(m_tree->GetHeader().empty() ? 1 : m_tree->GetHeader().size(),
+                   clCellValue("", -1, -1)); // at least one column
     clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
     m_cells[0] = cv;
 }
@@ -62,8 +62,8 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     }
 
     // Connect the linked list for sequential iteration
-    clRowEntry::Vec_t::iterator iterCur
-        = std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
+    clRowEntry::Vec_t::iterator iterCur =
+        std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
 
     clRowEntry* nodeBefore = nullptr;
     // Find the item before and after
@@ -72,7 +72,9 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     } else {
         --iterCur;
         clRowEntry* prevSibling = (*iterCur);
-        while(prevSibling && prevSibling->HasChildren()) { prevSibling = prevSibling->GetLastChild(); }
+        while(prevSibling && prevSibling->HasChildren()) {
+            prevSibling = prevSibling->GetLastChild();
+        }
         nodeBefore = prevSibling;
     }
     child->ConnectNodes(nodeBefore, nodeBefore->m_next);
@@ -102,8 +104,8 @@ void clRowEntry::DeleteChild(clRowEntry* child)
     if(prev) { prev->m_next = next; }
     if(next) { next->m_prev = prev; }
     // Now disconnect this child from this node
-    clRowEntry::Vec_t::iterator iter
-        = std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
+    clRowEntry::Vec_t::iterator iter =
+        std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
     if(iter != m_children.end()) { m_children.erase(iter); }
     wxDELETE(child);
 }
@@ -204,11 +206,9 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
         // Set Zebra colouring, only if no user colour was provided for the given line
         colours.SetItemBgColour(even_row ? c.GetAlternateColourEven() : c.GetAlternateColourOdd());
     }
-    
+
     // Override default item bg colour with the user's one
-    if(GetBgColour().IsOk()) {
-        colours.SetItemBgColour(GetBgColour());
-    }
+    if(GetBgColour().IsOk()) { colours.SetItemBgColour(GetBgColour()); }
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
@@ -299,7 +299,9 @@ size_t clRowEntry::GetChildrenCount(bool recurse) const
         return m_children.size();
     } else {
         size_t count = m_children.size();
-        for(size_t i = 0; i < count; ++i) { count += m_children[i]->GetChildrenCount(recurse); }
+        for(size_t i = 0; i < count; ++i) {
+            count += m_children[i]->GetChildrenCount(recurse);
+        }
         return count;
     }
 }
@@ -353,9 +355,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
 
     clCellValue& cell = GetColumn(col);
     wxFont f = clScrolledPanel::GetDefaultFont();
-    if(cell.GetFont().IsOk()) { 
-        f = cell.GetFont(); 
-    }
+    if(cell.GetFont().IsOk()) { f = cell.GetFont(); }
     dc.SetFont(f);
 
     wxSize textSize = dc.GetTextExtent(cell.GetText());

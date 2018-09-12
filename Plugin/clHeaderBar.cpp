@@ -1,8 +1,8 @@
 #include "clHeaderBar.h"
+#include "clScrolledPanel.h"
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
-#include "clScrolledPanel.h"
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
@@ -68,7 +68,7 @@ void clHeaderBar::Render(wxDC& dc, const wxRect& rect, const clColours& colours)
             dc.DrawLine(Item(i).GetRect().GetTopLeft(), Item(i).GetRect().GetBottomLeft());
         }
     }
-    
+
     // The horizontal header line should be _all_ visible
     // incase we got h-scrolling we need to adjust the rect to cover the visibile area
     wxRect fixedRect = rect;
@@ -98,7 +98,7 @@ void clHeaderBar::SetHideHeaders(bool b) { m_hideHeaders = b; }
 size_t clHeaderBar::GetWidth() const
 {
     size_t w = 0;
-    for(size_t i=0; i<m_columns.size(); ++i) {
+    for(size_t i = 0; i < m_columns.size(); ++i) {
         w += m_columns[i].GetWidth();
     }
     return w;

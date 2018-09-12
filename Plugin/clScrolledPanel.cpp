@@ -21,7 +21,15 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
     m_vsb->Bind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
+
     m_hsb->Bind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_LINEUP, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_PAGEDOWN, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnHScroll, this);
+
     Bind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Bind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
     Bind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
@@ -59,7 +67,15 @@ clScrolledPanel::~clScrolledPanel()
     m_vsb->Unbind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
+
     m_hsb->Unbind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_LINEUP, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_PAGEDOWN, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnHScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnHScroll, this);
+
     Unbind(wxEVT_SIZE, &clScrolledPanel::OnScrolledPanelSize, this);
     Unbind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Unbind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
@@ -74,43 +90,63 @@ void clScrolledPanel::OnHScroll(wxScrollEvent& event)
     int newColumn = wxNOT_FOUND;
     if(event.GetEventType() == wxEVT_SCROLL_THUMBTRACK) {
         newColumn = event.GetPosition();
-    }
-    if(newColumn != wxNOT_FOUND) {
         ScollToColumn(newColumn);
+
+    } else {
+        int steps = wxNOT_FOUND;
+        wxDirection direction = wxRIGHT;
+        if(event.GetEventType() == wxEVT_SCROLL_LINEUP) {
+            steps = 1;
+            direction = wxLEFT;
+        } else if(event.GetEventType() == wxEVT_SCROLL_LINEDOWN) {
+            steps = 1;
+            direction = wxRIGHT;
+        } else if(event.GetEventType() == wxEVT_SCROLL_PAGEUP) {
+            steps = m_hsb->GetPageSize();
+            direction = wxLEFT;
+        } else if(event.GetEventType() == wxEVT_SCROLL_PAGEDOWN) {
+            steps = m_hsb->GetPageSize();
+            direction = wxRIGHT;
+        } else if(event.GetEventType() == wxEVT_SCROLL_TOP) {
+            steps = 0;
+            direction = wxLEFT;
+        } else if(event.GetEventType() == wxEVT_SCROLL_BOTTOM) {
+            steps = 0;
+            direction = wxRIGHT;
+        }
+        if(steps != wxNOT_FOUND) { ScrollColumns(steps, direction); }
     }
 }
 
 void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 {
-    int steps = 0;
     wxDirection direction = wxDOWN;
     int newTopLine = wxNOT_FOUND;
-    if(event.GetEventType() == wxEVT_SCROLL_LINEUP) {
-        steps = 1;
-        direction = wxUP;
-    } else if(event.GetEventType() == wxEVT_SCROLL_LINEDOWN) {
-        steps = 1;
-        direction = wxDOWN;
-    } else if(event.GetEventType() == wxEVT_SCROLL_PAGEUP) {
-        steps = m_vsb->GetPageSize();
-        direction = wxUP;
-    } else if(event.GetEventType() == wxEVT_SCROLL_PAGEDOWN) {
-        steps = m_vsb->GetPageSize();
-        direction = wxDOWN;
-    } else if(event.GetEventType() == wxEVT_SCROLL_TOP) {
-        steps = -1;
-        direction = wxUP;
-    } else if(event.GetEventType() == wxEVT_SCROLL_BOTTOM) {
-        steps = -1;
-        direction = wxDOWN;
-    } else if(event.GetEventType() == wxEVT_SCROLL_THUMBTRACK) {
+    if(event.GetEventType() == wxEVT_SCROLL_THUMBTRACK) {
         newTopLine = event.GetPosition();
-    }
-
-    if(steps) {
-        ScrollRows(steps, direction);
-    } else if(newTopLine != wxNOT_FOUND) {
         ScrollToRow(newTopLine);
+    } else {
+        int steps = wxNOT_FOUND;
+        if(event.GetEventType() == wxEVT_SCROLL_LINEUP) {
+            steps = 1;
+            direction = wxUP;
+        } else if(event.GetEventType() == wxEVT_SCROLL_LINEDOWN) {
+            steps = 1;
+            direction = wxDOWN;
+        } else if(event.GetEventType() == wxEVT_SCROLL_PAGEUP) {
+            steps = m_vsb->GetPageSize();
+            direction = wxUP;
+        } else if(event.GetEventType() == wxEVT_SCROLL_PAGEDOWN) {
+            steps = m_vsb->GetPageSize();
+            direction = wxDOWN;
+        } else if(event.GetEventType() == wxEVT_SCROLL_TOP) {
+            steps = 0;
+            direction = wxUP;
+        } else if(event.GetEventType() == wxEVT_SCROLL_BOTTOM) {
+            steps = 0;
+            direction = wxDOWN;
+        }
+        if(steps != wxNOT_FOUND) { ScrollRows(steps, direction); }
     }
 }
 
@@ -118,6 +154,7 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
 {
     // Sanity
     if(pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) {
+        m_vsb->Hide();
         return;
     }
 
@@ -138,6 +175,7 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
 
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_vsb->Refresh();
+    CallAfter(&clScrolledPanel::DoPositionHScrollbar);
 }
 
 void clScrolledPanel::OnCharHook(wxKeyEvent& event)
@@ -237,7 +275,6 @@ void clScrolledPanel::OnMotion(wxMouseEvent& event)
 void clScrolledPanel::OnLeaveWindow(wxMouseEvent& event)
 {
     event.Skip();
-    wxLogMessage("Left window, dnd cancelled");
     DoCancelDrag();
 }
 
@@ -251,9 +288,7 @@ void clScrolledPanel::DoBeginDrag()
     wxTreeEvent event(wxEVT_TREE_BEGIN_DRAG);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
-    if(!event.IsAllowed()) {
-        return;
-    }
+    if(!event.IsAllowed()) { return; }
 
     // Change the cursor indicating DnD in progress
     SetCursor(wxCURSOR_HAND);
@@ -284,6 +319,7 @@ void clScrolledPanel::DoPositionVScrollbar()
     wxSize vsbSize = m_vsb->GetSize();
 
     int height = clientRect.GetHeight();
+    if(m_hsb && m_hsb->IsShown()) { height -= m_hsb->GetSize().GetHeight(); }
     int width = vsbSize.GetWidth();
     int x = clientRect.GetWidth() - vsbSize.GetWidth();
     int y = 0;
@@ -298,6 +334,7 @@ void clScrolledPanel::DoPositionHScrollbar()
     wxSize hsbSize = m_hsb->GetSize();
 
     int width = clientRect.GetWidth();
+    if(m_vsb && m_vsb->IsShown()) { width -= m_vsb->GetSize().GetWidth(); }
     int height = hsbSize.GetHeight();
     int x = 0;
     int y = clientRect.GetHeight() - hsbSize.GetHeight();
@@ -315,6 +352,10 @@ void clScrolledPanel::OnScrolledPanelSize(wxSizeEvent& event)
 
 void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
+    if(rangeSize <= 0) {
+        m_hsb->Hide();
+        return;
+    }
     bool should_show = thumbSize < rangeSize;
     if(should_show && !m_hsb->IsShown()) {
         DoPositionHScrollbar();
@@ -324,4 +365,13 @@ void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSiz
     }
     m_hsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_hsb->Refresh();
+    CallAfter(&clScrolledPanel::DoPositionVScrollbar);
+}
+
+wxRect clScrolledPanel::GetClientArea() const
+{
+    wxRect r = GetClientRect();
+    if(m_hsb && m_hsb->IsShown()) { r.SetHeight(r.GetHeight() - m_hsb->GetSize().GetHeight()); }
+    if(m_vsb && m_vsb->IsShown()) { r.SetWidth(r.GetWidth() - m_vsb->GetSize().GetWidth()); }
+    return r;
 }

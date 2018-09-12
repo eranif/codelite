@@ -33,7 +33,7 @@ protected:
     virtual void OnHScroll(wxScrollEvent& event);
     virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnIdle(wxIdleEvent& event);
-    void OnScrolledPanelSize(wxSizeEvent &event);
+    void OnScrolledPanelSize(wxSizeEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnMotion(wxMouseEvent& event);
@@ -74,6 +74,11 @@ public:
     int GetPageSize() const;
 
     /**
+     * @brief return the client area, taking scrollbars into consideration
+     */
+    wxRect GetClientArea() const;
+
+    /**
      * @brief whenver the view changes (i.e. there is a new top line) call this method so the scrollbar
      * will adjust its position
      */
@@ -86,7 +91,7 @@ public:
 
     /**
      * @brief override this method to scroll the view
-     * @param steps number of lines to scroll. If 'numLines' is set to 0, then scroll to top or bottom of the view
+     * @param steps number of lines to scroll. If 'steps' is set to 0, then scroll to top or bottom of the view
      * depending on the direction. otherwise, scroll 'steps' into the correct 'direction'
      * @param direction direction to scroll
      */
@@ -97,15 +102,27 @@ public:
     }
 
     /**
+     * @brief override this method to scroll the view
+     * @param steps number of columns to scroll. If 'steps' is set to 0, then scroll to right or left of the view
+     * depending on the direction. otherwise, scroll 'steps' into the correct 'direction'
+     * @param direction direction to scroll
+     */
+    virtual void ScrollColumns(int steps, wxDirection direction)
+    {
+        wxUnusedVar(steps);
+        wxUnusedVar(direction);
+    }
+
+    /**
      * @brief scroll to set 'firstLine' as the first visible line in the view
      */
     virtual void ScrollToRow(int firstLine) { wxUnusedVar(firstLine); }
-    
+
     /**
      * @brief scroll to set 'firstColumn' as the first column in the view
      */
     virtual void ScollToColumn(int firstColumn) { wxUnusedVar(firstColumn); }
-    
+
     /**
      * @brief called by the scrolled window whenver a key is down
      * return true if the key was processed and we should stop the processing of this event

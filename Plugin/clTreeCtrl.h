@@ -27,7 +27,7 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
     wxDirection m_lastScrollDir = wxDOWN;
     clHeaderBar m_header;
     int m_firstColumn = 0;
-    
+
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
@@ -55,7 +55,7 @@ public:
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clTreeCtrl();
-    
+
     /**
      * @brief return the header bar (relevant when using columns)
      */
@@ -73,7 +73,7 @@ public:
      * @brief is the heaer bar visible?
      */
     bool IsHeaderVisible() const;
-    
+
     //===--------------------
     // table view support
     //===--------------------
@@ -365,6 +365,7 @@ protected:
     void OnContextMenu(wxContextMenuEvent& event);
 
     void ScrollRows(int steps, wxDirection direction);
+    void ScrollColumns(int steps, wxDirection direction);
     void ScrollToRow(int firstLine);
     void ScollToColumn(int firstColumn);
 

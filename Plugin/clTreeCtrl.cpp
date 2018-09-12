@@ -979,12 +979,7 @@ int clTreeCtrl::GetItemImage(const wxTreeItemId& item, bool selectedImage, size_
     return selectedImage ? node->GetBitmapSelectedIndex(col) : node->GetBitmapIndex(col);
 }
 
-void clTreeCtrl::OnEnterWindow(wxMouseEvent& event)
-{
-    event.Skip();
-    CallAfter(&clTreeCtrl::SetFocus);
-    CallAfter(&clTreeCtrl::SetFocusFromKbd);
-}
+void clTreeCtrl::OnEnterWindow(wxMouseEvent& event) { event.Skip(); }
 
 wxRect clTreeCtrl::GetItemsRect() const
 {
@@ -998,7 +993,7 @@ wxRect clTreeCtrl::GetItemsRect() const
 
 void clTreeCtrl::SetHeader(const clHeaderBar& header)
 {
-    wxASSERT_MSG(!IsEmpty(), "SetColumns can't be called on a non empty tree");
+    wxASSERT_MSG(IsEmpty(), "SetHeader can not be called on a non empty tree");
     m_header = header;
     SetShowHeader(true);
 }

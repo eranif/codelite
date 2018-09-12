@@ -11,7 +11,7 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     colours.InitDefaults();
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
-    SetShowScrollBarOnFocus(true);
+    //SetShowScrollBarOnFocus(true);
 }
 
 clThemedTreeCtrl::~clThemedTreeCtrl()

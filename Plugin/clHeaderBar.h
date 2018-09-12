@@ -8,6 +8,7 @@
 class WXDLLIMPEXP_SDK clHeaderBar
 {
     clHeaderItem::Vect_t m_columns;
+    bool m_hideHeaders = false;
 
 protected:
     void DoUpdateSize();
@@ -16,7 +17,7 @@ protected:
 public:
     clHeaderBar();
     virtual ~clHeaderBar();
-    
+
     /**
      * @brief update the column width, but only if the new width is greater than the current one, unless 'force' is set
      * to 'true'
@@ -64,6 +65,12 @@ public:
      * @brief draw the header bar using dc and colours
      */
     void Render(wxDC& dc, const wxRect& rect, const clColours& colours);
+
+    /**
+     * @brief hide the columns headers
+     */
+    void SetHideHeaders(bool b);
+    bool IsHideHeaders() const { return m_hideHeaders; }
 };
 
 #endif // CLHEADERBAR_H

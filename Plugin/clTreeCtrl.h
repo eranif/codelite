@@ -54,8 +54,25 @@ public:
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clTreeCtrl();
-
+    
+    /**
+     * @brief return the header bar (relevant when using columns)
+     */
     const clHeaderBar& GetHeader() const { return m_header; }
+    /**
+     * @brief return the header bar (relevant when using columns)
+     */
+    clHeaderBar& GetHeader() { return m_header; }
+
+    /**
+     * @brief should we show the header bar?
+     */
+    void SetShowHeader(bool b);
+    /**
+     * @brief is the heaer bar visible?
+     */
+    bool IsHeaderVisible() const;
+    
     //===--------------------
     // table view support
     //===--------------------
@@ -348,7 +365,7 @@ protected:
 
     void ScrollRows(int steps, wxDirection direction);
     void ScrollToRow(int firstLine);
-    
+
     wxTreeItemId GetRow(const wxPoint& pt) const;
 };
 

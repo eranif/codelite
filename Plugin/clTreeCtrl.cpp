@@ -83,10 +83,12 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     dc.SetBrush(m_colours.GetBgColour());
     dc.DrawRectangle(clientRect);
 
-    wxRect headerRect = GetClientRect();
-    headerRect.SetHeight(m_header.GetHeight());
-    m_header.Render(dc, headerRect, m_colours);
-
+    if(IsHeaderVisible()) {
+        wxRect headerRect = GetClientRect();
+        headerRect.SetHeight(m_header.GetHeight());
+        m_header.Render(dc, headerRect, m_colours);
+    }
+    
     if(!m_model.GetRoot()) {
         // Reset the various items
         SetFirstItemOnScreen(nullptr);
@@ -304,7 +306,7 @@ void clTreeCtrl::DoEnsureVisible(const wxTreeItemId& item)
     clRowEntry* pNode = m_model.ToPtr(item);
     if(IsItemVisible(pNode)) { return; }
     EnsureItemVisible(pNode, false); // make it visible at the bottom
-    UpdateScrollBar(); // Make sure that the scrollbar fits the view
+    UpdateScrollBar();               // Make sure that the scrollbar fits the view
     Refresh();
 }
 
@@ -984,3 +986,11 @@ wxTreeItemId clTreeCtrl::GetRow(const wxPoint& pt) const
     if(item.IsOk() && (flags & wxTREE_HITTEST_ONITEM)) { return item; }
     return wxTreeItemId();
 }
+
+void clTreeCtrl::SetShowHeader(bool b)
+{
+    m_header.SetHideHeaders(!b);
+    Refresh();
+}
+
+bool clTreeCtrl::IsHeaderVisible() const { return !m_header.IsHideHeaders(); }

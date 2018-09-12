@@ -994,10 +994,12 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-#ifdef __WXOSX__
+#if defined(__WXOSX__)||defined(__WXMSW__)
+    // Windows & OSX
     wxRect choiceRect = rect;
     wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
 #else
+    // GTK
     wxColour face_light = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     wxColour face = face_light.ChangeLightness(95);
 
@@ -1042,7 +1044,8 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRoundedRectangle(choiceRect, 1.5);
 #endif
-
+    
+    // Common to all platforms: draw the text + bitmap
     wxRect textRect = choiceRect;
     textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight());
     dc.SetClippingRegion(textRect);
@@ -1058,7 +1061,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
     dc.DrawText(label, xx, textY);
 
-#ifndef __WXOSX__
+#ifdef __WXGTK__
     // Draw separator on the right side
     wxPoint p1 = textRect.GetTopRight();
     wxPoint p2 = textRect.GetBottomRight();
@@ -1072,7 +1075,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
 
     dc.DestroyClippingRegion();
 
-#ifndef __WXOSX__    
+#ifdef __WXGTK__    
     wxRect dropDownRect = choiceRect;
     dropDownRect.SetWidth(choiceRect.GetHeight());
     dropDownRect.SetX(textRect.GetX() + textRect.GetWidth());

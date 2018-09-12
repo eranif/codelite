@@ -352,14 +352,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
     PrepareDC(dc);
-
-#ifdef __WXGTK3__
-    wxDC& gcdc = dc;
-#else
     wxGCDC gcdc(dc);
-    PrepareDC(gcdc);
-#endif
-
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3) return;
     if(clientRect.height <= 3) return;

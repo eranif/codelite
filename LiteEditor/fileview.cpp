@@ -234,7 +234,7 @@ FileViewTree::~FileViewTree()
 
 void FileViewTree::BuildTree()
 {
-    wxFont defaultGuiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont defaultGuiFont = GetDefaultFont();
     wxWindowUpdateLocker locker(this);
     clCommandEvent event(wxEVT_WORKSPACE_VIEW_BUILD_STARTING);
     if(EventNotifier::Get()->ProcessEvent(event)) {
@@ -360,7 +360,7 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     }
 
     if(projectName == ManagerST::Get()->GetActiveProjectName()) {
-        wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont f = GetDefaultFont();
         f.SetWeight(wxFONTWEIGHT_BOLD);
         f.SetStyle(wxFONTSTYLE_ITALIC);
         SetItemFont(hti, f);
@@ -788,7 +788,7 @@ void FileViewTree::DoSetProjectActive(wxTreeItemId& item)
         if(data->GetData().GetKind() == ProjectItem::TypeProject) {
             UnselectAllProject(); // Clear any previously marked item
             ManagerST::Get()->SetActiveProject(data->GetData().GetDisplayName());
-            wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            wxFont f = GetDefaultFont();
             f.SetStyle(wxFONTSTYLE_ITALIC);
             f.SetWeight(wxFONTWEIGHT_BOLD);
             SetItemFont(item, f);
@@ -2470,7 +2470,7 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
 void FileViewTree::UnselectAllProject()
 {
     std::for_each(m_projectsMap.begin(), m_projectsMap.end(), [&](std::pair<wxString, wxTreeItemId> p) {
-        wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont f = GetDefaultFont();
         f.SetWeight(wxFONTWEIGHT_NORMAL);
         f.SetStyle(wxFONTSTYLE_NORMAL);
         SetItemFont(p.second, f);

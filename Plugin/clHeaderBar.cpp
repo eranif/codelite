@@ -2,6 +2,7 @@
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
+#include "clScrolledPanel.h"
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
@@ -43,9 +44,10 @@ wxSize clHeaderBar::GetTextSize(const wxString& label) const
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    memDC.SetFont(font);
-    wxSize textSize = memDC.GetTextExtent(label);
+    wxGCDC gcdc(memDC);
+    wxFont font = clScrolledPanel::GetDefaultFont();
+    gcdc.SetFont(font);
+    wxSize textSize = gcdc.GetTextExtent(label);
     return textSize;
 }
 

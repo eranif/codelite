@@ -142,7 +142,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     window->PrepareDC(dc);
 
     // Prepare the colours
-    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont f = DrawingUtils::GetDefaultGuiFont();
     dc.SetFont(f);
 
     if(m_useCustomCaptionColour) {
@@ -183,15 +183,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
         wxGCDC gdc;
         wxDC* pDC = NULL;
-#ifdef __WXGTK__
-        pDC = &memDc;
-#else
         if(!DrawingUtils::GetGCDC(memDc, gdc)) {
             pDC = &memDc;
         } else {
             pDC = &gdc;
         }
-#endif
 
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);

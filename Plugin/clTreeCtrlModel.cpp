@@ -1,5 +1,5 @@
-#include "clTreeCtrl.h"
 #include "clTreeCtrlModel.h"
+#include "clTreeCtrl.h"
 #include <algorithm>
 #include <wx/dc.h>
 #include <wx/settings.h>

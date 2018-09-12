@@ -1,6 +1,6 @@
+#include "clRowEntry.h"
 #include "clCellValue.h"
 #include "clHeaderItem.h"
-#include "clRowEntry.h"
 #include "clTreeCtrl.h"
 #include <functional>
 #include <wx/dc.h>
@@ -222,13 +222,12 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
     // Per cell drawings
     for(size_t i = 0; i < m_cells.size(); ++i) {
         colours = c; // reset the colours
-        wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+        wxFont f = clScrolledPanel::GetDefaultFont();;
         clCellValue& cell = GetColumn(i);
         if(cell.GetFont().IsOk()) { f = cell.GetFont(); }
         if(cell.GetTextColour().IsOk()) { colours.SetItemTextColour(cell.GetTextColour()); }
         if(cell.GetBgColour().IsOk()) { colours.SetItemBgColour(cell.GetBgColour()); }
         dc.SetFont(f);
-
         wxColour buttonColour = IsSelected() ? colours.GetSelbuttonColour() : colours.GetButtonColour();
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
@@ -350,8 +349,10 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     if(col >= m_cells.size()) { return 0; }
 
     clCellValue& cell = GetColumn(col);
-    wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    if(cell.GetFont().IsOk()) { f = cell.GetFont(); }
+    wxFont f = clScrolledPanel::GetDefaultFont();
+    if(cell.GetFont().IsOk()) { 
+        f = cell.GetFont(); 
+    }
     dc.SetFont(f);
 
     wxSize textSize = dc.GetTextExtent(cell.GetText());

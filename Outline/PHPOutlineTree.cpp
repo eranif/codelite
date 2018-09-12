@@ -33,7 +33,6 @@ PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& p
     : wxTreeCtrl(parent, id, pos, size, style)
 {
     MSWSetNativeTheme(this);
-    SetFont(DrawingUtils::GetDefaultGuiFont());
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}

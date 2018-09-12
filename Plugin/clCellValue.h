@@ -16,6 +16,7 @@ class WXDLLIMPEXP_SDK clCellValue
     wxColour m_textColour;
     wxColour m_bgColour;
     bool m_isNull = true;
+
 public:
     clCellValue();
     clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);

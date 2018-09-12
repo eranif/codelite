@@ -77,8 +77,6 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_scanInProgress(true)
 {
     MSWSetNativeTheme(m_treeCtrlView);
-    // SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();

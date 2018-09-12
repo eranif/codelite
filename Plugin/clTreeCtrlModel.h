@@ -54,10 +54,10 @@ public:
     void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
     void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
     wxTreeItemId AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data);
-    wxTreeItemId AppendItem(
-        const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data);
+    wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
+                            wxTreeItemData* data);
     wxTreeItemId InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text, int image,
-        int selImage, wxTreeItemData* data);
+                            int selImage, wxTreeItemData* data);
     wxTreeItemId GetRootItem() const;
 
     void SetIndentSize(int indentSize) { this->m_indentSize = indentSize; }
@@ -79,8 +79,8 @@ public:
     /**
      * @brief select a given item
      */
-    void SelectItem(
-        const wxTreeItemId& item, bool select = true, bool addSelection = false, bool clear_old_selection = false);
+    void SelectItem(const wxTreeItemId& item, bool select = true, bool addSelection = false,
+                    bool clear_old_selection = false);
     /**
      * @brief add an item to the selection list
      * this function fires an event
@@ -94,9 +94,9 @@ public:
 
     bool IsItemSelected(const wxTreeItemId& item) const { return IsItemSelected(ToPtr(item)); }
     bool IsItemSelected(const clRowEntry* item) const;
-    
+
     bool IsVisible(const wxTreeItemId& item) const;
-    
+
     /**
      * @brief select the children of 'item' this functin fires the changing and changed events
      */

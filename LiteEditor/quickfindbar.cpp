@@ -38,7 +38,6 @@
 #include "plugin.h"
 #include "quickfindbar.h"
 #include "stringsearcher.h"
-#include "wxFlatButtonBar.h"
 #include <wx/dcbuffer.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>

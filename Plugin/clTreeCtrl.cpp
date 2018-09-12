@@ -76,8 +76,9 @@ clTreeCtrl::~clTreeCtrl()
 void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC pdc(this);
+    PrepareDC(pdc);
+    
     wxGCDC dc(pdc);
-
     wxRect clientRect = GetItemsRect();
     dc.SetPen(m_colours.GetBgColour());
     dc.SetBrush(m_colours.GetBgColour());
@@ -714,7 +715,7 @@ void clTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold, size_t col)
     clRowEntry* node = m_model.ToPtr(item);
     CHECK_PTR_RET(node);
     wxFont f = node->GetFont(col);
-    if(!f.IsOk()) { f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT); }
+    if(!f.IsOk()) { f = GetDefaultFont(); }
     f.SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
     node->SetFont(f, col);
 
@@ -953,7 +954,7 @@ void clTreeCtrl::SetHeader(const clHeaderBar& header)
 wxSize clTreeCtrl::GetTextSize(const wxString& label) const
 {
     wxDC& dc = GetTempDC();
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = GetDefaultFont();
     dc.SetFont(font);
     wxSize textSize = dc.GetTextExtent("label");
     return textSize;

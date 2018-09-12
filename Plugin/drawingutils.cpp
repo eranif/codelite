@@ -39,6 +39,7 @@
 #include <wx/panel.h>
 #include <wx/renderer.h>
 #include <wx/stc/stc.h>
+#include "clScrolledPanel.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -879,8 +880,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
 
 wxFont DrawingUtils::GetDefaultGuiFont()
 {
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    return font;
+    return clScrolledPanel::GetDefaultFont();
 }
 
 wxSize DrawingUtils::GetBestSize(const wxString& label, int xspacer, int yspacer)

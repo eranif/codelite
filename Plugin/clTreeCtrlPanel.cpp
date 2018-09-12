@@ -35,7 +35,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     m_bmpLoader = clGetManager()->GetStdIcons();
 
     m_options = GetConfig()->Read("FileExplorer/Options", m_options);
-    GetTreeCtrl()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
     m_toolbar = new clToolBar(this);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);

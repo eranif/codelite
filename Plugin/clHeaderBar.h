@@ -9,6 +9,7 @@ class WXDLLIMPEXP_SDK clHeaderBar
 {
     clHeaderItem::Vect_t m_columns;
     bool m_hideHeaders = false;
+    int m_firstColumn = 0;
 
 protected:
     void DoUpdateSize();
@@ -71,6 +72,10 @@ public:
      */
     void SetHideHeaders(bool b);
     bool IsHideHeaders() const { return m_hideHeaders; }
+
+    size_t GetWidth() const;
+
+    void ScrollToColumn(int firstColumn);
 };
 
 #endif // CLHEADERBAR_H

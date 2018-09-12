@@ -29,7 +29,7 @@ void clHeaderBar::push_back(const clHeaderItem& item)
 void clHeaderBar::DoUpdateSize()
 {
     wxSize fixedText = GetTextSize("Tp");
-    int xx = 0;
+    int xx = m_firstColumn;
     for(size_t i = 0; i < m_columns.size(); ++i) {
         clHeaderItem& item = m_columns[i];
         wxSize textSize = GetTextSize(item.GetLabel());
@@ -68,8 +68,14 @@ void clHeaderBar::Render(wxDC& dc, const wxRect& rect, const clColours& colours)
             dc.DrawLine(Item(i).GetRect().GetTopLeft(), Item(i).GetRect().GetBottomLeft());
         }
     }
+    
+    // The horizontal header line should be _all_ visible
+    // incase we got h-scrolling we need to adjust the rect to cover the visibile area
+    wxRect fixedRect = rect;
+    wxPoint deviceOrigin = dc.GetDeviceOrigin();
+    fixedRect.SetX(-deviceOrigin.x);
     dc.SetPen(_colours.GetHeaderHBorderColour());
-    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    dc.DrawLine(fixedRect.GetBottomLeft(), fixedRect.GetBottomRight());
 }
 
 void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
@@ -88,3 +94,18 @@ void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
 }
 
 void clHeaderBar::SetHideHeaders(bool b) { m_hideHeaders = b; }
+
+size_t clHeaderBar::GetWidth() const
+{
+    size_t w = 0;
+    for(size_t i=0; i<m_columns.size(); ++i) {
+        w += m_columns[i].GetWidth();
+    }
+    return w;
+}
+
+void clHeaderBar::ScrollToColumn(int firstColumn)
+{
+    m_firstColumn = firstColumn;
+    DoUpdateSize();
+}

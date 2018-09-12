@@ -26,7 +26,8 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
     long m_treeStyle = 0;
     wxDirection m_lastScrollDir = wxDOWN;
     clHeaderBar m_header;
-
+    int m_firstColumn = 0;
+    
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
@@ -365,6 +366,7 @@ protected:
 
     void ScrollRows(int steps, wxDirection direction);
     void ScrollToRow(int firstLine);
+    void ScollToColumn(int firstColumn);
 
     wxTreeItemId GetRow(const wxPoint& pt) const;
 };

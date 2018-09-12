@@ -14,6 +14,7 @@ class WXDLLIMPEXP_SDK clScrolledPanel : public wxWindow
 {
 private:
     clScrollBar* m_vsb = nullptr;
+    clScrollBar* m_hsb = nullptr;
     int m_pageSize = 0;
     int m_position = 0;
     int m_thumbSize = 0;
@@ -29,14 +30,18 @@ private:
 
 protected:
     virtual void OnVScroll(wxScrollEvent& event);
+    virtual void OnHScroll(wxScrollEvent& event);
     virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnIdle(wxIdleEvent& event);
+    void OnScrolledPanelSize(wxSizeEvent &event);
     void OnLeftDown(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnMotion(wxMouseEvent& event);
     void OnLeaveWindow(wxMouseEvent& event);
     void DoBeginDrag();
     void DoCancelDrag();
+    void DoPositionVScrollbar();
+    void DoPositionHScrollbar();
 
 protected:
     bool ShouldShowScrollBar() const;
@@ -50,12 +55,12 @@ public:
     clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clScrolledPanel();
-    
+
     /**
      * @brief return the system default font
      */
     static wxFont GetDefaultFont();
-    
+
     /**
      * @brief when enabled, the scrollbar will only be shown (if needed at all) when this window has the focus (or any
      * of its decendants)
@@ -73,6 +78,7 @@ public:
      * will adjust its position
      */
     void UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize);
+    void UpdateHScrollBar(int position, int thumbSize, int rangeSize, int pageSize);
 
     //===----------------------------------------------------
     // Overridables
@@ -94,7 +100,12 @@ public:
      * @brief scroll to set 'firstLine' as the first visible line in the view
      */
     virtual void ScrollToRow(int firstLine) { wxUnusedVar(firstLine); }
-
+    
+    /**
+     * @brief scroll to set 'firstColumn' as the first column in the view
+     */
+    virtual void ScollToColumn(int firstColumn) { wxUnusedVar(firstColumn); }
+    
     /**
      * @brief called by the scrolled window whenver a key is down
      * return true if the key was processed and we should stop the processing of this event

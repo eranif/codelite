@@ -1,19 +1,18 @@
-#include "clScrolledPanel.h"
 #include "clScrollBar.h"
+#include "clScrolledPanel.h"
 #include <wx/log.h>
-#include <wx/sizer.h>
 #include <wx/settings.h>
+#include <wx/sizer.h>
 
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxWindow(parent, id, pos, size, style)
     , m_dragStartTime((time_t)-1)
 {
-    SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    m_vsb = new clScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
+    DoPositionVScrollbar();
 
-    m_vsb = new clScrollBar(this, wxVERTICAL);
-    GetSizer()->Add(0, 0, 1, wxALL | wxEXPAND);
-    GetSizer()->Add(m_vsb, 0, wxEXPAND);
-    GetSizer()->Layout();
+    m_hsb = new clScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL);
+    DoPositionHScrollbar();
 
     m_vsb->Bind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnVScroll, this);
@@ -22,12 +21,14 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
     m_vsb->Bind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
+    m_hsb->Bind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnHScroll, this);
     Bind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Bind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
     Bind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
     Bind(wxEVT_LEFT_UP, &clScrolledPanel::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clScrolledPanel::OnMotion, this);
     Bind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
+    Bind(wxEVT_SIZE, &clScrolledPanel::OnScrolledPanelSize, this);
 
 #ifdef __WXGTK__
     /// On GTK, UP/DOWN arrows is used to navigate between controls
@@ -58,12 +59,25 @@ clScrolledPanel::~clScrolledPanel()
     m_vsb->Unbind(wxEVT_SCROLL_PAGEUP, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_BOTTOM, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_TOP, &clScrolledPanel::OnVScroll, this);
+    m_hsb->Unbind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnHScroll, this);
+    Unbind(wxEVT_SIZE, &clScrolledPanel::OnScrolledPanelSize, this);
     Unbind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Unbind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
     Unbind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
     Unbind(wxEVT_LEFT_UP, &clScrolledPanel::OnLeftUp, this);
     Unbind(wxEVT_MOTION, &clScrolledPanel::OnMotion, this);
     Unbind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
+}
+
+void clScrolledPanel::OnHScroll(wxScrollEvent& event)
+{
+    int newColumn = wxNOT_FOUND;
+    if(event.GetEventType() == wxEVT_SCROLL_THUMBTRACK) {
+        newColumn = event.GetPosition();
+    }
+    if(newColumn != wxNOT_FOUND) {
+        ScollToColumn(newColumn);
+    }
 }
 
 void clScrolledPanel::OnVScroll(wxScrollEvent& event)
@@ -103,7 +117,9 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
     // Sanity
-    if(pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) { return; }
+    if(pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) {
+        return;
+    }
 
     // Keep the values
     m_pageSize = pageSize;
@@ -115,10 +131,9 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
     bool should_show = thumbSize < rangeSize;
     if(!should_show && m_vsb && m_vsb->IsShown()) {
         m_vsb->Hide();
-        GetSizer()->Layout();
     } else if(should_show && m_vsb && !m_vsb->IsShown()) {
+        DoPositionVScrollbar();
         m_vsb->Show();
-        GetSizer()->Layout();
     }
 
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
@@ -167,11 +182,10 @@ void clScrolledPanel::OnIdle(wxIdleEvent& event)
         if(ShouldShowScrollBar() && !m_vsb->IsShown() && inOurWindows) {
             // Update the scrollbar with the latest values
             m_vsb->Show();
-            GetSizer()->Layout();
+            DoPositionVScrollbar();
             m_vsb->SetScrollbar(m_position, m_thumbSize, m_rangeSize, m_pageSize);
         } else if(!inOurWindows && m_vsb->IsShown()) {
             m_vsb->Hide();
-            GetSizer()->Layout();
         }
     }
     ProcessIdle();
@@ -237,7 +251,9 @@ void clScrolledPanel::DoBeginDrag()
     wxTreeEvent event(wxEVT_TREE_BEGIN_DRAG);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
-    if(!event.IsAllowed()) { return; }
+    if(!event.IsAllowed()) {
+        return;
+    }
 
     // Change the cursor indicating DnD in progress
     SetCursor(wxCURSOR_HAND);
@@ -260,4 +276,52 @@ wxFont clScrolledPanel::GetDefaultFont()
     f.SetPointSize(f.GetPointSize() + 2);
 #endif
     return f;
+}
+
+void clScrolledPanel::DoPositionVScrollbar()
+{
+    wxRect clientRect = GetClientRect();
+    wxSize vsbSize = m_vsb->GetSize();
+
+    int height = clientRect.GetHeight();
+    int width = vsbSize.GetWidth();
+    int x = clientRect.GetWidth() - vsbSize.GetWidth();
+    int y = 0;
+
+    m_vsb->SetSize(width, height);
+    m_vsb->Move(x, y);
+}
+
+void clScrolledPanel::DoPositionHScrollbar()
+{
+    wxRect clientRect = GetClientRect();
+    wxSize hsbSize = m_hsb->GetSize();
+
+    int width = clientRect.GetWidth();
+    int height = hsbSize.GetHeight();
+    int x = 0;
+    int y = clientRect.GetHeight() - hsbSize.GetHeight();
+
+    m_hsb->SetSize(width, height);
+    m_hsb->Move(x, y);
+}
+
+void clScrolledPanel::OnScrolledPanelSize(wxSizeEvent& event)
+{
+    event.Skip();
+    DoPositionVScrollbar();
+    DoPositionHScrollbar();
+}
+
+void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
+{
+    bool should_show = thumbSize < rangeSize;
+    if(should_show && !m_hsb->IsShown()) {
+        DoPositionHScrollbar();
+        m_hsb->Show();
+    } else if(!should_show && m_hsb->IsShown()) {
+        m_hsb->Hide();
+    }
+    m_hsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
+    m_hsb->Refresh();
 }

@@ -209,20 +209,23 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
     if(GetBgColour().IsOk()) {
         colours.SetItemBgColour(GetBgColour());
     }
+    wxRect selectionRect = rowRect;
+    wxPoint deviceOrigin = dc.GetDeviceOrigin();
+    selectionRect.SetX(-deviceOrigin.x);
     if(IsSelected() || IsHovered()) {
         dc.SetBrush(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
         dc.SetPen(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
-        dc.DrawRoundedRectangle(rowRect, 1.5);
+        dc.DrawRoundedRectangle(selectionRect, 1.5);
     } else if(colours.GetItemBgColour().IsOk()) {
         dc.SetBrush(colours.GetItemBgColour());
         dc.SetPen(colours.GetItemBgColour());
-        dc.DrawRectangle(rowRect);
+        dc.DrawRectangle(selectionRect);
     }
 
     // Per cell drawings
     for(size_t i = 0; i < m_cells.size(); ++i) {
         colours = c; // reset the colours
-        wxFont f = clScrolledPanel::GetDefaultFont();;
+        wxFont f = clScrolledPanel::GetDefaultFont();
         clCellValue& cell = GetColumn(i);
         if(cell.GetFont().IsOk()) { f = cell.GetFont(); }
         if(cell.GetTextColour().IsOk()) { colours.SetItemTextColour(cell.GetTextColour()); }

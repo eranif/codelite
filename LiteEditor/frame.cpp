@@ -353,7 +353,7 @@ EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::Dispatch
 // Search menu
 //-------------------------------------------------------
 EVT_MENU(wxID_FIND, clMainFrame::DispatchCommandEvent)
-EVT_MENU(wxID_REPLACE, clMainFrame::OnIncrementalReplace)
+EVT_MENU(wxID_REPLACE, clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("find_resource"), clMainFrame::OnFindResourceXXX)
 EVT_MENU(XRCID("incremental_search"), clMainFrame::OnIncrementalSearch)
 EVT_MENU(XRCID("incremental_replace"), clMainFrame::OnIncrementalReplace)
@@ -382,7 +382,7 @@ EVT_UPDATE_UI(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::OnFileExistUpdateUI)
 
 EVT_UPDATE_UI(wxID_FIND, clMainFrame::OnIncrementalSearchUI)
-EVT_UPDATE_UI(wxID_REPLACE, clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(wxID_REPLACE, clMainFrame::OnIncrementalSearchUI)
 EVT_UPDATE_UI(XRCID("select_previous"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("select_next"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_next"), clMainFrame::OnFileExistUpdateUI)

@@ -229,8 +229,9 @@ int clTerminalSTC::GetStcStyle(int textColour, int bgColour)
 
 void clTerminalSTC::SetPreferences(const wxFont& font, const wxColour& textColour, const wxColour& textBgColour)
 {
+    wxFont f = font;
     for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        StyleSetFont(i, font);
+        StyleSetFont(i, f);
         StyleSetForeground(i, textColour);
         StyleSetBackground(i, textBgColour);
     }

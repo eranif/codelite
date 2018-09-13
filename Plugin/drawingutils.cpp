@@ -994,7 +994,7 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-#if defined(__WXOSX__)||defined(__WXMSW__)
+#if defined(__WXOSX__)||defined(__WXMSW__) ||defined(__WXGTK__)
     // Windows & OSX
     wxRect choiceRect = rect;
     wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
@@ -1064,7 +1064,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     TruncateText(label, textRect.GetWidth(), dc, truncatedText);
     dc.DrawText(truncatedText, xx, textY);
 
-#ifdef __WXGTK__
+#if 0
     // Draw separator on the right side
     wxPoint p1 = textRect.GetTopRight();
     wxPoint p2 = textRect.GetBottomRight();
@@ -1078,7 +1078,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
 
     dc.DestroyClippingRegion();
 
-#ifdef __WXGTK__    
+#if 0
     wxRect dropDownRect = choiceRect;
     dropDownRect.SetWidth(choiceRect.GetHeight());
     dropDownRect.SetX(textRect.GetX() + textRect.GetWidth());

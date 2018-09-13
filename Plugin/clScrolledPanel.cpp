@@ -3,6 +3,11 @@
 #include <wx/log.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
+#include <wx/dcscreen.h>
+
+#ifdef __WXGTK__
+#    include <gtk/gtk.h>
+#endif
 
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxWindow(parent, id, pos, size, style)
@@ -315,10 +320,20 @@ void clScrolledPanel::DoCancelDrag()
 wxFont clScrolledPanel::GetDefaultFont()
 {
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-//#ifdef __WXGTK__
-//    // for some reason, drawing the font size on GTK3 with wxGCDC is too small
-//    f.SetPointSize(f.GetPointSize() + 2);
-//#endif
+#ifdef __WXGTK__
+    static bool once = false;
+    static double ratio = 1.0;
+    if(!once) {
+        GdkScreen *screen = gdk_screen_get_default();
+        if(screen) {
+            double res = gdk_screen_get_resolution(screen);
+            ratio = (res / 96.); 
+        }
+        once = true;
+    }
+    int pointSize = f.GetPointSize() * ratio;
+    f.SetPointSize(pointSize);
+#endif
     return f;
 }
 

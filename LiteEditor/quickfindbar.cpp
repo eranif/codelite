@@ -464,6 +464,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
     }
 
     if(res) { GetParent()->GetSizer()->Layout(); }
+    m_replaceInSelection = !findWhat.IsEmpty() && findWhat.Contains("\n");
     if(!m_sci) {
         // nothing to do
 
@@ -477,7 +478,6 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         if(findWhat.Contains("\n")) {
             // Multiline selection
             // enable the 'Replace in Selection'
-            m_replaceInSelection = true;
             m_textCtrlFind->ChangeValue("");
             m_textCtrlFind->SetFocus();
         } else {

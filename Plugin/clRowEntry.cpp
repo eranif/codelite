@@ -1,6 +1,6 @@
-#include "clRowEntry.h"
 #include "clCellValue.h"
 #include "clHeaderItem.h"
+#include "clRowEntry.h"
 #include "clTreeCtrl.h"
 #include <algorithm>
 #include <functional>
@@ -194,7 +194,7 @@ void clRowEntry::ClearRects()
     m_rowRect = wxRect();
 }
 
-void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
+void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index)
 {
     wxRect rowRect = GetItemRect();
     bool zebraColouring = (m_tree->GetTreeStyle() & wxTR_ROW_LINES);
@@ -212,10 +212,14 @@ void clRowEntry::Render(wxDC& dc, const clColours& c, int row_index)
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
-    if(IsSelected() || IsHovered()) {
-        dc.SetBrush(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
-        dc.SetPen(IsSelected() ? colours.GetSelItemBgColour() : colours.GetHoverBgColour());
-        dc.DrawRoundedRectangle(selectionRect, 1.5);
+    if(IsSelected()) {
+        dc.SetPen(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+        dc.SetBrush(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+        dc.DrawRectangle(selectionRect);
+    } else if(IsHovered()) {
+        dc.SetPen(colours.GetHoverBgColour());
+        dc.SetBrush(colours.GetHoverBgColour());
+        dc.DrawRectangle(selectionRect);
     } else if(colours.GetItemBgColour().IsOk()) {
         dc.SetBrush(colours.GetItemBgColour());
         dc.SetPen(colours.GetItemBgColour());

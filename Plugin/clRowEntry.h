@@ -99,7 +99,7 @@ public:
      * @brief remove all children items
      */
     void DeleteAllChildren();
-    void Render(wxDC& dc, const clColours& colours, int row_index);
+    void Render(wxWindow* win, wxDC& dc, const clColours& colours, int row_index);
     void SetHovered(bool b) { SetFlag(kNF_Hovered, b); }
     bool IsHovered() const { return m_flags & kNF_Hovered; }
 

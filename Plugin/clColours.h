@@ -6,20 +6,22 @@
 
 class WXDLLIMPEXP_SDK clColours
 {
-    wxColour hoverBgColour;       // Background colour of an hovered item
-    wxColour itemTextColour;      // item text colour
-    wxColour itemBgColour;        // item bg colour
-    wxColour selItemTextColour;   // text colour for the selected item
-    wxColour selItemBgColour;     // selected item background colour
-    wxColour buttonColour;        // expand/collapse button colour
-    wxColour bgColour;            // background colour for the control
-    wxColour scrolBarButton;      // The scrollbar thumb button colour
-    wxColour alternateColourOdd;  // Colour to draw odd items background (wxTR_ROW_LINES)
-    wxColour alternateColourEven; // Colour to draw even items background (wxTR_ROW_LINES)
-    wxColour headerBgColour;      // Header background colour
-    wxColour headerHBorderColour; // The line to use for drawing a horizontal header border
-    wxColour headerVBorderColour; // The line to use for drawing a vertical header border
-    wxColour selbuttonColour;     // The colour of the button ("Expand") when on a selected row
+    wxColour hoverBgColour;          // Background colour of an hovered item
+    wxColour itemTextColour;         // item text colour
+    wxColour itemBgColour;           // item bg colour
+    wxColour selItemTextColour;      // text colour for the selected item
+    wxColour selItemBgColour;        // selected item background colour
+    wxColour selItemBgColourNoFocus; // selected item background colour
+    wxColour buttonColour;           // expand/collapse button colour
+    wxColour bgColour;               // background colour for the control
+    wxColour scrolBarButton;         // The scrollbar thumb button colour
+    wxColour alternateColourOdd;     // Colour to draw odd items background (wxTR_ROW_LINES)
+    wxColour alternateColourEven;    // Colour to draw even items background (wxTR_ROW_LINES)
+    wxColour headerBgColour;         // Header background colour
+    wxColour headerHBorderColour;    // The line to use for drawing a horizontal header border
+    wxColour headerVBorderColour;    // The line to use for drawing a vertical header border
+    wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
+    bool m_inFocus;
 
 public:
     clColours() { InitDefaults(); }
@@ -63,6 +65,13 @@ public:
     const wxColour& GetHeaderVBorderColour() const { return headerVBorderColour; }
     void SetSelbuttonColour(const wxColour& selbuttonColour) { this->selbuttonColour = selbuttonColour; }
     const wxColour& GetSelbuttonColour() const { return selbuttonColour; }
+    void SetSelItemBgColourNoFocus(const wxColour& selItemBgColourNoFocus)
+    {
+        this->selItemBgColourNoFocus = selItemBgColourNoFocus;
+    }
+    const wxColour& GetSelItemBgColourNoFocus() const { return selItemBgColourNoFocus; }
+    void SetInFocus(bool inFocus) { this->m_inFocus = inFocus; }
+    bool IsInFocus() const { return m_inFocus; }
 };
 
 #endif // CLCOLOURS_H

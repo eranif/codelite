@@ -134,7 +134,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
             buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
         }
         curitem->SetRects(itemRect, buttonRect);
-        curitem->Render(dc, m_colours, i);
+        curitem->Render(this, dc, m_colours, i);
         y += m_lineHeight;
     }
     m_model.SetOnScreenItems(items); // Keep track of the visible items

@@ -473,16 +473,24 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         m_sci->SetFocus();
 
     } else if(!findWhat.IsEmpty()) {
-
-        m_textCtrlFind->ChangeValue(findWhat);
-        m_textCtrlFind->SelectAll();
-        m_textCtrlFind->SetFocus();
-        if(m_highlightMatches) {
-            if(!(m_searchFlags & wxSTC_FIND_REGEXP) || m_textCtrlFind->GetValue().Length() > 2) {
-                DoHighlightMatches(true);
+        
+        if(findWhat.Contains("\n")) {
+            // Multiline selection
+            // enable the 'Replace in Selection'
+            m_replaceInSelection = true;
+            m_textCtrlFind->ChangeValue("");
+            m_textCtrlFind->SetFocus();
+        } else {
+            m_textCtrlFind->ChangeValue(findWhat);
+            m_textCtrlFind->SelectAll();
+            m_textCtrlFind->SetFocus();
+            if(m_highlightMatches) {
+                if(!(m_searchFlags & wxSTC_FIND_REGEXP) || m_textCtrlFind->GetValue().Length() > 2) {
+                    DoHighlightMatches(true);
+                }
             }
+            PostCommandEvent(this, m_textCtrlFind);
         }
-        PostCommandEvent(this, m_textCtrlFind);
 
     } else {
         if(m_sci->GetSelections() > 1) {}

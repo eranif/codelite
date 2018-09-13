@@ -1057,9 +1057,12 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
         dc.DrawBitmap(bmp, xx, bmpY);
         xx += bmp.GetScaledWidth() + X_MARGIN;
     }
+    dc.SetFont(GetDefaultGuiFont());
     wxSize textSize = dc.GetTextExtent(label);
     int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
-    dc.DrawText(label, xx, textY);
+    wxString truncatedText;
+    TruncateText(label, textRect.GetWidth(), dc, truncatedText);
+    dc.DrawText(truncatedText, xx, textY);
 
 #ifdef __WXGTK__
     // Draw separator on the right side

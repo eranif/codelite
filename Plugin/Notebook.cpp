@@ -436,11 +436,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
             pColours = &user_colours;
         }
-#ifdef __WXGTK3__
-        m_art->Draw(this, gcdc, dc, *tab.get(), (*pColours), m_style);
-#else
         m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
-#endif
     }
 
     // Redraw the active tab

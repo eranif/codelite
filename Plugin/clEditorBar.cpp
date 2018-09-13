@@ -73,11 +73,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
-#ifdef __WXGTK3__
-    wxDC& gcdc = bdc;
-#else
     wxGCDC gcdc(bdc);
-#endif
 
     PrepareDC(gcdc);
 

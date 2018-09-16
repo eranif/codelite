@@ -191,6 +191,8 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     BitmapLoader::Vec_t images = bmpLoader->MakeStandardMimeBitmapList();
 
     FOLDER_EXPAND_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    WORKSPACE_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeWorkspace);
+    
     images.push_back(bmpLoader->LoadBitmap(wxT("folder-yellow")));
     FOLDER_IMG_IDX = (images.size() - 1);
 
@@ -205,11 +207,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     images.push_back(bmpLoader->LoadBitmap("workspace-folder-yellow-opened"));
     WORKSPACE_FOLDER_EXPANDED_IMG_IDX = (images.size() - 1);
 
-    images.push_back(bmpLoader->LoadBitmap("folder-yellow-opened"));
-    WORKSPACE_EXPANDED_IMG_IDX = (images.size() - 1);
-
-    images.push_back(bmpLoader->LoadBitmap("folder-yellow"));
-    WORKSPACE_IMG_IDX = (images.size() - 1);
+    WORKSPACE_EXPANDED_IMG_IDX = WORKSPACE_IMG_IDX;
 
     SetBitmaps(images);
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &FileViewTree::OnItemActivated, this);

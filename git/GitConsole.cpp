@@ -243,6 +243,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
     m_stcLog->SetWrapMode(wxSTC_WRAP_WORD);
+    m_gauge->Hide();
     GetSizer()->Fit(this);
 }
 

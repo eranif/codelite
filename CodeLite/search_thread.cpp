@@ -220,17 +220,9 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
     if(!wxFileName::FileExists(fileName)) {
         return;
     }
-
-    wxFFile thefile(fileName, wxT("rb"));
-    if(!thefile.IsOpened()) {
-        // failed to open the file, probably because of permissions
-        m_summary.GetFailedFiles().Add(fileName);
-        return;
-    }
-
-    wxFileOffset size = thefile.Length();
-    thefile.Close();
     
+    size_t size = FileUtils::GetFileSize(fileName);
+    if(size == 0) { return; }
     wxString fileData;
     fileData.Alloc(size);
 

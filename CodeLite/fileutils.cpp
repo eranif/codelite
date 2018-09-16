@@ -536,9 +536,15 @@ time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
 
 size_t FileUtils::GetFileSize(const wxFileName& filename)
 {
-    wxFFile fp(filename.GetFullPath(), "rb");
-    if(fp.IsOpened()) { return fp.Length(); }
-    return 0;
+    struct stat b;
+    wxString file_name = filename.GetFullPath();
+    const char* cfile = file_name.mb_str(wxConvUTF8).data();
+    if(::stat(cfile, &b) == 0) {
+        return b.st_size;
+    } else {
+        clERROR() << "Failed to open file:" << file_name << "." << strerror(errno);
+        return 0; 
+    }
 }
 
 wxString FileUtils::EscapeString(const wxString& str)

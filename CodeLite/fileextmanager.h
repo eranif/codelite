@@ -71,6 +71,7 @@ public:
         TypeFolder,
         TypeFolderExpanded, // For UI purposes only
         TypeProjectActive,  // For UI purposes only
+        TypeProjectExpanded, // For UI purposes only
         TypeWorkspacePHP,
         TypeWorkspaceDocker,
         TypeWorkspaceNodeJS,

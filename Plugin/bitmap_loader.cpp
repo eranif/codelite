@@ -226,8 +226,13 @@ BitmapLoader::Vec_t BitmapLoader::MakeStandardMimeBitmapList()
     AddImage(V.size() - 1, FileExtManager::TypeWorkspaceDocker);
     V.push_back(LoadBitmap(wxT("nodejs-workspace")));
     AddImage(V.size() - 1, FileExtManager::TypeWorkspaceNodeJS);
+    
     V.push_back(LoadBitmap(wxT("project")));
     AddImage(V.size() - 1, FileExtManager::TypeProject);
+    
+    V.push_back(LoadBitmap(wxT("project-opened")));
+    AddImage(V.size() - 1, FileExtManager::TypeProjectExpanded);
+    
     V.push_back(LoadBitmap(wxT("blocks")));
     AddImage(V.size() - 1, FileExtManager::TypeWxCrafter);
     V.push_back(LoadBitmap(wxT("mime-xml")));
@@ -236,8 +241,10 @@ BitmapLoader::Vec_t BitmapLoader::MakeStandardMimeBitmapList()
     AddImage(V.size() - 1, FileExtManager::TypeResource);
     V.push_back(LoadBitmap(wxT("mime-sql")));
     AddImage(V.size() - 1, FileExtManager::TypeSQL);
+    
     V.push_back(LoadBitmap(wxT("folder-yellow")));
     AddImage(V.size() - 1, FileExtManager::TypeFolder);
+    
     V.push_back(LoadBitmap(wxT("folder-yellow-opened")));
     AddImage(V.size() - 1, FileExtManager::TypeFolderExpanded);
     V.push_back(LoadBitmap(wxT("mime-as")));

@@ -154,11 +154,14 @@ EVT_UPDATE_UI(XRCID("local_workspace_settings"), FileViewTree::OnBuildInProgress
 END_EVENT_TABLE()
 
 static int PROJECT_IMG_IDX = wxNOT_FOUND;
+static int PROJECT_EXPAND_IMG_IDX = wxNOT_FOUND;
 static int FOLDER_IMG_IDX = wxNOT_FOUND;
 static int WORKSPACE_IMG_IDX = wxNOT_FOUND;
+static int WORKSPACE_EXPANDED_IMG_IDX = wxNOT_FOUND;
 static int ACTIVE_PROJECT_IMG_IDX = wxNOT_FOUND;
 static int FOLDER_EXPAND_IMG_IDX = wxNOT_FOUND;
 static int WORKSPACE_FOLDER_IMG_IDX = wxNOT_FOUND;
+static int WORKSPACE_FOLDER_EXPANDED_IMG_IDX = wxNOT_FOUND;
 
 void FileViewTree::OnBuildInProgress(wxUpdateUIEvent& event) { event.Enable(!ManagerST::Get()->IsBuildInProgress()); }
 
@@ -194,11 +197,19 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     images.push_back(bmpLoader->LoadBitmap(wxT("project")));
     ACTIVE_PROJECT_IMG_IDX = (images.size() - 1);
 
-    WORKSPACE_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeWorkspace);
     PROJECT_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
-
+    PROJECT_EXPAND_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeProjectExpanded);
     images.push_back(bmpLoader->LoadBitmap("workspace-folder-yellow"));
     WORKSPACE_FOLDER_IMG_IDX = (images.size() - 1);
+
+    images.push_back(bmpLoader->LoadBitmap("workspace-folder-yellow-opened"));
+    WORKSPACE_FOLDER_EXPANDED_IMG_IDX = (images.size() - 1);
+
+    images.push_back(bmpLoader->LoadBitmap("folder-yellow-opened"));
+    WORKSPACE_EXPANDED_IMG_IDX = (images.size() - 1);
+
+    images.push_back(bmpLoader->LoadBitmap("folder-yellow"));
+    WORKSPACE_IMG_IDX = (images.size() - 1);
 
     SetBitmaps(images);
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &FileViewTree::OnItemActivated, this);
@@ -254,7 +265,8 @@ void FileViewTree::BuildTree()
         data.m_displayName = clCxxWorkspaceST::Get()->GetName();
         data.m_kind = ProjectItem::TypeWorkspace;
 
-        wxTreeItemId root = AddRoot(data.m_displayName, WORKSPACE_IMG_IDX, -1, new FilewViewTreeItemData(data));
+        wxTreeItemId root =
+            AddRoot(data.m_displayName, WORKSPACE_IMG_IDX, WORKSPACE_EXPANDED_IMG_IDX, new FilewViewTreeItemData(data));
         SetItemFont(root, defaultGuiFont);
 
         wxArrayString list;
@@ -347,7 +359,7 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     wxTreeItemId hti = AppendItem(rootItem,         // parent
                                   projectName,      // display name
                                   projectIconIndex, // item image index
-                                  projectIconIndex, // selected item image
+                                  PROJECT_EXPAND_IMG_IDX, // selected item image
                                   new FilewViewTreeItemData(item));
     DoSetItemBackgroundColour(hti, coloursList, item);
     m_projectsMap.insert({ projectName, hti });
@@ -364,7 +376,7 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
         f.SetWeight(wxFONTWEIGHT_BOLD);
         f.SetStyle(wxFONTSTYLE_ITALIC);
         SetItemFont(hti, f);
-        if(!iconFromPlugin) { SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX); }
+        if(!iconFromPlugin) { SetItemImage(hti, ACTIVE_PROJECT_IMG_IDX, PROJECT_EXPAND_IMG_IDX); }
     }
 }
 
@@ -2494,8 +2506,8 @@ wxTreeItemId FileViewTree::AddWorkspaceFolder(const wxString& folderPath)
             itemData.SetDisplayName(folders.Item(i));
             itemData.m_key = current;
             FilewViewTreeItemData* cd = new FilewViewTreeItemData(itemData);
-            parentItem =
-                AppendItem(parentItem, folders.Item(i), WORKSPACE_FOLDER_IMG_IDX, WORKSPACE_FOLDER_IMG_IDX, cd);
+            parentItem = AppendItem(parentItem, folders.Item(i), WORKSPACE_FOLDER_IMG_IDX,
+                                    WORKSPACE_FOLDER_EXPANDED_IMG_IDX, cd);
             m_workspaceFolders.insert(std::make_pair(current, parentItem));
         } else {
             parentItem = m_workspaceFolders.find(current)->second;
@@ -2843,7 +2855,7 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
         wxTreeItemId hti = AppendItem(parentItem,     // parent
                                       displayName,    // display name
                                       FOLDER_IMG_IDX, // item image index
-                                      FOLDER_IMG_IDX, // selected item image
+                                      FOLDER_EXPAND_IMG_IDX, // selected item image
                                       new FilewViewTreeItemData(folderItem));
         DoSetItemBackgroundColour(hti, coloursList, folderItem);
         if(!proj->IsVirtualDirectoryEmpty(childVdFullPath)) {

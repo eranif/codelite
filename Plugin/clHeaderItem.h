@@ -7,12 +7,18 @@
 #include <wx/bitmap.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
+#include <wx/window.h>
+
+enum clHeaderFlags {
+    kHeaderNative = (1 << 0),
+};
 
 class WXDLLIMPEXP_SDK clHeaderItem
 {
     wxString m_label;
     wxBitmap m_bitmap;
     wxRect m_rect;
+    wxWindow* m_parent = nullptr;
 
 public:
     typedef std::vector<clHeaderItem> Vect_t;
@@ -21,10 +27,10 @@ public:
 
 public:
     clHeaderItem();
-    clHeaderItem(const wxString& label, const wxBitmap& bmp = wxNullBitmap);
+    clHeaderItem(wxWindow* parent, const wxString& label, const wxBitmap& bmp = wxNullBitmap);
     virtual ~clHeaderItem();
 
-    void Render(wxDC& dc, const clColours& colours);
+    void Render(wxDC& dc, const clColours& colours, int flags);
     void SetBitmap(const wxBitmap& bitmap) { this->m_bitmap = bitmap; }
     void SetLabel(const wxString& label) { this->m_label = label; }
     void SetRect(const wxRect& rect) { this->m_rect = rect; }

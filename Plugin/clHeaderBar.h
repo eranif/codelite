@@ -10,15 +10,29 @@ class WXDLLIMPEXP_SDK clHeaderBar
     clHeaderItem::Vect_t m_columns;
     bool m_hideHeaders = false;
     int m_firstColumn = 0;
+    wxWindow* m_parent = nullptr;
+    int m_flags = 0;
 
 protected:
     void DoUpdateSize();
     wxSize GetTextSize(const wxString& label) const;
 
 public:
-    clHeaderBar();
+    clHeaderBar(wxWindow* parent);
     virtual ~clHeaderBar();
 
+    /**
+     * @brief set drawing native header
+     */
+    void SetNative(bool b)
+    {
+        if(b) {
+            m_flags |= kHeaderNative;
+        } else {
+            m_flags &= ~kHeaderNative;
+        }
+    }
+    
     /**
      * @brief update the column width, but only if the new width is greater than the current one, unless 'force' is set
      * to 'true'
@@ -56,12 +70,23 @@ public:
     /**
      * @brief add new column to the header bar
      */
-    void Add(const clHeaderItem& item) { push_back(item); }
+    clHeaderItem& Add(const clHeaderItem& item)
+    {
+        push_back(item);
+        return Last();
+    }
     /**
      * @brief add new column to the header bar
      */
-    void Add(const wxString& label, const wxBitmap& bitmap = wxNullBitmap) { push_back(clHeaderItem(label, bitmap)); }
+    clHeaderItem& Add(const wxString& label, const wxBitmap& bitmap = wxNullBitmap)
+    {
+        push_back(clHeaderItem(m_parent, label, bitmap));
+        return Last();
+    }
 
+    void Clear();
+    const clHeaderItem& Last() const;
+    clHeaderItem& Last();
     /**
      * @brief draw the header bar using dc and colours
      */

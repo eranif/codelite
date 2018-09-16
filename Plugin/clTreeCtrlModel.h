@@ -37,7 +37,7 @@ public:
     ~clTreeCtrlModel();
 
     void SetFirstItemOnScreen(clRowEntry* firstItemOnScreen) { this->m_firstItemOnScreen = firstItemOnScreen; }
-    clRowEntry* GetFirstItemOnScreen() { return m_firstItemOnScreen; }
+    clRowEntry* GetFirstItemOnScreen() const { return m_firstItemOnScreen; }
 
     void SetSortFunction(const std::function<bool(const wxTreeItemId&, const wxTreeItemId&)>& CompareFunc)
     {

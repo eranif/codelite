@@ -36,7 +36,8 @@ protected:
     clTreeCtrlModel* m_model = nullptr;
     clCellValue::Vect_t m_cells;
     size_t m_flags = 0;
-    wxTreeItemData* m_clientData = nullptr;
+    wxTreeItemData* m_clientObject = nullptr;
+    wxUIntPtr m_data = 0;
     clRowEntry* m_parent = nullptr;
     clRowEntry::Vec_t m_children;
     clRowEntry* m_next = nullptr;
@@ -78,6 +79,9 @@ public:
     void SetHidden(bool b);
     bool IsHidden() const { return HasFlag(kNF_Hidden); }
 
+    void SetData(wxUIntPtr data) { this->m_data = data; }
+    wxUIntPtr GetData() { return m_data; }
+    
     /**
      * @brief using wxDC, calculate the item's width
      */
@@ -143,14 +147,14 @@ public:
     const wxString& GetLabel(size_t col = 0) const;
 
     const std::vector<clRowEntry*>& GetChildren() const { return m_children; }
-    wxTreeItemData* GetClientObject() const { return m_clientData; }
+    wxTreeItemData* GetClientObject() const { return m_clientObject; }
     void SetParent(clRowEntry* parent);
     clRowEntry* GetParent() const { return m_parent; }
     bool HasChildren() const { return !m_children.empty(); }
     void SetClientData(wxTreeItemData* clientData)
     {
-        wxDELETE(m_clientData);
-        this->m_clientData = clientData;
+        wxDELETE(m_clientObject);
+        this->m_clientObject = clientData;
     }
     size_t GetChildrenCount(bool recurse) const;
     int GetExpandedLines() const;

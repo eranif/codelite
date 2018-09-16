@@ -1,6 +1,7 @@
 #ifndef CLTREECTRL_H
 #define CLTREECTRL_H
 
+#include "clControlWithItems.h"
 #include "clHeaderBar.h"
 #include "clScrolledPanel.h"
 #include "clTreeCtrlModel.h"
@@ -12,75 +13,36 @@
 #include <wx/scrolwin.h>
 
 class clScrollBar;
-class WXDLLIMPEXP_SDK clTreeCtrl : public clScrolledPanel
+class WXDLLIMPEXP_SDK clTreeCtrl : public clControlWithItems
 {
-    int m_lineHeight = 0;
+protected:
     clTreeCtrlModel m_model;
-#ifdef __WXOSX__
-    int m_scrollTick = 2;
-#else
-    int m_scrollTick = 3;
-#endif
-    std::vector<wxBitmap> m_bitmaps;
-    clColours m_colours;
     long m_treeStyle = 0;
     wxDirection m_lastScrollDir = wxDOWN;
-    clHeaderBar m_header;
-    int m_firstColumn = 0;
 
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
     bool IsItemVisible(clRowEntry* item) const;
     void EnsureItemVisible(clRowEntry* item, bool fromTop);
-    int GetNumLineCanFitOnScreen() const;
     clRowEntry* GetFirstItemOnScreen();
     void SetFirstItemOnScreen(clRowEntry* item);
-    void UpdateScrollBar();
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
     /**
      * @brief update the header size
      */
     void DoUpdateHeader(const wxTreeItemId& item);
 
-protected:
-    /**
-     * @brief get the rectangle for drawing items
-     */
-    wxRect GetItemsRect() const;
-
-    wxSize GetTextSize(const wxString& label) const;
-
 public:
+    virtual int GetFirstItemPosition() const;
+    virtual int GetRange() const;
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clTreeCtrl();
 
-    /**
-     * @brief return the header bar (relevant when using columns)
-     */
-    const clHeaderBar& GetHeader() const { return m_header; }
-    /**
-     * @brief return the header bar (relevant when using columns)
-     */
-    clHeaderBar& GetHeader() { return m_header; }
-
-    /**
-     * @brief should we show the header bar?
-     */
-    void SetShowHeader(bool b);
-    /**
-     * @brief is the heaer bar visible?
-     */
-    bool IsHeaderVisible() const;
-
     //===--------------------
     // table view support
     //===--------------------
-    /**
-     * @param header
-     */
-    void SetHeader(const clHeaderBar& header);
 
     // For internal use, dont use these two methods
     const clTreeCtrlModel& GetModel() const { return m_model; }
@@ -95,8 +57,7 @@ public:
     /**
      * @brief associate bitmap vector with this tree
      */
-    void SetBitmaps(const std::vector<wxBitmap>& bitmaps);
-    const std::vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
+    virtual void SetBitmaps(const std::vector<wxBitmap>& bitmaps);
 
     /**
      * @brief return the tree style
@@ -109,34 +70,15 @@ public:
     bool IsRootHidden() const { return m_treeStyle & wxTR_HIDE_ROOT; }
 
     /**
-     * @brief set the colours used for drawing items
-     */
-    void SetColours(const clColours& colours);
-
-    /**
      * @brief enable style on the tree
      */
-    void EnableStyle(int style, bool enable, bool refresh = true);
+    virtual void EnableStyle(int style, bool enable, bool refresh = true);
 
     /**
      * @brief does the tree has 'style' enabled?
      */
     bool HasStyle(int style) const { return m_treeStyle & style; }
 
-    /**
-     * @brief get the colours used for drawing items
-     */
-    const clColours& GetColours() const { return m_colours; }
-
-    /**
-     * @brief return line height
-     */
-    int GetLineHeight() const { return m_lineHeight; }
-
-    /**
-     * @brief return bitmap at give index, return wxNullBitmap on error
-     */
-    const wxBitmap& GetBitmap(size_t index) const;
     /**
      * @brief Calculates which (if any) item is under the given point, returning the tree item id at this point plus
      *  extra information flags.
@@ -223,7 +165,7 @@ public:
     /**
      * @brief return the current indent size
      */
-    int GetIndent() const;
+    virtual int GetIndent() const;
 
     /**
      * @brief is the tree has items? (root included)
@@ -338,7 +280,7 @@ public:
     /**
      * @brief delete all items in tree
      */
-    void DeleteAllItems() { Delete(GetRootItem()); }
+    virtual void DeleteAllItems() { Delete(GetRootItem()); }
 
     /**
      * @brief is this item visible?
@@ -353,7 +295,6 @@ protected:
     virtual bool DoKeyDown(const wxKeyEvent& event);
     void DoEnsureVisible(const wxTreeItemId& item);
     void OnPaint(wxPaintEvent& event);
-    void OnSize(wxSizeEvent& event);
     void OnMouseLeftDown(wxMouseEvent& event);
     void OnMouseLeftUp(wxMouseEvent& event);
     void OnRightDown(wxMouseEvent& event);
@@ -365,9 +306,7 @@ protected:
     void OnContextMenu(wxContextMenuEvent& event);
 
     void ScrollRows(int steps, wxDirection direction);
-    void ScrollColumns(int steps, wxDirection direction);
     void ScrollToRow(int firstLine);
-    void ScollToColumn(int firstColumn);
 
     wxTreeItemId GetRow(const wxPoint& pt) const;
 };

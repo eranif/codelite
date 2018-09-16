@@ -8,6 +8,7 @@
 #define _CODELITE_GIT_GITUI_BASE_CLASSES_H
 
 #include "Notebook.h"
+#include "clThemedListCtrl.h"
 #include "gitCommitEditor.h"
 #include <map>
 #include <wx/arrstr.h>
@@ -465,9 +466,9 @@ protected:
     wxPanel* m_splitterPageTreeView;
     Notebook* m_notebook672;
     wxPanel* m_panel674;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
-    wxDataViewListCtrl* m_dvListCtrlUnversioned;
+    clThemedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPage96;
     wxStyledTextCtrl* m_stcLog;
 
@@ -481,9 +482,9 @@ protected:
 
 public:
     wxGauge* GetGauge() { return m_gauge; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
-    wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    clThemedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     Notebook* GetNotebook672() { return m_notebook672; }
     wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }

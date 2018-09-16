@@ -4,6 +4,7 @@
 #include "clTreeCtrl.h"
 #include <algorithm>
 #include <functional>
+#include <wx/dataview.h>
 #include <wx/dc.h>
 #include <wx/settings.h>
 
@@ -29,7 +30,7 @@ clRowEntry::~clRowEntry()
 {
     // Delete all the node children
     DeleteAllChildren();
-    wxDELETE(m_clientData);
+    wxDELETE(m_clientObject);
 
     // Notify the model that a selection is being deleted
     if(m_model) { m_model->NodeDeleted(this); }
@@ -124,10 +125,10 @@ int clRowEntry::GetExpandedLines() const
 void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items)
 {
     items.reserve(count);
-    items.push_back(this);
+    if(!this->IsHidden()) { items.push_back(this); }
     clRowEntry* next = GetNext();
     while(next) {
-        if(next->IsVisible()) { items.push_back(next); }
+        if(next->IsVisible() && !next->IsHidden()) { items.push_back(next); }
         if((int)items.size() == count) { return; }
         next = next->GetNext();
     }
@@ -136,10 +137,10 @@ void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items)
 void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items)
 {
     items.reserve(count);
-    items.insert(items.begin(), this);
+    if(!this->IsHidden()) { items.insert(items.begin(), this); }
     clRowEntry* prev = GetPrev();
     while(prev) {
-        if(prev->IsVisible()) { items.insert(items.begin(), prev); }
+        if(prev->IsVisible() && !prev->IsHidden()) { items.insert(items.begin(), prev); }
         if((int)items.size() == count) { return; }
         prev = prev->GetPrev();
     }
@@ -197,7 +198,7 @@ void clRowEntry::ClearRects()
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index)
 {
     wxRect rowRect = GetItemRect();
-    bool zebraColouring = (m_tree->GetTreeStyle() & wxTR_ROW_LINES);
+    bool zebraColouring = (m_tree->HasStyle(wxTR_ROW_LINES) || m_tree->HasStyle(wxDV_ROW_LINES));
     bool even_row = ((row_index % 2) == 0);
 
     // Not cell related
@@ -228,6 +229,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
     // Per cell drawings
     for(size_t i = 0; i < m_cells.size(); ++i) {
+        bool last_cell = (i == (m_cells.size() - 1));
         colours = c; // reset the colours
         wxFont f = clScrolledPanel::GetDefaultFont();
         clCellValue& cell = GetColumn(i);
@@ -290,9 +292,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         // Draw the indentation only for the first cell
         dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY);
 
-        if(i > 0) {
+        if(!last_cell) {
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
-            dc.DrawLine(cellRect.GetTopLeft(), cellRect.GetBottomLeft());
+            dc.DrawLine(cellRect.GetTopRight(), cellRect.GetBottomRight());
         }
     }
 }
@@ -312,6 +314,7 @@ size_t clRowEntry::GetChildrenCount(bool recurse) const
 
 bool clRowEntry::IsVisible() const
 {
+    if(IsHidden()) { return false; }
     clRowEntry* parent = GetParent();
     while(parent) {
         if(!parent->IsExpanded()) { return false; }

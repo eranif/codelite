@@ -202,7 +202,7 @@ wxTreeItemId clTreeCtrlModel::GetItemBefore(const wxTreeItemId& item, bool visib
     if(!p) { return wxTreeItemId(); }
     p = p->GetPrev();
     while(p) {
-        if(visibleItem && (!p->IsVisible() || p->IsHidden())) {
+        if(visibleItem && !p->IsVisible()) {
             p = p->GetPrev();
             continue;
         }
@@ -310,7 +310,7 @@ wxTreeItemId clTreeCtrlModel::GetSingleSelection() const
 
 int clTreeCtrlModel::GetItemIndex(clRowEntry* item) const
 {
-    if(item == NULL) { return 0; }
+    if(item == NULL) { return wxNOT_FOUND; }
     if(!m_root) { return wxNOT_FOUND; }
     int counter = 0;
     clRowEntry* current = m_root;

@@ -379,11 +379,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }
     }
-
-    m_dvListCtrl->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    m_dvListCtrl->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    m_dvListCtrlUnversioned->GetColumn(0)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    m_dvListCtrlUnversioned->GetColumn(1)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     m_notebook672->SetPageText(1, wxString()
                                       << _("Unversioned files (") << m_dvListCtrlUnversioned->GetItemCount() << ")");
 }

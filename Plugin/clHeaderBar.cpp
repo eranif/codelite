@@ -2,6 +2,7 @@
 #include "clScrolledPanel.h"
 #include <wx/dcmemory.h>
 #include <wx/font.h>
+#include <wx/renderer.h>
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
@@ -10,7 +11,10 @@
 #define PEN_STYLE wxPENSTYLE_DOT
 #endif
 
-clHeaderBar::clHeaderBar() {}
+clHeaderBar::clHeaderBar(wxWindow* parent)
+    : m_parent(parent)
+{
+}
 
 clHeaderBar::~clHeaderBar() {}
 
@@ -57,25 +61,32 @@ void clHeaderBar::Render(wxDC& dc, const wxRect& rect, const clColours& colours)
     clColours _colours = colours;
     _colours.SetBgColour(_colours.GetHeaderBgColour());
 
-    dc.SetPen(_colours.GetBgColour());
-    dc.SetBrush(_colours.GetBgColour());
-    dc.DrawRectangle(rect);
+    bool useNativeHeader = m_flags & kHeaderNative;
+    if(useNativeHeader) {
+        wxRendererNative::Get().DrawHeaderButton(m_parent, dc, rect, wxCONTROL_NONE);
+    } else {
+        dc.SetPen(_colours.GetBgColour());
+        dc.SetBrush(_colours.GetBgColour());
+        dc.DrawRectangle(rect);
+    }
     for(size_t i = 0; i < size(); ++i) {
-        bool is_first = (i == 0);
-        Item(i).Render(dc, _colours);
-        if(!is_first) {
+        bool is_last = (i == (size() - 1));
+        Item(i).Render(dc, _colours, m_flags);
+        if(!is_last && !useNativeHeader) {
             dc.SetPen(wxPen(_colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
-            dc.DrawLine(Item(i).GetRect().GetTopLeft(), Item(i).GetRect().GetBottomLeft());
+            dc.DrawLine(Item(i).GetRect().GetTopRight(), Item(i).GetRect().GetBottomRight());
         }
     }
 
-    // The horizontal header line should be _all_ visible
-    // incase we got h-scrolling we need to adjust the rect to cover the visibile area
-    wxRect fixedRect = rect;
-    wxPoint deviceOrigin = dc.GetDeviceOrigin();
-    fixedRect.SetX(-deviceOrigin.x);
-    dc.SetPen(_colours.GetHeaderHBorderColour());
-    dc.DrawLine(fixedRect.GetBottomLeft(), fixedRect.GetBottomRight());
+    if(!useNativeHeader) {
+        // The horizontal header line should be _all_ visible
+        // incase we got h-scrolling we need to adjust the rect to cover the visibile area
+        wxRect fixedRect = rect;
+        wxPoint deviceOrigin = dc.GetDeviceOrigin();
+        fixedRect.SetX(-deviceOrigin.x);
+        dc.SetPen(_colours.GetHeaderHBorderColour());
+        dc.DrawLine(fixedRect.GetBottomLeft(), fixedRect.GetBottomRight());
+    }
 }
 
 void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
@@ -109,3 +120,23 @@ void clHeaderBar::ScrollToColumn(int firstColumn)
     m_firstColumn = firstColumn;
     DoUpdateSize();
 }
+
+const clHeaderItem& clHeaderBar::Last() const
+{
+    if(IsEmpty()) {
+        static clHeaderItem emptyItem;
+        return emptyItem;
+    }
+    return m_columns.back();
+}
+
+clHeaderItem& clHeaderBar::Last()
+{
+    if(IsEmpty()) {
+        static clHeaderItem emptyItem;
+        return emptyItem;
+    }
+    return m_columns.back();
+}
+
+void clHeaderBar::Clear() { m_columns.clear(); }

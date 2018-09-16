@@ -4,7 +4,7 @@
 
 void clColours::InitDefaults()
 {
-    itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
     selItemTextColour = wxColour("#FDFEFE");
 #ifdef __WXOSX__
     selItemBgColour = wxColour("rgb(149,169,176)");

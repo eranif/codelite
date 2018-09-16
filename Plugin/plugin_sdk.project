@@ -45,6 +45,12 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clThemedListCtrl.cpp"/>
+    <File Name="clThemedListCtrl.h"/>
+    <File Name="clControlWithItems.cpp"/>
+    <File Name="clControlWithItems.h"/>
+    <File Name="clDataViewListCtrl.cpp"/>
+    <File Name="clDataViewListCtrl.h"/>
     <File Name="clHeaderItem.h"/>
     <File Name="clHeaderItem.cpp"/>
     <File Name="clHeaderBar.h"/>

@@ -224,7 +224,7 @@ public:
     /**
      * @brief reutrn font suitable for drawing the tab label
      */
-    static wxFont GetTabFont();
+    static wxFont GetTabFont(bool bold);
 
     /**
      * @brief draw a button in a given state at a give location

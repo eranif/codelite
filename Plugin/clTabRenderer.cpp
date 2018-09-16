@@ -73,7 +73,7 @@ void clTabColours::InitLightColours()
 #endif
     wxColour textColour = DrawingUtils::GetPanelTextColour();
     activeTabTextColour = textColour;
-    inactiveTabTextColour = textColour;
+    inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     if(DrawingUtils::IsDark(faceColour)) {
         // Make the active tab draker
         activeTabBgColour = faceColour.ChangeLightness(60);
@@ -139,7 +139,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
-    wxFont font = clTabRenderer::GetTabFont();
+    wxFont font = clTabRenderer::GetTabFont(true);
     dc.SetFont(font);
 
     wxSize sz = dc.GetTextExtent(m_label);
@@ -234,10 +234,10 @@ clTabRenderer::clTabRenderer(const wxString& name)
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
 
-wxFont clTabRenderer::GetTabFont()
+wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-    f.SetWeight(wxFONTWEIGHT_BOLD);
+    if(bold) { f.SetWeight(wxFONTWEIGHT_BOLD); }
     return f;
 }
 

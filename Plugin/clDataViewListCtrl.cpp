@@ -41,7 +41,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_MENU, &clDataViewListCtrl::OnConvertEvent, this);
-    
+
     AddRoot("Hidden Root", -1, -1, nullptr);
 }
 
@@ -58,6 +58,8 @@ void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr
 {
     wxTreeItemId item = clTreeCtrl::AppendItem(GetRootItem(), "", -1, -1, nullptr);
     clRowEntry* child = m_model.ToPtr(item);
+    // mark this row as a "list-view" row (i.e. it can't have children)
+    child->SetListItem(true);
     child->SetData(data);
     for(size_t i = 0; i < values.size(); ++i) {
         const wxVariant& v = values[i];
@@ -170,6 +172,8 @@ void clDataViewListCtrl::DeleteAllItems()
 wxDataViewItem clDataViewListCtrl::AppendItem(const wxString& text, int image, int selImage, wxUIntPtr data)
 {
     wxTreeItemId child = clTreeCtrl::AppendItem(GetRootItem(), text, image, selImage, nullptr);
+    // mark this row as a "list-view" row (i.e. it can't have children)
+    m_model.ToPtr(child)->SetListItem(true);
     wxDataViewItem dvItem = DV_ITEM(child);
     SetItemData(dvItem, data);
     UpdateScrollBar();
@@ -181,6 +185,8 @@ wxDataViewItem clDataViewListCtrl::InsertItem(const wxDataViewItem& previous, co
 {
     wxTreeItemId child =
         clTreeCtrl::InsertItem(GetRootItem(), wxTreeItemId(previous.GetID()), text, image, selImage, nullptr);
+    // mark this row as a "list-view" row (i.e. it can't have children)
+    m_model.ToPtr(child)->SetListItem(true);
     wxDataViewItem dvItem = DV_ITEM(child);
     SetItemData(dvItem, data);
     return dvItem;

@@ -49,7 +49,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
 
     // Inactive tab
     colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(85); // darker
-    colours.inactiveTabTextColour = DrawingUtils::GetButtonTextColour();
+    colours.inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(80);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(130);
     colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
@@ -69,7 +69,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxFont font = GetTabFont();
+    wxFont font = GetTabFont(tabInfo.IsActive());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 

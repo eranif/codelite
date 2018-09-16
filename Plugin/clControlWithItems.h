@@ -9,7 +9,7 @@
 #ifdef __WXOSX__
 #define SCROLL_TICK 2
 #else
-#define SCROLL_TICK 3
+#define SCROLL_TICK 2
 #endif
 
 class clRowEntry;

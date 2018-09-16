@@ -21,6 +21,7 @@ enum clTreeCtrlNodeFlags {
     kNF_Selected = (1 << 4),
     kNF_Hovered = (1 << 5),
     kNF_Hidden = (1 << 6),
+    kNF_LisItem = (1 << 7),
 };
 
 class WXDLLIMPEXP_SDK clRowEntry
@@ -81,12 +82,13 @@ public:
 
     void SetData(wxUIntPtr data) { this->m_data = data; }
     wxUIntPtr GetData() { return m_data; }
-    
+
     /**
      * @brief using wxDC, calculate the item's width
      */
     int CalcItemWidth(wxDC& dc, int rowHeight, size_t col = 0);
-
+    bool IsListItem() const { return m_flags & kNF_LisItem; }
+    void SetListItem(bool b) { SetFlag(kNF_LisItem, b); }
     bool IsVisible() const;
     void SetBgColour(const wxColour& bgColour, size_t col = 0);
     void SetFont(const wxFont& font, size_t col = 0);

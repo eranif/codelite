@@ -28,7 +28,7 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxFont font = GetTabFont();
+    wxFont font = GetTabFont(tabInfo.IsActive());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 

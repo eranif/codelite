@@ -250,7 +250,7 @@ void clTabCtrl::DoSetBestSize()
     wxMemoryDC memoryDC(bmp);
     wxGCDC gcdc(memoryDC);
 
-    wxFont font = clTabRenderer::GetTabFont();
+    wxFont font = clTabRenderer::GetTabFont(true);
     gcdc.SetFont(font);
     
     wxSize sz = gcdc.GetTextExtent("_WORKSPACE_");

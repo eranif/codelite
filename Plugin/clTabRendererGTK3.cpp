@@ -38,7 +38,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     wxColour bgColour(colours.tabAreaColour);
     wxColour penColour(colours.tabAreaColour);
 
-    wxFont font = GetTabFont();
+    wxFont font = GetTabFont(true);
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     //font.SetWeight(wxFONTWEIGHT_BOLD);
     fontDC.SetFont(font);

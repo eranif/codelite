@@ -244,7 +244,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         wxRect cellRect = m_tree->GetHeader().empty() ? rowRect : m_tree->GetHeader().Item(i).GetRect();
         cellRect.SetY(rowRect.GetY());
         int textXOffset = cellRect.GetX();
-        if(i == 0) {
+        if((i == 0) && !IsListItem()) {
             // The expand button is only make sense for the first cell
             if(HasChildren()) {
                 wxPoint pts[3];
@@ -271,7 +271,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += rowRect.GetHeight();
             }
         }
-        int itemIndent = (GetIndentsCount() * m_tree->GetIndent());
+        int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
         int bitmapIndex = cell.GetBitmapIndex();
         if(IsExpanded() && HasChildren() && cell.GetBitmapSelectedIndex() != wxNOT_FOUND) {
             bitmapIndex = cell.GetBitmapSelectedIndex();
@@ -366,8 +366,8 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     dc.SetFont(f);
 
     wxSize textSize = dc.GetTextExtent(cell.GetText());
-    int item_width = 5;
-    if(col == 0) {
+    int item_width = X_SPACER;
+    if((col == 0) && !IsListItem()) {
         // always make room for the twist button
         item_width += rowHeight;
     }
@@ -385,7 +385,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
             item_width += X_SPACER;
         }
     }
-    if(col == 0) {
+    if((col == 0) && !IsListItem()) {
         int itemIndent = (GetIndentsCount() * m_tree->GetIndent());
         item_width += itemIndent;
     }

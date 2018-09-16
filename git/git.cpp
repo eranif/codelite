@@ -1523,6 +1523,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
         DoRecoverFromGitCommandError();
+        GetConsole()->ShowLog();
         return;
     }
 
@@ -1614,6 +1615,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
                     // Do nothing, will be coloured in the console view
+                    GetConsole()->ShowLog();
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
 

@@ -67,7 +67,8 @@ public:
     void UpdateProgress(unsigned long current, const wxString& message);
     bool IsProgressShown() const;
     void PulseProgress();
-
+    void ShowLog();
+    
 protected:
     virtual void OnUnversionedFileActivated(wxDataViewEvent& event);
     virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event);

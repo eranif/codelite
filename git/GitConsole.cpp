@@ -665,3 +665,9 @@ void GitConsole::OnAddUnversionedFiles(wxCommandEvent& event)
     wxUnusedVar(event);
     m_git->AddFiles(GetSelectedUnversionedFiles());
 }
+
+void GitConsole::ShowLog()
+{
+    // Change the selection to the "Log" view
+    m_notebook672->SetSelection(m_notebook672->GetPageIndex(_("Log")));
+}

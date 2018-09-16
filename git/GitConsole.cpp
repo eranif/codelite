@@ -199,10 +199,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     conf.ReadItem(&data);
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 
-//    m_splitter->SetSashPosition(data.GetGitConsoleSashPos());
-
     // Toolbar
-    m_toolbar = new clToolBar(this, wxID_ANY);
     m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), m_bitmapLoader->LoadBitmap("clear"),
                        _("Clear Git Log"));
     m_toolbar->AddTool(XRCID("git_stop_process"), _("Terminate Git Process"),
@@ -243,22 +240,14 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     PopulateToolbarOverflow(m_toolbar, m_images);
     m_toolbar->Realize();
-    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
-
-    // Adjust the h-scrollbar of git log
-    ::clRecalculateSTCHScrollBar(m_stcLog);
+    m_stcLog->SetWrapMode(wxSTC_WRAP_WORD);
+    GetSizer()->Fit(this);
 }
 
 GitConsole::~GitConsole()
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    data.SetGitConsoleSashPos(m_splitter->GetSashPosition());
-    conf.WriteItem(&data);
-
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL,

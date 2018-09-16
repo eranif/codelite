@@ -9,6 +9,7 @@
 
 #include "Notebook.h"
 #include "clThemedListCtrl.h"
+#include "clToolBar.h"
 #include "gitCommitEditor.h"
 #include <map>
 #include <wx/arrstr.h>
@@ -461,16 +462,16 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
-    wxGauge* m_gauge;
-    wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPageTreeView;
+    clToolBar* m_toolbar;
+    wxPanel* m_panel713;
     Notebook* m_notebook672;
     wxPanel* m_panel674;
     clThemedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
     clThemedListCtrl* m_dvListCtrlUnversioned;
-    wxPanel* m_splitterPage96;
+    wxPanel* m_panelLog;
     wxStyledTextCtrl* m_stcLog;
+    wxGauge* m_gauge;
 
 protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
@@ -481,18 +482,18 @@ protected:
     virtual void OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    wxGauge* GetGauge() { return m_gauge; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
     clThemedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
-    Notebook* GetNotebook672() { return m_notebook672; }
-    wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
     wxStyledTextCtrl* GetStcLog() { return m_stcLog; }
-    wxPanel* GetSplitterPage96() { return m_splitterPage96; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    wxPanel* GetPanelLog() { return m_panelLog; }
+    Notebook* GetNotebook672() { return m_notebook672; }
+    wxPanel* GetPanel713() { return m_panel713; }
+    wxGauge* GetGauge() { return m_gauge; }
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
 };
 

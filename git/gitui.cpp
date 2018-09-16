@@ -220,9 +220,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("GitSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -451,9 +449,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
     SetName(wxT("GitCommitDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -760,9 +756,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("GitCommitListDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -933,9 +927,7 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     SetName(wxT("GitDiffDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1227,9 +1219,7 @@ GitDiffChooseCommitishDlgBase::GitDiffChooseCommitishDlgBase(wxWindow* parent, w
 
     SetName(wxT("GitDiffChooseCommitishDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1410,9 +1400,7 @@ gitCloneDlgBaseClass::gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("gitCloneDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(500, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1515,9 +1503,7 @@ GitFileDiffDlgBase::GitFileDiffDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("GitFileDiffDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2290,9 +2276,7 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("GitApplyPatchDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2322,31 +2306,27 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
 
-    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 7)),
-                          wxGA_SMOOTH | wxGA_HORIZONTAL);
-    m_gauge->Hide();
-    m_gauge->SetValue(10);
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer36->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer36->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                      wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter->SetSashGravity(0.5);
-    m_splitter->SetMinimumPaneSize(10);
+    wxBoxSizer* boxSizer711 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer36->Add(m_splitter, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer36->Add(boxSizer711, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_splitterPageTreeView =
-        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panel713 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPageTreeView->SetSizer(boxSizer94);
+    boxSizer711->Add(m_panel713, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_notebook672 = new Notebook(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1, -1)), wxBK_DEFAULT);
+    wxBoxSizer* boxSizer715 = new wxBoxSizer(wxVERTICAL);
+    m_panel713->SetSizer(boxSizer715);
+
+    m_notebook672 =
+        new Notebook(m_panel713, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel713, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook672->SetName(wxT("m_notebook672"));
 
-    boxSizer94->Add(m_notebook672, 1, wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer715->Add(m_notebook672, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     m_panel674 = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook672, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL);
@@ -2381,15 +2361,15 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPage96 =
-        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPageTreeView, m_splitterPage96, 0);
+    m_panelLog = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook672, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
+    m_notebook672->AddPage(m_panelLog, _("Log"), false);
 
-    wxBoxSizer* boxSizer92 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage96->SetSizer(boxSizer92);
+    wxBoxSizer* boxSizer708 = new wxBoxSizer(wxVERTICAL);
+    m_panelLog->SetSizer(boxSizer708);
 
-    m_stcLog = new wxStyledTextCtrl(m_splitterPage96, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitterPage96, wxSize(-1, -1)), wxBORDER_THEME);
+    m_stcLog = new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)),
+                                    wxBORDER_THEME);
     // Configure the fold margin
     m_stcLog->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLog->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -2426,13 +2406,16 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stcLog->SetKeyWords(3, wxT(""));
     m_stcLog->SetKeyWords(4, wxT(""));
 
-    boxSizer92->Add(m_stcLog, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer708->Add(m_stcLog, 1, wxEXPAND, WXC_FROM_DIP(2));
+
+    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
+    m_gauge->SetValue(10);
+
+    boxSizer36->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("GitConsoleBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                           wxDataViewEventHandler(GitConsoleBase::OnContextMenu), NULL, this);
@@ -2747,9 +2730,7 @@ GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     SetName(wxT("GitBlameDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2861,9 +2842,7 @@ GitBlameSettingsDlgBase::GitBlameSettingsDlgBase(wxWindow* parent, wxWindowID id
 
     SetName(wxT("GitBlameSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2986,9 +2965,7 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     SetName(wxT("GitResetDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -3088,9 +3065,7 @@ GitUserEmailDialogBase::GitUserEmailDialogBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("GitUserEmailDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

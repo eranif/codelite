@@ -43,7 +43,6 @@ class GitConsole : public GitConsoleBase
     wxBitmap m_folderBmp;
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
-    clToolBar* m_toolbar;
     clGenericSTCStyler::Ptr_t m_styler;
 
 public:

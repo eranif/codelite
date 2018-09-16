@@ -471,10 +471,12 @@ void clTreeCtrl::OnMouseScroll(wxMouseEvent& event)
     clRowEntry::Vec_t items;
     if(event.GetWheelRotation() > 0) { // Scrolling up
         m_model.GetPrevItems(GetFirstItemOnScreen(), GetScrollTick(), items);
+        if(items.empty()) { return; }
         SetFirstItemOnScreen(items.front()); // first item
         UpdateScrollBar();
     } else {
         m_model.GetNextItems(GetFirstItemOnScreen(), GetScrollTick(), items);
+        if(items.empty()) { return; }
         SetFirstItemOnScreen(items.back()); // the last item
         UpdateScrollBar();
     }

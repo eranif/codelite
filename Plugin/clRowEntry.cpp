@@ -367,8 +367,10 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
 
     wxSize textSize = dc.GetTextExtent(cell.GetText());
     int item_width = 5;
-    // always make room for the twist button
-    item_width += rowHeight;
+    if(col == 0) {
+        // always make room for the twist button
+        item_width += rowHeight;
+    }
 
     int bitmapIndex = cell.GetBitmapIndex();
     if(IsExpanded() && HasChildren() && cell.GetBitmapSelectedIndex() != wxNOT_FOUND) {
@@ -388,7 +390,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += itemIndent;
     }
     item_width += textSize.GetWidth();
-    item_width += (clHeaderItem::X_SPACER * 2);
+    item_width += clHeaderItem::X_SPACER;
     return item_width;
 }
 

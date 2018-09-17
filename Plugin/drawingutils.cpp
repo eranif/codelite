@@ -1064,6 +1064,6 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxString truncatedText;
     TruncateText(label, textRect.GetWidth(), dc, truncatedText);
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    dc.DrawText(truncatedText, textRect.GetTopLeft());
+    dc.DrawText(truncatedText, textRect.GetX() + 2, textRect.GetY());
     dc.DestroyClippingRegion();
 }

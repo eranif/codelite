@@ -21,10 +21,10 @@ class WXDLLIMPEXP_SDK clColours
     wxColour headerHBorderColour;    // The line to use for drawing a horizontal header border
     wxColour headerVBorderColour;    // The line to use for drawing a vertical header border
     wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
-    bool m_inFocus;
+    bool m_useNativeColours = false; // When possible, use the native colours
 
 public:
-    clColours() { InitDefaults(); }
+    clColours();
     virtual ~clColours() {}
     void InitDefaults();
     void InitDarkDefaults();
@@ -70,8 +70,8 @@ public:
         this->selItemBgColourNoFocus = selItemBgColourNoFocus;
     }
     const wxColour& GetSelItemBgColourNoFocus() const { return selItemBgColourNoFocus; }
-    void SetInFocus(bool inFocus) { this->m_inFocus = inFocus; }
-    bool IsInFocus() const { return m_inFocus; }
+    void SetUseNativeColours(bool useNativeColours) { this->m_useNativeColours = useNativeColours; }
+    bool IsUseNativeColours() const { return m_useNativeColours; }
 };
 
 #endif // CLCOLOURS_H

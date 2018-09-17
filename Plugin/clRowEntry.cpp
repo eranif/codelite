@@ -14,6 +14,64 @@
 #define PEN_STYLE wxPENSTYLE_DOT
 #endif
 
+void clRowEntry::DrawNativeSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours)
+{
+#ifdef __WXMSW__
+    wxUnusedVar(colours);
+    // Focused coluors
+    wxColour outterBorder;
+    wxColour innerBorder;
+    wxColour endColour;
+    wxColour startColour;
+
+    wxRect rr = rect;
+    if(focused) {
+        outterBorder = wxColour("rgb(124,161,205)");
+        innerBorder = wxColour("rgb(233,242,251)");
+        endColour = wxColour("rgb(190,216,249)");
+        startColour = wxColour("rgb(216,231,249)");
+    } else {
+        // Non focused colours
+        outterBorder = wxColour("rgb(214,214,214)");
+        innerBorder = wxColour("rgb(237,237,237)");
+        endColour = wxColour("rgb(226,226,226)");
+        startColour = wxColour("rgb(245,245,245)");
+    }
+
+    // Draw outter border
+    dc.SetPen(outterBorder);
+    dc.DrawRectangle(rr);
+
+    // Draw the inner border
+    rr.Deflate(1);
+    dc.SetPen(innerBorder);
+    dc.DrawRectangle(rr);
+
+    // Fill the selection
+    rr.Deflate(1);
+    dc.GradientFillLinear(rr, startColour, endColour, wxSOUTH);
+#else
+    DrawSimpleSelection(focused, dc, rect, colours);
+#endif
+}
+
+void clRowEntry::DrawSimpleSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours)
+{
+    dc.SetPen(focused ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+    dc.SetBrush(focused ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+    dc.DrawRectangle(rect);
+}
+
+void clRowEntry::DrawSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours)
+{
+    if(colours.IsUseNativeColours()) {
+        DrawNativeSelection(focused, dc, rect, colours);
+    } else {
+        // Draw simple selection
+        DrawSimpleSelection(focused, dc, rect, colours);
+    }
+}
+
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
     : m_tree(tree)
     , m_model(tree ? &tree->GetModel() : nullptr)
@@ -214,9 +272,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
     if(IsSelected()) {
-        dc.SetPen(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
-        dc.SetBrush(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
-        dc.DrawRectangle(selectionRect);
+        DrawSelection(win->HasFocus(), dc, selectionRect, colours);
     } else if(IsHovered()) {
         dc.SetPen(colours.GetHoverBgColour());
         dc.SetBrush(colours.GetHoverBgColour());
@@ -287,6 +343,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += X_SPACER;
             }
         }
+
         dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
 
         // Draw the indentation only for the first cell

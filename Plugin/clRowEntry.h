@@ -65,6 +65,9 @@ protected:
     clRowEntry* GetVisibleItem(int index);
     clCellValue& GetColumn(size_t col = 0);
     const clCellValue& GetColumn(size_t col = 0) const;
+    void DrawSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
+    void DrawSimpleSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
+    void DrawNativeSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
 
 public:
     clRowEntry* GetLastChild() const;

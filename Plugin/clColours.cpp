@@ -2,6 +2,13 @@
 #include <wx/gdicmn.h>
 #include <wx/settings.h>
 
+clColours::clColours()
+{
+#ifdef __WXMSW__
+    m_useNativeColours = true;
+#endif
+}
+
 void clColours::InitDefaults()
 {
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
@@ -26,10 +33,18 @@ void clColours::InitDefaults()
     headerHBorderColour = wxColour("#D0D3D4");
     headerVBorderColour = wxColour("#D0D3D4");
     selItemBgColourNoFocus = wxColour("#BDC3C7");
+
+#ifdef __WXMSW__
+    if(m_useNativeColours) {
+        selItemTextColour = itemTextColour;
+        selbuttonColour = buttonColour;
+    }
+#endif
 }
 
 void clColours::InitDarkDefaults()
 {
+    m_useNativeColours = false;
     bgColour = wxColour("#5F6A6A");
     itemTextColour = wxColour("#F4F6F6");
     selItemTextColour = *wxWHITE;

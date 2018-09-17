@@ -26,7 +26,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
         Refresh();
     });
     //SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp"));
+    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp", 2, 2));
 }
 
 clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()

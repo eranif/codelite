@@ -994,7 +994,7 @@ wxColour DrawingUtils::GetCaptionTextColour()
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-#if defined(__WXOSX__)||defined(__WXMSW__) ||defined(__WXGTK__)
+#if 1
     // Windows & OSX
     wxRect choiceRect = rect;
     wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
@@ -1059,29 +1059,11 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     }
     dc.SetFont(GetDefaultGuiFont());
     wxSize textSize = dc.GetTextExtent(label);
-    int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
+    textRect.SetHeight(textSize.GetHeight());
+    textRect = textRect.CenterIn(choiceRect, wxVERTICAL);
     wxString truncatedText;
     TruncateText(label, textRect.GetWidth(), dc, truncatedText);
-    dc.DrawText(truncatedText, xx, textY);
-
-#if 0
-    // Draw separator on the right side
-    wxPoint p1 = textRect.GetTopRight();
-    wxPoint p2 = textRect.GetBottomRight();
-    dc.SetPen(pen_light);
-    dc.DrawLine(p1, p2);
-    p1.x -= 1;
-    p2.x -= 1;
-    dc.SetPen(penColour);
-    dc.DrawLine(p1, p2);
-#endif
-
+    dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    dc.DrawText(truncatedText, textRect.GetTopLeft());
     dc.DestroyClippingRegion();
-
-#if 0
-    wxRect dropDownRect = choiceRect;
-    dropDownRect.SetWidth(choiceRect.GetHeight());
-    dropDownRect.SetX(textRect.GetX() + textRect.GetWidth());
-    DrawDropDownArrow(win, dc, dropDownRect, arrowColour);
-#endif
 }

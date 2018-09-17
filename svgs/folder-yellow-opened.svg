@@ -18,7 +18,7 @@
    sodipodi:docname="folder-yellow-opened.svg"
    width="512"
    height="512"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -47,15 +47,15 @@
      id="namedview6"
      showgrid="false"
      inkscape:zoom="0.4609375"
-     inkscape:cx="-986.57627"
+     inkscape:cx="-1366.2373"
      inkscape:cy="256"
-     inkscape:window-x="2067"
-     inkscape:window-y="133"
+     inkscape:window-x="233"
+     inkscape:window-y="227"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg4" />
   <path
      d="m 464.28415,224.68364 h -41.61722 v -46.97456 c 0,-25.94366 -18.65452,-46.97456 -41.66669,-46.97456 H 242.11126 L 186.55567,68.101774 H 47.66669 c -23.012167,0 -41.6666929,21.0309 -41.6666929,46.974566 v 281.84733 c 0,25.94366 18.6545259,46.97456 41.6666929,46.97456 h 347.22245 a 41.667562,46.975535 0 0 0 35.33335,-22.07804 l 69.39414,-125.26548 c 17.31599,-31.23515 -2.63715,-71.87107 -35.33248,-71.87107 z M 52.875027,115.07634 H 169.29698 l 55.55559,62.63274 h 150.93934 a 5.2083367,5.8718195 0 0 1 5.20833,5.87182 v 41.10274 H 137.94453 a 41.666693,46.974556 0 0 0 -35.67537,22.70632 L 47.66669,349.40989 V 120.94131 a 5.2022602,5.864969 0 0 1 5.208337,-5.86497 z M 394.88914,396.92367 H 68.500037 L 135.54348,271.65819 h 328.79015 z"
      id="path2"
      inkscape:connector-curvature="0"
-     style="fill:#88aa00;fill-opacity:1;stroke-width:0.92168945" />
+     style="fill:#808080;fill-opacity:1;stroke-width:0.92168945" />
 </svg>

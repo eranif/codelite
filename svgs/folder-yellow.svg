@@ -16,7 +16,7 @@
    version="1.1"
    id="svg5090"
    sodipodi:docname="folder-yellow.svg"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata5096">
     <rdf:RDF>
@@ -40,12 +40,12 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1604"
-     inkscape:window-height="836"
+     inkscape:window-width="2142"
+     inkscape:window-height="1091"
      id="namedview5092"
      showgrid="false"
      inkscape:zoom="0.4609375"
-     inkscape:cx="-840.67797"
+     inkscape:cx="-642.16949"
      inkscape:cy="256"
      inkscape:window-x="1"
      inkscape:window-y="68"
@@ -55,5 +55,5 @@
      d="m 459.125,131 h -187.5 L 218.27539,77.650391 C 212.41602,71.791016 204.4668,68.5 196.17578,68.5 H 52.875 C 26.986328,68.5 6,89.486328 6,115.375 v 281.25 C 6,422.51367 26.986328,443.5 52.875,443.5 h 406.25 C 485.01367,443.5 506,422.51367 506,396.625 V 177.875 C 506,151.98633 485.01367,131 459.125,131 Z m 0,265.625 H 52.875 v -281.25 h 136.83594 l 53.34961,53.34961 c 5.85937,5.85937 13.80859,9.15039 22.09961,9.15039 H 459.125 Z"
      id="path5088"
      inkscape:connector-curvature="0"
-     style="fill:#88aa00;stroke-width:0.9765625;fill-opacity:1" />
+     style="fill:#808080;stroke-width:0.9765625;fill-opacity:1" />
 </svg>

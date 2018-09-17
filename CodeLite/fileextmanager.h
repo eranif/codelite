@@ -62,6 +62,7 @@ public:
         TypeArchive,
         TypeDll,
         TypeBmp,
+        TypeSvg,
         TypeMakefile,
         TypeText,
         TypeScript,

@@ -2958,7 +2958,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         case '%':
         case '?':
         case '/':
-        case ':':
             prevGt = false;
             if(depth <= 0) {
                 // dont include this token

@@ -336,7 +336,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
             if(bmp.IsOk()) {
-                textXOffset += X_SPACER;
+                textXOffset += IsListItem() ? 0 : X_SPACER;
                 int bitmapY = rowRect.GetY() + ((rowRect.GetHeight() - bmp.GetScaledHeight()) / 2);
                 dc.DrawBitmap(bmp, itemIndent + textXOffset, bitmapY);
                 textXOffset += bmp.GetScaledWidth();
@@ -350,6 +350,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY);
 
         if(!last_cell) {
+            cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
             dc.DrawLine(cellRect.GetTopRight(), cellRect.GetBottomRight());
         }

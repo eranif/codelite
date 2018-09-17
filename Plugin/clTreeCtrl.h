@@ -28,6 +28,12 @@ private:
     clRowEntry* GetFirstItemOnScreen();
     void SetFirstItemOnScreen(clRowEntry* item);
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
+    
+    /**
+     * @brief bitmap file was added, re-calculate the line heights
+     */
+    void DoBitmapAdded();
+    
     /**
      * @brief update the header size
      */
@@ -58,6 +64,11 @@ public:
      * @brief associate bitmap vector with this tree
      */
     virtual void SetBitmaps(const std::vector<wxBitmap>& bitmaps);
+
+    /**
+     * @brief add a bitmap to the current list. Return its index
+     */
+    int AddBitmap(const wxBitmap& bmp);
 
     /**
      * @brief return the tree style

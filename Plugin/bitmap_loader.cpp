@@ -259,6 +259,9 @@ BitmapLoader::Vec_t BitmapLoader::MakeStandardMimeBitmapList()
     AddImage(V.size() - 1, FileExtManager::TypeYAML);
     V.push_back(LoadBitmap(wxT("database")));
     AddImage(V.size() - 1, FileExtManager::TypeDatabase);
+    
+    V.push_back(LoadBitmap(wxT("mime-svg")));
+    AddImage(V.size() - 1, FileExtManager::TypeSvg);
 
     std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
                   [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
@@ -312,6 +315,7 @@ wxImageList* BitmapLoader::MakeStandardMimeImageList()
     AddImage(imageList->Add(LoadBitmap(wxT("docker"))), FileExtManager::TypeDockerfile);
     AddImage(imageList->Add(LoadBitmap(wxT("yml"))), FileExtManager::TypeYAML);
     AddImage(imageList->Add(LoadBitmap(wxT("database"))), FileExtManager::TypeDatabase);
+    AddImage(imageList->Add(LoadBitmap(wxT("mime-svg"))), FileExtManager::TypeSvg);
 
     std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
                   [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
@@ -367,6 +371,7 @@ BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
     images[FileExtManager::TypeDockerfile] = LoadBitmap(wxT("docker"));
     images[FileExtManager::TypeYAML] = LoadBitmap(wxT("yml"));
     images[FileExtManager::TypeDatabase] = LoadBitmap(wxT("database"));
+    images[FileExtManager::TypeSvg] = LoadBitmap(wxT("mime-svg"));
 
     BitmapLoader::BitmapMap_t merged;
     merged.insert(m_userBitmaps.begin(), m_userBitmaps.end());

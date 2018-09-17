@@ -108,6 +108,7 @@ void FileExtManager::Init()
         m_map[wxT("png")] = TypeBmp;
         m_map[wxT("ico")] = TypeBmp;
         m_map[wxT("xpm")] = TypeBmp;
+        m_map[wxT("svg")] = TypeSvg;
 
         m_map[wxT("mk")] = TypeMakefile;
 

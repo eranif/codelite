@@ -98,8 +98,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     BitmapLoader* bl = m_mgr->GetStdIcons();
     BitmapLoader::Vec_t bitmaps = bl->MakeStandardMimeBitmapList();
     m_treeCtrlView->SetBitmaps(bitmaps);
-    m_treeCtrlView->SetShowScrollBarOnFocus(true); // dont show the scrollbar, unless needed
-    
+
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
     m_treeCtrlView->Bind(wxEVT_TREE_BEGIN_DRAG, &PHPWorkspaceView::OnDragBegin, this);
@@ -435,9 +434,9 @@ void PHPWorkspaceView::LoadWorkspaceView()
         data->SetFile(iter_project->second->GetFilename().GetFullPath());
         data->SetActive(iter_project->second->IsActive());
 
-        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(root, iter_project->second->GetName(),
-                                                                bl->GetMimeImageId(FileExtManager::TypeProject),
-                                                                bl->GetMimeImageId(FileExtManager::TypeProject), data);
+        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(
+            root, iter_project->second->GetName(), bl->GetMimeImageId(FileExtManager::TypeProject),
+            bl->GetMimeImageId(FileExtManager::TypeProjectExpanded), data);
         if(data->IsActive()) { m_treeCtrlView->SetItemBold(projectItemId, true); }
 
         // The project is also a folder for the project folder
@@ -1140,6 +1139,7 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
     if(!pProject) return wxTreeItemId();
 
     int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+    int imgIdExpanded = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
     wxString curpath;
     wxTreeItemId parent = projectItem;
     wxFileName fnFolder(path, "dummy.txt");
@@ -1158,7 +1158,7 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
             itemData->SetFolderPath(curdir.GetPath());
             itemData->SetProjectName(project);
             itemData->SetFolderName(parts.Item(i));
-            parent = m_treeCtrlView->AppendItem(parent, parts.Item(i), imgId, imgId, itemData);
+            parent = m_treeCtrlView->AppendItem(parent, parts.Item(i), imgId, imgIdExpanded, itemData);
             m_foldersItems.insert(std::make_pair(curdir.GetPath(), parent));
         } else {
             parent = m_foldersItems.find(curdir.GetPath())->second;

@@ -25,9 +25,9 @@ void clThemedListCtrl::OnThemeChanged(wxCommandEvent& event)
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     clColours colours;
     if(lexer->IsDark()) {
-        colours.InitDarkDefaults();
-        wxColour bgColour = defaultStyle.GetBgColour();
-        wxColour oddLineColour = bgColour.ChangeLightness(103);
+        colours.InitDefaults();
+        wxColour bgColour = colours.GetBgColour();
+        wxColour oddLineColour = bgColour.ChangeLightness(97);
         colours.SetBgColour(bgColour);
         colours.SetAlternateColourEven(bgColour);
         colours.SetAlternateColourOdd(oddLineColour);

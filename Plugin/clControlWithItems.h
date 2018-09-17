@@ -51,6 +51,7 @@ public:
 
     virtual void SetBitmaps(const std::vector<wxBitmap>& bitmaps) { this->m_bitmaps = bitmaps; }
     virtual const std::vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
+    virtual std::vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
 
     void SetScrollTick(int scrollTick) { this->m_scrollTick = scrollTick; }
     int GetScrollTick() const { return m_scrollTick; }

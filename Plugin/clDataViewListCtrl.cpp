@@ -69,9 +69,17 @@ void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr
         } else if(variantType == "string") {
             child->SetLabel(v.GetString(), i);
         } else if(variantType == "wxDataViewIconText") {
+
+            // Extract the iamge + text from the wxDataViewIconText class
             wxDataViewIconText iconText;
             iconText << v;
+            wxBitmap bmp(iconText.GetIcon());
+            int imgIdx = AddBitmap(bmp);
+
+            //  update the row with the icon + text
             child->SetLabel(iconText.GetText(), i);
+            child->SetBitmapIndex(imgIdx, i);
+
         } else if(variantType == "double") {
             child->SetLabel(wxString() << v.GetDouble(), i);
         } else if(variantType == "datetime") {

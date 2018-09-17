@@ -2947,19 +2947,19 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
                 cont = false;
             }
             break;
-        case wxT(','):
-        case wxT('*'):
-        case wxT('&'):
-        case wxT('!'):
-        case wxT('~'):
-        case wxT('+'):
-        case wxT('^'):
-        case wxT('|'):
-        case wxT('%'):
-        case wxT('?'):
+        case ',':
+        case '*':
+        case '&':
+        case '!':
+        case '~':
+        case '+':
+        case '^':
+        case '|':
+        case '%':
+        case '?':
+        case '/':
             prevGt = false;
             if(depth <= 0) {
-
                 // dont include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;

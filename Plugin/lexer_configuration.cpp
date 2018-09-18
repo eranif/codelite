@@ -251,19 +251,15 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
 
 static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 {
-    wxColor inactiveColor;
+    unsigned char red, green, blue;
+    const unsigned char alpha = 60; /* here is a blending value in precent */
     wxColour fgColour = defaultStyle.GetFgColour();
-    if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
-        // a dark theme
-        if(DrawingUtils::IsDark(fgColour)) {
-            // this style is using a dark colour, this means that making it darker will not look good - replace it
-            fgColour = wxColour(defaultStyle.GetBgColour()).ChangeLightness(140);
-        }
-        inactiveColor = fgColour.ChangeLightness(30);
-    } else {
-        inactiveColor = wxColour(defaultStyle.GetFgColour()).MakeDisabled();
-    }
-    return inactiveColor;
+    wxColour bgColour = defaultStyle.GetBgColour();
+    red = ((fgColour.Red() * alpha + bgColour.Red() * (100 - alpha)) / 100);
+    green = ((fgColour.Green() * alpha + bgColour.Green() * (100 - alpha)) / 100);
+    blue = ((fgColour.Blue() * alpha + bgColour.Blue() * (100 - alpha)) / 100);
+    fgColour.Set(red, green ,blue);
+    return fgColour;
 }
 
 #define CL_LINE_MODIFIED_STYLE 200

@@ -7,6 +7,9 @@
 #define DV_ITEM(tree_item) wxDataViewItem(tree_item.GetID())
 #define TREE_ITEM(dv_item) wxTreeItemId(dv_item.GetID())
 
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewTextBitmap, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK);
+
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
 clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
@@ -27,13 +30,12 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     m_treeStyle = my_style;
 
     // Ignore these events
-    Bind(wxEVT_TREE_ITEM_EXPANDING, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_ITEM_EXPANDED, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_ITEM_COLLAPSING, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_ITEM_COLLAPSED, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_DELETE_ITEM, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_DELETE_ITEM, [](wxTreeEvent& e) { e.Skip(); });
-    Bind(wxEVT_TREE_ITEM_RIGHT_CLICK, [](wxTreeEvent& e) { e.Skip(); });
+    Bind(wxEVT_TREE_ITEM_EXPANDING, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_ITEM_EXPANDED, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_ITEM_COLLAPSING, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_ITEM_COLLAPSED, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_DELETE_ITEM, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_ITEM_RIGHT_CLICK, [](wxTreeEvent& e) { wxUnusedVar(e); });
 
     // Translate the following events to wxDVC events
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
@@ -63,29 +65,7 @@ void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr
     child->SetData(data);
     for(size_t i = 0; i < values.size(); ++i) {
         const wxVariant& v = values[i];
-        wxString variantType = v.GetType();
-        if(variantType == "bool") {
-            child->SetLabel((v.GetBool() ? "Yes" : "No"), i);
-        } else if(variantType == "string") {
-            child->SetLabel(v.GetString(), i);
-        } else if(variantType == "wxDataViewIconText") {
-
-            // Extract the iamge + text from the wxDataViewIconText class
-            wxDataViewIconText iconText;
-            iconText << v;
-            wxBitmap bmp(iconText.GetIcon());
-            int imgIdx = AddBitmap(bmp);
-
-            //  update the row with the icon + text
-            child->SetLabel(iconText.GetText(), i);
-            child->SetBitmapIndex(imgIdx, i);
-
-        } else if(variantType == "double") {
-            child->SetLabel(wxString() << v.GetDouble(), i);
-        } else if(variantType == "datetime") {
-            child->SetLabel(v.GetDateTime().FormatDate(), i);
-        }
-        clTreeCtrl::SetItemText(item, child->GetLabel(i), i);
+        DoSetCellValue(child, i, v);
     }
     UpdateScrollBar();
 }
@@ -172,8 +152,8 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
 
 void clDataViewListCtrl::DeleteAllItems()
 {
-    // DVC must allways have the hidden root
     clTreeCtrl::DeleteAllItems();
+    // DVC must allways have the hidden root
     AddRoot("Hidden Root", -1, -1, nullptr);
 }
 
@@ -284,4 +264,109 @@ wxDataViewItem clDataViewListCtrl::RowToItem(size_t row) const
     if(!root) { return wxDataViewItem(); }
     if(row >= root->GetChildren().size()) { return wxDataViewItem(); }
     return wxDataViewItem(root->GetChildren()[row]);
+}
+
+void clDataViewListCtrl::DeleteItem(size_t row)
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) { return; }
+    Delete(TREE_ITEM(item));
+}
+
+void clDataViewListCtrl::SetValue(const wxVariant& value, size_t row, size_t col)
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) { return; }
+    clRowEntry* r = m_model.ToPtr(TREE_ITEM(item));
+    DoSetCellValue(r, col, value);
+}
+
+void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVariant& value)
+{
+    wxString variantType = value.GetType();
+    if(variantType == "bool") {
+        row->SetLabel((value.GetBool() ? "Yes" : "No"), col);
+    } else if(variantType == "string") {
+        row->SetLabel(value.GetString(), col);
+    } else if(variantType == "wxDataViewIconText") {
+        // Extract the iamge + text from the wxDataViewIconText class
+        wxDataViewIconText iconText;
+        iconText << value;
+        //  update the row with the icon + text
+        row->SetLabel(iconText.GetText(), col);
+    } else if(variantType == "clDataViewTextBitmap") {
+        // Extract the iamge + text from the wxDataViewIconText class
+        clDataViewTextBitmap iconText;
+        iconText << value;
+        //  update the row with the icon + text
+        row->SetLabel(iconText.GetText(), col);
+        row->SetBitmapIndex(iconText.GetBitmapIndex(), col);
+    } else if(variantType == "double") {
+        row->SetLabel(wxString() << value.GetDouble(), col);
+    } else if(variantType == "datetime") {
+        row->SetLabel(value.GetDateTime().FormatDate(), col);
+    }
+    // Call this to update the view + update the header bar
+    clTreeCtrl::SetItemText(wxTreeItemId(row), row->GetLabel(col), col);
+}
+
+void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
+{
+    clRowEntry* root = m_model.GetRoot();
+    if(!root) { return; }
+    
+    if(!CompareFunc) { 
+        m_model.SetSortFunction(nullptr);
+        return;
+    }
+    // Disconnect the current function, if any
+    m_model.SetSortFunction(nullptr);
+    // This list ctrl is composed of a hidden root + its children
+    // Step 1:
+    clRowEntry::Vec_t& children = root->GetChildren();
+    for(size_t i=0; i<children.size(); ++i) {
+        clRowEntry* child = children[i];
+        child->SetNext(nullptr);
+        child->SetPrev(nullptr);
+    }
+    
+    // Step 2: disconect the root
+    root->SetNext(nullptr);
+    
+    // Step 3: sort the children
+    std::sort(children.begin(), children.end(), CompareFunc);
+    
+    // Now, reconnect the children, starting with the root
+    clRowEntry* prev = root;
+    for(size_t i=0; i<children.size(); ++i) {
+        clRowEntry* child = children[i];
+        prev->SetNext(child);
+        child->SetPrev(prev);
+        prev = child;
+    }
+    Refresh();
+}
+
+int clDataViewListCtrl::ItemToRow(const wxDataViewItem& item) const
+{
+    clRowEntry* pItem = m_model.ToPtr(TREE_ITEM(item));
+    if(!pItem) { return wxNOT_FOUND; }
+    
+    clRowEntry* root = m_model.GetRoot();
+    if(!root) { return wxNOT_FOUND; }
+    
+    const clRowEntry::Vec_t& children = root->GetChildren();
+    for(size_t i = 0; i < children.size(); ++i) {
+        if(children[i] == pItem) { return i; }
+    }
+    return wxNOT_FOUND;
+}
+
+void clDataViewListCtrl::Select(const wxDataViewItem& item)
+{
+    if(HasStyle(wxTR_MULTIPLE)) {
+        m_model.SelectItem(TREE_ITEM(item), true, true, false);
+    } else {
+        clTreeCtrl::SelectItem(TREE_ITEM(item), true);
+    }
 }

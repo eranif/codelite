@@ -753,10 +753,7 @@ clRowEntry* clTreeCtrl::GetFirstItemOnScreen() { return m_model.GetFirstItemOnSc
 
 void clTreeCtrl::SetFirstItemOnScreen(clRowEntry* item) { m_model.SetFirstItemOnScreen(item); }
 
-void clTreeCtrl::SetSortFunction(const std::function<bool(const wxTreeItemId&, const wxTreeItemId&)>& CompareFunc)
-{
-    m_model.SetSortFunction(CompareFunc);
-}
+void clTreeCtrl::SetSortFunction(const clSortFunc_t& CompareFunc) { m_model.SetSortFunction(CompareFunc); }
 
 void clTreeCtrl::ScrollToRow(int firstLine)
 {
@@ -917,3 +914,11 @@ wxTreeItemId clTreeCtrl::GetRow(const wxPoint& pt) const
 int clTreeCtrl::GetFirstItemPosition() const { return m_model.GetItemIndex(m_model.GetFirstItemOnScreen()); }
 
 int clTreeCtrl::GetRange() const { return m_model.GetExpandedLines(); }
+
+void clTreeCtrl::DeleteAllItems()
+{
+    m_model.EnableEvents(false);
+    Delete(GetRootItem());
+    m_model.EnableEvents(true);
+    DoUpdateHeader(nullptr);
+}

@@ -1,5 +1,5 @@
-#include "clTreeCtrlModel.h"
 #include "clTreeCtrl.h"
+#include "clTreeCtrlModel.h"
 #include <algorithm>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -16,8 +16,8 @@ clTreeCtrlModel::clTreeCtrlModel(clTreeCtrl* tree)
     : m_tree(tree)
 {
     // Setup a default compare function
-    m_shouldInsertBeforeFunc = [&](const wxTreeItemId& a, const wxTreeItemId& b) {
-        return ToPtr(a)->GetLabel(0).CmpNoCase(ToPtr(b)->GetLabel(0)) < 0;
+    m_shouldInsertBeforeFunc = [&](clRowEntry* a, clRowEntry* b) {
+        return a->GetLabel(0).CmpNoCase(a->GetLabel(0)) < 0;
     };
 }
 
@@ -145,9 +145,8 @@ wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxStr
     if(m_shouldInsertBeforeFunc) {
         const clRowEntry::Vec_t& children = parentNode->GetChildren();
         // Loop over the parent's children and add execute the compare function
-        wxTreeItemId newItem(child);
         for(int i = ((int)children.size() - 1); i >= 0; --i) {
-            if(!m_shouldInsertBeforeFunc(newItem, children[i])) {
+            if(!m_shouldInsertBeforeFunc(child, children[i])) {
                 // Our item should be placed _after_ children[i]s
                 prevItem = ToPtr(children[i]);
                 break;

@@ -28,12 +28,12 @@ private:
     clRowEntry* GetFirstItemOnScreen();
     void SetFirstItemOnScreen(clRowEntry* item);
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
-    
+
     /**
      * @brief bitmap file was added, re-calculate the line heights
      */
     void DoBitmapAdded();
-    
+
     /**
      * @brief update the header size
      */
@@ -58,7 +58,7 @@ public:
      * @brief set a sorting function for this tree. The function returns true if the first element should be placed
      * before the second element
      */
-    void SetSortFunction(const std::function<bool(const wxTreeItemId&, const wxTreeItemId&)>& CompareFunc);
+    virtual void SetSortFunction(const clSortFunc_t& CompareFunc);
 
     /**
      * @brief associate bitmap vector with this tree
@@ -291,7 +291,7 @@ public:
     /**
      * @brief delete all items in tree
      */
-    virtual void DeleteAllItems() { Delete(GetRootItem()); }
+    virtual void DeleteAllItems();
 
     /**
      * @brief is this item visible?

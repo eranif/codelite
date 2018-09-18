@@ -160,13 +160,24 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
 {
     // do we have header?
     if(GetHeader().empty()) { return; }
-    if(!row || row->IsHidden()) { return; }
+    if(row && row->IsHidden()) { return; }
     wxDC& dc = GetTempDC();
+
+    // Null row means: set the header bar to fit the column's label
+    bool forceUpdate = (row == nullptr);
 
     // Use bold font, to get the maximum width needed
     for(size_t i = 0; i < GetHeader().size(); ++i) {
-        int row_width = row->CalcItemWidth(dc, m_lineHeight, i);
-        GetHeader().UpdateColWidthIfNeeded(i, row_width, false);
+
+        int row_width = 0;
+        if(row) {
+            row_width = row->CalcItemWidth(dc, m_lineHeight, i);
+        } else {
+            int colWidth = dc.GetTextExtent(GetHeader().Item(i).GetLabel()).GetWidth();
+            colWidth += 3 * clRowEntry::X_SPACER;
+            row_width = colWidth;
+        }
+        GetHeader().UpdateColWidthIfNeeded(i, row_width, forceUpdate);
     }
 }
 

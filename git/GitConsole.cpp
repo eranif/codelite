@@ -79,6 +79,16 @@ public:
     eGitFile GetKind() const { return m_kind; }
 };
 
+static wxVariant MakeFileBitmapLabel(const wxString& filename)
+{
+    BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
+    clDataViewTextBitmap tb(filename, 
+                            bitmaps->GetMimeImageId(FileExtManager::GetType(filename, FileExtManager::TypeText)));
+    wxVariant v;
+    v << tb;
+    return v;
+}
+
 // ---------------------------------------------------------------------
 void PopulateToolbarOverflow(
     clToolBar* toolbar,
@@ -245,6 +255,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_stcLog->SetWrapMode(wxSTC_WRAP_WORD);
     m_gauge->Hide();
     GetSizer()->Fit(this);
+    
+    BitmapLoader::Vec_t bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList();
+    m_dvListCtrl->SetBitmaps(bitmaps);
+    m_dvListCtrlUnversioned->SetBitmaps(bitmaps);
 }
 
 GitConsole::~GitConsole()
@@ -304,6 +318,8 @@ void GitConsole::UpdateTreeView(const wxString& output)
     wxVector<wxVariant> cols;
     wxArrayString files = ::wxStringTokenize(output, "\n\r", wxTOKEN_STRTOK);
     std::sort(files.begin(), files.end());
+    
+    BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
     for(size_t i = 0; i < files.GetCount(); ++i) {
         wxString filename = files.Item(i);
         filename.Trim().Trim(false);
@@ -321,13 +337,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
         }
 
         if(filename.EndsWith("/")) { continue; }
-        wxBitmap bmp;
-        if(m_bitmaps.count(FileExtManager::GetType(filename))) {
-            bmp = m_bitmaps[FileExtManager::GetType(filename)];
-        } else {
-            bmp = m_bitmaps[FileExtManager::TypeText];
-        }
-
         wxChar chX = prefix[0];
         wxChar chY = 0;
         if(prefix.length() > 1) { chY = prefix[1]; }
@@ -360,11 +369,11 @@ void GitConsole::UpdateTreeView(const wxString& output)
         if(kind != eGitFile::kUntrackedFile) {
             cols.clear();
             cols.push_back(wxString() << chX);
-            cols.push_back(MakeIconText(filename, bmp));
+            cols.push_back(MakeFileBitmapLabel(filename));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         } else {
             cols.clear();
-            cols.push_back(MakeIconText(fn.GetFullName(), bmp));
+            cols.push_back(MakeFileBitmapLabel(fn.GetFullName()));
             cols.push_back(fn.GetFullPath());
             m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }

@@ -11,10 +11,7 @@
 #include <wx/treebase.h>
 
 class clTreeCtrl;
-struct WXDLLIMPEXP_SDK clTreeItemIdValue {
-    int nextItem = 0;
-};
-
+typedef std::function<bool(clRowEntry*, clRowEntry*)> clSortFunc_t;
 class WXDLLIMPEXP_SDK clTreeCtrlModel
 {
     clTreeCtrl* m_tree = nullptr;
@@ -24,7 +21,7 @@ class WXDLLIMPEXP_SDK clTreeCtrlModel
     clRowEntry* m_firstItemOnScreen = nullptr;
     int m_indentSize = 16;
     bool m_shutdown = false;
-    std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> m_shouldInsertBeforeFunc = nullptr;
+    clSortFunc_t m_shouldInsertBeforeFunc = nullptr;
 
 protected:
     void DoExpandAllChildren(const wxTreeItemId& item, bool expand);
@@ -39,10 +36,7 @@ public:
     void SetFirstItemOnScreen(clRowEntry* firstItemOnScreen) { this->m_firstItemOnScreen = firstItemOnScreen; }
     clRowEntry* GetFirstItemOnScreen() const { return m_firstItemOnScreen; }
 
-    void SetSortFunction(const std::function<bool(const wxTreeItemId&, const wxTreeItemId&)>& CompareFunc)
-    {
-        m_shouldInsertBeforeFunc = CompareFunc;
-    }
+    void SetSortFunction(const clSortFunc_t& CompareFunc) { m_shouldInsertBeforeFunc = CompareFunc; }
     void ExpandAllChildren(const wxTreeItemId& item);
     void CollapseAllChildren(const wxTreeItemId& item);
 
@@ -139,6 +133,8 @@ public:
 
     clRowEntry* GetNextSibling(clRowEntry* item) const;
     clRowEntry* GetPrevSibling(clRowEntry* item) const;
+    
+    void EnableEvents(bool enable) { m_shutdown = !enable; }
 };
 
 #endif // CLTREECTRLMODEL_H

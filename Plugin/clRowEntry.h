@@ -79,7 +79,9 @@ public:
 
     clRowEntry* GetNext() const { return m_next; }
     clRowEntry* GetPrev() const { return m_prev; }
-
+    void SetNext(clRowEntry* next) { this->m_next = next; }
+    void SetPrev(clRowEntry* prev) { this->m_prev = prev; }
+    
     void SetHidden(bool b);
     bool IsHidden() const { return HasFlag(kNF_Hidden); }
 
@@ -152,6 +154,7 @@ public:
     const wxString& GetLabel(size_t col = 0) const;
 
     const std::vector<clRowEntry*>& GetChildren() const { return m_children; }
+    std::vector<clRowEntry*>& GetChildren() { return m_children; }
     wxTreeItemData* GetClientObject() const { return m_clientObject; }
     void SetParent(clRowEntry* parent);
     clRowEntry* GetParent() const { return m_parent; }

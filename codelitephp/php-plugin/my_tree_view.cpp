@@ -1,3 +1,4 @@
+#include "clTreeCtrlModel.h"
 #include "my_tree_view.h"
 #include "tree_item_data.h"
 #include <wx/settings.h>
@@ -6,10 +7,9 @@ MyTreeView::MyTreeView(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     : clThemedTreeCtrl(parent, id, pos, size, style)
 {
     SetFont(GetDefaultFont());
-    std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
-                                                                                 const wxTreeItemId& itemB) {
-        ItemData* a = static_cast<ItemData*>(GetItemData(itemA));
-        ItemData* b = static_cast<ItemData*>(GetItemData(itemB));
+    clSortFunc_t SortFunc = [&](clRowEntry* itemA, clRowEntry* itemB) {
+        ItemData* a = dynamic_cast<ItemData*>(itemA->GetClientObject());
+        ItemData* b = dynamic_cast<ItemData*>(itemB->GetClientObject());
         if(a->IsFolder() && b->IsFile())
             return true;
         else if(b->IsFolder() && a->IsFile())

@@ -405,6 +405,11 @@ WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, con
 WXDLLIMPEXP_SDK wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp);
 
 /**
+ * @brief create wxVariant from wxString + int
+ */
+WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex);
+
+/**
  * @brief queue a call to a function to be executed on the next event loop
  */
 WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func, wxClientData* arg);

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "asyncprocess.h"
+#include "clDataViewListCtrl.h"
 #include "clGetTextFromUserDialog.h"
 #include "cl_standard_paths.h"
 #include "cpp_scanner.h"
@@ -2260,4 +2261,12 @@ void clFitColumnWidth(wxDataViewCtrl* ctrl)
         ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
     }
 #endif
+}
+
+wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex)
+{
+    clDataViewTextBitmap tb(text, imgIndex);
+    wxVariant vr;
+    vr << tb;
+    return vr;
 }

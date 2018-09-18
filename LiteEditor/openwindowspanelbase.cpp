@@ -25,8 +25,8 @@ OpenWindowsPanelBase::OpenWindowsPanelBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_dvListCtrl = new clDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     mainSizer->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 

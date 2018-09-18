@@ -7,7 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_OPENWINDOWSPANELBASE_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_OPENWINDOWSPANELBASE_BASE_CLASSES_H
 
-#include "clDataViewListCtrl.h"
+#include "clThemedListCtrl.h"
 #include <wx/artprov.h>
 #include <wx/dataview.h>
 #include <wx/panel.h>
@@ -34,7 +34,7 @@
 class OpenWindowsPanelBase : public wxPanel
 {
 protected:
-    clDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnTabSelected(wxDataViewEvent& event) { event.Skip(); }
@@ -42,7 +42,7 @@ protected:
     virtual void OnMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    clDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     OpenWindowsPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxSize(500, 300), long style = wxWANTS_CHARS | wxTAB_TRAVERSAL);
     virtual ~OpenWindowsPanelBase();

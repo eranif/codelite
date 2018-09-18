@@ -163,8 +163,8 @@ MainBook::~MainBook()
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
     if(m_findBar) {
-        EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnEditorChanged, this);
-        EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &MainBook::OnAllEditorClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnAllEditorClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &MainBook::OnEditorChanged, this);
     }
 }
 
@@ -1072,7 +1072,6 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
-        event.SetClientData((void*)dynamic_cast<IEditor*>(editor));
         EventNotifier::Get()->AddPendingEvent(event);
         UpdateNavBar(editor);
     }
@@ -1629,13 +1628,10 @@ void MainBook::ShowQuickBar(const wxString& findWhat)
 void MainBook::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
-    // See if we got a new editor
-    if(event.GetClientData()) {
-        IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
-        if(editor) {
-            m_findBar->SetEditor(editor->GetCtrl());
-            return;
-        }
+    IEditor* editor = GetActiveEditor();
+    if(editor) {
+        m_findBar->SetEditor(editor->GetCtrl());
+        return;
     }
     m_findBar->SetEditor(NULL);
 }

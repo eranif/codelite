@@ -192,12 +192,10 @@ QuickFindBar::~QuickFindBar()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, [&](wxCommandEvent& event) {
         event.Skip();
         // See if we got a new editor
-        if(event.GetClientData()) {
-            IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
-            if(editor) {
-                this->SetEditor(editor->GetCtrl());
-                return;
-            }
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            this->SetEditor(editor->GetCtrl());
+            return;
         }
         SetEditor(NULL);
     });
@@ -474,7 +472,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         m_sci->SetFocus();
 
     } else if(!findWhat.IsEmpty()) {
-        
+
         if(findWhat.Contains("\n")) {
             // Multiline selection
             // enable the 'Replace in Selection'

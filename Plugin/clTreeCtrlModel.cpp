@@ -63,7 +63,7 @@ void clTreeCtrlModel::UnselectAll()
     m_selectedItems.clear();
 }
 
-void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select, bool addSelection, bool clear_old_selection)
+void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select_it, bool addSelection, bool clear_old_selection)
 {
     clRowEntry* child = ToPtr(item);
     if(!child) return;
@@ -72,24 +72,27 @@ void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select, bool add
 
     if(clear_old_selection && !ClearSelections(item != GetSingleSelection())) { return; }
 
-    if(select) {
+    if(select_it) {
         clRowEntry::Vec_t::iterator iter =
             std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
         // If the item is already selected, don't select it again
         if(iter != m_selectedItems.end()) { return; }
     }
 
+    // Fire an event only if the was no selection prior to this item
+    bool fire_event = (m_selectedItems.empty() && select_it);
+
     if(IsMultiSelection() && addSelection) {
         // If we are unselecting it, remove it from the array
         clRowEntry::Vec_t::iterator iter =
             std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
-        if(iter != m_selectedItems.end() && !select) { m_selectedItems.erase(iter); }
+        if(iter != m_selectedItems.end() && !select_it) { m_selectedItems.erase(iter); }
     } else {
         if(!ClearSelections(item != GetSingleSelection())) { return; }
     }
-    child->SetSelected(select);
-    if(select) {
-        m_selectedItems.push_back(child);
+    child->SetSelected(select_it);
+    m_selectedItems.push_back(child);
+    if(fire_event) {
         wxTreeEvent evt(wxEVT_TREE_SEL_CHANGED);
         evt.SetEventObject(m_tree);
         evt.SetItem(wxTreeItemId(child));
@@ -419,21 +422,23 @@ void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
     if(iter != m_selectedItems.end()) { return; }
 
     // if we already got selections, notify about the change
-    if(!m_selectedItems.empty()) {
-        wxTreeEvent evt(wxEVT_TREE_SEL_CHANGING);
-        evt.SetEventObject(m_tree);
-        evt.SetOldItem(GetSingleSelection());
-        SendEvent(evt);
-        if(!evt.IsAllowed()) { return; }
-    }
+//    if(!m_selectedItems.empty()) {
+//        wxTreeEvent evt(wxEVT_TREE_SEL_CHANGING);
+//        evt.SetEventObject(m_tree);
+//        evt.SetOldItem(GetSingleSelection());
+//        SendEvent(evt);
+//        if(!evt.IsAllowed()) { return; }
+//    }
 
     child->SetSelected(true);
     // Send 'SEL_CHANGED' event
     m_selectedItems.push_back(child);
-    wxTreeEvent evt(wxEVT_TREE_SEL_CHANGED);
-    evt.SetEventObject(m_tree);
-    evt.SetItem(wxTreeItemId(child));
-    SendEvent(evt);
+    if(m_selectedItems.size() == 1) {
+        wxTreeEvent evt(wxEVT_TREE_SEL_CHANGED);
+        evt.SetEventObject(m_tree);
+        evt.SetItem(wxTreeItemId(child));
+        SendEvent(evt);
+    }
 }
 
 bool clTreeCtrlModel::ClearSelections(bool notify)

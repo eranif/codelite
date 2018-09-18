@@ -82,7 +82,7 @@ public:
 static wxVariant MakeFileBitmapLabel(const wxString& filename)
 {
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
-    clDataViewTextBitmap tb(filename, 
+    clDataViewTextBitmap tb(filename,
                             bitmaps->GetMimeImageId(FileExtManager::GetType(filename, FileExtManager::TypeText)));
     wxVariant v;
     v << tb;
@@ -255,7 +255,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_stcLog->SetWrapMode(wxSTC_WRAP_WORD);
     m_gauge->Hide();
     GetSizer()->Fit(this);
-    
+
     BitmapLoader::Vec_t bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList();
     m_dvListCtrl->SetBitmaps(bitmaps);
     m_dvListCtrlUnversioned->SetBitmaps(bitmaps);
@@ -296,7 +296,10 @@ void GitConsole::AddText(const wxString& text)
     wxString curtext = m_stcLog->GetText();
     curtext << tmp;
     m_stcLog->SetText(curtext);
-    m_stcLog->ScrollToEnd();
+    m_stcLog->SetSelectionEnd(m_stcLog->GetLength());
+    m_stcLog->SetSelectionStart(m_stcLog->GetLength());
+    m_stcLog->SetCurrentPos(m_stcLog->GetLength());
+    m_stcLog->EnsureCaretVisible();
 }
 
 void GitConsole::AddRawText(const wxString& text) { AddText(text); }
@@ -318,7 +321,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
     wxVector<wxVariant> cols;
     wxArrayString files = ::wxStringTokenize(output, "\n\r", wxTOKEN_STRTOK);
     std::sort(files.begin(), files.end());
-    
+
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
     for(size_t i = 0; i < files.GetCount(); ++i) {
         wxString filename = files.Item(i);

@@ -1915,7 +1915,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
         // replace the function signature with the normalized one, so default values
         // will not appear in the function implementation
         wxString newSig = TagsManagerST::Get()->NormalizeFunctionSig(
-            tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro);
+            tag->GetSignature(), Normalize_Func_Name);
         tag->SetSignature(newSig);
         wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
 

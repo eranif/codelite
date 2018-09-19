@@ -1882,9 +1882,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
     // Build the flags required by the NormalizeFunctionSig() method
     size_t tmpFlags(0);
     if(flags & FunctionFormat_Impl) {
-        tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro;
+        tmpFlags |= Normalize_Func_Name;
     } else {
-        tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro | Normalize_Func_Default_value;
+        tmpFlags |= Normalize_Func_Name | Normalize_Func_Default_value;
     }
 
     if(flags & FunctionFormat_Arg_Per_Line) tmpFlags |= Normalize_Func_Arg_Per_Line;

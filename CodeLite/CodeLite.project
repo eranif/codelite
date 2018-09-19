@@ -58,7 +58,6 @@
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
     <File Name="tag_tree.cpp"/>
-    <File Name="symbol_tree.cpp"/>
     <File Name="readtags.cpp"/>
     <File Name="progress_dialog.cpp"/>
     <File Name="procutils.cpp"/>
@@ -133,7 +132,6 @@
     <File Name="readtags.h"/>
     <File Name="singleton.h"/>
     <File Name="smart_ptr.h"/>
-    <File Name="symbol_tree.h"/>
     <File Name="tag_tree.h"/>
     <File Name="tokenizer.h"/>
     <File Name="tree.h"/>

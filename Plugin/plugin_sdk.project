@@ -367,6 +367,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">
+      <File Name="symbol_tree.h"/>
+      <File Name="symbol_tree.cpp"/>
       <File Name="clTableLineEditorDlg.cpp"/>
       <File Name="clTableLineEditorDlg.h"/>
       <File Name="clTableWithPagination.cpp"/>

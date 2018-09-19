@@ -513,6 +513,37 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 
                     output.Replace(wxT("$(IntermediateDirectory)"), id);
                     output.Replace(wxT("$(OutDir)"), id);
+                    
+                    // Compiler-related variables
+
+                    wxString cFlags = bldConf->GetCCompileOptions();
+                    cFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(CC)"), bldConf->GetCompiler()->GetTool("CC"));
+                    output.Replace(wxT("$(CFLAGS)"), cFlags);
+                    
+                    wxString cxxFlags = bldConf->GetCompileOptions();
+                    cxxFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(CXX)"), bldConf->GetCompiler()->GetTool("CXX"));
+                    output.Replace(wxT("$(CXXFLAGS)"), cxxFlags);
+                  
+                    wxString ldFlags = bldConf->GetLinkOptions();
+                    ldFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(LDFLAGS)"), ldFlags);
+                    
+                    wxString asFlags = bldConf->GetAssmeblerOptions();
+                    asFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
+                    output.Replace(wxT("$(ASFLAGS)"), asFlags);
+                    
+                    wxString arFlags = bldConf->GetResCompileOptions();
+                    arFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
+                    output.Replace(wxT("$(ARFLAGS)"), arFlags);
+                    
+                    output.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
+                    output.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
+                    output.Replace(wxT("$(ResourcePath)"), bldConf->GetLibraries());
+                    output.Replace(wxT("$(LinkLibraries)"), bldConf->GetLibraries());
                 }
 
                 if(output.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)

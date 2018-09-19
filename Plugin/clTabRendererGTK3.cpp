@@ -158,27 +158,11 @@ void clTabRendererGTK3::DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC&
 void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                                            size_t style)
 {
-    wxRect rr = rect;
-#ifdef __WXMSW__
-    rr.Deflate(1, 1);
-#endif
-    wxPoint p1, p2;
-    if((style & kNotebook_LeftTabs)) {
-        dc.SetPen(colours.tabAreaColour);
-        dc.DrawLine(rr.GetRightTop(), rr.GetRightBottom());
-    } else if(style & kNotebook_RightTabs) {
-        // Right tabs
-        dc.SetPen(colours.tabAreaColour);
-        dc.DrawLine(rr.GetLeftTop(), rr.GetLeftBottom());
-    } else if(style & kNotebook_BottomTabs) {
-        // Bottom tabs
-        dc.SetPen(colours.tabAreaColour);
-        dc.DrawLine(rr.GetTopRight(), rr.GetTopLeft());
-    } else {
-        // Top tabs
-        dc.SetPen(colours.tabAreaColour);
-        dc.DrawLine(rr.GetBottomRight(), rr.GetBottomLeft());
-    }
+    wxUnusedVar(parent);
+    wxUnusedVar(dc);
+    wxUnusedVar(rect);
+    wxUnusedVar(colours);
+    wxUnusedVar(style);
 }
 
 void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)

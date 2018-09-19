@@ -6,6 +6,23 @@ clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wx
     : clScrolledPanel(parent, id, pos, size, style)
     , m_viewHeader(this)
 {
+    DoInitialize();
+}
+
+clControlWithItems::clControlWithItems()
+    : m_viewHeader(this)
+{
+}
+
+bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+{
+    if(!clScrolledPanel::Create(parent, id, pos, size, style)) { return false; }
+    DoInitialize();
+    return true;
+}
+
+void clControlWithItems::DoInitialize()
+{
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);

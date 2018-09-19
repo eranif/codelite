@@ -19,7 +19,7 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager
     , m_manager(manager)
 {
     MSWSetNativeTheme(this);
-    m_keyboard.reset(new clTreeKeyboardInput(this));
+    //m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
@@ -29,7 +29,7 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
     , m_manager(NULL)
 {
     MSWSetNativeTheme(this);
-    m_keyboard.reset(new clTreeKeyboardInput(this));
+    //m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
 PHPFileLayoutTree::~PHPFileLayoutTree() { m_keyboard.reset(nullptr); }

@@ -1,35 +1,35 @@
 #include "clTreeKeyboardInput.h"
+#include "fileutils.h"
+#include "macros.h"
+#include <algorithm>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
-#include "macros.h"
-#include "fileutils.h"
-#include <algorithm>
 #include <wx/uiaction.h>
 
-clTreeKeyboardInput::clTreeKeyboardInput(wxTreeCtrl* tree)
+clTreeKeyboardInput::clTreeKeyboardInput(clTreeCtrl* tree)
     : m_tree(tree)
 {
-    m_tree->Bind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnKeyDown, this);
-    m_text = new wxTextCtrl(m_tree, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-    m_text->Hide();
-    m_text->Bind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnTextKeyDown, this);
-    m_text->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
-    m_text->Bind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
-    m_tree->Bind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
-    m_tree->Bind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
+    //m_tree->Bind(wxEVT_TREE_KEY_DOWN, &clTreeKeyboardInput::OnKeyDown, this);
+    //m_text = new wxTextCtrl(m_tree->GetParent(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    //m_text->Hide();
+    //m_text->Bind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnTextKeyDown, this);
+    //m_text->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
+    //m_text->Bind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
+    //m_tree->Bind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
+    //m_tree->Bind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
 }
 
 clTreeKeyboardInput::~clTreeKeyboardInput()
 {
-    m_tree->Unbind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnKeyDown, this);
-    m_text->Unbind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnTextKeyDown, this);
-    m_text->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
-    m_text->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
-    m_tree->Unbind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
-    m_tree->Unbind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
+    //m_tree->Unbind(wxEVT_TREE_KEY_DOWN, &clTreeKeyboardInput::OnKeyDown, this);
+    //m_text->Unbind(wxEVT_KEY_DOWN, &clTreeKeyboardInput::OnTextKeyDown, this);
+    //m_text->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clTreeKeyboardInput::OnTextUpdated, this);
+    //m_text->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clTreeKeyboardInput::OnTextEnter, this);
+    //m_tree->Unbind(wxEVT_SET_FOCUS, &clTreeKeyboardInput::OnTreeFocus, this);
+    //m_tree->Unbind(wxEVT_SIZE, &clTreeKeyboardInput::OnTreeSize, this);
 }
 
-void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
+void clTreeKeyboardInput::OnKeyDown(wxTreeEvent& event)
 {
     event.Skip(false);
 
@@ -71,17 +71,16 @@ void clTreeKeyboardInput::OnKeyDown(wxKeyEvent& event)
             ignoreKeys.insert(i);
         }
     }
-    if((event.GetModifiers() != wxMOD_NONE && event.GetModifiers() != wxMOD_SHIFT) || ignoreKeys.count(ch)) {
+    const wxKeyEvent& keyEvent = event.GetKeyEvent();
+    if((keyEvent.GetModifiers() != wxMOD_NONE && keyEvent.GetModifiers() != wxMOD_SHIFT) || ignoreKeys.count(ch)) {
         event.Skip();
         return;
     }
 
-    if(!m_text->IsShown()) {
-        DoShowTextBox();
-    }
+    if(!m_text->IsShown()) { DoShowTextBox(); }
 
     CallAfter(&clTreeKeyboardInput::SetTextFocus);
-    CallAfter(&clTreeKeyboardInput::SimulateKeyDown, event);
+    CallAfter(&clTreeKeyboardInput::SimulateKeyDown, event.GetKeyEvent());
 }
 
 void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
@@ -91,64 +90,25 @@ void clTreeKeyboardInput::OnTextKeyDown(wxKeyEvent& event)
     if(ch == WXK_ESCAPE) {
         event.Skip(false);
         Clear();
-        m_tree->CallAfter(&wxTreeCtrl::SetFocus);
-    } else if(ch == WXK_DOWN) {
+        m_tree->CallAfter(&clTreeCtrl::SetFocus);
+    } else if(ch == WXK_DOWN || ch == WXK_UP) {
         event.Skip(false);
-        // get the children list starting from the focused item
-        GetChildren(m_tree->GetFocusedItem());
-        if(!m_items.empty()) {
-            // exclude the first item from the list
-            m_items.erase(m_items.begin());
-        }
-
-        auto iter = m_items.begin();
-        for(; iter != m_items.end(); ++iter) {
-            wxString text = m_tree->GetItemText(*iter);
-            if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
-                CallAfter(&clTreeKeyboardInput::SelecteItem, (*iter));
-                return;
-            }
-        }
-    } else if(ch == WXK_UP) {
-        event.Skip(false);
-        // get all items "until" the focused item
-        GetChildren(wxTreeItemId(), m_tree->GetFocusedItem());
-        auto iter = m_items.rbegin();
-        for(; iter != m_items.rend(); ++iter) {
-            wxString text = m_tree->GetItemText(*iter);
-            if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
-                CallAfter(&clTreeKeyboardInput::SelecteItem, (*iter));
-                return;
-            }
-        }
+        wxTreeItemId match = FindItem(m_tree->GetSelection(), m_text->GetValue(), (ch == WXK_UP));
+        if(match.IsOk()) { CallAfter(&clTreeKeyboardInput::SelecteItem, match); }
     }
 }
 
 void clTreeKeyboardInput::OnTextUpdated(wxCommandEvent& event)
 {
-    GetChildren();
-
-    auto iter = m_items.begin();
-    for(; iter != m_items.end(); ++iter) {
-        wxString text = m_tree->GetItemText(*iter);
-        if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
-            CallAfter(&clTreeKeyboardInput::SelecteItem, (*iter));
-            return;
-        }
-    }
+    event.Skip();
+    wxTreeItemId match = FindItem(m_tree->GetSelection(), m_text->GetValue(), false);
+    if(match.IsOk()) { CallAfter(&clTreeKeyboardInput::SelecteItem, match); }
 }
 
 void clTreeKeyboardInput::SelecteItem(const wxTreeItemId& item)
 {
-    if(m_tree->GetWindowStyleFlag() & wxTR_MULTIPLE) {
-        m_tree->UnselectAll();
-        m_tree->EnsureVisible(item);
-        m_tree->SetFocusedItem(item);
-        m_tree->SelectItem(item);
-    } else {
-        m_tree->EnsureVisible(item);
-        m_tree->SelectItem(item);
-    }
+    m_tree->SelectItem(item);
+    m_tree->EnsureVisible(item);
 
     // Adjust the text box position and size
     DoShowTextBox();
@@ -158,45 +118,7 @@ void clTreeKeyboardInput::OnTreeFocus(wxFocusEvent& event)
 {
     event.Skip();
     // The tree got the focus. Hide the text control if any
-    if(m_text->IsShown()) {
-        Clear();
-    }
-}
-
-bool clTreeKeyboardInput::CheckItemForMatch(const wxTreeItemId& startItem)
-{
-    // First we check the current item
-    {
-        wxString text = m_tree->GetItemText(startItem);
-        if(FileUtils::FuzzyMatch(m_text->GetValue(), text)) {
-            // select this item
-            CallAfter(&clTreeKeyboardInput::SelecteItem, startItem);
-            return true;
-        }
-    }
-
-    // Check the item children if the item has children and only
-    // if the item is expanded
-    if(m_tree->ItemHasChildren(startItem) && m_tree->IsExpanded(startItem)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = m_tree->GetFirstChild(startItem, cookie);
-        while(child.IsOk()) {
-            if(CheckItemForMatch(child)) {
-                return true;
-            }
-            child = m_tree->GetNextChild(startItem, cookie);
-        }
-    }
-
-    // Check the item siblings (we go down)
-    wxTreeItemId item = m_tree->GetNextSibling(startItem);
-    while(item.IsOk()) {
-        if(CheckItemForMatch(item)) {
-            return true;
-        }
-        item = m_tree->GetNextSibling(item);
-    }
-    return false;
+    if(m_text->IsShown()) { Clear(); }
 }
 
 void clTreeKeyboardInput::SetTextFocus()
@@ -205,7 +127,6 @@ void clTreeKeyboardInput::SetTextFocus()
     // Remove the selection
     m_text->SelectNone();
     m_text->SetInsertionPoint(m_text->GetLastPosition());
-    m_tree->UnselectAll();
 }
 
 void clTreeKeyboardInput::OnTextEnter(wxCommandEvent& event)
@@ -221,53 +142,6 @@ void clTreeKeyboardInput::OnTextEnter(wxCommandEvent& event)
 
     // Hide the text control
     Clear();
-}
-
-void clTreeKeyboardInput::GetChildren(const wxTreeItemId& from, const wxTreeItemId& until)
-{
-    m_items.clear();
-    wxTreeItemId startItem = m_tree->GetRootItem();
-    if(startItem.IsOk() && m_tree->ItemHasChildren(startItem)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = m_tree->GetFirstChild(startItem, cookie);
-        while(child.IsOk()) {
-            DoGetChildren(child);
-            child = m_tree->GetNextChild(startItem, cookie);
-        }
-    }
-
-    if(from.IsOk()) {
-        std::list<wxTreeItemId> items;
-        auto iter =
-            std::find_if(m_items.begin(), m_items.end(), [&](const wxTreeItemId& item) { return item == from; });
-        if(iter != m_items.end()) {
-            // we got a match
-            items.insert(items.end(), iter, m_items.end());
-            m_items.swap(items);
-        }
-    } else if(until.IsOk()) {
-        std::list<wxTreeItemId> items;
-        auto iter =
-            std::find_if(m_items.begin(), m_items.end(), [&](const wxTreeItemId& item) { return item == until; });
-        if(iter != m_items.end()) {
-            // we got a match
-            items.insert(items.end(), m_items.begin(), iter);
-            m_items.swap(items);
-        }
-    }
-}
-
-void clTreeKeyboardInput::DoGetChildren(const wxTreeItemId& parent)
-{
-    m_items.push_back(parent);
-    if(m_tree->ItemHasChildren(parent) && m_tree->IsExpanded(parent)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = m_tree->GetFirstChild(parent, cookie);
-        while(child.IsOk()) {
-            DoGetChildren(child);
-            child = m_tree->GetNextChild(parent, cookie);
-        }
-    }
 }
 
 void clTreeKeyboardInput::Clear()
@@ -288,7 +162,6 @@ void clTreeKeyboardInput::DoShowTextBox()
     if(!m_text->IsShown()) {
         m_text->Show();
         m_text->ChangeValue("");
-        m_tree->UnselectAll();
         m_items.clear();
     }
 }
@@ -308,4 +181,14 @@ void clTreeKeyboardInput::SimulateKeyDown(const wxKeyEvent& event)
     wxUIActionSimulator sim;
     sim.KeyDown(event.GetKeyCode(), event.GetModifiers());
     wxYield();
+}
+
+wxTreeItemId clTreeKeyboardInput::FindItem(const wxTreeItemId& from, const wxString& pattern, bool goingUp) const
+{
+    wxTreeItemId nextItem = goingUp ? m_tree->GetPrevItem(from) : m_tree->GetNextItem(from);
+    while(nextItem.IsOk()) {
+        if(FileUtils::FuzzyMatch(pattern, m_tree->GetItemText(nextItem))) { return nextItem; }
+        nextItem = goingUp ? m_tree->GetPrevItem(nextItem) : m_tree->GetNextItem(nextItem);
+    }
+    return wxTreeItemId();
 }

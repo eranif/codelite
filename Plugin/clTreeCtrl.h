@@ -39,13 +39,17 @@ private:
      */
     void DoUpdateHeader(const wxTreeItemId& item);
 
+    void DoInitialize();
+
 public:
     virtual int GetFirstItemPosition() const;
     virtual int GetRange() const;
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = 0);
+    clTreeCtrl();
     virtual ~clTreeCtrl();
-
+    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0);
     //===--------------------
     // table view support
     //===--------------------
@@ -197,6 +201,16 @@ public:
      */
     wxTreeItemId GetFirstChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const;
     wxTreeItemId GetNextChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const;
+
+    /**
+     * @brief get the next item in tree (as if you were clicking DOWN in the keyboard)
+     */
+    wxTreeItemId GetNextItem(const wxTreeItemId& item) const;
+
+    /**
+     * @brief get the prev item in tree (as if you were clicking DOWN in the keyboard)
+     */
+    wxTreeItemId GetPrevItem(const wxTreeItemId& item) const;
 
     /**
      * @brief for compatibility, we dont really need to call this method manually

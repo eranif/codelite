@@ -22,25 +22,71 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
 #include "fileutils.h"
+#include "precompiled_header.h"
 
-#include "symbol_tree.h"
 #include "ctags_manager.h"
-#include <wx/wupdlock.h>
+#include "symbol_tree.h"
 #include "tokenizer.h"
+#include <functional>
+#include <wx/wupdlock.h>
 
 SymbolTree::SymbolTree()
     : m_sortByLineNumber(true)
 {
     InitialiseSymbolMap();
+
+    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
+        // Line number compare
+        MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(a->GetClientObject());
+        MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(b->GetClientObject());
+        if(m_sortByLineNumber && cd1 && cd2) {
+            return cd1->GetLine() > cd2->GetLine();
+        } else {
+            // ABC compare
+            int img1, img2;
+            img1 = a->GetBitmapIndex();
+            img2 = b->GetBitmapIndex();
+            if(img1 > img2)
+                return true;
+            else if(img1 < img2)
+                return false;
+            else {
+                // Items  has the same icons, compare text
+                return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
+            }
+        }
+    };
+    SetSortFunction(func);
 }
 
 SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : m_sortByLineNumber(true)
 {
     InitialiseSymbolMap();
-    Create(parent, id, pos, size, style);
+    Create(parent, id, pos, size, style | wxTR_HIDE_ROOT | wxTR_ROW_LINES);
+    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
+        // Line number compare
+        MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(a->GetClientObject());
+        MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(b->GetClientObject());
+        if(m_sortByLineNumber && cd1 && cd2) {
+            return cd1->GetLine() > cd2->GetLine();
+        } else {
+            // ABC compare
+            int img1, img2;
+            img1 = a->GetBitmapIndex();
+            img2 = b->GetBitmapIndex();
+            if(img1 > img2)
+                return true;
+            else if(img1 < img2)
+                return false;
+            else {
+                // Items  has the same icons, compare text
+                return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
+            }
+        }
+    };
+    SetSortFunction(func);
 }
 
 SymbolTree::~SymbolTree() {}
@@ -114,11 +160,7 @@ void SymbolTree::InitialiseSymbolMap()
 
 void SymbolTree::Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-#ifndef __WXGTK__
-    style |= wxTR_LINES_AT_ROOT;
-#endif
-
-    wxTreeCtrl::Create(parent, id, pos, size, style);
+    clThemedTreeCtrl::Create(parent, id, pos, size, style);
     BuildTree(wxFileName(), TagEntryPtrVector_t());
 }
 
@@ -135,7 +177,7 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
         }
         // Load the new tags from the database
         db->SelectTagsByFile(fileName.GetFullPath(), newTags);
-        
+
         // Compare the new tags with the old ones
         if(!forceBuild && TagsManagerST::Get()->AreTheSame(newTags, m_currentTags)) return;
 
@@ -154,9 +196,7 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
 
     // Convert them into tree
     m_tree = TagsManagerST::Get()->Load(m_fileName, &m_currentTags);
-    if(!m_tree) {
-        return;
-    }
+    if(!m_tree) { return; }
 
     // Add invisible root node
     wxTreeItemId root;
@@ -167,15 +207,11 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
     // add three items here:
     // the globals node, the mcros and the prototype node
     m_globalsNode = AppendItem(root, wxT("Global Functions and Variables"), 2, 2,
-        new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
-    m_prototypesNode = AppendItem(
-        root, wxT("Functions Prototypes"), 2, 2, new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
+                               new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
+    m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), 2, 2,
+                                  new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
     m_macrosNode = AppendItem(root, wxT("Macros"), 2, 2, new MyTreeItemData(wxT("Macros"), wxEmptyString));
 
-    // Iterate over the tree and add items
-    m_sortItems.clear();
-
-    Freeze();
     for(; !walker.End(); walker++) {
         // Add the item to the tree
         TagNode* node = walker.GetNode();
@@ -187,23 +223,9 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
         AddItem(node);
     }
 
-    SortTree(m_sortItems);
-    if(ItemHasChildren(m_globalsNode) == false) {
-        Delete(m_globalsNode);
-    }
-    if(ItemHasChildren(m_prototypesNode) == false) {
-        Delete(m_prototypesNode);
-    }
-    if(ItemHasChildren(m_macrosNode) == false) {
-        Delete(m_macrosNode);
-    }
-    Thaw();
-
-    // select the root node by default
-    if(!(GetWindowStyleFlag() & wxTR_HIDE_ROOT)) {
-        // root is visible, select it
-        SelectItem(GetRootItem());
-    }
+    if(ItemHasChildren(m_globalsNode) == false) { Delete(m_globalsNode); }
+    if(ItemHasChildren(m_prototypesNode) == false) { Delete(m_prototypesNode); }
+    if(ItemHasChildren(m_macrosNode) == false) { Delete(m_macrosNode); }
 }
 
 void SymbolTree::AddItem(TagNode* node)
@@ -218,19 +240,15 @@ void SymbolTree::AddItem(TagNode* node)
     if(nodeData.GetName().IsEmpty()) return;
 
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    if(nodeData.GetKind() == wxT("prototype")) {
-        font.SetStyle(wxFONTSTYLE_ITALIC);
-    }
-    if(nodeData.GetAccess() == wxT("public")) {
-        font.SetWeight(wxFONTWEIGHT_BOLD);
-    }
+    if(nodeData.GetKind() == wxT("prototype")) { font.SetStyle(wxFONTSTYLE_ITALIC); }
+    if(nodeData.GetAccess() == wxT("public")) { font.SetWeight(wxFONTWEIGHT_BOLD); }
 
     //-------------------------------------------------------------------------------
     // We gather globals together under special node
     //-------------------------------------------------------------------------------
     if((nodeData.GetParent() == wxT("<global>")) && // parent is global scope
-        m_globalsKind.find(nodeData.GetKind()) !=
-            m_globalsKind.end()) { // the node kind is one of function, prototype or variable
+       m_globalsKind.find(nodeData.GetKind()) !=
+           m_globalsKind.end()) { // the node kind is one of function, prototype or variable
         if(nodeData.GetKind() == wxT("prototype"))
             parentHti = m_prototypesNode;
         else
@@ -241,26 +259,22 @@ void SymbolTree::AddItem(TagNode* node)
     //---------------------------------------------------------------------------------
     // Macros are gathered under the 'Macros' node
     //---------------------------------------------------------------------------------
-    if(nodeData.GetKind() == wxT("macro")) {
-        parentHti = m_macrosNode;
-    }
+    if(nodeData.GetKind() == wxT("macro")) { parentHti = m_macrosNode; }
 
     // only if parent is valid, we add item to the tree
     wxTreeItemId hti;
 
-    if(parentHti.IsOk() == false) {
-        parentHti = GetRootItem();
-    }
+    if(parentHti.IsOk() == false) { parentHti = GetRootItem(); }
 
     if(parentHti.IsOk()) {
-        hti = AppendItem(parentHti, // parent
-            displayName,            // display name
-            iconIndex,              // item image index
-            iconIndex,              // selected item image
+        hti = AppendItem(
+            parentHti,   // parent
+            displayName, // display name
+            iconIndex,   // item image index
+            iconIndex,   // selected item image
             new MyTreeItemData(node->GetData().GetFile(), node->GetData().GetPattern(), node->GetData().GetLine()));
         SetItemFont(hti, font);
         node->GetData().SetTreeItemId(hti);
-        m_sortItems[parentHti.m_pItem] = true;
         m_items[nodeData.Key()] = hti.m_pItem;
     }
 }
@@ -272,42 +286,6 @@ void SymbolTree::SelectItemByName(const wxString& name)
         // if(currentSelection.IsOk()) {
         //     SelectItem(currentSelection, false);
         // }
-    }
-}
-
-void SymbolTree::SortTree(std::map<void*, bool>& nodes)
-{
-    std::map<void*, bool>::iterator iter = nodes.begin();
-    for(; iter != nodes.end(); iter++) {
-        wxTreeItemId item = iter->first;
-        if(item.IsOk()) {
-            // Does this node has children?
-            if(GetChildrenCount(item) == 0) continue;
-            SortChildren(item);
-        }
-    }
-}
-
-int SymbolTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
-{
-    // Line number compare
-    MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(GetItemData(item1));
-    MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(GetItemData(item2));
-    if(m_sortByLineNumber && cd1 && cd2) {
-        return cd1->GetLine() > cd2->GetLine();
-    } else {
-        // ABC compare
-        int img1, img2;
-        img1 = GetItemImage(item1);
-        img2 = GetItemImage(item2);
-        if(img1 > img2)
-            return 1;
-        else if(img1 < img2)
-            return -1;
-        else {
-            // Items  has the same icons, compare text
-            return wxTreeCtrl::OnCompareItems(item1, item2);
-        }
     }
 }
 
@@ -414,21 +392,13 @@ void SymbolTree::GetItemChildrenRecursive(wxTreeItemId& parent, std::map<void*, 
 void SymbolTree::AddSymbols(const std::vector<std::pair<wxString, TagEntry> >& items)
 {
     if(!m_tree) return;
-
-    m_sortItems.clear();
-    Freeze();
     for(size_t i = 0; i < items.size(); i++) {
         TagEntry data = items.at(i).second;
         if(m_tree) {
             TagNode* node = m_tree->AddEntry(data);
-            if(node) {
-                AddItem(node);
-            }
+            if(node) { AddItem(node); }
         }
     } // for(size_t i=0; i<items.size(); i++)
-    SortTree(m_sortItems);
-    m_sortItems.clear();
-    Thaw();
 }
 
 void SymbolTree::Clear()
@@ -440,7 +410,6 @@ void SymbolTree::Clear()
     m_globalsNode = wxTreeItemId();
     m_prototypesNode = wxTreeItemId();
     m_macrosNode = wxTreeItemId();
-    m_sortItems.clear();
     m_fileName.Clear();
     Thaw();
 }
@@ -463,11 +432,13 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(item, cookie);
         while(child.IsOk()) {
-            if(Matches(child, patter)) {
-                return true;
-            }
+            if(Matches(child, patter)) { return true; }
             child = GetNextChild(item, cookie);
         }
     }
     return false;
 }
+
+void SymbolTree::SetSymbolsImages(std::vector<wxBitmap>& bitmaps) { SetBitmaps(bitmaps); }
+
+void SymbolTree::SelectFirstItem() { SelectItem(GetFirstVisibleItem()); }

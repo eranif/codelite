@@ -22,18 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "globals.h"
-#include "stringsearcher.h"
-#include "stringsearcher.h"
 #include "cl_editor.h"
+#include "globals.h"
 #include "pluginmanager.h"
+#include "precompiled_header.h"
+#include "stringsearcher.h"
 
+#include "bitmap_loader.h"
 #include "cpp_symbol_tree.h"
-#include "manager.h"
 #include "frame.h"
-#include <wx/xrc/xmlres.h>
+#include "manager.h"
 #include <wx/imaglist.h>
+#include <wx/xrc/xmlres.h>
 
 IMPLEMENT_DYNAMIC_CLASS(CppSymbolTree, SymbolTree)
 
@@ -42,28 +42,25 @@ const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
 //----------------------------------------------------------------
 // accessory function
 //----------------------------------------------------------------
-wxImageList* CreateSymbolTreeImages()
+void CreateSymbolTreeImages(BitmapLoader::Vec_t& bitmaps)
 {
-    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
-
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 0
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));             // 4
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));    // 5
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected"))); // 6
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));   // 7
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));      // 8
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));   // 9
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));     // 10
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));            // 11
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
-    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 15
-    return images;
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 0
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/struct")));             // 4
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));    // 5
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_protected"))); // 6
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));   // 7
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));      // 8
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));   // 9
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));     // 10
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));            // 11
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
+    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 15
 }
 
 CppSymbolTree::CppSymbolTree() {}
@@ -99,9 +96,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
     if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno - 1)) {
         // get the editor, and search for the pattern in the file
         clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-        if(editor) {
-            FindAndSelect(editor, pattern, GetItemText(item));
-        }
+        if(editor) { FindAndSelect(editor, pattern, GetItemText(item)); }
     }
 
     // post an event that an item was activated

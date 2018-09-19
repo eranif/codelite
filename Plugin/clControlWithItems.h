@@ -26,6 +26,7 @@ private:
     int m_scrollTick = SCROLL_TICK;
 
 protected:
+    void DoInitialize();
     int GetNumLineCanFitOnScreen() const;
     virtual clRowEntry* GetFirstItemOnScreen();
     virtual void SetFirstItemOnScreen(clRowEntry* item);
@@ -40,7 +41,9 @@ public:
     clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clControlWithItems();
-
+    clControlWithItems();
+    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0);
     virtual int GetIndent() const { return m_indent; }
 
     virtual void SetFirstColumn(int firstColumn) { this->m_firstColumn = firstColumn; }
@@ -55,12 +58,12 @@ public:
 
     void SetScrollTick(int scrollTick) { this->m_scrollTick = scrollTick; }
     int GetScrollTick() const { return m_scrollTick; }
-        
+
     /**
      * @brief use native header drawings
      */
     void SetNativeHeader(bool b);
-    
+
     /**
      * @brief return bitmap at a given index
      */

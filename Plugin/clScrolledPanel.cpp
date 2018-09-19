@@ -1,18 +1,30 @@
 #include "clScrollBar.h"
 #include "clScrolledPanel.h"
+#include <wx/dcscreen.h>
 #include <wx/log.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/dcscreen.h>
 
 #ifdef __WXGTK__
-#    include <gtk/gtk.h>
+#include <gtk/gtk.h>
 #endif
 
 clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxWindow(parent, id, pos, size, style)
-    , m_dragStartTime((time_t)-1)
 {
+    DoInitialize();
+}
+
+bool clScrolledPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+{
+    if(!wxWindow::Create(parent, id, pos, size, style)) { return false; }
+    DoInitialize();
+    return true;
+}
+
+void clScrolledPanel::DoInitialize()
+{
+    m_dragStartTime = (time_t)-1;
     m_vsb = new clScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
     DoPositionVScrollbar();
 
@@ -324,10 +336,10 @@ wxFont clScrolledPanel::GetDefaultFont()
     static bool once = false;
     static double ratio = 1.0;
     if(!once) {
-        GdkScreen *screen = gdk_screen_get_default();
+        GdkScreen* screen = gdk_screen_get_default();
         if(screen) {
             double res = gdk_screen_get_resolution(screen);
-            ratio = (res / 96.); 
+            ratio = (res / 96.);
         }
         once = true;
     }

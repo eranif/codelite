@@ -70,7 +70,10 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
 
     m_panelCxx->GetSizer()->Add(m_tree, 1, wxEXPAND);
     m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
-    m_tree->AssignImageList(svSymbolTree::CreateSymbolTreeImages());
+
+    BitmapLoader::Vec_t bitmaps;
+    svSymbolTree::CreateSymbolTreeImages(bitmaps);
+    m_tree->SetBitmaps(bitmaps);
     m_treeCtrlPhp->SetManager(m_mgr);
 
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged),

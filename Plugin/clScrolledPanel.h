@@ -45,7 +45,8 @@ protected:
 
 protected:
     bool ShouldShowScrollBar() const;
-
+    void DoInitialize();
+    
     /**
      * @brief return true row from a position
      */
@@ -54,8 +55,11 @@ protected:
 public:
     clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = 0);
+    clScrolledPanel() {}
     virtual ~clScrolledPanel();
 
+    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0);
     /**
      * @brief return the system default font
      */

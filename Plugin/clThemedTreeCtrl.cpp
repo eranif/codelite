@@ -11,8 +11,20 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     colours.InitDefaults();
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
-    //SetShowScrollBarOnFocus(true);
+    // SetShowScrollBarOnFocus(true);
 }
+
+bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+{
+    if(!clTreeCtrl::Create(parent, id, pos, size, style)) { return false; }
+    clColours colours;
+    colours.InitDefaults();
+    SetColours(colours);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
+    return true;
+}
+
+clThemedTreeCtrl::clThemedTreeCtrl() {}
 
 clThemedTreeCtrl::~clThemedTreeCtrl()
 {

@@ -24,12 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CODELITE_SYMBOL_TREE_H
 #define CODELITE_SYMBOL_TREE_H
+#include "clThemedTreeCtrl.h"
+#include "codelite_exports.h"
 #include "ctags_manager.h"
+#include "entry.h"
+#include "map"
 #include "parse_thread.h"
 #include "wx/filename.h"
-#include "entry.h"
-#include "codelite_exports.h"
-#include "map"
 
 /**
  * Class MyTreeItemData, a user defined class which keeps the full name of a tree item.
@@ -71,14 +72,13 @@ public:
  * \author Eran
  *
  */
-class WXDLLIMPEXP_SDK SymbolTree : public wxTreeCtrl
+class WXDLLIMPEXP_SDK SymbolTree : public clThemedTreeCtrl
 {
 protected:
     std::map<wxString, int> m_imagesMap;
     wxTreeItemId m_globalsNode;
     wxTreeItemId m_prototypesNode;
     wxTreeItemId m_macrosNode;
-    std::map<void*, bool> m_sortItems;
     std::map<wxString, bool> m_globalsKind;
     wxFileName m_fileName;
     std::map<wxString, void*> m_items;
@@ -101,7 +101,7 @@ public:
      * \param style Window style
      */
     SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = 0);
+               const wxSize& size = wxDefaultSize, long style = 0);
 
     /**
      * @brief clear the tree content
@@ -122,7 +122,7 @@ public:
      * \param style Window style
      */
     virtual void Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+                        const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /**
      * Construct a outline tree for fileName
@@ -155,7 +155,7 @@ public:
      * since when coming to implementation (not prototypes!), all functions will receive 'public' icon.
      * \param images Image list (allocated on the heap), this class becomes the owner of this image list
      */
-    virtual void SetSymbolsImages(wxImageList* images) { AssignImageList(images); };
+    virtual void SetSymbolsImages(std::vector<wxBitmap>& bitmaps);
 
     void AddSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
     void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
@@ -175,7 +175,7 @@ public:
 
     void SetSortByLineNumber(bool sortByLineNumber) { this->m_sortByLineNumber = sortByLineNumber; }
     bool IsSortByLineNumber() const { return m_sortByLineNumber; }
-    
+
 protected:
     bool Matches(const wxTreeItemId& item, const wxString& patter);
 
@@ -201,25 +201,12 @@ protected:
     void InitialiseSymbolMap();
 
     /**
-     * Sort the tree.
-     * \param nodes Vector of nodes to sort
-     */
-    void SortTree(std::map<void*, bool>& nodes);
-
-    /**
-     * Override this function in the derived class to change the sort order of the items in the tree control.
-     * \param item1 Item one
-     * \param item2 Item two
-     * \return The function should return a negative, zero or positive value
-     * if the first item is less than, equal to or greater than the second one.
-     */
-    int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
-
-    /**
      * Update gui item with new data
      * \param data new data
      * \param key node key
      */
     void UpdateGuiItem(TagEntry& data, const wxString& key);
+    
+    void SelectFirstItem();
 };
 #endif // CODELITE_SYMBOL_TREE_H

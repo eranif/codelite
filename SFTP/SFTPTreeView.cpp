@@ -98,8 +98,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     m_treeCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
 
-    // m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
-    ::MSWSetNativeTheme(m_treeCtrl);
+    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
 
     m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."),
                        m_bmpLoader->LoadBitmap("folder-users"));

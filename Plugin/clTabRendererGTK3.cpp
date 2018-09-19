@@ -137,6 +137,7 @@ void clTabRendererGTK3::DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC&
     wxPoint point1 = pt1;
     wxPoint point2 = pt2;
     for(int i = 0; i < width; ++i) {
+        dc.DrawLine(point1, point2);
         if(direction == wxDOWN) {
             point1.y++;
             point2.y++;
@@ -151,7 +152,6 @@ void clTabRendererGTK3::DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC&
             point1.x++;
             point2.x++;
         }
-        dc.DrawLine(point1, point2);
     }
 }
 

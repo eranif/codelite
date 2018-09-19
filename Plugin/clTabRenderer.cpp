@@ -365,7 +365,7 @@ int clTabRenderer::GetMarkerWidth()
 #ifdef __WXOSX__
     return 2;
 #else
-    return 4;
+    return 3;
 #endif
 }
 

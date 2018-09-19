@@ -372,7 +372,7 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
     } else {
         menu = wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu"));
     }
-    PopupMenu(menu);
+    m_dvListCtrl->PopupMenu(menu);
     wxDELETE(menu);
 }
 

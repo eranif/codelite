@@ -2315,22 +2315,28 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     boxSizer36->Add(boxSizer711, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_panel713 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter733 =
+        new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE);
+    m_splitter733->SetSashGravity(0.5);
+    m_splitter733->SetMinimumPaneSize(10);
 
-    boxSizer711->Add(m_panel713, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer711->Add(m_splitter733, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer715 = new wxBoxSizer(wxVERTICAL);
-    m_panel713->SetSizer(boxSizer715);
+    m_splitterPage737 = new wxPanel(m_splitter733, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter733, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    m_notebook672 =
-        new Notebook(m_panel713, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel713, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook672->SetName(wxT("m_notebook672"));
+    wxBoxSizer* boxSizer715 = new wxBoxSizer(wxHORIZONTAL);
+    m_splitterPage737->SetSizer(boxSizer715);
 
-    boxSizer715->Add(m_notebook672, 1, wxEXPAND, WXC_FROM_DIP(2));
+    m_notebookChanges = new Notebook(m_splitterPage737, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_splitterPage737, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebookChanges->SetName(wxT("m_notebookChanges"));
 
-    m_panel674 = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook672, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook672->AddPage(m_panel674, _("Changes"), true);
+    boxSizer715->Add(m_notebookChanges, 1, wxEXPAND, WXC_FROM_DIP(2));
+
+    m_panel674 = new wxPanel(m_notebookChanges, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebookChanges->AddPage(m_panel674, _("Changes"), true);
 
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxVERTICAL);
     m_panel674->SetSizer(boxSizer678);
@@ -2344,9 +2350,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                                    wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                        wxDATAVIEW_COL_RESIZABLE);
-    m_panelUnversioned = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_notebook672, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook672->AddPage(m_panelUnversioned, _("Unversioned Files"), false);
+    m_panelUnversioned = new wxPanel(m_notebookChanges, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebookChanges->AddPage(m_panelUnversioned, _("Unversioned Files"), false);
 
     wxBoxSizer* boxSizer680 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer680);
@@ -2361,15 +2367,28 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
-    m_panelLog = new wxPanel(m_notebook672, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook672, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook672->AddPage(m_panelLog, _("Log"), false);
+    m_splitterPage741 = new wxPanel(m_splitter733, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter733, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter733->SplitVertically(m_splitterPage737, m_splitterPage741, 0);
 
-    wxBoxSizer* boxSizer708 = new wxBoxSizer(wxVERTICAL);
-    m_panelLog->SetSizer(boxSizer708);
+    wxBoxSizer* boxSizer743 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage741->SetSizer(boxSizer743);
 
-    m_stcLog = new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)),
-                                    wxBORDER_THEME);
+    m_notebookLog = new Notebook(m_splitterPage741, wxID_ANY, wxDefaultPosition,
+                                 wxDLG_UNIT(m_splitterPage741, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebookLog->SetName(wxT("m_notebookLog"));
+
+    boxSizer743->Add(m_notebookLog, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel_log = new wxPanel(m_notebookLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookLog, wxSize(-1, -1)),
+                              wxTAB_TRAVERSAL);
+    m_notebookLog->AddPage(m_panel_log, _("Output"), false);
+
+    wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
+    m_panel_log->SetSizer(boxSizer729);
+
+    m_stcLog = new wxStyledTextCtrl(m_panel_log, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel_log, wxSize(-1, -1)),
+                                    wxBORDER_NONE);
     // Configure the fold margin
     m_stcLog->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLog->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -2399,14 +2418,13 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stcLog->StyleClearAll();
     m_stcLog->SetWrapMode(0);
     m_stcLog->SetIndentationGuides(0);
-    m_stcLog->SetEOLMode(2);
     m_stcLog->SetKeyWords(0, wxT(""));
     m_stcLog->SetKeyWords(1, wxT(""));
     m_stcLog->SetKeyWords(2, wxT(""));
     m_stcLog->SetKeyWords(3, wxT(""));
     m_stcLog->SetKeyWords(4, wxT(""));
 
-    boxSizer708->Add(m_stcLog, 1, wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer729->Add(m_stcLog, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
     m_gauge->SetValue(10);
@@ -2426,7 +2444,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
                                      wxDataViewEventHandler(GitConsoleBase::OnUnversionedFileActivated), NULL, this);
     m_dvListCtrlUnversioned->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                      wxDataViewEventHandler(GitConsoleBase::OnUnversionedFileContextMenu), NULL, this);
-    m_stcLog->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
 }
 
 GitConsoleBase::~GitConsoleBase()
@@ -2441,7 +2458,6 @@ GitConsoleBase::~GitConsoleBase()
     m_dvListCtrlUnversioned->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                         wxDataViewEventHandler(GitConsoleBase::OnUnversionedFileContextMenu), NULL,
                                         this);
-    m_stcLog->Disconnect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(GitConsoleBase::OnStclogStcChange), NULL, this);
 }
 
 GitBlameDlgBase::GitBlameDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,

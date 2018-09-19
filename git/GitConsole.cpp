@@ -381,8 +381,8 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
         }
     }
-    m_notebook672->SetPageText(1, wxString()
-                                      << _("Unversioned files (") << m_dvListCtrlUnversioned->GetItemCount() << ")");
+    m_notebookChanges->SetPageText(1, wxString() << _("Unversioned files (") << m_dvListCtrlUnversioned->GetItemCount()
+                                                 << ")");
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
@@ -576,11 +576,7 @@ void GitConsole::PulseProgress() { m_gauge->Pulse(); }
 
 bool GitConsole::IsDirty() const { return (m_dvListCtrl->GetItemCount() > 0); }
 
-void GitConsole::OnStclogStcChange(wxStyledTextEvent& event)
-{
-    event.Skip();
-    ::clRecalculateSTCHScrollBar(m_stcLog);
-}
+void GitConsole::OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 void GitConsole::OnCloseView(wxCommandEvent& e)
 {
@@ -681,5 +677,5 @@ void GitConsole::OnAddUnversionedFiles(wxCommandEvent& event)
 void GitConsole::ShowLog()
 {
     // Change the selection to the "Log" view
-    m_notebook672->SetSelection(m_notebook672->GetPageIndex(_("Log")));
+    //m_notebookLog->SetSelection(m_notebookLog->GetPageIndex(_("Log")));
 }

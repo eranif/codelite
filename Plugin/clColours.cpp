@@ -34,6 +34,8 @@ void clColours::InitDefaults()
     headerVBorderColour = wxColour("#D0D3D4");
     selItemBgColourNoFocus = wxColour("#BDC3C7");
 
+    matchedItemBgText = wxColour("#FF6F00");
+    matchedItemText = wxColour("BLACK");
 #ifdef __WXMSW__
     if(m_useNativeColours) {
         selItemTextColour = itemTextColour;
@@ -64,4 +66,6 @@ void clColours::InitDarkDefaults()
     headerHBorderColour = wxColour("#839192");
     headerVBorderColour = wxColour("#BFC9CA");
     selItemBgColourNoFocus = wxColour("#707B7C");
+    matchedItemBgText = wxColour("#8BC34A");
+    matchedItemText = wxColour("WHITE");
 }

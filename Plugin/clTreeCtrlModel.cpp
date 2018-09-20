@@ -200,32 +200,12 @@ void clTreeCtrlModel::DoExpandAllChildren(const wxTreeItemId& item, bool expand)
 
 wxTreeItemId clTreeCtrlModel::GetItemBefore(const wxTreeItemId& item, bool visibleItem) const
 {
-    clRowEntry* p = ToPtr(item);
-    if(!p) { return wxTreeItemId(); }
-    p = p->GetPrev();
-    while(p) {
-        if(visibleItem && !p->IsVisible()) {
-            p = p->GetPrev();
-            continue;
-        }
-        break;
-    }
-    return wxTreeItemId(p);
+    return wxTreeItemId(GetRowBefore(ToPtr(item), visibleItem));
 }
 
 wxTreeItemId clTreeCtrlModel::GetItemAfter(const wxTreeItemId& item, bool visibleItem) const
 {
-    clRowEntry* p = ToPtr(item);
-    if(!p) { return wxTreeItemId(); }
-    p = p->GetNext();
-    while(p) {
-        if(visibleItem && !p->IsVisible()) {
-            p = p->GetNext();
-            continue;
-        }
-        break;
-    }
-    return wxTreeItemId(p);
+    return wxTreeItemId(GetRowAfter(ToPtr(item), visibleItem));
 }
 
 void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
@@ -422,13 +402,13 @@ void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
     if(iter != m_selectedItems.end()) { return; }
 
     // if we already got selections, notify about the change
-//    if(!m_selectedItems.empty()) {
-//        wxTreeEvent evt(wxEVT_TREE_SEL_CHANGING);
-//        evt.SetEventObject(m_tree);
-//        evt.SetOldItem(GetSingleSelection());
-//        SendEvent(evt);
-//        if(!evt.IsAllowed()) { return; }
-//    }
+    //    if(!m_selectedItems.empty()) {
+    //        wxTreeEvent evt(wxEVT_TREE_SEL_CHANGING);
+    //        evt.SetEventObject(m_tree);
+    //        evt.SetOldItem(GetSingleSelection());
+    //        SendEvent(evt);
+    //        if(!evt.IsAllowed()) { return; }
+    //    }
 
     child->SetSelected(true);
     // Send 'SEL_CHANGED' event
@@ -473,4 +453,34 @@ bool clTreeCtrlModel::IsVisible(const wxTreeItemId& item) const
     clRowEntry::Vec_t::const_iterator iter =
         std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* p) { return (p == entry); });
     return (iter != m_onScreenItems.end());
+}
+
+clRowEntry* clTreeCtrlModel::GetRowBefore(clRowEntry* item, bool visibleItem) const
+{
+    clRowEntry* curp = item;
+    if(!curp) { return nullptr; }
+    curp = curp->GetPrev();
+    while(curp) {
+        if(visibleItem && !curp->IsVisible()) {
+            curp = curp->GetPrev();
+            continue;
+        }
+        break;
+    }
+    return curp;
+}
+
+clRowEntry* clTreeCtrlModel::GetRowAfter(clRowEntry* item, bool visibleItem) const
+{
+    clRowEntry* curp = item;
+    if(!curp) { return nullptr; }
+    curp = curp->GetNext();
+    while(curp) {
+        if(visibleItem && !curp->IsVisible()) {
+            curp = curp->GetNext();
+            continue;
+        }
+        break;
+    }
+    return curp;
 }

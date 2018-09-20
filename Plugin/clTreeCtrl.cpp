@@ -592,19 +592,21 @@ size_t clTreeCtrl::GetSelections(wxArrayTreeItemIds& selections) const
 
 bool clTreeCtrl::DoKeyDown(const wxKeyEvent& event)
 {
+    // Let the user chance to process this first
+    wxTreeEvent evt(wxEVT_TREE_KEY_DOWN);
+    evt.SetEventObject(this);
+    evt.SetKeyEvent(event);
+    evt.SetItem(GetSelection()); // can be an invalid item
+    if(GetEventHandler()->ProcessEvent(evt)) { return true; }
+
+    clControlWithItems::DoKeyDown(event);
+
     if(!m_model.GetRoot()) {
         // we didnt process this event, carry on
         return true;
     }
     wxTreeItemId selectedItem = GetSelection();
     if(!selectedItem.IsOk()) { return true; }
-
-    // Let the user chance to process this first
-    wxTreeEvent evt(wxEVT_TREE_KEY_DOWN);
-    evt.SetEventObject(this);
-    evt.SetKeyEvent(event);
-    evt.SetItem(selectedItem);
-    if(GetEventHandler()->ProcessEvent(evt)) { return true; }
 
     if(event.GetKeyCode() == WXK_LEFT) {
         if(m_model.ToPtr(selectedItem)->IsExpanded()) {
@@ -868,12 +870,18 @@ wxTreeItemId clTreeCtrl::DoScrollLines(int numLines, bool up, wxTreeItemId from,
 
 void clTreeCtrl::EnableStyle(int style, bool enable, bool refresh)
 {
-    if(!m_model.GetRoot()) { return; }
     if(enable) {
         m_treeStyle |= style;
     } else {
         m_treeStyle &= ~style;
     }
+    if(style == wxTR_ENABLE_SEARCH) {
+        GetSearch().Reset();
+        GetSearch().SetEnabled(enable);
+    }
+
+    // From this point on, we require a root item
+    if(!m_model.GetRoot()) { return; }
 
     // When changing the wxTR_HIDE_ROOT style
     // we need to fix the indentation for each node in the tree
@@ -944,3 +952,68 @@ void clTreeCtrl::DeleteAllItems()
 wxTreeItemId clTreeCtrl::GetNextItem(const wxTreeItemId& item) const { return m_model.GetItemAfter(item, true); }
 
 wxTreeItemId clTreeCtrl::GetPrevItem(const wxTreeItemId& item) const { return m_model.GetItemBefore(item, true); }
+
+wxTreeItemId clTreeCtrl::FindNext(const wxTreeItemId& from, const wxString& what, size_t col, size_t searchFlags)
+{
+    return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, true));
+}
+
+wxTreeItemId clTreeCtrl::FindPrev(const wxTreeItemId& from, const wxString& what, size_t col, size_t searchFlags)
+{
+    return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, false));
+}
+
+void clTreeCtrl::HighlightText(const wxTreeItemId& item, bool b)
+{
+    if(!item.IsOk()) { return; }
+    m_model.ToPtr(item)->SetHighlight(true);
+}
+
+void clTreeCtrl::ClearHighlight(const wxTreeItemId& item)
+{
+    if(!item.IsOk()) { return; }
+    clRowEntry* row = m_model.ToPtr(item);
+    row->SetHighlight(false);
+    row->SetHighlightInfo({});
+    Refresh();
+}
+
+clRowEntry* clTreeCtrl::DoFind(clRowEntry* from, const wxString& what, size_t col, size_t searchFlags, bool next)
+{
+    clRowEntry* curp = nullptr;
+    if(!from) {
+        curp = m_model.GetRoot();
+    } else {
+        if(searchFlags & wxTR_SEARCH_INCLUDE_CURRENT_ITEM) {
+            curp = from;
+        } else {
+            curp = next ? m_model.GetRowAfter(m_model.ToPtr(from), searchFlags & wxTR_SEARCH_VISIBLE_ITEMS)
+                        : m_model.GetRowBefore(m_model.ToPtr(from), searchFlags & wxTR_SEARCH_VISIBLE_ITEMS);
+        }
+    }
+    while(curp) {
+        const wxString& haystack = curp->GetLabel(col);
+        clMatchResult res;
+        if(clSearchText::Matches(what, col, haystack, searchFlags, &res)) {
+            curp->SetHighlightInfo(res);
+            curp->SetHighlight(true);
+            return curp;
+        }
+        curp = next ? m_model.GetRowAfter(curp, searchFlags & wxTR_SEARCH_VISIBLE_ITEMS)
+                    : m_model.GetRowBefore(curp, searchFlags & wxTR_SEARCH_VISIBLE_ITEMS);
+    }
+    return nullptr;
+}
+
+void clTreeCtrl::ClearAllHighlights()
+{
+    clTreeNodeVisitor V;
+    std::function<bool(clRowEntry*, bool)> Foo = [&](clRowEntry* r, bool visible) {
+        wxUnusedVar(visible);
+        r->SetHighlightInfo({});
+        r->SetHighlight(false);
+        return true;
+    };
+    V.Visit(m_model.GetRoot(), false, Foo);
+    Refresh();
+}

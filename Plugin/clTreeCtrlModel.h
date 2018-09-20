@@ -64,6 +64,8 @@ public:
 
     wxTreeItemId GetItemBefore(const wxTreeItemId& item, bool visibleItem) const;
     wxTreeItemId GetItemAfter(const wxTreeItemId& item, bool visibleItem) const;
+    clRowEntry* GetRowBefore(clRowEntry* item, bool visibleItem) const;
+    clRowEntry* GetRowAfter(clRowEntry* item, bool visibleItem) const;
     clRowEntry* ToPtr(const wxTreeItemId& item) const
     {
         if(!m_root || !item.IsOk()) { return nullptr; }

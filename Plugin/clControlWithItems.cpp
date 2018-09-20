@@ -1,6 +1,9 @@
 #include "clControlWithItems.h"
 #include <wx/settings.h>
 
+wxDEFINE_EVENT(wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);
+wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
+
 clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
     : clScrolledPanel(parent, id, pos, size, style)
@@ -88,7 +91,7 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
             buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
         }
         curitem->SetRects(itemRect, buttonRect);
-        curitem->Render(this, dc, m_colours, i);
+        curitem->Render(this, dc, m_colours, i, &GetSearch());
         y += m_lineHeight;
     }
 }
@@ -232,3 +235,93 @@ void clControlWithItems::SetNativeHeader(bool b)
     m_viewHeader.SetNative(b);
     Refresh();
 }
+
+bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
+{
+    m_search.OnKeyDown(event, this);
+    return false; // continue processing
+}
+
+void clControlWithItems::SetFindWhat(const wxString& what) { GetSearch().SetFindWhat(what); }
+
+const wxString& clControlWithItems::GetFindWhat() const { return GetSearch().GetFindWhat(); }
+
+void clControlWithItems::ClearFindWhat() { GetSearch().Clear(); }
+
+//===---------------------------------------------------
+// clSearchText
+//===---------------------------------------------------
+clSearchText::clSearchText() {}
+
+clSearchText::~clSearchText() {}
+
+void clSearchText::OnKeyDown(const wxKeyEvent& event, clControlWithItems* control)
+{
+    if(!IsEnabled()) { return; }
+    if((event.GetKeyCode() == WXK_ESCAPE) || (event.GetKeyCode() == WXK_BACK && event.ControlDown())) {
+        Reset();
+        // Notify about search clear
+        control->Refresh();
+        wxTreeEvent e(wxEVT_TREE_CLEAR_SEARCH);
+        e.SetEventObject(control);
+        control->GetEventHandler()->QueueEvent(e.Clone());
+    } else if(event.GetKeyCode() == WXK_BACK) {
+        m_findWhat.RemoveLast();
+        control->Refresh();
+        wxTreeEvent e(m_findWhat.IsEmpty() ? wxEVT_TREE_CLEAR_SEARCH : wxEVT_TREE_SEARCH_TEXT);
+        e.SetEventObject(control);
+        e.SetString(m_findWhat);
+        control->GetEventHandler()->QueueEvent(e.Clone());
+
+    } else if(wxIsprint(event.GetUnicodeKey())) {
+        m_findWhat << event.GetUnicodeKey();
+        control->Refresh();
+        wxTreeEvent e(wxEVT_TREE_SEARCH_TEXT);
+        e.SetEventObject(control);
+        e.SetString(m_findWhat);
+        control->GetEventHandler()->QueueEvent(e.Clone());
+    }
+}
+
+void clSearchText::Reset() { m_findWhat.Clear(); }
+
+bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags,
+                           clMatchResult* matches)
+{
+    wxString haystack = searchFlags & wxTR_SEARCH_ICASE ? text.Lower() : text;
+    wxString needle = searchFlags & wxTR_SEARCH_ICASE ? findWhat.Lower() : findWhat;
+    if(!matches) {
+        if(searchFlags & wxTR_SEARCH_METHOD_CONTAINS) {
+            return haystack.Contains(needle);
+        } else {
+            return (haystack == needle);
+        }
+    } else {
+        if(searchFlags & wxTR_SEARCH_METHOD_CONTAINS) {
+            int where = haystack.Find(needle);
+            if(where == wxNOT_FOUND) { return false; }
+            Str3Arr_t arr;
+            arr[0] = text.Mid(0, where);
+            arr[1] = text.Mid(where, needle.length());
+            arr[2] = text.Mid(where + needle.length());
+            matches->Add(col, arr);
+            return true;
+        } else {
+            if(haystack == needle) {
+                Str3Arr_t arr;
+                arr[0] = "";
+                arr[1] = text;
+                arr[2] = "";
+                matches->Add(col, arr);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+void clSearchText::Clear() { m_findWhat.Clear(); }
+
+const wxString& clSearchText::GetFindWhat() const { return m_findWhat; }

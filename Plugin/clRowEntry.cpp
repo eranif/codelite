@@ -253,7 +253,7 @@ void clRowEntry::ClearRects()
     m_rowRect = wxRect();
 }
 
-void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index)
+void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)
 {
     wxRect rowRect = GetItemRect();
     bool zebraColouring = (m_tree->HasStyle(wxTR_ROW_LINES) || m_tree->HasStyle(wxDV_ROW_LINES));
@@ -343,18 +343,57 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += X_SPACER;
             }
         }
-
-        dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
-
-        // Draw the indentation only for the first cell
-        dc.DrawText(cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY);
-
+        RenderText(dc, colours, cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY, i);
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
             dc.DrawLine(cellRect.GetTopRight(), cellRect.GetBottomRight());
         }
     }
+}
+
+void clRowEntry::RenderText(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)
+{
+    if(IsHighlight()) {
+        const clMatchResult& hi = GetHighlightInfo();
+        Str3Arr_t arr;
+        if(!hi.Get(col, arr)) {
+            RenderTextSimple(dc, colours, text, x, y, col);
+            return;
+        }
+        const wxColour& defaultTextColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
+        const wxColour& matchBgColour = colours.GetMatchedItemBgText();
+        const wxColour& matchTextColour = colours.GetMatchedItemText();
+        int xx = x;
+        wxRect rowRect = GetItemRect();
+        for(size_t i = 0; i < arr.size(); ++i) {
+            wxString str = arr[i];
+            bool is_match = (i == 1); // the middle entry is always the matched string
+            wxSize sz = dc.GetTextExtent(str);
+            rowRect.SetX(xx);
+            rowRect.SetWidth(sz.GetWidth());
+            if(is_match) {
+                // draw a match rectangle
+                dc.SetPen(matchBgColour);
+                dc.SetBrush(matchBgColour);
+                dc.SetTextForeground(matchTextColour);
+                dc.DrawRoundedRectangle(rowRect, 3.0);
+            } else {
+                dc.SetTextForeground(defaultTextColour);
+            }
+            dc.DrawText(str, xx, y);
+            xx += sz.GetWidth();
+        }
+    } else {
+        // No match
+        RenderTextSimple(dc, colours, text, x, y, col);
+    }
+}
+
+void clRowEntry::RenderTextSimple(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)
+{
+    dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
+    dc.DrawText(text, x, y);
 }
 
 size_t clRowEntry::GetChildrenCount(bool recurse) const

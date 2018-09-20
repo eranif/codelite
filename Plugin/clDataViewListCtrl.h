@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include <wx/dataview.h>
 
+// Extra styles supported by this class
+#define wxDV_ENABLE_SEARCH wxTR_ENABLE_SEARCH
+
 /**
  * @brief a thin wrapper around clTreeCtrl which provides basic compatiblity API (such as adding columns)
  * This is mainly for code generators like wxCrafter

@@ -21,6 +21,8 @@ class WXDLLIMPEXP_SDK clColours
     wxColour headerHBorderColour;    // The line to use for drawing a horizontal header border
     wxColour headerVBorderColour;    // The line to use for drawing a vertical header border
     wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
+    wxColour matchedItemText;        // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
+    wxColour matchedItemBgText;      // Text bg colour for matched item (need the style wxTR_ENABLE_SEARCH)
     bool m_useNativeColours = false; // When possible, use the native colours
 
 public:
@@ -72,6 +74,10 @@ public:
     const wxColour& GetSelItemBgColourNoFocus() const { return selItemBgColourNoFocus; }
     void SetUseNativeColours(bool useNativeColours) { this->m_useNativeColours = useNativeColours; }
     bool IsUseNativeColours() const { return m_useNativeColours; }
+    void SetMatchedItemBgText(const wxColour& matchedItemBgText) { this->matchedItemBgText = matchedItemBgText; }
+    void SetMatchedItemText(const wxColour& matchedItemText) { this->matchedItemText = matchedItemText; }
+    const wxColour& GetMatchedItemBgText() const { return matchedItemBgText; }
+    const wxColour& GetMatchedItemText() const { return matchedItemText; }
 };
 
 #endif // CLCOLOURS_H

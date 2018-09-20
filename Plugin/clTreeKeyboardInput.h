@@ -33,31 +33,18 @@
 #include <vector>
 #include <wx/sharedptr.h>
 
-class wxTextCtrl;
 class WXDLLIMPEXP_SDK clTreeKeyboardInput : public wxEvtHandler
 {
-
 public:
     typedef wxSharedPtr<clTreeKeyboardInput> Ptr_t;
 
 protected:
     clTreeCtrl* m_tree = nullptr;
-    wxTextCtrl* m_text = nullptr;
-    std::list<wxTreeItemId> m_items;
 
 protected:
+    void OnSearch(wxTreeEvent& event);
+    void OnClearSearch(wxTreeEvent& event);
     void OnKeyDown(wxTreeEvent& event);
-    void OnTextKeyDown(wxKeyEvent& event);
-    void OnTextUpdated(wxCommandEvent& event);
-    void OnTextEnter(wxCommandEvent& event);
-    void OnTreeFocus(wxFocusEvent& event);
-    void OnTreeSize(wxSizeEvent& event);
-    void SelecteItem(const wxTreeItemId& item);
-    void SetTextFocus();
-    void Clear();
-    void DoShowTextBox();
-    void SimulateKeyDown(const wxKeyEvent& event);
-    wxTreeItemId FindItem(const wxTreeItemId& from, const wxString& pattern, bool goingUp) const;
 
 public:
     clTreeKeyboardInput(clTreeCtrl* tree);

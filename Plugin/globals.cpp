@@ -542,7 +542,7 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                     
                     output.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
                     output.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
-                    output.Replace(wxT("$(ResourcePath)"), bldConf->GetLibraries());
+                    output.Replace(wxT("$(ResourcePath)"), bldConf->GetResCmpIncludePath());
                     output.Replace(wxT("$(LinkLibraries)"), bldConf->GetLibraries());
                 }
 

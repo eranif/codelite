@@ -1348,13 +1348,7 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 {
     // Collapse the projects
-    wxWindowUpdateLocker locker(m_treeCtrlView);
-    wxTreeItemId root = m_treeCtrlView->GetRootItem();
-    DoCollapseItem(root);
-    if(m_treeCtrlView->ItemHasChildren(root)) {
-        m_treeCtrlView->Expand(root);
-        m_treeCtrlView->Collapse(root);
-    }
+    m_treeCtrlView->CollapseAll();
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }

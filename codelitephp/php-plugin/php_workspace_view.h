@@ -50,7 +50,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     bool m_scanInProgress;
     std::unordered_set<wxString> m_pendingSync;
     wxArrayString m_draggedFiles;
-    
+
 private:
     enum {
         ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
@@ -58,7 +58,6 @@ private:
 
 protected:
     virtual void OnCollapse(wxCommandEvent& event);
-    virtual void DoCollapseItem(wxTreeItemId& item);
     void OnFolderDropped(clCommandEvent& event);
 
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
@@ -173,11 +172,11 @@ protected:
     void OnWorkspaceSyncStart(clCommandEvent& event);
     void OnWorkspaceSyncEnd(clCommandEvent& event);
     void OnFileSaveAs(clFileSystemEvent& event);
-    
+
     // DnD
     void OnDragBegin(wxTreeEvent& event);
     void OnDragEnd(wxTreeEvent& event);
-    
+
 public:
     /** Constructor */
     PHPWorkspaceView(wxWindow* parent, IManager* mgr);

@@ -1357,19 +1357,6 @@ void PHPWorkspaceView::OnStartDebuggerListenerUI(wxUpdateUIEvent& event)
     event.Enable(!XDebugManager::Get().IsDebugSessionRunning());
 }
 
-void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
-{
-    if(m_treeCtrlView->ItemHasChildren(item)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
-        while(child.IsOk()) {
-            DoCollapseItem(child);
-            child = m_treeCtrlView->GetNextChild(item, cookie);
-        }
-        m_treeCtrlView->Collapse(item);
-    }
-}
-
 void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
 {
     // Prompt user for project path

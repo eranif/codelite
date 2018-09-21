@@ -5,13 +5,28 @@
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
 
+#if defined(__WXGTK__) || defined(__WXOSX__)
+#define USE_PANEL_PARENT 1
+#else
+#define USE_PANEL_PARENT 0
+#endif
+
+#if USE_PANEL_PARENT
+#include <wx/panel.h>
+#endif
+
 wxDEFINE_EVENT(wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);
 wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
 
 //===------------------------
 // Helper class
 //===------------------------
-class clSearchControl : public wxMiniFrame
+class clSearchControl :
+#if USE_PANEL_PARENT
+    public wxPanel
+#else
+    public wxMiniFrame
+#endif
 {
     wxTextCtrl* m_textCtrl = nullptr;
 
@@ -47,23 +62,36 @@ private:
 
 public:
     clSearchControl(clControlWithItems* parent)
+#if USE_PANEL_PARENT
+        : wxPanel(parent)
+#else
         : wxMiniFrame(parent, wxID_ANY, "Find", wxDefaultPosition, wxDefaultSize,
                       wxFRAME_FLOAT_ON_PARENT | wxBORDER_SIMPLE)
+#endif
     {
         SetSizer(new wxBoxSizer(wxVERTICAL));
         wxPanel* mainPanel = new wxPanel(this);
         GetSizer()->Add(mainPanel, 1, wxEXPAND);
         mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition,
-                                    wxSize(GetParent()->GetSize().GetWidth(), -1), wxTE_RICH | wxTE_PROCESS_ENTER);
+        int scrollBarWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, parent);
+        wxSize searchControlSize(GetParent()->GetSize().GetWidth() / 2 - scrollBarWidth, -1);
+        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, searchControlSize,
+                                    wxTE_RICH | wxTE_PROCESS_ENTER);
         mainPanel->GetSizer()->Add(m_textCtrl, 0, wxEXPAND);
         m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
         m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
-        wxPoint parentPt = GetParent()->GetScreenPosition();
         GetSizer()->Fit(this);
+        // Position the control
+#if USE_PANEL_PARENT
+        int x = GetParent()->GetSize().GetWidth() / 2;
+        int y = GetParent()->GetSize().GetHeight() - GetSize().GetHeight();
+        SetPosition(wxPoint(x, y));
+#else
+        wxPoint parentPt = GetParent()->GetScreenPosition();
         CenterOnParent();
         SetPosition(wxPoint(GetPosition().x, parentPt.y - m_textCtrl->GetSize().GetHeight()));
+#endif
     }
 
     virtual ~clSearchControl()
@@ -85,7 +113,7 @@ public:
 
     void ShowControl(const wxChar& ch)
     {
-        wxMiniFrame::Show();
+        Show();
         CallAfter(&clSearchControl::InitSearch, ch);
     }
 

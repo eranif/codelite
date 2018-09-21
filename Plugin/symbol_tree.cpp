@@ -35,19 +35,18 @@ SymbolTree::SymbolTree()
     : m_sortByLineNumber(true)
 {
     InitialiseSymbolMap();
-
     clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
         // Line number compare
         MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(a->GetClientObject());
         MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(b->GetClientObject());
         if(m_sortByLineNumber && cd1 && cd2) {
-            return cd1->GetLine() > cd2->GetLine();
+            return cd1->GetLine() < cd2->GetLine();
         } else {
             // ABC compare
             int img1, img2;
             img1 = a->GetBitmapIndex();
             img2 = b->GetBitmapIndex();
-            if(img1 > img2)
+            if(img1 < img2)
                 return true;
             else if(img1 < img2)
                 return false;
@@ -70,13 +69,13 @@ SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos
         MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(a->GetClientObject());
         MyTreeItemData* cd2 = dynamic_cast<MyTreeItemData*>(b->GetClientObject());
         if(m_sortByLineNumber && cd1 && cd2) {
-            return cd1->GetLine() > cd2->GetLine();
+            return cd1->GetLine() < cd2->GetLine();
         } else {
             // ABC compare
             int img1, img2;
             img1 = a->GetBitmapIndex();
             img2 = b->GetBitmapIndex();
-            if(img1 > img2)
+            if(img1 < img2)
                 return true;
             else if(img1 < img2)
                 return false;

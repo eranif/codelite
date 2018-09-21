@@ -96,6 +96,7 @@ public:
 
     virtual ~clSearchControl()
     {
+        m_textCtrl->Unbind(wxEVT_KILL_FOCUS, &clSearchControl::OnKillFocus, this);
         m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
 
@@ -109,8 +110,15 @@ public:
         m_textCtrl->ChangeValue(wxString() << ch);
         m_textCtrl->SelectNone();
         m_textCtrl->SetInsertionPointEnd();
+        m_textCtrl->Bind(wxEVT_KILL_FOCUS, &clSearchControl::OnKillFocus, this);
     }
 
+    void OnKillFocus(wxFocusEvent& event)
+    {
+        event.Skip();
+        Dismiss();
+    }
+    
     void ShowControl(const wxChar& ch)
     {
         Show();
@@ -400,7 +408,7 @@ void clControlWithItems::SetNativeHeader(bool b)
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
     if(m_searchControl) { return true; }
-    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey())) {
+    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) && (event.GetModifiers() == wxMOD_NONE)) {
         m_searchControl = new clSearchControl(this);
         m_searchControl->ShowControl(event.GetUnicodeKey());
         return true;

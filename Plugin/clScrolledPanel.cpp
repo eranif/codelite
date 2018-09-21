@@ -215,15 +215,13 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
     }
 
     // Always process the HOME/END buttons
-    if(event.GetKeyCode() == WXK_HOME) {
-        ScrollRows(0, wxUP);
-    } else if(event.GetKeyCode() == WXK_END) {
-        ScrollRows(0, wxDOWN);
-    }
-
     // The following can be processed only once
     if(event.GetEventObject() == this) {
-        if(event.GetKeyCode() == WXK_UP) {
+        if(event.GetKeyCode() == WXK_HOME) {
+            ScrollRows(0, wxUP);
+        } else if(event.GetKeyCode() == WXK_END) {
+            ScrollRows(0, wxDOWN);
+        } else if(event.GetKeyCode() == WXK_UP) {
             ScrollRows(1, wxUP);
         } else if(event.GetKeyCode() == WXK_DOWN) {
             ScrollRows(1, wxDOWN);

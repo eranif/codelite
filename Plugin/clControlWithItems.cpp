@@ -1,8 +1,140 @@
 #include "clControlWithItems.h"
+#include "clTreeCtrl.h"
+#include <wx/minifram.h>
 #include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/textctrl.h>
 
 wxDEFINE_EVENT(wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);
 wxDEFINE_EVENT(wxEVT_TREE_CLEAR_SEARCH, wxTreeEvent);
+
+//===------------------------
+// Helper class
+//===------------------------
+class clSearchControl : public wxMiniFrame
+{
+    wxTextCtrl* m_textCtrl = nullptr;
+
+private:
+    void DoSelect(bool next)
+    {
+        clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(GetParent());
+        if(!tree || m_textCtrl->IsEmpty()) { return; }
+        wxTreeItemId where = next ? tree->FindNext(tree->GetSelection(), m_textCtrl->GetValue(), 0,
+                                                   wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM)
+                                  : tree->FindPrev(tree->GetSelection(), m_textCtrl->GetValue(), 0,
+                                                   wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM);
+        if(where.IsOk()) {
+            clRowEntry* row = reinterpret_cast<clRowEntry*>(where.GetID());
+            clMatchResult res = row->GetHighlightInfo();
+
+            // This will remove all the matched info, including the last call to FindNext/Prev
+            tree->ClearAllHighlights();
+
+            // Set back the match info
+            row->SetHighlightInfo(res);
+
+            // Select the item
+            tree->SelectItem(where);
+
+            // Make sure its visible
+            tree->EnsureVisible(where);
+
+            // Highlight the result
+            tree->HighlightText(where, true);
+        }
+    }
+
+public:
+    clSearchControl(clControlWithItems* parent)
+        : wxMiniFrame(parent, wxID_ANY, "Find", wxDefaultPosition, wxDefaultSize,
+                      wxFRAME_FLOAT_ON_PARENT | wxBORDER_SIMPLE)
+    {
+        SetSizer(new wxBoxSizer(wxVERTICAL));
+        wxPanel* mainPanel = new wxPanel(this);
+        GetSizer()->Add(mainPanel, 1, wxEXPAND);
+        mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition,
+                                    wxSize(GetParent()->GetSize().GetWidth(), -1), wxTE_RICH | wxTE_PROCESS_ENTER);
+        mainPanel->GetSizer()->Add(m_textCtrl, 0, wxEXPAND);
+        m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
+        m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
+        m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
+        wxPoint parentPt = GetParent()->GetScreenPosition();
+        GetSizer()->Fit(this);
+        CenterOnParent();
+        SetPosition(wxPoint(GetPosition().x, parentPt.y - m_textCtrl->GetSize().GetHeight()));
+    }
+
+    virtual ~clSearchControl()
+    {
+        m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
+        m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
+
+        // Let the parent know that we were dismissed
+        clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
+        parent->SearchControlDismissed();
+    }
+
+    void InitSearch(const wxChar& ch)
+    {
+        m_textCtrl->ChangeValue(wxString() << ch);
+        m_textCtrl->SelectNone();
+        m_textCtrl->SetInsertionPointEnd();
+    }
+
+    void ShowControl(const wxChar& ch)
+    {
+        wxMiniFrame::Show();
+        CallAfter(&clSearchControl::InitSearch, ch);
+    }
+
+    void SelectNext() { DoSelect(true); }
+
+    void SelectPrev() { DoSelect(false); }
+
+    void Dismiss()
+    {
+        GetParent()->CallAfter(&wxWindow::SetFocus);
+        // Clear the search
+        wxTreeEvent e(wxEVT_TREE_CLEAR_SEARCH);
+        e.SetEventObject(GetParent());
+        GetParent()->GetEventHandler()->QueueEvent(e.Clone());
+        // And close the frame
+        Destroy();
+    }
+
+    void OnTextUpdated(wxCommandEvent& event)
+    {
+        event.Skip();
+        wxTreeEvent e(wxEVT_TREE_SEARCH_TEXT);
+        e.SetString(m_textCtrl->GetValue());
+        e.SetEventObject(GetParent());
+        GetParent()->GetEventHandler()->QueueEvent(e.Clone());
+    }
+
+    void OnKeyDown(wxKeyEvent& event)
+    {
+        if(event.GetKeyCode() == WXK_ESCAPE) {
+            Dismiss();
+            return;
+        } else if(event.GetKeyCode() == WXK_DOWN) {
+            SelectNext();
+        } else if(event.GetKeyCode() == WXK_UP) {
+            SelectPrev();
+        } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+            // Activate the item
+            clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(GetParent());
+            wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
+            evt.SetEventObject(tree);
+            evt.SetItem(tree->GetSelection());
+            tree->GetEventHandler()->ProcessEvent(evt);
+            Dismiss();
+        } else {
+            event.Skip();
+        }
+    }
+};
 
 clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
@@ -36,6 +168,7 @@ void clControlWithItems::DoInitialize()
 
 clControlWithItems::~clControlWithItems()
 {
+    wxDELETE(m_searchControl);
     Unbind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Unbind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
 }
@@ -238,15 +371,16 @@ void clControlWithItems::SetNativeHeader(bool b)
 
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
-    m_search.OnKeyDown(event, this);
-    return false; // continue processing
+    if(m_searchControl) { return true; }
+    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey())) {
+        m_searchControl = new clSearchControl(this);
+        m_searchControl->ShowControl(event.GetUnicodeKey());
+        return true;
+    }
+    return false;
 }
 
-void clControlWithItems::SetFindWhat(const wxString& what) { GetSearch().SetFindWhat(what); }
-
-const wxString& clControlWithItems::GetFindWhat() const { return GetSearch().GetFindWhat(); }
-
-void clControlWithItems::ClearFindWhat() { GetSearch().Clear(); }
+void clControlWithItems::SearchControlDismissed() { m_searchControl = nullptr; }
 
 //===---------------------------------------------------
 // clSearchText
@@ -254,36 +388,6 @@ void clControlWithItems::ClearFindWhat() { GetSearch().Clear(); }
 clSearchText::clSearchText() {}
 
 clSearchText::~clSearchText() {}
-
-void clSearchText::OnKeyDown(const wxKeyEvent& event, clControlWithItems* control)
-{
-    if(!IsEnabled()) { return; }
-    if((event.GetKeyCode() == WXK_ESCAPE) || (event.GetKeyCode() == WXK_BACK && event.ControlDown())) {
-        Reset();
-        // Notify about search clear
-        control->Refresh();
-        wxTreeEvent e(wxEVT_TREE_CLEAR_SEARCH);
-        e.SetEventObject(control);
-        control->GetEventHandler()->QueueEvent(e.Clone());
-    } else if(event.GetKeyCode() == WXK_BACK) {
-        m_findWhat.RemoveLast();
-        control->Refresh();
-        wxTreeEvent e(m_findWhat.IsEmpty() ? wxEVT_TREE_CLEAR_SEARCH : wxEVT_TREE_SEARCH_TEXT);
-        e.SetEventObject(control);
-        e.SetString(m_findWhat);
-        control->GetEventHandler()->QueueEvent(e.Clone());
-
-    } else if(wxIsprint(event.GetUnicodeKey())) {
-        m_findWhat << event.GetUnicodeKey();
-        control->Refresh();
-        wxTreeEvent e(wxEVT_TREE_SEARCH_TEXT);
-        e.SetEventObject(control);
-        e.SetString(m_findWhat);
-        control->GetEventHandler()->QueueEvent(e.Clone());
-    }
-}
-
-void clSearchText::Reset() { m_findWhat.Clear(); }
 
 bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags,
                            clMatchResult* matches)
@@ -321,7 +425,3 @@ bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString&
     }
     return false;
 }
-
-void clSearchText::Clear() { m_findWhat.Clear(); }
-
-const wxString& clSearchText::GetFindWhat() const { return m_findWhat; }

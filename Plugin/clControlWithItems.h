@@ -13,6 +13,7 @@
 #define SCROLL_TICK 2
 #endif
 
+class clSearchControl;
 class clControlWithItems;
 class clRowEntry;
 
@@ -28,22 +29,15 @@ class clRowEntry;
 
 class WXDLLIMPEXP_SDK clSearchText
 {
-    wxString m_findWhat;
     bool m_enabled = false;
 
 public:
-    void OnKeyDown(const wxKeyEvent& event, clControlWithItems* control);
-    void Reset();
     static bool Matches(const wxString& findWhat, size_t col, const wxString& text,
                         size_t searchFlags = wxTR_SEARCH_DEFAULT, clMatchResult* matches = nullptr);
-
     clSearchText();
     virtual ~clSearchText();
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     bool IsEnabled() const { return m_enabled; }
-    void Clear();
-    const wxString& GetFindWhat() const;
-    void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
 };
 
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
@@ -58,6 +52,7 @@ private:
     std::vector<wxBitmap> m_bitmaps;
     int m_scrollTick = SCROLL_TICK;
     clSearchText m_search;
+    clSearchControl* m_searchControl = nullptr;
 
 protected:
     void DoInitialize();
@@ -82,9 +77,6 @@ public:
 
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
-    void SetFindWhat(const wxString& what);
-    const wxString& GetFindWhat() const;
-    void ClearFindWhat();
     virtual int GetIndent() const { return m_indent; }
 
     virtual void SetFirstColumn(int firstColumn) { this->m_firstColumn = firstColumn; }
@@ -184,6 +176,8 @@ public:
      * @brief return the row number of the first visible item in the view
      */
     virtual int GetFirstItemPosition() const = 0;
+    
+    void SearchControlDismissed();
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_SEARCH_TEXT, wxTreeEvent);

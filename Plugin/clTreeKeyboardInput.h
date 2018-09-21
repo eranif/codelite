@@ -44,7 +44,6 @@ protected:
 protected:
     void OnSearch(wxTreeEvent& event);
     void OnClearSearch(wxTreeEvent& event);
-    void OnKeyDown(wxTreeEvent& event);
 
 public:
     clTreeKeyboardInput(clTreeCtrl* tree);

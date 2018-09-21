@@ -599,7 +599,8 @@ bool clTreeCtrl::DoKeyDown(const wxKeyEvent& event)
     evt.SetItem(GetSelection()); // can be an invalid item
     if(GetEventHandler()->ProcessEvent(evt)) { return true; }
 
-    clControlWithItems::DoKeyDown(event);
+    // Let the parent process this
+    if(clControlWithItems::DoKeyDown(event)) { return false; }
 
     if(!m_model.GetRoot()) {
         // we didnt process this event, carry on
@@ -875,10 +876,8 @@ void clTreeCtrl::EnableStyle(int style, bool enable, bool refresh)
     } else {
         m_treeStyle &= ~style;
     }
-    if(style == wxTR_ENABLE_SEARCH) {
-        GetSearch().Reset();
-        GetSearch().SetEnabled(enable);
-    }
+
+    if(style == wxTR_ENABLE_SEARCH) { GetSearch().SetEnabled(enable); }
 
     // From this point on, we require a root item
     if(!m_model.GetRoot()) { return; }

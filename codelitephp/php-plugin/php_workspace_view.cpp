@@ -76,7 +76,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
     , m_scanInProgress(true)
 {
-    MSWSetNativeTheme(m_treeCtrlView);
+    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
+
     // Initialise images map
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
     m_bitmaps = bmpLoader->MakeStandardMimeMap();
@@ -106,21 +107,21 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 
     // Build the toolbar
-    m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
-                        _("Open active project settings"), wxITEM_NORMAL);
-    m_auibar29
-        ->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("remote-folder"),
-                  _("Setup automatic upload"), wxITEM_NORMAL)
-        ->SetHasDropDown(true);
-    m_auibar29->AddSeparator();
-    m_auibar29->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
-                        wxITEM_NORMAL);
-    m_auibar29->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
-                        _("Sync workspace with file system..."), wxITEM_NORMAL);
-    m_auibar29->AddSeparator();
-    m_auibar29->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
-                        bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
-    m_auibar29->Realize();
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
+                       _("Open active project settings"), wxITEM_NORMAL);
+#if USE_SFTP
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"),
+                       bl->LoadBitmap("remote-folder"), _("Setup automatic upload"), wxITEM_DROPDOWN);
+#endif
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
+                       wxITEM_NORMAL);
+    m_toolbar->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
+                       _("Sync workspace with file system..."), wxITEM_NORMAL);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
+                       bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
+    m_toolbar->Realize();
 
     // Bind events
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
@@ -129,8 +130,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 #if USE_SFTP
     Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
          XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
-#endif
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSetupRemoteUploadUI, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_TOOL, &PHPWorkspaceView::OnSetupRemoteUpload, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUploadMenu, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+#endif
 
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
@@ -975,38 +978,30 @@ void PHPWorkspaceView::OnRenameWorkspace(wxCommandEvent& e)
 }
 
 #if USE_SFTP
-void PHPWorkspaceView::OnSetupRemoteUpload(wxAuiToolBarEvent& event)
+void PHPWorkspaceView::OnSetupRemoteUploadMenu(wxCommandEvent& event)
 {
-    if(!event.IsDropDownClicked()) {
-        CallAfter(&PHPWorkspaceView::DoOpenSSHAccountManager);
+    SSHWorkspaceSettings settings;
+    settings.Load();
+
+    wxMenu menu;
+    if(!settings.IsRemoteUploadSet()) {
+        // We never setup remote upload for this workspace
+        menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
+        menu.Enable(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
+        menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
 
     } else {
-        SSHWorkspaceSettings settings;
-        settings.Load();
-
-        wxMenu menu;
-        if(!settings.IsRemoteUploadSet()) {
-            // We never setup remote upload for this workspace
-            menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
-            menu.Enable(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
-            menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
-
-        } else {
-            menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
-            menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, settings.IsRemoteUploadEnabled());
-            menu.Connect(ID_TOGGLE_AUTOMATIC_UPLOAD, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
-        }
-
-        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
-        if(auibar) {
-            clAuiToolStickness ts(auibar, event.GetToolId());
-            wxRect rect = auibar->GetToolRect(event.GetId());
-            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
-            pt = ScreenToClient(pt);
-            PopupMenu(&menu, pt);
-        }
+        menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
+        menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, settings.IsRemoteUploadEnabled());
+        menu.Connect(ID_TOGGLE_AUTOMATIC_UPLOAD, wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
     }
+    m_toolbar->ShowMenuForButton(event.GetId(), &menu);
+}
+
+void PHPWorkspaceView::OnSetupRemoteUpload(wxCommandEvent& event)
+{
+    CallAfter(&PHPWorkspaceView::DoOpenSSHAccountManager);
 }
 #endif
 
@@ -1323,14 +1318,9 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
         if(itemData->IsFile()) { ::wxLaunchDefaultApplication(itemData->GetFile()); }
     }
 }
-void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
-{
 #if USE_SFTP
-    event.Enable(PHPWorkspace::Get()->IsOpen());
-#else
-    event.Enable(false);
+void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
 #endif
-}
 
 void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 {

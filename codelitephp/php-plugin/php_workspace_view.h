@@ -62,12 +62,13 @@ protected:
 
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnStartDebuggerListenerUI(wxUpdateUIEvent& event);
-    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnMenu(wxTreeEvent& event);
     void OnWorkspaceLoaded(PHPEvent& event);
 #if USE_SFTP
-    virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event);
+    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
+    virtual void OnSetupRemoteUpload(wxCommandEvent& event);
+    virtual void OnSetupRemoteUploadMenu(wxCommandEvent& event);
 #endif
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnActiveProjectSettings(wxCommandEvent& event);

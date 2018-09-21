@@ -6,7 +6,6 @@
 MyTreeView::MyTreeView(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clThemedTreeCtrl(parent, id, pos, size, style)
 {
-    SetFont(GetDefaultFont());
     clSortFunc_t SortFunc = [&](clRowEntry* itemA, clRowEntry* itemB) {
         ItemData* a = dynamic_cast<ItemData*>(itemA->GetClientObject());
         ItemData* b = dynamic_cast<ItemData*>(itemB->GetClientObject());

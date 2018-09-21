@@ -7,54 +7,55 @@
 #ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 #define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include "php_file_layout_tree.h"
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/button.h>
-#include <wx/filepicker.h>
-#include <wx/dataview.h>
-#include <wx/treebook.h>
-#include <wx/panel.h>
-#include <wx/imaglist.h>
-#include <wx/stc/stc.h>
-#include <wx/choicebk.h>
-#include <wx/checkbox.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/gauge.h>
-#include <wx/treectrl.h>
-#include "my_tree_view.h"
-#include <wx/aui/auibook.h>
 #include "Notebook.h"
-#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include "my_tree_view.h"
+#include "php_file_layout_tree.h"
 #include "xdebuglocalsviewmodel.h"
-#include <wx/bitmap.h>
-#include <wx/icon.h>
-#include <wx/notebook.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/simplebook.h>
-#include <wx/combobox.h>
-#include <wx/wizard.h>
+#include <map>
 #include <vector>
+#include <wx/arrstr.h>
+#include <wx/artprov.h>
+#include <wx/aui/auibar.h>
+#include <wx/aui/auibook.h>
 #include <wx/bannerwindow.h>
+#include <wx/bitmap.h>
+#include <wx/button.h>
+#include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/choicebk.h>
+#include <wx/combobox.h>
+#include <wx/dataview.h>
+#include <wx/dialog.h>
+#include <wx/filepicker.h>
+#include <wx/gauge.h>
+#include <wx/icon.h>
+#include <wx/iconbndl.h>
+#include <wx/imaglist.h>
+#include <wx/menu.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/pen.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/advprops.h>
+#include <wx/propgrid/property.h>
 #include <wx/radiobox.h>
+#include <wx/settings.h>
+#include <wx/simplebook.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
+#include <wx/toolbar.h>
+#include <wx/treebook.h>
+#include <wx/treectrl.h>
+#include <wx/wizard.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -67,20 +68,19 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class QuickOutlineDlgBase : public wxDialog
 {
 protected:
     PHPFileLayoutTree* m_treeCtrlLayout;
 
 protected:
-
 public:
     PHPFileLayoutTree* GetTreeCtrlLayout() { return m_treeCtrlLayout; }
-    QuickOutlineDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER|wxBORDER_SUNKEN);
+    QuickOutlineDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxBORDER_SUNKEN);
     virtual ~QuickOutlineDlgBase();
 };
-
 
 class NewPHPWorkspaceBaseDlg : public wxDialog
 {
@@ -109,10 +109,11 @@ public:
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxTextCtrl* GetTextCtrlPreview() { return m_textCtrlPreview; }
-    NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Workspace"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewPHPWorkspaceBaseDlg();
 };
-
 
 class NewFileDlgBase : public wxDialog
 {
@@ -125,7 +126,6 @@ protected:
     wxButton* m_button6;
 
 protected:
-
 public:
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
@@ -133,10 +133,11 @@ public:
     wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
     wxButton* GetButton5() { return m_button5; }
     wxButton* GetButton6() { return m_button6; }
-    NewFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New File"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewFileDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New File"),
+                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewFileDlgBase();
 };
-
 
 class OpenResourceDlgBase : public wxDialog
 {
@@ -155,10 +156,11 @@ public:
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    OpenResourceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open resource..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    OpenResourceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open resource..."),
+                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~OpenResourceDlgBase();
 };
-
 
 class PHPSettingsBaseDlg : public wxDialog
 {
@@ -215,10 +217,11 @@ public:
     wxTreebook* GetTreebook9() { return m_treebook9; }
     wxButton* GetButton9() { return m_button9; }
     wxButton* GetButton10() { return m_button10; }
-    PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP General Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP General Settings"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~PHPSettingsBaseDlg();
 };
-
 
 class PHPProjectSettingsBase : public wxDialog
 {
@@ -318,10 +321,11 @@ public:
     wxButton* GetButton12() { return m_button12; }
     wxButton* GetButton13() { return m_button13; }
     wxButton* GetButton14() { return m_button14; }
-    PHPProjectSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPProjectSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~PHPProjectSettingsBase();
 };
-
 
 class FileMappingDlgBase : public wxDialog
 {
@@ -342,15 +346,16 @@ public:
     wxDirPickerCtrl* GetDirPickerSource() { return m_dirPickerSource; }
     wxStaticText* GetStaticText123() { return m_staticText123; }
     wxTextCtrl* GetTextCtrlRemote() { return m_textCtrlRemote; }
-    FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    FileMappingDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File Mapping"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FileMappingDlgBase();
 };
-
 
 class PHPWorkspaceViewBase : public wxPanel
 {
 protected:
-    wxAuiToolBar* m_auibar29;
+    clToolBar* m_toolbar;
     wxGauge* m_gaugeParseProgress;
     MyTreeView* m_treeCtrlView;
 
@@ -359,13 +364,13 @@ protected:
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar29() { return m_auibar29; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxGauge* GetGaugeParseProgress() { return m_gaugeParseProgress; }
     MyTreeView* GetTreeCtrlView() { return m_treeCtrlView; }
-    PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PHPWorkspaceViewBase();
 };
-
 
 class PHPDebugPaneBase : public wxPanel
 {
@@ -374,6 +379,7 @@ public:
         ID_DELETE_ALL_BREAKPOINTS = 8001,
         ID_DELETE_BREAKPOINTS = 8002,
     };
+
 protected:
     Notebook* m_auiBook;
     wxPanel* m_panel140;
@@ -398,17 +404,16 @@ public:
     wxAuiToolBar* GetAuibar218() { return m_auibar218; }
     wxPanel* GetPanel142() { return m_panel142; }
     Notebook* GetAuiBook() { return m_auiBook; }
-    PHPDebugPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,300), long style = wxTAB_TRAVERSAL);
+    PHPDebugPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(300, 300), long style = wxTAB_TRAVERSAL);
     virtual ~PHPDebugPaneBase();
 };
-
 
 class LocalsViewBase : public wxPanel
 {
 protected:
     wxDataViewCtrl* m_dataview;
     wxObjectDataPtr<XDebugLocalsViewModel> m_dataviewModel;
-
 
 protected:
     virtual void OnLocalCollapsed(wxDataViewEvent& event) { event.Skip(); }
@@ -418,10 +423,10 @@ protected:
 
 public:
     wxDataViewCtrl* GetDataview() { return m_dataview; }
-    LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsViewBase();
 };
-
 
 class PHPImages : public wxImageList
 {
@@ -433,24 +438,19 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
-
 protected:
-
 public:
     PHPImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name + m_resolution) )
-            return wxNullBitmap;
+    const wxBitmap& Bitmap(const wxString& name) const
+    {
+        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString &res = wxEmptyString) {
-        m_resolution = res;
-    }
+    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~PHPImages();
 };
-
 
 class EvalPaneBase : public wxPanel
 {
@@ -482,10 +482,10 @@ public:
     wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
     wxPanel* GetPanel261() { return m_panel261; }
     wxNotebook* GetNotebook257() { return m_notebook257; }
-    EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                 const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();
 };
-
 
 class PHPDebugStartDlgBase : public wxDialog
 {
@@ -519,10 +519,11 @@ public:
     wxCheckBox* GetCheckBoxDebugActiveEditor() { return m_checkBoxDebugActiveEditor; }
     wxPanel* GetPanelCommandLine() { return m_panelCommandLine; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Run / Debug"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Run / Debug"),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~PHPDebugStartDlgBase();
 };
-
 
 class NewPHPProjectWizardBase : public wxWizard
 {
@@ -585,11 +586,16 @@ public:
     wxButton* GetButton651() { return m_button651; }
     wxTextCtrl* GetTextCtrlCCPaths() { return m_textCtrlCCPaths; }
     wxWizardPageSimple* GetWizardPage634() { return m_wizardPage634; }
-    NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
-    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New PHP Project"),
+                            const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
+                            long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const
+    {
+        if(!m_pages.empty()) return m_pages.at(0);
+        return NULL;
+    }
     virtual ~NewPHPProjectWizardBase();
 };
-
 
 class PHPXDebugSetupWizardBase : public wxWizard
 {
@@ -634,11 +640,16 @@ public:
     wxStaticText* GetStaticText625() { return m_staticText625; }
     wxTextCtrl* GetTextCtrlPHPIni() { return m_textCtrlPHPIni; }
     wxWizardPageSimple* GetWizardPagePHP() { return m_wizardPagePHP; }
-    PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Setup"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
-    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("XDebug Setup"),
+                             const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
+                             long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const
+    {
+        if(!m_pages.empty()) return m_pages.at(0);
+        return NULL;
+    }
     virtual ~PHPXDebugSetupWizardBase();
 };
-
 
 class PHPSettersGettersDialogBase : public wxDialog
 {
@@ -652,13 +663,15 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
-
 public:
     wxDataViewListCtrl* GetDvListCtrlFunctions() { return m_dvListCtrlFunctions; }
     wxCheckBox* GetCheckBoxLowercase() { return m_checkBoxLowercase; }
     wxCheckBox* GetCheckBoxPrefixGetter() { return m_checkBoxPrefixGetter; }
     wxCheckBox* GetCheckBoxReurnThis() { return m_checkBoxReurnThis; }
-    PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Generate Setters / Getters"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                const wxString& title = _("Generate Setters / Getters"),
+                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~PHPSettersGettersDialogBase();
 };
 

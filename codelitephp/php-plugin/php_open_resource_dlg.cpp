@@ -1,8 +1,8 @@
+#include "php_open_resource_dlg.h"
 #include "FilesCollector.h"
 #include "PHPLookupTable.h"
 #include "cl_config.h"
 #include "fileutils.h"
-#include "php_open_resource_dlg.h"
 #include "php_workspace.h"
 #include <bitmap_loader.h>
 #include <globals.h>

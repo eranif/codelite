@@ -1,5 +1,6 @@
 #include "clDataViewListCtrl.h"
 #include "clHeaderItem.h"
+#include <algorithm>
 #include <wx/dataview.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
@@ -142,7 +143,12 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
 
 bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent)
 {
+#if wxCHECK_VERSION(3, 1, 0)
     wxDataViewEvent e(type, &m_dummy, DV_ITEM(treeEvent.GetItem()));
+#else
+    wxDataViewEvent e(type));
+    e.SetItem(DV_ITEM(treeEvent.GetItem()));
+#endif
     e.SetEventObject(this);
     if(!GetEventHandler()->ProcessEvent(e)) {
         treeEvent.Skip();
@@ -315,8 +321,8 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
 {
     clRowEntry* root = m_model.GetRoot();
     if(!root) { return; }
-    
-    if(!CompareFunc) { 
+
+    if(!CompareFunc) {
         m_model.SetSortFunction(nullptr);
         return;
     }
@@ -325,21 +331,21 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
     // This list ctrl is composed of a hidden root + its children
     // Step 1:
     clRowEntry::Vec_t& children = root->GetChildren();
-    for(size_t i=0; i<children.size(); ++i) {
+    for(size_t i = 0; i < children.size(); ++i) {
         clRowEntry* child = children[i];
         child->SetNext(nullptr);
         child->SetPrev(nullptr);
     }
-    
+
     // Step 2: disconect the root
     root->SetNext(nullptr);
-    
+
     // Step 3: sort the children
     std::sort(children.begin(), children.end(), CompareFunc);
-    
+
     // Now, reconnect the children, starting with the root
     clRowEntry* prev = root;
-    for(size_t i=0; i<children.size(); ++i) {
+    for(size_t i = 0; i < children.size(); ++i) {
         clRowEntry* child = children[i];
         prev->SetNext(child);
         child->SetPrev(prev);
@@ -352,10 +358,10 @@ int clDataViewListCtrl::ItemToRow(const wxDataViewItem& item) const
 {
     clRowEntry* pItem = m_model.ToPtr(TREE_ITEM(item));
     if(!pItem) { return wxNOT_FOUND; }
-    
+
     clRowEntry* root = m_model.GetRoot();
     if(!root) { return wxNOT_FOUND; }
-    
+
     const clRowEntry::Vec_t& children = root->GetChildren();
     for(size_t i = 0; i < children.size(); ++i) {
         if(children[i] == pItem) { return i; }

@@ -113,7 +113,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         return;
     }
 
-    int maxItems = GetNumLineCanFitOnScreen();
+    size_t maxItems = GetNumLineCanFitOnScreen();
     bool needToUpdateScrollbar = false;
     if(!GetFirstItemOnScreen()) {
         SetFirstItemOnScreen(m_model.GetRoot());
@@ -126,6 +126,17 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     clRowEntry::Vec_t items;
     m_model.GetNextItems(firstItem, maxItems, items);
 
+    // Always try to get maximum entries to draw on the canvas
+    while(items.size() < maxItems) {
+        firstItem = m_model.GetRowBefore(firstItem, true);
+        if(!firstItem) { break; }
+        items.insert(items.begin(), firstItem);
+        needToUpdateScrollbar = true;
+    }
+    
+    // Update the first item on screen
+    SetFirstItemOnScreen(firstItem);
+    
     // Draw the items
     RenderItems(dc, items);
 

@@ -2231,7 +2231,7 @@
        "border": 5,
        "gbSpan": ",",
        "gbPosition": ",",
-       "m_styles": ["wxTR_DEFAULT_STYLE", "wxTR_HIDE_ROOT", "wxTR_LINES_AT_ROOT"],
+       "m_styles": ["wxTR_HIDE_ROOT"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -2280,11 +2280,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",

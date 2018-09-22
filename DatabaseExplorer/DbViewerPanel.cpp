@@ -170,14 +170,13 @@ void DbViewerPanel::RefreshDbView()
     // clear items from tree
     m_treeDatabases->DeleteAllItems();
     // create imageList for icons
-    wxImageList* pImageList = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("folder-yellow"))); // 0, folder icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-table")));      // 1, table icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("cscope")));        // 2, view icon
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("database")));      // 3, database
-    pImageList->Add(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-column")));     // 4, column
-
-    m_treeDatabases->AssignImageList(pImageList);
+    BitmapLoader::Vec_t bitmaps;
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap(wxT("folder-yellow"))); // 0, folder icon
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-table")));      // 1, table icon
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap(wxT("cscope")));        // 2, view icon
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap(wxT("database")));      // 3, database
+    bitmaps.push_back(m_mgr->GetStdIcons()->LoadBitmap(wxT("db-column")));     // 4, column
+    m_treeDatabases->SetBitmaps(bitmaps);
 
     wxTreeItemId totalRootID = m_treeDatabases->AddRoot(wxString::Format(wxT("Databases")), -1);
 
@@ -259,9 +258,7 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event) { event.Skip(); }
 void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 {
     event.Skip();
-    if(event.GetItem().IsOk()) {
-        m_treeDatabases->SelectItem(event.GetItem());
-    }
+    if(event.GetItem().IsOk()) { m_treeDatabases->SelectItem(event.GetItem()); }
 }
 
 void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
@@ -486,9 +483,7 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     // TODO:LANG:
                     wxFileDialog dlg(this, _("Import database from SQL file ..."), wxGetCwd(), wxT(""),
                                      wxT("SQL Files (*.sql)|*.sql"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-                    if(dlg.ShowModal() == wxID_OK) {
-                        ImportDb(dlg.GetPath(), pDb);
-                    }
+                    if(dlg.ShowModal() == wxID_OK) { ImportDb(dlg.GetPath(), pDb); }
                 }
             }
             RefreshDbView();
@@ -520,27 +515,21 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                         SerializableList::compatibility_iterator tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) {
-                                retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab, true));
-                            }
+                            if(tab) { retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab, true)); }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             View* view = wxDynamicCast(tabNode->GetData(), View);
-                            if(view) {
-                                retStr.append(pDb->GetDbAdapter()->GetCreateViewSql(view, true));
-                            }
+                            if(view) { retStr.append(pDb->GetDbAdapter()->GetCreateViewSql(view, true)); }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) {
-                                retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab));
-                            }
+                            if(tab) { retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab)); }
                             tabNode = tabNode->GetNext();
                         }
 
@@ -654,9 +643,7 @@ wxString DbViewerPanel::CreatePanelName(View* v)
 void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("SQL");
-    if(lexer) {
-        lexer->Apply(sci, true);
-    }
+    if(lexer) { lexer->Apply(sci, true); }
 }
 
 void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e) { wxUnusedVar(e); }
@@ -768,9 +755,7 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
 
 void DbViewerPanel::RemoveFrame(DbExplorerFrame* frame)
 {
-    if(m_frames.count(frame)) {
-        m_frames.erase(frame);
-    }
+    if(m_frames.count(frame)) { m_frames.erase(frame); }
 }
 
 void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultSQLPanel)

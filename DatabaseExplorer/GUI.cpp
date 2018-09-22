@@ -95,10 +95,8 @@ _ImageExportDialog::_ImageExportDialog(wxWindow* parent, wxWindowID id, const wx
     m_sdbSizer2->Realize();
 
     SetName(wxT("_ImageExportDialog"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -142,10 +140,8 @@ _ThumbPane::_ThumbPane(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     this->SetSizer(mainSizer);
 
     SetName(wxT("_ThumbPane"));
-    SetSize(500, 300);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
 _ThumbPane::~_ThumbPane() {}
@@ -232,10 +228,8 @@ _SqlCommandPanel::_SqlCommandPanel(wxWindow* parent, wxWindowID id, const wxPoin
     bSizer24->Add(m_table, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_SqlCommandPanel"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
 _SqlCommandPanel::~_SqlCommandPanel() {}
@@ -269,10 +263,8 @@ _AdapterSelectDlg::_AdapterSelectDlg(wxWindow* parent, wxWindowID id, const wxSt
     bSizer9->Add(m_button24, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_AdapterSelectDlg"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -310,16 +302,14 @@ _DbViewerPanel::_DbViewerPanel(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer28);
 
-    m_treeDatabases = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                     wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_LINES_AT_ROOT);
+    m_treeDatabases =
+        new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTR_HIDE_ROOT);
 
     bSizer28->Add(m_treeDatabases, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_DbViewerPanel"));
-    SetSize(200, 100);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(200, 100)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(_DbViewerPanel::OnDnDStart), NULL, this);
     m_treeDatabases->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(_DbViewerPanel::OnItemActivate),
@@ -597,10 +587,8 @@ _DBSettingsDialog::_DBSettingsDialog(wxWindow* parent, wxWindowID id, const wxSt
 #endif
 
     SetName(wxT("_DBSettingsDialog"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -678,10 +666,8 @@ _ErdPanel::_ErdPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     erdSizer->Add(m_toolBarErd, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_ErdPanel"));
-    SetSize(640, 480);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(640, 480)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(_ErdPanel::OnMouseWheel), NULL, this);
 }
@@ -818,10 +804,8 @@ _CreateForeignKey::_CreateForeignKey(wxWindow* parent, wxWindowID id, const wxSt
     bSizer12->Add(m_btnOK, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("_CreateForeignKey"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -887,10 +871,8 @@ _LogDialog::_LogDialog(wxWindow* parent, wxWindowID id, const wxString& title, c
 
     SetName(wxT("_LogDialog"));
     SetMinClientSize(wxSize(640, 460));
-    SetSize(640, 460);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(640, 460)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1005,10 +987,8 @@ _ViewSettings::_ViewSettings(wxWindow* parent, wxWindowID id, const wxString& ti
 
     SetName(wxT("_ViewSettings"));
     SetMinClientSize(wxSize(650, 450));
-    SetSize(650, 450);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(650, 450)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1150,10 +1130,8 @@ _ClassGenerateDialog::_ClassGenerateDialog(wxWindow* parent, wxWindowID id, cons
     bSizer20->Add(m_button25, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     SetName(wxT("_ClassGenerateDialog"));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1252,10 +1230,8 @@ _CodePreviewDialog::_CodePreviewDialog(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("_CodePreviewDialog"));
     SetMinClientSize(wxSize(500, 470));
-    SetSize(500, 470);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 470)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1505,10 +1481,8 @@ _TableSettings::_TableSettings(wxWindow* parent, wxWindowID id, const wxString& 
 
     SetName(wxT("_TableSettings"));
     SetMinClientSize(wxSize(600, -1));
-    SetSize(-1, -1);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1659,10 +1633,8 @@ DbExplorerFrameBase::DbExplorerFrameBase(wxWindow* parent, wxWindowID id, const 
     this->SetSizer(boxSizer192);
 
     SetName(wxT("DbExplorerFrameBase"));
-    SetSize(500, 300);
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

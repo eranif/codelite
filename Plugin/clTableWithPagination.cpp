@@ -1,9 +1,10 @@
 #include "clTableLineEditorDlg.h"
 #include "clTableWithPagination.h"
+#include "clThemedListCtrl.h"
+#include "globals.h"
 #include "macros.h"
 #include <wx/dataview.h>
 #include <wx/sizer.h>
-#include "globals.h"
 
 clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
                                              long style, const wxString& name)
@@ -18,7 +19,7 @@ clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid,
     m_staticText = new wxStaticText(this, wxID_ANY, "");
     GetSizer()->Add(m_staticText, 0, wxEXPAND | wxALIGN_CENTER, 5);
 
-    m_ctrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_VERT_RULES | wxDV_ROW_LINES);
+    m_ctrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES);
     hSizer->Add(m_ctrl, 1, wxEXPAND);
     wxBoxSizer* vSizer = new wxBoxSizer(wxVERTICAL);
     hSizer->Add(vSizer, 0, wxEXPAND);
@@ -71,7 +72,7 @@ void clTableWithPagination::ClearAll()
 {
     m_data.clear();
     m_ctrl->DeleteAllItems();
-    m_ctrl->ClearColumns();
+    m_ctrl->GetHeader().Clear();
 }
 
 void clTableWithPagination::ShowPage(int nPage)
@@ -91,8 +92,7 @@ void clTableWithPagination::ShowPage(int nPage)
         }
         m_ctrl->AppendItem(cols, (wxUIntPtr)&items);
     }
-    
-    clFitColumnWidth(m_ctrl);
+
     m_staticText->SetLabel(wxString() << _("Showing entries from: ") << startIndex << _(":") << lastIndex
                                       << " Total of: " << m_data.size() << _(" entries"));
 }

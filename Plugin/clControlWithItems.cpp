@@ -1,5 +1,6 @@
 #include "clControlWithItems.h"
 #include "clTreeCtrl.h"
+#include <cmath>
 #include <wx/minifram.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -118,7 +119,7 @@ public:
         event.Skip();
         Dismiss();
     }
-    
+
     void ShowControl(const wxChar& ch)
     {
         Show();
@@ -245,30 +246,18 @@ void clControlWithItems::RenderHeader(wxDC& dc)
 
 void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
 {
-    wxRect clientRect = GetItemsRect();
-    int y = clientRect.GetY();
+    AssignRects(items);
     for(size_t i = 0; i < items.size(); ++i) {
         clRowEntry* curitem = items[i];
-        if(curitem->IsHidden()) {
-            // Set the item's rects into something non visible
-            curitem->SetRects(wxRect(-100, -100, 0, 0), wxRect(-100, -100, 0, 0));
-            continue;
-        }
-        wxRect itemRect = wxRect(0, y, clientRect.GetWidth(), m_lineHeight);
-        wxRect buttonRect;
-        if(curitem->HasChildren()) {
-            buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
-        }
-        curitem->SetRects(itemRect, buttonRect);
+        if(curitem->IsHidden()) { continue; }
         curitem->Render(this, dc, m_colours, i, &GetSearch());
-        y += m_lineHeight;
     }
 }
 
 int clControlWithItems::GetNumLineCanFitOnScreen() const
 {
     wxRect clientRect = GetItemsRect();
-    int max_lines_on_screen = ceil(clientRect.GetHeight() / m_lineHeight);
+    int max_lines_on_screen = std::ceil((double)((double)clientRect.GetHeight() / (double)m_lineHeight));
     return max_lines_on_screen;
 }
 
@@ -280,8 +269,8 @@ void clControlWithItems::UpdateScrollBar()
 {
     {
         // V-scrollbar
-        wxRect rect = GetItemsRect();
-        int thumbSize = (rect.GetHeight() / m_lineHeight); // Number of lines can be drawn
+        // wxRect rect = GetItemsRect();
+        int thumbSize = GetNumLineCanFitOnScreen(); // Number of lines can be drawn
         int pageSize = (thumbSize);
         int rangeSize = GetRange();
         int position = GetFirstItemPosition();
@@ -408,7 +397,8 @@ void clControlWithItems::SetNativeHeader(bool b)
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
     if(m_searchControl) { return true; }
-    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) && (event.GetModifiers() == wxMOD_NONE)) {
+    if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) &&
+       (event.GetModifiers() == wxMOD_NONE || event.GetModifiers() == wxMOD_SHIFT)) {
         m_searchControl = new clSearchControl(this);
         m_searchControl->ShowControl(event.GetUnicodeKey());
         return true;
@@ -417,6 +407,27 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 }
 
 void clControlWithItems::SearchControlDismissed() { m_searchControl = nullptr; }
+
+void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
+{
+    wxRect clientRect = GetItemsRect();
+    int y = clientRect.GetY();
+    for(size_t i = 0; i < items.size(); ++i) {
+        clRowEntry* curitem = items[i];
+        if(curitem->IsHidden()) {
+            // Set the item's rects into something non visible
+            curitem->SetRects(wxRect(-100, -100, 0, 0), wxRect(-100, -100, 0, 0));
+            continue;
+        }
+        wxRect itemRect = wxRect(0, y, clientRect.GetWidth(), m_lineHeight);
+        wxRect buttonRect;
+        if(curitem->HasChildren()) {
+            buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
+        }
+        curitem->SetRects(itemRect, buttonRect);
+        y += m_lineHeight;
+    }
+}
 
 //===---------------------------------------------------
 // clSearchText

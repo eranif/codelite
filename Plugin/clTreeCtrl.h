@@ -21,11 +21,12 @@ protected:
     clTreeCtrlModel m_model;
     long m_treeStyle = 0;
     wxDirection m_lastScrollDir = wxDOWN;
-
+    
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
     bool IsItemVisible(clRowEntry* item) const;
+    bool IsItemFullyVisible(clRowEntry* item) const;
     void EnsureItemVisible(clRowEntry* item, bool fromTop);
     clRowEntry* GetFirstItemOnScreen();
     void SetFirstItemOnScreen(clRowEntry* item);

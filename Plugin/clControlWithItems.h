@@ -61,6 +61,7 @@ protected:
     virtual void SetFirstItemOnScreen(clRowEntry* item);
     void RenderHeader(wxDC& dc);
     void RenderItems(wxDC& dc, const clRowEntry::Vec_t& items);
+    void AssignRects(const clRowEntry::Vec_t& items);
     void OnSize(wxSizeEvent& event);
     void DoUpdateHeader(clRowEntry* row);
     wxSize GetTextSize(const wxString& label) const;

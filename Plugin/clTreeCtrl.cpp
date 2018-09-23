@@ -133,12 +133,26 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         items.insert(items.begin(), firstItem);
         needToUpdateScrollbar = true;
     }
-    
+
+    wxRect clientRect = GetItemsRect();
+    // So we increased the list to display as much as items as we can.
+    // However, if the last item on that list is selected OR it is the last item in general, it must be *fully*
+    // displayed
+    if(!items.empty()) {
+        clRowEntry* lastItem = items.back();
+        if(lastItem->IsSelected() || (lastItem->GetNext() == nullptr)) {
+            AssignRects(items);
+            if(!IsItemFullyVisible(items.back())) { items.erase(items.begin()); }
+        }
+    }
+
     // Update the first item on screen
     SetFirstItemOnScreen(firstItem);
-    
+
     // Draw the items
+    dc.SetClippingRegion(clientRect);
     RenderItems(dc, items);
+    dc.DestroyClippingRegion();
 
     // Keep the visible items
     m_model.SetOnScreenItems(items); // Keep track of the visible items
@@ -317,7 +331,7 @@ void clTreeCtrl::DoEnsureVisible(const wxTreeItemId& item)
     // scroll to the item
     if(!item.IsOk()) { return; }
     clRowEntry* pNode = m_model.ToPtr(item);
-    if(IsItemVisible(pNode)) { return; }
+    if(IsItemVisible(pNode) && IsItemFullyVisible(pNode)) { return; }
     EnsureItemVisible(pNode, false); // make it visible at the bottom
     UpdateScrollBar();               // Make sure that the scrollbar fits the view
     Refresh();
@@ -644,14 +658,22 @@ bool clTreeCtrl::DoKeyDown(const wxKeyEvent& event)
 bool clTreeCtrl::IsItemVisible(clRowEntry* item) const
 {
     const clRowEntry::Vec_t& onScreenItems = m_model.GetOnScreenItems();
-    return (std::find_if(onScreenItems.begin(), onScreenItems.end(), [&](clRowEntry* p) { return p == item; }) !=
-            onScreenItems.end());
+    clRowEntry::Vec_t::const_iterator iter =
+        std::find_if(onScreenItems.begin(), onScreenItems.end(), [&](clRowEntry* p) { return p == item; });
+    return (iter != onScreenItems.end());
+}
+
+bool clTreeCtrl::IsItemFullyVisible(clRowEntry* item) const
+{
+    const wxRect& itemRect = item->GetItemRect();
+    const wxRect clientRect = GetItemsRect();
+    return clientRect.Contains(itemRect);
 }
 
 void clTreeCtrl::EnsureItemVisible(clRowEntry* item, bool fromTop)
 {
     CHECK_PTR_RET(item)
-    if(IsItemVisible(item)) { return; }
+    if(IsItemFullyVisible(item)) { return; }
     if(fromTop) {
         SetFirstItemOnScreen(item);
     } else {
@@ -659,6 +681,7 @@ void clTreeCtrl::EnsureItemVisible(clRowEntry* item, bool fromTop)
         clRowEntry::Vec_t items;
         m_model.GetPrevItems(item, max_lines_on_screen, items);
         if(items.empty()) { return; }
+        if(!IsItemFullyVisible(item) && (items.size() > 1)) { items.erase(items.begin()); }
         SetFirstItemOnScreen(items[0]);
     }
 }

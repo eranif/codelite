@@ -11,6 +11,7 @@
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
+#include <array>
 
 class clSearchText;
 class clTreeCtrlModel;
@@ -193,8 +194,8 @@ public:
     }
     size_t GetChildrenCount(bool recurse) const;
     int GetExpandedLines() const;
-    void GetNextItems(int count, clRowEntry::Vec_t& items);
-    void GetPrevItems(int count, clRowEntry::Vec_t& items);
+    void GetNextItems(int count, clRowEntry::Vec_t& items, bool selfIncluded = true);
+    void GetPrevItems(int count, clRowEntry::Vec_t& items, bool selfIncluded = true);
     void SetIndentsCount(int count) { this->m_indentsCount = count; }
     int GetIndentsCount() const { return m_indentsCount; }
 

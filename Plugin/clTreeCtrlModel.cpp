@@ -27,14 +27,14 @@ clTreeCtrlModel::~clTreeCtrlModel()
     wxDELETE(m_root);
 }
 
-void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const
+void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
 {
-    return from->GetNextItems(count, items);
+    return from->GetNextItems(count, items, selfIncluded);
 }
 
-void clTreeCtrlModel::GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const
+void clTreeCtrlModel::GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
 {
-    return from->GetPrevItems(count, items);
+    return from->GetPrevItems(count, items, selfIncluded);
 }
 
 wxTreeItemId clTreeCtrlModel::AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data)

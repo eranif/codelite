@@ -83,7 +83,21 @@ public:
         m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
         m_textCtrl->Bind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
         GetSizer()->Fit(this);
-        // Position the control
+        Hide();
+    }
+
+    virtual ~clSearchControl()
+    {
+        m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
+        m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
+
+        // Let the parent know that we were dismissed
+        clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
+        parent->SearchControlDismissed();
+    }
+
+    void PositionControl()
+    {
 #if USE_PANEL_PARENT
         int x = GetParent()->GetSize().GetWidth() / 2;
         int y = GetParent()->GetSize().GetHeight() - GetSize().GetHeight();
@@ -94,35 +108,21 @@ public:
         SetPosition(wxPoint(GetPosition().x, parentPt.y - m_textCtrl->GetSize().GetHeight()));
 #endif
     }
-
-    virtual ~clSearchControl()
-    {
-        m_textCtrl->Unbind(wxEVT_KILL_FOCUS, &clSearchControl::OnKillFocus, this);
-        m_textCtrl->Unbind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
-        m_textCtrl->Unbind(wxEVT_KEY_DOWN, &clSearchControl::OnKeyDown, this);
-
-        // Let the parent know that we were dismissed
-        clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
-        parent->SearchControlDismissed();
-    }
+    void DoSelectNone() { m_textCtrl->SelectNone(); }
 
     void InitSearch(const wxChar& ch)
     {
+        m_textCtrl->SetFocus();
         m_textCtrl->ChangeValue(wxString() << ch);
-        m_textCtrl->SelectNone();
         m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->Bind(wxEVT_KILL_FOCUS, &clSearchControl::OnKillFocus, this);
-    }
-
-    void OnKillFocus(wxFocusEvent& event)
-    {
-        event.Skip();
-        Dismiss();
+        CallAfter(&clSearchControl::DoSelectNone);
     }
 
     void ShowControl(const wxChar& ch)
     {
         Show();
+        m_textCtrl->ChangeValue("");
+        PositionControl();
         CallAfter(&clSearchControl::InitSearch, ch);
     }
 
@@ -137,8 +137,7 @@ public:
         wxTreeEvent e(wxEVT_TREE_CLEAR_SEARCH);
         e.SetEventObject(GetParent());
         GetParent()->GetEventHandler()->QueueEvent(e.Clone());
-        // And close the frame
-        Destroy();
+        Hide();
     }
 
     void OnTextUpdated(wxCommandEvent& event)
@@ -198,6 +197,9 @@ void clControlWithItems::DoInitialize()
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
+    Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& e) {
+        if(m_searchControl && m_searchControl->IsShown()) { m_searchControl->Dismiss(); }
+    });
     wxSize textSize = GetTextSize("Tp");
     SetLineHeight(clRowEntry::Y_SPACER + textSize.GetHeight() + clRowEntry::Y_SPACER);
     SetIndent(0);
@@ -205,7 +207,7 @@ void clControlWithItems::DoInitialize()
 
 clControlWithItems::~clControlWithItems()
 {
-    wxDELETE(m_searchControl);
+    m_searchControl = nullptr;
     Unbind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Unbind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
 }
@@ -380,12 +382,7 @@ const wxBitmap& clControlWithItems::GetBitmap(size_t index) const
 void clControlWithItems::OnMouseScroll(wxMouseEvent& event)
 {
     event.Skip();
-    int range = GetRange();
-    bool going_up = (event.GetWheelRotation() > 0);
-    int new_row = GetFirstItemPosition() + (going_up ? -GetScrollTick() : GetScrollTick());
-    if(new_row < 0) { new_row = 0; }
-    if(new_row >= range) { new_row = range - 1; }
-    ScrollToRow(new_row);
+    DoMouseScroll(event);
 }
 
 void clControlWithItems::SetNativeHeader(bool b)
@@ -396,17 +393,17 @@ void clControlWithItems::SetNativeHeader(bool b)
 
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
-    if(m_searchControl) { return true; }
+    if(m_searchControl && m_searchControl->IsShown()) { return true; }
     if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) &&
        (event.GetModifiers() == wxMOD_NONE || event.GetModifiers() == wxMOD_SHIFT)) {
-        m_searchControl = new clSearchControl(this);
+        if(!m_searchControl) { m_searchControl = new clSearchControl(this); }
         m_searchControl->ShowControl(event.GetUnicodeKey());
         return true;
     }
     return false;
 }
 
-void clControlWithItems::SearchControlDismissed() { m_searchControl = nullptr; }
+void clControlWithItems::SearchControlDismissed() {}
 
 void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
 {
@@ -427,6 +424,16 @@ void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
         curitem->SetRects(itemRect, buttonRect);
         y += m_lineHeight;
     }
+}
+
+void clControlWithItems::DoMouseScroll(const wxMouseEvent& event)
+{
+    int range = GetRange();
+    bool going_up = (event.GetWheelRotation() > 0);
+    int new_row = GetFirstItemPosition() + (going_up ? -GetScrollTick() : GetScrollTick());
+    if(new_row < 0) { new_row = 0; }
+    if(new_row >= range) { new_row = range - 1; }
+    ScrollToRow(new_row);
 }
 
 //===---------------------------------------------------

@@ -180,10 +180,10 @@ int clRowEntry::GetExpandedLines() const
     return counter;
 }
 
-void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items)
+void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items, bool selfIncluded)
 {
     items.reserve(count);
-    if(!this->IsHidden()) { items.push_back(this); }
+    if(!this->IsHidden() && selfIncluded) { items.push_back(this); }
     clRowEntry* next = GetNext();
     while(next) {
         if(next->IsVisible() && !next->IsHidden()) { items.push_back(next); }
@@ -192,10 +192,10 @@ void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items)
     }
 }
 
-void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items)
+void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items, bool selfIncluded)
 {
     items.reserve(count);
-    if(!this->IsHidden()) { items.insert(items.begin(), this); }
+    if(!this->IsHidden() && selfIncluded) { items.insert(items.begin(), this); }
     clRowEntry* prev = GetPrev();
     while(prev) {
         if(prev->IsVisible() && !prev->IsHidden()) { items.insert(items.begin(), prev); }

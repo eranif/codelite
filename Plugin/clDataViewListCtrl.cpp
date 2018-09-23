@@ -11,6 +11,9 @@
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewTextBitmap, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK);
 
+wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
+wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
+
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
 clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
@@ -45,6 +48,8 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_ITEM_MENU, &clDataViewListCtrl::OnConvertEvent, this);
+    Bind(wxEVT_TREE_SEARCH_TEXT, &clDataViewListCtrl::OnConvertEvent, this);
+    Bind(wxEVT_TREE_CLEAR_SEARCH, &clDataViewListCtrl::OnConvertEvent, this);
 
     AddRoot("Hidden Root", -1, -1, nullptr);
 }
@@ -127,6 +132,7 @@ int clDataViewListCtrl::GetSelectedItemsCount() const { return m_model.GetSelect
 void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
 {
     wxEventType type = wxEVT_ANY;
+    wxString eventText;
     if(event.GetEventType() == wxEVT_TREE_BEGIN_DRAG) {
         type = wxEVT_DATAVIEW_ITEM_BEGIN_DRAG;
     } else if(event.GetEventType() == wxEVT_TREE_END_DRAG) {
@@ -137,11 +143,16 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         type = wxEVT_DATAVIEW_ITEM_ACTIVATED;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_MENU) {
         type = wxEVT_DATAVIEW_ITEM_CONTEXT_MENU;
+    } else if(event.GetEventType() == wxEVT_TREE_SEARCH_TEXT) {
+        type = wxEVT_DATAVIEW_SEARCH_TEXT;
+        eventText = event.GetString();
+    } else if(event.GetEventType() == wxEVT_TREE_CLEAR_SEARCH) {
+        type = wxEVT_DATAVIEW_CLEAR_SEARCH;
     }
-    if(type != wxEVT_ANY) { SendDataViewEvent(type, event); }
+    if(type != wxEVT_ANY) { SendDataViewEvent(type, event, eventText); }
 }
 
-bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent)
+bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent, const wxString& text)
 {
 #if wxCHECK_VERSION(3, 1, 0)
     wxDataViewEvent e(type, &m_dummy, DV_ITEM(treeEvent.GetItem()));
@@ -150,6 +161,7 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
     e.SetItem(DV_ITEM(treeEvent.GetItem()));
 #endif
     e.SetEventObject(this);
+    e.SetString(text);
     if(!GetEventHandler()->ProcessEvent(e)) {
         treeEvent.Skip();
         return false;
@@ -377,3 +389,26 @@ void clDataViewListCtrl::Select(const wxDataViewItem& item)
         clTreeCtrl::SelectItem(TREE_ITEM(item), true);
     }
 }
+
+wxDataViewItem clDataViewListCtrl::FindNext(const wxDataViewItem& from, const wxString& what, size_t col,
+                                            size_t searchFlags)
+{
+    return DV_ITEM(clTreeCtrl::FindNext(TREE_ITEM(from), what, col, searchFlags));
+}
+
+wxDataViewItem clDataViewListCtrl::FindPrev(const wxDataViewItem& from, const wxString& what, size_t col,
+                                            size_t searchFlags)
+{
+    return DV_ITEM(clTreeCtrl::FindPrev(TREE_ITEM(from), what, col, searchFlags));
+}
+
+void clDataViewListCtrl::HighlightText(const wxDataViewItem& item, bool b)
+{
+    clTreeCtrl::HighlightText(TREE_ITEM(item), b);
+}
+
+void clDataViewListCtrl::ClearHighlight(const wxDataViewItem& item) { clTreeCtrl::ClearHighlight(TREE_ITEM(item)); }
+
+void clDataViewListCtrl::EnsureVisible(const wxDataViewItem& item) { clTreeCtrl::EnsureVisible(TREE_ITEM(item)); }
+
+void clDataViewListCtrl::ClearColumns() { GetHeader().Clear(); }

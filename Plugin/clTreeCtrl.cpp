@@ -4,6 +4,7 @@
 #include "clTreeNodeVisitor.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
@@ -64,7 +65,6 @@ void clTreeCtrl::DoInitialize()
     Bind(wxEVT_LEFT_DOWN, &clTreeCtrl::OnMouseLeftDown, this);
     Bind(wxEVT_LEFT_UP, &clTreeCtrl::OnMouseLeftUp, this);
     Bind(wxEVT_LEFT_DCLICK, &clTreeCtrl::OnMouseLeftDClick, this);
-    Bind(wxEVT_MOUSEWHEEL, &clTreeCtrl::OnMouseScroll, this);
     Bind(wxEVT_LEAVE_WINDOW, &clTreeCtrl::OnLeaveWindow, this);
     Bind(wxEVT_ENTER_WINDOW, &clTreeCtrl::OnEnterWindow, this);
     Bind(wxEVT_CONTEXT_MENU, &clTreeCtrl::OnContextMenu, this);
@@ -88,7 +88,6 @@ clTreeCtrl::~clTreeCtrl()
     Unbind(wxEVT_LEFT_DOWN, &clTreeCtrl::OnMouseLeftDown, this);
     Unbind(wxEVT_LEFT_UP, &clTreeCtrl::OnMouseLeftUp, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTreeCtrl::OnMouseLeftDClick, this);
-    Unbind(wxEVT_MOUSEWHEEL, &clTreeCtrl::OnMouseScroll, this);
     Unbind(wxEVT_LEAVE_WINDOW, &clTreeCtrl::OnLeaveWindow, this);
     Unbind(wxEVT_ENTER_WINDOW, &clTreeCtrl::OnEnterWindow, this);
     Unbind(wxEVT_CONTEXT_MENU, &clTreeCtrl::OnContextMenu, this);
@@ -134,7 +133,6 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         needToUpdateScrollbar = true;
     }
 
-    wxRect clientRect = GetItemsRect();
     // So we increased the list to display as much as items as we can.
     // However, if the last item on that list is selected OR it is the last item in general, it must be *fully*
     // displayed
@@ -150,6 +148,9 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     SetFirstItemOnScreen(firstItem);
 
     // Draw the items
+    wxRect clientRect = GetItemsRect();
+    // Set the width of the clipping region to match the header's width
+    clientRect.SetWidth(wxMax(GetHeader().GetWidth(), clientRect.GetWidth()));
     dc.SetClippingRegion(clientRect);
     RenderItems(dc, items);
     dc.DestroyClippingRegion();
@@ -447,19 +448,10 @@ wxTreeItemData* clTreeCtrl::GetItemData(const wxTreeItemId& item) const
     return node->GetClientObject();
 }
 
-void clTreeCtrl::OnMouseScroll(wxMouseEvent& event)
+void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
 {
-    event.Skip();
     CHECK_ROOT_RET();
     if(!GetFirstItemOnScreen()) { return; }
-
-    // Ignore the first tick (should fix an annoyance on OSX)
-    wxDirection direction = (event.GetWheelRotation() > 0) ? wxUP : wxDOWN;
-    if(direction != m_lastScrollDir) {
-        // Changing direction
-        m_lastScrollDir = direction;
-        return;
-    }
 
     const clRowEntry::Vec_t& onScreenItems = m_model.GetOnScreenItems();
     if(onScreenItems.empty()) { return; }
@@ -475,16 +467,24 @@ void clTreeCtrl::OnMouseScroll(wxMouseEvent& event)
     }
     if(!nextItem.IsOk()) {
         // No more items to draw
+        m_scrollLines = 0;
         return;
     }
+
     clRowEntry::Vec_t items;
+    m_scrollLines += event.GetWheelRotation();
+    int lines = m_scrollLines / event.GetWheelDelta();
+    int remainder = m_scrollLines % event.GetWheelDelta();
+
+    if(lines != 0) { m_scrollLines = remainder; }
+    else { return; }
     if(event.GetWheelRotation() > 0) { // Scrolling up
-        m_model.GetPrevItems(GetFirstItemOnScreen(), GetScrollTick(), items);
+        m_model.GetPrevItems(GetFirstItemOnScreen(), std::abs((double)lines), items, false);
         if(items.empty()) { return; }
         SetFirstItemOnScreen(items.front()); // first item
         UpdateScrollBar();
     } else {
-        m_model.GetNextItems(GetFirstItemOnScreen(), GetScrollTick(), items);
+        m_model.GetNextItems(GetFirstItemOnScreen(), std::abs((double)lines), items, false);
         if(items.empty()) { return; }
         SetFirstItemOnScreen(items.back()); // the last item
         UpdateScrollBar();
@@ -980,6 +980,7 @@ void clTreeCtrl::DeleteAllItems()
     Delete(GetRootItem());
     m_model.EnableEvents(true);
     DoUpdateHeader(nullptr);
+    m_scrollLines = 0;
 }
 
 wxTreeItemId clTreeCtrl::GetNextItem(const wxTreeItemId& item) const { return m_model.GetItemAfter(item, true); }
@@ -1049,4 +1050,10 @@ void clTreeCtrl::ClearAllHighlights()
     };
     V.Visit(m_model.GetRoot(), false, Foo);
     Refresh();
+}
+
+void clTreeCtrl::UpdateScrollBar()
+{
+    clControlWithItems::UpdateScrollBar();
+    m_scrollLines = 0;
 }

@@ -45,8 +45,8 @@ public:
     void NodeExpanded(clRowEntry* node, bool expanded);
     bool NodeExpanding(clRowEntry* node, bool expanding);
 
-    void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
-    void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items) const;
+    void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
+    void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
     wxTreeItemId AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data);
     wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
                             wxTreeItemData* data);

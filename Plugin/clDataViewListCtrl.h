@@ -8,6 +8,15 @@
 // Extra styles supported by this class
 #define wxDV_ENABLE_SEARCH wxTR_ENABLE_SEARCH
 
+// Search flags
+// See wxTR_SEARCH* for more info
+#define wxDV_SEARCH_METHOD_EXACT wxTR_SEARCH_METHOD_EXACT
+#define wxDV_SEARCH_METHOD_CONTAINS wxTR_SEARCH_METHOD_CONTAINS
+#define wxDV_SEARCH_VISIBLE_ITEMS wxTR_SEARCH_VISIBLE_ITEMS
+#define wxDV_SEARCH_ICASE wxTR_SEARCH_ICASE
+#define wxDV_SEARCH_INCLUDE_CURRENT_ITEM wxTR_SEARCH_INCLUDE_CURRENT_ITEM
+#define wxDV_SEARCH_DEFAULT wxTR_SEARCH_DEFAULT
+
 /**
  * @brief a thin wrapper around clTreeCtrl which provides basic compatiblity API (such as adding columns)
  * This is mainly for code generators like wxCrafter
@@ -22,7 +31,7 @@ class WXDLLIMPEXP_SDK clDataViewListCtrl : public clTreeCtrl
 protected:
     void DoAddHeader(const wxString& label, int width);
     void OnConvertEvent(wxTreeEvent& event);
-    bool SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent);
+    bool SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent, const wxString& text = "");
     void DoSetCellValue(clRowEntry* row, size_t col, const wxVariant& value);
 
 public:
@@ -37,9 +46,41 @@ public:
     bool IsEmpty() const { return GetItemCount() == 0; }
 
     ///===--------------------
+    /// Search support
+    ///===--------------------
+    /**
+     * @brief search for an item from pos that matches the "what" string.
+     * Pass an invalid item to start the search from the root
+     */
+    wxDataViewItem FindNext(const wxDataViewItem& from, const wxString& what, size_t col = 0,
+                            size_t searchFlags = wxDV_SEARCH_DEFAULT);
+    /**
+     * @brief search for an item from pos that matches the "what" string.
+     * Pass an invalid item to start the search from the root
+     */
+    wxDataViewItem FindPrev(const wxDataViewItem& from, const wxString& what, size_t col = 0,
+                            size_t searchFlags = wxDV_SEARCH_DEFAULT);
+
+    /**
+     * @brief highlight matched string of an item. This call should be called after a successfull call to
+     * FindNext or FindPrev
+     */
+    void HighlightText(const wxDataViewItem& item, bool b);
+
+    /**
+     * @brief clear highlighted text
+     */
+    void ClearHighlight(const wxDataViewItem& item);
+
+    ///===--------------------
     /// wxDV compatilibty API
     ///===--------------------
-
+    
+    /**
+     * @brief Scrolls to ensure that the given item is visible.
+     */
+    void EnsureVisible(const wxDataViewItem& item);
+    
     /**
      * @brief appends an item to the end of the list
      */
@@ -98,12 +139,12 @@ public:
      * @brief return item at a given row. This function is executed in O(1)
      */
     wxDataViewItem RowToItem(size_t row) const;
-    
+
     /**
      * @brief return row number from item. This function is executed in O(N)
      */
     int ItemToRow(const wxDataViewItem& item) const;
-    
+
     /**
      * @brief Delete the row at position row.
      */
@@ -112,11 +153,16 @@ public:
      * @brief Sets the value of a given row/col (i.e. cell)
      */
     void SetValue(const wxVariant& value, size_t row, size_t col);
-    
+
     /**
      * @brief set sorting function AND apply it
      */
     void SetSortFunction(const clSortFunc_t& CompareFunc);
+    
+    /**
+     * @brief remove all columns from the control
+     */
+    void ClearColumns();
 };
 
 // Helper class passing bitmap index + text
@@ -124,25 +170,26 @@ class WXDLLIMPEXP_SDK clDataViewTextBitmap : public wxObject
 {
 private:
     wxString m_text;
-    int      m_bitmapIndex;
-    
-public:
-    clDataViewTextBitmap( const wxString &text = wxEmptyString,
-                        int bitmapIndex = wxNOT_FOUND )
-        : m_text(text),
-          m_bitmapIndex(bitmapIndex)
-    { }
+    int m_bitmapIndex;
 
-    clDataViewTextBitmap( const clDataViewTextBitmap &other )
-        : wxObject(),
-          m_text(other.m_text),
-          m_bitmapIndex(other.m_bitmapIndex)
-    { }
-    
+public:
+    clDataViewTextBitmap(const wxString& text = wxEmptyString, int bitmapIndex = wxNOT_FOUND)
+        : m_text(text)
+        , m_bitmapIndex(bitmapIndex)
+    {
+    }
+
+    clDataViewTextBitmap(const clDataViewTextBitmap& other)
+        : wxObject()
+        , m_text(other.m_text)
+        , m_bitmapIndex(other.m_bitmapIndex)
+    {
+    }
+
     virtual ~clDataViewTextBitmap() {}
-    
-    void SetText( const wxString &text ) { m_text = text; }
-    wxString GetText() const             { return m_text; }
+
+    void SetText(const wxString& text) { m_text = text; }
+    wxString GetText() const { return m_text; }
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
@@ -151,19 +198,15 @@ public:
         return m_text == other.m_text && m_bitmapIndex == other.m_bitmapIndex;
     }
 
-    bool operator==(const clDataViewTextBitmap& other) const
-    {
-        return IsSameAs(other);
-    }
+    bool operator==(const clDataViewTextBitmap& other) const { return IsSameAs(other); }
 
-    bool operator!=(const clDataViewTextBitmap& other) const
-    {
-        return !IsSameAs(other);
-    }
+    bool operator!=(const clDataViewTextBitmap& other) const { return !IsSameAs(other); }
 
     wxDECLARE_DYNAMIC_CLASS(clDataViewTextBitmap);
 };
 
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 
 #endif // CLDATAVIEWLISTCTRL_H

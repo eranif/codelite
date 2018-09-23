@@ -78,6 +78,7 @@ void clTabColours::InitLightColours()
         // Make the active tab draker
         activeTabBgColour = faceColour.ChangeLightness(60);
         activeTabPenColour = activeTabBgColour;
+        inactiveTabTextColour = activeTabTextColour;
 
     } else {
         // Make it lighter

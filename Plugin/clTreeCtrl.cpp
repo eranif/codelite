@@ -339,7 +339,7 @@ void clTreeCtrl::EnsureVisible(const wxTreeItemId& item)
     // Make sure that all parents of ítem are expanded
     if(!m_model.ExpandToItem(item)) { return; }
     Refresh();
-    CallAfter(&clTreeCtrl::DoEnsureVisible, item);
+    DoEnsureVisible(item);
 }
 
 void clTreeCtrl::DoEnsureVisible(const wxTreeItemId& item)

@@ -46,6 +46,9 @@ protected:
 protected:
     bool ShouldShowScrollBar() const;
     void DoInitialize();
+
+    clScrollBar* GetHScrollBar() { return m_hsb; }
+    clScrollBar* GetVScrollBar() { return m_vsb; }
     
     /**
      * @brief return true row from a position

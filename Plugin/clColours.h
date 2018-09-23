@@ -13,6 +13,7 @@ class WXDLLIMPEXP_SDK clColours
     wxColour selItemBgColour;        // selected item background colour
     wxColour selItemBgColourNoFocus; // selected item background colour
     wxColour buttonColour;           // expand/collapse button colour
+    wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
     wxColour bgColour;               // background colour for the control
     wxColour scrolBarButton;         // The scrollbar thumb button colour
     wxColour alternateColourOdd;     // Colour to draw odd items background (wxTR_ROW_LINES)
@@ -20,7 +21,6 @@ class WXDLLIMPEXP_SDK clColours
     wxColour headerBgColour;         // Header background colour
     wxColour headerHBorderColour;    // The line to use for drawing a horizontal header border
     wxColour headerVBorderColour;    // The line to use for drawing a vertical header border
-    wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
     wxColour matchedItemText;        // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
     wxColour matchedItemBgText;      // Text bg colour for matched item (need the style wxTR_ENABLE_SEARCH)
     bool m_useNativeColours = false; // When possible, use the native colours

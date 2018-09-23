@@ -112,7 +112,6 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         return;
     }
 
-    size_t maxItems = GetNumLineCanFitOnScreen();
     bool needToUpdateScrollbar = false;
     if(!GetFirstItemOnScreen()) {
         SetFirstItemOnScreen(m_model.GetRoot());
@@ -123,10 +122,20 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
 
     // Get list of items to draw
     clRowEntry::Vec_t items;
+    size_t maxItems = GetNumLineCanFitOnScreen();
+    if(maxItems == 0) { return; }
     m_model.GetNextItems(firstItem, maxItems, items);
 
     // Always try to get maximum entries to draw on the canvas
-    while(items.size() < maxItems) {
+    if(items.empty()) { return; }
+    bool canScrollDown = GetVScrollBar()->CanScollDown();
+    while((canScrollDown &&
+           (items.size() < maxItems)) || // While can move the scroll thumb a bit further down, increase the list size
+          (!canScrollDown && (items.size() < (maxItems - 1)))) { // the scroll thumb cant be moved further down, so it
+                                                                 // makes no sense on hiding the last item (we wont be
+                                                                 // able to reach it), so make sure we extend the list
+                                                                 // up to max-items -1, this means that the last item is
+                                                                 // always fully visible
         firstItem = m_model.GetRowBefore(firstItem, true);
         if(!firstItem) { break; }
         items.insert(items.begin(), firstItem);
@@ -134,13 +143,16 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     }
 
     // So we increased the list to display as much as items as we can.
-    // However, if the last item on that list is selected OR it is the last item in general, it must be *fully*
-    // displayed
-    if(!items.empty()) {
-        clRowEntry* lastItem = items.back();
-        if(lastItem->IsSelected() || (lastItem->GetNext() == nullptr)) {
-            AssignRects(items);
-            if(!IsItemFullyVisible(items.back())) { items.erase(items.begin()); }
+    // However, if the last item in the view is not visible, make it so
+    clRowEntry* lastRow = items.back();
+    if(lastRow && lastRow->IsSelected()) {
+        AssignRects(items);
+        if(!IsItemFullyVisible(lastRow)) {
+            // Remove the first item from the list and append new item at the bottom
+            // basically what we are doing here is sliding the window (visible items) 1 row up
+            items.erase(items.begin());
+            clRowEntry* new_last_item = m_model.GetRowAfter(lastRow, true);
+            if(new_last_item) { items.push_back(new_last_item); }
         }
     }
 
@@ -150,7 +162,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Draw the items
     wxRect clientRect = GetItemsRect();
     // Set the width of the clipping region to match the header's width
-    clientRect.SetWidth(wxMax(GetHeader().GetWidth(), clientRect.GetWidth()));
+    clientRect.SetWidth(wxMax(GetHeader().GetWidth(), clientRect.GetWidth()) + 1);
     dc.SetClippingRegion(clientRect);
     RenderItems(dc, items);
     dc.DestroyClippingRegion();
@@ -249,10 +261,12 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                     } else if(!has_multiple_selection && !pNode->IsSelected()) {
                         // We got other selection (1), but not this one, select it
                         m_model.SelectItem(where, true, false, true);
+                        EnsureVisible(where);
                     } else if(has_multiple_selection && !pNode->IsSelected()) {
                         // we got multiple selections and we want to select a new item, what we do
                         // is we clear the current selections and select the new item
                         m_model.SelectItem(where, true, false, true);
+                        EnsureVisible(where);
                     }
                 }
 
@@ -260,6 +274,7 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                 if(GetSelection() != wxTreeItemId(pNode)) {
                     // Select it
                     SelectItem(wxTreeItemId(pNode));
+                    EnsureVisible(where);
                 }
             }
         }
@@ -460,12 +475,16 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
 
     // Can we scroll any further?
     wxTreeItemId nextItem;
-    if(event.GetWheelRotation() > 0) { // Scrolling up
-        nextItem = m_model.GetItemAfter(firstItem, true);
-    } else {
+    bool scrolling_down = !(event.GetWheelRotation() > 0);
+    if(scrolling_down) { // Scrolling up
         nextItem = m_model.GetItemAfter(lastItem, true);
+    } else {
+        nextItem = m_model.GetItemAfter(firstItem, true);
     }
-    if(!nextItem.IsOk()) {
+
+    if(!nextItem.IsOk() && (scrolling_down && !IsItemFullyVisible(lastItem))) {
+        nextItem = wxTreeItemId(lastItem);
+    } else if(!nextItem.IsOk()) {
         // No more items to draw
         m_scrollLines = 0;
         return;
@@ -476,8 +495,11 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
     int lines = m_scrollLines / event.GetWheelDelta();
     int remainder = m_scrollLines % event.GetWheelDelta();
 
-    if(lines != 0) { m_scrollLines = remainder; }
-    else { return; }
+    if(lines != 0) {
+        m_scrollLines = remainder;
+    } else {
+        return;
+    }
     if(event.GetWheelRotation() > 0) { // Scrolling up
         m_model.GetPrevItems(GetFirstItemOnScreen(), std::abs((double)lines), items, false);
         if(items.empty()) { return; }
@@ -817,7 +839,19 @@ void clTreeCtrl::ScrollToRow(int firstLine)
     newTopLine = m_model.GetItemFromIndex(firstLine);
     if(newTopLine) {
         if(newTopLine->IsHidden()) { newTopLine = newTopLine->GetFirstChild(); }
-        SetFirstItemOnScreen(m_model.ToPtr(newTopLine));
+        SetFirstItemOnScreen(newTopLine);
+        if(!GetVScrollBar()->CanScollDown()) {
+            // we cant scroll down anymore
+            // Get list of items to draw
+            clRowEntry::Vec_t items;
+            size_t maxItems = GetNumLineCanFitOnScreen();
+            m_model.GetNextItems(newTopLine, maxItems, items);
+            AssignRects(items);
+            if(!items.empty() && !IsItemFullyVisible(items.back())) {
+                newTopLine = m_model.GetRowAfter(newTopLine, true);
+                if(newTopLine) { SetFirstItemOnScreen(newTopLine); }
+            }
+        }
     }
     UpdateScrollBar();
     Refresh();

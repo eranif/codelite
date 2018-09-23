@@ -164,7 +164,7 @@ public:
             wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
             evt.SetEventObject(tree);
             evt.SetItem(tree->GetSelection());
-            tree->GetEventHandler()->ProcessEvent(evt);
+            tree->GetEventHandler()->AddPendingEvent(evt);
             Dismiss();
         } else {
             event.Skip();

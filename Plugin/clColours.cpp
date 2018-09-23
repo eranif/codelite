@@ -11,7 +11,7 @@ clColours::clColours()
 
 void clColours::InitDefaults()
 {
-    itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
+    itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     selItemTextColour = wxColour("#FDFEFE");
 #ifdef __WXOSX__
     selItemBgColour = wxColour("rgb(149,169,176)");
@@ -25,7 +25,7 @@ void clColours::InitDefaults()
     alternateColourOdd = bgColour.ChangeLightness(95);
 #endif
     selbuttonColour = selItemTextColour;
-    buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    buttonColour = itemTextColour;
     hoverBgColour = wxColour("rgb(219,221,224)");
     scrolBarButton = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     itemBgColour = bgColour;

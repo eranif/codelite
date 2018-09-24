@@ -420,9 +420,9 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer78->Add(m_toolbarContainers, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlContainers = new wxDataViewListCtrl(m_containersPage, wxID_ANY, wxDefaultPosition,
-                                                    wxDLG_UNIT(m_containersPage, wxSize(-1, -1)),
-                                                    wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+    m_dvListCtrlContainers = new clThemedListCtrl(m_containersPage, wxID_ANY, wxDefaultPosition,
+                                                  wxDLG_UNIT(m_containersPage, wxSize(-1, -1)),
+                                                  wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
     boxSizer78->Add(m_dvListCtrlContainers, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -454,8 +454,8 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
     boxSizer90->Add(m_toolbarImages, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlImages =
-        new wxDataViewListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)),
-                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+        new clThemedListCtrl(m_imagesPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_imagesPage, wxSize(-1, -1)),
+                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
     boxSizer90->Add(m_dvListCtrlImages, 1, wxEXPAND, WXC_FROM_DIP(5));
 

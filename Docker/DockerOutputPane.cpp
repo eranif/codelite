@@ -155,7 +155,6 @@ void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers
         cols.push_back(container.GetName());
         m_dvListCtrlContainers->AppendItem(cols, (wxUIntPtr)&container);
     }
-    clFitColumnWidth(m_dvListCtrlContainers);
 }
 
 void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)

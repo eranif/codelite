@@ -79,8 +79,6 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
 
     // Initialise images map
-    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-    m_bitmaps = bmpLoader->MakeStandardMimeMap();
     EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
                                   clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
@@ -97,8 +95,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
 
     BitmapLoader* bl = m_mgr->GetStdIcons();
-    BitmapLoader::Vec_t bitmaps = bl->MakeStandardMimeBitmapList();
-    m_treeCtrlView->SetBitmaps(bitmaps);
+    m_treeCtrlView->SetBitmaps(&bl->GetMimeBitmaps().GetBitmaps());
 
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -807,17 +804,6 @@ void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)
     if(debugDlg.ShowModal() != wxID_OK) { return; }
 
     PHPWorkspace::Get()->RunProject(false, debugDlg.GetPath(), DoGetSelectedProject());
-}
-
-wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
-{
-    wxString filename;
-    filename << "dummy"
-             << "." << ext;
-
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(type == FileExtManager::TypeOther) { type = FileExtManager::TypeText; }
-    return m_bitmaps.find(type)->second;
 }
 
 void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)

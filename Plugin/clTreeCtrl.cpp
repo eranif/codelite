@@ -517,29 +517,22 @@ void clTreeCtrl::DoMouseScroll(const wxMouseEvent& event)
 void clTreeCtrl::DoBitmapAdded()
 {
     // Also, we adjust the indent size
-    const std::vector<wxBitmap>& bmps = GetBitmaps();
+    if(!GetBitmaps()) { return; }
     int heighestBitmap = 0;
-    for(size_t i = 0; i < bmps.size(); ++i) {
-        heighestBitmap = wxMax(heighestBitmap, bmps[i].GetScaledHeight());
+    for(size_t i = 0; i < GetBitmaps()->size(); ++i) {
+        const wxBitmap& bmp = GetBitmaps()->at(i);
+        heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
     }
     heighestBitmap += 2 * clRowEntry::Y_SPACER;
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
     SetIndent(GetLineHeight());
 }
 
-void clTreeCtrl::SetBitmaps(const std::vector<wxBitmap>& bitmaps)
+void clTreeCtrl::SetBitmaps(BitmapVec_t* bitmaps)
 {
     clControlWithItems::SetBitmaps(bitmaps);
     DoBitmapAdded();
     Refresh();
-}
-
-int clTreeCtrl::AddBitmap(const wxBitmap& bmp)
-{
-    GetBitmaps().push_back(bmp);
-    DoBitmapAdded();
-    int new_index = (GetBitmaps().size() - 1);
-    return new_index;
 }
 
 void clTreeCtrl::ProcessIdle()

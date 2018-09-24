@@ -149,9 +149,8 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
     , m_codeliteEcho(NULL)
 {
-    BitmapLoader::Vec_t bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList();
-    m_dvListCtrl->SetBitmaps(bitmaps);
-    m_dvListCtrlUnversioned->SetBitmaps(bitmaps);
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
     CreatGUIControls();
     m_themeHelper = new ThemeHandlerHelper(this);

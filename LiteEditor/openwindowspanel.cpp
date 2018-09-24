@@ -85,8 +85,7 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
 {
     // Disable the built in sorting, this control will take care of it
     m_dvListCtrl->SetSortFunction(nullptr);
-    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList());
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_toolbar = new clToolBar(this);
     m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
                        wxITEM_CHECK);

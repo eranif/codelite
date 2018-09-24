@@ -83,8 +83,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
 
-    // BitmapLoader::RegisterImage(FileExtManager::TypeWorkspacePHP, images.Bitmap("m_bmpPhpWorkspace"));
-
     // Add our UI
     // create tab (possibly detached)
     m_workspaceView = new PHPWorkspaceView(m_mgr->GetWorkspaceView()->GetBook(), m_mgr);

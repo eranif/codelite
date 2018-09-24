@@ -8,6 +8,7 @@
 #define _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 
 #include "clFileViwerTreeCtrl.h"
+#include "clThemedListCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dataview.h>
@@ -155,7 +156,7 @@ class NotebookNavigationDlgBase : public wxDialog
 {
 protected:
     wxPanel* m_panel161;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
@@ -163,7 +164,7 @@ protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel161() { return m_panel161; }
     NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"),
                               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 200),

@@ -132,14 +132,13 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
 {
     wxWindowUpdateLocker locker(m_treeCtrl);
     m_treeCtrl->DeleteAllItems();
+    m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
-    if(m_images.empty()) {
-        BitmapLoader& bmpLoader = *clGetManager()->GetStdIcons();
-        m_images.push_back(bmpLoader.LoadBitmap(wxT("cxx-workspace"))); // 0
-        m_images.push_back(bmpLoader.LoadBitmap(wxT("folder-yellow"))); // 1
-        m_images.push_back(bmpLoader.LoadBitmap(wxT("project")));       // 2
-        m_treeCtrl->SetBitmaps(m_images);
-    }
+    int workspaceImgId = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeWorkspace);
+    int folderImgId = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+    int folderImgIdExpanded = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    int projectImgId = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeProject);
+    int projectImgIdExpanded = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeProjectExpanded);
 
     if(m_workspace) {
         wxArrayString projects;
@@ -164,7 +163,7 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
         }
 
         // create the tree
-        wxTreeItemId root = m_treeCtrl->AddRoot(nodeData.name, 0, 0);
+        wxTreeItemId root = m_treeCtrl->AddRoot(nodeData.name, workspaceImgId, workspaceImgId);
         tree->GetData().itemId = root;
         TreeWalker<wxString, VisualWorkspaceNode> walker(tree);
 
@@ -178,17 +177,21 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
             wxTreeItemId parentHti = node->GetParent()->GetData().itemId;
             if(parentHti.IsOk() == false) { parentHti = root; }
 
-            int imgId(2); // Virtual folder
+            int imgId; // Virtual folder
+            int imgIdExpanded;
             switch(node->GetData().type) {
             case ProjectItem::TypeWorkspace:
                 imgId = 0;
+                imgIdExpanded = 0;
                 break;
             case ProjectItem::TypeProject:
-                imgId = 2;
+                imgId = projectImgId;
+                imgIdExpanded = projectImgIdExpanded;
                 break;
             case ProjectItem::TypeVirtualDirectory:
             default:
-                imgId = 1;
+                imgId = folderImgId;
+                imgIdExpanded = folderImgIdExpanded;
                 break;
             }
 
@@ -196,26 +199,14 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
             node->GetData().itemId = m_treeCtrl->AppendItem(parentHti,            // parent
                                                             node->GetData().name, // display name
                                                             imgId,                // item image index
-                                                            imgId                 // selected item image
+                                                            imgIdExpanded         // selected item image
             );
             m_treeCtrl->SortChildren(parentHti);
         }
 
-#if !defined(__WXMSW__)
-        // For a single project, hide the workspace node. This doesn't work on wxMSW
-        if(!m_projectName.empty()) {
-            m_treeCtrl->SetWindowStyle(m_treeCtrl->GetWindowStyle() | wxTR_HIDE_ROOT);
-            wxTreeItemIdValue cookie;
-            wxTreeItemId projitem = m_treeCtrl->GetFirstChild(root, cookie);
-            if(projitem.IsOk() && m_treeCtrl->HasChildren(projitem)) { m_treeCtrl->Expand(projitem); }
-        } else
-#endif
-            if(root.IsOk() && m_treeCtrl->ItemHasChildren(root)) {
-            m_treeCtrl->Expand(root);
-        }
-        delete tree;
+        if(root.IsOk() && m_treeCtrl->ItemHasChildren(root)) { m_treeCtrl->Expand(root); }
+        wxDELETE(tree);
     }
-
     // if a initialPath was provided, try to find and select it
     if(SelectPath(m_initialPath)) { m_treeCtrl->Expand(m_treeCtrl->GetSelection()); }
 }

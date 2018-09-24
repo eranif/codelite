@@ -73,8 +73,7 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 
     // Add icons to the tree
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    BitmapLoader::Vec_t bitmaps = bmpLoader->MakeStandardMimeBitmapList();
-    m_tree->SetBitmaps(bitmaps);
+    m_tree->SetBitmaps(bmpLoader->GetStandardMimeBitmapListPtr());
 
     sz->Add(m_tree, 1, wxEXPAND);
 

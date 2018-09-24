@@ -43,7 +43,6 @@ class ItemData;
 class PHPWorkspaceView : public PHPWorkspaceViewBase
 {
     IManager* m_mgr;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     std::unordered_map<wxString, wxTreeItemId> m_filesItems;
     std::unordered_map<wxString, wxTreeItemId> m_foldersItems;
     clTreeKeyboardInput::Ptr_t m_keyboardHelper;
@@ -91,7 +90,6 @@ protected:
     const ItemData* DoGetItemData(const wxTreeItemId& item) const;
     bool IsFolderItem(const wxTreeItemId& item);
     int DoGetItemImgIdx(const wxString& filename);
-    wxBitmap DoGetBitmapForExt(const wxString& ext) const;
     void DoDeleteSelectedFileItem();
 #if USE_SFTP
     void DoOpenSSHAccountManager();

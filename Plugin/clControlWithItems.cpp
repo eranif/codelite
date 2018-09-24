@@ -372,11 +372,11 @@ wxSize clControlWithItems::GetTextSize(const wxString& label) const
 
 const wxBitmap& clControlWithItems::GetBitmap(size_t index) const
 {
-    if(index >= m_bitmaps.size()) {
+    if(!GetBitmaps() || (index >= GetBitmaps()->size())) {
         static wxBitmap emptyBitmap;
         return emptyBitmap;
     }
-    return m_bitmaps[index];
+    return GetBitmaps()->at(index);
 }
 
 void clControlWithItems::OnMouseScroll(wxMouseEvent& event)

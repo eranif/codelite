@@ -41,7 +41,6 @@
 
 std::unordered_map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::unordered_map<wxString, wxString> BitmapLoader::m_manifest;
-BitmapLoader::BitmapMap_t BitmapLoader::m_userBitmaps;
 
 BitmapLoader::~BitmapLoader() {}
 
@@ -63,9 +62,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     }
 
     iter = m_toolbarsBitmaps.find(name);
-    if(iter != m_toolbarsBitmaps.end()) {
-        return iter->second;
-    }
+    if(iter != m_toolbarsBitmaps.end()) { return iter->second; }
 
     return wxNullBitmap;
 }
@@ -146,220 +143,15 @@ void BitmapLoader::doLoadBitmaps()
     }
 }
 
-int BitmapLoader::GetMimeImageId(FileExtManager::FileType type)
-{
-    FileExtManager::Init();
-    if(m_fileIndexMap.empty()) {
-        // Allocate image list so we will populate the m_fileIndexMap
-        wxImageList* il = MakeStandardMimeImageList();
-        wxDELETE(il);
-    }
-    std::unordered_map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) return wxNOT_FOUND;
-    return iter->second;
-}
+int BitmapLoader::GetMimeImageId(int type) { return GetMimeBitmaps().GetIndex(type); }
 
-int BitmapLoader::GetMimeImageId(const wxString& filename)
-{
-    FileExtManager::Init();
-    if(m_fileIndexMap.empty()) {
-        // Allocate image list so we will populate the m_fileIndexMap
-        wxImageList* il = MakeStandardMimeImageList();
-        wxDELETE(il);
-    }
-
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    std::unordered_map<FileExtManager::FileType, int>::const_iterator iter = m_fileIndexMap.find(type);
-    if(iter == m_fileIndexMap.end()) {
-        return wxNOT_FOUND;
-    }
-    return iter->second;
-}
-
-#define ADD_BITMAP_TO_VEC(vect, bmp_name, file_type)    \
-    vect.push_back(LoadBitmap(bmp_name));               \
-    AddImage(vect.size() - 1, file_type);
-
-BitmapLoader::Vec_t BitmapLoader::MakeStandardMimeBitmapList()
-{
-    BitmapLoader::Vec_t V;
-    m_fileIndexMap.clear();
-    ADD_BITMAP_TO_VEC(V, "console", FileExtManager::TypeExe);
-    ADD_BITMAP_TO_VEC(V, "mime-html", FileExtManager::TypeHtml);
-    ADD_BITMAP_TO_VEC(V, "archive", FileExtManager::TypeArchive);
-    ADD_BITMAP_TO_VEC(V, "mime-php", FileExtManager::TypePhp);
-    ADD_BITMAP_TO_VEC(V, "dll", FileExtManager::TypeDll);
-    ADD_BITMAP_TO_VEC(V, "blocks", FileExtManager::TypeFormbuilder);
-    ADD_BITMAP_TO_VEC(V, "mime-txt", FileExtManager::TypeCodedesigner);
-    ADD_BITMAP_TO_VEC(V, "mime-bmp", FileExtManager::TypeBmp);
-    ADD_BITMAP_TO_VEC(V, "cog", FileExtManager::TypeMakefile);
-    ADD_BITMAP_TO_VEC(V, "mime-c", FileExtManager::TypeSourceC);
-    ADD_BITMAP_TO_VEC(V, "mime-cpp", FileExtManager::TypeSourceCpp);
-    ADD_BITMAP_TO_VEC(V, "mime-h", FileExtManager::TypeHeader);
-    ADD_BITMAP_TO_VEC(V, "mime-txt", FileExtManager::TypeText);
-    ADD_BITMAP_TO_VEC(V, "execute", FileExtManager::TypeScript);
-    ADD_BITMAP_TO_VEC(V, "mime-xml", FileExtManager::TypeXml);
-    ADD_BITMAP_TO_VEC(V, "mime-txt", FileExtManager::TypeErd);
-    ADD_BITMAP_TO_VEC(V, "mime-python", FileExtManager::TypePython);
-    ADD_BITMAP_TO_VEC(V, "mime-css", FileExtManager::TypeCSS);
-    ADD_BITMAP_TO_VEC(V, "mime-js", FileExtManager::TypeJS);
-    ADD_BITMAP_TO_VEC(V, "cxx-workspace", FileExtManager::TypeWorkspace);
-    ADD_BITMAP_TO_VEC(V, "php-workspace", FileExtManager::TypeWorkspacePHP);
-    ADD_BITMAP_TO_VEC(V, "docker", FileExtManager::TypeWorkspaceDocker);
-    ADD_BITMAP_TO_VEC(V, "nodejs-workspace", FileExtManager::TypeWorkspaceNodeJS);
-    ADD_BITMAP_TO_VEC(V, "project", FileExtManager::TypeProject);
-    ADD_BITMAP_TO_VEC(V, "project-opened", FileExtManager::TypeProjectExpanded);
-    ADD_BITMAP_TO_VEC(V, "blocks", FileExtManager::TypeWxCrafter);
-    ADD_BITMAP_TO_VEC(V, "mime-xml", FileExtManager::TypeXRC);
-    ADD_BITMAP_TO_VEC(V, "tools", FileExtManager::TypeResource);
-    ADD_BITMAP_TO_VEC(V, "mime-sql", FileExtManager::TypeSQL);
-    ADD_BITMAP_TO_VEC(V, "folder-yellow", FileExtManager::TypeFolder);
-    ADD_BITMAP_TO_VEC(V, "folder-yellow-opened", FileExtManager::TypeFolderExpanded);
-    ADD_BITMAP_TO_VEC(V, "mime-as", FileExtManager::TypeAsm);
-    ADD_BITMAP_TO_VEC(V, "cmake", FileExtManager::TypeCMake);
-    ADD_BITMAP_TO_VEC(V, "qt", FileExtManager::TypeQMake);
-    ADD_BITMAP_TO_VEC(V, "docker", FileExtManager::TypeDockerfile);
-    ADD_BITMAP_TO_VEC(V, "yml", FileExtManager::TypeYAML);
-    ADD_BITMAP_TO_VEC(V, "database", FileExtManager::TypeDatabase);
-    ADD_BITMAP_TO_VEC(V, "mime-svg", FileExtManager::TypeSvg);
-    
-    std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
-                  [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
-                      V.push_back(p.second);
-                      AddImage(V.size() - 1, p.first);
-                  });
-    return V;
-}
-
-#define ADD_BITMAP_TO_LIST(L, bmp_name, file_type)  \
-    AddImage(imageList->Add(LoadBitmap(bmp_name)), file_type);
-    
-wxImageList* BitmapLoader::MakeStandardMimeImageList()
-{
-#if defined(__WXMSW__) || defined(__WXGTK__)
-    wxImageList* imageList = new wxImageList(clGetScaledSize(16), clGetScaledSize(16));
-#else
-    wxImageList* imageList = new wxImageList(16, 16);
-#endif
-    m_fileIndexMap.clear();
-    ADD_BITMAP_TO_LIST(imageList, "console", FileExtManager::TypeExe);
-    ADD_BITMAP_TO_LIST(imageList, "mime-html", FileExtManager::TypeHtml);
-    ADD_BITMAP_TO_LIST(imageList, "archive", FileExtManager::TypeArchive);
-    ADD_BITMAP_TO_LIST(imageList, "mime-php", FileExtManager::TypePhp);
-    ADD_BITMAP_TO_LIST(imageList, "dll", FileExtManager::TypeDll);
-    ADD_BITMAP_TO_LIST(imageList, "blocks", FileExtManager::TypeFormbuilder);
-    ADD_BITMAP_TO_LIST(imageList, "mime-txt", FileExtManager::TypeCodedesigner);
-    ADD_BITMAP_TO_LIST(imageList, "mime-bmp", FileExtManager::TypeBmp);
-    ADD_BITMAP_TO_LIST(imageList, "cog", FileExtManager::TypeMakefile);
-    ADD_BITMAP_TO_LIST(imageList, "mime-c", FileExtManager::TypeSourceC);
-    ADD_BITMAP_TO_LIST(imageList, "mime-cpp", FileExtManager::TypeSourceCpp);
-    ADD_BITMAP_TO_LIST(imageList, "mime-h", FileExtManager::TypeHeader);
-    ADD_BITMAP_TO_LIST(imageList, "mime-txt", FileExtManager::TypeText);
-    ADD_BITMAP_TO_LIST(imageList, "execute", FileExtManager::TypeScript);
-    ADD_BITMAP_TO_LIST(imageList, "mime-xml", FileExtManager::TypeXml);
-    ADD_BITMAP_TO_LIST(imageList, "mime-txt", FileExtManager::TypeErd);
-    ADD_BITMAP_TO_LIST(imageList, "mime-python", FileExtManager::TypePython);
-    ADD_BITMAP_TO_LIST(imageList, "mime-css", FileExtManager::TypeCSS);
-    ADD_BITMAP_TO_LIST(imageList, "mime-js", FileExtManager::TypeJS);
-    ADD_BITMAP_TO_LIST(imageList, "cxx-workspace", FileExtManager::TypeWorkspace);
-    ADD_BITMAP_TO_LIST(imageList, "php-workspace", FileExtManager::TypeWorkspacePHP);
-    ADD_BITMAP_TO_LIST(imageList, "docker", FileExtManager::TypeWorkspaceDocker);
-    ADD_BITMAP_TO_LIST(imageList, "nodejs-workspace", FileExtManager::TypeWorkspaceNodeJS);
-    ADD_BITMAP_TO_LIST(imageList, "project", FileExtManager::TypeProject);
-    ADD_BITMAP_TO_LIST(imageList, "project-opened", FileExtManager::TypeProjectExpanded);
-    ADD_BITMAP_TO_LIST(imageList, "blocks", FileExtManager::TypeWxCrafter);
-    ADD_BITMAP_TO_LIST(imageList, "mime-xml", FileExtManager::TypeXRC);
-    ADD_BITMAP_TO_LIST(imageList, "tools", FileExtManager::TypeResource);
-    ADD_BITMAP_TO_LIST(imageList, "mime-sql", FileExtManager::TypeSQL);
-    ADD_BITMAP_TO_LIST(imageList, "folder-yellow", FileExtManager::TypeFolder);
-    ADD_BITMAP_TO_LIST(imageList, "folder-yellow-opened", FileExtManager::TypeFolderExpanded);
-    ADD_BITMAP_TO_LIST(imageList, "mime-as", FileExtManager::TypeAsm);
-    ADD_BITMAP_TO_LIST(imageList, "cmake", FileExtManager::TypeCMake);
-    ADD_BITMAP_TO_LIST(imageList, "qt", FileExtManager::TypeQMake);
-    ADD_BITMAP_TO_LIST(imageList, "docker", FileExtManager::TypeDockerfile);
-    ADD_BITMAP_TO_LIST(imageList, "yml", FileExtManager::TypeYAML);
-    ADD_BITMAP_TO_LIST(imageList, "database", FileExtManager::TypeDatabase);
-    ADD_BITMAP_TO_LIST(imageList, "mime-svg", FileExtManager::TypeSvg);
-
-    std::for_each(m_userBitmaps.begin(), m_userBitmaps.end(),
-                  [&](const std::pair<FileExtManager::FileType, wxBitmap>& p) {
-                      AddImage(imageList->Add(GetIcon(p.second)), p.first);
-                  });
-    return imageList;
-}
-
-void BitmapLoader::AddImage(int index, FileExtManager::FileType type)
-{
-    std::unordered_map<FileExtManager::FileType, int>::iterator iter = m_fileIndexMap.find(type);
-    if(iter != m_fileIndexMap.end()) m_fileIndexMap.erase(iter);
-    m_fileIndexMap.insert(std::make_pair(type, index));
-}
-
-#define ADD_BITMAP_TO_MAP(M, bmp_name, file_type)  \
-    M[file_type] = LoadBitmap(bmp_name);
-    
-BitmapLoader::BitmapMap_t BitmapLoader::MakeStandardMimeMap()
-{
-    BitmapLoader::BitmapMap_t images;
-    ADD_BITMAP_TO_MAP(images, "console", FileExtManager::TypeExe);
-    ADD_BITMAP_TO_MAP(images, "mime-html", FileExtManager::TypeHtml);
-    ADD_BITMAP_TO_MAP(images, "archive", FileExtManager::TypeArchive);
-    ADD_BITMAP_TO_MAP(images, "mime-php", FileExtManager::TypePhp);
-    ADD_BITMAP_TO_MAP(images, "dll", FileExtManager::TypeDll);
-    ADD_BITMAP_TO_MAP(images, "blocks", FileExtManager::TypeFormbuilder);
-    ADD_BITMAP_TO_MAP(images, "mime-txt", FileExtManager::TypeCodedesigner);
-    ADD_BITMAP_TO_MAP(images, "mime-bmp", FileExtManager::TypeBmp);
-    ADD_BITMAP_TO_MAP(images, "cog", FileExtManager::TypeMakefile);
-    ADD_BITMAP_TO_MAP(images, "mime-c", FileExtManager::TypeSourceC);
-    ADD_BITMAP_TO_MAP(images, "mime-cpp", FileExtManager::TypeSourceCpp);
-    ADD_BITMAP_TO_MAP(images, "mime-h", FileExtManager::TypeHeader);
-    ADD_BITMAP_TO_MAP(images, "mime-txt", FileExtManager::TypeText);
-    ADD_BITMAP_TO_MAP(images, "execute", FileExtManager::TypeScript);
-    ADD_BITMAP_TO_MAP(images, "mime-xml", FileExtManager::TypeXml);
-    ADD_BITMAP_TO_MAP(images, "mime-txt", FileExtManager::TypeErd);
-    ADD_BITMAP_TO_MAP(images, "mime-python", FileExtManager::TypePython);
-    ADD_BITMAP_TO_MAP(images, "mime-css", FileExtManager::TypeCSS);
-    ADD_BITMAP_TO_MAP(images, "mime-js", FileExtManager::TypeJS);
-    ADD_BITMAP_TO_MAP(images, "cxx-workspace", FileExtManager::TypeWorkspace);
-    ADD_BITMAP_TO_MAP(images, "php-workspace", FileExtManager::TypeWorkspacePHP);
-    ADD_BITMAP_TO_MAP(images, "docker", FileExtManager::TypeWorkspaceDocker);
-    ADD_BITMAP_TO_MAP(images, "nodejs-workspace", FileExtManager::TypeWorkspaceNodeJS);
-    ADD_BITMAP_TO_MAP(images, "project", FileExtManager::TypeProject);
-    ADD_BITMAP_TO_MAP(images, "project-opened", FileExtManager::TypeProjectExpanded);
-    ADD_BITMAP_TO_MAP(images, "blocks", FileExtManager::TypeWxCrafter);
-    ADD_BITMAP_TO_MAP(images, "mime-xml", FileExtManager::TypeXRC);
-    ADD_BITMAP_TO_MAP(images, "tools", FileExtManager::TypeResource);
-    ADD_BITMAP_TO_MAP(images, "mime-sql", FileExtManager::TypeSQL);
-    ADD_BITMAP_TO_MAP(images, "folder-yellow", FileExtManager::TypeFolder);
-    ADD_BITMAP_TO_MAP(images, "folder-yellow-opened", FileExtManager::TypeFolderExpanded);
-    ADD_BITMAP_TO_MAP(images, "mime-as", FileExtManager::TypeAsm);
-    ADD_BITMAP_TO_MAP(images, "cmake", FileExtManager::TypeCMake);
-    ADD_BITMAP_TO_MAP(images, "qt", FileExtManager::TypeQMake);
-    ADD_BITMAP_TO_MAP(images, "docker", FileExtManager::TypeDockerfile);
-    ADD_BITMAP_TO_MAP(images, "yml", FileExtManager::TypeYAML);
-    ADD_BITMAP_TO_MAP(images, "database", FileExtManager::TypeDatabase);
-    ADD_BITMAP_TO_MAP(images, "mime-svg", FileExtManager::TypeSvg);
-    
-    BitmapLoader::BitmapMap_t merged;
-    merged.insert(m_userBitmaps.begin(), m_userBitmaps.end());
-    merged.insert(images.begin(), images.end());
-    return merged;
-}
+int BitmapLoader::GetMimeImageId(const wxString& filename) { return GetMimeBitmaps().GetIndex(filename); }
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 {
     wxIcon icn;
     icn.CopyFromBitmap(bmp);
     return icn;
-}
-
-void BitmapLoader::RegisterImage(FileExtManager::FileType type, const wxBitmap& bmp)
-{
-    BitmapMap_t::iterator iter = m_userBitmaps.find(type);
-    if(iter != m_userBitmaps.end()) {
-        m_userBitmaps.erase(iter);
-    }
-    m_userBitmaps.insert(std::make_pair(type, bmp));
 }
 
 void BitmapLoader::initialize()
@@ -406,9 +198,7 @@ void BitmapLoader::initialize()
         bitmapFolder << "." << clGetUserName();
 
         tmpFolder.AppendDir(bitmapFolder);
-        if(tmpFolder.DirExists()) {
-            tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
-        }
+        if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
 
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
@@ -432,17 +222,132 @@ void BitmapLoader::initialize()
                 m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
             }
         }
-
-        // if(DrawingUtils::IsDark(DrawingUtils::GetMenuBarBgColour())) {
-        //     std::unordered_map<wxString, wxBitmap> greyBitmaps;
-        //     std::for_each(m_toolbarsBitmaps.begin(),
-        //                   m_toolbarsBitmaps.end(),
-        //                   [&](const std::unordered_map<wxString, wxBitmap>::value_type& vt) {
-        //         wxBitmap bmp = DrawingUtils::CreateGrayBitmap(vt.second);
-        //         wxString name = vt.first;
-        //         greyBitmaps[name] = bmp;
-        //     });
-        //     m_toolbarsBitmaps.swap(greyBitmaps);
-        // }
     }
+
+    // Create the mime-list
+    CreateMimeList();
+}
+
+void BitmapLoader::CreateMimeList()
+{
+    if(m_mimeBitmaps.IsEmpty()) {
+        m_mimeBitmaps.AddBitmap(LoadBitmap("console"), FileExtManager::TypeExe);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-html"), FileExtManager::TypeHtml);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("archive"), FileExtManager::TypeArchive);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-php"), FileExtManager::TypePhp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("dll"), FileExtManager::TypeDll);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks"), FileExtManager::TypeFormbuilder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeCodedesigner);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-bmp"), FileExtManager::TypeBmp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cog"), FileExtManager::TypeMakefile);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-c"), FileExtManager::TypeSourceC);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp"), FileExtManager::TypeSourceCpp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h"), FileExtManager::TypeHeader);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeText);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("execute"), FileExtManager::TypeScript);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml"), FileExtManager::TypeXml);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeErd);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python"), FileExtManager::TypePython);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-css"), FileExtManager::TypeCSS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-js"), FileExtManager::TypeJS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cxx-workspace"), FileExtManager::TypeWorkspace);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace"), FileExtManager::TypeWorkspacePHP);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("docker"), FileExtManager::TypeWorkspaceDocker);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("nodejs-workspace"), FileExtManager::TypeWorkspaceNodeJS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("project"), FileExtManager::TypeProject);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("project-opened"), FileExtManager::TypeProjectExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks"), FileExtManager::TypeWxCrafter);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml"), FileExtManager::TypeXRC);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("tools"), FileExtManager::TypeResource);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-sql"), FileExtManager::TypeSQL);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow"), FileExtManager::TypeFolder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened"), FileExtManager::TypeFolderExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-as"), FileExtManager::TypeAsm);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cmake"), FileExtManager::TypeCMake);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("qt"), FileExtManager::TypeQMake);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("docker"), FileExtManager::TypeDockerfile);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("yml"), FileExtManager::TypeYAML);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("database"), FileExtManager::TypeDatabase);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg"), FileExtManager::TypeSvg);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened"),
+                                FileExtManager::TypeWorkspaceFolderExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow"), FileExtManager::TypeWorkspaceFolder);
+
+        // Non mime bitmaps
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save"), kSave);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save_all"), kSaveAll);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_close"), kClose);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("db-table"), kTable);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cscope"), kFind);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("database"), kDatabase);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("db-column"), kColumn);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("globals"), kAngleBrackets);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/namespace"), kNamespace);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/class"), kClass);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/struct"), kStruct);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_public"), kFunctionPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_protected"), kFunctionProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_private"), kFunctionPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_public"), kMemberPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_protected"), kMemberProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_private"), kMemberPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/typedef"), kTypedef);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro"), kMacro);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum"), kEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum"), kCEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro"), kConstant);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enumerator"), kEnumerator);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/cpp_keyword"), kCxxKeyword);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("sort"), kSort);
+    }
+}
+
+const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename) const
+{
+    FileExtManager::FileType ft = FileExtManager::GetType(filename, FileExtManager::TypeText);
+    return m_mimeBitmaps.GetBitmap(ft);
+}
+
+//===---------------------------
+// clMimeBitmaps
+//===---------------------------
+
+clMimeBitmaps::clMimeBitmaps() {}
+
+clMimeBitmaps::~clMimeBitmaps() {}
+
+int clMimeBitmaps::GetIndex(int type) const
+{
+    if(m_fileIndexMap.count(type) == 0) { return wxNOT_FOUND; }
+    return m_fileIndexMap.at(type);
+}
+
+int clMimeBitmaps::GetIndex(const wxString& filename) const
+{
+    FileExtManager::Init();
+    int ft = FileExtManager::GetType(filename, FileExtManager::TypeText);
+    return GetIndex(ft);
+}
+
+void clMimeBitmaps::AddBitmap(const wxBitmap& bitmap, int type)
+{
+    m_bitmaps.push_back(bitmap);
+    int index = (m_bitmaps.size() - 1);
+    m_fileIndexMap.insert({ type, index });
+}
+
+void clMimeBitmaps::Clear()
+{
+    m_bitmaps.clear();
+    m_fileIndexMap.clear();
+}
+
+const wxBitmap& clMimeBitmaps::GetBitmap(int type) const
+{
+    int index = GetIndex(type);
+    if(index == wxNOT_FOUND) {
+        static wxBitmap emptyBitmap;
+        return emptyBitmap;
+    }
+    return m_bitmaps.at(index);
 }

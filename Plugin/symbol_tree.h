@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef CODELITE_SYMBOL_TREE_H
 #define CODELITE_SYMBOL_TREE_H
+#include "bitmap_loader.h"
 #include "clThemedTreeCtrl.h"
 #include "codelite_exports.h"
 #include "ctags_manager.h"
@@ -155,7 +156,7 @@ public:
      * since when coming to implementation (not prototypes!), all functions will receive 'public' icon.
      * \param images Image list (allocated on the heap), this class becomes the owner of this image list
      */
-    virtual void SetSymbolsImages(std::vector<wxBitmap>& bitmaps);
+    virtual void SetSymbolsImages(BitmapLoader::Vec_t* bitmaps);
 
     void AddSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
     void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
@@ -206,7 +207,7 @@ protected:
      * \param key node key
      */
     void UpdateGuiItem(TagEntry& data, const wxString& key);
-    
+
     void SelectFirstItem();
 };
 #endif // CODELITE_SYMBOL_TREE_H

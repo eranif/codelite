@@ -105,14 +105,9 @@ public:
     virtual void SetSortFunction(const clSortFunc_t& CompareFunc);
 
     /**
-     * @brief associate bitmap vector with this tree
+     * @brief associate bitmap vector with this tree. The bitmaps array must exists as long as this control exists
      */
-    virtual void SetBitmaps(const std::vector<wxBitmap>& bitmaps);
-
-    /**
-     * @brief add a bitmap to the current list. Return its index
-     */
-    int AddBitmap(const wxBitmap& bmp);
+    virtual void SetBitmaps(BitmapVec_t* bitmaps);
 
     /**
      * @brief return the tree style

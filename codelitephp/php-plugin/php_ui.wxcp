@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 697,
+  "m_objCounter": 699,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCF01InitBitmapResources",
   "m_bitmapsFile": "php_ui_php-plugin_bitmaps.cpp",
@@ -2139,7 +2139,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+       "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -2148,7 +2148,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,200"
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -2188,11 +2188,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -2221,11 +2221,11 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "400"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
-           "m_selection": 3,
+           "m_selection": 2,
            "m_options": ["bitmap", "check", "text", "icontext", "progress", "choice"]
           }, {
            "type": "multi-string",
@@ -2259,11 +2259,11 @@
          "m_properties": [{
            "type": "string",
            "m_label": "Name:",
-           "m_value": "Kind"
+           "m_value": "Type"
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "80"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -2305,7 +2305,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "250"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",

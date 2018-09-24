@@ -42,6 +42,9 @@ public:
 
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
 {
+public:
+    typedef std::vector<wxBitmap> BitmapVec_t;
+
 private:
     clHeaderBar m_viewHeader;
     clColours m_colours;
@@ -49,7 +52,7 @@ private:
     int m_firstColumn = 0;
     int m_lineHeight = 0;
     int m_indent = 0;
-    std::vector<wxBitmap> m_bitmaps;
+    BitmapVec_t* m_bitmaps = nullptr;
     int m_scrollTick = SCROLL_TICK;
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;
@@ -87,9 +90,9 @@ public:
     virtual void SetLineHeight(int lineHeight) { this->m_lineHeight = lineHeight; }
     virtual int GetLineHeight() const { return m_lineHeight; }
 
-    virtual void SetBitmaps(const std::vector<wxBitmap>& bitmaps) { this->m_bitmaps = bitmaps; }
-    virtual const std::vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
-    virtual std::vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
+    virtual void SetBitmaps(BitmapVec_t* bitmaps) { this->m_bitmaps = bitmaps; }
+    virtual const BitmapVec_t* GetBitmaps() const { return m_bitmaps; }
+    virtual BitmapVec_t* GetBitmaps() { return m_bitmaps; }
 
     void SetScrollTick(int scrollTick) { this->m_scrollTick = scrollTick; }
     int GetScrollTick() const { return m_scrollTick; }

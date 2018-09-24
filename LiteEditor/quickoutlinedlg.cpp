@@ -43,8 +43,6 @@
 #include "quickoutlinedlg.h"
 #include "windowattrmanager.h"
 
-extern void CreateSymbolTreeImages(BitmapLoader::Vec_t& bitmaps);
-
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER)
@@ -62,10 +60,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
         new CppSymbolTree(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_ROW_LINES | wxTR_HIDE_ROOT);
     m_keyboard.reset(new clTreeKeyboardInput(m_treeOutline));
     m_treeOutline->Bind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
-
-    BitmapLoader::Vec_t bitmaps;
-    CreateSymbolTreeImages(bitmaps);
-    m_treeOutline->SetSymbolsImages(bitmaps);
+    m_treeOutline->SetSymbolsImages(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
     Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
     mainSizer->Add(m_treeOutline, 1, wxEXPAND);

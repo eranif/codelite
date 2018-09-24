@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 141,
+  "m_objCounter": 145,
   "m_includeFiles": ["\"codelite_exports.h\""],
   "m_bitmapFunction": "wxCE8CInitBitmapResources",
   "m_bitmapsFile": "sftp_ui_sftp_bitmaps.cpp",
@@ -10,6 +10,7 @@
   "m_firstWindowId": 1000,
   "m_useEnum": true,
   "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -183,7 +184,7 @@
          "border": 5,
          "gbSpan": "1,1",
          "gbPosition": "0,0",
-         "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxDV_SINGLE"],
+         "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
          "m_properties": [{
            "type": "winid",
@@ -192,7 +193,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "400,400"
+           "m_value": "-1,-1"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
@@ -200,7 +201,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_dvListCtrlAccounts"
+           "m_value": "m_dvListCtrl"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -232,11 +233,11 @@
           }, {
            "type": "string",
            "m_label": "Class Name:",
-           "m_value": ""
+           "m_value": "clThemedListCtrl"
           }, {
            "type": "string",
            "m_label": "Include File:",
-           "m_value": ""
+           "m_value": "clThemedListCtrl.h"
           }, {
            "type": "string",
            "m_label": "Style:",
@@ -285,6 +286,10 @@
              "m_label": "Cell Mode",
              "m_selection": 0,
              "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+            }, {
+             "type": "colHeaderFlags",
+             "m_label": "Column Flags",
+             "stringValue": "wxDATAVIEW_COL_RESIZABLE"
             }],
            "m_events": [],
            "m_children": []
@@ -323,6 +328,10 @@
              "m_label": "Cell Mode",
              "m_selection": 0,
              "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+            }, {
+             "type": "colHeaderFlags",
+             "m_label": "Column Flags",
+             "stringValue": "wxDATAVIEW_COL_RESIZABLE"
             }],
            "m_events": [],
            "m_children": []
@@ -361,6 +370,10 @@
              "m_label": "Cell Mode",
              "m_selection": 0,
              "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+            }, {
+             "type": "colHeaderFlags",
+             "m_label": "Column Flags",
+             "stringValue": "wxDATAVIEW_COL_RESIZABLE"
             }],
            "m_events": [],
            "m_children": []
@@ -3102,6 +3115,18 @@
          "type": "string",
          "m_label": "Separator Size:",
          "m_value": "5"
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": ""
         }],
        "m_events": [],
        "m_children": [{
@@ -3223,7 +3248,7 @@
          "m_children": []
         }]
       }, {
-       "m_type": 4473,
+       "m_type": 4469,
        "proportion": 1,
        "border": 5,
        "gbSpan": "1,1",
@@ -3237,7 +3262,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "600,100"
+         "m_value": "500,300"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -3277,32 +3302,17 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",
          "m_value": ""
-        }, {
-         "type": "string",
-         "m_label": "Generated Model Class Name",
-         "m_value": "SFTPTreeModel"
-        }, {
-         "type": "bool",
-         "m_label": "Container Item Has Columns",
-         "m_value": true
         }],
        "m_events": [{
-         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
-         "m_eventClass": "wxDataViewEvent",
-         "m_eventHandler": "wxDataViewEventHandler",
-         "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
-         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
-         "m_noBody": false
-        }, {
          "m_eventName": "wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
          "m_eventClass": "wxDataViewEvent",
          "m_eventHandler": "wxDataViewEventHandler",
@@ -3310,11 +3320,11 @@
          "m_description": "Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event",
          "m_noBody": false
         }, {
-         "m_eventName": "wxEVT_CHAR",
-         "m_eventClass": "wxKeyEvent",
-         "m_eventHandler": "wxKeyEventHandler",
-         "m_functionNameAndSignature": "OnKeyDown(wxKeyEvent& event)",
-         "m_description": "Process a wxEVT_CHAR event",
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
          "m_noBody": false
         }],
        "m_children": [{
@@ -3352,6 +3362,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -3390,6 +3404,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []
@@ -3428,6 +3446,10 @@
            "m_label": "Cell Mode",
            "m_selection": 0,
            "m_options": ["wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"]
+          }, {
+           "type": "colHeaderFlags",
+           "m_label": "Column Flags",
+           "stringValue": "wxDATAVIEW_COL_RESIZABLE"
           }],
          "m_events": [],
          "m_children": []

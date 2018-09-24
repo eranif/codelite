@@ -41,7 +41,6 @@ class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlg : public VirtualDirectorySelec
     wxString m_projectName;
     wxString m_initialPath;
     wxString m_suggestedName;
-    BitmapLoader::Vec_t m_images;
     bool m_reloadTreeNeeded;
     clTreeKeyboardInput::Ptr_t m_treeCtrlSearchHelper;
 

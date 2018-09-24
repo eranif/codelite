@@ -1987,24 +1987,24 @@ void GitPlugin::DoCreateTreeImages()
 
 void GitPlugin::DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-
-    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
-
-    // get the base image first
-    int curImgIdx = ctrl->GetItemImage(item);
-    if(m_treeImageMapping.count(curImgIdx)) {
-        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
-
-        // now get the new image index based on the following:
-        // baseCount + (imgIdx * bitmapCount) + BmpType
-        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
-
-        // the below condition should never met, but I am paranoid..
-        if(ctrl->GetBitmaps().size() > newImg) { ctrl->SetItemImage(item, newImg); }
-    }
+//    clConfig conf("git.conf");
+//    GitEntry data;
+//    conf.ReadItem(&data);
+//
+//    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
+//
+//    // get the base image first
+//    int curImgIdx = ctrl->GetItemImage(item);
+//    if(m_treeImageMapping.count(curImgIdx)) {
+//        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
+//
+//        // now get the new image index based on the following:
+//        // baseCount + (imgIdx * bitmapCount) + BmpType
+//        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
+//
+//        // the below condition should never met, but I am paranoid..
+//        if(ctrl->GetBitmaps() && ctrl->GetBitmaps()->size() > newImg) { ctrl->SetItemImage(item, newImg); }
+//    }
 }
 
 void GitPlugin::OnClone(wxCommandEvent& e)

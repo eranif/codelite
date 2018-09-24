@@ -62,12 +62,8 @@ class CscopeTab : public CscopeTabBase
     wxString m_findWhat;
     StringManager m_stringManager;
     wxFont m_font;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     clFindResultsStyler::Ptr_t m_styler;
     std::map<int, CscopeEntryData> m_matchesInStc;
-    
-protected:
-    wxBitmap GetBitmap(const wxString& filename) const;
 
 protected:
     void FreeTable();

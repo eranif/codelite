@@ -70,8 +70,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     , m_plugin(plugin)
 {
     m_bmpLoader = clGetManager()->GetStdIcons();
-    BitmapLoader::Vec_t bmps = m_bmpLoader->MakeStandardMimeBitmapList();
-    m_treeCtrl->SetBitmaps(bmps);
+    m_treeCtrl->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
 
     SFTPSettings settings;
     settings.Load();

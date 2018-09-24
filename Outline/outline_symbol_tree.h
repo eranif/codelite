@@ -64,7 +64,6 @@ public:
     bool IsSelectedItemIncludeFile();
     wxString GetSelectedIncludeFile() const;
 
-    static void CreateSymbolTreeImages(BitmapLoader::Vec_t& bitmaps);
     virtual void Clear();
     void ClearCache();
 

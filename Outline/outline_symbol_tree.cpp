@@ -49,31 +49,6 @@ IMPLEMENT_DYNAMIC_CLASS(svSymbolTree, SymbolTree)
 
 const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
 
-//----------------------------------------------------------------
-// accessory function
-//----------------------------------------------------------------
-void svSymbolTree::CreateSymbolTreeImages(BitmapLoader::Vec_t& bitmaps)
-{
-    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 0
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/struct")));             // 4
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));    // 5
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_protected"))); // 6
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));   // 7
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));      // 8
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));   // 9
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));     // 10
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));            // 11
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 15
-    bitmaps.push_back(bmpLoader->LoadBitmap(wxT("mime-h")));                   // 16
-}
-
 svSymbolTree::svSymbolTree() { m_sortByLineNumber = true; }
 
 svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos,
@@ -91,7 +66,7 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
     Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, &svSymbolTree::OnCacheInvalidated, this);
-    
+
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 

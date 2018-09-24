@@ -272,16 +272,16 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
 
     bSizer10->Add(m_textCtrlFilter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
-                                          wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
 
     bSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT,
-                                       wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Kind"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT,
+    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT,
+    m_dvListCtrl->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("OpenResourceDlgBase"));

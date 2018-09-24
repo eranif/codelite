@@ -39,7 +39,8 @@ class WXDLLIMPEXP_CL FileExtManager
 {
 public:
     enum FileType {
-        TypeSourceC,
+        TypeOther = wxNOT_FOUND,
+        TypeSourceC, // 0
         TypeSourceCpp,
         TypeHeader,
         TypeResource,
@@ -73,6 +74,8 @@ public:
         TypeFolderExpanded, // For UI purposes only
         TypeProjectActive,  // For UI purposes only
         TypeProjectExpanded, // For UI purposes only
+        TypeWorkspaceFolder, // For UI purposes only
+        TypeWorkspaceFolderExpanded, // For UI purposes only
         TypeWorkspacePHP,
         TypeWorkspaceDocker,
         TypeWorkspaceNodeJS,
@@ -85,7 +88,7 @@ public:
         TypeDockerfile,
         TypeYAML,
         TypeDatabase,
-        TypeOther = wxNOT_FOUND
+        TypeLast,
     };
 
     struct Matcher {

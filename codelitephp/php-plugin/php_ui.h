@@ -8,6 +8,7 @@
 #define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
 #include "Notebook.h"
+#include "clThemedListCtrl.h"
 #include "clToolBar.h"
 #include "my_tree_view.h"
 #include "php_file_layout_tree.h"
@@ -144,7 +145,7 @@ class OpenResourceDlgBase : public wxDialog
 protected:
     wxStaticText* m_staticText9;
     wxTextCtrl* m_textCtrlFilter;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
@@ -155,7 +156,7 @@ protected:
 public:
     wxStaticText* GetStaticText9() { return m_staticText9; }
     wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     OpenResourceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open resource..."),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

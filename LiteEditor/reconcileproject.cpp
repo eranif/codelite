@@ -86,8 +86,6 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
     , m_projname(projname)
     , m_projectModified(false)
 {
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
-
     m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                   wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
 
@@ -319,9 +317,7 @@ void ReconcileProjectDlg::DoFindFiles()
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
 {
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(!m_bitmaps.count(type)) return m_bitmaps.find(FileExtManager::TypeText)->second;
-    return m_bitmaps.find(type)->second;
+    return clGetManager()->GetStdIcons()->GetBitmapForFile(filename);
 }
 
 void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
@@ -669,17 +665,13 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
 
     // Fix the the ignore files
     ignoreFiles = wxJoin(ignoreFilesArr, ';');
-    
+
     // Fix the exclude paths. First make absolute
     wxString tld(toplevelDir);
-    if (tld.Last() != wxFILE_SEP_PATH) {
-        tld << wxFILE_SEP_PATH;
-    }
+    if(tld.Last() != wxFILE_SEP_PATH) { tld << wxFILE_SEP_PATH; }
     for(size_t i = 0; i < rawExcludePaths.size(); ++i) {
         wxString& path = rawExcludePaths.Item(i);
-        if(!path.StartsWith(wxFILE_SEP_PATH)) {
-            path.Prepend(tld);
-        }
+        if(!path.StartsWith(wxFILE_SEP_PATH)) { path.Prepend(tld); }
         // Now fix any symlinks in the path and add to the array
         excludePaths.Add(CLRealPath(path));
     }

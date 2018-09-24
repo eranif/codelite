@@ -193,7 +193,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     GitImages m_images;
     m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
-    m_bitmaps = m_bitmapLoader->MakeStandardMimeMap();
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("modified");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
     m_folderBmp = m_bitmapLoader->LoadBitmap("folder-yellow");
@@ -256,9 +255,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_gauge->Hide();
     GetSizer()->Fit(this);
 
-    BitmapLoader::Vec_t bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList();
-    m_dvListCtrl->SetBitmaps(bitmaps);
-    m_dvListCtrlUnversioned->SetBitmaps(bitmaps);
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 }
 
 GitConsole::~GitConsole()
@@ -677,5 +675,5 @@ void GitConsole::OnAddUnversionedFiles(wxCommandEvent& event)
 void GitConsole::ShowLog()
 {
     // Change the selection to the "Log" view
-    //m_notebookLog->SetSelection(m_notebookLog->GetPageIndex(_("Log")));
+    // m_notebookLog->SetSelection(m_notebookLog->GetPageIndex(_("Log")));
 }

@@ -60,8 +60,7 @@ WebTools::WebTools(IManager* manager)
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
 
     WebToolsImages images;
-    // BitmapLoader::RegisterImage(FileExtManager::TypeWorkspaceNodeJS, images.Bitmap("m_bmpNodeJS"));
-
+    
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();

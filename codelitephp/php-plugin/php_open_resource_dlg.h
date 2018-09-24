@@ -26,6 +26,7 @@
 #ifndef __php_open_resource_dlg__
 #define __php_open_resource_dlg__
 
+#include <wx/propgrid/manager.h>
 #include "php_ui.h"
 #include <vector>
 #include "PHPEntityVariable.h"
@@ -102,7 +103,6 @@ public:
     ResourceVector_t m_resources;
     ResourceItem* m_selectedItem;
     PHPLookupTable m_table;
-    BitmapLoader::BitmapMap_t m_fileImages;
 
 protected:
     virtual void OnDVItemActivated(wxDataViewEvent& event);
@@ -111,7 +111,7 @@ protected:
     ResourceVector_t DoGetFiles(const wxString& filter);
     void DoGetResources(const wxString& filter);
     ResourceItem* DoGetItemData(const wxDataViewItem& item);
-    wxBitmap DoGetImgIdx(const ResourceItem* item);
+    int DoGetImgIdx(const ResourceItem* item);
 
 protected:
     void DoSelectNext();

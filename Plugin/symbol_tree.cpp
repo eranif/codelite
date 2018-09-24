@@ -25,10 +25,13 @@
 #include "fileutils.h"
 #include "precompiled_header.h"
 
+#include "bitmap_loader.h"
 #include "ctags_manager.h"
+#include "globals.h"
 #include "symbol_tree.h"
 #include "tokenizer.h"
 #include <functional>
+#include <imanager.h>
 #include <wx/wupdlock.h>
 
 SymbolTree::SymbolTree()
@@ -95,61 +98,57 @@ void SymbolTree::InitialiseSymbolMap()
     //--------------------------------------------------------
     // Initialise the images map (kind:icon_index)
     //--------------------------------------------------------
-    m_imagesMap[wxT("class_view")] = 14;
-    m_imagesMap[wxT("project")] = 0;
-    m_imagesMap[wxT("namespace")] = 1;
-    m_imagesMap[wxT("globals")] = 2;
-    m_imagesMap[wxT("class")] = 3;
-    m_imagesMap[wxT("interface")] = 3;
-    m_imagesMap[wxT("interface_private")] = 3;
-    m_imagesMap[wxT("interface_protected")] = 3;
-    m_imagesMap[wxT("class_private")] = 3;
-    m_imagesMap[wxT("class_public")] = 3;
-    m_imagesMap[wxT("class_protected")] = 3;
-
-    m_imagesMap[wxT("struct")] = 4;
-    m_imagesMap[wxT("struct_private")] = 4;
-    m_imagesMap[wxT("struct_public")] = 4;
-    m_imagesMap[wxT("struct_protected")] = 4;
-
-    m_imagesMap[wxT("function")] = 5;
-    m_imagesMap[wxT("prototype")] = 5;
-    m_imagesMap[wxT("function_public")] = 5;
-    m_imagesMap[wxT("prototype_public")] = 5;
-
-    m_imagesMap[wxT("function_protected")] = 6;
-    m_imagesMap[wxT("prototype_protected")] = 6;
-    m_imagesMap[wxT("function_private")] = 7;
-    m_imagesMap[wxT("prototype_private")] = 7;
-    m_imagesMap[wxT("variable")] = 8;
-    m_imagesMap[wxT("member")] = 8;
-    m_imagesMap[wxT("member_public")] = 8;
-    m_imagesMap[wxT("member_protected")] = 9;
-    m_imagesMap[wxT("member_private")] = 10;
-    m_imagesMap[wxT("typedef")] = 11;
-    m_imagesMap[wxT("typedef_public")] = 11;
-    m_imagesMap[wxT("typedef_private")] = 11;
-    m_imagesMap[wxT("typedef_protected")] = 11;
-    m_imagesMap[wxT("macro")] = 12;
-    m_imagesMap[wxT("macro_private")] = 12;
-    m_imagesMap[wxT("macro_protected")] = 12;
-    m_imagesMap[wxT("macro_public")] = 12;
-    m_imagesMap[wxT("enum")] = 13;
-    m_imagesMap[wxT("cenum")] = 13;
-    m_imagesMap[wxT("enum_private")] = 13;
-    m_imagesMap[wxT("enum_public")] = 13;
-    m_imagesMap[wxT("enum_protected")] = 13;
-    m_imagesMap[wxT("enumerator")] = 14;
-
-    m_imagesMap[wxT("method")] = 5;
-    m_imagesMap[wxT("method_public")] = 5;
-    m_imagesMap[wxT("method_protected")] = 6;
-    m_imagesMap[wxT("method_private")] = 7;
+    BitmapLoader* loader = clGetManager()->GetStdIcons();
+    m_imagesMap["class_view"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["project"] = loader->GetImageIndex(FileExtManager::TypeProject);
+    m_imagesMap["namespace"] = loader->GetImageIndex(BitmapLoader::kNamespace);
+    m_imagesMap["globals"] = loader->GetImageIndex(BitmapLoader::kAngleBrackets);
+    m_imagesMap["class"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["interface"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["interface_private"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["interface_protected"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["class_private"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["class_public"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["class_protected"] = loader->GetImageIndex(BitmapLoader::kClass);
+    m_imagesMap["struct"] = loader->GetImageIndex(BitmapLoader::kStruct);
+    m_imagesMap["struct_private"] = loader->GetImageIndex(BitmapLoader::kStruct);
+    m_imagesMap["struct_public"] = loader->GetImageIndex(BitmapLoader::kStruct);
+    m_imagesMap["struct_protected"] = loader->GetImageIndex(BitmapLoader::kStruct);
+    m_imagesMap["function"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["prototype"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["function_public"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["prototype_public"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["function_protected"] = loader->GetImageIndex(BitmapLoader::kFunctionProtected);
+    m_imagesMap["prototype_protected"] = loader->GetImageIndex(BitmapLoader::kFunctionProtected);
+    m_imagesMap["function_private"] = loader->GetImageIndex(BitmapLoader::kFunctionPrivate);
+    m_imagesMap["prototype_private"] = loader->GetImageIndex(BitmapLoader::kFunctionPrivate);
+    m_imagesMap["variable"] = loader->GetImageIndex(BitmapLoader::kMemberPublic);
+    m_imagesMap["member"] = loader->GetImageIndex(BitmapLoader::kMemberPublic);
+    m_imagesMap["member_public"] = loader->GetImageIndex(BitmapLoader::kMemberPublic);
+    m_imagesMap["member_protected"] = loader->GetImageIndex(BitmapLoader::kMemberProtected);
+    m_imagesMap["member_private"] = loader->GetImageIndex(BitmapLoader::kMemberPrivate);
+    m_imagesMap["typedef"] = loader->GetImageIndex(BitmapLoader::kTypedef);
+    m_imagesMap["typedef_public"] = loader->GetImageIndex(BitmapLoader::kTypedef);
+    m_imagesMap["typedef_private"] = loader->GetImageIndex(BitmapLoader::kTypedef);
+    m_imagesMap["typedef_protected"] = loader->GetImageIndex(BitmapLoader::kTypedef);
+    m_imagesMap["macro"] = loader->GetImageIndex(BitmapLoader::kMacro);
+    m_imagesMap["macro_private"] = loader->GetImageIndex(BitmapLoader::kMacro);
+    m_imagesMap["macro_protected"] = loader->GetImageIndex(BitmapLoader::kMacro);
+    m_imagesMap["macro_public"] = loader->GetImageIndex(BitmapLoader::kMacro);
+    m_imagesMap["enum"] = loader->GetImageIndex(BitmapLoader::kEnum);
+    m_imagesMap["cenum"] = loader->GetImageIndex(BitmapLoader::kEnum);
+    m_imagesMap["enum_private"] = loader->GetImageIndex(BitmapLoader::kEnum);
+    m_imagesMap["enum_public"] = loader->GetImageIndex(BitmapLoader::kEnum);
+    m_imagesMap["enum_protected"] = loader->GetImageIndex(BitmapLoader::kEnum);
+    m_imagesMap["enumerator"] = loader->GetImageIndex(BitmapLoader::kEnumerator);
+    m_imagesMap["method"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["method_public"] = loader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    m_imagesMap["method_protected"] = loader->GetImageIndex(BitmapLoader::kFunctionProtected);
+    m_imagesMap["method_private"] = loader->GetImageIndex(BitmapLoader::kFunctionProtected);
 
     //-----------------------------------------------------------
     // Populate globals kind
     //-----------------------------------------------------------
-
     m_globalsKind[wxT("<global>")] = true;
     m_globalsKind[wxT("function")] = true;
     m_globalsKind[wxT("prototype")] = true;
@@ -205,11 +204,13 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
 
     // add three items here:
     // the globals node, the mcros and the prototype node
-    m_globalsNode = AppendItem(root, wxT("Global Functions and Variables"), 2, 2,
+    int nodeImgIdx = clGetManager()->GetStdIcons()->GetImageIndex(BitmapLoader::kAngleBrackets);
+    m_globalsNode = AppendItem(root, wxT("Global Functions and Variables"), nodeImgIdx, nodeImgIdx,
                                new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
-    m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), 2, 2,
+    m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), nodeImgIdx, nodeImgIdx,
                                   new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
-    m_macrosNode = AppendItem(root, wxT("Macros"), 2, 2, new MyTreeItemData(wxT("Macros"), wxEmptyString));
+    m_macrosNode =
+        AppendItem(root, wxT("Macros"), nodeImgIdx, nodeImgIdx, new MyTreeItemData(wxT("Macros"), wxEmptyString));
 
     for(; !walker.End(); walker++) {
         // Add the item to the tree
@@ -291,14 +292,14 @@ void SymbolTree::SelectItemByName(const wxString& name)
 int SymbolTree::GetItemIconIndex(const wxString& kind, const wxString& access)
 {
     wxString key(kind);
-    int index(4); // structs will be the default icon index
+    int index(m_imagesMap["struct"]); // structs will be the default icon index
 
     if(!access.IsEmpty()) key += wxT("_") + access;
 
     key.Trim();
 
     std::map<wxString, int>::iterator iter = m_imagesMap.find(key);
-    if(iter != m_imagesMap.end()) index = iter->second;
+    if(iter != m_imagesMap.end()) { index = iter->second; }
     return index;
 }
 
@@ -438,6 +439,6 @@ bool SymbolTree::Matches(const wxTreeItemId& item, const wxString& patter)
     return false;
 }
 
-void SymbolTree::SetSymbolsImages(std::vector<wxBitmap>& bitmaps) { SetBitmaps(bitmaps); }
+void SymbolTree::SetSymbolsImages(BitmapLoader::Vec_t* bitmaps) { SetBitmaps(bitmaps); }
 
 void SymbolTree::SelectFirstItem() { SelectItem(GetFirstVisibleItem()); }

@@ -27,6 +27,7 @@
 #include "SvnInfoDialog.h"
 #include "bitmap_loader.h"
 #include "clDiffFrame.h"
+#include "clToolBar.h"
 #include "cl_command_event.h"
 #include "clcommandlineparser.h"
 #include "diff_dialog.h"
@@ -70,7 +71,6 @@
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-#include "clToolBar.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 EVT_UPDATE_UI(XRCID("svn_stop"), SubversionView::OnStopUI)
@@ -149,8 +149,9 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
     , m_codeliteEcho(NULL)
 {
-    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    m_standardBitmaps = bmpLoader->MakeStandardMimeMap();
+    BitmapLoader::Vec_t bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeBitmapList();
+    m_dvListCtrl->SetBitmaps(bitmaps);
+    m_dvListCtrlUnversioned->SetBitmaps(bitmaps);
 
     CreatGUIControls();
     m_themeHelper = new ThemeHandlerHelper(this);
@@ -387,17 +388,20 @@ void SubversionView::UpdateTree(const wxArrayString& modifiedFiles, const wxArra
     }
 }
 
+int SubversionView::GetImageIndex(const wxFileName& filepath) const
+{
+    BitmapLoader* loader = clGetManager()->GetStdIcons();
+    int imageId = loader->GetMimeImageId(FileExtManager::GetType(filepath.GetFullName(), FileExtManager::TypeText));
+    if(wxFileName::DirExists(filepath.GetFullPath())) { imageId = loader->GetMimeImageId(FileExtManager::TypeFolder); }
+    return imageId;
+}
+
 void SubversionView::DoAddUnVersionedFiles(const wxArrayString& files)
 {
     std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
-        FileExtManager::FileType type = FileExtManager::GetType(filepath, FileExtManager::TypeText);
-        wxBitmap bmp = m_standardBitmaps[FileExtManager::TypeText];
-        if(m_standardBitmaps.count(type)) { bmp = m_standardBitmaps[type]; }
         wxFileName fn(DoGetCurRepoPath() + wxFileName::GetPathSeparator() + filepath);
-        if(wxFileName::DirExists(fn.GetFullPath())) { bmp = m_standardBitmaps[FileExtManager::TypeFolder]; }
-
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(fn.GetFullName(), bmp));
+        cols.push_back(::MakeBitmapIndexText(fn.GetFullName(), GetImageIndex(fn)));
         cols.push_back(filepath);
         m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
     });
@@ -407,12 +411,10 @@ void SubversionView::DoAddUnVersionedFiles(const wxArrayString& files)
 void SubversionView::DoAddChangedFiles(const wxString& status, const wxArrayString& files)
 {
     std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
-        FileExtManager::FileType type = FileExtManager::GetType(filepath, FileExtManager::TypeText);
-        wxBitmap bmp = m_standardBitmaps[FileExtManager::TypeText];
-        if(m_standardBitmaps.count(type)) { bmp = m_standardBitmaps[type]; }
+        wxFileName fn(DoGetCurRepoPath() + wxFileName::GetPathSeparator() + filepath);
         wxVector<wxVariant> cols;
         cols.push_back(status);
-        cols.push_back(::MakeIconText(filepath, bmp));
+        cols.push_back(::MakeBitmapIndexText(fn.GetFullName(), GetImageIndex(fn)));
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
     });
 }
@@ -585,9 +587,9 @@ void SubversionView::OnRevert(wxCommandEvent& event)
 {
     wxArrayString paths;
     DoGetSelectedFiles(paths);
-    
+
     if(paths.IsEmpty()) { return; }
-    
+
     if(wxMessageBox(_("You are about to revert all your changes\nAre you sure?"), "CodeLite",
                     wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
         return;
@@ -1277,7 +1279,7 @@ void SubversionView::DoGetAllFiles(wxArrayString& paths)
     paths.Clear();
     if(m_dvListCtrl->GetItemCount() == 0) { return; }
     paths.reserve(m_dvListCtrl->GetItemCount());
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         SvnTreeData* d = (SvnTreeData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         paths.Add(d->GetFilepath());
     }

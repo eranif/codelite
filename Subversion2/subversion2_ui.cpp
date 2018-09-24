@@ -26,7 +26,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(mainSizer);
 
     m_splitter17 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
+                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter17->SetSashGravity(0.5);
     m_splitter17->SetMinimumPaneSize(10);
 
@@ -51,8 +51,8 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer86 = new wxBoxSizer(wxVERTICAL);
     m_panel82->SetSizer(boxSizer86);
 
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrl = new clThemedListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1, -1)),
+                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer86->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -67,9 +67,9 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer88);
 
-    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
-                                                     wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
-                                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrlUnversioned = new clThemedListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
+                                                   wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
+                                                   wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -84,8 +84,20 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer30);
 
-    m_sci = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
+    m_notebook92 = new Notebook(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook92->SetName(wxT("m_notebook92"));
+
+    boxSizer30->Add(m_notebook92, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel94 = new wxPanel(m_notebook92, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook92, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
+    m_notebook92->AddPage(m_panel94, _("Output"), false);
+
+    wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
+    m_panel94->SetSizer(boxSizer96);
+
+    m_sci = new wxStyledTextCtrl(m_panel94, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel94, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_sci->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_sci->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -121,7 +133,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     m_sci->SetKeyWords(3, wxT(""));
     m_sci->SetKeyWords(4, wxT(""));
 
-    boxSizer30->Add(m_sci, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer96->Add(m_sci, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
     SetName(wxT("SubversionPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

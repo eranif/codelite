@@ -8,6 +8,7 @@
 #define _CODELITE_SUBVERSION2_SUBVERSION2_BASE_CLASSES_H
 
 #include "Notebook.h"
+#include "clThemedListCtrl.h"
 #include "svnblameeditor.h"
 #include <map>
 #include <wx/arrstr.h>
@@ -60,10 +61,12 @@ protected:
     wxPanel* m_splitterPageLeft;
     Notebook* m_notebook80;
     wxPanel* m_panel82;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
-    wxDataViewListCtrl* m_dvListCtrlUnversioned;
+    clThemedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPageRight;
+    Notebook* m_notebook92;
+    wxPanel* m_panel94;
     wxStyledTextCtrl* m_sci;
 
 protected:
@@ -78,13 +81,15 @@ protected:
     virtual void OnSciStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel82() { return m_panel82; }
-    wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    clThemedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     Notebook* GetNotebook80() { return m_notebook80; }
     wxPanel* GetSplitterPageLeft() { return m_splitterPageLeft; }
     wxStyledTextCtrl* GetSci() { return m_sci; }
+    wxPanel* GetPanel94() { return m_panel94; }
+    Notebook* GetNotebook92() { return m_notebook92; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
     wxSplitterWindow* GetSplitter17() { return m_splitter17; }
     SubversionPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -28,6 +28,7 @@ public:
 PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clThemedTreeCtrl(parent, id, pos, size, style)
 {
+    SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}

@@ -309,6 +309,10 @@ void clControlWithItems::OnSize(wxSizeEvent& event)
 {
     event.Skip();
     m_firstColumn = 0;
+    // since the control size was resized, we turn the "m_maxList" flag to ON
+    // and in turn, in the OnPaint() we will try to maximize the list displayed
+    // to fit 
+    m_maxList = true;
     UpdateScrollBar();
     Refresh();
 }

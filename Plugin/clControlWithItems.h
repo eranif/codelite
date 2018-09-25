@@ -45,7 +45,7 @@ class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
 public:
     typedef std::vector<wxBitmap> BitmapVec_t;
 
-private:
+protected:
     clHeaderBar m_viewHeader;
     clColours m_colours;
     clRowEntry* m_firstItemOnScreen = nullptr;
@@ -56,7 +56,8 @@ private:
     int m_scrollTick = SCROLL_TICK;
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;
-
+    bool m_maxList = false;
+    
 protected:
     void DoInitialize();
     int GetNumLineCanFitOnScreen() const;

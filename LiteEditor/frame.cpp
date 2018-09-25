@@ -203,7 +203,7 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 // System events
 //---------------------------------------------------
 EVT_IDLE(clMainFrame::OnIdle)
-EVT_ACTIVATE(clMainFrame::OnAppActivated)
+EVT_ACTIVATE_APP(clMainFrame::OnAppActivated)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
 //  EVT_AUI_RENDER(Frame::OnAuiManagerRender)

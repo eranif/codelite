@@ -33,10 +33,10 @@
     if(!m_model.GetRoot()) { return; }
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clControlWithItems(parent, wxID_ANY, pos, size, wxWANTS_CHARS)
+    : clControlWithItems(parent, wxID_ANY, pos, size, style | wxWANTS_CHARS)
     , m_model(this)
 {
-    m_treeStyle = style;
+    m_treeStyle = style & ~wxWINDOW_STYLE_MASK; // remove the non window style
     DoInitialize();
 }
 
@@ -47,8 +47,8 @@ clTreeCtrl::clTreeCtrl()
 
 bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-    m_treeStyle = style;
-    if(!clControlWithItems::Create(parent, id, pos, size, wxWANTS_CHARS)) { return false; }
+    m_treeStyle = style & ~wxWINDOW_STYLE_MASK;
+    if(!clControlWithItems::Create(parent, id, pos, size, style | wxWANTS_CHARS)) { return false; }
     DoInitialize();
     return true;
 }

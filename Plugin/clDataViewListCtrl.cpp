@@ -17,7 +17,7 @@ wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
 clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
-    : clTreeCtrl(parent, id, pos, size, 0)
+    : clTreeCtrl(parent, id, pos, size, style)
 {
     // Map clDataViewListCtrl to clTreeCtrl style
     SetShowHeader(true);

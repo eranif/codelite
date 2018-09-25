@@ -28,7 +28,7 @@ static void ApplyTheme(clThemedListCtrl* ctrl)
 }
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clDataViewListCtrl(parent, id, pos, size, style | wxTR_ROW_LINES)
+    : clDataViewListCtrl(parent, id, pos, size, style | wxTR_ROW_LINES | wxBORDER_THEME)
 {
     clColours colours;
     colours.InitDefaults();

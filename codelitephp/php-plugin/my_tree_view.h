@@ -33,7 +33,7 @@ class MyTreeView : public clThemedTreeCtrl
 {
 public:
     MyTreeView(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT);
+               const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT | wxBORDER_THEME);
     virtual ~MyTreeView();
 };
 

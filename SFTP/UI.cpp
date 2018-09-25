@@ -283,7 +283,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_treeCtrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                       wxTR_DEFAULT_STYLE | wxTR_MULTIPLE);
 
-    boxSizer16->Add(m_treeCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer16->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("SFTPTreeViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

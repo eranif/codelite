@@ -46,7 +46,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
     boxSizer2->Add(boxSizer10, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+                                        wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_THEME);
 
     boxSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -402,7 +402,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_toolbar->Realize();
 
     m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)),
-                                      wxDV_ROW_LINES | wxDV_SINGLE);
+                                      wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_THEME);
 
     boxSizer62->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

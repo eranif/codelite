@@ -1166,9 +1166,9 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     bSizer5->Add(m_gaugeParseProgress, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxTR_MULTIPLE | wxTR_ROW_LINES | wxBORDER_STATIC);
+                                    wxTR_MULTIPLE | wxTR_ROW_LINES | wxBORDER_THEME);
 
-    bSizer5->Add(m_treeCtrlView, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    bSizer5->Add(m_treeCtrlView, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("PHPWorkspaceViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

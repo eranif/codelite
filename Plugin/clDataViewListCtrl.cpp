@@ -40,7 +40,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     Bind(wxEVT_TREE_ITEM_COLLAPSING, [](wxTreeEvent& e) { wxUnusedVar(e); });
     Bind(wxEVT_TREE_ITEM_COLLAPSED, [](wxTreeEvent& e) { wxUnusedVar(e); });
     Bind(wxEVT_TREE_DELETE_ITEM, [](wxTreeEvent& e) { wxUnusedVar(e); });
-    Bind(wxEVT_TREE_ITEM_RIGHT_CLICK, [](wxTreeEvent& e) { wxUnusedVar(e); });
+    Bind(wxEVT_TREE_ITEM_RIGHT_CLICK, [](wxTreeEvent& e) { e.Skip(); });
 
     // Translate the following events to wxDVC events
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);

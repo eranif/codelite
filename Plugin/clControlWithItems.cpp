@@ -99,8 +99,9 @@ public:
     void PositionControl()
     {
 #if USE_PANEL_PARENT
+        int scrollBarHeight = wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y, GetParent());
         int x = GetParent()->GetSize().GetWidth() / 2;
-        int y = GetParent()->GetSize().GetHeight() - GetSize().GetHeight();
+        int y = GetParent()->GetSize().GetHeight() - GetSize().GetHeight() - scrollBarHeight;
         SetPosition(wxPoint(x, y));
 #else
         wxPoint parentPt = GetParent()->GetScreenPosition();

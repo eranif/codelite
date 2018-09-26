@@ -297,7 +297,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
         // Draw the button
-        wxRect cellRect = m_tree->GetHeader().empty() ? rowRect : m_tree->GetHeader().Item(i).GetRect();
+        bool hasHeader = !m_tree->GetHeader().empty();
+        wxRect cellRect = hasHeader ? m_tree->GetHeader().Item(i).GetRect() : rowRect;
         cellRect.SetY(rowRect.GetY());
         int textXOffset = cellRect.GetX();
         if((i == 0) && !IsListItem()) {
@@ -343,7 +344,19 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += X_SPACER;
             }
         }
+        wxRect oldClippingRegion;
+        if(hasHeader) { 
+            dc.GetClippingBox(oldClippingRegion);
+            dc.SetClippingRegion(cellRect); 
+        }
         RenderText(dc, colours, cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY, i);
+        if(hasHeader) { 
+            dc.DestroyClippingRegion(); 
+            // Restore the old clipping region
+            if(!oldClippingRegion.IsEmpty()) {
+                dc.SetClippingRegion(oldClippingRegion);
+            }
+        }
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));

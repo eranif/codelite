@@ -171,11 +171,6 @@ void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)
         cols.push_back(image.GetSize());
         m_dvListCtrlImages->AppendItem(cols, (wxUIntPtr)&image);
     }
-    m_dvListCtrlImages->GetColumn(0)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(1)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(2)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(3)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(4)->SetWidth(-2);
 }
 
 void DockerOutputPane::SelectTab(const wxString& label) { m_notebook->SetSelection(m_notebook->GetPageIndex(label)); }

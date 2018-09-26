@@ -203,7 +203,6 @@ BEGIN_EVENT_TABLE(clMainFrame, wxFrame)
 // System events
 //---------------------------------------------------
 EVT_IDLE(clMainFrame::OnIdle)
-EVT_ACTIVATE_APP(clMainFrame::OnAppActivated)
 EVT_CLOSE(clMainFrame::OnClose)
 EVT_TIMER(FrameTimerId, clMainFrame::OnTimer)
 //  EVT_AUI_RENDER(Frame::OnAuiManagerRender)
@@ -775,7 +774,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
                       this);
     wxTheApp->Connect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
                       this);
-
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &clMainFrame::OnActivate, this);
     EventNotifier::Get()->Bind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
                                this);
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
@@ -853,7 +852,7 @@ clMainFrame::~clMainFrame(void)
 #if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
     delete m_myMenuBar;
 #endif
-
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnActivate, this);
     wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
     wxTheApp->Disconnect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED,

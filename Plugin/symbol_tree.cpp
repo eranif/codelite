@@ -239,7 +239,7 @@ void SymbolTree::AddItem(TagNode* node)
     wxTreeItemId parentHti;
     if(nodeData.GetName().IsEmpty()) return;
 
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = clScrolledPanel::GetDefaultFont();
     if(nodeData.GetKind() == wxT("prototype")) { font.SetStyle(wxFONTSTYLE_ITALIC); }
     if(nodeData.GetAccess() == wxT("public")) { font.SetWeight(wxFONTWEIGHT_BOLD); }
 

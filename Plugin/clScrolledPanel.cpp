@@ -191,7 +191,7 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
     m_rangeSize = rangeSize;
 
     // Hide the scrollbar if needed
-    bool should_show = m_vsb->IsShown() || ((thumbSize < rangeSize) && !m_showSBOnFocus);
+    bool should_show = (thumbSize < rangeSize) && (m_vsb->IsShown() || !m_showSBOnFocus);
     if(!should_show && m_vsb && m_vsb->IsShown()) {
         m_vsb->Hide();
     } else if(should_show && m_vsb && !m_vsb->IsShown()) {

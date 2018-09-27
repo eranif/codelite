@@ -299,7 +299,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         // Draw the button
         bool hasHeader = !m_tree->GetHeader().empty();
         wxRect cellRect = hasHeader ? m_tree->GetHeader().Item(i).GetRect() : rowRect;
+        
+        // Make sure that the cellRect has all the correct attributes of the row
         cellRect.SetY(rowRect.GetY());
+        cellRect.SetHeight(rowRect.GetHeight());
         int textXOffset = cellRect.GetX();
         if((i == 0) && !IsListItem()) {
             // The expand button is only make sense for the first cell

@@ -50,7 +50,7 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
         }
 
         // Do we need to revert macros?
-        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text)) {
+        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text) && (tok.text != "std")) {
             s << table.find(tok.text)->second;
         } else {
             s << tok.text;

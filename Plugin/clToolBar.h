@@ -10,18 +10,24 @@
 class clToolBarButtonBase;
 class WXDLLIMPEXP_SDK clToolBar : public wxPanel
 {
-    std::vector<clToolBarButtonBase*> m_buttons;
-    std::vector<clToolBarButtonBase*> m_overflowButtons;
-    std::vector<clToolBarButtonBase*> m_visibleButtons;
-    bool m_popupShown;
-    size_t m_flags;
+public:
+    typedef std::vector<clToolBarButtonBase*> ToolVect_t;
+
+private:
+    ToolVect_t m_buttons;
+    ToolVect_t m_overflowButtons;
+    ToolVect_t m_visibleButtons;
+    bool m_popupShown = false;
+    size_t m_flags = 0;
     wxRect m_chevronRect;
+    int m_groupSpacing = 30;
 
 public:
     enum eFlags {
         kShowLabels = (1 << 0),
         kThemedColour = (1 << 1),
         kShowCustomiseMenu = (1 << 2),
+        kMiniToolBar = (1 << 3),
     };
 
 protected:
@@ -38,6 +44,8 @@ protected:
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
     void DoShowOverflowMenu();
+    void SplitGroups(std::vector<ToolVect_t>& G);
+    void RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc);
 
 public:
     clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -68,8 +76,8 @@ public:
     /**
      * @brief return all the buttons
      */
-    std::vector<clToolBarButtonBase*>& GetButtons() { return m_buttons; };
-    const std::vector<clToolBarButtonBase*>& GetButtons() const { return m_buttons; }
+    ToolVect_t& GetButtons() { return m_buttons; };
+    const ToolVect_t& GetButtons() const { return m_buttons; }
 
     /**
      * @brief display labels next to the bitmap icon
@@ -78,7 +86,11 @@ public:
     bool IsShowLabels() const { return m_flags & kShowLabels; }
     void EnableCustomisation(bool b) { EnableFlag(kShowCustomiseMenu, b); }
     bool IsCustomisationEnabled() const { return HasFlag(kShowCustomiseMenu); }
-    
+    void SetMiniToolBar(bool b) { EnableFlag(kMiniToolBar, b); }
+    bool IsMiniToolBar() const { return HasFlag(kMiniToolBar); }
+    void SetGroupSapcing(int spacing) { m_groupSpacing = spacing; }
+    int GetGroupSapcing() const { return m_groupSpacing; }
+
     /**
      * @brief add toolbar button
      */

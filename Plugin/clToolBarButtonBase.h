@@ -16,6 +16,8 @@
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 8
 #endif
 
+#define GROUP_RADIUS 3.0
+
 class WXDLLIMPEXP_SDK clToolBarButtonBase : public wxToolBarToolBase
 {
 protected:

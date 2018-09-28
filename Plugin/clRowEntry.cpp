@@ -64,12 +64,8 @@ void clRowEntry::DrawSimpleSelection(bool focused, wxDC& dc, const wxRect& rect,
 
 void clRowEntry::DrawSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
-    if(colours.IsUseNativeColours()) {
-        DrawNativeSelection(focused, dc, rect, colours);
-    } else {
-        // Draw simple selection
-        DrawSimpleSelection(focused, dc, rect, colours);
-    }
+    // Draw simple selection
+    DrawSimpleSelection(focused, dc, rect, colours);
 }
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
@@ -263,7 +259,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     clColours colours = c;
     if(zebraColouring) {
         // Set Zebra colouring, only if no user colour was provided for the given line
-        colours.SetItemBgColour(even_row ? c.GetAlternateColourEven() : c.GetAlternateColourOdd());
+        colours.SetItemBgColour(even_row ? c.GetAlternateColour() : c.GetBgColour());
     }
 
     // Override default item bg colour with the user's one
@@ -299,7 +295,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         // Draw the button
         bool hasHeader = !m_tree->GetHeader().empty();
         wxRect cellRect = hasHeader ? m_tree->GetHeader().Item(i).GetRect() : rowRect;
-        
+
         // Make sure that the cellRect has all the correct attributes of the row
         cellRect.SetY(rowRect.GetY());
         cellRect.SetHeight(rowRect.GetHeight());
@@ -348,17 +344,15 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             }
         }
         wxRect oldClippingRegion;
-        if(hasHeader) { 
+        if(hasHeader) {
             dc.GetClippingBox(oldClippingRegion);
-            dc.SetClippingRegion(cellRect); 
+            dc.SetClippingRegion(cellRect);
         }
         RenderText(dc, colours, cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY, i);
-        if(hasHeader) { 
-            dc.DestroyClippingRegion(); 
+        if(hasHeader) {
+            dc.DestroyClippingRegion();
             // Restore the old clipping region
-            if(!oldClippingRegion.IsEmpty()) {
-                dc.SetClippingRegion(oldClippingRegion);
-            }
+            if(!oldClippingRegion.IsEmpty()) { dc.SetClippingRegion(oldClippingRegion); }
         }
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());

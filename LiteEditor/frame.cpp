@@ -1298,6 +1298,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     }
 
     m_toolbar = new clToolBar(this, wxID_ANY);
+    m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
 

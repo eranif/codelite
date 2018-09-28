@@ -14,15 +14,13 @@ static void ApplyTheme(clThemedTreeCtrl* tree)
         wxColour bgColour = colours.GetBgColour();
         wxColour oddLineColour = bgColour.ChangeLightness(97);
         colours.SetBgColour(bgColour);
-        colours.SetAlternateColourEven(bgColour);
-        colours.SetAlternateColourOdd(oddLineColour);
+        colours.SetAlternateColour(oddLineColour);
     } else {
         colours.InitDefaults();
         wxColour bgColour = defaultStyle.GetBgColour(); // Use the current style background colour
         wxColour oddLineColour = bgColour.ChangeLightness(97);
         colours.SetBgColour(bgColour);
-        colours.SetAlternateColourEven(bgColour);
-        colours.SetAlternateColourOdd(oddLineColour);
+        colours.SetAlternateColour(oddLineColour);
     }
     tree->SetColours(colours);
 }

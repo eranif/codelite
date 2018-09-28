@@ -25,21 +25,11 @@
 #ifndef DRAWINGUTILS_H
 #define DRAWINGUTILS_H
 
+#include "clColours.h"
 #include "codelite_exports.h"
 #include "wx/colour.h"
 #include "wx/dc.h"
 #include <wx/dcgraph.h>
-
-struct WXDLLIMPEXP_SDK clColourPalette {
-    // basic colours
-    wxColour textColour;
-    wxColour bgColour;
-    wxColour penColour;
-
-    // Selected item colours
-    wxColour selecteTextColour;
-    wxColour selectionBgColour;
-};
 
 enum class eButtonState {
     kNormal,
@@ -68,28 +58,15 @@ public:
     static wxColour GetMenuTextColour();
     static wxColour GetMenuBarBgColour();
     static wxColour GetMenuBarTextColour();
-    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool themed = true);
+    static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar = true);
     static void TruncateText(const wxString& text, int maxWidth, wxDC& dc, wxString& fixedText);
     static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,
                                          const wxColour& endColor, bool vertical);
-    static void DrawVerticalButton(wxDC& dc, const wxRect& rect, const bool& focus, const bool& upperTabs,
-                                   bool vertical, bool hover = false);
-    static void DrawHorizontalButton(wxDC& dc, const wxRect& rect, const bool& focus, const bool& upperTabs,
-                                     bool vertical, bool hover = false);
     static bool IsDark(const wxColour& col);
-    static float GetDdkShadowLightFactor();
-    static float GetDdkShadowLightFactor2();
-    static wxColour GetGradient();
-
     static wxFont GetDefaultFixedFont();
     static wxFont GetDefaultGuiFont();
     static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
     static wxSize GetBestSize(const wxString& label, int xspacer = 5, int yspacer = 5);
-
-    /**
-     * @brief return basic colour palette based on the current editor
-     */
-    static clColourPalette GetColourPalette();
 
     /**
      * @brief draw a button
@@ -169,6 +146,11 @@ public:
      * @brief stipple brush used for painting on various wxPanels
      */
     static wxBrush GetStippleBrush();
+
+    /**
+     * @brief get colours object
+     */
+    static clColours& GetColours(bool darkColours = false);
 };
 
 #endif // DRAWINGUTILS_H

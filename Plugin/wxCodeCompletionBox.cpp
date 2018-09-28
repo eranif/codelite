@@ -95,16 +95,15 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
 
     // Default colorus (dark theme)
-    clColourPalette palette = DrawingUtils::GetColourPalette();
+    const clColours& colours = DrawingUtils::GetColours();
 
     // Default colours
-    wxColour baseColour = DrawingUtils::GetPanelBgColour();
-    m_bgColour = palette.bgColour;
-    m_penColour = palette.penColour;
+    m_bgColour = colours.GetBgColour();
+    m_penColour = colours.GetBorderColour();
     m_separatorColour = m_bgColour.ChangeLightness(98);
-    m_textColour = palette.textColour;
-    m_selectedTextColour = palette.selecteTextColour;
-    m_selectedTextBgColour = palette.selectionBgColour;
+    m_textColour = colours.GetItemTextColour();
+    m_selectedTextColour = colours.GetSelItemTextColour();
+    m_selectedTextBgColour = colours.GetSelItemBgColour();
     m_useLightColours = true;
 
     IManager* manager = ::clGetManager();

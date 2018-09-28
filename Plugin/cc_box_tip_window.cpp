@@ -340,11 +340,11 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 
 void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
 {
-    clColourPalette colors = DrawingUtils::GetColourPalette();
+    const clColours& colors = DrawingUtils::GetColours();
 
-    wxColour penColour = colors.penColour;
-    wxColour brushColour = colors.bgColour;
-    wxColour textColour = colors.textColour;
+    wxColour penColour = colors.GetBorderColour();
+    wxColour brushColour = colors.GetBgColour();
+    wxColour textColour = colors.GetItemTextColour();
     wxColour linkColour("rgb(204, 153, 255)");
 
     if(m_useLightColours) {

@@ -98,8 +98,8 @@ void clToolBar::RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc)
         groupWidth += buttonSize.GetWidth();
     });
 
-    // Draw a rectangle, but not on Windows
-    if(!HasFlag(kMiniToolBar)/* && !(wxGetOsVersion() & wxOS_WINDOWS)*/) {
+    // Draw a rectangle
+    if(!HasFlag(kMiniToolBar) && !(wxGetOsVersion() & wxOS_WINDOWS)) {
         wxRect bgRect = wxRect(wxPoint(xx, 0), wxSize(groupWidth, clientRect.GetHeight() - 2));
         bool isLight = !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
         wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);

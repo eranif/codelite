@@ -36,6 +36,7 @@ public:
     virtual ~clColours() {}
     bool IsLightTheme() const;
     void InitDefaults();
+    void InitFromColour(const wxColour& baseColour = wxColour());
     void InitDarkDefaults();
     void SetAlternateColour(const wxColour& alternateColour) { this->alternateColour = alternateColour; }
     void SetBgColour(const wxColour& bgColour) { this->bgColour = bgColour; }

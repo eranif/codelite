@@ -59,3 +59,45 @@ void clColours::InitDarkDefaults()
 }
 
 bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)); }
+
+void clColours::InitFromColour(const wxColour& baseColour)
+{
+    if(!baseColour.IsOk()) {
+        InitDefaults();
+        return;
+    }
+    bool is_dark = DrawingUtils::IsDark(baseColour);
+    bool is_light = !is_dark;
+    bgColour = baseColour;
+    itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
+
+    if(is_light) {
+        alternateColour = bgColour.ChangeLightness(95);
+        hoverBgColour = bgColour.ChangeLightness(110);
+        headerBgColour = bgColour.ChangeLightness(113);
+        headerHBorderColour = alternateColour;
+        headerVBorderColour = alternateColour;
+        selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+        selItemBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        selbuttonColour = selItemTextColour;
+        selItemBgColourNoFocus = selItemBgColour.ChangeLightness(145);
+    } else {
+        alternateColour = bgColour.ChangeLightness(105);
+        hoverBgColour = bgColour.ChangeLightness(90);
+        headerBgColour = bgColour.ChangeLightness(113);
+        headerHBorderColour = wxColour("#D0D3D4");
+        headerVBorderColour = wxColour("#D0D3D4");
+        selItemTextColour = itemTextColour;
+        selItemBgColour = bgColour.ChangeLightness(130);
+        selbuttonColour = selItemTextColour;
+        selItemBgColourNoFocus = bgColour.ChangeLightness(115);
+    }
+    itemBgColour = bgColour;
+
+    buttonColour = itemTextColour;
+    matchedItemBgText = wxColour("#8BC34A");
+    matchedItemText = wxColour("#FDFEFE");
+    fillColour = bgColour;
+    borderColour = is_light ? bgColour.ChangeLightness(90) : bgColour.ChangeLightness(110);
+    darkBorderColour = is_light ? bgColour.ChangeLightness(80) : bgColour.ChangeLightness(115);
+}

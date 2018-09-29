@@ -3,6 +3,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include <clColours.h>
+#include <wx/settings.h>
 
 static void ApplyTheme(clThemedTreeCtrl* tree)
 {

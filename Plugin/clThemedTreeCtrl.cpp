@@ -7,20 +7,11 @@
 static void ApplyTheme(clThemedTreeCtrl* tree)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    const StyleProperty& defaultStyle = lexer->GetProperty(0);
     clColours colours;
     if(lexer->IsDark()) {
-        colours.InitDefaults();
-        wxColour bgColour = colours.GetBgColour();
-        wxColour oddLineColour = bgColour.ChangeLightness(97);
-        colours.SetBgColour(bgColour);
-        colours.SetAlternateColour(oddLineColour);
+        colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     } else {
         colours.InitDefaults();
-        wxColour bgColour = defaultStyle.GetBgColour(); // Use the current style background colour
-        wxColour oddLineColour = bgColour.ChangeLightness(97);
-        colours.SetBgColour(bgColour);
-        colours.SetAlternateColour(oddLineColour);
     }
     tree->SetColours(colours);
 }

@@ -32,6 +32,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
+#include <algorithm>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -39,7 +40,6 @@
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
-#include <algorithm>
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -222,7 +222,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
             }
         }
     }
-    
+
     if(!vPositioned) {
         // The tip window is positioned to the left or right of the CC box
         // Check if the tip window is going outside of the display, if it is, move it up
@@ -232,7 +232,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
             pt.y = std::max(0, pt.y);
         }
     }
-    
+
     if(focusEdior) {
         // Check that the tip Y coord is inside the editor
         // this is to prevent some zombie tips appearing floating in no-man-land
@@ -340,8 +340,11 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 
 void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
 {
-    const clColours& colors = DrawingUtils::GetColours();
+    clColours colors = DrawingUtils::GetColours();
 
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) { colors.InitFromColour(editor->GetCtrl()->StyleGetBackground(0)); }
+    
     wxColour penColour = colors.GetBorderColour();
     wxColour brushColour = colors.GetBgColour();
     wxColour textColour = colors.GetItemTextColour();

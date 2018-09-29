@@ -72,7 +72,12 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     if(m_args.IsEmpty()) return;
 
     // Define the colours used by this tooltip window
-    const clColours& colours = DrawingUtils::GetColours();
+    clColours colours = DrawingUtils::GetColours();
+    
+    // If we got an active editor, adjust the coluors to match editor's colours
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) { colours.InitFromColour(editor->GetCtrl()->StyleGetBackground(0)); }
+    
     wxColour bgColour, penColour, textColour, highlightBgColour, highlightFgColour;
     bgColour = colours.GetBgColour();
     penColour = colours.GetBorderColour();

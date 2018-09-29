@@ -1,24 +1,22 @@
-#include "wxCodeCompletionBox.h"
-#include <wx/dcmemory.h>
-#include <wx/dcbuffer.h>
-#include <wx/stc/stc.h>
-#include "imanager.h"
-#include "globals.h"
+#include "CxxTemplateFunction.h"
 #include "bitmap_loader.h"
-#include "wxCodeCompletionBoxManager.h"
-#include "codelite_events.h"
-#include "cl_command_event.h"
-#include "event_notifier.h"
 #include "cc_box_tip_window.h"
-#include "file_logger.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 #include "drawingutils.h"
-#include <wx/font.h>
-#include "macros.h"
-#include <wx/stc/stc.h>
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "CxxTemplateFunction.h"
+#include "macros.h"
+#include "wxCodeCompletionBox.h"
+#include "wxCodeCompletionBoxManager.h"
 #include <wx/app.h>
+#include <wx/dcbuffer.h>
+#include <wx/dcmemory.h>
+#include <wx/font.h>
+#include <wx/stc/stc.h>
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -94,8 +92,16 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
 
-    // Default colorus (dark theme)
-    const clColours& colours = DrawingUtils::GetColours();
+    // Default colorus
+    clColours colours = DrawingUtils::GetColours();
+    m_useLightColours = true;
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+        colours.InitFromColour(bgColour);
+        m_useLightColours = !DrawingUtils::IsDark(bgColour);
+    }
 
     // Default colours
     m_bgColour = colours.GetBgColour();
@@ -104,20 +110,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_textColour = colours.GetItemTextColour();
     m_selectedTextColour = colours.GetSelItemTextColour();
     m_selectedTextBgColour = colours.GetSelItemBgColour();
-    m_useLightColours = true;
-
-    IManager* manager = ::clGetManager();
-    if(manager) {
-        IEditor* editor = manager->GetActiveEditor();
-        if(editor) {
-            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(DrawingUtils::IsDark(bgColour)) {
-                // Dark colour
-                m_separatorColour = m_bgColour.ChangeLightness(102);
-                m_useLightColours = false;
-            }
-        }
-    }
+    m_alternateRowColour = colours.GetAlternateColour();
 
     m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
     m_bmpDownEnabled = m_bmpDown.ConvertToDisabled();
@@ -191,9 +184,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     rect.SetWidth(rect.GetWidth() - SCROLLBAR_WIDTH);
     int firstIndex = m_index;
     int lastIndex = m_index + LINES_PER_PAGE;
-    if(lastIndex > (int)m_entries.size()) {
-        lastIndex = m_entries.size();
-    }
+    if(lastIndex > (int)m_entries.size()) { lastIndex = m_entries.size(); }
 
     // if the number of items to display is less from the number of lines
     // on the box, try prepending items from the top
@@ -207,10 +198,18 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     wxCoord bmpX = clGetScaledSize(2);
 
     // Draw all items from firstIndex => lastIndex
+    size_t rowCounter = 0;
     for(int i = firstIndex; i < lastIndex; ++i) {
         bool isSelected = (i == m_index);
         bool isLast = ((firstIndex + 1) == lastIndex);
         wxRect itemRect(0, y, rect.GetWidth(), singleLineHeight);
+        
+        // We colour lines in an alternate colours
+        dc.SetBrush((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
+        dc.SetPen((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
+        dc.DrawRectangle(itemRect);
+        ++rowCounter;
+        
         if(isSelected) {
             // highlight the selection
             dc.SetBrush(m_selectedTextBgColour);
@@ -249,9 +248,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         dc.DestroyClippingRegion();
         y += singleLineHeight;
         dc.SetPen(m_separatorColour);
-        if(!isLast) {
-            dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
-        }
+        if(!isLast) { dc.DrawLine(2, y, itemRect.GetWidth() + 2, y); }
         entry->m_itemRect = itemRect;
     }
 
@@ -265,6 +262,11 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(scrollRect);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
+    
+    // Redraw the box border
+    dc.SetPen(m_penColour);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle(GetClientRect());
 }
 
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries)
@@ -274,9 +276,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_allEntries = entries;
 
     // Keep the start position
-    if(m_startPos == wxNOT_FOUND) {
-        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
-    }
+    if(m_startPos == wxNOT_FOUND) { m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true); }
 
     // Fire "Showing" event
     if(!(m_flags & kNoShowingEvent)) {
@@ -774,9 +774,7 @@ void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event) { DoMouseScroll(eve
 void wxCodeCompletionBox::DoPgUp()
 {
     int newindex = m_index - (LINES_PER_PAGE - 1);
-    if(newindex < 0) {
-        newindex = 0;
-    }
+    if(newindex < 0) { newindex = 0; }
     // only refresh if there was an actual change
     if(m_index != newindex) {
         m_index = newindex;
@@ -788,9 +786,7 @@ void wxCodeCompletionBox::DoPgUp()
 void wxCodeCompletionBox::DoPgDown()
 {
     int newindex = m_index + (LINES_PER_PAGE - 1);
-    if(newindex >= (int)m_entries.size()) {
-        newindex = (int)m_entries.size() - 1;
-    }
+    if(newindex >= (int)m_entries.size()) { newindex = (int)m_entries.size() - 1; }
     // only refresh if there was an actual change
     if(m_index != newindex) {
         m_index = newindex;

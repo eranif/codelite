@@ -93,6 +93,7 @@ protected:
     wxColour m_textColour;
     wxColour m_selectedTextColour;
     wxColour m_selectedTextBgColour;
+    wxColour m_alternateRowColour;
     
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;

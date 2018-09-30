@@ -34,7 +34,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     if(DrawingUtils::IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
 
-#ifdef __WXMSW__
+#if defined(__WXOSX__)||defined(__WXMSW__)
     bool hasGrouping = false;
 #else
     bool hasGrouping = !m_toolbar->HasFlag(clToolBar::kMiniToolBar);

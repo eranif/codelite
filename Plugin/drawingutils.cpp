@@ -330,6 +330,12 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
         dc.SetPen(bottomColour);
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
+#elif defined(__WXOSX__)
+    wxUnusedVar(miniToolbar);
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    dc.SetPen(bgColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRectangle(rect);
 #else
     wxUnusedVar(miniToolbar);
     wxColour bgColour = miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)

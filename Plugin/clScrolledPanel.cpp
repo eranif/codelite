@@ -405,6 +405,11 @@ void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSiz
 wxRect clScrolledPanel::GetClientArea() const
 {
     wxRect r = GetClientRect();
+#ifdef __WXOSX__
+    // on OSX, the top-left is set to 2,2
+    r.SetTopLeft(wxPoint(0, 0));
+#endif
+
     if(m_hsb && m_hsb->IsShown()) { r.SetHeight(r.GetHeight() - m_hsb->GetSize().GetHeight()); }
     if(m_vsb && m_vsb->IsShown()) { r.SetWidth(r.GetWidth() - m_vsb->GetSize().GetWidth()); }
     return r;

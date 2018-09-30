@@ -99,7 +99,7 @@ void clToolBar::RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc)
     });
 
     // Draw a rectangle
-#ifdef __WXMSW__
+#if defined(__WXOSX__)||defined(__WXMSW__)
     bool hasGrouping = false;
 #else
     bool hasGrouping = !HasFlag(clToolBar::kMiniToolBar);

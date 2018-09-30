@@ -176,15 +176,11 @@ public:
 clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
     : clScrolledPanel(parent, id, pos, size, style)
-    , m_viewHeader(this)
 {
     DoInitialize();
 }
 
-clControlWithItems::clControlWithItems()
-    : m_viewHeader(this)
-{
-}
+clControlWithItems::clControlWithItems() {}
 
 bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
@@ -196,6 +192,7 @@ bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& 
 void clControlWithItems::DoInitialize()
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+    m_viewHeader = new clHeaderBar(this, m_colours);
     Bind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
     Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& e) {
@@ -213,38 +210,26 @@ clControlWithItems::~clControlWithItems()
     Unbind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
 }
 
-void clControlWithItems::SetHeader(const clHeaderBar& header)
-{
-    wxASSERT_MSG(IsEmpty(), "SetHeader can not be called on a non empty control");
-    m_viewHeader = header;
-    SetShowHeader(true);
-}
-
 void clControlWithItems::SetShowHeader(bool b)
 {
-    m_viewHeader.SetHideHeaders(!b);
-    Refresh();
+    if(GetHeader()) {
+        GetHeader()->Show(b);
+        DoPositionVScrollbar(); // Adjust the vertical scrollbar if needed
+        Refresh();
+    }
 }
 
-bool clControlWithItems::IsHeaderVisible() const { return !m_viewHeader.IsHideHeaders(); }
+bool clControlWithItems::IsHeaderVisible() const { return GetHeader() && GetHeader()->IsShown(); }
 
 wxRect clControlWithItems::GetItemsRect() const
 {
     // Return the rectangle taking header into consideration
-    int yOffset = m_viewHeader.GetHeight();
+    int yOffset = 0;
+    if(m_viewHeader && m_viewHeader->IsShown()) { yOffset = m_viewHeader->GetHeight(); }
     wxRect clientRect = GetClientArea();
     clientRect.SetY(yOffset);
     clientRect.SetHeight(clientRect.GetHeight() - yOffset);
     return clientRect;
-}
-
-void clControlWithItems::RenderHeader(wxDC& dc)
-{
-    if(IsHeaderVisible()) {
-        wxRect headerRect = GetClientArea();
-        headerRect.SetHeight(m_viewHeader.GetHeight());
-        m_viewHeader.Render(dc, headerRect, m_colours);
-    }
 }
 
 void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
@@ -283,7 +268,7 @@ void clControlWithItems::UpdateScrollBar()
         // H-scrollbar
         int thumbSize = GetClientArea().GetWidth();
         int pageSize = (thumbSize - 1);
-        int rangeSize = IsEmpty() ? 0 : m_viewHeader.GetWidth();
+        int rangeSize = IsEmpty() ? 0 : m_viewHeader->GetWidth();
         int position = m_firstColumn;
         UpdateHScrollBar(position, thumbSize, rangeSize, pageSize);
     }
@@ -303,7 +288,6 @@ void clControlWithItems::Render(wxDC& dc)
 
     // Set the device origin to the X-offset
     dc.SetDeviceOrigin(-m_firstColumn, 0);
-    RenderHeader(dc);
 }
 
 void clControlWithItems::OnSize(wxSizeEvent& event)
@@ -312,7 +296,7 @@ void clControlWithItems::OnSize(wxSizeEvent& event)
     m_firstColumn = 0;
     // since the control size was resized, we turn the "m_maxList" flag to ON
     // and in turn, in the OnPaint() we will try to maximize the list displayed
-    // to fit 
+    // to fit
     m_maxList = true;
     UpdateScrollBar();
     Refresh();
@@ -329,9 +313,9 @@ void clControlWithItems::ScrollColumns(int steps, wxDirection direction)
     if((steps == 0) && (direction == wxLEFT)) {
         m_firstColumn = 0;
     } else if((steps == 0) && (direction == wxRIGHT)) {
-        m_firstColumn = GetHeader().GetWidth();
+        m_firstColumn = GetHeader()->GetWidth();
     } else {
-        int max_width = GetHeader().GetWidth();
+        int max_width = GetHeader()->GetWidth();
         int firstColumn = m_firstColumn + ((direction == wxRIGHT) ? steps : -steps);
         if(firstColumn < 0) { firstColumn = 0; }
         int pageSize = GetClientArea().GetWidth();
@@ -344,7 +328,7 @@ void clControlWithItems::ScrollColumns(int steps, wxDirection direction)
 void clControlWithItems::DoUpdateHeader(clRowEntry* row)
 {
     // do we have header?
-    if(GetHeader().empty()) { return; }
+    if(GetHeader()->empty()) { return; }
     if(row && row->IsHidden()) { return; }
     wxDC& dc = GetTempDC();
 
@@ -352,17 +336,17 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
     bool forceUpdate = (row == nullptr);
 
     // Use bold font, to get the maximum width needed
-    for(size_t i = 0; i < GetHeader().size(); ++i) {
+    for(size_t i = 0; i < GetHeader()->size(); ++i) {
 
         int row_width = 0;
         if(row) {
             row_width = row->CalcItemWidth(dc, m_lineHeight, i);
         } else {
-            int colWidth = dc.GetTextExtent(GetHeader().Item(i).GetLabel()).GetWidth();
+            int colWidth = dc.GetTextExtent(GetHeader()->Item(i).GetLabel()).GetWidth();
             colWidth += 3 * clRowEntry::X_SPACER;
             row_width = colWidth;
         }
-        GetHeader().UpdateColWidthIfNeeded(i, row_width, forceUpdate);
+        GetHeader()->UpdateColWidthIfNeeded(i, row_width, forceUpdate);
     }
 }
 
@@ -390,11 +374,7 @@ void clControlWithItems::OnMouseScroll(wxMouseEvent& event)
     DoMouseScroll(event);
 }
 
-void clControlWithItems::SetNativeHeader(bool b)
-{
-    m_viewHeader.SetNative(b);
-    Refresh();
-}
+void clControlWithItems::SetNativeHeader(bool b) { GetHeader()->SetNative(b); }
 
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
@@ -440,6 +420,35 @@ void clControlWithItems::DoMouseScroll(const wxMouseEvent& event)
     if(new_row >= range) { new_row = range - 1; }
     ScrollToRow(new_row);
 }
+
+clHeaderBar* clControlWithItems::GetHeader() const
+{
+    return m_viewHeader;
+}
+
+void clControlWithItems::DoPositionVScrollbar()
+{
+    if(IsHeaderVisible()) {
+        // When the heaer is visible place the vertical scrollbar under it
+        wxRect clientRect = GetClientRect();
+        wxSize vsbSize = GetVScrollBar()->GetSize();
+
+        int height = clientRect.GetHeight();
+        if(GetHScrollBar() && GetHScrollBar()->IsShown()) { height -= GetHScrollBar()->GetSize().GetHeight(); }
+        int width = vsbSize.GetWidth();
+        int x = clientRect.GetWidth() - vsbSize.GetWidth();
+        int y = (GetHeader() ? GetHeader()->GetHeight() : 0);
+        height -= (GetHeader() ? GetHeader()->GetHeight() : 0);
+        if(height < 0) { height = 0; }
+        GetVScrollBar()->SetSize(width, height);
+        GetVScrollBar()->Move(x, y);
+
+    } else {
+        clScrolledPanel::DoPositionVScrollbar();
+    }
+}
+
+void clControlWithItems::DoPositionHScrollbar() { clScrolledPanel::DoPositionHScrollbar(); }
 
 //===---------------------------------------------------
 // clSearchText

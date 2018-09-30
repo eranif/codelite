@@ -74,7 +74,7 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
 {
     // Fill the verctor with items constructed using the _non_ default constructor
     // to makes sure that IsOk() returns TRUE
-    m_cells.resize(m_tree->GetHeader().empty() ? 1 : m_tree->GetHeader().size(),
+    m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
                    clCellValue("", -1, -1)); // at least one column
     clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
     m_cells[0] = cv;
@@ -178,6 +178,7 @@ int clRowEntry::GetExpandedLines() const
 
 void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items, bool selfIncluded)
 {
+    if(count <= 0) { return; }
     items.reserve(count);
     if(!this->IsHidden() && selfIncluded) { items.push_back(this); }
     clRowEntry* next = GetNext();
@@ -190,6 +191,7 @@ void clRowEntry::GetNextItems(int count, clRowEntry::Vec_t& items, bool selfIncl
 
 void clRowEntry::GetPrevItems(int count, clRowEntry::Vec_t& items, bool selfIncluded)
 {
+    if(count <= 0) { return; }
     items.reserve(count);
     if(!this->IsHidden() && selfIncluded) { items.insert(items.begin(), this); }
     clRowEntry* prev = GetPrev();
@@ -293,8 +295,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
         // Draw the button
-        bool hasHeader = !m_tree->GetHeader().empty();
-        wxRect cellRect = hasHeader ? m_tree->GetHeader().Item(i).GetRect() : rowRect;
+        bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
+        wxRect cellRect = hasHeader ? m_tree->GetHeader()->Item(i).GetRect() : rowRect;
 
         // Make sure that the cellRect has all the correct attributes of the row
         cellRect.SetY(rowRect.GetY());

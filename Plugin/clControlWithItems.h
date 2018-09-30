@@ -46,7 +46,7 @@ public:
     typedef std::vector<wxBitmap> BitmapVec_t;
 
 protected:
-    clHeaderBar m_viewHeader;
+    clHeaderBar* m_viewHeader = nullptr;
     clColours m_colours;
     clRowEntry* m_firstItemOnScreen = nullptr;
     int m_firstColumn = 0;
@@ -63,7 +63,6 @@ protected:
     int GetNumLineCanFitOnScreen() const;
     virtual clRowEntry* GetFirstItemOnScreen();
     virtual void SetFirstItemOnScreen(clRowEntry* item);
-    void RenderHeader(wxDC& dc);
     void RenderItems(wxDC& dc, const clRowEntry::Vec_t& items);
     void AssignRects(const clRowEntry::Vec_t& items);
     void OnSize(wxSizeEvent& event);
@@ -74,7 +73,10 @@ protected:
     virtual void DoMouseScroll(const wxMouseEvent& event);
     clSearchText& GetSearch() { return m_search; }
     const clSearchText& GetSearch() const { return m_search; }
-
+    
+    void DoPositionHScrollbar();
+    void DoPositionVScrollbar();
+    
 public:
     clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
@@ -122,15 +124,11 @@ public:
      * @brief draw the header + items
      */
     void Render(wxDC& dc);
-
+    
     /**
-     * @brief return the header bar (relevant when using columns)
+     * @brief Get a pointer to the header, create one if needed
      */
-    const clHeaderBar& GetHeader() const { return m_viewHeader; }
-    /**
-     * @brief return the header bar (relevant when using columns)
-     */
-    clHeaderBar& GetHeader() { return m_viewHeader; }
+    clHeaderBar* GetHeader() const;
 
     /**
      * @param header

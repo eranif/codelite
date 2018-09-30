@@ -74,9 +74,7 @@ void clTreeCtrl::DoInitialize()
     GetColours().InitDefaults();
 
     // There is always a header
-    clHeaderBar header(this);
-    header.Add("");
-    SetHeader(header);
+    GetHeader()->Add("");
     SetShowHeader(false);
 }
 
@@ -129,7 +127,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Always try to get maximum entries to draw on the canvas
     if(items.empty()) { return; }
     bool canScrollDown = GetVScrollBar()->CanScollDown();
-    
+
     // An action took that requires us to try to maximimze the list
     if(m_maxList) {
         while(
@@ -168,7 +166,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Draw the items
     wxRect clientRect = GetItemsRect();
     // Set the width of the clipping region to match the header's width
-    clientRect.SetWidth(wxMax(GetHeader().GetWidth(), clientRect.GetWidth()) + 1);
+    clientRect.SetWidth(wxMax(GetHeader()->GetWidth(), clientRect.GetWidth()) + 1);
     dc.SetClippingRegion(clientRect);
     RenderItems(dc, items);
     dc.DestroyClippingRegion();
@@ -176,6 +174,9 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Keep the visible items
     m_model.SetOnScreenItems(items); // Keep track of the visible items
     if(needToUpdateScrollbar) { CallAfter(&clTreeCtrl::UpdateScrollBar); }
+
+    // Update the header as well
+    if(GetHeader() && GetHeader()->IsShown()) { GetHeader()->Update(); }
 }
 
 wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
@@ -1090,4 +1091,16 @@ void clTreeCtrl::UpdateScrollBar()
 {
     clControlWithItems::UpdateScrollBar();
     m_scrollLines = 0;
+}
+
+void clTreeCtrl::AddHeader(const wxString& label, const wxBitmap& bmp, int width) { DoAddHeader(label, bmp, width); }
+
+void clTreeCtrl::DoAddHeader(const wxString& label, const wxBitmap& bmp, int width)
+{
+    if(m_needToClearDefaultHeader) {
+        m_needToClearDefaultHeader = false;
+        GetHeader()->Clear();
+    }
+    clHeaderItem& col = GetHeader()->Add(label);
+    if(width > 0) { col.SetWidth(width); }
 }

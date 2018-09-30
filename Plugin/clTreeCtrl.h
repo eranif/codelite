@@ -11,6 +11,7 @@
 #include <wx/dc.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
+#include <wx/headercol.h>
 
 #define wxTR_ENABLE_SEARCH 0x4000
 
@@ -19,6 +20,7 @@ class WXDLLIMPEXP_SDK clTreeCtrl : public clControlWithItems
 {
 protected:
     clTreeCtrlModel m_model;
+    bool m_needToClearDefaultHeader = true;
     long m_treeStyle = 0;
     int m_scrollLines = 0;
     
@@ -47,6 +49,7 @@ private:
     
 protected:
     void UpdateScrollBar();
+    void DoAddHeader(const wxString& label, const wxBitmap& bmp, int width = wxCOL_WIDTH_AUTOSIZE);
     
 public:
     virtual int GetFirstItemPosition() const;
@@ -93,7 +96,9 @@ public:
     //===--------------------
     // table view support
     //===--------------------
-
+    
+    void AddHeader(const wxString& label, const wxBitmap& bmp = wxNullBitmap, int width = wxCOL_WIDTH_AUTOSIZE);
+    
     // For internal use, dont use these two methods
     const clTreeCtrlModel& GetModel() const { return m_model; }
     clTreeCtrlModel& GetModel() { return m_model; }

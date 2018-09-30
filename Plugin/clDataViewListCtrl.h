@@ -23,13 +23,11 @@
  */
 class WXDLLIMPEXP_SDK clDataViewListCtrl : public clTreeCtrl
 {
-    bool m_needToClearDefaultHeader = true;
     wxDataViewListCtrl m_dummy; // Needed for generating wxDV compatible events
 
     static std::unordered_map<int, int> m_stylesMap;
 
 protected:
-    void DoAddHeader(const wxString& label, int width);
     void OnConvertEvent(wxTreeEvent& event);
     bool SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent, const wxString& text = "");
     void DoSetCellValue(clRowEntry* row, size_t col, const wxVariant& value);

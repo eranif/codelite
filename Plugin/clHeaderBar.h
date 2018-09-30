@@ -4,23 +4,27 @@
 #include "clHeaderItem.h"
 #include "codelite_exports.h"
 #include <vector>
+#include <wx/panel.h>
 
-class WXDLLIMPEXP_SDK clHeaderBar
+class clControlWithItems;
+class WXDLLIMPEXP_SDK clHeaderBar : public wxPanel
 {
     clHeaderItem::Vect_t m_columns;
-    bool m_hideHeaders = false;
-    int m_firstColumn = 0;
-    wxWindow* m_parent = nullptr;
+    const clColours& m_colours;
     int m_flags = 0;
 
 protected:
     void DoUpdateSize();
     wxSize GetTextSize(const wxString& label) const;
 
-public:
-    clHeaderBar(wxWindow* parent);
-    virtual ~clHeaderBar();
+    void OnPaint(wxPaintEvent& event);
+    void OnSize(wxSizeEvent& event);
 
+public:
+    clHeaderBar(clControlWithItems* parent, const clColours& colours);
+    virtual ~clHeaderBar();
+    
+    bool Show(bool show = true);
     /**
      * @brief set drawing native header
      */
@@ -31,8 +35,9 @@ public:
         } else {
             m_flags &= ~kHeaderNative;
         }
+        Refresh();
     }
-    
+
     /**
      * @brief update the column width, but only if the new width is greater than the current one, unless 'force' is set
      * to 'true'
@@ -90,17 +95,8 @@ public:
     /**
      * @brief draw the header bar using dc and colours
      */
-    void Render(wxDC& dc, const wxRect& rect, const clColours& colours);
-
-    /**
-     * @brief hide the columns headers
-     */
-    void SetHideHeaders(bool b);
-    bool IsHideHeaders() const { return m_hideHeaders; }
-
+    void Render(wxDC& dc, const clColours& colours);
     size_t GetWidth() const;
-
-    void ScrollToColumn(int firstColumn);
 };
 
 #endif // CLHEADERBAR_H

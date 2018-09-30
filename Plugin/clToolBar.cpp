@@ -99,7 +99,13 @@ void clToolBar::RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc)
     });
 
     // Draw a rectangle
-    if(!HasFlag(kMiniToolBar) && !(wxGetOsVersion() & wxOS_WINDOWS)) {
+#ifdef __WXMSW__
+    bool hasGrouping = false;
+#else
+    bool hasGrouping = !HasFlag(clToolBar::kMiniToolBar);
+#endif
+
+    if(hasGrouping) {
         wxRect bgRect = wxRect(wxPoint(xx, 0), wxSize(groupWidth, clientRect.GetHeight() - 2));
         bool isLight = !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
         wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
@@ -113,12 +119,12 @@ void clToolBar::RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc)
             gcdc.SetPen(light_pen);
             gcdc.SetBrush(fill_colour);
             bgRect.Offset(1, 1);
-            gcdc.DrawRoundedRectangle(bgRect, GROUP_RADIUS);
+            gcdc.DrawRectangle(bgRect);
 
             bgRect.Offset(-1, -1);
             gcdc.SetBrush(fill_colour);
             gcdc.SetPen(dark_pen);
-            gcdc.DrawRoundedRectangle(bgRect, GROUP_RADIUS);
+            gcdc.DrawRectangle(bgRect);
 
         } else {
             wxColour fill_colour = bgColour.ChangeLightness(110);
@@ -130,12 +136,12 @@ void clToolBar::RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc)
             gcdc.SetPen(light_pen);
             gcdc.SetBrush(fill_colour);
             bgRect.Offset(1, 1);
-            gcdc.DrawRoundedRectangle(bgRect, GROUP_RADIUS);
+            gcdc.DrawRectangle(bgRect);
 
             bgRect.Offset(-1, -1);
             gcdc.SetBrush(fill_colour);
             gcdc.SetPen(dark_pen);
-            gcdc.DrawRoundedRectangle(bgRect, GROUP_RADIUS);
+            gcdc.DrawRectangle(bgRect);
         }
     }
 

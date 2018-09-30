@@ -83,7 +83,7 @@ wxDataViewColumn* clDataViewListCtrl::AppendIconTextColumn(const wxString& label
     wxUnusedVar(mode);
     wxUnusedVar(align);
     wxUnusedVar(flags);
-    DoAddHeader(label, width);
+    AddHeader(label, wxNullBitmap, width);
     return nullptr;
 }
 
@@ -93,7 +93,7 @@ wxDataViewColumn* clDataViewListCtrl::AppendProgressColumn(const wxString& label
     wxUnusedVar(mode);
     wxUnusedVar(align);
     wxUnusedVar(flags);
-    DoAddHeader(label, width);
+    AddHeader(label, wxNullBitmap, width);
     return nullptr;
 }
 
@@ -103,18 +103,8 @@ wxDataViewColumn* clDataViewListCtrl::AppendTextColumn(const wxString& label, wx
     wxUnusedVar(mode);
     wxUnusedVar(align);
     wxUnusedVar(flags);
-    DoAddHeader(label, width);
+    AddHeader(label, wxNullBitmap, width);
     return nullptr;
-}
-
-void clDataViewListCtrl::DoAddHeader(const wxString& label, int width)
-{
-    if(m_needToClearDefaultHeader) {
-        m_needToClearDefaultHeader = false;
-        GetHeader().Clear();
-    }
-    clHeaderItem& col = GetHeader().Add(label);
-    if(width > 0) { col.SetWidth(width); }
 }
 
 int clDataViewListCtrl::GetSelections(wxDataViewItemArray& sel) const
@@ -264,8 +254,8 @@ void clDataViewListCtrl::EnableStyle(int style, bool enable, bool refresh)
 
 clHeaderItem* clDataViewListCtrl::GetColumn(size_t index)
 {
-    if(index >= GetHeader().size()) { return nullptr; }
-    return &GetHeader().Item(index);
+    if(index >= GetHeader()->size()) { return nullptr; }
+    return &GetHeader()->Item(index);
 }
 
 size_t clDataViewListCtrl::GetItemCount() const
@@ -411,4 +401,4 @@ void clDataViewListCtrl::ClearHighlight(const wxDataViewItem& item) { clTreeCtrl
 
 void clDataViewListCtrl::EnsureVisible(const wxDataViewItem& item) { clTreeCtrl::EnsureVisible(TREE_ITEM(item)); }
 
-void clDataViewListCtrl::ClearColumns() { GetHeader().Clear(); }
+void clDataViewListCtrl::ClearColumns() { GetHeader()->Clear(); }

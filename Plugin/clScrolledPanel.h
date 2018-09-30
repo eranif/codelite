@@ -40,15 +40,13 @@ protected:
     void OnLeaveWindow(wxMouseEvent& event);
     void DoBeginDrag();
     void DoCancelDrag();
-    void DoPositionVScrollbar();
-    void DoPositionHScrollbar();
+    virtual void DoPositionVScrollbar();
+    virtual void DoPositionHScrollbar();
 
 protected:
     bool ShouldShowScrollBar() const;
     void DoInitialize();
 
-    clScrollBar* GetHScrollBar() { return m_hsb; }
-    clScrollBar* GetVScrollBar() { return m_vsb; }
     
     /**
      * @brief return true row from a position
@@ -61,6 +59,9 @@ public:
     clScrolledPanel() {}
     virtual ~clScrolledPanel();
 
+    clScrollBar* GetHScrollBar() { return m_hsb; }
+    clScrollBar* GetVScrollBar() { return m_vsb; }
+    
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
     /**

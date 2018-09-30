@@ -14,17 +14,16 @@ void clColours::InitDefaults()
     if(IsLightTheme()) {
         alternateColour = bgColour.ChangeLightness(98);
         hoverBgColour = bgColour.ChangeLightness(110);
-        headerBgColour = bgColour.ChangeLightness(113);
-        headerHBorderColour = alternateColour;
-        headerVBorderColour = alternateColour;
+        headerBgColour = bgColour.ChangeLightness(96);
+        headerHBorderColour = headerBgColour.ChangeLightness(90);
+        headerVBorderColour = headerBgColour.ChangeLightness(90);
     } else {
         alternateColour = bgColour.ChangeLightness(98);
         hoverBgColour = bgColour.ChangeLightness(90);
-        headerBgColour = bgColour.ChangeLightness(113);
-        headerHBorderColour = wxColour("#D0D3D4");
-        headerVBorderColour = wxColour("#D0D3D4");
+        headerBgColour = bgColour.ChangeLightness(105);
+        headerHBorderColour = headerBgColour.ChangeLightness(112);
+        headerVBorderColour = headerBgColour.ChangeLightness(112);
     }
-
     selbuttonColour = selItemTextColour;
     buttonColour = itemTextColour;
     itemBgColour = bgColour;
@@ -74,9 +73,9 @@ void clColours::InitFromColour(const wxColour& baseColour)
     if(is_light) {
         alternateColour = bgColour.ChangeLightness(98);
         hoverBgColour = bgColour.ChangeLightness(110);
-        headerBgColour = bgColour.ChangeLightness(113);
-        headerHBorderColour = alternateColour;
-        headerVBorderColour = alternateColour;
+        headerBgColour = bgColour.ChangeLightness(96);
+        headerHBorderColour = headerBgColour.ChangeLightness(90);
+        headerVBorderColour = headerBgColour.ChangeLightness(90);
         selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
         selItemBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
         selbuttonColour = selItemTextColour;
@@ -84,9 +83,9 @@ void clColours::InitFromColour(const wxColour& baseColour)
     } else {
         alternateColour = bgColour.ChangeLightness(102);
         hoverBgColour = bgColour.ChangeLightness(90);
-        headerBgColour = bgColour.ChangeLightness(113);
-        headerHBorderColour = wxColour("#D0D3D4");
-        headerVBorderColour = wxColour("#D0D3D4");
+        headerBgColour = bgColour.ChangeLightness(105);
+        headerHBorderColour = headerBgColour.ChangeLightness(112);
+        headerVBorderColour = headerBgColour.ChangeLightness(112);
         selItemTextColour = itemTextColour;
         selItemBgColour = bgColour.ChangeLightness(130);
         selbuttonColour = selItemTextColour;

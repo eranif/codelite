@@ -72,7 +72,7 @@ void clTableWithPagination::ClearAll()
 {
     m_data.clear();
     m_ctrl->DeleteAllItems();
-    m_ctrl->GetHeader().Clear();
+    m_ctrl->ClearColumns();
 }
 
 void clTableWithPagination::ShowPage(int nPage)

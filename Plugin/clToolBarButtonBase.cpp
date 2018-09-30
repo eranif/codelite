@@ -33,8 +33,12 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     if(DrawingUtils::IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
-    
-    bool hasGrouping = !m_toolbar->HasFlag(clToolBar::kMiniToolBar) && !(wxGetOsVersion() & wxOS_WINDOWS);
+
+#ifdef __WXMSW__
+    bool hasGrouping = false;
+#else
+    bool hasGrouping = !m_toolbar->HasFlag(clToolBar::kMiniToolBar);
+#endif
     const wxRect clientRect = m_toolbar->GetClientRect();
     const wxColour bgColour = m_toolbar->HasFlag(clToolBar::kMiniToolBar)
                             ? colours.GetFillColour()
@@ -46,9 +50,9 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
 
         // Adjust the highlight rect so it wont be drawn over the group border
         if(hasGrouping) {
-            highlightRect.Deflate(GROUP_RADIUS/2);
+            highlightRect.Deflate(1);
             highlightRect.CenterIn(clientRect, wxVERTICAL);
-            highlightRect.SetX(highlightRect.GetX() + GROUP_RADIUS / 2);
+            highlightRect.SetX(highlightRect.GetX() + 1);
         }
         dc.SetBrush(pressBgColour);
         dc.SetPen(penColour);

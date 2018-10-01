@@ -45,7 +45,7 @@ protected:
     wxRect CalculateRect(wxDC& dc) const;
     void DoShowOverflowMenu();
     void SplitGroups(std::vector<ToolVect_t>& G);
-    void RenderGroup(int& xx, clToolBar::ToolVect_t& G, wxDC& gcdc);
+    void RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup);
 
 public:
     clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -62,7 +62,10 @@ public:
         }
     }
     bool HasFlag(eFlags flag) const { return m_flags & flag; }
-
+    
+    int GetXSpacer() const;
+    int GetYSpacer() const;
+    
     /**
      * @brief set a drop down menu for a button
      */

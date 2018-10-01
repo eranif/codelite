@@ -298,12 +298,17 @@ wxColour DrawingUtils::GetTextCtrlTextColour() { return wxSystemSettings::GetCol
 
 wxColour DrawingUtils::GetMenuTextColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT); }
 
-wxColour DrawingUtils::GetMenuBarBgColour()
+wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
 #ifdef __WXMSW__
+    // return miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR) : wxColour("rgb(245,246,247)");
     return wxColour("rgb(245,246,247)");
+#elif defined(__WXOSX__)
+    wxUnusedVar(miniToolbar);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    return miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                       : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
 
@@ -311,14 +316,16 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
 {
 #ifdef __WXMSW__
     if(miniToolbar && false) {
-        wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        wxColour bgColour = GetMenuBarBgColour(true);
         dc.SetPen(bgColour);
         dc.SetBrush(bgColour);
         dc.DrawRectangle(rect);
     } else {
         wxColour topColour(*wxWHITE);
-        wxColour brushColour(GetMenuBarBgColour());
-        wxColour bottomColour("rgb(232,233,234)");
+        wxColour brushColour(GetMenuBarBgColour(false));
+
+        wxColour bottomColour = brushColour;
+        bottomColour = bottomColour.ChangeLightness(90);
 
         dc.SetPen(brushColour);
         dc.SetBrush(brushColour);
@@ -331,18 +338,20 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
 #elif defined(__WXOSX__)
-    wxUnusedVar(miniToolbar);
-    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgColour = GetMenuBarBgColour(false);
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
 #else
-    wxUnusedVar(miniToolbar);
-    wxColour bgColour = miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                                    : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    wxColour bgColour = GetMenuBarBgColour(miniToolbar);
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
+
+    wxColour lineColour = bgColour;
+    lineColour = lineColour.ChangeLightness(90);
+    dc.SetPen(lineColour);
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #endif
 }
 
@@ -460,20 +469,9 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
 #ifdef __WXOSX__
     return bmp.ConvertToDisabled(255);
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK__) || defined(__WXMSW__)
     bool bDarkBG = IsDark(GetPanelBgColour());
     return bmp.ConvertToDisabled(bDarkBG ? 20 : 255);
-#else
-    bool bDarkBG = IsDark(GetPanelBgColour());
-    wxImage img = bmp.ConvertToImage();
-    img = img.ConvertToGreyscale();
-    wxBitmap greyBmp(img);
-    if(bDarkBG) {
-        return greyBmp.ConvertToDisabled(20);
-
-    } else {
-        return greyBmp.ConvertToDisabled(255);
-    }
 #endif
 }
 
@@ -576,7 +574,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     if(kind == eButtonKind::kDropDown) {
         dc.SetPen(penColour);
         dc.SetBrush(baseColour);
-        DrawDropDownArrow(win, dc, arrowRect, textColour);
+        DrawDropDownArrow(win, dc, arrowRect);
         dc.SetPen(penColour);
         dc.DrawLine(arrowRect.GetX(), clientRect.GetTopLeft().y, arrowRect.GetX(), clientRect.GetBottomLeft().y);
     }
@@ -642,8 +640,19 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     points[2].x = arrowRect.GetBottomLeft().x + (arrowRect.GetWidth() / 2);
     points[2].y = arrowRect.GetBottomLeft().y;
 
-    dc.SetPen(colour);
-    dc.SetBrush(colour);
+    // if a user provided a colour for the button, use it
+    wxColour buttonColour = colour;
+    if(!buttonColour.IsOk()) {
+        // No colour provided, provide one
+        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+            buttonColour = wxColour("#FDFEFE");
+        } else {
+            buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+        }
+    }
+
+    dc.SetPen(buttonColour);
+    dc.SetBrush(buttonColour);
     dc.DrawPolygon(3, points);
 }
 

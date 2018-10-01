@@ -56,7 +56,7 @@ public:
     static wxColour GetOutputPaneFgColour();
     static wxColour GetOutputPaneBgColour();
     static wxColour GetMenuTextColour();
-    static wxColour GetMenuBarBgColour();
+    static wxColour GetMenuBarBgColour(bool miniToolbar = true);
     static wxColour GetMenuBarTextColour();
     static void FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar = true);
     static void TruncateText(const wxString& text, int maxWidth, wxDC& dc, wxString& fixedText);
@@ -81,8 +81,9 @@ public:
 
     /**
      * @brief draw a drop down arrow
+     * pass an invalid colour to let this function determine the best colour to use
      */
-    static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour);
+    static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour = wxColour());
 
     static void DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                  const wxBitmap& bmp = wxNullBitmap,

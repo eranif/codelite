@@ -535,10 +535,14 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
                     output.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
                     output.Replace(wxT("$(ASFLAGS)"), asFlags);
                     
-                    wxString arFlags = bldConf->GetResCompileOptions();
-                    arFlags.Replace(wxT(";"), wxT(" "));
+                    wxString resFlags = bldConf->GetResCompileOptions();
+                    resFlags.Replace(wxT(";"), wxT(" "));
+                    output.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
+                    output.Replace(wxT("$(RESFLAGS)"), resFlags);
+  
                     output.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
-                    output.Replace(wxT("$(ARFLAGS)"), arFlags);
+                    
+                    output.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
                     
                     output.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
                     output.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());

@@ -222,10 +222,14 @@ wxString MacroManager::DoExpand(
                     expandedString.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
                     expandedString.Replace(wxT("$(ASFLAGS)"), asFlags);
                     
-                    wxString arFlags = bldConf->GetResCompileOptions();
-                    arFlags.Replace(wxT(";"), wxT(" "));
+                    wxString resFlags = bldConf->GetResCompileOptions();
+                    resFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
+                    expandedString.Replace(wxT("$(RESFLAGS)"), resFlags);
+  
                     expandedString.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
-                    expandedString.Replace(wxT("$(ARFLAGS)"), arFlags);
+                    
+                    expandedString.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
                     
                     expandedString.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
                     expandedString.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());

@@ -210,6 +210,7 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     clRowEntry* child = m_model.ToPtr(item);
     if(!child) return;
     child->SetExpanded(true);
+    m_maxList = true;
     DoUpdateHeader(item);
     UpdateScrollBar();
     Refresh();

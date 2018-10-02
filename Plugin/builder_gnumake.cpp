@@ -1435,6 +1435,17 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxStrin
     wxString cmpType;
     wxFileName fn(fileName);
 
+    if(FileExtManager::GetType(fileName) == FileExtManager::TypeHeader) {
+        // Attempting to build a header file, try to see if we got an implementation file instead
+        // We had the current extension to the array so incase we loop over the entire array
+        // we remain with the original file name unmodified
+        std::vector<wxString> implExtensions = { "cpp", "cxx", "cc", "c++", "c", fn.GetExt() };
+        for(const wxString& ext : implExtensions) {
+            fn.SetExt(ext);
+            if(fn.FileExists()) { break; }
+        }
+    }
+
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf) { return wxEmptyString; }
 

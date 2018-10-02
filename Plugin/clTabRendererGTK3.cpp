@@ -168,7 +168,7 @@ void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxR
 void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
 {
     bool useDefaults = true;
-    if(style & kNotebook_DynamicColours) {
+/*    if(style & kNotebook_DynamicColours) {
         wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
         if(!globalTheme.IsEmpty()) {
             LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
@@ -183,14 +183,15 @@ void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
                 useDefaults = false;
             }
         }
-    }
+    }*/
 
     if(useDefaults) {
-        colours.activeTabBgColour = wxColour("#a6acaf");
+        colours.activeTabBgColour = DrawingUtils::GetPanelBgColour();
         colours.activeTabInnerPenColour = colours.activeTabBgColour;
         colours.tabAreaColour = colours.inactiveTabBgColour;
         colours.activeTabPenColour = colours.activeTabBgColour;
-        colours.inactiveTabTextColour = wxColour("#808b96");
-        colours.activeTabTextColour = wxColour("#17202A");
+        colours.activeTabTextColour = DrawingUtils::GetPanelTextColour();
+        colours.inactiveTabTextColour = DrawingUtils::IsDark(colours.activeTabTextColour) ?
+            wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : colours.activeTabTextColour.ChangeLightness(80);
     }
 }

@@ -115,7 +115,11 @@ public:
     void ClearRenderFlags() { m_renderFlags = 0; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
     bool IsChecked() const { return (m_flags & kChecked); }
-    void Check(bool b) { EnableFlag(kChecked, b); }
+    void Check(bool b)
+    {
+        EnableFlag(kChecked, b);
+        SetPressed(b);
+    }
     bool IsToggle() const { return (m_flags & kToggleButton); }
     bool IsSeparator() const { return m_flags & kSeparator; }
     bool IsSpacer() const { return m_flags & kSpacer; }

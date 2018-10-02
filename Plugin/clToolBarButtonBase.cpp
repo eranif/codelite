@@ -34,9 +34,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     if(DrawingUtils::IsDark(bgHighlightColour)) { bgHighlightColour = bgHighlightColour.ChangeLightness(140); }
 #endif
 
-    const wxColour bgColour = m_toolbar->HasFlag(clToolBar::kMiniToolBar)
-                                  ? colours.GetFillColour()
-                                  : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    const wxColour bgColour = DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBar::kMiniToolBar));
     if(IsEnabled() && (IsPressed() || IsChecked())) {
         wxColour pressBgColour = bgColour.ChangeLightness(85);
         wxRect highlightRect = m_buttonRect;
@@ -46,13 +44,6 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         dc.DrawRoundedRectangle(highlightRect, 3.0);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
-//#ifdef __WXOSX__
-//    } else if(IsEnabled() && IsHover()) {
-//        wxColour hoverColour = DrawingUtils::GetMenuBarBgColour(false).ChangeLightness(150);
-//        dc.SetPen(hoverColour);
-//        dc.SetBrush(hoverColour);
-//        dc.DrawRoundedRectangle(m_buttonRect, 3.0);
-//#endif
     } else if(!IsEnabled()) {
         // A disabled button
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);

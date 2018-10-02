@@ -49,7 +49,6 @@ struct WXDLLIMPEXP_SDK clMatchResult {
 
 class WXDLLIMPEXP_SDK clRowEntry
 {
-
 public:
     typedef std::vector<clRowEntry*> Vec_t;
     static const int Y_SPACER = 1;
@@ -102,7 +101,12 @@ public:
     clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND,
                int bitmapSelectedIndex = wxNOT_FOUND);
     ~clRowEntry();
-
+    
+    /**
+     * @brief return the item rectangle
+     * @return 
+     */
+    wxRect GetCellRect(size_t col = 0) const;
     clRowEntry* GetNext() const { return m_next; }
     clRowEntry* GetPrev() const { return m_prev; }
     void SetNext(clRowEntry* next) { this->m_next = next; }

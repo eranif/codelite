@@ -151,6 +151,7 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
     e.SetItem(DV_ITEM(treeEvent.GetItem()));
 #endif
     e.SetEventObject(this);
+    e.SetColumn(treeEvent.GetInt());
     e.SetString(text);
     if(!GetEventHandler()->ProcessEvent(e)) {
         treeEvent.Skip();

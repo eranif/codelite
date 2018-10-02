@@ -210,7 +210,6 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     clRowEntry* child = m_model.ToPtr(item);
     if(!child) return;
     child->SetExpanded(true);
-    m_maxList = true;
     DoUpdateHeader(item);
     UpdateScrollBar();
     Refresh();
@@ -241,8 +240,9 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
     event.Skip();
     CHECK_ROOT_RET();
     int flags = 0;
+    int column = wxNOT_FOUND;
     wxPoint pt = DoFixPoint(event.GetPosition());
-    wxTreeItemId where = HitTest(pt, flags);
+    wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk()) {
         if(flags & wxTREE_HITTEST_ONITEMBUTTON) {
             if(IsExpanded(where)) {
@@ -296,7 +296,8 @@ void clTreeCtrl::OnMouseLeftUp(wxMouseEvent& event)
     event.Skip();
     int flags = 0;
     wxPoint pt = DoFixPoint(event.GetPosition());
-    wxTreeItemId where = HitTest(pt, flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk() && (flags & wxTREE_HITTEST_ONITEM)) {
         bool has_multiple_selection = (m_model.GetSelectionsCount() > 1);
         clRowEntry* pNode = m_model.ToPtr(where);
@@ -308,10 +309,11 @@ void clTreeCtrl::OnMouseLeftUp(wxMouseEvent& event)
     }
 }
 
-wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags) const
+wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) const
 {
-    if(!m_model.GetRoot()) { return wxTreeItemId(); }
+    column = wxNOT_FOUND;
     flags = 0;
+    if(!m_model.GetRoot()) { return wxTreeItemId(); }
     for(size_t i = 0; i < m_model.GetOnScreenItems().size(); ++i) {
         const clRowEntry* item = m_model.GetOnScreenItems()[i];
         wxRect buttonRect = item->GetButtonRect();
@@ -323,6 +325,20 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags) const
         }
         if(item->GetItemRect().Contains(point)) {
             flags |= wxTREE_HITTEST_ONITEM;
+            if(GetHeader() && !GetHeader()->empty()) {
+                for(size_t col=0; col < GetHeader()->size(); ++col) {
+                    // Check which column was clicked
+                    wxRect cellRect = item->GetCellRect(col);
+                    if(cellRect.Contains(point)) {
+                        column = col;
+                        break;
+                    }
+                }
+                if(column == wxNOT_FOUND) {
+                    // assume its the last column (the last column expands on the remainder of the row
+                    column = (GetHeader()->size() - 1);
+                }
+            }
             return wxTreeItemId(const_cast<clRowEntry*>(item));
         }
     }
@@ -369,7 +385,8 @@ void clTreeCtrl::OnMouseLeftDClick(wxMouseEvent& event)
 
     int flags = 0;
     wxPoint pt = DoFixPoint(event.GetPosition());
-    wxTreeItemId where = HitTest(pt, flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk()) {
         SelectItem(where, true);
 
@@ -377,6 +394,7 @@ void clTreeCtrl::OnMouseLeftDClick(wxMouseEvent& event)
         wxTreeEvent evt(wxEVT_TREE_ITEM_ACTIVATED);
         evt.SetEventObject(this);
         evt.SetItem(where);
+        evt.SetInt(column);
         if(GetEventHandler()->ProcessEvent(evt)) { return; }
 
         // Process the default action
@@ -550,7 +568,8 @@ void clTreeCtrl::ProcessIdle()
         CHECK_ROOT_RET();
         int flags = 0;
         wxPoint pt = ScreenToClient(::wxGetMousePosition());
-        wxTreeItemId item = HitTest(pt, flags);
+        int column = wxNOT_FOUND;
+        wxTreeItemId item = HitTest(pt, flags, column);
         if(item.IsOk()) {
             clRowEntry::Vec_t& items = m_model.GetOnScreenItems();
             clRowEntry* hoveredNode = m_model.ToPtr(item);
@@ -800,12 +819,14 @@ void clTreeCtrl::OnContextMenu(wxContextMenuEvent& event)
     event.Skip();
     CHECK_ROOT_RET();
     int flags = 0;
+    int column = wxNOT_FOUND;
     wxPoint pt = ScreenToClient(::wxGetMousePosition());
-    wxTreeItemId item = HitTest(pt, flags);
+    wxTreeItemId item = HitTest(pt, flags, column);
     if(item.IsOk()) {
         SelectItem(item, true);
         wxTreeEvent evt(wxEVT_TREE_ITEM_MENU);
         evt.SetItem(item);
+        evt.SetInt(column); // pass the column
         evt.SetEventObject(this);
         GetEventHandler()->ProcessEvent(evt);
     }
@@ -817,11 +838,13 @@ void clTreeCtrl::OnRightDown(wxMouseEvent& event)
     CHECK_ROOT_RET();
     int flags = 0;
     wxPoint pt = DoFixPoint(event.GetPosition());
-    wxTreeItemId where = HitTest(pt, flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk()) {
         wxTreeEvent evt(wxEVT_TREE_ITEM_RIGHT_CLICK);
         evt.SetEventObject(this);
         evt.SetItem(where);
+        evt.SetInt(column);
         event.Skip(false);
         if(GetEventHandler()->ProcessEvent(evt)) { return; }
         event.Skip();
@@ -1002,7 +1025,8 @@ bool clTreeCtrl::IsSelected(const wxTreeItemId& item) const { return m_model.IsI
 wxTreeItemId clTreeCtrl::GetRow(const wxPoint& pt) const
 {
     int flags = 0;
-    wxTreeItemId item = HitTest(pt, flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId item = HitTest(pt, flags, column);
     if(item.IsOk() && (flags & wxTREE_HITTEST_ONITEM)) { return item; }
     return wxTreeItemId();
 }

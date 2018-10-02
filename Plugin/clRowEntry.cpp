@@ -1,5 +1,6 @@
 #include "clCellValue.h"
 #include "clHeaderItem.h"
+#include "clHeaderBar.h"
 #include "clRowEntry.h"
 #include "clTreeCtrl.h"
 #include <algorithm>
@@ -615,4 +616,22 @@ const wxColour& clRowEntry::GetTextColour(size_t col) const
         return invalid_colour;
     }
     return cell.GetTextColour();
+}
+
+wxRect clRowEntry::GetCellRect(size_t col) const
+{
+    if(m_tree && m_tree->GetHeader() && (col < m_tree->GetHeader()->size())) {
+        // Check which column was clicked
+        wxRect cellRect = m_tree->GetHeader()->Item(col).GetRect();
+        
+        const wxRect& itemRect = GetItemRect();
+        // Make sure that the cellRect has all the correct attributes of the row
+        cellRect.SetY(itemRect.GetY());
+        // If we got h-scrollbar, adjust the X coordinate
+        cellRect.SetX(cellRect.GetX() - m_tree->GetFirstColumn());
+        cellRect.SetHeight(itemRect.GetHeight());
+        return cellRect;
+    } else {
+        return GetItemRect();
+    }
 }

@@ -137,14 +137,12 @@ public:
     /**
      * @brief Calculates which (if any) item is under the given point, returning the tree item id at this point plus
      *  extra information flags.
-     *  flags is a bitlist of the following:
+     *  flags is a bitlist of the following (the bits are output returned by this function):
      *  wxTREE_HITTEST_NOWHERE: In the client area but below the last item.
      *  wxTREE_HITTEST_ONITEMBUTTON: On the button associated with an item.
-     *  wxTREE_HITTEST_ONITEMICON: On the bitmap associated with an item.
-     *  wxTREE_HITTEST_ONITEMLABEL: On the label (string) associated with an item.
-     * wxTREE_HITTEST_ONITEM
+     *  wxTREE_HITTEST_ONITEM
      */
-    wxTreeItemId HitTest(const wxPoint& point, int& flags) const;
+    wxTreeItemId HitTest(const wxPoint& point, int& flags, int& column) const;
 
     /**
      * @brief ppends an item to the end of the branch identified by parent, return a new item id.

@@ -84,7 +84,8 @@ void svSymbolTree::OnMouseDblClick(wxMouseEvent& event)
 {
     // Make sure the double click was done on an actual item
     int flags = 0;
-    wxTreeItemId where = HitTest(event.GetPosition(), flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId where = HitTest(event.GetPosition(), flags, column);
 
     if(where.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
         SelectItem(where);

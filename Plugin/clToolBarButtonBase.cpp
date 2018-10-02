@@ -46,7 +46,13 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         dc.DrawRoundedRectangle(highlightRect, 3.0);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
-
+//#ifdef __WXOSX__
+//    } else if(IsEnabled() && IsHover()) {
+//        wxColour hoverColour = DrawingUtils::GetMenuBarBgColour(false).ChangeLightness(150);
+//        dc.SetPen(hoverColour);
+//        dc.SetBrush(hoverColour);
+//        dc.DrawRoundedRectangle(m_buttonRect, 3.0);
+//#endif
     } else if(!IsEnabled()) {
         // A disabled button
         textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);

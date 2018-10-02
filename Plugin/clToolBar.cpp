@@ -5,6 +5,7 @@
 #include "clToolBarMenuButton.h"
 #include "clToolBarSeparator.h"
 #include "clToolBarSpacer.h"
+#include "clToolBarStretchableSpace.h"
 #include "clToolBarToggleButton.h"
 #include "drawingutils.h"
 #include <algorithm>
@@ -70,8 +71,10 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+
+    // Prepare for drawings
     std::vector<ToolVect_t> groups;
-    SplitGroups(groups);
+    PrepareForDrawings(gcdc, groups, clientRect);
 
     int xx = 0;
     for(size_t i = 0; i < groups.size(); ++i) {
@@ -122,11 +125,11 @@ void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc,
             gcdc.DrawLine(bgRect.GetTopRight(), bgRect.GetBottomRight());
         }
     }
-    
+
     // Now draw the buttons
     std::for_each(G.begin(), G.end(), [&](clToolBarButtonBase* button) {
         wxSize buttonSize = button->CalculateSize(gcdc);
-        if((xx + buttonSize.GetWidth()) >= clientRect.GetRight()) {
+        if((xx + buttonSize.GetWidth()) > clientRect.GetRight()) {
             if(button->IsControl()) {
                 clToolBarControl* control = button->Cast<clToolBarControl>();
                 control->GetControl()->Hide();
@@ -356,6 +359,7 @@ bool clToolBar::DeleteById(wxWindowID id)
 clToolBarButtonBase* clToolBar::AddSeparator() { return Add(new clToolBarSeparator(this)); }
 
 clToolBarButtonBase* clToolBar::AddSpacer() { return Add(new clToolBarSpacer(this)); }
+clToolBarButtonBase* clToolBar::AddStretchableSpace() { return Add(new clToolBarStretchableSpace(this)); }
 
 void clToolBar::SetDropdownMenu(wxWindowID buttonID, wxMenu* menu)
 {
@@ -507,14 +511,34 @@ int clToolBar::GetMenuSelectionFromUser(wxWindowID buttonID, wxMenu* menu)
     return selection;
 }
 
-void clToolBar::SplitGroups(std::vector<ToolVect_t>& G)
+void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const wxRect& rect)
 {
     G.clear();
+    int totalWidth = 0;
+    int stretchableButtons = 0;
     ToolVect_t curG;
+    ToolVect_t spacers;
     for(size_t i = 0; i < m_buttons.size(); ++i) {
         clToolBarButtonBase* button = m_buttons[i];
+
+        // Don't include stretchable buttons in the total width
+        if(!button->IsStretchableSpace()) { totalWidth += button->CalculateSize(dc).GetWidth(); }
         if(button->IsHidden()) { continue; }
-        if(button->IsSpacer() || button->IsSeparator()) {
+
+        if(button->IsStretchableSpace()) {
+            stretchableButtons++;
+            spacers.push_back(button);
+
+            // A stretchable space is a one-one-group
+            if(!curG.empty()) {
+                G.push_back(curG);
+                curG.clear();
+            }
+            curG.push_back(button);
+            G.push_back(curG);
+            curG.clear();
+            continue;
+        } else if(button->IsSpacer() || button->IsSeparator()) {
             // close this group and start a new one
             if(!curG.empty()) {
                 G.push_back(curG);
@@ -525,8 +549,16 @@ void clToolBar::SplitGroups(std::vector<ToolVect_t>& G)
             curG.push_back(button);
         }
     }
-
     if(!curG.empty()) { G.push_back(curG); }
+
+    // Set a size to each stretchable button
+    if(!spacers.empty()) {
+        int spacer_width =
+            ((rect.GetWidth() - totalWidth - ((G.size() - spacers.size() - 1) * GetGroupSapcing())) / spacers.size());
+        for(clToolBarButtonBase* button : spacers) {
+            button->Cast<clToolBarStretchableSpace>()->SetWidth(spacer_width < 0 ? 0 : spacer_width);
+        }
+    }
 }
 
 int clToolBar::GetXSpacer() const { return HasFlag(kMiniToolBar) ? 5 : 10; }

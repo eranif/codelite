@@ -14,7 +14,7 @@
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 8
 #endif
 
-class WXDLLIMPEXP_SDK clToolBarButtonBase : public wxToolBarToolBase
+class WXDLLIMPEXP_SDK clToolBarButtonBase
 {
 protected:
     clToolBar* m_toolbar;
@@ -37,6 +37,7 @@ public:
         kControl = (1 << 5),
         kHidden = (1 << 6),
         kSpacer = (1 << 7),
+        kStretchalbeSpace = (1 << 8),
     };
 
     enum eRenderFlags {
@@ -118,6 +119,7 @@ public:
     bool IsToggle() const { return (m_flags & kToggleButton); }
     bool IsSeparator() const { return m_flags & kSeparator; }
     bool IsSpacer() const { return m_flags & kSpacer; }
+    bool IsStretchableSpace() const { return m_flags & kStretchalbeSpace; }
     bool IsEnabled() const { return !(m_flags & kDisabled); }
     bool IsControl() const { return m_flags & kControl; }
     bool Enable(bool b)
@@ -128,7 +130,7 @@ public:
     bool IsHidden() const { return m_flags & kHidden; }
     bool IsShown() const { return !IsHidden(); }
     void Show(bool b) { EnableFlag(kHidden, !b); }
-    
+
     template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
 };
 

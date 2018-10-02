@@ -40,6 +40,14 @@ class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
     size_t m_objectChunks;
     Project::FilesMap_t* m_projectFilesMetadata;
 
+protected:
+    enum eBuildFlags {
+        kCleanOnly = (1 << 0),
+        kAddCleanTarget = (1 << 1),
+        kIncludePreBuild = (1 << 2),
+        kIncludePostBuild = (1 << 3),
+    };
+
 public:
     BuilderGnuMake();
     BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
@@ -95,8 +103,7 @@ private:
 
     wxString GetProjectMakeCommand(const wxFileName& wspfile, const wxFileName& projectPath, ProjectPtr proj,
                                    const wxString& confToBuild);
-    wxString GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild, const wxString& target,
-                                   bool addCleanTarget, bool cleanOnly);
+    wxString GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild, const wxString& target, size_t flags);
     wxString DoGetCompilerMacro(const wxString& filename);
     wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
     wxString DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath = "");

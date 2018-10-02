@@ -44,7 +44,7 @@ protected:
     void DoIdleUpdate();
     wxRect CalculateRect(wxDC& dc) const;
     void DoShowOverflowMenu();
-    void SplitGroups(std::vector<ToolVect_t>& G);
+    void PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const wxRect& rect);
     void RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup);
 
 public:
@@ -114,6 +114,7 @@ public:
     clToolBarButtonBase* AddMenuButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddToggleButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
     clToolBarButtonBase* AddSeparator();
+    clToolBarButtonBase* AddStretchableSpace();
     clToolBarButtonBase* AddSpacer();
 
     /**

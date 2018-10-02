@@ -75,6 +75,8 @@
     <File Name="clTreeNodeVisitor.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clToolBar">
+    <File Name="clToolBarStretchableSpace.h"/>
+    <File Name="clToolBarStretchableSpace.cpp"/>
     <File Name="clToolBarSpacer.h"/>
     <File Name="clToolBarSpacer.cpp"/>
     <VirtualDirectory Name="UI">

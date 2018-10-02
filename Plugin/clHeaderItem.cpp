@@ -1,6 +1,7 @@
 #include "clHeaderItem.h"
 #include "clScrolledPanel.h"
 #include <wx/dc.h>
+#include <wx/headercol.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
 
@@ -32,4 +33,29 @@ void clHeaderItem::Render(wxDC& dc, const clColours& colours, int flags)
     dc.SetTextForeground(flags & kHeaderNative ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)
                                                : colours.GetItemTextColour());
     dc.DrawText(GetLabel(), wxPoint(m_rect.GetX() + X_SPACER, textY));
+}
+
+void clHeaderItem::SetWidthValue(int width)
+{
+    switch(width) {
+    case wxCOL_WIDTH_AUTOSIZE:
+        EnableFlag(kHeaderColWidthMask, false);
+        EnableFlag(kHeaderColWidthFitData, true);
+        return;
+    case wxCOL_WIDTH_DEFAULT:
+        EnableFlag(kHeaderColWidthMask, false);
+        EnableFlag(kHeaderColWidthFitHeader, true);
+        return;
+    default:
+        if(width < 0) { return; }
+        EnableFlag(kHeaderColWidthMask, false);
+        EnableFlag(kHeaderColWidthUser, true);
+        break;
+    }
+    UpdateWidth(width);
+}
+
+void clHeaderItem::UpdateWidth(int width)
+{
+    if(width >= 0) { m_rect.SetWidth(width); }
 }

@@ -57,7 +57,7 @@ protected:
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;
     bool m_maxList = false;
-    
+
 protected:
     void DoInitialize();
     int GetNumLineCanFitOnScreen() const;
@@ -73,10 +73,10 @@ protected:
     virtual void DoMouseScroll(const wxMouseEvent& event);
     clSearchText& GetSearch() { return m_search; }
     const clSearchText& GetSearch() const { return m_search; }
-    
+
     void DoPositionHScrollbar();
     void DoPositionVScrollbar();
-    
+
 public:
     clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
@@ -124,16 +124,20 @@ public:
      * @brief draw the header + items
      */
     void Render(wxDC& dc);
-    
+
     /**
      * @brief Get a pointer to the header, create one if needed
      */
     clHeaderBar* GetHeader() const;
 
     /**
-     * @param header
+     * @brief sets a column width. If the width is less than 0, this function does nothing. If the column is out of
+     * bound this function does nothing. Two sepcial values are allowed here: wxCOL_WIDTH_DEFAULT and
+     * wxCOL_WIDTH_AUTOSIZE
+     * @param col the column index
+     * @param width the width. Can contain one of the special values: wxCOL_WIDTH_DEFAULT and wxCOL_WIDTH_AUTOSIZE
      */
-    void SetHeader(const clHeaderBar& header);
+    void SetColumnWidth(size_t col, int width);
 
     /**
      * @brief should we show the header bar?

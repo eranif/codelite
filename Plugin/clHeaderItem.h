@@ -11,6 +11,10 @@
 
 enum clHeaderFlags {
     kHeaderNative = (1 << 0),
+    kHeaderColWidthFitData = (1 << 1),
+    kHeaderColWidthFitHeader = (1 << 2),
+    kHeaderColWidthUser = (1 << 3),
+    kHeaderColWidthMask = (kHeaderColWidthUser | kHeaderColWidthFitHeader | kHeaderColWidthFitData),
 };
 
 class WXDLLIMPEXP_SDK clHeaderItem
@@ -19,6 +23,17 @@ class WXDLLIMPEXP_SDK clHeaderItem
     wxBitmap m_bitmap;
     wxRect m_rect;
     wxWindow* m_parent = nullptr;
+    size_t m_flags = kHeaderColWidthFitData;
+
+protected:
+    void EnableFlag(int flag, bool b)
+    {
+        if(b) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
+    }
 
 public:
     typedef std::vector<clHeaderItem> Vect_t;
@@ -37,9 +52,11 @@ public:
     const wxRect& GetRect() const { return m_rect; }
     const wxBitmap& GetBitmap() const { return m_bitmap; }
     const wxString& GetLabel() const { return m_label; }
-    void SetWidth(size_t width) { m_rect.SetWidth(width); }
+    void SetWidthValue(int width);
+    void UpdateWidth(int width);
     size_t GetWidth() const { return m_rect.GetWidth(); }
     void SetX(size_t x) { m_rect.SetX(x); }
+    bool IsAutoResize() const { return m_flags & kHeaderColWidthFitData; }
 };
 
 #endif // CLHEADERITEM_H

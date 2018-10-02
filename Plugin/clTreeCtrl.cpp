@@ -210,6 +210,7 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     clRowEntry* child = m_model.ToPtr(item);
     if(!child) return;
     child->SetExpanded(true);
+    m_maxList = true;
     DoUpdateHeader(item);
     UpdateScrollBar();
     Refresh();
@@ -321,6 +322,8 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
         buttonRect.SetX(buttonRect.GetX() - GetFirstColumn());
         if(buttonRect.Contains(point)) {
             flags |= wxTREE_HITTEST_ONITEMBUTTON;
+            // The button is always on column 0
+            column = 0;
             return wxTreeItemId(const_cast<clRowEntry*>(item));
         }
         if(item->GetItemRect().Contains(point)) {
@@ -329,6 +332,8 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                 for(size_t col=0; col < GetHeader()->size(); ++col) {
                     // Check which column was clicked
                     wxRect cellRect = item->GetCellRect(col);
+                    // We need to fix the x-axis to reflect any horizontal scrollbar
+                    cellRect.SetX(cellRect.GetX() - GetFirstColumn());
                     if(cellRect.Contains(point)) {
                         column = col;
                         break;
@@ -1127,5 +1132,5 @@ void clTreeCtrl::DoAddHeader(const wxString& label, const wxBitmap& bmp, int wid
         GetHeader()->Clear();
     }
     clHeaderItem& col = GetHeader()->Add(label);
-    if(width > 0) { col.SetWidth(width); }
+    if(width > 0) { col.SetWidthValue(width); }
 }

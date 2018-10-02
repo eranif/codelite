@@ -1,6 +1,6 @@
 #include "clCellValue.h"
-#include "clHeaderItem.h"
 #include "clHeaderBar.h"
+#include "clHeaderItem.h"
 #include "clRowEntry.h"
 #include "clTreeCtrl.h"
 #include <algorithm>
@@ -14,6 +14,39 @@
 #else
 #define PEN_STYLE wxPENSTYLE_DOT
 #endif
+
+struct clClipperHelper {
+
+    bool m_used = false;
+    wxRect m_oldRect;
+    wxDC& m_dc;
+
+    clClipperHelper(wxDC& dc)
+        : m_dc(dc)
+    {
+    }
+
+    ~clClipperHelper() { Reset(); }
+
+    void Clip(const wxRect& rect)
+    {
+        // Make sure we can call this method only once
+        if(m_used) { return; }
+        m_dc.GetClippingBox(m_oldRect);
+        m_dc.SetClippingRegion(rect);
+        m_used = true;
+    }
+
+    void Reset()
+    {
+        // Make sure we can call this method only once
+        if(m_used) {
+            m_dc.DestroyClippingRegion();
+            if(!m_oldRect.IsEmpty()) { m_dc.SetClippingRegion(m_oldRect); }
+            m_used = false;
+        }
+    }
+};
 
 void clRowEntry::DrawNativeSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
@@ -258,6 +291,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     bool zebraColouring = (m_tree->HasStyle(wxTR_ROW_LINES) || m_tree->HasStyle(wxDV_ROW_LINES));
     bool even_row = ((row_index % 2) == 0);
 
+    // Define the clipping region
+    bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
+
     // Not cell related
     clColours colours = c;
     if(zebraColouring) {
@@ -295,13 +331,14 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         wxColour buttonColour = IsSelected() ? colours.GetSelbuttonColour() : colours.GetButtonColour();
         wxSize textSize = dc.GetTextExtent(cell.GetText());
         int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
-        // Draw the button
-        bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
-        wxRect cellRect = hasHeader ? m_tree->GetHeader()->Item(i).GetRect() : rowRect;
 
-        // Make sure that the cellRect has all the correct attributes of the row
-        cellRect.SetY(rowRect.GetY());
-        cellRect.SetHeight(rowRect.GetHeight());
+        wxRect cellRect = GetCellRect(i);
+
+        // We use a helper class to clip the drawings this ensures that if we exit the scope
+        // the clipping region is restored properly
+        clClipperHelper clipper(dc);
+        if(hasHeader) { clipper.Clip(cellRect); }
+
         int textXOffset = cellRect.GetX();
         if((i == 0) && !IsListItem()) {
             // The expand button is only make sense for the first cell
@@ -309,6 +346,11 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxPoint pts[3];
                 wxRect buttonRect = GetButtonRect();
                 textXOffset += buttonRect.GetWidth();
+                if(textXOffset >= cellRect.GetWidth()) {
+                    // if we cant draw the button (off screen etc)
+                    SetRects(GetItemRect(), wxRect());
+                    continue;
+                }
                 buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
                 if(IsExpanded()) {
                     pts[0] = buttonRect.GetTopRight();
@@ -328,6 +370,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 }
             } else {
                 textXOffset += rowRect.GetHeight();
+                if(textXOffset >= cellRect.GetWidth()) {
+                    SetRects(GetItemRect(), wxRect());
+                    continue;
+                }
             }
         }
         int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
@@ -341,22 +387,14 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             if(bmp.IsOk()) {
                 textXOffset += IsListItem() ? 0 : X_SPACER;
                 int bitmapY = rowRect.GetY() + ((rowRect.GetHeight() - bmp.GetScaledHeight()) / 2);
+                // if((textXOffset + bmp.GetScaledWidth()) >= cellRect.GetWidth()) { continue; }
                 dc.DrawBitmap(bmp, itemIndent + textXOffset, bitmapY);
                 textXOffset += bmp.GetScaledWidth();
                 textXOffset += X_SPACER;
             }
         }
-        wxRect oldClippingRegion;
-        if(hasHeader) {
-            dc.GetClippingBox(oldClippingRegion);
-            dc.SetClippingRegion(cellRect);
-        }
         RenderText(dc, colours, cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY, i);
-        if(hasHeader) {
-            dc.DestroyClippingRegion();
-            // Restore the old clipping region
-            if(!oldClippingRegion.IsEmpty()) { dc.SetClippingRegion(oldClippingRegion); }
-        }
+
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
@@ -623,12 +661,12 @@ wxRect clRowEntry::GetCellRect(size_t col) const
     if(m_tree && m_tree->GetHeader() && (col < m_tree->GetHeader()->size())) {
         // Check which column was clicked
         wxRect cellRect = m_tree->GetHeader()->Item(col).GetRect();
-        
+
         const wxRect& itemRect = GetItemRect();
         // Make sure that the cellRect has all the correct attributes of the row
         cellRect.SetY(itemRect.GetY());
         // If we got h-scrollbar, adjust the X coordinate
-        cellRect.SetX(cellRect.GetX() - m_tree->GetFirstColumn());
+        // cellRect.SetX(cellRect.GetX() - m_tree->GetFirstColumn());
         cellRect.SetHeight(itemRect.GetHeight());
         return cellRect;
     } else {

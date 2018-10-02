@@ -270,6 +270,7 @@ void clControlWithItems::UpdateScrollBar()
         int pageSize = (thumbSize - 1);
         int rangeSize = IsEmpty() ? 0 : m_viewHeader->GetWidth();
         int position = m_firstColumn;
+        //if((m_firstColumn + thumbSize) > rangeSize) { position = m_firstColumn = 0; }
         UpdateHScrollBar(position, thumbSize, rangeSize, pageSize);
     }
 }
@@ -337,7 +338,6 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
 
     // Use bold font, to get the maximum width needed
     for(size_t i = 0; i < GetHeader()->size(); ++i) {
-
         int row_width = 0;
         if(row) {
             row_width = row->CalcItemWidth(dc, m_lineHeight, i);
@@ -346,7 +346,9 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
             colWidth += 3 * clRowEntry::X_SPACER;
             row_width = colWidth;
         }
-        GetHeader()->UpdateColWidthIfNeeded(i, row_width, forceUpdate);
+        if(forceUpdate || GetHeader()->Item(i).IsAutoResize()) {
+            GetHeader()->UpdateColWidthIfNeeded(i, row_width, forceUpdate);
+        }
     }
 }
 
@@ -421,10 +423,7 @@ void clControlWithItems::DoMouseScroll(const wxMouseEvent& event)
     ScrollToRow(new_row);
 }
 
-clHeaderBar* clControlWithItems::GetHeader() const
-{
-    return m_viewHeader;
-}
+clHeaderBar* clControlWithItems::GetHeader() const { return m_viewHeader; }
 
 void clControlWithItems::DoPositionVScrollbar()
 {
@@ -449,6 +448,22 @@ void clControlWithItems::DoPositionVScrollbar()
 }
 
 void clControlWithItems::DoPositionHScrollbar() { clScrolledPanel::DoPositionHScrollbar(); }
+
+void clControlWithItems::SetColumnWidth(size_t col, int width)
+{
+    if(col >= GetHeader()->size()) { return; }
+    // Handle special values
+    if(width == wxCOL_WIDTH_AUTOSIZE || width == wxCOL_WIDTH_DEFAULT) {
+        GetHeader()->Item(col).SetWidthValue(width);
+        GetHeader()->UpdateColWidthIfNeeded(col, width, true);
+    } else if(width >= 0) {
+        GetHeader()->Item(col).SetWidthValue(width);
+        GetHeader()->UpdateColWidthIfNeeded(col, width, true);
+    }
+    UpdateScrollBar();
+    GetHeader()->Refresh();
+    Refresh();
+}
 
 //===---------------------------------------------------
 // clSearchText

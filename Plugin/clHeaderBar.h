@@ -45,7 +45,7 @@ public:
      * @param width
      * @param force set the new width, no matter what...
      */
-    void UpdateColWidthIfNeeded(size_t col, size_t width, bool force = false);
+    void UpdateColWidthIfNeeded(size_t col, int width, bool force = false);
     clHeaderItem& Item(int index) { return m_columns[index]; }
     const clHeaderItem& Item(int index) const { return m_columns[index]; }
     clHeaderItem& operator[](int index) { return Item(index); }

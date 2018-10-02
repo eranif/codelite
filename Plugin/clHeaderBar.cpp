@@ -109,11 +109,11 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
     }
 }
 
-void clHeaderBar::UpdateColWidthIfNeeded(size_t col, size_t width, bool force)
+void clHeaderBar::UpdateColWidthIfNeeded(size_t col, int width, bool force)
 {
     if(col >= m_columns.size()) { return; }
     clHeaderItem& column = m_columns[col];
-    column.SetWidth(force ? width : wxMax(column.GetWidth(), width));
+    column.UpdateWidth(force ? width : wxMax(column.GetWidth(), width));
 
     // Update the offsets
     int xx = 0;

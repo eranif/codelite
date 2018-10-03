@@ -90,9 +90,6 @@ void DebuggerPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-#if USE_AUI_NOTEBOOK
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
-#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
     if(!EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection()) { style |= kNotebook_BottomTabs; }
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
@@ -101,7 +98,7 @@ void DebuggerPane::CreateGUIControls()
     }
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     style |= kNotebook_UnderlineActiveTab;
-#endif
+
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());

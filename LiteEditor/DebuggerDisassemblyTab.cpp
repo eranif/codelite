@@ -47,10 +47,6 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     : DebuggerDisassemblyTabBase(parent)
     , m_title(label)
 {
-    // associate our custom model
-    m_model.reset(new RegistersViewModel(m_dvListCtrlRegisters));
-    m_dvListCtrlRegisters->AssociateModel(m_model.get());
-
     m_stc->MarkerDefine(CURLINE_MARKER,
                         wxSTC_MARK_BACKGROUND,
                         wxNullColour,

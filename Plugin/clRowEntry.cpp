@@ -453,7 +453,8 @@ size_t clRowEntry::GetChildrenCount(bool recurse) const
         return m_children.size();
     } else {
         size_t count = m_children.size();
-        for(size_t i = 0; i < count; ++i) {
+        // Loop over the children and add its children count
+        for(size_t i = 0; i < m_children.size(); ++i) {
             count += m_children[i]->GetChildrenCount(recurse);
         }
         return count;

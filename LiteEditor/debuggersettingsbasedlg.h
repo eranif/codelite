@@ -7,40 +7,41 @@
 #ifndef _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include "clThemedListCtrl.h"
+#include "clThemedTreeCtrl.h"
+#include <map>
+#include <wx/arrstr.h>
+#include <wx/artprov.h>
+#include <wx/aui/auibar.h>
+#include <wx/button.h>
+#include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/choicebk.h>
+#include <wx/dataview.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/notebook.h>
-#include <wx/button.h>
-#include <wx/panel.h>
-#include <wx/stc/stc.h>
-#include <wx/listctrl.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/checkbox.h>
 #include <wx/imaglist.h>
-#include <wx/spinctrl.h>
-#include <wx/statbox.h>
-#include <wx/choicebk.h>
-#include <wx/splitter.h>
-#include <wx/dataview.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
+#include <wx/listctrl.h>
 #include <wx/menu.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/pen.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/spinctrl.h>
+#include <wx/splitter.h>
+#include <wx/statbox.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wx/toolbar.h>
 #include <wx/treectrl.h>
-#include "cl_treelistctrl.h"
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -52,7 +53,6 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
-
 
 class DebuggerSettingsBaseDlg : public wxDialog
 {
@@ -68,10 +68,11 @@ protected:
 
 public:
     wxNotebook* GetNotebook() { return m_notebook; }
-    DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };
-
 
 class DbgPageStartupCmdsBase : public wxPanel
 {
@@ -79,13 +80,12 @@ protected:
     wxStyledTextCtrl* m_textCtrlStartupCommands;
 
 protected:
-
 public:
     wxStyledTextCtrl* GetTextCtrlStartupCommands() { return m_textCtrlStartupCommands; }
-    DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageStartupCmdsBase();
 };
-
 
 class PreDefinedTypesPageBase : public wxPanel
 {
@@ -110,10 +110,10 @@ public:
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
     wxPanel* GetPanel2() { return m_panel2; }
-    PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PreDefinedTypesPageBase();
 };
-
 
 class NewPreDefinedSetBaseDlg : public wxDialog
 {
@@ -127,7 +127,6 @@ protected:
     wxButton* m_button10;
 
 protected:
-
 public:
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
@@ -136,10 +135,12 @@ public:
     wxCheckBox* GetCheckBoxMakeActive() { return m_checkBoxMakeActive; }
     wxButton* GetButton9() { return m_button9; }
     wxButton* GetButton10() { return m_button10; }
-    NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create a new 'PreDefined Types' set..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+                            const wxString& title = _("Create a new 'PreDefined Types' set..."),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewPreDefinedSetBaseDlg();
 };
-
 
 class DbgPageGeneralBase : public wxPanel
 {
@@ -196,10 +197,10 @@ public:
     wxPanel* GetPanelDisplay() { return m_panelDisplay; }
     wxNotebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }
-    DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageGeneralBase();
 };
-
 
 class DbgPageMiscBase : public wxPanel
 {
@@ -228,10 +229,10 @@ public:
     wxStaticText* GetStaticText5() { return m_staticText5; }
     wxTextCtrl* GetTextCtrlCygwinPathCommand() { return m_textCtrlCygwinPathCommand; }
     wxPanel* GetPanel7() { return m_panel7; }
-    DbgPageMiscBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    DbgPageMiscBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageMiscBase();
 };
-
 
 class DbgPagePreDefTypesBase : public wxPanel
 {
@@ -252,10 +253,10 @@ public:
     wxButton* GetButtonDeleteSet() { return m_buttonDeleteSet; }
     wxChoicebook* GetNotebookPreDefTypes() { return m_notebookPreDefTypes; }
     wxPanel* GetPanel6() { return m_panel6; }
-    DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~DbgPagePreDefTypesBase();
 };
-
 
 class DebuggerDisassemblyTabBase : public wxPanel
 {
@@ -266,7 +267,7 @@ protected:
     wxPanel* m_splitterPage55;
     wxStyledTextCtrl* m_stc;
     wxPanel* m_splitterPage59;
-    wxDataViewListCtrl* m_dvListCtrlRegisters;
+    clThemedListCtrl* m_dvListCtrlRegisters;
 
 protected:
     virtual void OnMarginClicked(wxStyledTextEvent& event) { event.Skip(); }
@@ -276,13 +277,13 @@ public:
     wxTextCtrl* GetTextCtrlCurFunction() { return m_textCtrlCurFunction; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxPanel* GetSplitterPage55() { return m_splitterPage55; }
-    wxDataViewListCtrl* GetDvListCtrlRegisters() { return m_dvListCtrlRegisters; }
+    clThemedListCtrl* GetDvListCtrlRegisters() { return m_dvListCtrlRegisters; }
     wxPanel* GetSplitterPage59() { return m_splitterPage59; }
     wxSplitterWindow* GetSplitter51() { return m_splitter51; }
-    DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                               const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~DebuggerDisassemblyTabBase();
 };
-
 
 class LocalsTableBase : public wxPanel
 {
@@ -290,9 +291,10 @@ public:
     enum {
         ID_SORT_LOCALS = 7334,
     };
+
 protected:
     wxAuiToolBar* m_auibar31;
-    clTreeListCtrl* m_listTable;
+    clThemedTreeCtrl* m_listTable;
 
 protected:
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
@@ -310,8 +312,9 @@ protected:
 
 public:
     wxAuiToolBar* GetAuibar31() { return m_auibar31; }
-    clTreeListCtrl* GetListTable() { return m_listTable; }
-    LocalsTableBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clThemedTreeCtrl* GetListTable() { return m_listTable; }
+    LocalsTableBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsTableBase();
 };
 

@@ -30,27 +30,22 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include "simpletablebase.h"
-#include "manager.h"
 #include "debugger.h"
-#include "globals.h"
-#include "event_notifier.h"
-#include "plugin.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "manager.h"
+#include "plugin.h"
+#include "simpletablebase.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent,
-                                                   wxWindowID id,
-                                                   bool withButtonsPane,
-                                                   const wxPoint& pos,
-                                                   const wxSize& size,
-                                                   long style)
+DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID id, bool withButtonsPane,
+                                                   const wxPoint& pos, const wxSize& size, long style)
     : LocalsTableBase(parent, id, pos, size, style)
     , m_withButtons(withButtonsPane)
 {
-    m_listTable->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());
-
+    m_listTable->SetShowHeader(true);
     if(!m_withButtons) {
         m_auibar31->DeleteTool(wxID_DELETE);
         m_auibar31->DeleteTool(wxID_NEW);
@@ -58,16 +53,15 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent,
         m_auibar31->DeleteTool(ID_SORT_LOCALS);
     }
     m_auibar31->Realize();
-
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED,
+                                  wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
 }
 
 DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase()
 {
     // Disconnect Events
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED,
+                                     wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
 }
 
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
@@ -80,8 +74,8 @@ IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 
 void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_t itemKind)
 {
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxColour bgColour = wxNullColour;
+    wxColour fgColour = wxNullColour;
 
     wxTreeItemIdValue cookieOne;
     wxTreeItemId child = m_listTable->GetFirstChild(item, cookieOne);
@@ -90,10 +84,10 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
 
         bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
         if(resetColor) {
-            m_listTable->SetItemTextColour(child, fgColour);
+            m_listTable->SetItemTextColour(child, fgColour, 1);
         }
 
-        m_listTable->SetItemBackgroundColour(child, bgColour);
+        m_listTable->SetItemBackgroundColour(child, bgColour, 1);
 
         if(m_listTable->HasChildren(child)) {
             DoResetItemColour(child, itemKind);
@@ -109,21 +103,19 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEventData& ev
 
     std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
     if(iter != m_gdbIdToTreeId.end()) {
-
         wxString newValue = value;
         wxString curValue = m_listTable->GetItemText(iter->second, 1);
-
-        if(!(newValue == curValue || curValue.IsEmpty())) m_listTable->SetItemTextColour(iter->second, *wxRED);
-
-        m_listTable->SetItemText(iter->second, 1, value);
+        if(!(newValue == curValue || curValue.IsEmpty())) {
+            m_listTable->SetItemTextColour(iter->second, *wxRED, 1);
+        }
+        m_listTable->SetItemText(iter->second, value, 1);
 
         // keep the red items IDs in the array
         m_gdbIdToTreeId.erase(iter);
     }
 }
 
-void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr,
-                                                        const wxTreeItemId& item,
+void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr, const wxTreeItemId& item,
                                                         wxArrayString& itemsToRefresh)
 {
     if(itemsToRefresh.IsEmpty()) return;

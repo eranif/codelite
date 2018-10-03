@@ -36,7 +36,8 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
         tabsInfoMap.insert(std::make_pair((void*)allTabs.at(i).window, allTabs.at(i)));
     }
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    
+    m_dvListCtrl->SetColumnWidth(0, wxCOL_WIDTH_AUTOSIZE);
+    m_dvListCtrl->SetColumnWidth(1, wxCOL_WIDTH_AUTOSIZE);
     clTabHistory::Ptr_t history = m_book->GetHistory();
     const std::vector<wxWindow*>& windows = history->GetHistory();
     // Populate the list

@@ -56,7 +56,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer86->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER,
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_CENTER,
                                    wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                        wxDATAVIEW_COL_RESIZABLE);
@@ -73,7 +73,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT,
+    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
@@ -137,7 +137,9 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("SubversionPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                           wxDataViewEventHandler(SubversionPageBase::OnItemActivated), NULL, this);
@@ -259,7 +261,9 @@ SvnCopyDialogBase::SvnCopyDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     SetName(wxT("SvnCopyDialogBase"));
     SetMinClientSize(wxSize(400, 250));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -340,7 +344,9 @@ SvnLoginDialogBase::SvnLoginDialogBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("SvnLoginDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -627,7 +633,9 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
     SetName(wxT("SvnPreferencesDialogBase"));
     SetMinClientSize(wxSize(400, 250));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -799,7 +807,9 @@ SvnInfoDialogBase::SvnInfoDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     SetName(wxT("SvnInfoDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -891,7 +901,9 @@ SvnCheckoutDialogBase::SvnCheckoutDialogBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("SvnCheckoutDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -990,7 +1002,9 @@ SvnLogDialogBase::SvnLogDialogBase(wxWindow* parent, wxWindowID id, const wxStri
 
     SetName(wxT("SvnLogDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1077,7 +1091,9 @@ DiffDialogBase::DiffDialogBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     SetName(wxT("DiffDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1126,7 +1142,9 @@ ChangeLogPageBase::ChangeLogPageBase(wxWindow* parent, wxWindowID id, const wxPo
 
     SetName(wxT("ChangeLogPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_URL, wxCommandEventHandler(ChangeLogPageBase::OnURL), NULL, this);
 }
@@ -1240,7 +1258,9 @@ SvnPropsBaseDlg::SvnPropsBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     SetName(wxT("SvnPropsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1311,7 +1331,9 @@ PatchDlgBase::PatchDlgBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     SetName(wxT("PatchDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1384,7 +1406,9 @@ SvnSelectLocalRepoBase::SvnSelectLocalRepoBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("SvnSelectLocalRepoBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1484,7 +1508,9 @@ SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxSt
 
     SetName(wxT("SvnBlameFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1669,7 +1695,9 @@ SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWin
 
     SetName(wxT("SvnShowRecentChangesBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

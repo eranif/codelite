@@ -9,7 +9,7 @@ clTreeCtrlPanelDefaultPage::clTreeCtrlPanelDefaultPage(wxWindow* parent)
 {
     SetDropTarget(new clFileOrFolderDropTarget(parent));
     m_staticText177->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
-    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+    GetPanel169()->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 }
 
 clTreeCtrlPanelDefaultPage::~clTreeCtrlPanelDefaultPage() {}

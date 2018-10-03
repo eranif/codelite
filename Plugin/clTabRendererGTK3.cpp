@@ -38,7 +38,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 
     wxColour activeTabBgColour = DrawingUtils::IsDark(colours.tabAreaColour)
                                      ? colours.tabAreaColour.ChangeLightness(105)
-                                     : colours.tabAreaColour.ChangeLightness(95);
+                                     : colours.tabAreaColour.ChangeLightness(125);
     wxColour bgColour(tabInfo.IsActive() ? activeTabBgColour : colours.tabAreaColour);
     wxColour penColour(colours.tabAreaColour);
 

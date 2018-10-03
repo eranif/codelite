@@ -116,6 +116,9 @@ void WorkspaceTab::CreateGUIControls()
     m_view->SelectPage(_("Default"));
     m_view->SetDefaultPage(_("Default"));
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "",
+                          wxITEM_CHECK);
+    m_toolbar580->AddSeparator();
     m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), bmps->LoadBitmap("fold"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), bmps->LoadBitmap("home"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
@@ -129,9 +132,8 @@ void WorkspaceTab::CreateGUIControls()
                           _("Stop Current Build"));
     m_toolbar580->AddTool(XRCID("clean_active_project"), _("Clean Active Project"), bmps->LoadBitmap("clean"),
                           _("Clean Active Project"));
-    m_toolbar580->AddSeparator();
-    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "",
-                          wxITEM_CHECK);
+    m_toolbar580->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+                          _("Run Active Project"));
     m_toolbar580->Realize();
 }
 

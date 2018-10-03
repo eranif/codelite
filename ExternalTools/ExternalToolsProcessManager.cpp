@@ -84,7 +84,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 {
     wxString command, working_dir;
     command << ti.GetPath();
-    ::WrapWithQuotes(command);
+    //::WrapWithQuotes(command);
     if(!filename.IsEmpty()) {
         // If an input file was given, append it to the command
         wxString fileName = filename;

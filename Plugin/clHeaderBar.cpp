@@ -1,13 +1,16 @@
 #include "clControlWithItems.h"
 #include "clHeaderBar.h"
 #include "clScrolledPanel.h"
+#include <wx/cursor.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/event.h>
 #include <wx/font.h>
 #include <wx/log.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include <wx/window.h>
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
@@ -22,6 +25,9 @@ clHeaderBar::clHeaderBar(clControlWithItems* parent, const clColours& colours)
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     if(!wxPanel::Create(parent)) { return; }
     Bind(wxEVT_PAINT, &clHeaderBar::OnPaint, this);
+    Bind(wxEVT_LEFT_DOWN, &clHeaderBar::OnMouseLeftDown, this);
+    Bind(wxEVT_MOTION, &clHeaderBar::OnMotion, this);
+    Bind(wxEVT_LEFT_UP, &clHeaderBar::OnMouseLeftUp, this);
     GetParent()->Bind(wxEVT_SIZE, &clHeaderBar::OnSize, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& event) { wxUnusedVar(event); });
 }
@@ -124,6 +130,55 @@ void clHeaderBar::UpdateColWidthIfNeeded(size_t col, int width, bool force)
     }
 }
 
+void clHeaderBar::OnMouseLeftDown(wxMouseEvent& event)
+{
+    event.Skip();
+
+    clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
+    int x = event.GetX() + parent->GetFirstColumn();
+    m_draggedCol = HitBorder(x);
+    if(m_draggedCol > wxNOT_FOUND) {
+        // Get ready to drag
+        m_previousCursor = GetCursor();
+        SetCursor(wxCursor(wxCURSOR_SIZEWE));
+        m_isDragging = true;
+        CaptureMouse();
+    }
+}
+
+void clHeaderBar::OnMotion(wxMouseEvent& event)
+{
+    event.Skip();
+    clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
+    int x = event.GetX() + parent->GetFirstColumn();
+    if(m_isDragging) {
+        wxCHECK_RET(m_draggedCol > -1 && m_draggedCol < (int)m_columns.size(), "Dragging but the column is invalid");
+        int delta = x - Item(m_draggedCol).GetRect().GetRight();
+        // Compare with COL_MIN_SIZE as we don't want to shrink the col to nothing (or beyond!)
+        const static int COL_MIN_SIZE = 7;
+        if((int)(Item(m_draggedCol).GetWidth()) + delta > COL_MIN_SIZE) {
+            parent->SetColumnWidth(m_draggedCol, Item(m_draggedCol).GetWidth() + delta);
+        }
+    }
+}
+
+void clHeaderBar::OnMouseLeftUp(wxMouseEvent& event)
+{
+    event.Skip();
+    DoCancelDrag();
+}
+
+int clHeaderBar::HitBorder(int x) const // Returns the column whose *right*-hand edge contains the cursor
+{
+    int xpos(0);
+    for(size_t i = 0; i < size(); ++i) {
+        xpos += Item(i).GetWidth();
+        if(abs(x - xpos) < 5) { return i; }
+    }
+
+    return wxNOT_FOUND;
+}
+
 size_t clHeaderBar::GetWidth() const
 {
     size_t w = 0;
@@ -167,4 +222,13 @@ bool clHeaderBar::Show(bool show)
     if(!GetParent()) { return false; }
     SetSize(GetParent()->GetSize().GetWidth(), GetHeight());
     return wxPanel::Show(show);
+}
+
+void clHeaderBar::DoCancelDrag()
+{
+    m_isDragging = false;
+    m_draggedCol = -1;
+    SetCursor(m_previousCursor);
+    m_previousCursor = wxCursor();
+    if(HasCapture()) { ReleaseMouse(); }
 }

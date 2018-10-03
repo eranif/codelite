@@ -270,7 +270,13 @@ void clControlWithItems::UpdateScrollBar()
         int pageSize = (thumbSize - 1);
         int rangeSize = IsEmpty() ? 0 : m_viewHeader->GetWidth();
         int position = m_firstColumn;
-        //if((m_firstColumn + thumbSize) > rangeSize) { position = m_firstColumn = 0; }
+        
+        int pixels_after = rangeSize - m_firstColumn - thumbSize;
+        if(pixels_after < 0) {
+            m_firstColumn += pixels_after; // reduce it from the left side
+        }
+        if(m_firstColumn < 0) { m_firstColumn = 0; }
+        position = m_firstColumn;
         UpdateHScrollBar(position, thumbSize, rangeSize, pageSize);
     }
 }

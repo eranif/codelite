@@ -12,14 +12,18 @@ class WXDLLIMPEXP_SDK clHeaderBar : public wxPanel
     clHeaderItem::Vect_t m_columns;
     const clColours& m_colours;
     int m_flags = 0;
+    bool m_isDragging = false;
+    int m_draggedCol = wxNOT_FOUND;
+    wxCursor m_previousCursor;
 
 protected:
     void DoUpdateSize();
     wxSize GetTextSize(const wxString& label) const;
-
+    int HitBorder(int x) const;
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
-
+    void DoCancelDrag();
+    
 public:
     clHeaderBar(clControlWithItems* parent, const clColours& colours);
     virtual ~clHeaderBar();
@@ -97,6 +101,24 @@ public:
      */
     void Render(wxDC& dc, const clColours& colours);
     size_t GetWidth() const;
+    
+    /**
+     * @brief are we dragging a column?
+     */
+    bool IsDragging() { return m_isDragging; };
+    
+    /**
+     * @brief process a left-down event
+     */
+    void OnMouseLeftDown(wxMouseEvent& event);
+    /**
+     * @brief process motion events
+     */
+    void OnMotion(wxMouseEvent& event);
+    /**
+     * @brief process a left-up event
+     */
+    void OnMouseLeftUp(wxMouseEvent& event);
 };
 
 #endif // CLHEADERBAR_H

@@ -7436,7 +7436,7 @@
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "(128,128,128)"
+         "colour": "<Default>"
         }, {
          "type": "font",
          "m_label": "Font:",

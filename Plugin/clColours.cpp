@@ -18,6 +18,8 @@ clColours::clColours() {}
 void clColours::InitDefaults()
 {
     InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX));
+    itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
+    selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }
 
 void clColours::InitDarkDefaults()

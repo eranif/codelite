@@ -7,21 +7,22 @@
 #ifndef _CODELITE_FORMBUILDER_LISTCTRLPANEL_BASE_CLASSES_H
 #define _CODELITE_FORMBUILDER_LISTCTRLPANEL_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/dataview.h>
-#include <wx/imaglist.h>
-#include <wx/bitmap.h>
+#include "clThemedListCtrl.h"
 #include <map>
+#include <wx/artprov.h>
+#include <wx/bitmap.h>
+#include <wx/dataview.h>
 #include <wx/icon.h>
+#include <wx/imaglist.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -34,22 +35,21 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class ListCtrlPanelBase : public wxPanel
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    ListCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    ListCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~ListCtrlPanelBase();
 };
-
 
 class DebuggerBtImgList : public wxImageList
 {
@@ -61,20 +61,16 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
-
 protected:
-
 public:
     DebuggerBtImgList();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name + m_resolution) )
-            return wxNullBitmap;
+    const wxBitmap& Bitmap(const wxString& name) const
+    {
+        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString &res = wxEmptyString) {
-        m_resolution = res;
-    }
+    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~DebuggerBtImgList();
 };

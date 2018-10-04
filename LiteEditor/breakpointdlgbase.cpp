@@ -70,6 +70,8 @@ BreakpointTabBase::BreakpointTabBase(wxWindow* parent, wxWindowID id, const wxPo
     // Connect events
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                      wxDataViewEventHandler(BreakpointTabBase::OnContextMenu), NULL, this);
+    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                     wxDataViewEventHandler(BreakpointTabBase::OnBreakpointActivated), NULL, this);
     m_buttonAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnAdd), NULL, this);
     m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnEdit), NULL, this);
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnDelete), NULL,
@@ -84,6 +86,8 @@ BreakpointTabBase::~BreakpointTabBase()
 {
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                         wxDataViewEventHandler(BreakpointTabBase::OnContextMenu), NULL, this);
+    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                        wxDataViewEventHandler(BreakpointTabBase::OnBreakpointActivated), NULL, this);
     m_buttonAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnAdd), NULL, this);
     m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BreakpointTabBase::OnEdit), NULL,
                              this);

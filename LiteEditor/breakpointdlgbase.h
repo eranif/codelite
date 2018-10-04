@@ -54,6 +54,7 @@ protected:
 
 protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAdd(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEdit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }

@@ -553,7 +553,9 @@ void clTreeCtrl::DoBitmapAdded()
     int heighestBitmap = 0;
     for(size_t i = 0; i < GetBitmaps()->size(); ++i) {
         const wxBitmap& bmp = GetBitmaps()->at(i);
-        heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
+        if(bmp.IsOk()) {
+            heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
+        }
     }
     heighestBitmap += 2 * clRowEntry::Y_SPACER;
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));

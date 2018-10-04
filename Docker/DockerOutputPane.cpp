@@ -111,6 +111,7 @@ void DockerOutputPane::AddOutputTextWithEOL(const wxString& msg)
 void DockerOutputPane::AddOutputTextRaw(const wxString& msg)
 {
     m_stc->SetReadOnly(false);
+    m_stc->SetInsertionPointEnd();
     m_stc->AddText(msg);
     m_stc->SetReadOnly(true);
     m_stc->ScrollToEnd();

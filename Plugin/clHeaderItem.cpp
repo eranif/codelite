@@ -22,8 +22,12 @@ void clHeaderItem::Render(wxDC& dc, const clColours& colours, int flags)
     int textY = m_rect.GetY() + (m_rect.GetHeight() - textSize.GetHeight()) / 2;
 
     if(flags & kHeaderNative) {
-        wxRendererNative::Get().DrawHeaderButton(m_parent, dc, m_rect, wxCONTROL_NONE);
-
+        #if wxCHECK_VERSION(3, 1, 0)
+            wxRendererNative::Get().DrawHeaderButton(m_parent, dc, m_rect, wxCONTROL_NONE);
+        #else
+            // Fourth argument is optional flags (none by default)
+            wxRendererNative::Get().DrawHeaderButton(m_parent, dc, m_rect);
+        #endif
     } else {
         dc.SetBrush(colours.GetHeaderBgColour());
         dc.SetPen(colours.GetHeaderBgColour());

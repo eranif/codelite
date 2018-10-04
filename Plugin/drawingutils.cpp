@@ -678,7 +678,13 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
 #if 1
     // Windows & OSX
     wxRect choiceRect = rect;
-    wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+    #if wxCHECK_VERSION(3, 1, 0)
+        wxRendererNative::Get().DrawChoice(win, dc, rect, wxCONTROL_NONE);
+    #else
+        // Fourth argument is optional flags (none by default)
+        wxRendererNative::Get().DrawChoice(win, dc, rect);
+    #endif
+
 #else
     // GTK
     wxColour face_light = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);

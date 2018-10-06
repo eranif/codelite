@@ -56,9 +56,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
 
     SetName(wxT("DebuggerSettingsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
@@ -140,9 +138,7 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("DbgPageStartupCmdsBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
 DbgPageStartupCmdsBase::~DbgPageStartupCmdsBase() {}
@@ -198,9 +194,7 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
 
     SetName(wxT("PreDefinedTypesPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
                          wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
@@ -301,9 +295,7 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
 
     SetName(wxT("NewPreDefinedSetBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -534,9 +526,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("DbgPageGeneralBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL,
                             this);
@@ -654,9 +644,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     SetName(wxT("DbgPageMiscBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_checkBoxDebugAssert->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                    wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
@@ -727,9 +715,7 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("DbgPagePreDefTypesBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_buttonNewSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet), NULL,
                             this);
@@ -846,9 +832,9 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer63 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage59->SetSizer(boxSizer63);
 
-    m_dvListCtrlRegisters = new clThemedListCtrl(m_splitterPage59, wxID_ANY, wxDefaultPosition,
-                                                 wxDLG_UNIT(m_splitterPage59, wxSize(-1, -1)),
-                                                 wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlRegisters =
+        new clThemedListCtrl(m_splitterPage59, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPage59, wxSize(-1, -1)), wxDV_ENABLE_SEARCH | wxDV_ROW_LINES);
 
     boxSizer63->Add(m_dvListCtrlRegisters, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
@@ -856,16 +842,10 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
                                             wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                            wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                            wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("DebuggerDisassemblyTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_stc->Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL,
                    this);
@@ -910,15 +890,13 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_auibar31->Realize();
 
     m_listTable = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                       wxTR_SINGLE | wxTR_ROW_LINES | wxTR_HIDE_ROOT);
+                                       wxTR_SINGLE | wxTR_ROW_LINES | wxTR_HIDE_ROOT | wxTR_ENABLE_SEARCH);
 
     boxSizer29->Add(m_listTable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("LocalsTableBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL,
                   this);

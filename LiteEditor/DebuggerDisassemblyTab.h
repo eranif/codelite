@@ -26,9 +26,10 @@
 #ifndef DEBUGGERDISASSEMBLYTAB_H
 #define DEBUGGERDISASSEMBLYTAB_H
 
-#include "debuggersettingsbasedlg.h"
-#include "debugger.h"
 #include "cl_command_event.h"
+#include "debugger.h"
+#include "debuggersettingsbasedlg.h"
+#include "clTreeKeyboardInput.h"
 
 //++++++++++----------------------------------
 // Our custom model
@@ -52,31 +53,6 @@ public:
     bool IsSecondColModified() const { return m_secondColModified; }
 };
 
-class RegistersViewModel : public wxDataViewListStore
-{
-    wxDataViewListCtrl* m_view;
-
-public:
-    RegistersViewModel(wxDataViewListCtrl* view)
-        : m_view(view)
-    {
-    }
-    virtual ~RegistersViewModel() {}
-
-    bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
-    {
-        RegistersViewModelClientData* cd = reinterpret_cast<RegistersViewModelClientData*>(m_view->GetItemData(item));
-        if(col == 1 && cd && cd->IsFirstColModified()) {
-            attr.SetColour(*wxRED);
-            return true;
-        } else if(col == 3 && cd && cd->IsSecondColModified()) {
-            attr.SetColour(*wxRED);
-            return true;
-        }
-        return false;
-    }
-};
-
 //++++++++++----------------------------------
 // DebuggerDisassemblyTab
 //++++++++++----------------------------------
@@ -85,8 +61,8 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
 {
     wxString m_title;
     DisassembleEntryVec_t m_lines;
-    wxObjectDataPtr<RegistersViewModel> m_model;
     wxStringMap_t m_oldValues;
+    clTreeKeyboardInput::Ptr_t m_keyboardSearch;
 
 protected:
     virtual void OnMarginClicked(wxStyledTextEvent& event);

@@ -26,23 +26,24 @@
 #ifndef __simpletablebase__
 #define __simpletablebase__
 
-#include <wx/listctrl.h>
-#include <wx/gdicmn.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include <wx/string.h>
-#include <wx/button.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/choice.h>
-#include <wx/panel.h>
+#include "clTreeKeyboardInput.h"
 #include "cl_treelistctrl.h"
-#include <map>
 #include "debugger.h"
-#include "manager.h"
 #include "debuggerobserver.h"
 #include "debuggersettingsbasedlg.h"
+#include "manager.h"
+#include <map>
+#include <wx/button.h>
+#include <wx/choice.h>
+#include <wx/colour.h>
+#include <wx/font.h>
+#include <wx/gdicmn.h>
+#include <wx/listctrl.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/string.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -86,6 +87,7 @@ class DebuggerTreeListCtrlBase : public LocalsTableBase
 {
 private:
     bool m_withButtons;
+    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 protected:
     virtual void OnSortItems(wxCommandEvent& event);
@@ -111,15 +113,9 @@ protected:
     int m_QUERY_NUM_CHILDS;
     int m_LIST_CHILDS;
 
-protected:
-    void OnThemeColourChanged(wxCommandEvent& e);
-
 public:
-    DebuggerTreeListCtrlBase(wxWindow* parent,
-                             wxWindowID id = wxID_ANY,
-                             bool withButtonsPane = true,
-                             const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(500, 300),
+    DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID id = wxID_ANY, bool withButtonsPane = true,
+                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                              long style = wxTAB_TRAVERSAL);
     ~DebuggerTreeListCtrlBase();
 

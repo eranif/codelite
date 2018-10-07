@@ -266,7 +266,7 @@
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "150"
+             "m_value": "-2"
             }, {
              "type": "choice",
              "m_label": "Column Type",
@@ -308,7 +308,7 @@
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "75"
+             "m_value": "-2"
             }, {
              "type": "choice",
              "m_label": "Column Type",
@@ -350,7 +350,7 @@
             }, {
              "type": "string",
              "m_label": "Width:",
-             "m_value": "75"
+             "m_value": "-2"
             }, {
              "type": "choice",
              "m_label": "Column Type",
@@ -3342,7 +3342,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "400"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -3384,7 +3384,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "100"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -3426,7 +3426,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "100"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",

@@ -94,8 +94,13 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
     m_findEventsHandler->NoUnbind();
     m_replaceEventsHandler->NoUnbind();
-
-    m_toolbar->EnableFlag(clToolBar::kThemedColour, false);
+    m_toolbar->SetMiniToolBar(true);
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), bmps->LoadBitmap("file_close"), _("Close"), wxITEM_NORMAL);
+    m_toolbar->AddSeparator();
+    m_matchesFound = new wxStaticText(m_toolbar, wxID_ANY, "", wxDefaultPosition, wxSize(250, -1),
+                                      wxST_NO_AUTORESIZE | wxALIGN_LEFT);
+    m_toolbar->AddControl(m_matchesFound);
+    m_toolbar->AddStretchableSpace();
     m_toolbar->AddTool(XRCID("case-sensitive"), _("Case Sensitive"), bmps->LoadBitmap("case-sensitive"), "",
                        wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bmps->LoadBitmap("whole-word"), "", wxITEM_CHECK);
@@ -104,7 +109,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bmps->LoadBitmap("text_selection"), "",
                        wxITEM_CHECK);
     m_toolbar->Realize();
-
+    m_toolbar->Bind(wxEVT_TOOL, &QuickFindBar::OnHide, this, wxID_CLOSE);
     m_toolbar->Bind(wxEVT_TOOL,
                     [&](wxCommandEvent& e) {
                         if(e.IsChecked()) {

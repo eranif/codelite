@@ -602,7 +602,7 @@ void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const w
     // Set a size to each stretchable button
     if(!spacers.empty()) {
         int spacer_width =
-            ((rect.GetWidth() - totalWidth - ((G.size() - spacers.size() - 1) * GetGroupSapcing())) / spacers.size());
+            ((rect.GetWidth() - totalWidth - ((G.size() - 1) * GetGroupSapcing())) / spacers.size());
         for(clToolBarButtonBase* button : spacers) {
             button->Cast<clToolBarStretchableSpace>()->SetWidth(spacer_width < 0 ? 0 : spacer_width);
         }

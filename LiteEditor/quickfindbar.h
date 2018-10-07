@@ -57,6 +57,7 @@ public:
     bool m_replaceInSelection;
     clTerminalHistory m_searchHistory;
     clTerminalHistory m_replaceHistory;
+    wxStaticText* m_matchesFound = nullptr;
 
 protected:
     virtual void OnButtonKeyDown(wxKeyEvent& event);

@@ -6,7 +6,7 @@
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_STATIC
+#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_SIMPLE
 #else
 #define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH
 #endif

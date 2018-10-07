@@ -6,7 +6,7 @@
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_STATIC
+#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_SIMPLE
 #else
 #define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH
 #endif

@@ -44,7 +44,7 @@ public:
 
     /// Nothing special here, just call our parent constructor
     svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxBORDER_THEME);
+                 const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT);
 
     /// destructor
     virtual ~svSymbolTree(){};

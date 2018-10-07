@@ -93,7 +93,9 @@ protected:
     void DrawNativeSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
     void RenderText(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
     void RenderTextSimple(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
-
+    void RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked);
+    int GetCheckBoxWidth(wxWindow* win);
+    
 public:
     clRowEntry* GetLastChild() const;
     clRowEntry* GetFirstChild() const;

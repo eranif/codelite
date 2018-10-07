@@ -67,6 +67,6 @@ void clColours::InitFromColour(const wxColour& baseColour)
     matchedItemBgText = wxColour("#8BC34A");
     matchedItemText = wxColour("#FDFEFE");
     fillColour = bgColour;
-    borderColour = is_light ? bgColour.ChangeLightness(90) : bgColour.ChangeLightness(110);
-    darkBorderColour = is_light ? bgColour.ChangeLightness(80) : bgColour.ChangeLightness(115);
+    borderColour = is_light ? bgColour.ChangeLightness(80) : bgColour.ChangeLightness(120);
+    darkBorderColour = is_light ? bgColour.ChangeLightness(40) : bgColour.ChangeLightness(160);
 }

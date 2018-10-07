@@ -395,12 +395,12 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         // Draw checkbox
         if(cell.IsBool()) {
             // Render the checkbox
-            static int checkboxSize = wxNOT_FOUND;
-            if(checkboxSize == wxNOT_FOUND) { checkboxSize = wxRendererNative::Get().GetCheckBoxSize(win).GetWidth(); }
             textXOffset += X_SPACER;
+            int checkboxSize = GetCheckBoxWidth(win);
             wxRect checkboxRect = wxRect(textXOffset, rowRect.GetY(), checkboxSize, checkboxSize);
             checkboxRect = checkboxRect.CenterIn(rowRect, wxVERTICAL);
-            wxRendererNative::Get().DrawCheckBox(win, dc, checkboxRect, cell.GetValueBool() ? wxCONTROL_CHECKED : 0);
+            dc.SetPen(colours.GetItemTextColour());
+            RenderCheckBox(win, dc, colours, checkboxRect, cell.GetValueBool());
             cell.SetCheckboxRect(checkboxRect);
             textXOffset += checkboxRect.GetWidth();
             textXOffset += X_SPACER;
@@ -737,4 +737,47 @@ const wxRect& clRowEntry::GetCheckboxRect(size_t col) const
         return emptyRect;
     }
     return cell.GetCheckboxRect();
+}
+
+void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
+{
+#ifdef __WXMSW__
+    wxUnusedVar(win);
+    wxUnusedVar(colours);
+    wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : 0);
+#else
+    dc.SetPen(colours.GetBorderColour());
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRoundedRectangle(rect, 1.5);
+    if(checked) {
+        wxRect innerRect = rect;
+        innerRect.Deflate(5);
+        const wxColour& penColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetDarkBorderColour();
+        dc.SetPen(wxPen(penColour, 3));
+        
+        wxPoint p1, p2, p3;
+        p1.x = innerRect.GetTopLeft().x;
+        p1.y = innerRect.GetTopLeft().y + (innerRect.GetHeight() / 2);
+        
+        p2.x = innerRect.GetBottomLeft().x + (innerRect.GetWidth() / 3);
+        p2.y = innerRect.GetBottomLeft().y;
+        
+        p3 = innerRect.GetTopRight();
+        dc.DrawLine(p1, p2);
+        dc.DrawLine(p2, p3);
+    }
+#endif
+}
+
+int clRowEntry::GetCheckBoxWidth(wxWindow* win)
+{
+    static int width = wxNOT_FOUND;
+    if(width == wxNOT_FOUND) { 
+        width = wxRendererNative::Get().GetCheckBoxSize(win).GetWidth();
+        if(width <= 0) {
+            // set default value
+            width = 20;
+        }
+    }
+    return width;
 }

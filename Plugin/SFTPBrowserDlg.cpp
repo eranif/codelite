@@ -30,7 +30,6 @@
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
-#include "my_sftp_tree_model.h"
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
 #include "windowattrmanager.h"
@@ -82,7 +81,7 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     SetLabel(title);
     SFTPSettings settings;
     settings.Load();
-
+    m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
     SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter) {

@@ -631,8 +631,6 @@
     <File Name="SSHAccountManagerDlg.h"/>
     <File Name="sftp_settings.cpp"/>
     <File Name="sftp_settings.h"/>
-    <File Name="my_sftp_tree_model.cpp"/>
-    <File Name="my_sftp_tree_model.h"/>
     <File Name="SSHTerminal.h"/>
     <File Name="SSHTerminal.cpp"/>
   </VirtualDirectory>

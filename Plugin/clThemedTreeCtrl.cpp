@@ -18,7 +18,7 @@ static void ApplyTheme(clThemedTreeCtrl* tree)
 }
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clTreeCtrl(parent, id, pos, size, style | wxTR_ROW_LINES | wxBORDER_THEME)
+    : clTreeCtrl(parent, id, pos, size, style | wxTR_ROW_LINES)
 {
     clColours colours;
     colours.InitDefaults();

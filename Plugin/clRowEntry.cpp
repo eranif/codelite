@@ -7,6 +7,7 @@
 #include <functional>
 #include <wx/dataview.h>
 #include <wx/dc.h>
+#include <wx/renderer.h>
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
@@ -111,6 +112,18 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
     m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
                    clCellValue("", -1, -1)); // at least one column
     clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
+    m_cells[0] = cv;
+}
+
+clRowEntry::clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
+    : m_tree(tree)
+    , m_model(tree ? &tree->GetModel() : nullptr)
+{
+    // Fill the verctor with items constructed using the _non_ default constructor
+    // to makes sure that IsOk() returns TRUE
+    m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
+                   clCellValue("", -1, -1)); // at least one column
+    clCellValue cv(checked, label, bitmapIndex, bitmapSelectedIndex);
     m_cells[0] = cv;
 }
 
@@ -329,9 +342,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         if(cell.GetBgColour().IsOk()) { colours.SetItemBgColour(cell.GetBgColour()); }
         dc.SetFont(f);
         wxColour buttonColour = IsSelected() ? colours.GetSelbuttonColour() : colours.GetButtonColour();
-        wxSize textSize = dc.GetTextExtent(cell.GetText());
-        int textY = rowRect.GetY() + (m_tree->GetLineHeight() - textSize.GetHeight()) / 2;
-
         wxRect cellRect = GetCellRect(i);
 
         // We use a helper class to clip the drawings this ensures that if we exit the scope
@@ -382,6 +392,23 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             bitmapIndex = cell.GetBitmapSelectedIndex();
         }
 
+        // Draw checkbox
+        if(cell.IsBool()) {
+            // Render the checkbox
+            static int checkboxSize = wxNOT_FOUND;
+            if(checkboxSize == wxNOT_FOUND) { checkboxSize = 20; }
+            textXOffset += X_SPACER;
+            wxRect checkboxRect = wxRect(textXOffset, rowRect.GetY(), checkboxSize, checkboxSize);
+            checkboxRect = checkboxRect.CenterIn(rowRect, wxVERTICAL);
+            wxRendererNative::Get().DrawCheckBox(win, dc, checkboxRect, cell.GetValueBool() ? wxCONTROL_CHECKED : 0);
+            cell.SetCheckboxRect(checkboxRect);
+            textXOffset += checkboxRect.GetWidth();
+            textXOffset += X_SPACER;
+        } else {
+            cell.SetCheckboxRect(wxRect()); // clear the checkbox rect
+        }
+
+        // Draw the bitmap
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
             if(bmp.IsOk()) {
@@ -393,8 +420,13 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += X_SPACER;
             }
         }
-        RenderText(dc, colours, cell.GetText(), (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset, textY, i);
 
+        // Draw the text
+        wxRect textRect(dc.GetTextExtent(cell.GetValueString()));
+        textRect = textRect.CenterIn(rowRect, wxVERTICAL);
+        int textY = textRect.GetY();
+        int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
+        RenderText(dc, colours, cell.GetValueString(), textX, textY, i);
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
@@ -514,13 +546,17 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     if(cell.GetFont().IsOk()) { f = cell.GetFont(); }
     dc.SetFont(f);
 
-    wxSize textSize = dc.GetTextExtent(cell.GetText());
     int item_width = X_SPACER;
+    if(cell.IsBool()) {
+        // add the checkbox size
+        item_width += rowHeight;
+        item_width += X_SPACER;
+    }
+    wxSize textSize = dc.GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
         item_width += rowHeight;
     }
-
     int bitmapIndex = cell.GetBitmapIndex();
     if(IsExpanded() && HasChildren() && cell.GetBitmapSelectedIndex() != wxNOT_FOUND) {
         bitmapIndex = cell.GetBitmapSelectedIndex();
@@ -575,7 +611,7 @@ void clRowEntry::SetLabel(const wxString& label, size_t col)
 {
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) { return; }
-    cell.SetText(label);
+    cell.SetValue(label);
 }
 
 const wxString& clRowEntry::GetLabel(size_t col) const
@@ -585,7 +621,25 @@ const wxString& clRowEntry::GetLabel(size_t col) const
         static wxString empty_string;
         return empty_string;
     }
-    return cell.GetText();
+    return cell.GetValueString();
+}
+
+void clRowEntry::SetChecked(bool checked, int bitmapIndex, const wxString& label, size_t col)
+{
+    clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) { return; }
+    cell.SetValue(checked);
+    cell.SetValue(label);
+    cell.SetBitmapIndex(bitmapIndex);
+    // Mark this type as 'bool'
+    cell.SetType(clCellValue::kTypeBool);
+}
+
+bool clRowEntry::IsChecked(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) { return false; }
+    return cell.GetValueBool();
 }
 
 const clCellValue& clRowEntry::GetColumn(size_t col) const
@@ -673,4 +727,14 @@ wxRect clRowEntry::GetCellRect(size_t col) const
     } else {
         return GetItemRect();
     }
+}
+
+const wxRect& clRowEntry::GetCheckboxRect(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        static wxRect emptyRect;
+        return emptyRect;
+    }
+    return cell.GetCheckboxRect();
 }

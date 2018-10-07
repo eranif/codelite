@@ -73,12 +73,12 @@ public:
     ///===--------------------
     /// wxDV compatilibty API
     ///===--------------------
-    
+
     /**
      * @brief Scrolls to ensure that the given item is visible.
      */
     void EnsureVisible(const wxDataViewItem& item);
-    
+
     /**
      * @brief appends an item to the end of the list
      */
@@ -123,6 +123,9 @@ public:
     void SetItemText(const wxDataViewItem& item, const wxString& text, size_t col = 0);
     wxString GetItemText(const wxDataViewItem& item, size_t col = 0) const;
 
+    void SetItemChecked(const wxDataViewItem& item,  bool checked, size_t col = 0);
+    bool IsItemChecked(const wxDataViewItem& item, size_t col = 0) const;
+
     void SetItemBold(const wxDataViewItem& item, bool bold, size_t col = 0);
 
     void SetItemFont(const wxDataViewItem& item, const wxFont& font, size_t col = 0);
@@ -156,7 +159,7 @@ public:
      * @brief set sorting function AND apply it
      */
     void SetSortFunction(const clSortFunc_t& CompareFunc);
-    
+
     /**
      * @brief remove all columns from the control
      */
@@ -204,6 +207,56 @@ public:
 };
 
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK)
+
+// Helper class passing bitmap bool + label with possible bitmap index
+class WXDLLIMPEXP_SDK clDataViewCheckbox : public wxObject
+{
+private:
+    bool m_checked = false;
+    wxString m_label;
+    int m_bitmapIndex = wxNOT_FOUND;
+
+public:
+    clDataViewCheckbox(bool checked, int bitmapIndex = wxNOT_FOUND, const wxString& label = wxEmptyString)
+        : m_checked(checked)
+        , m_label(label)
+        , m_bitmapIndex(bitmapIndex)
+    {
+    }
+
+    clDataViewCheckbox(const clDataViewCheckbox& other)
+        : wxObject()
+        , m_checked(other.m_checked)
+        , m_label(other.m_label)
+        , m_bitmapIndex(other.m_bitmapIndex)
+    {
+    }
+    
+    clDataViewCheckbox() {}
+    
+    virtual ~clDataViewCheckbox() {}
+
+    void SetChecked(bool checked) { this->m_checked = checked; }
+    bool IsChecked() const { return m_checked; }
+    void SetText(const wxString& text) { m_label = text; }
+    wxString GetText() const { return m_label; }
+    void SetBitmapIndex(int index) { m_bitmapIndex = index; }
+    int GetBitmapIndex() const { return m_bitmapIndex; }
+
+    bool IsSameAs(const clDataViewCheckbox& other) const
+    {
+        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex && m_checked == other.m_checked;
+    }
+
+    bool operator==(const clDataViewCheckbox& other) const { return IsSameAs(other); }
+
+    bool operator!=(const clDataViewCheckbox& other) const { return !IsSameAs(other); }
+
+    wxDECLARE_DYNAMIC_CLASS(clDataViewCheckbox);
+};
+
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK)
+
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 

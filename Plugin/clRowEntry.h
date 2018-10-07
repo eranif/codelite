@@ -4,6 +4,7 @@
 #include "clCellValue.h"
 #include "clColours.h"
 #include "codelite_exports.h"
+#include <array>
 #include <unordered_map>
 #include <vector>
 #include <wx/colour.h>
@@ -11,7 +12,6 @@
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
-#include <array>
 
 class clSearchText;
 class clTreeCtrlModel;
@@ -100,11 +100,12 @@ public:
 
     clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND,
                int bitmapSelectedIndex = wxNOT_FOUND);
+    clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, int bitmapIndex = wxNOT_FOUND,
+               int bitmapSelectedIndex = wxNOT_FOUND);
     ~clRowEntry();
-    
     /**
      * @brief return the item rectangle
-     * @return 
+     * @return
      */
     wxRect GetCellRect(size_t col = 0) const;
     clRowEntry* GetNext() const { return m_next; }
@@ -154,6 +155,7 @@ public:
     }
     const wxRect& GetItemRect() const { return m_rowRect; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
+    const wxRect& GetCheckboxRect(size_t col = 0) const;
 
     void AddChild(clRowEntry* child);
 
@@ -181,6 +183,11 @@ public:
     void SetBitmapIndex(int bitmapIndex, size_t col = 0);
     void SetBitmapSelectedIndex(int bitmapIndex, size_t col = 0);
     void SetLabel(const wxString& label, size_t col = 0);
+    
+    // Set this cell as "checkable" cell with possible label
+    void SetChecked(bool checked, int bitmapIndex, const wxString& label, size_t col = 0);
+    bool IsChecked(size_t col = 0) const;
+    
     int GetBitmapIndex(size_t col = 0) const;
     int GetBitmapSelectedIndex(size_t col = 0) const;
     const wxString& GetLabel(size_t col = 0) const;

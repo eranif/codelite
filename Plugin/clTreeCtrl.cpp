@@ -72,10 +72,7 @@ void clTreeCtrl::DoInitialize()
 
     // Initialise default colours
     GetColours().InitDefaults();
-    
-    // Should we enable the search?
-    GetSearch().SetEnabled(HasStyle(wxTR_ENABLE_SEARCH));
-    
+
     // There is always a header
     GetHeader()->Add("");
     SetShowHeader(false);
@@ -256,6 +253,10 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
             }
         } else {
             clRowEntry* pNode = m_model.ToPtr(where);
+            if(flags & wxTREE_HITTEST_ONITEMSTATEICON) {
+                // Change the state
+                Check(where, !IsChecked(where, column), column);
+            }
             if(HasStyle(wxTR_MULTIPLE)) {
                 if(event.ControlDown()) {
                     // Toggle the selection
@@ -320,24 +321,34 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
     if(!m_model.GetRoot()) { return wxTreeItemId(); }
     for(size_t i = 0; i < m_model.GetOnScreenItems().size(); ++i) {
         const clRowEntry* item = m_model.GetOnScreenItems()[i];
-        wxRect buttonRect = item->GetButtonRect();
-        // Adjust the coordiantes incase we got h-scroll
-        buttonRect.SetX(buttonRect.GetX() - GetFirstColumn());
-        if(buttonRect.Contains(point)) {
-            flags |= wxTREE_HITTEST_ONITEMBUTTON;
-            // The button is always on column 0
-            column = 0;
-            return wxTreeItemId(const_cast<clRowEntry*>(item));
+
+        {
+            wxRect buttonRect = item->GetButtonRect();
+            // Adjust the coordiantes incase we got h-scroll
+            buttonRect.SetX(buttonRect.GetX() - GetFirstColumn());
+            if(buttonRect.Contains(point)) {
+                flags = wxTREE_HITTEST_ONITEMBUTTON;
+                // The button is always on column 0
+                column = 0;
+                return wxTreeItemId(const_cast<clRowEntry*>(item));
+            }
         }
         if(item->GetItemRect().Contains(point)) {
-            flags |= wxTREE_HITTEST_ONITEM;
+            flags = wxTREE_HITTEST_ONITEM;
             if(GetHeader() && !GetHeader()->empty()) {
-                for(size_t col=0; col < GetHeader()->size(); ++col) {
+                for(size_t col = 0; col < GetHeader()->size(); ++col) {
                     // Check which column was clicked
                     wxRect cellRect = item->GetCellRect(col);
                     // We need to fix the x-axis to reflect any horizontal scrollbar
                     cellRect.SetX(cellRect.GetX() - GetFirstColumn());
                     if(cellRect.Contains(point)) {
+                        // Check if click was made on the checkbox ("state icon")
+                        wxRect checkboxRect = item->GetCheckboxRect(col);
+                        if(!checkboxRect.IsEmpty()) {
+                            // Adjust the coordiantes incase we got h-scroll
+                            checkboxRect.SetX(checkboxRect.GetX() - GetFirstColumn());
+                            if(checkboxRect.Contains(point)) { flags |= wxTREE_HITTEST_ONITEMSTATEICON; }
+                        }
                         column = col;
                         break;
                     }
@@ -556,9 +567,7 @@ void clTreeCtrl::DoBitmapAdded()
     int heighestBitmap = 0;
     for(size_t i = 0; i < GetBitmaps()->size(); ++i) {
         const wxBitmap& bmp = GetBitmaps()->at(i);
-        if(bmp.IsOk()) {
-            heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
-        }
+        if(bmp.IsOk()) { heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight()); }
     }
     heighestBitmap += 2 * clRowEntry::Y_SPACER;
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
@@ -732,7 +741,7 @@ void clTreeCtrl::EnsureItemVisible(clRowEntry* item, bool fromTop)
         // turn the m_maxList flag to ON
         m_maxList = true;
     }
-    
+
     if(IsItemFullyVisible(item)) { return; }
     if(fromTop) {
         SetFirstItemOnScreen(item);
@@ -1145,4 +1154,19 @@ void clTreeCtrl::DoAddHeader(const wxString& label, const wxBitmap& bmp, int wid
     }
     clHeaderItem& col = GetHeader()->Add(label);
     if(width > 0) { col.SetWidthValue(width); }
+}
+
+void clTreeCtrl::Check(const wxTreeItemId& item, bool check, size_t col)
+{
+    clRowEntry* row = m_model.ToPtr(item);
+    if(!row) { return; }
+    row->SetChecked(check, row->GetBitmapIndex(col), row->GetLabel(col), col);
+    Refresh();
+}
+
+bool clTreeCtrl::IsChecked(const wxTreeItemId& item, size_t col) const
+{
+    clRowEntry* row = m_model.ToPtr(item);
+    if(!row) { return false; }
+    return row->IsChecked(col);
 }

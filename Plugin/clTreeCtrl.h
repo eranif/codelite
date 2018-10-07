@@ -173,7 +173,17 @@ public:
      * @brief Expands the given item
      */
     void Expand(const wxTreeItemId& item);
-
+    
+    /**
+     * @brief check a given item (if it has checkbox)
+     */
+    void Check(const wxTreeItemId& item, bool check, size_t col = 0);
+    
+    /**
+     * @brief is the state of an item is checked?
+     */
+    bool IsChecked(const wxTreeItemId& item, size_t col = 0) const;
+    
     /**
      * @brief Collapses the given item
      */

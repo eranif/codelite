@@ -11,6 +11,9 @@
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewTextBitmap, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK);
 
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewCheckbox, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK);
+
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 
@@ -147,7 +150,7 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
 #if wxCHECK_VERSION(3, 1, 0)
     wxDataViewEvent e(type, &m_dummy, DV_ITEM(treeEvent.GetItem()));
 #else
-    wxDataViewEvent e(type);
+    wxDataViewEvent e(type));
     e.SetItem(DV_ITEM(treeEvent.GetItem()));
 #endif
     e.SetEventObject(this);
@@ -295,9 +298,13 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
 {
     wxString variantType = value.GetType();
     if(variantType == "bool") {
-        row->SetLabel((value.GetBool() ? "Yes" : "No"), col);
+        row->SetChecked(value.GetBool(), wxNOT_FOUND, wxString(), col);
     } else if(variantType == "string") {
         row->SetLabel(value.GetString(), col);
+    } else if(variantType == "clDataViewCheckbox") {
+        clDataViewCheckbox check;
+        check << value;
+        row->SetChecked(check.IsChecked(), check.GetBitmapIndex(), check.GetText(), col);
     } else if(variantType == "wxDataViewIconText") {
         // Extract the iamge + text from the wxDataViewIconText class
         wxDataViewIconText iconText;
@@ -403,3 +410,13 @@ void clDataViewListCtrl::ClearHighlight(const wxDataViewItem& item) { clTreeCtrl
 void clDataViewListCtrl::EnsureVisible(const wxDataViewItem& item) { clTreeCtrl::EnsureVisible(TREE_ITEM(item)); }
 
 void clDataViewListCtrl::ClearColumns() { GetHeader()->Clear(); }
+
+void clDataViewListCtrl::SetItemChecked(const wxDataViewItem& item, bool checked, size_t col)
+{
+    clTreeCtrl::Check(TREE_ITEM(item), checked, col);
+}
+
+bool clDataViewListCtrl::IsItemChecked(const wxDataViewItem& item, size_t col) const
+{
+    return clTreeCtrl::IsChecked(TREE_ITEM(item), col);
+}

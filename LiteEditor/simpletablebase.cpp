@@ -46,7 +46,6 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID 
     , m_withButtons(withButtonsPane)
 {
     m_listTable->SetShowHeader(true);
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_listTable));
     if(!m_withButtons) {
         m_auibar31->DeleteTool(wxID_DELETE);
         m_auibar31->DeleteTool(wxID_NEW);

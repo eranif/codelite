@@ -214,7 +214,6 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     Bind(wxEVT_TREE_DELETE_ITEM, &FileViewTree::OnItemExpanding, this);
     SetDropTarget(new clFileOrFolderDropTarget(this));
     BuildTree();
-    m_keyboardHelper.reset(new clTreeKeyboardInput(this));
 }
 
 FileViewTree::~FileViewTree()
@@ -229,7 +228,6 @@ FileViewTree::~FileViewTree()
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
-    m_keyboardHelper.reset(NULL);
 }
 
 void FileViewTree::BuildTree()

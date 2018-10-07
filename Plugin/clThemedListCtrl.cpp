@@ -5,20 +5,14 @@
 #include "lexer_configuration.h"
 #include <wx/settings.h>
 
-static void ApplyTheme(clThemedListCtrl* ctrl)
-{
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-    ctrl->SetColours(colours);
-}
+#ifdef __WXMSW__
+#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_STATIC
+#else
+#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH
+#endif
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clDataViewListCtrl(parent, id, pos, size, style | wxTR_ROW_LINES)
+    : clDataViewListCtrl(parent, id, pos, size, style | LIST_STYLE)
 {
     clColours colours;
     colours.InitDefaults();
@@ -27,16 +21,36 @@ clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoin
 #ifdef __WXMSW__
     SetNativeHeader(true);
 #endif
-    ApplyTheme(this);
+    ApplyTheme();
+    
+    // Enable keyboard search
+    m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
 clThemedListCtrl::~clThemedListCtrl()
 {
+    m_keyboard.reset(nullptr);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
 }
 
 void clThemedListCtrl::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
-    ApplyTheme(this);
+    ApplyTheme();
+}
+
+void clThemedListCtrl::ApplyTheme()
+{
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    clColours colours;
+    if(lexer->IsDark()) {
+        colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    } else {
+        colours.InitDefaults();
+    }
+    wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    colours.SetMatchedItemBgText(highlightColur);
+    colours.SetMatchedItemText(textColour);
+    this->SetColours(colours);
 }

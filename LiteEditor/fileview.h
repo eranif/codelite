@@ -27,7 +27,6 @@
 
 #include "clThemedTreeCtrl.h"
 #include "clTreeCtrlColourHelper.h"
-#include "clTreeKeyboardInput.h"
 #include "imanager.h"
 #include "map"
 #include "pluginmanager.h"
@@ -48,7 +47,6 @@ class FileViewTree : public clThemedTreeCtrl
 {
     wxArrayTreeItemIds m_draggedFiles;
     wxArrayTreeItemIds m_draggedProjects;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     std::unordered_map<wxString, wxTreeItemId> m_workspaceFolders;
     std::unordered_map<wxString, wxTreeItemId> m_projectsMap;
     std::unordered_map<wxString, wxTreeItemId> m_excludeBuildFiles;

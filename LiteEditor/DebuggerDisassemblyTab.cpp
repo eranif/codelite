@@ -72,7 +72,6 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
                                   clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("Assembly");
     if(lex) { lex->Apply(m_stc, true); }
-    m_keyboardSearch.reset(new clTreeKeyboardInput(m_dvListCtrlRegisters));
 }
 
 DebuggerDisassemblyTab::~DebuggerDisassemblyTab()

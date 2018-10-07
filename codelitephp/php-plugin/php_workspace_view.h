@@ -27,7 +27,6 @@
 #define __php_workspace_view__
 
 #include "clFileSystemEvent.h"
-#include "clTreeKeyboardInput.h"
 #include "php_event.h"
 #include "php_ui.h"
 #include "php_workspace.h"
@@ -45,7 +44,6 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     IManager* m_mgr;
     std::unordered_map<wxString, wxTreeItemId> m_filesItems;
     std::unordered_map<wxString, wxTreeItemId> m_foldersItems;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     bool m_scanInProgress;
     std::unordered_set<wxString> m_pendingSync;
     wxArrayString m_draggedFiles;

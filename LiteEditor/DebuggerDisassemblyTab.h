@@ -29,7 +29,6 @@
 #include "cl_command_event.h"
 #include "debugger.h"
 #include "debuggersettingsbasedlg.h"
-#include "clTreeKeyboardInput.h"
 
 //++++++++++----------------------------------
 // Our custom model
@@ -62,7 +61,6 @@ class DebuggerDisassemblyTab : public DebuggerDisassemblyTabBase
     wxString m_title;
     DisassembleEntryVec_t m_lines;
     wxStringMap_t m_oldValues;
-    clTreeKeyboardInput::Ptr_t m_keyboardSearch;
 
 protected:
     virtual void OnMarginClicked(wxStyledTextEvent& event);

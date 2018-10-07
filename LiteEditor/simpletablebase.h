@@ -26,7 +26,6 @@
 #ifndef __simpletablebase__
 #define __simpletablebase__
 
-#include "clTreeKeyboardInput.h"
 #include "cl_treelistctrl.h"
 #include "debugger.h"
 #include "debuggerobserver.h"
@@ -87,7 +86,6 @@ class DebuggerTreeListCtrlBase : public LocalsTableBase
 {
 private:
     bool m_withButtons;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
 protected:
     virtual void OnSortItems(wxCommandEvent& event);

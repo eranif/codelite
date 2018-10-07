@@ -58,7 +58,6 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
     // build the outline view
     m_treeOutline =
         new CppSymbolTree(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_ROW_LINES | wxTR_HIDE_ROOT);
-    m_keyboard.reset(new clTreeKeyboardInput(m_treeOutline));
     m_treeOutline->Bind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
     m_treeOutline->SetSymbolsImages(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
@@ -77,7 +76,6 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
 
 QuickOutlineDlg::~QuickOutlineDlg()
 {
-    m_keyboard.reset(NULL);
     m_treeOutline->Unbind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
 }
 

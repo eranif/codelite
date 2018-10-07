@@ -76,8 +76,6 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
     , m_scanInProgress(true)
 {
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
-
     // Initialise images map
     EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
                                   clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);

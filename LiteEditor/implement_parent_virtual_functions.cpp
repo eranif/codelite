@@ -190,7 +190,7 @@ TagEntryPtr ImplementParentVirtualFunctionsDialog::GetTag(size_t index) const
 
 wxString clFunctionImplDetails::GetDecl(ImplementParentVirtualFunctionsDialog* dlg) const
 {
-    if(!IsSelected()) { return "" };
+    if(!IsSelected()) { return ""; };
 
     TagEntryPtr tag = dlg->GetTag(m_tagIndex);
     if(!tag) { return ""; }

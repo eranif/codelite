@@ -18,7 +18,8 @@ clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     colours.InitDefaults();
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
-#ifdef __WXMSW__
+    
+#if defined(__WXMSW__) || defined(__WXGTK3__) || defined(__WXOSX__)
     SetNativeHeader(true);
 #endif
     ApplyTheme();

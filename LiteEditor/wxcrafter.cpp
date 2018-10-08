@@ -448,19 +448,13 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
 
     boxSizer117->Add(boxSizer129, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
 
-    m_dataviewModel = new AddFunctionsModel;
-    m_dataviewModel->SetColCount(2);
-    m_dataview->AssociateModel(m_dataviewModel.get());
+    boxSizer129->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer129->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dataview->AppendToggleColumn(_("?"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(50),
-                                   wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(300),
-                                 wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -1265,7 +1259,6 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
 
     m_staticText523 = new wxStaticText(this, wxID_ANY, _("DRAG AND DROP\nA FOLDER HERE"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), wxALIGN_CENTRE);
-    m_staticText523->SetForegroundColour(wxColour(wxT("rgb(128,128,128)")));
     wxFont m_staticText523Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText523Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText523->SetFont(m_staticText523Font);

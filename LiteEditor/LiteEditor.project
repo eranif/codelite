@@ -875,8 +875,6 @@
       <File Name="functionsmodel.h"/>
       <File Name="wxcAboutDlg.h"/>
       <File Name="wxcAboutDlg.cpp"/>
-      <File Name="addfunctionsmodel.cpp"/>
-      <File Name="addfunctionsmodel.h"/>
       <File Name="rename_symbool_dlg.h"/>
       <File Name="rename_symbool_dlg.cpp"/>
       <File Name="compiler_pages.h"/>

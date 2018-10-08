@@ -77,10 +77,15 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc,
-                   wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
-                          CLOSE_BUTTON_SIZE),
-                   colours, eButtonState::kNormal);
+        // Draw the X button
+        eButtonState state = eButtonState::kNormal;
+        wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
+                                   CLOSE_BUTTON_SIZE);
+        wxPoint mousePoint = parent->ScreenToClient(::wxGetMousePosition());
+        if(buttonRect.Contains(mousePoint)) {
+            state = ::wxGetMouseState().LeftIsDown() ? eButtonState::kPressed : eButtonState::kHover;
+        }
+        DrawButton(dc, buttonRect, colours, state);
     }
     if(tabInfo.IsActive()) {
         wxPen markerPen(colours.markerColour);

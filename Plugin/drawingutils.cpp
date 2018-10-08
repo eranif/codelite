@@ -606,19 +606,23 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
                                eButtonState state)
 {
     // Calculate the circle radius:
+    wxUnusedVar(penColour);
     wxRect innerRect(rect);
-    wxColour colour = penColour;
+    const clColours& colours = GetColours();
+    
+    // Normal state colours
+    wxColour colour = colours.GetItemTextColour();
+    wxColour bgColour = colours.GetFillColour();
 
     // Default state: "normal"
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-
     switch(state) {
     case eButtonState::kHover:
-        colour = colour.ChangeLightness(120);
-        break;
+        bgColour = colours.GetSelItemBgColour();
+        colour = colours.GetSelItemTextColour();
         break;
     case eButtonState::kPressed:
-        colour = colour.ChangeLightness(80);
+        bgColour = colours.GetDarkBorderColour();
+        bgColour = colours.GetBorderColour();
         break;
     default:
         break;
@@ -626,6 +630,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
     // Draw the 'x'
     dc.SetPen(wxPen(colour, 2));
+    dc.SetBrush(bgColour);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 }

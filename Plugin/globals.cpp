@@ -513,37 +513,37 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 
                     output.Replace(wxT("$(IntermediateDirectory)"), id);
                     output.Replace(wxT("$(OutDir)"), id);
-                    
+
                     // Compiler-related variables
 
                     wxString cFlags = bldConf->GetCCompileOptions();
                     cFlags.Replace(wxT(";"), wxT(" "));
                     output.Replace(wxT("$(CC)"), bldConf->GetCompiler()->GetTool("CC"));
                     output.Replace(wxT("$(CFLAGS)"), cFlags);
-                    
+
                     wxString cxxFlags = bldConf->GetCompileOptions();
                     cxxFlags.Replace(wxT(";"), wxT(" "));
                     output.Replace(wxT("$(CXX)"), bldConf->GetCompiler()->GetTool("CXX"));
                     output.Replace(wxT("$(CXXFLAGS)"), cxxFlags);
-                  
+
                     wxString ldFlags = bldConf->GetLinkOptions();
                     ldFlags.Replace(wxT(";"), wxT(" "));
                     output.Replace(wxT("$(LDFLAGS)"), ldFlags);
-                    
+
                     wxString asFlags = bldConf->GetAssmeblerOptions();
                     asFlags.Replace(wxT(";"), wxT(" "));
                     output.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
                     output.Replace(wxT("$(ASFLAGS)"), asFlags);
-                    
+
                     wxString resFlags = bldConf->GetResCompileOptions();
                     resFlags.Replace(wxT(";"), wxT(" "));
                     output.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
                     output.Replace(wxT("$(RESFLAGS)"), resFlags);
-  
+
                     output.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
-                    
+
                     output.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
-                    
+
                     output.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
                     output.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
                     output.Replace(wxT("$(ResourcePath)"), bldConf->GetResCmpIncludePath());
@@ -2303,5 +2303,13 @@ wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex)
     clDataViewTextBitmap tb(text, imgIndex);
     wxVariant vr;
     vr << tb;
+    return vr;
+}
+
+wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
+{
+    clDataViewCheckbox cb(checked, imgIndex, label);
+    wxVariant vr;
+    vr << cb;
     return vr;
 }

@@ -19,7 +19,7 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
-    SetNativeHeader(true);
+    SetNativeTheme(true);
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
@@ -31,7 +31,7 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
-    SetNativeHeader(true);
+    SetNativeTheme(true);
     m_keyboard.reset(new clTreeKeyboardInput(this));
     return true;
 }

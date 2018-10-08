@@ -17,6 +17,10 @@
 #include <wx/utils.h>
 #include <wx/wupdlock.h>
 
+#ifdef __WXMSW__
+#include <uxtheme.h>
+#endif
+
 #define CHECK_PTR_RET(p) \
     if(!p) { return; }
 
@@ -33,6 +37,14 @@
     if(!m_model.GetRoot()) { return; }
 
 wxDEFINE_EVENT(wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
+
+static void MSWSetNativeTheme(wxWindow* win)
+{
+#ifdef __WXMSW__
+    SetWindowTheme((HWND)win->GetHWND(), wxT("Explorer"), NULL);
+#endif
+}
+
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clControlWithItems(parent, wxID_ANY, pos, size, style | wxWANTS_CHARS)
@@ -78,6 +90,7 @@ void clTreeCtrl::DoInitialize()
     // There is always a header
     GetHeader()->Add("");
     SetShowHeader(false);
+    MSWSetNativeTheme(this);
 }
 
 clTreeCtrl::~clTreeCtrl()

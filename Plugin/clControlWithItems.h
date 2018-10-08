@@ -57,6 +57,7 @@ protected:
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;
     bool m_maxList = false;
+    bool m_nativeTheme = false;
 
 protected:
     void DoInitialize();
@@ -83,6 +84,8 @@ public:
     virtual ~clControlWithItems();
     clControlWithItems();
 
+    void SetNativeTheme(bool nativeTheme);
+    bool IsNativeTheme() const { return m_nativeTheme; }
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
     virtual int GetIndent() const { return m_indent; }
@@ -99,11 +102,6 @@ public:
 
     void SetScrollTick(int scrollTick) { this->m_scrollTick = scrollTick; }
     int GetScrollTick() const { return m_scrollTick; }
-
-    /**
-     * @brief use native header drawings
-     */
-    void SetNativeHeader(bool b);
 
     /**
      * @brief return bitmap at a given index

@@ -44,7 +44,6 @@ WatchesTable::WatchesTable(wxWindow* parent)
     m_DBG_USERR = DBG_USERR_WATCHTABLE;
     m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
     m_LIST_CHILDS = LIST_WATCH_CHILDS;
-    m_listTable->SetNativeHeader(true);
     // Should a be placed before b?
     clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
         return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);

@@ -19,7 +19,7 @@ clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
     
-    SetNativeHeader(true);
+    SetNativeTheme(true);
     ApplyTheme();
     
     // Enable keyboard search

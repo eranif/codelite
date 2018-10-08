@@ -88,14 +88,13 @@ protected:
     clRowEntry* GetVisibleItem(int index);
     clCellValue& GetColumn(size_t col = 0);
     const clCellValue& GetColumn(size_t col = 0) const;
-    void DrawSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
-    void DrawSimpleSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
-    void DrawNativeSelection(bool focused, wxDC& dc, const wxRect& rect, const clColours& colours);
-    void RenderText(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
-    void RenderTextSimple(wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
+    void DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours);
+    void RenderText(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
+    void RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
+                          size_t col);
     void RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked);
     int GetCheckBoxWidth(wxWindow* win);
-    
+
 public:
     clRowEntry* GetLastChild() const;
     clRowEntry* GetFirstChild() const;
@@ -185,11 +184,11 @@ public:
     void SetBitmapIndex(int bitmapIndex, size_t col = 0);
     void SetBitmapSelectedIndex(int bitmapIndex, size_t col = 0);
     void SetLabel(const wxString& label, size_t col = 0);
-    
+
     // Set this cell as "checkable" cell with possible label
     void SetChecked(bool checked, int bitmapIndex, const wxString& label, size_t col = 0);
     bool IsChecked(size_t col = 0) const;
-    
+
     int GetBitmapIndex(size_t col = 0) const;
     int GetBitmapSelectedIndex(size_t col = 0) const;
     const wxString& GetLabel(size_t col = 0) const;

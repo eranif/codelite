@@ -384,8 +384,6 @@ void clControlWithItems::OnMouseScroll(wxMouseEvent& event)
     DoMouseScroll(event);
 }
 
-void clControlWithItems::SetNativeHeader(bool b) { GetHeader()->SetNative(b); }
-
 bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
 {
     if(m_searchControl && m_searchControl->IsShown()) { return true; }
@@ -470,6 +468,13 @@ void clControlWithItems::SetColumnWidth(size_t col, int width)
     }
     UpdateScrollBar();
     GetHeader()->Refresh();
+    Refresh();
+}
+
+void clControlWithItems::SetNativeTheme(bool nativeTheme)
+{
+    GetHeader()->SetNative(nativeTheme);
+    m_nativeTheme = nativeTheme;
     Refresh();
 }
 

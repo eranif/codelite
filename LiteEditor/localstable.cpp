@@ -53,7 +53,6 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_listTable->AddHeader(_("Name"));
     m_listTable->AddHeader(_("Value"));
     m_listTable->AddHeader(_("Type"));
-    m_listTable->SetNativeHeader(true);
     // Should a be placed before b?
     clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
         return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);

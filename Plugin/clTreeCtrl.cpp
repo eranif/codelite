@@ -32,6 +32,8 @@
 #define CHECK_ROOT_RET() \
     if(!m_model.GetRoot()) { return; }
 
+wxDEFINE_EVENT(wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
+
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clControlWithItems(parent, wxID_ANY, pos, size, style | wxWANTS_CHARS)
     , m_model(this)
@@ -94,7 +96,7 @@ clTreeCtrl::~clTreeCtrl()
 
 void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
-    wxBufferedPaintDC pdc(this);
+    wxAutoBufferedPaintDC pdc(this);
     PrepareDC(pdc);
 
     wxGCDC dc(pdc);
@@ -1161,6 +1163,13 @@ void clTreeCtrl::Check(const wxTreeItemId& item, bool check, size_t col)
     clRowEntry* row = m_model.ToPtr(item);
     if(!row) { return; }
     row->SetChecked(check, row->GetBitmapIndex(col), row->GetLabel(col), col);
+    
+    // Fire value changed event
+    wxTreeEvent evt(wxEVT_TREE_ITEM_VALUE_CHANGED);
+    evt.SetInt(col);
+    evt.SetEventObject(this);
+    evt.SetItem(item);
+    GetEventHandler()->ProcessEvent(evt);
     Refresh();
 }
 

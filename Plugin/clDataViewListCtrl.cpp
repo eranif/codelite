@@ -46,6 +46,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     Bind(wxEVT_TREE_ITEM_RIGHT_CLICK, [](wxTreeEvent& e) { e.Skip(); });
 
     // Translate the following events to wxDVC events
+    Bind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -64,6 +65,7 @@ clDataViewListCtrl::~clDataViewListCtrl()
     Unbind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_MENU, &clDataViewListCtrl::OnConvertEvent, this);
+    Unbind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
 }
 
 void clDataViewListCtrl::AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data)
@@ -141,6 +143,8 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         eventText = event.GetString();
     } else if(event.GetEventType() == wxEVT_TREE_CLEAR_SEARCH) {
         type = wxEVT_DATAVIEW_CLEAR_SEARCH;
+    } else if(event.GetEventType() == wxEVT_TREE_ITEM_VALUE_CHANGED) {
+        type = wxEVT_DATAVIEW_ITEM_VALUE_CHANGED;
     }
     if(type != wxEVT_ANY) { SendDataViewEvent(type, event, eventText); }
 }
@@ -163,8 +167,17 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
     return true;
 }
 
-void clDataViewListCtrl::DeleteAllItems()
+void clDataViewListCtrl::DeleteAllItems(const std::function<void(wxUIntPtr)>& deleterFunc)
 {
+    // If a deleter was provided, call it per user's item data
+    if(deleterFunc && m_model.GetRoot()) {
+        clRowEntry::Vec_t& children = m_model.GetRoot()->GetChildren();
+        for(size_t i = 0; i < children.size(); ++i) {
+            wxUIntPtr userData = children[i]->GetData();
+            if(userData) { deleterFunc(userData); }
+            children[i]->SetData(0);
+        }
+    }
     clTreeCtrl::DeleteAllItems();
     // DVC must allways have the hidden root
     AddRoot("Hidden Root", -1, -1, nullptr);

@@ -741,7 +741,7 @@ const wxRect& clRowEntry::GetCheckboxRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-#if defined(__WXMSW__) || defined(__WXOSX__)
+#if 1
     wxUnusedVar(win);
     wxUnusedVar(colours);
     wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : 0);

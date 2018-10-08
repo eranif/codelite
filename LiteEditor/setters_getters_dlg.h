@@ -25,9 +25,9 @@
 #ifndef __setters_getters_dlg__
 #define __setters_getters_dlg__
 
-#include "setters_getters.h"
-#include "manager.h"
 #include "ctags_manager.h"
+#include "manager.h"
+#include "setters_getters.h"
 
 //----------------------------------------------------
 
@@ -109,12 +109,16 @@ protected:
     void OnButtonOk(wxCommandEvent& e);
     int BuildTree();
     void UpdateTree();
+    void Clear();
 
     wxString GenerateFunctions();
     wxString GenerateSetter(TagEntryPtr tag, bool& alreadyExist, wxString& displayName);
     wxString GenerateSetter(TagEntryPtr tag);
     wxString GenerateGetter(TagEntryPtr tag, bool& alreadyExist, wxString& displayName);
     wxString GenerateGetter(TagEntryPtr tag);
+    SettersGettersTreeData* GetItemData(const wxDataViewItem& item);
+    SettersGettersTreeData* GetItemData(size_t row);
+    void DoCheckAll(bool checked);
 
     void FormatName(wxString& name);
     void UpdatePreview();

@@ -109,7 +109,10 @@ public:
     void Select(const wxDataViewItem& item);
     int GetSelections(wxDataViewItemArray& sel) const;
     int GetSelectedItemsCount() const;
-    void DeleteAllItems();
+    /**
+     * @brief delete all items in the view. If a "deleterFunc" is provided, it will be called per item data
+     */
+    void DeleteAllItems(const std::function<void(wxUIntPtr)>& deleterFunc = nullptr);
 
     wxUIntPtr GetItemData(const wxDataViewItem& item) const;
     void SetItemData(const wxDataViewItem& item, wxUIntPtr data);

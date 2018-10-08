@@ -341,7 +341,7 @@ wxFont clScrolledPanel::GetDefaultFont()
         }
         once = true;
     }
-    int pointSize = std::ceil((double)f.GetPointSize() * ratio);
+    int pointSize = f.GetPointSize() * ratio;
     f.SetPointSize(pointSize);
 #endif
     return f;

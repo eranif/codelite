@@ -93,7 +93,7 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
     _colours.SetBgColour(_colours.GetHeaderBgColour());
 
     bool useNativeHeader = (m_flags & kHeaderNative);
-    if(useNativeHeader) { wxRendererNative::Get().DrawHeaderButton(m_parent, dc, rect, 0); }
+    if(useNativeHeader) { wxRendererNative::Get().DrawHeaderButton(this, dc, rect, 0); }
 
     // Set the DC origin to reflect the h-scrollbar
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());

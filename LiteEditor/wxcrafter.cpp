@@ -428,22 +428,6 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer117);
 
-    m_banner125 =
-        new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_THEME);
-    m_banner125->SetBitmap(wxNullBitmap);
-    m_banner125->SetText(_("Implement functions"), _("Select the functions you want to implement"));
-    m_banner125->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION),
-                             wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner125->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-
-    boxSizer117->Add(m_banner125, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                                        wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE);
-    m_filePicker->SetToolTip(_("The functions will be placed into this file"));
-
-    boxSizer117->Add(m_filePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer117->Add(boxSizer129, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -467,6 +451,12 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
         new wxButton(this, wxID_ANY, _("Uncheck all"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer131->Add(m_button135, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_filePicker = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
+                                        wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE);
+    m_filePicker->SetToolTip(_("The functions will be placed into this file"));
+
+    boxSizer117->Add(m_filePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
 

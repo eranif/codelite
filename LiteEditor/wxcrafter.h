@@ -113,11 +113,10 @@ public:
 class AddFunctionsImplBaseDlg : public wxDialog
 {
 protected:
-    wxBannerWindow* m_banner125;
-    wxFilePickerCtrl* m_filePicker;
     clThemedListCtrl* m_dvListCtrl;
     wxButton* m_button133;
     wxButton* m_button135;
+    wxFilePickerCtrl* m_filePicker;
     wxButton* m_button121;
     wxButton* m_button123;
 
@@ -127,11 +126,10 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxBannerWindow* GetBanner125() { return m_banner125; }
-    wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxButton* GetButton133() { return m_button133; }
     wxButton* GetButton135() { return m_button135; }
+    wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
     wxButton* GetButton121() { return m_button121; }
     wxButton* GetButton123() { return m_button123; }
     AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,

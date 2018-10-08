@@ -176,6 +176,7 @@ public:
     
     /**
      * @brief check a given item (if it has checkbox)
+     * This method fires 'wxEVT_TREE_ITEM_VALUE_CHANGED' event
      */
     void Check(const wxTreeItemId& item, bool check, size_t col = 0);
     
@@ -384,4 +385,5 @@ protected:
     wxTreeItemId GetRow(const wxPoint& pt) const;
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
 #endif // CLTREECTRL_H

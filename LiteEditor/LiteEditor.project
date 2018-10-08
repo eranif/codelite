@@ -468,8 +468,6 @@
       <File Name="setters_getters.cpp"/>
       <File Name="setters_getters.h"/>
       <File Name="setters_getters_formbuilder_bitmaps.cpp"/>
-      <File Name="settersgettersmodel.cpp"/>
-      <File Name="settersgettersmodel.h"/>
       <File Name="../formbuilder/setters_getters.wxcp"/>
       <File Name="../formbuilder/rename_symbool_dlg.wxcp"/>
     </VirtualDirectory>

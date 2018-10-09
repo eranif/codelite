@@ -51,11 +51,15 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     gcdc.SetPen(DrawingUtils::GetPanelBgColour());
     gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
     gcdc.DrawRectangle(rect);
+    
+#ifdef __WXGTK__
+    rect.Deflate(1);
+#endif
 
     // Build the text to draw
     wxString label;
     label << m_activeProject << " :: " << m_activeConfiguration;
-    DrawingUtils::DrawNativeChoice(this, gcdc, GetClientRect(), label);
+    DrawingUtils::DrawNativeChoice(this, gcdc, rect, label);
 }
 
 void clConfigurationSelectionCtrl::OnEraseBG(wxEraseEvent& e) {}

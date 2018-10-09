@@ -277,10 +277,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #if defined(__WXMSW__)
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
 #elif defined(__WXGTK__)
-    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    ctrl->SetDoubleBuffered(false);
+    //ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    //ctrl->SetDoubleBuffered(false);
 #if wxCHECK_VERSION(3, 1, 1)
-    ctrl->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
+    //ctrl->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
 #endif
 #endif
 

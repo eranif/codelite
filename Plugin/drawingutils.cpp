@@ -632,6 +632,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
+#ifdef __WXGTK__
+    wxRendererNative::Get().DrawDropArrow(win, dc, rect, 0);
+#else
     int size = wxMin(rect.GetHeight(), rect.GetWidth());
     size = wxMin(8, size);
     wxRect arrowRect = wxRect(0, 0, size, size);
@@ -659,6 +662,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     dc.SetPen(buttonColour);
     dc.SetBrush(buttonColour);
     dc.DrawPolygon(3, points);
+#endif
 }
 
 wxColour DrawingUtils::GetCaptionTextColour()

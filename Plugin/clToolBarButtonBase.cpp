@@ -90,7 +90,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
                         wxPoint(xx, m_buttonRect.GetY() + m_buttonRect.GetHeight() - 2));
         }
         xx += m_toolbar->GetXSpacer();
-        DrawingUtils::DrawDropDownArrow(nullptr, dc, m_dropDownArrowRect);
+        DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect);
         xx += CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
         xx += m_toolbar->GetXSpacer();
     }

@@ -11,13 +11,19 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 
+#ifdef __WXMSW__
+#define MARGIN_SPACER 5
+#else
+#define MARGIN_SPACER 3
+#endif
+
 clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,
                                                            const wxSize& size, long style)
     : wxPanel(parent, winid, pos, size, style)
     , m_state(eButtonState::kNormal)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    
+    MSWSetNativeTheme(this);
     Bind(wxEVT_PAINT, &clConfigurationSelectionCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clConfigurationSelectionCtrl::OnEraseBG, this);
     Bind(wxEVT_LEFT_DOWN, &clConfigurationSelectionCtrl::OnLeftDown, this);
@@ -25,8 +31,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
         event.Skip();
         Refresh();
     });
-    //SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp", 3, 3));
+    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp", MARGIN_SPACER, MARGIN_SPACER));
 }
 
 clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()

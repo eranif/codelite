@@ -671,59 +671,27 @@ wxColour DrawingUtils::GetCaptionTextColour()
     }
 }
 
+#ifdef __WXMSW__
+#define X_MARGIN 6
+#else
 #define X_MARGIN 4
+#endif
+
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {
-#if 1
-    // Windows & OSX
     wxRect choiceRect = rect;
-    wxRendererNative::Get().DrawChoice(win, dc, rect, 0);
+#if defined(__WXMSW__)||defined(__WXGTK3__)
+    int width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
+    wxRect dropDownRect = wxRect(0, 0, width, width);
+    int x = choiceRect.GetX() + choiceRect.GetWidth() - dropDownRect.GetWidth();
+    dropDownRect.SetX(x);
+    dropDownRect = dropDownRect.CenterIn(choiceRect, wxVERTICAL);
+    wxRendererNative::Get().DrawPushButton(win, dc, choiceRect, wxCONTROL_NONE);
+    wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, wxCONTROL_CURRENT);
 #else
-    // GTK
-    wxColour face_light = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    wxColour face = face_light.ChangeLightness(95);
-
-    wxColour penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    wxColour pen_light = *wxWHITE;
-
-    wxColour arrowColour = *wxBLACK;
-    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-
-    // Handle dark themes
-    if(IsDark(face_light)) {
-        penColour = *wxBLACK;
-        pen_light = face.ChangeLightness(120);
-        arrowColour = *wxWHITE;
-    }
-    dc.SetPen(face);
-    dc.SetBrush(face);
-    dc.DrawRectangle(rect);
-
-    wxRect choiceRect = rect;
-    wxRect upperRect = rect;
-    upperRect.SetHeight(upperRect.GetHeight() / 2);
-
-    // Draw the choice rect with face_light colour (the darker one)
-    dc.SetPen(face);
-    dc.SetBrush(face);
-    dc.DrawRectangle(choiceRect);
-
-    // Now draw the upper rect
-    dc.SetPen(face_light);
-    dc.SetBrush(face_light);
-    dc.DrawRectangle(upperRect);
-
-    // Draw the outer border with the darker pen
-    dc.SetPen(penColour);
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRoundedRectangle(choiceRect, 1.5);
-
-    // Draw the inner bother with the lighter pen
-    choiceRect.Deflate(1);
-    dc.SetPen(pen_light);
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRoundedRectangle(choiceRect, 1.5);
+    // Windows & OSX
+    wxRendererNative::Get().DrawChoice(win, dc, rect, 0);
 #endif
 
     // Common to all platforms: draw the text + bitmap
@@ -745,7 +713,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxString truncatedText;
     TruncateText(label, textRect.GetWidth(), dc, truncatedText);
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    dc.DrawText(truncatedText, textRect.GetX() + 2, textRect.GetY());
+    dc.DrawText(truncatedText, textRect.GetX() + X_MARGIN, textRect.GetY());
     dc.DestroyClippingRegion();
 }
 

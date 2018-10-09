@@ -750,13 +750,12 @@ void clEditor::SetProperties()
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 
 #elif defined(__WXGTK__)
-    SetLayoutCache(wxSTC_CACHE_PAGE);
+    //SetLayoutCache(wxSTC_CACHE_PAGE);
 
 #else // MSW
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
     SetLayoutCache(wxSTC_CACHE_PAGE);
-
 #endif
 
     // indentation settings

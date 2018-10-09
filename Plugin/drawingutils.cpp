@@ -682,13 +682,17 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
 {
     wxRect choiceRect = rect;
 #if defined(__WXMSW__)||defined(__WXGTK3__)
+#ifdef __WXMSW__
     int width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
+#else
+    int width = choiceRect.GetHeight();
+#endif
     wxRect dropDownRect = wxRect(0, 0, width, width);
     int x = choiceRect.GetX() + choiceRect.GetWidth() - dropDownRect.GetWidth();
     dropDownRect.SetX(x);
     dropDownRect = dropDownRect.CenterIn(choiceRect, wxVERTICAL);
-    wxRendererNative::Get().DrawPushButton(win, dc, choiceRect, wxCONTROL_NONE);
-    wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, wxCONTROL_CURRENT);
+    wxRendererNative::Get().DrawPushButton(win, dc, choiceRect, 0);
+    wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, 0);
 #else
     // Windows & OSX
     wxRendererNative::Get().DrawChoice(win, dc, rect, 0);

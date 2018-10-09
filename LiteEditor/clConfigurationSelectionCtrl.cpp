@@ -43,7 +43,7 @@ clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
 
 void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC bdc(this);
+    wxPaintDC bdc(this);
     PrepareDC(bdc);
     wxGCDC gcdc(bdc);
 

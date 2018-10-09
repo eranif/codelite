@@ -685,7 +685,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
                                     const wxBitmap& bmp, int align)
 {
     wxRect choiceRect = rect;
-#if defined(__WXMSW__)||defined(__WXGTK3__)
+#if defined(__WXMSW__)||defined(__WXGTK__)
 #ifdef __WXMSW__
     int width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
 #else
@@ -721,7 +721,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxString truncatedText;
     TruncateText(label, textRect.GetWidth(), dc, truncatedText);
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    dc.DrawText(truncatedText, textRect.GetX() + X_MARGIN, textRect.GetY());
+    dc.DrawText(truncatedText, xx, textRect.GetY());
     dc.DestroyClippingRegion();
 }
 

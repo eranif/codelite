@@ -6,6 +6,7 @@
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include <unordered_set>
 
 class Docker;
 class IProcess;
@@ -25,7 +26,7 @@ protected:
     };
 
 protected:
-    IProcess* m_process = nullptr;
+    std::unordered_set<IProcess*> m_processes;
     Docker* m_plugin;
     eContext m_context = kNone;
     wxString m_output;
@@ -50,7 +51,7 @@ public:
     void Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
     void Run(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);
 
-    bool IsRunning() const { return m_process != nullptr; }
+    bool IsRunning() const { return !m_processes.empty(); }
     void Stop();
 
     //===------------------

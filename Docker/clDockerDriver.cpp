@@ -28,7 +28,10 @@ clDockerDriver::~clDockerDriver()
 
 void clDockerDriver::Stop()
 {
-    if(IsRunning()) { m_process->Terminate(); }
+    if(IsRunning()) {
+        // Stop each process
+        std::for_each(m_processes.begin(), m_processes.end(), [&](IProcess* process) { process->Terminate(); });
+    }
 }
 
 void clDockerDriver::OnProcessOutput(clProcessEvent& event)
@@ -51,7 +54,11 @@ void clDockerDriver::OnProcessOutput(clProcessEvent& event)
 
 void clDockerDriver::OnProcessTerminated(clProcessEvent& event)
 {
-    wxDELETE(m_process);
+    if(!event.GetProcess() || m_processes.count(event.GetProcess()) == 0) { return; } // Not our process !?
+
+    IProcess* process = event.GetProcess();
+    m_processes.erase(process);
+    wxDELETE(process);
     switch(m_context) {
     case kListImages:
         ProcessListImagesCommand();
@@ -104,7 +111,8 @@ void clDockerDriver::StartProcessAsync(const wxString& command, const wxString& 
 {
     m_output.Clear();
     m_context = context;
-    m_process = ::CreateAsyncProcess(this, command, flags, wd);
+    IProcess* process = ::CreateAsyncProcess(this, command, flags, wd);
+    if(process) { m_processes.insert(process); }
 }
 
 wxString clDockerDriver::GetDockerExe() const
@@ -115,7 +123,7 @@ wxString clDockerDriver::GetDockerExe() const
     const wxFileName& dockerCommand = dockerSettings.GetDocker();
     if(!dockerCommand.FileExists()) {
         clGetManager()->SetStatusMessage(
-            _("Can't find docker executable\nPlease install docker and let me know where it is"), 3);
+            _("Can't find docker executable. Please install docker and let me know where it is"), 3);
         return "";
     }
     wxString exepath = dockerCommand.GetFullPath();

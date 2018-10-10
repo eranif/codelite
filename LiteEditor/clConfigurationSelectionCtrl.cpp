@@ -14,7 +14,7 @@
 #ifdef __WXMSW__
 #define MARGIN_SPACER 5
 #else
-#define MARGIN_SPACER 3
+#define MARGIN_SPACER 5
 #endif
 
 clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,

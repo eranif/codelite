@@ -154,7 +154,7 @@ bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent&
 #if wxCHECK_VERSION(3, 1, 0)
     wxDataViewEvent e(type, &m_dummy, DV_ITEM(treeEvent.GetItem()));
 #else
-    wxDataViewEvent e(type));
+    wxDataViewEvent e(type);
     e.SetItem(DV_ITEM(treeEvent.GetItem()));
 #endif
     e.SetEventObject(this);

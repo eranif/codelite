@@ -13,8 +13,10 @@
 
 #ifdef __WXMSW__
 #define MARGIN_SPACER 5
-#else
+#elif defined(__WXGTK3__)
 #define MARGIN_SPACER 5
+#else
+#define MARGIN_SPACER 3
 #endif
 
 clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,
@@ -43,7 +45,7 @@ clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
 
 void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxBufferedPaintDC bdc(this);
+    wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
     wxGCDC gcdc(bdc);
 

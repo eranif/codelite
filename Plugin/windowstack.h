@@ -30,11 +30,18 @@
 #include "wx/sizer.h"
 #include <set>
 #include <vector>
-#include <wx/simplebook.h>
 
-class WXDLLIMPEXP_SDK WindowStack : public wxSimplebook
+class WXDLLIMPEXP_SDK WindowStack : public wxWindow
 {
+    std::vector<wxWindow*> m_windows;
+    wxWindow* m_activeWin = nullptr;
+
+protected:
     int FindPage(wxWindow* page) const;
+    void ChangeSelection(size_t index);
+    void DoSelect(wxWindow* win);
+    void OnSize(wxSizeEvent& e);
+    void DoHideNoActiveWindows();
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY);
@@ -45,10 +52,9 @@ public:
     void Clear();
 
     bool Remove(wxWindow* win);
-    bool Delete(wxWindow* win);
 
     bool Contains(wxWindow* win);
-    bool IsEmpty() const { return this->GetPageCount() == 0; }
+    bool IsEmpty() const { return m_windows.empty(); }
     wxWindow* GetSelected() const;
 };
 

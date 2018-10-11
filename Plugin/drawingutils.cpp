@@ -699,7 +699,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, 0);
 #else
     // Windows & OSX
-    wxRendererNative::Get().DrawChoice(win, dc, rect, 0);
+    wxRendererNative::Get().DrawChoice(win, dc, choiceRect, 0);
 #endif
 
     // Common to all platforms: draw the text + bitmap
@@ -710,9 +710,10 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     int xx = textRect.GetX() + X_MARGIN;
     if(bmp.IsOk()) {
         // Draw bitmap first
-        int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
-        dc.DrawBitmap(bmp, xx, bmpY);
-        xx += bmp.GetScaledWidth() + X_MARGIN;
+        wxRect bmpRect(xx, textRect.GetY(), bmp.GetScaledWidth(), bmp.GetScaledHeight());
+        bmpRect = bmpRect.CenterIn(choiceRect, wxVERTICAL);
+        dc.DrawBitmap(bmp, bmpRect.GetTopLeft());
+        xx += bmpRect.GetWidth() + X_MARGIN;
     }
     dc.SetFont(GetDefaultGuiFont());
     wxSize textSize = dc.GetTextExtent(label);

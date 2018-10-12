@@ -230,75 +230,81 @@ void BitmapLoader::initialize()
 
 void BitmapLoader::CreateMimeList()
 {
+#ifdef __WXGTK3__
+    const int bitmap_size = 24;
+#else
+    const int bitmap_size = 16;
+#endif
+
     if(m_mimeBitmaps.IsEmpty()) {
-        m_mimeBitmaps.AddBitmap(LoadBitmap("console"), FileExtManager::TypeExe);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-html"), FileExtManager::TypeHtml);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("archive"), FileExtManager::TypeArchive);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-php"), FileExtManager::TypePhp);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("dll"), FileExtManager::TypeDll);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks"), FileExtManager::TypeFormbuilder);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeCodedesigner);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-bmp"), FileExtManager::TypeBmp);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cog"), FileExtManager::TypeMakefile);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-c"), FileExtManager::TypeSourceC);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp"), FileExtManager::TypeSourceCpp);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h"), FileExtManager::TypeHeader);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeText);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("execute"), FileExtManager::TypeScript);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml"), FileExtManager::TypeXml);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt"), FileExtManager::TypeErd);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python"), FileExtManager::TypePython);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-css"), FileExtManager::TypeCSS);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-js"), FileExtManager::TypeJS);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cxx-workspace"), FileExtManager::TypeWorkspace);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace"), FileExtManager::TypeWorkspacePHP);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("docker"), FileExtManager::TypeWorkspaceDocker);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("nodejs-workspace"), FileExtManager::TypeWorkspaceNodeJS);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("project"), FileExtManager::TypeProject);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("project-opened"), FileExtManager::TypeProjectExpanded);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks"), FileExtManager::TypeWxCrafter);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml"), FileExtManager::TypeXRC);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("tools"), FileExtManager::TypeResource);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-sql"), FileExtManager::TypeSQL);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow"), FileExtManager::TypeFolder);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened"), FileExtManager::TypeFolderExpanded);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-as"), FileExtManager::TypeAsm);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cmake"), FileExtManager::TypeCMake);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("qt"), FileExtManager::TypeQMake);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("docker"), FileExtManager::TypeDockerfile);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("yml"), FileExtManager::TypeYAML);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("database"), FileExtManager::TypeDatabase);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg"), FileExtManager::TypeSvg);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened"),
+        m_mimeBitmaps.AddBitmap(LoadBitmap("console", bitmap_size), FileExtManager::TypeExe);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-html", bitmap_size), FileExtManager::TypeHtml);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("archive", bitmap_size), FileExtManager::TypeArchive);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-php", bitmap_size), FileExtManager::TypePhp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("dll", bitmap_size), FileExtManager::TypeDll);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks", bitmap_size), FileExtManager::TypeFormbuilder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeCodedesigner);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-bmp", bitmap_size), FileExtManager::TypeBmp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cog", bitmap_size), FileExtManager::TypeMakefile);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-c", bitmap_size), FileExtManager::TypeSourceC);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp", bitmap_size), FileExtManager::TypeSourceCpp);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h", bitmap_size), FileExtManager::TypeHeader);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeText);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("execute", bitmap_size), FileExtManager::TypeScript);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", bitmap_size), FileExtManager::TypeXml);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeErd);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python", bitmap_size), FileExtManager::TypePython);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-css", bitmap_size), FileExtManager::TypeCSS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-js", bitmap_size), FileExtManager::TypeJS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cxx-workspace", bitmap_size), FileExtManager::TypeWorkspace);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace", bitmap_size), FileExtManager::TypeWorkspacePHP);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("docker", bitmap_size), FileExtManager::TypeWorkspaceDocker);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("nodejs-workspace", bitmap_size), FileExtManager::TypeWorkspaceNodeJS);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("project", bitmap_size), FileExtManager::TypeProject);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("project-opened", bitmap_size), FileExtManager::TypeProjectExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("blocks", bitmap_size), FileExtManager::TypeWxCrafter);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", bitmap_size), FileExtManager::TypeXRC);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("tools", bitmap_size), FileExtManager::TypeResource);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-sql", bitmap_size), FileExtManager::TypeSQL);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow", bitmap_size), FileExtManager::TypeFolder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened", bitmap_size), FileExtManager::TypeFolderExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-as", bitmap_size), FileExtManager::TypeAsm);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cmake", bitmap_size), FileExtManager::TypeCMake);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("qt", bitmap_size), FileExtManager::TypeQMake);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("docker", bitmap_size), FileExtManager::TypeDockerfile);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("yml", bitmap_size), FileExtManager::TypeYAML);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("database", bitmap_size), FileExtManager::TypeDatabase);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", bitmap_size), FileExtManager::TypeSvg);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened", bitmap_size),
                                 FileExtManager::TypeWorkspaceFolderExpanded);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow"), FileExtManager::TypeWorkspaceFolder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", bitmap_size), FileExtManager::TypeWorkspaceFolder);
 
         // Non mime bitmaps
-        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save"), kSave);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save_all"), kSaveAll);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("file_close"), kClose);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("db-table"), kTable);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cscope"), kFind);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("database"), kDatabase);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("db-column"), kColumn);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("globals"), kAngleBrackets);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/namespace"), kNamespace);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/class"), kClass);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/struct"), kStruct);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_public"), kFunctionPublic);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_protected"), kFunctionProtected);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_private"), kFunctionPrivate);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_public"), kMemberPublic);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_protected"), kMemberProtected);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_private"), kMemberPrivate);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/typedef"), kTypedef);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro"), kMacro);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum"), kEnum);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum"), kCEnum);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro"), kConstant);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enumerator"), kEnumerator);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/cpp_keyword"), kCxxKeyword);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("sort"), kSort);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_save_all", bitmap_size), kSaveAll);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("file_close", bitmap_size), kClose);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("db-table", bitmap_size), kTable);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cscope", bitmap_size), kFind);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("database", bitmap_size), kDatabase);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("db-column", bitmap_size), kColumn);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("globals", bitmap_size), kAngleBrackets);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/namespace", bitmap_size), kNamespace);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/class", bitmap_size), kClass);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/struct", bitmap_size), kStruct);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_public", bitmap_size), kFunctionPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_protected", bitmap_size), kFunctionProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/function_private", bitmap_size), kFunctionPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_public", bitmap_size), kMemberPublic);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_protected", bitmap_size), kMemberProtected);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/member_private", bitmap_size), kMemberPrivate);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/typedef", bitmap_size), kTypedef);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro", bitmap_size), kMacro);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum", bitmap_size), kEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enum", bitmap_size), kCEnum);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/macro", bitmap_size), kConstant);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/enumerator", bitmap_size), kEnumerator);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("cc/16/cpp_keyword", bitmap_size), kCxxKeyword);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("sort", bitmap_size), kSort);
     }
 }
 

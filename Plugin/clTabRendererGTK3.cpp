@@ -201,7 +201,7 @@ void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
         colours.activeTabPenColour = colours.activeTabBgColour;
         colours.activeTabTextColour = DrawingUtils::GetPanelTextColour();
         colours.inactiveTabTextColour = DrawingUtils::IsDark(colours.activeTabTextColour)
-                                            ? colours.activeTabTextColour.ChangeLightness(160)
+                                            ? colours.activeTabTextColour.ChangeLightness(140)
                                             : colours.activeTabTextColour.ChangeLightness(60);
     }
 }

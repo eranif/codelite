@@ -67,7 +67,7 @@ static DnD_Data s_clTabCtrlDnD_Data;
 void Notebook::PositionControls()
 {
     size_t style = GetStyle();
-    
+
     // Detach the controls from the main sizer
     if(GetSizer()) {
         GetSizer()->Detach(m_windows);
@@ -199,7 +199,7 @@ bool Notebook::MoveActivePage(int newIndex)
 void Notebook::OnSize(wxSizeEvent& event)
 {
     event.Skip();
-    //CallAfter(&Notebook::PositionControls);
+    // CallAfter(&Notebook::PositionControls);
 }
 
 //----------------------------------------------------------
@@ -914,6 +914,24 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         // It is OK to end up with a null next selection, we will handle it later
     }
 
+    // If we are deleting the active page, select the new one first and _then_ remove the
+    // current one. This removes any possible flicker
+    if(deletingSelection) {
+        // Always make sure we have something to select...
+        if(!nextSelection && !m_tabs.empty()) { nextSelection = m_tabs.at(0)->GetWindow(); }
+
+        int nextSel = DoGetPageIndex(nextSelection);
+        if(nextSel != wxNOT_FOUND) {
+            ChangeSelection(nextSel);
+            if(notify) {
+                wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
+                event.SetEventObject(GetParent());
+                event.SetSelection(GetSelection());
+                GetParent()->GetEventHandler()->ProcessEvent(event);
+            }
+        }
+    }
+
     // Now remove the page from the notebook. We will delete the page
     // ourself, so there is no need to call DeletePage
     GetStack()->Remove(tab->GetWindow());
@@ -928,32 +946,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
     if(notify) {
         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSED);
         event.SetEventObject(GetParent());
-        event.SetSelection(GetSelection());
         GetParent()->GetEventHandler()->ProcessEvent(event);
-    }
-
-    // When removing a tab from the vertical tabs, we need to call
-    // DoSetBestSize() to calcaulte the tab control again
-    // if(IsVerticalTabs()) { DoSetBestSize(); }
-    // Choose the next page
-    if(deletingSelection) {
-        // Always make sure we have something to select...
-        if(!nextSelection && !m_tabs.empty()) { nextSelection = m_tabs.at(0)->GetWindow(); }
-
-        int nextSel = DoGetPageIndex(nextSelection);
-        if(nextSel != wxNOT_FOUND) {
-            ChangeSelection(nextSel);
-            if(notify) {
-                wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
-                event.SetEventObject(GetParent());
-                event.SetSelection(GetSelection());
-                GetParent()->GetEventHandler()->ProcessEvent(event);
-            }
-        } else {
-            Refresh();
-        }
-    } else {
-        Refresh();
     }
     return true;
 }

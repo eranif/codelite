@@ -948,6 +948,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         event.SetEventObject(GetParent());
         GetParent()->GetEventHandler()->ProcessEvent(event);
     }
+    Refresh();
     return true;
 }
 

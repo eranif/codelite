@@ -31,7 +31,7 @@ clTabRendererSquare::clTabRendererSquare()
 clTabRendererSquare::~clTabRendererSquare() {}
 
 void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                               const clTabColours& colours, size_t style)
+                               const clTabColours& colours, size_t style, eButtonState buttonState)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
@@ -60,7 +60,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
                                                                                          : tabInfo.GetBitmap();
         dc.DrawBitmap(bmp, tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
     }
-    
+
     wxString label = tabInfo.m_label;
     if(bVerticalTabs) {
         // Check that the text can fit into the tab label
@@ -74,7 +74,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc,
+        DrawButton(parent, dc,
                    wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
                           CLOSE_BUTTON_SIZE),
                    colours, eButtonState::kNormal);

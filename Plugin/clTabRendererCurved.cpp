@@ -23,7 +23,7 @@ clTabRendererCurved::clTabRendererCurved()
 clTabRendererCurved::~clTabRendererCurved() {}
 
 void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                               const clTabColours& colours, size_t style)
+                               const clTabColours& colours, size_t style, eButtonState buttonState)
 {
     const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
@@ -139,8 +139,9 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     }
     fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc, wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
-                              CLOSE_BUTTON_SIZE),
+        DrawButton(parent, dc,
+                   wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
+                          CLOSE_BUTTON_SIZE),
                    colours, eButtonState::kNormal);
     }
 }

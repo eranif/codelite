@@ -208,7 +208,7 @@ public:
     clTabRenderer(const wxString& name);
     virtual ~clTabRenderer() {}
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
-                      size_t style) = 0;
+                      size_t style, eButtonState buttonState) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
 
@@ -229,13 +229,14 @@ public:
     /**
      * @brief draw a button in a given state at a give location
      */
-    static void DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state);
+    static void DrawButton(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                           eButtonState state);
 
     /**
      * @brief draw cheveron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
-    
+
     /**
      * @brief Adjust colours per renderer
      * @param colours [in/out]

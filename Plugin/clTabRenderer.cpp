@@ -196,11 +196,7 @@ void clTabInfo::CalculateOffsets(size_t style)
 {
     wxBitmap b(1, 1);
     wxMemoryDC memoryDC(b);
-#ifdef _WXGTK3__
-    wxDC& gcdc = memoryDC;
-#else
     wxGCDC gcdc(memoryDC);
-#endif
     CalculateOffsets(style, gcdc);
 }
 
@@ -238,11 +234,11 @@ clTabRenderer::clTabRenderer(const wxString& name)
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-//#ifdef __WXGTK3__
+    //#ifdef __WXGTK3__
     wxUnusedVar(bold);
-//#else
+    //#else
     if(bold) { f.SetWeight(wxFONTWEIGHT_BOLD); }
-//#endif
+    //#endif
     return f;
 }
 
@@ -304,9 +300,10 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
     }
 }
 
-void clTabRenderer::DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state)
+void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                               eButtonState state)
 {
-    DrawingUtils::DrawButtonX(dc, nullptr, rect, colours.activeTabTextColour, state);
+    DrawingUtils::DrawButtonX(dc, win, rect, colours.activeTabTextColour, colours.activeTabBgColour, state);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)

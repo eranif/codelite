@@ -77,7 +77,8 @@ public:
     /**
      * @brief draw a close button
      */
-    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour, eButtonState state);
+    static void DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
+                            const wxColour& bgColouur, eButtonState state);
 
     /**
      * @brief draw a drop down arrow

@@ -430,13 +430,13 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
             pColours = &user_colours;
         }
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style);
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, m_xButtonState);
     }
 
     // Redraw the active tab
     if(activeTabInex != wxNOT_FOUND) {
         clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style);
+        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, m_xButtonState);
     }
     if(!IsVerticalTabs()) { gcdc.DestroyClippingRegion(); }
     if(activeTabInex != wxNOT_FOUND) {
@@ -535,6 +535,8 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         wxRect xRect(t->GetRect().x + t->GetBmpCloseX(), t->GetRect().y + t->GetBmpCloseY(), 16, 16);
         if(xRect.Contains(event.GetPosition())) {
             m_closeButtonClickedIndex = tabHit;
+            m_xButtonState = eButtonState::kPressed;
+            Refresh();
             return;
         }
     }
@@ -765,6 +767,21 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
             OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
         }
     }
+    
+    // Refresh if hovering the close button state
+    eButtonState oldButtonState = m_xButtonState;
+    if(realPos == GetSelection() && (GetStyle() && kNotebook_CloseButtonOnActiveTab)) {
+        clTabInfo::Ptr_t t = m_tabs[realPos];
+        wxRect xRect(t->GetRect().x + t->GetBmpCloseX(), t->GetRect().y + t->GetBmpCloseY(), 16, 16);
+        if(xRect.Contains(event.GetPosition())) {
+            m_xButtonState = m_closeButtonClickedIndex ?  eButtonState::kPressed : eButtonState::kHover;
+        } else {
+            m_xButtonState = eButtonState::kNormal;
+        }
+    } else {
+        m_xButtonState = eButtonState::kNormal;
+    }
+    if(oldButtonState != m_xButtonState) { Refresh(); }
 }
 
 void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDirection& align)

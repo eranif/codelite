@@ -56,7 +56,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
 }
 
 void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                                const clTabColours& colors, size_t style)
+                                const clTabColours& colors, size_t style, eButtonState buttonState)
 {
     const int TOP_SMALL_HEIGHT = 2;
 
@@ -180,7 +180,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
     fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc,
+        DrawButton(parent, dc,
                    wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
                           CLOSE_BUTTON_SIZE),
                    colours, eButtonState::kNormal);

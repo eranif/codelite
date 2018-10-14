@@ -603,29 +603,14 @@ wxColour DrawingUtils::GetButtonBgColour() { return wxSystemSettings::GetColour(
 wxColour DrawingUtils::GetButtonTextColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
 
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                               eButtonState state)
+                               const wxColour& bgColouur, eButtonState state)
 {
     // Calculate the circle radius:
     wxRect innerRect(rect);
-    wxColour colour = penColour;
-
-    // Default state: "normal"
+    innerRect.Deflate(2);
+    innerRect = innerRect.CenterIn(rect);
+    dc.SetPen(wxPen(penColour, 2));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-
-    switch(state) {
-    case eButtonState::kHover:
-        colour = colour.ChangeLightness(120);
-        break;
-        break;
-    case eButtonState::kPressed:
-        colour = colour.ChangeLightness(80);
-        break;
-    default:
-        break;
-    }
-
-    // Draw the 'x'
-    dc.SetPen(wxPen(colour, 2));
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 }
@@ -685,7 +670,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
                                     const wxBitmap& bmp, int align)
 {
     wxRect choiceRect = rect;
-#if defined(__WXMSW__)||defined(__WXGTK__)
+#if defined(__WXMSW__) || defined(__WXGTK__)
 #ifdef __WXMSW__
     int width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
 #else

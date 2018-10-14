@@ -605,6 +605,20 @@ wxColour DrawingUtils::GetButtonTextColour() { return wxSystemSettings::GetColou
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                const wxColour& bgColouur, eButtonState state)
 {
+#if defined(__WXMSW__)||defined(__WXOSX__)
+    size_t flags = 0;
+    switch(state) {
+    case eButtonState::kHover:
+        flags = wxCONTROL_CURRENT;
+        break;
+    case eButtonState::kPressed:
+        flags = wxCONTROL_PRESSED;
+        break;
+    default:
+        break;
+    }
+    wxRendererNative::Get().DrawTitleBarBitmap(win, dc, rect, wxTITLEBAR_BUTTON_CLOSE, flags);
+#else
     // Calculate the circle radius:
     wxRect innerRect(rect);
     wxColour b = bgColouur;
@@ -635,6 +649,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
+#endif
 }
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)

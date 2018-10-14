@@ -34,7 +34,7 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour
     // Inactive tab
     colours.inactiveTabBgColour = activeTabBGColour.ChangeLightness(120);
     colours.inactiveTabTextColour = colours.activeTabTextColour.ChangeLightness(80);
-    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(85);
+    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(110);
     colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
 }
@@ -44,13 +44,13 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     // Active tab
     colours.activeTabTextColour = DrawingUtils::GetButtonTextColour();
     colours.activeTabBgColour = activeTabBGColour;
-    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(80);
+    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(90);
     colours.activeTabInnerPenColour = activeTabBGColour.ChangeLightness(110);
 
     // Inactive tab
     colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(85); // darker
     colours.inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(80);
+    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(130);
     colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
 }

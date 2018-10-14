@@ -17,6 +17,14 @@
 #define PEN_STYLE wxPENSTYLE_DOT
 #endif
 
+#ifdef __WXMSW__
+int clRowEntry::X_SPACER = 4;
+int clRowEntry::Y_SPACER = 2;
+#else
+int clRowEntry::X_SPACER = 5;
+int clRowEntry::Y_SPACER = 3;
+#endif
+
 struct clClipperHelper {
 
     bool m_used = false;
@@ -357,7 +365,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                         dc.DrawPolygon(3, pts);
                     }
                 }
-                
+
             } else {
                 textXOffset += rowRect.GetHeight();
                 if(textXOffset >= cellRect.GetWidth()) {

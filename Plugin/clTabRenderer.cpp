@@ -20,6 +20,8 @@
 #include "drawingutils.h"
 #endif
 
+#define X_BUTTON_SIZE 20
+
 clTabColours::clTabColours() { InitDarkColours(); }
 
 void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& textColour)
@@ -152,9 +154,9 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_height = wxMax(m_height, bmpHeight);
 
     m_width = 0;
+    m_width += X_spacer;
     m_width += M_spacer;
     m_width += S_spacer;
-    m_width += X_spacer;
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
     // bitmap
@@ -175,12 +177,13 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_textWidth = sz.x;
 
     // x button
+    wxRect xrect;
     if((style & kNotebook_CloseButtonOnActiveTab)) {
         m_width += X_spacer;
-        m_width += X_spacer;
-        m_bmpCloseX = m_width;
-        m_bmpCloseY = ((m_height - 12) / 2) + 2;
-        m_width += 12; // X button is 10 pixels in size
+        xrect = wxRect(m_width, 0, X_BUTTON_SIZE, X_BUTTON_SIZE);
+        m_bmpCloseX = xrect.GetX();
+        m_bmpCloseY = 0; // we will fix this later
+        m_width += xrect.GetWidth();
     }
 
     m_width += X_spacer;
@@ -190,6 +193,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     // Update the rect width
     m_rect.SetWidth(m_width);
     m_rect.SetHeight(m_height);
+
+    // If we got a X button, adjust its Y axis
+    if(!xrect.IsEmpty()) {
+        xrect = xrect.CenterIn(m_rect, wxVERTICAL);
+        m_bmpCloseY = xrect.GetY();
+    }
 }
 
 void clTabInfo::CalculateOffsets(size_t style)
@@ -219,6 +228,13 @@ void clTabInfo::SetActive(bool active, size_t style)
     CalculateOffsets(style);
 }
 
+wxRect clTabInfo::GetCloseButtonRect() const
+{
+    wxRect xRect(GetRect().x + GetBmpCloseX(), GetRect().y + GetBmpCloseY(), clTabRenderer::GetXButtonSize(),
+                 clTabRenderer::GetXButtonSize());
+    return xRect;
+}
+
 clTabRenderer::clTabRenderer(const wxString& name)
     : bottomAreaHeight(0)
     , majorCurveWidth(0)
@@ -234,11 +250,7 @@ clTabRenderer::clTabRenderer(const wxString& name)
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-    //#ifdef __WXGTK3__
-    wxUnusedVar(bold);
-    //#else
     if(bold) { f.SetWeight(wxFONTWEIGHT_BOLD); }
-    //#endif
     return f;
 }
 
@@ -300,10 +312,14 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
     }
 }
 
-void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
                                eButtonState state)
 {
-    DrawingUtils::DrawButtonX(dc, win, rect, colours.activeTabTextColour, colours.activeTabBgColour, state);
+    // Draw the X button
+    wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + tabInfo.GetRect().GetX(),
+                               tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(), X_BUTTON_SIZE, X_BUTTON_SIZE);
+    buttonRect = buttonRect.CenterIn(tabInfo.GetRect(), wxVERTICAL);
+    DrawingUtils::DrawButtonX(dc, win, buttonRect, colours.activeTabTextColour, colours.activeTabBgColour, state);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)
@@ -409,3 +425,62 @@ void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)
         }
     }
 }
+
+void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)
+{
+    if((style & kNotebook_UnderlineActiveTab) == 0) { return; }
+    wxPen markerPen(colours.markerColour);
+    // Draw marker line if needed
+    // wxRect confinedRect = parent->GetClientRect();
+    wxPoint p1, p2;
+    if((style & kNotebook_LeftTabs)) {
+        p1 = tabInfo.GetRect().GetTopRight();
+        p2 = tabInfo.GetRect().GetBottomRight();
+        dc.SetPen(markerPen);
+        DrawMarkerLine(dc, p1, p2, wxLEFT);
+    } else if(style & kNotebook_RightTabs) {
+        // Right tabs
+        p1 = tabInfo.GetRect().GetTopLeft();
+        p2 = tabInfo.GetRect().GetBottomLeft();
+        dc.SetPen(markerPen);
+        DrawMarkerLine(dc, p1, p2, wxRIGHT);
+    } else if(style & kNotebook_BottomTabs) {
+        // Bottom tabs
+        p1 = tabInfo.GetRect().GetTopLeft();
+        p2 = tabInfo.GetRect().GetTopRight();
+        dc.SetPen(markerPen);
+        DrawMarkerLine(dc, p1, p2, wxDOWN);
+    } else {
+        // Top tabs
+        p1 = tabInfo.GetRect().GetBottomLeft();
+        p2 = tabInfo.GetRect().GetBottomRight();
+        dc.SetPen(markerPen);
+        DrawMarkerLine(dc, p1, p2, wxUP);
+    }
+}
+
+void clTabRenderer::DrawMarkerLine(wxDC& dc, const wxPoint& p1, const wxPoint& p2, wxDirection direction)
+{
+    const int width = GetMarkerWidth();
+    wxPoint point1 = p1;
+    wxPoint point2 = p2;
+    for(int i = 0; i < width; ++i) {
+        dc.DrawLine(point1, point2);
+        if(direction == wxDOWN) {
+            point1.y++;
+            point2.y++;
+        } else if(direction == wxUP) {
+            point1.y--;
+            point2.y--;
+        } else if(direction == wxLEFT) {
+            point1.x--;
+            point2.x--;
+        } else {
+            // wxRIGHT
+            point1.x++;
+            point2.x++;
+        }
+    }
+}
+
+int clTabRenderer::GetXButtonSize() { return X_BUTTON_SIZE; }

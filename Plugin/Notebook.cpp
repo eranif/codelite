@@ -532,7 +532,7 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && clickWasOnActiveTab) {
         // we clicked on the selected index
         clTabInfo::Ptr_t t = m_visibleTabs.at(tabHit);
-        wxRect xRect(t->GetRect().x + t->GetBmpCloseX(), t->GetRect().y + t->GetBmpCloseY(), 16, 16);
+        wxRect xRect = t->GetCloseButtonRect();
         if(xRect.Contains(event.GetPosition())) {
             m_closeButtonClickedIndex = tabHit;
             m_xButtonState = eButtonState::kPressed;
@@ -727,9 +727,8 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
             if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && m_visibleTabs.at(tabHit)->IsActive()) {
                 // we clicked on the selected index
                 clTabInfo::Ptr_t t = m_visibleTabs.at(tabHit);
-                wxRect xRect(t->GetRect().x + t->GetBmpCloseX(), t->GetRect().y + t->GetBmpCloseY(), 16, 16);
+                wxRect xRect = t->GetCloseButtonRect();
                 xRect.Inflate(2); // don't be picky if we did not click exactly on the 16x16 bitmap...
-
                 if(m_closeButtonClickedIndex == tabHit && xRect.Contains(event.GetPosition())) {
                     if(GetStyle() & kNotebook_CloseButtonOnActiveTabFireEvent) {
                         // let the user process this
@@ -767,21 +766,21 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
             OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
         }
     }
-    
+
     // Refresh if hovering the close button state
-    eButtonState oldButtonState = m_xButtonState;
-    if(realPos == GetSelection() && (GetStyle() && kNotebook_CloseButtonOnActiveTab)) {
+    if((realPos != wxNOT_FOUND) && realPos == GetSelection() && (GetStyle() & kNotebook_CloseButtonOnActiveTab)) {
         clTabInfo::Ptr_t t = m_tabs[realPos];
-        wxRect xRect(t->GetRect().x + t->GetBmpCloseX(), t->GetRect().y + t->GetBmpCloseY(), 16, 16);
+        wxRect xRect = t->GetCloseButtonRect();
         if(xRect.Contains(event.GetPosition())) {
-            m_xButtonState = m_closeButtonClickedIndex ?  eButtonState::kPressed : eButtonState::kHover;
+            m_xButtonState = event.LeftIsDown() ? eButtonState::kPressed : eButtonState::kHover;
         } else {
             m_xButtonState = eButtonState::kNormal;
         }
+        Refresh();
     } else {
         m_xButtonState = eButtonState::kNormal;
+        Refresh();
     }
-    if(oldButtonState != m_xButtonState) { Refresh(); }
 }
 
 void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDirection& align)

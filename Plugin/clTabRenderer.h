@@ -28,7 +28,6 @@
 #include <wx/sharedptr.h>
 
 #define CHEVRON_SIZE 20
-#define CLOSE_BUTTON_SIZE 12
 
 class clTabCtrl;
 enum NotebookStyle {
@@ -173,6 +172,7 @@ public:
     const wxString& GetLabel() const { return m_label; }
     const wxRect& GetRect() const { return m_rect; }
     wxRect& GetRect() { return m_rect; }
+    wxRect GetCloseButtonRect() const;
     wxWindow* GetWindow() { return m_window; }
     wxWindow* GetWindow() const { return m_window; }
     void SetWindow(wxWindow* window) { this->m_window = window; }
@@ -203,7 +203,9 @@ public:
 
 protected:
     void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
-
+    void DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style);
+    void DrawMarkerLine(wxDC& dc, const wxPoint& p1, const wxPoint& p2, wxDirection direction);
+    
 public:
     clTabRenderer(const wxString& name);
     virtual ~clTabRenderer() {}
@@ -229,14 +231,15 @@ public:
     /**
      * @brief draw a button in a given state at a give location
      */
-    static void DrawButton(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+    static void DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
                            eButtonState state);
 
     /**
      * @brief draw cheveron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
-
+    
+    static int GetXButtonSize();
     /**
      * @brief Adjust colours per renderer
      * @param colours [in/out]

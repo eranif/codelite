@@ -607,9 +607,31 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 {
     // Calculate the circle radius:
     wxRect innerRect(rect);
-    innerRect.Deflate(2);
+    wxColour b = bgColouur;
+    wxColour xColour = penColour;
+    switch(state) {
+    case eButtonState::kHover:
+        b = b.ChangeLightness(120);
+        break;
+    case eButtonState::kPressed:
+        b = b.ChangeLightness(70);
+        xColour = b.ChangeLightness(150);
+        break;
+    default:
+        break;
+    }
+
+    // Draw the background
+    if(state != eButtonState::kNormal) {
+        dc.SetPen(b);
+        dc.SetBrush(b);
+        dc.DrawRoundedRectangle(rect, 2.0);
+    }
+    
+    // draw the x sign
+    innerRect.Deflate(4);
     innerRect = innerRect.CenterIn(rect);
-    dc.SetPen(wxPen(penColour, 2));
+    dc.SetPen(wxPen(xColour, 2));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());

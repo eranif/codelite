@@ -78,41 +78,9 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
         // Draw the X button
-        wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
-                                   CLOSE_BUTTON_SIZE);
-        DrawButton(parent, dc, buttonRect, colours, buttonState);
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
-    if(tabInfo.IsActive()) {
-        wxPen markerPen(colours.markerColour);
-
-        // Draw marker line if needed
-        // wxRect confinedRect = parent->GetClientRect();
-        wxPoint p1, p2;
-        if((style & kNotebook_LeftTabs)) {
-            p1 = tabInfo.GetRect().GetTopRight();
-            p2 = tabInfo.GetRect().GetBottomRight();
-            dc.SetPen(markerPen);
-            DrawMarker(p1, p2, dc, wxLEFT);
-        } else if(style & kNotebook_RightTabs) {
-            // Right tabs
-            p1 = tabInfo.GetRect().GetTopLeft();
-            p2 = tabInfo.GetRect().GetBottomLeft();
-            dc.SetPen(markerPen);
-            DrawMarker(p1, p2, dc, wxRIGHT);
-        } else if(style & kNotebook_BottomTabs) {
-            // Bottom tabs
-            p1 = tabInfo.GetRect().GetTopLeft();
-            p2 = tabInfo.GetRect().GetTopRight();
-            dc.SetPen(markerPen);
-            DrawMarker(p1, p2, dc, wxDOWN);
-        } else {
-            // Top tabs
-            p1 = tabInfo.GetRect().GetBottomLeft();
-            p2 = tabInfo.GetRect().GetBottomRight();
-            dc.SetPen(markerPen);
-            DrawMarker(p1, p2, dc, wxUP);
-        }
-    }
+    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style); }
 }
 
 void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
@@ -133,30 +101,6 @@ void clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect&
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
-}
-
-void clTabRendererGTK3::DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC& dc, wxDirection direction)
-{
-    const int width = GetMarkerWidth();
-    wxPoint point1 = pt1;
-    wxPoint point2 = pt2;
-    for(int i = 0; i < width; ++i) {
-        dc.DrawLine(point1, point2);
-        if(direction == wxDOWN) {
-            point1.y++;
-            point2.y++;
-        } else if(direction == wxUP) {
-            point1.y--;
-            point2.y--;
-        } else if(direction == wxLEFT) {
-            point1.x--;
-            point2.x--;
-        } else {
-            // wxRIGHT
-            point1.x++;
-            point2.x++;
-        }
-    }
 }
 
 void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,

@@ -5,9 +5,6 @@
 
 class WXDLLIMPEXP_SDK clTabRendererGTK3 : public clTabRenderer
 {
-protected:
-    void DrawMarker(const wxPoint& pt1, const wxPoint& pt2, wxDC& dc, wxDirection direction);
-
 public:
     clTabRendererGTK3();
     virtual ~clTabRendererGTK3();

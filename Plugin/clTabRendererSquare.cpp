@@ -74,11 +74,9 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(parent, dc,
-                   wxRect(tabInfo.m_bmpCloseX + rr.GetX(), tabInfo.m_bmpCloseY + rr.GetY(), CLOSE_BUTTON_SIZE,
-                          CLOSE_BUTTON_SIZE),
-                   colours, eButtonState::kNormal);
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
+    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style); }
     // Draw the separator line
     if(bVerticalTabs) {
         wxPoint pt_1 = rr.GetRightBottom();
@@ -97,31 +95,5 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
                                          wxDC& dc, const clTabColours& colours, size_t style)
 {
-    const int penWidth = 3;
-    wxPen markerPen(colours.markerColour, penWidth);
-    bool underlineTab = (style & kNotebook_UnderlineActiveTab);
-
-    // Draw marker line if needed
-    // wxRect confinedRect = parent->GetClientRect();
-    if(underlineTab) {
-        wxPoint p1, p2;
-        if((style & kNotebook_LeftTabs) || (style & kNotebook_RightTabs)) {
-            p1 = activeTab->GetRect().GetTopLeft();
-            p2 = activeTab->GetRect().GetBottomLeft();
-            p1.y += 1;
-            p2.y -= 1;
-            p1.x += 1;
-            p2.x += 1;
-            dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
-        } else {
-
-            // Bottom tabs
-            p1 = activeTab->GetRect().GetTopLeft();
-            p2 = activeTab->GetRect().GetBottomLeft();
-            dc.SetPen(markerPen);
-            dc.DrawLine(p1, p2);
-        }
-    }
     ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }

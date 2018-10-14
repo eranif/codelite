@@ -26,6 +26,7 @@
 #ifndef ADDFUNCTIONSIMPDLG_H
 #define ADDFUNCTIONSIMPDLG_H
 
+#include <wx/treebase.h>
 #include "entry.h"
 #include "wxcrafter.h"
 #include <wx/arrstr.h>

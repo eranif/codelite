@@ -94,9 +94,6 @@ ColoursAndFontsManager::ColoursAndFontsManager()
         m_defaultLexer.Reset(new LexerConf());
         m_defaultLexer->FromXml(doc.GetRoot());
     }
-
-    m_globalBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    m_globalFgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     m_lexersVersion = clConfig::Get().Read(LEXERS_VERSION_STRING, LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS);
 }
 
@@ -165,11 +162,7 @@ void ColoursAndFontsManager::Load()
     // Load the global settings
     if(GetConfigFile().FileExists()) {
         JSONRoot root(GetConfigFile());
-        if(root.isOk()) {
-            m_globalBgColour = root.toElement().namedObject("m_globalBgColour").toColour(m_globalBgColour);
-            m_globalFgColour = root.toElement().namedObject("m_globalFgColour").toColour(m_globalFgColour);
-            m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Default");
-        }
+        if(root.isOk()) { m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Default"); }
     }
 
     // Load the lexers
@@ -494,10 +487,7 @@ void ColoursAndFontsManager::SaveGlobalSettings()
 {
     // save the global settings
     JSONRoot root(cJSON_Object);
-    root.toElement()
-        .addProperty("m_globalBgColour", m_globalBgColour)
-        .addProperty("m_globalFgColour", m_globalFgColour)
-        .addProperty("m_globalTheme", m_globalTheme);
+    root.toElement().addProperty("m_globalTheme", m_globalTheme);
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
 

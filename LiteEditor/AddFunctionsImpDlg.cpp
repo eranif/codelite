@@ -31,6 +31,8 @@
 AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile)
     : AddFunctionsImplBaseDlg(parent)
 {
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    int functionIndex = clGetManager()->GetStdIcons()->GetMimeImageId(BitmapLoader::kFunctionPublic);
     m_dvListCtrl->SetSortFunction(nullptr); // Disable sorting
     // Keep the tags
     m_tags = tags;
@@ -38,7 +40,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     m_implArr.Clear();
     for(size_t i = 0; i < m_tags.size(); ++i) {
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, wxNOT_FOUND));
+        cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));
 
         // keep the implementation as the client data
         wxString body;

@@ -482,16 +482,6 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
     Save();
 }
 
-void EditorConfig::SetCurrentOutputviewFgColour(const wxString& colourstring)
-{
-    ColoursAndFontsManager::Get().SetGlobalFgColour(colourstring);
-}
-
-void EditorConfig::SetCurrentOutputviewBgColour(const wxString& colourstring)
-{
-    ColoursAndFontsManager::Get().SetGlobalBgColour(colourstring);
-}
-
 // Singleton
 static EditorConfig* gs_EditorConfig = NULL;
 void EditorConfigST::Free()

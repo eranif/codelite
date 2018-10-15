@@ -44,7 +44,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     // Active tab
     colours.activeTabTextColour = DrawingUtils::GetButtonTextColour();
     colours.activeTabBgColour = activeTabBGColour;
-    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(90);
+    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(75);
     colours.activeTabInnerPenColour = activeTabBGColour.ChangeLightness(110);
 
     // Inactive tab

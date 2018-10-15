@@ -80,7 +80,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
         // Draw the X button
         DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
-    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style); }
+    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style | kNotebook_UnderlineActiveTab); }
 }
 
 void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,

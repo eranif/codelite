@@ -618,6 +618,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         break;
     }
     wxRendererNative::Get().DrawTitleBarBitmap(win, dc, rect, wxTITLEBAR_BUTTON_CLOSE, flags);
+#ifdef __WXMSW__
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(bgColouur);
+    dc.DrawRectangle(rect);
+#endif
 #else
     // Calculate the circle radius:
     wxRect innerRect(rect);

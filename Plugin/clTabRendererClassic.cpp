@@ -36,7 +36,7 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour
     colours.inactiveTabTextColour = colours.activeTabTextColour.ChangeLightness(80);
     colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(110);
-    colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
+    colours.tabAreaColour = colours.inactiveTabBgColour;
 }
 
 void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour)
@@ -52,7 +52,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     colours.inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(130);
-    colours.tabAreaColour = DrawingUtils::GetPanelBgColour();
+    colours.tabAreaColour = colours.inactiveTabBgColour;
 }
 
 void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
@@ -127,4 +127,29 @@ void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
     wxUnusedVar(dc);
     wxUnusedVar(colors);
     wxUnusedVar(style);
+}
+
+void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                                          size_t style)
+{
+    clTabColours c = colours;
+    if(DrawingUtils::IsDark(colours.activeTabBgColour)) {
+        InitDarkColours(c, colours.activeTabBgColour);
+    } else {
+        InitLightColours(c, colours.activeTabBgColour);
+    }
+    c.tabAreaColour = c.tabAreaColour.ChangeLightness(DrawingUtils::IsDark(c.tabAreaColour) ? 110 : 130);
+    clTabRenderer::DrawBackground(parent, dc, rect, c, style);
+}
+
+void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
+                                              const clTabColours& colours, size_t style)
+{
+    wxUnusedVar(parent);
+    dc.SetPen(colours.activeTabBgColour);
+    if(style & kNotebook_BottomTabs) {
+        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
+    } else {
+        dc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
+    }
 }

@@ -389,8 +389,8 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
     wxUnusedVar(parent);
     wxUnusedVar(colours);
     wxUnusedVar(style);
-    dc.SetPen(DrawingUtils::GetPanelBgColour());
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.SetPen(colours.tabAreaColour);
+    dc.SetBrush(colours.tabAreaColour);
     dc.DrawRectangle(clientRect);
 }
 

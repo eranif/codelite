@@ -68,6 +68,10 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     m_chevronRect = wxRect();
 
     wxRect clientRect = GetClientRect();
+#ifdef __WXOSX__
+    clientRect.Inflate(1);
+#endif
+
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
     clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
     DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));

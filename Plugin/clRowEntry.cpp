@@ -25,6 +25,12 @@ int clRowEntry::X_SPACER = 5;
 int clRowEntry::Y_SPACER = 3;
 #endif
 
+#ifdef __WXOSX__
+#define IS_OSX 1
+#else
+#define IS_OSX 0
+#endif
+
 struct clClipperHelper {
 
     bool m_used = false;
@@ -330,7 +336,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             if(HasChildren()) {
                 wxRect buttonRect = GetButtonRect();
                 textXOffset += buttonRect.GetWidth();
-                if(m_tree->IsNativeTheme()) {
+                if(m_tree->IsNativeTheme() && !IS_OSX) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) { flags |= wxCONTROL_EXPANDED; }
                     int button_width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);

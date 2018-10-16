@@ -393,6 +393,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 #endif
 
+#ifdef __WXOSX__
+    clientRect.Inflate(1);
+#endif
+
     GetArt()->DrawBackground(this, gcdc, clientRect, m_colours, m_style);
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs[i]->CalculateOffsets(GetStyle());

@@ -187,6 +187,10 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                 if(btn->IsToggle()) {
                     // Change the button state
                     btn->Check(!btn->IsChecked());
+                    
+                    // The hover state is the opposite to the check status
+                    btn->SetHover(!btn->IsChecked());
+                    
                     // Fire an event with proper IsChecked() set
                     wxCommandEvent clicked(wxEVT_TOOL, btn->GetId());
                     clicked.SetEventObject(this);
@@ -241,6 +245,7 @@ void clToolBar::OnMotion(wxMouseEvent& event)
         if(button->Contains(pos)) {
             if(!button->IsHover()) {
                 // a refresh is needed
+                button->SetHover(true);
                 refreshNeeded = true;
             }
             if(button->IsSeparator() || button->IsSpacer()) {
@@ -259,7 +264,8 @@ void clToolBar::OnMotion(wxMouseEvent& event)
                 // a refresh is needed
                 refreshNeeded = true;
             }
-            //button->ClearRenderFlags();
+            // Clear the hover flag
+            button->SetHover(false);
         }
     }
     if(refreshNeeded) {

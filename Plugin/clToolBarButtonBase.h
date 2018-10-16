@@ -104,7 +104,6 @@ public:
     bool IsPressed() const { return m_renderFlags & kPressed; }
     void SetHover(bool b)
     {
-        ClearRenderFlags();
         EnableRenderFlag(kHover, b);
     }
     void SetPressed(bool b)

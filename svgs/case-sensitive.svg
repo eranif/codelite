@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="-136.15944"
+     inkscape:cx="-311.15944"
      inkscape:cy="295.11772"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -57,16 +57,16 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot4136"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#7f7f82;fill-opacity:1;stroke:none;stroke-width:0.99392229;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:'PT Mono';-inkscape-font-specification:'PT Mono, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#747474;fill-opacity:1;stroke:#747474;stroke-width:0.99392229;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
        transform="matrix(9.5340218,0,0,12.659795,-397.20886,-265.75453)"><flowRegion
          id="flowRegion4138"
-         style="fill:#7f7f82;fill-opacity:1;stroke:none;stroke-opacity:1;"><rect
+         style="fill:#747474;fill-opacity:1;stroke:#747474;stroke-opacity:1;"><rect
            id="rect4140"
            width="364"
            height="271"
            x="46"
            y="69"
-           style="fill:#7f7f82;fill-opacity:1;stroke:none;stroke-width:0.99392229;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;" /></flowRegion><flowPara
+           style="fill:#747474;fill-opacity:1;stroke:#747474;stroke-width:0.99392229;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;" /></flowRegion><flowPara
          id="flowPara4142"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Shruti;-inkscape-font-specification:'Shruti Bold';fill:#7f7f82;fill-opacity:1;stroke:none;stroke-opacity:1;">Aa</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:40px;line-height:1.25;font-family:Shruti;-inkscape-font-specification:'Shruti Bold';fill:#747474;fill-opacity:1;stroke:#747474;stroke-opacity:1;">Aa</flowPara></flowRoot>  </g>
 </svg>

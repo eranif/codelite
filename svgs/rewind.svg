@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="16"
+   height="16"
+   id="svg2415">
+  <defs
+     id="defs2417">
+    <linearGradient
+       id="linearGradient2856">
+      <stop
+         id="stop2858"
+         style="stop-color:#eeeeec;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop2860"
+         style="stop-color:#babdb6;stop-opacity:1"
+         offset="0.78130704" />
+      <stop
+         id="stop2862"
+         style="stop-color:#a1a59b;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3703">
+      <stop
+         id="stop3705"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3707"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3615">
+      <stop
+         id="stop3617"
+         style="stop-color:#eeeeec;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3619"
+         style="stop-color:#babdb6;stop-opacity:1"
+         offset="0.69580418" />
+      <stop
+         id="stop3621"
+         style="stop-color:#a1a59b;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="4"
+       y1="5"
+       x2="1"
+       y2="13"
+       id="linearGradient3689"
+       xlink:href="#linearGradient2856"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,15.999316,0)" />
+    <linearGradient
+       x1="10"
+       y1="5"
+       x2="7"
+       y2="13"
+       id="linearGradient3713"
+       xlink:href="#linearGradient3615"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,14.999658,0)" />
+    <linearGradient
+       x1="8"
+       y1="4"
+       x2="8"
+       y2="13"
+       id="linearGradient3721"
+       xlink:href="#linearGradient3703"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,14.999658,0)" />
+    <linearGradient
+       x1="8"
+       y1="4"
+       x2="8"
+       y2="13"
+       id="linearGradient3725"
+       xlink:href="#linearGradient3703"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,21.999316,0)" />
+  </defs>
+  <path
+     d="m 15.496665,3.502 0,9.995139 L 7.4996577,8.5 15.496665,3.502 z"
+     id="path5566"
+     style="fill:url(#linearGradient3689);fill-opacity:1;fill-rule:nonzero;stroke:#888a86;stroke-width:1.0053153;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate" />
+  <path
+     d="m 8.4970077,3.502 0,9.995139 L 0.5,8.5 8.4970077,3.502 z"
+     id="path2854"
+     style="fill:url(#linearGradient3713);fill-opacity:1;fill-rule:nonzero;stroke:#888a86;stroke-width:1.0053153;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate" />
+  <path
+     d="m 7.4996577,5.4375 0,6.125 L 2.218,8.5 7.4996577,5.4375 z"
+     id="path3711"
+     style="opacity:0.5;fill:none;stroke:url(#linearGradient3721);stroke-width:1.0053153;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate" />
+  <path
+     d="m 14.499316,5.4375 0,6.125 L 9.2176577,8.5 14.499316,5.4375 z"
+     id="path3723"
+     style="opacity:0.5;fill:none;stroke:url(#linearGradient3725);stroke-width:1.0053153;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible;enable-background:accumulate" />
+</svg>

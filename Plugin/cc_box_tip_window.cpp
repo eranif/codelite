@@ -195,7 +195,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     bool vPositioned = false;
-    wxSize displaySize = ::wxGetDisplaySize();
+    wxSize displaySize = ::clGetDisplaySize();
     if((pt.x + tipSize.x) > displaySize.x) {
         // Move the tip to the left
         pt = windowPos;

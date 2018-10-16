@@ -696,7 +696,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
 
     int lineHeight = textSize.y + 3; // 3 pixels margins
     wxRect rect = GetRect();
-    wxSize screenSize = ::wxGetDisplaySize();
+    wxSize screenSize = ::clGetDisplaySize();
 
     // determine the box x position
     int wordStart = m_startPos;

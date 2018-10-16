@@ -621,4 +621,9 @@ WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
  */
 WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
 
+/**
+ * @brief return the screen size, taking dual or more screens into account
+ */
+WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
+
 #endif // GLOBALS_H

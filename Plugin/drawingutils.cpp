@@ -315,28 +315,23 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar)
 {
 #ifdef __WXMSW__
-    if(miniToolbar && false) {
-        wxColour bgColour = GetMenuBarBgColour(true);
-        dc.SetPen(bgColour);
-        dc.SetBrush(bgColour);
-        dc.DrawRectangle(rect);
-    } else {
-        wxColour topColour(*wxWHITE);
-        wxColour brushColour(GetMenuBarBgColour(false));
 
-        wxColour bottomColour = brushColour;
-        bottomColour = bottomColour.ChangeLightness(90);
+    wxColour topColour(*wxWHITE);
+    wxColour brushColour(GetMenuBarBgColour(false));
 
-        dc.SetPen(brushColour);
-        dc.SetBrush(brushColour);
-        dc.DrawRectangle(rect);
+    wxColour bottomColour = brushColour;
+    bottomColour = bottomColour.ChangeLightness(90);
 
-        dc.SetPen(topColour);
-        dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    dc.SetPen(brushColour);
+    dc.SetBrush(brushColour);
+    dc.DrawRectangle(rect);
 
-        dc.SetPen(bottomColour);
-        dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-    }
+    dc.SetPen(topColour);
+    dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+
+    dc.SetPen(bottomColour);
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+
 #elif defined(__WXOSX__)
     wxColour bgColour = GetMenuBarBgColour(false);
     dc.SetPen(bgColour);

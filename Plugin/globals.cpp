@@ -60,6 +60,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
+#include <wx/display.h>
 #include <wx/filename.h>
 #include <wx/fontmap.h>
 #include <wx/graphics.h>
@@ -2287,6 +2288,17 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
         result << lines.Item(i);
     }
     return result;
+}
+
+wxSize clGetDisplaySize()
+{
+    int width = 0;
+    int height = ::wxGetDisplaySize().GetHeight();
+    for(size_t i = 0; i < wxDisplay::GetCount(); ++i) {
+        wxDisplay display(i);
+        width += display.GetClientArea().GetWidth();
+    }
+    return wxSize(width, height);
 }
 
 void clFitColumnWidth(wxDataViewCtrl* ctrl)

@@ -12,7 +12,7 @@
    width="48"
    version="1.1"
    id="svg6"
-   sodipodi:docname="find.svg"
+   sodipodi:docname="debugger_restart.svg"
    inkscape:version="0.92.1 r15371">
   <metadata
      id="metadata12">
@@ -22,7 +22,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -37,21 +36,21 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1308"
-     inkscape:window-height="739"
+     inkscape:window-width="1429"
+     inkscape:window-height="887"
      id="namedview8"
      showgrid="false"
      inkscape:zoom="4.9166667"
-     inkscape:cx="-17.491525"
-     inkscape:cy="24"
-     inkscape:window-x="351"
-     inkscape:window-y="81"
+     inkscape:cx="24.508475"
+     inkscape:cy="23.491525"
+     inkscape:window-x="258"
+     inkscape:window-y="73"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg6" />
   <path
-     d="M 34.305317,30.188679 H 32.123499 L 31.368782,29.433963 C 34.058319,26.319039 35.67753,22.271012 35.67753,17.838765 35.67753,7.9862779 27.691252,0 17.838765,0 7.986278,0 0,7.9862779 0,17.838765 0,27.691252 7.986278,35.67753 17.838765,35.67753 c 4.432247,0 8.480274,-1.619211 11.595198,-4.295025 l 0.754716,0.754716 v 2.168096 L 43.910807,48 48,43.910807 Z m -16.466552,0 c -6.819898,0 -12.349914,-5.530017 -12.349914,-12.349914 0,-6.819898 5.530016,-12.3499142 12.349914,-12.3499142 6.819897,0 12.349914,5.5300162 12.349914,12.3499142 0,6.819897 -5.530017,12.349914 -12.349914,12.349914 z"
+     d="M 24,6.5454545 V 0 L 15.272728,8.7272727 24,17.454545 v -6.545454 c 7.232727,0 13.090909,5.858182 13.090909,13.090909 0,2.214545 -0.556364,4.287273 -1.516364,6.12 l 3.185454,3.185455 C 40.45091,30.6 41.454545,27.425455 41.454545,24 41.454545,14.356364 33.643636,6.5454545 24,6.5454545 Z m 0,30.5454545 c -7.232728,0 -13.090909,-5.858182 -13.090909,-13.090909 0,-2.214545 0.556364,-4.287273 1.516364,-6.12 L 9.2399995,14.694545 C 7.5490909,17.4 6.5454545,20.574545 6.5454545,24 6.5454545,33.643636 14.356364,41.454545 24,41.454545 V 48 L 32.727272,39.272727 24,30.545455 Z"
      id="path2"
-     style="fill:#267cb5;fill-opacity:1;stroke-width:1.37221277"
+     style="fill:#267cb5;fill-opacity:1;stroke-width:1.09090912"
      inkscape:connector-curvature="0" />
   <path
      d="M0 0h48v48H0z"

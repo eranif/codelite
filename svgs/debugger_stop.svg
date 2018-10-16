@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16px"
+   version="1.1"
+   viewBox="0 0 16 16"
+   width="16px"
+   id="svg9"
+   sodipodi:docname="debugger_stop.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="841"
+     inkscape:window-height="480"
+     id="namedview11"
+     showgrid="false"
+     inkscape:zoom="14.75"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg9" />
+  <title
+     id="title2" />
+  <defs
+     id="defs4" />
+  <g
+     fill="none"
+     fill-rule="evenodd"
+     id="Icons with numbers"
+     stroke="none"
+     stroke-width="1"
+     style="fill:#267cb5;fill-opacity:1">
+    <g
+       fill="#000000"
+       id="Group"
+       transform="translate(-336.000000, -528.000000)"
+       style="fill:#267cb5;fill-opacity:1">
+      <path
+         d="M344,544 C339.581722,544 336,540.418278 336,536 C336,531.581722 339.581722,528 344,528 C348.418278,528 352,531.581722 352,536 C352,540.418278 348.418278,544 344,544 L344,544 Z M348,532 L340,532 L340,536 L340,540 L348,540 L348,532 L348,532 Z M348,532"
+         id="Shape copy 4"
+         style="fill:#267cb5;fill-opacity:1" />
+    </g>
+  </g>
+</svg>

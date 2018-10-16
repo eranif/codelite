@@ -23,7 +23,7 @@ clBitmap::~clBitmap() {}
 bool clBitmap::LoadFile(const wxString& name, wxBitmapType type)
 {
     wxFileName filename(name);
-#if !defined(__WXOSX__) && !defined(__WXGTK3__)
+#if !defined(__WXOSX__)
     double scale = 1.0;
     if(ShouldLoadHiResImages()) {
         wxFileName hiResFileName = filename;
@@ -53,7 +53,7 @@ bool clBitmap::ShouldLoadHiResImages()
         GdkScreen *screen = gdk_screen_get_default();
         if(screen) {
             double res = gdk_screen_get_resolution(screen);
-            shouldLoad = ((res / 96.) >= 1.5); 
+            shouldLoad = ((res / 96.) > 1.0); 
         }
 #else
         shouldLoad = ((wxScreenDC().GetPPI().y / 96.) >= 1.5);

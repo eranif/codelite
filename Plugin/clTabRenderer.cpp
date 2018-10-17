@@ -326,9 +326,9 @@ void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, con
 {
     wxColour buttonColour;
     if(DrawingUtils::IsDark(colours.tabAreaColour)) {
-        buttonColour = *wxWHITE;
+        buttonColour = colours.tabAreaColour.ChangeLightness(150);
     } else {
-        buttonColour = *wxBLACK;
+        buttonColour = colours.tabAreaColour.ChangeLightness(50);
     }
     DrawingUtils::DrawDropDownArrow(win, dc, rect, buttonColour);
 }

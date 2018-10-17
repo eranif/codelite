@@ -672,8 +672,9 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     wxColour buttonColour = colour;
     if(!buttonColour.IsOk()) {
         // No colour provided, provide one
-        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
-            buttonColour = wxColour("#FDFEFE");
+        wxColour buttonFace = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+        if(DrawingUtils::IsDark(buttonFace)) {
+            buttonColour = buttonFace.ChangeLightness(150);
         } else {
             buttonColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
         }
@@ -731,7 +732,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
         dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
         dc.SetPen(borderColour);
         dc.DrawRoundedRectangle(choiceRect, 3.0);
-        DrawDropDownArrow(win, dc, dropDownRect, borderColour);
+        DrawDropDownArrow(win, dc, dropDownRect);
     } else {
         wxRendererNative::Get().DrawChoice(win, dc, choiceRect, 0);
     }

@@ -181,7 +181,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Draw the items
     wxRect clientRect = GetItemsRect();
     // Set the width of the clipping region to match the header's width
-    clientRect.SetWidth(wxMax(GetHeader()->GetWidth(), clientRect.GetWidth()) + 1);
+    clientRect.SetWidth(clientRect.GetWidth() + m_firstColumn + 1);
     dc.SetClippingRegion(clientRect);
     RenderItems(dc, items);
     dc.DestroyClippingRegion();

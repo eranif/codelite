@@ -22,8 +22,8 @@ clTabRendererSquare::clTabRendererSquare()
 #endif
     majorCurveWidth = 0;
     smallCurveWidth = 0;
-    overlapWidth = 2;
-    verticalOverlapWidth = 2;
+    overlapWidth = 0;
+    verticalOverlapWidth = 0;
     xSpacer = 15;
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
 }
@@ -95,5 +95,5 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
                                          wxDC& dc, const clTabColours& colours, size_t style)
 {
-    ClearActiveTabExtraLine(activeTab, dc, colours, style);
+    //ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }

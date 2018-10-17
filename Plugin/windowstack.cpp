@@ -122,4 +122,10 @@ void WindowStack::DoHideNoActiveWindows()
     std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
         if(w != m_activeWin) { w->Hide(); }
     });
+    
+#ifdef __WXOSX__
+    if(m_activeWin) {
+        m_activeWin->Refresh();
+    }
+#endif
 }

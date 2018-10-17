@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.0"
+   width="16"
+   height="16"
+   id="svg3247">
+  <defs
+     id="defs3249">
+    <linearGradient
+       x1="23.878077"
+       y1="18.765108"
+       x2="23.878077"
+       y2="29.707441"
+       id="linearGradient2401"
+       xlink:href="#linearGradient3941"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.709648,0,0,0.7053673,-8.9450299,-8.2362938)" />
+    <linearGradient
+       id="linearGradient3180">
+      <stop
+         id="stop3182"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3184"
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="8"
+       y1="0"
+       x2="8"
+       y2="16.004318"
+       id="linearGradient3190"
+       xlink:href="#linearGradient3180"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient3941">
+      <stop
+         id="stop3945"
+         style="stop-color:#e35d4f;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3947"
+         style="stop-color:#c6262e;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <g
+     id="layer1">
+    <path
+       d="m 15.5,5.5 0,5 -15,0 0,-5 15,0 z"
+       id="path2262"
+       style="fill:url(#linearGradient2401);fill-opacity:1;fill-rule:evenodd;stroke:#a53738;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
+    <path
+       d="m 1.5,6.5 0,3 13,0 0,-3 -13,0 z"
+       id="path3188"
+       style="opacity:0.4;fill:none;stroke:url(#linearGradient3190);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
+  </g>
+</svg>

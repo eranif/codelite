@@ -186,7 +186,12 @@ void BitmapLoader::initialize()
         }
     }
 
-    wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps.zip");
+    // Load the bitmaps based on the current theme
+    wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
+    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+        fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
+    }
+
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
@@ -277,7 +282,8 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", bitmap_size), FileExtManager::TypeSvg);
         m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened", bitmap_size),
                                 FileExtManager::TypeWorkspaceFolderExpanded);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", bitmap_size), FileExtManager::TypeWorkspaceFolder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", bitmap_size),
+                                FileExtManager::TypeWorkspaceFolder);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);

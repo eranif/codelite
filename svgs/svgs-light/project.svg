@@ -14,8 +14,8 @@
    viewBox="0 0 50 50"
    width="50px"
    xml:space="preserve"
-   sodipodi:docname="folder-yellow.svg"
-   inkscape:version="0.92.1 r15371"><metadata
+   sodipodi:docname="project.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"><metadata
      id="metadata13"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
@@ -33,8 +33,8 @@
      id="namedview9"
      showgrid="false"
      inkscape:zoom="4.72"
-     inkscape:cx="46.056462"
-     inkscape:cy="24.470339"
+     inkscape:cx="8.9801908"
+     inkscape:cy="22.669492"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -50,4 +50,4 @@
      stroke-miterlimit="10"
      stroke-width="2"
      id="path4"
-     style="fill:#267cb5;fill-opacity:1;stroke:#206898;stroke-opacity:1" /></svg>
+     style="fill:#729fcf;fill-opacity:1;stroke:#206898;stroke-opacity:1" /></svg>

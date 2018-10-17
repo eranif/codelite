@@ -8,7 +8,6 @@
 #include "clToolBarStretchableSpace.h"
 #include "clToolBarToggleButton.h"
 #include "drawingutils.h"
-#include "cl_config.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -24,7 +23,6 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     , m_popupShown(false)
     , m_flags(0)
 {
-    SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetMiniToolBar(true);
 

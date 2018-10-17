@@ -14,7 +14,7 @@
    viewBox="0 0 31.999999 31.999998"
    id="svg4138"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="git-commit.svg">
   <defs
      id="defs4140" />
@@ -26,18 +26,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.04"
-     inkscape:cx="119.5012"
-     inkscape:cy="-19.044555"
+     inkscape:cx="119.99625"
+     inkscape:cy="-21.024753"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showborder="true"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="1920"
-     inkscape:window-height="983"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="2560"
+     inkscape:window-height="1361"
+     inkscape:window-x="1920"
+     inkscape:window-y="41"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata4143">
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -57,21 +57,21 @@
      id="layer1"
      transform="translate(0,-1020.3622)">
     <path
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:4.99999952;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#806678;stroke-width:4.99999952;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        d="m 23.499997,1036.3622 a 7.4999987,7.4999991 0 0 1 -7.499999,7.5 7.4999987,7.4999991 0 0 1 -7.499999,-7.5 7.4999987,7.4999991 0 0 1 7.499999,-7.5 7.4999987,7.4999991 0 0 1 7.499999,7.5 z"
        id="path4686"
        inkscape:connector-curvature="0"
        inkscape:transform-center-x="4.9504937"
        inkscape:transform-center-y="-54.455427" />
     <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#806678;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4691-2"
        width="7.999999"
        height="5.999999"
        x="23.999998"
        y="1033.3622" />
     <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#806678;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4691-2-7"
        width="7.999999"
        height="5.9999986"

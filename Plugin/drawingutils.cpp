@@ -467,12 +467,8 @@ double wxOSXGetMainScreenContentScaleFactor();
 
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
-#ifdef __WXOSX__
-    return bmp.ConvertToDisabled(255);
-#elif defined(__WXGTK__) || defined(__WXMSW__)
     bool bDarkBG = IsDark(GetPanelBgColour());
-    return bmp.ConvertToDisabled(bDarkBG ? 20 : 255);
-#endif
+    return bmp.ConvertToDisabled(bDarkBG ? 69 : 255);
 }
 
 #define DROPDOWN_ARROW_SIZE 20

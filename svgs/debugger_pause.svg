@@ -13,7 +13,7 @@
    width="32"
    id="svg14"
    sodipodi:docname="interrupt.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.1 r15371">
   <metadata
      id="metadata18">
     <rdf:RDF>
@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -40,10 +40,10 @@
      id="namedview16"
      showgrid="false"
      inkscape:zoom="7.8666667"
-     inkscape:cx="7"
+     inkscape:cx="-18.805085"
      inkscape:cy="15"
      inkscape:window-x="430"
-     inkscape:window-y="205"
+     inkscape:window-y="152"
      inkscape:window-maximized="0"
      inkscape:current-layer="Pause" />
   <desc
@@ -61,7 +61,7 @@
        width="3"
        x="11"
        y="0"
-       style="fill:#267cb5;fill-opacity:1" />
+       style="fill:#806678;fill-opacity:1" />
     <rect
        height="30"
        id="rect9"
@@ -69,6 +69,6 @@
        width="3"
        x="0"
        y="0"
-       style="fill:#267cb5;fill-opacity:1" />
+       style="fill:#806678;fill-opacity:1" />
   </g>
 </svg>

@@ -11,7 +11,7 @@
    width="64"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="placeholder.svg">
   <metadata
      id="metadata10">
@@ -21,7 +21,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,7 +41,7 @@
      id="namedview6"
      showgrid="false"
      inkscape:zoom="1.01"
-     inkscape:cx="255.91251"
+     inkscape:cx="55.91251"
      inkscape:cy="227.08911"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -50,5 +50,6 @@
   <path
      d="m 27,32 c 0,-2.763672 2.236328,-5 5,-5 2.762461,0 5,2.236328 5,5 0,2.763672 -2.237539,5 -5,5 -2.763653,0 -5,-2.236328 -5,-5 z"
      id="path4"
-     inkscape:connector-curvature="0" />
+     inkscape:connector-curvature="0"
+     style="fill:#dd4814;fill-opacity:1" />
 </svg>

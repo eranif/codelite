@@ -718,8 +718,23 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxRendererNative::Get().DrawPushButton(win, dc, choiceRect, 0);
     wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, 0);
 #else
-    // Windows & OSX
-    wxRendererNative::Get().DrawChoice(win, dc, choiceRect, 0);
+    // OSX
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    if(IsDark(bgColour)) {
+        // On Dark theme (Mojave and later)
+        int width = choiceRect.GetHeight();
+        wxRect dropDownRect = wxRect(0, 0, width, width);
+        int x = choiceRect.GetX() + choiceRect.GetWidth() - dropDownRect.GetWidth();
+        dropDownRect.SetX(x);
+        dropDownRect = dropDownRect.CenterIn(choiceRect, wxVERTICAL);
+        wxColour borderColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNHIGHLIGHT);
+        dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+        dc.SetPen(borderColour);
+        dc.DrawRoundedRectangle(choiceRect, 3.0);
+        DrawDropDownArrow(win, dc, dropDownRect, borderColour);
+    } else {
+        wxRendererNative::Get().DrawChoice(win, dc, choiceRect, 0);
+    }
 #endif
 
     // Common to all platforms: draw the text + bitmap

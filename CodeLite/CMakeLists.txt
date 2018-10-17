@@ -119,7 +119,7 @@ else (UNIX AND NOT APPLE)
                           wxsqlite3 
                           ${LIBSSH_LIB} 
                           ${ADDITIONAL_LIBRARIES} 
-                          -lz -lcrypto)
+                          -lz /usr/lib/libcrypto.dylib)
 endif ( UNIX AND NOT APPLE )
 
 if (NOT MINGW)

@@ -21,7 +21,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,7 +41,7 @@
      id="namedview9"
      showgrid="false"
      inkscape:zoom="1.84375"
-     inkscape:cx="-26.576271"
+     inkscape:cx="-121.49153"
      inkscape:cy="64"
      inkscape:window-x="99"
      inkscape:window-y="246"
@@ -54,12 +54,12 @@
      id="path6" />
   <path
      inkscape:connector-curvature="0"
-     style="fill:#3465a4;stroke:#3465a4;stroke-width:3.57509804;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+     style="fill:#267cb5;stroke:#267cb5;stroke-width:3.57509804;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
      d="m 29.329416,76.174867 v 0 a 3,2.3964987 0 0 0 0.44,0.28758 l 0.24,0.103848 a 1.74,1.3899692 0 0 0 0.59,0.19172 l 0.25,0.05592 v 0 a 3,2.3964987 0 0 0 1.16,0 l 0.26,-0.06391 0.3,-0.07189 a 3,2.3964987 0 0 0 0.3,-0.127814 l 0.21,-0.09586 a 3,2.3964987 0 0 0 0.46,-0.303556 L 60.449411,54.678274 a 3,2.3964987 0 1 0 -4.21,-3.363086 L 34.449416,68.697792 V 4.1840467 a 3,2.3964987 0 0 0 -6,0 V 68.697792 L 6.6594159,51.315188 A 3,2.3964987 0 0 0 2.449416,54.678274 Z"
      id="path4-1" />
   <path
      inkscape:connector-curvature="0"
-     style="fill:#3465a4;stroke:#3465a4;stroke-width:3.57509804;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:#267cb5;stroke:#267cb5;stroke-width:3.57509804;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
      d="m 94.317159,76.174867 v 0 a 3,2.3964987 0 0 0 0.44,0.28758 l 0.24,0.10385 a 1.74,1.3899692 0 0 0 0.59,0.19172 l 0.25,0.0559 v 0 a 3,2.3964987 0 0 0 1.16,0 l 0.26,-0.0639 0.3,-0.0719 a 3,2.3964987 0 0 0 0.3,-0.12782 l 0.21,-0.0959 a 3,2.3964987 0 0 0 0.46,-0.30355 l 26.909991,-21.47263 a 3,2.3964987 0 1 0 -4.21,-3.36309 L 99.437159,68.697737 V 4.1840467 a 3,2.3964987 0 0 0 -6,0 V 68.697797 l -21.79,-17.38261 a 3,2.3964987 0 0 0 -4.21,3.36309 z"
      id="path4-1-1" />
 </svg>

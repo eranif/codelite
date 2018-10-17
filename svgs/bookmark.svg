@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16px"
+   version="1.1"
+   viewBox="0 0 16 16"
+   width="16px"
+   id="svg9"
+   sodipodi:docname="bookmark.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1288"
+     inkscape:window-height="714"
+     id="namedview11"
+     showgrid="false"
+     inkscape:zoom="14.75"
+     inkscape:cx="8"
+     inkscape:cy="8.9152542"
+     inkscape:window-x="768"
+     inkscape:window-y="374"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg9" />
+  <defs
+     id="defs4" />
+  <g
+     fill="none"
+     fill-rule="evenodd"
+     id="Icons with numbers"
+     stroke="none"
+     stroke-width="1"
+     style="fill:#dd4814;stroke:none;stroke-opacity:1;fill-opacity:1">
+    <g
+       fill="#000000"
+       id="Group"
+       transform="translate(-672.000000, -432.000000)"
+       style="fill:#dd4814;stroke:none;stroke-opacity:1;fill-opacity:1">
+      <path
+         d="M676,433 C676,432.447715 676.447715,432 677,432 L683,432 C683.552285,432 684,432.447715 684,433 L684,448 L680,442.970215 L676,448 Z M677,434 L677,445 L680,441.038574 L683,445 L683,434 C683,433.447715 682.552285,433 682,433 L678,433 C677.447715,433 677,433.447715 677,434 Z M677,434"
+         id="Rectangle 216 copy"
+         style="fill:#dd4814;stroke:none;stroke-opacity:1;fill-opacity:1" />
+    </g>
+  </g>
+</svg>

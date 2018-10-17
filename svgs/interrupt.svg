@@ -7,26 +7,25 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="48"
-   viewBox="0 0 48 48"
-   width="48"
+   height="32"
    version="1.1"
-   id="svg6"
+   viewBox="0 0 32 32"
+   width="32"
+   id="svg14"
    sodipodi:docname="interrupt.svg"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
-     id="metadata12">
+     id="metadata18">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <defs
-     id="defs10" />
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -36,24 +35,40 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1555"
-     inkscape:window-height="895"
-     id="namedview8"
+     inkscape:window-width="1098"
+     inkscape:window-height="890"
+     id="namedview16"
      showgrid="false"
-     inkscape:zoom="4.9166667"
-     inkscape:cx="-17.084746"
-     inkscape:cy="24.31342"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:zoom="7.8666667"
+     inkscape:cx="7"
+     inkscape:cy="15"
+     inkscape:window-x="430"
+     inkscape:window-y="205"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg6" />
-  <path
-     d="M0 0h48v48H0z"
-     fill="none"
-     id="path2" />
-  <path
-     d="M 24,0 C 10.74,0 0,10.74 0,24 0,37.26 10.74,48 24,48 37.26,48 48,37.26 48,24 48,10.74 37.26,0 24,0 Z M 21.6,33.6 H 16.8 V 14.4 h 4.8 z m 9.6,0 H 26.4 V 14.4 h 4.8 z"
-     id="path4"
-     style="fill:#267cb5;fill-opacity:1;stroke-width:1.20000005"
-     inkscape:connector-curvature="0" />
+     inkscape:current-layer="Pause" />
+  <desc
+     id="desc4" />
+  <defs
+     id="defs6" />
+  <g
+     id="Pause"
+     transform="matrix(1.0666667,0,0,1.0666667,8.5333335,-6e-7)"
+     style="fill:#267cb5;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1">
+    <rect
+       height="30"
+       id="Rectangle"
+       rx="1.5"
+       width="3"
+       x="11"
+       y="0"
+       style="fill:#267cb5;fill-opacity:1" />
+    <rect
+       height="30"
+       id="rect9"
+       rx="1.5"
+       width="3"
+       x="0"
+       y="0"
+       style="fill:#267cb5;fill-opacity:1" />
+  </g>
 </svg>

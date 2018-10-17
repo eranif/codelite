@@ -53,7 +53,7 @@ bool clBitmap::ShouldLoadHiResImages()
         GdkScreen *screen = gdk_screen_get_default();
         if(screen) {
             double res = gdk_screen_get_resolution(screen);
-            shouldLoad = ((res / 96.) > 1.0); 
+            shouldLoad = ((res / 96.) >= 1.5); 
         }
 #else
         shouldLoad = ((wxScreenDC().GetPPI().y / 96.) >= 1.5);

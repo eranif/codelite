@@ -91,8 +91,8 @@ public:
     bool IsCustomisationEnabled() const { return HasFlag(kShowCustomiseMenu); }
     void SetMiniToolBar(bool b) { EnableFlag(kMiniToolBar, b); }
     bool IsMiniToolBar() const { return HasFlag(kMiniToolBar); }
-    void SetGroupSapcing(int spacing) { m_groupSpacing = spacing; }
-    int GetGroupSapcing() const { return m_groupSpacing; }
+    void SetGroupSpacing(int spacing) { m_groupSpacing = spacing; }
+    int GetGroupSpacing() const { return m_groupSpacing; }
 
     /**
      * @brief add toolbar button

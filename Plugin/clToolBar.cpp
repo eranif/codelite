@@ -8,6 +8,7 @@
 #include "clToolBarStretchableSpace.h"
 #include "clToolBarToggleButton.h"
 #include "drawingutils.h"
+#include "cl_config.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -23,7 +24,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     , m_popupShown(false)
     , m_flags(0)
 {
-    SetGroupSapcing(20);
+    SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetMiniToolBar(true);
 
@@ -84,7 +85,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     for(size_t i = 0; i < groups.size(); ++i) {
         RenderGroup(xx, groups[i], gcdc, (i == (groups.size() - 1)));
         // Use a spacer of 10 pixels between groups
-        xx += GetGroupSapcing();
+        xx += GetGroupSpacing();
     }
 
     wxRect chevronRect = GetClientRect();
@@ -114,7 +115,7 @@ void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc,
         bgRect.SetHeight(bgRect.GetHeight() - 5);
         bgRect = bgRect.CenterIn(clientRect, wxVERTICAL);
 #endif
-        bgRect.SetWidth(bgRect.GetWidth() + GetGroupSapcing() / 2);
+        bgRect.SetWidth(bgRect.GetWidth() + GetGroupSpacing() / 2);
         {
             wxColour lineColour = DrawingUtils::GetMenuBarBgColour(IsMiniToolBar());
             lineColour = lineColour.ChangeLightness(90);
@@ -612,7 +613,7 @@ void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const w
     // Set a size to each stretchable button
     if(!spacers.empty()) {
         int spacer_width =
-            ((rect.GetWidth() - totalWidth - ((G.size() - 1) * GetGroupSapcing())) / spacers.size());
+            ((rect.GetWidth() - totalWidth - ((G.size() - 1) * GetGroupSpacing())) / spacers.size());
         for(clToolBarButtonBase* button : spacers) {
             button->Cast<clToolBarStretchableSpace>()->SetWidth(spacer_width < 0 ? 0 : spacer_width);
         }

@@ -90,9 +90,7 @@ static wxVariant MakeFileBitmapLabel(const wxString& filename)
 }
 
 // ---------------------------------------------------------------------
-void PopulateToolbarOverflow(
-    clToolBar* toolbar,
-    const GitImages& images) // Helper function, partly because there's no convenient wxAuiToolBarItem ctor
+void PopulateToolbarOverflow(clToolBar* toolbar)
 {
     static const char* labels[] = { wxTRANSLATE("Create local branch"),
                                     wxTRANSLATE("Switch to local branch"),
@@ -107,19 +105,9 @@ void PopulateToolbarOverflow(
                                     wxTRANSLATE("Plugin settings"),
                                     wxTRANSLATE("Set repository path"),
                                     wxTRANSLATE("Clone a git repository") };
-    static const char* bitmapnames[] = { "gitNewBranch",
-                                         "gitSwitchLocalBranch",
-                                         "gitSwitchRemoteBranch",
-                                         "",
-                                         "gitRefresh",
-                                         "gitApply",
-                                         "",
-                                         "gitStart",
-                                         "gitTrash",
-                                         "",
-                                         "gitSettings",
-                                         "gitPath",
-                                         "gitClone" };
+    static const char* bitmapnames[] = { "file_new", "split",          "remote-folder", "", "file_reload", "patch",
+                                         "",         "debugger_start", "clean",         "", "cog",         "folder",
+                                         "copy" };
     static const int IDs[] = { XRCID("git_create_branch"),
                                XRCID("git_switch_branch"),
                                XRCID("git_switch_to_remote_branch"),
@@ -143,7 +131,7 @@ void PopulateToolbarOverflow(
 
     for(size_t n = 0; n < IDsize; ++n) {
         if(IDs[n] != 0) {
-            toolbar->AddTool(IDs[n], labels[n], images.Bitmap(bitmapnames[n]));
+            toolbar->AddTool(IDs[n], labels[n], clGetManager()->GetStdIcons()->LoadBitmap(bitmapnames[n]));
         } else {
             toolbar->AddSeparator();
         }
@@ -218,25 +206,28 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), m_bitmapLoader->LoadBitmap("undo"),
                        _("Reset File"));
 
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_images.Bitmap("gitResetRepo"),
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), m_bitmapLoader->LoadBitmap("clean"),
                        _("Reset repository"));
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), m_images.Bitmap("gitPull"), _("Pull remote changes"),
+    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), m_bitmapLoader->LoadBitmap("pull"), _("Pull remote changes"),
                        wxITEM_DROPDOWN);
 
-    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), m_images.Bitmap("gitCommitLocal"), _("Commit local changes"));
-    m_toolbar->AddTool(XRCID("git_push"), _("Push"), m_images.Bitmap("gitPush"), _("Push local changes"));
-    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), m_images.Bitmap("gitRebase"), _("Rebase"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), m_bitmapLoader->LoadBitmap("git-commit"),
+                       _("Commit local changes"));
+    m_toolbar->AddTool(XRCID("git_push"), _("Push"), m_bitmapLoader->LoadBitmap("up"), _("Push local changes"));
+    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), m_bitmapLoader->LoadBitmap("merge"), _("Rebase"),
+                       wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_images.Bitmap("gitDiffs"), _("Show current diffs"));
-    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_images.Bitmap("gitCommitedFiles"),
+    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), m_bitmapLoader->LoadBitmap("diff"),
+                       _("Show current diffs"));
+    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), m_bitmapLoader->LoadBitmap("tasks"),
                        _("Browse commit history"));
-    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), m_images.Bitmap("gitBlame"), _("Git blame"));
+    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), m_bitmapLoader->LoadBitmap("finger"), _("Git blame"));
 
 #ifdef __WXMSW__
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_msysgit"), _("Open MSYS Git"), m_images.Bitmap("msysgit"),
+    m_toolbar->AddTool(XRCID("git_msysgit"), _("Open MSYS Git"), m_bitmapLoader->LoadBitmap("console"),
                        _("Open MSYS Git at the current file location"));
 #endif
 
@@ -247,7 +238,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
-    PopulateToolbarOverflow(m_toolbar, m_images);
+    PopulateToolbarOverflow(m_toolbar);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));

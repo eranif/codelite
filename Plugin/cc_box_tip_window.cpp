@@ -341,7 +341,7 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
 {
     clColours colors = DrawingUtils::GetColours();
-
+    
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) { colors.InitFromColour(editor->GetCtrl()->StyleGetBackground(0)); }
     
@@ -412,7 +412,6 @@ void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
             wxFont f = dc.GetFont();
             f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetFont(f);
-            dc.SetTextBackground(*wxWHITE);
             break;
         }
         case BOLD_END: {

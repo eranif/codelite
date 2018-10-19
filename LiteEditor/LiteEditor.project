@@ -423,12 +423,7 @@
       <File Name="pluginmgrdlg.cpp"/>
       <File Name="plugindlgbase.wxcp"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="DoxygenUI">
-      <File Name="commentpagebase.h"/>
-      <File Name="commentpage.cpp"/>
-      <File Name="commentpage.h"/>
-      <File Name="commentpagebase.cpp"/>
-    </VirtualDirectory>
+    <VirtualDirectory Name="DoxygenUI"/>
     <VirtualDirectory Name="Accelerators">
       <File Name="acceltabledlg.h"/>
       <File Name="acceltabledlg.cpp"/>

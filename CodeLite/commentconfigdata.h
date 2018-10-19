@@ -25,18 +25,17 @@
 #ifndef __commentconfigdata__
 #define __commentconfigdata__
 
-#include "serialized_object.h"
 #include "codelite_exports.h"
+#include "serialized_object.h"
 
 class WXDLLIMPEXP_CL CommentConfigData : public SerializedObject
 {
-    bool m_addStarOnCComment;
-    bool m_continueCppComment;
-    bool m_useSlash2Stars;
-    bool m_useShtroodel;
+    bool m_addStarOnCComment = true;
+    bool m_continueCppComment = false;
+    bool m_autoInsert = true;
+    bool m_useQtStyle = false;
     wxString m_classPattern;
     wxString m_functionPattern;
-    bool m_autoInsertAfterSlash2Stars;
 
 public:
     CommentConfigData();
@@ -51,21 +50,15 @@ public:
     void SetClassPattern(const wxString& classPattern) { this->m_classPattern = classPattern; }
     void SetContinueCppComment(const bool& continueCppComment) { this->m_continueCppComment = continueCppComment; }
     void SetFunctionPattern(const wxString& functionPattern) { this->m_functionPattern = functionPattern; }
-    void SetUseShtroodel(const bool& useShtroodel) { this->m_useShtroodel = useShtroodel; }
-    void SetUseSlash2Stars(const bool& useSlash2Stars) { this->m_useSlash2Stars = useSlash2Stars; }
-    // Getters
+
     const bool& GetAddStarOnCComment() const { return m_addStarOnCComment; }
     const wxString& GetClassPattern() const { return m_classPattern; }
     const bool& GetContinueCppComment() const { return m_continueCppComment; }
     const wxString& GetFunctionPattern() const { return m_functionPattern; }
-    bool GetUseShtroodel() const { return true; }
-    bool GetUseSlash2Stars() const { return m_useSlash2Stars; }
-    void SetAutoInsertAfterSlash2Stars(bool autoInsertAfterSlash2Stars)
-    {
-        this->m_autoInsertAfterSlash2Stars = autoInsertAfterSlash2Stars;
-    }
-    bool IsAutoInsertAfterSlash2Stars() const { return m_autoInsertAfterSlash2Stars; }
-
-    wxString GetCommentBlockPrefix() const { return GetUseSlash2Stars() ? wxString("/**") : wxString("/*!"); }
+    void SetUseQtStyle(bool useQtStyle) { this->m_useQtStyle = useQtStyle; }
+    bool IsUseQtStyle() const { return m_useQtStyle; }
+    void SetAutoInsert(bool b) { this->m_autoInsert = b; }
+    bool IsAutoInsert() const { return m_autoInsert; }
+    wxString GetCommentBlockPrefix() const { return IsUseQtStyle() ? wxString("/*!") : wxString("/**"); }
 };
 #endif // __commentconfigdata__

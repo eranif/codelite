@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editorsettingscommentsdoxygenpanel.h"
-#include "commentconfigdata.h"
-#include "globals.h"
+#include "ColoursAndFontsManager.h"
 #include "EditDlg.h"
+#include "commentconfigdata.h"
+#include "editorsettingscommentsdoxygenpanel.h"
+#include "globals.h"
 #include "macros.h"
 
 EditorSettingsCommentsDoxygenPanel::EditorSettingsCommentsDoxygenPanel(wxWindow* parent)
@@ -35,10 +36,15 @@ EditorSettingsCommentsDoxygenPanel::EditorSettingsCommentsDoxygenPanel(wxWindow*
 {
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
-    m_pgPropDoxyClassPrefix->SetValueFromString(data.GetClassPattern());
-    m_pgPropDoxyFunctionPrefix->SetValueFromString(data.GetFunctionPattern());
-    m_pgPropAutoGen->SetValue(data.IsAutoInsertAfterSlash2Stars());
-    m_pgPropCommentBlockPrefix->SetValue(data.GetUseSlash2Stars() ? 0 : 1);
+    m_checkBoxQtStyle->SetValue(data.IsUseQtStyle());
+    m_checkBoxAutoInsert->SetValue(data.IsAutoInsert());
+    m_stcClassTemplate->SetText(data.GetClassPattern());
+    m_stcFunctionTemplate->SetText(data.GetFunctionPattern());
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(lexer) {
+        lexer->Apply(m_stcClassTemplate);
+        lexer->Apply(m_stcFunctionTemplate);
+    }
 }
 
 void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
@@ -46,24 +52,14 @@ void EditorSettingsCommentsDoxygenPanel::Save(OptionsConfigPtr)
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
-    wxString classPattern = m_pgPropDoxyClassPrefix->GetValue().GetString();
-    wxString funcPattern = m_pgPropDoxyFunctionPrefix->GetValue().GetString();
-    int blockPrefixIndex = m_pgPropCommentBlockPrefix->GetValue().GetInteger();
+    wxString classPattern = m_stcClassTemplate->GetText();
+    wxString funcPattern = m_stcFunctionTemplate->GetText();
     classPattern.Replace("\\n", "\n");
     funcPattern.Replace("\\n", "\n");
 
     data.SetClassPattern(classPattern);
     data.SetFunctionPattern(funcPattern);
-    data.SetAutoInsertAfterSlash2Stars(m_pgPropAutoGen->GetValue().GetBool());
-    data.SetUseSlash2Stars(blockPrefixIndex == 0 ? true : false);
+    data.SetAutoInsert(m_checkBoxAutoInsert->IsChecked());
+    data.SetUseQtStyle(m_checkBoxQtStyle->IsChecked());
     EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
-}
-
-void EditorSettingsCommentsDoxygenPanel::OnButtonClicked(wxCommandEvent& e)
-{
-    CHECK_PTR_RET(m_pgMgrDoxy->GetSelection());
-    wxString str = ::clGetStringFromUser(m_pgMgrDoxy->GetSelection()->GetValueAsString());
-    if(!str.IsEmpty()) {
-        m_pgMgrDoxy->GetSelection()->SetValueFromString(str);
-    }
 }

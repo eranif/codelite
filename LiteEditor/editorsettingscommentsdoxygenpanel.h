@@ -35,7 +35,6 @@ class EditorSettingsCommentsDoxygenPanel : public EditorSettingsCommentsDoxygenP
 public:
     EditorSettingsCommentsDoxygenPanel(wxWindow* parent);
     void Save(OptionsConfigPtr options);
-    void OnButtonClicked(wxCommandEvent& e);
 };
 
 #endif // __editorsettingscommentsdoxygenpanel__

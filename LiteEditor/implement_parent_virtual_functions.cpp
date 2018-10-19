@@ -113,7 +113,7 @@ wxString ImplementParentVirtualFunctionsDialog::DoMakeCommentForTag(TagEntryPtr 
     DoxygenComment dc;
     dc.comment = commentCreator.CreateComment();
     dc.name = tag->GetName();
-    m_contextCpp->DoMakeDoxyCommentString(dc, data.GetCommentBlockPrefix());
+    m_contextCpp->DoMakeDoxyCommentString(dc, data.GetCommentBlockPrefix(), m_doxyPrefix);
 
     // Format the comment
     wxString textComment = dc.comment;

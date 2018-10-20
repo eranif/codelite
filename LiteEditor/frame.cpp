@@ -1381,7 +1381,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
                        bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
     m_toolbar->AddSpacer();
-    
+
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
@@ -1491,6 +1491,9 @@ void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 
 bool clMainFrame::IsEditorEvent(wxEvent& event)
 {
+    // If the event came from the toolbar, return true
+    if(dynamic_cast<clToolBar*>(event.GetEventObject())) { return true; }
+    
 #ifdef __WXGTK__
     MainBook* mainBook = GetMainBook();
     if(!mainBook || !mainBook->GetActiveEditor(true)) {
@@ -2523,9 +2526,9 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnTimer(wxTimerEvent& event)
 {
-//#ifdef __WXMSW__
-//    wxWindowUpdateLocker locker(this);
-//#endif
+    //#ifdef __WXMSW__
+    //    wxWindowUpdateLocker locker(this);
+    //#endif
 
     clLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
     clLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
@@ -3221,7 +3224,7 @@ void clMainFrame::CompleteInitialization()
     }
 
     clGotoAnythingManager::Get().Initialise();
-    
+
     // Update the toolbar view
     wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", wxArrayString());
     std::vector<clToolBarButtonBase*>& buttons = m_toolbar->GetButtons();
@@ -3231,7 +3234,6 @@ void clMainFrame::CompleteInitialization()
             buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
         if(iter != buttons.end()) { (*iter)->Show(false); }
     }
-
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
@@ -5126,7 +5128,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
     ShowOrHideCaptions();
-    if (clConfig::Get().Read(kConfigShowToolBar, false)) {
+    if(clConfig::Get().Read(kConfigShowToolBar, false)) {
         // As the toolbar is showing, refresh in case the group spacing was changed
         m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
         m_toolbar->Realize();

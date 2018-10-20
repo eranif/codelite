@@ -408,7 +408,8 @@ protected:
     void OnFileReload(wxCommandEvent& event);
     void OnFileLoadTabGroup(wxCommandEvent& event);
     void OnNativeTBUnRedoDropdown(wxCommandEvent& event);
-    void OnTBUnRedo(wxAuiToolBarEvent& event);
+    void OnTBUnRedo(wxCommandEvent& event);
+    void OnTBUnRedoMenu(wxCommandEvent& event);
     void OnCodeComplete(wxCommandEvent& event);
     void OnWordComplete(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent& event);

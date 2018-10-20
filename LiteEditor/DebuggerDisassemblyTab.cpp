@@ -252,10 +252,8 @@ void DebuggerDisassemblyTab::OnRefreshView(clCommandEvent& e)
 
 void DebuggerDisassemblyTab::DoClearRegistersView()
 {
-    for(int i = 0; i < m_dvListCtrlRegisters->GetItemCount(); ++i) {
-        RegistersViewModelClientData* cd = reinterpret_cast<RegistersViewModelClientData*>(
-            m_dvListCtrlRegisters->GetItemData(m_dvListCtrlRegisters->RowToItem(i)));
+    m_dvListCtrlRegisters->DeleteAllItems([&](wxUIntPtr pData) {
+        RegistersViewModelClientData* cd = reinterpret_cast<RegistersViewModelClientData*>(pData);
         wxDELETE(cd);
-    }
-    m_dvListCtrlRegisters->DeleteAllItems();
+    });
 }

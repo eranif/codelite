@@ -798,10 +798,10 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
                                this);
     EventNotifier::Get()->Bind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
-    Connect(wxID_UNDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL,
-            this);
-    Connect(wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo), NULL,
-            this);
+    m_toolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+    m_toolbar->Bind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
 
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL, this);
 
@@ -895,10 +895,10 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
                                  wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
 
-    Disconnect(wxID_UNDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
-               NULL, this);
-    Disconnect(wxID_REDO, wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, wxAuiToolBarEventHandler(clMainFrame::OnTBUnRedo),
-               NULL, this);
+    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
                                      this);
     wxDELETE(m_timer);
@@ -1467,22 +1467,21 @@ void clMainFrame::UpdateBuildTools() {}
 
 void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
 
-void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
+void clMainFrame::OnTBUnRedoMenu(wxCommandEvent& event)
 {
-    if(event.IsDropDownClicked()) {
-        clEditor* editor = GetMainBook()->GetActiveEditor(true);
-        if(editor) {
-            editor->GetCommandsProcessor().ProcessEvent(event);
+    clEditor* editor = GetMainBook()->GetActiveEditor(true);
+    if(editor) {
+        editor->GetCommandsProcessor().ProcessEvent(event);
 
-        } else if(GetMainBook()->GetCurrentPage()) {
-            event.StopPropagation(); // Otherwise we'll infinitely loop if the active page doesn't handle this event
-            GetMainBook()->GetCurrentPage()->GetEventHandler()->ProcessEvent(event); // Let the active plugin have a go
-        }
+    } else if(GetMainBook()->GetCurrentPage()) {
+        event.StopPropagation(); // Otherwise we'll infinitely loop if the active page doesn't handle this event
+        GetMainBook()->GetCurrentPage()->GetEventHandler()->ProcessEvent(event); // Let the active plugin have a go
     }
+}
 
-    else {
-        DispatchCommandEvent(event); // Revert to standard processing
-    }
+void clMainFrame::OnTBUnRedo(wxCommandEvent& event)
+{
+    DispatchCommandEvent(event); // Revert to standard processing
 }
 
 //----------------------------------------------------
@@ -1492,8 +1491,8 @@ void clMainFrame::OnTBUnRedo(wxAuiToolBarEvent& event)
 bool clMainFrame::IsEditorEvent(wxEvent& event)
 {
     // If the event came from the toolbar, return true
-    if(dynamic_cast<clToolBar*>(event.GetEventObject())) { return true; }
-    
+    // if(dynamic_cast<clToolBar*>(event.GetEventObject())) { return true; }
+
 #ifdef __WXGTK__
     MainBook* mainBook = GetMainBook();
     if(!mainBook || !mainBook->GetActiveEditor(true)) {

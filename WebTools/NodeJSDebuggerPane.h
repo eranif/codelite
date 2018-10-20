@@ -50,23 +50,22 @@ class NodeJSDebuggerPane : public NodeJSDebuggerPaneBase
 
 public:
     std::map<int, NodeJSHandle> m_handles;
-    std::vector<PendingLookupDV> m_pendingLookupRefs;
+    std::vector<PendingLookupT> m_pendingLookupRefs;
     wxTerminal* m_terminal;
 
 protected:
-    virtual void OnLocalExpanding(wxDataViewEvent& event);
+    virtual void OnLocalExpanding(wxTreeEvent& event);
     virtual void OnEvaluateExpression(clCommandEvent& event);
     virtual void OnBreakpointSelected(wxDataViewEvent& event);
     void ClearCallstack();
     void BuildLocals(const JSONElement& json);
     void BuildArguments(const JSONElement& json);
-    wxDataViewItem AddLocal(const wxDataViewItem& parent, const wxString& name, int refId);
+    wxTreeItemId AddLocal(const wxTreeItemId& parent, const wxString& name, int refId);
     void ParseRefsArray(const JSONElement& refs);
     NodeJSHandle ParseRef(const JSONElement& ref);
     void DoOpenFile(const wxString& filename, int line);
-    void DoDeleteLocalItemAfter(const wxDataViewItem& item);
-    void DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent);
-    void DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxDataViewItem& parent);
+    void DoAddKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxTreeItemId& parent);
+    void DoAddUnKnownRefs(const std::vector<std::pair<int, wxString> >& refs, const wxTreeItemId& parent);
     void Clear();
 
 protected:

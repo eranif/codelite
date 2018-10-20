@@ -106,13 +106,13 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
                        _("Open active project settings"), wxITEM_NORMAL);
 #if USE_SFTP
     m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"),
-                       bl->LoadBitmap("remote-folder"), _("Setup automatic upload"), wxITEM_DROPDOWN);
+                       bl->LoadBitmap("file_open"), _("Setup automatic upload"), wxITEM_DROPDOWN);
 #endif
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
                        wxITEM_NORMAL);
-    m_toolbar->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
-                       _("Sync workspace with file system..."), wxITEM_NORMAL);
+    m_toolbar->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Sync workspace with file system"),
+                       bl->LoadBitmap("debugger_restart"), _("Sync workspace with file system..."), wxITEM_NORMAL);
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
                        bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));

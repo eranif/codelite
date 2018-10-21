@@ -1617,10 +1617,10 @@ void MainBook::ShowQuickBar(bool s)
     }
 }
 
-void MainBook::ShowQuickBar(const wxString& findWhat)
+void MainBook::ShowQuickBar(const wxString& findWhat, bool showReplace)
 {
     if(m_findBar) {
-        m_findBar->Show(findWhat);
+        m_findBar->Show(findWhat, showReplace);
         GetParent()->GetSizer()->Layout();
     }
 }

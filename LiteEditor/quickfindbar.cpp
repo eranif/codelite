@@ -442,14 +442,15 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
 
 int QuickFindBar::GetCloseButtonId() { return ID_TOOL_CLOSE; }
 
-bool QuickFindBar::Show(const wxString& findWhat)
+bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat
+    // and show/hide the 'Replace' section depending on the bool
     if(!m_sci) return false;
-    return DoShow(true, findWhat);
+    return DoShow(true, findWhat, showReplace);
 }
 
-bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
+bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
 {
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
@@ -466,7 +467,23 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         }
     }
 
-    if(res) { GetParent()->GetSizer()->Layout(); }
+    if(s) {
+        // Show or Hide the 'Replace' section as requested
+        wxSizer* flexgridsizer = m_textCtrlFind->GetContainingSizer();
+        if (flexgridsizer) {
+            if (showReplace) {
+                flexgridsizer->ShowItems(true);
+            } else {
+                for (size_t n=4; n < 7; ++n) {
+                    flexgridsizer->Hide(n);
+                }
+            }
+        }
+    }
+    if(res) { 
+        GetParent()->GetSizer()->Layout(); 
+    }
+
     m_replaceInSelection = !findWhat.IsEmpty() && findWhat.Contains("\n");
     if(!m_sci) {
         // nothing to do

@@ -7,26 +7,26 @@
 #ifndef _CODELITE_LITEEDITOR_QUICKFINDBARBASE_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_QUICKFINDBARBASE_BASE_CLASSES_H
 
-#include "clToolBar.h"
-#include <map>
-#include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/icon.h>
-#include <wx/imaglist.h>
-#include <wx/panel.h>
-#include <wx/popupwin.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/popupwin.h>
+#include <wx/checkbox.h>
+#include <wx/imaglist.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -39,13 +39,13 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+
 class QuickFindBarBase : public wxPanel
 {
 public:
     enum {
         wxID_FIND_ALL = 1001,
     };
-
 protected:
     clToolBar* m_toolbar;
     wxTextCtrl* m_textCtrlFind;
@@ -57,38 +57,112 @@ protected:
     wxButton* m_buttonReplaceAll;
 
 protected:
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnFindPrev(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindPrevUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnFindAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceTextEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnReplaceAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceAllUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnter(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnText(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFind(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnButtonKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindPrev(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindPrevUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindAll(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnFindAllUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceTextUpdated(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceTextEnter(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceKeyDown(wxKeyEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplace(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceAll(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnReplaceAllUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
-    wxTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
-    wxButton* GetButtonFind() { return m_buttonFind; }
-    wxButton* GetButtonFindPrev() { return m_buttonFindPrev; }
-    wxButton* GetButtonFindAll() { return m_buttonFindAll; }
-    wxTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
-    wxButton* GetButtonReplace() { return m_buttonReplace; }
-    wxButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
-    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1),
-                     long style = wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW | wxBORDER_THEME);
+    clToolBar* GetToolbar()
+    {
+        return m_toolbar;
+    }
+    wxTextCtrl* GetTextCtrlFind()
+    {
+        return m_textCtrlFind;
+    }
+    wxButton* GetButtonFind()
+    {
+        return m_buttonFind;
+    }
+    wxButton* GetButtonFindPrev()
+    {
+        return m_buttonFindPrev;
+    }
+    wxButton* GetButtonFindAll()
+    {
+        return m_buttonFindAll;
+    }
+    wxTextCtrl* GetTextCtrlReplace()
+    {
+        return m_textCtrlReplace;
+    }
+    wxButton* GetButtonReplace()
+    {
+        return m_buttonReplace;
+    }
+    wxButton* GetButtonReplaceAll()
+    {
+        return m_buttonReplaceAll;
+    }
+    QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW|wxBORDER_THEME);
     virtual ~QuickFindBarBase();
 };
+
 
 class QuickFindBarOptionsMenuBase : public wxPopupTransientWindow
 {
@@ -101,19 +175,44 @@ protected:
     wxCheckBox* m_checkBoxMultipleSelections;
 
 protected:
-    virtual void OnCheckBoxRegex(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckWild(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckBoxRegex(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnCheckWild(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
-    wxCheckBox* GetCheckBoxRegex() { return m_checkBoxRegex; }
-    wxCheckBox* GetCheckBoxWord() { return m_checkBoxWord; }
-    wxCheckBox* GetCheckBoxWildcard() { return m_checkBoxWildcard; }
-    wxCheckBox* GetCheckBoxMultipleSelections() { return m_checkBoxMultipleSelections; }
-    wxPanel* GetPanel71() { return m_panel71; }
+    wxCheckBox* GetCheckBoxCase()
+    {
+        return m_checkBoxCase;
+    }
+    wxCheckBox* GetCheckBoxRegex()
+    {
+        return m_checkBoxRegex;
+    }
+    wxCheckBox* GetCheckBoxWord()
+    {
+        return m_checkBoxWord;
+    }
+    wxCheckBox* GetCheckBoxWildcard()
+    {
+        return m_checkBoxWildcard;
+    }
+    wxCheckBox* GetCheckBoxMultipleSelections()
+    {
+        return m_checkBoxMultipleSelections;
+    }
+    wxPanel* GetPanel71()
+    {
+        return m_panel71;
+    }
     QuickFindBarOptionsMenuBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~QuickFindBarOptionsMenuBase();
 };
+
 
 class QuickFindBarImages : public wxImageList
 {
@@ -125,16 +224,22 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
+
 protected:
+
 public:
     QuickFindBarImages();
-    const wxBitmap& Bitmap(const wxString& name) const
+    const wxBitmap& Bitmap(const wxString &name) const
     {
-        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
+        if ( !m_bitmaps.count(name + m_resolution) )
+            return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
+    void SetBitmapResolution(const wxString &res = wxEmptyString)
+    {
+        m_resolution = res;
+    }
 
     virtual ~QuickFindBarImages();
 };

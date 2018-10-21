@@ -137,7 +137,7 @@ protected:
     void OnFindPreviousCaret(wxCommandEvent& e);
 
 protected:
-    bool DoShow(bool s, const wxString& findWhat);
+    bool DoShow(bool s, const wxString& findWhat, bool showReplace=false);
     wxStyledTextCtrl* DoCheckPlugins();
 
 public:
@@ -146,7 +146,7 @@ public:
     int GetCloseButtonId();
     bool ShowForPlugins();
     bool Show(bool s = true);
-    bool Show(const wxString& findWhat);
+    bool Show(const wxString& findWhat, bool showReplace);
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
 

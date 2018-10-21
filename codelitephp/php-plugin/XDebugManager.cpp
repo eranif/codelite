@@ -43,6 +43,7 @@ XDebugManager::XDebugManager()
 {
     // Connect CodeLite's debugger events to XDebugManager
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
@@ -66,6 +67,7 @@ XDebugManager::XDebugManager()
 XDebugManager::~XDebugManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
@@ -166,10 +168,10 @@ void XDebugManager::OnSocketInput(const std::string& reply) { ProcessDebuggerMes
 
 void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 {
-    if(m_readerThread) {
-        e.SetAnswer(true);
-
+    if(PHPWorkspace::Get()->IsOpen()) {
+        e.SetAnswer((m_readerThread != nullptr));
     } else {
+        // Not ours to handle
         e.Skip();
     }
 }
@@ -610,7 +612,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
-bool XDebugManager::IsDebugSessionRunning() const { return m_readerThread != NULL; }
+bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->IsOpen() && (m_readerThread != NULL); }
 
 void XDebugManager::OnBreakpointItemActivated(PHPEvent& e)
 {

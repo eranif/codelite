@@ -44,17 +44,23 @@ DebuggerCallstackView::DebuggerCallstackView(wxWindow* parent)
     m_bitmaps.push_back(m_images.Bitmap("arrowInactive"));
     m_dvListCtrl->SetBitmaps(&m_bitmaps);
 
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_LIST_FRAMES,
-                                  clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_FRAME_SELECTED,
-                                  clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
+    // The first column contains the frame ID
+    // We want the lowest frames first
+    m_dvListCtrl->SetSortFunction([](clRowEntry* a, clRowEntry* b) {
+        const wxString& cellA = a->GetLabel(0);
+        const wxString& cellB = b->GetLabel(0);
+        long frameIdA = 0, frameIdB = 0;
+        cellA.ToCLong(&frameIdA);
+        cellB.ToCLong(&frameIdA);
+        return frameIdA < frameIdB;
+    });
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_LIST_FRAMES, &DebuggerCallstackView::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUGGER_FRAME_SELECTED, &DebuggerCallstackView::OnFrameSelected, this);
 }
 DebuggerCallstackView::~DebuggerCallstackView()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_LIST_FRAMES,
-                                     clCommandEventHandler(DebuggerCallstackView::OnUpdateBacktrace), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_FRAME_SELECTED,
-                                     clCommandEventHandler(DebuggerCallstackView::OnFrameSelected), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_LIST_FRAMES, &DebuggerCallstackView::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_FRAME_SELECTED, &DebuggerCallstackView::OnFrameSelected, this);
 }
 
 void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)

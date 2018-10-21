@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="libCodeLite" Version="10.0.0">
+  <VirtualDirectory Name="Console">
+    <File Name="clConsoleOSXTerminal.cpp"/>
+    <File Name="clConsoleOSXTerminal.h"/>
+    <File Name="clConsoleCMD.cpp"/>
+    <File Name="clConsoleCMD.h"/>
+    <File Name="clConsoleKonsole.cpp"/>
+    <File Name="clConsoleKonsole.h"/>
+    <File Name="clConsoleGnomeTerminal.cpp"/>
+    <File Name="clConsoleGnomeTerminal.h"/>
+    <File Name="clConsoleBase.cpp"/>
+    <File Name="clConsoleBase.h"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00090001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>

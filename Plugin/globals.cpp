@@ -77,6 +77,7 @@
 #include <wx/wfstream.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/zipstrm.h>
+#include "clConsoleBase.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1598,68 +1599,9 @@ wxArrayString SplitString(const wxString& inString, bool trim)
     }
     return lines;
 }
-#ifndef __WXMSW__
-static bool search_process_by_command(const wxString& name, wxString& tty, long& pid)
-{
-    CL_DEBUG("search_process_by_command is called");
-    tty.Clear();
-    pid = wxNOT_FOUND;
-
-    // Run "ps -A -o pid,tty,command" to locate the terminal ID
-    wxString psCommand;
-    wxArrayString arrOutput;
-    psCommand << "ps -A -o pid,tty,command";
-
-    ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
-
-    for(size_t i = 0; i < arrOutput.GetCount(); ++i) {
-        wxString curline = arrOutput.Item(i).Trim().Trim(false);
-        wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
-        if(tokens.GetCount() < 3) { continue; }
-
-        // replace tabs with spaces
-        curline.Replace("\t", " ");
-
-        // remove any duplicate spaces
-        while(curline.Replace("  ", " ")) {}
-
-        wxString tmp_pid = curline.BeforeFirst(' ');
-        curline = curline.AfterFirst(' ');
-
-        wxString tmp_tty = curline.BeforeFirst(' ');
-        curline = curline.AfterFirst(' ');
-
-        wxString command = curline; // the remainder
-        command.Trim().Trim(false);
-
-        if(command == name) {
-            // we got our match
-            tmp_tty = tmp_tty.AfterLast('/');
-#ifdef __WXMAC__
-            tmp_tty.Prepend("/dev/");
-#else
-            tmp_tty.Prepend("/dev/pts/");
-#endif
-            tty = tmp_tty;
-            tmp_pid.Trim().Trim(false).ToCLong(&pid);
-            return true;
-        }
-    }
-    return false;
-}
-#endif
 
 void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
 {
-    static wxString SLEEP_COMMAND_BASE("");
-
-    // We can't rely on the terminal's string being "sleep" here:
-    // konsole's is the full path e.g. "/bin/sleep", which would never be found
-    if(SLEEP_COMMAND_BASE.empty()) { ProcUtils::Locate("sleep", SLEEP_COMMAND_BASE); }
-    if(SLEEP_COMMAND_BASE.empty()) {
-        SLEEP_COMMAND_BASE = "sleep"; // Sensible default, which might even work
-    }
-
     pid = wxNOT_FOUND;
     tty.Clear();
     realPts.Clear();
@@ -1674,63 +1616,12 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
 
 #else
     // Non Windows machines
-
-    // generate a random value to differntiate this instance of codelite
-    // from other instances
-    time_t curtime = time(NULL);
-    int randomSeed = (curtime % 947);
-    wxString secondsToSleep;
-
-    secondsToSleep << (85765 + randomSeed);
-
-    wxString SLEEP_COMMAND;
-    SLEEP_COMMAND << SLEEP_COMMAND_BASE << " " << secondsToSleep;
-
-    wxString consoleCommand = TERMINAL_CMD;
-
-    wxString separate;
-#ifdef __WXGTK__
-    wxString grepcommand("grep 'x-terminal-emulator\\|konsole' ");
-    grepcommand << consoleCommand.BeforeFirst('\'');
-    wxString CCcontents = ProcUtils::SafeExecuteCommand(grepcommand);
-    if(CCcontents.Contains("konsole") ||
-       (CCcontents.Contains("x-terminal-emulator") &&
-        CLRealPath(ProcUtils::SafeExecuteCommand("which x-terminal-emulator").Trim()).Contains("konsole"))) {
-        // konsole hangs when the debugger stops and we kill the contained 'sleep' instance, warning that 'sleep' has
-        // crashed.
-        // So we have to kill it manually. However by default konsole opens new instances of itself as threads of
-        // existing ones.
-        // That means that killing one 'instance' kills them all. The fix is to add --separate to the launch command.
-        separate = " '--separate'";
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    if(console->StartForDebugger()) {
+        tty = console->GetTty();
+        realPts = console->GetRealPts();
+        pid = console->GetPid();
     }
-#endif
-
-    consoleCommand.Replace("$(CMD)", SLEEP_COMMAND);
-    consoleCommand.Replace("$(TITLE)", title);
-    consoleCommand << separate;
-    ::wxExecute(consoleCommand);
-
-    // Let it start ... (wait for it up to 5 seconds)
-    for(size_t i = 0; i < 100; ++i) {
-        if(search_process_by_command(SLEEP_COMMAND, tty, pid)) {
-#ifdef __WXGTK__
-            // On GTK, redirection to TTY does not work with lldb
-            // as a workaround, we create a symlink with different name
-
-            // Keep the real tty
-            realPts = tty;
-
-            wxString symlinkName = tty;
-            symlinkName.Replace("/dev/pts/", "/tmp/pts");
-            wxString lnCommand;
-            lnCommand << "ln -sf " << tty << " " << symlinkName;
-            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) { tty.swap(symlinkName); }
-#endif
-            return;
-        }
-        wxThread::Sleep(50);
-    }
-
 #endif // !__WXMSW__
 }
 

@@ -40,18 +40,18 @@
 //---------------------------------------------------------
 static DebuggerMgr* ms_instance = NULL;
 
-const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_FRAMES = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED = ::wxNewEventType();
+wxDEFINE_EVENT(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_CHILDREN, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_VAROBJ_EVALUATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_VAROBJECT_CREATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_FRAMES, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEvent);
 
 DebuggerMgr::DebuggerMgr() {}
 

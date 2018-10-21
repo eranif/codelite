@@ -166,7 +166,7 @@ void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command)
             cmd << user_command;
         }
     }
-    
+
 #elif defined(__WXGTK__)
     GTKOpenTerminal(user_command, path);
     return;
@@ -176,9 +176,7 @@ void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command)
     if(strPath.Contains(" ")) { strPath.Prepend("\\\"").Append("\\\""); }
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
-    if(!user_command.IsEmpty()) {
-        cmd << " && " << user_command;
-    }
+    if(!user_command.IsEmpty()) { cmd << " && " << user_command; }
     cmd << "\"'";
     clDEBUG() << cmd;
     ::system(cmd.mb_str(wxConvUTF8).data());
@@ -202,20 +200,20 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
     wxString filename = fn.GetFullPath();
     data.clear();
     const char* cfile = filename.mb_str(wxConvUTF8).data();
-    FILE *fp = fopen(cfile, "rb");
+    FILE* fp = fopen(cfile, "rb");
     if(!fp) {
         // Nothing to be done
         clERROR() << "Failed to open file:" << fn << "." << strerror(errno);
         return false;
     }
-    
+
     // Get the file size
     fseek(fp, 0, SEEK_END);
     long fsize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    
+
     // Allocate buffer for the read
-    char *buffer = (char*)malloc(fsize + 1);
+    char* buffer = (char*)malloc(fsize + 1);
     long bytes_read = fread(buffer, 1, fsize, fp);
     if(bytes_read != fsize) {
         // failed to read
@@ -225,17 +223,17 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
         return false;
     }
     buffer[fsize] = 0;
-    
+
     // Close the handle
     fclose(fp);
-    
+
     // Convert it into wxString
     data = wxString(buffer, conv, fsize);
     if(data.IsEmpty() && fsize != 0) {
         // Conversion failed
         data = wxString::From8BitData(buffer, fsize);
     }
-    
+
     // Release the C-buffer allocated earlier
     free(buffer);
     return true;
@@ -254,7 +252,8 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 #endif
 }
 
-void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid)
+void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty,
+                                                 long& pid)
 {
     tty.Clear();
     wxString command;
@@ -262,11 +261,13 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
     wxString escapedPath = path;
     if(escapedPath.Contains(" ")) { escapedPath.Prepend("\"").Append("\""); }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile << " && clear && sleep 12345\"'";
-    CL_DEBUG("Executing: %s", command);
+    wxString terminalName = "\"" + appname + "\"";
+    command << "osascript -e 'tell app " << terminalName << " to do script \"tty > " << tmpfile
+            << " && clear && sleep 12345\"'";
+    clDEBUG() << "Executing: " << command;
     long res = ::wxExecute(command);
     if(res == 0) {
-        CL_WARNING("Failed to execute command:\n%s", command);
+        clWARNING() << "Failed to execute command:" << command;
         return;
     }
 
@@ -289,14 +290,14 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         wxString psCommand;
         psCommand << "ps -A -o ppid,command";
         wxString psOutput = ProcUtils::SafeExecuteCommand(psCommand);
-        CL_DEBUG("PS output:\n%s\n", psOutput);
+        clDEBUG() << "ps command output:\n" << psOutput;
         wxArrayString lines = ::wxStringTokenize(psOutput, "\n", wxTOKEN_STRTOK);
         for(size_t u = 0; u < lines.GetCount(); ++u) {
             wxString l = lines.Item(u);
             l.Trim().Trim(false);
             if(l.Contains("sleep") && l.Contains("12345")) {
                 // we got a match
-                CL_DEBUG("Got a match!");
+                clDEBUG() << "Got a match!";
                 wxString ppidString = l.BeforeFirst(' ');
                 ppidString.ToCLong(&pid);
                 break;
@@ -304,8 +305,8 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         }
         break;
     }
-    CL_DEBUG("PID is: %d\n", (int)pid);
-    CL_DEBUG("TTY is: %s\n", tty);
+    clDEBUG() << "PID is:" << pid;
+    clDEBUG() << "TTY is:" << tty;
 }
 
 void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
@@ -543,7 +544,7 @@ size_t FileUtils::GetFileSize(const wxFileName& filename)
         return b.st_size;
     } else {
         clERROR() << "Failed to open file:" << file_name << "." << strerror(errno);
-        return 0; 
+        return 0;
     }
 }
 
@@ -663,7 +664,7 @@ unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 }
 
 // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
-wxString FileUtils::RealPath(const wxString& filepath) 
+wxString FileUtils::RealPath(const wxString& filepath)
 {
 #if defined(__WXGTK__)
     if(!filepath.empty()) {
@@ -682,10 +683,10 @@ wxString FileUtils::RealPath(const wxString& filepath)
 void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit)
 {
     wxString title(user_command);
-    
+
     wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
     fnCodeliteTerminal.SetFullName("codelite-terminal");
-    
+
     wxString newCommand;
     newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
     if(pause_when_exit) { newCommand << " --wait "; }

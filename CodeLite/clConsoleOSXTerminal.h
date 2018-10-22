@@ -1,9 +1,9 @@
 #ifndef CLCONSOLEOSXTERMINAL_H
 #define CLCONSOLEOSXTERMINAL_H
 
-#include "clConsoleBase.h" // Base class: clConsoleBase
+#include "clConsoleBash.h"
 
-class clConsoleOSXTerminal : public clConsoleBase
+class WXDLLIMPEXP_CL clConsoleOSXTerminal : public clConsoleBash
 {
 public:
     clConsoleOSXTerminal();

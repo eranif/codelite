@@ -1,9 +1,9 @@
 #ifndef CLCONSOLEGNOMETERMINAL_H
 #define CLCONSOLEGNOMETERMINAL_H
 
-#include "clConsoleBase.h" // Base class: clConsoleBase
+#include "clConsoleBash.h"
 
-class clConsoleGnomeTerminal : public clConsoleBase
+class WXDLLIMPEXP_CL clConsoleGnomeTerminal : public clConsoleBash
 {
     wxString m_terminalCommand = "/usr/bin/gnome-terminal";
     wxString m_workingDirSwitchPattern = "--working-directory=VALUE";

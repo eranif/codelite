@@ -38,6 +38,7 @@ protected:
     bool m_waitWhenDone = false;
     bool m_autoTerminate = false;
     int m_execExtraFlags = 0;
+    bool m_terminalNeeded = true;
 
     /**
      * @brief create an environment list to be used before we execute our terminal
@@ -76,12 +77,12 @@ public:
      * @brief return the best terminal for the OS. Pass an empty string to return the default temrinal for the OS
      */
     static clConsoleBase::Ptr_t GetTerminal();
-    
+
     /**
      * @brief return the default name for the OS
      */
     static wxString GetSelectedTerminalName();
-    
+
     /**
      * @brief return list of known terminals
      */
@@ -109,6 +110,10 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SetExecExtraFlags(int execExtraFlags) { this->m_execExtraFlags = execExtraFlags; }
     int GetExecExtraFlags() const { return m_execExtraFlags; }
+    void SetAutoTerminate(bool autoTerminate) { this->m_autoTerminate = autoTerminate; }
+    void SetTerminalNeeded(bool terminalNeeded) { this->m_terminalNeeded = terminalNeeded; }
+    bool IsAutoTerminate() const { return m_autoTerminate; }
+    bool IsTerminalNeeded() const { return m_terminalNeeded; }
 };
 
 #endif // CLCONSOLEBASE_H

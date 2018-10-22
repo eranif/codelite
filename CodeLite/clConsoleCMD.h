@@ -4,7 +4,7 @@
 #include "clConsoleBase.h" // Base class: clConsoleBase
 
 class StartForDebugger;
-class clConsoleCMD : public clConsoleBase
+class WXDLLIMPEXP_CL clConsoleCMD : public clConsoleBase
 {
 public:
     clConsoleCMD();

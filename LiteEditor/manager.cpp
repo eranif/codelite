@@ -1464,6 +1464,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
     console->SetWorkingDirectory(wd);
     console->SetCommand(cmd, cmdArgs);
     console->SetWaitWhenDone(considerPauseWhenExecuting && !bldConf->IsGUIProgram());
+    console->SetTerminalNeeded(!bldConf->IsGUIProgram());
     return console->PrepareCommand();
 }
 

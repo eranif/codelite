@@ -1,6 +1,7 @@
 #include "clConsoleGnomeTerminal.h"
 #include "dirsaver.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "procutils.h"
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
@@ -104,32 +105,24 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 wxString clConsoleGnomeTerminal::PrepareCommand()
 {
     wxString commandToExecute;
-    commandToExecute << GetTerminalCommand();
-
-    // set the working directory
-    wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-    if(!workingDirectory.IsEmpty()) {
-        wxString pattern = GetWorkingDirSwitchPattern();
-        pattern.Replace("VALUE", workingDirectory);
-        commandToExecute << " " << pattern;
+    if(IsTerminalNeeded()) {
+        commandToExecute << GetTerminalCommand();
+        // set the working directory
+        wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
+        if(!workingDirectory.IsEmpty()) {
+            wxString pattern = GetWorkingDirSwitchPattern();
+            pattern.Replace("VALUE", workingDirectory);
+            commandToExecute << " " << pattern;
+        }
     }
 
     if(!GetCommand().IsEmpty()) {
-        commandToExecute << " -e '/bin/bash -c \"" << EscapeString(GetCommand(), "\"");
-        if(!GetCommandArgs().IsEmpty()) {
-            // first, we split the input string by double quotes
-            wxArrayString tmparr = wxSplit(GetCommandArgs(), '"', '\\');
-            // remove empty entries
-            wxArrayString arr;
-            for(size_t i = 0; i < tmparr.size(); ++i) {
-                if(!tmparr[i].IsEmpty()) { arr.Add(tmparr[i].Trim(false).Trim(true)); }
-            }
-            wxString commandArgs = wxJoin(arr, ' '); // it will escape extra spaces if needed
-            commandToExecute << " " << commandArgs;
+        wxFileName scriptPath = PrepareExecScript();
+        if(IsTerminalNeeded()) {
+            commandToExecute << " -e '/bin/bash -f \"" << scriptPath.GetFullPath() << "\"'";
+        } else {
+            commandToExecute << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";
         }
-        if(IsWaitWhenDone()) { commandToExecute << " && echo Hit any key to continue... && read"; }
-        commandToExecute << "\""; // Close /bin/bash -c
-        commandToExecute << "'";  // Close gnome-terminal -e
     }
     return commandToExecute;
 }

@@ -15,11 +15,10 @@ wxFileName clConsoleBash::PrepareExecScript() const
     wxFileName scriptPath("/tmp", "codelite-exec.sh");
 #else
     wxFileName scriptPath(clStandardPaths::Get().GetUserDataDir(), "codelite-exec.sh");
-#endif
-
     scriptPath.AppendDir("tmp");
     scriptPath.AppendDir(::wxGetUserId());
     scriptPath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+#endif
 
     if(!GetCommand().IsEmpty()) {
         wxString fileContent;
@@ -47,7 +46,7 @@ wxFileName clConsoleBash::PrepareExecScript() const
     }
 #ifdef __WXOSX__
     // The script must have exec permissions
-    system("chown +x /tmp/codelite-exec.sh");
+    system("chmod +x /tmp/codelite-exec.sh");
 #endif
     return scriptPath;
 }

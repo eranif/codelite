@@ -27,7 +27,11 @@ wxString clConsoleOSXTerminal::PrepareCommand()
     wxString commandToExecute;
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     wxFileName scriptPath = PrepareExecScript();
-    commandToExecute << GetEnvironmentPrefix() << "/usr/bin/open -a Terminal " << scriptPath.GetFullPath();
+    
+    if(IsTerminalNeeded()) {
+        commandToExecute << GetEnvironmentPrefix() << "/usr/bin/open -a Terminal ";
+    }
+    commandToExecute << scriptPath.GetFullPath();
     clDEBUG() << commandToExecute;
     return commandToExecute;
 }

@@ -149,12 +149,16 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     tty.Clear();
     wxString command;
     wxString tmpfile;
-    wxString escapedPath = path;
-    if(escapedPath.Contains(" ")) { escapedPath.Prepend("\"").Append("\""); }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    wxString terminalName = "\"" + appname + "\"";
-    command << "osascript -e 'tell app " << terminalName << " to do script \"tty > " << tmpfile
-            << " && clear && sleep 12345\"'";
+    wxFileName helperScript("/tmp", "codelite-lldb-helper.sh");
+    wxString fileContent;
+    fileContent << "#!/bin/bash\n";
+    fileContent << "tty > " << tmpfile << "\n";
+    fileContent << "sleep 12345";
+    FileUtils::WriteFileContent(helperScript, fileContent);
+    system("chmod +x /tmp/codelite-lldb-helper.sh");
+    
+    command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh" ;
     clDEBUG() << "Executing: " << command;
     long res = ::wxExecute(command);
     if(res == 0) {

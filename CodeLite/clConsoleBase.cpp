@@ -46,7 +46,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("gnome-terminal");
     terminals.Add("lxterminal");
 #else
-    terminals.Add("Terminal.app");
+    terminals.Add("Terminal");
 #endif
     return terminals;
 }

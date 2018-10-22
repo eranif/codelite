@@ -711,7 +711,7 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 
     m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
     m_dragStartPos = wxPoint();
-
+    m_xButtonState = eButtonState::kNormal;
     // First check if the chevron was clicked. We do this because the chevron could overlap the buttons drawing
     // area
     if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {

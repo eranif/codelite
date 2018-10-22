@@ -1669,7 +1669,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, true);
     wxUnusedVar(dummy);
-
+    
     m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
     if(m_programProcess) {
         clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString()

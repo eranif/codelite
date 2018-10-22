@@ -104,7 +104,7 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 wxString clConsoleGnomeTerminal::PrepareCommand()
 {
     wxString commandToExecute;
-    commandToExecute << GetEnvironmentPrefix() << GetTerminalCommand();
+    commandToExecute << GetTerminalCommand();
 
     // set the working directory
     wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
@@ -116,7 +116,18 @@ wxString clConsoleGnomeTerminal::PrepareCommand()
 
     if(!GetCommand().IsEmpty()) {
         commandToExecute << " -e '/bin/bash -c \"" << EscapeString(GetCommand(), "\"");
-        if(IsWaitWhenDone()) { commandToExecute << " && read"; }
+        if(!GetCommandArgs().IsEmpty()) {
+            // first, we split the input string by double quotes
+            wxArrayString tmparr = wxSplit(GetCommandArgs(), '"', '\\');
+            // remove empty entries
+            wxArrayString arr;
+            for(size_t i = 0; i < tmparr.size(); ++i) {
+                if(!tmparr[i].IsEmpty()) { arr.Add(tmparr[i].Trim(false).Trim(true)); }
+            }
+            wxString commandArgs = wxJoin(arr, ' '); // it will escape extra spaces if needed
+            commandToExecute << " " << commandArgs;
+        }
+        if(IsWaitWhenDone()) { commandToExecute << " && echo Hit any key to continue... && read"; }
         commandToExecute << "\""; // Close /bin/bash -c
         commandToExecute << "'";  // Close gnome-terminal -e
     }

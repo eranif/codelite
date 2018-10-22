@@ -32,9 +32,7 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
 #else
     clConsoleOSXTerminal* t = new clConsoleOSXTerminal();
     terminal.reset(t);
-    if(terminalName.CmpNoCase("iTerm2") == 0) {
-        t->SetTerminalApp("iTerm");
-    }
+    if(terminalName.CmpNoCase("iTerm2") == 0) { t->SetTerminalApp("iTerm"); }
 #endif
     return terminal;
 }
@@ -73,9 +71,7 @@ wxString clConsoleBase::WrapWithQuotesIfNeeded(const wxString& s) const
 {
     wxString strimmed = s;
     strimmed.Trim().Trim(false);
-    if(strimmed.Contains(" ")) {
-        strimmed.Prepend("\"").Append("\"");
-    }
+    if(strimmed.Contains(" ")) { strimmed.Prepend("\"").Append("\""); }
     return strimmed;
 }
 
@@ -125,9 +121,7 @@ void clConsoleEnvironment::Apply()
         clWARNING() << "Refusing to apply environment. Already in a dirty state";
         return;
     }
-    if(m_environment.empty()) {
-        return;
-    }
+    if(m_environment.empty()) { return; }
 
     // keep a copy of the old environment before we apply the new values
     m_oldEnvironment.clear();
@@ -144,9 +138,7 @@ void clConsoleEnvironment::Apply()
 
 void clConsoleEnvironment::UnApply()
 {
-    if(m_oldEnvironment.empty()) {
-        return;
-    }
+    if(m_oldEnvironment.empty()) { return; }
     std::for_each(m_oldEnvironment.begin(), m_oldEnvironment.end(), [&](const wxStringMap_t::value_type& vt) {
         if(vt.second == "__no_such_env__") {
             ::wxUnsetEnv(vt.second);
@@ -160,4 +152,71 @@ void clConsoleEnvironment::UnApply()
 clConsoleEnvironment::clConsoleEnvironment(const wxStringMap_t& env)
     : m_environment(env)
 {
+}
+
+#define ADD_CURRENT_TOKEN()                                  \
+    if(!curtoken.IsEmpty()) {                                \
+        curtoken.Trim().Trim(false);                         \
+        if(!curtoken.IsEmpty()) { outputArr.Add(curtoken); } \
+        curtoken.Clear();                                    \
+    }
+
+wxArrayString clConsoleBase::SplitArguments(const wxString& args)
+{
+    const int STATE_NORMAL = 0;
+    const int STATE_DQUOTES = 1;
+    const int STATE_ESCAPE = 2;
+    int state = STATE_NORMAL;
+    int prevState = STATE_NORMAL;
+    wxArrayString outputArr;
+    wxString curtoken;
+    for(size_t i = 0; i < args.size(); ++i) {
+        wxChar ch = args[i];
+        switch(state) {
+        case STATE_NORMAL: {
+            switch(ch) {
+            case '\\':
+                curtoken << ch;
+                prevState = STATE_NORMAL;
+                state = STATE_ESCAPE;
+                break;
+            case ' ':
+                ADD_CURRENT_TOKEN();
+                break;
+            case '"':
+                ADD_CURRENT_TOKEN();
+                state = STATE_DQUOTES;
+                break;
+            default:
+                curtoken << ch;
+                break;
+            }
+        } break;
+        case STATE_DQUOTES: {
+            switch(ch) {
+            case '\\':
+                curtoken << ch;
+                prevState = STATE_DQUOTES;
+                state = STATE_ESCAPE;
+                break;
+            case '"':
+                ADD_CURRENT_TOKEN();
+                state = STATE_NORMAL;
+                break;
+            default:
+                curtoken << ch;
+                break;
+            }
+        } break;
+        case STATE_ESCAPE:
+            curtoken << ch;
+            state = prevState;
+            break;
+        default:
+            break;
+        }
+    }
+    // if we still got some unprocessed token, add it
+    ADD_CURRENT_TOKEN();
+    return outputArr;
 }

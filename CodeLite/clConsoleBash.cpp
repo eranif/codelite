@@ -25,13 +25,9 @@ wxFileName clConsoleBash::PrepareExecScript() const
         fileContent << "#!/bin/bash\n";
         fileContent << "command=\"" << GetCommand() << "\"\n";
         if(!GetCommandArgs().IsEmpty()) {
-            // first, we split the input string by double quotes
-            wxArrayString tmparr = ::wxSplit(GetCommandArgs(), '"', '\\');
-            // remove empty entries
-            wxArrayString arr;
-            for(size_t i = 0; i < tmparr.size(); ++i) {
-                if(!tmparr[i].IsEmpty()) { arr.Add(tmparr[i].Trim(false).Trim(true)); }
-            }
+
+            // Split the arguments line
+            wxArrayString arr = SplitArguments(GetCommandArgs());
 
             // Create an array in the script
             for(size_t i = 0; i < arr.size(); ++i) {

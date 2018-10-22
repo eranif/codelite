@@ -54,7 +54,11 @@ protected:
 public:
     clConsoleBase();
     virtual ~clConsoleBase();
-
+    /**
+     * @brief split command line arguments taking double quotes and escaping into account
+     */
+    static wxArrayString SplitArguments(const wxString& args);
+    
     /**
      * @brief add an environment variable to be applied before we start the terminal
      */

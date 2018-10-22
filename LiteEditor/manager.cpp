@@ -61,6 +61,7 @@
 #include "breakpointdlg.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
+#include "clConsoleBase.h"
 #include "clFileSystemEvent.h"
 #include "clKeyboardManager.h"
 #include "clProfileHandler.h"
@@ -1455,93 +1456,15 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 #endif
     wd = workingDir.GetPath();
     cmd = fileExe.GetFullPath();
-    ::WrapWithQuotes(cmd);
 
     clDEBUG() << "Command to execute:" << cmd;
     clDEBUG() << "Working directory:" << wd;
 
-    wxString execLine(cmd + wxT(" ") + cmdArgs);
-    execLine.Trim().Trim(false);
-
-    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
-    fnCodeliteTerminal.SetFullName("codelite-terminal");
-
-    wxString title;
-    title << cmd << " " << cmdArgs;
-
-    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-
-    // change directory to the working directory
-    if(considerPauseWhenExecuting && !bldConf->IsGUIProgram()) {
-
-#if defined(__WXMAC__)
-        wxFileName fnWD(wd, "");
-        if(fnWD.IsRelative()) { fnWD.MakeAbsolute(GetProject(projectName)->GetFileName().GetPath()); }
-        execLine = FileUtils::GetOSXTerminalCommand(cmd + " " + cmdArgs, fnWD.GetPath());
-
-#elif defined(__WXGTK__)
-
-        // Set a console to the execute target
-        if(opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal) && !bldConf->IsGUIProgram()) {
-            wxString newCommand;
-            newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-            if(bldConf->GetPauseWhenExecEnds()) { newCommand << " --wait "; }
-            newCommand << " --cmd " << title;
-            execLine = newCommand;
-
-        } else if(bldConf->IsGUIProgram()) {
-            // do nothing run the command as-is
-
-        } else {
-            wxString term;
-            term = opts->GetProgramConsoleCommand();
-            term.Replace(wxT("$(TITLE)"), title);
-
-            // build the command
-            wxString command;
-            if(bldConf->GetPauseWhenExecEnds()) {
-                wxString ld_lib_path;
-                wxFileName exePath(clStandardPaths::Get().GetExecutablePath());
-                wxFileName exeWrapper(exePath.GetPath(), wxT("codelite_exec"));
-
-                if(wxGetEnv(wxT("LD_LIBRARY_PATH"), &ld_lib_path) && ld_lib_path.IsEmpty() == false) {
-                    command << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" LD_LIBRARY_PATH=") << ld_lib_path
-                            << wxT(" ");
-                } else {
-                    command << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" ");
-                }
-            }
-
-            command << execLine;
-            term.Replace(wxT("$(CMD)"), command);
-            execLine = term;
-        }
-#elif defined(__WXMSW__)
-
-        if(!bldConf->IsGUIProgram()) {
-            if(bldConf->GetPauseWhenExecEnds() && opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
-
-                // codelite-terminal does not like forward slashes...
-                wxString commandToRun;
-                commandToRun << cmd << " ";
-                commandToRun.Replace("/", "\\");
-                commandToRun << cmdArgs;
-                commandToRun.Trim().Trim(false);
-
-                wxString newCommand;
-                newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-                if(bldConf->GetPauseWhenExecEnds()) { newCommand << " --wait "; }
-
-                newCommand << " --cmd " << commandToRun;
-                execLine = newCommand;
-            } else if(bldConf->GetPauseWhenExecEnds()) {
-                execLine.Prepend("le_exec.exe ");
-                ::WrapInShell(execLine);
-            }
-        }
-#endif
-    }
-    return execLine;
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetWorkingDirectory(wd);
+    console->SetCommand(cmd, cmdArgs);
+    console->SetWaitWhenDone(considerPauseWhenExecuting && !bldConf->IsGUIProgram());
+    return console->PrepareCommand();
 }
 
 //--------------------------- Top Level Pane Management -----------------------------
@@ -2652,7 +2575,7 @@ void Manager::StopBuild()
 {
     clBuildEvent stopEvent(wxEVT_STOP_BUILD);
     if(EventNotifier::Get()->ProcessEvent(stopEvent)) { return; }
-    
+
     // Mark this build as 'interrupted'
     clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetBuildInterrupted(true);
 

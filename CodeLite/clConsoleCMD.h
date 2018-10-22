@@ -13,6 +13,7 @@ public:
 public:
     virtual bool Start();
     virtual bool StartForDebugger();
+    virtual wxString PrepareCommand();
 };
 
 #endif // CLCONSOLECMD_H

@@ -105,8 +105,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
                        _("Open active project settings"), wxITEM_NORMAL);
 #if USE_SFTP
-    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"),
-                       bl->LoadBitmap("file_open"), _("Setup automatic upload"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("file_open"),
+                       _("Setup automatic upload"), wxITEM_DROPDOWN);
 #endif
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),

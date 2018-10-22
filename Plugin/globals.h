@@ -427,17 +427,6 @@ WXDLLIMPEXP_SDK void PostCall(wxObject* instance, clEventFunc_t func);
 WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString& inString, bool trim = true);
 
 /**
- * @brief make an execution command for running cmd under a shell and optionally prompt the user with the 'press any to
- * key to continue...' message
- */
-WXDLLIMPEXP_SDK wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey);
-
-/**
- * @brief launch codelite terminal and return its TTY
- */
-WXDLLIMPEXP_SDK IProcess* LaunchTerminal(const wxString& title, bool forDebugger, IProcessCallback* processCB);
-
-/**
  * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
  */
 WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid);

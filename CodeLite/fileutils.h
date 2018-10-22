@@ -73,7 +73,7 @@ public:
     /**
      * @brief launch the OS default terminal at a given path
      */
-    static void OpenTerminal(const wxString& path, const wxString& user_command = "");
+    static void OpenTerminal(const wxString& path, const wxString& user_command = "", bool pause_when_exit = false);
 
     /**
      * @brief open the built-in terminal

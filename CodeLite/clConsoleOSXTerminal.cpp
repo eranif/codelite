@@ -8,14 +8,7 @@ clConsoleOSXTerminal::~clConsoleOSXTerminal() {}
 
 bool clConsoleOSXTerminal::Start()
 {
-    wxString commandToExecute;
-    wxString strPath = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-    
-    // osascript -e 'tell app "Terminal" to do script "echo hello"'
-    commandToExecute << GetEnvironmentPrefix() << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
-    if(!GetCommand().IsEmpty()) { commandToExecute << " && " << GetCommand(); }
-    commandToExecute << "\"'";
-    clDEBUG() << commandToExecute;
+    wxString commandToExecute = PrepareCommand();
     system(commandToExecute.mb_str(wxConvUTF8).data());
     return true;
 }
@@ -28,4 +21,16 @@ bool clConsoleOSXTerminal::StartForDebugger()
     FileUtils::OSXOpenDebuggerTerminalAndGetTTY(GetWorkingDirectory(), "Terminal", m_tty, m_pid);
     SetRealPts(m_tty);
     return true;
+}
+wxString clConsoleOSXTerminal::PrepareCommand()
+{
+    wxString commandToExecute;
+    wxString strPath = WrapWithQuotesIfNeeded(GetWorkingDirectory());
+
+    // osascript -e 'tell app "Terminal" to do script "echo hello"'
+    commandToExecute << GetEnvironmentPrefix() << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
+    if(!GetCommand().IsEmpty()) { commandToExecute << " && " << GetCommand(); }
+    commandToExecute << "\"'";
+    clDEBUG() << commandToExecute;
+    return commandToExecute;
 }

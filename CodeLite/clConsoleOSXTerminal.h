@@ -12,6 +12,7 @@ public:
 public:
     virtual bool Start();
     virtual bool StartForDebugger();
+    virtual wxString PrepareCommand();
 };
 
 #endif // CLCONSOLEOSXTERMINAL_H

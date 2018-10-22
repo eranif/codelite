@@ -3,6 +3,7 @@
 #include "clConsoleGnomeTerminal.h"
 #include "clConsoleKonsole.h"
 #include "clConsoleOSXTerminal.h"
+#include "cl_config.h"
 #include "file_logger.h"
 #include <algorithm>
 #include <wx/utils.h>
@@ -11,9 +12,10 @@ clConsoleBase::clConsoleBase() {}
 
 clConsoleBase::~clConsoleBase() {}
 
-clConsoleBase::Ptr_t clConsoleBase::GetTerminal(const wxString& terminalName)
+clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
 {
     clConsoleBase::Ptr_t terminal;
+    wxString terminalName = GetSelectedTerminalName();
 #ifdef __WXMSW__
     wxUnusedVar(terminalName);
     terminal.reset(new clConsoleCMD());
@@ -63,7 +65,7 @@ wxString clConsoleBase::WrapWithQuotesIfNeeded(const wxString& s) const
 {
     wxString strimmed = s;
     strimmed.Trim().Trim(false);
-    if(strimmed.Contains(" ")) { strimmed.Prepend("\"").Append("\\"); }
+    if(strimmed.Contains(" ")) { strimmed.Prepend("\"").Append("\""); }
     return strimmed;
 }
 
@@ -72,6 +74,27 @@ wxString clConsoleBase::EscapeString(const wxString& str, const wxString& c) con
     wxString escaped = str;
     escaped.Replace(c, wxString() << "\\" << c);
     return escaped;
+}
+
+bool clConsoleBase::StartProcess(const wxString& command)
+{
+    SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags()));
+    return (GetPid() > 0);
+}
+
+wxString clConsoleBase::GetSelectedTerminalName()
+{
+    wxString terminalName = clConfig::Get().Read("Terminal", wxString());
+    if(terminalName.IsEmpty()) {
+#ifdef __WXGTK__
+        terminalName = "gnome-terminal";
+#elif defined(__WXOSX__)
+        terminalName = "Terminal";
+#else
+        terminalName = "CMD";
+#endif
+    }
+    return terminalName;
 }
 
 clConsoleEnvironment::clConsoleEnvironment() {}

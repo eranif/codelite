@@ -302,5 +302,5 @@ void clDockerDriver::Run(const wxFileName& filepath, const clDockerWorkspaceSett
     wxString runOptions = info->GetRunOptions();
     runOptions.Trim().Trim(false);
     command << " " << runOptions;
-    FileUtils::OpenBuiltInTerminal(filepath.GetPath(), command, true);
+    FileUtils::OpenTerminal(filepath.GetPath(), command, true);
 }

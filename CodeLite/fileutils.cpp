@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "clConsoleBase.h"
+#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "file_logger.h"
@@ -66,124 +68,13 @@ void FileUtils::OpenFileExplorer(const wxString& path)
     }
 }
 
-#ifdef __WXGTK__
-struct TerminalCookie {
-    size_t idx = 0;
-    bool IsOk(const std::vector<std::pair<wxString, wxString> >& terminals) const { return (idx < terminals.size()); }
-};
-
-static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
+void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command, bool pause_when_exit)
 {
-    static std::vector<std::pair<wxString, wxString> > Terminals;
-    if(Terminals.empty()) {
-        // Try to locate gnome-terminal
-        if(wxFileName::FileExists("/usr/bin/lxterminal")) {
-            wxString cmd = "/usr/bin/lxterminal";
-            wxString titlePattern = " -l -e '$COMMAND'";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/konsole")) {
-            wxString cmd = "/usr/bin/konsole -p font=\"Monospace,12\"";
-            wxString titlePattern = "-e $COMMAND";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
-            wxString cmd = "/usr/bin/gnome-terminal";
-            wxString titlePattern = "-e '$COMMAND'";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/xterm")) {
-            wxString cmd = "/usr/bin/xterm";
-            wxString titlePattern = "-e '$COMMAND'";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/uxterm")) {
-            wxString cmd = "/usr/bin/uxterm";
-            wxString titlePattern = "-e '$COMMAND'";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-    }
-    if(!cookie.IsOk(Terminals)) { return ""; }
-    wxString cmd = Terminals[cookie.idx].first;
-    wxString extra = Terminals[cookie.idx].second;
-    ++cookie.idx;
-    if(!command.IsEmpty()) {
-        extra.Replace("$COMMAND", command);
-        return cmd + " " + extra;
-    } else {
-        return cmd;
-    }
-}
-
-static void GTKOpenTerminal(const wxString& command, const wxString& path)
-{
-    DirSaver ds;
-    if(!path.IsEmpty() && wxDirExists(path)) { ::wxSetWorkingDirectory(path); }
-
-    TerminalCookie cookie;
-    while(true) {
-        wxString cmd = GTKGetTerminal(command, cookie);
-        if(cmd.IsEmpty()) { return; }
-        clDEBUG() << "Trying terminal" << cmd;
-        long PID = ::wxExecute(cmd);
-        if(PID != wxNOT_FOUND) {
-            // Successful launch
-            wxThread::Sleep(150);
-            // Check that the process is actually running
-            if(::kill(PID, 0) == 0) {
-                clDEBUG() << "Launched terminal (PID=" << PID << "):" << cmd;
-                break;
-            } else {
-                // The process terminated
-                clDEBUG() << "Failed to launch terminal:" << cmd;
-            }
-        }
-        // Try another terminal
-    }
-}
-
-#endif
-
-void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command)
-{
-    wxString strPath = path;
-    if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
-
-    wxString cmd;
-#ifdef __WXMSW__
-    cmd << "cmd";
-    DirSaver ds;
-    ::wxSetWorkingDirectory(path);
-    if(!user_command.IsEmpty()) {
-        cmd << " /C ";
-        if(user_command.StartsWith("\"") && !user_command.EndsWith("\"")) {
-            cmd << "\"" << user_command << "\"";
-        } else {
-            cmd << user_command;
-        }
-    }
-
-#elif defined(__WXGTK__)
-    GTKOpenTerminal(user_command, path);
-    return;
-
-#elif defined(__WXMAC__)
-    strPath = path;
-    if(strPath.Contains(" ")) { strPath.Prepend("\\\"").Append("\\\""); }
-    // osascript -e 'tell app "Terminal" to do script "echo hello"'
-    cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
-    if(!user_command.IsEmpty()) { cmd << " && " << user_command; }
-    cmd << "\"'";
-    clDEBUG() << cmd;
-    ::system(cmd.mb_str(wxConvUTF8).data());
-    return;
-#endif
-    if(cmd.IsEmpty()) return;
-    ::wxExecute(cmd);
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetCommand(user_command, "");
+    console->SetWorkingDirectory(path);
+    console->SetWaitWhenDone(pause_when_exit);
+    console->Start();
 }
 
 bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
@@ -312,38 +203,17 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
 void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
                                 int port)
 {
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    wxString args;
 #ifdef __WXMSW__
-    wxString command;
-    wxFileName putty(sshClient);
-    if(!putty.Exists()) {
-#if wxUSE_GUI
-        wxMessageBox(_("Can't launch PuTTY. Don't know where it is ...."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
-#endif
-        return;
-    }
-
-    wxString puttyClient = putty.GetFullPath();
-    if(puttyClient.Contains(" ")) { puttyClient.Prepend("\"").Append("\""); }
-
-    if(password.IsEmpty()) {
-        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << "\"";
-    } else {
-        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
-    }
-    ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
-
-#elif defined(__WXGTK__)
-    // Linux, we can't pass the password in the command line
-    wxString command;
-    command << sshClient << " -p " << port << " " << connectString;
-    GTKOpenTerminal(command, "");
+    args << "-P " << port << " " << connectString;
+    if(!password.IsEmpty()) { args << " -pw " << password; }
+    console->SetExecExtraFlags(wxEXEC_HIDE_CONSOLE);
 #else
-    // OSX
-    wxString command;
-    command << "osascript -e 'tell app \"Terminal\" to do script \"" << sshClient << " " << connectString << " -p "
-            << port << "\"'";
-    ::wxExecute(command);
+    args << "-p " << port << " " << connectString;
 #endif
+    console->SetCommand(sshClient, args);
+    console->Start();
 }
 
 static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wxArrayString& excludeMask)

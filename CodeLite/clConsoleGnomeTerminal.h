@@ -24,6 +24,7 @@ public:
 public:
     virtual bool Start();
     virtual bool StartForDebugger();
+    virtual wxString PrepareCommand();
 };
 
 #endif // CLCONSOLEGNOMETERMINAL_H

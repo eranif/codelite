@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "asyncprocess.h"
+#include "clConsoleBase.h"
 #include "clDataViewListCtrl.h"
 #include "clGetTextFromUserDialog.h"
 #include "cl_standard_paths.h"
@@ -77,7 +78,6 @@
 #include <wx/wfstream.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/zipstrm.h>
-#include "clConsoleBase.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -1606,14 +1606,9 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
     tty.Clear();
     realPts.Clear();
 
-#if defined(__WXMAC__)
-    FileUtils::OSXOpenDebuggerTerminalAndGetTTY(::wxGetCwd(), tty, pid);
-    realPts = tty;
-
-#elif defined(__WXMSW__)
+#if defined(__WXMSW__)
     // Windows
     wxUnusedVar(title);
-
 #else
     // Non Windows machines
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
@@ -1623,110 +1618,6 @@ void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& r
         pid = console->GetPid();
     }
 #endif // !__WXMSW__
-}
-
-IProcess* LaunchTerminal(const wxString& title, bool forDebugger, IProcessCallback* processCB)
-{
-#ifdef __WXMSW__
-    // Windows
-    wxUnusedVar(title);
-    wxUnusedVar(processCB);
-    wxUnusedVar(forDebugger);
-    return NULL;
-
-#else
-    wxString command;
-    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
-
-#if defined(__WXMAC__)
-    command << "/usr/bin/open \"" << fnCodeliteTerminal.GetPath(true) << "codelite-terminal.app\" --args ";
-#else
-    command << fnCodeliteTerminal.GetPath(true) << "codelite-terminal ";
-#endif
-    // command << " --always-on-top ";
-    command << " --print-info ";
-
-    if(forDebugger) { command << " --dbg-terminal "; }
-    command << " --title \"" << title << "\"";
-
-    CL_DEBUG("Launching Terminal: %s", command);
-    IProcess* handle = ::CreateAsyncProcessCB(NULL, processCB, command);
-    return handle;
-
-#endif
-}
-
-wxString MakeExecInShellCommand(const wxString& cmd, const wxString& wd, bool waitForAnyKey)
-{
-    // execute command & cmdArgs
-    wxString execLine(cmd);
-    wxString title(cmd);
-
-    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
-    fnCodeliteTerminal.SetFullName("codelite-terminal");
-
-// change directory to the working directory
-#if defined(__WXMAC__)
-    wxString newCommand;
-    newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-    if(waitForAnyKey) { newCommand << " --wait "; }
-    newCommand << " --cmd " << title;
-    execLine = newCommand;
-
-#elif defined(__WXGTK__)
-
-    // Set a console to the execute target
-    if(opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
-        wxString newCommand;
-        newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-        if(waitForAnyKey) { newCommand << " --wait "; }
-        newCommand << " --cmd " << title;
-        execLine = newCommand;
-
-    } else {
-        wxString term;
-        term = opts->GetProgramConsoleCommand();
-        term.Replace(wxT("$(TITLE)"), title);
-
-        // build the command
-        wxString command;
-        wxString ld_lib_path;
-        wxFileName exePath(clStandardPaths::Get().GetExecutablePath());
-        wxFileName exeWrapper(exePath.GetPath(), wxT("codelite_exec"));
-
-        if(wxGetEnv(wxT("LD_LIBRARY_PATH"), &ld_lib_path) && ld_lib_path.IsEmpty() == false) {
-            command << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" LD_LIBRARY_PATH=") << ld_lib_path
-                    << wxT(" ");
-        } else {
-            command << wxT("/bin/sh -f ") << exeWrapper.GetFullPath() << wxT(" ");
-        }
-        command << execLine;
-        term.Replace(wxT("$(CMD)"), command);
-        execLine = term;
-    }
-#elif defined(__WXMSW__)
-
-    if(opts->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal)) {
-
-        // codelite-terminal does not like forward slashes...
-        wxString commandToRun;
-        commandToRun << cmd << " ";
-        commandToRun.Replace("/", "\\");
-        commandToRun.Trim().Trim(false);
-
-        wxString newCommand;
-        newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
-        if(waitForAnyKey) { newCommand << " --wait"; }
-
-        newCommand << " --cmd " << commandToRun;
-        execLine = newCommand;
-
-    } else if(waitForAnyKey) {
-        execLine.Prepend("le_exec.exe ");
-    }
-#endif
-    return execLine;
 }
 
 wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message, const wxString& dlgId,

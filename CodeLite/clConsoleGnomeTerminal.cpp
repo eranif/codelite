@@ -56,29 +56,10 @@ clConsoleGnomeTerminal::~clConsoleGnomeTerminal() {}
 
 bool clConsoleGnomeTerminal::Start()
 {
-    wxString commandToExecute;
-    commandToExecute << GetEnvironmentPrefix() << GetTerminalCommand();
-
-    // set the working directory
-    wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-    if(!workingDirectory.IsEmpty()) {
-        wxString pattern = GetWorkingDirSwitchPattern();
-        pattern.Replace("VALUE", workingDirectory);
-        commandToExecute << " " << pattern;
-    }
-
-    if(!GetCommand().IsEmpty()) {
-        commandToExecute << " -e '/bin/bash -c \"" << EscapeString(GetCommand(), "\"");
-        if(IsWaitWhenDone()) { commandToExecute << " && read"; }
-        commandToExecute << "\""; // Close /bin/bash -c
-        commandToExecute << "'";  // Close gnome-terminal -e
-    }
-
     // Apply the environment variables before we launch the process
     clConsoleEnvironment env(GetEnvironment());
     env.Apply();
-    SetPid(::wxExecute(commandToExecute));
-    return (GetPid() > 0);
+    return StartProcess(PrepareCommand());
 }
 
 bool clConsoleGnomeTerminal::StartForDebugger()
@@ -118,4 +99,26 @@ bool clConsoleGnomeTerminal::StartForDebugger()
         wxThread::Sleep(50);
     }
     return !m_tty.IsEmpty();
+}
+
+wxString clConsoleGnomeTerminal::PrepareCommand()
+{
+    wxString commandToExecute;
+    commandToExecute << GetEnvironmentPrefix() << GetTerminalCommand();
+
+    // set the working directory
+    wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
+    if(!workingDirectory.IsEmpty()) {
+        wxString pattern = GetWorkingDirSwitchPattern();
+        pattern.Replace("VALUE", workingDirectory);
+        commandToExecute << " " << pattern;
+    }
+
+    if(!GetCommand().IsEmpty()) {
+        commandToExecute << " -e '/bin/bash -c \"" << EscapeString(GetCommand(), "\"");
+        if(IsWaitWhenDone()) { commandToExecute << " && read"; }
+        commandToExecute << "\""; // Close /bin/bash -c
+        commandToExecute << "'";  // Close gnome-terminal -e
+    }
+    return commandToExecute;
 }

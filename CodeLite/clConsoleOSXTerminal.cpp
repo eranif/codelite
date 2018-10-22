@@ -25,12 +25,9 @@ bool clConsoleOSXTerminal::StartForDebugger()
 wxString clConsoleOSXTerminal::PrepareCommand()
 {
     wxString commandToExecute;
-    wxString strPath = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
-    commandToExecute << GetEnvironmentPrefix() << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath;
-    if(!GetCommand().IsEmpty()) { commandToExecute << " && " << GetCommand(); }
-    commandToExecute << "\"'";
+    wxFileName scriptPath = PrepareExecScript();
+    commandToExecute << GetEnvironmentPrefix() << "/usr/bin/open -a Terminal " << scriptPath.GetFullPath();
     clDEBUG() << commandToExecute;
     return commandToExecute;
 }

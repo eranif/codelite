@@ -11,7 +11,12 @@ clConsoleBash::~clConsoleBash() {}
 wxFileName clConsoleBash::PrepareExecScript() const
 {
     // Create a script
+#ifdef __WXOSX__
+    wxFileName scriptPath("/tmp", "codelite-exec.sh");
+#else
     wxFileName scriptPath(clStandardPaths::Get().GetUserDataDir(), "codelite-exec.sh");
+#endif
+
     scriptPath.AppendDir("tmp");
     scriptPath.AppendDir(::wxGetUserId());
     scriptPath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -40,5 +45,9 @@ wxFileName clConsoleBash::PrepareExecScript() const
         if(IsWaitWhenDone()) { fileContent << "echo Hit any key to continue...\nread"; }
         FileUtils::WriteFileContent(scriptPath, fileContent);
     }
+#ifdef __WXOSX__
+    // The script must have exec permissions
+    system("chown +x /tmp/codelite-exec.sh");
+#endif
     return scriptPath;
 }

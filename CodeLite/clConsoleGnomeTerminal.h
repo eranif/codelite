@@ -5,17 +5,18 @@
 
 class WXDLLIMPEXP_CL clConsoleGnomeTerminal : public clConsoleBash
 {
-    wxString m_terminalCommand = "/usr/bin/gnome-terminal";
-    wxString m_workingDirSwitchPattern = "--working-directory=VALUE";
+    wxString m_terminalCommand;
+    wxString m_emptyTerminalCommand;
 
 protected:
     void SetTerminalCommand(const wxString& terminalCommand) { this->m_terminalCommand = terminalCommand; }
     const wxString& GetTerminalCommand() const { return m_terminalCommand; }
-    void SetWorkingDirSwitchPattern(const wxString& workingDirSwitchPattern)
+
+    void SetEmptyTerminalCommand(const wxString& emptyTerminalCommand)
     {
-        this->m_workingDirSwitchPattern = workingDirSwitchPattern;
+        this->m_emptyTerminalCommand = emptyTerminalCommand;
     }
-    const wxString& GetWorkingDirSwitchPattern() const { return m_workingDirSwitchPattern; }
+    const wxString& GetEmptyTerminalCommand() const { return m_emptyTerminalCommand; }
 
 public:
     clConsoleGnomeTerminal();

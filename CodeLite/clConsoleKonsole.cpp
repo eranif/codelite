@@ -1,10 +1,9 @@
 #include "clConsoleKonsole.h"
 
-clConsoleKonsole::clConsoleKonsole() 
+clConsoleKonsole::clConsoleKonsole()
 {
-    SetTerminalCommand("/usr/bin/konsole --separate");
-    SetWorkingDirSwitchPattern("--workdir VALUE");
+    SetTerminalCommand("/usr/bin/konsole --separate --working %WD% -e '%COMMAND%'");
+    SetEmptyTerminalCommand("/usr/bin/konsole --separate --working %WD%");
 }
 
 clConsoleKonsole::~clConsoleKonsole() {}
-

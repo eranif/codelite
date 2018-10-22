@@ -51,7 +51,11 @@ static bool search_process_by_command(const wxString& name, wxString& tty, long&
     return false;
 }
 
-clConsoleGnomeTerminal::clConsoleGnomeTerminal() {}
+clConsoleGnomeTerminal::clConsoleGnomeTerminal()
+{
+    SetTerminalCommand("/usr/bin/gnome-terminal --working-directory=%WD% -e '%COMMAND%'");
+    SetEmptyTerminalCommand("/usr/bin/gnome-terminal --working-directory=%WD%");
+}
 
 clConsoleGnomeTerminal::~clConsoleGnomeTerminal() {}
 
@@ -76,10 +80,11 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 
     wxString sleepCommand = "/bin/sleep";
     sleepCommand << " " << secondsToSleep;
-
-    wxString consoleCommand;
-    consoleCommand << GetTerminalCommand() << " -e '" << sleepCommand << "'";
-    ::wxExecute(consoleCommand);
+    
+    wxString commandToExecute = GetTerminalCommand();
+    commandToExecute.Replace("%WD%", ".");
+    commandToExecute.Replace("%COMMAND%", sleepCommand);
+    ::wxExecute(commandToExecute);
 
     // Let it start ... (wait for it up to 5 seconds)
     for(size_t i = 0; i < 100; ++i) {
@@ -105,24 +110,22 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 wxString clConsoleGnomeTerminal::PrepareCommand()
 {
     wxString commandToExecute;
+    bool hasCommand = !GetCommand().IsEmpty();
+    commandToExecute = hasCommand ? GetTerminalCommand() : GetEmptyTerminalCommand();
+    if(!IsTerminalNeeded()) { commandToExecute = "%COMMAND%"; }
+
     if(IsTerminalNeeded()) {
-        commandToExecute << GetTerminalCommand();
         // set the working directory
         wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-        if(!workingDirectory.IsEmpty()) {
-            wxString pattern = GetWorkingDirSwitchPattern();
-            pattern.Replace("VALUE", workingDirectory);
-            commandToExecute << " " << pattern;
-        }
+        if(workingDirectory.IsEmpty()) { workingDirectory = "."; }
+        commandToExecute.Replace("%WD%", workingDirectory);
     }
 
-    if(!GetCommand().IsEmpty()) {
+    if(hasCommand) {
         wxFileName scriptPath = PrepareExecScript();
-        if(IsTerminalNeeded()) {
-            commandToExecute << " -e '/bin/bash -f \"" << scriptPath.GetFullPath() << "\"'";
-        } else {
-            commandToExecute << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";
-        }
+        wxString rowCommand;
+        rowCommand << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";
+        commandToExecute.Replace("%COMMAND%", rowCommand);
     }
     return commandToExecute;
 }

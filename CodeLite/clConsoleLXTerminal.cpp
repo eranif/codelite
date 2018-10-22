@@ -2,11 +2,8 @@
 
 clConsoleLXTerminal::clConsoleLXTerminal()
 {
-    SetTerminalCommand("/usr/bin/lxterminal");
-    SetWorkingDirSwitchPattern("--working-directory=VALUE");
+    SetTerminalCommand("/usr/bin/lxterminal --working-directory=%WD% -e %COMMAND%");
+    SetEmptyTerminalCommand("/usr/bin/lxterminal --working-directory=%WD%");
 }
 
-clConsoleLXTerminal::~clConsoleLXTerminal()
-{
-}
-
+clConsoleLXTerminal::~clConsoleLXTerminal() {}

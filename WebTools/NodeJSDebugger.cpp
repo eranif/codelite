@@ -169,7 +169,12 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
     NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kDebug);
     if(dlg.ShowModal() != wxID_OK) { return; }
 
-    StartDebugger(dlg.GetCommand(), dlg.GetWorkingDirectory());
+    wxString command;
+    wxString command_args;
+    dlg.GetCommand(command, command_args);
+    wxString oneliner = command;
+    if(!command_args.IsEmpty()) { oneliner << " " << command_args; }
+    StartDebugger(oneliner, dlg.GetWorkingDirectory());
 }
 
 void NodeJSDebugger::OnDebugStepIn(clDebugEvent& event)

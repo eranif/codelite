@@ -33,8 +33,8 @@
 #ifndef _VALGRINDPROCESSOR_H_
 #define _VALGRINDPROCESSOR_H_
 
-#include <wx/xml/xml.h>
 #include "imemcheckprocessor.h"
+#include <wx/xml/xml.h>
 
 /**
  * @class ValgrindMemcheckProcessor
@@ -42,23 +42,24 @@
  *
  * Settings for this parset is implemented in global settings. It could be moved here or to own file.
  */
-class ValgrindMemcheckProcessor:public IMemCheckProcessor
+class ValgrindMemcheckProcessor : public IMemCheckProcessor
 {
 public:
     /**
      * @brief interface implementation, does nothing more than inherited ctor
      * @param settings
      */
-    ValgrindMemcheckProcessor(MemCheckSettings * const settings);
-    
+    ValgrindMemcheckProcessor(MemCheckSettings* const settings);
+
     /**
      * @brief interface implementation
      * @return list of supp files
      *
-     * Some files are specified in setting. Workspace specific supp file need to be named just before analyse run, according to current opened workspace.
+     * Some files are specified in setting. Workspace specific supp file need to be named just before analyse run,
+     * according to current opened workspace.
      */
     virtual wxArrayString GetSuppressionFiles();
-    
+
     /**
      * @brief interface implementation
      * @param originalCommand
@@ -66,16 +67,16 @@ public:
      *
      * Takes original command and prepend it with Valgrind command and its arguments.
      */
-    virtual wxString GetExecutionCommand(const wxString & originalCommand);
-    
+    virtual void GetExecutionCommand(const wxString& originalCommand, wxString& command, wxString& command_args);
+
     /**
      * @brief interface implementation
      * @param outputLogFileName
-     * @return 
+     * @return
      *
      * Loads Valgrind's xml log to wxXmlDocument, and goes trought nodes
      */
-    virtual bool Process(const wxString & outputLogFileName = wxEmptyString);
+    virtual bool Process(const wxString& outputLogFileName = wxEmptyString);
 
 protected:
     /**
@@ -84,17 +85,18 @@ protected:
      * @param errorNode reference to current processed node in that doc file
      * @return MemCheckError object
      *
-     * Auxiliary section is not in subnode. First part of the node describes particular error, second part describes auxiliary info. For auxiliary is created sub MemCheckError object.
+     * Auxiliary section is not in subnode. First part of the node describes particular error, second part describes
+     * auxiliary info. For auxiliary is created sub MemCheckError object.
      */
-    MemCheckError ProcessError(wxXmlDocument & doc, wxXmlNode * errorNode);
-    
+    MemCheckError ProcessError(wxXmlDocument& doc, wxXmlNode* errorNode);
+
     /**
      * @brief creates one MemCheckErrorLocation object
      * @param doc whole log document
      * @param locationNode reference to current processed node in that doc file
      * @return MemCheckErrorLocation object
      */
-    MemCheckErrorLocation ProcessLocation(wxXmlDocument & doc, wxXmlNode * locationNode);
+    MemCheckErrorLocation ProcessLocation(wxXmlDocument& doc, wxXmlNode* locationNode);
 };
 
 #endif // _VALGRINDPROCESSOR_H_

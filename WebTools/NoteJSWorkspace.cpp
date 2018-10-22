@@ -1,22 +1,20 @@
-#include "NoteJSWorkspace.h"
+#include "NodeJSDebuggerDlg.h"
+#include "NodeJSNewWorkspaceDlg.h"
 #include "NodeJSWorkspaceConfiguration.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
 #include "NodeJSWorkspaceView.h"
+#include "NoteJSWorkspace.h"
+#include "asyncprocess.h"
+#include "clWorkspaceManager.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "ctags_manager.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "clWorkspaceView.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <wx/dirdlg.h>
-#include "ctags_manager.h"
-#include "clWorkspaceManager.h"
-#include <wx/msgdlg.h>
-#include "NodeJSDebuggerDlg.h"
-#include "asyncprocess.h"
 #include "processreaderthread.h"
-#include "NodeJSNewWorkspaceDlg.h"
 #include <wx/dir.h>
+#include <wx/dirdlg.h>
+#include <wx/msgdlg.h>
 
 NodeJSWorkspace* NodeJSWorkspace::ms_workspace = NULL;
 
@@ -73,17 +71,13 @@ bool NodeJSWorkspace::IsProjectSupported() const { return false; }
 
 void NodeJSWorkspace::Free()
 {
-    if(ms_workspace) {
-        delete ms_workspace;
-    }
+    if(ms_workspace) { delete ms_workspace; }
     ms_workspace = NULL;
 }
 
 NodeJSWorkspace* NodeJSWorkspace::Get()
 {
-    if(!ms_workspace) {
-        ms_workspace = new NodeJSWorkspace();
-    }
+    if(!ms_workspace) { ms_workspace = new NodeJSWorkspace(); }
     return ms_workspace;
 }
 
@@ -174,8 +168,8 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
 
         wxFileName workspaceFile = dlg.GetWorkspaceFilename();
         if(!workspaceFile.GetDirCount()) {
-            ::wxMessageBox(
-                _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(_("Can not create workspace in the root folder"), _("New Workspace"),
+                           wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
@@ -183,8 +177,7 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
         workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
         if(!Create(workspaceFile)) {
-            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"),
-                           _("New Workspace"),
+            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"), _("New Workspace"),
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -244,17 +237,13 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     NodeJSWorkspaceConfiguration conf;
     conf.Load(workspaceFile);
-    if(!conf.IsOk()) {
-        return;
-    }
+    if(!conf.IsOk()) { return; }
     // This is a NodeJS workspace, stop event processing by calling
     // event.Skip(false)
     event.Skip(false);
 
     // Check if this is a PHP workspace
-    if(IsOpen()) {
-        Close();
-    }
+    if(IsOpen()) { Close(); }
     Open(workspaceFile);
 }
 
@@ -273,9 +262,7 @@ void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
 
 void NodeJSWorkspace::RestoreSession()
 {
-    if(IsOpen()) {
-        clGetManager()->LoadWorkspaceSession(m_filename);
-    }
+    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
 }
 
 void NodeJSWorkspace::OnSaveSession(clCommandEvent& event)
@@ -299,17 +286,17 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
     if(IsOpen()) {
         if(m_terminal.IsRunning()) {
             ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
-                           "CodeLite",
-                           wxICON_WARNING | wxCENTER | wxOK);
+                           "CodeLite", wxICON_WARNING | wxCENTER | wxOK);
             return;
         }
         event.Skip(false);
         NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kExecute);
-        if(dlg.ShowModal() != wxID_OK) {
-            return;
-        }
-        wxString cmd = dlg.GetCommand();
-        m_terminal.ExecuteConsole(cmd, dlg.GetWorkingDirectory(), true, cmd);
+        if(dlg.ShowModal() != wxID_OK) { return; }
+
+        wxString command;
+        wxString command_args;
+        dlg.GetCommand(command, command_args);
+        m_terminal.ExecuteConsole(command, true, command_args, dlg.GetWorkingDirectory(), command + " " + command_args);
     }
 }
 

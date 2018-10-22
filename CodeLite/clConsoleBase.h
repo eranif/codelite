@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 #include <wx/arrstr.h>
+#include <wx/process.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 
@@ -39,6 +40,7 @@ protected:
     bool m_autoTerminate = false;
     int m_execExtraFlags = 0;
     bool m_terminalNeeded = true;
+    wxProcess* m_callback = nullptr;
 
     /**
      * @brief create an environment list to be used before we execute our terminal
@@ -114,6 +116,11 @@ public:
     void SetTerminalNeeded(bool terminalNeeded) { this->m_terminalNeeded = terminalNeeded; }
     bool IsAutoTerminate() const { return m_autoTerminate; }
     bool IsTerminalNeeded() const { return m_terminalNeeded; }
+    void SetCallback(wxProcess* callback)
+    {
+        wxDELETE(m_callback);
+        this->m_callback = callback;
+    }
 };
 
 #endif // CLCONSOLEBASE_H

@@ -53,33 +53,30 @@ public:
      * @brief ctor saves reference to settings and inicilizes other properties
      * @param settings reference to global plugin setting, each processor uses what part it needs
      */
-    IMemCheckProcessor(MemCheckSettings * const settings): m_settings(settings),
-        m_outputLogFileName(wxEmptyString), m_errorList() {
-    };
-    
+    IMemCheckProcessor(MemCheckSettings* const settings)
+        : m_settings(settings)
+        , m_outputLogFileName(wxEmptyString)
+        , m_errorList(){};
+
     virtual ~IMemCheckProcessor() {}
-    
+
 protected:
-    MemCheckSettings * m_settings;
+    MemCheckSettings* m_settings;
     wxString m_outputLogFileName;
     ErrorList m_errorList;
 
 public:
     /**
-     * @brief method "Process" parses external tool output and stores in errorList structure 
+     * @brief method "Process" parses external tool output and stores in errorList structure
      * @return reference to errorList
      */
-    virtual ErrorList & GetErrors() {
-        return m_errorList;
-    };
+    virtual ErrorList& GetErrors() { return m_errorList; };
 
     /**
      * @brief If tool uses temp file for error log, this function return its path.
      * @return log file name
      */
-    virtual const wxString & GetOutputLogFileName() const {
-        return m_outputLogFileName;
-    }
+    virtual const wxString& GetOutputLogFileName() const { return m_outputLogFileName; }
 
     /**
      * @brief Reads settings and creates list of actual valid supp files.
@@ -89,15 +86,13 @@ public:
 
     /**
      * @brief Combines processor settings and command to be checked and creates new memory tool execution command
-     * @param originalCommand
-     * @return modified command
      */
-    virtual wxString GetExecutionCommand(const wxString & originalCommand) = 0;
+    virtual void GetExecutionCommand(const wxString& originalCommand, wxString& command, wxString& command_args) = 0;
 
     /**
      * @brief Processes data from external tool (log file) to ErrorList.
      */
-    virtual bool Process(const wxString & outputLogFileName = wxEmptyString) = 0;
+    virtual bool Process(const wxString& outputLogFileName = wxEmptyString) = 0;
 };
 
 #endif //_IMEMCHECKPROCESSOR_H_

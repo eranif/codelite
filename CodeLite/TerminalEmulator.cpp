@@ -1,11 +1,12 @@
 #include "TerminalEmulator.h"
-#include <wx/filename.h>
-#include <wx/log.h>
-#include "processreaderthread.h"
-#include "macros.h"
-#include <algorithm>
 #include "dirsaver.h"
 #include "file_logger.h"
+#include "macros.h"
+#include "processreaderthread.h"
+#include <algorithm>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include "clConsoleBase.h"
 
 #ifndef __WXMSW__
 #include <signal.h>
@@ -24,9 +25,7 @@ public:
         : wxProcess(parent)
         , m_parent(parent)
     {
-        if(m_parent) {
-            m_parent->m_myProcesses.push_back(this);
-        }
+        if(m_parent) { m_parent->m_myProcesses.push_back(this); }
     }
 
     virtual ~MyProcess() { m_parent = NULL; }
@@ -37,12 +36,10 @@ public:
             m_parent->AddPendingEvent(terminateEvent);
             m_parent->m_pid = wxNOT_FOUND;
 
-            std::list<wxProcess*>::iterator iter = std::find_if(m_parent->m_myProcesses.begin(),
-                                                                m_parent->m_myProcesses.end(),
-                                                                [&](wxProcess* proc) { return proc == this; });
-            if(iter != m_parent->m_myProcesses.end()) {
-                m_parent->m_myProcesses.erase(iter);
-            }
+            std::list<wxProcess*>::iterator iter =
+                std::find_if(m_parent->m_myProcesses.begin(), m_parent->m_myProcesses.end(),
+                             [&](wxProcess* proc) { return proc == this; });
+            if(iter != m_parent->m_myProcesses.end()) { m_parent->m_myProcesses.erase(iter); }
             delete this;
         }
     }
@@ -66,11 +63,16 @@ TerminalEmulator::~TerminalEmulator()
     });
 }
 
-bool TerminalEmulator::ExecuteConsole(const wxString& command,
-                                      const wxString& workingDirectory,
-                                      bool waitOnExit,
-                                      const wxString& title)
+bool TerminalEmulator::ExecuteConsole(const wxString& command, bool waitOnExit, const wxString& command_args,
+                                      const wxString& workingDirectory, const wxString& title)
 {
+    wxUnusedVar(title);
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetCommand(command, command_args);
+    console->SetWaitWhenDone(waitOnExit);
+    console->SetWorkingDirectory(workingDirectory);
+    console->SetCallback(new MyProcess(this));
+    
     wxString consoleCommand;
     wxString strTitle = title;
     if(strTitle.IsEmpty()) {
@@ -78,81 +80,9 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command,
     } else {
         strTitle.Prepend("'").Append("'");
     }
-#ifdef __WXMSW__
-    consoleCommand = PrepareCommand(command, strTitle, waitOnExit);
-
-#elif defined(__WXGTK__)
-    // Test for the common terminals on Linux
-    // gnome-terminal, konsole and lxterminal are all starting asychronously
-    // this means that "waitOnExit" has no effect here
-    if(wxFileName::Exists("/usr/bin/gnome-terminal") && !waitOnExit) {
-        consoleCommand << "/usr/bin/gnome-terminal -t " << strTitle << " -x "
-                       << PrepareCommand(command, strTitle, waitOnExit);
-
-    } else if(wxFileName::Exists("/usr/bin/konsole") && !waitOnExit) {
-        consoleCommand << "/usr/bin/konsole -e " << PrepareCommand(command, strTitle, waitOnExit);
-
-    } else if(wxFileName::Exists("/usr/bin/lxterminal") && !waitOnExit) {
-        consoleCommand << "/usr/bin/lxterminal -T " << strTitle << " -e "
-                       << PrepareCommand(command, strTitle, waitOnExit);
-
-    } else if(wxFileName::Exists("/usr/bin/uxterm")) {
-        consoleCommand << "/usr/bin/uxterm -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
-
-    } else if(wxFileName::Exists("/usr/bin/xterm")) {
-        consoleCommand << "/usr/bin/xterm -T " << strTitle << " -e " << PrepareCommand(command, strTitle, waitOnExit);
-    }
-
-#elif defined(__WXMAC__)
-
-    consoleCommand = TERMINAL_CMD;
-    consoleCommand.Replace("$(CMD)", command);
-    wxUnusedVar(strTitle);
-    wxUnusedVar(waitOnExit);
-
-#endif
-    if(consoleCommand.IsEmpty()) return false;
-    clLogMessage(consoleCommand);
-
-    // Create the process as group leader, this way we make sure that killing it
-    // will also kill all the children processes
-    DirSaver ds;
-    if(!workingDirectory.IsEmpty()) {
-        wxSetWorkingDirectory(workingDirectory);
-        clLogMessage("Working directory is now: " + ::wxGetCwd());
-    }
-    
-    clLogMessage(consoleCommand);
-    m_pid = ::wxExecute(consoleCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new MyProcess(this));
-    return (m_pid != 0);
-}
-
-wxString TerminalEmulator::PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit)
-{
-    wxString command;
-#ifdef __WXGTK__
-    // First escape any double quotes
-    // so "Some Command" -> \"Some Command\"
-    wxString escapedString = str;
-    escapedString.Replace("\"", "\\\"");
-    command << "/bin/bash -c \"" << escapedString;
-    if(waitOnExit) {
-        command << " ; echo 'Hit ENTER to continue' ; read";
-    }
-    command << "\"";
-
-#elif defined(__WXMSW__)
-    // Windows
-    wxString escapedString = str;
-    command << "cmd /C call title \"" << title << "\" && " << escapedString;
-    if(waitOnExit) {
-        command << " && echo \"\" & pause";
-    }
-#else
-// OSX
-
-#endif
-    return command;
+    bool res = console->Start();
+    m_pid = console->GetPid();
+    return res;
 }
 
 void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
@@ -168,9 +98,7 @@ void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
 void TerminalEmulator::Terminate()
 {
     if(IsRunning()) {
-        if(m_process) {
-            m_process->Terminate();
-        }
+        if(m_process) { m_process->Terminate(); }
         if(m_pid != wxNOT_FOUND) {
             wxKill(m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
             m_pid = wxNOT_FOUND;
@@ -197,9 +125,7 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
     wxString command;
 #ifdef __WXMSW__
     wxString shell = wxGetenv("COMSPEC");
-    if(shell.IsEmpty()) {
-        shell = "CMD";
-    }
+    if(shell.IsEmpty()) { shell = "CMD"; }
 
     command << shell << wxT(" /c \"");
     command << commandToRun << wxT("\"");

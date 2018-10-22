@@ -320,12 +320,12 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("Launching MemCheck...\n"));
     m_mgr->AppendOutputTabText(kOutputTab_Output, wxString()
                                                       << _("Working directory is set to: ") << ::wxGetCwd() << "\n");
-    m_mgr->AppendOutputTabText(kOutputTab_Output,
-                               wxString() << "MemCheck command: " << m_memcheckProcessor->GetExecutionCommand(command)
-                                          << "\n");
-
-    wxString cmd = m_memcheckProcessor->GetExecutionCommand(command);
-    m_terminal.ExecuteConsole(cmd, "", true, wxString::Format("MemCheck: %s", projectName));
+    wxString cmd;
+    wxString cmdArgs;
+    m_memcheckProcessor->GetExecutionCommand(command, cmd, cmdArgs);
+    m_mgr->AppendOutputTabText(kOutputTab_Output, wxString()
+                                                      << "MemCheck command: " << command << " " << cmdArgs << "\n");
+    m_terminal.ExecuteConsole(cmd, true, cmdArgs, "", wxString::Format("MemCheck: %s", projectName));
 }
 
 void MemCheckPlugin::OnImportLog(wxCommandEvent& event)

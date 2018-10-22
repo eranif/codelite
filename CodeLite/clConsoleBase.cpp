@@ -82,7 +82,9 @@ wxString clConsoleBase::EscapeString(const wxString& str, const wxString& c) con
 
 bool clConsoleBase::StartProcess(const wxString& command)
 {
-    SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags()));
+    SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags(), m_callback));
+    // reset the m_callback (it will auto-delete itself)
+    m_callback = nullptr;
     return (GetPid() > 0);
 }
 

@@ -41,7 +41,7 @@ public:
     NodeJSDebuggerDlg(wxWindow* parent, eDialogType type);
     NodeJSDebuggerDlg(wxWindow* parent, eDialogType type, const wxFileName& script, const wxArrayString& args);
     virtual ~NodeJSDebuggerDlg();
-    wxString GetCommand();
+    void GetCommand(wxString& command, wxString& command_args);
     wxArrayString GetArgs() const
     {
         return wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);

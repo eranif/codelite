@@ -30,8 +30,11 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleGnomeTerminal());
     }
 #else
-    wxUnusedVar(terminalName);
-    terminal.reset(new clConsoleOSXTerminal());
+    clConsoleOSXTerminal* t = new clConsoleOSXTerminal();
+    terminal.reset(t);
+    if(terminalName.CmpNoCase("iTerm2") == 0) {
+        t->SetTerminalApp("iTerm");
+    }
 #endif
     return terminal;
 }
@@ -47,6 +50,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("lxterminal");
 #else
     terminals.Add("Terminal");
+    terminals.Add("iTerm2");
 #endif
     return terminals;
 }
@@ -69,7 +73,9 @@ wxString clConsoleBase::WrapWithQuotesIfNeeded(const wxString& s) const
 {
     wxString strimmed = s;
     strimmed.Trim().Trim(false);
-    if(strimmed.Contains(" ")) { strimmed.Prepend("\"").Append("\""); }
+    if(strimmed.Contains(" ")) {
+        strimmed.Prepend("\"").Append("\"");
+    }
     return strimmed;
 }
 
@@ -119,7 +125,9 @@ void clConsoleEnvironment::Apply()
         clWARNING() << "Refusing to apply environment. Already in a dirty state";
         return;
     }
-    if(m_environment.empty()) { return; }
+    if(m_environment.empty()) {
+        return;
+    }
 
     // keep a copy of the old environment before we apply the new values
     m_oldEnvironment.clear();
@@ -136,7 +144,9 @@ void clConsoleEnvironment::Apply()
 
 void clConsoleEnvironment::UnApply()
 {
-    if(m_oldEnvironment.empty()) { return; }
+    if(m_oldEnvironment.empty()) {
+        return;
+    }
     std::for_each(m_oldEnvironment.begin(), m_oldEnvironment.end(), [&](const wxStringMap_t::value_type& vt) {
         if(vt.second == "__no_such_env__") {
             ::wxUnsetEnv(vt.second);

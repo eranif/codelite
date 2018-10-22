@@ -2,7 +2,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 
-clConsoleOSXTerminal::clConsoleOSXTerminal() {}
+clConsoleOSXTerminal::clConsoleOSXTerminal() { SetTerminalApp("Terminal"); }
 
 clConsoleOSXTerminal::~clConsoleOSXTerminal() {}
 
@@ -18,7 +18,7 @@ bool clConsoleOSXTerminal::StartForDebugger()
     SetRealPts("");
     SetTty("");
     SetPid(wxNOT_FOUND);
-    FileUtils::OSXOpenDebuggerTerminalAndGetTTY(GetWorkingDirectory(), "Terminal", m_tty, m_pid);
+    FileUtils::OSXOpenDebuggerTerminalAndGetTTY(GetWorkingDirectory(), GetTerminalApp(), m_tty, m_pid);
     SetRealPts(m_tty);
     return true;
 }
@@ -27,11 +27,14 @@ wxString clConsoleOSXTerminal::PrepareCommand()
     wxString commandToExecute;
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     wxFileName scriptPath = PrepareExecScript();
-    
+
     if(IsTerminalNeeded()) {
-        commandToExecute << GetEnvironmentPrefix() << "/usr/bin/open -a Terminal ";
+        commandToExecute << "/usr/bin/open -n -a " << GetTerminalApp();
     }
-    commandToExecute << scriptPath.GetFullPath();
+
+    if(!GetCommand().IsEmpty()) {
+        commandToExecute << " " << scriptPath.GetFullPath();
+    }
     clDEBUG() << commandToExecute;
     return commandToExecute;
 }

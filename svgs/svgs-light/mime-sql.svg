@@ -17,7 +17,7 @@
    sodipodi:docname="mime-sql.svg"><metadata
    id="metadata17"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
    id="defs15" /><sodipodi:namedview
    pagecolor="#ffffff"
    bordercolor="#666666"
@@ -32,28 +32,25 @@
    id="namedview13"
    showgrid="false"
    inkscape:zoom="5"
-   inkscape:cx="-33.774608"
-   inkscape:cy="-41.8"
+   inkscape:cx="-67.174608"
+   inkscape:cy="-43.5"
    inkscape:window-x="-11"
    inkscape:window-y="-11"
    inkscape:window-maximized="1"
    inkscape:current-layer="svg2"
    inkscape:showpageshadow="false"
-   showborder="false" /><text
+   showborder="true" /><text
    xml:space="preserve"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#464646;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-   x="2.7137451"
-   y="10.094727"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.56742477px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#474747;fill-opacity:1;stroke:none;stroke-width:1.38061881px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+   x="0.70169741"
+   y="10.892019"
    id="text8728"><tspan
      sodipodi:role="line"
      id="tspan8730"
-     x="2.7137451"
-     y="10.094727"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.5px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#909b9e;fill-opacity:1">sql</tspan></text>
+     x="0.70169741"
+     y="10.892019"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.35464096px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#474747;fill-opacity:1;stroke-width:1.38061881px;">sql</tspan></text>
 
 
-<path
-   d="M 13,0 H 3 C 1.8955,0 1,0.8955 1,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 V 2 C 15,0.8955 14.1045,0 13,0 Z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 C 2.44925,15 2,14.5518 2,14 V 2 C 2,1.4483 2.44925,1 3,1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-   id="path2"
-   inkscape:connector-curvature="0"
-   style="fill:#b4c4cc;stroke-width:0.125;fill-opacity:1" /></svg>
+
+</svg>

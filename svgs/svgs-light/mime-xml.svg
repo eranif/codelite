@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-129.8"
-     inkscape:cy="25.786469"
+     inkscape:cx="-163.2"
+     inkscape:cy="24.086469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -68,16 +68,16 @@
          style="font-size:40px;line-height:1.25"> </tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.38225651px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#909b9e;fill-opacity:1;stroke:none;stroke-width:0.865188px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="7.4524574"
-       y="741.94525"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.08603477px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#853e64;fill-opacity:1;stroke:none;stroke-width:0.92383617px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="6.4303441"
+       y="742.35101"
        id="text4692"
        transform="scale(0.71013759,1.4081778)"><tspan
          sodipodi:role="line"
          id="tspan4694"
-         x="7.4524574"
-         y="741.94525"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.76922989px;line-height:1.25;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#909b9e;fill-opacity:1;stroke-width:0.865188px;">&lt;/&gt;</tspan></text>
+         x="6.4303441"
+         y="742.35101"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.90596008px;line-height:1.25;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#853e64;fill-opacity:1;stroke-width:0.92383617px">&lt;/&gt;</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot9386"
@@ -89,10 +89,5 @@
            x="-12.5"
            y="-10.3" /></flowRegion><flowPara
          id="flowPara9392"
-         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>    <path
-       d="M 26,1020.3622 H 6 c -2.209,0 -4,1.791 -4,4 v 24 c 0,2.209 1.791,4 4,4 h 20 c 2.209,0 4,-1.791 4,-4 v -24 c 0,-2.209 -1.791,-4 -4,-4 z m 2,28 c 0,1.1036 -0.8965,2 -2,2 H 6 c -1.1015,0 -2,-0.8964 -2,-2 v -24 c 0,-1.1034 0.8985,-2 2,-2 h 20 c 1.1035,0 2,0.8966 2,2 z"
-       id="path2"
-       inkscape:connector-curvature="0"
-       style="fill:#b4c4cc;fill-opacity:1;stroke-width:0.25" />
-  </g>
+         style="font-size:40px;line-height:1.25"> </flowPara></flowRoot>  </g>
 </svg>

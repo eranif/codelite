@@ -34,7 +34,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-56.091291"
+     inkscape:cx="-89.491291"
      inkscape:cy="30.629209"
      inkscape:document-units="px"
      inkscape:current-layer="g8794"
@@ -102,20 +102,15 @@
       <text
          transform="scale(1.0387064,0.96273596)"
          id="text4692"
-         y="1093.8966"
-         x="4.021893"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#078929;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         y="1094.8616"
+         x="3.18556"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.82817173px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#c17d11;fill-opacity:1;stroke:none;stroke-width:1.23568094px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#078929;fill-opacity:1"
-           y="1093.8966"
-           x="4.021893"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.53521347px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#c17d11;fill-opacity:1;stroke-width:1.23568094px"
+           y="1094.8616"
+           x="3.18556"
            id="tspan4694"
            sodipodi:role="line">c</tspan></text>
-      <path
-         id="path828"
-         d="M 12.863466,1041.192 H 2.8635409 c -1.119992,0 -1.99998499,0.88 -1.99998499,2 v 11.9999 c 0,1.12 0.87999299,2 1.99998499,2 h 9.9999251 c 1.119992,0 1.999985,-0.88 1.999985,-2 v -11.9999 c 0,-1.12 -0.879993,-2 -1.999985,-2 z m 1.039992,13.9999 c 0,0.56 -0.479996,1.04 -1.039992,1.04 H 2.8635409 c -0.559996,0 -0.959993,-0.48 -0.959993,-1.04 v -11.9999 c 0,-0.56 0.399997,-0.96 0.959993,-0.96 h 9.9999251 c 0.559996,0 1.039992,0.4 1.039992,0.96 z"
-         style="fill:#b4c4cc;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>

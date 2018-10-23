@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-76.8"
-     inkscape:cy="12.403779"
+     inkscape:cx="-178.6"
+     inkscape:cy="9.003779"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -56,53 +56,22 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1036.3622)">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="8"
-       y="1044.3622"
-       id="text4688"><tspan
-         sodipodi:role="line"
-         id="tspan4690"
-         x="8"
-         y="1044.3622"
-         style="font-size:40px;line-height:1.25"> </tspan></text>
     <g
        id="g8787"
-       transform="matrix(0.35896575,0,0,0.43401579,2.1626775,591.09249)">
+       transform="matrix(0.32085514,0,0,0.44649981,2.7824141,578.05467)"
+       style="fill:#888a85">
       <text
          transform="scale(1.2891779,0.77568814)"
          id="text4692"
          y="1360.8052"
          x="1.9442111"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#b0bec5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#888a85;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.00247955px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#909b9e;fill-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.00247955px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#888a85;fill-opacity:1"
            y="1360.8052"
            x="1.9442111"
            id="tspan4694"
            sodipodi:role="line">h</tspan></text>
-      <text
-         id="text6428"
-         y="1051.8324"
-         x="-5.2999983"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;line-height:1.25;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';fill:#007eb7;fill-opacity:1"
-           y="1051.8324"
-           x="-5.2999983"
-           id="tspan6430"
-           sodipodi:role="line"> </tspan><tspan
-           id="tspan6432"
-           y="1096.097"
-           x="-5.2999983"
-           sodipodi:role="line"
-           style="font-size:35px;line-height:1.25"> </tspan></text>
     </g>
-    <path
-       d="M 13,1036.3622 H 3 c -1.1045,0 -2,0.8955 -2,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 v -12 c 0,-1.1045 -0.8955,-2 -2,-2 z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 c -0.55075,0 -1,-0.4482 -1,-1 v -12 c 0,-0.5517 0.44925,-1 1,-1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-       id="path2"
-       inkscape:connector-curvature="0"
-       style="fill:#b4c4cc;stroke-width:0.125;fill-opacity:1" />
   </g>
 </svg>

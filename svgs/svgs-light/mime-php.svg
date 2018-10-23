@@ -17,7 +17,7 @@
    sodipodi:docname="mime-php.svg"><metadata
    id="metadata17"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
    id="defs15" /><sodipodi:namedview
    pagecolor="#ffffff"
    bordercolor="#666666"
@@ -32,30 +32,27 @@
    id="namedview13"
    showgrid="false"
    inkscape:zoom="5"
-   inkscape:cx="-67.174608"
-   inkscape:cy="-41.8"
+   inkscape:cx="-100.57461"
+   inkscape:cy="-43.5"
    inkscape:window-x="-11"
    inkscape:window-y="-11"
    inkscape:window-maximized="1"
    inkscape:current-layer="svg2"
    inkscape:showpageshadow="false"
-   showborder="false" /><text
+   showborder="true" /><text
    xml:space="preserve"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.36334324px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#909b9e;fill-opacity:1;stroke:none;stroke-width:0.94694531px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-   x="1.5663341"
-   y="9.5591536"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.08982849px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#85377d;fill-opacity:1;stroke:none;stroke-width:1.09081912px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+   x="0.52073753"
+   y="9.8605299"
    id="text8728"
    transform="scale(0.9469453,1.0560272)"><tspan
      sodipodi:role="line"
      id="tspan8730"
-     x="1.5663341"
-     y="9.5591536"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.10208988px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#909b9e;fill-opacity:1;stroke-width:0.94694531px;">php</tspan></text>
+     x="0.52073753"
+     y="9.8605299"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.18114376px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#85377d;fill-opacity:1;stroke-width:1.09081912px;">php</tspan></text>
 
 
 
-<path
-   d="M 13,0 H 3 C 1.8955,0 1,0.8955 1,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 V 2 C 15,0.8955 14.1045,0 13,0 Z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 C 2.44925,15 2,14.5518 2,14 V 2 C 2,1.4483 2.44925,1 3,1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-   id="path2"
-   inkscape:connector-curvature="0"
-   style="fill:#b4c4cc;fill-opacity:1;stroke-width:0.125" /></svg>
+
+</svg>

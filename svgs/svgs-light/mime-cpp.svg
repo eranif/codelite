@@ -49,7 +49,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-11.0875"
+     inkscape:cx="-44.4875"
      inkscape:cy="10.064327"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -61,7 +61,7 @@
      inkscape:window-x="-11"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     showborder="false" />
+     showborder="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -70,7 +70,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -90,34 +90,34 @@
          x="8.3000002"
          y="1029.3622"
          style="font-size:40px;line-height:1.25"> </tspan></text>
-    <text
-       transform="scale(1.0387064,0.96273596)"
-       id="text4692"
-       y="1088.8799"
-       x="2.0731013"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#007eb7;fill-opacity:1"
-         y="1088.8799"
+    <g
+       id="g827"
+       transform="matrix(0.8966249,0,0,0.8966249,1.666804,107.96109)"
+       style="fill:#3465a4">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#3465a4;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          x="2.0731013"
-         id="tspan4694"
-         sodipodi:role="line">c</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#007eb7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="8.183279"
-       y="1035.3752"
-       id="text4696-9-9-6-1"
-       transform="scale(0.98772808,1.0124244)"><tspan
-         sodipodi:role="line"
-         id="tspan4698-7-1-5-0"
-         x="8.183279"
+         y="1088.8799"
+         id="text4692"
+         transform="scale(1.0387064,0.96273596)"><tspan
+           sodipodi:role="line"
+           id="tspan4694"
+           x="2.0731013"
+           y="1088.8799"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#3465a4;fill-opacity:1">c</tspan></text>
+      <text
+         transform="scale(0.98772808,1.0124244)"
+         id="text4696-9-9-6-1"
          y="1035.3752"
-         style="font-size:10.8698349px;line-height:1.25;fill:#007eb7;fill-opacity:1">+</tspan></text>
-    <path
-       d="M 13,1036.3622 H 3 c -1.1045,0 -2,0.8955 -2,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 v -12 c 0,-1.1045 -0.8955,-2 -2,-2 z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 c -0.55075,0 -1,-0.4482 -1,-1 v -12 c 0,-0.5517 0.44925,-1 1,-1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-       id="path2"
-       inkscape:connector-curvature="0"
-       style="fill:#b4c4cc;stroke-width:0.125;fill-opacity:1" />
+         x="8.183279"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#3465a4;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-size:10.8698349px;line-height:1.25;fill:#3465a4;fill-opacity:1"
+           y="1035.3752"
+           x="8.183279"
+           id="tspan4698-7-1-5-0"
+           sodipodi:role="line">+</tspan></text>
+    </g>
   </g>
 </svg>

@@ -26,17 +26,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="73.2"
+     inkscape:cx="34"
      inkscape:cy="-66.747329"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-width="1853"
+     inkscape:window-height="1016"
+     inkscape:window-x="67"
+     inkscape:window-y="27"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -104,17 +104,12 @@
        id="text4692"
        y="891.16223"
        x="5.9688072"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#890754;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#6b4d62;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#890754;fill-opacity:1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#6b4d62;fill-opacity:1;"
          y="891.16223"
          x="5.9688072"
          id="tspan4694"
          sodipodi:role="line">s</tspan></text>
-    <path
-       d="M 13,1036.3622 H 3 c -1.1045,0 -2,0.8955 -2,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 v -12 c 0,-1.1045 -0.8955,-2 -2,-2 z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 c -0.55075,0 -1,-0.4482 -1,-1 v -12 c 0,-0.5517 0.44925,-1 1,-1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-       id="path2"
-       inkscape:connector-curvature="0"
-       style="fill:#b4c4cc;fill-opacity:1;stroke-width:0.125" />
   </g>
 </svg>

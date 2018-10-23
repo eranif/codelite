@@ -26,17 +26,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-95.845646"
-     inkscape:cy="17.030795"
+     inkscape:cx="-47.045646"
+     inkscape:cy="15.430795"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-width="1853"
+     inkscape:window-height="1016"
+     inkscape:window-x="67"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      showborder="false" />
   <metadata
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -118,10 +118,5 @@
            x="-33"
            y="-22" /></flowRegion><flowPara
          id="flowPara9317"
-         style="font-size:10px;line-height:1.25"> </flowPara></flowRoot>    <path
-       d="M 13,1036.3622 H 3 c -1.1045,0 -2,0.8955 -2,2 v 12 c 0,1.1045 0.8955,2 2,2 h 10 c 1.1045,0 2,-0.8955 2,-2 v -12 c 0,-1.1045 -0.8955,-2 -2,-2 z m 1,14 c 0,0.5518 -0.44825,1 -1,1 H 3 c -0.55075,0 -1,-0.4482 -1,-1 v -12 c 0,-0.5517 0.44925,-1 1,-1 h 10 c 0.55175,0 1,0.4483 1,1 z"
-       id="path2"
-       inkscape:connector-curvature="0"
-       style="fill:#b4c4cc;fill-opacity:1;stroke-width:0.125" />
-  </g>
+         style="font-size:10px;line-height:1.25"> </flowPara></flowRoot>  </g>
 </svg>

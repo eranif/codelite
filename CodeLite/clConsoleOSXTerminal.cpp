@@ -9,7 +9,7 @@ clConsoleOSXTerminal::~clConsoleOSXTerminal() {}
 bool clConsoleOSXTerminal::Start()
 {
     wxString commandToExecute = PrepareCommand();
-    system(commandToExecute.mb_str(wxConvUTF8).data());
+    (void)system(commandToExecute.mb_str(wxConvUTF8).data());
     return true;
 }
 

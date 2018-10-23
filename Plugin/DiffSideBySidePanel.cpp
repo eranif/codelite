@@ -63,6 +63,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
     m_toolbar = new clToolBar(this);
+    m_toolbar->SetMiniToolBar(false);
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_REFRESH"), _("Refresh"), bmps->LoadBitmap("debugger_restart"));
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SAVE"), _("Save"), bmps->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
@@ -106,7 +107,6 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
         m_splitter->Unsplit();
         m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
     }
-
     EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing),
                                   NULL, this);
 

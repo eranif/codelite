@@ -47,6 +47,8 @@ void clThemedListCtrl::ApplyTheme()
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
+#ifdef __WXGTK__
     if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
+#endif
     this->SetColours(colours);
 }

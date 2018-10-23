@@ -596,7 +596,7 @@ wxColour DrawingUtils::GetButtonTextColour() { return wxSystemSettings::GetColou
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                const wxColour& bgColouur, eButtonState state)
 {
-#if defined(__WXMSW__) || defined(__WXOSX__)
+#if defined(__WXMSW__)
     size_t flags = 0;
     switch(state) {
     case eButtonState::kHover:
@@ -643,7 +643,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // draw the x sign
     innerRect.Deflate(4);
     innerRect = innerRect.CenterIn(rect);
+#ifdef __WXOSX__
+    dc.SetPen(wxPen(xColour, 1));
+#else
     dc.SetPen(wxPen(xColour, 2));
+#endif
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());

@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5"
-     inkscape:cx="-47.045646"
-     inkscape:cy="15.430795"
+     inkscape:zoom="4"
+     inkscape:cx="-3.0093813"
+     inkscape:cy="9.7246571"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -38,7 +38,8 @@
      inkscape:window-x="67"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     showborder="false" />
+     showborder="true"
+     inkscape:pagecheckerboard="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -47,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -97,16 +98,16 @@
          style="font-size:35px;line-height:1.25"> </tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#218cec;fill-opacity:1;stroke:none"
-       x="2.5101652"
-       y="938.05725"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.29028893px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4e9a06;fill-opacity:1;stroke:none;stroke-width:1.27419078;"
+       x="-0.66177458"
+       y="938.76404"
        id="text7103"
        transform="scale(0.89575275,1.1163795)"><tspan
          sodipodi:role="line"
          id="tspan7105"
-         x="2.5101652"
-         y="938.05725"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.41298771px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#218cec;fill-opacity:1">css</tspan></text>
+         x="-0.66177458"
+         y="938.76404"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.99394131px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#4e9a06;fill-opacity:1;stroke-width:1.27419078;">css</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot9311"

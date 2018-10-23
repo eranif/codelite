@@ -16,7 +16,10 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
 {
     clColours colours;
     colours.InitDefaults();
+    colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     SetColours(colours);
+    
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
     SetNativeTheme(true);
@@ -28,6 +31,8 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) { return false; }
     clColours colours;
     colours.InitDefaults();
+    colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
@@ -63,6 +68,7 @@ void clThemedTreeCtrl::ApplyTheme()
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
-
+    colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(110));
     SetColours(colours);
 }

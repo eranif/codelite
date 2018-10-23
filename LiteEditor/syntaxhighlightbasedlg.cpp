@@ -94,7 +94,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     fgSizer4->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcPreview = new wxStyledTextCtrl(m_panelGlobalColours, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+                                        wxDLG_UNIT(m_panelGlobalColours, wxSize(300, 500)), 0);
     // Configure the fold margin
     m_stcPreview->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcPreview->SetMarginMask(4, wxSTC_MASK_FOLDERS);

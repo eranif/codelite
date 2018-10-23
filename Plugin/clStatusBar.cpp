@@ -57,7 +57,7 @@ public:
         m_textShadowColour = colours.GetBgColour();
         m_penColour = colours.GetBgColour();
         m_bgColour = colours.GetBgColour();
-        m_separatorColour = colours.GetBorderColour();
+        m_separatorColour = colours.GetBgColour();
     }
     virtual ~clStatusBarArtNormal() {}
 };

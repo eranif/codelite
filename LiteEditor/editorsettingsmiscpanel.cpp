@@ -99,7 +99,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
     m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
     m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
-    m_toolGroupSpacing->ChangeValue(::wxIntToString(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30)));
+    m_textCtrlSeparation->ChangeValue(::wxIntToString(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30)));
 
     bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
     m_showSplashScreen->SetValue(showSplash);
@@ -135,7 +135,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
-    clConfig::Get().Write(kConfigToolbarGroupSpacing, ::wxStringToInt(m_toolGroupSpacing->GetValue(), 30));
+    clConfig::Get().Write(kConfigToolbarGroupSpacing, ::wxStringToInt(m_textCtrlSeparation->GetValue(), 30));
 
     // check to see of the icon size was modified
     int oldIconSize(24);

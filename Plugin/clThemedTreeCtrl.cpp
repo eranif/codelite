@@ -58,7 +58,7 @@ void clThemedTreeCtrl::ApplyTheme()
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
     colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(110));
+    colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #ifdef __WXGTK__
     if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
 #endif

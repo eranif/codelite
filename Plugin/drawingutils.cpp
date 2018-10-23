@@ -307,8 +307,10 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
     wxUnusedVar(miniToolbar);
     return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    return miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                       : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    wxUnusedVar(miniToolbar);
+    return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+//    return miniToolbar ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+//                       : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 #endif
 }
 

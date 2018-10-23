@@ -4,6 +4,7 @@
 #include "clConsoleKonsole.h"
 #include "clConsoleLXTerminal.h"
 #include "clConsoleOSXTerminal.h"
+#include "clConsoleMateTerminal.h"
 #include "cl_config.h"
 #include "file_logger.h"
 #include <algorithm>
@@ -25,6 +26,8 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleKonsole());
     } else if(terminalName.CmpNoCase("lxterminal") == 0) {
         terminal.reset(new clConsoleLXTerminal());
+    } else if(terminalName.CmpNoCase("mate-terminal") == 0) {
+        terminal.reset(new clConsoleMateTerminal());
     } else {
         // the default terminal is "gnome-terminal"
         terminal.reset(new clConsoleGnomeTerminal());
@@ -46,6 +49,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("konsole");
     terminals.Add("gnome-terminal");
     terminals.Add("lxterminal");
+    terminals.Add("mate-terminal");
 #else
     terminals.Add("Terminal");
     terminals.Add("iTerm2");

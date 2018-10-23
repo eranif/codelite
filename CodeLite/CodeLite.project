@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Console">
+    <File Name="clConsoleMateTerminal.cpp"/>
+    <File Name="clConsoleMateTerminal.h"/>
     <File Name="clConsoleLXTerminal.cpp"/>
     <File Name="clConsoleLXTerminal.h"/>
     <File Name="clConsoleBash.cpp"/>

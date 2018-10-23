@@ -2,6 +2,7 @@
 #include "wxCustomStatusBar.h"
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
+#include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/settings.h>
@@ -16,10 +17,10 @@ wxCustomStatusBarArt::wxCustomStatusBarArt(const wxString& name)
 {
     const clColours& colours = DrawingUtils::GetColours();
     m_textColour = colours.GetItemTextColour();
-    m_textShadowColour = colours.GetBgColour();
-    m_penColour = colours.GetBgColour();
-    m_bgColour = colours.GetBgColour();
-    m_separatorColour = colours.GetBorderColour();
+    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    m_textShadowColour = m_bgColour;
+    m_penColour = m_bgColour;
+    m_separatorColour = m_bgColour;
 }
 
 void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text)
@@ -224,11 +225,13 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxAutoBufferedPaintDC dc(this);
-    PrepareDC(dc);
-
+    wxAutoBufferedPaintDC abdc(this);
+    PrepareDC(abdc);
+    wxGCDC dc(abdc);
     wxRect rect = GetClientRect();
-
+    
+    dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+    
     // Remember which art name used for painting
     SetLastArtNameUsedForPaint(m_art->GetName());
 

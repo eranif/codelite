@@ -54,10 +54,10 @@ public:
     {
         const clColours& colours = DrawingUtils::GetColours();
         m_textColour = colours.GetItemTextColour();
-        m_textShadowColour = colours.GetBgColour();
-        m_penColour = colours.GetBgColour();
-        m_bgColour = colours.GetBgColour();
-        m_separatorColour = colours.GetBgColour();
+        m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        m_textShadowColour = m_bgColour;
+        m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT);
+        m_separatorColour = m_bgColour;
     }
     virtual ~clStatusBarArtNormal() {}
 };

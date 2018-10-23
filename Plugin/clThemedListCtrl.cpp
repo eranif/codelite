@@ -14,14 +14,10 @@
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clDataViewListCtrl(parent, id, pos, size, style | LIST_STYLE)
 {
-    clColours colours;
-    colours.InitDefaults();
-    SetColours(colours);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
-    
     SetNativeTheme(true);
     ApplyTheme();
-    
+
     // Enable keyboard search
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }
@@ -51,5 +47,6 @@ void clThemedListCtrl::ApplyTheme()
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
+    if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
     this->SetColours(colours);
 }

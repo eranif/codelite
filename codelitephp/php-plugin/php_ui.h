@@ -12,12 +12,10 @@
 #include "clToolBar.h"
 #include "my_tree_view.h"
 #include "php_file_layout_tree.h"
-#include "xdebuglocalsviewmodel.h"
 #include <map>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
-#include <wx/aui/auibar.h>
 #include <wx/aui/auibook.h>
 #include <wx/bannerwindow.h>
 #include <wx/bitmap.h>
@@ -33,13 +31,11 @@
 #include <wx/icon.h>
 #include <wx/iconbndl.h>
 #include <wx/imaglist.h>
-#include <wx/menu.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/advprops.h>
 #include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
+#include <wx/propgrid/manager.h>
 #include <wx/radiobox.h>
 #include <wx/settings.h>
 #include <wx/simplebook.h>
@@ -375,34 +371,24 @@ public:
 
 class PHPDebugPaneBase : public wxPanel
 {
-public:
-    enum {
-        ID_DELETE_ALL_BREAKPOINTS = 8001,
-        ID_DELETE_BREAKPOINTS = 8002,
-    };
-
 protected:
     Notebook* m_auiBook;
     wxPanel* m_panel140;
-    wxDataViewListCtrl* m_dvListCtrlStackTrace;
+    clThemedListCtrl* m_dvListCtrlStackTrace;
     wxPanel* m_panel142;
-    wxDataViewListCtrl* m_dvListCtrlBreakpoints;
-    wxAuiToolBar* m_auibar218;
+    wxToolBar* m_tbBreakpoints;
+    clThemedListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
     virtual void OnCallStackItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnCallStackMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnBreakpointItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnDeleteBreakpoint(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearAllUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlStackTrace() { return m_dvListCtrlStackTrace; }
+    clThemedListCtrl* GetDvListCtrlStackTrace() { return m_dvListCtrlStackTrace; }
     wxPanel* GetPanel140() { return m_panel140; }
-    wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
-    wxAuiToolBar* GetAuibar218() { return m_auibar218; }
+    wxToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
+    clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanel142() { return m_panel142; }
     Notebook* GetAuiBook() { return m_auiBook; }
     PHPDebugPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -413,17 +399,8 @@ public:
 class LocalsViewBase : public wxPanel
 {
 protected:
-    wxDataViewCtrl* m_dataview;
-    wxObjectDataPtr<XDebugLocalsViewModel> m_dataviewModel;
-
 protected:
-    virtual void OnLocalCollapsed(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnLocalExpanded(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnLocalExpanding(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnLocalsMenu(wxDataViewEvent& event) { event.Skip(); }
-
 public:
-    wxDataViewCtrl* GetDataview() { return m_dataview; }
     LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsViewBase();

@@ -864,8 +864,6 @@
       <File Name="assignedfilesmodel.h"/>
       <File Name="stalefilesmodel.cpp"/>
       <File Name="stalefilesmodel.h"/>
-      <File Name="functionsmodel.cpp"/>
-      <File Name="functionsmodel.h"/>
       <File Name="wxcAboutDlg.h"/>
       <File Name="wxcAboutDlg.cpp"/>
       <File Name="rename_symbool_dlg.h"/>

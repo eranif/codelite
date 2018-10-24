@@ -1200,8 +1200,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer129 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer129);
 
-    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 300)),
-                             wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_SPLIT);
+    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 300)), 0);
     m_auiBook->SetName(wxT("m_auiBook"));
 
     boxSizer129->Add(m_auiBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
@@ -1214,12 +1213,12 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_panel140->SetSizer(boxSizer144);
 
     m_dvListCtrlStackTrace =
-        new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel140, wxSize(-1, -1)),
-                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+        new clThemedListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel140, wxSize(-1, -1)),
+                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlStackTrace->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrlStackTrace->AppendIconTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                                  wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlStackTrace->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
@@ -1234,39 +1233,24 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer156 = new wxBoxSizer(wxVERTICAL);
     m_panel142->SetSizer(boxSizer156);
 
-    wxBoxSizer* boxSizer204 = new wxBoxSizer(wxHORIZONTAL);
+    m_tbBreakpoints =
+        new wxToolBar(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)), wxTB_FLAT);
+    m_tbBreakpoints->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer156->Add(boxSizer204, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer156->Add(m_tbBreakpoints, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlBreakpoints =
-        new wxDataViewListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)),
-                               wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+        new clThemedListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)),
+                             wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
-    boxSizer204->Add(m_dvListCtrlBreakpoints, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer156->Add(m_dvListCtrlBreakpoints, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
-    wxBoxSizer* boxSizer206 = new wxBoxSizer(wxVERTICAL);
-
-    boxSizer204->Add(boxSizer206, 0, 0, WXC_FROM_DIP(5));
-
-    m_auibar218 = new wxAuiToolBar(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)),
-                                   wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_VERTICAL);
-    m_auibar218->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer204->Add(m_auibar218, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar218->AddTool(ID_DELETE_BREAKPOINTS, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-one")),
-                         wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete the selected breakpoints"), NULL);
-
-    m_auibar218->AddTool(ID_DELETE_ALL_BREAKPOINTS, _("Delete all breakpoints"),
-                         wxXmlResource::Get()->LoadBitmap(wxT("delete-all")), wxNullBitmap, wxITEM_NORMAL, wxT(""),
-                         _("Delete all breakpoints"), NULL);
-    m_auibar218->Realize();
     m_auiBook->SetMinSize(wxSize(300, 300));
 
     SetName(wxT("PHPDebugPaneBase"));
@@ -1279,14 +1263,6 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
                                     wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                      wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
-    this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI,
-                  wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Connect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(PHPDebugPaneBase::OnClearAll), NULL, this);
-    this->Connect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnClearAllUI),
-                  NULL, this);
 }
 
 PHPDebugPaneBase::~PHPDebugPaneBase()
@@ -1298,14 +1274,6 @@ PHPDebugPaneBase::~PHPDebugPaneBase()
     m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                         wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL,
                                         this);
-    this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Disconnect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(PHPDebugPaneBase::OnClearAll), NULL, this);
-    this->Disconnect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnClearAllUI),
-                     NULL, this);
 }
 
 LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -1321,49 +1289,12 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer236 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer236);
 
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 150)),
-                                    wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE);
-
-    m_dataviewModel = new XDebugLocalsViewModel;
-    m_dataviewModel->SetColCount(4);
-    m_dataview->AssociateModel(m_dataviewModel.get());
-
-    boxSizer236->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
-    m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2),
-                                 wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2),
-                                 wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Classname"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2),
-                                 wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2),
-                                 wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-
     SetName(wxT("LocalsViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
-    // Connect events
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed),
-                        NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded),
-                        NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding),
-                        NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu),
-                        NULL, this);
 }
 
-LocalsViewBase::~LocalsViewBase()
-{
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED,
-                           wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED,
-                           wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING,
-                           wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                           wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu), NULL, this);
-}
+LocalsViewBase::~LocalsViewBase() {}
 
 PHPImages::PHPImages()
     : wxImageList(16, 16, true)
@@ -1380,106 +1311,6 @@ PHPImages::PHPImages()
     {
         wxBitmap bmp;
         wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpFile"));
         if(bmp.IsOk()) {
             if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
@@ -1487,56 +1318,6 @@ PHPImages::PHPImages()
                 this->Add(icn);
             }
             m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpFile"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace@2x"), bmp));
         }
     }
 }

@@ -43,6 +43,11 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnClearAll, this, wxID_CLEAR);
     m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &PHPDebugPane::OnClearAllUI, this, wxID_CLEAR);
     m_tbBreakpoints->Realize();
+
+    // Assign bitmaps to the view
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
+    m_dvListCtrlStackTrace->SetBitmaps(&m_bitmaps);
 }
 
 PHPDebugPane::~PHPDebugPane()
@@ -65,12 +70,10 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
         wxArrayString elements = ::wxStringTokenize(calls.Item(i), "|", wxTOKEN_RET_EMPTY);
         if(elements.GetCount() == 4) {
             wxVector<wxVariant> cols;
-            cols.push_back(
-                ::MakeIconText(elements.Item(0),
-                               ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") : wxNullBitmap)); // Level
-            cols.push_back(elements.Item(1));                                                                 // Where
-            cols.push_back(::URIToFileName(elements.Item(2)));                                                // File
-            cols.push_back(elements.Item(3));                                                                 // Line
+            cols.push_back(::MakeBitmapIndexText(elements.Item(0), ((int)i == e.GetInt()) ? 0 : 1)); // Level
+            cols.push_back(elements.Item(1));                                                        // Where
+            cols.push_back(::URIToFileName(elements.Item(2)));                                       // File
+            cols.push_back(elements.Item(3));                                                        // Line
             m_dvListCtrlStackTrace->AppendItem(cols);
         }
     }

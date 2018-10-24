@@ -86,8 +86,8 @@ void PHPDebugPane::OnCallStackItemActivated(wxDataViewEvent& event)
 
     // Open the file - we use an event to do so
     wxString depth = m_dvListCtrlStackTrace->GetItemText(item, 0);
-    wxString filename = m_dvListCtrlStackTrace->GetItemText(item, 1);
-    wxString lineNumber = m_dvListCtrlStackTrace->GetItemText(item, 2);
+    wxString filename = m_dvListCtrlStackTrace->GetItemText(item, 2);
+    wxString lineNumber = m_dvListCtrlStackTrace->GetItemText(item, 3);
 
     long nLine(-1);
     long nDepth(-1);

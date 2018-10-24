@@ -24,13 +24,12 @@ public:
 LocalsView::LocalsView(wxWindow* parent)
     : LocalsViewBase(parent)
 {
-    Hide();
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
-    m_tree = new clThemedTreeCtrl(this);
-    GetSizer()->Add(m_tree, 1, wxEXPAND | wxALL, 2);
+    
+    ClearView();
     m_tree->AddHeader(_("Name"));
     m_tree->AddHeader(_("Type"));
     m_tree->AddHeader(_("Class"));
@@ -63,7 +62,7 @@ void LocalsView::OnXDebugSessionEnded(XDebugEvent& e)
     e.Skip();
     CL_DEBUG("LocalsView::OnXDebugSessionEnded(): Debug sessions started - cleaning all locals view");
     // Clear the variables view
-    m_tree->DeleteAllItems();
+    ClearView();
     m_localsExpandedItemsFullname.clear();
     m_localsExpandedItems.Clear();
     m_waitingExpand.clear();
@@ -83,11 +82,11 @@ void LocalsView::OnLocalsUpdated(XDebugEvent& e)
     e.Skip();
     CL_DEBUG("Inside OnLocalsUpdated");
 
-    m_tree->DeleteAllItems();
+    ClearView();
     m_localsExpandedItems.Clear();
 
     const XVariable::List_t& vars = e.GetVariables();
-    AppendVariablesToTree(wxTreeItemId(NULL), vars);
+    AppendVariablesToTree(m_tree->GetRootItem(), vars);
 
     // Expand the items that were expanded before the view refresh
     for(size_t i = 0; i < m_localsExpandedItems.GetCount(); ++i) {
@@ -129,7 +128,7 @@ void LocalsView::OnXDebugSessionStarted(XDebugEvent& e)
     e.Skip();
     CL_DEBUG("LocalsView::OnXDebugSessionStarted(): Debug sessions started - cleaning all locals view");
     // Clear the variables view
-    m_tree->DeleteAllItems();
+    ClearView();
     m_localsExpandedItemsFullname.clear();
     m_localsExpandedItems.Clear();
     m_waitingExpand.clear();
@@ -211,4 +210,11 @@ void LocalsView::OnCopyValue(wxCommandEvent& event)
         textToCopy << v << EditorConfigST::Get()->GetOptions()->GetEOLAsString();
     }
     ::CopyToClipboard(textToCopy);
+}
+
+void LocalsView::ClearView()
+{
+    m_tree->DeleteAllItems();
+    wxTreeItemId root = m_tree->AddRoot(_("Locals"), wxNOT_FOUND, wxNOT_FOUND, new MyStringData(""));
+    m_tree->Expand(root);
 }

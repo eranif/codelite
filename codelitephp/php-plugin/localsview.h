@@ -38,7 +38,6 @@ class LocalsView : public LocalsViewBase
     wxStringSet_t m_localsExpandedItemsFullname;
     wxArrayTreeItemIds m_localsExpandedItems;
     std::unordered_map<wxString, wxTreeItemId> m_waitingExpand;
-    clThemedTreeCtrl* m_tree = nullptr;
 
 public:
     LocalsView(wxWindow* parent);
@@ -49,6 +48,7 @@ protected:
     virtual void OnLocalExpanding(wxTreeEvent& event);
     virtual void OnLocalCollapsed(wxTreeEvent& event);
     virtual void OnLocalExpanded(wxTreeEvent& event);
+    void ClearView();
     void OnCopyValue(wxCommandEvent& event);
 
     wxString DoGetItemClientData(const wxTreeItemId& item) const;

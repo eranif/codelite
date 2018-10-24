@@ -611,13 +611,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         break;
     }
     wxRendererNative::Get().DrawTitleBarBitmap(win, dc, rect, wxTITLEBAR_BUTTON_CLOSE, flags);
-#ifdef __WXMSW__
     if(IsDark(bgColouur)) {
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.SetPen(bgColouur);
         dc.DrawRectangle(rect);
     }
-#endif
 #else
     // Calculate the circle radius:
     wxRect innerRect(rect);
@@ -643,17 +641,49 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     }
 
     // draw the x sign
-    innerRect.Deflate(4);
+    innerRect.Deflate(2);
     innerRect = innerRect.CenterIn(rect);
-#ifdef __WXOSX__
     dc.SetPen(wxPen(xColour, 1));
-#else
-    dc.SetPen(wxPen(xColour, 2));
-#endif
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
 #endif
+}
+
+void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
+                                             const wxColour& bgColouur, eButtonState state)
+{
+    // Calculate the circle radius:
+    wxRect innerRect(rect);
+    wxColour b = bgColouur;
+    wxColour xColour = penColour;
+    switch(state) {
+    case eButtonState::kHover:
+        b = b.ChangeLightness(120);
+        break;
+    case eButtonState::kPressed:
+        b = b.ChangeLightness(70);
+        xColour = b.ChangeLightness(150);
+        break;
+    default:
+        break;
+    }
+
+    // Draw the background
+    if(state != eButtonState::kNormal) {
+        dc.SetPen(b);
+        dc.SetBrush(b);
+        dc.DrawRoundedRectangle(rect, 2.0);
+    }
+
+    // draw the x sign
+    innerRect.Deflate(2);
+    innerRect = innerRect.CenterIn(rect);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(xColour);
+    dc.DrawRectangle(innerRect);
+    innerRect.Deflate(0, 2);
+    dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetTopRight());
 }
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
@@ -692,15 +722,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
 #endif
 }
 
-wxColour DrawingUtils::GetCaptionTextColour()
-{
-    wxColour captionColour = GetCaptionColour();
-    if(IsDark(captionColour)) {
-        return *wxWHITE;
-    } else {
-        return *wxBLACK;
-    }
-}
+wxColour DrawingUtils::GetCaptionTextColour() { return wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT); }
 
 #ifdef __WXMSW__
 #define X_MARGIN 6

@@ -81,6 +81,12 @@ public:
                             const wxColour& bgColouur, eButtonState state);
 
     /**
+     * @brief draw a close button
+     */
+    static void DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
+                                          const wxColour& bgColouur, eButtonState state);
+
+    /**
      * @brief draw a drop down arrow
      * pass an invalid colour to let this function determine the best colour to use
      */

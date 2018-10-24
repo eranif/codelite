@@ -4642,8 +4642,6 @@ void clMainFrame::SetAUIManagerFlags()
         auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
         break;
     }
-
-    auiMgrFlags |= wxAUI_MGR_ALLOW_ACTIVE_PANE;
 #ifndef __WXGTK__
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
 #endif

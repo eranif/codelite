@@ -20,7 +20,7 @@
 #include "drawingutils.h"
 #endif
 
-#define X_BUTTON_SIZE 20
+#define X_BUTTON_SIZE 14
 
 clTabColours::clTabColours() { InitDarkColours(); }
 

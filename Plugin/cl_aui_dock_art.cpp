@@ -106,23 +106,43 @@ clAuiDockArt::~clAuiDockArt()
 void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
                                   wxAuiPaneInfo& pane)
 {
-    int xx = _rect.GetTopLeft().x + ((_rect.GetWidth() - AUI_BUTTON_SIZE) / 2);
-    int yy = _rect.GetTopLeft().y + ((_rect.GetHeight() - AUI_BUTTON_SIZE) / 2);
+    wxRect buttonRect = _rect;
+
+    // Make sure that the height and width of the button are equals
+    if(buttonRect.GetWidth() != buttonRect.GetHeight()) {
+        buttonRect.SetHeight(wxMin(buttonRect.GetHeight(), buttonRect.GetWidth()));
+        buttonRect.SetWidth(wxMin(buttonRect.GetHeight(), buttonRect.GetWidth()));
+    } else {
+        buttonRect.Deflate(1);
+    }
+    buttonRect = buttonRect.CenterIn(_rect);
+    eButtonState buttonState = eButtonState::kNormal;
+    switch(button_state) {
+    case wxAUI_BUTTON_STATE_HOVER:
+        buttonState = eButtonState::kHover;
+        break;
+    case wxAUI_BUTTON_STATE_PRESSED:
+        buttonState = eButtonState::kPressed;
+        break;
+    case wxAUI_BUTTON_STATE_NORMAL:
+    default:
+        buttonState = eButtonState::kNormal;
+        break;
+    }
+
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
-        dc.DrawBitmap(m_dockCloseBmp, xx, yy);
+        DrawingUtils::DrawButtonX(dc, window, buttonRect, wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT),
+                                  wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), buttonState);
         break;
     case wxAUI_BUTTON_MAXIMIZE_RESTORE:
-        if(pane.IsMaximized()) {
-            dc.DrawBitmap(m_dockMinimizeBmp, xx, yy);
-        } else {
-            dc.DrawBitmap(m_dockExpandeBmp, xx, yy);
-        }
-        break;
-    case wxAUI_BUTTON_PIN:
-        dc.DrawBitmap(m_dockMoreBmp, xx, yy);
+        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect,
+                                                wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT),
+                                                wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), buttonState);
         break;
     default:
+        // Make sure that the pane buttons are drawn with proper colours
+        pane.state |= wxAuiPaneInfo::optionActive;
         wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
         break;
     }
@@ -191,33 +211,28 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
-        pDC->SetPen(m_captionColour);
-        pDC->SetBrush(m_captionColour);
+        wxColour captionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+        pDC->SetPen(captionBgColour);
+        pDC->SetBrush(captionBgColour);
         pDC->DrawRectangle(tmpRect);
 
-        int caption_offset = 0;
-        if(pane.icon.IsOk()) {
-            DrawIcon(gdc, tmpRect, pane);
-            caption_offset += pane.icon.GetWidth() + 3;
-        } else {
-            caption_offset = 3;
-        }
-        wxCoord w, h;
-        pDC->SetFont(f);
-        pDC->GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
+        int caption_offset = 5;
 
         wxRect clip_rect = tmpRect;
-        clip_rect.width -= 3; // text offset
-        clip_rect.width -= 2; // button padding
+        clip_rect.width -= caption_offset; // text offset
+        clip_rect.width -= 2;              // button padding
         if(pane.HasCloseButton()) clip_rect.width -= m_buttonSize;
         if(pane.HasPinButton()) clip_rect.width -= m_buttonSize;
         if(pane.HasMaximizeButton()) clip_rect.width -= m_buttonSize;
 
+        // Truncate the text if needed
         wxString draw_text = wxAuiChopText(gdc, text, clip_rect.width);
-
         wxSize textSize = pDC->GetTextExtent(draw_text);
-        pDC->SetTextForeground(m_captionTextColour);
-        pDC->DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
+        wxRect textRect(textSize);
+        textRect = textRect.CenterIn(clip_rect, wxVERTICAL);
+        textRect.SetX(caption_offset);
+        pDC->SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+        pDC->DrawText(draw_text, textRect.GetTopLeft());
         memDc.SelectObject(wxNullBitmap);
     }
     dc.DrawBitmap(bmp, rect.x, rect.y, true);
@@ -265,7 +280,7 @@ void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
     m_useDarkColours = EditorConfigST::Get()->GetOptions()->IsTabColourDark();
     m_captionColour = DrawingUtils::GetCaptionColour();
     m_captionTextColour = DrawingUtils::GetCaptionTextColour();
-    m_useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
+    m_useCustomCaptionColour = false;
 
     // update the bitmaps
     if(m_useDarkColours) {

@@ -53,7 +53,7 @@
   <g
      id="Pause"
      transform="matrix(1.0666667,0,0,1.0666667,8.5333335,-6e-7)"
-     style="fill:#267cb5;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1">
+     style="fill:#cccccc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1">
     <rect
        height="30"
        id="Rectangle"
@@ -61,7 +61,7 @@
        width="3"
        x="11"
        y="0"
-       style="fill:#806678;fill-opacity:1" />
+       style="fill:#cccccc;fill-opacity:1" />
     <rect
        height="30"
        id="rect9"
@@ -69,6 +69,6 @@
        width="3"
        x="0"
        y="0"
-       style="fill:#806678;fill-opacity:1" />
+       style="fill:#cccccc;fill-opacity:1" />
   </g>
 </svg>

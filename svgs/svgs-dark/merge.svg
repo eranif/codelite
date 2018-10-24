@@ -52,21 +52,21 @@
      id="defs8" />
   <g
      id="Page-1"
-     style="fill:#806678;fill-rule:evenodd;stroke:none;stroke-width:1;fill-opacity:1"
+     style="fill:#cccccc;fill-rule:evenodd;stroke:none;stroke-width:1;fill-opacity:1"
      transform="translate(2.5169492,0.45762712)">
     <g
        id="Icons-Communication"
        transform="translate(-129,0)"
-       style="fill:#806678;fill-opacity:1">
+       style="fill:#cccccc;fill-opacity:1">
       <g
          id="call-merge"
          transform="translate(129.5,0.5)"
-         style="fill:#806678;fill-opacity:1">
+         style="fill:#cccccc;fill-opacity:1">
         <path
            d="M 11,16.4 12.4,15 9,11.6 7.6,13 l 3.4,3.4 0,0 z M 1.5,4 5,4 5,9.6 -0.4,15 1,16.4 7,10.4 7,4 10.5,4 6,-0.5 1.5,4 l 0,0 z"
            id="Shape"
            inkscape:connector-curvature="0"
-           style="fill:#806678;fill-opacity:1" />
+           style="fill:#cccccc;fill-opacity:1" />
       </g>
     </g>
   </g>

@@ -86,7 +86,6 @@
 #undef GSocket
 #endif
 #include "Notebook.h"
-#include "aboutdlg.h"
 #include "acceltabledlg.h"
 #include "advanced_settings.h"
 #include "async_executable_cmd.h"
@@ -1602,12 +1601,37 @@ void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxString mainTitle;
-    mainTitle = CODELITE_VERSION_STRING;
+    // Build the about info
+    wxAboutDialogInfo info;
 
-    AboutDlg dlg(this, mainTitle);
-    dlg.SetInfo(mainTitle);
-    dlg.ShowModal();
+    // Add the developers list
+    info.AddDeveloper(_("Eran Ifrah (Project admin)"));
+    info.AddDeveloper(_("David G. Hart"));
+    info.AddDeveloper(_("Frank Lichtner"));
+    info.AddDeveloper(_("Jacek Kucharski"));
+    info.AddDeveloper(_("Marrianne Gagnon"));
+    info.AddDeveloper(_("Scott Dolim"));
+
+    // Misc
+    info.SetWebSite("https://codelite.org", _("CodeLite Home"));
+    info.SetVersion(CODELITE_VERSION_STRING);
+    info.SetCopyright("Eran Ifrah 2007-2018");
+
+    // Load the license file
+    wxFileName license(clStandardPaths::Get().GetDataDir(), "LICENSE");
+    wxString fileContent;
+    FileUtils::ReadFileContent(license, fileContent);
+    info.SetLicence(fileContent);
+    info.SetName(_("CodeLite IDE"));
+    info.SetDescription(_("A free, open source, C/C++/PHP and JavaScript IDE"));
+
+    wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 256);
+    if(iconBmp.IsOk()) {
+        wxIcon icn;
+        icn.CopyFromBitmap(iconBmp);
+        info.SetIcon(icn);
+    }
+    wxAboutBox(info, this);
 }
 
 void clMainFrame::OnClose(wxCloseEvent& event)

@@ -67,56 +67,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     return wxNullBitmap;
 }
 
-void BitmapLoader::doLoadManifest()
-{
-    wxString targetFile;
-    if(ExtractFileFromZip(m_zipPath.GetFullPath(), wxT("manifest.ini"), clStandardPaths::Get().GetUserDataDir(),
-                          targetFile)) {
-        // we got the file extracted, read it
-        wxFileName manifest(targetFile);
-        wxFFile fp(manifest.GetFullPath(), wxT("r"));
-        if(fp.IsOpened()) {
-
-            wxString content;
-            fp.ReadAll(&content);
-
-            m_manifest.clear();
-            wxArrayString entries = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
-            for(size_t i = 0; i < entries.size(); i++) {
-                wxString entry = entries[i];
-                entry.Trim().Trim(false);
-
-                // empty?
-                if(entry.empty()) continue;
-
-                // comment?
-                if(entry.StartsWith(wxT(";"))) continue;
-
-                wxString key = entry.BeforeFirst(wxT('='));
-                wxString val = entry.AfterFirst(wxT('='));
-                key.Trim().Trim(false);
-                val.Trim().Trim(false);
-
-                wxString key16, key24;
-                key16 = key;
-                key24 = key;
-
-                key16.Replace(wxT("<size>"), wxT("16"));
-                key24.Replace(wxT("<size>"), wxT("24"));
-
-                key16.Replace(wxT("."), wxT("/"));
-                key24.Replace(wxT("."), wxT("/"));
-
-                m_manifest[key16] = val;
-                m_manifest[key24] = val;
-            }
-
-            fp.Close();
-            clRemoveFile(manifest.GetFullPath());
-        }
-        clRemoveFile(targetFile);
-    }
-}
+void BitmapLoader::doLoadManifest() {}
 
 wxBitmap BitmapLoader::doLoadBitmap(const wxString& filepath)
 {
@@ -156,36 +107,6 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 
 void BitmapLoader::initialize()
 {
-    wxString zipname;
-    wxFileName fn;
-    zipname = "codelite-icons.zip";
-
-    if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm) {
-        zipname = wxT("codelite-icons-fresh-farm.zip");
-
-    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark) {
-        zipname = wxT("codelite-icons-dark.zip");
-
-    } else if(EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_IconSet_Classic) {
-        zipname = wxT("codelite-icons.zip");
-    }
-
-// Under linux, take into account the --prefix
-#ifdef __WXGTK__
-    wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
-    fn = wxFileName(bitmapPath, zipname);
-#else
-    fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
-#endif
-
-    if(m_manifest.empty() || m_toolbarsBitmaps.empty()) {
-        m_zipPath = fn;
-        if(m_zipPath.FileExists()) {
-            doLoadManifest();
-            doLoadBitmaps();
-        }
-    }
-
     // Load the bitmaps based on the current theme
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
     if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
@@ -224,7 +145,8 @@ void BitmapLoader::initialize()
             clBitmap bmp;
             if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
                 clDEBUG1() << "Adding new image:" << pngFile.GetName() << clEndl;
-                m_toolbarsBitmaps.insert(std::make_pair(pngFile.GetName(), bmp));
+                m_toolbarsBitmaps.erase(pngFile.GetName());
+                m_toolbarsBitmaps.insert({ pngFile.GetName(), bmp });
             }
         }
     }

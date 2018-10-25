@@ -14,7 +14,7 @@
    viewBox="0 0 511.99999 511.99999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="codelite-logo.svg">
   <title
      id="title6123">CodeLite IDE Logo</title>
@@ -171,16 +171,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.92075429"
-     inkscape:cx="-103.28662"
-     inkscape:cy="316.76057"
+     inkscape:cx="205.15615"
+     inkscape:cy="229.87528"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:showpageshadow="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1343"
-     inkscape:window-x="1920"
+     inkscape:window-width="1853"
+     inkscape:window-height="1016"
+     inkscape:window-x="67"
      inkscape:window-y="27"
      inkscape:window-maximized="1" />
   <metadata
@@ -221,7 +221,7 @@
        y="547.87305"
        rx="10.043558"
        ry="10.043558"
-       transform="matrix(-1,0,0,1,185.24459,159.0396)" />
+       transform="matrix(-1.3606651,0,0,1.3606651,170.35601,-27.143102)" />
     <rect
        style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
        id="rect5967-9-9"
@@ -230,7 +230,8 @@
        x="144.21576"
        y="676.97546"
        rx="10.043559"
-       ry="10.043559" />
+       ry="10.043559"
+       transform="matrix(1.3606651,0,0,1.3606651,-101.82565,-288.13481)" />
     <rect
        style="fill:#ffd748;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
        id="rect5967-9-7-5"
@@ -240,6 +241,6 @@
        y="801.87305"
        rx="10.043558"
        ry="10.043558"
-       transform="matrix(-1,0,0,1,96.659881,-158.56564)" />
+       transform="matrix(-1.3606651,0,0,1.3606651,-2.9418556,-546.04996)" />
   </g>
 </svg>

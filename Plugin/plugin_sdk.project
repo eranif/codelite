@@ -430,6 +430,8 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="clAboutDialog.cpp"/>
+      <File Name="clAboutDialog.h"/>
       <File Name="nameanddescdlg.h"/>
       <File Name="nameanddescbasedlg.cpp"/>
       <File Name="nameanddescbasedlg.h"/>
@@ -566,7 +568,9 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="clAboutDialogBase_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
       <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
@@ -583,6 +587,8 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="clAboutDialogBase.cpp"/>
+      <File Name="clAboutDialogBase.h"/>
       <File Name="VirtualDirectorySelectorBase.h"/>
       <File Name="VirtualDirectorySelectorBase.cpp"/>
       <File Name="plugin_general_wxcp.h"/>

@@ -76,6 +76,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "clAboutDialog.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1594,6 +1595,7 @@ void clMainFrame::OnFileExistUpdateUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
+#ifdef __WXGTK__
     // Build the about info
     wxAboutDialogInfo info;
 
@@ -1625,6 +1627,10 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
         info.SetIcon(icn);
     }
     wxAboutBox(info, this);
+#else
+    clAboutDialog dialog(this, CODELITE_VERSION_STRING);
+    dialog.ShowModal();
+#endif
 }
 
 void clMainFrame::OnClose(wxCloseEvent& event)
@@ -5142,7 +5148,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
     ShowOrHideCaptions();
-    
+
     // As the toolbar is showing, refresh in case the group spacing was changed
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
     m_toolbar->Realize();

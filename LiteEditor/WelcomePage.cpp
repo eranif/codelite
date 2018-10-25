@@ -42,13 +42,14 @@ WelcomePage::WelcomePage(wxWindow* parent)
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
                                   this);
-    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 256));
+    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 128));
     m_cmdLnkBtnFilesMenu->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
     m_cmdLnkBtnForum->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
     m_cmdLnkBtnNewProject->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
     m_cmdLnkBtnNewWorkspace->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
     m_cmdLnkBtnWiki->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
     m_cmdLnkBtnWorkspaces->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
+    GetSizer()->Fit(this);
 }
 
 WelcomePage::~WelcomePage()

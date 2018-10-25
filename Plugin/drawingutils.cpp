@@ -598,7 +598,7 @@ wxColour DrawingUtils::GetButtonTextColour() { return wxSystemSettings::GetColou
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                const wxColour& bgColouur, eButtonState state)
 {
-#if defined(__WXMSW__)
+#if 0
     size_t flags = 0;
     switch(state) {
     case eButtonState::kHover:
@@ -643,16 +643,37 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // draw the x sign
     innerRect.Deflate(2);
     innerRect = innerRect.CenterIn(rect);
-    dc.SetPen(wxPen(xColour, 1));
+    dc.SetPen(wxPen(xColour, 2));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
+    dc.DrawPoint(innerRect.GetBottomRight());
+    dc.DrawPoint(innerRect.GetBottomLeft());
 #endif
 }
 
 void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                              const wxColour& bgColouur, eButtonState state)
 {
+#if 0
+    size_t flags = 0;
+    switch(state) {
+    case eButtonState::kHover:
+        flags = wxCONTROL_CURRENT;
+        break;
+    case eButtonState::kPressed:
+        flags = wxCONTROL_PRESSED;
+        break;
+    default:
+        break;
+    }
+    wxRendererNative::Get().DrawTitleBarBitmap(win, dc, rect, wxTITLEBAR_BUTTON_MAXIMIZE, flags);
+    if(IsDark(bgColouur)) {
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.SetPen(bgColouur);
+        dc.DrawRectangle(rect);
+    }
+#else
     // Calculate the circle radius:
     wxRect innerRect(rect);
     wxColour b = bgColouur;
@@ -680,10 +701,11 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
     innerRect.Deflate(2);
     innerRect = innerRect.CenterIn(rect);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(xColour);
+    dc.SetPen(wxPen(xColour, 2));
     dc.DrawRectangle(innerRect);
-    innerRect.Deflate(0, 2);
+    innerRect.Deflate(0, 3);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetTopRight());
+#endif
 }
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)

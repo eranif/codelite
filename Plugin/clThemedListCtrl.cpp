@@ -48,7 +48,11 @@ void clThemedListCtrl::ApplyTheme()
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
     colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+#ifdef __WXOSX__
+    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+#else
     colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
+#endif
 #ifdef __WXGTK__
     if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
 #endif

@@ -37,6 +37,7 @@
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <wx/statbmp.h>
+#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>

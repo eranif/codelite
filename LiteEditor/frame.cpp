@@ -5410,7 +5410,7 @@ void clMainFrame::InitializeLogo()
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon(icn);
     }
-
+    
     {
         wxBitmap iconBmp = bmpLoader.LoadBitmap("64" + baseLogoName);
         wxIcon icn;

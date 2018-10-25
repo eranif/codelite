@@ -2016,7 +2016,7 @@
                 }, {
                  "type": "bitmapPicker",
                  "m_label": "Bitmap File:",
-                 "m_path": "../bitmaps/256-codelite-logo.png"
+                 "m_path": ""
                 }],
                "m_events": [],
                "m_children": []
@@ -2133,7 +2133,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",
@@ -2223,7 +2223,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",
@@ -2313,7 +2313,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",
@@ -2410,7 +2410,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",
@@ -2507,7 +2507,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",
@@ -2597,7 +2597,7 @@
                   }, {
                    "type": "bitmapPicker",
                    "m_label": "Bitmap File:",
-                   "m_path": "../bitmaps/24-show_current_line.png"
+                   "m_path": ""
                   }, {
                    "type": "bool",
                    "m_label": "Default Button",

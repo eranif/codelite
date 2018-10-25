@@ -5149,12 +5149,10 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     SetFrameTitle(GetMainBook()->GetActiveEditor());
     ShowOrHideCaptions();
-    if(clConfig::Get().Read(kConfigShowToolBar, false)) {
-        // As the toolbar is showing, refresh in case the group spacing was changed
-        m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
-        m_toolbar->Realize();
-        m_toolbar->Refresh();
-    }
+    
+    // As the toolbar is showing, refresh in case the group spacing was changed
+    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
+    m_toolbar->Realize();
 
     clEditor::Vec_t editors;
     GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);

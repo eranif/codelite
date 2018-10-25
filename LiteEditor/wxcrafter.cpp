@@ -85,331 +85,6 @@ NewProjImgList::NewProjImgList()
         wxC3F25InitBitmapResources();
         bBitmapLoaded = true;
     }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("gear16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gear16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("gear16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("qt16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("qt16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("qt16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("qt16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wx16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("wx16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wx16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("wx16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gtk16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("gtk16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("gtk16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("gtk16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("console16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("console16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("console16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("console16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("archive16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("archive16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("archive16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("archive16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("dll16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("dll16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("dll16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("dll16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("makefile16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("makefile16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("makefile16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("makefile16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("wxc"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("wxc@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("cmake"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("cmake@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("cmake@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("tabClose"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("tabClose@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("tabClose@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("clang16"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("clang16"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("clang16@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("clang16@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpFindInFiles"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpFindInFiles"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpFindInFiles@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpFindInFiles@2x"), bmp));
-        }
-    }
 }
 
 NewProjImgList::~NewProjImgList() {}
@@ -528,9 +203,8 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
 
-    m_staticBitmap =
-        new wxStaticBitmap(m_panel191, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("256-codelite-logo")),
-                           wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), 0);
+    m_staticBitmap = new wxStaticBitmap(m_panel191, wxID_ANY, wxNullBitmap, wxDefaultPosition,
+                                        wxDLG_UNIT(m_panel191, wxSize(-1, -1)), 0);
 
     boxSizer195->Add(m_staticBitmap, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
@@ -541,7 +215,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_cmdLnkBtnNewWorkspace =
         new wxCommandLinkButton(m_panel191, wxID_ANY, _("New Workspace"), _("Create a new workspace"),
                                 wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnNewWorkspace->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnNewWorkspace->SetToolTip(_("Create a new workspace"));
 
     gridSizer574->Add(m_cmdLnkBtnNewWorkspace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -550,7 +223,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_cmdLnkBtnNewProject =
         new wxCommandLinkButton(m_panel191, wxID_ANY, _("Open Workspace"), _("Open an existing workspace"),
                                 wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnNewProject->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnNewProject->SetToolTip(_("Click to create a new project.\nIf NO workspace is open, it will auto create "
                                         "a workspace before creating the project"));
 
@@ -559,7 +231,6 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_cmdLnkBtnWorkspaces =
         new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent workspaces"), _("Open a recently used workspace"),
                                 wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnWorkspaces->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnWorkspaces->SetToolTip(_("Open a workspace from a list of recently opened workspaces"));
 
     gridSizer574->Add(m_cmdLnkBtnWorkspaces, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -567,21 +238,18 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     m_cmdLnkBtnFilesMenu =
         new wxCommandLinkButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently used file"),
                                 wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnFilesMenu->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnFilesMenu->SetToolTip(_("Open a file from the revcently opened files"));
 
     gridSizer574->Add(m_cmdLnkBtnFilesMenu, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_cmdLnkBtnForum = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"),
                                                wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnForum->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnForum->SetToolTip(_("Click to open a web browser in CodeLite's forums"));
 
     gridSizer574->Add(m_cmdLnkBtnForum, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_cmdLnkBtnWiki = new wxCommandLinkButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"),
                                               wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnWiki->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("24-show_current_line")), wxLEFT);
     m_cmdLnkBtnWiki->SetToolTip(_("Click to open a web browser in CodeLite's wiki main documentation page"));
 
     gridSizer574->Add(m_cmdLnkBtnWiki, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));

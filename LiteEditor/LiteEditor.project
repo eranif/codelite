@@ -483,8 +483,6 @@
     <File Name="newversionbasedlg.h"/>
     <File Name="newversiondlg.h"/>
     <File Name="newversiondlg.cpp"/>
-    <File Name="clsplashscreen.h"/>
-    <File Name="clsplashscreen.cpp"/>
     <File Name="WelcomePage.cpp"/>
     <File Name="WelcomePage.h"/>
     <File Name="autoversion.cpp"/>

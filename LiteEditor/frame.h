@@ -69,7 +69,6 @@ class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
 class MyMenuBar;
-class clSplashScreen;
 
 //--------------------------------
 // Helper class

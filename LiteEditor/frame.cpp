@@ -49,7 +49,6 @@
 #include "cl_standard_paths.h"
 #include "cl_unredo.h"
 #include "clang_compilation_db_thread.h"
-#include "clsplashscreen.h"
 #include "code_completion_manager.h"
 #include "console_frame.h"
 #include "event_notifier.h"
@@ -1434,12 +1433,6 @@ bool clMainFrame::StartSetupWizard()
 
 void clMainFrame::Bootstrap()
 {
-    if(!clSplashScreen::g_destroyed && clSplashScreen::g_splashScreen) {
-        clSplashScreen::g_splashScreen->Hide();
-        clSplashScreen::g_splashScreen->Destroy();
-        clSplashScreen::g_splashScreen = NULL;
-    }
-
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
         if(StartSetupWizard()) {

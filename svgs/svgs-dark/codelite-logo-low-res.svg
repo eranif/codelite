@@ -13,7 +13,7 @@
    height="32"
    id="svg3016"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="codelite-logo-low-res.svg">
   <defs
      id="defs3018" />
@@ -24,19 +24,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="11.037601"
-     inkscape:cy="7.2091335"
+     inkscape:zoom="8"
+     inkscape:cx="66.047549"
+     inkscape:cy="-22.519614"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
-     inkscape:window-width="1872"
-     inkscape:window-height="1027"
+     inkscape:window-width="2560"
+     inkscape:window-height="1343"
      inkscape:window-x="1920"
-     inkscape:window-y="31"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
-     showborder="false" />
+     showborder="true" />
   <metadata
      id="metadata3021">
     <rdf:RDF>
@@ -45,6 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,42 +59,21 @@
        id="rect3024"
        width="15"
        height="15"
-       x="0"
-       y="1020.3622" />
-    <rect
-       style="fill:#ffd748;fill-opacity:1;stroke:none"
-       id="rect3024-2"
-       width="15"
-       height="15"
-       x="0"
-       y="1037.3622" />
+       x="12.625"
+       y="1033.7372" />
     <rect
        style="fill:#6eca60;fill-opacity:1;stroke:none"
        id="rect3024-0"
        width="15"
        height="15"
-       x="17"
-       y="1037.3622" />
+       x="8.5"
+       y="1030.1122" />
     <rect
-       style="fill:#ffffff;fill-opacity:0.19607843;stroke:none"
-       id="rect3024-8"
-       width="8"
-       height="8"
-       x="7"
-       y="1027.3622" />
-    <rect
-       style="fill:#ffffff;fill-opacity:0.19607843;stroke:none"
-       id="rect3024-8-3"
-       width="8"
-       height="8"
-       x="7"
-       y="1037.3622" />
-    <rect
-       style="fill:#ffffff;fill-opacity:0.19607843;stroke:none"
-       id="rect3024-8-7"
-       width="8"
-       height="8"
-       x="17"
-       y="1037.3622" />
+       style="fill:#ffd748;fill-opacity:1;stroke:none"
+       id="rect3024-2"
+       width="15"
+       height="15"
+       x="3.75"
+       y="1026.7372" />
   </g>
 </svg>

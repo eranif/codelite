@@ -14,7 +14,7 @@
    viewBox="0 0 511.99999 511.99999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="codelite-logo.svg">
   <title
      id="title6123">CodeLite IDE Logo</title>
@@ -171,17 +171,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.92075429"
-     inkscape:cx="166.6008"
-     inkscape:cy="318.38967"
+     inkscape:cx="-103.28662"
+     inkscape:cy="316.76057"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:showpageshadow="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1028"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="2560"
+     inkscape:window-height="1343"
+     inkscape:window-x="1920"
+     inkscape:window-y="27"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -213,7 +213,7 @@
      id="layer1"
      transform="translate(0,-540.36219)">
     <rect
-       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#c2e7ff;stroke-width:5.02177954;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
+       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
        id="rect5967-9"
        width="244.97823"
        height="244.97823"
@@ -221,19 +221,18 @@
        y="547.87305"
        rx="10.043558"
        ry="10.043558"
-       transform="matrix(-1,0,0,1,0,-2)" />
+       transform="matrix(-1,0,0,1,185.24459,159.0396)" />
     <rect
-       style="opacity:0.1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-99"
-       width="100"
-       height="100"
-       x="-250.11064"
-       y="692.29364"
-       rx="10"
-       ry="10"
-       transform="matrix(-1,0,0,1,0,-2)" />
+       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
+       id="rect5967-9-9"
+       width="244.97823"
+       height="244.97823"
+       x="144.21576"
+       y="676.97546"
+       rx="10.043559"
+       ry="10.043559" />
     <rect
-       style="fill:#ffd748;fill-opacity:1;fill-rule:evenodd;stroke:#fdfdf1;stroke-width:5.02177954;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
+       style="fill:#ffd748;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
        id="rect5967-9-7-5"
        width="244.97823"
        height="244.97823"
@@ -241,34 +240,6 @@
        y="801.87305"
        rx="10.043558"
        ry="10.043558"
-       transform="scale(-1,1)" />
-    <rect
-       style="opacity:0.1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-7-5-9"
-       width="100"
-       height="100"
-       x="-250.22127"
-       y="-902.18304"
-       rx="9.9999952"
-       ry="9.9999952"
-       transform="scale(-1,-1)" />
-    <rect
-       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:5.02177954;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-9"
-       width="244.97823"
-       height="244.97823"
-       x="261.51089"
-       y="801.87305"
-       rx="10.043559"
-       ry="10.043559" />
-    <rect
-       style="opacity:0.1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-9-6"
-       width="99.557449"
-       height="99.557449"
-       x="261.17914"
-       y="802.62561"
-       rx="10"
-       ry="10" />
+       transform="matrix(-1,0,0,1,96.659881,-158.56564)" />
   </g>
 </svg>

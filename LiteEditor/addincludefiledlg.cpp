@@ -23,20 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "addincludefiledlg.h"
-#include "manager.h"
+#include "bitmap_loader.h"
+#include "editor_config.h"
 #include "frame.h"
+#include "globals.h"
+#include "lexer_configuration.h"
+#include "manager.h"
+#include "windowattrmanager.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
 #include <algorithm>
-#include "editor_config.h"
-#include "lexer_configuration.h"
-#include "windowattrmanager.h"
 #include <wx/wupdlock.h>
 
 wxArrayString AddIncludeFileDlg::m_includePath;
 
-struct SAscendingSort
-{
+struct SAscendingSort {
     bool operator()(const wxString& s1, const wxString& s2) { return s1.Len() > s2.Len(); }
 };
 
@@ -50,6 +51,14 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     UpdateLineToAdd();
     LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
     cppLex->Apply(m_textCtrlPreview, true);
+
+    m_toolbar->AddTool(wxID_UP, _("Move Up"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
+    m_toolbar->AddTool(wxID_DOWN, _("Move Up"), clGetManager()->GetStdIcons()->LoadBitmap("down"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    m_toolbar->Bind(wxEVT_TOOL, &AddIncludeFileDlg::OnButtonUp, this, wxID_UP);
+    m_toolbar->Bind(wxEVT_TOOL, &AddIncludeFileDlg::OnButtonDown, this, wxID_DOWN);
+    m_toolbar->Bind(wxEVT_TOOL, &AddIncludeFileDlg::OnClearCachedPaths, this, wxID_CLEAR);
+    m_toolbar->Realize();
 
     //---------------------------------------------------------
     m_textCtrlPreview->MarkerDefine(0x7, wxSTC_MARK_ARROW);
@@ -73,9 +82,7 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
 
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
+    if(firstVisibleLine < 0) { firstVisibleLine = 0; }
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
 }
 
@@ -93,14 +100,10 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 
     wxString rest;
     for(size_t i = 0; i < m_includePath.GetCount(); i++) {
-        if(pp.StartsWith(m_includePath.Item(i), &rest)) {
-            break;
-        }
+        if(pp.StartsWith(m_includePath.Item(i), &rest)) { break; }
     }
 
-    if(rest.IsEmpty()) {
-        rest = fn.GetFullName();
-    }
+    if(rest.IsEmpty()) { rest = fn.GetFullName(); }
 
     wxString errMsg;
     wxString projectName = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetProject();
@@ -114,16 +117,12 @@ void AddIncludeFileDlg::UpdateLineToAdd()
 #ifdef __WXMSW__
             path.MakeLower();
 #endif
-            if(m_fullpath.StartsWith(path, &rest)) {
-                break;
-            }
+            if(m_fullpath.StartsWith(path, &rest)) { break; }
         }
     }
 
     rest.Replace(wxT("\\"), wxT("/"));
-    if(rest.StartsWith(wxT("/"))) {
-        rest.Remove(0, 1);
-    }
+    if(rest.StartsWith(wxT("/"))) { rest.Remove(0, 1); }
 
     if(!ManagerST::Get()->IsFileInWorkspace(m_fullpath)) {
         line << wxT("#include <") << rest << wxT(">");
@@ -147,9 +146,7 @@ void AddIncludeFileDlg::SetAndMarkLine()
     // Make the line to add at the center of the display
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
-    }
+    if(firstVisibleLine < 0) { firstVisibleLine = 0; }
 
     m_textCtrlPreview->MarkerDeleteAll(0x7);
     m_textCtrlPreview->SetText(m_text);
@@ -173,9 +170,7 @@ void AddIncludeFileDlg::OnTextUpdated(wxCommandEvent& e)
 void AddIncludeFileDlg::OnButtonDown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_line + 2 >= m_textCtrlPreview->GetLineCount()) {
-        return;
-    }
+    if(m_line + 2 >= m_textCtrlPreview->GetLineCount()) { return; }
     m_line++;
     SetAndMarkLine();
 }
@@ -183,9 +178,7 @@ void AddIncludeFileDlg::OnButtonDown(wxCommandEvent& event)
 void AddIncludeFileDlg::OnButtonUp(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_line - 1 < 0) {
-        return;
-    }
+    if(m_line - 1 < 0) { return; }
     m_line--;
     SetAndMarkLine();
 }
@@ -198,9 +191,7 @@ void AddIncludeFileDlg::OnButtonOK(wxCommandEvent& e)
     static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.]*)"));
     wxString relativePath;
 
-    if(reIncludeFile.Matches(m_lineToAdd)) {
-        relativePath = reIncludeFile.GetMatch(m_lineToAdd, 1);
-    }
+    if(reIncludeFile.Matches(m_lineToAdd)) { relativePath = reIncludeFile.GetMatch(m_lineToAdd, 1); }
 
     fullpath.Replace(wxT("\\"), wxT("/"));
     relativePath.Replace(wxT("\\"), wxT("/"));

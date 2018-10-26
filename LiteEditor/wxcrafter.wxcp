@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 584,
+  "m_objCounter": 585,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxC3F25InitBitmapResources",
   "m_bitmapsFile": "wxcrafter_liteeditor_bitmaps.cpp",
@@ -1950,7 +1950,7 @@
               }],
              "m_events": [],
              "m_children": [{
-               "m_type": 4449,
+               "m_type": 4401,
                "proportion": 0,
                "border": 5,
                "gbSpan": "1,1",
@@ -1964,7 +1964,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Name:",
-                 "m_value": "staticBoxSizer584"
+                 "m_value": "boxSizer585"
                 }, {
                  "type": "string",
                  "m_label": "Style:",
@@ -1973,11 +1973,7 @@
                  "type": "choice",
                  "m_label": "Orientation:",
                  "m_selection": 0,
-                 "m_options": ["Vertical", "Horizontal"]
-                }, {
-                 "type": "string",
-                 "m_label": "Label:",
-                 "m_value": ""
+                 "m_options": ["wxVERTICAL", "wxHORIZONTAL"]
                 }],
                "m_events": [],
                "m_children": [{

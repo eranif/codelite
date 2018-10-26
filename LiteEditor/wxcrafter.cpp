@@ -203,19 +203,18 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
 
-    wxStaticBoxSizer* staticBoxSizer584 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel191, wxID_ANY, wxT("")), wxVERTICAL);
+    wxBoxSizer* boxSizer585 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer195->Add(staticBoxSizer584, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer195->Add(boxSizer585, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     m_staticBitmap = new wxStaticBitmap(m_panel191, wxID_ANY, wxNullBitmap, wxDefaultPosition,
                                         wxDLG_UNIT(m_panel191, wxSize(-1, -1)), 0);
 
-    staticBoxSizer584->Add(m_staticBitmap, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer585->Add(m_staticBitmap, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     wxGridSizer* gridSizer574 = new wxGridSizer(0, 2, 0, 0);
 
-    staticBoxSizer584->Add(gridSizer574, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer585->Add(gridSizer574, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     m_cmdLnkBtnNewWorkspace =
         new wxCommandLinkButton(m_panel191, wxID_ANY, _("New Workspace"), _("Create a new workspace"),

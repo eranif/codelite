@@ -32,6 +32,7 @@
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "build_custom_targets_menu_manager.h"
+#include "clAboutDialog.h"
 #include "clBootstrapWizard.h"
 #include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
@@ -76,7 +77,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "clAboutDialog.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -701,8 +701,7 @@ bool clMainFrame::m_initCompleted = false;
 
 clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos,
                          const wxSize& size, long style)
-    : wxFrame(pParent, id, title, pos, size, style)
-    , m_buildAndRun(false)
+    : m_buildAndRun(false)
     , m_cppMenu(NULL)
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
@@ -715,6 +714,9 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
 {
+    Hide();
+    if(!wxFrame::Create(pParent, id, title, pos, size, style)) { return; }
+    
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
     // accelerator for the menu bar.  We don't want that.  There is
@@ -5410,7 +5412,7 @@ void clMainFrame::InitializeLogo()
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon(icn);
     }
-    
+
     {
         wxBitmap iconBmp = bmpLoader.LoadBitmap("64" + baseLogoName);
         wxIcon icn;

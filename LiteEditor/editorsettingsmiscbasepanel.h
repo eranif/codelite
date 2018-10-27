@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_MISC_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_MISC_BASE_CLASSES_H
 
+#include "Notebook.h"
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
 #include <wx/bannerwindow.h>
@@ -18,7 +19,6 @@
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/xrc/xh_bmp.h>
@@ -42,13 +42,10 @@
 class EditorSettingsMiscBasePanel : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook2;
+    Notebook* m_notebook2;
     wxPanel* m_panel1;
-    wxStaticText* m_staticText7;
-    wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText8;
     wxChoice* m_toolbarIconSize;
-    wxCheckBox* m_showSplashScreen;
     wxCheckBox* m_singleAppInstance;
     wxCheckBox* m_versionCheckOnStartup;
     wxCheckBox* m_checkBoxPromptReleaseOnly;
@@ -113,11 +110,8 @@ protected:
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText7() { return m_staticText7; }
-    wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
     wxStaticText* GetStaticText8() { return m_staticText8; }
     wxChoice* GetToolbarIconSize() { return m_toolbarIconSize; }
-    wxCheckBox* GetShowSplashScreen() { return m_showSplashScreen; }
     wxCheckBox* GetSingleAppInstance() { return m_singleAppInstance; }
     wxCheckBox* GetVersionCheckOnStartup() { return m_versionCheckOnStartup; }
     wxCheckBox* GetCheckBoxPromptReleaseOnly() { return m_checkBoxPromptReleaseOnly; }
@@ -169,7 +163,7 @@ public:
     wxButton* GetButtonOpenLog() { return m_buttonOpenLog; }
     wxCheckBox* GetRedirectLogOutput() { return m_redirectLogOutput; }
     wxPanel* GetPanel4() { return m_panel4; }
-    wxNotebook* GetNotebook2() { return m_notebook2; }
+    Notebook* GetNotebook2() { return m_notebook2; }
     EditorSettingsMiscBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                                 const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsMiscBasePanel();

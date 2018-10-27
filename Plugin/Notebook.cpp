@@ -102,7 +102,7 @@ void Notebook::PositionControls()
 
 Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
-    : wxPanel(parent, id, pos, size, wxNO_BORDER | wxWANTS_CHARS | wxTAB_TRAVERSAL, name)
+    : wxPanel(parent, id, pos, size, wxWANTS_CHARS | wxTAB_TRAVERSAL | (style & wxWINDOW_STYLE_MASK), name)
 {
     static bool once = false;
     if(!once) {
@@ -112,7 +112,7 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
         Notebook_Init_Bitmaps();
         once = true;
     }
-
+    style = (style & ~wxWINDOW_STYLE_MASK); // filter out wxWindow styles
     Bind(wxEVT_SIZE, &Notebook::OnSize, this);
     Bind(wxEVT_SIZING, &Notebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);
@@ -381,18 +381,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     wxColour tabAreaBgCol = m_colours.tabAreaColour;
     clTabColours activeTabColours = m_colours;
 
-#if CL_BUILD
-    if(active_tab && (GetStyle() & kNotebook_EnableColourCustomization)) {
-        // the background colour is set according to the active tab colour
-        clColourEvent colourEvent(wxEVT_COLOUR_TAB);
-        colourEvent.SetPage(active_tab->GetWindow());
-        if(EventNotifier::Get()->ProcessEvent(colourEvent)) {
-            tabAreaBgCol = colourEvent.GetBgColour();
-            activeTabColours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-        }
-    }
-#endif
-
 #ifdef __WXOSX__
     clientRect.Inflate(1);
 #endif
@@ -425,10 +413,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         colourEvent.SetPage(tab->GetWindow());
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
-        if((GetStyle() & kNotebook_EnableColourCustomization) && EventNotifier::Get()->ProcessEvent(colourEvent)) {
-            user_colours.InitFromColours(colourEvent.GetBgColour(), colourEvent.GetFgColour());
-            pColours = &user_colours;
-        }
         m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, m_xButtonState);
     }
 
@@ -438,13 +422,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, m_xButtonState);
     }
     if(!IsVerticalTabs()) { gcdc.DestroyClippingRegion(); }
-    if(activeTabInex != wxNOT_FOUND) {
-        clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-        if(!(GetStyle() & kNotebook_VerticalButtons)) {
-            DoDrawBottomBox(activeTab, clientRect, gcdc, activeTabColours);
-        }
-    }
-
     if((GetStyle() & kNotebook_ShowFileListButton)) {
         // Draw the chevron
         if(IsVerticalTabs()) {

@@ -52,26 +52,24 @@ enum NotebookStyle {
     kNotebook_EnableNavigationEvent = (1 << 8),
     /// Place tabs at the bottom
     kNotebook_BottomTabs = (1 << 9),
-    /// Enable colour customization events
-    kNotebook_EnableColourCustomization = (1 << 10),
+    
+    /// Allow DnD between different book controls
+    kNotebook_AllowForeignDnD = (1 << 10),
+    
     /// Place the tabs on the right
     kNotebook_RightTabs = (1 << 11),
+    
     /// Place th tabs on the left
     kNotebook_LeftTabs = (1 << 12),
-    /// Vertical tabs as buttons
-    kNotebook_VerticalButtons = (1 << 13),
+    
+    /// The notebook colours are changing based on the current editor theme
+    kNotebook_DynamicColours = (1 << 13),
 
     /// Underline the active tab with a 2 pixel line
     kNotebook_UnderlineActiveTab = (1 << 14),
 
     /// When scrolling with the mouse button when hovering the tab control, switch between tabs
     kNotebook_MouseScrollSwitchTabs = (1 << 15),
-
-    /// The notebook colours are changing based on the current editor theme
-    kNotebook_DynamicColours = (1 << 16),
-
-    /// Allow DnD between different book controls
-    kNotebook_AllowForeignDnD = (1 << 17),
 
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,

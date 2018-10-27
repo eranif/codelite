@@ -53,16 +53,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
         m_toolbarIconSize->SetSelection(1);
     }
 
-    if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
-        m_choiceIconSet->SetSelection(1);
-
-    else if(options->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
-        m_choiceIconSet->SetSelection(2);
-
-    else
-        m_choiceIconSet->SetSelection(0); // Default
-
-    
     m_oldSetLocale = options->GetUseLocale();
     m_SetLocale->SetValue(m_oldSetLocale);
     m_oldpreferredLocale = options->GetPreferredLocale();
@@ -101,8 +91,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
     m_textCtrlSeparation->ChangeValue(::wxIntToString(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30)));
 
-    bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
-    m_showSplashScreen->SetValue(showSplash);
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 
@@ -117,13 +105,6 @@ void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
 
 void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 {
-
-    if(m_showSplashScreen->IsChecked()) {
-        clMainFrame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
-    } else {
-        clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
-    }
-
     clConfig::Get().Write(kConfigSingleInstance, m_singleAppInstance->IsChecked());
     clConfig::Get().Write(kConfigCheckForNewVersion, m_versionCheckOnStartup->IsChecked());
     clConfig::Get().Write(kConfigMaxItemsInFindReplaceDialog, ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15));
@@ -187,20 +168,8 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     flags &= ~(OptionsConfig::Opt_IconSet_Classic);
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
-
-    if(m_choiceIconSet->GetSelection() == 0) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-        flags |= OptionsConfig::Opt_IconSet_Classic;
-
-    } else if(m_choiceIconSet->GetSelection() == 2) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-        flags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    } else { // 1
-        newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-        flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-    }
-
+    flags |= OptionsConfig::Opt_IconSet_Classic;
+    
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);

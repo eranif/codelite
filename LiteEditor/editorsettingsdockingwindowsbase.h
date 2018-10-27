@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 
+#include "Notebook.h"
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
 #include <wx/checkbox.h>
@@ -42,7 +43,7 @@
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook10;
+    Notebook* m_notebook10;
     wxPanel* m_panelTabs;
     wxStaticText* m_staticText46;
     wxChoice* m_choiceTabStyle;
@@ -141,7 +142,7 @@ public:
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfMemCheck() { return m_checkBoxHideOutputPaneNotIfMemCheck; }
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
     wxPanel* GetPanel16() { return m_panel16; }
-    wxNotebook* GetNotebook10() { return m_notebook10; }
+    Notebook* GetNotebook10() { return m_notebook10; }
     EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();

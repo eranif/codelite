@@ -25,7 +25,8 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    m_notebook2 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook2 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                               kNotebook_Default | wxBORDER_STATIC);
     m_notebook2->SetName(wxT("m_notebook2"));
 
     bSizer1->Add(m_notebook2, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -37,32 +38,12 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer2);
 
-    wxStaticBoxSizer* staticBoxSizer3 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel1, wxID_ANY, _("Look and Feel:")), wxVERTICAL);
-
-    bSizer2->Add(staticBoxSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection(wxBOTH);
     fgSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer4->AddGrowableCol(1);
 
-    staticBoxSizer3->Add(fgSizer4, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText7 = new wxStaticText(m_panel1, wxID_ANY, _("Icon Set:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
-
-    fgSizer4->Add(m_staticText7, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceIconSetArr;
-    m_choiceIconSetArr.Add(wxT("Classic"));
-    m_choiceIconSetArr.Add(wxT("Fresh Farm"));
-    m_choiceIconSetArr.Add(wxT("Classic - Dark"));
-    m_choiceIconSet = new wxChoice(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
-                                   m_choiceIconSetArr, 0);
-    m_choiceIconSet->SetSelection(1);
-
-    fgSizer4->Add(m_choiceIconSet, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    bSizer2->Add(fgSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText8 = new wxStaticText(m_panel1, wxID_ANY, _("Toolbar Icon Size:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
@@ -78,24 +59,16 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
 
     fgSizer4->Add(m_toolbarIconSize, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    wxStaticBoxSizer* staticBoxSizer4 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel1, wxID_ANY, _("Other:")), wxVERTICAL);
+    wxBoxSizer* boxSizer98 = new wxBoxSizer(wxVERTICAL);
 
-    bSizer2->Add(staticBoxSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_showSplashScreen = new wxCheckBox(m_panel1, wxID_ANY, _("Show splashscreen on startup"), wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
-    m_showSplashScreen->SetValue(true);
-    m_showSplashScreen->SetToolTip(_("Show codelite's splashscreen when it first started"));
-
-    staticBoxSizer4->Add(m_showSplashScreen, 0, wxALL, WXC_FROM_DIP(5));
+    bSizer2->Add(boxSizer98, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_singleAppInstance = new wxCheckBox(m_panel1, wxID_ANY, _("Allow only single instance running"), wxDefaultPosition,
                                          wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
     m_singleAppInstance->SetValue(false);
     m_singleAppInstance->SetToolTip(_("There can be only one"));
 
-    staticBoxSizer4->Add(m_singleAppInstance, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer98->Add(m_singleAppInstance, 0, wxALL, WXC_FROM_DIP(5));
 
     m_versionCheckOnStartup = new wxCheckBox(m_panel1, wxID_ANY, _("Check for new version on startup"),
                                              wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
@@ -103,11 +76,11 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_versionCheckOnStartup->SetToolTip(_("When codelite starts, it will connect to http://codelite.org to check if a "
                                           "new version of codelite was released"));
 
-    staticBoxSizer4->Add(m_versionCheckOnStartup, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer98->Add(m_versionCheckOnStartup, 0, wxALL, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
 
-    staticBoxSizer4->Add(boxSizer57, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer98->Add(boxSizer57, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     boxSizer57->Add(15, -1, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -125,14 +98,14 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     m_checkBoxRestoreSession->SetToolTip(
         _("When launched, codelite will restore the last opened workspace + all open editors"));
 
-    staticBoxSizer4->Add(m_checkBoxRestoreSession, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer98->Add(m_checkBoxRestoreSession, 0, wxALL, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* flexGridSizer77 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer77->SetFlexibleDirection(wxBOTH);
     flexGridSizer77->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer77->AddGrowableCol(1);
 
-    staticBoxSizer4->Add(flexGridSizer77, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer98->Add(flexGridSizer77, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText79 = new wxStaticText(m_panel1, wxID_ANY, _("Web search prefix:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);

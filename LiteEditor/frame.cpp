@@ -714,7 +714,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
 {
-    Hide();
     if(!wxFrame::Create(pParent, id, title, pos, size, style)) { return; }
     
 #if defined(__WXGTK20__)

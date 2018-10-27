@@ -2305,6 +2305,61 @@
       }],
      "m_events": [],
      "m_children": [{
+       "m_type": 4461,
+       "proportion": 0,
+       "border": 5,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": ["wxTB_FLAT"],
+       "m_sizerFlags": ["wxEXPAND"],
+       "m_properties": [{
+         "type": "winid",
+         "m_label": "ID:",
+         "m_winid": "wxID_ANY"
+        }, {
+         "type": "string",
+         "m_label": "Size:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Name:",
+         "m_value": "m_toolbar"
+        }, {
+         "type": "string",
+         "m_label": "Tooltip:",
+         "m_value": ""
+        }, {
+         "type": "string",
+         "m_label": "Bitmap Size:",
+         "m_value": "16,16"
+        }, {
+         "type": "string",
+         "m_label": "Margins:",
+         "m_value": "-1,-1"
+        }, {
+         "type": "string",
+         "m_label": "Padding:",
+         "m_value": "1"
+        }, {
+         "type": "string",
+         "m_label": "Separator Size:",
+         "m_value": "5"
+        }, {
+         "type": "string",
+         "m_label": "Class Name:",
+         "m_value": "clToolBar"
+        }, {
+         "type": "string",
+         "m_label": "Include File:",
+         "m_value": "clToolBar.h"
+        }, {
+         "type": "string",
+         "m_label": "Style:",
+         "m_value": ""
+        }],
+       "m_events": [],
+       "m_children": []
+      }, {
        "m_type": 4447,
        "proportion": 1,
        "border": 5,
@@ -3047,61 +3102,6 @@
             }],
            "m_events": [],
            "m_children": [{
-             "m_type": 4461,
-             "proportion": 0,
-             "border": 5,
-             "gbSpan": "1,1",
-             "gbPosition": "0,0",
-             "m_styles": ["wxTB_FLAT"],
-             "m_sizerFlags": ["wxEXPAND"],
-             "m_properties": [{
-               "type": "winid",
-               "m_label": "ID:",
-               "m_winid": "wxID_ANY"
-              }, {
-               "type": "string",
-               "m_label": "Size:",
-               "m_value": "-1,-1"
-              }, {
-               "type": "string",
-               "m_label": "Name:",
-               "m_value": "m_toolbar"
-              }, {
-               "type": "string",
-               "m_label": "Tooltip:",
-               "m_value": ""
-              }, {
-               "type": "string",
-               "m_label": "Bitmap Size:",
-               "m_value": "16,16"
-              }, {
-               "type": "string",
-               "m_label": "Margins:",
-               "m_value": "-1,-1"
-              }, {
-               "type": "string",
-               "m_label": "Padding:",
-               "m_value": "1"
-              }, {
-               "type": "string",
-               "m_label": "Separator Size:",
-               "m_value": "5"
-              }, {
-               "type": "string",
-               "m_label": "Class Name:",
-               "m_value": "clToolBar"
-              }, {
-               "type": "string",
-               "m_label": "Include File:",
-               "m_value": "clToolBar.h"
-              }, {
-               "type": "string",
-               "m_label": "Style:",
-               "m_value": ""
-              }],
-             "m_events": [],
-             "m_children": []
-            }, {
              "m_type": 4466,
              "proportion": 1,
              "border": 5,
@@ -4466,7 +4466,7 @@
              "border": 2,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxDV_VERT_RULES", "wxDV_ROW_LINES", "wxDV_SINGLE"],
+             "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -4515,11 +4515,11 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl"
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl.h"
               }, {
                "type": "string",
                "m_label": "Style:",
@@ -4555,7 +4555,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Width:",
-                 "m_value": "150"
+                 "m_value": "-2"
                 }, {
                  "type": "choice",
                  "m_label": "Column Type",
@@ -4597,7 +4597,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Width:",
-                 "m_value": "100"
+                 "m_value": "-2"
                 }, {
                  "type": "choice",
                  "m_label": "Column Type",
@@ -4639,7 +4639,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Width:",
-                 "m_value": "100"
+                 "m_value": "-2"
                 }, {
                  "type": "choice",
                  "m_label": "Column Type",
@@ -4681,7 +4681,7 @@
                 }, {
                  "type": "string",
                  "m_label": "Width:",
-                 "m_value": "600"
+                 "m_value": "-2"
                 }, {
                  "type": "choice",
                  "m_label": "Column Type",

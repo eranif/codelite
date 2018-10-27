@@ -283,6 +283,11 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
 
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    bSizer4->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                           wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitterMain->SetSashGravity(1);
@@ -366,11 +371,6 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
-
-    m_toolbar = new clToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition,
                                               wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_THEME);
@@ -571,19 +571,19 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer451->Add(m_comboExtraArgs, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_dvListCtrlCommitList = new wxDataViewListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition,
-                                                    wxDLG_UNIT(m_splitterPage178, wxSize(-1, -1)),
-                                                    wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlCommitList =
+        new clThemedListCtrl(m_splitterPage178, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPage178, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer205->Add(m_dvListCtrlCommitList, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT,
+    m_dvListCtrlCommitList->AppendTextColumn(_("Commit"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT,
+    m_dvListCtrlCommitList->AppendTextColumn(_("Author"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT,
+    m_dvListCtrlCommitList->AppendTextColumn(_("Date"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(600), wxALIGN_LEFT,
+    m_dvListCtrlCommitList->AppendTextColumn(_("Subject"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
     m_splitterPage182 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_splitter174, wxSize(-1, -1)), wxTAB_TRAVERSAL);

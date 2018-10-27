@@ -127,6 +127,7 @@ public:
 class GitCommitDlgBase : public wxDialog
 {
 protected:
+    clToolBar* m_toolbar;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
     wxSplitterWindow* m_splitterInner;
@@ -135,7 +136,6 @@ protected:
     wxPanel* m_panel2;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
-    clToolBar* m_toolbar;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
     wxButton* m_buttonOK;
@@ -147,13 +147,13 @@ protected:
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxCheckListBox* GetListBox() { return m_listBox; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
     wxSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
-    clToolBar* GetToolbar() { return m_toolbar; }
     wxStyledTextCtrl* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }
@@ -177,7 +177,7 @@ protected:
     wxCheckBox* m_checkBoxIgnoreCase;
     wxStaticText* m_staticText414;
     wxComboBox* m_comboExtraArgs;
-    wxDataViewListCtrl* m_dvListCtrlCommitList;
+    clThemedListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage182;
     wxSplitterWindow* m_splitter186;
     wxPanel* m_splitterPage190;
@@ -211,7 +211,7 @@ public:
     wxCheckBox* GetCheckBoxIgnoreCase() { return m_checkBoxIgnoreCase; }
     wxStaticText* GetStaticText414() { return m_staticText414; }
     wxComboBox* GetComboExtraArgs() { return m_comboExtraArgs; }
-    wxDataViewListCtrl* GetDvListCtrlCommitList() { return m_dvListCtrlCommitList; }
+    clThemedListCtrl* GetDvListCtrlCommitList() { return m_dvListCtrlCommitList; }
     wxPanel* GetSplitterPage178() { return m_splitterPage178; }
     wxStaticText* GetStaticText210() { return m_staticText210; }
     wxListBox* GetFileListBox() { return m_fileListBox; }

@@ -63,7 +63,8 @@ protected:
     virtual void OnShowCommitHistory(wxCommandEvent& event);
     virtual void OnShowCommitHistoryUI(wxUpdateUIEvent& event);
     void DoShowDiff(int selection);
-
+    void DoCreateToolbar();
+    
 protected:
     virtual void OnFileSelected(wxCommandEvent& event);
     void OnProcessOutput(clProcessEvent& e);

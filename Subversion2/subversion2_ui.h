@@ -10,10 +10,8 @@
 #include "Notebook.h"
 #include "clThemedListCtrl.h"
 #include "svnblameeditor.h"
-#include <map>
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
-#include <wx/bitmap.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/combobox.h>
@@ -21,7 +19,6 @@
 #include <wx/dialog.h>
 #include <wx/filepicker.h>
 #include <wx/frame.h>
-#include <wx/icon.h>
 #include <wx/iconbndl.h>
 #include <wx/imaglist.h>
 #include <wx/listbox.h>
@@ -453,30 +450,6 @@ public:
                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                       long style = wxDEFAULT_FRAME_STYLE | wxFRAME_NO_TASKBAR | wxFRAME_FLOAT_ON_PARENT);
     virtual ~SvnBlameFrameBase();
-};
-
-class SubversionImages : public wxImageList
-{
-protected:
-    // Maintain a map of all bitmaps representd by their name
-    std::map<wxString, wxBitmap> m_bitmaps;
-    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)
-    wxString m_resolution;
-    int m_imagesWidth;
-    int m_imagesHeight;
-
-protected:
-public:
-    SubversionImages();
-    const wxBitmap& Bitmap(const wxString& name) const
-    {
-        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
-        return m_bitmaps.find(name + m_resolution)->second;
-    }
-
-    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
-
-    virtual ~SubversionImages();
 };
 
 class SvnShowRecentChangesBaseDlg : public wxDialog

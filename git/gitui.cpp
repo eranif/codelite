@@ -2250,22 +2250,17 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     boxSizer565->Add(m_staticText581, 0, wxALL, WXC_FROM_DIP(5));
 
+    m_clToolbarAltered = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_clToolbarAltered->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer565->Add(m_clToolbarAltered, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_checkListBoxChangedArr;
     m_checkListBoxChanged = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                                m_checkListBoxChangedArr, wxLB_SINGLE);
     m_checkListBoxChanged->SetToolTip(_("These are the files that are altered. Select which you want to reset."));
 
-    boxSizer565->Add(m_checkListBoxChanged, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar569 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                   wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_HORZ_TEXT);
-    m_auibar569->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer565->Add(m_auibar569, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar569->AddTool(ID_TOGGLE_CHECKALL_REVERT, _("Toggle all"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")),
-                         wxNullBitmap, wxITEM_NORMAL, _("Toggle check all"), _("Toggle check all"), NULL);
-    m_auibar569->Realize();
+    boxSizer565->Add(m_checkListBoxChanged, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer5651 = new wxBoxSizer(wxVERTICAL);
 
@@ -2276,36 +2271,29 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     boxSizer5651->Add(m_staticText5815, 0, wxALL, WXC_FROM_DIP(5));
 
+    m_clToolbarAdded = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_clToolbarAdded->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer5651->Add(m_clToolbarAdded, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_checkListBoxNewArr;
     m_checkListBoxNew = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                            m_checkListBoxNewArr, wxLB_SINGLE);
     m_checkListBoxNew->SetToolTip(_("These are the files that have been added. Select which you want to remove."));
 
-    boxSizer5651->Add(m_checkListBoxNew, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer5651->Add(m_checkListBoxNew, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_auibar5693 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_HORZ_TEXT);
-    m_auibar5693->SetToolBitmapSize(wxSize(16, 16));
+    m_stdBtnSizer751 = new wxStdDialogButtonSizer();
 
-    boxSizer5651->Add(m_auibar5693, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer4->Add(m_stdBtnSizer751, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
-    m_auibar5693->AddTool(ID_TOGGLE_CHECKALL_REMOVE, _("Toggle all"), wxXmlResource::Get()->LoadBitmap(wxT("16-ok")),
-                          wxNullBitmap, wxITEM_NORMAL, _("Toggle check all"), _("Toggle check all"), NULL);
-    m_auibar5693->Realize();
+    m_button753 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button753->SetDefault();
+    m_stdBtnSizer751->AddButton(m_button753);
 
-    wxBoxSizer* boxSizer372 = new wxBoxSizer(wxHORIZONTAL);
-
-    bSizer4->Add(boxSizer372, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_buttonOK->SetDefault();
-
-    boxSizer372->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_buttonCancel =
-        new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer372->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+    m_button755 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer751->AddButton(m_button755);
+    m_stdBtnSizer751->Realize();
 
     SetName(wxT("GitResetDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -2322,28 +2310,9 @@ GitResetDlgBase::GitResetDlgBase(wxWindow* parent, wxWindowID id, const wxString
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
-    // Connect events
-    this->Connect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(GitResetDlgBase::OnToggleAllRevert), NULL, this);
-    this->Connect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_UPDATE_UI,
-                  wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRevertUI), NULL, this);
-    this->Connect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(GitResetDlgBase::OnToggleAllRemove), NULL, this);
-    this->Connect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_UPDATE_UI,
-                  wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRemoveUI), NULL, this);
 }
 
-GitResetDlgBase::~GitResetDlgBase()
-{
-    this->Disconnect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(GitResetDlgBase::OnToggleAllRevert), NULL, this);
-    this->Disconnect(ID_TOGGLE_CHECKALL_REVERT, wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRevertUI), NULL, this);
-    this->Disconnect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(GitResetDlgBase::OnToggleAllRemove), NULL, this);
-    this->Disconnect(ID_TOGGLE_CHECKALL_REMOVE, wxEVT_UPDATE_UI,
-                     wxUpdateUIEventHandler(GitResetDlgBase::OnToggleAllRemoveUI), NULL, this);
-}
+GitResetDlgBase::~GitResetDlgBase() {}
 
 GitUserEmailDialogBase::GitUserEmailDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                const wxPoint& pos, const wxSize& size, long style)

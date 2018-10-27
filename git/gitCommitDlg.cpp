@@ -23,40 +23,45 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
+#include "clSingleChoiceDialog.h"
+#include "editor_config.h"
+#include "git.h"
 #include "gitCommitDlg.h"
 #include "gitCommitEditor.h"
-#include "git.h"
+#include "gitentry.h"
+#include "globals.h"
+#include "lexer_configuration.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
-#include "gitentry.h"
-#include "lexer_configuration.h"
-#include "editor_config.h"
-#include "ColoursAndFontsManager.h"
-#include "globals.h"
-#include "clSingleChoiceDialog.h"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
-    : GitCommitDlgBase(parent), m_plugin(plugin), m_workingDir(workingDir)
+    : GitCommitDlgBase(parent)
+    , m_plugin(plugin)
+    , m_workingDir(workingDir)
     , m_toggleChecks(false)
 {
     // read the configuration
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-
+    ::MSWSetNativeTheme(m_listBox);
     m_splitterInner->SetSashPosition(data.GetGitCommitDlgHSashPos());
     m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
 
     LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
-    if(diffLexer) {
-        diffLexer->Apply(m_stcDiff);
-    }
+    if(diffLexer) { diffLexer->Apply(m_stcDiff); }
 
+    m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), clGetManager()->GetStdIcons()->LoadBitmap("check-all"));
+    m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("history"));
+    m_toolbar->Realize();
     SetName("GitCommitDlg");
     WindowAttrManager::Load(this);
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
-    
+    m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));
+    m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
     m_editEventsHandlerCommitStc.Reset(new clEditEventsHandler(m_stcCommitMessage));
     m_editEventsHandlerDiffStc.Reset(new clEditEventsHandler(m_stcDiff));
 }
@@ -153,38 +158,30 @@ void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
     m_toggleChecks = !m_toggleChecks;
 }
 
-
 void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
 {
     clSingleChoiceDialog dlg(this, m_history);
     dlg.SetLabel(_("Choose a commit"));
     if(dlg.ShowModal() != wxID_OK) return;
-    
+
     wxString commitHash = dlg.GetSelection().BeforeFirst(' ');
-    if (!commitHash.empty()) {
+    if(!commitHash.empty()) {
         wxString selectedCommit;
         m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, m_workingDir, selectedCommit);
-        if (!selectedCommit.empty()) {
-            m_stcCommitMessage->SetText(selectedCommit);
-        }
+        if(!selectedCommit.empty()) { m_stcCommitMessage->SetText(selectedCommit); }
     }
 }
 
-void GitCommitDlg::OnCommitHistoryUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_history.IsEmpty());
-}
+void GitCommitDlg::OnCommitHistoryUI(wxUpdateUIEvent& event) { event.Enable(!m_history.IsEmpty()); }
 
 void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
 {
-    if (event.IsChecked()) {
-        if (!m_previousCommitMessage.empty()) {
+    if(event.IsChecked()) {
+        if(!m_previousCommitMessage.empty()) {
             m_stashedMessage = m_stcCommitMessage->GetText();
             m_stcCommitMessage->SetText(m_previousCommitMessage);
         }
     } else {
-        if (!m_stashedMessage.empty()) {
-            m_stcCommitMessage->SetText(m_stashedMessage);
-        }
+        if(!m_stashedMessage.empty()) { m_stcCommitMessage->SetText(m_stashedMessage); }
     }
 }

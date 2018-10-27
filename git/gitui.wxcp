@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 743,
+  "m_objCounter": 745,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
   "m_bitmapsFile": "gitui_git_bitmaps.cpp",
@@ -3047,12 +3047,12 @@
             }],
            "m_events": [],
            "m_children": [{
-             "m_type": 4463,
+             "m_type": 4461,
              "proportion": 0,
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": ["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE", "wxAUI_TB_HORZ_TEXT"],
+             "m_styles": ["wxTB_FLAT"],
              "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -3065,7 +3065,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_auibar"
+               "m_value": "m_toolbar"
               }, {
                "type": "string",
                "m_label": "Tooltip:",
@@ -3078,145 +3078,29 @@
                "type": "string",
                "m_label": "Margins:",
                "m_value": "-1,-1"
+              }, {
+               "type": "string",
+               "m_label": "Padding:",
+               "m_value": "1"
+              }, {
+               "type": "string",
+               "m_label": "Separator Size:",
+               "m_value": "5"
+              }, {
+               "type": "string",
+               "m_label": "Class Name:",
+               "m_value": "clToolBar"
+              }, {
+               "type": "string",
+               "m_label": "Include File:",
+               "m_value": "clToolBar.h"
+              }, {
+               "type": "string",
+               "m_label": "Style:",
+               "m_value": ""
               }],
              "m_events": [],
-             "m_children": [{
-               "m_type": 4462,
-               "proportion": 0,
-               "border": 5,
-               "gbSpan": "1,1",
-               "gbPosition": "0,0",
-               "m_styles": [],
-               "m_sizerFlags": [],
-               "m_properties": [{
-                 "type": "winid",
-                 "m_label": "ID:",
-                 "m_winid": "ID_TOGGLE_CHECKALL"
-                }, {
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "m_toolbarItemToggleCheckAll"
-                }, {
-                 "type": "string",
-                 "m_label": "Label:",
-                 "m_value": "Toggle Files"
-                }, {
-                 "type": "multi-string",
-                 "m_label": "Tooltip:",
-                 "m_value": "Toggle Check All"
-                }, {
-                 "type": "string",
-                 "m_label": "Help String:",
-                 "m_value": "Toggle Check All"
-                }, {
-                 "type": "bitmapPicker",
-                 "m_label": "Bitmap File:",
-                 "m_path": "../bitmaps/16-ok.png"
-                }, {
-                 "type": "filePicker",
-                 "m_label": "Disabled-Bitmap File",
-                 "m_path": ""
-                }, {
-                 "type": "choice",
-                 "m_label": "Kind:",
-                 "m_selection": 0,
-                 "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-                }, {
-                 "type": "bool",
-                 "m_label": "Construct the Dropdown Menu:",
-                 "m_value": true
-                }],
-               "m_events": [{
-                 "m_eventName": "wxEVT_COMMAND_TOOL_CLICKED",
-                 "m_eventClass": "wxCommandEvent",
-                 "m_eventHandler": "wxCommandEventHandler",
-                 "m_functionNameAndSignature": "OnToggleCheckAll(wxCommandEvent& event)",
-                 "m_description": "Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
-                 "m_noBody": false
-                }],
-               "m_children": []
-              }, {
-               "m_type": 4462,
-               "proportion": 0,
-               "border": 5,
-               "gbSpan": "1,1",
-               "gbPosition": "0,0",
-               "m_styles": [],
-               "m_sizerFlags": [],
-               "m_properties": [{
-                 "type": "winid",
-                 "m_label": "ID:",
-                 "m_winid": "ID_GIT_COMMIT_HISTORY"
-                }, {
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "m_toolbarItemCommitHistory"
-                }, {
-                 "type": "string",
-                 "m_label": "Label:",
-                 "m_value": "History"
-                }, {
-                 "type": "multi-string",
-                 "m_label": "Tooltip:",
-                 "m_value": "Show Commit History"
-                }, {
-                 "type": "string",
-                 "m_label": "Help String:",
-                 "m_value": "Show Commit History"
-                }, {
-                 "type": "bitmapPicker",
-                 "m_label": "Bitmap File:",
-                 "m_path": "../bitmaps/16-history.png"
-                }, {
-                 "type": "filePicker",
-                 "m_label": "Disabled-Bitmap File",
-                 "m_path": ""
-                }, {
-                 "type": "choice",
-                 "m_label": "Kind:",
-                 "m_selection": 0,
-                 "m_options": ["normal", "checkable", "radio", "separator", "dropdown"]
-                }, {
-                 "type": "bool",
-                 "m_label": "Construct the Dropdown Menu:",
-                 "m_value": true
-                }],
-               "m_events": [{
-                 "m_eventName": "wxEVT_COMMAND_TOOL_CLICKED",
-                 "m_eventClass": "wxCommandEvent",
-                 "m_eventHandler": "wxCommandEventHandler",
-                 "m_functionNameAndSignature": "OnCommitHistory(wxCommandEvent& event)",
-                 "m_description": "Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool",
-                 "m_noBody": false
-                }, {
-                 "m_eventName": "wxEVT_UPDATE_UI",
-                 "m_eventClass": "wxUpdateUIEvent",
-                 "m_eventHandler": "wxUpdateUIEventHandler",
-                 "m_functionNameAndSignature": "OnCommitHistoryUI(wxUpdateUIEvent& event)",
-                 "m_description": "Process a wxEVT_UPDATE_UI event",
-                 "m_noBody": false
-                }],
-               "m_children": []
-              }, {
-               "m_type": 4516,
-               "proportion": 0,
-               "border": 5,
-               "gbSpan": "1,1",
-               "gbPosition": "0,0",
-               "m_styles": [],
-               "m_sizerFlags": [],
-               "m_properties": [{
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "m_auitbarStretchSpace370"
-                }, {
-                 "type": "string",
-                 "m_label": "Proportion:",
-                 "m_value": "1"
-                }],
-               "m_events": [],
-               "m_children": []
-              }]
+             "m_children": []
             }, {
              "m_type": 4466,
              "proportion": 1,

@@ -125,9 +125,10 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
     m_view = new CppCheckReportPage(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
     //	wxBookCtrlBase *book = m_mgr->GetOutputPaneNotebook();
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, _("CppCheck"), false, m_mgr->GetStdIcons()->LoadBitmap("checkbox"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, _("CppCheck"), false,
+                                            m_mgr->GetStdIcons()->LoadBitmap("check-all"));
     m_tabHelper.reset(new clTabTogglerHelper(_("CppCheck"), m_view, "", NULL));
-    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("checkbox"));
+    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("check-all"));
 }
 
 CppCheckPlugin::~CppCheckPlugin() {}

@@ -64,8 +64,8 @@ void clThemedTreeCtrl::ApplyTheme()
     colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif
 
-#ifdef __WXGTK__
-    if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
-#endif
+//#ifdef __WXGTK__
+//    if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
+//#endif
     SetColours(colours);
 }

@@ -25,7 +25,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     bSizer1->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -36,7 +36,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
 
     m_stdBtnSizer92 = new wxStdDialogButtonSizer();
 
-    bSizer2->Add(m_stdBtnSizer92, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    bSizer2->Add(m_stdBtnSizer92, 0, wxALL, WXC_FROM_DIP(5));
 
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
@@ -46,29 +46,14 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     m_stdBtnSizer92->AddButton(m_button96);
     m_stdBtnSizer92->Realize();
 
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook);
-    }
-#endif
-
     SetName(wxT("DebuggerSettingsBaseDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
         CentreOnScreen();
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL, this);
     m_button96->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel),
@@ -334,7 +319,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_panel6->SetSizer(bSizer16);
 
     m_notebook73 =
-        new wxNotebook(m_panel6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), wxBK_DEFAULT);
+        new Notebook(m_panel6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook73->SetName(wxT("m_notebook73"));
 
     bSizer16->Add(m_notebook73, 1, wxEXPAND, WXC_FROM_DIP(5));

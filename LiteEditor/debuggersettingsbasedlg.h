@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 
+#include "Notebook.h"
 #include "clThemedListCtrl.h"
 #include "clThemedTreeCtrl.h"
 #include <map>
@@ -57,7 +58,7 @@
 class DebuggerSettingsBaseDlg : public wxDialog
 {
 protected:
-    wxNotebook* m_notebook;
+    Notebook* m_notebook;
     wxStdDialogButtonSizer* m_stdBtnSizer92;
     wxButton* m_buttonOK;
     wxButton* m_button96;
@@ -67,9 +68,9 @@ protected:
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxNotebook* GetNotebook() { return m_notebook; }
+    Notebook* GetNotebook() { return m_notebook; }
     DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };
@@ -146,7 +147,7 @@ class DbgPageGeneralBase : public wxPanel
 {
 protected:
     wxPanel* m_panel6;
-    wxNotebook* m_notebook73;
+    Notebook* m_notebook73;
     wxPanel* m_panelGeneral;
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textCtrDbgPath;
@@ -195,7 +196,7 @@ public:
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
     wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
     wxPanel* GetPanelDisplay() { return m_panelDisplay; }
-    wxNotebook* GetNotebook73() { return m_notebook73; }
+    Notebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }
     DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);

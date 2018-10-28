@@ -143,6 +143,9 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
                         m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
                     },
                     XRCID("import_eclipse_theme"));
+    m_colourPickerBaseColour->SetColour(
+        clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    m_cbUseCustomBaseColour->SetValue(clConfig::Get().Read("UseCustomBaseColour", false));
     CentreOnParent();
 }
 
@@ -263,6 +266,8 @@ SyntaxHighlightDlg::~SyntaxHighlightDlg()
     // Write the global font
     wxFont font = m_fontPickerGlobal->GetSelectedFont();
     if(font.IsOk()) { clConfig::Get().Write("GlobalThemeFont", font); }
+    clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
+    clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
 }
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
@@ -716,4 +721,9 @@ void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
     zw.Close();
 
     ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
+}
+
+void SyntaxHighlightDlg::OnUseCustomColourUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_cbUseCustomBaseColour->IsChecked());
 }

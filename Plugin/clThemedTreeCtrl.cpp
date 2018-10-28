@@ -4,6 +4,7 @@
 #include "event_notifier.h"
 #include <clColours.h>
 #include <wx/settings.h>
+#include "cl_config.h"
 
 #ifdef __WXMSW__
 #define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_SIMPLE
@@ -52,6 +53,12 @@ void clThemedTreeCtrl::ApplyTheme()
         colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     } else {
         colours.InitDefaults();
+    }
+    wxColour baseColour = colours.GetBgColour();
+    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+    if(useCustomColour) {
+        baseColour = clConfig::Get().Read("BaseColour", baseColour);
+        colours.InitFromColour(baseColour);
     }
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);

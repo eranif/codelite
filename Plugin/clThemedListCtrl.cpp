@@ -4,6 +4,7 @@
 #include "event_notifier.h"
 #include "lexer_configuration.h"
 #include <wx/settings.h>
+#include "cl_config.h"
 
 #ifdef __WXMSW__
 #define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_SIMPLE
@@ -43,6 +44,14 @@ void clThemedListCtrl::ApplyTheme()
     } else {
         colours.InitDefaults();
     }
+
+    wxColour baseColour = colours.GetBgColour();
+    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+    if(useCustomColour) {
+        baseColour = clConfig::Get().Read("BaseColour", baseColour);
+        colours.InitFromColour(baseColour);
+    }
+
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);

@@ -58,6 +58,8 @@ protected:
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
+    wxCheckBox* m_cbUseCustomBaseColour;
+    wxColourPickerCtrl* m_colourPickerBaseColour;
     wxStyledTextCtrl* m_stcPreview;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
@@ -104,6 +106,7 @@ protected:
 protected:
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -133,6 +136,8 @@ public:
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
+    wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
+    wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
     wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
     wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
     wxListBox* GetListBox() { return m_listBox; }

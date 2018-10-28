@@ -214,7 +214,7 @@
         }, {
          "type": "string",
          "m_label": "Style:",
-         "m_value": ""
+         "m_value": "kNotebook_Default|wxBORDER_STATIC"
         }],
        "m_events": [],
        "m_children": []

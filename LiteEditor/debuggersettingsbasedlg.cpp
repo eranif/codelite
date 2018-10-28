@@ -25,7 +25,8 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                              kNotebook_Default | wxBORDER_STATIC);
     m_notebook->SetName(wxT("m_notebook"));
 
     bSizer1->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

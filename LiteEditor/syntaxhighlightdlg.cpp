@@ -256,6 +256,10 @@ void SyntaxHighlightDlg::SaveChanges()
         CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }
 
+    // Save the base colour changes
+    clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
+    clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
+
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
     m_isModified = false;
@@ -266,8 +270,6 @@ SyntaxHighlightDlg::~SyntaxHighlightDlg()
     // Write the global font
     wxFont font = m_fontPickerGlobal->GetSelectedFont();
     if(font.IsOk()) { clConfig::Get().Write("GlobalThemeFont", font); }
-    clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
-    clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
 }
 
 void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
@@ -726,4 +728,15 @@ void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 void SyntaxHighlightDlg::OnUseCustomColourUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_cbUseCustomBaseColour->IsChecked());
+}
+void SyntaxHighlightDlg::OnCustomBaseColourPIcked(wxColourPickerEvent& event)
+{
+    m_isModified = true;
+    event.Skip();
+}
+
+void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
+{
+    m_isModified = true;
+    event.Skip();
 }

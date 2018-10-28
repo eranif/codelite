@@ -106,7 +106,9 @@ protected:
 protected:
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCustomBaseColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }

@@ -451,8 +451,13 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
                                 wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
                                  wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
+    m_cbUseCustomBaseColour->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                     wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColour), NULL, this);
     m_colourPickerBaseColour->Connect(wxEVT_UPDATE_UI,
                                       wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL, this);
+    m_colourPickerBaseColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                      wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
+                                      NULL, this);
     m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected),
                        NULL, this);
     m_choiceLexerThemes->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
@@ -515,8 +520,14 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
                                    wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                                     wxCommandEventHandler(SyntaxHighlightBaseDlg::OnGlobalThemeSelected), NULL, this);
+    m_cbUseCustomBaseColour->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                        wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomBaseColour), NULL,
+                                        this);
     m_colourPickerBaseColour->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL, this);
+    m_colourPickerBaseColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                         wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
+                                         NULL, this);
     m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
                           wxCommandEventHandler(SyntaxHighlightBaseDlg::OnLexerSelected), NULL, this);
     m_choiceLexerThemes->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,

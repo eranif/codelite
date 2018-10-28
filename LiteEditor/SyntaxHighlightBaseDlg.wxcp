@@ -899,7 +899,14 @@
                      "m_label": "Value:",
                      "m_value": false
                     }],
-                   "m_events": [],
+                   "m_events": [{
+                     "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
+                     "m_eventClass": "wxCommandEvent",
+                     "m_eventHandler": "wxCommandEventHandler",
+                     "m_functionNameAndSignature": "OnUseCustomBaseColour(wxCommandEvent& event)",
+                     "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+                     "m_noBody": false
+                    }],
                    "m_children": []
                   }, {
                    "m_type": 4429,
@@ -976,6 +983,13 @@
                      "m_eventHandler": "wxUpdateUIEventHandler",
                      "m_functionNameAndSignature": "OnUseCustomColourUI(wxUpdateUIEvent& event)",
                      "m_description": "Process a wxEVT_UPDATE_UI event",
+                     "m_noBody": false
+                    }, {
+                     "m_eventName": "wxEVT_COMMAND_COLOURPICKER_CHANGED",
+                     "m_eventClass": "wxColourPickerEvent",
+                     "m_eventHandler": "wxColourPickerEventHandler",
+                     "m_functionNameAndSignature": "OnCustomBaseColourPIcked(wxColourPickerEvent& event)",
+                     "m_description": "The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
                      "m_noBody": false
                     }],
                    "m_children": []

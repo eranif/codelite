@@ -70,7 +70,7 @@ protected:
 public:
     Notebook* GetNotebook() { return m_notebook; }
     DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };

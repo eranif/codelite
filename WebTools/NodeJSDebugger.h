@@ -27,6 +27,7 @@
 #define NODEJSDEBUGGER_H
 
 #include "NodeJS.h"
+#include "NodeJSDebuggerBase.h"
 #include "NodeJSDebuggerBreakpointManager.h"
 #include "NodeJSSocket.h"
 #include "cl_command_event.h"
@@ -48,17 +49,13 @@ struct NodeJSDebuggerException {
     }
 };
 
-class NodeJSDebugger : public wxEvtHandler
+class NodeJSDebugger : public NodeJSDebuggerBase
 {
     NodeJSSocket::Ptr_t m_socket;
-    NodeJSBptManager m_bptManager;
     bool m_canInteract;
     wxStringSet_t m_tempFiles;
     NodeJSDebuggerTooltip* m_tooltip;
     IProcess* m_nodeProcess;
-
-public:
-    typedef SmartPtr<NodeJSDebugger> Ptr_t;
 
 protected:
     // Debugger event handlers

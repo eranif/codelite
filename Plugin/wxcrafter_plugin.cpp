@@ -725,7 +725,7 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent, long style)
 
     m_panelStatus = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer222->Add(m_panelStatus, 0, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer222->Add(m_panelStatus, 0, wxEXPAND, WXC_FROM_DIP(0));
 
     wxBoxSizer* boxSizer234 = new wxBoxSizer(wxHORIZONTAL);
     m_panelStatus->SetSizer(boxSizer234);

@@ -27,11 +27,14 @@
 #define NOTEJSWORKSPACE_H
 
 #include "IWorkspace.h"
-#include <wx/filename.h>
-#include "cl_command_event.h"
 #include "NodeJSDebugger.h"
+#include "NodeJSDebuggerBase.h"
 #include "TerminalEmulator.h"
+#include "cl_command_event.h"
+#include <wx/filename.h>
 
+class NodeJSDebugger;
+class NodeJSCLIDebugger;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
 {
@@ -42,13 +45,18 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-    NodeJSDebugger::Ptr_t m_debugger;
+    NodeJSDebuggerBase::Ptr_t m_debugger;
     TerminalEmulator m_terminal;
     static NodeJSWorkspace* ms_workspace;
 
 protected:
+    int GetNodeJSMajorVersion() const;
+    void DoAllocateDebugger();
     void DoClear();
     bool DoOpen(const wxFileName& filename);
+
+    // Fallback, incase we fail to allocate a proper debugger
+    void OnDebugStart(clDebugEvent& event);
 
     //--------------------------------------------------
     // Event handlers
@@ -113,7 +121,8 @@ public:
     virtual bool IsProjectSupported() const;
 
     NodeJSWorkspaceView* GetView() { return m_view; }
-    NodeJSDebugger::Ptr_t GetDebugger() { return m_debugger; }
+    NodeJSDebuggerBase::Ptr_t GetDebugger();
+
     /**
      * @brief is this workspace opened?
      */

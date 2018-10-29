@@ -1,4 +1,6 @@
+#include "NodeJSCLIDebugger.h"
 #include "NodeJSDebuggerDlg.h"
+#include "NodeJSExecutable.h"
 #include "NodeJSNewWorkspaceDlg.h"
 #include "NodeJSWorkspaceConfiguration.h"
 #include "NodeJSWorkspaceView.h"
@@ -9,6 +11,7 @@
 #include "codelite_events.h"
 #include "ctags_manager.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "processreaderthread.h"
@@ -29,7 +32,7 @@ NodeJSWorkspace::NodeJSWorkspace()
     , m_showWelcomePage(false)
 {
     SetWorkspaceType("Node.js");
-    m_debugger.Reset(new NodeJSDebugger());
+    DoAllocateDebugger();
 
     m_view = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
@@ -42,6 +45,7 @@ NodeJSWorkspace::NodeJSWorkspace()
     EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &NodeJSWorkspace::OnExecute, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSWorkspace::OnDebugStart, this);
 
     m_terminal.Bind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
     m_terminal.Bind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
@@ -58,7 +62,8 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &NodeJSWorkspace::OnExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
-        m_debugger.Reset(NULL);
+        EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &NodeJSWorkspace::OnDebugStart, this);
+        m_debugger.reset(NULL);
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
 
@@ -126,7 +131,7 @@ void NodeJSWorkspace::Close()
     wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
 
-    m_debugger.Reset(NULL);
+    m_debugger.reset(NULL);
 
     // notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
@@ -225,7 +230,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     CallAfter(&NodeJSWorkspace::RestoreSession);
 
     // Create new debugger for this workspace
-    m_debugger.Reset(new NodeJSDebugger());
+    DoAllocateDebugger();
     return true;
 }
 
@@ -354,3 +359,38 @@ wxFileName NodeJSWorkspace::GetProjectFileName(const wxString& projectName) cons
 }
 
 wxArrayString NodeJSWorkspace::GetWorkspaceProjects() const { return wxArrayString(); }
+
+int NodeJSWorkspace::GetNodeJSMajorVersion() const
+{
+    NodeJSExecutable nodeJS;
+    int nodeVersion = nodeJS.GetMajorVersion();
+    clDEBUG() << "NodeJS major version is:" << nodeVersion;
+    return nodeVersion;
+}
+
+void NodeJSWorkspace::DoAllocateDebugger()
+{
+    if(GetNodeJSMajorVersion() <= 7) {
+        m_debugger.reset(new NodeJSDebugger());
+    } else {
+        m_debugger.reset(new NodeJSCLIDebugger());
+    }
+}
+
+void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
+{
+    if(IsOpen()) {
+        if(m_debugger) {
+            // let our debugger handle it
+            event.Skip();
+        } else {
+            // We don't have a proper debugger, however, we dont want CodeLite to start the wrong debugger
+            ::wxMessageBox(_("Could not instantiate a debugger for your NodeJS version!"));
+            event.Skip(false);
+        }
+    } else {
+        event.Skip();
+    }
+}
+
+NodeJSDebuggerBase::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }

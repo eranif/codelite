@@ -252,9 +252,9 @@ void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
     // Sanity
 
     // No debugger?
-    if(!NodeJSWorkspace::Get()->GetDebugger()) return;
-    // Already running?
-    if(NodeJSWorkspace::Get()->GetDebugger()->IsConnected()) return;
+    if(!NodeJSWorkspace::Get()->GetDebugger() &&
+       ((type == NodeJSDebuggerDlg::kDebug) || (type == NodeJSDebuggerDlg::kDebugCLI)))
+        return;
 
     NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), type, pj.GetScript(), pj.GetArgs());
     if(dlg.ShowModal() != wxID_OK) { return; }

@@ -33,6 +33,7 @@ class NodeJSDebuggerDlg : public NodeJSDebuggerDlgBase
 public:
     enum eDialogType {
         kDebug,
+        kDebugCLI,
         kExecute,
     };
     eDialogType m_type;

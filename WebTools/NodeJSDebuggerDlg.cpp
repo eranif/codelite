@@ -118,6 +118,8 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
         long port = 5858;
         if(!sport.Trim().ToCLong(&port)) { port = 5858; }
         command_args << "--debug-brk=" << port << " " << script;
+    } else if(m_type == kDebugCLI) {
+        command_args << "inspect " << script;
     } else {
         command_args << script;
     }

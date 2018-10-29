@@ -89,6 +89,8 @@
     <File Name="XMLBuffer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="NodeJS">
+    <File Name="NodeJSExecutable.cpp"/>
+    <File Name="NodeJSExecutable.h"/>
     <File Name="NoteJSWorkspace.h"/>
     <File Name="NoteJSWorkspace.cpp"/>
     <File Name="NodeJSWorkspaceView.h"/>
@@ -96,16 +98,32 @@
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
-      <File Name="NodeJSDebugger.h"/>
-      <File Name="NodeJSDebugger.cpp"/>
-      <File Name="NodeJSSocket.h"/>
-      <File Name="NodeJSSocket.cpp"/>
-      <File Name="NodeJSDebuggerDlg.h"/>
-      <File Name="NodeJSDebuggerDlg.cpp"/>
-      <File Name="NodeJSDebuggerBreakpoint.h"/>
-      <File Name="NodeJSDebuggerBreakpoint.cpp"/>
-      <File Name="NodeJSDebuggerBreakpointManager.h"/>
-      <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
+      <VirtualDirectory Name="DebuggerCLI">
+        <File Name="NodeJSCLIDebugger.h"/>
+        <File Name="NodeJSCLIDebugger.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="DebuggerOLD">
+        <File Name="NodeJSSocket.h"/>
+        <File Name="NodeJSSocket.cpp"/>
+        <File Name="NodeJSOuptutParser.h"/>
+        <File Name="NodeJSOuptutParser.cpp"/>
+        <File Name="NodeJSDebuggerPane.h"/>
+        <File Name="NodeJSDebuggerPane.cpp"/>
+        <File Name="NodeJSDebuggerDlg.h"/>
+        <File Name="NodeJSDebuggerDlg.cpp"/>
+        <File Name="NodeJSDebugger.h"/>
+        <File Name="NodeJSDebugger.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="DebuggerCommon">
+        <File Name="NodeJSDebuggerTooltip.h"/>
+        <File Name="NodeJSDebuggerTooltip.cpp"/>
+        <File Name="NodeJSDebuggerBase.h"/>
+        <File Name="NodeJSDebuggerBase.cpp"/>
+        <File Name="NodeJSDebuggerBreakpoint.cpp"/>
+        <File Name="NodeJSDebuggerBreakpoint.h"/>
+        <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
+        <File Name="NodeJSDebuggerBreakpointManager.h"/>
+      </VirtualDirectory>
       <VirtualDirectory Name="Handlers">
         <File Name="NodeJSSetBreakpointHandler.h"/>
         <File Name="NodeJSSetBreakpointHandler.cpp"/>
@@ -124,10 +142,6 @@
         <File Name="NodeJSLookupHandler.h"/>
         <File Name="NodeJSLookupHandler.cpp"/>
       </VirtualDirectory>
-      <File Name="NodeJSDebuggerPane.h"/>
-      <File Name="NodeJSDebuggerPane.cpp"/>
-      <File Name="NodeJSOuptutParser.h"/>
-      <File Name="NodeJSOuptutParser.cpp"/>
     </VirtualDirectory>
     <File Name="NodeJSWorkspaceUserConfiguration.h"/>
     <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
@@ -135,8 +149,6 @@
     <File Name="NodeJSEvents.cpp"/>
     <File Name="NodeJSNewWorkspaceDlg.h"/>
     <File Name="NodeJSNewWorkspaceDlg.cpp"/>
-    <File Name="NodeJSDebuggerTooltip.h"/>
-    <File Name="NodeJSDebuggerTooltip.cpp"/>
     <File Name="NodeJS.h"/>
     <File Name="NodeJSPackageJSON.h"/>
     <File Name="NodeJSPackageJSON.cpp"/>

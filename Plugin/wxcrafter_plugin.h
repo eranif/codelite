@@ -252,7 +252,7 @@ public:
     wxStaticBitmap* GetStaticBitmap240() { return m_staticBitmap240; }
     wxPanel* GetPanelStatus() { return m_panelStatus; }
     wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
-    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_SIMPLE);
+    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_THEME);
     virtual ~clResizableTooltipBase();
 };
 

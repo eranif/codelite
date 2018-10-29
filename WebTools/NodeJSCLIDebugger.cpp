@@ -82,6 +82,10 @@ bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
 
 void NodeJSCLIDebugger::DoCleanup()
 {
+    m_debuggerOutput.Clear();
+    m_commands.clear();
+    m_canInteract = false;
+    m_workingDirectory.Clear();
     if(m_process) { m_process->Terminate(); }
 }
 
@@ -101,21 +105,96 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
     wxDELETE(m_process);
 }
 
-void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event) { clDEBUG() << "NodeJS Debugger:" << event.GetOutput(); }
+void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
+{
+    wxString str = event.GetOutput();
+    for(size_t i = 0; i < str.size(); ++i) {
+        wxChar ch = str[i];
+        switch(ch) {
+        case '\r': {
+            // Unwind back and delete everything until the first '\n' we find or start of string
+            size_t where = m_debuggerOutput.rfind('\n');
+            if(where != wxString::npos) {
+                m_debuggerOutput.Truncate(where + 1);
+            } else {
+                m_debuggerOutput.Clear();
+            }
+        } break;
+        case '\b': {
+            if(!m_debuggerOutput.IsEmpty() && (m_debuggerOutput.Last() != '\n')) {
+                // remove last char
+                m_debuggerOutput.Truncate(m_debuggerOutput.size() - 1);
+            }
+
+        } break;
+        case '\n': {
+            m_debuggerOutput << ch;
+
+        } break;
+        default: {
+            m_debuggerOutput << ch;
+
+        } break;
+        }
+    }
+    const char* p = m_debuggerOutput.mb_str(wxConvUTF8).data();
+    wxUnusedVar(p);
+    if(m_debuggerOutput.EndsWith("\ndebug>") || m_debuggerOutput.EndsWith("\ndebug> ")) {
+        if(!m_commands.empty() && m_commands.front().in_progress) {
+
+            // the output from the last command belongs to this command, let it handle it
+            const NodeJSCliCommandHandler& handler = m_commands.front();
+            if(handler.action) { handler.action(m_debuggerOutput); }
+
+            // remove the first entry from the command queue
+            m_commands.erase(m_commands.begin());
+        }
+        m_debuggerOutput.Clear();
+        m_canInteract = true;
+        ProcessQueue(); // Process the next command
+    }
+}
 
 void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& workingDirectory)
 {
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
+    size_t createFlags = IProcessCreateDefault;
+    m_process = ::CreateAsyncProcess(this, command, createFlags, workingDirectory);
     if(!m_process) {
         ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << command);
         DoCleanup();
         return;
     }
 
+    // Keep the working directory
+    m_workingDirectory = workingDirectory;
+
     // request the current backtrace
     Callstack();
 }
+
 void NodeJSCLIDebugger::Callstack()
 {
-    if(m_process) { m_process->WriteToConsole("bt"); }
+    NodeJSCliCommandHandler commandHandler("bt", [&](const wxString& outputString) {
+        clDEBUG() << "Callstack handler:[\n" << outputString << "\n]";
+    });
+    PushCommand(commandHandler);
 }
+
+void NodeJSCLIDebugger::ProcessQueue()
+{
+    if(!m_commands.empty() && IsCanInteract()) {
+        NodeJSCliCommandHandler& command = m_commands.front();
+        if(command.in_progress) { return; }
+        clDEBUG() << "NodeJSCLIDebugger:" << command.m_commandText;
+        m_process->Write(command.m_commandText);
+        command.in_progress = true;
+    }
+}
+
+void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler)
+{
+    m_commands.push_back(commandHandler);
+    ProcessQueue();
+}
+
+bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }

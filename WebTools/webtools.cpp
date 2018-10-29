@@ -50,7 +50,6 @@ WebTools::WebTools(IManager* manager)
     , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
     , m_nodejsDebuggerPane(NULL)
-    , m_hideToolBarOnDebugStop(false)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -384,13 +383,6 @@ void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
     fnNodeJSLayout.AppendDir("config");
     if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
     EnsureAuiPaneIsVisible("nodejs_debugger", true);
-
-    m_hideToolBarOnDebugStop = false;
-    if(!m_mgr->AllowToolbar()) {
-        // Using native toolbar
-        m_hideToolBarOnDebugStop = !m_mgr->IsToolBarShown();
-        m_mgr->ShowToolBar(true);
-    }
 }
 
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
@@ -407,8 +399,6 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(m_savePerspective);
         m_savePerspective.clear();
     }
-
-    if(m_hideToolBarOnDebugStop) { m_mgr->ShowToolBar(false); }
 }
 
 void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)

@@ -18,6 +18,7 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSCLIDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeJSCLIDebugger::OnDebugContinue, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
@@ -28,6 +29,7 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &NodeJSCLIDebugger::OnDebugStart, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &NodeJSCLIDebugger::OnDebugContinue, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
@@ -78,6 +80,11 @@ void NodeJSCLIDebugger::OnDebugNext(clDebugEvent& event)
 {
     event.Skip();
     CHECK_RUNNING();
+    NodeJSCliCommandHandler commandHandler("next", GetCommandId(), [&](const wxString& outputString) {
+        // trigger a 'Callstack' call
+        Callstack();
+    });
+    PushCommand(commandHandler);
 }
 
 bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
@@ -106,7 +113,7 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
     wxDELETE(m_process);
-    
+
     clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED);
     e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(e);
@@ -126,7 +133,6 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
             if(commandHandler->second.action) { commandHandler->second.action(output); }
         }
     }
-
     if(processOutput.EndsWith("\ndebug>") || processOutput.EndsWith("\ndebug> ")) {
         m_canInteract = true;
         ProcessQueue(); // Process the next command
@@ -156,7 +162,7 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
 
 void NodeJSCLIDebugger::Callstack()
 {
-    NodeJSCliCommandHandler commandHandler("bt", [&](const wxString& outputString) {
+    NodeJSCliCommandHandler commandHandler("bt", GetCommandId(), [&](const wxString& outputString) {
         clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK);
         e.SetString(outputString);
         EventNotifier::Get()->AddPendingEvent(e);
@@ -166,29 +172,28 @@ void NodeJSCLIDebugger::Callstack()
 
 void NodeJSCLIDebugger::ProcessQueue()
 {
-    static long commandID = 0;
     if(!m_commands.empty() && IsCanInteract()) {
         NodeJSCliCommandHandler& command = m_commands.front();
-        clDEBUG() << "    -->" << command.m_commandText;
-        // We write 3 commands, a prefix which yields an output, the commands itself and the suffix which indicates
-        // that the command output is completed
-        wxString commandStartString;
-        wxString commandEndString;
-        commandStartString << "#start_command_" << commandID;
-        commandEndString << "#end_command_" << commandID;
-        m_process->Write(wxString() << "console.log(\"" << commandStartString << "\")");
+        clDEBUG() << "-->#" << command.m_commandID << ":" << command.m_commandText;
         m_process->Write(command.m_commandText);
-        m_process->Write(wxString() << "console.log(\"" << commandEndString << "\")");
-        m_waitingReplyCommands.insert({ commandID, command });
+        if(command.action) { m_waitingReplyCommands.insert({ command.m_commandID, command }); }
         m_commands.erase(m_commands.begin());
-        commandID++;
     }
 }
 
+static long commandID = 0;
+
 void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler)
 {
+    m_commands.push_back({ wxString() << "console.log(\"#start_command_" << commandHandler.m_commandID << "\")",
+                           commandHandler.m_commandID, nullptr });
     m_commands.push_back(commandHandler);
+    m_commands.push_back({ wxString() << "console.log(\"#end_command_" << commandHandler.m_commandID << "\")",
+                           commandHandler.m_commandID, nullptr });
+    ++commandID;
     ProcessQueue();
 }
 
 bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
+
+long NodeJSCLIDebugger::GetCommandId() const { return commandID; }

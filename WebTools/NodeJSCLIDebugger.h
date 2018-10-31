@@ -16,10 +16,12 @@ class NodeJSCliCommandHandler
 public:
     wxString m_commandText;
     CommandHandlerFunc_t action = nullptr;
+    long m_commandID = wxNOT_FOUND;
 
-    NodeJSCliCommandHandler(const wxString& command, const CommandHandlerFunc_t& func)
+    NodeJSCliCommandHandler(const wxString& command, long commandID, const CommandHandlerFunc_t& func)
         : m_commandText(command)
         , action(func)
+        , m_commandID(commandID)
     {
     }
 };
@@ -43,7 +45,8 @@ public:
 
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
-
+    long GetCommandId() const;
+    
 protected:
     void OnDebugStart(clDebugEvent& event);
     void OnDebugContinue(clDebugEvent& event);

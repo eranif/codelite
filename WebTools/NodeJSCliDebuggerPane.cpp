@@ -9,6 +9,7 @@
 NodeJSCliDebuggerPane::NodeJSCliDebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
+    m_dvListCtrlCallstack->SetSortFunction(nullptr);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeJSCliDebuggerPane::OnUpdateBacktrace,
                                this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &NodeJSCliDebuggerPane::OnDebuggerStopped, this);

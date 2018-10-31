@@ -26,6 +26,7 @@ bool NodeJSCLIDebuggerOutputParser::CheckForPrefix(wxString& outputString)
 {
     static wxRegEx rePrefix("#start_command_([0-9]+)");
     clDEBUG() << "CheckForPrefix is called with:\n" << outputString;
+    m_output.Clear();
     if(rePrefix.Matches(outputString)) {
         long commandId;
         wxString command_number = rePrefix.GetMatch(outputString, 1);
@@ -64,7 +65,7 @@ long NodeJSCLIDebuggerOutputParser::CheckForSuffix(wxString& outputString)
         m_results.push_back({ m_commandID, m_output });
         m_commandID = wxNOT_FOUND;
         m_state = kStateWaitingPrefix;
-
+        m_output.Clear();
         outputString = outputString.Mid(where + full_match.length());
         return matchedCommandID;
     } else {

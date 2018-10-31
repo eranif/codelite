@@ -15,6 +15,9 @@ public:
 protected:
     NodeJSBptManager m_bptManager;
 
+protected:
+    void DoHighlightLine(const wxString& filename, int lineNo);
+
 public:
     NodeJSDebuggerBase();
     virtual ~NodeJSDebuggerBase();
@@ -34,11 +37,15 @@ public:
      * @brief select the desired frame
      */
     virtual void SelectFrame(int index) {}
-    
+
     /**
      * @brief trigger a "callstack" request
      */
     virtual void Callstack() {}
+    
+    void SetDebuggerMarker(IEditor* editor, int lineno);
+    void SetDebuggerMarker(const wxString& path, int lineno);
+    void ClearDebuggerMarker();
 };
 
 #endif // NODEJSDEBUGGERBASE_H

@@ -87,7 +87,6 @@ protected:
     void OnDestroyTip(clCommandEvent& event);
 
 protected:
-    void DoHighlightLine(const wxString& filename, int lineNo);
     void DoDeleteTempFiles(const wxStringSet_t& files);
     void DoCleanup();
 
@@ -98,9 +97,6 @@ public:
     void ShowTooltip(const wxString& expression, const wxString& jsonOutput);
 
     void AddTempFile(const wxString& filename) { m_tempFiles.insert(filename); }
-
-    void SetDebuggerMarker(IEditor* editor, int lineno);
-    void ClearDebuggerMarker();
 
     void SetCanInteract(bool canInteract);
     bool IsCanInteract() const { return m_canInteract; }

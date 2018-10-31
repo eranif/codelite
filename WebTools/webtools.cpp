@@ -90,6 +90,7 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
@@ -135,6 +136,7 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));

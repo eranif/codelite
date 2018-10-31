@@ -1,10 +1,12 @@
 #ifndef NODEJSCLIDEBUGGER_H
 #define NODEJSCLIDEBUGGER_H
 
+#include "NodeJSCLIDebuggerOutputParser.h"
 #include "NodeJSDebuggerBase.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <functional>
+#include <unordered_map>
 #include <vector>
 #include <wx/event.h>
 
@@ -13,7 +15,6 @@ class NodeJSCliCommandHandler
 {
 public:
     wxString m_commandText;
-    bool in_progress = false;
     CommandHandlerFunc_t action = nullptr;
 
     NodeJSCliCommandHandler(const wxString& command, const CommandHandlerFunc_t& func)
@@ -26,9 +27,10 @@ public:
 class NodeJSCLIDebugger : public NodeJSDebuggerBase
 {
     IProcess* m_process = nullptr;
-    wxString m_debuggerOutput;
+    NodeJSCLIDebuggerOutputParser m_outputParser;
     bool m_canInteract = false;
     std::vector<NodeJSCliCommandHandler> m_commands;
+    std::unordered_map<long, NodeJSCliCommandHandler> m_waitingReplyCommands;
     wxString m_workingDirectory;
 
 public:
@@ -38,6 +40,9 @@ public:
     bool IsRunning() const;
     bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& workingDirectory);
+
+    void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
 protected:
     void OnDebugStart(clDebugEvent& event);

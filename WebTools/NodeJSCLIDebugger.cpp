@@ -9,6 +9,7 @@
 #include "processreaderthread.h"
 #include <wx/msgdlg.h>
 
+#define NODE_CLI_DEBUGGER_NAME "Node.js - CLI"
 #define CHECK_RUNNING() \
     if(!IsRunning()) { return; }
 
@@ -83,10 +84,11 @@ bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
 
 void NodeJSCLIDebugger::DoCleanup()
 {
-    m_debuggerOutput.Clear();
     m_commands.clear();
     m_canInteract = false;
     m_workingDirectory.Clear();
+    m_waitingReplyCommands.clear();
+    m_outputParser.Clear();
     if(m_process) { m_process->Terminate(); }
 }
 
@@ -104,54 +106,28 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
     wxDELETE(m_process);
+    
+    clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED);
+    e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
+    EventNotifier::Get()->AddPendingEvent(e);
+    DoCleanup();
 }
 
 void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
 {
-    wxString str = event.GetOutput();
-    for(size_t i = 0; i < str.size(); ++i) {
-        wxChar ch = str[i];
-        switch(ch) {
-        case '\r': {
-            // Unwind back and delete everything until the first '\n' we find or start of string
-            size_t where = m_debuggerOutput.rfind('\n');
-            if(where != wxString::npos) {
-                m_debuggerOutput.Truncate(where + 1);
-            } else {
-                m_debuggerOutput.Clear();
-            }
-        } break;
-        case '\b': {
-            if(!m_debuggerOutput.IsEmpty() && (m_debuggerOutput.Last() != '\n')) {
-                // remove last char
-                m_debuggerOutput.Truncate(m_debuggerOutput.size() - 1);
-            }
-
-        } break;
-        case '\n': {
-            m_debuggerOutput << ch;
-
-        } break;
-        default: {
-            m_debuggerOutput << ch;
-
-        } break;
+    wxString processOutput = event.GetOutput();
+    m_outputParser.ParseOutput(processOutput);
+    if(m_outputParser.HasResults()) {
+        auto result = m_outputParser.TakeResult();
+        long commandId = result.first;
+        wxString output = result.second;
+        auto commandHandler = m_waitingReplyCommands.find(commandId);
+        if(commandHandler != m_waitingReplyCommands.end()) {
+            if(commandHandler->second.action) { commandHandler->second.action(output); }
         }
     }
-    const char* p = m_debuggerOutput.mb_str(wxConvUTF8).data();
-    clDEBUG() << "NodeJS Debugger:" << m_debuggerOutput;
-    wxUnusedVar(p);
-    if(m_debuggerOutput.EndsWith("\ndebug>") || m_debuggerOutput.EndsWith("\ndebug> ")) {
-        if(!m_commands.empty() && m_commands.front().in_progress) {
 
-            // the output from the last command belongs to this command, let it handle it
-            const NodeJSCliCommandHandler& handler = m_commands.front();
-            if(handler.action) { handler.action(m_debuggerOutput); }
-
-            // remove the first entry from the command queue
-            m_commands.erase(m_commands.begin());
-        }
-        m_debuggerOutput.Clear();
+    if(processOutput.EndsWith("\ndebug>") || processOutput.EndsWith("\ndebug> ")) {
         m_canInteract = true;
         ProcessQueue(); // Process the next command
     }
@@ -171,7 +147,7 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
     m_workingDirectory = workingDirectory;
 
     clDebugEvent eventStart(wxEVT_NODEJS_CLI_DEBUGGER_STARTED);
-    eventStart.SetDebuggerName("Node.js - CLI");
+    eventStart.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(eventStart);
 
     // request the current backtrace
@@ -190,12 +166,22 @@ void NodeJSCLIDebugger::Callstack()
 
 void NodeJSCLIDebugger::ProcessQueue()
 {
+    static long commandID = 0;
     if(!m_commands.empty() && IsCanInteract()) {
         NodeJSCliCommandHandler& command = m_commands.front();
-        if(command.in_progress) { return; }
         clDEBUG() << "    -->" << command.m_commandText;
+        // We write 3 commands, a prefix which yields an output, the commands itself and the suffix which indicates
+        // that the command output is completed
+        wxString commandStartString;
+        wxString commandEndString;
+        commandStartString << "#start_command_" << commandID;
+        commandEndString << "#end_command_" << commandID;
+        m_process->Write(wxString() << "console.log(\"" << commandStartString << "\")");
         m_process->Write(command.m_commandText);
-        command.in_progress = true;
+        m_process->Write(wxString() << "console.log(\"" << commandEndString << "\")");
+        m_waitingReplyCommands.insert({ commandID, command });
+        m_commands.erase(m_commands.begin());
+        commandID++;
     }
 }
 

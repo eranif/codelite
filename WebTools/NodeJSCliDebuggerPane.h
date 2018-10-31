@@ -7,6 +7,8 @@ class NodeJSCliDebuggerPane : public NodeJSCliDebuggerPaneBase
 {
 protected:
     void OnUpdateBacktrace(clDebugEvent& event);
+    void OnDebuggerStopped(clDebugEvent& event);
+    void OnMarkLine(clDebugEvent& event);
 
 public:
     NodeJSCliDebuggerPane(wxWindow* parent);

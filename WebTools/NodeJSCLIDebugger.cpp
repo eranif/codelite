@@ -1,5 +1,6 @@
 #include "NodeJSCLIDebugger.h"
 #include "NodeJSDebuggerDlg.h"
+#include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -7,7 +8,6 @@
 #include "macros.h"
 #include "processreaderthread.h"
 #include <wx/msgdlg.h>
-#include "NodeJSEvents.h"
 
 #define CHECK_RUNNING() \
     if(!IsRunning()) { return; }
@@ -139,6 +139,7 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
         }
     }
     const char* p = m_debuggerOutput.mb_str(wxConvUTF8).data();
+    clDEBUG() << "NodeJS Debugger:" << m_debuggerOutput;
     wxUnusedVar(p);
     if(m_debuggerOutput.EndsWith("\ndebug>") || m_debuggerOutput.EndsWith("\ndebug> ")) {
         if(!m_commands.empty() && m_commands.front().in_progress) {
@@ -180,7 +181,9 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
 void NodeJSCLIDebugger::Callstack()
 {
     NodeJSCliCommandHandler commandHandler("bt", [&](const wxString& outputString) {
-        clDEBUG() << "Callstack handler:[\n" << outputString << "\n]";
+        clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK);
+        e.SetString(outputString);
+        EventNotifier::Get()->AddPendingEvent(e);
     });
     PushCommand(commandHandler);
 }
@@ -190,7 +193,7 @@ void NodeJSCLIDebugger::ProcessQueue()
     if(!m_commands.empty() && IsCanInteract()) {
         NodeJSCliCommandHandler& command = m_commands.front();
         if(command.in_progress) { return; }
-        clDEBUG() << "NodeJSCLIDebugger:" << command.m_commandText;
+        clDEBUG() << "    -->" << command.m_commandText;
         m_process->Write(command.m_commandText);
         command.in_progress = true;
     }

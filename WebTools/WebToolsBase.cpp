@@ -69,7 +69,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(300, 400)),
+    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)),
                                         wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
 
     boxSizer22->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -208,8 +208,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 #endif
 
     SetName(wxT("WebToolsSettingsBase"));
-    SetMinClientSize(wxSize(400, 300));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -693,3 +692,51 @@ WebToolsImages::WebToolsImages()
 }
 
 WebToolsImages::~WebToolsImages() {}
+
+NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                                                     const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCD9C6InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer269 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer269);
+
+    m_splitter271 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter271->SetSashGravity(0.5);
+    m_splitter271->SetMinimumPaneSize(10);
+
+    boxSizer269->Add(m_splitter271, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_splitterPageCallstack = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
+                                          wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageCallstack->SetSizer(boxSizer281);
+
+    m_dvListCtrlCallstack =
+        new clThemedListCtrl(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer281->Add(m_dvListCtrlCallstack, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                            wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                            wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPageWatches = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter271->SplitVertically(m_splitterPageCallstack, m_splitterPageWatches, 0);
+
+    SetName(wxT("NodeJSCliDebuggerPaneBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+}
+
+NodeJSCliDebuggerPaneBase::~NodeJSCliDebuggerPaneBase() {}

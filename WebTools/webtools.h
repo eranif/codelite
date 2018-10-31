@@ -53,7 +53,8 @@ class WebTools : public IPlugin
 
     /// Node.js
     bool m_clangOldFlag;
-    NodeJSDebuggerPane* m_nodejsDebuggerPane;
+    wxWindow* m_nodejsDebuggerPane = nullptr;
+    wxWindow* m_nodejsCliDebuggerPane = nullptr;
     wxString m_savePerspective;
 
 protected:
@@ -74,6 +75,7 @@ protected:
     void OnCommentLine(wxCommandEvent& e);
     void OnCommentSelection(wxCommandEvent& e);
     void OnNodeJSDebuggerStarted(clDebugEvent& event);
+    void OnNodeJSCliDebuggerStarted(clDebugEvent& event);
     void OnNodeJSDebuggerStopped(clDebugEvent& event);
     void OnIsDebugger(clDebugEvent& event);
 

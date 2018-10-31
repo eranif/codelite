@@ -7,6 +7,7 @@
 #include "macros.h"
 #include "processreaderthread.h"
 #include <wx/msgdlg.h>
+#include "NodeJSEvents.h"
 
 #define CHECK_RUNNING() \
     if(!IsRunning()) { return; }
@@ -167,6 +168,10 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
 
     // Keep the working directory
     m_workingDirectory = workingDirectory;
+
+    clDebugEvent eventStart(wxEVT_NODEJS_CLI_DEBUGGER_STARTED);
+    eventStart.SetDebuggerName("Node.js - CLI");
+    EventNotifier::Get()->AddPendingEvent(eventStart);
 
     // request the current backtrace
     Callstack();

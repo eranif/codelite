@@ -1,3 +1,4 @@
+#include "NodeJSCliDebuggerPane.h"
 #include "NodeJSDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NodeJSWorkspaceView.h"
@@ -59,7 +60,7 @@ WebTools::WebTools(IManager* manager)
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
 
     WebToolsImages images;
-    
+
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
     m_jsColourThread->Create();
@@ -87,6 +88,7 @@ WebTools::WebTools(IManager* manager)
 
     // Debugger related
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
@@ -467,4 +469,31 @@ void WebTools::OnIsDebugger(clDebugEvent& event)
 {
     event.Skip(); // always call skip
     // event.GetStrings().Add("NodeJS Debugger");
+}
+
+void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
+
+    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
+    // Show the debugger pane
+    if(!m_nodejsCliDebuggerPane) {
+        m_nodejsCliDebuggerPane = new NodeJSCliDebuggerPane(parent);
+        clGetManager()->GetDockingManager()->AddPane(m_nodejsCliDebuggerPane, wxAuiPaneInfo()
+                                                                                  .MinSize(wxSize(-1, 300))
+                                                                                  .Layer(5)
+                                                                                  .Name("nodejs_cli_debugger")
+                                                                                  .Caption("Node.js CLI Debugger")
+                                                                                  .CloseButton(false)
+                                                                                  .MaximizeButton()
+                                                                                  .Bottom()
+                                                                                  .Position(0));
+    }
+
+    wxString layout;
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs_cli.layout");
+    fnNodeJSLayout.AppendDir("config");
+    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
+    EnsureAuiPaneIsVisible("nodejs_cli_debugger", true);
 }

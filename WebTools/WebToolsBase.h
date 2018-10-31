@@ -23,9 +23,9 @@
 #include <wx/imaglist.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
 #include <wx/propgrid/manager.h>
+#include <wx/propgrid/advprops.h>
+#include <wx/propgrid/property.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
@@ -114,7 +114,7 @@ public:
     wxPanel* GetPanel237() { return m_panel237; }
     wxNotebook* GetNotebook10() { return m_notebook10; }
     WebToolsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("WebTools Settings"),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~WebToolsSettingsBase();
 };
@@ -249,6 +249,25 @@ public:
     void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~WebToolsImages();
+};
+
+class NodeJSCliDebuggerPaneBase : public wxPanel
+{
+protected:
+    wxSplitterWindow* m_splitter271;
+    wxPanel* m_splitterPageCallstack;
+    clThemedListCtrl* m_dvListCtrlCallstack;
+    wxPanel* m_splitterPageWatches;
+
+protected:
+public:
+    clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
+    wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
+    wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
+    wxSplitterWindow* GetSplitter271() { return m_splitter271; }
+    NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~NodeJSCliDebuggerPaneBase();
 };
 
 #endif

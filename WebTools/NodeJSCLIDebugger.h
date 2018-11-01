@@ -3,6 +3,7 @@
 
 #include "NodeJSCLIDebuggerOutputParser.h"
 #include "NodeJSDebuggerBase.h"
+#include "NodeJSDebuggerBreakpoint.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <functional>
@@ -36,22 +37,23 @@ class NodeJSCLIDebugger : public NodeJSDebuggerBase
     wxString m_workingDirectory;
 
 public:
-    virtual void Callstack();
     NodeJSCLIDebugger();
     virtual ~NodeJSCLIDebugger();
     bool IsRunning() const;
     bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& workingDirectory);
-
+    void ListBreakpoints();
+    void Callstack();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     long GetCommandId() const;
-    
+
 protected:
     void OnDebugStart(clDebugEvent& event);
-    void OnDebugContinue(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);
     void OnDebugNext(clDebugEvent& event);
+    void OnDebugContinue(clDebugEvent& event);
+    void OnToggleBreakpoint(clDebugEvent& event);
     void OnDebugIsRunning(clDebugEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
@@ -60,6 +62,10 @@ protected:
     void DoCleanup();
     void ProcessQueue();
     void PushCommand(const NodeJSCliCommandHandler& commandHandler);
+    void SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler = false);
+    void DeleteBreakpoint(const NodeJSBreakpoint& bp);
+    wxString GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const;
+    void ApplyAllBerakpoints();
 };
 
 #endif // NODEJSCLIDEBUGGER_H

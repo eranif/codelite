@@ -5,13 +5,23 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
 #include "macros.h"
 #include "processreaderthread.h"
 #include <wx/msgdlg.h>
 
 #define NODE_CLI_DEBUGGER_NAME "Node.js - CLI"
+
 #define CHECK_RUNNING() \
     if(!IsRunning()) { return; }
+
+#define CHECK_SHOULD_HANDLE(evt)                      \
+    evt.Skip();                                       \
+    if(!IsRunning()) { return; }                      \
+    if(!NodeJSWorkspace::Get()->IsOpen()) { return; } \
+    evt.Skip(false);
 
 NodeJSCLIDebugger::NodeJSCLIDebugger()
 {
@@ -20,6 +30,7 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
 }
@@ -31,6 +42,7 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
 }
@@ -57,20 +69,24 @@ void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
         StartDebugger(oneliner, dlg.GetWorkingDirectory());
 
     } else {
-        // TODO: continue
+        OnDebugContinue(event);
     }
 }
 
 void NodeJSCLIDebugger::OnDebugContinue(clDebugEvent& event)
 {
-    event.Skip();
-    CHECK_RUNNING();
+    CHECK_SHOULD_HANDLE(event);
+
+    NodeJSCliCommandHandler commandHandler("cont", GetCommandId(), [&](const wxString& outputString) {
+        // trigger a 'Callstack' call
+        Callstack();
+    });
+    PushCommand(commandHandler);
 }
 
 void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
 {
-    event.Skip();
-    CHECK_RUNNING();
+    CHECK_SHOULD_HANDLE(event);
 
     // Terminate the process
     m_process->Terminate();
@@ -78,8 +94,7 @@ void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
 
 void NodeJSCLIDebugger::OnDebugNext(clDebugEvent& event)
 {
-    event.Skip();
-    CHECK_RUNNING();
+    CHECK_SHOULD_HANDLE(event);
     NodeJSCliCommandHandler commandHandler("next", GetCommandId(), [&](const wxString& outputString) {
         // trigger a 'Callstack' call
         Callstack();
@@ -156,6 +171,9 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
     eventStart.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(eventStart);
 
+    // Apply all breakpoints
+    ApplyAllBerakpoints();
+
     // request the current backtrace
     Callstack();
 }
@@ -197,3 +215,105 @@ void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandle
 bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
 
 long NodeJSCLIDebugger::GetCommandId() const { return commandID; }
+
+void NodeJSCLIDebugger::OnToggleBreakpoint(clDebugEvent& event)
+{
+    event.Skip();
+    if(!NodeJSWorkspace::Get()->IsOpen()) { return; }
+    event.Skip(false);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(IsRunning()) {
+        if(editor && (editor->GetFileName().GetFullPath() == event.GetFileName())) {
+            // Correct editor
+            // add marker
+            NodeJSBreakpoint bp = m_bptManager.GetBreakpoint(event.GetFileName(), event.GetInt());
+            if(bp.IsOk()) {
+                DeleteBreakpoint(bp);
+            } else {
+                SetBreakpoint(event.GetFileName(), event.GetInt());
+            }
+            // Update the UI
+        }
+    } else {
+
+        NodeJSBreakpoint bp = m_bptManager.GetBreakpoint(event.GetFileName(), event.GetInt());
+        if(bp.IsOk()) {
+            m_bptManager.DeleteBreakpoint(event.GetFileName(), event.GetInt());
+        } else {
+            m_bptManager.AddBreakpoint(event.GetFileName(), event.GetInt());
+        }
+    }
+    if(editor) { m_bptManager.SetBreakpoints(editor); }
+}
+
+void NodeJSCLIDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler)
+{
+    // We have no breakpoint on this file/line (yet)
+    m_bptManager.AddBreakpoint(file, lineNumber);
+    const NodeJSBreakpoint& bp = m_bptManager.GetBreakpoint(file, lineNumber);
+    if(!bp.IsOk()) { return; }
+
+    // NodeJS debugger likes his file path in a certain format (relative, all backslashes escaped)
+    wxString file_path = GetBpRelativeFilePath(bp);
+
+    wxString command;
+    command << "setBreakpoint(\"" << file_path << "\"," << bp.GetLine() << ")";
+    CommandHandlerFunc_t callback = nullptr;
+    if(!useVoidHandler) {
+        callback = [&](const wxString& outputString) {
+            wxUnusedVar(outputString);
+            ListBreakpoints();
+        };
+    }
+    NodeJSCliCommandHandler commandHandler(command, GetCommandId(), callback);
+    PushCommand(commandHandler);
+}
+
+void NodeJSCLIDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
+{
+    if(!bp.IsOk()) { return; }
+
+    wxString command;
+    wxString file_path = GetBpRelativeFilePath(bp);
+    command << "clearBreakpoint(\"" << file_path << "\"," << bp.GetLine() << ")";
+
+    // Tell Node to remove this breakpoint
+    NodeJSCliCommandHandler commandHandler(command, GetCommandId(), [&](const wxString& outputString) {
+        wxUnusedVar(outputString);
+        ListBreakpoints();
+    });
+    PushCommand(commandHandler);
+}
+
+void NodeJSCLIDebugger::ListBreakpoints()
+{
+    // Tell Node to remove this breakpoint
+    NodeJSCliCommandHandler commandHandler("breakpoints", GetCommandId(), [&](const wxString& outputString) {
+        // Update the UI with the list of breakpoints we got so far
+        clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+        e.SetString(outputString);
+        EventNotifier::Get()->AddPendingEvent(e);
+    });
+    PushCommand(commandHandler);
+}
+
+wxString NodeJSCLIDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
+{
+    wxFileName fn(bp.GetFilename());
+    fn.MakeRelativeTo(GetWorkingDirectory());
+    wxString file_path = fn.GetFullPath();
+
+    // We need to escapte backslashes, otherwise, it wont work...
+    file_path.Replace("\\", "\\\\");
+    return file_path;
+}
+
+void NodeJSCLIDebugger::ApplyAllBerakpoints()
+{
+    const NodeJSBreakpoint::List_t& breakpoints = m_bptManager.GetBreakpoints();
+    std::for_each(breakpoints.begin(), breakpoints.end(),
+                  [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine(), true); });
+
+    // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
+    ListBreakpoints();
+}

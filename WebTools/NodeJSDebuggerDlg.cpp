@@ -41,7 +41,9 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     m_filePickerNodeJS->SetPath(nodejs);
     m_filePickerScript->SetPath(script);
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
-    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory());
+    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory().IsEmpty()
+                                             ? NodeJSWorkspace::Get()->GetFilename().GetPath()
+                                             : userConf.GetWorkingDirectory());
 
     m_stcCommandLineArguments->SetText(::wxJoin(userConf.GetCommandLineArgs(), '\n'));
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
@@ -78,7 +80,9 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type, const w
     m_filePickerScript->SetPath(script.GetFullPath());
     m_textCtrlPort->ChangeValue(wxString() << userConf.GetDebuggerPort());
     m_stcCommandLineArguments->SetText(::wxJoin(args, '\n'));
-    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory());
+    m_dirPickerWorkingDirectory->SetPath(userConf.GetWorkingDirectory().IsEmpty()
+                                             ? NodeJSWorkspace::Get()->GetFilename().GetPath()
+                                             : userConf.GetWorkingDirectory());
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("javascript");
     if(lexer) { lexer->Apply(m_stcCommandLineArguments); }
@@ -128,4 +132,10 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
     for(size_t i = 0; i < args.size(); ++i) {
         command_args << " " << ::WrapWithQuotes(args.Item(i));
     }
+}
+
+wxString NodeJSDebuggerDlg::GetWorkingDirectory() const
+{
+    return m_dirPickerWorkingDirectory->GetPath().IsEmpty() ? NodeJSWorkspace::Get()->GetFilename().GetPath()
+                                                            : m_dirPickerWorkingDirectory->GetPath();
 }

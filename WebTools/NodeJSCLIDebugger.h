@@ -10,10 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <wx/event.h>
-#include <wx/timer.h>
-#include <wx/process.h>
 
-class NodeJSCLIDebugger;
 typedef std::function<void(const wxString&)> CommandHandlerFunc_t;
 class NodeJSCliCommandHandler
 {
@@ -30,26 +27,6 @@ public:
     }
 };
 
-class NodeProcess : public wxProcess
-{
-    NodeJSCLIDebugger* m_debugger = nullptr;
-    wxTimer* m_timer = nullptr;
-    long m_pid = wxNOT_FOUND;
-
-public:
-    NodeProcess(NodeJSCLIDebugger* debugger)
-        : m_debugger(debugger)
-    {
-        Redirect();
-    }
-    
-    virtual ~NodeProcess();
-    void OnTimer(wxTimerEvent& event);
-    void OnTerminate(int pid, int status);
-    void Start(const wxString& command, const wxString& workingDirectory);
-    void Terminate();
-};
-
 class NodeJSCLIDebugger : public NodeJSDebuggerBase
 {
     IProcess* m_process = nullptr;
@@ -58,14 +35,13 @@ class NodeJSCLIDebugger : public NodeJSDebuggerBase
     std::vector<NodeJSCliCommandHandler> m_commands;
     std::unordered_map<long, NodeJSCliCommandHandler> m_waitingReplyCommands;
     wxString m_workingDirectory;
-    wxString m_bufferedOutput;
 
 public:
     NodeJSCLIDebugger();
     virtual ~NodeJSCLIDebugger();
     bool IsRunning() const;
     bool IsCanInteract() const;
-    void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
+    void StartDebugger(const wxString& command, const wxString& workingDirectory);
     void ListBreakpoints();
     void Callstack();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }

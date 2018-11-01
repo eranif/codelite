@@ -25,7 +25,7 @@ void NodeJSCLIDebuggerOutputParser::ParseOutput(const wxString& outputString)
 bool NodeJSCLIDebuggerOutputParser::CheckForPrefix(wxString& outputString)
 {
     static wxRegEx rePrefix("#start_command_([0-9]+)");
-    //clDEBUG() << "CheckForPrefix is called with:\n" << outputString;
+    clDEBUG() << "CheckForPrefix is called with:\n" << outputString;
     m_output.Clear();
     if(rePrefix.Matches(outputString)) {
         long commandId;
@@ -125,4 +125,5 @@ void NodeJSCLIDebuggerOutputParser::PrepareOutput(wxString& outputString)
         }
     }
     outputString.swap(fixedString);
+    clDEBUG() << "NodeJS Debugger:" << outputString;
 }

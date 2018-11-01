@@ -107,7 +107,7 @@ public:
     /**
      * @brief start the debugger using the given command
      */
-    void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
+    void StartDebugger(const wxString& command, const wxString& workingDirectory);
 
     /**
      * @brief delete breakpoint from NodeJS. This function does not updat the breakpoint manager

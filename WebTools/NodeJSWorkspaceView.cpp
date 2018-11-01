@@ -267,7 +267,9 @@ void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
     wxString command;
     wxString command_args;
     dlg.GetCommand(command, command_args);
-    NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(command, command_args, dlg.GetWorkingDirectory());
+    wxString oneliner = command;
+    if(!command_args.IsEmpty()) { oneliner << " " << command_args; }
+    NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(command_args, dlg.GetWorkingDirectory());
 }
 
 void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)

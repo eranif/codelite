@@ -2,9 +2,7 @@
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
-#include "clConsoleBase.h"
 #include "codelite_events.h"
-#include "dirsaver.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -66,7 +64,9 @@ void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
         wxString command;
         wxString command_args;
         dlg.GetCommand(command, command_args);
-        StartDebugger(command, command_args, dlg.GetWorkingDirectory());
+        wxString oneliner = command;
+        if(!command_args.IsEmpty()) { oneliner << " " << command_args; }
+        StartDebugger(oneliner, dlg.GetWorkingDirectory());
 
     } else {
         OnDebugContinue(event);
@@ -111,7 +111,6 @@ void NodeJSCLIDebugger::DoCleanup()
     m_workingDirectory.Clear();
     m_waitingReplyCommands.clear();
     m_outputParser.Clear();
-    m_bufferedOutput.clear();
     if(m_process) { m_process->Terminate(); }
 }
 
@@ -138,12 +137,7 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 
 void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
 {
-    m_bufferedOutput << event.GetOutput();
-    clDEBUG() << m_bufferedOutput;
-
-    // We process everyting if it ends with LF
-    wxString processOutput = m_bufferedOutput.BeforeLast('\n');
-    m_bufferedOutput = m_bufferedOutput.AfterLast('\n');
+    wxString processOutput = event.GetOutput();
     m_outputParser.ParseOutput(processOutput);
     if(m_outputParser.HasResults()) {
         auto result = m_outputParser.TakeResult();
@@ -154,24 +148,16 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
             if(commandHandler->second.action) { commandHandler->second.action(output); }
         }
     }
-#ifdef __WXGTK__
-    m_canInteract = true;
-    ProcessQueue(); // Process the next command
-#else
-    if(processOutput.EndsWith("debug>") || processOutput.EndsWith("debug> ")) {
+    if(processOutput.EndsWith("\ndebug>") || processOutput.EndsWith("\ndebug> ")) {
         m_canInteract = true;
         ProcessQueue(); // Process the next command
     }
-#endif
 }
 
-void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& command_args,
-                                      const wxString& workingDirectory)
+void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& workingDirectory)
 {
-    size_t createFlags = IProcessCreateDefault | IProcessDontStripTerminalColours;
-    wxString cmd = command;
-    if(!command_args.empty()) { cmd << " " << command_args; }
-    m_process = ::CreateAsyncProcess(this, cmd, createFlags, workingDirectory);
+    size_t createFlags = IProcessCreateDefault;
+    m_process = ::CreateAsyncProcess(this, command, createFlags, workingDirectory);
     if(!m_process) {
         ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << command);
         DoCleanup();
@@ -331,34 +317,3 @@ void NodeJSCLIDebugger::ApplyAllBerakpoints()
     // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
     ListBreakpoints();
 }
-
-///===------------------------------------------------------------------------------------------
-///===------------------------------------------------------------------------------------------
-void NodeProcess::OnTerminate(int pid, int status)
-{
-    // Notify the debugger the process terminated
-}
-
-void NodeProcess::Start(const wxString& command, const wxString& workingDirectory)
-{
-    DirSaver ds;
-    ::wxSetWorkingDirectory(workingDirectory);
-    m_pid = wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, this);
-    m_timer = new wxTimer(this, wxID_ANY);
-    Bind(wxEVT_TIMER, &NodeProcess::OnTimer, this, m_timer->GetId());
-    m_timer->Start(50, false);
-}
-
-void NodeProcess::OnTimer(wxTimerEvent& event) {}
-
-void NodeProcess::Terminate()
-{
-    if(m_pid != wxNOT_FOUND) {
-        Unbind(wxEVT_TIMER, &NodeProcess::OnTimer, this, m_timer->GetId());
-        m_timer->Stop();
-        wxDELETE(m_timer);
-        clKill(m_pid, wxSIGKILL, true);
-    }
-}
-
-NodeProcess::~NodeProcess() { Terminate(); }

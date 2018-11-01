@@ -28,8 +28,7 @@ public:
     /**
      * @brief start the debugger using the given command
      */
-    virtual void StartDebugger(const wxString& command, const wxString& command_args,
-                               const wxString& workingDirectory) = 0;
+    virtual void StartDebugger(const wxString& command, const wxString& workingDirectory) = 0;
     /**
      * @brief lookup handles
      */
@@ -43,7 +42,7 @@ public:
      * @brief trigger a "callstack" request
      */
     virtual void Callstack() {}
-
+    
     void SetDebuggerMarker(IEditor* editor, int lineno);
     void SetDebuggerMarker(const wxString& path, int lineno);
     void ClearDebuggerMarker();

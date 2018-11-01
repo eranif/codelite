@@ -44,8 +44,7 @@ void NodeJSCliDebuggerPane::OnUpdateBacktrace(clDebugEvent& event)
         m_dvListCtrlCallstack->AppendItem(cols);
         if(i == 0) {
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
-            NodeJSCLIDebuggerFrameEntry row(
-                where, NodeJSWorkspace::Get()->GetDebugger()->Cast<NodeJSCLIDebugger>()->GetWorkingDirectory());
+            NodeJSCLIDebuggerFrameEntry row(where, NodeJSWorkspace::Get()->GetFileName().GetPath());
             event.SetLineNumber(row.GetLineNumber());
             event.SetFileName(row.GetFile());
             EventNotifier::Get()->AddPendingEvent(event);

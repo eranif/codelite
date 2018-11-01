@@ -172,9 +172,7 @@ void NodeJSDebugger::OnDebugStart(clDebugEvent& event)
     wxString command;
     wxString command_args;
     dlg.GetCommand(command, command_args);
-    wxString oneliner = command;
-    if(!command_args.IsEmpty()) { oneliner << " " << command_args; }
-    StartDebugger(oneliner, dlg.GetWorkingDirectory());
+    StartDebugger(command, command_args, dlg.GetWorkingDirectory());
 }
 
 void NodeJSDebugger::OnDebugStepIn(clDebugEvent& event)
@@ -613,15 +611,19 @@ void NodeJSDebugger::OnAttach(clDebugEvent& event)
 #endif
 }
 
-void NodeJSDebugger::StartDebugger(const wxString& command, const wxString& workingDirectory)
+void NodeJSDebugger::StartDebugger(const wxString& command, const wxString& command_args,
+                                   const wxString& workingDirectory)
 {
     if(m_nodeProcess) {
         ::wxMessageBox(_("An instance of NodeJS is already running"));
         return;
     }
-    m_nodeProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
+
+    wxString cmd = command;
+    if(!command_args.IsEmpty()) { cmd << " " << command_args; }
+    m_nodeProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, workingDirectory);
     if(!m_nodeProcess) {
-        ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << command);
+        ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << cmd);
         DoCleanup();
         return;
     }

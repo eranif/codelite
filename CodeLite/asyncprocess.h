@@ -40,6 +40,7 @@ enum IProcessCreateFlags {
         (1 << 3), // Create a synchronous process (i.e. there is no background thread that performs the reads)
     IProcessCreateAsSuperuser = (1 << 4), // On platforms that support it, start the process as superuser
     IProcessNoRedirect = (1 << 5),
+    IProcessDontStripTerminalColours = (1 << 6),
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -65,7 +66,7 @@ protected:
     bool m_hardKill;
     IProcessCallback* m_callback;
     size_t m_flags; // The creation flags
-    
+
 public:
     typedef wxSharedPtr<IProcess> Ptr_t;
 
@@ -129,7 +130,7 @@ public:
     void SetHardKill(bool hardKill) { this->m_hardKill = hardKill; }
     bool GetHardKill() const { return m_hardKill; }
     IProcessCallback* GetCallback() { return m_callback; }
-    
+
     /**
      * @brief do we have process redirect enabled?
      */

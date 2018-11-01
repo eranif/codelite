@@ -330,13 +330,13 @@ bool UnixProcessImpl::Read(wxString& buff)
         // there is something to read
         char buffer[BUFF_SIZE + 1]; // our read buffer
         memset(buffer, 0, sizeof(buffer));
-        int bytesRead = read(GetReadHandle(), buffer, sizeof(buffer));
+        int bytesRead = read(GetReadHandle(), buffer, BUFF_SIZE);
         if(bytesRead > 0) {
-            buffer[BUFF_SIZE] = 0; // allways place a terminator
+            buffer[bytesRead] = 0; // allways place a terminator
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'
-            RemoveTerminalColoring(buffer);
+            if(!(m_flags & IProcessDontStripTerminalColours)) { RemoveTerminalColoring(buffer); }
 
             wxString convBuff = wxString(buffer, wxConvUTF8);
             if(convBuff.IsEmpty()) { convBuff = wxString::From8BitData(buffer); }
@@ -395,6 +395,10 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
     if(rc == 0) {
         login_tty(slave);
         close(master); // close the un-needed master end
+
+        struct termios new_term_settings;
+        cfmakeraw(&new_term_settings);
+        tcsetattr(slave, TCSANOW, &new_term_settings);
 
         // at this point, slave is used as stdin/stdout/stderr
         // Child process

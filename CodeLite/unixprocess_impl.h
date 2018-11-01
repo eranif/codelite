@@ -26,40 +26,34 @@
 #ifndef __unixprocessimpl__
 #define __unixprocessimpl__
 
-#if defined(__WXMAC__)||defined(__WXGTK__)
+#if defined(__WXMAC__) || defined(__WXGTK__)
 #include "asyncprocess.h"
-#include "processreaderthread.h"
 #include "codelite_exports.h"
+#include "processreaderthread.h"
 
 class wxTerminal;
 class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
-    int                  m_readHandle;
-    int                  m_writeHandle;
-    ProcessReaderThread *m_thr;
+    int m_readHandle;
+    int m_writeHandle;
+    ProcessReaderThread* m_thr;
 
     friend class wxTerminal;
+
 private:
     void StartReaderThread();
 
 public:
-    UnixProcessImpl(wxEvtHandler *parent);
+    UnixProcessImpl(wxEvtHandler* parent);
     virtual ~UnixProcessImpl();
 
-    static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, size_t flags, const wxString &workingDirectory = wxEmptyString, IProcessCallback *cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+                             const wxString& workingDirectory = wxEmptyString, IProcessCallback* cb = NULL);
 
-    void SetReadHandle(const int& readHandle) {
-        this->m_readHandle = readHandle;
-    }
-    void SetWriteHandler(const int& writeHandler) {
-        this->m_writeHandle = writeHandler;
-    }
-    const int& GetReadHandle() const {
-        return m_readHandle;
-    }
-    const int& GetWriteHandle() const {
-        return m_writeHandle;
-    }
+    void SetReadHandle(const int& readHandle) { this->m_readHandle = readHandle; }
+    void SetWriteHandler(const int& writeHandler) { this->m_writeHandle = writeHandler; }
+    const int& GetReadHandle() const { return m_readHandle; }
+    const int& GetWriteHandle() const { return m_writeHandle; }
 
 public:
     virtual void Cleanup();
@@ -69,7 +63,6 @@ public:
     virtual void Terminate();
     virtual bool WriteToConsole(const wxString& buff);
     virtual void Detach();
-
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
 #endif // __unixprocessimpl__

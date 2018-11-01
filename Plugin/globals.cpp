@@ -1910,27 +1910,49 @@ void clSetManager(IManager* manager) { s_pluginManager = manager; }
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
 
+enum eTextState {
+    kNormal,
+    kEscape,
+    kParams,
+};
+
 void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 {
-    modbuffer.Clear();
-    short state = BUFF_STATE_NORMAL;
+    eTextState state = kNormal;
     wxString::const_iterator iter = buffer.begin();
-    for(; iter != buffer.end(); ++iter) {
+    while(iter != buffer.end()) {
         wxChar ch = *iter;
-        if(ch == 7) continue; // BELL
-
+        ++iter;
         switch(state) {
-        case BUFF_STATE_NORMAL:
-            if(ch == 0x1B) { // found ESC char
-                state = BUFF_STATE_IN_ESC;
-
-            } else {
+        case kNormal:
+            switch(ch) {
+            case 27: // \033
+                // Before switching state, push the current buffer with its style
+                state = kEscape;
+                break;
+            default:
                 modbuffer << ch;
+                break;
             }
             break;
-        case BUFF_STATE_IN_ESC:
-            if(ch == 'm') { // end of color sequence
-                state = BUFF_STATE_NORMAL;
+        // We found '\033' we are now expecting to see '['
+        case kEscape:
+            switch(ch) {
+            case '[':
+                state = kParams;
+                break;
+            default:
+                // No [ ? restore the "\033" back to the buffer and put us back in the "Nomral" state
+                modbuffer << ((wxChar)27) << ch;
+                state = kNormal;
+                break;
+            }
+            break;
+        case kParams:
+            switch(ch) {
+            case 'm':
+                state = kNormal;
+                break;
             }
             break;
         }

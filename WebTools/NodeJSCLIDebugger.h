@@ -41,7 +41,7 @@ public:
     virtual ~NodeJSCLIDebugger();
     bool IsRunning() const;
     bool IsCanInteract() const;
-    void StartDebugger(const wxString& command, const wxString& workingDirectory);
+    void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
     void ListBreakpoints();
     void Callstack();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }

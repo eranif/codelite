@@ -2,6 +2,7 @@
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
+#include "clConsoleBase.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -64,9 +65,7 @@ void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
         wxString command;
         wxString command_args;
         dlg.GetCommand(command, command_args);
-        wxString oneliner = command;
-        if(!command_args.IsEmpty()) { oneliner << " " << command_args; }
-        StartDebugger(oneliner, dlg.GetWorkingDirectory());
+        StartDebugger(command, command_args, dlg.GetWorkingDirectory());
 
     } else {
         OnDebugContinue(event);
@@ -154,8 +153,22 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
     }
 }
 
-void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& workingDirectory)
+void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& command_args,
+                                      const wxString& workingDirectory)
 {
+#if 1
+    if(::wxMessageBox(
+           _("The old debugger protocol is not supported by your current Node.js version.\nWould you like that "
+             "CodeLite will start a CLI debug session for you in a terminal?"),
+           _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
+           EventNotifier::Get()->TopFrame()) == wxYES) {
+        clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+        console->SetWorkingDirectory(workingDirectory);
+        console->SetCommand(command, command_args);
+        console->SetTerminalNeeded(true);
+        console->Start();
+    }
+#else
     size_t createFlags = IProcessCreateDefault;
     m_process = ::CreateAsyncProcess(this, command, createFlags, workingDirectory);
     if(!m_process) {
@@ -176,6 +189,7 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& w
 
     // request the current backtrace
     Callstack();
+#endif
 }
 
 void NodeJSCLIDebugger::Callstack()

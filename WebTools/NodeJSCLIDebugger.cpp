@@ -157,11 +157,10 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
                                       const wxString& workingDirectory)
 {
 #if 1
-    if(::wxMessageBox(
-           _("The old debugger protocol is not supported by your current Node.js version.\nWould you like that "
-             "CodeLite will start a CLI debug session for you in a terminal?"),
-           _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
-           EventNotifier::Get()->TopFrame()) == wxYES) {
+    if(::wxMessageBox(_("The old debugger protocol is not supported by your current Node.js version.\nWould you "
+                        "CodeLite to a CLI debug session for you in a terminal?"),
+                      _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
+                      EventNotifier::Get()->TopFrame()) == wxYES) {
         clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
         console->SetWorkingDirectory(workingDirectory);
         console->SetCommand(command, command_args);

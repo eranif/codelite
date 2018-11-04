@@ -17,4 +17,5 @@ public:
     void Write(const wxString& command);
 };
 wxDECLARE_EVENT(wxEVT_STDIN_MESSAGE, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_STDIN_EXIT, clCommandEvent);
 #endif // NODESTDINTHREAD_H

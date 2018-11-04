@@ -2,6 +2,7 @@
 #include <wx/crt.h>
 
 wxDEFINE_EVENT(wxEVT_STDIN_MESSAGE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_STDIN_EXIT, clCommandEvent);
 NodeStdinThread::NodeStdinThread(wxEvtHandler* owner)
     : m_owner(owner)
 {
@@ -23,6 +24,8 @@ void* NodeStdinThread::Entry()
             m_owner->AddPendingEvent(evt);
         }
     }
+    clCommandEvent evt_exit(wxEVT_STDIN_EXIT);
+    m_owner->AddPendingEvent(evt_exit);
     return NULL;
 }
 

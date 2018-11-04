@@ -1929,8 +1929,21 @@ void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
             }
             break;
         case BUFF_STATE_IN_ESC:
-            if(ch == 'm') { // end of color sequence
+            switch(ch) {
+            case 'm':
+            case 'K':
+            case 'G':
+            case 'J':
+            case 'H':
+            case 'X':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'd':
                 state = BUFF_STATE_NORMAL;
+                break;
+            default:
+                break;
             }
             break;
         }

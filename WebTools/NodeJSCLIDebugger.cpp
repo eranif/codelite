@@ -1,3 +1,4 @@
+#include "NodeFileManager.h"
 #include "NodeJSCLIDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
@@ -127,6 +128,7 @@ void NodeJSCLIDebugger::DoCleanup()
     m_waitingReplyCommands.clear();
     if(m_process) { m_process->Terminate(); }
     m_socket.Close();
+    NodeFileManager::Get().Clear();
 }
 
 void NodeJSCLIDebugger::OnDebugIsRunning(clDebugEvent& event)
@@ -218,19 +220,13 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
 #endif
 }
 
-void NodeJSCLIDebugger::Callstack()
-{
-}
+void NodeJSCLIDebugger::Callstack() {}
 
-void NodeJSCLIDebugger::ProcessQueue()
-{
-}
+void NodeJSCLIDebugger::ProcessQueue() {}
 
 static long commandID = 0;
 
-void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler)
-{
-}
+void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler) {}
 
 bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
 
@@ -305,9 +301,7 @@ void NodeJSCLIDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
     PushCommand(commandHandler);
 }
 
-void NodeJSCLIDebugger::ListBreakpoints()
-{
-}
+void NodeJSCLIDebugger::ListBreakpoints() {}
 
 wxString NodeJSCLIDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
 {

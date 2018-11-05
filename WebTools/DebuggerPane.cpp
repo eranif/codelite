@@ -1,10 +1,11 @@
 #include "CallFrame.h"
-#include "NodeJSCLIDebugger.h"
 #include "DebuggerPane.h"
+#include "NodeJSCLIDebugger.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "event_notifier.h"
 #include <wx/wupdlock.h>
+#include "NodeFileManager.h"
 
 DebuggerPane::DebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
@@ -35,7 +36,8 @@ void DebuggerPane::OnUpdateBacktrace(NodeJSDebugEvent& event)
         wxVector<wxVariant> cols;
         cols.push_back(wxString() << "#" << i);
         cols.push_back(frame->GetFunctionName());
-        cols.push_back(wxString() << frame->GetLocation().GetScriptId() << ":" << frame->GetLocation().GetLineNumber());
+        cols.push_back(wxString() << NodeFileManager::Get().GetFilePath(frame->GetLocation().GetScriptId()) << ":"
+                                  << frame->GetLocation().GetLineNumber());
         m_dvListCtrlCallstack->AppendItem(cols);
         if(i == 0) {
             // clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);

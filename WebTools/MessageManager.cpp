@@ -1,7 +1,12 @@
 #include "DebuggerPaused.h"
+#include "DebuggerScriptParsed.h"
 #include "MessageManager.h"
 
-MessageManager::MessageManager() { AddHandler(NodeMessageBase::Ptr_t(new DebuggerPaused())); }
+MessageManager::MessageManager()
+{
+    AddHandler(NodeMessageBase::Ptr_t(new DebuggerPaused()));
+    AddHandler(NodeMessageBase::Ptr_t(new DebuggerScriptParsed()));
+}
 
 MessageManager::~MessageManager() {}
 

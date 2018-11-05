@@ -111,6 +111,9 @@ void clNodeProcess::Debug(const wxString& nodejs, const wxString& script)
     m_helperThread = new UnixHelperThread(this, pid, fd);
     m_helperThread->Start();
 #else
+    wxString oneliner = nodejs;
+    oneliner << " inspect " << script;
+    m_helperThread = ::CreateAsyncProcess(this, oneliner, IProcessCreateDefault);
 #endif
 }
 

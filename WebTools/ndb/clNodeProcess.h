@@ -5,6 +5,7 @@
 #include <cl_command_event.h>
 #include <wx/event.h>
 #include <wx/string.h>
+#include <wx/arrstr.h>
 
 #if defined(__WXGTK__) || defined(__WXOSX__)
 #define USE_FORK 1
@@ -19,6 +20,7 @@ class clNodeProcess : public wxEvtHandler
 {
     HELPER_TYPE* m_helperThread = nullptr;
     wxString m_buffer;
+    wxArrayString m_commands;
 
 protected:
     void OnProcessOutput(clProcessEvent& event);
@@ -34,7 +36,7 @@ public:
     void Debug(const wxString& nodejs, const wxString& script);
 
     void Stop();
-    
+
     /**
      * @brief tell nodejs to execute a command
      */

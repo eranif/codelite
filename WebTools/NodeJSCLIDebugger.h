@@ -4,6 +4,7 @@
 #include "NodeJSDebuggerBase.h"
 #include "NodeJSDebuggerBreakpoint.h"
 #include "NodeJSDevToolsProtocol.h"
+#include "SocketAPI/clWebSocketClient.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <functional>
@@ -11,7 +12,6 @@
 #include <vector>
 #include <wx/event.h>
 
-class NodeJSWebSocketThread;
 typedef std::function<void(const wxString&)> CommandHandlerFunc_t;
 class NodeJSCliCommandHandler
 {
@@ -35,7 +35,7 @@ class NodeJSCLIDebugger : public NodeJSDebuggerBase
     std::vector<NodeJSCliCommandHandler> m_commands;
     std::unordered_map<long, NodeJSCliCommandHandler> m_waitingReplyCommands;
     wxString m_workingDirectory;
-    NodeJSWebSocketThread* m_thread = nullptr;
+    clWebSocketClient m_socket;
     NodeJSDevToolsProtocol m_protocol;
 
 public:
@@ -62,7 +62,7 @@ protected:
     void OnWebSocketConnected(clCommandEvent& event);
     void OnWebSocketError(clCommandEvent& event);
     void OnWebSocketOnMessage(clCommandEvent& event);
-    void OnWebSocketThreadTerminated(clCommandEvent& event);
+    void OnWebSocketDisconnected(clCommandEvent& event);
 
     // Helpers
     void DoCleanup();

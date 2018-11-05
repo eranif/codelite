@@ -101,8 +101,6 @@
       <VirtualDirectory Name="DebuggerCLI">
         <File Name="NodeJSDevToolsProtocol.cpp"/>
         <File Name="NodeJSDevToolsProtocol.h"/>
-        <File Name="NodeJSWebSocketThread.cpp"/>
-        <File Name="NodeJSWebSocketThread.h"/>
         <File Name="NodeJSCLIDebuggerFrameEntry.cpp"/>
         <File Name="NodeJSCLIDebuggerFrameEntry.h"/>
         <File Name="NodeJSCliDebuggerPane.cpp"/>

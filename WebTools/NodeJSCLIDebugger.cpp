@@ -1,7 +1,6 @@
 #include "NodeJSCLIDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
-#include "NodeJSWebSocketThread.h"
 #include "NoteJSWorkspace.h"
 #include "SocketAPI/clWebSocketClient.h"
 #include "clConsoleBase.h"
@@ -27,6 +26,7 @@
     evt.Skip(false);
 
 NodeJSCLIDebugger::NodeJSCLIDebugger()
+    : m_socket(this)
 {
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSCLIDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeJSCLIDebugger::OnDebugContinue, this);
@@ -40,7 +40,7 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     Bind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
     Bind(wxEVT_WEBSOCKET_ERROR, &NodeJSCLIDebugger::OnWebSocketError, this);
     Bind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeJSCLIDebugger::OnWebSocketOnMessage, this);
-    Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeJSCLIDebugger::OnWebSocketThreadTerminated, this);
+    Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeJSCLIDebugger::OnWebSocketDisconnected, this);
 }
 
 NodeJSCLIDebugger::~NodeJSCLIDebugger()
@@ -153,8 +153,6 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
         websocketAddress.Trim().Trim(false);
 
         // Start a helper thread to listen on the this socket
-        m_thread = new NodeJSWebSocketThread(this, websocketAddress);
-        m_thread->Start();
     }
 }
 
@@ -173,7 +171,7 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
         console->Start();
     }
 #else
-    if(m_thread) {
+    if(m_socket.IsConnected()) {
         clDEBUG() << "An instance of the debugger is already running";
         return;
     }
@@ -347,7 +345,7 @@ void NodeJSCLIDebugger::OnWebSocketConnected(clCommandEvent& event)
     // Now that the connection has been established, we can send the startup commands
     wxArrayString commands = m_protocol.GetStartupCommands();
     for(size_t i = 0; i < commands.size(); ++i) {
-        m_thread->Send(commands[i]);
+        m_socket.Send(commands[i]);
     }
 }
 
@@ -363,4 +361,4 @@ void NodeJSCLIDebugger::OnWebSocketOnMessage(clCommandEvent& event)
     clDEBUG() << "<--" << event.GetString();
 }
 
-void NodeJSCLIDebugger::OnWebSocketThreadTerminated(clCommandEvent& event) { wxDELETE(m_thread); }
+void NodeJSCLIDebugger::OnWebSocketDisconnected(clCommandEvent& event) {}

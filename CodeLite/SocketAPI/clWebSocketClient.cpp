@@ -162,7 +162,7 @@ void clWebSocketClient::DoCleanup()
 
 void clWebSocketClient::OnHelperThreadExit()
 {
-    m_connection_handle.reset();
+    DoCleanup();
     clCommandEvent event(wxEVT_WEBSOCKET_DISCONNECTED);
     event.SetEventObject(this);
     GetOwner()->AddPendingEvent(event);

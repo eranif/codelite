@@ -15,11 +15,11 @@ void NodeEventDebuggerPaused::Process(const JSONElement& json)
 {
     m_stopReason = json.namedObject("reason").toString();
     JSONElement frames = json.namedObject("callFrames");
-    clJSONObject::Vec_t V;
+    nSerializableObject::Vec_t V;
     int size = frames.arraySize();
     for(int i = 0; i < size; ++i) {
         JSONElement frame = frames.arrayItem(i);
-        clJSONObject::Ptr_t f(new CallFrame());
+        nSerializableObject::Ptr_t f(new CallFrame());
         f->FromJSON(frame);
         V.push_back(f);
     }

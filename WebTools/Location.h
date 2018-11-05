@@ -3,7 +3,7 @@
 
 #include "NodeJSONSerialisable.h"
 
-class Location : public clJSONObject
+class Location : public nSerializableObject
 {
     wxString m_scriptId;
     long m_lineNumber = 0;

@@ -1,5 +1,5 @@
 #include "NodeJSONSerialisable.h"
 
-clJSONObject::clJSONObject() {}
+nSerializableObject::nSerializableObject() {}
 
-clJSONObject::~clJSONObject() {}
+nSerializableObject::~nSerializableObject() {}

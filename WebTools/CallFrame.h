@@ -5,7 +5,7 @@
 #include "RemoteObject.h"
 #include "NodeJSONSerialisable.h"
 
-class CallFrame : public clJSONObject
+class CallFrame : public nSerializableObject
 {
     wxString m_callFrameId;
     wxString m_functionName;

@@ -6,15 +6,15 @@
 
 class NodeJSDebugEvent : public clCommandEvent
 {
-    clJSONObject::Vec_t m_callFrames;
+    nSerializableObject::Vec_t m_callFrames;
 
 public:
     NodeJSDebugEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     NodeJSDebugEvent(const NodeJSDebugEvent& event);
     NodeJSDebugEvent& operator=(const NodeJSDebugEvent& src);
-    clJSONObject::Vec_t& GetCallFrames() { return m_callFrames; }
-    const clJSONObject::Vec_t& GetCallFrames() const { return m_callFrames; }
-    void SetCallFrames(const clJSONObject::Vec_t& callFrames) { m_callFrames = callFrames; }
+    nSerializableObject::Vec_t& GetCallFrames() { return m_callFrames; }
+    const nSerializableObject::Vec_t& GetCallFrames() const { return m_callFrames; }
+    void SetCallFrames(const nSerializableObject::Vec_t& callFrames) { m_callFrames = callFrames; }
     virtual ~NodeJSDebugEvent();
     virtual wxEvent* Clone() const { return new NodeJSDebugEvent(*this); };
 };

@@ -26,7 +26,7 @@ void DebuggerPane::OnUpdateBacktrace(NodeJSDebugEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dvListCtrlCallstack);
-    const clJSONObject::Vec_t& frames = event.GetCallFrames();
+    const nSerializableObject::Vec_t& frames = event.GetCallFrames();
     m_dvListCtrlCallstack->DeleteAllItems();
 
     for(size_t i = 0; i < frames.size(); ++i) {

@@ -4,7 +4,7 @@
 #include "NodeJSONSerialisable.h"
 #include <wx/string.h>
 
-class RemoteObject : public clJSONObject
+class RemoteObject : public nSerializableObject
 {
     wxString m_type;
     wxString m_subtype;

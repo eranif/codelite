@@ -34,6 +34,8 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
+
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
 
@@ -51,6 +53,8 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
+
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
     Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
@@ -99,6 +103,7 @@ void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
 
     // Terminate the process
     m_process->Terminate();
+    m_socket.Close();
 }
 
 void NodeJSCLIDebugger::OnDebugNext(clDebugEvent& event)
@@ -115,11 +120,13 @@ bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
 
 void NodeJSCLIDebugger::DoCleanup()
 {
+    clDEBUG() << "Cleaning Nodejs debugger...";
     m_commands.clear();
     m_canInteract = false;
     m_workingDirectory.Clear();
     m_waitingReplyCommands.clear();
     if(m_process) { m_process->Terminate(); }
+    m_socket.Close();
 }
 
 void NodeJSCLIDebugger::OnDebugIsRunning(clDebugEvent& event)
@@ -134,6 +141,7 @@ void NodeJSCLIDebugger::OnDebugIsRunning(clDebugEvent& event)
 
 void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 {
+    clDEBUG() << "Nodejs process terminated";
     wxUnusedVar(event);
     wxDELETE(m_process);
 
@@ -145,6 +153,7 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 
 void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
 {
+    clDEBUG1() << event.GetOutput();
     const wxString& processOutput = event.GetOutput();
     int where = processOutput.Find("ws://");
     if(where != wxNOT_FOUND) {
@@ -152,7 +161,16 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
         websocketAddress = websocketAddress.BeforeFirst('\n');
         websocketAddress.Trim().Trim(false);
 
-        // Start a helper thread to listen on the this socket
+        try {
+            clDEBUG() << "Attempting to connect debugger on" << websocketAddress;
+
+            // Initialise the socket
+            m_socket.Initialise();
+            // Start a helper thread to listen on the this socket
+            m_socket.StartLoop(websocketAddress);
+        } catch(clSocketException& e) {
+            clWARNING() << e.what();
+        }
     }
 }
 
@@ -202,36 +220,16 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
 
 void NodeJSCLIDebugger::Callstack()
 {
-    NodeJSCliCommandHandler commandHandler("bt", GetCommandId(), [&](const wxString& outputString) {
-        clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK);
-        e.SetString(outputString);
-        EventNotifier::Get()->AddPendingEvent(e);
-    });
-    PushCommand(commandHandler);
 }
 
 void NodeJSCLIDebugger::ProcessQueue()
 {
-    if(!m_commands.empty() && IsCanInteract()) {
-        NodeJSCliCommandHandler& command = m_commands.front();
-        clDEBUG() << "-->#" << command.m_commandID << ":" << command.m_commandText;
-        m_process->Write(command.m_commandText);
-        if(command.action) { m_waitingReplyCommands.insert({ command.m_commandID, command }); }
-        m_commands.erase(m_commands.begin());
-    }
 }
 
 static long commandID = 0;
 
 void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler)
 {
-    m_commands.push_back({ wxString() << "console.log(\"#start_command_" << commandHandler.m_commandID << "\")",
-                           commandHandler.m_commandID, nullptr });
-    m_commands.push_back(commandHandler);
-    m_commands.push_back({ wxString() << "console.log(\"#end_command_" << commandHandler.m_commandID << "\")",
-                           commandHandler.m_commandID, nullptr });
-    ++commandID;
-    ProcessQueue();
 }
 
 bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
@@ -309,14 +307,6 @@ void NodeJSCLIDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 
 void NodeJSCLIDebugger::ListBreakpoints()
 {
-    // Tell Node to remove this breakpoint
-    NodeJSCliCommandHandler commandHandler("breakpoints", GetCommandId(), [&](const wxString& outputString) {
-        // Update the UI with the list of breakpoints we got so far
-        clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
-        e.SetString(outputString);
-        EventNotifier::Get()->AddPendingEvent(e);
-    });
-    PushCommand(commandHandler);
 }
 
 wxString NodeJSCLIDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
@@ -343,10 +333,7 @@ void NodeJSCLIDebugger::ApplyAllBerakpoints()
 void NodeJSCLIDebugger::OnWebSocketConnected(clCommandEvent& event)
 {
     // Now that the connection has been established, we can send the startup commands
-    wxArrayString commands = m_protocol.GetStartupCommands();
-    for(size_t i = 0; i < commands.size(); ++i) {
-        m_socket.Send(commands[i]);
-    }
+    m_protocol.SendStartCommands(m_socket);
 }
 
 void NodeJSCLIDebugger::OnWebSocketError(clCommandEvent& event)
@@ -359,6 +346,13 @@ void NodeJSCLIDebugger::OnWebSocketOnMessage(clCommandEvent& event)
 {
     // We got a message from the websocket
     clDEBUG() << "<--" << event.GetString();
+    m_protocol.ProcessMessage(event.GetString(), m_socket);
 }
 
 void NodeJSCLIDebugger::OnWebSocketDisconnected(clCommandEvent& event) {}
+
+void NodeJSCLIDebugger::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    DoCleanup();
+}

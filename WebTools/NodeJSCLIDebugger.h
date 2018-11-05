@@ -63,7 +63,8 @@ protected:
     void OnWebSocketError(clCommandEvent& event);
     void OnWebSocketOnMessage(clCommandEvent& event);
     void OnWebSocketDisconnected(clCommandEvent& event);
-
+    void OnWorkspaceClosed(wxCommandEvent& event);
+    
     // Helpers
     void DoCleanup();
     void ProcessQueue();

@@ -482,7 +482,7 @@ void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     // Show the debugger pane
     if(!m_nodejsCliDebuggerPane) {
-        m_nodejsCliDebuggerPane = new NodeJSCliDebuggerPane(parent);
+        m_nodejsCliDebuggerPane = new DebuggerPane(parent);
         clGetManager()->GetDockingManager()->AddPane(m_nodejsCliDebuggerPane, wxAuiPaneInfo()
                                                                                   .MinSize(wxSize(-1, 300))
                                                                                   .Layer(5)

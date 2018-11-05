@@ -1,17 +1,19 @@
 #ifndef NODEJSCLIDEBUGGERPANE_H
 #define NODEJSCLIDEBUGGERPANE_H
+
+#include "NodeCLIDebuggerEvent.h"
 #include "WebToolsBase.h"
 #include "cl_command_event.h"
 
-class NodeJSCliDebuggerPane : public NodeJSCliDebuggerPaneBase
+class DebuggerPane : public NodeJSCliDebuggerPaneBase
 {
 protected:
-    void OnUpdateBacktrace(clDebugEvent& event);
+    void OnUpdateBacktrace(NodeJSDebugEvent& event);
     void OnDebuggerStopped(clDebugEvent& event);
     void OnMarkLine(clDebugEvent& event);
 
 public:
-    NodeJSCliDebuggerPane(wxWindow* parent);
-    virtual ~NodeJSCliDebuggerPane();
+    DebuggerPane(wxWindow* parent);
+    virtual ~DebuggerPane();
 };
 #endif // NODEJSCLIDEBUGGERPANE_H

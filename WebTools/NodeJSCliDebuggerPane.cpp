@@ -1,65 +1,59 @@
+#include "NodeDbgCallFrame.h"
 #include "NodeJSCLIDebugger.h"
-#include "NodeJSCLIDebuggerFrameEntry.h"
 #include "NodeJSCliDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "event_notifier.h"
 #include <wx/wupdlock.h>
 
-NodeJSCliDebuggerPane::NodeJSCliDebuggerPane(wxWindow* parent)
+DebuggerPane::DebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeJSCliDebuggerPane::OnUpdateBacktrace,
-                               this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &NodeJSCliDebuggerPane::OnDebuggerStopped, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSCliDebuggerPane::OnMarkLine, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
 }
 
-NodeJSCliDebuggerPane::~NodeJSCliDebuggerPane()
+DebuggerPane::~DebuggerPane()
 {
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeJSCliDebuggerPane::OnUpdateBacktrace,
-                                 this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &NodeJSCliDebuggerPane::OnDebuggerStopped, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeJSCliDebuggerPane::OnMarkLine, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
 }
 
-void NodeJSCliDebuggerPane::OnUpdateBacktrace(clDebugEvent& event)
+void DebuggerPane::OnUpdateBacktrace(NodeJSDebugEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dvListCtrlCallstack);
+    const clJSONObject::Vec_t& frames = event.GetCallFrames();
     m_dvListCtrlCallstack->DeleteAllItems();
-    wxString bt = event.GetString();
-    wxArrayString arr = ::wxStringTokenize(bt, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < arr.size(); ++i) {
-        const wxString& frame = arr.Item(i).Trim().Trim(false);
-        if(!frame.StartsWith("#")) { continue; }
-        wxString ID = frame.BeforeFirst(' ');
-        wxString where = frame.AfterFirst(' ');
-        ID.Trim().Trim(false);
-        where.Trim().Trim(false);
+
+    for(size_t i = 0; i < frames.size(); ++i) {
+        CallFrame* frame = frames[i]->To<CallFrame>();
+
         wxVector<wxVariant> cols;
-        cols.push_back(ID);
-        cols.push_back(where);
+        cols.push_back(wxString() << "#" << i);
+        cols.push_back(frame->GetFunctionName());
+        cols.push_back(wxString() << frame->GetLocation().GetScriptId() << ":" << frame->GetLocation().GetLineNumber());
         m_dvListCtrlCallstack->AppendItem(cols);
         if(i == 0) {
-            clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
-            NodeJSCLIDebuggerFrameEntry row(where, NodeJSWorkspace::Get()->GetFileName().GetPath());
-            event.SetLineNumber(row.GetLineNumber());
-            event.SetFileName(row.GetFile());
-            EventNotifier::Get()->AddPendingEvent(event);
+            // clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
+            // NodeJSCLIDebuggerFrameEntry row(where, NodeJSWorkspace::Get()->GetFileName().GetPath());
+            // event.SetLineNumber(row.GetLineNumber());
+            // event.SetFileName(row.GetFile());
+            // EventNotifier::Get()->AddPendingEvent(event);
         }
     }
 }
-
-void NodeJSCliDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
+void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
     m_dvListCtrlCallstack->DeleteAllItems();
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
 }
 
-void NodeJSCliDebuggerPane::OnMarkLine(clDebugEvent& event)
+void DebuggerPane::OnMarkLine(clDebugEvent& event)
 {
     event.Skip();
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();

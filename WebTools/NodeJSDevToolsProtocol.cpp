@@ -1,36 +1,54 @@
 #include "NodeJSDevToolsProtocol.h"
+#include "SocketAPI/clSocketBase.h"
+#include "file_logger.h"
 #include "json_node.h"
 
 NodeJSDevToolsProtocol::NodeJSDevToolsProtocol() {}
 
 NodeJSDevToolsProtocol::~NodeJSDevToolsProtocol() {}
 
-wxArrayString NodeJSDevToolsProtocol::GetStartupCommands()
+void NodeJSDevToolsProtocol::SendStartCommands(clWebSocketClient& socket)
 {
-    wxArrayString commands;
-    {
-        JSONRoot root(cJSON_Object);
-        JSONElement e = root.toElement();
-        e.addProperty("id", ++message_id);
-        e.addProperty("method", "Runtime.enable");
+    try {
+        {
+            JSONRoot root(cJSON_Object);
+            JSONElement e = root.toElement();
+            e.addProperty("id", ++message_id);
+            e.addProperty("method", "Runtime.enable");
+            socket.Send(e.format(false));
+        }
+        {
+            JSONRoot root(cJSON_Object);
+            JSONElement e = root.toElement();
+            e.addProperty("id", ++message_id);
+            e.addProperty("method", "Debugger.enable");
 
-        commands.Add(e.format(false));
-    }
-    {
-        JSONRoot root(cJSON_Object);
-        JSONElement e = root.toElement();
-        e.addProperty("id", ++message_id);
-        e.addProperty("method", "Debugger.enable");
+            socket.Send(e.format(false));
+        }
+        {
+            JSONRoot root(cJSON_Object);
+            JSONElement e = root.toElement();
+            e.addProperty("id", ++message_id);
+            e.addProperty("method", "Runtime.runIfWaitingForDebugger");
 
-        commands.Add(e.format(false));
+            socket.Send(e.format(false));
+        }
+    } catch(clSocketException& e) {
+        clWARNING() << e.what();
     }
-    {
-        JSONRoot root(cJSON_Object);
-        JSONElement e = root.toElement();
-        e.addProperty("id", ++message_id);
-        e.addProperty("method", "Runtime.runIfWaitingForDebugger");
+}
 
-        commands.Add(e.format(false));
+void NodeJSDevToolsProtocol::ProcessMessage(const wxString& msg, clWebSocketClient& socket)
+{
+    JSONRoot root(msg);
+    if(!root.isOk()) { return; }
+    if(!root.toElement().hasNamedObject("method")) { return; }
+    wxString method = root.toElement().namedObject("method").toString();
+    if(method.IsEmpty()) { return; }
+
+    NodeDbgEventBase::Ptr_t handler = m_handlers.GetHandler(method);
+    if(handler) { 
+        clDEBUG() << "Invoking handler:" << handler->GetEventName();
+        handler->Process(root.toElement().namedObject("params")); 
     }
-    return commands;
 }

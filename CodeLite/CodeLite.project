@@ -498,6 +498,8 @@
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="../sdk/asio-1.12.1"/>
+        <IncludePath Value="../sdk/websocketpp"/>
         <Preprocessor Value="USE_SFTP=1"/>
         <Preprocessor Value="wxUSE_GUI=1"/>
       </Compiler>
@@ -506,6 +508,7 @@
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libssh64"/>
+        <Library Value="Ws2_32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../lib/gcc_lib/libcodeliteud.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="--no-plugins" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -542,8 +545,7 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
-</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -560,6 +562,8 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="../sdk/websocketpp"/>
+        <IncludePath Value="../sdk/asio-1.12.1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
@@ -567,6 +571,7 @@ XmlLexer.cpp: XMLLexer.l
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libssh64"/>
+        <Library Value="ws2_32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -604,7 +609,8 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

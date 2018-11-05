@@ -80,20 +80,18 @@ static void on_ws_open_handler(clWebSocketClient* c, websocketpp::connection_hdl
     c->GetOwner()->AddPendingEvent(event);
 }
 
+static void on_ws_fail_handler(clWebSocketClient* c, websocketpp::connection_hdl hdl)
+{
+    clDEBUG1() << "<-- Error!";
+    clCommandEvent event(wxEVT_WEBSOCKET_ERROR);
+    event.SetEventObject(c);
+    c->GetOwner()->AddPendingEvent(event);
+}
+
 clWebSocketClient::clWebSocketClient(wxEvtHandler* owner)
     : m_owner(owner)
 {
-    try {
-        m_client = new Client_t();
-        Client_t* c = GetClient<Client_t>();
-        c->set_access_channels(websocketpp::log::alevel::all);
-        c->clear_access_channels(websocketpp::log::alevel::frame_payload);
-        c->init_asio();
-        c->set_message_handler(bind(&on_ws_message, this, ::_1, ::_2));
-        c->set_open_handler(bind(&on_ws_open_handler, this, ::_1));
-    } catch(websocketpp::exception& e) {
-        clERROR() << e.what();
-    }
+    DoInit();
 }
 
 clWebSocketClient::~clWebSocketClient()
@@ -102,10 +100,10 @@ clWebSocketClient::~clWebSocketClient()
     DoCleanup();
 }
 
-void clWebSocketClient::Connect(const wxString& url)
+void clWebSocketClient::StartLoop(const wxString& url)
 {
     if(m_helperThread) { throw clSocketException("A websocket loop is already running"); }
-    
+
     Client_t* c = GetClient<Client_t>();
     if(!c) { throw clSocketException("Invalid connection!"); }
     try {
@@ -122,7 +120,7 @@ void clWebSocketClient::Connect(const wxString& url)
         m_connection_handle.reset();
         throw clSocketException(e.what());
     }
-    
+
     // Run the main loop in background thread
     m_helperThread = new clWebSocketHelperThread(this, url, c);
     m_helperThread->Start();
@@ -148,8 +146,7 @@ void clWebSocketClient::Close()
 {
     Client_t* c = GetClient<Client_t>();
     if(!c) { return; }
-    if(m_connection_handle.expired()) { return; }
-    c->close(GetConnectionHandle(), websocketpp::close::status::going_away, "");
+    c->stop();
     DoCleanup();
 }
 
@@ -170,3 +167,24 @@ void clWebSocketClient::OnHelperThreadExit()
     event.SetEventObject(this);
     GetOwner()->AddPendingEvent(event);
 }
+
+void clWebSocketClient::DoInit()
+{
+    // Dont initialise again
+    if(m_client) { return; }
+
+    try {
+        m_client = new Client_t();
+        Client_t* c = GetClient<Client_t>();
+        c->set_access_channels(websocketpp::log::alevel::all);
+        c->clear_access_channels(websocketpp::log::alevel::frame_payload);
+        c->init_asio();
+        c->set_message_handler(bind(&on_ws_message, this, ::_1, ::_2));
+        c->set_open_handler(bind(&on_ws_open_handler, this, ::_1));
+        c->set_fail_handler(bind(&on_ws_fail_handler, this, ::_1));
+    } catch(websocketpp::exception& e) {
+        clERROR() << e.what();
+    }
+}
+
+void clWebSocketClient::Initialise() { DoInit(); }

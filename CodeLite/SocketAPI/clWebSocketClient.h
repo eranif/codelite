@@ -7,7 +7,7 @@
 #include <memory>
 #include <wx/event.h>
 
-class WXDLLIMPEXP_SDK clWebSocketClient : public wxEvtHandler
+class WXDLLIMPEXP_CL clWebSocketClient : public wxEvtHandler
 {
 protected:
     void* m_client = 0;
@@ -16,20 +16,30 @@ protected:
     clJoinableThread* m_helperThread = nullptr;
 
 protected:
-    template <typename T> T* GetClient() { return reinterpret_cast<T*>(m_client); }
+    template <typename T> T* GetClient()
+    {
+        if(!m_client) { return nullptr; }
+        return reinterpret_cast<T*>(m_client);
+    }
     void DoCleanup();
+    void DoInit();
 
 public:
     void OnHelperThreadExit();
-
+    
 public:
     clWebSocketClient(wxEvtHandler* owner);
     virtual ~clWebSocketClient();
-
+    
+    /**
+     * @brief prepare the socket before starting the main loop
+     */
+    void Initialise();
+    
     /**
      * @brief connect to a remote URL. This function start a background thread to executes the main loop
      */
-    void Connect(const wxString& url);
+    void StartLoop(const wxString& url);
 
     /**
      * @brief send data over the websocket
@@ -47,16 +57,16 @@ public:
      * @brief close the connection
      */
     void Close();
-    
+
     /**
      * @brief are we connected?
      */
     bool IsConnected() const { return m_helperThread != nullptr; }
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WEBSOCKET_CONNECTED, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WEBSOCKET_DISCONNECTED, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WEBSOCKET_ONMESSAGE, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WEBSOCKET_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_CONNECTED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_DISCONNECTED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_ONMESSAGE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_ERROR, clCommandEvent);
 
 #endif // CLWEBSOCKETCLIENT_H

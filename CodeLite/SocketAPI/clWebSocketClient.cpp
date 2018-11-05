@@ -46,7 +46,10 @@ public:
                 m_client->run();
 
             } catch(websocketpp::exception& e) {
-                wxUnusedVar(e);
+                // Report an error
+                clCommandEvent event(wxEVT_WEBSOCKET_ERROR);
+                event.SetString(e.what());
+                m_owner->AddPendingEvent(event);
             }
         }
         m_owner->CallAfter(&clWebSocketClient::OnHelperThreadExit);

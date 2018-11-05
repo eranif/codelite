@@ -1,4 +1,4 @@
-#include "NodeJSONSerialisable.h"
+#include "nSerializableObject.h"
 
 nSerializableObject::nSerializableObject() {}
 

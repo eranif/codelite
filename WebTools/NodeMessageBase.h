@@ -4,17 +4,17 @@
 #include "json_node.h"
 #include <wx/sharedptr.h>
 
-class NodeDbgEventBase
+class NodeMessageBase
 {
 public:
-    typedef wxSharedPtr<NodeDbgEventBase> Ptr_t;
+    typedef wxSharedPtr<NodeMessageBase> Ptr_t;
 
 protected:
     wxString m_eventName;
 
 public:
-    NodeDbgEventBase(const wxString& eventName);
-    virtual ~NodeDbgEventBase();
+    NodeMessageBase(const wxString& eventName);
+    virtual ~NodeMessageBase();
     /**
      * @brief process message in JSON format
      */
@@ -23,8 +23,8 @@ public:
     /**
      * @brief create new instance of this type
      */
-    virtual NodeDbgEventBase::Ptr_t Clone() = 0;
-    
+    virtual NodeMessageBase::Ptr_t Clone() = 0;
+
     void SetEventName(const wxString& eventName) { this->m_eventName = eventName; }
     const wxString& GetEventName() const { return m_eventName; }
 };

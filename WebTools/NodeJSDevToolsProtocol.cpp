@@ -46,7 +46,7 @@ void NodeJSDevToolsProtocol::ProcessMessage(const wxString& msg, clWebSocketClie
     wxString method = root.toElement().namedObject("method").toString();
     if(method.IsEmpty()) { return; }
 
-    NodeDbgEventBase::Ptr_t handler = m_handlers.GetHandler(method);
+    NodeMessageBase::Ptr_t handler = m_handlers.GetHandler(method);
     if(handler) { 
         clDEBUG() << "Invoking handler:" << handler->GetEventName();
         handler->Process(root.toElement().namedObject("params")); 

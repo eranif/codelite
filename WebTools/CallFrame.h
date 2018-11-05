@@ -3,7 +3,7 @@
 
 #include "Location.h"
 #include "RemoteObject.h"
-#include "NodeJSONSerialisable.h"
+#include "nSerializableObject.h"
 
 class CallFrame : public nSerializableObject
 {

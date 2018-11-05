@@ -1,7 +1,7 @@
 #ifndef NODEDBGREMOTEOBJECT_H
 #define NODEDBGREMOTEOBJECT_H
 
-#include "NodeJSONSerialisable.h"
+#include "nSerializableObject.h"
 #include <wx/string.h>
 
 class RemoteObject : public nSerializableObject

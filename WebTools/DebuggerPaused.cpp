@@ -1,17 +1,17 @@
 #include "CallFrame.h"
-#include "NodeEventDebuggerPaused.h"
+#include "DebuggerPaused.h"
 #include "NodeJSEvents.h"
 #include "event_notifier.h"
 #include <vector>
 
-NodeEventDebuggerPaused::NodeEventDebuggerPaused()
-    : NodeDbgEventBase("Debugger.paused")
+DebuggerPaused::DebuggerPaused()
+    : NodeMessageBase("Debugger.paused")
 {
 }
 
-NodeEventDebuggerPaused::~NodeEventDebuggerPaused() {}
+DebuggerPaused::~DebuggerPaused() {}
 
-void NodeEventDebuggerPaused::Process(const JSONElement& json)
+void DebuggerPaused::Process(const JSONElement& json)
 {
     m_stopReason = json.namedObject("reason").toString();
     JSONElement frames = json.namedObject("callFrames");
@@ -35,7 +35,4 @@ void NodeEventDebuggerPaused::Process(const JSONElement& json)
     EventNotifier::Get()->ProcessEvent(callFrameEvent);
 }
 
-NodeDbgEventBase::Ptr_t NodeEventDebuggerPaused::Clone()
-{
-    return NodeDbgEventBase::Ptr_t(new NodeEventDebuggerPaused());
-}
+NodeMessageBase::Ptr_t DebuggerPaused::Clone() { return NodeMessageBase::Ptr_t(new DebuggerPaused()); }

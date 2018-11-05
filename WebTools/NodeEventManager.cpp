@@ -1,17 +1,17 @@
-#include "NodeEventDebuggerPaused.h"
-#include "NodeEventManager.h"
+#include "DebuggerPaused.h"
+#include "MessageManager.h"
 
-NodeEventManager::NodeEventManager() { AddHandler(NodeDbgEventBase::Ptr_t(new NodeEventDebuggerPaused())); }
+NodeEventManager::NodeEventManager() { AddHandler(NodeMessageBase::Ptr_t(new DebuggerPaused())); }
 
 NodeEventManager::~NodeEventManager() {}
 
-void NodeEventManager::AddHandler(NodeDbgEventBase::Ptr_t handler)
+void NodeEventManager::AddHandler(NodeMessageBase::Ptr_t handler)
 {
     m_events.insert({ handler->GetEventName(), handler });
 }
 
-NodeDbgEventBase::Ptr_t NodeEventManager::GetHandler(const wxString& eventName)
+NodeMessageBase::Ptr_t NodeEventManager::GetHandler(const wxString& eventName)
 {
-    if(m_events.count(eventName) == 0) { return NodeDbgEventBase::Ptr_t(nullptr); }
+    if(m_events.count(eventName) == 0) { return NodeMessageBase::Ptr_t(nullptr); }
     return m_events[eventName]->Clone();
 }

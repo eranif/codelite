@@ -1,7 +1,7 @@
 #ifndef NODEDBGLOCATION_H
 #define NODEDBGLOCATION_H
 
-#include "NodeJSONSerialisable.h"
+#include "nSerializableObject.h"
 
 class Location : public nSerializableObject
 {

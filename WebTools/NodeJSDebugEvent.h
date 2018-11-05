@@ -1,7 +1,7 @@
 #ifndef NODECLIDEBUGGEREVENT_H
 #define NODECLIDEBUGGEREVENT_H
 
-#include "NodeJSONSerialisable.h"
+#include "nSerializableObject.h"
 #include "cl_command_event.h"
 
 class NodeJSDebugEvent : public clCommandEvent

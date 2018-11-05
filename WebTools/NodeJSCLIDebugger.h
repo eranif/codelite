@@ -1,9 +1,9 @@
 #ifndef NODEJSCLIDEBUGGER_H
 #define NODEJSCLIDEBUGGER_H
 
-#include "NodeJSCLIDebuggerOutputParser.h"
 #include "NodeJSDebuggerBase.h"
 #include "NodeJSDebuggerBreakpoint.h"
+#include "NodeJSDevToolsProtocol.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <functional>
@@ -11,6 +11,7 @@
 #include <vector>
 #include <wx/event.h>
 
+class NodeJSWebSocketThread;
 typedef std::function<void(const wxString&)> CommandHandlerFunc_t;
 class NodeJSCliCommandHandler
 {
@@ -30,11 +31,12 @@ public:
 class NodeJSCLIDebugger : public NodeJSDebuggerBase
 {
     IProcess* m_process = nullptr;
-    NodeJSCLIDebuggerOutputParser m_outputParser;
     bool m_canInteract = false;
     std::vector<NodeJSCliCommandHandler> m_commands;
     std::unordered_map<long, NodeJSCliCommandHandler> m_waitingReplyCommands;
     wxString m_workingDirectory;
+    NodeJSWebSocketThread* m_thread = nullptr;
+    NodeJSDevToolsProtocol m_protocol;
 
 public:
     NodeJSCLIDebugger();
@@ -57,6 +59,10 @@ protected:
     void OnDebugIsRunning(clDebugEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
+    void OnWebSocketConnected(clCommandEvent& event);
+    void OnWebSocketError(clCommandEvent& event);
+    void OnWebSocketOnMessage(clCommandEvent& event);
+    void OnWebSocketThreadTerminated(clCommandEvent& event);
 
     // Helpers
     void DoCleanup();

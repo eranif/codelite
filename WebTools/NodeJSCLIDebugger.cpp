@@ -1,7 +1,9 @@
 #include "NodeJSCLIDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
+#include "NodeJSWebSocketThread.h"
 #include "NoteJSWorkspace.h"
+#include "SocketAPI/clWebSocketClient.h"
 #include "clConsoleBase.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -34,6 +36,11 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
+
+    Bind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
+    Bind(wxEVT_WEBSOCKET_ERROR, &NodeJSCLIDebugger::OnWebSocketError, this);
+    Bind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeJSCLIDebugger::OnWebSocketOnMessage, this);
+    Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeJSCLIDebugger::OnWebSocketThreadTerminated, this);
 }
 
 NodeJSCLIDebugger::~NodeJSCLIDebugger()
@@ -46,6 +53,9 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
+    Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
+    Unbind(wxEVT_WEBSOCKET_ERROR, &NodeJSCLIDebugger::OnWebSocketError, this);
+    Unbind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeJSCLIDebugger::OnWebSocketOnMessage, this);
 }
 
 void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
@@ -109,7 +119,6 @@ void NodeJSCLIDebugger::DoCleanup()
     m_canInteract = false;
     m_workingDirectory.Clear();
     m_waitingReplyCommands.clear();
-    m_outputParser.Clear();
     if(m_process) { m_process->Terminate(); }
 }
 
@@ -136,27 +145,23 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
 
 void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
 {
-    wxString processOutput = event.GetOutput();
-    m_outputParser.ParseOutput(processOutput);
-    if(m_outputParser.HasResults()) {
-        auto result = m_outputParser.TakeResult();
-        long commandId = result.first;
-        wxString output = result.second;
-        auto commandHandler = m_waitingReplyCommands.find(commandId);
-        if(commandHandler != m_waitingReplyCommands.end()) {
-            if(commandHandler->second.action) { commandHandler->second.action(output); }
-        }
-    }
-    if(processOutput.EndsWith("\ndebug>") || processOutput.EndsWith("\ndebug> ")) {
-        m_canInteract = true;
-        ProcessQueue(); // Process the next command
+    const wxString& processOutput = event.GetOutput();
+    int where = processOutput.Find("ws://");
+    if(where != wxNOT_FOUND) {
+        wxString websocketAddress = processOutput.Mid(where);
+        websocketAddress = websocketAddress.BeforeFirst('\n');
+        websocketAddress.Trim().Trim(false);
+
+        // Start a helper thread to listen on the this socket
+        m_thread = new NodeJSWebSocketThread(this, websocketAddress);
+        m_thread->Start();
     }
 }
 
 void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& command_args,
                                       const wxString& workingDirectory)
 {
-#if 1
+#if 0
     if(::wxMessageBox(_("The old debugger protocol is not supported by your current Node.js version.\nWould you "
                         "CodeLite to a CLI debug session for you in a terminal?"),
                       _("CodeLite"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT,
@@ -168,8 +173,14 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
         console->Start();
     }
 #else
+    if(m_thread) {
+        clDEBUG() << "An instance of the debugger is already running";
+        return;
+    }
     size_t createFlags = IProcessCreateDefault;
-    m_process = ::CreateAsyncProcess(this, command, createFlags, workingDirectory);
+    wxString one_liner = command;
+    if(!command_args.IsEmpty()) { one_liner << " " << command_args; }
+    m_process = ::CreateAsyncProcess(this, one_liner, createFlags, workingDirectory);
     if(!m_process) {
         ::wxMessageBox(wxString() << _("Failed to launch NodeJS: ") << command);
         DoCleanup();
@@ -330,3 +341,26 @@ void NodeJSCLIDebugger::ApplyAllBerakpoints()
     // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
     ListBreakpoints();
 }
+
+void NodeJSCLIDebugger::OnWebSocketConnected(clCommandEvent& event)
+{
+    // Now that the connection has been established, we can send the startup commands
+    wxArrayString commands = m_protocol.GetStartupCommands();
+    for(size_t i = 0; i < commands.size(); ++i) {
+        m_thread->Send(commands[i]);
+    }
+}
+
+void NodeJSCLIDebugger::OnWebSocketError(clCommandEvent& event)
+{
+    // an error occured!, terminate the debug session
+    if(m_process) { m_process->Terminate(); }
+}
+
+void NodeJSCLIDebugger::OnWebSocketOnMessage(clCommandEvent& event)
+{
+    // We got a message from the websocket
+    clDEBUG() << "<--" << event.GetString();
+}
+
+void NodeJSCLIDebugger::OnWebSocketThreadTerminated(clCommandEvent& event) { wxDELETE(m_thread); }

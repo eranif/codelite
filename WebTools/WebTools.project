@@ -99,10 +99,12 @@
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
       <VirtualDirectory Name="DebuggerCLI">
+        <File Name="NodeJSDevToolsProtocol.cpp"/>
+        <File Name="NodeJSDevToolsProtocol.h"/>
+        <File Name="NodeJSWebSocketThread.cpp"/>
+        <File Name="NodeJSWebSocketThread.h"/>
         <File Name="NodeJSCLIDebuggerFrameEntry.cpp"/>
         <File Name="NodeJSCLIDebuggerFrameEntry.h"/>
-        <File Name="NodeJSCLIDebuggerOutputParser.cpp"/>
-        <File Name="NodeJSCLIDebuggerOutputParser.h"/>
         <File Name="NodeJSCliDebuggerPane.cpp"/>
         <File Name="NodeJSCliDebuggerPane.h"/>
         <File Name="NodeJSCLIDebugger.h"/>

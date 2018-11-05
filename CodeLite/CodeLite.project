@@ -343,6 +343,8 @@
     <File Name="clSFTPEvent.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SocketAPI">
+    <File Name="SocketAPI/clWebSocketClient.cpp"/>
+    <File Name="SocketAPI/clWebSocketClient.h"/>
     <File Name="SocketAPI/clSocketBase.cpp"/>
     <File Name="SocketAPI/clSocketBase.h"/>
     <File Name="SocketAPI/clSocketClient.cpp"/>

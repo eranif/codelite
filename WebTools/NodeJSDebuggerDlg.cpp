@@ -117,13 +117,14 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
     command << m_filePickerNodeJS->GetPath();
     script << m_filePickerScript->GetPath();
     ::WrapWithQuotes(script);
+    wxString sport = m_textCtrlPort->GetValue();
+    long port = 5858;
+    if(!sport.Trim().ToCLong(&port)) { port = 5858; }
+    
     if(m_type == kDebug) {
-        wxString sport = m_textCtrlPort->GetValue();
-        long port = 5858;
-        if(!sport.Trim().ToCLong(&port)) { port = 5858; }
         command_args << "--debug-brk=" << port << " " << script;
     } else if(m_type == kDebugCLI) {
-        command_args << "inspect " << script;
+        command_args << "--inspect-brk=" << port << " " << script;
     } else {
         command_args << script;
     }

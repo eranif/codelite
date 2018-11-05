@@ -1,4 +1,4 @@
-#include "NodeCLIDebuggerEvent.h"
+#include "NodeJSDebugEvent.h"
 
 // ------------------------------------------------
 // NodeCLIDebuggerEvent

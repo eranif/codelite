@@ -1,4 +1,4 @@
-#include "NodeJSCliDebuggerPane.h"
+#include "DebuggerPane.h"
 #include "NodeJSDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NodeJSWorkspaceView.h"

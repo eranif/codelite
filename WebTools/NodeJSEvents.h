@@ -27,7 +27,7 @@
 #define NODEJSEVENTS_H
 
 #include "cl_command_event.h"
-#include "NodeCLIDebuggerEvent.h"
+#include "NodeJSDebugEvent.h"
 
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_STARTED, clDebugEvent);
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_STOPPED, clDebugEvent);

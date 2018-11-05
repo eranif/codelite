@@ -1,8 +1,8 @@
 #ifndef NODEDBGCALLFRAME_H
 #define NODEDBGCALLFRAME_H
 
-#include "NodeDbgLocation.h"
-#include "NodeDbgRemoteObject.h"
+#include "Location.h"
+#include "RemoteObject.h"
 #include "NodeJSONSerialisable.h"
 
 class CallFrame : public clJSONObject

@@ -98,31 +98,31 @@
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
-      <VirtualDirectory Name="DebuggerCLI">
-        <VirtualDirectory Name="NodeDbgEvents">
+      <VirtualDirectory Name="DebuggerNew">
+        <File Name="DebuggerPane.h"/>
+        <File Name="DebuggerPane.cpp"/>
+        <VirtualDirectory Name="MessageHandlers">
+          <File Name="NodeJSDebugEvent.h"/>
+          <File Name="NodeJSDebugEvent.cpp"/>
           <File Name="NodeEventManager.cpp"/>
           <File Name="NodeEventManager.h"/>
-          <File Name="NodeCLIDebuggerEvent.cpp"/>
-          <File Name="NodeCLIDebuggerEvent.h"/>
           <File Name="NodeEventDebuggerPaused.cpp"/>
           <File Name="NodeEventDebuggerPaused.h"/>
           <File Name="NodeDbgEventBase.cpp"/>
           <File Name="NodeDbgEventBase.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Protocol">
+          <File Name="RemoteObject.h"/>
+          <File Name="RemoteObject.cpp"/>
+          <File Name="Location.h"/>
+          <File Name="Location.cpp"/>
+          <File Name="CallFrame.h"/>
+          <File Name="CallFrame.cpp"/>
           <File Name="NodeJSONSerialisable.cpp"/>
           <File Name="NodeJSONSerialisable.h"/>
-          <File Name="NodeDbgCallFrame.cpp"/>
-          <File Name="NodeDbgCallFrame.h"/>
-          <File Name="NodeDbgRemoteObject.cpp"/>
-          <File Name="NodeDbgRemoteObject.h"/>
           <File Name="NodeJSDevToolsProtocol.cpp"/>
           <File Name="NodeJSDevToolsProtocol.h"/>
-          <File Name="NodeDbgLocation.h"/>
-          <File Name="NodeDbgLocation.cpp"/>
         </VirtualDirectory>
-        <File Name="NodeJSCliDebuggerPane.cpp"/>
-        <File Name="NodeJSCliDebuggerPane.h"/>
         <File Name="NodeJSCLIDebugger.h"/>
         <File Name="NodeJSCLIDebugger.cpp"/>
       </VirtualDirectory>

@@ -1,4 +1,4 @@
-#include "NodeDbgCallFrame.h"
+#include "CallFrame.h"
 #include "NodeEventDebuggerPaused.h"
 #include "NodeJSEvents.h"
 #include "event_notifier.h"

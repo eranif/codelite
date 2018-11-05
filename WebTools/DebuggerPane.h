@@ -1,7 +1,7 @@
 #ifndef NODEJSCLIDEBUGGERPANE_H
 #define NODEJSCLIDEBUGGERPANE_H
 
-#include "NodeCLIDebuggerEvent.h"
+#include "NodeJSDebugEvent.h"
 #include "WebToolsBase.h"
 #include "cl_command_event.h"
 

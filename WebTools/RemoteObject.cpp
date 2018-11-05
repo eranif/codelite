@@ -1,4 +1,4 @@
-#include "NodeDbgRemoteObject.h"
+#include "RemoteObject.h"
 
 RemoteObject::RemoteObject() {}
 

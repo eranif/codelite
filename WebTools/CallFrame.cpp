@@ -1,4 +1,4 @@
-#include "NodeDbgCallFrame.h"
+#include "CallFrame.h"
 
 CallFrame::CallFrame() {}
 

@@ -99,6 +99,8 @@
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
       <VirtualDirectory Name="DebuggerNew">
+        <File Name="NodeDebugger.h"/>
+        <File Name="NodeDebugger.cpp"/>
         <File Name="NodeFileManager.cpp"/>
         <File Name="NodeFileManager.h"/>
         <File Name="DebuggerPane.h"/>
@@ -129,8 +131,6 @@
           <File Name="NodeJSDevToolsProtocol.cpp"/>
           <File Name="NodeJSDevToolsProtocol.h"/>
         </VirtualDirectory>
-        <File Name="NodeJSCLIDebugger.h"/>
-        <File Name="NodeJSCLIDebugger.cpp"/>
       </VirtualDirectory>
       <VirtualDirectory Name="DebuggerCommon">
         <File Name="NodeJSDebuggerDlg.h"/>

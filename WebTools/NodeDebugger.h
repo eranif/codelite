@@ -12,7 +12,7 @@
 #include <vector>
 #include <wx/event.h>
 
-class NodeJSCLIDebugger : public NodeJSDebuggerBase
+class NodeDebugger : public NodeJSDebuggerBase
 {
     IProcess* m_process = nullptr;
     bool m_canInteract = false;
@@ -21,8 +21,8 @@ class NodeJSCLIDebugger : public NodeJSDebuggerBase
     NodeJSDevToolsProtocol m_protocol;
 
 public:
-    NodeJSCLIDebugger();
-    virtual ~NodeJSCLIDebugger();
+    NodeDebugger();
+    virtual ~NodeDebugger();
     bool IsRunning() const;
     bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);

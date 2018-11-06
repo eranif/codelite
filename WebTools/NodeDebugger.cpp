@@ -1,5 +1,5 @@
 #include "NodeFileManager.h"
-#include "NodeJSCLIDebugger.h"
+#include "NodeDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
@@ -27,48 +27,48 @@
     if(!NodeJSWorkspace::Get()->IsOpen()) { return; } \
     evt.Skip(false);
 
-NodeJSCLIDebugger::NodeJSCLIDebugger()
+NodeDebugger::NodeDebugger()
     : m_socket(this)
 {
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeJSCLIDebugger::OnDebugStart, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeJSCLIDebugger::OnDebugContinue, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeDebugger::OnDebugStart, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeDebugger::OnDebugContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &NodeDebugger::OnStopDebugger, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeDebugger::OnDebugNext, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
 
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
 
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeDebugger::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeDebugger::OnProcessTerminated, this);
 
-    Bind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
-    Bind(wxEVT_WEBSOCKET_ERROR, &NodeJSCLIDebugger::OnWebSocketError, this);
-    Bind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeJSCLIDebugger::OnWebSocketOnMessage, this);
-    Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeJSCLIDebugger::OnWebSocketDisconnected, this);
+    Bind(wxEVT_WEBSOCKET_CONNECTED, &NodeDebugger::OnWebSocketConnected, this);
+    Bind(wxEVT_WEBSOCKET_ERROR, &NodeDebugger::OnWebSocketError, this);
+    Bind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeDebugger::OnWebSocketOnMessage, this);
+    Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeDebugger::OnWebSocketDisconnected, this);
 }
 
-NodeJSCLIDebugger::~NodeJSCLIDebugger()
+NodeDebugger::~NodeDebugger()
 {
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &NodeJSCLIDebugger::OnDebugStart, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &NodeJSCLIDebugger::OnDebugContinue, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &NodeJSCLIDebugger::OnStopDebugger, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeJSCLIDebugger::OnDebugNext, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &NodeDebugger::OnDebugStart, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &NodeDebugger::OnDebugContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &NodeDebugger::OnStopDebugger, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeDebugger::OnDebugNext, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
 
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
-    Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
-    Unbind(wxEVT_WEBSOCKET_ERROR, &NodeJSCLIDebugger::OnWebSocketError, this);
-    Unbind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeJSCLIDebugger::OnWebSocketOnMessage, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeDebugger::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeDebugger::OnProcessTerminated, this);
+    Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeDebugger::OnWebSocketConnected, this);
+    Unbind(wxEVT_WEBSOCKET_ERROR, &NodeDebugger::OnWebSocketError, this);
+    Unbind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeDebugger::OnWebSocketOnMessage, this);
 }
 
-void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
+void NodeDebugger::OnDebugStart(clDebugEvent& event)
 {
     event.Skip();
     CHECK_COND_RET(NodeJSWorkspace::Get()->IsOpen());
@@ -92,13 +92,13 @@ void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
     }
 }
 
-void NodeJSCLIDebugger::OnDebugContinue(clDebugEvent& event)
+void NodeDebugger::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
     m_protocol.Continue(m_socket);
 }
 
-void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
+void NodeDebugger::OnStopDebugger(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
 
@@ -107,15 +107,15 @@ void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
     m_socket.Close();
 }
 
-void NodeJSCLIDebugger::OnDebugNext(clDebugEvent& event)
+void NodeDebugger::OnDebugNext(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
     m_protocol.Next(m_socket);
 }
 
-bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
+bool NodeDebugger::IsRunning() const { return m_process != NULL; }
 
-void NodeJSCLIDebugger::DoCleanup()
+void NodeDebugger::DoCleanup()
 {
     clDEBUG() << "Cleaning Nodejs debugger...";
     m_canInteract = false;
@@ -125,7 +125,7 @@ void NodeJSCLIDebugger::DoCleanup()
     NodeFileManager::Get().Clear();
 }
 
-void NodeJSCLIDebugger::OnDebugIsRunning(clDebugEvent& event)
+void NodeDebugger::OnDebugIsRunning(clDebugEvent& event)
 {
     if(IsRunning()) {
         event.SetAnswer(true);
@@ -135,7 +135,7 @@ void NodeJSCLIDebugger::OnDebugIsRunning(clDebugEvent& event)
     }
 }
 
-void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
+void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
 {
     clDEBUG() << "Nodejs process terminated";
     wxUnusedVar(event);
@@ -147,7 +147,7 @@ void NodeJSCLIDebugger::OnProcessTerminated(clProcessEvent& event)
     DoCleanup();
 }
 
-void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
+void NodeDebugger::OnProcessOutput(clProcessEvent& event)
 {
     clDEBUG1() << event.GetOutput();
     const wxString& processOutput = event.GetOutput();
@@ -170,7 +170,7 @@ void NodeJSCLIDebugger::OnProcessOutput(clProcessEvent& event)
     }
 }
 
-void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& command_args,
+void NodeDebugger::StartDebugger(const wxString& command, const wxString& command_args,
                                       const wxString& workingDirectory)
 {
 #if 0
@@ -214,9 +214,9 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
 #endif
 }
 
-bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
+bool NodeDebugger::IsCanInteract() const { return m_process && m_canInteract; }
 
-void NodeJSCLIDebugger::OnToggleBreakpoint(clDebugEvent& event)
+void NodeDebugger::OnToggleBreakpoint(clDebugEvent& event)
 {
     event.Skip();
     if(!NodeJSWorkspace::Get()->IsOpen()) { return; }
@@ -246,7 +246,7 @@ void NodeJSCLIDebugger::OnToggleBreakpoint(clDebugEvent& event)
     if(editor) { m_bptManager.SetBreakpoints(editor); }
 }
 
-void NodeJSCLIDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler)
+void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler)
 {
     // We have no breakpoint on this file/line (yet)
     m_bptManager.AddBreakpoint(file, lineNumber);
@@ -257,14 +257,14 @@ void NodeJSCLIDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bo
     wxString file_path = GetBpRelativeFilePath(bp);
 }
 
-void NodeJSCLIDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
+void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
 }
 
-void NodeJSCLIDebugger::ListBreakpoints() {}
+void NodeDebugger::ListBreakpoints() {}
 
-wxString NodeJSCLIDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
+wxString NodeDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
 {
     wxFileName fn(bp.GetFilename());
     fn.MakeRelativeTo(GetWorkingDirectory());
@@ -275,7 +275,7 @@ wxString NodeJSCLIDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) co
     return file_path;
 }
 
-void NodeJSCLIDebugger::ApplyAllBerakpoints()
+void NodeDebugger::ApplyAllBerakpoints()
 {
     const NodeJSBreakpoint::List_t& breakpoints = m_bptManager.GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(),
@@ -284,34 +284,34 @@ void NodeJSCLIDebugger::ApplyAllBerakpoints()
     ListBreakpoints();
 }
 
-void NodeJSCLIDebugger::OnWebSocketConnected(clCommandEvent& event)
+void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
 {
     // Now that the connection has been established, we can send the startup commands
     m_protocol.SendStartCommands(m_socket);
 }
 
-void NodeJSCLIDebugger::OnWebSocketError(clCommandEvent& event)
+void NodeDebugger::OnWebSocketError(clCommandEvent& event)
 {
     // an error occured!, terminate the debug session
     if(m_process) { m_process->Terminate(); }
 }
 
-void NodeJSCLIDebugger::OnWebSocketOnMessage(clCommandEvent& event)
+void NodeDebugger::OnWebSocketOnMessage(clCommandEvent& event)
 {
     // We got a message from the websocket
     clDEBUG() << "<--" << event.GetString();
     m_protocol.ProcessMessage(event.GetString(), m_socket);
 }
 
-void NodeJSCLIDebugger::OnWebSocketDisconnected(clCommandEvent& event) {}
+void NodeDebugger::OnWebSocketDisconnected(clCommandEvent& event) {}
 
-void NodeJSCLIDebugger::OnWorkspaceClosed(wxCommandEvent& event)
+void NodeDebugger::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     DoCleanup();
 }
 
-void NodeJSCLIDebugger::OnInteract(clDebugEvent& event)
+void NodeDebugger::OnInteract(clDebugEvent& event)
 {
     event.Skip();
     m_canInteract = event.IsAnswer();

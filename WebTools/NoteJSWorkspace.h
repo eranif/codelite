@@ -33,7 +33,7 @@
 #include <wx/filename.h>
 
 class NodeJSDebugger;
-class NodeJSCLIDebugger;
+class NodeDebugger;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
 {

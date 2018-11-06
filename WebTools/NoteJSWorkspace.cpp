@@ -1,4 +1,4 @@
-#include "NodeJSCLIDebugger.h"
+#include "NodeDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSExecutable.h"
 #include "NodeJSNewWorkspaceDlg.h"
@@ -370,7 +370,7 @@ int NodeJSWorkspace::GetNodeJSMajorVersion() const
 
 void NodeJSWorkspace::DoAllocateDebugger()
 {
-    m_debugger.reset(new NodeJSCLIDebugger());
+    m_debugger.reset(new NodeDebugger());
     if(GetNodeJSMajorVersion() <= 7) {
         ::wxMessageBox(
             _("Your Node.js version is tool old, please consider upgrading\nSome functionalities will not work"),

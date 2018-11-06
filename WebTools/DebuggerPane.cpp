@@ -1,7 +1,7 @@
 #include "CallFrame.h"
 #include "DebuggerPane.h"
 #include "NodeFileManager.h"
-#include "NodeJSCLIDebugger.h"
+#include "NodeDebugger.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "event_notifier.h"

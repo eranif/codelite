@@ -7,9 +7,7 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
-#include "Notebook.h"
 #include "clThemedListCtrl.h"
-#include "clThemedTreeCtrl.h"
 #include <map>
 #include <wx/artprov.h>
 #include <wx/bitmap.h>
@@ -32,7 +30,6 @@
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
-#include <wx/treectrl.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
@@ -154,45 +151,6 @@ public:
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NodeJSDebuggerDlgBase();
-};
-
-class NodeJSDebuggerPaneBase : public wxPanel
-{
-protected:
-    wxSplitterWindow* m_splitter104;
-    wxPanel* m_splitterPage112;
-    clThemedTreeCtrl* m_locals;
-    wxPanel* m_splitterPage108;
-    wxSplitterWindow* m_splitter168;
-    wxPanel* m_splitterPage172;
-    clThemedListCtrl* m_dvListCtrlCallstack;
-    wxPanel* m_splitterPage176;
-    Notebook* m_notebook;
-    wxPanel* m_panelConsoleLog;
-    wxPanel* m_panelBreakpoints;
-    wxDataViewListCtrl* m_dvListCtrlBreakpoints;
-
-protected:
-    virtual void OnLocalExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnBreakpointSelected(wxDataViewEvent& event) { event.Skip(); }
-
-public:
-    clThemedTreeCtrl* GetLocals() { return m_locals; }
-    wxPanel* GetSplitterPage112() { return m_splitterPage112; }
-    clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
-    wxPanel* GetSplitterPage172() { return m_splitterPage172; }
-    wxPanel* GetPanelConsoleLog() { return m_panelConsoleLog; }
-    wxDataViewListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
-    wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
-    Notebook* GetNotebook() { return m_notebook; }
-    wxPanel* GetSplitterPage176() { return m_splitterPage176; }
-    wxSplitterWindow* GetSplitter168() { return m_splitter168; }
-    wxPanel* GetSplitterPage108() { return m_splitterPage108; }
-    wxSplitterWindow* GetSplitter104() { return m_splitter104; }
-    NodeJSDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(500, 250), long style = wxTAB_TRAVERSAL);
-    virtual ~NodeJSDebuggerPaneBase();
 };
 
 class NodeJSNewWorkspaceDlgBase : public wxDialog

@@ -32,7 +32,7 @@
 class IEditor;
 class NodeJSBptManager : public wxEvtHandler
 {
-    NodeJSBreakpoint::List_t m_breakpoints;
+    NodeJSBreakpoint::Vec_t m_breakpoints;
     wxFileName m_workspaceFile;
 
 protected:
@@ -48,7 +48,7 @@ public:
     /**
      * @brief return breakpoints for a given file
      */
-    size_t GetBreakpointsForFile(const wxString& filename, NodeJSBreakpoint::List_t& bps) const;
+    size_t GetBreakpointsForFile(const wxString& filename, NodeJSBreakpoint::Vec_t& bps) const;
 
     /**
      * @brief set all breakpoints for the given file
@@ -72,7 +72,7 @@ public:
      */
     void AddBreakpoint(const wxFileName& filename, int line);
     
-    const NodeJSBreakpoint::List_t& GetBreakpoints() const { return m_breakpoints; }
+    const NodeJSBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
 };
 
 #endif // NODEJSDEBUGGERBREAKPOINTMANAGER_H

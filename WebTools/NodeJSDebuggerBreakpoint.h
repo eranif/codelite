@@ -26,42 +26,41 @@
 #ifndef NODEJSDEBUGGERBREAKPOINT_H
 #define NODEJSDEBUGGERBREAKPOINT_H
 
-#include <wx/string.h>
 #include "json_node.h"
-#include <list>
+#include "nSerializableObject.h"
+#include <vector>
+#include <wx/string.h>
 
-class NodeJSBreakpoint
+class NodeJSBreakpoint : public nSerializableObject
 {
     wxString m_filename;
-    int m_line;
-    int m_nodeBpID; // If applied, this will contain V8 breakpoint ID
+    int m_line = wxNOT_FOUND;
+    wxString m_nodeBpID; // If applied, this will contain V8 breakpoint ID
 
 public:
-    typedef std::list<NodeJSBreakpoint> List_t;
+    typedef std::vector<NodeJSBreakpoint> Vec_t;
 
 public:
     NodeJSBreakpoint();
     virtual ~NodeJSBreakpoint();
 
-    JSONElement ToJSON() const;
+    JSONElement ToJSON(const wxString& name) const;
     void FromJSON(const JSONElement& json);
-    
-    bool IsOk() const {
-        return !m_filename.IsEmpty() && (m_line != wxNOT_FOUND);
-    }
-    
+
+    bool IsOk() const { return !m_filename.IsEmpty() && (m_line != wxNOT_FOUND); }
+
     /**
      * @brief is this breakpoint was already applied in NodeJS?
      */
-    bool IsApplied() const { return m_nodeBpID != wxNOT_FOUND; }
+    bool IsApplied() const { return !m_nodeBpID.empty(); }
     void SetFilename(const wxString& filename) { this->m_filename = filename; }
     void SetLine(int line) { this->m_line = line; }
 
     const wxString& GetFilename() const { return m_filename; }
     int GetLine() const { return m_line; }
-    
-    void SetNodeBpID(int nodeBpID) { this->m_nodeBpID = nodeBpID; }
-    int GetNodeBpID() const { return m_nodeBpID; }
+
+    void SetNodeBpID(const wxString& nodeBpID) { this->m_nodeBpID = nodeBpID; }
+    const wxString& GetNodeBpID() const { return m_nodeBpID; }
 };
 
 #endif // NODEJSDEBUGGERBREAKPOINT_H

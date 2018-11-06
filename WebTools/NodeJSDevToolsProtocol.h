@@ -2,18 +2,20 @@
 #define NODEJSDEVTOOLSPROTOCOL_H
 
 #include "MessageManager.h"
+#include "NodeJSDebuggerBreakpoint.h"
 #include "SocketAPI/clWebSocketClient.h"
 #include <unordered_map>
 #include <wx/arrstr.h>
 
-typedef std::function<void(const wxString&)> CommandHandlerFunc_t;
+class NodeDebugger;
+typedef std::function<void(const JSONElement&)> ResultFunc_t;
 class CommandHandler
 {
 public:
-    CommandHandlerFunc_t action = nullptr;
+    ResultFunc_t action = nullptr;
     long m_commandID = wxNOT_FOUND;
-
-    CommandHandler(const wxString& command, long commandID, const CommandHandlerFunc_t& func)
+    CommandHandler() {}
+    CommandHandler(long commandID, const ResultFunc_t& func)
         : action(func)
         , m_commandID(commandID)
     {
@@ -22,24 +24,28 @@ public:
 
 class NodeJSDevToolsProtocol
 {
+    NodeDebugger* m_debugger = nullptr;
     long message_id = 0;
     MessageManager m_handlers;
     std::unordered_map<long, CommandHandler> m_waitingReplyCommands;
 
 protected:
-    void SendSimpleCommand(clWebSocketClient& socket, const wxString& command);
+    void SendSimpleCommand(clWebSocketClient& socket, const wxString& command,
+                           const JSONElement& params = JSONElement(NULL));
 
 public:
-    NodeJSDevToolsProtocol();
+    NodeJSDevToolsProtocol(NodeDebugger* debugger);
     virtual ~NodeJSDevToolsProtocol();
     void Clear();
-    
+
     void SendStartCommands(clWebSocketClient& socket);
     void ProcessMessage(const wxString& msg, clWebSocketClient& socket);
     void Next(clWebSocketClient& socket);
     void StepIn(clWebSocketClient& socket);
     void StepOut(clWebSocketClient& socket);
     void Continue(clWebSocketClient& socket);
+    void SetBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
+    void DeleteBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
 };
 
 #endif // NODEJSDEVTOOLSPROTOCOL_H

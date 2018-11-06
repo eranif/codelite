@@ -29,6 +29,7 @@
 
 NodeDebugger::NodeDebugger()
     : m_socket(this)
+    , m_protocol(this)
 {
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeDebugger::OnDebugContinue, this);
@@ -207,12 +208,6 @@ void NodeDebugger::StartDebugger(const wxString& command, const wxString& comman
     clDebugEvent eventStart(wxEVT_NODEJS_DEBUGGER_STARTED);
     eventStart.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(eventStart);
-
-    // Apply all breakpoints
-    ApplyAllBerakpoints();
-
-    // request the current backtrace
-    Callstack();
 #endif
 }
 
@@ -254,14 +249,13 @@ void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bool us
     m_bptManager.AddBreakpoint(file, lineNumber);
     const NodeJSBreakpoint& bp = m_bptManager.GetBreakpoint(file, lineNumber);
     if(!bp.IsOk()) { return; }
-
-    // NodeJS debugger likes his file path in a certain format (relative, all backslashes escaped)
-    wxString file_path = GetBpRelativeFilePath(bp);
+    m_protocol.SetBreakpoint(m_socket, bp);
 }
 
 void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
+    m_protocol.DeleteBreakpoint(m_socket, bp);
 }
 
 void NodeDebugger::ListBreakpoints() {}
@@ -279,7 +273,7 @@ wxString NodeDebugger::GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const
 
 void NodeDebugger::ApplyAllBerakpoints()
 {
-    const NodeJSBreakpoint::List_t& breakpoints = m_bptManager.GetBreakpoints();
+    const NodeJSBreakpoint::Vec_t& breakpoints = m_bptManager.GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(),
                   [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine(), true); });
     // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
@@ -290,6 +284,9 @@ void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
 {
     // Now that the connection has been established, we can send the startup commands
     m_protocol.SendStartCommands(m_socket);
+    
+    // Apply all breakpoints
+    ApplyAllBerakpoints();
 }
 
 void NodeDebugger::OnWebSocketError(clCommandEvent& event)

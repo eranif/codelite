@@ -1,17 +1,15 @@
 #include "NodeJSDebuggerBreakpointManager.h"
-#include "globals.h"
-#include "imanager.h"
-#include "ieditor.h"
-#include "bookmark_manager.h"
-#include "codelite_events.h"
-#include "event_notifier.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include "NoteJSWorkspace.h"
 #include "bookmark_manager.h"
-#include "macros.h"
-#include <wx/stc/stc.h>
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "globals.h"
 #include "ieditor.h"
+#include "imanager.h"
+#include "macros.h"
 #include <algorithm>
+#include <wx/stc/stc.h>
 
 NodeJSBptManager::NodeJSBptManager()
 {
@@ -35,9 +33,9 @@ void NodeJSBptManager::OnEditorChanged(wxCommandEvent& e)
     if(clGetManager()) {
         IEditor* editor = clGetManager()->GetActiveEditor();
         if(editor) {
-            NodeJSBreakpoint::List_t bps;
+            NodeJSBreakpoint::Vec_t bps;
             if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
-                NodeJSBreakpoint::List_t::iterator iter = bps.begin();
+                NodeJSBreakpoint::Vec_t::iterator iter = bps.begin();
                 for(; iter != bps.end(); ++iter) {
                     int markerMask = editor->GetCtrl()->MarkerGet(iter->GetLine() - 1);
                     if(!(markerMask & mmt_breakpoint)) {
@@ -51,14 +49,12 @@ void NodeJSBptManager::OnEditorChanged(wxCommandEvent& e)
     }
 }
 
-size_t NodeJSBptManager::GetBreakpointsForFile(const wxString& filename, NodeJSBreakpoint::List_t& bps) const
+size_t NodeJSBptManager::GetBreakpointsForFile(const wxString& filename, NodeJSBreakpoint::Vec_t& bps) const
 {
     bps.clear();
-    NodeJSBreakpoint::List_t::const_iterator iter = m_breakpoints.begin();
+    NodeJSBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
     for(; iter != m_breakpoints.end(); ++iter) {
-        if(iter->GetFilename() == filename) {
-            bps.push_back(*iter);
-        }
+        if(iter->GetFilename() == filename) { bps.push_back(*iter); }
     }
     return bps.size();
 }
@@ -79,7 +75,7 @@ void NodeJSBptManager::OnWorkspaceOpened(wxCommandEvent& event)
 {
     event.Skip();
     m_workspaceFile.Clear();
-    
+
     wxFileName fileName = event.GetString();
     if(FileExtManager::GetType(fileName.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
         m_workspaceFile = fileName;
@@ -93,9 +89,9 @@ void NodeJSBptManager::SetBreakpoints(IEditor* editor)
     CHECK_PTR_RET(editor);
     editor->GetCtrl()->MarkerDeleteAll(smt_breakpoint);
 
-    NodeJSBreakpoint::List_t bps;
+    NodeJSBreakpoint::Vec_t bps;
     GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps);
-    NodeJSBreakpoint::List_t::const_iterator iter = bps.begin();
+    NodeJSBreakpoint::Vec_t::const_iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
         editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
     }
@@ -103,7 +99,7 @@ void NodeJSBptManager::SetBreakpoints(IEditor* editor)
 
 void NodeJSBptManager::AddBreakpoint(const wxFileName& filename, int line)
 {
-    NodeJSBreakpoint::List_t::const_iterator iter =
+    NodeJSBreakpoint::Vec_t::const_iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
             if(bp.GetFilename() == filename.GetFullPath() && bp.GetLine() == line) return true;
             return false;
@@ -119,19 +115,17 @@ void NodeJSBptManager::AddBreakpoint(const wxFileName& filename, int line)
 
 void NodeJSBptManager::DeleteBreakpoint(const wxFileName& filename, int line)
 {
-    NodeJSBreakpoint::List_t::iterator iter =
+    NodeJSBreakpoint::Vec_t::iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
             if(bp.GetFilename() == filename.GetFullPath() && bp.GetLine() == line) return true;
             return false;
         });
-    if(iter != m_breakpoints.end()) {
-        m_breakpoints.erase(iter);
-    }
+    if(iter != m_breakpoints.end()) { m_breakpoints.erase(iter); }
 }
 
 bool NodeJSBptManager::HasBreakpoint(const wxFileName& filename, int line) const
 {
-    NodeJSBreakpoint::List_t::const_iterator iter =
+    NodeJSBreakpoint::Vec_t::const_iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
             if(bp.GetFilename() == filename.GetFullPath() && bp.GetLine() == line) return true;
             return false;
@@ -143,14 +137,12 @@ const NodeJSBreakpoint& NodeJSBptManager::GetBreakpoint(const wxFileName& filena
 {
     static NodeJSBreakpoint nullBreakpoint;
 
-    NodeJSBreakpoint::List_t::const_iterator iter =
+    NodeJSBreakpoint::Vec_t::const_iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
             if(bp.GetFilename() == filename.GetFullPath() && bp.GetLine() == line) return true;
             return false;
         });
-    if(m_breakpoints.end() == iter) {
-        return nullBreakpoint;
-    }
+    if(m_breakpoints.end() == iter) { return nullBreakpoint; }
     return *iter;
 }
 
@@ -158,14 +150,12 @@ NodeJSBreakpoint& NodeJSBptManager::GetBreakpoint(const wxFileName& filename, in
 {
     static NodeJSBreakpoint nullBreakpoint;
 
-    NodeJSBreakpoint::List_t::iterator iter =
+    NodeJSBreakpoint::Vec_t::iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
             if(bp.GetFilename() == filename.GetFullPath() && bp.GetLine() == line) return true;
             return false;
         });
-    if(m_breakpoints.end() == iter) {
-        return nullBreakpoint;
-    }
+    if(m_breakpoints.end() == iter) { return nullBreakpoint; }
     return *iter;
 }
 

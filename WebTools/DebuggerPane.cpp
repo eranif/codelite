@@ -12,7 +12,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
 {
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
 }
@@ -20,7 +20,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
 DebuggerPane::~DebuggerPane()
 {
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
 }

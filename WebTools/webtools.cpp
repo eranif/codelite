@@ -86,8 +86,8 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
 
     // Debugger related
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
@@ -130,8 +130,8 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     wxTheApp->Unbind(wxEVT_MENU, &WebTools::OnCommentLine, this, XRCID("comment_line"));
@@ -365,7 +365,7 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
     clDEBUG1() << "Saving NodeJS debugger perspective";
 
     wxString layoutFileName = "nodejs.layout";
-    if(event.GetEventType() == wxEVT_NODEJS_CLI_DEBUGGER_STOPPED) { layoutFileName = "nodejs_cli.layout"; }
+    if(event.GetEventType() == wxEVT_NODEJS_DEBUGGER_STOPPED) { layoutFileName = "nodejs_cli.layout"; }
     wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), layoutFileName);
     fnNodeJSLayout.AppendDir("config");
     FileUtils::WriteFileContent(fnNodeJSLayout, m_mgr->GetDockingManager()->SavePerspective());

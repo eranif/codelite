@@ -39,6 +39,7 @@ NodeDebugger::NodeDebugger()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
 
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_FINISHED, &NodeDebugger::OnStopDebugger, this);
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeDebugger::OnProcessTerminated, this);
@@ -60,6 +61,7 @@ NodeDebugger::~NodeDebugger()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
 
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_FINISHED, &NodeDebugger::OnStopDebugger, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeDebugger::OnProcessTerminated, this);
@@ -141,7 +143,7 @@ void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
     wxUnusedVar(event);
     wxDELETE(m_process);
 
-    clDebugEvent e(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED);
+    clDebugEvent e(wxEVT_NODEJS_DEBUGGER_STOPPED);
     e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(e);
     DoCleanup();
@@ -202,7 +204,7 @@ void NodeDebugger::StartDebugger(const wxString& command, const wxString& comman
     // Keep the working directory
     m_workingDirectory = workingDirectory;
 
-    clDebugEvent eventStart(wxEVT_NODEJS_CLI_DEBUGGER_STARTED);
+    clDebugEvent eventStart(wxEVT_NODEJS_DEBUGGER_STARTED);
     eventStart.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(eventStart);
 

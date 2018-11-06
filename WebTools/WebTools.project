@@ -106,6 +106,8 @@
         <File Name="DebuggerPane.h"/>
         <File Name="DebuggerPane.cpp"/>
         <VirtualDirectory Name="MessageHandlers">
+          <File Name="RuntimeExecutionContextDestroyed.cpp"/>
+          <File Name="RuntimeExecutionContextDestroyed.h"/>
           <File Name="clDebugCallFramesEvent.h"/>
           <File Name="clDebugCallFramesEvent.cpp"/>
           <File Name="DebuggerResumed.cpp"/>

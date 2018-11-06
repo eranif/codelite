@@ -2,12 +2,14 @@
 #include "DebuggerResumed.h"
 #include "DebuggerScriptParsed.h"
 #include "MessageManager.h"
+#include "RuntimeExecutionContextDestroyed.h"
 
 MessageManager::MessageManager()
 {
     AddHandler(NodeMessageBase::Ptr_t(new DebuggerPaused()));
     AddHandler(NodeMessageBase::Ptr_t(new DebuggerScriptParsed()));
     AddHandler(NodeMessageBase::Ptr_t(new DebuggerResumed()));
+    AddHandler(NodeMessageBase::Ptr_t(new RuntimeExecutionContextDestroyed()));
 }
 
 MessageManager::~MessageManager() {}

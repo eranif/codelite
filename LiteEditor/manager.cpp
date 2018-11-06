@@ -1344,6 +1344,11 @@ void Manager::GetProjectFiles(const wxString& project, wxArrayString& files)
 
 wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive /*= false*/)
 {
+    wxString fPFN(fullPathFileName);
+    return GetProjectNameByFile(fPFN, caseSensitive);
+}
+wxString Manager::GetProjectNameByFile(wxString& fullPathFileName, bool caseSensitive /*= false*/)
+{
     wxArrayString projects;
     GetProjectList(projects);
 
@@ -1352,11 +1357,18 @@ wxString Manager::GetProjectNameByFile(const wxString& fullPathFileName, bool ca
     wxString linkDestination = CLRealPath(fullPathFileName);
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
+        // The second call copes with the searched-for file being a symlink
         if(proj->IsFileExist(fullPathFileName) || proj->IsFileExist(linkDestination)) {
             return proj->GetName();
-        } else {
-            // TODO:: add support for case insensitive search in project
         }
+#if defined(__WXGTK__)
+        wxString fileNameInProject; // Try again, checking if the _project_ filePath is a symlink
+        if(proj->IsFileExist(fullPathFileName, fileNameInProject)) {
+            fullPathFileName = fileNameInProject; // Hopefully the calling function will now use this
+            return proj->GetName();
+        }
+#endif
+        // TODO:: add support for case insensitive search in project
     }
 
     return wxEmptyString;

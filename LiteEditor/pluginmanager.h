@@ -121,6 +121,7 @@ public:
     void StopAndClearQueue();
     bool IsBuildInProgress() const;
     bool IsBuildEndedSuccessfully() const;
+    wxString GetProjectNameByFile(wxString& fullPathFileName);
     wxString GetProjectNameByFile(const wxString& fullPathFileName);
     BuildManager* GetBuildManager();
     BuildSettingsConfig* GetBuildSettingsConfigManager();

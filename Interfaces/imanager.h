@@ -453,6 +453,7 @@ public:
      * @return project name or wxEmptyString if the search failed
      */
     virtual wxString GetProjectNameByFile(const wxString& fullPathFileName) = 0;
+    virtual wxString GetProjectNameByFile(wxString& fullPathFileName) = 0;
 
     /**
      * @brief accessor to singleton object in the application

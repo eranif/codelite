@@ -572,8 +572,13 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
 
     wxString projName = projectName;
     if(projName.IsEmpty()) {
+        wxString filePath(fileName.GetFullPath());
         // try to match a project name to the file. otherwise, CC may not work
-        projName = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
+        projName = ManagerST::Get()->GetProjectNameByFile(filePath);
+        // If (in Linux) the project contains a *symlink* this filepath, not the realpath,
+        // filePath will have been changed by GetProjectNameByFile() to that symlink.
+        // So update fileName in case
+        fileName = wxFileName(filePath);
     }
 
     clEditor* editor = GetActiveEditor(true);

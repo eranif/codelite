@@ -624,6 +624,13 @@ public:
      * Return true if a file already exist under the project
      */
     bool IsFileExist(const wxString& fileName);
+    /**
+     * \brief See if filePath exists in the project as a symlink
+     * \param filePath the filepath to match
+     * \param fileNameInProject will be filled with any matching name
+     * \return true if a matching name was found
+     */
+    bool IsFileExist(const wxString& filePath, wxString& fileNameInProject);
 
     /**
      * \brief return true of the project was modified (in terms of files removed/added)

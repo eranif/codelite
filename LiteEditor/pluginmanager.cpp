@@ -524,6 +524,11 @@ bool PluginManager::IsBuildInProgress() const { return ManagerST::Get()->IsBuild
 
 bool PluginManager::IsBuildEndedSuccessfully() const { return ManagerST::Get()->IsBuildEndedSuccessfully(); }
 
+wxString PluginManager::GetProjectNameByFile(wxString& fullPathFileName)
+{
+    return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);
+}
+
 wxString PluginManager::GetProjectNameByFile(const wxString& fullPathFileName)
 {
     return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);

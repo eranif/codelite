@@ -1,6 +1,9 @@
 #include "NodeDebugger.h"
 #include "NodeJSDevToolsProtocol.h"
+#include "NodeJSEvents.h"
 #include "SocketAPI/clSocketBase.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "json_node.h"
 
@@ -48,6 +51,8 @@ void NodeJSDevToolsProtocol::ProcessMessage(const wxString& msg, clWebSocketClie
             if(m_waitingReplyCommands.count(replyId)) {
                 CommandHandler& handler = m_waitingReplyCommands[replyId];
                 if(handler.action) { handler.action(rootElement.namedObject("result")); }
+                // Delete the handler
+                m_waitingReplyCommands.erase(replyId);
             }
         }
     }
@@ -79,12 +84,16 @@ void NodeJSDevToolsProtocol::SetBreakpoint(clWebSocketClient& socket, const Node
         params.addProperty("lineNumber", bp.GetLine() - 1);
         // Send the command
         SendSimpleCommand(socket, "Debugger.setBreakpointByUrl", params);
-        
+
         // Register a handler to handle this command when it returns
         CommandHandler handler(message_id, [&](const JSONElement& result) {
             wxString breakpointId = result.namedObject("breakpointId").toString();
             NodeJSBreakpoint& b = m_debugger->GetBreakpointsMgr()->GetBreakpoint(bp.GetFilename(), bp.GetLine());
-            if(b.IsOk()) { b.SetNodeBpID(breakpointId); }
+            if(b.IsOk()) {
+                b.SetNodeBpID(breakpointId);
+                clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+                EventNotifier::Get()->AddPendingEvent(bpEvent);
+            }
         });
         m_waitingReplyCommands.insert({ handler.m_commandID, handler });
     } catch(clSocketException& e) {
@@ -92,4 +101,21 @@ void NodeJSDevToolsProtocol::SetBreakpoint(clWebSocketClient& socket, const Node
     }
 }
 
-void NodeJSDevToolsProtocol::DeleteBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp) {}
+void NodeJSDevToolsProtocol::DeleteBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp)
+{
+    try {
+        JSONElement params = JSONElement::createObject("params");
+        params.addProperty("breakpointId", bp.GetNodeBpID());
+        // Send the command
+        SendSimpleCommand(socket, "Debugger.removeBreakpoint", params);
+
+        // Register a handler to handle this command when it returns
+        CommandHandler handler(message_id, [&](const JSONElement& result) {
+            clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+            EventNotifier::Get()->AddPendingEvent(bpEvent);
+        });
+        m_waitingReplyCommands.insert({ handler.m_commandID, handler });
+    } catch(clSocketException& e) {
+        clWARNING() << e.what();
+    }
+}

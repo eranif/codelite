@@ -47,6 +47,12 @@ public:
     void SetDebuggerMarker(IEditor* editor, int lineno);
     void SetDebuggerMarker(const wxString& path, int lineno);
     void ClearDebuggerMarker();
+    
+    /**
+     * @brief pass command to the 
+     * @param command
+     */
+    virtual void SendToDebuggee(const wxString& command) {}
 };
 
 #endif // NODEJSDEBUGGERBASE_H

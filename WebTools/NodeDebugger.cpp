@@ -1,5 +1,5 @@
-#include "NodeFileManager.h"
 #include "NodeDebugger.h"
+#include "NodeFileManager.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
@@ -126,6 +126,10 @@ void NodeDebugger::DoCleanup()
     if(m_process) { m_process->Terminate(); }
     m_socket.Close();
     NodeFileManager::Get().Clear();
+    m_protocol.Clear();
+    
+    // Serialise the breakpoints
+    m_bptManager.Save();
 }
 
 void NodeDebugger::OnDebugIsRunning(clDebugEvent& event)
@@ -153,6 +157,11 @@ void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
 void NodeDebugger::OnProcessOutput(clProcessEvent& event)
 {
     clDEBUG1() << event.GetOutput();
+    {
+        clDebugEvent e(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE);
+        e.SetString(event.GetOutput());
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
     const wxString& processOutput = event.GetOutput();
     int where = processOutput.Find("ws://");
     if(where != wxNOT_FOUND) {
@@ -174,7 +183,7 @@ void NodeDebugger::OnProcessOutput(clProcessEvent& event)
 }
 
 void NodeDebugger::StartDebugger(const wxString& command, const wxString& command_args,
-                                      const wxString& workingDirectory)
+                                 const wxString& workingDirectory)
 {
 #if 0
     if(::wxMessageBox(_("The old debugger protocol is not supported by your current Node.js version.\nWould you "
@@ -226,10 +235,10 @@ void NodeDebugger::OnToggleBreakpoint(clDebugEvent& event)
             NodeJSBreakpoint bp = m_bptManager.GetBreakpoint(event.GetFileName(), event.GetInt());
             if(bp.IsOk()) {
                 DeleteBreakpoint(bp);
+
             } else {
                 SetBreakpoint(event.GetFileName(), event.GetInt());
             }
-            // Update the UI
         }
     } else {
 
@@ -243,18 +252,20 @@ void NodeDebugger::OnToggleBreakpoint(clDebugEvent& event)
     if(editor) { m_bptManager.SetBreakpoints(editor); }
 }
 
-void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler)
+void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber)
 {
     // We have no breakpoint on this file/line (yet)
     m_bptManager.AddBreakpoint(file, lineNumber);
     const NodeJSBreakpoint& bp = m_bptManager.GetBreakpoint(file, lineNumber);
     if(!bp.IsOk()) { return; }
     m_protocol.SetBreakpoint(m_socket, bp);
+    m_bptManager.AddBreakpoint(file.GetFullPath(), lineNumber);
 }
 
 void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
+    m_bptManager.DeleteBreakpoint(bp.GetFilename(), bp.GetLine());
     m_protocol.DeleteBreakpoint(m_socket, bp);
 }
 
@@ -275,16 +286,16 @@ void NodeDebugger::ApplyAllBerakpoints()
 {
     const NodeJSBreakpoint::Vec_t& breakpoints = m_bptManager.GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(),
-                  [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine(), true); });
-    // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
-    ListBreakpoints();
+                  [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine()); });
+    clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+    EventNotifier::Get()->AddPendingEvent(bpEvent);
 }
 
 void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
 {
     // Now that the connection has been established, we can send the startup commands
     m_protocol.SendStartCommands(m_socket);
-    
+
     // Apply all breakpoints
     ApplyAllBerakpoints();
 }
@@ -314,4 +325,9 @@ void NodeDebugger::OnInteract(clDebugEvent& event)
 {
     event.Skip();
     m_canInteract = event.IsAnswer();
+}
+
+void NodeDebugger::SendToDebuggee(const wxString& command)
+{
+    if(m_process) { m_process->Write(command); }
 }

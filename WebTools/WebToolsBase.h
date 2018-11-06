@@ -7,7 +7,9 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
+#include "Notebook.h"
 #include "clThemedListCtrl.h"
+#include "clToolBar.h"
 #include <map>
 #include <wx/artprov.h>
 #include <wx/bitmap.h>
@@ -30,6 +32,7 @@
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
+#include <wx/toolbar.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
@@ -216,11 +219,21 @@ protected:
     wxPanel* m_splitterPageCallstack;
     clThemedListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_splitterPageWatches;
+    Notebook* m_notebook;
+    wxPanel* m_panelBreakpoints;
+    clToolBar* m_tbBreakpoints;
+    clThemedListCtrl* m_dvListCtrlBreakpoints;
+    wxPanel* m_panelConsole;
 
 protected:
 public:
     clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
+    clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
+    clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
+    wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
+    wxPanel* GetPanelConsole() { return m_panelConsole; }
+    Notebook* GetNotebook() { return m_notebook; }
     wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }
     NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

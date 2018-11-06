@@ -29,7 +29,8 @@ public:
     void ListBreakpoints();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
-
+    void SendToDebuggee(const wxString& command);
+    
 protected:
     void OnDebugStart(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);
@@ -47,7 +48,7 @@ protected:
     void OnInteract(clDebugEvent& event);
     // Helpers
     void DoCleanup();
-    void SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler = false);
+    void SetBreakpoint(const wxFileName& file, int lineNumber);
     void DeleteBreakpoint(const NodeJSBreakpoint& bp);
     wxString GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const;
     void ApplyAllBerakpoints();

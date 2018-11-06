@@ -600,6 +600,45 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                         wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter271->SplitVertically(m_splitterPageCallstack, m_splitterPageWatches, 0);
 
+    wxBoxSizer* boxSizer285 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageWatches->SetSizer(boxSizer285);
+
+    m_notebook = new Notebook(m_splitterPageWatches, wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPageWatches, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+
+    boxSizer285->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelBreakpoints =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), true);
+
+    wxBoxSizer* boxSizer293 = new wxBoxSizer(wxVERTICAL);
+    m_panelBreakpoints->SetSizer(boxSizer293);
+
+    m_tbBreakpoints = new clToolBar(m_panelBreakpoints, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_panelBreakpoints, wxSize(-1, -1)), wxTB_FLAT);
+    m_tbBreakpoints->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer293->Add(m_tbBreakpoints, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlBreakpoints =
+        new clThemedListCtrl(m_panelBreakpoints, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_panelBreakpoints, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer293->Add(m_dvListCtrlBreakpoints, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_panelConsole =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsole, _("Console"), false);
+
+    wxBoxSizer* boxSizer295 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsole->SetSizer(boxSizer295);
+
     SetName(wxT("NodeJSCliDebuggerPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }

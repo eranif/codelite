@@ -100,6 +100,7 @@ protected:
     void RestoreSession();
 
     NodeJSWorkspace(); // default ctor is private
+    
 
 public:
     virtual wxString GetActiveProjectName() const;
@@ -112,6 +113,10 @@ public:
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();
 
+    /**
+     * @brief create a debugger instance for this workspace
+     */
+    void AllocateDebugger();
     static NodeJSWorkspace* Get();
     static void Free();
 

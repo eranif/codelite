@@ -224,7 +224,10 @@ void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
     }
 }
 
-void WebTools::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
+void WebTools::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+}
 
 void WebTools::OnEditorChanged(wxCommandEvent& event)
 {
@@ -235,14 +238,16 @@ void WebTools::OnEditorChanged(wxCommandEvent& event)
 void WebTools::OnSettings(wxCommandEvent& event)
 {
     WebToolsSettings settings(m_mgr->GetTheApp()->GetTopWindow());
-    settings.ShowModal();
-    if(m_jsCodeComplete) {
-        m_jsCodeComplete->Reload();
-        m_jsCodeComplete->ClearFatalError();
-    }
-    if(m_xmlCodeComplete) {
-        m_xmlCodeComplete->Reload();
-        m_jsCodeComplete->ClearFatalError();
+    if(settings.ShowModal() == wxID_OK) {
+        NodeJSWorkspace::Get()->AllocateDebugger();
+        if(m_jsCodeComplete) {
+            m_jsCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
+        }
+        if(m_xmlCodeComplete) {
+            m_xmlCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
+        }
     }
 }
 

@@ -32,7 +32,6 @@ NodeJSWorkspace::NodeJSWorkspace()
     , m_showWelcomePage(false)
 {
     SetWorkspaceType("Node.js");
-    DoAllocateDebugger();
 
     m_view = new NodeJSWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
@@ -370,11 +369,12 @@ int NodeJSWorkspace::GetNodeJSMajorVersion() const
 
 void NodeJSWorkspace::DoAllocateDebugger()
 {
-    m_debugger.reset(new NodeDebugger());
-    if(GetNodeJSMajorVersion() <= 7) {
-        ::wxMessageBox(
-            _("Your Node.js version is tool old, please consider upgrading\nSome functionalities will not work"),
-            _("CodeLite"), wxICON_WARNING);
+    if((GetNodeJSMajorVersion() >= 8)) {
+        clDEBUG() << "Successfully allocated new JS debugger";
+        m_debugger.reset(new NodeDebugger());
+    } else {
+        m_debugger.reset();
+        clWARNING() << "Your Nodejs version is lower than v8, unable to allocate debugger";
     }
 }
 
@@ -386,7 +386,7 @@ void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
             event.Skip();
         } else {
             // We don't have a proper debugger, however, we dont want CodeLite to start the wrong debugger
-            ::wxMessageBox(_("Could not instantiate a debugger for your NodeJS version!"));
+            ::wxMessageBox(_("Could not instantiate a debugger for your NodeJS version!"), "CodeLite", wxICON_WARNING);
             event.Skip(false);
         }
     } else {
@@ -395,3 +395,5 @@ void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
 }
 
 NodeJSDebuggerBase::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }
+
+void NodeJSWorkspace::AllocateDebugger() { DoAllocateDebugger(); }

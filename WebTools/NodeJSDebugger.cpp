@@ -413,7 +413,8 @@ void NodeJSDebugger::SelectFrame(int frameId)
 
 void NodeJSDebugger::SetCanInteract(bool canInteract)
 {
-    clDebugEvent event(canInteract ? wxEVT_NODEJS_DEBUGGER_CAN_INTERACT : wxEVT_NODEJS_DEBUGGER_LOST_INTERACT);
+    clDebugEvent event(wxEVT_NODEJS_DEBUGGER_INTERACT);
+    event.SetAnswer(canInteract);
     EventNotifier::Get()->ProcessEvent(event);
     this->m_canInteract = canInteract;
     if(!canInteract) { ClearDebuggerMarker(); }

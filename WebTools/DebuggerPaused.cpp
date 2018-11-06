@@ -25,8 +25,9 @@ void DebuggerPaused::Process(const JSONElement& json)
     }
 
     // Notify the UI that the debugger paused
-    clDebugEvent pauseEvent(wxEVT_NODEJS_DEBUGGER_CAN_INTERACT);
+    clDebugEvent pauseEvent(wxEVT_NODEJS_DEBUGGER_INTERACT);
     pauseEvent.SetString(m_stopReason);
+    pauseEvent.SetAnswer(true);
     EventNotifier::Get()->ProcessEvent(pauseEvent);
 
     // Notify the UI to update the view

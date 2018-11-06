@@ -12,28 +12,10 @@
 #include <vector>
 #include <wx/event.h>
 
-typedef std::function<void(const wxString&)> CommandHandlerFunc_t;
-class NodeJSCliCommandHandler
-{
-public:
-    wxString m_commandText;
-    CommandHandlerFunc_t action = nullptr;
-    long m_commandID = wxNOT_FOUND;
-
-    NodeJSCliCommandHandler(const wxString& command, long commandID, const CommandHandlerFunc_t& func)
-        : m_commandText(command)
-        , action(func)
-        , m_commandID(commandID)
-    {
-    }
-};
-
 class NodeJSCLIDebugger : public NodeJSDebuggerBase
 {
     IProcess* m_process = nullptr;
     bool m_canInteract = false;
-    std::vector<NodeJSCliCommandHandler> m_commands;
-    std::unordered_map<long, NodeJSCliCommandHandler> m_waitingReplyCommands;
     wxString m_workingDirectory;
     clWebSocketClient m_socket;
     NodeJSDevToolsProtocol m_protocol;
@@ -45,10 +27,8 @@ public:
     bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
     void ListBreakpoints();
-    void Callstack();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
-    long GetCommandId() const;
 
 protected:
     void OnDebugStart(clDebugEvent& event);
@@ -64,11 +44,9 @@ protected:
     void OnWebSocketOnMessage(clCommandEvent& event);
     void OnWebSocketDisconnected(clCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
-    
+    void OnInteract(clDebugEvent& event);
     // Helpers
     void DoCleanup();
-    void ProcessQueue();
-    void PushCommand(const NodeJSCliCommandHandler& commandHandler);
     void SetBreakpoint(const wxFileName& file, int lineNumber, bool useVoidHandler = false);
     void DeleteBreakpoint(const NodeJSBreakpoint& bp);
     wxString GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const;

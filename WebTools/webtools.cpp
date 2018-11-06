@@ -396,7 +396,9 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
 
     clDEBUG1() << "Saving NodeJS debugger perspective";
 
-    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
+    wxString layoutFileName = "nodejs.layout";
+    if(event.GetEventType() == wxEVT_NODEJS_CLI_DEBUGGER_STOPPED) { layoutFileName = "nodejs_cli.layout"; }
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), layoutFileName);
     fnNodeJSLayout.AppendDir("config");
     FileUtils::WriteFileContent(fnNodeJSLayout, m_mgr->GetDockingManager()->SavePerspective());
 

@@ -730,7 +730,9 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                             wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlCallstack->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlCallstack->AppendTextColumn(_("Location"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrlCallstack->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                            wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
     m_splitterPageWatches = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);

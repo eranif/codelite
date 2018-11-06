@@ -36,6 +36,8 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
+    
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
@@ -55,7 +57,9 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
-
+    
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
+    
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
     Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);
@@ -90,12 +94,7 @@ void NodeJSCLIDebugger::OnDebugStart(clDebugEvent& event)
 void NodeJSCLIDebugger::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-
-    NodeJSCliCommandHandler commandHandler("cont", GetCommandId(), [&](const wxString& outputString) {
-        // trigger a 'Callstack' call
-        Callstack();
-    });
-    PushCommand(commandHandler);
+    m_protocol.Continue(m_socket);
 }
 
 void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
@@ -110,11 +109,7 @@ void NodeJSCLIDebugger::OnStopDebugger(clDebugEvent& event)
 void NodeJSCLIDebugger::OnDebugNext(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-    NodeJSCliCommandHandler commandHandler("next", GetCommandId(), [&](const wxString& outputString) {
-        // trigger a 'Callstack' call
-        Callstack();
-    });
-    PushCommand(commandHandler);
+    m_protocol.Next(m_socket);
 }
 
 bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
@@ -122,10 +117,8 @@ bool NodeJSCLIDebugger::IsRunning() const { return m_process != NULL; }
 void NodeJSCLIDebugger::DoCleanup()
 {
     clDEBUG() << "Cleaning Nodejs debugger...";
-    m_commands.clear();
     m_canInteract = false;
     m_workingDirectory.Clear();
-    m_waitingReplyCommands.clear();
     if(m_process) { m_process->Terminate(); }
     m_socket.Close();
     NodeFileManager::Get().Clear();
@@ -220,17 +213,7 @@ void NodeJSCLIDebugger::StartDebugger(const wxString& command, const wxString& c
 #endif
 }
 
-void NodeJSCLIDebugger::Callstack() {}
-
-void NodeJSCLIDebugger::ProcessQueue() {}
-
-static long commandID = 0;
-
-void NodeJSCLIDebugger::PushCommand(const NodeJSCliCommandHandler& commandHandler) {}
-
 bool NodeJSCLIDebugger::IsCanInteract() const { return m_process && m_canInteract; }
-
-long NodeJSCLIDebugger::GetCommandId() const { return commandID; }
 
 void NodeJSCLIDebugger::OnToggleBreakpoint(clDebugEvent& event)
 {
@@ -271,34 +254,11 @@ void NodeJSCLIDebugger::SetBreakpoint(const wxFileName& file, int lineNumber, bo
 
     // NodeJS debugger likes his file path in a certain format (relative, all backslashes escaped)
     wxString file_path = GetBpRelativeFilePath(bp);
-
-    wxString command;
-    command << "setBreakpoint(\"" << file_path << "\"," << bp.GetLine() << ")";
-    CommandHandlerFunc_t callback = nullptr;
-    if(!useVoidHandler) {
-        callback = [&](const wxString& outputString) {
-            wxUnusedVar(outputString);
-            ListBreakpoints();
-        };
-    }
-    NodeJSCliCommandHandler commandHandler(command, GetCommandId(), callback);
-    PushCommand(commandHandler);
 }
 
 void NodeJSCLIDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
-
-    wxString command;
-    wxString file_path = GetBpRelativeFilePath(bp);
-    command << "clearBreakpoint(\"" << file_path << "\"," << bp.GetLine() << ")";
-
-    // Tell Node to remove this breakpoint
-    NodeJSCliCommandHandler commandHandler(command, GetCommandId(), [&](const wxString& outputString) {
-        wxUnusedVar(outputString);
-        ListBreakpoints();
-    });
-    PushCommand(commandHandler);
 }
 
 void NodeJSCLIDebugger::ListBreakpoints() {}
@@ -319,7 +279,6 @@ void NodeJSCLIDebugger::ApplyAllBerakpoints()
     const NodeJSBreakpoint::List_t& breakpoints = m_bptManager.GetBreakpoints();
     std::for_each(breakpoints.begin(), breakpoints.end(),
                   [&](const NodeJSBreakpoint& bp) { SetBreakpoint(bp.GetFilename(), bp.GetLine(), true); });
-
     // Now that we have applied all the breapoints, we can ask for list of the actual breakpoints from the debugger
     ListBreakpoints();
 }
@@ -349,4 +308,10 @@ void NodeJSCLIDebugger::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     DoCleanup();
+}
+
+void NodeJSCLIDebugger::OnInteract(clDebugEvent& event)
+{
+    event.Skip();
+    m_canInteract = event.IsAnswer();
 }

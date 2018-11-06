@@ -11,6 +11,7 @@ protected:
     void OnUpdateBacktrace(NodeJSDebugEvent& event);
     void OnDebuggerStopped(clDebugEvent& event);
     void OnMarkLine(clDebugEvent& event);
+    void OnInteract(clDebugEvent& event);
 
 public:
     DebuggerPane(wxWindow* parent);

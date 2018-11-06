@@ -98,16 +98,14 @@
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
-      <VirtualDirectory Name="DebuggerCLI">
-        <File Name="NodeJSCliDebuggerPane.cpp"/>
-        <File Name="NodeJSCliDebuggerPane.h"/>
-      </VirtualDirectory>
       <VirtualDirectory Name="DebuggerNew">
         <File Name="NodeFileManager.cpp"/>
         <File Name="NodeFileManager.h"/>
         <File Name="DebuggerPane.h"/>
         <File Name="DebuggerPane.cpp"/>
         <VirtualDirectory Name="MessageHandlers">
+          <File Name="DebuggerResumed.cpp"/>
+          <File Name="DebuggerResumed.h"/>
           <File Name="DebuggerScriptParsed.cpp"/>
           <File Name="DebuggerScriptParsed.h"/>
           <File Name="MessageManager.cpp"/>

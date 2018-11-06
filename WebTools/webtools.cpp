@@ -1,5 +1,4 @@
 #include "DebuggerPane.h"
-#include "NodeJSDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NodeJSWorkspaceView.h"
 #include "NoteJSWorkspace.h"
@@ -87,9 +86,7 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
 
     // Debugger related
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
@@ -133,9 +130,7 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
@@ -361,33 +356,6 @@ bool WebTools::IsHTMLFile(IEditor* editor)
         return !PHPSourceFile::IsInPHPSection(buffer);
     }
     return false;
-}
-
-void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
-{
-    event.Skip();
-    m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
-
-    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
-    // Show the debugger pane
-    if(!m_nodejsDebuggerPane) {
-        m_nodejsDebuggerPane = new NodeJSDebuggerPane(parent);
-        clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane, wxAuiPaneInfo()
-                                                                               .MinSize(wxSize(-1, 300))
-                                                                               .Layer(5)
-                                                                               .Name("nodejs_debugger")
-                                                                               .Caption("Node.js Debugger")
-                                                                               .CloseButton(false)
-                                                                               .MaximizeButton()
-                                                                               .Bottom()
-                                                                               .Position(0));
-    }
-
-    wxString layout;
-    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
-    fnNodeJSLayout.AppendDir("config");
-    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
-    EnsureAuiPaneIsVisible("nodejs_debugger", true);
 }
 
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)

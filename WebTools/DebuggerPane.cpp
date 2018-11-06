@@ -25,7 +25,7 @@ DebuggerPane::~DebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
 }
 
-void DebuggerPane::OnUpdateBacktrace(NodeJSDebugEvent& event)
+void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dvListCtrlCallstack);

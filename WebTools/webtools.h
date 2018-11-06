@@ -36,7 +36,6 @@
 #include "CSSCodeCompletion.h"
 #include "clJSCTags.h"
 
-class NodeJSDebuggerPane;
 class NodeJSWorkspaceView;
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -74,7 +73,6 @@ protected:
     void OnTimer(wxTimerEvent& event);
     void OnCommentLine(wxCommandEvent& e);
     void OnCommentSelection(wxCommandEvent& e);
-    void OnNodeJSDebuggerStarted(clDebugEvent& event);
     void OnNodeJSCliDebuggerStarted(clDebugEvent& event);
     void OnNodeJSDebuggerStopped(clDebugEvent& event);
     void OnIsDebugger(clDebugEvent& event);

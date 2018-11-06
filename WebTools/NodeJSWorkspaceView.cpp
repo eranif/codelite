@@ -1,4 +1,3 @@
-#include "NodeJSDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSPackageJSON.h"
 #include "NodeJSWorkspaceConfiguration.h"

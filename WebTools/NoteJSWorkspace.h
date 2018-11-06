@@ -27,7 +27,6 @@
 #define NOTEJSWORKSPACE_H
 
 #include "IWorkspace.h"
-#include "NodeJSDebugger.h"
 #include "NodeJSDebuggerBase.h"
 #include "TerminalEmulator.h"
 #include "cl_command_event.h"

@@ -104,6 +104,8 @@
         <File Name="DebuggerPane.h"/>
         <File Name="DebuggerPane.cpp"/>
         <VirtualDirectory Name="MessageHandlers">
+          <File Name="clDebugCallFramesEvent.h"/>
+          <File Name="clDebugCallFramesEvent.cpp"/>
           <File Name="DebuggerResumed.cpp"/>
           <File Name="DebuggerResumed.h"/>
           <File Name="DebuggerScriptParsed.cpp"/>
@@ -114,8 +116,6 @@
           <File Name="NodeMessageBase.h"/>
           <File Name="DebuggerPaused.h"/>
           <File Name="DebuggerPaused.cpp"/>
-          <File Name="NodeJSDebugEvent.h"/>
-          <File Name="NodeJSDebugEvent.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Protocol">
           <File Name="nSerializableObject.h"/>
@@ -132,45 +132,15 @@
         <File Name="NodeJSCLIDebugger.h"/>
         <File Name="NodeJSCLIDebugger.cpp"/>
       </VirtualDirectory>
-      <VirtualDirectory Name="DebuggerOLD">
-        <File Name="NodeJSSocket.h"/>
-        <File Name="NodeJSSocket.cpp"/>
-        <File Name="NodeJSOuptutParser.h"/>
-        <File Name="NodeJSOuptutParser.cpp"/>
-        <File Name="NodeJSDebuggerPane.h"/>
-        <File Name="NodeJSDebuggerPane.cpp"/>
+      <VirtualDirectory Name="DebuggerCommon">
         <File Name="NodeJSDebuggerDlg.h"/>
         <File Name="NodeJSDebuggerDlg.cpp"/>
-        <File Name="NodeJSDebugger.h"/>
-        <File Name="NodeJSDebugger.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="DebuggerCommon">
-        <File Name="NodeJSDebuggerTooltip.h"/>
-        <File Name="NodeJSDebuggerTooltip.cpp"/>
         <File Name="NodeJSDebuggerBase.h"/>
         <File Name="NodeJSDebuggerBase.cpp"/>
         <File Name="NodeJSDebuggerBreakpoint.cpp"/>
         <File Name="NodeJSDebuggerBreakpoint.h"/>
         <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
         <File Name="NodeJSDebuggerBreakpointManager.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="Handlers">
-        <File Name="NodeJSSetBreakpointHandler.h"/>
-        <File Name="NodeJSSetBreakpointHandler.cpp"/>
-        <File Name="NodeJSHandlerBase.h"/>
-        <File Name="NodeJSHandlerBase.cpp"/>
-        <File Name="NodeJSContinueHandler.h"/>
-        <File Name="NodeJSContinueHandler.cpp"/>
-        <File Name="NodeJSCallstackHandler.h"/>
-        <File Name="NodeJSCallstackHandler.cpp"/>
-        <File Name="NodeJSSelectFrameHandler.h"/>
-        <File Name="NodeJSSelectFrameHandler.cpp"/>
-        <File Name="NodeJSGetScriptHandler.h"/>
-        <File Name="NodeJSGetScriptHandler.cpp"/>
-        <File Name="NodeJSEvaluateExprHandler.h"/>
-        <File Name="NodeJSEvaluateExprHandler.cpp"/>
-        <File Name="NodeJSLookupHandler.h"/>
-        <File Name="NodeJSLookupHandler.cpp"/>
       </VirtualDirectory>
     </VirtualDirectory>
     <File Name="NodeJSWorkspaceUserConfiguration.h"/>

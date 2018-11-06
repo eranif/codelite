@@ -370,10 +370,11 @@ int NodeJSWorkspace::GetNodeJSMajorVersion() const
 
 void NodeJSWorkspace::DoAllocateDebugger()
 {
+    m_debugger.reset(new NodeJSCLIDebugger());
     if(GetNodeJSMajorVersion() <= 7) {
-        m_debugger.reset(new NodeJSDebugger());
-    } else {
-        m_debugger.reset(new NodeJSCLIDebugger());
+        ::wxMessageBox(
+            _("Your Node.js version is tool old, please consider upgrading\nSome functionalities will not work"),
+            _("CodeLite"), wxICON_WARNING);
     }
 }
 

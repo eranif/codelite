@@ -3,6 +3,7 @@
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
+#include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clWebSocketClient.h"
 #include "clConsoleBase.h"
 #include "codelite_events.h"
@@ -36,7 +37,7 @@ NodeJSCLIDebugger::NodeJSCLIDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
-    
+
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
@@ -57,9 +58,9 @@ NodeJSCLIDebugger::~NodeJSCLIDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeJSCLIDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeJSCLIDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSCLIDebugger::OnWorkspaceClosed, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeJSCLIDebugger::OnInteract, this);
-    
+
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &NodeJSCLIDebugger::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &NodeJSCLIDebugger::OnProcessTerminated, this);
     Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeJSCLIDebugger::OnWebSocketConnected, this);

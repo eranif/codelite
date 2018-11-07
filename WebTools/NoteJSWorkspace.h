@@ -27,12 +27,11 @@
 #define NOTEJSWORKSPACE_H
 
 #include "IWorkspace.h"
-#include "NodeJSDebuggerBase.h"
+#include "NodeDebugger.h"
 #include "TerminalEmulator.h"
 #include "cl_command_event.h"
 #include <wx/filename.h>
 
-class NodeJSDebugger;
 class NodeDebugger;
 class NodeJSWorkspaceView;
 class NodeJSWorkspace : public IWorkspace
@@ -44,7 +43,7 @@ protected:
     bool m_clangOldFlag;
     bool m_dummy;
     bool m_showWelcomePage;
-    NodeJSDebuggerBase::Ptr_t m_debugger;
+    NodeDebugger::Ptr_t m_debugger;
     TerminalEmulator m_terminal;
     static NodeJSWorkspace* ms_workspace;
 
@@ -100,7 +99,6 @@ protected:
     void RestoreSession();
 
     NodeJSWorkspace(); // default ctor is private
-    
 
 public:
     virtual wxString GetActiveProjectName() const;
@@ -125,7 +123,7 @@ public:
     virtual bool IsProjectSupported() const;
 
     NodeJSWorkspaceView* GetView() { return m_view; }
-    NodeJSDebuggerBase::Ptr_t GetDebugger();
+    NodeDebugger::Ptr_t GetDebugger();
 
     /**
      * @brief is this workspace opened?

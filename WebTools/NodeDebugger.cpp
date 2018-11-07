@@ -5,6 +5,7 @@
 #include "NoteJSWorkspace.h"
 #include "SocketAPI/clSocketBase.h"
 #include "SocketAPI/clWebSocketClient.h"
+#include "bookmark_manager.h"
 #include "clConsoleBase.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -75,6 +76,37 @@ NodeDebugger::~NodeDebugger()
     Unbind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeDebugger::OnWebSocketOnMessage, this);
     NodeJSDevToolsProtocol::Get().SetDebugger(nullptr);
 }
+
+void NodeDebugger::SetDebuggerMarker(IEditor* editor, int lineno)
+{
+    wxStyledTextCtrl* stc = editor->GetCtrl();
+    stc->MarkerDeleteAll(smt_indicator);
+    stc->MarkerAdd(lineno, smt_indicator);
+    int caretPos = stc->PositionFromLine(lineno);
+    stc->SetSelection(caretPos, caretPos);
+    stc->SetCurrentPos(caretPos);
+    stc->EnsureCaretVisible();
+    editor->CenterLine(lineno);
+#ifdef __WXOSX__
+    stc->Refresh();
+#endif
+}
+
+void NodeDebugger::ClearDebuggerMarker()
+{
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    std::for_each(editors.begin(), editors.end(),
+                  [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_indicator); });
+}
+
+void NodeDebugger::DoHighlightLine(const wxString& filename, int lineNo)
+{
+    IEditor* activeEditor = clGetManager()->OpenFile(filename, "", lineNo - 1);
+    if(activeEditor) { SetDebuggerMarker(activeEditor, lineNo - 1); }
+}
+
+void NodeDebugger::SetDebuggerMarker(const wxString& path, int lineno) { DoHighlightLine(path, lineno); }
 
 void NodeDebugger::OnDebugStart(clDebugEvent& event)
 {
@@ -349,4 +381,7 @@ void NodeDebugger::OnDebugStepOut(clDebugEvent& event)
     NodeJSDevToolsProtocol::Get().StepOut(m_socket);
 }
 
-void NodeDebugger::Eval(const wxString& command) { NodeJSDevToolsProtocol::Get().Eval(m_socket, command); }
+void NodeDebugger::Eval(const wxString& command, const wxString& frameId)
+{
+    NodeJSDevToolsProtocol::Get().Eval(m_socket, command, frameId);
+}

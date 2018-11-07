@@ -18,12 +18,12 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     m_terminal = new wxTerminal(m_panelOutput);
     m_terminal->SetInteractive(true);
     m_panelOutput->GetSizer()->Add(m_terminal, 1, wxEXPAND);
-    
+
     // Console for real-time evaluating with Node.js
     m_node_console = new wxTerminal(m_panelConsole);
     m_node_console->SetInteractive(true);
     m_panelConsole->GetSizer()->Add(m_node_console, 1, wxEXPAND);
-    
+
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
@@ -32,6 +32,9 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
+    m_dvListCtrlCallstack->SetSortFunction(nullptr);
+    m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 }
 
 DebuggerPane::~DebuggerPane()
@@ -45,6 +48,7 @@ DebuggerPane::~DebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints,
                                  this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
 }
 
 void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
@@ -63,7 +67,7 @@ void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
         cols.push_back(frame->GetFunctionName());
         cols.push_back(filename);
         cols.push_back(wxString() << (frame->GetLocation().GetLineNumber() + 1));
-        m_dvListCtrlCallstack->AppendItem(cols);
+        m_dvListCtrlCallstack->AppendItem(cols, (wxUIntPtr) new wxStringClientData(frame->GetCallFrameId()));
         if(i == 0) {
             clDebugEvent event(wxEVT_NODEJS_DEBUGGER_MARK_LINE);
             event.SetLineNumber(frame->GetLocation().GetLineNumber() + 1);
@@ -76,7 +80,14 @@ void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
 void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
-    m_dvListCtrlCallstack->DeleteAllItems();
+    m_dvListCtrlCallstack->DeleteAllItems([](wxUIntPtr data) {
+        wxStringClientData* scd = reinterpret_cast<wxStringClientData*>(data);
+        wxDELETE(scd);
+    });
+    m_dvListCtrlBreakpoints->DeleteAllItems([](wxUIntPtr data) {
+        wxStringClientData* scd = reinterpret_cast<wxStringClientData*>(data);
+        wxDELETE(scd);
+    });
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
 }
 
@@ -120,18 +131,27 @@ void DebuggerPane::OnInteract(clDebugEvent& event)
 
 void DebuggerPane::OnRunTerminalCommand(clCommandEvent& event)
 {
+    // Dont call event.Skip() here
     wxString command = event.GetString();
     NodeJSWorkspace::Get()->GetDebugger()->SendToDebuggee(command);
 }
 
 void DebuggerPane::OnConsoleOutput(clDebugEvent& event)
 {
-    event.Skip();
+    // Dont call event.Skip() here
     m_terminal->AddTextRaw(event.GetString());
 }
 
 void DebuggerPane::OnEval(clCommandEvent& event)
 {
-    event.Skip();
-    NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString());
+    if(m_dvListCtrlCallstack->IsEmpty()) { return; }
+    wxUIntPtr ptr = m_dvListCtrlCallstack->GetItemData(m_dvListCtrlCallstack->RowToItem(0));
+    wxStringClientData* cd = reinterpret_cast<wxStringClientData*>(ptr);
+    if(cd) { NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString(), cd->GetData()); }
+}
+
+void DebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
+{
+    RemoteObject* pro = event.GetRemoteObject()->To<RemoteObject>();
+    m_node_console->AddTextRaw(pro->ToString() + "\n");
 }

@@ -51,7 +51,7 @@ public:
     void SetBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
     void DeleteBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
     void GetScriptSource(clWebSocketClient& socket, const wxString& scriptId);
-    void Eval(clWebSocketClient& socket, const wxString& scriptId);
+    void Eval(clWebSocketClient& socket, const wxString& expression, const wxString& frameId);
 };
 
 #endif // NODEJSDEVTOOLSPROTOCOL_H

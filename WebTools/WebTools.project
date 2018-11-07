@@ -106,6 +106,8 @@
         <File Name="DebuggerPane.h"/>
         <File Name="DebuggerPane.cpp"/>
         <VirtualDirectory Name="MessageHandlers">
+          <File Name="clDebugRemoteObjectEvent.cpp"/>
+          <File Name="clDebugRemoteObjectEvent.h"/>
           <File Name="RuntimeExecutionContextDestroyed.cpp"/>
           <File Name="RuntimeExecutionContextDestroyed.h"/>
           <File Name="clDebugCallFramesEvent.h"/>
@@ -122,6 +124,10 @@
           <File Name="DebuggerPaused.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Protocol">
+          <File Name="ObjectPreview.cpp"/>
+          <File Name="ObjectPreview.h"/>
+          <File Name="PropertyPreview.cpp"/>
+          <File Name="PropertyPreview.h"/>
           <File Name="nSerializableObject.h"/>
           <File Name="nSerializableObject.cpp"/>
           <File Name="RemoteObject.h"/>
@@ -137,8 +143,6 @@
       <VirtualDirectory Name="DebuggerCommon">
         <File Name="NodeJSDebuggerDlg.h"/>
         <File Name="NodeJSDebuggerDlg.cpp"/>
-        <File Name="NodeJSDebuggerBase.h"/>
-        <File Name="NodeJSDebuggerBase.cpp"/>
         <File Name="NodeJSDebuggerBreakpoint.cpp"/>
         <File Name="NodeJSDebuggerBreakpoint.h"/>
         <File Name="NodeJSDebuggerBreakpointManager.cpp"/>

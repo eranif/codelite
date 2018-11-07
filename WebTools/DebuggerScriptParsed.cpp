@@ -13,6 +13,7 @@ void DebuggerScriptParsed::Process(clWebSocketClient& socket, const JSONElement&
 {
     wxString scriptId = json.namedObject("scriptId").toString();
     wxString url = json.namedObject("url").toString();
+    if(url.IsEmpty()) { return; }
     NodeFileManager::Get().AddFile(scriptId, url);
     // Check that this file exists locally
     if(!NodeFileManager::Get().IsFileExists(scriptId)) {

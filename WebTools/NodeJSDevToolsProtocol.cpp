@@ -2,12 +2,15 @@
 #include "NodeFileManager.h"
 #include "NodeJSDevToolsProtocol.h"
 #include "NodeJSEvents.h"
+#include "RemoteObject.h"
 #include "SocketAPI/clSocketBase.h"
+#include "clDebugRemoteObjectEvent.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "json_node.h"
 
+class RemoteObject;
 NodeJSDevToolsProtocol::NodeJSDevToolsProtocol() {}
 
 NodeJSDevToolsProtocol::~NodeJSDevToolsProtocol() {}
@@ -143,6 +146,23 @@ void NodeJSDevToolsProtocol::GetScriptSource(clWebSocketClient& socket, const wx
     m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }
 
-void NodeJSDevToolsProtocol::Eval(clWebSocketClient& socket, const wxString& scriptId)
+void NodeJSDevToolsProtocol::Eval(clWebSocketClient& socket, const wxString& expression, const wxString& frameId)
 {
+    JSONElement params = JSONElement::createObject("params");
+    params.addProperty("callFrameId", frameId);
+    params.addProperty("expression", expression);
+    params.addProperty("generatePreview", true);
+    SendSimpleCommand(socket, "Debugger.evaluateOnCallFrame", params);
+    // Register a handler to handle this command when it returns
+    CommandHandler handler(message_id, [=](const JSONElement& result) {
+        if(result.hasNamedObject("result")) {
+            nSerializableObject::Ptr_t ro(new RemoteObject());
+            ro->To<RemoteObject>()->SetExpression(expression);
+            ro->To<RemoteObject>()->FromJSON(result.namedObject("result"));
+            clDebugRemoteObjectEvent evt(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT);
+            evt.SetRemoteObject(ro);
+            EventNotifier::Get()->ProcessEvent(evt);
+        }
+    });
+    m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }

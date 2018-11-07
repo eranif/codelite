@@ -3,6 +3,7 @@
 
 #include "WebToolsBase.h"
 #include "clDebugCallFramesEvent.h"
+#include "clDebugRemoteObjectEvent.h"
 #include "cl_command_event.h"
 
 class wxTerminal;
@@ -20,6 +21,7 @@ protected:
     void OnRunTerminalCommand(clCommandEvent& event);
     void OnEval(clCommandEvent& event);
     void OnConsoleOutput(clDebugEvent& event);
+    void OnEvalResult(clDebugRemoteObjectEvent& event);
 
 public:
     DebuggerPane(wxWindow* parent);

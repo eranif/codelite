@@ -394,6 +394,6 @@ void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
     }
 }
 
-NodeJSDebuggerBase::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }
+NodeDebugger::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }
 
 void NodeJSWorkspace::AllocateDebugger() { DoAllocateDebugger(); }

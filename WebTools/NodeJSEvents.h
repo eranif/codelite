@@ -28,6 +28,7 @@
 
 #include "cl_command_event.h"
 #include "clDebugCallFramesEvent.h"
+#include "clDebugRemoteObjectEvent.h"
 
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_INTERACT, clDebugEvent);
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_MARK_LINE, clDebugEvent);
@@ -35,6 +36,7 @@ wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_CONSOLE_LOG, clDebugEvent);
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_EXCEPTION_THROWN, clDebugEvent);
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, clDebugEvent);
 wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, clDebugEvent);
+wxDECLARE_EVENT(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, clDebugRemoteObjectEvent);
 
 
 // Custom Node v8+ events

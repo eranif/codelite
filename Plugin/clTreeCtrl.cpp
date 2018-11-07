@@ -199,6 +199,9 @@ wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItem
 {
     wxTreeItemId item = m_model.InsertItem(parent, previous, text, image, selImage, data);
     DoUpdateHeader(item);
+    if(IsExpanded(parent)) {
+        UpdateScrollBar();
+    }
     return item;
 }
 
@@ -207,6 +210,9 @@ wxTreeItemId clTreeCtrl::AppendItem(const wxTreeItemId& parent, const wxString& 
 {
     wxTreeItemId item = m_model.AppendItem(parent, text, image, selImage, data);
     DoUpdateHeader(item);
+    if(IsExpanded(parent)) {
+        UpdateScrollBar();
+    }
     return item;
 }
 

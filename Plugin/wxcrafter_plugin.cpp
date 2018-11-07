@@ -712,13 +712,13 @@ clResizableTooltipBase::clResizableTooltipBase(wxWindow* parent, long style)
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 250)),
                               wxTAB_TRAVERSAL | wxBORDER_THEME);
 
-    boxSizer222->Add(m_mainPanel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer222->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     wxBoxSizer* boxSizer230 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer230);
 
-    m_treeCtrl = new wxTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
-                                wxTR_DEFAULT_STYLE | wxBORDER_NONE);
+    m_treeCtrl = new clThemedTreeCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
+                                      wxTR_DEFAULT_STYLE | wxBORDER_NONE);
 
     boxSizer230->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(0));
     m_mainPanel->SetMinSize(wxSize(300, 250));

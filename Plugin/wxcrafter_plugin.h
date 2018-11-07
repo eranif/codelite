@@ -9,6 +9,7 @@
 
 #include "clFileViwerTreeCtrl.h"
 #include "clThemedListCtrl.h"
+#include "clThemedTreeCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dataview.h>
@@ -231,7 +232,7 @@ class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxPopupWindow
 {
 protected:
     wxPanel* m_mainPanel;
-    wxTreeCtrl* m_treeCtrl;
+    clThemedTreeCtrl* m_treeCtrl;
     wxPanel* m_panelStatus;
     wxStaticBitmap* m_staticBitmap240;
     wxTimer* m_timerCheckMousePos;
@@ -247,7 +248,7 @@ protected:
     virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
 
 public:
-    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxStaticBitmap* GetStaticBitmap240() { return m_staticBitmap240; }
     wxPanel* GetPanelStatus() { return m_panelStatus; }

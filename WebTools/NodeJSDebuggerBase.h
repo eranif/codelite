@@ -30,14 +30,6 @@ public:
      */
     virtual void StartDebugger(const wxString& command, const wxString& command_args,
                                const wxString& workingDirectory) = 0;
-    /**
-     * @brief lookup handles
-     */
-    virtual void Lookup(const std::vector<int>& handles, eNodeJSContext context) {}
-    /**
-     * @brief select the desired frame
-     */
-    virtual void SelectFrame(int index) {}
 
     /**
      * @brief trigger a "callstack" request
@@ -47,12 +39,14 @@ public:
     void SetDebuggerMarker(IEditor* editor, int lineno);
     void SetDebuggerMarker(const wxString& path, int lineno);
     void ClearDebuggerMarker();
-    
+
     /**
-     * @brief pass command to the 
+     * @brief pass command to the
      * @param command
      */
     virtual void SendToDebuggee(const wxString& command) {}
+
+    virtual void Eval(const wxString& command) {}
 };
 
 #endif // NODEJSDEBUGGERBASE_H

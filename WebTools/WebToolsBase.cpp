@@ -609,9 +609,23 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
 
     boxSizer285->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_panelOutput =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelOutput, _("Output"), true);
+
+    wxBoxSizer* boxSizer295 = new wxBoxSizer(wxVERTICAL);
+    m_panelOutput->SetSizer(boxSizer295);
+
+    m_panelConsole =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsole, _("Console"), false);
+
+    wxBoxSizer* boxSizer303 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsole->SetSizer(boxSizer303);
+
     m_panelBreakpoints =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), true);
+    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
 
     wxBoxSizer* boxSizer293 = new wxBoxSizer(wxVERTICAL);
     m_panelBreakpoints->SetSizer(boxSizer293);
@@ -632,12 +646,6 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                               wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
-    m_panelConsole =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelConsole, _("Console"), false);
-
-    wxBoxSizer* boxSizer295 = new wxBoxSizer(wxVERTICAL);
-    m_panelConsole->SetSizer(boxSizer295);
 
     SetName(wxT("NodeJSCliDebuggerPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

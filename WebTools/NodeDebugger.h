@@ -29,7 +29,8 @@ public:
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SendToDebuggee(const wxString& command);
-    
+    void Eval(const wxString& command);
+
 protected:
     void OnDebugStart(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);

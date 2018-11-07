@@ -142,3 +142,7 @@ void NodeJSDevToolsProtocol::GetScriptSource(clWebSocketClient& socket, const wx
     });
     m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }
+
+void NodeJSDevToolsProtocol::Eval(clWebSocketClient& socket, const wxString& scriptId)
+{
+}

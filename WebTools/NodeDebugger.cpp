@@ -348,3 +348,5 @@ void NodeDebugger::OnDebugStepOut(clDebugEvent& event)
     CHECK_SHOULD_HANDLE(event);
     NodeJSDevToolsProtocol::Get().StepOut(m_socket);
 }
+
+void NodeDebugger::Eval(const wxString& command) { NodeJSDevToolsProtocol::Get().Eval(m_socket, command); }

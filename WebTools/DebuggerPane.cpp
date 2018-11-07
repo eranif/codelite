@@ -14,10 +14,18 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
-    m_terminal = new wxTerminal(m_panelConsole);
-    m_panelConsole->GetSizer()->Add(m_terminal, 1, wxEXPAND);
-
+    // Terminal for stdout/stdin with the running JS application
+    m_terminal = new wxTerminal(m_panelOutput);
+    m_terminal->SetInteractive(true);
+    m_panelOutput->GetSizer()->Add(m_terminal, 1, wxEXPAND);
+    
+    // Console for real-time evaluating with Node.js
+    m_node_console = new wxTerminal(m_panelConsole);
+    m_node_console->SetInteractive(true);
+    m_panelConsole->GetSizer()->Add(m_node_console, 1, wxEXPAND);
+    
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
+    m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
@@ -29,6 +37,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
 DebuggerPane::~DebuggerPane()
 {
     m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
+    m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
@@ -119,4 +128,10 @@ void DebuggerPane::OnConsoleOutput(clDebugEvent& event)
 {
     event.Skip();
     m_terminal->AddTextRaw(event.GetString());
+}
+
+void DebuggerPane::OnEval(clCommandEvent& event)
+{
+    event.Skip();
+    NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString());
 }

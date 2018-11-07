@@ -9,6 +9,7 @@ class wxTerminal;
 class DebuggerPane : public NodeJSCliDebuggerPaneBase
 {
     wxTerminal* m_terminal = nullptr;
+    wxTerminal* m_node_console = nullptr;
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);
@@ -17,6 +18,7 @@ protected:
     void OnInteract(clDebugEvent& event);
     void OnUpdateBreakpoints(clDebugEvent& event);
     void OnRunTerminalCommand(clCommandEvent& event);
+    void OnEval(clCommandEvent& event);
     void OnConsoleOutput(clDebugEvent& event);
 
 public:

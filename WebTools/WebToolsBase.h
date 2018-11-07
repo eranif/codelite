@@ -220,19 +220,21 @@ protected:
     clThemedListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_splitterPageWatches;
     Notebook* m_notebook;
+    wxPanel* m_panelOutput;
+    wxPanel* m_panelConsole;
     wxPanel* m_panelBreakpoints;
     clToolBar* m_tbBreakpoints;
     clThemedListCtrl* m_dvListCtrlBreakpoints;
-    wxPanel* m_panelConsole;
 
 protected:
 public:
     clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
+    wxPanel* GetPanelOutput() { return m_panelOutput; }
+    wxPanel* GetPanelConsole() { return m_panelConsole; }
     clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
     clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
-    wxPanel* GetPanelConsole() { return m_panelConsole; }
     Notebook* GetNotebook() { return m_notebook; }
     wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }

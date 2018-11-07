@@ -18,7 +18,6 @@ class NodeDebugger : public NodeJSDebuggerBase
     bool m_canInteract = false;
     wxString m_workingDirectory;
     clWebSocketClient m_socket;
-    NodeJSDevToolsProtocol m_protocol;
 
 public:
     NodeDebugger();
@@ -35,6 +34,8 @@ protected:
     void OnDebugStart(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);
     void OnDebugNext(clDebugEvent& event);
+    void OnDebugStepIn(clDebugEvent& event);
+    void OnDebugStepOut(clDebugEvent& event);
     void OnDebugContinue(clDebugEvent& event);
     void OnToggleBreakpoint(clDebugEvent& event);
     void OnDebugIsRunning(clDebugEvent& event);

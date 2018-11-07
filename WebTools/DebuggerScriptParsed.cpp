@@ -1,5 +1,6 @@
 #include "DebuggerScriptParsed.h"
 #include "NodeFileManager.h"
+#include "NodeJSDevToolsProtocol.h"
 
 DebuggerScriptParsed::DebuggerScriptParsed()
     : NodeMessageBase("Debugger.scriptParsed")
@@ -8,11 +9,16 @@ DebuggerScriptParsed::DebuggerScriptParsed()
 
 DebuggerScriptParsed::~DebuggerScriptParsed() {}
 
-void DebuggerScriptParsed::Process(const JSONElement& json)
+void DebuggerScriptParsed::Process(clWebSocketClient& socket, const JSONElement& json)
 {
     wxString scriptId = json.namedObject("scriptId").toString();
     wxString url = json.namedObject("url").toString();
     NodeFileManager::Get().AddFile(scriptId, url);
+    // Check that this file exists locally
+    if(!NodeFileManager::Get().IsFileExists(scriptId)) {
+        // Request a copy of the file content
+        NodeJSDevToolsProtocol::Get().GetScriptSource(socket, scriptId);
+    }
 }
 
 NodeMessageBase::Ptr_t DebuggerScriptParsed::Clone() { return NodeMessageBase::Ptr_t(new DebuggerScriptParsed()); }

@@ -29,12 +29,13 @@
 
 NodeDebugger::NodeDebugger()
     : m_socket(this)
-    , m_protocol(this)
 {
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &NodeDebugger::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &NodeDebugger::OnDebugContinue, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &NodeDebugger::OnStopDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &NodeDebugger::OnDebugNext, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_IN, &NodeDebugger::OnDebugStepIn, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_OUT, &NodeDebugger::OnDebugStepOut, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
@@ -49,6 +50,7 @@ NodeDebugger::NodeDebugger()
     Bind(wxEVT_WEBSOCKET_ERROR, &NodeDebugger::OnWebSocketError, this);
     Bind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeDebugger::OnWebSocketOnMessage, this);
     Bind(wxEVT_WEBSOCKET_DISCONNECTED, &NodeDebugger::OnWebSocketDisconnected, this);
+    NodeJSDevToolsProtocol::Get().SetDebugger(this);
 }
 
 NodeDebugger::~NodeDebugger()
@@ -57,6 +59,8 @@ NodeDebugger::~NodeDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &NodeDebugger::OnDebugContinue, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &NodeDebugger::OnStopDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &NodeDebugger::OnDebugNext, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &NodeDebugger::OnDebugStepIn, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &NodeDebugger::OnDebugStepOut, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
@@ -69,6 +73,7 @@ NodeDebugger::~NodeDebugger()
     Unbind(wxEVT_WEBSOCKET_CONNECTED, &NodeDebugger::OnWebSocketConnected, this);
     Unbind(wxEVT_WEBSOCKET_ERROR, &NodeDebugger::OnWebSocketError, this);
     Unbind(wxEVT_WEBSOCKET_ONMESSAGE, &NodeDebugger::OnWebSocketOnMessage, this);
+    NodeJSDevToolsProtocol::Get().SetDebugger(nullptr);
 }
 
 void NodeDebugger::OnDebugStart(clDebugEvent& event)
@@ -98,7 +103,7 @@ void NodeDebugger::OnDebugStart(clDebugEvent& event)
 void NodeDebugger::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-    m_protocol.Continue(m_socket);
+    NodeJSDevToolsProtocol::Get().Continue(m_socket);
 }
 
 void NodeDebugger::OnStopDebugger(clDebugEvent& event)
@@ -113,7 +118,7 @@ void NodeDebugger::OnStopDebugger(clDebugEvent& event)
 void NodeDebugger::OnDebugNext(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-    m_protocol.Next(m_socket);
+    NodeJSDevToolsProtocol::Get().Next(m_socket);
 }
 
 bool NodeDebugger::IsRunning() const { return m_process != NULL; }
@@ -126,8 +131,8 @@ void NodeDebugger::DoCleanup()
     if(m_process) { m_process->Terminate(); }
     m_socket.Close();
     NodeFileManager::Get().Clear();
-    m_protocol.Clear();
-    
+    NodeJSDevToolsProtocol::Get().Clear();
+
     // Serialise the breakpoints
     m_bptManager.Save();
 }
@@ -258,7 +263,7 @@ void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber)
     m_bptManager.AddBreakpoint(file, lineNumber);
     const NodeJSBreakpoint& bp = m_bptManager.GetBreakpoint(file, lineNumber);
     if(!bp.IsOk()) { return; }
-    m_protocol.SetBreakpoint(m_socket, bp);
+    NodeJSDevToolsProtocol::Get().SetBreakpoint(m_socket, bp);
     m_bptManager.AddBreakpoint(file.GetFullPath(), lineNumber);
 }
 
@@ -266,7 +271,7 @@ void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
     m_bptManager.DeleteBreakpoint(bp.GetFilename(), bp.GetLine());
-    m_protocol.DeleteBreakpoint(m_socket, bp);
+    NodeJSDevToolsProtocol::Get().DeleteBreakpoint(m_socket, bp);
 }
 
 void NodeDebugger::ListBreakpoints() {}
@@ -294,7 +299,7 @@ void NodeDebugger::ApplyAllBerakpoints()
 void NodeDebugger::OnWebSocketConnected(clCommandEvent& event)
 {
     // Now that the connection has been established, we can send the startup commands
-    m_protocol.SendStartCommands(m_socket);
+    NodeJSDevToolsProtocol::Get().SendStartCommands(m_socket);
 
     // Apply all breakpoints
     ApplyAllBerakpoints();
@@ -310,7 +315,7 @@ void NodeDebugger::OnWebSocketOnMessage(clCommandEvent& event)
 {
     // We got a message from the websocket
     clDEBUG() << "<--" << event.GetString();
-    m_protocol.ProcessMessage(event.GetString(), m_socket);
+    NodeJSDevToolsProtocol::Get().ProcessMessage(event.GetString(), m_socket);
 }
 
 void NodeDebugger::OnWebSocketDisconnected(clCommandEvent& event) {}
@@ -330,4 +335,16 @@ void NodeDebugger::OnInteract(clDebugEvent& event)
 void NodeDebugger::SendToDebuggee(const wxString& command)
 {
     if(m_process) { m_process->Write(command); }
+}
+
+void NodeDebugger::OnDebugStepIn(clDebugEvent& event)
+{
+    CHECK_SHOULD_HANDLE(event);
+    NodeJSDevToolsProtocol::Get().StepIn(m_socket);
+}
+
+void NodeDebugger::OnDebugStepOut(clDebugEvent& event)
+{
+    CHECK_SHOULD_HANDLE(event);
+    NodeJSDevToolsProtocol::Get().StepOut(m_socket);
 }

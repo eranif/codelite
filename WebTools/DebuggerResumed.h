@@ -11,7 +11,7 @@ public:
     virtual ~DebuggerResumed();
 
 public:
-    void Process(const JSONElement& json);
+    void Process(clWebSocketClient& socket, const JSONElement& json);
     NodeMessageBase::Ptr_t Clone();
 };
 

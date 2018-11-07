@@ -11,7 +11,7 @@ public:
 
 public:
     virtual NodeMessageBase::Ptr_t Clone();
-    virtual void Process(const JSONElement& json);
+    virtual void Process(clWebSocketClient& socket, const JSONElement& json);
 };
 
 #endif // RUNTIMEEXECUTIONCONTEXTDESTROYED_H

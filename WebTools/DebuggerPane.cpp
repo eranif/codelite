@@ -6,8 +6,9 @@
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "event_notifier.h"
-#include <wx/wupdlock.h>
 #include "wxterminal.h"
+#include <wx/msgdlg.h>
+#include <wx/wupdlock.h>
 
 DebuggerPane::DebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
@@ -15,7 +16,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_terminal = new wxTerminal(m_panelConsole);
     m_panelConsole->GetSizer()->Add(m_terminal, 1, wxEXPAND);
-    
+
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
@@ -100,6 +101,11 @@ void DebuggerPane::OnInteract(clDebugEvent& event)
     if(!event.IsAnswer()) {
         m_dvListCtrlCallstack->DeleteAllItems();
         NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
+    }
+    if(event.GetString() == "exception") {
+        // The debugger paused of an uncaught exception
+        ::wxMessageBox(_("Node.js: uncaught exception!"), "Node.js", wxICON_ERROR | wxCENTRE,
+                       EventNotifier::Get()->TopFrame());
     }
 }
 

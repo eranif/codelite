@@ -33,11 +33,15 @@ protected:
     void SendSimpleCommand(clWebSocketClient& socket, const wxString& command,
                            const JSONElement& params = JSONElement(NULL));
 
+    NodeJSDevToolsProtocol();
+
 public:
-    NodeJSDevToolsProtocol(NodeDebugger* debugger);
+    static NodeJSDevToolsProtocol& Get();
     virtual ~NodeJSDevToolsProtocol();
     void Clear();
 
+    void SetDebugger(NodeDebugger* debugger) { this->m_debugger = debugger; }
+    NodeDebugger* GetDebugger() { return m_debugger; }
     void SendStartCommands(clWebSocketClient& socket);
     void ProcessMessage(const wxString& msg, clWebSocketClient& socket);
     void Next(clWebSocketClient& socket);
@@ -46,6 +50,7 @@ public:
     void Continue(clWebSocketClient& socket);
     void SetBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
     void DeleteBreakpoint(clWebSocketClient& socket, const NodeJSBreakpoint& bp);
+    void GetScriptSource(clWebSocketClient& socket, const wxString& scriptId);
 };
 
 #endif // NODEJSDEVTOOLSPROTOCOL_H

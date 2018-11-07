@@ -1,4 +1,5 @@
 #include "NodeDebugger.h"
+#include "NodeFileManager.h"
 #include "NodeJSDevToolsProtocol.h"
 #include "NodeJSEvents.h"
 #include "SocketAPI/clSocketBase.h"
@@ -7,12 +8,15 @@
 #include "file_logger.h"
 #include "json_node.h"
 
-NodeJSDevToolsProtocol::NodeJSDevToolsProtocol(NodeDebugger* debugger)
-    : m_debugger(debugger)
-{
-}
+NodeJSDevToolsProtocol::NodeJSDevToolsProtocol() {}
 
 NodeJSDevToolsProtocol::~NodeJSDevToolsProtocol() {}
+
+NodeJSDevToolsProtocol& NodeJSDevToolsProtocol::Get()
+{
+    static NodeJSDevToolsProtocol protocol;
+    return protocol;
+}
 
 void NodeJSDevToolsProtocol::SendSimpleCommand(clWebSocketClient& socket, const wxString& command,
                                                const JSONElement& params)
@@ -43,7 +47,7 @@ void NodeJSDevToolsProtocol::ProcessMessage(const wxString& msg, clWebSocketClie
         NodeMessageBase::Ptr_t handler = m_handlers.GetHandler(method);
         if(handler) {
             clDEBUG() << "Invoking handler:" << handler->GetEventName();
-            handler->Process(rootElement.namedObject("params"));
+            handler->Process(socket, rootElement.namedObject("params"));
         }
     } else if(replyId != wxNOT_FOUND) {
         if(rootElement.hasNamedObject("result")) {
@@ -62,6 +66,11 @@ void NodeJSDevToolsProtocol::SendStartCommands(clWebSocketClient& socket)
 {
     SendSimpleCommand(socket, "Runtime.enable");
     SendSimpleCommand(socket, "Debugger.enable");
+    {
+        JSONElement params = JSONElement::createObject("params");
+        params.addProperty("state", "uncaught");
+        SendSimpleCommand(socket, "Debugger.setPauseOnExceptions", params);
+    }
     SendSimpleCommand(socket, "Runtime.runIfWaitingForDebugger");
 }
 
@@ -86,7 +95,7 @@ void NodeJSDevToolsProtocol::SetBreakpoint(clWebSocketClient& socket, const Node
         SendSimpleCommand(socket, "Debugger.setBreakpointByUrl", params);
 
         // Register a handler to handle this command when it returns
-        CommandHandler handler(message_id, [&](const JSONElement& result) {
+        CommandHandler handler(message_id, [=](const JSONElement& result) {
             wxString breakpointId = result.namedObject("breakpointId").toString();
             NodeJSBreakpoint& b = m_debugger->GetBreakpointsMgr()->GetBreakpoint(bp.GetFilename(), bp.GetLine());
             if(b.IsOk()) {
@@ -110,7 +119,7 @@ void NodeJSDevToolsProtocol::DeleteBreakpoint(clWebSocketClient& socket, const N
         SendSimpleCommand(socket, "Debugger.removeBreakpoint", params);
 
         // Register a handler to handle this command when it returns
-        CommandHandler handler(message_id, [&](const JSONElement& result) {
+        CommandHandler handler(message_id, [=](const JSONElement& result) {
             clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
             EventNotifier::Get()->AddPendingEvent(bpEvent);
         });
@@ -118,4 +127,18 @@ void NodeJSDevToolsProtocol::DeleteBreakpoint(clWebSocketClient& socket, const N
     } catch(clSocketException& e) {
         clWARNING() << e.what();
     }
+}
+
+void NodeJSDevToolsProtocol::GetScriptSource(clWebSocketClient& socket, const wxString& scriptId)
+{
+    JSONElement params = JSONElement::createObject("params");
+    params.addProperty("scriptId", scriptId);
+    // Send the command
+    SendSimpleCommand(socket, "Debugger.getScriptSource", params);
+    // Register a handler to handle this command when it returns
+    CommandHandler handler(message_id, [=](const JSONElement& result) {
+        wxString fileContent = result.namedObject("scriptSource").toString();
+        NodeFileManager::Get().CacheRemoteCopy(scriptId, fileContent);
+    });
+    m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }

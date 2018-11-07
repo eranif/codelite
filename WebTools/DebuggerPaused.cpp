@@ -11,7 +11,7 @@ DebuggerPaused::DebuggerPaused()
 
 DebuggerPaused::~DebuggerPaused() {}
 
-void DebuggerPaused::Process(const JSONElement& json)
+void DebuggerPaused::Process(clWebSocketClient& socket, const JSONElement& json)
 {
     m_stopReason = json.namedObject("reason").toString();
     JSONElement frames = json.namedObject("callFrames");

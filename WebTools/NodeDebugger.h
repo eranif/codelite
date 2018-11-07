@@ -19,6 +19,7 @@ class NodeDebugger : public wxEvtHandler
     wxString m_workingDirectory;
     clWebSocketClient m_socket;
     NodeJSBptManager m_bptManager;
+    wxArrayString m_frames;
 
 public:
     typedef wxSharedPtr<NodeDebugger> Ptr_t;
@@ -34,11 +35,15 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SendToDebuggee(const wxString& command);
     void Eval(const wxString& command, const wxString& frameId);
+    void GetObjectProperties(const wxString& objectId);
     NodeJSBptManager* GetBreakpointsMgr() { return &m_bptManager; }
 
     void SetDebuggerMarker(IEditor* editor, int lineno);
     void SetDebuggerMarker(const wxString& path, int lineno);
     void ClearDebuggerMarker();
+
+    void SetFrames(const wxArrayString& frames) { this->m_frames = frames; }
+    const wxArrayString& GetFrames() const { return m_frames; }
 
 protected:
     void OnDebugStart(clDebugEvent& event);
@@ -57,6 +62,7 @@ protected:
     void OnWebSocketDisconnected(clCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnInteract(clDebugEvent& event);
+    void OnTooltip(clDebugEvent& event);
     // Helpers
     void DoCleanup();
     void SetBreakpoint(const wxFileName& file, int lineNumber);

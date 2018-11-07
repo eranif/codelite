@@ -124,6 +124,8 @@
           <File Name="DebuggerPaused.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Protocol">
+          <File Name="PropertyDescriptor.cpp"/>
+          <File Name="PropertyDescriptor.h"/>
           <File Name="ObjectPreview.cpp"/>
           <File Name="ObjectPreview.h"/>
           <File Name="PropertyPreview.cpp"/>

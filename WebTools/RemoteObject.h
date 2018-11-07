@@ -13,17 +13,20 @@ class RemoteObject : public nSerializableObject
     wxString m_value;
     ObjectPreview m_preview;
     wxString m_expression; // The expression originated this object
+    wxString m_objectId;
 
 public:
     RemoteObject();
     virtual ~RemoteObject();
-    
+
     void FromJSON(const JSONElement& json);
     JSONElement ToJSON(const wxString& name) const;
     bool IsObject() const { return GetType() == "object"; }
     bool IsString() const { return GetType() == "string"; }
     bool IsUndefined() const { return GetType() == "undefined"; }
-    
+
+    void SetObjectId(const wxString& objectId) { this->m_objectId = objectId; }
+    const wxString& GetObjectId() const { return m_objectId; }
     void SetClassName(const wxString& className) { this->m_className = className; }
     void SetSubtype(const wxString& subtype) { this->m_subtype = subtype; }
     void SetType(const wxString& type) { this->m_type = type; }
@@ -40,6 +43,7 @@ public:
      * @brief return a string representing this obejct for UI display (tooltip, console etc)
      */
     wxString ToString() const;
+    bool IsEmpty() const { return m_type.IsEmpty(); }
 };
 
 #endif // NODEDBGREMOTEOBJECT_H

@@ -161,7 +161,46 @@ void NodeJSDevToolsProtocol::Eval(clWebSocketClient& socket, const wxString& exp
             ro->To<RemoteObject>()->FromJSON(result.namedObject("result"));
             clDebugRemoteObjectEvent evt(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT);
             evt.SetRemoteObject(ro);
-            EventNotifier::Get()->ProcessEvent(evt);
+            EventNotifier::Get()->AddPendingEvent(evt);
+        }
+    });
+    m_waitingReplyCommands.insert({ handler.m_commandID, handler });
+}
+
+void NodeJSDevToolsProtocol::GetObjectProperties(clWebSocketClient& socket, const wxString& objectId)
+{
+    JSONElement params = JSONElement::createObject("params");
+    params.addProperty("objectId", objectId);
+    SendSimpleCommand(socket, "Runtime.getProperties", params);
+    // Register a handler to handle this command when it returns
+    CommandHandler handler(message_id, [=](const JSONElement& result) {
+        if(result.hasNamedObject("result")) {
+            clDebugEvent evt(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES);
+            evt.SetString(result.namedObject("result").format(false));
+            EventNotifier::Get()->AddPendingEvent(evt);
+        }
+    });
+    m_waitingReplyCommands.insert({ handler.m_commandID, handler });
+}
+
+void NodeJSDevToolsProtocol::CreateObject(clWebSocketClient& socket, const wxString& expression,
+                                          const wxString& frameId)
+{
+    // Same as eval but without the preview
+    JSONElement params = JSONElement::createObject("params");
+    params.addProperty("callFrameId", frameId);
+    params.addProperty("expression", expression);
+    params.addProperty("generatePreview", false);
+    SendSimpleCommand(socket, "Debugger.evaluateOnCallFrame", params);
+    // Register a handler to handle this command when it returns
+    CommandHandler handler(message_id, [=](const JSONElement& result) {
+        if(result.hasNamedObject("result")) {
+            nSerializableObject::Ptr_t ro(new RemoteObject());
+            ro->To<RemoteObject>()->SetExpression(expression);
+            ro->To<RemoteObject>()->FromJSON(result.namedObject("result"));
+            clDebugRemoteObjectEvent evt(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT);
+            evt.SetRemoteObject(ro);
+            EventNotifier::Get()->AddPendingEvent(evt);
         }
     });
     m_waitingReplyCommands.insert({ handler.m_commandID, handler });

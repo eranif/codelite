@@ -29,6 +29,7 @@ public:
     bool IsObject() const { return GetType() == "object"; }
     bool IsString() const { return GetType() == "string"; }
     bool IsUndefined() const { return GetType() == "undefined"; }
+    bool IsEmpty() const { return m_type.IsEmpty(); }
     wxString ToString() const;
 };
 

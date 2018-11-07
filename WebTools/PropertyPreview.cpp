@@ -29,6 +29,7 @@ JSONElement PropertyPreview::ToJSON(const wxString& name) const
 wxString PropertyPreview::ToString() const
 {
     wxString str;
+    if(IsObject() && IsEmpty()) { return "{...}"; }
     str << GetName() << " : ";
     if(!GetSubtype().IsEmpty()) {
         str << GetSubtype();

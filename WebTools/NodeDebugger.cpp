@@ -40,6 +40,7 @@ NodeDebugger::NodeDebugger()
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &NodeDebugger::OnTooltip, this);
 
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_FINISHED, &NodeDebugger::OnStopDebugger, this);
@@ -64,8 +65,9 @@ NodeDebugger::~NodeDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &NodeDebugger::OnDebugStepOut, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &NodeDebugger::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &NodeDebugger::OnTooltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
-
+    
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_FINISHED, &NodeDebugger::OnStopDebugger, this);
 
@@ -167,6 +169,7 @@ void NodeDebugger::DoCleanup()
 
     // Serialise the breakpoints
     m_bptManager.Save();
+    m_frames.clear();
 }
 
 void NodeDebugger::OnDebugIsRunning(clDebugEvent& event)
@@ -384,4 +387,18 @@ void NodeDebugger::OnDebugStepOut(clDebugEvent& event)
 void NodeDebugger::Eval(const wxString& command, const wxString& frameId)
 {
     NodeJSDevToolsProtocol::Get().Eval(m_socket, command, frameId);
+}
+
+void NodeDebugger::OnTooltip(clDebugEvent& event)
+{
+    CHECK_SHOULD_HANDLE(event);
+    if(m_frames.IsEmpty()) { return; }
+    
+    wxString expression = event.GetString();
+    NodeJSDevToolsProtocol::Get().CreateObject(m_socket, expression, m_frames[0]);
+}
+
+void NodeDebugger::GetObjectProperties(const wxString& objectId)
+{
+    NodeJSDevToolsProtocol::Get().GetObjectProperties(m_socket, objectId);
 }

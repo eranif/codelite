@@ -10,6 +10,7 @@ void RemoteObject::FromJSON(const JSONElement& json)
     m_type = json.namedObject("type").toString();
     m_subtype = json.namedObject("subtype").toString();
     m_className = json.namedObject("className").toString();
+    m_objectId = json.namedObject("objectId").toString();
     JSONElement value = json.namedObject("value");
     if(value.isNull()) {
         m_value = "null";
@@ -30,6 +31,7 @@ JSONElement RemoteObject::ToJSON(const wxString& name) const
     json.addProperty("subtype", m_subtype);
     json.addProperty("className", m_className);
     json.addProperty("value", m_value);
+    json.addProperty("objectId", m_objectId);
     if(!m_preview.IsEmpty()) { json.append(m_preview.ToJSON("preview")); }
     return json;
 }
@@ -38,8 +40,7 @@ wxString RemoteObject::ToString() const
 {
     wxString str;
     if(IsObject()) {
-        str << this->GetClassName() << ": " << GetType() << "\n";
-        str << GetPreview().ToString();
+        str << this->GetClassName() << " : " << GetPreview().ToString();
         
     } else if(IsString()) {
         // Simple type

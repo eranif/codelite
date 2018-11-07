@@ -22,7 +22,9 @@ protected:
     void OnEval(clCommandEvent& event);
     void OnConsoleOutput(clDebugEvent& event);
     void OnEvalResult(clDebugRemoteObjectEvent& event);
-
+    void OnCreateObject(clDebugRemoteObjectEvent& event);
+    void OnObjectProperties(clDebugEvent& event);
+    
 public:
     DebuggerPane(wxWindow* parent);
     virtual ~DebuggerPane();

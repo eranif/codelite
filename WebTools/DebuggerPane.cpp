@@ -5,6 +5,7 @@
 #include "NodeJSDebuggerBreakpoint.h"
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
+#include "PropertyDescriptor.h"
 #include "event_notifier.h"
 #include "wxterminal.h"
 #include <wx/msgdlg.h>
@@ -33,6 +34,8 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &DebuggerPane::OnObjectProperties, this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 }
@@ -49,6 +52,8 @@ DebuggerPane::~DebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints,
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &DebuggerPane::OnObjectProperties, this);
 }
 
 void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
@@ -58,6 +63,7 @@ void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
     const nSerializableObject::Vec_t& frames = event.GetCallFrames();
     m_dvListCtrlCallstack->DeleteAllItems();
 
+    wxArrayString call_frame_ids;
     for(size_t i = 0; i < frames.size(); ++i) {
         CallFrame* frame = frames[i]->To<CallFrame>();
 
@@ -74,7 +80,9 @@ void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
             event.SetFileName(filename);
             EventNotifier::Get()->AddPendingEvent(event);
         }
+        call_frame_ids.Add(frame->GetCallFrameId());
     }
+    NodeJSWorkspace::Get()->GetDebugger()->SetFrames(call_frame_ids);
 }
 
 void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
@@ -154,4 +162,32 @@ void DebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
 {
     RemoteObject* pro = event.GetRemoteObject()->To<RemoteObject>();
     m_node_console->AddTextRaw(pro->ToString() + "\n");
+}
+
+void DebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
+{
+    nSerializableObject::Ptr_t o = event.GetRemoteObject();
+    RemoteObject* ro = o->To<RemoteObject>();
+    m_node_console->AddTextWithEOL(ro->GetObjectId() + " : " + ro->ToString());
+    // Request the object properties
+    NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(ro->GetObjectId());
+}
+
+void DebuggerPane::OnObjectProperties(clDebugEvent& event)
+{
+    wxString s = event.GetString();
+    JSONRoot root(s);
+    JSONElement prop_arr = root.toElement();
+    int size = prop_arr.arraySize();
+    std::vector<PropertyDescriptor> propVec;
+    for(int i = 0; i < size; ++i) {
+        JSONElement prop = prop_arr.arrayItem(i);
+        PropertyDescriptor propDesc;
+        propDesc.FromJSON(prop);
+        if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }
+    }
+
+    for(size_t i = 0; i < propVec.size(); ++i) {
+        m_node_console->AddTextWithEOL(wxString() << "    " << propVec[i].ToString());
+    }
 }

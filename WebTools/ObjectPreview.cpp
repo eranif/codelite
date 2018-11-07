@@ -52,20 +52,24 @@ void ObjectPreview::DeleteProperties()
 wxString ObjectPreview::ToString() const
 {
     wxString str;
-    str << GetType();
-    if(!GetSubtype().IsEmpty()) { str << " (" << GetSubtype() << ")"; }
-    if(!GetProperties().empty()) {
-        str << ": [";
-        for(size_t i = 0; i < m_properties.size(); ++i) {
-            str << m_properties[i]->ToString() << ", ";
-        }
-    }
-    if(IsOverflow()) {
-        str << "...";
+    if(IsEmpty()) {
+        return "{...}";
     } else {
-        // remove the last comma we added
-        str.RemoveLast(2);
+        str << GetType();
+        if(!GetSubtype().IsEmpty()) { str << " (" << GetSubtype() << ")"; }
+        if(!GetProperties().empty()) {
+            str << ": [";
+            for(size_t i = 0; i < m_properties.size(); ++i) {
+                str << m_properties[i]->ToString() << ", ";
+            }
+        }
+        if(IsOverflow()) {
+            str << "...";
+        } else {
+            // remove the last comma we added
+            str.RemoveLast(2);
+        }
+        if(!GetProperties().empty()) { str << "]"; }
+        return str;
     }
-    if(!GetProperties().empty()) { str << "]"; }
-    return str;
 }

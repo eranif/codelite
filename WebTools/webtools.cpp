@@ -49,7 +49,6 @@ WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
-    , m_nodejsDebuggerPane(NULL)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -224,10 +223,7 @@ void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
     }
 }
 
-void WebTools::OnWorkspaceClosed(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void WebTools::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
 
 void WebTools::OnEditorChanged(wxCommandEvent& event)
 {
@@ -458,11 +454,13 @@ void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
     // Show the debugger pane
     if(!m_nodejsCliDebuggerPane) {
         m_nodejsCliDebuggerPane = new DebuggerPane(parent);
+        // Let the pane process the 'startup' event as well
+        m_nodejsCliDebuggerPane->GetEventHandler()->ProcessEvent(event);
         clGetManager()->GetDockingManager()->AddPane(m_nodejsCliDebuggerPane, wxAuiPaneInfo()
                                                                                   .MinSize(wxSize(-1, 300))
                                                                                   .Layer(5)
                                                                                   .Name("nodejs_cli_debugger")
-                                                                                  .Caption("Node.js CLI Debugger")
+                                                                                  .Caption("Node.js Debugger")
                                                                                   .CloseButton(false)
                                                                                   .MaximizeButton()
                                                                                   .Bottom()

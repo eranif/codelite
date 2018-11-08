@@ -24,11 +24,6 @@ public:
 NodeDebuggerTooltip::NodeDebuggerTooltip(wxWindow* parent)
     : clResizableTooltip(parent)
 {
-    int height = clConfig::Get().Read("NodeDebuggerTooltip/Height", 200);
-    int width = clConfig::Get().Read("NodeDebuggerTooltip/Width", 300);
-    wxSize toolsize(width, height);
-    if((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) { toolsize = wxSize(300, 200); }
-    SetSize(toolsize);
     m_treeCtrl->AddHeader("Name");
     m_treeCtrl->AddHeader("Value");
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &NodeDebuggerTooltip::OnObjectProperties, this);
@@ -38,8 +33,6 @@ NodeDebuggerTooltip::~NodeDebuggerTooltip()
 {
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &NodeDebuggerTooltip::OnObjectProperties,
                                  this);
-    clConfig::Get().Write("NodeDebuggerTooltip/Height", GetSize().GetHeight());
-    clConfig::Get().Write("NodeDebuggerTooltip/Width", GetSize().GetWidth());
 }
 
 void NodeDebuggerTooltip::Show(nSerializableObject::Ptr_t remoteObject)

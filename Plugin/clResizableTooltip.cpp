@@ -1,7 +1,8 @@
 #include "clResizableTooltip.h"
-#include <wx/wupdlock.h>
+#include "cl_config.h"
 #include "event_notifier.h"
 #include <wx/gdicmn.h>
+#include <wx/wupdlock.h>
 
 wxDEFINE_EVENT(wxEVT_TOOLTIP_DESTROY, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TOOLTIP_ITEM_EXPANDING, clCommandEvent);
@@ -11,14 +12,19 @@ clResizableTooltip::clResizableTooltip(wxEvtHandler* owner)
     , m_dragging(false)
     , m_owner(owner)
 {
-    m_treeCtrl->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    m_treeCtrl->SetSortFunction(nullptr);
+    int height = clConfig::Get().Read("Tooltip/Height", 200);
+    int width = clConfig::Get().Read("Tooltip/Width", 300);
+    wxSize toolsize(width, height);
+    if((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) { toolsize = wxSize(300, 200); }
+    SetSize(toolsize);
 }
 
 clResizableTooltip::~clResizableTooltip()
 {
-    if(m_panelStatus->HasCapture()) {
-        m_panelStatus->ReleaseMouse();
-    }
+    if(m_panelStatus->HasCapture()) { m_panelStatus->ReleaseMouse(); }
+    clConfig::Get().Write("Tooltip/Height", GetSize().GetHeight());
+    clConfig::Get().Write("Tooltip/Width", GetSize().GetWidth());
 }
 
 void clResizableTooltip::OnCheckMousePosition(wxTimerEvent& event)
@@ -40,9 +46,7 @@ void clResizableTooltip::OnCheckMousePosition(wxTimerEvent& event)
     // and increase it by 15 pixels
     rect.Inflate(15, 15);
     if(!rect.Contains(::wxGetMousePosition())) {
-        if(m_panelStatus->HasCapture()) {
-            m_panelStatus->ReleaseMouse();
-        }
+        if(m_panelStatus->HasCapture()) { m_panelStatus->ReleaseMouse(); }
 
         // Notify to the owner that this tooltip should be destroyed
         clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
@@ -76,9 +80,7 @@ void clResizableTooltip::OnStatusBarMotion(wxMouseEvent& event)
         int xDiff = curect.GetBottomRight().x - curpos.x;
         int yDiff = curect.GetBottomRight().y - curpos.y;
 
-        if((abs(xDiff) > 3) || (abs(yDiff) > 3)) {
-            DoUpdateSize(false);
-        }
+        if((abs(xDiff) > 3) || (abs(yDiff) > 3)) { DoUpdateSize(false); }
     }
 }
 
@@ -109,18 +111,14 @@ void clResizableTooltip::DoUpdateSize(bool performClean)
         wxPoint mousePt = ::wxGetMousePosition();
         ww = mousePt.x - m_topLeft.x;
         hh = mousePt.y - m_topLeft.y;
-        
+
         wxRect curect(m_topLeft, wxSize(ww, hh));
-        if(curect.GetHeight() > 100 && curect.GetWidth() > 100) {
-            SetSize(curect);
-        }
+        if(curect.GetHeight() > 100 && curect.GetWidth() > 100) { SetSize(curect); }
     }
 
     if(performClean) {
         m_dragging = false;
-        if(m_panelStatus->HasCapture()) {
-            m_panelStatus->ReleaseMouse();
-        }
+        if(m_panelStatus->HasCapture()) { m_panelStatus->ReleaseMouse(); }
 #ifndef __WXGTK__
         wxSetCursor(wxNullCursor);
 #endif
@@ -141,8 +139,5 @@ void clResizableTooltip::ShowTip()
     m_topLeft = ::wxGetMousePosition();
     Move(m_topLeft);
     wxPopupWindow::Show();
-    if(GetTreeCtrl() && GetTreeCtrl()->IsShown()) {
-        GetTreeCtrl()->SetFocus();
-    }
-    
+    if(GetTreeCtrl() && GetTreeCtrl()->IsShown()) { GetTreeCtrl()->SetFocus(); }
 }

@@ -36,9 +36,12 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
     Bind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
+
+    DoPrintStartupMessages();
 }
 
 DebuggerPane::~DebuggerPane()
@@ -56,6 +59,7 @@ DebuggerPane::~DebuggerPane()
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
     Unbind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
 }
 
@@ -175,10 +179,7 @@ void DebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
     m_debuggerTooltip->Show(o);
 }
 
-void DebuggerPane::OnDestroyTip(clCommandEvent& event)
-{
-    DoDestroyTip();
-}
+void DebuggerPane::OnDestroyTip(clCommandEvent& event) { DoDestroyTip(); }
 
 void DebuggerPane::DoDestroyTip()
 {
@@ -187,4 +188,25 @@ void DebuggerPane::DoDestroyTip()
         m_debuggerTooltip->Destroy();
     }
     m_debuggerTooltip = nullptr;
+}
+
+void DebuggerPane::OnDebugSessionStarted(clDebugEvent& event)
+{
+    event.Skip();
+    DoPrintStartupMessages();
+}
+
+void DebuggerPane::DoPrintStartupMessages()
+{
+    m_node_console->Clear();
+    m_terminal->Clear();
+    m_node_console->AddTextWithEOL("##==========================================================");
+    m_node_console->AddTextWithEOL("## Node.js console");
+    m_node_console->AddTextWithEOL("## use this console to send commands directly to node.js");
+    m_node_console->AddTextWithEOL("##==========================================================");
+
+    m_terminal->AddTextWithEOL("##==========================================================");
+    m_terminal->AddTextWithEOL("## Node.js stdin/stdout console");
+    m_terminal->AddTextWithEOL("## stdout messages (e.g. console.log(..) will appear here");
+    m_terminal->AddTextWithEOL("##==========================================================");
 }

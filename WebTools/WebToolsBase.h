@@ -7,7 +7,6 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
-#include "Notebook.h"
 #include "clThemedListCtrl.h"
 #include "clToolBar.h"
 #include <map>
@@ -216,27 +215,31 @@ class NodeJSCliDebuggerPaneBase : public wxPanel
 {
 protected:
     wxSplitterWindow* m_splitter271;
-    wxPanel* m_splitterPageCallstack;
-    clThemedListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_splitterPageWatches;
-    Notebook* m_notebook;
-    wxPanel* m_panelOutput;
+    wxSplitterWindow* m_splitter311;
     wxPanel* m_panelConsole;
+    wxPanel* m_panelOutput;
+    wxPanel* m_splitterPageCallstack;
+    wxNotebook* m_notebook301;
+    wxPanel* m_panelCallstack;
+    clThemedListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_panelBreakpoints;
     clToolBar* m_tbBreakpoints;
     clThemedListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
 public:
-    clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
-    wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
-    wxPanel* GetPanelOutput() { return m_panelOutput; }
     wxPanel* GetPanelConsole() { return m_panelConsole; }
+    wxPanel* GetPanelOutput() { return m_panelOutput; }
+    wxSplitterWindow* GetSplitter311() { return m_splitter311; }
+    wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
+    clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
+    wxPanel* GetPanelCallstack() { return m_panelCallstack; }
     clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
     clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
-    Notebook* GetNotebook() { return m_notebook; }
-    wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
+    wxNotebook* GetNotebook301() { return m_notebook301; }
+    wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }
     NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                               const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);

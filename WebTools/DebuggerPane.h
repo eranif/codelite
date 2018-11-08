@@ -16,6 +16,7 @@ class DebuggerPane : public NodeJSCliDebuggerPaneBase
 
 protected:
     void DoDestroyTip();
+    void DoPrintStartupMessages();
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);
@@ -26,6 +27,7 @@ protected:
     void OnRunTerminalCommand(clCommandEvent& event);
     void OnEval(clCommandEvent& event);
     void OnConsoleOutput(clDebugEvent& event);
+    void OnDebugSessionStarted(clDebugEvent& event);
     void OnEvalResult(clDebugRemoteObjectEvent& event);
     void OnCreateObject(clDebugRemoteObjectEvent& event);
     void OnDestroyTip(clCommandEvent& event);

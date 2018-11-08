@@ -576,17 +576,58 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
 
     boxSizer269->Add(m_splitter271, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_splitterPageWatches = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer285 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageWatches->SetSizer(boxSizer285);
+
+    m_splitter311 = new wxSplitterWindow(m_splitterPageWatches, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_splitterPageWatches, wxSize(-1, -1)),
+                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter311->SetSashGravity(0.5);
+    m_splitter311->SetMinimumPaneSize(10);
+
+    boxSizer285->Add(m_splitter311, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelConsole = new wxPanel(m_splitter311, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter311, wxSize(-1, -1)),
+                                 wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer321 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsole->SetSizer(boxSizer321);
+
+    m_panelOutput = new wxPanel(m_splitter311, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter311, wxSize(-1, -1)),
+                                wxTAB_TRAVERSAL);
+    m_splitter311->SplitVertically(m_panelConsole, m_panelOutput, 0);
+
+    wxBoxSizer* boxSizer323 = new wxBoxSizer(wxVERTICAL);
+    m_panelOutput->SetSizer(boxSizer323);
+
     m_splitterPageCallstack = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
                                           wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter271->SplitVertically(m_splitterPageWatches, m_splitterPageCallstack, 0);
 
     wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageCallstack->SetSizer(boxSizer281);
 
-    m_dvListCtrlCallstack =
-        new clThemedListCtrl(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_notebook301 = new wxNotebook(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook301->SetName(wxT("m_notebook301"));
 
-    boxSizer281->Add(m_dvListCtrlCallstack, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer281->Add(m_notebook301, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelCallstack = new wxPanel(m_notebook301, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_notebook301, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook301->AddPage(m_panelCallstack, _("Callstack"), true);
+
+    wxBoxSizer* boxSizer307 = new wxBoxSizer(wxVERTICAL);
+    m_panelCallstack->SetSizer(boxSizer307);
+
+    m_dvListCtrlCallstack =
+        new clThemedListCtrl(m_panelCallstack, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_panelCallstack, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer307->Add(m_dvListCtrlCallstack, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlCallstack->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
@@ -596,36 +637,9 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                             wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPageWatches = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter271->SplitVertically(m_splitterPageCallstack, m_splitterPageWatches, 0);
-
-    wxBoxSizer* boxSizer285 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPageWatches->SetSizer(boxSizer285);
-
-    m_notebook = new Notebook(m_splitterPageWatches, wxID_ANY, wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPageWatches, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook->SetName(wxT("m_notebook"));
-
-    boxSizer285->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panelOutput =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelOutput, _("Output"), true);
-
-    wxBoxSizer* boxSizer295 = new wxBoxSizer(wxVERTICAL);
-    m_panelOutput->SetSizer(boxSizer295);
-
-    m_panelConsole =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelConsole, _("Console"), false);
-
-    wxBoxSizer* boxSizer303 = new wxBoxSizer(wxVERTICAL);
-    m_panelConsole->SetSizer(boxSizer303);
-
-    m_panelBreakpoints =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
+    m_panelBreakpoints = new wxPanel(m_notebook301, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_notebook301, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook301->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
 
     wxBoxSizer* boxSizer293 = new wxBoxSizer(wxVERTICAL);
     m_panelBreakpoints->SetSizer(boxSizer293);

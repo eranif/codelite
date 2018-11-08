@@ -7,7 +7,7 @@
 #ifndef _CODELITE_PLUGIN_VIRTUALDIRECTORYSELECTORBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_VIRTUALDIRECTORYSELECTORBASE_BASE_CLASSES_H
 
-#include "clTreeCtrl.h"
+#include "clThemedTreeCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
@@ -41,7 +41,7 @@ class WXDLLIMPEXP_SDK VirtualDirectorySelectorDlgBaseClass : public wxDialog
 {
 protected:
     wxStaticText* m_staticText1;
-    clTreeCtrl* m_treeCtrl;
+    clThemedTreeCtrl* m_treeCtrl;
     wxStaticText* m_staticTextPreview;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
@@ -57,7 +57,7 @@ protected:
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
-    clTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     wxStaticText* GetStaticTextPreview() { return m_staticTextPreview; }
     wxButton* GetButtonOk() { return m_buttonOk; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }

@@ -32,8 +32,8 @@ VirtualDirectorySelectorDlgBaseClass::VirtualDirectorySelectorDlgBaseClass(wxWin
 
     bSizer1->Add(m_staticText1, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_treeCtrl = new clTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                wxTR_DEFAULT_STYLE | wxTR_SINGLE);
+    m_treeCtrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 200)),
+                                      wxTR_DEFAULT_STYLE | wxTR_SINGLE);
     m_treeCtrl->SetFocus();
 
     bSizer1->Add(m_treeCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

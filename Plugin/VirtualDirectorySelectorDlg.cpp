@@ -42,6 +42,21 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
+class MyVdTreeItemData : public wxTreeItemData
+{
+    int m_itemType = ProjectItem::TypeInvalid;
+
+public:
+    MyVdTreeItemData(int type)
+        : m_itemType(type)
+    {
+    }
+    virtual ~MyVdTreeItemData() {}
+
+    bool IsFolder() const { return m_itemType == ProjectItem::TypeVirtualDirectory; }
+    bool IsProject() const { return m_itemType == ProjectItem::TypeProject; }
+};
+
 VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxxWorkspace* wsp,
                                                          const wxString& initialPath, const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass(parent)
@@ -52,7 +67,6 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxx
 {
     m_treeCtrl->SetFocus();
     DoBuildTree();
-
     GetSizer()->Fit(this);
     CentreOnParent();
 }
@@ -130,7 +144,6 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeIt
 }
 void VirtualDirectorySelectorDlg::DoBuildTree()
 {
-    wxWindowUpdateLocker locker(m_treeCtrl);
     m_treeCtrl->DeleteAllItems();
     m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
@@ -163,7 +176,8 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
         }
 
         // create the tree
-        wxTreeItemId root = m_treeCtrl->AddRoot(nodeData.name, workspaceImgId, workspaceImgId);
+        wxTreeItemId root = m_treeCtrl->AddRoot(nodeData.name, workspaceImgId, workspaceImgId,
+                                                new MyVdTreeItemData(ProjectItem::TypeWorkspace));
         tree->GetData().itemId = root;
         TreeWalker<wxString, VisualWorkspaceNode> walker(tree);
 
@@ -199,11 +213,9 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
             node->GetData().itemId = m_treeCtrl->AppendItem(parentHti,            // parent
                                                             node->GetData().name, // display name
                                                             imgId,                // item image index
-                                                            imgIdExpanded         // selected item image
-            );
-            m_treeCtrl->SortChildren(parentHti);
+                                                            imgIdExpanded,        // selected item image
+                                                            new MyVdTreeItemData(node->GetData().type));
         }
-
         if(root.IsOk() && m_treeCtrl->ItemHasChildren(root)) { m_treeCtrl->Expand(root); }
         wxDELETE(tree);
     }
@@ -214,7 +226,12 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
 void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)
 {
     wxTreeItemId id = m_treeCtrl->GetSelection();
-    event.Enable(id.IsOk() && m_treeCtrl->GetItemImage(id) == 1);
+    if(!id.IsOk()) {
+        event.Enable(false);
+    } else {
+        MyVdTreeItemData* cd = dynamic_cast<MyVdTreeItemData*>(m_treeCtrl->GetItemData(id));
+        event.Enable(cd->IsFolder());
+    }
 }
 
 wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
@@ -330,6 +347,6 @@ void VirtualDirectorySelectorDlg::OnNewVDUI(wxUpdateUIEvent& event)
         event.Enable(false);
         return;
     }
-    int imgid = m_treeCtrl->GetItemImage(id);
-    event.Enable(imgid == 1 || imgid == 2); // project or virtual folder
+    MyVdTreeItemData* cd = dynamic_cast<MyVdTreeItemData*>(m_treeCtrl->GetItemData(id));
+    event.Enable(cd->IsProject() || cd->IsFolder()); // project or virtual folder
 }

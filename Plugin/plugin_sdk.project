@@ -568,8 +568,10 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="clResizableTooltipBase_plugin_bitmaps.cpp"/>
       <File Name="clAboutDialogBase_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
@@ -587,6 +589,8 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="clResizableTooltipBase.cpp"/>
+      <File Name="clResizableTooltipBase.h"/>
       <File Name="clAboutDialogBase.cpp"/>
       <File Name="clAboutDialogBase.h"/>
       <File Name="VirtualDirectorySelectorBase.h"/>

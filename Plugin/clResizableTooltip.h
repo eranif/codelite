@@ -25,7 +25,8 @@
 
 #ifndef CLRESIZABLETOOLTIP_H
 #define CLRESIZABLETOOLTIP_H
-#include "wxcrafter_plugin.h"
+
+#include "clResizableTooltipBase.h"
 #include "cl_command_event.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLTIP_DESTROY, clCommandEvent);
@@ -36,10 +37,6 @@ class WXDLLIMPEXP_SDK clResizableTooltip : public clResizableTooltipBase
     bool m_dragging;
     wxEvtHandler* m_owner;
     wxPoint m_topLeft;
-
-protected:
-    virtual void OnCaptureLost(wxMouseCaptureLostEvent& event);
-    void DoUpdateSize(bool performClean);
 
 public:
     clResizableTooltip(wxEvtHandler* owner);
@@ -67,11 +64,6 @@ protected:
      * @param event
      */
     virtual void OnItemExpanding(wxTreeEvent& event);
-    virtual void OnStatusBarLeftDown(wxMouseEvent& event);
-    virtual void OnStatusBarLeftUp(wxMouseEvent& event);
-    virtual void OnStatusBarMotion(wxMouseEvent& event);
-    virtual void OnStatusEnterWindow(wxMouseEvent& event);
-    virtual void OnStatusLeaveWindow(wxMouseEvent& event);
     virtual void OnCheckMousePosition(wxTimerEvent& event);
 };
 #endif // CLRESIZABLETOOLTIP_H

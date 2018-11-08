@@ -9,7 +9,6 @@
 
 #include "clFileViwerTreeCtrl.h"
 #include "clThemedListCtrl.h"
-#include "clThemedTreeCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dataview.h>
@@ -18,7 +17,6 @@
 #include <wx/iconbndl.h>
 #include <wx/listbox.h>
 #include <wx/panel.h>
-#include <wx/popupwin.h>
 #include <wx/scrolwin.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
@@ -28,7 +26,6 @@
 #include <wx/stattext.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
-#include <wx/timer.h>
 #include <wx/treectrl.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
@@ -226,35 +223,6 @@ public:
     clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~clImageViewerBase();
-};
-
-class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxPopupWindow
-{
-protected:
-    wxPanel* m_mainPanel;
-    clThemedTreeCtrl* m_treeCtrl;
-    wxPanel* m_panelStatus;
-    wxStaticBitmap* m_staticBitmap240;
-    wxTimer* m_timerCheckMousePos;
-
-protected:
-    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnStatusEnterWindow(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusLeaveWindow(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusBarMotion(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusBarLeftUp(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatusBarLeftDown(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnCaptureLost(wxMouseCaptureLostEvent& event) { event.Skip(); }
-    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
-
-public:
-    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxStaticBitmap* GetStaticBitmap240() { return m_staticBitmap240; }
-    wxPanel* GetPanelStatus() { return m_panelStatus; }
-    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
-    clResizableTooltipBase(wxWindow* parent, long style = wxBORDER_THEME);
-    virtual ~clResizableTooltipBase();
 };
 
 class WXDLLIMPEXP_SDK clEditorBarBase : public wxPanel

@@ -129,16 +129,21 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
         buttonState = eButtonState::kNormal;
         break;
     }
-
+    
+    // Prepare the colours
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    wxColour penColour;
+    if(DrawingUtils::IsDark(bgColour)) {
+        penColour = wxColour("#fdfefe");
+    } else {
+        penColour = wxColour("#17202a");
+    }
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
-        DrawingUtils::DrawButtonX(dc, window, buttonRect, wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT),
-                                  wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), buttonState);
+        DrawingUtils::DrawButtonX(dc, window, buttonRect, penColour, bgColour, buttonState);
         break;
     case wxAUI_BUTTON_MAXIMIZE_RESTORE:
-        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect,
-                                                wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT),
-                                                wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), buttonState);
+        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect, penColour, bgColour, buttonState);
         break;
     default:
         // Make sure that the pane buttons are drawn with proper colours
@@ -231,7 +236,14 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxRect textRect(textSize);
         textRect = textRect.CenterIn(clip_rect, wxVERTICAL);
         textRect.SetX(caption_offset);
-        pDC->SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
+
+        wxColour textColour;
+        if(DrawingUtils::IsDark(captionBgColour)) {
+            textColour = wxColour("#fdfefe");
+        } else {
+            textColour = wxColour("#17202a");
+        }
+        pDC->SetTextForeground(textColour);
         pDC->DrawText(draw_text, textRect.GetTopLeft());
         memDc.SelectObject(wxNullBitmap);
     }

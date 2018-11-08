@@ -11,89 +11,6 @@ extern void wxCB786InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-clDebuggerTipWindowBase::clDebuggerTipWindowBase(wxWindow* parent, long style)
-    : wxPopupWindow(parent, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCB786InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer4);
-
-    m_panel46 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
-
-    boxSizer4->Add(m_panel46, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
-    m_panel46->SetSizer(boxSizer48);
-
-    m_panel50 =
-        new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel46, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    boxSizer48->Add(m_panel50, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
-    m_panel50->SetSizer(bSizer5);
-
-    m_treeCtrl = new clThemedTreeCtrl(m_panel50, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel50, wxSize(-1, -1)),
-                                      wxTR_DEFAULT_STYLE | wxTR_SINGLE | wxBORDER_NONE);
-
-    bSizer5->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(0));
-
-    m_panelStatusBar =
-        new wxPanel(m_panel46, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel46, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    boxSizer48->Add(m_panelStatusBar, 0, wxEXPAND, WXC_FROM_DIP(2));
-
-    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
-    m_panelStatusBar->SetSizer(boxSizer42);
-
-    m_staticBitmap44 = new wxStaticBitmap(m_panelStatusBar, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("resize")),
-                                          wxDefaultPosition, wxDLG_UNIT(m_panelStatusBar, wxSize(-1, -1)), 0);
-
-    boxSizer42->Add(m_staticBitmap44, 0, wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    SetName(wxT("clDebuggerTipWindowBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    // Connect events
-    m_treeCtrl->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(clDebuggerTipWindowBase::OnKeyDown), NULL, this);
-    m_treeCtrl->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnLeftDown), NULL, this);
-    m_treeCtrl->Connect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnMouseMove), NULL, this);
-    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEventHandler(clDebuggerTipWindowBase::OnItemExpanded),
-                        NULL, this);
-    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clDebuggerTipWindowBase::OnExpandItem),
-                        NULL, this);
-    m_treeCtrl->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(clDebuggerTipWindowBase::OnItemMenu), NULL,
-                        this);
-    m_panelStatusBar->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatusLeftUp), NULL, this);
-    m_panelStatusBar->Connect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatuMotion), NULL, this);
-    m_staticBitmap44->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnTipLeftDown), NULL, this);
-}
-
-clDebuggerTipWindowBase::~clDebuggerTipWindowBase()
-{
-    m_treeCtrl->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(clDebuggerTipWindowBase::OnKeyDown), NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnLeftDown), NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnMouseMove), NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDED,
-                           wxTreeEventHandler(clDebuggerTipWindowBase::OnItemExpanded), NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(clDebuggerTipWindowBase::OnExpandItem),
-                           NULL, this);
-    m_treeCtrl->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(clDebuggerTipWindowBase::OnItemMenu), NULL,
-                           this);
-    m_panelStatusBar->Disconnect(wxEVT_LEFT_UP, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatusLeftUp), NULL,
-                                 this);
-    m_panelStatusBar->Disconnect(wxEVT_MOTION, wxMouseEventHandler(clDebuggerTipWindowBase::OnStatuMotion), NULL, this);
-    m_staticBitmap44->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(clDebuggerTipWindowBase::OnTipLeftDown), NULL,
-                                 this);
-}
-
 clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                      const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
@@ -122,6 +39,7 @@ clDebuggerEditItemDlgBase::clDebuggerEditItemDlgBase(wxWindow* parent, wxWindowI
 
     m_textCtrl38 =
         new wxTextCtrl(m_panel32, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel32, wxSize(-1, -1)), 0);
+    m_textCtrl38->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrl38->SetHint(wxT(""));
 #endif

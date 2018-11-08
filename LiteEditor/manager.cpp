@@ -219,6 +219,8 @@ Manager::Manager(void)
 
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
+    Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
+    
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -228,6 +230,7 @@ Manager::Manager(void)
 
 Manager::~Manager(void)
 {
+    Unbind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
@@ -1358,9 +1361,7 @@ wxString Manager::GetProjectNameByFile(wxString& fullPathFileName, bool caseSens
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
         // The second call copes with the searched-for file being a symlink
-        if(proj->IsFileExist(fullPathFileName) || proj->IsFileExist(linkDestination)) {
-            return proj->GetName();
-        }
+        if(proj->IsFileExist(fullPathFileName) || proj->IsFileExist(linkDestination)) { return proj->GetName(); }
 #if defined(__WXGTK__)
         wxString fileNameInProject; // Try again, checking if the _project_ filePath is a symlink
         if(proj->IsFileExist(fullPathFileName, fileNameInProject)) {
@@ -1682,7 +1683,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, true);
     wxUnusedVar(dummy);
-    
+
     m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
     if(m_programProcess) {
         clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString()
@@ -3593,4 +3594,9 @@ void Manager::OnDebuggerSetMemory(clDebugEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void Manager::OnHideGdbTooltip(clCommandEvent& event)
+{
+    if(GetDebuggerTip()) { GetDebuggerTip()->HideDialog(); }
 }

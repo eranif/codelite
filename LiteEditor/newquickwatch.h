@@ -7,19 +7,15 @@
 #ifndef _CODELITE_LITEEDITOR_NEWQUICKWATCH_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_NEWQUICKWATCH_BASE_CLASSES_H
 
-#include "clThemedTreeCtrl.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/panel.h>
-#include <wx/popupwin.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/statbmp.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/treectrl.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
@@ -37,36 +33,6 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
-
-class clDebuggerTipWindowBase : public wxPopupWindow
-{
-protected:
-    wxPanel* m_panel46;
-    wxPanel* m_panel50;
-    clThemedTreeCtrl* m_treeCtrl;
-    wxPanel* m_panelStatusBar;
-    wxStaticBitmap* m_staticBitmap44;
-
-protected:
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnLeftDown(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnMouseMove(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnItemExpanded(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnExpandItem(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnItemMenu(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnStatusLeftUp(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnStatuMotion(wxMouseEvent& event) { event.Skip(); }
-    virtual void OnTipLeftDown(wxMouseEvent& event) { event.Skip(); }
-
-public:
-    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    wxPanel* GetPanel50() { return m_panel50; }
-    wxStaticBitmap* GetStaticBitmap44() { return m_staticBitmap44; }
-    wxPanel* GetPanelStatusBar() { return m_panelStatusBar; }
-    wxPanel* GetPanel46() { return m_panel46; }
-    clDebuggerTipWindowBase(wxWindow* parent, long style = wxBORDER_NONE);
-    virtual ~clDebuggerTipWindowBase();
-};
 
 class clDebuggerEditItemDlgBase : public wxDialog
 {

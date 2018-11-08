@@ -118,7 +118,8 @@ protected:
 protected:
     Manager(void);
     virtual ~Manager(void);
-
+    void OnHideGdbTooltip(clCommandEvent &event);
+    
     //--------------------------- Global State -----------------------------
 public:
     DisplayVariableDlg* GetDebuggerTip();

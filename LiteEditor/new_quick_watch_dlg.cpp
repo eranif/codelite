@@ -55,47 +55,22 @@ public:
 };
 
 DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
-    : clDebuggerTipWindowBase(parent)
+    : clResizableTooltip(parent)
     , m_debugger(NULL)
-    , m_keepCurrentPosition(false)
-    , m_dragging(false)
     , m_editDlgIsUp(false)
 {
-    m_hoveredItem = wxTreeItemId();
     Hide();
     Centre();
-    MSWSetNativeTheme(m_treeCtrl);
-    m_timer2 = new wxTimer(this);
-    m_mousePosTimer = new wxTimer(this);
-
     SetName("clDebuggerEditItemDlgBase");
-
-    bool sizeSet(false);
-    if(!wxPersistenceManager::Get().Find(this)) { sizeSet = wxPersistentRegisterAndRestore(this, "CLDebuggerTip"); }
-    wxUnusedVar(sizeSet);
-    if(GetSize().x < 100 || GetSize().y < 100) { SetSize(wxRect(GetPosition(), wxSize(100, 100))); }
-
-    Connect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
-    Connect(m_mousePosTimer->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnCheckMousePosTimer), NULL,
-            this);
-    m_panelStatusBar->Connect(wxEVT_MOUSE_CAPTURE_LOST,
-                              wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_MENU, &DisplayVariableDlg::OnItemMenu, this);
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()
 {
-    Disconnect(m_timer2->GetId(), wxEVT_TIMER, wxTimerEventHandler(DisplayVariableDlg::OnTimer2), NULL, this);
-    m_panelStatusBar->Disconnect(wxEVT_MOUSE_CAPTURE_LOST,
-                                 wxMouseCaptureLostEventHandler(DisplayVariableDlg::OnCaptureLost), NULL, this);
-
-    m_timer2->Stop();
-    m_mousePosTimer->Stop();
-
-    wxDELETE(m_timer2);
-    wxDELETE(m_mousePosTimer);
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_MENU, &DisplayVariableDlg::OnItemMenu, this);
 }
 
-void DisplayVariableDlg::OnExpandItem(wxTreeEvent& event)
+void DisplayVariableDlg::OnItemExpanding(wxTreeEvent& event)
 {
     event.Skip();
     wxTreeItemId item = event.GetItem();
@@ -243,69 +218,29 @@ void DisplayVariableDlg::DoCleanUp()
     m_variableName = wxT("");
     m_expression = wxT("");
     m_itemOldValue.Clear();
-    m_dragging = false;
     m_editDlgIsUp = false;
-    if(m_panelStatusBar->HasCapture()) { m_panelStatusBar->ReleaseMouse(); }
     wxSetCursor(wxNullCursor);
 }
 
 void DisplayVariableDlg::HideDialog()
 {
-
     DoCleanUp();
     // asm("int3");
-    wxPopupWindow::Hide();
-    m_mousePosTimer->Stop();
-}
-
-void DisplayVariableDlg::OnKeyDown(wxKeyEvent& event)
-{
-    if(event.GetKeyCode() == WXK_F2) {
-        wxTreeItemId item = m_treeCtrl->GetSelection();
-        if(item.IsOk() && !IsFakeItem(item)) {
-            DoEditItem(item);
-
-        } else {
-            HideDialog();
-        }
-
-    } else {
-        HideDialog();
-    }
+    clResizableTooltip::Hide();
 }
 
 void DisplayVariableDlg::ShowDialog(bool center)
 {
-    if(!center) {
-        wxPopupWindow::Show();
-        DoAdjustPosition();
-
-    } else {
-        Centre();
-        wxPopupWindow::Show();
-    }
-
-    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) {
-#ifndef __WXMAC__
-        clMainFrame::Get()->Raise();
-#endif
-        editor->SetFocus();
-        editor->SetActive();
-    }
-    m_mousePosTimer->Start(200);
+    wxUnusedVar(center);
+    clResizableTooltip::ShowTip();
 }
-
-void DisplayVariableDlg::OnLeftDown(wxMouseEvent& e) { e.Skip(); }
-
-void DisplayVariableDlg::OnItemExpanded(wxTreeEvent& event) { event.Skip(); }
 
 void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
 {
     event.Skip();
     wxTreeItemId item = event.GetItem();
 
-    if(item.IsOk()) m_treeCtrl->SelectItem(item);
+    if(item.IsOk()) { m_treeCtrl->SelectItem(item); }
 
     // Dont show popup menu for fake nodes
     if(IsFakeItem(item)) return;
@@ -406,52 +341,7 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
     }
 }
 
-void DisplayVariableDlg::OnMouseMove(wxMouseEvent& event) { event.Skip(); }
-
-void DisplayVariableDlg::OnTimer2(wxTimerEvent& e) {}
-
-void DisplayVariableDlg::DoAdjustPosition()
-{
-    if(m_keepCurrentPosition) {
-
-        // Reset the flag
-        m_keepCurrentPosition = false;
-        Move(s_Rect.GetTopLeft());
-
-        s_Rect = wxRect();
-        return;
-    }
-    Move(::wxGetMousePosition());
-}
-
-void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEventData& event)
-{
-    wxUnusedVar(event);
-    m_keepCurrentPosition = false;
-}
-
-void DisplayVariableDlg::OnCheckMousePosTimer(wxTimerEvent& e)
-{
-    if(m_editDlgIsUp) { return; }
-
-    wxRect rect = GetScreenRect().Inflate(20, 30);
-
-    wxPoint pt = ::wxGetMousePosition();
-    bool mouseLeftWidow = !rect.Contains(pt);
-    if(mouseLeftWidow) {
-
-        wxMouseState state = wxGetMouseState();
-        // This is to fix a 'MouseCapture' bug on Linux while leaving the mouse Window
-        // and mouse button is clicked and scrolling the scrollbar (H or Vertical)
-        // The UI hangs
-        if(state.LeftIsDown()) {
-            // Don't Hide, just restart the timer
-            return;
-        }
-
-        HideDialog();
-    }
-}
+void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEventData& event) { wxUnusedVar(event); }
 
 void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 {
@@ -512,78 +402,7 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 
     s_Rect = GetScreenRect();
     HideDialog();
-
-    // When the new tooltip shows, do not move the the dialog position
-    // Incase an error will take place, the flag will be reset
-    m_keepCurrentPosition = true;
     m_debugger->CreateVariableObject(newExpr, false, DBG_USERR_QUICKWACTH);
-}
-
-void DisplayVariableDlg::OnTipLeftDown(wxMouseEvent& event)
-{
-    m_dragging = true;
-    wxSetCursor(wxCURSOR_SIZENWSE);
-    m_panelStatusBar->CaptureMouse();
-}
-
-void DisplayVariableDlg::OnCaptureLost(wxMouseCaptureLostEvent& e)
-{
-    e.Skip();
-    if(m_panelStatusBar->HasCapture()) {
-        m_panelStatusBar->ReleaseMouse();
-        m_dragging = true;
-    }
-}
-
-void DisplayVariableDlg::OnStatuMotion(wxMouseEvent& event)
-{
-    event.Skip();
-    if(m_dragging) {
-        wxRect curect = GetScreenRect();
-        wxPoint curpos = ::wxGetMousePosition();
-
-        int xDiff = curect.GetBottomRight().x - curpos.x;
-        int yDiff = curect.GetBottomRight().y - curpos.y;
-
-        if((abs(xDiff) > 3) || (abs(yDiff) > 3)) { DoUpdateSize(false); }
-    }
-}
-
-void DisplayVariableDlg::OnStatusLeftUp(wxMouseEvent& event)
-{
-    event.Skip();
-    DoUpdateSize(true);
-}
-
-void DisplayVariableDlg::OnEnterBmp(wxMouseEvent& event) { event.Skip(); }
-
-void DisplayVariableDlg::OnLeaveBmp(wxMouseEvent& event) { event.Skip(); }
-
-void DisplayVariableDlg::DoUpdateSize(bool performClean)
-{
-    if(m_dragging) {
-        wxRect curect = GetScreenRect();
-        curect.SetBottomRight(::wxGetMousePosition());
-        if(curect.GetHeight() <= 100 || curect.GetWidth() <= 100) {
-            if(performClean) {
-                m_dragging = false;
-                if(m_panelStatusBar->HasCapture()) { m_panelStatusBar->ReleaseMouse(); }
-                wxSetCursor(wxNullCursor);
-            }
-            return;
-        }
-
-#ifdef __WXMSW__
-        wxWindowUpdateLocker locker(clMainFrame::Get());
-#endif
-
-        SetSize(curect);
-        if(performClean) {
-            m_dragging = false;
-            if(m_panelStatusBar->HasCapture()) { m_panelStatusBar->ReleaseMouse(); }
-            wxSetCursor(wxNullCursor);
-        }
-    }
 }
 
 void CLPersistentDebuggerTip::Save() const

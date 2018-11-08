@@ -7,20 +7,21 @@
 #ifndef _CODELITE_PLUGIN_CLRESIZABLETOOLTIPBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_CLRESIZABLETOOLTIPBASE_BASE_CLASSES_H
 
-#include "clThemedTreeCtrl.h"
-#include <wx/artprov.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/timer.h>
+#include <wx/minifram.h>
 #include <wx/treectrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clThemedTreeCtrl.h"
+#include <wx/timer.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -35,22 +36,32 @@
 
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxFrame
+class WXDLLIMPEXP_SDK clResizableTooltipBase : public wxMiniFrame
 {
 protected:
     clThemedTreeCtrl* m_treeCtrl;
     wxTimer* m_timerCheckMousePos;
 
 protected:
-    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnCheckMousePosition(wxTimerEvent& event) { event.Skip(); }
+    virtual void OnItemExpanding(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnCheckMousePosition(wxTimerEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    wxTimer* GetTimerCheckMousePos() { return m_timerCheckMousePos; }
-    clResizableTooltipBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Inspect Variable"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300, 200),
-                           long style = wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT | wxRESIZE_BORDER);
+    clThemedTreeCtrl* GetTreeCtrl()
+    {
+        return m_treeCtrl;
+    }
+    wxTimer* GetTimerCheckMousePos()
+    {
+        return m_timerCheckMousePos;
+    }
+    clResizableTooltipBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Inspect Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,200), long style = wxFRAME_TOOL_WINDOW|wxFRAME_FLOAT_ON_PARENT|wxRESIZE_BORDER);
     virtual ~clResizableTooltipBase();
 };
 

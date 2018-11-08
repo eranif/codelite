@@ -105,8 +105,8 @@
     }, {
      "type": "choice",
      "m_label": "wxFrame Type",
-     "m_selection": 0,
-     "m_options": ["wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame"]
+     "m_selection": 5,
+     "m_options": ["wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame"]
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",

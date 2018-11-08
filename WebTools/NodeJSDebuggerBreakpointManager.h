@@ -28,6 +28,7 @@
 
 #include "NodeJSDebuggerBreakpoint.h"
 #include <wx/event.h>
+#include "cl_command_event.h"
 
 class IEditor;
 class NodeJSBptManager : public wxEvtHandler
@@ -39,12 +40,14 @@ protected:
     void OnEditorChanged(wxCommandEvent& e);
     void OnWorkspaceOpened(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnDebuggerStopped(clDebugEvent& event);
+    void OnFileSaved(clCommandEvent& event);
 
 public:
     NodeJSBptManager();
     virtual ~NodeJSBptManager();
     void Save();
-    
+
     /**
      * @brief return breakpoints for a given file
      */
@@ -71,7 +74,7 @@ public:
      * @brief add breakpoint by file and line
      */
     void AddBreakpoint(const wxFileName& filename, int line);
-    
+
     const NodeJSBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
 };
 

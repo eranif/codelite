@@ -31,7 +31,7 @@ void DebuggerPaused::Process(clWebSocketClient& socket, const JSONElement& json)
     EventNotifier::Get()->ProcessEvent(pauseEvent);
 
     // Notify the UI to update the view
-    clDebugCallFramesEvent callFrameEvent(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK);
+    clDebugCallFramesEvent callFrameEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK);
     callFrameEvent.SetCallFrames(V);
     EventNotifier::Get()->ProcessEvent(callFrameEvent);
 }

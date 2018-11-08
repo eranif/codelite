@@ -1,6 +1,6 @@
 #include "CallFrame.h"
-#include "NodeDebuggerPane.h"
 #include "NodeDebugger.h"
+#include "NodeDebuggerPane.h"
 #include "NodeDebuggerTooltip.h"
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerBreakpoint.h"
@@ -29,11 +29,12 @@ NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeDebuggerPane::OnDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeDebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebuggerPane::OnInteract, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeDebuggerPane::OnUpdateBreakpoints, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeDebuggerPane::OnUpdateBreakpoints,
+                               this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &NodeDebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &NodeDebuggerPane::OnCreateObject, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeDebuggerPane::OnDebugSessionStarted, this);
@@ -51,7 +52,8 @@ NodeDebuggerPane::~NodeDebuggerPane()
     m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace,
+                                 this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeDebuggerPane::OnDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeDebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebuggerPane::OnInteract, this);

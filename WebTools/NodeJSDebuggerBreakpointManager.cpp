@@ -1,4 +1,5 @@
 #include "NodeJSDebuggerBreakpointManager.h"
+#include "NodeJSEvents.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include "NoteJSWorkspace.h"
 #include "bookmark_manager.h"
@@ -16,6 +17,8 @@ NodeJSBptManager::NodeJSBptManager()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &NodeJSBptManager::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NodeJSBptManager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSBptManager::OnEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSBptManager::OnDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &NodeJSBptManager::OnFileSaved, this);
 }
 
 NodeJSBptManager::~NodeJSBptManager()
@@ -23,6 +26,8 @@ NodeJSBptManager::~NodeJSBptManager()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &NodeJSBptManager::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeJSBptManager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &NodeJSBptManager::OnEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeJSBptManager::OnDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &NodeJSBptManager::OnFileSaved, this);
 }
 
 void NodeJSBptManager::OnEditorChanged(wxCommandEvent& e)
@@ -165,5 +170,59 @@ void NodeJSBptManager::Save()
     if(m_workspaceFile.Exists()) {
         NodeJSWorkspaceUser userWorkspace(m_workspaceFile.GetFullPath());
         userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
+    }
+}
+
+void NodeJSBptManager::OnDebuggerStopped(clDebugEvent& event)
+{
+    event.Skip();
+    // Clear the node's breakpoint ID
+    std::for_each(m_breakpoints.begin(), m_breakpoints.end(), [&](NodeJSBreakpoint& bp) { bp.SetNodeBpID(""); });
+}
+
+void NodeJSBptManager::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    if(!NodeJSWorkspace::Get()->IsOpen()) { return; }
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    // Delete all the breakpoints belonged to this file
+    wxArrayString nodeBpIds;
+    bool isDebuggerRunning = NodeJSWorkspace::Get()->GetDebugger()->IsRunning();
+    while(true) {
+        NodeJSBreakpoint::Vec_t::iterator iter =
+            std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+                if(bp.GetFilename() == editor->GetFileName().GetFullPath()) return true;
+                return false;
+            });
+        if(iter == m_breakpoints.end()) { break; }
+        if(isDebuggerRunning) {
+            const NodeJSBreakpoint& bp = *iter;
+            nodeBpIds.Add(bp.GetNodeBpID());
+        }
+        m_breakpoints.erase(iter);
+    }
+
+    // Tell Node to delete these breakpoints
+    if(isDebuggerRunning) {
+        // Remove all the breakpoints from the debugger
+        for(size_t i = 0; i < nodeBpIds.size(); ++i) {
+            NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(nodeBpIds.Item(i));
+        }
+    }
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    int lineNo = ctrl->MarkerNext(0, mmt_breakpoint);
+    while(lineNo != wxNOT_FOUND) {
+        // stc uses 0 based index
+        ++lineNo;
+        AddBreakpoint(editor->GetFileName(), lineNo);
+        if(isDebuggerRunning) {
+            const NodeJSBreakpoint& bp = GetBreakpoint(editor->GetFileName(), lineNo);
+            NodeJSWorkspace::Get()->GetDebugger()->SetBreakpoint(bp.GetFilename(), bp.GetLine());
+        }
+        // find the next breakpoint
+        lineNo = ctrl->MarkerNext(lineNo, mmt_breakpoint);
     }
 }

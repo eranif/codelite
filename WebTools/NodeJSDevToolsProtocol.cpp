@@ -206,3 +206,15 @@ void NodeJSDevToolsProtocol::CreateObject(clWebSocketClient& socket, const wxStr
     });
     m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }
+
+void NodeJSDevToolsProtocol::DeleteBreakpointByID(clWebSocketClient& socket, const wxString& bpid)
+{
+    try {
+        JSONElement params = JSONElement::createObject("params");
+        params.addProperty("breakpointId", bpid);
+        // Send the command
+        SendSimpleCommand(socket, "Debugger.removeBreakpoint", params);
+    } catch(clSocketException& e) {
+        clWARNING() << e.what();
+    }
+}

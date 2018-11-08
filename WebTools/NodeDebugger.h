@@ -44,6 +44,9 @@ public:
 
     void SetFrames(const wxArrayString& frames) { this->m_frames = frames; }
     const wxArrayString& GetFrames() const { return m_frames; }
+    void SetBreakpoint(const wxFileName& file, int lineNumber);
+    void DeleteBreakpointByID(const wxString& bpid);
+    void DeleteBreakpoint(const NodeJSBreakpoint& bp);
 
 protected:
     void OnDebugStart(clDebugEvent& event);
@@ -65,8 +68,6 @@ protected:
     void OnTooltip(clDebugEvent& event);
     // Helpers
     void DoCleanup();
-    void SetBreakpoint(const wxFileName& file, int lineNumber);
-    void DeleteBreakpoint(const NodeJSBreakpoint& bp);
     wxString GetBpRelativeFilePath(const NodeJSBreakpoint& bp) const;
     void ApplyAllBerakpoints();
     void DoHighlightLine(const wxString& filename, int lineNo);

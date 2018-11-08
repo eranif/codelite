@@ -108,6 +108,8 @@
         <File Name="NodeFileManager.cpp"/>
         <File Name="NodeFileManager.h"/>
         <VirtualDirectory Name="MessageHandlers">
+          <File Name="BreakpointResolved.cpp"/>
+          <File Name="BreakpointResolved.h"/>
           <File Name="clDebugRemoteObjectEvent.cpp"/>
           <File Name="clDebugRemoteObjectEvent.h"/>
           <File Name="RuntimeExecutionContextDestroyed.cpp"/>

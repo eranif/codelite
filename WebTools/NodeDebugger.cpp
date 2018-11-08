@@ -302,6 +302,11 @@ void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber)
     m_bptManager.AddBreakpoint(file.GetFullPath(), lineNumber);
 }
 
+void NodeDebugger::DeleteBreakpointByID(const wxString& bpid)
+{
+    NodeJSDevToolsProtocol::Get().DeleteBreakpointByID(m_socket, bpid);
+}
+
 void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
 {
     if(!bp.IsOk()) { return; }
@@ -402,3 +407,4 @@ void NodeDebugger::GetObjectProperties(const wxString& objectId)
 {
     NodeJSDevToolsProtocol::Get().GetObjectProperties(m_socket, objectId);
 }
+

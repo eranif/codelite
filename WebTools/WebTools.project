@@ -101,12 +101,12 @@
       <File Name="NodeDebuggerTooltip.cpp"/>
       <File Name="NodeDebuggerTooltip.h"/>
       <VirtualDirectory Name="DebuggerNew">
+        <File Name="NodeDebuggerPane.cpp"/>
+        <File Name="NodeDebuggerPane.h"/>
         <File Name="NodeDebugger.h"/>
         <File Name="NodeDebugger.cpp"/>
         <File Name="NodeFileManager.cpp"/>
         <File Name="NodeFileManager.h"/>
-        <File Name="DebuggerPane.h"/>
-        <File Name="DebuggerPane.cpp"/>
         <VirtualDirectory Name="MessageHandlers">
           <File Name="clDebugRemoteObjectEvent.cpp"/>
           <File Name="clDebugRemoteObjectEvent.h"/>

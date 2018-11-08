@@ -8,7 +8,7 @@
 
 class NodeDebuggerTooltip;
 class wxTerminal;
-class DebuggerPane : public NodeJSCliDebuggerPaneBase
+class NodeDebuggerPane : public NodeJSCliDebuggerPaneBase
 {
     wxTerminal* m_terminal = nullptr;
     wxTerminal* m_node_console = nullptr;
@@ -33,7 +33,7 @@ protected:
     void OnDestroyTip(clCommandEvent& event);
 
 public:
-    DebuggerPane(wxWindow* parent);
-    virtual ~DebuggerPane();
+    NodeDebuggerPane(wxWindow* parent);
+    virtual ~NodeDebuggerPane();
 };
 #endif // NODEJSCLIDEBUGGERPANE_H

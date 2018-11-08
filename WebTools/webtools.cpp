@@ -1,4 +1,4 @@
-#include "DebuggerPane.h"
+#include "NodeDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NodeJSWorkspaceView.h"
 #include "NoteJSWorkspace.h"
@@ -453,7 +453,7 @@ void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     // Show the debugger pane
     if(!m_nodejsCliDebuggerPane) {
-        m_nodejsCliDebuggerPane = new DebuggerPane(parent);
+        m_nodejsCliDebuggerPane = new NodeDebuggerPane(parent);
         // Let the pane process the 'startup' event as well
         m_nodejsCliDebuggerPane->GetEventHandler()->ProcessEvent(event);
         clGetManager()->GetDockingManager()->AddPane(m_nodejsCliDebuggerPane, wxAuiPaneInfo()

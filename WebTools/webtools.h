@@ -36,7 +36,7 @@
 #include "CSSCodeCompletion.h"
 #include "clJSCTags.h"
 
-class DebuggerPane;
+class NodeDebuggerPane;
 class NodeJSWorkspaceView;
 class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
@@ -53,7 +53,7 @@ class WebTools : public IPlugin
 
     /// Node.js
     bool m_clangOldFlag;
-    DebuggerPane* m_nodejsCliDebuggerPane = nullptr;
+    NodeDebuggerPane* m_nodejsCliDebuggerPane = nullptr;
     wxString m_savePerspective;
 
 protected:

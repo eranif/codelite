@@ -1,5 +1,5 @@
 #include "CallFrame.h"
-#include "DebuggerPane.h"
+#include "NodeDebuggerPane.h"
 #include "NodeDebugger.h"
 #include "NodeDebuggerTooltip.h"
 #include "NodeFileManager.h"
@@ -12,7 +12,7 @@
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 
-DebuggerPane::DebuggerPane(wxWindow* parent)
+NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
@@ -26,44 +26,44 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     m_node_console->SetInteractive(true);
     m_panelConsole->GetSizer()->Add(m_node_console, 1, wxEXPAND);
 
-    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
-    m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
+    m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
+    m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeDebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeDebuggerPane::OnMarkLine, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebuggerPane::OnInteract, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeDebuggerPane::OnUpdateBreakpoints, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &NodeDebuggerPane::OnEvalResult, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &NodeDebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeDebuggerPane::OnDebugSessionStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &NodeDebuggerPane::OnDestroyTip, this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 
     DoPrintStartupMessages();
 }
 
-DebuggerPane::~DebuggerPane()
+NodeDebuggerPane::~NodeDebuggerPane()
 {
     DoDestroyTip();
 
-    m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
-    m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &DebuggerPane::OnUpdateBacktrace, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &DebuggerPane::OnDebuggerStopped, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &DebuggerPane::OnMarkLine, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &DebuggerPane::OnInteract, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints,
+    m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
+    m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_CLI_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeDebuggerPane::OnDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeDebuggerPane::OnMarkLine, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebuggerPane::OnInteract, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &NodeDebuggerPane::OnUpdateBreakpoints,
                                  this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &NodeDebuggerPane::OnEvalResult, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &NodeDebuggerPane::OnCreateObject, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeDebuggerPane::OnDebugSessionStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &NodeDebuggerPane::OnDestroyTip, this);
 }
 
-void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
+void NodeDebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dvListCtrlCallstack);
@@ -92,7 +92,7 @@ void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
     NodeJSWorkspace::Get()->GetDebugger()->SetFrames(call_frame_ids);
 }
 
-void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
+void NodeDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
     m_dvListCtrlCallstack->DeleteAllItems([](wxUIntPtr data) {
@@ -107,14 +107,14 @@ void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
     DoDestroyTip();
 }
 
-void DebuggerPane::OnMarkLine(clDebugEvent& event)
+void NodeDebuggerPane::OnMarkLine(clDebugEvent& event)
 {
     event.Skip();
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
     NodeJSWorkspace::Get()->GetDebugger()->SetDebuggerMarker(event.GetFileName(), event.GetLineNumber());
 }
 
-void DebuggerPane::OnUpdateBreakpoints(clDebugEvent& event)
+void NodeDebuggerPane::OnUpdateBreakpoints(clDebugEvent& event)
 {
     event.Skip();
     m_dvListCtrlBreakpoints->DeleteAllItems([](wxUIntPtr data) {
@@ -131,7 +131,7 @@ void DebuggerPane::OnUpdateBreakpoints(clDebugEvent& event)
     }
 }
 
-void DebuggerPane::OnInteract(clDebugEvent& event)
+void NodeDebuggerPane::OnInteract(clDebugEvent& event)
 {
     event.Skip();
     if(!event.IsAnswer()) {
@@ -145,20 +145,20 @@ void DebuggerPane::OnInteract(clDebugEvent& event)
     }
 }
 
-void DebuggerPane::OnRunTerminalCommand(clCommandEvent& event)
+void NodeDebuggerPane::OnRunTerminalCommand(clCommandEvent& event)
 {
     // Dont call event.Skip() here
     wxString command = event.GetString();
     NodeJSWorkspace::Get()->GetDebugger()->SendToDebuggee(command);
 }
 
-void DebuggerPane::OnConsoleOutput(clDebugEvent& event)
+void NodeDebuggerPane::OnConsoleOutput(clDebugEvent& event)
 {
     // Dont call event.Skip() here
     m_terminal->AddTextRaw(event.GetString());
 }
 
-void DebuggerPane::OnEval(clCommandEvent& event)
+void NodeDebuggerPane::OnEval(clCommandEvent& event)
 {
     if(m_dvListCtrlCallstack->IsEmpty()) { return; }
     wxUIntPtr ptr = m_dvListCtrlCallstack->GetItemData(m_dvListCtrlCallstack->RowToItem(0));
@@ -166,26 +166,26 @@ void DebuggerPane::OnEval(clCommandEvent& event)
     if(cd) { NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString(), cd->GetData()); }
 }
 
-void DebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
+void NodeDebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
 {
     RemoteObject* pro = event.GetRemoteObject()->To<RemoteObject>();
     m_node_console->AddTextRaw(pro->ToString() + "\n");
 }
 
-void DebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
+void NodeDebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
 {
     nSerializableObject::Ptr_t o = event.GetRemoteObject();
     if(!m_debuggerTooltip) { m_debuggerTooltip = new NodeDebuggerTooltip(this); }
     m_debuggerTooltip->Show(o);
 }
 
-void DebuggerPane::OnDestroyTip(clCommandEvent& event)
+void NodeDebuggerPane::OnDestroyTip(clCommandEvent& event)
 {
     event.Skip();
     DoDestroyTip();
 }
 
-void DebuggerPane::DoDestroyTip()
+void NodeDebuggerPane::DoDestroyTip()
 {
     if(m_debuggerTooltip) {
         m_debuggerTooltip->Hide();
@@ -194,13 +194,13 @@ void DebuggerPane::DoDestroyTip()
     m_debuggerTooltip = nullptr;
 }
 
-void DebuggerPane::OnDebugSessionStarted(clDebugEvent& event)
+void NodeDebuggerPane::OnDebugSessionStarted(clDebugEvent& event)
 {
     event.Skip();
     DoPrintStartupMessages();
 }
 
-void DebuggerPane::DoPrintStartupMessages()
+void NodeDebuggerPane::DoPrintStartupMessages()
 {
     m_node_console->Clear();
     m_terminal->Clear();

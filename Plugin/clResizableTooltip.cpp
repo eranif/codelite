@@ -59,6 +59,6 @@ void clResizableTooltip::ShowTip()
 {
     m_topLeft = ::wxGetMousePosition();
     Move(m_topLeft);
-    wxFrame::Show();
+    wxMiniFrame::Show();
     if(GetTreeCtrl()) { GetTreeCtrl()->CallAfter(&clThemedTreeCtrl::SetFocus); }
 }

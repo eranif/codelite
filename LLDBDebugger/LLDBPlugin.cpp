@@ -1233,6 +1233,7 @@ void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
 
 void LLDBPlugin::OnDestroyTip(clCommandEvent& e)
 {
+    e.Skip();
     if(m_tooltip) {
         m_tooltip->Destroy();
         m_tooltip = NULL;

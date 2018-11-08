@@ -179,7 +179,11 @@ void DebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
     m_debuggerTooltip->Show(o);
 }
 
-void DebuggerPane::OnDestroyTip(clCommandEvent& event) { DoDestroyTip(); }
+void DebuggerPane::OnDestroyTip(clCommandEvent& event)
+{
+    event.Skip();
+    DoDestroyTip();
+}
 
 void DebuggerPane::DoDestroyTip()
 {

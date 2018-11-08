@@ -3598,5 +3598,6 @@ void Manager::OnDebuggerSetMemory(clDebugEvent& event)
 
 void Manager::OnHideGdbTooltip(clCommandEvent& event)
 {
+    event.Skip();
     if(GetDebuggerTip()) { GetDebuggerTip()->HideDialog(); }
 }

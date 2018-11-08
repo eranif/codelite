@@ -31,6 +31,7 @@
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"
 #include "clPrintout.h"
+#include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
@@ -750,7 +751,7 @@ void clEditor::SetProperties()
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 
 #elif defined(__WXGTK__)
-    //SetLayoutCache(wxSTC_CACHE_PAGE);
+    // SetLayoutCache(wxSTC_CACHE_PAGE);
 
 #else // MSW
     SetTwoPhaseDraw(true);
@@ -3251,6 +3252,10 @@ void clEditor::OnLeftDown(wxMouseEvent& event)
     }
     SetActive();
 
+    // Destroy any floating tooltips out there
+    clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
+    EventNotifier::Get()->AddPendingEvent(destroyEvent);
+
     // Clear any messages from the status bar
     clGetManager()->GetStatusBar()->SetMessage("");
     event.Skip();
@@ -4730,7 +4735,7 @@ void clEditor::DoUpdateTLWTitle(bool raise)
 {
     // ensure that the top level window parent of this editor is 'Raised'
     wxWindow* tlw = ::wxGetTopLevelParent(this);
-    //if(tlw && raise) { tlw->Raise(); }
+    // if(tlw && raise) { tlw->Raise(); }
 
     if(!IsDetached()) {
         clMainFrame::Get()->SetFrameTitle(this);

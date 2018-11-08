@@ -37,7 +37,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
-    Bind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 
@@ -60,7 +60,7 @@ DebuggerPane::~DebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &DebuggerPane::OnDebugSessionStarted, this);
-    Unbind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
 }
 
 void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)

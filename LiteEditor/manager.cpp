@@ -219,7 +219,7 @@ Manager::Manager(void)
 
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
-    Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
@@ -230,7 +230,7 @@ Manager::Manager(void)
 
 Manager::~Manager(void)
 {
-    Unbind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     Unbind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &Manager::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);

@@ -19,7 +19,7 @@
    "border": 5,
    "gbSpan": "1,1",
    "gbPosition": "0,0",
-   "m_styles": ["wxFRAME_TOOL_WINDOW", "wxFRAME_FLOAT_ON_PARENT", "wxRESIZE_BORDER"],
+   "m_styles": ["wxRESIZE_BORDER"],
    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
    "m_properties": [{
      "type": "string",
@@ -76,7 +76,7 @@
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",
-     "m_value": true
+     "m_value": false
     }, {
      "type": "string",
      "m_label": "Title:",
@@ -162,7 +162,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxTR_DEFAULT_STYLE"],
+       "m_styles": [],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -228,43 +228,16 @@
          "m_functionNameAndSignature": "OnItemExpanding(wxTreeEvent& event)",
          "m_description": "The item is being expanded. This can be prevented by calling Veto().",
          "m_noBody": false
+        }, {
+         "m_eventName": "wxEVT_COMMAND_TREE_KEY_DOWN",
+         "m_eventClass": "wxTreeEvent",
+         "m_eventHandler": "wxTreeEventHandler",
+         "m_functionNameAndSignature": "OnKeyDown(wxTreeEvent& event)",
+         "m_description": "A key has been pressed.",
+         "m_noBody": false
         }],
        "m_children": []
       }]
-    }, {
-     "m_type": 4483,
-     "proportion": 0,
-     "border": 5,
-     "gbSpan": "1,1",
-     "gbPosition": "0,0",
-     "m_styles": [],
-     "m_sizerFlags": [],
-     "m_properties": [{
-       "type": "string",
-       "m_label": "Name:",
-       "m_value": "m_timerCheckMousePos"
-      }, {
-       "type": "integer",
-       "m_label": "Interval",
-       "m_value": 25
-      }, {
-       "type": "bool",
-       "m_label": "Start the timer",
-       "m_value": true
-      }, {
-       "type": "bool",
-       "m_label": "One Shot Timer",
-       "m_value": false
-      }],
-     "m_events": [{
-       "m_eventName": "wxEVT_TIMER",
-       "m_eventClass": "wxTimerEvent",
-       "m_eventHandler": "wxTimerEventHandler",
-       "m_functionNameAndSignature": "OnCheckMousePosition(wxTimerEvent& event)",
-       "m_description": "Process a timer event",
-       "m_noBody": false
-      }],
-     "m_children": []
     }]
   }]
 }

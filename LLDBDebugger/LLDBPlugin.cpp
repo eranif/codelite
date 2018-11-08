@@ -166,7 +166,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
 
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL,
                                   this);
-    Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 
     EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
@@ -180,7 +180,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
 
 void LLDBPlugin::UnPlug()
 {
-    Unbind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     m_connector.StopDebugServer();
     DestroyUI();
 

@@ -59,11 +59,13 @@ public:
     virtual void ShowTip();
 
 protected:
+    void DoSetFocus();
+
+    virtual void OnKeyDown(wxTreeEvent& event);
     /**
      * @brief user is expanding a tree item
      * @param event
      */
     virtual void OnItemExpanding(wxTreeEvent& event);
-    virtual void OnCheckMousePosition(wxTimerEvent& event);
 };
 #endif // CLRESIZABLETOOLTIP_H

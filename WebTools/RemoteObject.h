@@ -24,6 +24,7 @@ public:
     bool IsObject() const { return GetType() == "object"; }
     bool IsString() const { return GetType() == "string"; }
     bool IsUndefined() const { return GetType() == "undefined"; }
+    bool IsFunction() const { return GetType() == "function"; }
 
     void SetObjectId(const wxString& objectId) { this->m_objectId = objectId; }
     const wxString& GetObjectId() const { return m_objectId; }
@@ -44,6 +45,10 @@ public:
      */
     wxString ToString() const;
     bool IsEmpty() const { return m_type.IsEmpty(); }
+    
+    // For display purposes
+    wxString GetTextPreview() const;
+    bool HasChildren() const;
 };
 
 #endif // NODEDBGREMOTEOBJECT_H

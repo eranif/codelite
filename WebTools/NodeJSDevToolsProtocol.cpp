@@ -177,6 +177,7 @@ void NodeJSDevToolsProtocol::GetObjectProperties(clWebSocketClient& socket, cons
         if(result.hasNamedObject("result")) {
             clDebugEvent evt(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES);
             evt.SetString(result.namedObject("result").format(false));
+            evt.SetStartupCommands(objectId);
             EventNotifier::Get()->AddPendingEvent(evt);
         }
     });

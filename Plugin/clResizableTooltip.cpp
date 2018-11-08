@@ -112,9 +112,6 @@ void clResizableTooltip::DoUpdateSize(bool performClean)
         
         wxRect curect(m_topLeft, wxSize(ww, hh));
         if(curect.GetHeight() > 100 && curect.GetWidth() > 100) {
-#ifdef __WXMSW__
-            wxWindowUpdateLocker locker(EventNotifier::Get()->TopFrame());
-#endif
             SetSize(curect);
         }
     }
@@ -129,6 +126,7 @@ void clResizableTooltip::DoUpdateSize(bool performClean)
 #endif
     }
 }
+
 void clResizableTooltip::OnCaptureLost(wxMouseCaptureLostEvent& event)
 {
     event.Skip();

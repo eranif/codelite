@@ -6,11 +6,16 @@
 #include "clDebugRemoteObjectEvent.h"
 #include "cl_command_event.h"
 
+class NodeDebuggerTooltip;
 class wxTerminal;
 class DebuggerPane : public NodeJSCliDebuggerPaneBase
 {
     wxTerminal* m_terminal = nullptr;
     wxTerminal* m_node_console = nullptr;
+    NodeDebuggerTooltip* m_debuggerTooltip = nullptr;
+
+protected:
+    void DoDestroyTip();
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);
@@ -23,8 +28,8 @@ protected:
     void OnConsoleOutput(clDebugEvent& event);
     void OnEvalResult(clDebugRemoteObjectEvent& event);
     void OnCreateObject(clDebugRemoteObjectEvent& event);
-    void OnObjectProperties(clDebugEvent& event);
-    
+    void OnDestroyTip(clCommandEvent& event);
+
 public:
     DebuggerPane(wxWindow* parent);
     virtual ~DebuggerPane();

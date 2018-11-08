@@ -98,6 +98,8 @@
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
+      <File Name="NodeDebuggerTooltip.cpp"/>
+      <File Name="NodeDebuggerTooltip.h"/>
       <VirtualDirectory Name="DebuggerNew">
         <File Name="NodeDebugger.h"/>
         <File Name="NodeDebugger.cpp"/>

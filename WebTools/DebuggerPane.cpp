@@ -1,6 +1,7 @@
 #include "CallFrame.h"
 #include "DebuggerPane.h"
 #include "NodeDebugger.h"
+#include "NodeDebuggerTooltip.h"
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerBreakpoint.h"
 #include "NodeJSEvents.h"
@@ -35,13 +36,15 @@ DebuggerPane::DebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW, &DebuggerPane::OnUpdateBreakpoints, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &DebuggerPane::OnObjectProperties, this);
+    Bind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 }
 
 DebuggerPane::~DebuggerPane()
 {
+    DoDestroyTip();
+
     m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &DebuggerPane::OnEval, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &DebuggerPane::OnConsoleOutput, this);
@@ -53,7 +56,7 @@ DebuggerPane::~DebuggerPane()
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_EVAL_RESULT, &DebuggerPane::OnEvalResult, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &DebuggerPane::OnCreateObject, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES, &DebuggerPane::OnObjectProperties, this);
+    Unbind(wxEVT_TOOLTIP_DESTROY, &DebuggerPane::OnDestroyTip, this);
 }
 
 void DebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
@@ -97,6 +100,7 @@ void DebuggerPane::OnDebuggerStopped(clDebugEvent& event)
         wxDELETE(scd);
     });
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
+    DoDestroyTip();
 }
 
 void DebuggerPane::OnMarkLine(clDebugEvent& event)
@@ -167,27 +171,20 @@ void DebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
 void DebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
 {
     nSerializableObject::Ptr_t o = event.GetRemoteObject();
-    RemoteObject* ro = o->To<RemoteObject>();
-    m_node_console->AddTextWithEOL(ro->GetObjectId() + " : " + ro->ToString());
-    // Request the object properties
-    NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(ro->GetObjectId());
+    if(!m_debuggerTooltip) { m_debuggerTooltip = new NodeDebuggerTooltip(this); }
+    m_debuggerTooltip->Show(o);
 }
 
-void DebuggerPane::OnObjectProperties(clDebugEvent& event)
+void DebuggerPane::OnDestroyTip(clCommandEvent& event)
 {
-    wxString s = event.GetString();
-    JSONRoot root(s);
-    JSONElement prop_arr = root.toElement();
-    int size = prop_arr.arraySize();
-    std::vector<PropertyDescriptor> propVec;
-    for(int i = 0; i < size; ++i) {
-        JSONElement prop = prop_arr.arrayItem(i);
-        PropertyDescriptor propDesc;
-        propDesc.FromJSON(prop);
-        if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }
-    }
+    DoDestroyTip();
+}
 
-    for(size_t i = 0; i < propVec.size(); ++i) {
-        m_node_console->AddTextWithEOL(wxString() << "    " << propVec[i].ToString());
+void DebuggerPane::DoDestroyTip()
+{
+    if(m_debuggerTooltip) {
+        m_debuggerTooltip->Hide();
+        m_debuggerTooltip->Destroy();
     }
+    m_debuggerTooltip = nullptr;
 }

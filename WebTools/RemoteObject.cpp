@@ -39,16 +39,26 @@ JSONElement RemoteObject::ToJSON(const wxString& name) const
 wxString RemoteObject::ToString() const
 {
     wxString str;
-    if(IsObject()) {
+    if(IsFunction()) {
+        return "Function";
+    } else if(IsObject()) {
         str << this->GetClassName() << " : " << GetPreview().ToString();
-        
+
     } else if(IsString()) {
         // Simple type
-        str << GetType() << " : \"" << GetValue() << "\"";
+        str << "\"" << GetValue() << "\"";
     } else if(IsUndefined()) {
         str << "undefined";
     } else {
-        str << GetType() << " : " << GetValue();
+        str << GetValue();
     }
     return str;
 }
+
+wxString RemoteObject::GetTextPreview() const
+{
+    if(IsObject()) { return "{...}"; }
+    return ToString();
+}
+
+bool RemoteObject::HasChildren() const { return IsObject(); }

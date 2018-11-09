@@ -3,6 +3,7 @@
 #include "fileutils.h"
 #include <algorithm>
 #include <wx/filename.h>
+#include <wx/uri.h>
 
 NodeFileManager::NodeFileManager() {}
 
@@ -12,6 +13,21 @@ NodeFileManager& NodeFileManager::Get()
 {
     static NodeFileManager mgr;
     return mgr;
+}
+
+#define FILE_SCHEME "file://"
+
+static wxString URIToFileName(const wxString& uriFileName)
+{
+    wxString filename = wxURI::Unescape(uriFileName);
+    filename.StartsWith(FILE_SCHEME, &filename);
+
+#ifdef __WXMSW__
+    if(filename.StartsWith("/")) {
+        filename.Remove(0, 1);
+    }
+#endif
+    return wxFileName(filename).GetFullPath();
 }
 
 void NodeFileManager::Clear()
@@ -25,7 +41,11 @@ void NodeFileManager::Clear()
     m_remoteFiles.clear();
 }
 
-void NodeFileManager::AddFile(const wxString& id, const wxString& url) { m_files.insert({ id, url }); }
+void NodeFileManager::AddFile(const wxString& id, const wxString& url) 
+{
+    wxString filepath = URIToFileName(url);
+    m_files.insert({ id, filepath });
+}
 
 wxString NodeFileManager::GetFilePath(const wxString& id) const
 {

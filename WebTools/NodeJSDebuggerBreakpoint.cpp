@@ -13,7 +13,12 @@ void NodeJSBreakpoint::FromJSON(const JSONElement& json)
 JSONElement NodeJSBreakpoint::ToJSON(const wxString& name) const
 {
     JSONElement json = JSONElement::createObject(name);
+#ifdef __WXOSX__
+    wxString url = "file://" + m_filename;
+    json.addProperty("url", url);
+#else
     json.addProperty("url", m_filename);
+#endif
     json.addProperty("lineNumber", m_line);
     return json;
 }

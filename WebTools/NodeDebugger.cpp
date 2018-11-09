@@ -67,7 +67,7 @@ NodeDebugger::~NodeDebugger()
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &NodeDebugger::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &NodeDebugger::OnTooltip, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &NodeDebugger::OnWorkspaceClosed, this);
-    
+
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebugger::OnInteract, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_FINISHED, &NodeDebugger::OnStopDebugger, this);
 
@@ -302,9 +302,22 @@ void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber)
     m_bptManager.AddBreakpoint(file.GetFullPath(), lineNumber);
 }
 
+void NodeDebugger::DeleteAllBreakpoints()
+{
+    wxArrayString arr = m_bptManager.GetAllAppliedBreakpoints();
+    for(size_t i = 0; i < arr.size(); ++i) {
+        DeleteBreakpointByID(arr.Item(i));
+    }
+    // Update the UI
+    m_bptManager.DeleteAll();
+}
+
 void NodeDebugger::DeleteBreakpointByID(const wxString& bpid)
 {
     NodeJSDevToolsProtocol::Get().DeleteBreakpointByID(m_socket, bpid);
+
+    // Update the UI
+    m_bptManager.DeleteByID(bpid);
 }
 
 void NodeDebugger::DeleteBreakpoint(const NodeJSBreakpoint& bp)
@@ -398,7 +411,7 @@ void NodeDebugger::OnTooltip(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
     if(m_frames.IsEmpty()) { return; }
-    
+
     wxString expression = event.GetString();
     NodeJSDevToolsProtocol::Get().CreateObject(m_socket, expression, m_frames[0]);
 }
@@ -407,4 +420,3 @@ void NodeDebugger::GetObjectProperties(const wxString& objectId)
 {
     NodeJSDevToolsProtocol::Get().GetObjectProperties(m_socket, objectId);
 }
-

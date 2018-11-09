@@ -17,19 +17,6 @@ NodeFileManager& NodeFileManager::Get()
 
 #define FILE_SCHEME "file://"
 
-static wxString URIToFileName(const wxString& uriFileName)
-{
-    wxString filename = wxURI::Unescape(uriFileName);
-    filename.StartsWith(FILE_SCHEME, &filename);
-
-#ifdef __WXMSW__
-    if(filename.StartsWith("/")) {
-        filename.Remove(0, 1);
-    }
-#endif
-    return wxFileName(filename).GetFullPath();
-}
-
 void NodeFileManager::Clear()
 {
     m_files.clear();
@@ -41,7 +28,7 @@ void NodeFileManager::Clear()
     m_remoteFiles.clear();
 }
 
-void NodeFileManager::AddFile(const wxString& id, const wxString& url) 
+void NodeFileManager::AddFile(const wxString& id, const wxString& url)
 {
     wxString filepath = URIToFileName(url);
     m_files.insert({ id, filepath });
@@ -87,4 +74,22 @@ wxString NodeFileManager::DoGetFilePath(const wxString& id) const
     std::unordered_map<wxString, wxString>::const_iterator iter = m_files.find(id);
     if(iter == m_files.end()) { return ""; }
     return iter->second;
+}
+
+wxString NodeFileManager::URIToFileName(const wxString& uri)
+{
+    wxString filename = wxURI::Unescape(uri);
+    filename.StartsWith(FILE_SCHEME, &filename);
+    return wxFileName(filename).GetFullPath();
+}
+
+wxString NodeFileManager::FileNameToURI(const wxString& uri)
+{
+#ifdef __WXOSX__
+    wxString filename;
+    filename << "file://" << uri;
+    return filename;
+#else
+    return uri;
+#endif
 }

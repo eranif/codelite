@@ -31,6 +31,10 @@ protected:
     void OnEvalResult(clDebugRemoteObjectEvent& event);
     void OnCreateObject(clDebugRemoteObjectEvent& event);
     void OnDestroyTip(clCommandEvent& event);
+    void OnClearAllBreakpoints(wxCommandEvent& event);
+    void OnClearAllBreakpointsUI(wxUpdateUIEvent& event);
+    void OnDeleteBreakpoint(wxCommandEvent& event);
+    void OnDeleteBreakpointUI(wxUpdateUIEvent& event);
 
 public:
     NodeDebuggerPane(wxWindow* parent);

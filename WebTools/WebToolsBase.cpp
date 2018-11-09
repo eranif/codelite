@@ -610,15 +610,15 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageCallstack->SetSizer(boxSizer281);
 
-    m_notebook301 = new wxNotebook(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook301->SetName(wxT("m_notebook301"));
+    m_notebook = new Notebook(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer281->Add(m_notebook301, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer281->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelCallstack = new wxPanel(m_notebook301, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_notebook301, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook301->AddPage(m_panelCallstack, _("Callstack"), true);
+    m_panelCallstack =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelCallstack, _("Callstack"), true);
 
     wxBoxSizer* boxSizer307 = new wxBoxSizer(wxVERTICAL);
     m_panelCallstack->SetSizer(boxSizer307);
@@ -637,9 +637,9 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                             wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlCallstack->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
-    m_panelBreakpoints = new wxPanel(m_notebook301, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_notebook301, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook301->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
+    m_panelBreakpoints =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelBreakpoints, _("Breakpoints"), false);
 
     wxBoxSizer* boxSizer293 = new wxBoxSizer(wxVERTICAL);
     m_panelBreakpoints->SetSizer(boxSizer293);

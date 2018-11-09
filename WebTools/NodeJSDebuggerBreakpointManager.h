@@ -76,6 +76,20 @@ public:
     void AddBreakpoint(const wxFileName& filename, int line);
 
     const NodeJSBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
+    
+    /**
+     * @brief remove all breakpoints from both the manager + UI
+     */
+    void DeleteAll();
+    /**
+     * @brief remove a single breakpoint by its ID
+     */
+    void DeleteByID(const wxString& bpid);
+    
+    /**
+     * @brief return list of all applied breakpoints
+     */
+    wxArrayString GetAllAppliedBreakpoints() const;
 };
 
 #endif // NODEJSDEBUGGERBREAKPOINTMANAGER_H

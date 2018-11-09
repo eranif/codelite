@@ -47,7 +47,8 @@ public:
     void SetBreakpoint(const wxFileName& file, int lineNumber);
     void DeleteBreakpointByID(const wxString& bpid);
     void DeleteBreakpoint(const NodeJSBreakpoint& bp);
-
+    void DeleteAllBreakpoints();
+    
 protected:
     void OnDebugStart(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);

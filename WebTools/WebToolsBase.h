@@ -7,6 +7,7 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
+#include "Notebook.h"
 #include "clThemedListCtrl.h"
 #include "clToolBar.h"
 #include <map>
@@ -220,7 +221,7 @@ protected:
     wxPanel* m_panelConsole;
     wxPanel* m_panelOutput;
     wxPanel* m_splitterPageCallstack;
-    wxNotebook* m_notebook301;
+    Notebook* m_notebook;
     wxPanel* m_panelCallstack;
     clThemedListCtrl* m_dvListCtrlCallstack;
     wxPanel* m_panelBreakpoints;
@@ -238,7 +239,7 @@ public:
     clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
     clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
-    wxNotebook* GetNotebook301() { return m_notebook301; }
+    Notebook* GetNotebook() { return m_notebook; }
     wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }
     NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

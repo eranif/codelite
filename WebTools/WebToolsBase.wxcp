@@ -5334,7 +5334,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_notebook301"
+               "m_value": "m_notebook"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -5366,11 +5366,11 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": ""
+               "m_value": "Notebook"
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "Notebook.h"
               }, {
                "type": "string",
                "m_label": "Style:",

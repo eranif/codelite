@@ -226,3 +226,46 @@ void NodeJSBptManager::OnFileSaved(clCommandEvent& event)
         lineNo = ctrl->MarkerNext(lineNo, mmt_breakpoint);
     }
 }
+
+void NodeJSBptManager::DeleteAll()
+{
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    std::for_each(editors.begin(), editors.end(),
+                  [&](IEditor* editor) { editor->GetCtrl()->MarkerDeleteAll(smt_breakpoint); });
+    m_breakpoints.clear();
+
+    // Tell the UI to refresh its view
+    clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+    EventNotifier::Get()->AddPendingEvent(bpEvent);
+}
+
+wxArrayString NodeJSBptManager::GetAllAppliedBreakpoints() const
+{
+    wxArrayString arr;
+    std::for_each(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+        if(!bp.GetNodeBpID().IsEmpty()) { arr.Add(bp.GetNodeBpID()); }
+    });
+    return arr;
+}
+
+void NodeJSBptManager::DeleteByID(const wxString& bpid)
+{
+    NodeJSBreakpoint::Vec_t::iterator iter =
+        std::find_if(m_breakpoints.begin(), m_breakpoints.end(), [&](const NodeJSBreakpoint& bp) {
+            if(bp.GetNodeBpID() == bpid) return true;
+            return false;
+        });
+    if(iter == m_breakpoints.end()) { return; }
+    const NodeJSBreakpoint& bp = *iter;
+    IEditor* editor = clGetManager()->FindEditor(bp.GetFilename());
+    DeleteBreakpoint(bp.GetFilename(), bp.GetLine());
+
+    if(editor) {
+        // Update the breakpoints set on this editor
+        SetBreakpoints(editor);
+    }
+    // Tell the UI to refresh its view
+    clDebugEvent bpEvent(wxEVT_NODEJS_DEBUGGER_UPDATE_BREAKPOINTS_VIEW);
+    EventNotifier::Get()->AddPendingEvent(bpEvent);
+}

@@ -101,6 +101,8 @@
       <File Name="NodeDebuggerTooltip.cpp"/>
       <File Name="NodeDebuggerTooltip.h"/>
       <VirtualDirectory Name="DebuggerNew">
+        <File Name="DebuggerPane.cpp"/>
+        <File Name="DebuggerPane.h"/>
         <File Name="NodeDebuggerPane.cpp"/>
         <File Name="NodeDebuggerPane.h"/>
         <File Name="NodeDebugger.h"/>

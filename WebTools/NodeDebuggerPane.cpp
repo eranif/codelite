@@ -7,8 +7,12 @@
 #include "NodeJSEvents.h"
 #include "NoteJSWorkspace.h"
 #include "PropertyDescriptor.h"
+#include "bitmap_loader.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "macros.h"
 #include "wxterminal.h"
+#include <imanager.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 
@@ -43,6 +47,14 @@ NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 
     DoPrintStartupMessages();
+    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Clear all breakpoints"),
+                             clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+    m_tbBreakpoints->AddTool(wxID_REMOVE, _("Delete breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("minus"));
+    m_tbBreakpoints->Realize();
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &NodeDebuggerPane::OnClearAllBreakpoints, this, wxID_CLEAR);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &NodeDebuggerPane::OnClearAllBreakpointsUI, this, wxID_CLEAR);
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &NodeDebuggerPane::OnDeleteBreakpoint, this, wxID_REMOVE);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &NodeDebuggerPane::OnDeleteBreakpointUI, this, wxID_REMOVE);
 }
 
 NodeDebuggerPane::~NodeDebuggerPane()
@@ -52,8 +64,7 @@ NodeDebuggerPane::~NodeDebuggerPane()
     m_terminal->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Unbind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace,
-                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_UPDATE_CALLSTACK, &NodeDebuggerPane::OnUpdateBacktrace, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &NodeDebuggerPane::OnDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_MARK_LINE, &NodeDebuggerPane::OnMarkLine, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_INTERACT, &NodeDebuggerPane::OnInteract, this);
@@ -215,4 +226,29 @@ void NodeDebuggerPane::DoPrintStartupMessages()
     m_terminal->AddTextWithEOL("## Node.js stdin/stdout console");
     m_terminal->AddTextWithEOL("## stdout messages (e.g. console.log(..) will appear here");
     m_terminal->AddTextWithEOL("##==========================================================");
+}
+
+void NodeDebuggerPane::OnClearAllBreakpoints(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    NodeJSWorkspace::Get()->GetDebugger()->DeleteAllBreakpoints();
+}
+
+void NodeDebuggerPane::OnClearAllBreakpointsUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_dvListCtrlBreakpoints->IsEmpty());
+}
+
+void NodeDebuggerPane::OnDeleteBreakpoint(wxCommandEvent& event)
+{
+    wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
+    CHECK_ITEM_RET(item);
+
+    wxStringClientData* cd = reinterpret_cast<wxStringClientData*>(m_dvListCtrlBreakpoints->GetItemData(item));
+    if(cd) { NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(cd->GetData()); }
+}
+
+void NodeDebuggerPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dvListCtrlBreakpoints->GetSelection().IsOk());
 }

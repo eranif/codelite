@@ -582,26 +582,11 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer285 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageWatches->SetSizer(boxSizer285);
 
-    m_splitter311 = new wxSplitterWindow(m_splitterPageWatches, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPageWatches, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
-    m_splitter311->SetSashGravity(0.5);
-    m_splitter311->SetMinimumPaneSize(10);
+    m_treeCtrlLocals =
+        new clThemedTreeCtrl(m_splitterPageWatches, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageWatches, wxSize(-1, -1)), wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT);
 
-    boxSizer285->Add(m_splitter311, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panelConsole = new wxPanel(m_splitter311, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter311, wxSize(-1, -1)),
-                                 wxTAB_TRAVERSAL);
-
-    wxBoxSizer* boxSizer321 = new wxBoxSizer(wxVERTICAL);
-    m_panelConsole->SetSizer(boxSizer321);
-
-    m_panelOutput = new wxPanel(m_splitter311, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter311, wxSize(-1, -1)),
-                                wxTAB_TRAVERSAL);
-    m_splitter311->SplitVertically(m_panelConsole, m_panelOutput, 0);
-
-    wxBoxSizer* boxSizer323 = new wxBoxSizer(wxVERTICAL);
-    m_panelOutput->SetSizer(boxSizer323);
+    boxSizer285->Add(m_treeCtrlLocals, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPageCallstack = new wxPanel(m_splitter271, wxID_ANY, wxDefaultPosition,
                                           wxDLG_UNIT(m_splitter271, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -610,51 +595,19 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageCallstack->SetSizer(boxSizer281);
 
-    m_splitter325 = new wxSplitterWindow(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
-    m_splitter325->SetSashGravity(0.5);
-    m_splitter325->SetMinimumPaneSize(10);
+    m_panel353 = new wxPanel(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer281->Add(m_splitter325, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer281->Add(m_panel353, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage329 = new wxPanel(m_splitter325, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitter325, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    wxBoxSizer* boxSizer355 = new wxBoxSizer(wxVERTICAL);
+    m_panel353->SetSizer(boxSizer355);
 
-    wxBoxSizer* boxSizer335 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage329->SetSizer(boxSizer335);
-
-    m_notebook341 = new Notebook(m_splitterPage329, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPage329, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebook341->SetName(wxT("m_notebook341"));
-
-    boxSizer335->Add(m_notebook341, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panel343 = new wxPanel(m_notebook341, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook341, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook341->AddPage(m_panel343, _("Locals"), false);
-
-    wxBoxSizer* boxSizer345 = new wxBoxSizer(wxVERTICAL);
-    m_panel343->SetSizer(boxSizer345);
-
-    m_treeCtrlLocals =
-        new clThemedTreeCtrl(m_panel343, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel343, wxSize(-1, -1)),
-                             wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT);
-
-    boxSizer345->Add(m_treeCtrlLocals, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitterPage333 = new wxPanel(m_splitter325, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitter325, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter325->SplitVertically(m_splitterPage329, m_splitterPage333, 0);
-
-    wxBoxSizer* boxSizer337 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage333->SetSizer(boxSizer337);
-
-    m_notebook = new Notebook(m_splitterPage333, wxID_ANY, wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPage333, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook =
+        new Notebook(m_panel353, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel353, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer337->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer355->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelCallstack =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -700,6 +653,19 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
                                               wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
+    m_panelConsole =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelConsole, _("Console"), false);
+
+    wxBoxSizer* boxSizer321 = new wxBoxSizer(wxVERTICAL);
+    m_panelConsole->SetSizer(boxSizer321);
+
+    m_panelOutput =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelOutput, _("Stdin / Stdout"), false);
+
+    wxBoxSizer* boxSizer323 = new wxBoxSizer(wxVERTICAL);
+    m_panelOutput->SetSizer(boxSizer323);
 
     SetName(wxT("NodeJSCliDebuggerPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

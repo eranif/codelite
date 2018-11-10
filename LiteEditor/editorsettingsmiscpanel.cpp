@@ -149,20 +149,6 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     }
 
     size_t flags = options->GetOptions();
-    size_t oldFlags = oldOptions->GetOptions();
-
-    // Keep the old icon-set flags, this is done for deciding whether we should
-    // prompt the user for possible restart
-    size_t oldIconFlags(0);
-    size_t newIconFlags(0);
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_FreshFarm) oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic_Dark) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    if(oldIconFlags == 0) oldIconFlags = OptionsConfig::Opt_IconSet_Classic;
 
     // Clear old settings
     flags &= ~(OptionsConfig::Opt_IconSet_Classic);
@@ -173,8 +159,6 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
-    m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
-
     options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
 }
 

@@ -232,7 +232,7 @@ if ( WITH_SFTP )
     else ( UNIX AND NOT APPLE OR MINGW )
         ## OSX
         set( LIBSSH_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/libssh/include)
-        set( LIBSSH_LIB ${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a)
+        set( LIBSSH_LIB "${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a;${CL_SRC_ROOT}/sdk/libssh/lib/osx/libcrypto.a")
         include_directories(${LIBSSH_INCLUDE_DIR})
     endif ( UNIX AND NOT APPLE OR MINGW )
     message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")

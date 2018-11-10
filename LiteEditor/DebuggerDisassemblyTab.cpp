@@ -186,7 +186,6 @@ void DebuggerDisassemblyTab::OnMarginClicked(wxStyledTextEvent& event)
     int nLine = m_stc->LineFromPosition(event.GetPosition());
     wxString line = m_stc->GetLine(nLine);
     wxString address = line.BeforeFirst(' ').Trim(true).Trim(false);
-    ;
 
     if(m_stc->MarkerGet(nLine) & BREAKPOINT_MARKER_MASK) {
 
@@ -256,4 +255,13 @@ void DebuggerDisassemblyTab::DoClearRegistersView()
         RegistersViewModelClientData* cd = reinterpret_cast<RegistersViewModelClientData*>(pData);
         wxDELETE(cd);
     });
+}
+
+wxArrayString DebuggerDisassemblyTab::GetRegisterNames() const
+{
+    wxArrayString names;
+    for(size_t i = 0; i < m_dvListCtrlRegisters->GetItemCount(); ++i) {
+        names.Add(m_dvListCtrlRegisters->GetItemText(m_dvListCtrlRegisters->RowToItem(i)));
+    }
+    return names;
 }

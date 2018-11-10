@@ -22,20 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "dbgcmd.h"
-#include "event_notifier.h"
-#include "wx/tokenzr.h"
-#include "debuggergdb.h"
-#include "gdb_result_parser.h"
-#include <wx/regex.h>
-#include "gdb_parser_incl.h"
-#include "procutils.h"
-#include "gdbmi_parse_thread_info.h"
-#include "event_notifier.h"
-#include "debuggermanager.h"
 #include "cl_command_event.h"
+#include "dbgcmd.h"
+#include "debuggergdb.h"
+#include "debuggermanager.h"
+#include "event_notifier.h"
+#include "gdb_parser_incl.h"
+#include "gdb_result_parser.h"
+#include "gdbmi_parse_thread_info.h"
+#include "precompiled_header.h"
+#include "procutils.h"
+#include "wx/tokenzr.h"
 #include <algorithm>
+#include <wx/regex.h>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
@@ -45,44 +44,30 @@ static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
         currentToken = gdb_result_string; \
     }
 
-#define GDB_BREAK(ch)     \
-    if(type != (int)ch) { \
-        break;            \
-    }
+#define GDB_BREAK(ch) \
+    if(type != (int)ch) { break; }
 
 static void wxGDB_STRIP_QUOATES(wxString& currentToken)
 {
     size_t where = currentToken.find(wxT("\""));
-    if(where != std::string::npos && where == 0) {
-        currentToken.erase(0, 1);
-    }
+    if(where != std::string::npos && where == 0) { currentToken.erase(0, 1); }
 
     where = currentToken.rfind(wxT("\""));
-    if(where != std::string::npos && where == currentToken.length() - 1) {
-        currentToken.erase(where);
-    }
+    if(where != std::string::npos && where == currentToken.length() - 1) { currentToken.erase(where); }
 
     where = currentToken.find(wxT("\"\\\\"));
-    if(where != std::string::npos && where == 0) {
-        currentToken.erase(0, 3);
-    }
+    if(where != std::string::npos && where == 0) { currentToken.erase(0, 3); }
 
     where = currentToken.rfind(wxT("\"\\\\"));
-    if(where != std::string::npos && where == currentToken.length() - 3) {
-        currentToken.erase(where);
-    }
+    if(where != std::string::npos && where == currentToken.length() - 3) { currentToken.erase(where); }
 }
 
 static void wxRemoveQuotes(wxString& str)
 {
-    if(str.IsEmpty()) {
-        return;
-    }
+    if(str.IsEmpty()) { return; }
 
     str.RemoveLast();
-    if(str.IsEmpty() == false) {
-        str.Remove(0, 1);
-    }
+    if(str.IsEmpty() == false) { str.Remove(0, 1); }
 }
 
 static wxString wxGdbFixValue(const wxString& value)
@@ -106,9 +91,7 @@ static wxString wxGdbFixValue(const wxString& value)
 static wxString NextValue(wxString& line, wxString& key)
 {
     // extract the key name first
-    if(line.StartsWith(wxT(","))) {
-        line.Remove(0, 1);
-    }
+    if(line.StartsWith(wxT(","))) { line.Remove(0, 1); }
 
     key = line.BeforeFirst(wxT('='));
     line = line.AfterFirst(wxT('"'));
@@ -155,9 +138,7 @@ static void ParseStackEntry(const wxString& line, StackEntry& entry)
 wxString ExtractGdbChild(const std::map<std::string, std::string>& attr, const wxString& name)
 {
     std::map<std::string, std::string>::const_iterator iter = attr.find(name.mb_str(wxConvUTF8).data());
-    if(iter == attr.end()) {
-        return wxT("");
-    }
+    if(iter == attr.end()) { return wxT(""); }
     wxString val = wxString(iter->second.c_str(), wxConvUTF8);
     val.Trim().Trim(false);
 
@@ -180,9 +161,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
     wxString tmpLine;
     line.StartsWith(wxT("^done,frame={"), &tmpLine);
     tmpLine.RemoveLast();
-    if(tmpLine.IsEmpty()) {
-        return false;
-    }
+    if(tmpLine.IsEmpty()) { return false; }
 
     StackEntry entry;
     ParseStackEntry(tmpLine, entry);
@@ -220,16 +199,12 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
         return false;
     }
     // file=
-    if(tkz.HasMoreTokens()) {
-        filename = tkz.NextToken();
-    }
+    if(tkz.HasMoreTokens()) { filename = tkz.NextToken(); }
 
     // fullname=
     if(tkz.HasMoreTokens()) {
         wxString tmpfull_name = tkz.NextToken();
-        if(tmpfull_name.StartsWith("fullname")) {
-            fullName = tmpfull_name;
-        }
+        if(tmpfull_name.StartsWith("fullname")) { fullName = tmpfull_name; }
     } else {
         return false;
     }
@@ -280,9 +255,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
 
                         // if the convertedPath does exists on the disk,
                         // replace the file name with it
-                        if(wxFileName::FileExists(convertedPath)) {
-                            fullName = convertedPath;
-                        }
+                        if(wxFileName::FileExists(convertedPath)) { fullName = convertedPath; }
                     }
                 }
             }
@@ -362,7 +335,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
         if(func.IsEmpty() && IS_WINDOWNS) {
             if(func == wxT("msvcrt!_assert") || // MinGW
                func == wxT("__assert")          // Cygwin
-               ) {
+            ) {
                 // assertion caught
                 UpdateGotControl(DBG_BP_ASSERTION_HIT, func);
             }
@@ -600,9 +573,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString& line)
     } else if(m_bp.memory_address.IsEmpty() == false) {
         msg << _("address ") << m_bp.memory_address;
     } else {
-        if(!m_bp.file.IsEmpty()) {
-            msg << m_bp.file << wxT(':');
-        }
+        if(!m_bp.file.IsEmpty()) { msg << m_bp.file << wxT(':'); }
         if(!m_bp.function_name.IsEmpty()) {
             msg << m_bp.function_name;
         } else if(m_bp.lineno != -1) {
@@ -652,9 +623,7 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString& line)
         }
 
         var.value.Trim().Trim(false);
-        if(var.value.IsEmpty()) {
-            var.value = wxT("{...}");
-        }
+        if(var.value.IsEmpty()) { var.value = wxT("{...}"); }
 
         iter = attr.find("type");
         if(iter != attr.end()) {
@@ -719,9 +688,7 @@ bool DbgCmdHandlerFuncArgs::ProcessOutput(const wxString& line)
         }
 
         var.value.Trim().Trim(false);
-        if(var.value.IsEmpty()) {
-            var.value = wxT("{...}");
-        }
+        if(var.value.IsEmpty()) { var.value = wxT("{...}"); }
 
         iter = attr.find("type");
         if(iter != attr.end()) {
@@ -771,9 +738,7 @@ bool DbgCmdStackList::ProcessOutput(const wxString& line)
     StackEntryArray stackArray;
     while(true) {
         tmpLine = tmpLine.AfterFirst(wxT('{'));
-        if(tmpLine.IsEmpty()) {
-            break;
-        }
+        if(tmpLine.IsEmpty()) { break; }
 
         remainder = tmpLine.AfterFirst(wxT('}'));
         tmpLine = tmpLine.BeforeFirst(wxT('}'));
@@ -809,9 +774,7 @@ bool DbgCmdHandlerRemoteDebugging::ProcessOutput(const wxString& line)
     // Apply the breakpoints
     m_observer->UpdateAddLine(_("Applying breakpoints..."));
     DbgGdb* gdb = dynamic_cast<DbgGdb*>(m_debugger);
-    if(gdb) {
-        gdb->SetBreakpoints();
-    }
+    if(gdb) { gdb->SetBreakpoints(); }
     m_observer->UpdateAddLine(_("Applying breakpoints... done"));
     // continue execution
     return m_debugger->Continue();
@@ -1067,7 +1030,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
             uniqueBreakpoints.push_back(bp);
         }
     });
-    
+
     li.swap(uniqueBreakpoints);
     m_observer->ReconcileBreakpoints(li);
     return true;
@@ -1095,9 +1058,7 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
     int divider(m_columns);
     int factor((int)(m_count / divider));
 
-    if(m_count % divider != 0) {
-        factor = (int)(m_count / divider) + 1;
-    }
+    if(m_count % divider != 0) { factor = (int)(m_count / divider) + 1; }
 
     // {addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
     // {addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
@@ -1121,18 +1082,14 @@ bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 
             while(type != GDB_ADDR) {
 
-                if(type == 0) {
-                    break;
-                }
+                if(type == 0) { break; }
 
                 GDB_NEXT_TOKEN();
                 continue;
             }
 
             // Eof?
-            if(type == 0) {
-                break;
-            }
+            if(type == 0) { break; }
 
             GDB_NEXT_TOKEN(); //=
             GDB_NEXT_TOKEN(); // 0x003d3e24
@@ -1237,9 +1194,7 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
                 wxString v(iter->second.c_str(), wxConvUTF8);
                 wxRemoveQuotes(v);
                 wxString val = wxGdbFixValue(v);
-                if(val.IsEmpty() == false) {
-                    e.m_evaluated = val;
-                }
+                if(val.IsEmpty() == false) { e.m_evaluated = val; }
             }
         }
 
@@ -1251,13 +1206,9 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
                 vo.typeName = t;
             }
 
-            if(vo.typeName.EndsWith(wxT(" *"))) {
-                vo.isPtr = true;
-            }
+            if(vo.typeName.EndsWith(wxT(" *"))) { vo.isPtr = true; }
 
-            if(vo.typeName.EndsWith(wxT(" **"))) {
-                vo.isPtrPtr = true;
-            }
+            if(vo.typeName.EndsWith(wxT(" **"))) { vo.isPtrPtr = true; }
         }
 
         vo.has_more = info.has_more;
@@ -1288,13 +1239,9 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
     wxString numChilds = ExtractGdbChild(attr, wxT("numchild"));
     wxString dynamic = ExtractGdbChild(attr, wxT("dynamic"));
 
-    if(numChilds.IsEmpty() == false) {
-        child.numChilds = wxAtoi(numChilds);
-    }
+    if(numChilds.IsEmpty() == false) { child.numChilds = wxAtoi(numChilds); }
 
-    if(child.numChilds == 0 && dynamic == "1") {
-        child.numChilds = 1;
-    }
+    if(child.numChilds == 0 && dynamic == "1") { child.numChilds = 1; }
 
     child.varName = ExtractGdbChild(attr, wxT("exp"));
     if(child.varName.IsEmpty() || child.type == child.varName ||
@@ -1312,9 +1259,7 @@ static VariableObjChild FromParserOutput(const std::map<std::string, std::string
             wxRemoveQuotes(v);
             child.value = wxGdbFixValue(v);
 
-            if(child.value.IsEmpty() == false) {
-                child.varName << wxT(" = ") << child.value;
-            }
+            if(child.value.IsEmpty() == false) { child.varName << wxT(" = ") << child.value; }
         }
     }
     return child;
@@ -1594,19 +1539,20 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
             }
             reg_name = currentToken;
             wxGDB_STRIP_QUOATES(reg_name);
-            m_numberToName.insert(std::make_pair(counter, reg_name));
 
+            // Don't include empty register names
+            if(!reg_name.IsEmpty()) { m_numberToName.insert(std::make_pair(counter, reg_name)); }
             GDB_NEXT_TOKEN(); // remove the ','
-            if(type != ',')
+            if(type != ',') {
                 // end of the list
                 break;
+            }
             ++counter;
         }
     }
     gdb_result_lex_clean();
-    // Now trigger the register values call
-    return m_gdb->WriteCommand("-data-list-register-values N",
-                               new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
+    wxString command = "-data-list-register-values N";
+    return m_gdb->WriteCommand(command, new DbgCmdHandlerRegisterValues(m_observer, m_gdb, m_numberToName));
 }
 
 // +++-----------------------------
@@ -1653,9 +1599,7 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
 
             // find this register in the map
             std::map<int, wxString>::iterator iter = m_numberToName.find(regId);
-            if(iter != m_numberToName.end()) {
-                reg.reg_name = iter->second;
-            }
+            if(iter != m_numberToName.end()) { reg.reg_name = iter->second; }
 
             GDB_NEXT_TOKEN(); // ,
             GDB_NEXT_TOKEN(); // value
@@ -1665,9 +1609,7 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
             wxGDB_STRIP_QUOATES(reg.reg_value);
 
             // Add the register
-            if(!reg.reg_name.IsEmpty()) {
-                registers.push_back(reg);
-            }
+            if(!reg.reg_name.IsEmpty()) { registers.push_back(reg); }
 
             // Read the next token
             GDB_NEXT_TOKEN(); // }

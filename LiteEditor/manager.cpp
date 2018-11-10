@@ -220,7 +220,7 @@ Manager::Manager(void)
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
-    
+
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -1750,9 +1750,13 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
         // updated
         //--------------------------------------------------------------------
 
-        if(curpage == pane->GetLocalsTable() || IsPaneVisible(wxGetTranslation(DebuggerPane::LOCALS))) {
+        if(curpage == (wxWindow*)pane->GetLocalsTable() || IsPaneVisible(wxGetTranslation(DebuggerPane::LOCALS))) {
             // update the locals tree
             dbgr->QueryLocals();
+        }
+
+        if(curpage == (wxWindow*)pane->GetDisassemblyTab() ||
+           IsPaneVisible(wxGetTranslation(DebuggerPane::DISASSEMBLY))) {
             dbgr->ListRegisters();
         }
 
@@ -1760,7 +1764,6 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
             pane->GetWatchesTable()->RefreshValues();
         }
         if(curpage == (wxWindow*)pane->GetFrameListView() || IsPaneVisible(wxGetTranslation(DebuggerPane::FRAMES))) {
-
             // update the stack call
             dbgr->ListFrames();
         }

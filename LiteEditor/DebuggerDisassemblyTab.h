@@ -83,5 +83,6 @@ public:
 
     void SetTitle(const wxString& title) { this->m_title = title; }
     const wxString& GetTitle() const { return m_title; }
+    wxArrayString GetRegisterNames() const;
 };
 #endif // DEBUGGERDISASSEMBLYTAB_H

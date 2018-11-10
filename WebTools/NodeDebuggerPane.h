@@ -6,6 +6,7 @@
 #include "clDebugRemoteObjectEvent.h"
 #include "cl_command_event.h"
 
+class CallFrame;
 class NodeDebuggerTooltip;
 class wxTerminal;
 class NodeDebuggerPane : public NodeJSCliDebuggerPaneBase
@@ -13,10 +14,14 @@ class NodeDebuggerPane : public NodeJSCliDebuggerPaneBase
     wxTerminal* m_terminal = nullptr;
     wxTerminal* m_node_console = nullptr;
     NodeDebuggerTooltip* m_debuggerTooltip = nullptr;
+    std::unordered_map<wxString, wxTreeItemId> m_localsPendingItems;
 
 protected:
+    virtual void OnLocalExpanding(wxTreeEvent& event);
     void DoDestroyTip();
     void DoPrintStartupMessages();
+    void DoUpdateLocalsView(CallFrame* callFrame);
+    wxString GetLocalObjectItem(const wxTreeItemId& item) const;
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);
@@ -28,6 +33,7 @@ protected:
     void OnEval(clCommandEvent& event);
     void OnConsoleOutput(clDebugEvent& event);
     void OnDebugSessionStarted(clDebugEvent& event);
+    void OnLocalProperties(clDebugEvent& event);
     void OnEvalResult(clDebugRemoteObjectEvent& event);
     void OnCreateObject(clDebugRemoteObjectEvent& event);
     void OnDestroyTip(clCommandEvent& event);

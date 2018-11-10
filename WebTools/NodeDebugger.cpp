@@ -416,7 +416,7 @@ void NodeDebugger::OnTooltip(clDebugEvent& event)
     NodeJSDevToolsProtocol::Get().CreateObject(m_socket, expression, m_frames[0]);
 }
 
-void NodeDebugger::GetObjectProperties(const wxString& objectId)
+void NodeDebugger::GetObjectProperties(const wxString& objectId, wxEventType eventType)
 {
-    NodeJSDevToolsProtocol::Get().GetObjectProperties(m_socket, objectId);
+    NodeJSDevToolsProtocol::Get().GetObjectProperties(m_socket, objectId, eventType);
 }

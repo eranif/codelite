@@ -130,6 +130,8 @@
           <File Name="DebuggerPaused.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Protocol">
+          <File Name="CallFrameScope.cpp"/>
+          <File Name="CallFrameScope.h"/>
           <File Name="PropertyDescriptor.cpp"/>
           <File Name="PropertyDescriptor.h"/>
           <File Name="ObjectPreview.cpp"/>

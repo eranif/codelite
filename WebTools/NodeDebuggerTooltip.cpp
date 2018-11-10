@@ -64,7 +64,7 @@ void NodeDebuggerTooltip::OnItemExpanding(wxTreeEvent& event)
             return;
         }
         m_pendingItems.insert({ objectId, event.GetItem() });
-        NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(objectId);
+        NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(objectId, wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES);
     }
 }
 

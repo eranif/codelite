@@ -53,7 +53,7 @@ public:
     void DeleteBreakpointByID(clWebSocketClient& socket, const wxString& bpid);
     void GetScriptSource(clWebSocketClient& socket, const wxString& scriptId);
     void Eval(clWebSocketClient& socket, const wxString& expression, const wxString& frameId);
-    void GetObjectProperties(clWebSocketClient& socket, const wxString& objectId);
+    void GetObjectProperties(clWebSocketClient& socket, const wxString& objectId, wxEventType eventType);
     void CreateObject(clWebSocketClient& socket, const wxString& expression, const wxString& frameId);
 };
 

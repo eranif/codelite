@@ -167,7 +167,8 @@ void NodeJSDevToolsProtocol::Eval(clWebSocketClient& socket, const wxString& exp
     m_waitingReplyCommands.insert({ handler.m_commandID, handler });
 }
 
-void NodeJSDevToolsProtocol::GetObjectProperties(clWebSocketClient& socket, const wxString& objectId)
+void NodeJSDevToolsProtocol::GetObjectProperties(clWebSocketClient& socket, const wxString& objectId,
+                                                 wxEventType eventType)
 {
     JSONElement params = JSONElement::createObject("params");
     params.addProperty("objectId", objectId);
@@ -175,7 +176,7 @@ void NodeJSDevToolsProtocol::GetObjectProperties(clWebSocketClient& socket, cons
     // Register a handler to handle this command when it returns
     CommandHandler handler(message_id, [=](const JSONElement& result) {
         if(result.hasNamedObject("result")) {
-            clDebugEvent evt(wxEVT_NODEJS_DEBUGGER_OBJECT_PROPERTIES);
+            clDebugEvent evt(eventType);
             evt.SetString(result.namedObject("result").format(false));
             evt.SetStartupCommands(objectId);
             EventNotifier::Get()->AddPendingEvent(evt);

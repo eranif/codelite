@@ -9,6 +9,7 @@
 
 #include "Notebook.h"
 #include "clThemedListCtrl.h"
+#include "clThemedTreeCtrl.h"
 #include "clToolBar.h"
 #include <map>
 #include <wx/artprov.h>
@@ -33,6 +34,7 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/toolbar.h>
+#include <wx/treectrl.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
@@ -221,6 +223,12 @@ protected:
     wxPanel* m_panelConsole;
     wxPanel* m_panelOutput;
     wxPanel* m_splitterPageCallstack;
+    wxSplitterWindow* m_splitter325;
+    wxPanel* m_splitterPage329;
+    Notebook* m_notebook341;
+    wxPanel* m_panel343;
+    clThemedTreeCtrl* m_treeCtrlLocals;
+    wxPanel* m_splitterPage333;
     Notebook* m_notebook;
     wxPanel* m_panelCallstack;
     clThemedListCtrl* m_dvListCtrlCallstack;
@@ -229,17 +237,25 @@ protected:
     clThemedListCtrl* m_dvListCtrlBreakpoints;
 
 protected:
+    virtual void OnLocalExpanding(wxTreeEvent& event) { event.Skip(); }
+
 public:
     wxPanel* GetPanelConsole() { return m_panelConsole; }
     wxPanel* GetPanelOutput() { return m_panelOutput; }
     wxSplitterWindow* GetSplitter311() { return m_splitter311; }
     wxPanel* GetSplitterPageWatches() { return m_splitterPageWatches; }
+    clThemedTreeCtrl* GetTreeCtrlLocals() { return m_treeCtrlLocals; }
+    wxPanel* GetPanel343() { return m_panel343; }
+    Notebook* GetNotebook341() { return m_notebook341; }
+    wxPanel* GetSplitterPage329() { return m_splitterPage329; }
     clThemedListCtrl* GetDvListCtrlCallstack() { return m_dvListCtrlCallstack; }
     wxPanel* GetPanelCallstack() { return m_panelCallstack; }
     clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
     clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
     Notebook* GetNotebook() { return m_notebook; }
+    wxPanel* GetSplitterPage333() { return m_splitterPage333; }
+    wxSplitterWindow* GetSplitter325() { return m_splitter325; }
     wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }
     NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

@@ -11,6 +11,7 @@ class CallFrame : public nSerializableObject
     wxString m_functionName;
     Location m_location;
     RemoteObject m_this;
+    nSerializableObject::Vec_t m_scopeChain;
 
 public:
     CallFrame();
@@ -26,6 +27,8 @@ public:
     const wxString& GetFunctionName() const { return m_functionName; }
     const Location& GetLocation() const { return m_location; }
     const RemoteObject& GetThis() const { return m_this; }
+    void SetScopeChain(const nSerializableObject::Vec_t& scopeChain) { this->m_scopeChain = scopeChain; }
+    const nSerializableObject::Vec_t& GetScopeChain() const { return m_scopeChain; }
 };
 
 #endif // NODEDBGCALLFRAME_H

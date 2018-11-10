@@ -1,4 +1,5 @@
 #include "CallFrame.h"
+#include "CallFrameScope.h"
 #include "NodeDebugger.h"
 #include "NodeDebuggerPane.h"
 #include "NodeDebuggerTooltip.h"
@@ -16,6 +17,20 @@
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 
+class LocalTreeItemData : public wxTreeItemData
+{
+    wxString m_data;
+
+public:
+    LocalTreeItemData(const wxString& data)
+        : m_data(data)
+    {
+    }
+    virtual ~LocalTreeItemData() {}
+    void SetData(const wxString& data) { this->m_data = data; }
+    const wxString& GetData() const { return m_data; }
+};
+
 NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
@@ -30,6 +45,8 @@ NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     m_node_console->SetInteractive(true);
     m_panelConsole->GetSizer()->Add(m_node_console, 1, wxEXPAND);
 
+    m_treeCtrlLocals->AddHeader("Name");
+    m_treeCtrlLocals->AddHeader("Value");
     m_terminal->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnRunTerminalCommand, this);
     m_node_console->Bind(wxEVT_TERMINAL_EXECUTE_COMMAND, &NodeDebuggerPane::OnEval, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_UPDATE_CONSOLE, &NodeDebuggerPane::OnConsoleOutput, this);
@@ -43,6 +60,8 @@ NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &NodeDebuggerPane::OnCreateObject, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeDebuggerPane::OnDebugSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &NodeDebuggerPane::OnDestroyTip, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_LOCAL_OBJECT_PROPERTIES, &NodeDebuggerPane::OnLocalProperties,
+                               this);
     m_dvListCtrlCallstack->SetSortFunction(nullptr);
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 
@@ -74,6 +93,8 @@ NodeDebuggerPane::~NodeDebuggerPane()
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_CREATE_OBJECT, &NodeDebuggerPane::OnCreateObject, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &NodeDebuggerPane::OnDebugSessionStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &NodeDebuggerPane::OnDestroyTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_LOCAL_OBJECT_PROPERTIES, &NodeDebuggerPane::OnLocalProperties,
+                                 this);
 }
 
 void NodeDebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
@@ -99,6 +120,9 @@ void NodeDebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
             event.SetLineNumber(frame->GetLocation().GetLineNumber() + 1);
             event.SetFileName(filename);
             EventNotifier::Get()->AddPendingEvent(event);
+
+            // Update the locals view
+            DoUpdateLocalsView(frame);
         }
         call_frame_ids.Add(frame->GetCallFrameId());
     }
@@ -118,6 +142,10 @@ void NodeDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
     });
     NodeJSWorkspace::Get()->GetDebugger()->ClearDebuggerMarker();
     DoDestroyTip();
+
+    // Clear the locals view
+    m_treeCtrlLocals->DeleteAllItems();
+    m_localsPendingItems.clear();
 }
 
 void NodeDebuggerPane::OnMarkLine(clDebugEvent& event)
@@ -251,4 +279,88 @@ void NodeDebuggerPane::OnDeleteBreakpoint(wxCommandEvent& event)
 void NodeDebuggerPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_dvListCtrlBreakpoints->GetSelection().IsOk());
+}
+
+void NodeDebuggerPane::DoUpdateLocalsView(CallFrame* callFrame)
+{
+    m_treeCtrlLocals->DeleteAllItems();
+    if(!callFrame) { return; }
+    wxTreeItemId root = m_treeCtrlLocals->AddRoot("Locals");
+    const nSerializableObject::Vec_t& chain = callFrame->GetScopeChain();
+    for(size_t i = 0; i < chain.size(); ++i) {
+        CallFrameScope* scope = chain[i]->To<CallFrameScope>();
+        wxString name = scope->GetDisplayName();
+        const wxString& objectId = scope->GetRemoteObject().GetObjectId();
+        wxTreeItemId scopeItemId =
+            m_treeCtrlLocals->AppendItem(root, name, wxNOT_FOUND, wxNOT_FOUND, new LocalTreeItemData(objectId));
+        if(scope->GetRemoteObject().IsObject() && !objectId.IsEmpty()) {
+            m_treeCtrlLocals->AppendItem(scopeItemId, "Loading...");
+
+            // Dont expand the "global" scope
+            if(name != "global") { m_treeCtrlLocals->Expand(scopeItemId); }
+            m_localsPendingItems.insert({ objectId, scopeItemId });
+
+            // Request the properties for this object from the debugger
+            NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(objectId,
+                                                                       wxEVT_NODEJS_DEBUGGER_LOCAL_OBJECT_PROPERTIES);
+        }
+    }
+}
+
+void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
+{
+    wxString objectId = event.GetStartupCommands();
+    if(m_localsPendingItems.count(objectId) == 0) { return; }
+    wxTreeItemId item = m_localsPendingItems[objectId];
+    m_localsPendingItems.erase(objectId);
+    m_treeCtrlLocals->DeleteChildren(item);
+    // Get the output result (an array of PropertyDescriptor)
+    wxString s = event.GetString();
+    JSONRoot root(s);
+    JSONElement prop_arr = root.toElement();
+    int size = prop_arr.arraySize();
+    std::vector<PropertyDescriptor> propVec;
+    for(int i = 0; i < size; ++i) {
+        JSONElement prop = prop_arr.arrayItem(i);
+        PropertyDescriptor propDesc;
+        propDesc.FromJSON(prop);
+        if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }
+    }
+
+    for(size_t i = 0; i < propVec.size(); ++i) {
+        const PropertyDescriptor& prop = propVec[i];
+        wxTreeItemId child = m_treeCtrlLocals->AppendItem(item, prop.GetName());
+        m_treeCtrlLocals->SetItemText(child, prop.GetTextPreview(), 1);
+        m_treeCtrlLocals->SetItemData(child, new LocalTreeItemData(prop.GetValue().GetObjectId()));
+        if(prop.HasChildren()) { m_treeCtrlLocals->AppendItem(child, "<dummy>"); }
+    }
+}
+void NodeDebuggerPane::OnLocalExpanding(wxTreeEvent& event)
+{
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    wxString object_id = GetLocalObjectItem(item);
+    if(object_id.IsEmpty()) {
+        m_treeCtrlLocals->DeleteChildren(item);
+    } else {
+        wxTreeItemIdValue cookie;
+        wxTreeItemId child = m_treeCtrlLocals->GetFirstChild(item, cookie);
+        if(m_treeCtrlLocals->GetItemText(child) == "<dummy>") {
+            m_treeCtrlLocals->SetItemText(child, "Loading...");
+            m_localsPendingItems.insert({ object_id, item });
+
+            // Request the properties for this object from the debugger
+            NodeJSWorkspace::Get()->GetDebugger()->GetObjectProperties(object_id,
+                                                                       wxEVT_NODEJS_DEBUGGER_LOCAL_OBJECT_PROPERTIES);
+        }
+    }
+}
+
+wxString NodeDebuggerPane::GetLocalObjectItem(const wxTreeItemId& item) const
+{
+    if(item.IsOk() == false) { return ""; }
+    LocalTreeItemData* d = dynamic_cast<LocalTreeItemData*>(m_treeCtrlLocals->GetItemData(item));
+    if(!d) { return ""; }
+    return d->GetData();
 }

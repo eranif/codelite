@@ -35,7 +35,7 @@ public:
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
     void SendToDebuggee(const wxString& command);
     void Eval(const wxString& command, const wxString& frameId);
-    void GetObjectProperties(const wxString& objectId);
+    void GetObjectProperties(const wxString& objectId, wxEventType eventType);
     NodeJSBptManager* GetBreakpointsMgr() { return &m_bptManager; }
 
     void SetDebuggerMarker(IEditor* editor, int lineno);

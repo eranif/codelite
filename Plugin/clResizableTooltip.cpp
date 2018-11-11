@@ -3,6 +3,7 @@
 #include "event_notifier.h"
 #include <wx/gdicmn.h>
 #include <wx/wupdlock.h>
+#include "file_logger.h"
 
 wxDEFINE_EVENT(wxEVT_TOOLTIP_DESTROY, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TOOLTIP_ITEM_EXPANDING, clCommandEvent);
@@ -24,7 +25,7 @@ clResizableTooltip::~clResizableTooltip()
     clConfig::Get().Write("Tooltip/Height", GetSize().GetHeight());
     clConfig::Get().Write("Tooltip/Width", GetSize().GetWidth());
 }
-
+    
 void clResizableTooltip::OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
 
 void clResizableTooltip::Clear() { m_treeCtrl->DeleteAllItems(); }
@@ -32,8 +33,10 @@ void clResizableTooltip::Clear() { m_treeCtrl->DeleteAllItems(); }
 void clResizableTooltip::ShowTip()
 {
     m_topLeft = ::wxGetMousePosition();
-    Move(m_topLeft);
     Show();
+    Move(m_topLeft);
+    clDEBUG() << "Moving tooltip dialog to: (" << m_topLeft.x << "," << m_topLeft.y << ")";
+    
     CallAfter(&clResizableTooltip::DoSetFocus);
 }
 

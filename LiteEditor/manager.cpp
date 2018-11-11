@@ -3324,7 +3324,7 @@ void Manager::DoSaveAllFilesBeforeBuild()
 
 DisplayVariableDlg* Manager::GetDebuggerTip()
 {
-    if(!m_watchDlg) { m_watchDlg = new DisplayVariableDlg(clMainFrame::Get()); }
+    if(!m_watchDlg) { m_watchDlg = new DisplayVariableDlg(clMainFrame::Get()->GetMainBook()); }
     return m_watchDlg;
 }
 

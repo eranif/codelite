@@ -176,8 +176,8 @@ void clWebSocketClient::DoInit()
     try {
         m_client = new Client_t();
         Client_t* c = GetClient<Client_t>();
-        c->set_access_channels(websocketpp::log::alevel::all);
-        c->clear_access_channels(websocketpp::log::alevel::frame_payload);
+        //c->set_access_channels(websocketpp::log::alevel::all);
+        c->clear_access_channels(websocketpp::log::alevel::all);
         c->init_asio();
         c->set_message_handler(bind(&on_ws_message, this, ::_1, ::_2));
         c->set_open_handler(bind(&on_ws_open_handler, this, ::_1));

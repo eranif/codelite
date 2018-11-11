@@ -1476,7 +1476,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
     console->SetWorkingDirectory(wd);
     console->SetCommand(cmd, cmdArgs);
-    console->SetWaitWhenDone(considerPauseWhenExecuting && !bldConf->IsGUIProgram());
+    console->SetWaitWhenDone(considerPauseWhenExecuting);
     console->SetTerminalNeeded(!bldConf->IsGUIProgram());
     return console->PrepareCommand();
 }
@@ -1681,7 +1681,7 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
 #endif
 
     wxString dummy;
-    execLine = GetProjectExecutionCommand(projectName, dummy, true);
+    execLine = GetProjectExecutionCommand(projectName, dummy, bldConf->GetPauseWhenExecEnds());
     wxUnusedVar(dummy);
 
     m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
@@ -1706,6 +1706,7 @@ void Manager::OnProcessOutput(clProcessEvent& event)
 void Manager::OnProcessEnd(clProcessEvent& event)
 {
     wxDELETE(m_programProcess);
+    clGetManager()->AppendOutputTabText(kOutputTab_Output, _("Program exited\n"));
     // return the focus back to the editor
     if(clMainFrame::Get()->GetMainBook()->GetActiveEditor()) {
         clMainFrame::Get()->GetMainBook()->GetActiveEditor()->SetActive();

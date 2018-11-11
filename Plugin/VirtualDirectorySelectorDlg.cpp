@@ -246,6 +246,9 @@ wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
     // We need to pump-prime with the first token, otherwise the loop is never entered
     wxTreeItemIdValue cookie;
     item = m_treeCtrl->GetFirstChild(item, cookie);
+    if(m_treeCtrl->GetItemText(item) == path) {
+        return item; // Root's first child, the top VDir, was the item to find
+    }
 
     for(size_t i = 1; i < tokens.GetCount(); ++i) {
         if(item.IsOk() && m_treeCtrl->HasChildren(item)) {

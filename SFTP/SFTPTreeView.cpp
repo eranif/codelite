@@ -30,7 +30,6 @@
 #include "SFTPTreeView.h"
 #include "SFTPUploadDialog.h"
 #include "SSHAccountManagerDlg.h"
-#include "SSHTerminal.h"
 #include "bitmap_loader.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"

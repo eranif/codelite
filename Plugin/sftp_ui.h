@@ -7,34 +7,27 @@
 #ifndef _CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
 
-#include "clThemedListCtrl.h"
-#include <map>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibar.h>
-#include <wx/button.h>
-#include <wx/choice.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/frame.h>
-#include <wx/gbsizer.h>
-#include <wx/iconbndl.h>
-#include <wx/infobar.h>
-#include <wx/menu.h>
-#include <wx/panel.h>
-#include <wx/pen.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/button.h>
+#include <wx/infobar.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/gbsizer.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/toolbar.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -179,30 +172,6 @@ public:
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPBrowserBaseDlg();
-};
-
-class WXDLLIMPEXP_SDK SSHTerminalBase : public wxFrame
-{
-protected:
-    wxAuiToolBar* m_auibar135;
-    wxPanel* m_panel126;
-    wxStyledTextCtrl* m_stcOutput;
-    wxTextCtrl* m_textCtrl1;
-
-protected:
-    virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSendCommand(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxAuiToolBar* GetAuibar135() { return m_auibar135; }
-    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
-    wxTextCtrl* GetTextCtrl1() { return m_textCtrl1; }
-    wxPanel* GetPanel126() { return m_panel126; }
-    SSHTerminalBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SSHTerminalBase"),
-                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                    long style = wxDEFAULT_FRAME_STYLE);
-    virtual ~SSHTerminalBase();
 };
 
 #endif

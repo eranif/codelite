@@ -641,8 +641,6 @@
     <File Name="SSHAccountManagerDlg.h"/>
     <File Name="sftp_settings.cpp"/>
     <File Name="sftp_settings.h"/>
-    <File Name="SSHTerminal.h"/>
-    <File Name="SSHTerminal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Diff">
     <File Name="clDiffFrame.cpp"/>

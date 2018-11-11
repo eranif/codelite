@@ -450,8 +450,6 @@ clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer
 void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
 {
     wxMenu* menu = event.GetMenu();
-    menu->AppendSeparator();
-
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
 
@@ -463,13 +461,17 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
             // Tab is visible, dont show it
             continue;
         }
+        
+        if(hiddenTabsMenu->GetMenuItemCount() == 0) {
+            // we are adding the first menu item
+            menu->AppendSeparator();
+        }
+        
         int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
         hiddenTabsMenu->Append(tabId, label);
 
         // If the tab is detached, disable it's menu entry
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
-            hiddenTabsMenu->Enable(tabId, false);
-        }
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { hiddenTabsMenu->Enable(tabId, false); }
 
         // Bind the event
         hiddenTabsMenu->Bind(wxEVT_MENU,
@@ -481,5 +483,9 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
                              },
                              tabId);
     }
-    menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
+    if(hiddenTabsMenu->GetMenuItemCount() == 0) {
+        wxDELETE(hiddenTabsMenu);
+    } else {
+        menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
+    }
 }

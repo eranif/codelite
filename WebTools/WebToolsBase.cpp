@@ -673,10 +673,16 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     // Connect events
     m_treeCtrlLocals->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
                               wxTreeEventHandler(NodeJSCliDebuggerPaneBase::OnLocalExpanding), NULL, this);
+    m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                   wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackEntryActivated), NULL,
+                                   this);
 }
 
 NodeJSCliDebuggerPaneBase::~NodeJSCliDebuggerPaneBase()
 {
     m_treeCtrlLocals->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
                                  wxTreeEventHandler(NodeJSCliDebuggerPaneBase::OnLocalExpanding), NULL, this);
+    m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                      wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackEntryActivated), NULL,
+                                      this);
 }

@@ -169,7 +169,7 @@ void NodeDebugger::DoCleanup()
 
     // Serialise the breakpoints
     m_bptManager.Save();
-    m_frames.clear();
+    m_activeFrame.Clear();
 }
 
 void NodeDebugger::OnDebugIsRunning(clDebugEvent& event)
@@ -410,10 +410,10 @@ void NodeDebugger::Eval(const wxString& command, const wxString& frameId)
 void NodeDebugger::OnTooltip(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-    if(m_frames.IsEmpty()) { return; }
+    if(m_activeFrame.IsEmpty()) { return; }
 
     wxString expression = event.GetString();
-    NodeJSDevToolsProtocol::Get().CreateObject(m_socket, expression, m_frames[0]);
+    NodeJSDevToolsProtocol::Get().CreateObject(m_socket, expression, m_activeFrame);
 }
 
 void NodeDebugger::GetObjectProperties(const wxString& objectId, wxEventType eventType)

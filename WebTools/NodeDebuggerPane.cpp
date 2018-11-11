@@ -34,7 +34,6 @@ public:
 NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     : NodeJSCliDebuggerPaneBase(parent)
 {
-    m_dvListCtrlCallstack->SetSortFunction(nullptr);
     // Terminal for stdout/stdin with the running JS application
     m_terminal = new wxTerminal(m_panelOutput);
     m_terminal->SetInteractive(true);
@@ -101,12 +100,13 @@ void NodeDebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
 {
     event.Skip();
     wxWindowUpdateLocker locker(m_dvListCtrlCallstack);
-    const nSerializableObject::Vec_t& frames = event.GetCallFrames();
+
+    // Keep the frames
+    m_frames = event.GetCallFrames();
     m_dvListCtrlCallstack->DeleteAllItems();
 
-    wxArrayString call_frame_ids;
-    for(size_t i = 0; i < frames.size(); ++i) {
-        CallFrame* frame = frames[i]->To<CallFrame>();
+    for(size_t i = 0; i < m_frames.size(); ++i) {
+        CallFrame* frame = m_frames[i]->To<CallFrame>();
 
         wxVector<wxVariant> cols;
         wxString filename = NodeFileManager::Get().GetFilePath(frame->GetLocation().GetScriptId());
@@ -123,10 +123,9 @@ void NodeDebuggerPane::OnUpdateBacktrace(clDebugCallFramesEvent& event)
 
             // Update the locals view
             DoUpdateLocalsView(frame);
+            NodeJSWorkspace::Get()->GetDebugger()->SetActiveFrame(frame->GetCallFrameId());
         }
-        call_frame_ids.Add(frame->GetCallFrameId());
     }
-    NodeJSWorkspace::Get()->GetDebugger()->SetFrames(call_frame_ids);
 }
 
 void NodeDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
@@ -201,10 +200,11 @@ void NodeDebuggerPane::OnConsoleOutput(clDebugEvent& event)
 
 void NodeDebuggerPane::OnEval(clCommandEvent& event)
 {
+    // We always eval on the active frame
     if(m_dvListCtrlCallstack->IsEmpty()) { return; }
-    wxUIntPtr ptr = m_dvListCtrlCallstack->GetItemData(m_dvListCtrlCallstack->RowToItem(0));
-    wxStringClientData* cd = reinterpret_cast<wxStringClientData*>(ptr);
-    if(cd) { NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString(), cd->GetData()); }
+    const wxString& frameId = NodeJSWorkspace::Get()->GetDebugger()->GetActiveFrame();
+    if(frameId.IsEmpty()) { return; }
+    NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString(), frameId);
 }
 
 void NodeDebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
@@ -363,4 +363,37 @@ wxString NodeDebuggerPane::GetLocalObjectItem(const wxTreeItemId& item) const
     LocalTreeItemData* d = dynamic_cast<LocalTreeItemData*>(m_treeCtrlLocals->GetItemData(item));
     if(!d) { return ""; }
     return d->GetData();
+}
+
+void NodeDebuggerPane::OnStackEntryActivated(wxDataViewEvent& event)
+{
+    // Set a new active frame
+    wxStringClientData* d = reinterpret_cast<wxStringClientData*>(m_dvListCtrlCallstack->GetItemData(event.GetItem()));
+    CHECK_PTR_RET(d);
+
+    CallFrame* frame = GetFrameById(d->GetData());
+    CHECK_PTR_RET(frame);
+
+    NodeJSWorkspace::Get()->GetDebugger()->SetActiveFrame(d->GetData());
+
+    // Open the current file and line and
+    // Set the debugger marker on this line
+    wxString file_path = m_dvListCtrlCallstack->GetItemText(event.GetItem(), 2);
+    wxString line_number = m_dvListCtrlCallstack->GetItemText(event.GetItem(), 3);
+
+    long nLineNumber = 0;
+    line_number.ToCLong(&nLineNumber);
+    NodeJSWorkspace::Get()->GetDebugger()->SetDebuggerMarker(file_path, nLineNumber);
+
+    // Update the locals view to reflect the current frame
+    DoUpdateLocalsView(frame);
+}
+
+CallFrame* NodeDebuggerPane::GetFrameById(const wxString& frameId) const
+{
+    for(size_t i = 0; i < m_frames.size(); ++i) {
+        CallFrame* frame = m_frames[i]->To<CallFrame>();
+        if(frame->GetCallFrameId() == frameId) { return frame; }
+    }
+    return nullptr;
 }

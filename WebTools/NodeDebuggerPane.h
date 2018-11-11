@@ -15,13 +15,16 @@ class NodeDebuggerPane : public NodeJSCliDebuggerPaneBase
     wxTerminal* m_node_console = nullptr;
     NodeDebuggerTooltip* m_debuggerTooltip = nullptr;
     std::unordered_map<wxString, wxTreeItemId> m_localsPendingItems;
+    nSerializableObject::Vec_t m_frames;
 
 protected:
+    virtual void OnStackEntryActivated(wxDataViewEvent& event);
     virtual void OnLocalExpanding(wxTreeEvent& event);
     void DoDestroyTip();
     void DoPrintStartupMessages();
     void DoUpdateLocalsView(CallFrame* callFrame);
     wxString GetLocalObjectItem(const wxTreeItemId& item) const;
+    CallFrame* GetFrameById(const wxString& frameId) const;
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);

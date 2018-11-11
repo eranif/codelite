@@ -7,40 +7,40 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include "clThemedListCtrl.h"
-#include "clThemedTreeCtrl.h"
-#include "clToolBar.h"
-#include <map>
-#include <wx/artprov.h>
-#include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/dataview.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/icon.h>
 #include <wx/iconbndl.h>
-#include <wx/imaglist.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
+#include <wx/imaglist.h>
+#include <wx/checkbox.h>
 #include <wx/propgrid/manager.h>
-#include <wx/propgrid/advprops.h>
 #include <wx/propgrid/property.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/splitter.h>
+#include <wx/propgrid/advprops.h>
 #include <wx/stattext.h>
-#include <wx/stc/stc.h>
+#include <wx/filepicker.h>
+#include <wx/button.h>
 #include <wx/textctrl.h>
-#include <wx/toolbar.h>
+#include <wx/stc/stc.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
+#include <wx/splitter.h>
 #include <wx/treectrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clThemedTreeCtrl.h"
+#include "Notebook.h"
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -233,6 +233,7 @@ protected:
 
 protected:
     virtual void OnLocalExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnStackEntryActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     clThemedTreeCtrl* GetTreeCtrlLocals() { return m_treeCtrlLocals; }

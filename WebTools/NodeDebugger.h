@@ -19,7 +19,7 @@ class NodeDebugger : public wxEvtHandler
     wxString m_workingDirectory;
     clWebSocketClient m_socket;
     NodeJSBptManager m_bptManager;
-    wxArrayString m_frames;
+    wxString m_activeFrame;
 
 public:
     typedef wxSharedPtr<NodeDebugger> Ptr_t;
@@ -42,13 +42,14 @@ public:
     void SetDebuggerMarker(const wxString& path, int lineno);
     void ClearDebuggerMarker();
 
-    void SetFrames(const wxArrayString& frames) { this->m_frames = frames; }
-    const wxArrayString& GetFrames() const { return m_frames; }
     void SetBreakpoint(const wxFileName& file, int lineNumber);
     void DeleteBreakpointByID(const wxString& bpid);
     void DeleteBreakpoint(const NodeJSBreakpoint& bp);
     void DeleteAllBreakpoints();
-    
+
+    void SetActiveFrame(const wxString& activeFrame) { this->m_activeFrame = activeFrame; }
+    const wxString& GetActiveFrame() const { return m_activeFrame; }
+
 protected:
     void OnDebugStart(clDebugEvent& event);
     void OnStopDebugger(clDebugEvent& event);

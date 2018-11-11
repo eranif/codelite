@@ -145,6 +145,9 @@ void NodeDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
     // Clear the locals view
     m_treeCtrlLocals->DeleteAllItems();
     m_localsPendingItems.clear();
+    
+    // Clear the frames
+    m_frames.clear();
 }
 
 void NodeDebuggerPane::OnMarkLine(clDebugEvent& event)

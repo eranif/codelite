@@ -2035,7 +2035,7 @@ ProjectPtr FileViewTree::GetSelectedProject() const
 void FileViewTree::OnBuildTree(wxCommandEvent& e)
 {
     e.Skip();
-    BuildTree();
+    CallAfter(&FileViewTree::BuildTree);
 }
 
 void FileViewTree::OnBuildProjectOnlyInternal(wxCommandEvent& e)

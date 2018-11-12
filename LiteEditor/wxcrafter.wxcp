@@ -7165,11 +7165,11 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,-1"
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -7181,7 +7181,7 @@
     }, {
      "type": "colour",
      "m_label": "Bg Colour:",
-     "colour": "(220,220,220)"
+     "colour": "<Default>"
     }, {
      "type": "colour",
      "m_label": "Fg Colour:",

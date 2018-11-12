@@ -1080,7 +1080,7 @@ void clMainFrame::CreateGUIControls()
                                        .Name(m_workspacePane->GetCaption())
                                        .Caption(m_workspacePane->GetCaption())
                                        .Left()
-                                       .BestSize(250, 300)
+                                       .BestSize(500, 300)
                                        .Layer(1)
                                        .Position(0)
                                        .CloseButton(true));
@@ -1131,8 +1131,8 @@ void clMainFrame::CreateGUIControls()
                                     .Layer(1)
                                     .Position(0)
                                     .MinimizeButton()
-                                    .Show()
-                                    .BestSize(wxSize(400, 200))
+                                    .Show(false)
+                                    .BestSize(wxSize(wxNOT_FOUND, 400))
                                     .MaximizeButton());
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 

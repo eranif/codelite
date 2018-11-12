@@ -912,7 +912,6 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
         wxC3F25InitBitmapResources();
         bBitmapLoaded = true;
     }
-    this->SetBackgroundColour(wxColour(wxT("rgb(220,220,220)")));
 
     wxBoxSizer* boxSizer515 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer515);
@@ -935,9 +934,9 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
 
     boxSizer515->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    SetBackgroundColour(wxColour(wxT("rgb(220,220,220)")));
     SetName(wxT("DefaultWorkspacePageBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetMinClientSize(wxSize(400, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
 }
 

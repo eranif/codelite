@@ -102,6 +102,7 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     , m_maxlineWidth(wxNOT_FOUND)
     , m_lastLineColoured(wxNOT_FOUND)
 {
+    SetSize(wxNOT_FOUND, 400);
     m_curError = m_errorsAndWarningsList.end();
     wxBoxSizer* bs = new wxBoxSizer(wxVERTICAL);
     SetSizer(bs);

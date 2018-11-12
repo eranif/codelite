@@ -7,48 +7,48 @@
 #ifndef _CODELITE_LITEEDITOR_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_WXCRAFTER_BASE_CLASSES_H
 
-#include "clConfigurationSelectionCtrl.h"
-#include "clThemedListCtrl.h"
-#include "clToolBar.h"
-#include "dvtemplatesmodel.h"
-#include "fileview.h"
-#include <map>
-#include <vector>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/bannerwindow.h>
-#include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/commandlinkbutton.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/dirctrl.h>
-#include <wx/filepicker.h>
-#include <wx/frame.h>
-#include <wx/icon.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/panel.h>
-#include <wx/scrolwin.h>
 #include <wx/settings.h>
-#include <wx/simplebook.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/imaglist.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/button.h>
+#include <wx/filepicker.h>
+#include <wx/scrolwin.h>
 #include <wx/statbmp.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
+#include <wx/commandlinkbutton.h>
+#include <wx/dirctrl.h>
+#include <wx/simplebook.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
+#include "clConfigurationSelectionCtrl.h"
 #include <wx/treectrl.h>
+#include "fileview.h"
+#include <wx/frame.h>
 #include <wx/wizard.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <vector>
+#include <wx/bannerwindow.h>
+#include "dvtemplatesmodel.h"
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
+#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -372,7 +372,7 @@ public:
     wxStaticText* GetStaticText523() { return m_staticText523; }
     wxStaticBitmap* GetStaticBitmap521() { return m_staticBitmap521; }
     DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+                             const wxSize& size = wxSize(400, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~DefaultWorkspacePageBase();
 };
 

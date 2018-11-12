@@ -3025,7 +3025,7 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
         } else if(event.m_userReason == DBG_USERR_LOCALS) {
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnEvaluateVariableObj(event);
 
-        } else if(GetDebuggerTip() && GetDebuggerTip()->IsShown()) {
+        } else if(GetDebuggerTip()) {
             GetDebuggerTip()->UpdateValue(event.m_expression, event.m_evaluated);
         }
         break;

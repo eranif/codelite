@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <wx/settings.h>
 #include <wx/utils.h>
+#include "cl_config.h"
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -258,7 +259,7 @@ static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
     red = ((fgColour.Red() * alpha + bgColour.Red() * (100 - alpha)) / 100);
     green = ((fgColour.Green() * alpha + bgColour.Green() * (100 - alpha)) / 100);
     blue = ((fgColour.Blue() * alpha + bgColour.Blue() * (100 - alpha)) / 100);
-    fgColour.Set(red, green ,blue);
+    fgColour.Set(red, green, blue);
     return fgColour;
 }
 
@@ -275,12 +276,13 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #endif
 
 #if defined(__WXMSW__)
-    ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    bool useDirect2D = clConfig::Get().Read("Editor/UseDirect2D", true);
+    ctrl->SetTechnology(useDirect2D ? wxSTC_TECHNOLOGY_DIRECTWRITE : wxSTC_TECHNOLOGY_DEFAULT);
 #elif defined(__WXGTK__)
-    //ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    //ctrl->SetDoubleBuffered(false);
+    // ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    // ctrl->SetDoubleBuffered(false);
 #if wxCHECK_VERSION(3, 1, 1)
-    //ctrl->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
+    // ctrl->SetFontQuality(wxSTC_EFF_QUALITY_ANTIALIASED);
 #endif
 #endif
 

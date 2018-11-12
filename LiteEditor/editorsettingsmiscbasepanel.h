@@ -7,26 +7,26 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_MISC_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_MISC_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include <wx/arrstr.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/notebook.h>
+#include "Notebook.h"
+#include <wx/imaglist.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/checkbox.h>
+#include <wx/textctrl.h>
 #include <wx/bannerwindow.h>
 #include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/imaglist.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -52,6 +52,7 @@ protected:
     wxCheckBox* m_checkBoxRestoreSession;
     wxStaticText* m_staticText79;
     wxTextCtrl* m_webSearchPrefix;
+    wxCheckBox* m_checkBoxDirect2D;
     wxPanel* m_panel23;
     wxBannerWindow* m_banner27;
     wxStaticText* m_staticText31;
@@ -99,6 +100,7 @@ protected:
 
 protected:
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUseDirect2DUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChkUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleStaticUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChoiceUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -118,6 +120,7 @@ public:
     wxCheckBox* GetCheckBoxRestoreSession() { return m_checkBoxRestoreSession; }
     wxStaticText* GetStaticText79() { return m_staticText79; }
     wxTextCtrl* GetWebSearchPrefix() { return m_webSearchPrefix; }
+    wxCheckBox* GetCheckBoxDirect2D() { return m_checkBoxDirect2D; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxBannerWindow* GetBanner27() { return m_banner27; }
     wxStaticText* GetStaticText31() { return m_staticText31; }

@@ -44,6 +44,7 @@ class EditorSettingsMiscPanel
     bool     m_oldMswUseTheme;
 
 protected:
+    virtual void OnUseDirect2DUI(wxUpdateUIEvent& event);
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event);
     virtual void OnResetAnnoyingDialogsAnswers(wxCommandEvent& event);
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event);

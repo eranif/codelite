@@ -120,6 +120,12 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
 
     flexGridSizer77->Add(m_webSearchPrefix, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_checkBoxDirect2D = new wxCheckBox(m_panel1, wxID_ANY, _("Windows Only: use Direct2D editor drawings"),
+                                        wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)), 0);
+    m_checkBoxDirect2D->SetValue(true);
+
+    boxSizer98->Add(m_checkBoxDirect2D, 0, wxALL, WXC_FROM_DIP(5));
+
     m_panel23 =
         new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panel23, _("Frame Title"), false);
@@ -449,6 +455,8 @@ EditorSettingsMiscBasePanel::EditorSettingsMiscBasePanel(wxWindow* parent, wxWin
     // Connect events
     m_checkBoxPromptReleaseOnly->Connect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
+    m_checkBoxDirect2D->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnUseDirect2DUI),
+                                NULL, this);
     m_SetLocale->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI), NULL,
                          this);
     m_staticTextLocale->Connect(wxEVT_UPDATE_UI,
@@ -473,6 +481,8 @@ EditorSettingsMiscBasePanel::~EditorSettingsMiscBasePanel()
 {
     m_checkBoxPromptReleaseOnly->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnPromptStableReleaseUI), NULL, this);
+    m_checkBoxDirect2D->Disconnect(wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::OnUseDirect2DUI), NULL, this);
     m_SetLocale->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsMiscBasePanel::LocaleChkUpdateUI),
                             NULL, this);
     m_staticTextLocale->Disconnect(

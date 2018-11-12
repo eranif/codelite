@@ -95,6 +95,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 
     GetWebSearchPrefix()->ChangeValue(options->GetWebSearchPrefix());
+    m_checkBoxDirect2D->SetValue(clConfig::Get().Read("Editor/UseDirect2D", true));
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
@@ -160,6 +161,9 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
     options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
+    bool useDirect2D_Old = clConfig::Get().Read("Editor/UseDirect2D", true);
+    clConfig::Get().Write("Editor/UseDirect2D", m_checkBoxDirect2D->IsChecked());
+    m_restartRequired = (useDirect2D_Old != m_checkBoxDirect2D->IsChecked());
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
@@ -234,6 +238,7 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 
     clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }
+
 void EditorSettingsMiscPanel::OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event)
 {
 #ifdef __WXGTK__
@@ -253,4 +258,14 @@ void EditorSettingsMiscPanel::OnResetAnnoyingDialogsAnswers(wxCommandEvent& even
 void EditorSettingsMiscPanel::OnPromptStableReleaseUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_versionCheckOnStartup->IsChecked());
+}
+
+void EditorSettingsMiscPanel::OnUseDirect2DUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+    event.Enable(true);
+#else
+    event.Enable(false);
+    event.Check(false);
+#endif
 }

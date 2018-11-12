@@ -94,6 +94,13 @@ void VirtualDirectorySelectorDlg::OnButtonCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     EndModal(wxID_CANCEL);
+
+    // Even though the user cancelled,  we still need to reload if a new VDir was created
+    if(m_reloadTreeNeeded) {
+        m_reloadTreeNeeded = false;
+        wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
+        EventNotifier::Get()->AddPendingEvent(buildTree);
+    }
 }
 
 wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeItemId& item, bool validateFolder)

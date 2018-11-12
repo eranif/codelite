@@ -9,7 +9,7 @@
 #ifdef __WXMSW__
 #define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_SIMPLE
 #else
-#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_STATIC
+#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_THEME
 #endif
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -62,7 +62,7 @@ void clThemedListCtrl::ApplyTheme()
 #else
     colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif
-#ifdef __WXGTK__
+#if 0
     if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
 #endif
     this->SetColours(colours);

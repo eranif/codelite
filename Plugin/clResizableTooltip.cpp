@@ -33,10 +33,8 @@ void clResizableTooltip::Clear() { m_treeCtrl->DeleteAllItems(); }
 void clResizableTooltip::ShowTip()
 {
     m_topLeft = ::wxGetMousePosition();
-    Show();
     Move(m_topLeft);
     clDEBUG() << "Moving tooltip dialog to: (" << m_topLeft.x << "," << m_topLeft.y << ")";
-    
     CallAfter(&clResizableTooltip::DoSetFocus);
 }
 
@@ -52,6 +50,7 @@ void clResizableTooltip::OnKeyDown(wxTreeEvent& event)
 
 void clResizableTooltip::DoSetFocus()
 {
+    Show(true);
     if(!m_treeCtrl->IsEmpty()) {
         m_treeCtrl->SetFocus();
         m_treeCtrl->SelectItem(m_treeCtrl->GetRootItem());

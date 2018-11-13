@@ -202,6 +202,9 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 
                 if(attemptAllocation) {
                     wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+                    if (virtualFolder.empty() && fn.GetPath().empty()) {
+                        virtualFolder = m_projname; // This must be a top-level file
+                    }
                     if(!virtualFolder.empty()) {
                         wxVector<wxVariant> cols;
                         cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
@@ -325,7 +328,13 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
     wxString suggestedPath, suggestedName;
     bool guessed = GuessNewVirtualDirName(suggestedPath, suggestedName);
     VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), suggestedPath, m_projname);
-    if(guessed) { selector.SetSuggestedName(suggestedName); }
+    if(guessed && !suggestedPath.empty()) {
+        selector.SelectPath(m_projname + ':' + suggestedPath);
+    } else {
+        selector.SelectPath(m_projname);  // Either a top-level file, or a top-level dir that's not yet in the VDir tree
+    }
+    selector.SetSuggestedName(suggestedName);
+
     if(selector.ShowModal() == wxID_OK) {
         wxString vd = selector.GetVirtualDirectoryPath();
         wxDataViewItemArray items;
@@ -373,31 +382,26 @@ bool ReconcileProjectDlg::GuessNewVirtualDirName(wxString& suggestedPath, wxStri
     }
 
     wxFileName fn(path);
-    fn.MakeAbsolute(m_toplevelDir);
+    wxString pathSegments(fn.GetPath());
+    pathSegments.Replace(wxFILE_SEP_PATH, ":");
+
+    if (pathSegments.empty()) { return true; } // This must be a top-level file
 
     VirtualDirectoryTree vdTree;
     vdTree.BuildTree(m_projname);
-    wxString residue;
     do {
-        wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+        wxString virtualFolder = vdTree.FindBestMatchVDir(path, fn.GetExt());
         if(!virtualFolder.empty()) {
-            suggestedPath = fn.GetPath();
-            suggestedName = residue;
+            suggestedPath = path;
+            suggestedPath.Replace(wxFILE_SEP_PATH, ":");
+            suggestedName = pathSegments.Mid(suggestedPath.Len()+1);
             return true;
         }
 
-        wxString pathend = fn.GetPath().AfterLast(wxFILE_SEP_PATH);
-        if(pathend == m_projname) {
-            suggestedPath = pathend;
-            suggestedName = residue;
-            return true;
-        }
+        path=path.BeforeLast(wxFILE_SEP_PATH);
+    } while(!path.empty());
 
-        if(!residue.empty()) { residue = ':' + residue; }
-        residue = pathend + residue; // Save the name(s) of missing VDs
-        fn.RemoveLastDir();
-    } while(fn.GetDirCount());
-
+    suggestedName = pathSegments; // This may be a top-level dir not in the VDir tree. pathSegments holds the likely name
     return false;
 }
 

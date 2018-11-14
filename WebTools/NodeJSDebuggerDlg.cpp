@@ -12,7 +12,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     : NodeJSDebuggerDlgBase(parent)
     , m_type(type)
 {
-    if(m_type == kDebug) {
+    if(m_type == kDebug || m_type == kDebugCLI) {
         SetLabel(_("Debug script"));
         m_staticTextScript->SetLabel(_("Script to debug:"));
     } else {
@@ -56,7 +56,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type, const w
     : NodeJSDebuggerDlgBase(parent)
     , m_type(type)
 {
-    if(m_type == kDebug) {
+    if(m_type == kDebug || m_type == kDebugCLI) {
         SetLabel(_("Debug script"));
         m_staticTextScript->SetLabel(_("Script to debug:"));
     } else {

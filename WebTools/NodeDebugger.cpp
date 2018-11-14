@@ -202,6 +202,8 @@ void NodeDebugger::OnProcessOutput(clProcessEvent& event)
         e.SetString(event.GetOutput());
         EventNotifier::Get()->AddPendingEvent(e);
     }
+
+    wxString lcOutput = event.GetOutput().Lower();
     const wxString& processOutput = event.GetOutput();
     int where = processOutput.Find("ws://");
     if(where != wxNOT_FOUND) {
@@ -219,6 +221,13 @@ void NodeDebugger::OnProcessOutput(clProcessEvent& event)
         } catch(clSocketException& e) {
             clWARNING() << e.what();
         }
+    } else if(lcOutput.Contains("address already in use")) {
+
+        // Anothe process is already using our port
+        ::wxMessageBox(processOutput, "CodeLite", wxICON_WARNING | wxCENTER);
+
+        // Terminate the process
+        if(m_process) { m_process->Terminate(); }
     }
 }
 

@@ -55,7 +55,6 @@ protected:
     LocalsView* m_xdebugLocalsView;
     EvalPane* m_xdebugEvalPane;
     bool m_showWelcomePage;
-    bool m_toggleToolbar;
 #if USE_SFTP
     PhpSFTPHandler::Ptr_t m_sftpHandler;
 #endif //USE_SFTP

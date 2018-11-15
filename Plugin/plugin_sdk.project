@@ -311,6 +311,8 @@
     <File Name="EnvVarImporterDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
+    <File Name="DebuggerToolBar.cpp"/>
+    <File Name="DebuggerToolBar.h"/>
     <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
     <File Name="memoryviewbase.wxcp"/>
     <File Name="memoryviewbase.h"/>

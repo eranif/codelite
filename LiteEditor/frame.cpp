@@ -77,6 +77,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "DebuggerToolBar.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -715,7 +716,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_toolbar(NULL)
 {
     if(!wxFrame::Create(pParent, id, title, pos, size, style)) { return; }
-    
+
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
     // accelerator for the menu bar.  We don't want that.  There is
@@ -1196,9 +1197,13 @@ void clMainFrame::CreateGUIControls()
     if(options) {
         CreateToolBar(options->GetIconsSize());
         Bind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnNativeTBUnRedoDropdown, this, wxID_UNDO, wxID_REDO);
+
     } else {
         CreateToolBar(16);
     }
+
+    // the toolbar is created hidden
+    m_debuggerToolbar = new DebuggerToolBar(this);
 
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if(GetMainToolBar()) {
@@ -1362,24 +1367,6 @@ void clMainFrame::CreateToolBar(int toolSize)
     //----------------------------------------------
     m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
                        bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize), _("Start or Continue debugger"));
-    m_toolbar->AddTool(XRCID("stop_debugger"), _("Stop debugger"), bmpLoader.LoadBitmap(wxT("debugger_stop"), toolSize),
-                       _("Stop debugger"));
-    m_toolbar->AddTool(XRCID("pause_debugger"), _("Pause debugger"), bmpLoader.LoadBitmap(wxT("interrupt"), toolSize),
-                       _("Pause debugger"));
-    m_toolbar->AddTool(XRCID("restart_debugger"), _("Restart debugger"),
-                       bmpLoader.LoadBitmap(wxT("debugger_restart"), toolSize), _("Restart debugger"));
-    m_toolbar->AddTool(XRCID("show_cursor"), _("Show Current Line"),
-                       bmpLoader.LoadBitmap(wxT("show_current_line"), toolSize), _("Show Current Line"));
-    m_toolbar->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("step_in"), toolSize),
-                       _("Step In"));
-    m_toolbar->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("next"), toolSize), _("Next"));
-    m_toolbar->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap(wxT("step_out"), toolSize),
-                       _("Step Out"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("dbg_enable_reverse_debug"), _("Toggle Rewind Commands"),
-                       bmpLoader.LoadBitmap("rewind", toolSize), _("Toggle Rewind Commands"), wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
-                       bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
     m_toolbar->AddSpacer();
 
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
@@ -5292,19 +5279,13 @@ void clMainFrame::OnNewProjectUI(wxUpdateUIEvent& event)
 void clMainFrame::OnDebugStarted(clDebugEvent& event)
 {
     event.Skip();
-    m_toggleToolBar = false;
-    if(GetMainToolBar() && !GetMainToolBar()->IsShown()) {
-        // We have a native toolbar which is not visible, show it during debug session
-        clGetManager()->ShowToolBar();
-        m_toggleToolBar = true;
-    }
+    m_debuggerToolbar->Show();
 }
 
 void clMainFrame::OnDebugEnded(clDebugEvent& event)
 {
     event.Skip();
-    if(m_toggleToolBar && GetMainToolBar()) { clGetManager()->ShowToolBar(false); }
-    m_toggleToolBar = false;
+    m_debuggerToolbar->Hide();
 }
 
 void clMainFrame::OnPrint(wxCommandEvent& event)

@@ -70,7 +70,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_xdebugLocalsView(NULL)
     , m_xdebugEvalPane(NULL)
     , m_showWelcomePage(false)
-    , m_toggleToolbar(false)
 {
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
@@ -551,22 +550,12 @@ void PhpPlugin::OnDebugEnded(XDebugEvent& e)
         m_mgr->GetDockingManager()->LoadPerspective(m_savedPerspective);
         m_savedPerspective.Clear();
     }
-
-    if(m_toggleToolbar) {
-        m_mgr->ShowToolBar(false);
-        m_toggleToolbar = false;
-    }
 }
 
 void PhpPlugin::OnDebugStarted(XDebugEvent& e)
 {
     e.Skip();
     DoEnsureXDebugPanesVisible();
-    m_toggleToolbar = !m_mgr->IsToolBarShown();
-    if(m_toggleToolbar) {
-        // toolbar not shown
-        m_mgr->ShowToolBar();
-    }
 }
 
 void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)

@@ -188,9 +188,18 @@ void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
     wxUnusedVar(event);
     wxDELETE(m_process);
 
-    clDebugEvent e(wxEVT_NODEJS_DEBUGGER_STOPPED);
-    e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
-    EventNotifier::Get()->AddPendingEvent(e);
+    {
+        clDebugEvent e(wxEVT_NODEJS_DEBUGGER_STOPPED);
+        e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
+    
+    {
+        clDebugEvent e(wxEVT_DEBUG_ENDED);
+        e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
+
     DoCleanup();
 }
 
@@ -266,6 +275,12 @@ void NodeDebugger::StartDebugger(const wxString& command, const wxString& comman
     clDebugEvent eventStart(wxEVT_NODEJS_DEBUGGER_STARTED);
     eventStart.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
     EventNotifier::Get()->AddPendingEvent(eventStart);
+
+    if(one_liner.Contains("inspect")) {
+        // Fire CodeLite IDE event indicating that a debug session started
+        clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+        EventNotifier::Get()->AddPendingEvent(cl_event);
+    }
 #endif
 }
 

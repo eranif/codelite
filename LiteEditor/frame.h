@@ -53,8 +53,10 @@
 #include <wx/html/htmlwin.h>
 #include <wx/process.h>
 #include <wx/splash.h>
+#include <wx/minifram.h>
 
 // forward decls
+class DebuggerToolBar;
 class clToolBar;
 class WebUpdateJob;
 class CodeLiteApp;
@@ -132,6 +134,7 @@ class clMainFrame : public wxFrame
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob* m_webUpdate;
     clToolBar* m_toolbar;
+    DebuggerToolBar* m_debuggerToolbar = nullptr;
 
 public:
     static bool m_initCompleted;

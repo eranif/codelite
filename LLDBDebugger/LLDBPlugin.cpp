@@ -489,6 +489,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
                 m_connector.Start(startCommand);
 
+                clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+                EventNotifier::Get()->AddPendingEvent(cl_event);
+
             } else {
                 // Failed to connect, notify and perform cleanup
                 DoCleanup();
@@ -532,6 +535,11 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     // Also notify codelite's event
     clDebugEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent(e2);
+
+    {
+        clDebugEvent e(wxEVT_DEBUG_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
 }
 
 void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)

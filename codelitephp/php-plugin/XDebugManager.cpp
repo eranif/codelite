@@ -162,6 +162,10 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     // Notify about debug session started
     XDebugEvent eventStart(wxEVT_XDEBUG_SESSION_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);
+
+    // Fire CodeLite IDE event indicating that a debug session started
+    clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+    EventNotifier::Get()->AddPendingEvent(cl_event);
 }
 
 void XDebugManager::OnSocketInput(const std::string& reply) { ProcessDebuggerMessage(reply); }
@@ -204,6 +208,11 @@ void XDebugManager::DoStopDebugger()
     // Notify about debug session ended
     XDebugEvent eventEnd(wxEVT_XDEBUG_SESSION_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventEnd);
+
+    {
+        clDebugEvent e(wxEVT_DEBUG_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
 }
 
 bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)

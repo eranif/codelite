@@ -43,7 +43,8 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup)
 {
     // Filename is kept in absolute path
     m_filename.MakeAbsolute();
-
+    
+    wxString content;
     if(FileUtils::ReadFileContent(filename, content, wxConvISO8859_1)) { m_text.swap(content); }
     m_scanner = ::phpLexerNew(m_text, kPhpLexerOpt_ReturnComments);
 }

@@ -30,6 +30,7 @@ public:
     bool IsRunning() const;
     bool IsCanInteract() const;
     void StartDebugger(const wxString& command, const wxString& command_args, const wxString& workingDirectory);
+    void StopDebugger();
     void ListBreakpoints();
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }

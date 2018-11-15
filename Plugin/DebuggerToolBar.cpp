@@ -9,6 +9,8 @@
 #include "cl_config.h"
 #include <wx/dcbuffer.h>
 #include "drawingutils.h"
+#include "event_notifier.h"
+#include <wx/frame.h>
 
 DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     : wxPopupWindow(parent)
@@ -16,12 +18,12 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxPanel* mainPanel = new wxPanel(this);
     mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_gripper = new Gripper(this);
+    m_gripper = new Gripper(mainPanel);
     mainPanel->GetSizer()->Add(m_gripper, 0, wxEXPAND);
     GetSizer()->Add(mainPanel, 1, wxEXPAND);
 
-    // OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    int toolSize = 24;
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    int toolSize = options->GetIconsSize();
 
     // Create the toolbar itself
     //===-----------------------------------------------------------------------------
@@ -51,38 +53,54 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     m_tb->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
                   bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
     m_tb->Realize();
+    // Let the top level window (i.e. the main frame) process this
+    m_tb->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) {
+        wxFrame* topLevel = EventNotifier::Get()->TopFrame();
+        topLevel->GetEventHandler()->AddPendingEvent(event);
+    });
     mainPanel->GetSizer()->Add(m_tb, 0, wxEXPAND);
-    wxSize tbSize = m_tb->GetSize();
+    // wxSize tbSize = m_tb->GetSize();
     GetSizer()->Fit(this);
-    int x = clConfig::Get().Read("DebuggerToolBar/x", wxNOT_FOUND);
-    int y = clConfig::Get().Read("DebuggerToolBar/y", wxNOT_FOUND);
-    if((x != wxNOT_FOUND) && (y != wxNOT_FOUND)) {
-        Move(x, y);
-    } else {
-        CentreOnParent();
-    }
 }
 
-DebuggerToolBar::~DebuggerToolBar()
+DebuggerToolBar::~DebuggerToolBar() {}
+
+bool DebuggerToolBar::Show(bool show)
 {
-    clConfig::Get().Write("DebuggerToolBar/x", GetScreenPosition().x);
-    clConfig::Get().Write("DebuggerToolBar/y", GetScreenPosition().y);
+    bool res = wxWindow::Show(show);
+    if(show) {
+        int x = clConfig::Get().Read("DebuggerToolBar/x", wxNOT_FOUND);
+        int y = clConfig::Get().Read("DebuggerToolBar/y", wxNOT_FOUND);
+        if((x != wxNOT_FOUND) && (y != wxNOT_FOUND)) {
+            Move(x, y);
+        } else {
+            Centre();
+        }
+    } else {
+        clConfig::Get().Write("DebuggerToolBar/x", GetScreenPosition().x);
+        clConfig::Get().Write("DebuggerToolBar/y", GetScreenPosition().y);
+    }
+    return res;
 }
 
 Gripper::Gripper(wxWindow* parent)
-    : wxPanel(parent)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxNO_BORDER)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_LEFT_DOWN, &Gripper::OnLeftDown, this);
     Bind(wxEVT_LEFT_UP, &Gripper::OnLeftUp, this);
     Bind(wxEVT_MOTION, &Gripper::OnMotion, this);
     Bind(wxEVT_PAINT, &Gripper::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
     SetSizeHints(wxNOT_FOUND, 10);
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
 }
 
 Gripper::~Gripper()
 {
+    Unbind(wxEVT_LEFT_DOWN, &Gripper::OnLeftDown, this);
+    Unbind(wxEVT_LEFT_UP, &Gripper::OnLeftUp, this);
+    Unbind(wxEVT_MOTION, &Gripper::OnMotion, this);
+    Unbind(wxEVT_PAINT, &Gripper::OnPaint, this);
     if(HasCapture()) { ReleaseMouse(); }
 }
 
@@ -107,7 +125,7 @@ void Gripper::OnMotion(wxMouseEvent& event)
         wxPoint newPos = ::wxGetMousePosition();
         newPos.x -= m_offset.x;
         newPos.y -= m_offset.y;
-        GetParent()->Move(newPos);
+        GetGrandParent()->Move(newPos);
     }
 }
 

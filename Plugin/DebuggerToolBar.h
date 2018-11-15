@@ -31,6 +31,7 @@ class WXDLLIMPEXP_SDK DebuggerToolBar : public wxPopupWindow
 public:
     DebuggerToolBar(wxWindow* parent);
     virtual ~DebuggerToolBar();
+    bool Show(bool show = true);
 };
 
 #endif // DEBUGGERTOOLBAR_H

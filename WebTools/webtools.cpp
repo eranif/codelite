@@ -118,6 +118,10 @@ void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void WebTools::UnPlug()
 {
+    if(NodeJSWorkspace::Get()->IsOpen() && NodeJSWorkspace::Get()->GetDebugger()->IsRunning()) {
+        NodeJSWorkspace::Get()->GetDebugger()->StopDebugger();
+    }
+    
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &WebTools::OnEditorContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);

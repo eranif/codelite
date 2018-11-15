@@ -140,10 +140,15 @@ void NodeDebugger::OnDebugContinue(clDebugEvent& event)
     NodeJSDevToolsProtocol::Get().Continue(m_socket);
 }
 
+void NodeDebugger::StopDebugger()
+{
+    // Terminate the process
+    DoCleanup();
+}
+
 void NodeDebugger::OnStopDebugger(clDebugEvent& event)
 {
     CHECK_SHOULD_HANDLE(event);
-
     // Terminate the process
     m_process->Terminate();
     m_socket.Close();
@@ -193,7 +198,7 @@ void NodeDebugger::OnProcessTerminated(clProcessEvent& event)
         e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);
         EventNotifier::Get()->AddPendingEvent(e);
     }
-    
+
     {
         clDebugEvent e(wxEVT_DEBUG_ENDED);
         e.SetDebuggerName(NODE_CLI_DEBUGGER_NAME);

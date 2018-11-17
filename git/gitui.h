@@ -7,51 +7,51 @@
 #ifndef _CODELITE_GIT_GITUI_BASE_CLASSES_H
 #define _CODELITE_GIT_GITUI_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include "clThemedListCtrl.h"
-#include "clToolBar.h"
-#include "gitCommitEditor.h"
-#include <map>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibar.h>
-#include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/checklst.h>
-#include <wx/choice.h>
-#include <wx/combobox.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/gauge.h>
-#include <wx/icon.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/listbox.h>
-#include <wx/menu.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/radiobox.h>
-#include <wx/radiobut.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/spinctrl.h>
-#include <wx/splitter.h>
-#include <wx/srchctrl.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/treebook.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/treebook.h>
+#include <wx/panel.h>
+#include <wx/imaglist.h>
+#include <wx/stattext.h>
+#include <wx/filepicker.h>
+#include <wx/textctrl.h>
+#include <wx/checkbox.h>
+#include <wx/button.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/splitter.h>
+#include <wx/checklst.h>
+#include <wx/stc/stc.h>
+#include <wx/srchctrl.h>
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/listbox.h>
+#include "gitCommitEditor.h"
+#include <wx/radiobox.h>
+#include <wx/statbox.h>
+#include <wx/radiobut.h>
+#include <wx/choice.h>
+#include <wx/spinctrl.h>
+#include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
+#include <wx/notebook.h>
+#include "Notebook.h"
+#include <wx/gauge.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <wx/menu.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -119,7 +119,7 @@ public:
     wxPanel* GetPanel236() { return m_panel236; }
     wxTreebook* GetTreebook230() { return m_treebook230; }
     GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitSettingsDlgBase();
 };

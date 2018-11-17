@@ -204,7 +204,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_treebook230->ExpandNode(2, true);
 
     SetName(wxT("GitSettingsDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -259,8 +259,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     bSizer4->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitterMain->SetSashGravity(1);
+                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitterMain->SetSashGravity(0.5);
     m_splitterMain->SetMinimumPaneSize(150);
 
     bSizer4->Add(m_splitterMain, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -272,9 +272,9 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_panel3->SetSizer(bSizer12);
 
     m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)),
-                                           wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitterInner->SetSashGravity(0);
-    m_splitterInner->SetMinimumPaneSize(150);
+                                           wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitterInner->SetSashGravity(0.5);
+    m_splitterInner->SetMinimumPaneSize(0);
 
     bSizer12->Add(m_splitterInner, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -285,19 +285,19 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_panel1->SetSizer(bSizer11);
 
     wxArrayString m_listBoxArr;
-    m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
+    m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(250, -1)),
                                    m_listBoxArr, wxLB_SINGLE);
 
     bSizer11->Add(m_listBox, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)),
                            wxTAB_TRAVERSAL);
-    m_splitterInner->SplitVertically(m_panel1, m_panel2, 150);
+    m_splitterInner->SplitVertically(m_panel1, m_panel2, 0);
 
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
 
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)), 0);
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(250, -1)), 0);
     // Configure the fold margin
     m_stcDiff->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcDiff->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -337,13 +337,13 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
     m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)),
                            wxTAB_TRAVERSAL);
-    m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 150);
+    m_splitterMain->SplitHorizontally(m_panel3, m_panel4, 0);
 
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
 
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_THEME);
+                                              wxDLG_UNIT(m_panel4, wxSize(-1, 250)), wxBORDER_THEME);
     m_stcCommitMessage->SetToolTip(_("Type your commit message here"));
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin

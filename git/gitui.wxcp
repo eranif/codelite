@@ -30,7 +30,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -2365,7 +2365,7 @@
        "border": 5,
        "gbSpan": ",",
        "gbPosition": ",",
-       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
+       "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -2431,7 +2431,7 @@
         }, {
          "type": "string",
          "m_label": "Sash Gravity:",
-         "m_value": "1"
+         "m_value": "0.5"
         }, {
          "type": "string",
          "m_label": "Minimum Pane Size:",
@@ -2439,7 +2439,7 @@
         }, {
          "type": "string",
          "m_label": "Sash Position:",
-         "m_value": "150"
+         "m_value": "0"
         }],
        "m_events": [],
        "m_children": [{
@@ -2541,7 +2541,7 @@
              "border": 5,
              "gbSpan": ",",
              "gbPosition": ",",
-             "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
+             "m_styles": ["wxSP_LIVE_UPDATE", "wxSP_NO_XP_THEME", "wxSP_3DSASH"],
              "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -2607,15 +2607,15 @@
               }, {
                "type": "string",
                "m_label": "Sash Gravity:",
-               "m_value": "0"
+               "m_value": "0.5"
               }, {
                "type": "string",
                "m_label": "Minimum Pane Size:",
-               "m_value": "150"
+               "m_value": "0"
               }, {
                "type": "string",
                "m_label": "Sash Position:",
-               "m_value": "150"
+               "m_value": "0"
               }],
              "m_events": [],
              "m_children": [{
@@ -2726,7 +2726,7 @@
                     }, {
                      "type": "string",
                      "m_label": "Size:",
-                     "m_value": "-1,-1"
+                     "m_value": "250,-1"
                     }, {
                      "type": "string",
                      "m_label": "Minimum Size:",
@@ -2899,7 +2899,7 @@
                     }, {
                      "type": "string",
                      "m_label": "Size:",
-                     "m_value": "-1,-1"
+                     "m_value": "250,-1"
                     }, {
                      "type": "string",
                      "m_label": "Minimum Size:",
@@ -3116,7 +3116,7 @@
               }, {
                "type": "string",
                "m_label": "Size:",
-               "m_value": "-1,-1"
+               "m_value": "-1,250"
               }, {
                "type": "string",
                "m_label": "Minimum Size:",

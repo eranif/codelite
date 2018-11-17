@@ -13,7 +13,7 @@
 #include <wx/frame.h>
 
 DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
-    : wxPopupWindow(parent)
+    : wxPopupWindow(parent, wxBORDER_RAISED)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxPanel* mainPanel = new wxPanel(this);

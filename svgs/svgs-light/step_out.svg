@@ -7,17 +7,25 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   style="enable-background:new 0 0 50 50;"
+   data-name="Layer 1"
+   id="Layer_1"
+   viewBox="0 0 32 32"
    version="1.1"
-   viewBox="0 0 50 50"
-   xml:space="preserve"
-   id="svg9"
    sodipodi:docname="step_out.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"><metadata
-     id="metadata15"><rdf:RDF><cc:Work
-         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-     id="defs13" /><sodipodi:namedview
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1"
@@ -26,23 +34,26 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1239"
-     inkscape:window-height="637"
+     inkscape:window-width="2026"
+     inkscape:window-height="1014"
      id="namedview11"
      showgrid="false"
-     inkscape:zoom="4.72"
-     inkscape:cx="25"
-     inkscape:cy="25"
-     inkscape:window-x="1042"
-     inkscape:window-y="269"
+     inkscape:zoom="7.375"
+     inkscape:cx="-75.661017"
+     inkscape:cy="14.779662"
+     inkscape:window-x="237"
+     inkscape:window-y="218"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg9" /><g
-     id="g829"
-     transform="matrix(1.0204082,0,0,1.0204082,-0.510205,-0.510205)"><polygon
-       points="47,14 49,14 49,1 36,1 36,3 45.586,3 28.293,20.293 29.707,21.707 47,4.414 "
-       id="polygon2"
-       style="fill:#dd4814;stroke:#dd4814;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" /><polygon
-       points="34,10 34,8 1,8 1,49 42,49 42,16 40,16 40,47 3,47 3,10 "
-       id="polygon4"
-       style="fill:#474747;fill-opacity:1;stroke:#474747;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" /></g><g
-     id="g7" /></svg>
+     inkscape:current-layer="Layer_1" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#ba63c6;}</style>
+  </defs>
+  <path
+     class="cls-1"
+     d="M 1.2583975e-4,28.522554 A 2.2844525,2.2844525 0 0 1 2.2845784,26.238101 H 14.849067 c 3.118278,0 4.568905,-1.450627 4.568905,-4.568905 V 7.871103 l -1.142226,2.284453 -2.935522,2.935521 a 2.2857235,2.2857235 0 0 1 -3.232501,-3.2325 l 7.995585,-7.995584 a 2.2844525,2.2844525 0 0 1 3.2325,0 l 7.995584,7.995584 a 2.2857231,2.2857231 0 0 1 -3.2325,3.2325 L 25.129103,10.007066 23.986877,7.7911472 V 21.669196 c 0,5.631175 -3.506635,9.13781 -9.13781,9.13781 H 2.2845784 A 2.2844525,2.2844525 0 0 1 1.2583975e-4,28.522554 Z"
+     id="path8"
+     inkscape:connector-curvature="0"
+     style="fill:#474747;fill-opacity:1;stroke-width:1.14222622" />
+</svg>

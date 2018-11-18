@@ -1366,7 +1366,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     // create the debugger toolbar
     //----------------------------------------------
     m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
-                       bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize), _("Start or Continue debugger"));
+                       bmpLoader.LoadBitmap(wxT("start-debugger"), toolSize), _("Start or Continue debugger"));
     m_toolbar->AddSpacer();
 
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);

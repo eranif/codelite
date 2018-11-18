@@ -341,8 +341,13 @@ wxFont clScrolledPanel::GetDefaultFont()
         }
         once = true;
     }
+#if wxCHECK_VERSION(3,1,2)
+    float pointSize = f.GetFractionalPointSize() * ratio;
+    f.SetFractionalPointSize(pointSize);
+#else
     int pointSize = f.GetPointSize() * ratio;
     f.SetPointSize(pointSize);
+#endif
 #endif
     return f;
 }

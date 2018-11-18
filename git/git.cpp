@@ -2455,7 +2455,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
             for(unsigned i = 0; i < selectedFiles.GetCount(); ++i)
-                commitArgs << selectedFiles.Item(i) << wxT(" ");
+                commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
             m_console->AddRawText(_("No commit message given, aborting"));

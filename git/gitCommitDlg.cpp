@@ -85,12 +85,15 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
     wxArrayString diffList = wxStringTokenize(diff, wxT("\n"), wxTOKEN_STRTOK);
     unsigned index = 0;
     wxString currentFile;
+    const wxString diffPrefix = "diff --git a/";
     while(index < diffList.GetCount()) {
         wxString line = diffList[index];
-        if(line.StartsWith(wxT("diff"))) {
-            line.Replace(wxT("diff --git a/"), wxT(""));
-            currentFile = line.Left(line.Find(wxT(" ")));
-
+        if(line.StartsWith(diffPrefix)) {
+            int where = line.Find(diffPrefix);
+            line = line.Mid(where + diffPrefix.length());
+            where = line.Find(" b/");
+            if(where != wxNOT_FOUND) { line = line.Mid(0, where); }
+            currentFile = line;
         } else if(line.StartsWith(wxT("Binary"))) {
             m_diffMap[currentFile] = wxT("Binary diff");
 

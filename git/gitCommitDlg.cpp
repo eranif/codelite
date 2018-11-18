@@ -34,6 +34,7 @@
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
+#include "GitDiffOutputParser.h"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
     : GitCommitDlgBase(parent)
@@ -82,34 +83,16 @@ GitCommitDlg::~GitCommitDlg()
 /*******************************************************************************/
 void GitCommitDlg::AppendDiff(const wxString& diff)
 {
-    wxArrayString diffList = wxStringTokenize(diff, wxT("\n"), wxTOKEN_STRTOK);
-    unsigned index = 0;
-    wxString currentFile;
-    const wxString diffPrefix = "diff --git a/";
-    while(index < diffList.GetCount()) {
-        wxString line = diffList[index];
-        if(line.StartsWith(diffPrefix)) {
-            int where = line.Find(diffPrefix);
-            line = line.Mid(where + diffPrefix.length());
-            where = line.Find(" b/");
-            if(where != wxNOT_FOUND) { line = line.Mid(0, where); }
-            currentFile = line;
-        } else if(line.StartsWith(wxT("Binary"))) {
-            m_diffMap[currentFile] = wxT("Binary diff");
-
-        } else {
-            m_diffMap[currentFile].Append(line + wxT("\n"));
-        }
-        ++index;
-    }
-    index = 0;
-    for(std::map<wxString, wxString>::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
+    GitDiffOutputParser diff_parser;
+    diff_parser.GetDiffMap(diff, m_diffMap);
+    size_t index = 0;
+    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_listBox->Append((*it).first);
         m_listBox->Check(index++, true);
     }
 
     if(m_diffMap.size() != 0) {
-        std::map<wxString, wxString>::iterator it = m_diffMap.begin();
+        wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
         m_listBox->Select(0);
         m_stcDiff->SetReadOnly(true);

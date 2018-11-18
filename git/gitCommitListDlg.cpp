@@ -38,6 +38,7 @@
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
 #include <wx/tokenzr.h>
+#include "GitDiffOutputParser.h"
 
 static int ID_COPY_COMMIT_HASH = wxNewId();
 static int ID_REVERT_COMMIT = wxNewId();
@@ -104,37 +105,15 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     ClearAll(false);
 
     m_commandOutput.Replace(wxT("\r"), wxT(""));
-    wxArrayString diffList = wxStringTokenize(m_commandOutput, wxT("\n"));
-
     m_stcCommitMessage->SetEditable(true);
     m_stcDiff->SetEditable(true);
 
-    bool foundFirstDiff = false;
-    unsigned index = 0;
-    wxString currentFile;
-    const wxString diffPrefix = "diff --git a/";
-    while(index < diffList.GetCount()) {
-        wxString line = diffList[index];
-        if(line.StartsWith(diffPrefix)) {
-            int where = line.Find(diffPrefix);
-            line = line.Mid(where + diffPrefix.length());
-            where = line.Find(" b/");
-            if(where != wxNOT_FOUND) { line = line.Mid(0, where); }
-            currentFile = line;
-            foundFirstDiff = true;
-        } else if(line.StartsWith(wxT("Binary"))) {
-            m_diffMap[currentFile] = wxT("Binary diff");
-        } else if(!foundFirstDiff) {
-            m_stcCommitMessage->AppendText(line + wxT("\n"));
-        } else {
-            m_diffMap[currentFile].Append(line + wxT("\n"));
-        }
-        ++index;
-    }
+    GitDiffOutputParser diff_parser;
+    diff_parser.GetDiffMap(m_commandOutput, m_diffMap);
+
     for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
-
     if(m_diffMap.size() != 0) {
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);

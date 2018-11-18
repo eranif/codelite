@@ -5179,7 +5179,7 @@ void clEditor::QuickAddNext()
     wxString findWhat = GetTextRange(start, end);
     int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
     if(where != wxNOT_FOUND) {
-        AddSelection(where, where + findWhat.length());
+        AddSelection(where + findWhat.length(), where);
         CenterLineIfNeeded(LineFromPos(where));
     }
 
@@ -5211,7 +5211,7 @@ void clEditor::QuickFindAll()
             CenterLineIfNeeded(LineFromPos(where));
 
         } else {
-            AddSelection(where, where + findWhat.length());
+            AddSelection(where + findWhat.length(), where);
         }
         ++matches;
         where = this->FindText(where + findWhat.length(), GetLength(), findWhat, wxSTC_FIND_MATCHCASE);

@@ -41,7 +41,7 @@
 #include <wx/strconv.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
-
+#include <string.h> // strerror
 #ifdef __WXGTK__
 #include <signal.h>
 #include <sys/wait.h>

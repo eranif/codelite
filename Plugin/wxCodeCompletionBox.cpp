@@ -17,6 +17,7 @@
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/stc/stc.h>
+#include <wx/dcgraph.h>
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -37,10 +38,9 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_ccFont = DrawingUtils::GetDefaultFixedFont();
-    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - 1);
     SetCursor(wxCURSOR_HAND);
 
-    // Update the BOX_WIDTH to contains at least 30 chars
+    // Update the BOX_WIDTH to contains at least 50 chars
     static int once = false;
     if(!once) {
         once = true;
@@ -52,10 +52,9 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
         wxSize sz = memDC.GetTextExtent(sampleString);
         BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
     }
-
+    m_lineHeight = GetSingleLineHeight();
     // Calculate the size of the box
-    int singleLineHeight = GetSingleLineHeight();
-    int boxHeight = singleLineHeight * LINES_PER_PAGE;
+    int boxHeight = m_lineHeight * LINES_PER_PAGE;
     int boxWidth = BOX_WIDTH; // 100 pixels
     wxSize boxSize = wxSize(boxWidth, boxHeight);
     wxRect rect(boxSize);
@@ -149,7 +148,8 @@ void wxCodeCompletionBox::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(e
 void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 {
     // Paint the background colour
-    wxAutoBufferedPaintDC dc(m_canvas);
+    wxAutoBufferedPaintDC bdc(m_canvas);
+    wxGCDC dc(bdc);
 
     // Invalidate all item rects before we draw them
     for(size_t i = 0; i < m_entries.size(); ++i) {
@@ -161,7 +161,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
                           rect.GetHeight());
 
     dc.SetFont(m_ccFont);
-    int singleLineHeight = GetSingleLineHeight();
+    int singleLineHeight = m_lineHeight;
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
@@ -194,7 +194,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     // Paint the entries, starting from m_index => m_index + 7
     wxCoord y = 1; // Initial coord for drawing the first line
-    wxCoord textX = m_bitmaps.empty() ? 2 : clGetScaledSize(20);
+    wxCoord textX = m_bitmaps.empty() ? clGetScaledSize(2) : (m_bitmaps.at(0).GetScaledWidth() + clGetScaledSize(4));
     wxCoord bmpX = clGetScaledSize(2);
 
     // Draw all items from firstIndex => lastIndex
@@ -203,13 +203,13 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         bool isSelected = (i == m_index);
         bool isLast = ((firstIndex + 1) == lastIndex);
         wxRect itemRect(0, y, rect.GetWidth(), singleLineHeight);
-        
+
         // We colour lines in an alternate colours
         dc.SetBrush((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
         dc.SetPen((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
         dc.DrawRectangle(itemRect);
         ++rowCounter;
-        
+
         if(isSelected) {
             // highlight the selection
             dc.SetBrush(m_selectedTextBgColour);
@@ -262,7 +262,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(scrollRect);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
-    
+
     // Redraw the box border
     dc.SetPen(m_penColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -429,13 +429,11 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
-    memDC.SetFont(m_ccFont);
-    m_canvas->PrepareDC(memDC);
-    wxSize size = memDC.GetTextExtent("Tp");
+    wxGCDC gcdc(memDC);
+    gcdc.SetFont(m_ccFont);
+    m_canvas->PrepareDC(gcdc);
+    wxSize size = gcdc.GetTextExtent("Tp");
     int singleLineHeight = size.y + (2 * Y_SPACER) + clGetScaledSize(2); // the extra pixel is for the border line
-    if(singleLineHeight < clGetScaledSize(16)) {
-        singleLineHeight = clGetScaledSize(16) + clGetScaledSize(2); // at least 16 pixels for image
-    }
     return singleLineHeight;
 }
 

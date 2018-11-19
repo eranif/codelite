@@ -460,7 +460,11 @@ wxColour DrawingUtils::GetCaptionColour()
 
 wxFont DrawingUtils::GetDefaultFixedFont()
 {
-    return wxFont(wxFontInfo(DEFAULT_FONT_SIZE).Family(wxFONTFAMILY_TELETYPE).FaceName(DEFAULT_FACE_NAME));
+    wxFont f(GetDefaultGuiFont());
+    f.SetFamily(wxFONTFAMILY_TELETYPE);
+    f.SetFaceName(DEFAULT_FACE_NAME);
+    f.SetPointSize(DEFAULT_FONT_SIZE);
+    return f;
 }
 
 #ifdef __WXOSX__

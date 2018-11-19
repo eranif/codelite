@@ -94,12 +94,13 @@ protected:
     wxColour m_selectedTextColour;
     wxColour m_selectedTextBgColour;
     wxColour m_alternateRowColour;
-    
+
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
     wxBitmap m_bmpDown;
     wxBitmap m_bmpUpEnabled;
     wxBitmap m_bmpDownEnabled;
+    int m_lineHeight = 0;
 
 protected:
     void StcKeyDown(wxKeyEvent& event);

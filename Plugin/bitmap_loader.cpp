@@ -226,7 +226,7 @@ void BitmapLoader::initialize()
 
 void BitmapLoader::CreateMimeList()
 {
-#ifdef __WXGTK3__
+#if 0
     const int bitmap_size = 24;
 #else
     const int bitmap_size = 16;

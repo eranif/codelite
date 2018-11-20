@@ -1110,6 +1110,11 @@ void clMainFrame::CreateGUIControls()
     navbar->Hide();
 
     container->GetSizer()->Add(navbar, 0, wxEXPAND | wxALL, 5);
+    
+    // Add the debugger toolbar
+    m_debuggerToolbar = new DebuggerToolBar(container);
+    container->GetSizer()->Add(m_debuggerToolbar, 0, wxALIGN_CENTER_HORIZONTAL);
+
     m_mainBook = new MainBook(container);
 
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
@@ -1201,9 +1206,6 @@ void clMainFrame::CreateGUIControls()
     } else {
         CreateToolBar(16);
     }
-
-    // the toolbar is created hidden
-    m_debuggerToolbar = new DebuggerToolBar(this);
 
     // Connect the custom build target events range: !USE_AUI_TOOLBAR only
     if(GetMainToolBar()) {
@@ -5280,12 +5282,14 @@ void clMainFrame::OnDebugStarted(clDebugEvent& event)
 {
     event.Skip();
     m_debuggerToolbar->Show();
+    m_debuggerToolbar->GetParent()->GetSizer()->Layout();
 }
 
 void clMainFrame::OnDebugEnded(clDebugEvent& event)
 {
     event.Skip();
     m_debuggerToolbar->Hide();
+    m_debuggerToolbar->GetParent()->GetSizer()->Layout();
 }
 
 void clMainFrame::OnPrint(wxCommandEvent& event)

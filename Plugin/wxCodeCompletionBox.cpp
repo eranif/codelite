@@ -18,6 +18,8 @@
 #include <wx/font.h>
 #include <wx/stc/stc.h>
 #include <wx/dcgraph.h>
+#include "ieditor.h"
+#include "imanager.h"
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -37,27 +39,15 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_ccFont = DrawingUtils::GetDefaultFixedFont();
-    SetCursor(wxCURSOR_HAND);
-
-    // Update the BOX_WIDTH to contains at least 50 chars
-    static int once = false;
-    if(!once) {
-        once = true;
-        wxMemoryDC memDC;
-        wxBitmap bmp(1, 1);
-        memDC.SelectObject(bmp);
-        memDC.SetFont(m_ccFont);
-        wxString sampleString('X', 50);
-        wxSize sz = memDC.GetTextExtent(sampleString);
-        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    // Use the active editor's font (if any)
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        m_ccFont = editor->GetCtrl()->StyleGetFont(0);
+    } else {
+        // Default
+        m_ccFont = DrawingUtils::GetDefaultFixedFont();
     }
-    m_lineHeight = GetSingleLineHeight();
-    // Calculate the size of the box
-    int boxHeight = m_lineHeight * LINES_PER_PAGE;
-    int boxWidth = BOX_WIDTH; // 100 pixels
-    wxSize boxSize = wxSize(boxWidth, boxHeight);
-    wxRect rect(boxSize);
+    SetCursor(wxCURSOR_HAND);
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
@@ -82,6 +72,28 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
 
     InitializeDefaultBitmaps();
+    
+    // Set the control width
+    {
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        wxGCDC gcdc(memDC);
+        gcdc.SetFont(m_ccFont);
+        wxString sampleString('X', 50);
+        wxSize sz = gcdc.GetTextExtent(sampleString);
+        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    }
+    
+    m_lineHeight = GetSingleLineHeight();
+    int bitmapHeight = m_bitmaps[0].GetScaledHeight();
+    if(bitmapHeight > m_lineHeight) { m_lineHeight = bitmapHeight; }
+
+    // Calculate the size of the box
+    int boxHeight = m_lineHeight * LINES_PER_PAGE;
+    int boxWidth = BOX_WIDTH; // 100 pixels
+    wxSize boxSize = wxSize(boxWidth, boxHeight);
+    wxRect rect(boxSize);
 
     // Increase the size by 2 pixel for each dimension
     rect.Inflate(2, 2);
@@ -94,14 +106,11 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // Default colorus
     clColours colours = DrawingUtils::GetColours();
     m_useLightColours = true;
-
-    IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         colours.InitFromColour(bgColour);
         m_useLightColours = !DrawingUtils::IsDark(bgColour);
     }
-
     // Default colours
     m_bgColour = colours.GetBgColour();
     m_penColour = colours.GetBorderColour();

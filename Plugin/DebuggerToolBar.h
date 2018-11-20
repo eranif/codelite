@@ -17,13 +17,14 @@ protected:
     void OnLeftUp(wxMouseEvent& event);
     void OnMotion(wxMouseEvent& event);
     void OnPaint(wxPaintEvent& event);
+    void OnAppActivated(wxActivateEvent& event);
 
 public:
     Gripper(wxWindow* parent);
     virtual ~Gripper();
 };
 
-class WXDLLIMPEXP_SDK DebuggerToolBar : public wxPopupWindow
+class WXDLLIMPEXP_SDK DebuggerToolBar : public wxPanel
 {
     clToolBar* m_tb = nullptr;
     Gripper* m_gripper = nullptr;

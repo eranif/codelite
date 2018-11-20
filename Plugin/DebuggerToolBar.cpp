@@ -13,8 +13,9 @@
 #include <wx/frame.h>
 
 DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
-    : wxPopupWindow(parent, wxBORDER_RAISED)
 {
+    Hide();
+    if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxPanel* mainPanel = new wxPanel(this);
     mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -33,9 +34,8 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     BitmapLoader& bmpLoader = *clGetManager()->GetStdIcons();
     m_tb = new clToolBar(mainPanel);
 
-    m_tb->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
-                  bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize), _("Start or Continue debugger"));
-
+    m_tb->AddTool(XRCID("start_debugger"), _("Continue"), bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize),
+                  _("Continue"));
     m_tb->AddTool(XRCID("stop_debugger"), _("Stop debugger"), bmpLoader.LoadBitmap(wxT("debugger_stop"), toolSize),
                   _("Stop debugger"));
     m_tb->AddTool(XRCID("pause_debugger"), _("Pause debugger"), bmpLoader.LoadBitmap(wxT("interrupt"), toolSize),
@@ -52,6 +52,7 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
                   bmpLoader.LoadBitmap("rewind", toolSize), _("Toggle Rewind Commands"), wxITEM_CHECK);
     m_tb->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
                   bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
+    m_tb->AddSeparator();
     m_tb->Realize();
     // Let the top level window (i.e. the main frame) process this
     m_tb->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) {
@@ -70,15 +71,13 @@ bool DebuggerToolBar::Show(bool show)
     bool res = wxWindow::Show(show);
     if(show) {
         int x = clConfig::Get().Read("DebuggerToolBar/x", wxNOT_FOUND);
-        int y = clConfig::Get().Read("DebuggerToolBar/y", wxNOT_FOUND);
-        if((x != wxNOT_FOUND) && (y != wxNOT_FOUND)) {
-            Move(x, y);
+        if(x != wxNOT_FOUND) {
+            Move(x, 0);
         } else {
-            Centre();
+            CentreOnParent(wxHORIZONTAL);
         }
     } else {
-        clConfig::Get().Write("DebuggerToolBar/x", GetScreenPosition().x);
-        clConfig::Get().Write("DebuggerToolBar/y", GetScreenPosition().y);
+        clConfig::Get().Write("DebuggerToolBar/x", GetPosition().x);
     }
     return res;
 }
@@ -92,7 +91,9 @@ Gripper::Gripper(wxWindow* parent)
     Bind(wxEVT_MOTION, &Gripper::OnMotion, this);
     Bind(wxEVT_PAINT, &Gripper::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
-    SetSizeHints(wxNOT_FOUND, 10);
+    wxTheApp->Bind(wxEVT_ACTIVATE_APP, &Gripper::OnAppActivated, this);
+    //SetSizeHints(wxNOT_FOUND, 10);
+    SetSizeHints(wxNOT_FOUND, 0);
 }
 
 Gripper::~Gripper()
@@ -101,36 +102,49 @@ Gripper::~Gripper()
     Unbind(wxEVT_LEFT_UP, &Gripper::OnLeftUp, this);
     Unbind(wxEVT_MOTION, &Gripper::OnMotion, this);
     Unbind(wxEVT_PAINT, &Gripper::OnPaint, this);
-    if(HasCapture()) { ReleaseMouse(); }
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &Gripper::OnAppActivated, this);
+    // if(HasCapture()) { ReleaseMouse(); }
+}
+
+void Gripper::OnAppActivated(wxActivateEvent& event)
+{
+    event.Skip();
+    //    if(!event.GetActive()) {
+    //        // App being de-activated, release the mouse
+    //        if(HasCapture()) { ReleaseMouse(); }
+    //    }
 }
 
 void Gripper::OnLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    CaptureMouse();
-    m_offset.x = ::wxGetMousePosition().x - GetScreenPosition().x;
-    m_offset.y = ::wxGetMousePosition().y - GetScreenPosition().y;
+    //    CaptureMouse();
+    //    m_offset.x = event.GetPosition().x - GetPosition().x;
+    //    m_offset.y = 0;
 }
 
 void Gripper::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
-    if(HasCapture()) { ReleaseMouse(); }
+    // if(HasCapture()) { ReleaseMouse(); }
 }
 
 void Gripper::OnMotion(wxMouseEvent& event)
 {
     event.Skip();
-    if(HasCapture()) {
-        wxPoint newPos = ::wxGetMousePosition();
-        newPos.x -= m_offset.x;
-        newPos.y -= m_offset.y;
-        GetGrandParent()->Move(newPos);
-    }
+    //    if(HasCapture()) {
+    //        wxPoint newPos = event.GetPosition();
+    //        newPos.x -= m_offset.x;
+    //        newPos.y -= m_offset.y;
+    //        GetGrandParent()->Move(newPos);
+    //    }
 }
 
 void Gripper::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
-    DrawingUtils::DrawStippleBackground(GetClientRect(), dc);
+    // DrawingUtils::DrawStippleBackground(GetClientRect(), dc);
+    dc.SetPen(DrawingUtils::GetPanelBgColour());
+    dc.SetBrush(DrawingUtils::GetPanelBgColour());
+    dc.DrawRectangle(GetClientRect());
 }

@@ -33,7 +33,8 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     //===-----------------------------------------------------------------------------
     BitmapLoader& bmpLoader = *clGetManager()->GetStdIcons();
     m_tb = new clToolBar(mainPanel);
-
+    m_tb->SetMiniToolBar(false);
+    
     m_tb->AddTool(XRCID("start_debugger"), _("Continue"), bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize),
                   _("Continue"));
     m_tb->AddTool(XRCID("stop_debugger"), _("Stop debugger"), bmpLoader.LoadBitmap(wxT("debugger_stop"), toolSize),

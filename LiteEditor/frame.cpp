@@ -1113,7 +1113,7 @@ void clMainFrame::CreateGUIControls()
     
     // Add the debugger toolbar
     m_debuggerToolbar = new DebuggerToolBar(container);
-    container->GetSizer()->Add(m_debuggerToolbar, 0, wxALIGN_CENTER_HORIZONTAL);
+    container->GetSizer()->Add(m_debuggerToolbar, 0, wxALIGN_LEFT);
 
     m_mainBook = new MainBook(container);
 

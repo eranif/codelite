@@ -14,8 +14,8 @@
 
 DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
 {
-    Hide();
     if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)) { return; }
+    Hide();
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxPanel* mainPanel = new wxPanel(this);
     mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));

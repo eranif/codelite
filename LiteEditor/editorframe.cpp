@@ -34,6 +34,7 @@
 #include "quickfindbar.h"
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "frame.h"
 
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
@@ -51,7 +52,7 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_book->AddPage(editor, editor->GetFileName().GetFullName(), true);
     // Notebook::RemovePage hides the detached tab
     if(!editor->IsShown()) { editor->Show(); }
-    
+
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
     m_findBar->SetEditor(editor);
@@ -59,11 +60,25 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 
+    m_toolbar->SetMiniToolBar(false);
+    m_toolbar->AddTool(wxID_SAVE, _("Save"), clGetManager()->GetStdIcons()->LoadBitmap("file_save"));
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
+    m_toolbar->AddTool(XRCID("reload_file"), _("Reload"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    m_toolbar->AddTool(wxID_FIND, _("Find"), clGetManager()->GetStdIcons()->LoadBitmap("cscope"));
+    m_toolbar->AddSpacer();
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), clGetManager()->GetStdIcons()->LoadBitmap("undo"));
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), clGetManager()->GetStdIcons()->LoadBitmap("redo"));
+    m_toolbar->Realize();
+
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_SAVE);
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnClose, this, wxID_CLOSE);
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_UNDO);
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_REDO);
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, XRCID("reload_file"));
+    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnFind, this, wxID_FIND);
+
     m_mainPanel->Layout();
     SetTitle(editor->GetFileName().GetFullPath());
-
-    // Update the accelerator table for this frame
-    //ManagerST::Get()->UpdateMenuAccelerators(this);
     SetSize(600, 600);
     CentreOnScreen();
 }
@@ -169,4 +184,11 @@ void EditorFrame::DoCloseEditor(clEditor* editor)
     wxCommandEvent eventClose(wxEVT_EDITOR_CLOSING);
     eventClose.SetClientData((IEditor*)editor);
     EventNotifier::Get()->ProcessEvent(eventClose);
+}
+
+void EditorFrame::OnEdit(wxCommandEvent& event)
+{
+    clEditor* editor = reinterpret_cast<clEditor*>(m_book->GetCurrentPage());
+    if(!editor) { return; }
+    editor->OnMenuCommand(event);
 }

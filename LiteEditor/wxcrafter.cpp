@@ -415,31 +415,11 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* boxSizer324 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer324);
 
-    m_toolbar = this->CreateToolBar(wxTB_NOALIGN | wxTB_FLAT, wxID_ANY);
+    m_toolbar = new clToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
+                              wxTB_NOALIGN | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(24, 24));
 
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_save")),
-                       wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
-
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_close")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Close"), _("Close"), NULL);
-
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_reload")),
-                       wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
-
-    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("24-find")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Find"), _("Find"), NULL);
-
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("24-undo")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
-
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("24-redo")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
-
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"),
-                       wxXmlResource::Get()->LoadBitmap(wxT("24-bookmark")), wxNullBitmap, wxITEM_DROPDOWN,
-                       _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
-    m_toolbar->Realize();
+    boxSizer324->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("EditorFrameBase"));
     SetMinClientSize(wxSize(800, 600));
@@ -459,20 +439,11 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
 #endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Connect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
-    this->Connect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
-    this->Connect(wxID_FIND, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
-    this->Connect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL, this);
 }
 
 EditorFrameBase::~EditorFrameBase()
 {
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Disconnect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL,
-                     this);
-    this->Disconnect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
-    this->Disconnect(wxID_FIND, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
-    this->Disconnect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL, this);
 }
 
 NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp,

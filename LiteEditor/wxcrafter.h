@@ -220,18 +220,14 @@ class EditorFrameBase : public wxFrame
 {
 protected:
     wxPanel* m_mainPanel;
-    wxToolBar* m_toolbar;
+    clToolBar* m_toolbar;
 
 protected:
     virtual void OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloseUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFindUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxToolBar* GetToolbar() { return m_toolbar; }
     EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"),
                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
                     long style = wxDEFAULT_FRAME_STYLE);

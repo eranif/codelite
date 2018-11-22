@@ -52,7 +52,7 @@ protected:
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
-
+    void OnEdit(wxCommandEvent& event);
     void OnPageClosed(wxBookCtrlEvent& event);
     void OnPageClosing(wxBookCtrlEvent& event);
 

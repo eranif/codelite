@@ -114,9 +114,14 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC dc(bmp);
 
     wxSize size;
-
-    m_codeFont = DrawingUtils::GetDefaultFixedFont();
-    m_commentFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    
+    if(editor) {
+        // Use the active editor's font
+        m_codeFont = editor->GetCtrl()->StyleGetFont(0);
+    } else {
+        m_codeFont = DrawingUtils::GetDefaultFixedFont();
+    }
+    m_commentFont = DrawingUtils::GetDefaultGuiFont();
 
     wxString codePart, commentPart;
     wxString strippedTip = DoStripMarkups();

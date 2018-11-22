@@ -42,7 +42,8 @@ WelcomePage::WelcomePage(wxWindow* parent)
 {
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
                                   this);
-    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 128));
+    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
+    m_staticBitmap->Hide();
     m_cmdLnkBtnFilesMenu->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     m_cmdLnkBtnForum->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     m_cmdLnkBtnNewProject->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));

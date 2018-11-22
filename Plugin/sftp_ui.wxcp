@@ -105,11 +105,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../bitmaps/16-remote-folder.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "../bitmaps/16-remote-folder@2x.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -1004,11 +1004,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../bitmaps/16-remote-folder.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "../bitmaps/16-remote-folder@2x.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",
@@ -2569,11 +2569,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../bitmaps/16-remote-folder.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "../bitmaps/16-remote-folder@2x.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",

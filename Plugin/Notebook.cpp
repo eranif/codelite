@@ -459,11 +459,11 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
     }
 }
 
-void clTabCtrl::UpdateVisibleTabs()
+void clTabCtrl::UpdateVisibleTabs(bool forceReshuffle)
 {
     // don't update the list if we don't need to
     if(!IsVerticalTabs()) {
-        if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs)) return;
+        if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs) && !forceReshuffle) return;
     }
 
     // set the physical coords for each tab (we do this for all the tabs)
@@ -940,6 +940,7 @@ bool clTabCtrl::RemovePage(size_t page, bool notify, bool deletePage)
         event.SetEventObject(GetParent());
         GetParent()->GetEventHandler()->ProcessEvent(event);
     }
+    UpdateVisibleTabs(true);
     Refresh();
     return true;
 }

@@ -1610,7 +1610,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     info.SetName(_("CodeLite IDE"));
     info.SetDescription(_("A free, open source, C/C++/PHP and JavaScript IDE"));
 
-    wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 256);
+    wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 64);
     if(iconBmp.IsOk()) {
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);

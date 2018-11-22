@@ -28,19 +28,18 @@
 
 #if USE_SFTP
 
-#include "sftp_ui.h"
-#include "cl_sftp.h"
 #include "bitmap_loader.h"
+#include "cl_sftp.h"
+#include "sftp_ui.h"
 
 class SFTPBrowserEntryClientData;
 class FloatingTextCtrl;
 
 class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
-    clSFTP::Ptr_t             m_sftp;
-    BitmapLoader::BitmapMap_t m_bitmaps;
-    wxString                  m_filter;
-    size_t                    m_flags;
+    clSFTP::Ptr_t m_sftp;
+    wxString m_filter;
+    size_t m_flags;
 
 protected:
     virtual void OnSSHAccountManager(wxCommandEvent& event);
@@ -55,14 +54,16 @@ protected:
     virtual void OnTextEnter(wxCommandEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     void DoCloseSession();
-    void DoDisplayEntriesForPath(const wxString &path = "");
+    void DoDisplayEntriesForPath(const wxString& path = "");
+    void ClearView();
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
 
 public:
-    SFTPBrowserDlg(wxWindow* parent, const wxString &title, const wxString& filter, size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
+    SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter,
+                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
     virtual ~SFTPBrowserDlg();
 
-    void Initialize(const wxString &account, const wxString &path);
+    void Initialize(const wxString& account, const wxString& path);
     wxString GetPath() const;
     wxString GetAccount() const;
 

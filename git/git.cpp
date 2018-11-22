@@ -49,6 +49,7 @@
 #include "GitApplyPatchDlg.h"
 #include "GitConsole.h"
 #include "GitLocator.h"
+#include "GitUserEmailDialog.h"
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
@@ -66,7 +67,6 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
-#include "GitUserEmailDialog.h"
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -865,8 +865,8 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
     if(!choice.IsEmpty()) {
         wxTreeItemId id = modifiedIDs[choice];
         if(id.IsOk()) {
-            m_mgr->GetTree(TreeFileView)->EnsureVisible(id);
-            m_mgr->GetTree(TreeFileView)->SelectItem(id);
+            m_mgr->GetWorkspaceTree()->EnsureVisible(id);
+            m_mgr->GetWorkspaceTree()->SelectItem(id);
         }
     }
 }
@@ -977,7 +977,7 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
             m_gitActionQueue.push_back(ga);
             break;
         }
-        DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), it->second, OverlayTool::Bmp_Modified);
+        DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), it->second, OverlayTool::Bmp_Modified);
     }
 
     gitAction ga(gitListModified, wxT(""));
@@ -1325,13 +1325,13 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 
     if(ga.action == gitListAll) {
         m_mgr->SetStatusMessage(_("Colouring tracked git files..."), 0);
-        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
+        ColourFileTree(m_mgr->GetWorkspaceTree(), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
 
     } else if(ga.action == gitListModified) {
         m_mgr->SetStatusMessage(_("Colouring modifed git files..."), 0);
         // Reset modified files
-        ColourFileTree(m_mgr->GetTree(TreeFileView), m_modifiedFiles, OverlayTool::Bmp_OK);
+        ColourFileTree(m_mgr->GetWorkspaceTree(), m_modifiedFiles, OverlayTool::Bmp_OK);
         // First get an up to date map of the filepaths/treeitemids
         // (Trying to cache these results in segfaults when the tree has been modified)
         std::map<wxString, wxTreeItemId> IDs;
@@ -1343,14 +1343,14 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         for(; iter != gitFileSet.end(); ++iter) {
             wxTreeItemId id = IDs[(*iter)];
             if(id.IsOk()) {
-                DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), id, OverlayTool::Bmp_Modified);
+                DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), id, OverlayTool::Bmp_Modified);
 
             } else {
                 toColour.insert(*iter);
             }
         }
 
-        if(!toColour.empty()) { ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, OverlayTool::Bmp_Modified); }
+        if(!toColour.empty()) { ColourFileTree(m_mgr->GetWorkspaceTree(), toColour, OverlayTool::Bmp_Modified); }
 
         // Finally, cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
@@ -1523,6 +1523,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
         DoRecoverFromGitCommandError();
+        GetConsole()->ShowLog();
         return;
     }
 
@@ -1614,6 +1615,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
                     // Do nothing, will be coloured in the console view
+                    GetConsole()->ShowLog();
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
 
@@ -1834,7 +1836,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
+void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
     GitEntry data;
@@ -1868,7 +1870,7 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, Ove
 
 void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
 {
-    wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) { return; }
 
     IDs.clear();
@@ -1962,7 +1964,7 @@ void GitPlugin::DoCreateTreeImages()
 //                    m_baseImageCount + img-base + 2 => Modified
 #if 0
     if(m_treeImageMapping.empty()) {
-        wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+        wxTreeCtrl* tree = m_mgr->GetWorkspaceTree();
 
         // Create 2 sets: modified & normal
         wxImageList* il = tree->GetImageList();
@@ -1983,29 +1985,26 @@ void GitPlugin::DoCreateTreeImages()
 #endif
 }
 
-void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
+void GitPlugin::DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-
-    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
-
-    // get the base image first
-    int curImgIdx = ctrl->GetItemImage(item);
-    if(m_treeImageMapping.count(curImgIdx)) {
-        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
-
-        // now get the new image index based on the following:
-        // baseCount + (imgIdx * bitmapCount) + BmpType
-        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
-
-        // the below condition should never met, but I am paranoid..
-        if(ctrl->GetImageList()->GetImageCount() > newImg) {
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected);
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
-        }
-    }
+//    clConfig conf("git.conf");
+//    GitEntry data;
+//    conf.ReadItem(&data);
+//
+//    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
+//
+//    // get the base image first
+//    int curImgIdx = ctrl->GetItemImage(item);
+//    if(m_treeImageMapping.count(curImgIdx)) {
+//        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
+//
+//        // now get the new image index based on the following:
+//        // baseCount + (imgIdx * bitmapCount) + BmpType
+//        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
+//
+//        // the below condition should never met, but I am paranoid..
+//        if(ctrl->GetBitmaps() && ctrl->GetBitmaps()->size() > newImg) { ctrl->SetItemImage(item, newImg); }
+//    }
 }
 
 void GitPlugin::OnClone(wxCommandEvent& e)
@@ -2086,7 +2085,7 @@ void GitPlugin::RefreshFileListView()
 void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo)
 {
     files.Clear();
-    wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) return;
 
     wxArrayTreeItemIds items;
@@ -2456,7 +2455,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
             for(unsigned i = 0; i < selectedFiles.GetCount(); ++i)
-                commitArgs << selectedFiles.Item(i) << wxT(" ");
+                commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
             m_console->AddRawText(_("No commit message given, aborting"));

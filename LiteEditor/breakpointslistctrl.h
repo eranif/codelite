@@ -25,10 +25,11 @@
 #ifndef __breakpointslistctrl__
 #define __breakpointslistctrl__
 
-#include <vector>
+#include "clThemedListCtrl.h"
 #include "debugger.h"
+#include <vector>
 
-class BreakpointsListctrl : public wxListCtrl
+class BreakpointsListctrl : public clThemedListCtrl
 {
     enum column_ids {
         col_id,
@@ -45,35 +46,21 @@ class BreakpointsListctrl : public wxListCtrl
     };
 
 public:
-    BreakpointsListctrl(wxWindow* parent,
-                        wxWindowID id = wxID_ANY,
-                        const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxDefaultSize,
-                        long style = wxLC_REPORT | wxLC_SINGLE_SEL)
-        : wxListCtrl(parent, id, pos, size, style)
+    BreakpointsListctrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxDefaultSize, long style = wxDV_ROW_LINES)
+        : clThemedListCtrl(parent, id, pos, size, style)
     {
+        // Disable any kind of sorting as we want the item in the order we insert them
+        SetSortFunction(nullptr);
         const wxString column_headers[] = { _("ID"), _("Type"),   _("Enabled"), _("File"),    _("Line"),  _("Function"),
                                             _("At"), _("Memory"), _("What"),    _("Ignored"), _("Extras") };
-
         for(int n = col_id; n <= col_extras; ++n) {
-            InsertColumn(n, column_headers[n]);
+            AddHeader(column_headers[n]);
         }
-
-        SetColumnWidth(col_id, 50);
-        SetColumnWidth(col_type, 100);
-        SetColumnWidth(col_enabled, 100);
-        SetColumnWidth(col_file, 300);
-        SetColumnWidth(col_lineno, 100);
-        SetColumnWidth(col_functionname, 100);
-        SetColumnWidth(col_at, 100);
-        SetColumnWidth(col_memory, 100);
-        SetColumnWidth(col_what, 100);
-        SetColumnWidth(col_ignorecount, 50);
-        SetColumnWidth(col_extras, 50);
     }
 
+    virtual ~BreakpointsListctrl() {}
     void Initialise(std::vector<BreakpointInfo>& bps);
-    int GetSelection();
     int GetLinenoColumn() { return col_lineno; }
     int GetFileColumn() { return col_file; }
 };

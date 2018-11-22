@@ -116,6 +116,9 @@ void WorkspaceTab::CreateGUIControls()
     m_view->SelectPage(_("Default"));
     m_view->SetDefaultPage(_("Default"));
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "",
+                          wxITEM_CHECK);
+    m_toolbar580->AddSeparator();
     m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), bmps->LoadBitmap("fold"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), bmps->LoadBitmap("home"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
@@ -123,7 +126,14 @@ void WorkspaceTab::CreateGUIControls()
                             "of the seleced item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSeparator();
-    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "", wxITEM_CHECK);
+    m_toolbar580->AddTool(XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build"),
+                          _("Build Active Project"), wxITEM_DROPDOWN);
+    m_toolbar580->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop"),
+                          _("Stop Current Build"));
+    m_toolbar580->AddTool(XRCID("clean_active_project"), _("Clean Active Project"), bmps->LoadBitmap("clean"),
+                          _("Clean Active Project"));
+    m_toolbar580->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+                          _("Run Active Project"));
     m_toolbar580->Realize();
 }
 
@@ -195,16 +205,16 @@ void WorkspaceTab::OnCollapseAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(!m_fileView->GetRootItem().IsOk()) return;
-    m_fileView->Freeze();
     m_fileView->CollapseAll();
-    m_fileView->Expand(m_fileView->GetRootItem());
+    
     // count will probably be 0 below, so ensure we can at least see the root item
     m_fileView->EnsureVisible(m_fileView->GetRootItem());
-    m_fileView->Thaw();
-
+    m_fileView->SelectItem(m_fileView->GetRootItem());
+    // Expand the workspace
+    m_fileView->Expand(m_fileView->GetRootItem());
+    
     wxArrayTreeItemIds arr;
     size_t count = m_fileView->GetSelections(arr);
-
     if(count == 1) {
         wxTreeItemId sel = arr.Item(0);
         if(sel.IsOk()) { m_fileView->EnsureVisible(sel); }

@@ -65,7 +65,8 @@ protected:
     DbConnectionInfoVec DoLoadPgSQLHistory();
 
     void DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name);
-
+    bool DoSQLiteItemActivated();
+    
     // Event handlers
     virtual void OnCancelClick(wxCommandEvent& event);
     virtual void OnMySqlOkClick(wxCommandEvent& event);

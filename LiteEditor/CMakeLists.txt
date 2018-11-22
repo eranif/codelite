@@ -80,9 +80,8 @@ if(NOT APPLE)
     endif (UNIX)
 
     ## codelite icons
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons-fresh-farm.zip DESTINATION ${CL_PREFIX}/share/codelite)
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps.zip DESTINATION ${CL_PREFIX}/share/codelite)
-    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)
+    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)
+    install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_PREFIX}/share/codelite)
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-icons.zip DESTINATION ${CL_PREFIX}/share/codelite)
 
     ## License file
@@ -111,36 +110,36 @@ if(NOT APPLE)
         ## Install icons
         
         ## 32x32
-        install(FILES ${CL_SRC_ROOT}/bitmaps/32-codelite-logo@2x.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32@2x/apps
                 RENAME codelite.png)
                 
-        install(FILES ${CL_SRC_ROOT}/bitmaps/32-codelite-logo.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
                 RENAME codelite.png)
         ## 64x64
-        install(FILES ${CL_SRC_ROOT}/bitmaps/64-codelite-logo@2x.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64@2x/apps
                 RENAME codelite.png)
                 
-        install(FILES ${CL_SRC_ROOT}/bitmaps/64-codelite-logo.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64/apps
                 RENAME codelite.png)
                 
         ## 128x128
-        install(FILES ${CL_SRC_ROOT}/bitmaps/128-codelite-logo@2x.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128@2x/apps
                 RENAME codelite.png)
                 
-        install(FILES ${CL_SRC_ROOT}/bitmaps/128-codelite-logo.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128/apps
                 RENAME codelite.png)
         ## 256x256
-        install(FILES ${CL_SRC_ROOT}/bitmaps/256-codelite-logo@2x.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256@2x/apps
                 RENAME codelite.png)
                 
-        install(FILES ${CL_SRC_ROOT}/bitmaps/256-codelite-logo.png
+        install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256/apps
                 RENAME codelite.png)
 

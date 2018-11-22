@@ -210,6 +210,10 @@
   <Dependencies Name="Win_x86_Release">
     <Project Name="PHPParser"/>
   </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -377,7 +381,7 @@
         <Library Value="libPHPParser-dbg.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="C:/src/codelite/Runtime/codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="C:/src/codelite/Runtime/codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
@@ -390,7 +394,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy $(IntermediateDirectory)\PHP.dll ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy $(IntermediateDirectory)\PHP-dbg.dll ..\..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -417,7 +421,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags);-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
@@ -431,7 +435,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <LibraryPath Value="../lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -492,7 +496,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <LibraryPath Value="../lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -539,8 +543,4 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
 </CodeLite_Project>

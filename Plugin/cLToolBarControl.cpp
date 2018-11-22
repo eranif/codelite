@@ -1,8 +1,9 @@
 #include "cLToolBarControl.h"
+#include "drawingutils.h"
 
 clToolBarControl::clToolBarControl(clToolBar* parent, wxWindow* control)
     : clToolBarButtonBase(parent, wxID_ANY, wxNullBitmap, "", kControl)
-    , m_control(control)
+    , m_ctrl(control)
 {
 }
 
@@ -11,16 +12,16 @@ clToolBarControl::~clToolBarControl() {}
 wxSize clToolBarControl::CalculateSize(wxDC& dc) const
 {
     wxUnusedVar(dc);
-    return m_control->GetSize();
+    return m_ctrl->GetSize();
 }
 
 void clToolBarControl::Render(wxDC& dc, const wxRect& rect)
 {
-    int height = m_toolbar->GetClientRect().GetHeight();
-    wxPoint pt(rect.GetPosition());
-    int yy = (height - m_control->GetSize().GetHeight()) / 2 + pt.y;
-    pt.y = yy;
-    pt.y += CL_TOOL_BAR_Y_MARGIN;
-    m_control->Move(pt);
-    if(!m_control->IsShown()) { m_control->Show(); }
+    wxUnusedVar(dc);
+    wxRect controlRect = m_ctrl->GetRect();
+    controlRect = controlRect.CenterIn(rect, wxVERTICAL);
+    controlRect.SetX(rect.GetX());
+    m_ctrl->Move(controlRect.GetTopLeft());
+    m_ctrl->SetBackgroundColour(DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBar::kMiniToolBar)));
+    if(!m_ctrl->IsShown()) { m_ctrl->Show(); }
 }

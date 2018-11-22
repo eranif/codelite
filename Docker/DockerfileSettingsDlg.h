@@ -1,14 +1,16 @@
 #ifndef DOCKERFILESETTINGSDLG_H
 #define DOCKERFILESETTINGSDLG_H
+
 #include "UI.h"
+#include "clDockerBuildableFile.h"
 #include "clDockerWorkspaceSettings.h"
 
 class DockerfileSettingsDlg : public DockerfileSettingsDlgBase
 {
-    clDockerfile& m_info;
+    clDockerBuildableFile::Ptr_t m_info;
 
 public:
-    DockerfileSettingsDlg(wxWindow* parent, clDockerfile& info);
+    DockerfileSettingsDlg(wxWindow* parent, clDockerBuildableFile::Ptr_t info);
     virtual ~DockerfileSettingsDlg();
 
 protected:

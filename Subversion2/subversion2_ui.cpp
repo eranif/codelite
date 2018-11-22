@@ -26,7 +26,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(mainSizer);
 
     m_splitter17 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
+                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter17->SetSashGravity(0.5);
     m_splitter17->SetMinimumPaneSize(10);
 
@@ -51,12 +51,12 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer86 = new wxBoxSizer(wxVERTICAL);
     m_panel82->SetSizer(boxSizer86);
 
-    m_dvListCtrl = new wxDataViewListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrl = new clThemedListCtrl(m_panel82, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel82, wxSize(-1, -1)),
+                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer86->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(32), wxALIGN_CENTER,
+    m_dvListCtrl->AppendTextColumn(_("?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_CENTER,
                                    wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendIconTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                        wxDATAVIEW_COL_RESIZABLE);
@@ -67,13 +67,13 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer88 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer88);
 
-    m_dvListCtrlUnversioned = new wxDataViewListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
-                                                     wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
-                                                     wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrlUnversioned = new clThemedListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
+                                                   wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
+                                                   wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer88->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT,
+    m_dvListCtrlUnversioned->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
@@ -84,8 +84,20 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer30);
 
-    m_sci = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
+    m_notebook92 = new Notebook(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook92->SetName(wxT("m_notebook92"));
+
+    boxSizer30->Add(m_notebook92, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel94 = new wxPanel(m_notebook92, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook92, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
+    m_notebook92->AddPage(m_panel94, _("Output"), false);
+
+    wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
+    m_panel94->SetSizer(boxSizer96);
+
+    m_sci = new wxStyledTextCtrl(m_panel94, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel94, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_sci->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_sci->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -121,7 +133,7 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     m_sci->SetKeyWords(3, wxT(""));
     m_sci->SetKeyWords(4, wxT(""));
 
-    boxSizer30->Add(m_sci, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer96->Add(m_sci, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
     SetName(wxT("SubversionPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -361,16 +373,12 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
 
     m_treebook1 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treebook1->SetName(wxT("m_treebook1"));
-    wxImageList* m_treebook1_il = new wxImageList(16, 16);
-    m_treebook1->AssignImageList(m_treebook1_il);
 
     bSizer12->Add(m_treebook1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel3 =
         new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    int m_panel3ImgIndex;
-    m_panel3ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-cog")));
-    m_treebook1->AddPage(m_panel3, _("General"), true, m_panel3ImgIndex);
+    m_treebook1->AddPage(m_panel3, _("General"), true, wxNOT_FOUND);
 
     wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer15);
@@ -449,9 +457,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
 
     m_panel4 =
         new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    int m_panel4ImgIndex;
-    m_panel4ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-diff")));
-    m_treebook1->AddPage(m_panel4, _("External Diff"), false, m_panel4ImgIndex);
+    m_treebook1->AddPage(m_panel4, _("External Diff"), false, wxNOT_FOUND);
 
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer16);
@@ -490,9 +496,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
 
     m_panel5 =
         new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    int m_panel5ImgIndex;
-    m_panel5ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-lock")));
-    m_treebook1->AddPage(m_panel5, _("SSH Client"), false, m_panel5ImgIndex);
+    m_treebook1->AddPage(m_panel5, _("SSH Client"), false, wxNOT_FOUND);
 
     wxBoxSizer* bSizer161 = new wxBoxSizer(wxVERTICAL);
     m_panel5->SetSizer(bSizer161);
@@ -551,9 +555,7 @@ SvnPreferencesDialogBase::SvnPreferencesDialogBase(wxWindow* parent, wxWindowID 
 
     m_panel6 =
         new wxPanel(m_treebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    int m_panel6ImgIndex;
-    m_panel6ImgIndex = m_treebook1_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("16-connected")));
-    m_treebook1->AddPage(m_panel6, _("Integration"), false, m_panel6ImgIndex);
+    m_treebook1->AddPage(m_panel6, _("Integration"), false, wxNOT_FOUND);
 
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     m_panel6->SetSizer(bSizer23);
@@ -1488,46 +1490,6 @@ SvnBlameFrameBase::SvnBlameFrameBase(wxWindow* parent, wxWindowID id, const wxSt
 }
 
 SvnBlameFrameBase::~SvnBlameFrameBase() {}
-
-SubversionImages::SubversionImages()
-    : wxImageList(16, 16, true)
-    , m_imagesWidth(16)
-    , m_imagesHeight(16)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC95F2InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSvn"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSvn"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSvn@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSvn@2x"), bmp));
-        }
-    }
-}
-
-SubversionImages::~SubversionImages() {}
 
 SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
                                                          const wxPoint& pos, const wxSize& size, long style)

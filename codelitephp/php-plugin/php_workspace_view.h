@@ -27,7 +27,6 @@
 #define __php_workspace_view__
 
 #include "clFileSystemEvent.h"
-#include "clTreeKeyboardInput.h"
 #include "php_event.h"
 #include "php_ui.h"
 #include "php_workspace.h"
@@ -43,15 +42,12 @@ class ItemData;
 class PHPWorkspaceView : public PHPWorkspaceViewBase
 {
     IManager* m_mgr;
-    BitmapLoader::BitmapMap_t m_bitmaps;
-    wxOrderedMap<wxTreeItemId, bool> m_itemsToSort;
     std::unordered_map<wxString, wxTreeItemId> m_filesItems;
     std::unordered_map<wxString, wxTreeItemId> m_foldersItems;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     bool m_scanInProgress;
     std::unordered_set<wxString> m_pendingSync;
     wxArrayString m_draggedFiles;
-    
+
 private:
     enum {
         ID_TOGGLE_AUTOMATIC_UPLOAD = wxID_HIGHEST + 1,
@@ -59,17 +55,17 @@ private:
 
 protected:
     virtual void OnCollapse(wxCommandEvent& event);
-    virtual void DoCollapseItem(wxTreeItemId& item);
     void OnFolderDropped(clCommandEvent& event);
 
     virtual void OnCollapseUI(wxUpdateUIEvent& event);
     virtual void OnStartDebuggerListenerUI(wxUpdateUIEvent& event);
-    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnMenu(wxTreeEvent& event);
     void OnWorkspaceLoaded(PHPEvent& event);
 #if USE_SFTP
-    virtual void OnSetupRemoteUpload(wxAuiToolBarEvent& event);
+    virtual void OnSetupRemoteUploadUI(wxUpdateUIEvent& event);
+    virtual void OnSetupRemoteUpload(wxCommandEvent& event);
+    virtual void OnSetupRemoteUploadMenu(wxCommandEvent& event);
 #endif
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnActiveProjectSettings(wxCommandEvent& event);
@@ -80,7 +76,6 @@ protected:
     void DoSetStatusBarText(const wxString& text, int timeOut);
 
     // Helpers
-    void DoSortItems();
     wxTreeItemId DoAddFolder(const wxString& project, const wxString& path);
     wxTreeItemId DoCreateFile(const wxTreeItemId& parent, const wxString& fullpath, const wxString& content = "");
     wxTreeItemId DoGetProject(const wxString& project);
@@ -93,7 +88,6 @@ protected:
     const ItemData* DoGetItemData(const wxTreeItemId& item) const;
     bool IsFolderItem(const wxTreeItemId& item);
     int DoGetItemImgIdx(const wxString& filename);
-    wxBitmap DoGetBitmapForExt(const wxString& ext) const;
     void DoDeleteSelectedFileItem();
 #if USE_SFTP
     void DoOpenSSHAccountManager();
@@ -175,11 +169,11 @@ protected:
     void OnWorkspaceSyncStart(clCommandEvent& event);
     void OnWorkspaceSyncEnd(clCommandEvent& event);
     void OnFileSaveAs(clFileSystemEvent& event);
-    
+
     // DnD
     void OnDragBegin(wxTreeEvent& event);
     void OnDragEnd(wxTreeEvent& event);
-    
+
 public:
     /** Constructor */
     PHPWorkspaceView(wxWindow* parent, IManager* mgr);

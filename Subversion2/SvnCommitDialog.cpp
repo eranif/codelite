@@ -25,8 +25,10 @@
 
 #include "SvnCommitDialog.h"
 #include "asyncprocess.h"
+#include "bitmap_loader.h"
 #include "clSingleChoiceDialog.h"
 #include "editor_config.h"
+#include "globals.h"
 #include "imanager.h"
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
@@ -73,17 +75,20 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     m_checkListFiles->Disable();
     m_panel1->Disable();
 
-    SetName("SvnCommitDialog");
-    WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     if(textLexer) { textLexer->Apply(m_stcMessage); }
-    
-    // These two classes will allow copy / paste etc using the keyboard on the STC classes 
+
+    // These two classes will allow copy / paste etc using the keyboard on the STC classes
     m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
     m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
+    
+    DoCreateToolbar();
+    SetName("SvnCommitDialog");
+    GetSizer()->Fit(this);
+    // WindowAttrManager::Load(this);
 }
 
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,
@@ -113,6 +118,8 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
     }
 
     SetName("SvnCommitDialog");
+    DoCreateToolbar();
+    
     WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
@@ -286,3 +293,15 @@ void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
     event.Enable(!m_plugin->GetCommitMessagesCache().IsEmpty());
 }
 
+void SvnCommitDialog::DoCreateToolbar()
+{
+    m_toolbar->AddTool(XRCID("commit-history"), _("Commit History"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("history"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear History"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    m_toolbar->Realize();
+
+    m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnShowCommitHistory, this, XRCID("commit-history"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnShowCommitHistoryUI, this, XRCID("commit-history"));
+    m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnClearHistory, this, wxID_CLEAR);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnClearHistoryUI, this, wxID_CLEAR);
+}

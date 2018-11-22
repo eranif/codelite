@@ -104,8 +104,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     }
 
     // Load the global colours
-    m_colourPickerOutputPanesFgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalFgColour());
-    m_colourPickerOutputPanesBgColour->SetColour(ColoursAndFontsManager::Get().GetGlobalBgColour());
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
 
@@ -118,6 +116,36 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
+    m_toolbar->SetMiniToolBar(false);
+    m_toolbar->AddTool(wxID_NEW, _("New Theme"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
+    m_toolbar->AddTool(wxID_SAVE, _("Export"), clGetManager()->GetStdIcons()->LoadBitmap("file_save"));
+    m_toolbar->AddTool(XRCID("export_all"), _("Export All"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("file_save_all"));
+    m_toolbar->AddTool(XRCID("import_zip"), _("Import from ZIP file"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("file_open"));
+    m_toolbar->AddTool(XRCID("revert_changes"), _("Reaload Default Settings"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    m_toolbar->AddTool(XRCID("import_eclipse_theme"), _("Import Eclipse Theme"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("eclipse"), "", wxITEM_DROPDOWN);
+    m_toolbar->Realize();
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnNewTheme, this, wxID_NEW);
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnExportSelective, this, wxID_SAVE);
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnExportAll, this, XRCID("export_all"));
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImport, this, XRCID("import_zip"));
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnRestoreDefaults, this, XRCID("revert_changes"));
+    m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImportEclipseTheme, this, XRCID("import_eclipse_theme"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN,
+                    [&](wxCommandEvent& e) {
+                        wxMenu m;
+                        m.Append(XRCID("load_eclipse_theme_website"), _("Load Eclipse Themes WebSite.."));
+                        m.Bind(wxEVT_MENU, &SyntaxHighlightDlg::OnLoadEclipseThemeWebsite, this,
+                               XRCID("load_eclipse_theme_website"));
+                        m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
+                    },
+                    XRCID("import_eclipse_theme"));
+    m_colourPickerBaseColour->SetColour(
+        clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    m_cbUseCustomBaseColour->SetValue(clConfig::Get().Read("UseCustomBaseColour", false));
     CentreOnParent();
 }
 
@@ -228,15 +256,12 @@ void SyntaxHighlightDlg::SaveChanges()
         CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }
 
+    // Save the base colour changes
+    clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
+    clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
+
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
-
-    wxString newFg = m_colourPickerOutputPanesFgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
-    EditorConfigST::Get()->SetCurrentOutputviewFgColour(newFg);
-
-    wxString newBg = m_colourPickerOutputPanesBgColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX);
-    EditorConfigST::Get()->SetCurrentOutputviewBgColour(newBg);
-
     m_isModified = false;
 }
 
@@ -595,7 +620,7 @@ void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
     DoExport();
 }
 
-void SyntaxHighlightDlg::OnToolExportAll(wxAuiToolBarEvent& event)
+void SyntaxHighlightDlg::OnToolExportAll(wxCommandEvent& event)
 {
     // EclipseThemeImporterManager importer;
     // importer.ImportCxxToAll();
@@ -618,7 +643,7 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
     }
 }
 
-void SyntaxHighlightDlg::OnImportEclipseTheme(wxAuiToolBarEvent& event)
+void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 {
     wxFileDialog selector(this, _("Select eclipse XML theme file"), "", "", "Eclipse Theme Files (*.xml)|*.xml",
                           wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
@@ -677,17 +702,7 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
     m_bgColourPicker->SetColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 }
 
-void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged()
-{
-    if(!m_globalBgColourChangedTooltipShown) {
-        wxRichToolTip tip(_("Global Background Colour Adjusted"),
-                          _("Notice that CodeLite altered the global output panes\n"
-                            "background colour to match the theme background colour"));
-        tip.SetIcon(wxICON_INFORMATION);
-        tip.ShowFor(m_colourPickerOutputPanesBgColour);
-        m_globalBgColourChangedTooltipShown = true;
-    }
-}
+void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged() {}
 
 void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 {
@@ -708,4 +723,20 @@ void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
     zw.Close();
 
     ::wxMessageBox(_("Settings have been saved into:\n") + zw.GetFilename().GetFullPath());
+}
+
+void SyntaxHighlightDlg::OnUseCustomColourUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_cbUseCustomBaseColour->IsChecked());
+}
+void SyntaxHighlightDlg::OnCustomBaseColourPIcked(wxColourPickerEvent& event)
+{
+    m_isModified = true;
+    event.Skip();
+}
+
+void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
+{
+    m_isModified = true;
+    event.Skip();
 }

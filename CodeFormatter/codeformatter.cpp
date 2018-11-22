@@ -127,6 +127,7 @@ void CodeFormatter::CreateToolBar(clToolBar* toolbar)
     int size = m_mgr->GetToolbarIconSize();
 
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    toolbar->AddSpacer();
     toolbar->AddTool(XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size),
                      _("Format Source Code"));
     toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
@@ -684,7 +685,7 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
             filesToFormat.push_back(vt.second->GetFilename());
         }
     });
-    BatchFormat(filesToFormat);
+    BatchFormat(filesToFormat, false);
 }
 
 void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files, bool silent)

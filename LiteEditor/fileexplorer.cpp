@@ -52,7 +52,6 @@ FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
 {
     CreateGUIControls();
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_view->GetTreeCtrl()));
 
     m_themeHelper = new ThemeHandlerHelper(this);
     SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -61,7 +60,6 @@ FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
 
 FileExplorer::~FileExplorer()
 {
-    m_keyboardHelper.reset(NULL);
     wxDELETE(m_themeHelper);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileExplorer::OnFolderDropped, this);
 }
@@ -74,8 +72,7 @@ void FileExplorer::CreateGUIControls()
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     clToolBarButton* button =
         new clToolBarButton(m_view->GetToolBar(), wxID_OPEN, bmpLoader->LoadBitmap("folder"), _("Open folder"));
-    m_view->GetToolBar()->InsertBefore(XRCID("link_editor"), button);
-
+    m_view->GetToolBar()->Add(button);
     m_view->GetToolBar()->Realize();
     m_view->GetToolBar()->Bind(wxEVT_TOOL, &FileExplorer::OnOpenFolder, this, wxID_OPEN);
     // For the file explorer we use the standard configuration tool

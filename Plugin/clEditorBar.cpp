@@ -6,6 +6,7 @@
 #include "clTabRenderer.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
+#include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -46,7 +47,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp"));
     CreateBookmarksBitmap();
-    
+
     Bind(wxEVT_LEFT_UP, &clEditorBar::OnLeftUp, this);
     Bind(wxEVT_IDLE, &clEditorBar::OnIdle, this);
 
@@ -73,11 +74,7 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
-#ifdef __WXGTK3__
-    wxDC& gcdc = bdc;
-#else
     wxGCDC gcdc(bdc);
-#endif
 
     PrepareDC(gcdc);
 

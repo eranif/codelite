@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=12.0.9
+AppVersion=12.0.11
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-php-amd64-12.0.9
+OutputBaseFilename=codelite-php-amd64-12.0.11
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -108,7 +108,6 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\snipwiz.dll"; DestDir: "{app}\plugins"
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Subversion2.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\ZoomNavigator.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SFTP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime\plugins\Tweaks.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\WordCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SpellCheck.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 

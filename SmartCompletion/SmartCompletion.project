@@ -55,7 +55,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/SmartCompletion.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/SmartCompletion-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./DebugUnicode" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -67,7 +67,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\SmartCompletion.dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\SmartCompletion-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -104,7 +104,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -160,7 +160,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

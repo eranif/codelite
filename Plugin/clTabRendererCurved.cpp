@@ -1,5 +1,4 @@
 #include "clTabRendererCurved.h"
-#if !USE_AUI_NOTEBOOK
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
@@ -23,12 +22,12 @@ clTabRendererCurved::clTabRendererCurved()
 clTabRendererCurved::~clTabRendererCurved() {}
 
 void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
-                               const clTabColours& colours, size_t style)
+                               const clTabColours& colours, size_t style, eButtonState buttonState)
 {
     const int TOP_SMALL_HEIGHT = 0;
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxFont font = GetTabFont();
+    wxFont font = GetTabFont(tabInfo.IsActive());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 
@@ -139,9 +138,7 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     }
     fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        DrawButton(dc, wxRect(tabInfo.m_bmpCloseX + tabInfo.m_rect.GetX(), tabInfo.m_bmpCloseY, CLOSE_BUTTON_SIZE,
-                              CLOSE_BUTTON_SIZE),
-                   colours, eButtonState::kNormal);
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
 }
 
@@ -166,4 +163,3 @@ void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t acti
 
     ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }
-#endif

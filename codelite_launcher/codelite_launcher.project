@@ -73,7 +73,7 @@
       <Compiler Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;-s" Required="yes"/>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_launcher" IntermediateDirectory="./Release" Command="./codelite_launcher" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
@@ -113,7 +113,7 @@
       <Compiler Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;-s" Required="yes"/>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_launcher" IntermediateDirectory="$(ConfigurationName)" Command="./codelite_launcher" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

@@ -4,30 +4,40 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
-#define CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
+#ifndef _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
+#define _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include "clTerminalSTC.h"
+#include <wx/artprov.h>
+#include <wx/button.h>
+#include <wx/clrpicker.h>
+#include <wx/dialog.h>
+#include <wx/fontpicker.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/panel.h>
-#include <wx/stc/stc.h>
 #include <wx/menu.h>
-#include <wx/timer.h>
-#include <wx/dialog.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/clrpicker.h>
-#include <wx/fontpicker.h>
-#include <wx/button.h>
+#include <wx/stc/stc.h>
+#include <wx/timer.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
+#endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
 #endif
 
 class MainFrameBaseClass : public wxFrame
@@ -35,13 +45,14 @@ class MainFrameBaseClass : public wxFrame
 public:
     enum {
         ID_SIGHUP = 1001,
-        ID_SIGINT = 1002,
-        ID_SIGKILL = 1003,
-        ID_SIGTERM = 1004,
+        ID_SIGKILL = 1002,
+        ID_SIGTERM = 1003,
+        ID_SIGINT = 1004,
     };
+
 protected:
     wxPanel* m_mainPanel;
-    wxStyledTextCtrl* m_stc;
+    clTerminalSTC* m_stc;
     wxMenuBar* m_menuBar;
     wxMenu* m_File;
     wxMenuItem* m_menuItemSave;
@@ -62,7 +73,6 @@ protected:
 protected:
     virtual void OnIdle(wxIdleEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnStcUpdateUI(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnClearView(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
@@ -71,14 +81,15 @@ protected:
     virtual void OnAddMarker(wxTimerEvent& event) { event.Skip(); }
 
 public:
-    wxStyledTextCtrl* GetStc() { return m_stc; }
+    clTerminalSTC* GetStc() { return m_stc; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
     wxTimer* GetTimerMarker() { return m_timerMarker; }
-    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
+    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrameBaseClass();
 };
-
 
 class SettingsDlgBase : public wxDialog
 {
@@ -106,7 +117,9 @@ public:
     wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
     wxButton* GetButton45() { return m_button45; }
     wxButton* GetButton47() { return m_button47; }
-    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"),
+                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SettingsDlgBase();
 };
 

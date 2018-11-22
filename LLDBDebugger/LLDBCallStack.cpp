@@ -40,9 +40,6 @@ LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBPlugin& plugin)
 {
     m_connector->Bind(wxEVT_LLDB_STOPPED, &LLDBCallStackPane::OnBacktrace, this);
     m_connector->Bind(wxEVT_LLDB_RUNNING, &LLDBCallStackPane::OnRunning, this);
-
-    m_model.reset(new CallstackModel(this, m_dvListCtrlBacktrace));
-    m_dvListCtrlBacktrace->AssociateModel(m_model.get());
 }
 
 LLDBCallStackPane::~LLDBCallStackPane()
@@ -57,41 +54,27 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
 
     SetSelectedFrame(0); // Clear the selected frame
     wxWindowUpdateLocker locker(m_dvListCtrlBacktrace);
-    const size_t initialNumberOfItems = m_dvListCtrlBacktrace->GetItemCount();
+    m_dvListCtrlBacktrace->DeleteAllItems();
     const LLDBBacktrace& bt = event.GetBacktrace();
     SetSelectedFrame(bt.GetSelectedFrameId());
 
     const LLDBBacktrace::EntryVec_t& entries = bt.GetCallstack();
+    wxDataViewItem selectedItem;
     for(size_t i = 0; i < entries.size(); ++i) {
         const LLDBBacktrace::Entry& entry = entries.at(i);
-
         wxVector<wxVariant> cols;
-        cols.push_back(wxString::Format("%d", entry.id));
+        cols.push_back(wxString() << entry.id);
         cols.push_back(entry.functionName);
         cols.push_back(m_plugin.GetFilenameForDisplay(entry.filename));
-        cols.push_back(wxString::Format("%d", (int)(entry.line + 1)));
-
-        if(i < initialNumberOfItems) {
-            // Update existing entry in place. Makes browsing a callstack nicer as the display
-            // won't shift each time a frame is selected.
-            for(unsigned int j = 0; j < cols.size(); ++j) {
-                m_dvListCtrlBacktrace->SetTextValue(cols[j], static_cast<unsigned int>(i), j);
-            }
-        }
-        else {
-            m_dvListCtrlBacktrace->AppendItem(cols);
-        }
+        cols.push_back(wxString() << (int)(entry.line + 1));
+        m_dvListCtrlBacktrace->AppendItem(cols);
+        wxDataViewItem item = m_dvListCtrlBacktrace->RowToItem(i);
+        if(bt.GetSelectedFrameId() == entry.id) { selectedItem = item; }
     }
 
-    while(m_dvListCtrlBacktrace->GetItemCount() > (int)entries.size()) {
-        m_dvListCtrlBacktrace->DeleteItem(m_dvListCtrlBacktrace->GetItemCount() - 1);
-    }
-
-    if(!entries.empty() && (m_dvListCtrlBacktrace->GetItemCount() > GetSelectedFrame())) {
-        const auto item = m_dvListCtrlBacktrace->RowToItem(GetSelectedFrame());
-        if(item.IsOk()) {
-            m_dvListCtrlBacktrace->EnsureVisible(item);
-        }
+    if(selectedItem.IsOk()) {
+        m_dvListCtrlBacktrace->Select(selectedItem);
+        m_dvListCtrlBacktrace->EnsureVisible(selectedItem);
     }
 }
 
@@ -140,13 +123,11 @@ void LLDBCallStackPane::DoCopyBacktraceToClipboard()
     wxString callstack;
     for(int i = 0; i < m_dvListCtrlBacktrace->GetItemCount(); ++i) {
         wxString line;
-        for(size_t col = 0; col < 4; ++col) {
-            wxVariant value;
-            m_dvListCtrlBacktrace->GetValue(value, i, col);
-            line << value.GetString() << " ";
+        for(size_t col = 0; col < m_dvListCtrlBacktrace->GetHeader()->size(); ++col) {
+            line << m_dvListCtrlBacktrace->GetItemText(m_dvListCtrlBacktrace->RowToItem(i), col) << " ";
         }
         callstack << line << "\n";
     }
-    CL_DEBUG("LLDB: Copying stack to clipboard");
+    clDEBUG() << "LLDB: Copying stack to clipboard";
     ::CopyToClipboard(callstack);
 }

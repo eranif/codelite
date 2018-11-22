@@ -26,7 +26,6 @@
 #ifndef SYMBOLVIEWTABPANEL_H
 #define SYMBOLVIEWTABPANEL_H
 
-#include "clTreeKeyboardInput.h"
 #include "cl_command_event.h"
 #include "theme_handler_helper.h"
 #include "wxcrafter.h"
@@ -42,8 +41,6 @@ protected:
     svSymbolTree* m_tree;
     ThemeHandlerHelper* m_themeHelper;
     wxFileName m_phpFile;
-    clTreeKeyboardInput::Ptr_t m_phpKeyboardHelper;
-    clTreeKeyboardInput::Ptr_t m_cxxKeyboardHelper;
     bool m_sortCxxTreeAlphabetically;
     clToolBar* m_toolbar;
 

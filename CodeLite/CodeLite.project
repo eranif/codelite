@@ -44,6 +44,26 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="Console">
+    <File Name="clConsoleXfce4Terminal.cpp"/>
+    <File Name="clConsoleXfce4Terminal.h"/>
+    <File Name="clConsoleMateTerminal.cpp"/>
+    <File Name="clConsoleMateTerminal.h"/>
+    <File Name="clConsoleLXTerminal.cpp"/>
+    <File Name="clConsoleLXTerminal.h"/>
+    <File Name="clConsoleBash.cpp"/>
+    <File Name="clConsoleBash.h"/>
+    <File Name="clConsoleOSXTerminal.cpp"/>
+    <File Name="clConsoleOSXTerminal.h"/>
+    <File Name="clConsoleCMD.cpp"/>
+    <File Name="clConsoleCMD.h"/>
+    <File Name="clConsoleKonsole.cpp"/>
+    <File Name="clConsoleKonsole.h"/>
+    <File Name="clConsoleGnomeTerminal.cpp"/>
+    <File Name="clConsoleGnomeTerminal.h"/>
+    <File Name="clConsoleBase.cpp"/>
+    <File Name="clConsoleBase.h"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="Network">
     <File Name="clNetworkMessage.h"/>
     <File Name="clNetworkMessage.cpp"/>
@@ -58,7 +78,6 @@
     <File Name="worker_thread.cpp"/>
     <File Name="tokenizer.cpp"/>
     <File Name="tag_tree.cpp"/>
-    <File Name="symbol_tree.cpp"/>
     <File Name="readtags.cpp"/>
     <File Name="progress_dialog.cpp"/>
     <File Name="procutils.cpp"/>
@@ -133,7 +152,6 @@
     <File Name="readtags.h"/>
     <File Name="singleton.h"/>
     <File Name="smart_ptr.h"/>
-    <File Name="symbol_tree.h"/>
     <File Name="tag_tree.h"/>
     <File Name="tokenizer.h"/>
     <File Name="tree.h"/>
@@ -325,6 +343,8 @@
     <File Name="clSFTPEvent.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SocketAPI">
+    <File Name="SocketAPI/clWebSocketClient.cpp"/>
+    <File Name="SocketAPI/clWebSocketClient.h"/>
     <File Name="SocketAPI/clSocketBase.cpp"/>
     <File Name="SocketAPI/clSocketBase.h"/>
     <File Name="SocketAPI/clSocketClient.cpp"/>
@@ -478,6 +498,8 @@
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="../sdk/asio-1.12.1"/>
+        <IncludePath Value="../sdk/websocketpp"/>
         <Preprocessor Value="USE_SFTP=1"/>
         <Preprocessor Value="wxUSE_GUI=1"/>
       </Compiler>
@@ -486,6 +508,7 @@
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libssh64"/>
+        <Library Value="Ws2_32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../lib/gcc_lib/libcodeliteud.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="--no-plugins" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -522,8 +545,7 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
-</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -540,13 +562,16 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="../sdk/websocketpp"/>
+        <IncludePath Value="../sdk/asio-1.12.1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libssh64"/>
+        <Library Value="ws2_32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -584,7 +609,8 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -603,7 +629,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <LibraryPath Value="../sdk/libssh/lib"/>
         <Library Value="libwxsqlite3u.dll"/>

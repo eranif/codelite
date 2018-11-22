@@ -77,10 +77,8 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
     : DbgPageStartupCmdsBase(parent)
     , m_title(title)
 {
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text", "Default");
-    if(lexer) {
-        lexer->Apply(m_textCtrlStartupCommands);
-    }
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_textCtrlStartupCommands); }
 
     DebuggerInformation info;
     if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
@@ -130,16 +128,12 @@ void DebuggerPage::OnBrowse(wxCommandEvent& e)
         newfilepath = wxFileSelector(wxT("Select file:"));
     }
 
-    if(!newfilepath.IsEmpty()) {
-        m_textCtrDbgPath->SetValue(newfilepath);
-    }
+    if(!newfilepath.IsEmpty()) { m_textCtrDbgPath->SetValue(newfilepath); }
 }
 
 void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
 {
-    if(e.IsChecked()) {
-        m_checkBoxEnablePendingBreakpoints->SetValue(true);
-    }
+    if(e.IsChecked()) { m_checkBoxEnablePendingBreakpoints->SetValue(true); }
 }
 
 void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
@@ -279,7 +273,7 @@ void DebuggerSettingsDlg::Initialize()
     m_notebook->AddPage(p, wxT("GNU gdb debugger"), true);
     m_pages.push_back(p);
 
-    wxNotebook* innerBook = p->GetNotebook73();
+    Notebook* innerBook = p->GetNotebook73();
     DebuggerPageMisc* misc = new DebuggerPageMisc(innerBook, "GNU gdb debugger");
     innerBook->AddPage(misc, wxT("Misc"), false);
     m_pages.push_back(misc);
@@ -366,9 +360,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
         }
 
         DbgPagePreDefTypes* pd = dynamic_cast<DbgPagePreDefTypes*>(win);
-        if(pd) {
-            pd->Save();
-        }
+        if(pd) { pd->Save(); }
     }
 
     EndModal(wxID_OK);

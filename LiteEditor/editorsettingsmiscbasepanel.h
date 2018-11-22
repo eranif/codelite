@@ -14,8 +14,8 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/notebook.h>
+#include "Notebook.h"
 #include <wx/imaglist.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -39,23 +39,20 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class EditorSettingsMiscBasePanel : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook2;
+    Notebook* m_notebook2;
     wxPanel* m_panel1;
-    wxStaticText* m_staticText7;
-    wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText8;
     wxChoice* m_toolbarIconSize;
-    wxCheckBox* m_showSplashScreen;
     wxCheckBox* m_singleAppInstance;
     wxCheckBox* m_versionCheckOnStartup;
     wxCheckBox* m_checkBoxPromptReleaseOnly;
     wxCheckBox* m_checkBoxRestoreSession;
     wxStaticText* m_staticText79;
     wxTextCtrl* m_webSearchPrefix;
+    wxCheckBox* m_checkBoxDirect2D;
     wxPanel* m_panel23;
     wxBannerWindow* m_banner27;
     wxStaticText* m_staticText31;
@@ -76,6 +73,10 @@ protected:
     wxCheckBox* m_statusbarShowPos;
     wxCheckBox* m_statusbarShowFileLength;
     wxCheckBox* m_statusBarShowSelChars;
+    wxPanel* m_panelTBar;
+    wxStaticText* m_staticText94;
+    wxTextCtrl* m_textCtrlSeparation;
+    wxStaticText* m_staticText97;
     wxPanel* m_panel2;
     wxStaticText* m_staticText1;
     wxChoice* m_fileEncoding;
@@ -99,6 +100,7 @@ protected:
 
 protected:
     virtual void OnPromptStableReleaseUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUseDirect2DUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChkUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleStaticUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void LocaleChoiceUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -110,17 +112,15 @@ protected:
     virtual void OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText7() { return m_staticText7; }
-    wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
     wxStaticText* GetStaticText8() { return m_staticText8; }
     wxChoice* GetToolbarIconSize() { return m_toolbarIconSize; }
-    wxCheckBox* GetShowSplashScreen() { return m_showSplashScreen; }
     wxCheckBox* GetSingleAppInstance() { return m_singleAppInstance; }
     wxCheckBox* GetVersionCheckOnStartup() { return m_versionCheckOnStartup; }
     wxCheckBox* GetCheckBoxPromptReleaseOnly() { return m_checkBoxPromptReleaseOnly; }
     wxCheckBox* GetCheckBoxRestoreSession() { return m_checkBoxRestoreSession; }
     wxStaticText* GetStaticText79() { return m_staticText79; }
     wxTextCtrl* GetWebSearchPrefix() { return m_webSearchPrefix; }
+    wxCheckBox* GetCheckBoxDirect2D() { return m_checkBoxDirect2D; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxBannerWindow* GetBanner27() { return m_banner27; }
     wxStaticText* GetStaticText31() { return m_staticText31; }
@@ -142,6 +142,10 @@ public:
     wxCheckBox* GetStatusbarShowFileLength() { return m_statusbarShowFileLength; }
     wxCheckBox* GetStatusBarShowSelChars() { return m_statusBarShowSelChars; }
     wxPanel* GetPanel44() { return m_panel44; }
+    wxStaticText* GetStaticText94() { return m_staticText94; }
+    wxTextCtrl* GetTextCtrlSeparation() { return m_textCtrlSeparation; }
+    wxStaticText* GetStaticText97() { return m_staticText97; }
+    wxPanel* GetPanelTBar() { return m_panelTBar; }
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxChoice* GetFileEncoding() { return m_fileEncoding; }
     wxCheckBox* GetSetLocale() { return m_SetLocale; }
@@ -162,8 +166,9 @@ public:
     wxButton* GetButtonOpenLog() { return m_buttonOpenLog; }
     wxCheckBox* GetRedirectLogOutput() { return m_redirectLogOutput; }
     wxPanel* GetPanel4() { return m_panel4; }
-    wxNotebook* GetNotebook2() { return m_notebook2; }
-    EditorSettingsMiscBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    Notebook* GetNotebook2() { return m_notebook2; }
+    EditorSettingsMiscBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                                const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsMiscBasePanel();
 };
 

@@ -37,6 +37,7 @@
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include <algorithm>
+#include <wx/utils.h>
 
 BEGIN_EVENT_TABLE(LocalsTable, DebuggerTreeListCtrlBase)
 EVT_MENU(XRCID("Change_Value"), LocalsTable::OnEditValue)
@@ -48,11 +49,16 @@ LocalsTable::LocalsTable(wxWindow* parent)
     , m_arrayAsCharPtr(false)
     , m_sortAsc(true)
 {
-    m_listTable->AddColumn(_("Name"), 150);
-    m_listTable->AddColumn(_("Value"), 500);
-    m_listTable->AddColumn(_("Type"), 200);
     m_listTable->AddRoot(_("Locals"));
-
+    m_listTable->AddHeader(_("Name"));
+    m_listTable->AddHeader(_("Value"));
+    m_listTable->AddHeader(_("Type"));
+    // Should a be placed before b?
+    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
+        return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
+    };
+    m_listTable->SetSortFunction(func);
+    
     m_DBG_USERR = DBG_USERR_LOCALS;
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
     m_LIST_CHILDS = LIST_LOCALS_CHILDS;
@@ -100,7 +106,7 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEventData& event)
             data->_kind = DbgTreeItemData::VariableObject;
 
             // variable object's type name is extracted from the event.m_variableObject.typeName
-            m_listTable->SetItemText(iter->second, 2, event.m_variableObject.typeName);
+            m_listTable->SetItemText(iter->second, event.m_variableObject.typeName, 2);
 
             // refresh this item only
             IDebugger* dbgr = DoGetDebugger();
@@ -144,7 +150,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
                     data->_isFake = ch.isAFake;
 
                     wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
-                    m_listTable->SetItemText(child, 2, ch.type);
+                    m_listTable->SetItemText(child, ch.type, 2);
 
                     // Add a dummy node
                     if(child.IsOk() && ch.numChilds > 0) {
@@ -185,6 +191,7 @@ void LocalsTable::OnVariableObjUpdate(const DebuggerEventData& event)
 
 void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 {
+    wxBusyCursor bc;
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_listTable->GetFirstChild(event.GetItem(), cookie);
 
@@ -280,8 +287,6 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
     wxTreeItemId root = m_listTable->GetRootItem();
     if(!root.IsOk()) return;
 
-    wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
-
     IDebugger* dbgr = DoGetDebugger();
     wxArrayString itemsNotRemoved;
     // remove the non-variable objects and return a list
@@ -333,7 +338,6 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
                 DbgTreeItemData* data = new DbgTreeItemData();
                 data->_kind = DbgTreeItemData::VariableObject;
                 wxTreeItemId item = m_listTable->AppendItem(root, newVarName, -1, -1, data);
-                // m_listTable->SetItemBackgroundColour(item, rootItemColour);
 
                 m_listTable->AppendItem(item, wxT("<dummy>"));
                 m_listTable->Collapse(item);
@@ -351,12 +355,12 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
                 wxTreeItemId item = m_listTable->AppendItem(root, locals[i].name, -1, -1, new DbgTreeItemData());
                 // m_listTable->SetItemTextColour(item, DrawingUtils::GetMenuTextColour());
 
-                m_listTable->SetItemText(item, 1, locals[i].value);
-                m_listTable->SetItemText(item, 2, locals[i].type);
+                m_listTable->SetItemText(item, locals[i].value, 1);
+                m_listTable->SetItemText(item, locals[i].type, 2);
 
                 std::map<wxString, wxString>::iterator iter = oldValues.find(locals[i].name);
                 if(iter != oldValues.end() && iter->second != locals[i].value) {
-                    m_listTable->SetItemTextColour(item, *wxRED);
+                    m_listTable->SetItemTextColour(item, *wxRED, 1);
                 }
 
                 m_listTable->AppendItem(item, wxT("<dummy>"));
@@ -439,8 +443,6 @@ void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
     wxTreeItemId root = m_listTable->GetRootItem();
     if(!root.IsOk()) return;
 
-    wxColour rootItemColour = DrawingUtils::LightColour(wxT("LIGHT GRAY"), 3.0);
-
     wxArrayString itemsNotRemoved;
     // remove the non-variable objects and return a list
     // of all the variable objects (at the top level)
@@ -455,11 +457,10 @@ void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
     data->_retValueGdbValue = retValueGdbId;
 
     item = m_listTable->AppendItem(root, wxT("Function Returned"), -1, -1, data);
-    m_listTable->SetItemBackgroundColour(item, rootItemColour);
-
-    m_listTable->SetItemText(item, 1, retValueGdbId);
-    m_listTable->SetItemText(item, 2, wxT(""));
-    m_listTable->SetItemTextColour(item, *wxRED);
+    
+    m_listTable->SetItemText(item, retValueGdbId, 1);
+    m_listTable->SetItemText(item, wxT(""), 2);
+    m_listTable->SetItemTextColour(item, *wxRED, 1);
 
     m_listTable->AppendItem(item, wxT("<dummy>"));
     m_listTable->Collapse(item);

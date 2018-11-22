@@ -50,10 +50,8 @@ void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 {
     if(!event.GetItem().IsOk()) return;
 
-    wxVariant v;
     long threadId;
-    m_dvListCtrl->GetValue(v, m_dvListCtrl->ItemToRow(event.GetItem()), 0);
-    wxString str_id = v.GetString();
+    wxString str_id = m_dvListCtrl->GetItemText(event.GetItem(), 0);    
     if(str_id.ToCLong(&threadId)) {
         Manager* mgr = ManagerST::Get();
         mgr->DbgSetThread(threadId);
@@ -99,9 +97,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         }
 
     } else {
-        wxWindowUpdateLocker locker(m_dvListCtrl);
         Clear();
-
         // Replace the thread list
         m_threads.clear();
         m_threads.insert(m_threads.end(), threads.begin(), threads.end());
@@ -129,11 +125,11 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
             cols.push_back(entry.line);
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new ThreadListClientData(entry));
         }
-
+        m_dvListCtrl->Update();
         // Ensure that the active thread is visible
         if(sel != wxNOT_FOUND) {
             wxDataViewItem item = m_dvListCtrl->RowToItem(sel);
-            m_dvListCtrl->EnsureVisible(item, 0);
+            m_dvListCtrl->EnsureVisible(item);
         }
     }
 }

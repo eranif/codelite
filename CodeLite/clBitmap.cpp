@@ -23,7 +23,7 @@ clBitmap::~clBitmap() {}
 bool clBitmap::LoadFile(const wxString& name, wxBitmapType type)
 {
     wxFileName filename(name);
-#ifndef __WXOSX__
+#if !defined(__WXOSX__)
     double scale = 1.0;
     if(ShouldLoadHiResImages()) {
         wxFileName hiResFileName = filename;

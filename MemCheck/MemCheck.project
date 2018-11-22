@@ -190,7 +190,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib"/>
         <Library Value="libpluginu.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -251,7 +251,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/MemCheck.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ConfigurationName)/MemCheck-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -262,7 +262,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\MemCheck.dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\MemCheck-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -300,7 +300,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -356,7 +356,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

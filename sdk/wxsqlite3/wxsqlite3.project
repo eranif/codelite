@@ -86,7 +86,7 @@
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
@@ -222,7 +222,7 @@
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>

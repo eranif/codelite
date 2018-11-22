@@ -1,24 +1,25 @@
-#include "wxCodeCompletionBox.h"
-#include <wx/dcmemory.h>
-#include <wx/dcbuffer.h>
-#include <wx/stc/stc.h>
-#include "imanager.h"
-#include "globals.h"
+#include "CxxTemplateFunction.h"
 #include "bitmap_loader.h"
-#include "wxCodeCompletionBoxManager.h"
-#include "codelite_events.h"
-#include "cl_command_event.h"
-#include "event_notifier.h"
 #include "cc_box_tip_window.h"
-#include "file_logger.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 #include "drawingutils.h"
-#include <wx/font.h>
-#include "macros.h"
-#include <wx/stc/stc.h>
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "CxxTemplateFunction.h"
+#include "macros.h"
+#include "wxCodeCompletionBox.h"
+#include "wxCodeCompletionBoxManager.h"
 #include <wx/app.h>
+#include <wx/dcbuffer.h>
+#include <wx/dcmemory.h>
+#include <wx/font.h>
+#include <wx/stc/stc.h>
+#include <wx/dcgraph.h>
+#include "ieditor.h"
+#include "imanager.h"
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -38,29 +39,15 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_ccFont = DrawingUtils::GetDefaultFixedFont();
-    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - 1);
-    SetCursor(wxCURSOR_HAND);
-
-    // Update the BOX_WIDTH to contains at least 30 chars
-    static int once = false;
-    if(!once) {
-        once = true;
-        wxMemoryDC memDC;
-        wxBitmap bmp(1, 1);
-        memDC.SelectObject(bmp);
-        memDC.SetFont(m_ccFont);
-        wxString sampleString('X', 50);
-        wxSize sz = memDC.GetTextExtent(sampleString);
-        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    // Use the active editor's font (if any)
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        m_ccFont = editor->GetCtrl()->StyleGetFont(0);
+    } else {
+        // Default
+        m_ccFont = DrawingUtils::GetDefaultFixedFont();
     }
-
-    // Calculate the size of the box
-    int singleLineHeight = GetSingleLineHeight();
-    int boxHeight = singleLineHeight * LINES_PER_PAGE;
-    int boxWidth = BOX_WIDTH; // 100 pixels
-    wxSize boxSize = wxSize(boxWidth, boxHeight);
-    wxRect rect(boxSize);
+    SetCursor(wxCURSOR_HAND);
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
@@ -85,6 +72,28 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
 
     InitializeDefaultBitmaps();
+    
+    // Set the control width
+    {
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        wxGCDC gcdc(memDC);
+        gcdc.SetFont(m_ccFont);
+        wxString sampleString('X', 50);
+        wxSize sz = gcdc.GetTextExtent(sampleString);
+        BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
+    }
+    
+    m_lineHeight = GetSingleLineHeight();
+    int bitmapHeight = m_bitmaps[0].GetScaledHeight();
+    if(bitmapHeight > m_lineHeight) { m_lineHeight = bitmapHeight; }
+
+    // Calculate the size of the box
+    int boxHeight = m_lineHeight * LINES_PER_PAGE;
+    int boxWidth = BOX_WIDTH; // 100 pixels
+    wxSize boxSize = wxSize(boxWidth, boxHeight);
+    wxRect rect(boxSize);
 
     // Increase the size by 2 pixel for each dimension
     rect.Inflate(2, 2);
@@ -94,31 +103,22 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_canvas->Bind(wxEVT_LEFT_DCLICK, &wxCodeCompletionBox::OnLeftDClick, this);
     m_canvas->Bind(wxEVT_MOUSEWHEEL, &wxCodeCompletionBox::OnMouseScroll, this);
 
-    // Default colorus (dark theme)
-    clColourPalette palette = DrawingUtils::GetColourPalette();
-
-    // Default colours
-    wxColour baseColour = DrawingUtils::GetPanelBgColour();
-    m_bgColour = palette.bgColour;
-    m_penColour = palette.penColour;
-    m_separatorColour = m_bgColour.ChangeLightness(98);
-    m_textColour = palette.textColour;
-    m_selectedTextColour = palette.selecteTextColour;
-    m_selectedTextBgColour = palette.selectionBgColour;
+    // Default colorus
+    clColours colours = DrawingUtils::GetColours();
     m_useLightColours = true;
-
-    IManager* manager = ::clGetManager();
-    if(manager) {
-        IEditor* editor = manager->GetActiveEditor();
-        if(editor) {
-            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(DrawingUtils::IsDark(bgColour)) {
-                // Dark colour
-                m_separatorColour = m_bgColour.ChangeLightness(102);
-                m_useLightColours = false;
-            }
-        }
+    if(editor) {
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+        colours.InitFromColour(bgColour);
+        m_useLightColours = !DrawingUtils::IsDark(bgColour);
     }
+    // Default colours
+    m_bgColour = colours.GetBgColour();
+    m_penColour = colours.GetBorderColour();
+    m_separatorColour = m_bgColour.ChangeLightness(98);
+    m_textColour = colours.GetItemTextColour();
+    m_selectedTextColour = colours.GetSelItemTextColour();
+    m_selectedTextBgColour = colours.GetSelItemBgColour();
+    m_alternateRowColour = colours.GetAlternateColour();
 
     m_bmpDown = wxXmlResource::Get()->LoadBitmap("cc-box-down");
     m_bmpDownEnabled = m_bmpDown.ConvertToDisabled();
@@ -157,7 +157,8 @@ void wxCodeCompletionBox::OnEraseBackground(wxEraseEvent& event) { wxUnusedVar(e
 void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 {
     // Paint the background colour
-    wxAutoBufferedPaintDC dc(m_canvas);
+    wxAutoBufferedPaintDC bdc(m_canvas);
+    wxGCDC dc(bdc);
 
     // Invalidate all item rects before we draw them
     for(size_t i = 0; i < m_entries.size(); ++i) {
@@ -169,7 +170,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
                           rect.GetHeight());
 
     dc.SetFont(m_ccFont);
-    int singleLineHeight = GetSingleLineHeight();
+    int singleLineHeight = m_lineHeight;
 
     m_canvas->PrepareDC(dc);
     // Draw the entire box with single solid colour
@@ -192,9 +193,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     rect.SetWidth(rect.GetWidth() - SCROLLBAR_WIDTH);
     int firstIndex = m_index;
     int lastIndex = m_index + LINES_PER_PAGE;
-    if(lastIndex > (int)m_entries.size()) {
-        lastIndex = m_entries.size();
-    }
+    if(lastIndex > (int)m_entries.size()) { lastIndex = m_entries.size(); }
 
     // if the number of items to display is less from the number of lines
     // on the box, try prepending items from the top
@@ -204,14 +203,22 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
 
     // Paint the entries, starting from m_index => m_index + 7
     wxCoord y = 1; // Initial coord for drawing the first line
-    wxCoord textX = m_bitmaps.empty() ? 2 : clGetScaledSize(20);
+    wxCoord textX = m_bitmaps.empty() ? clGetScaledSize(2) : (m_bitmaps.at(0).GetScaledWidth() + clGetScaledSize(4));
     wxCoord bmpX = clGetScaledSize(2);
 
     // Draw all items from firstIndex => lastIndex
+    size_t rowCounter = 0;
     for(int i = firstIndex; i < lastIndex; ++i) {
         bool isSelected = (i == m_index);
         bool isLast = ((firstIndex + 1) == lastIndex);
         wxRect itemRect(0, y, rect.GetWidth(), singleLineHeight);
+
+        // We colour lines in an alternate colours
+        dc.SetBrush((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
+        dc.SetPen((rowCounter % 2) == 0 ? m_bgColour : m_alternateRowColour);
+        dc.DrawRectangle(itemRect);
+        ++rowCounter;
+
         if(isSelected) {
             // highlight the selection
             dc.SetBrush(m_selectedTextBgColour);
@@ -250,9 +257,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
         dc.DestroyClippingRegion();
         y += singleLineHeight;
         dc.SetPen(m_separatorColour);
-        if(!isLast) {
-            dc.DrawLine(2, y, itemRect.GetWidth() + 2, y);
-        }
+        if(!isLast) { dc.DrawLine(2, y, itemRect.GetWidth() + 2, y); }
         entry->m_itemRect = itemRect;
     }
 
@@ -266,6 +271,11 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     dc.DrawRectangle(scrollRect);
     DoDrawBottomScrollButton(dc);
     DoDrawTopScrollButton(dc);
+
+    // Redraw the box border
+    dc.SetPen(m_penColour);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle(GetClientRect());
 }
 
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries)
@@ -275,9 +285,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_allEntries = entries;
 
     // Keep the start position
-    if(m_startPos == wxNOT_FOUND) {
-        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
-    }
+    if(m_startPos == wxNOT_FOUND) { m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true); }
 
     // Fire "Showing" event
     if(!(m_flags & kNoShowingEvent)) {
@@ -430,13 +438,11 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
 {
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
-    memDC.SetFont(m_ccFont);
-    m_canvas->PrepareDC(memDC);
-    wxSize size = memDC.GetTextExtent("Tp");
+    wxGCDC gcdc(memDC);
+    gcdc.SetFont(m_ccFont);
+    m_canvas->PrepareDC(gcdc);
+    wxSize size = gcdc.GetTextExtent("Tp");
     int singleLineHeight = size.y + (2 * Y_SPACER) + clGetScaledSize(2); // the extra pixel is for the border line
-    if(singleLineHeight < clGetScaledSize(16)) {
-        singleLineHeight = clGetScaledSize(16) + clGetScaledSize(2); // at least 16 pixels for image
-    }
     return singleLineHeight;
 }
 
@@ -697,7 +703,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
 
     int lineHeight = textSize.y + 3; // 3 pixels margins
     wxRect rect = GetRect();
-    wxSize screenSize = ::wxGetDisplaySize();
+    wxSize screenSize = ::clGetDisplaySize();
 
     // determine the box x position
     int wordStart = m_startPos;
@@ -775,9 +781,7 @@ void wxCodeCompletionBox::OnMouseScroll(wxMouseEvent& event) { DoMouseScroll(eve
 void wxCodeCompletionBox::DoPgUp()
 {
     int newindex = m_index - (LINES_PER_PAGE - 1);
-    if(newindex < 0) {
-        newindex = 0;
-    }
+    if(newindex < 0) { newindex = 0; }
     // only refresh if there was an actual change
     if(m_index != newindex) {
         m_index = newindex;
@@ -789,9 +793,7 @@ void wxCodeCompletionBox::DoPgUp()
 void wxCodeCompletionBox::DoPgDown()
 {
     int newindex = m_index + (LINES_PER_PAGE - 1);
-    if(newindex >= (int)m_entries.size()) {
-        newindex = (int)m_entries.size() - 1;
-    }
+    if(newindex >= (int)m_entries.size()) { newindex = (int)m_entries.size() - 1; }
     // only refresh if there was an actual change
     if(m_index != newindex) {
         m_index = newindex;

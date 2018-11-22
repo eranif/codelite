@@ -25,13 +25,13 @@
 #ifndef CONTEXT_CPP_H
 #define CONTEXT_CPP_H
 
+#include "cl_command_event.h"
 #include "context_base.h"
 #include "cpptoken.h"
 #include "ctags_manager.h"
-#include <map>
 #include "entry.h"
-#include "cl_command_event.h"
 #include "macros.h"
+#include <map>
 
 class RefactorSource;
 
@@ -155,7 +155,7 @@ private:
     bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
 
 public:
-    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix);
+    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix);
 
 private:
     /**

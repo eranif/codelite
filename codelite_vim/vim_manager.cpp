@@ -51,7 +51,7 @@ void VimManager::OnEditorChanged(wxCommandEvent& event)
     m_currentCommand.set_ctrl(m_ctrl); // Always keep the current editor. Even when disabled. Otherwise, when opening an
                                        // editor and *then* enabling the VIM plugin, it may lead to crashes
     if(!m_settings.IsEnabled()) return;
-    IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
+    IEditor* editor = clGetManager()->GetActiveEditor();
     SaveOldEditorState();
 
     DoBindEditor(editor);

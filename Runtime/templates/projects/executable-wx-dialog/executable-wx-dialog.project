@@ -33,7 +33,7 @@
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options="-mwindows;-s;$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes"/>
+      <Linker Options="-mwindows;;$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">

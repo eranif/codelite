@@ -9,17 +9,17 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 
-class wxDataViewListCtrl;
+class clThemedListCtrl;
 class WXDLLIMPEXP_SDK clTableWithPagination : public wxPanel
 {
     int m_linesPerPage;
     int m_currentPage;
     std::vector<wxArrayString> m_data;
     wxArrayString m_columns;
-    wxDataViewListCtrl* m_ctrl;
-    wxButton* m_btnNextPage;
-    wxButton* m_btnPrevPage;
-    wxStaticText* m_staticText;
+    clThemedListCtrl* m_ctrl = nullptr;
+    wxButton* m_btnNextPage = nullptr;
+    wxButton* m_btnPrevPage = nullptr;
+    wxStaticText* m_staticText = nullptr;
 
 protected:
     bool CanNext() const;

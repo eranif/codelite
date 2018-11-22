@@ -161,7 +161,7 @@ void SpellCheck::Init()
 void SpellCheck::CreateToolBar(clToolBar* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();
-    toolbar->AddSeparator();
+    toolbar->AddSpacer();
     toolbar->AddTool(XRCID(s_doCheckID.ToUTF8()), _("Check spelling..."),
                      m_mgr->GetStdIcons()->LoadBitmap("spellcheck", size), _("Run spell-checker"));
     toolbar->AddToggleButton(XRCID(s_contCheckID.ToUTF8()), m_mgr->GetStdIcons()->LoadBitmap("repeat", size),

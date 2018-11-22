@@ -8,6 +8,7 @@
 #define _CODELITE_DATABASEEXPLORER_GUI_BASE_CLASSES_H
 
 #include "clTableWithPagination.h"
+#include "clThemedTreeCtrl.h"
 #include <map>
 #include <wx/arrstr.h>
 #include <wx/artprov.h>
@@ -147,7 +148,7 @@ public:
 class _DbViewerPanel : public wxPanel
 {
 protected:
-    wxTreeCtrl* m_treeDatabases;
+    clThemedTreeCtrl* m_treeDatabases;
 
 protected:
     virtual void OnDnDStart(wxTreeEvent& event) { event.Skip(); }
@@ -157,7 +158,7 @@ protected:
     virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxTreeCtrl* GetTreeDatabases() { return m_treeDatabases; }
+    clThemedTreeCtrl* GetTreeDatabases() { return m_treeDatabases; }
     _DbViewerPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(200, 100), long style = wxTAB_TRAVERSAL);
     virtual ~_DbViewerPanel();

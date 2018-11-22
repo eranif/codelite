@@ -13,7 +13,6 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include <wx/textctrl.h>
@@ -48,7 +47,6 @@ public:
         wxID_FIND_ALL = 1001,
     };
 protected:
-    wxStaticText* m_matchesFound;
     clToolBar* m_toolbar;
     wxTextCtrl* m_textCtrlFind;
     wxButton* m_buttonFind;
@@ -129,10 +127,6 @@ protected:
     }
 
 public:
-    wxStaticText* GetMatchesFound()
-    {
-        return m_matchesFound;
-    }
     clToolBar* GetToolbar()
     {
         return m_toolbar;

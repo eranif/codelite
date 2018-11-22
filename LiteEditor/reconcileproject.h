@@ -59,7 +59,6 @@ protected:
     wxStringSet_t m_newfiles;
     Project::FilesMap_t m_stalefiles;
     wxStringSet_t m_allfiles;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     wxString m_toplevelDir;
     bool m_projectModified;
 

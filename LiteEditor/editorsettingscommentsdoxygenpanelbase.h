@@ -7,19 +7,19 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_COMMENTS_DOXYGEN_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_COMMENTS_DOXYGEN_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/checkbox.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -32,24 +32,27 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class EditorSettingsCommentsDoxygenPanelBase : public wxPanel
 {
 protected:
-    wxPropertyGridManager* m_pgMgrDoxy;
-    wxPGProperty* m_pgProp10;
-    wxPGProperty* m_pgPropAutoGen;
-    wxPGProperty* m_pgPropCommentBlockPrefix;
-    wxPGProperty* m_pgProp4;
-    wxPGProperty* m_pgPropDoxyClassPrefix;
-    wxPGProperty* m_pgPropDoxyFunctionPrefix;
+    wxStaticText* m_staticText22;
+    wxStyledTextCtrl* m_stcClassTemplate;
+    wxStaticText* m_staticText26;
+    wxStyledTextCtrl* m_stcFunctionTemplate;
+    wxCheckBox* m_checkBoxAutoInsert;
+    wxCheckBox* m_checkBoxQtStyle;
 
 protected:
-    virtual void OnButtonClicked(wxCommandEvent& event) { event.Skip(); }
-
 public:
-    wxPropertyGridManager* GetPgMgrDoxy() { return m_pgMgrDoxy; }
-    EditorSettingsCommentsDoxygenPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    wxStaticText* GetStaticText22() { return m_staticText22; }
+    wxStyledTextCtrl* GetStcClassTemplate() { return m_stcClassTemplate; }
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxStyledTextCtrl* GetStcFunctionTemplate() { return m_stcFunctionTemplate; }
+    wxCheckBox* GetCheckBoxAutoInsert() { return m_checkBoxAutoInsert; }
+    wxCheckBox* GetCheckBoxQtStyle() { return m_checkBoxQtStyle; }
+    EditorSettingsCommentsDoxygenPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                           long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsCommentsDoxygenPanelBase();
 };
 

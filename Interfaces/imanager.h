@@ -40,6 +40,7 @@
 #include "clStatusBar.h"
 #include "clTab.h"
 
+class clTreeCtrl;
 class clEditorBar;
 class clWorkspaceView;
 class TagsManager;
@@ -211,7 +212,8 @@ public:
      * @param type the type of tree
      * @sa TreeType
      */
-    virtual wxTreeCtrl* GetTree(TreeType type) = 0;
+    virtual clTreeCtrl* GetFileExplorerTree() = 0;
+    virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**
      * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
@@ -451,6 +453,7 @@ public:
      * @return project name or wxEmptyString if the search failed
      */
     virtual wxString GetProjectNameByFile(const wxString& fullPathFileName) = 0;
+    virtual wxString GetProjectNameByFile(wxString& fullPathFileName) = 0;
 
     /**
      * @brief accessor to singleton object in the application

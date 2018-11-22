@@ -26,18 +26,10 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    wxBoxSizer* boxSizer123 = new wxBoxSizer(wxHORIZONTAL);
-
-    mainSizer->Add(boxSizer123, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-
-    m_matchesFound = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-
-    boxSizer123->Add(m_matchesFound, 1, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-
     m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTB_NODIVIDER|wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16,16));
 
-    boxSizer123->Add(m_toolbar, 0, 0, WXC_FROM_DIP(2));
+    mainSizer->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(2));
 
     wxFlexGridSizer* flexGridSizer107 = new wxFlexGridSizer(0, 4, 0, 0);
     flexGridSizer107->SetFlexibleDirection( wxBOTH );
@@ -83,7 +75,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("QuickFindBarBase"));
-    SetSize(-1,-1);
+    SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }
@@ -189,7 +181,7 @@ QuickFindBarOptionsMenuBase::QuickFindBarOptionsMenuBase(wxWindow* parent,long s
     gridSizer49->Add(m_checkBoxMultipleSelections, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(3));
 
     SetName(wxT("QuickFindBarOptionsMenuBase"));
-    SetSize(-1,-1);
+    SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }

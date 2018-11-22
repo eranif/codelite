@@ -26,9 +26,9 @@
 #ifndef GITCONSOLE_H
 #define GITCONSOLE_H
 #include "bitmap_loader.h"
+#include "clGenericSTCStyler.h"
 #include "gitui.h"
 #include <wx/dataview.h>
-#include "clGenericSTCStyler.h"
 
 class clToolBar;
 class GitPlugin;
@@ -37,13 +37,11 @@ class GitConsole : public GitConsoleBase
     GitPlugin* m_git;
     bool m_isVerbose;
     BitmapLoader* m_bitmapLoader;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     wxBitmap m_modifiedBmp;
     wxBitmap m_untrackedBmp;
     wxBitmap m_folderBmp;
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
-    clToolBar* m_toolbar;
     clGenericSTCStyler::Ptr_t m_styler;
 
 public:
@@ -68,6 +66,7 @@ public:
     void UpdateProgress(unsigned long current, const wxString& message);
     bool IsProgressShown() const;
     void PulseProgress();
+    void ShowLog();
 
 protected:
     virtual void OnUnversionedFileActivated(wxDataViewEvent& event);

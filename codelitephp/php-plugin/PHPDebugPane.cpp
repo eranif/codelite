@@ -1,17 +1,17 @@
-#include "PHPDebugPane.h"
-#include <event_notifier.h>
-#include "XDebugManager.h"
-#include <wx/tokenzr.h>
-#include <globals.h>
-#include <cl_aui_notebook_art.h>
-#include "php_utils.h"
-#include "php_event.h"
-#include "xdebugevent.h"
-#include <editor_config.h>
-#include <lexer_configuration.h>
-#include "php_workspace.h"
 #include "ColoursAndFontsManager.h"
+#include "PHPDebugPane.h"
+#include "XDebugManager.h"
 #include "lexer_configuration.h"
+#include "php_event.h"
+#include "php_utils.h"
+#include "php_workspace.h"
+#include "xdebugevent.h"
+#include <cl_aui_notebook_art.h>
+#include <editor_config.h>
+#include <event_notifier.h>
+#include <globals.h>
+#include <lexer_configuration.h>
+#include <wx/tokenzr.h>
 
 PHPDebugPane::PHPDebugPane(wxWindow* parent)
     : PHPDebugPaneBase(parent)
@@ -25,7 +25,7 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
     m_console = new TerminalEmulatorUI(m_auiBook);
 
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_auiBook->SetStyle((kNotebook_Default & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_auiBook->SetStyle(kNotebook_Default);
@@ -33,9 +33,21 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
 
     m_auiBook->AddPage(m_console, _("Console"), true);
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
-    if(phpLexer) {
-        phpLexer->Apply(m_console->GetTerminalOutputWindow());
-    }
+    if(phpLexer) { phpLexer->Apply(m_console->GetTerminalOutputWindow()); }
+    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("minus"),
+                             _("Delete the selected breakpoints"));
+    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete all breakpoints"),
+                             clGetManager()->GetStdIcons()->LoadBitmap("clean"), _("Delete all breakpoints"));
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnDeleteBreakpoint, this, wxID_DELETE);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &PHPDebugPane::OnDeleteBreakpointUI, this, wxID_DELETE);
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnClearAll, this, wxID_CLEAR);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &PHPDebugPane::OnClearAllUI, this, wxID_CLEAR);
+    m_tbBreakpoints->Realize();
+
+    // Assign bitmaps to the view
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("forward"));
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
+    m_dvListCtrlStackTrace->SetBitmaps(&m_bitmaps);
 }
 
 PHPDebugPane::~PHPDebugPane()
@@ -58,11 +70,10 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
         wxArrayString elements = ::wxStringTokenize(calls.Item(i), "|", wxTOKEN_RET_EMPTY);
         if(elements.GetCount() == 4) {
             wxVector<wxVariant> cols;
-            cols.push_back(::MakeIconText(elements.Item(0),
-                ((int)i == e.GetInt()) ? m_images.Bitmap("m_bmpArrowActive") : wxNullBitmap)); // Level
-            cols.push_back(elements.Item(1));                                                  // Where
-            cols.push_back(::URIToFileName(elements.Item(2)));                                 // File
-            cols.push_back(elements.Item(3));                                                  // Line
+            cols.push_back(::MakeBitmapIndexText(elements.Item(0), ((int)i == e.GetInt()) ? 0 : 1)); // Level
+            cols.push_back(elements.Item(1));                                                        // Where
+            cols.push_back(::URIToFileName(elements.Item(2)));                                       // File
+            cols.push_back(elements.Item(3));                                                        // Line
             m_dvListCtrlStackTrace->AppendItem(cols);
         }
     }
@@ -70,24 +81,24 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
 
 void PHPDebugPane::OnCallStackItemActivated(wxDataViewEvent& event)
 {
-    if(event.GetItem().IsOk()) {
-        // Open the file - we use an event to do so
-        wxVariant depth, filename, lineNumber;
-        int row = m_dvListCtrlStackTrace->ItemToRow(event.GetItem());
-        m_dvListCtrlStackTrace->GetValue(depth, row, 0);
-        m_dvListCtrlStackTrace->GetValue(filename, row, 2);
-        m_dvListCtrlStackTrace->GetValue(lineNumber, row, 3);
-        long nLine(-1);
-        long nDepth(-1);
-        lineNumber.GetString().ToLong(&nLine);
-        depth.GetString().ToLong(&nDepth);
+    wxDataViewItem item = event.GetItem();
+    CHECK_ITEM_RET(item);
 
-        PHPEvent eventOpenFile(wxEVT_PHP_STACK_TRACE_ITEM_ACTIVATED);
-        eventOpenFile.SetLineNumber(nLine);
-        eventOpenFile.SetInt(nDepth);
-        eventOpenFile.SetFileName(filename.GetString());
-        EventNotifier::Get()->AddPendingEvent(eventOpenFile);
-    }
+    // Open the file - we use an event to do so
+    wxString depth = m_dvListCtrlStackTrace->GetItemText(item, 0);
+    wxString filename = m_dvListCtrlStackTrace->GetItemText(item, 2);
+    wxString lineNumber = m_dvListCtrlStackTrace->GetItemText(item, 3);
+
+    long nLine(-1);
+    long nDepth(-1);
+    lineNumber.ToLong(&nLine);
+    depth.ToLong(&nDepth);
+
+    PHPEvent eventOpenFile(wxEVT_PHP_STACK_TRACE_ITEM_ACTIVATED);
+    eventOpenFile.SetLineNumber(nLine);
+    eventOpenFile.SetInt(nDepth);
+    eventOpenFile.SetFileName(filename);
+    EventNotifier::Get()->AddPendingEvent(eventOpenFile);
 }
 
 void PHPDebugPane::OnClearAll(wxCommandEvent& event)
@@ -127,17 +138,18 @@ void PHPDebugPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 
 XDebugBreakpoint PHPDebugPane::GetBreakpoint(const wxDataViewItem& item) const
 {
-    wxVariant id, filename, lineNumber;
-    int row = m_dvListCtrlBreakpoints->ItemToRow(item);
-    m_dvListCtrlBreakpoints->GetValue(id, row, 0);
-    m_dvListCtrlBreakpoints->GetValue(filename, row, 1);
-    m_dvListCtrlBreakpoints->GetValue(lineNumber, row, 2);
+    if(!item.IsOk()) { return XDebugBreakpoint(); }
+
+    wxString id = m_dvListCtrlBreakpoints->GetItemText(item, 0);
+    wxString filename = m_dvListCtrlBreakpoints->GetItemText(item, 1);
+    wxString lineNumber = m_dvListCtrlBreakpoints->GetItemText(item, 2);
+
     long nId(-1);
     long nLine(-1);
 
-    lineNumber.GetString().ToLong(&nLine);
-    id.GetString().ToCLong(&nId);
-    XDebugBreakpoint bp(filename.GetString(), nLine);
+    lineNumber.ToLong(&nLine);
+    id.ToCLong(&nId);
+    XDebugBreakpoint bp(filename, nLine);
     bp.SetBreakpointId(nId);
     return bp;
 }
@@ -204,15 +216,14 @@ void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
     event.Skip();
     m_console->SetTerminal(PHPWorkspace::Get()->GetTerminalEmulator());
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
-    if(phpLexer) {
-        phpLexer->Apply(m_console->GetTerminalOutputWindow());
-    }
+    if(phpLexer) { phpLexer->Apply(m_console->GetTerminalOutputWindow()); }
 }
 void PHPDebugPane::OnCallStackMenu(wxDataViewEvent& event) {}
 
-void PHPDebugPane::OnSettingsChanged(wxCommandEvent& event) {
+void PHPDebugPane::OnSettingsChanged(wxCommandEvent& event)
+{
     event.Skip();
-    if (EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
+    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
         m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
     } else {
         m_auiBook->SetStyle((m_auiBook->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);

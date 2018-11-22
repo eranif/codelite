@@ -1,12 +1,15 @@
-#include "clTreeCtrlPanelDefaultPage.h"
 #include "clFileOrFolderDropTarget.h"
-#include <wx/menu.h>
+#include "clTreeCtrlPanelDefaultPage.h"
 #include <wx/app.h>
+#include <wx/menu.h>
+#include <wx/settings.h>
 
 clTreeCtrlPanelDefaultPage::clTreeCtrlPanelDefaultPage(wxWindow* parent)
     : clTreeCtrlPanelDefaultPageBase(parent)
 {
     SetDropTarget(new clFileOrFolderDropTarget(parent));
+    m_staticText177->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    GetPanel169()->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 }
 
 clTreeCtrlPanelDefaultPage::~clTreeCtrlPanelDefaultPage() {}

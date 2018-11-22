@@ -14,20 +14,24 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/notebook.h>
+#include "Notebook.h"
 #include <wx/imaglist.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/toolbar.h>
-#include "lldbbreakpointmodel.h"
+#include "clToolBar.h"
+#include <wx/treectrl.h>
+#include "clThemedTreeCtrl.h"
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
@@ -50,58 +54,49 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class LLDBCallStackBase : public wxPanel
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrlBacktrace;
+    clThemedListCtrl* m_dvListCtrlBacktrace;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlBacktrace() { return m_dvListCtrlBacktrace; }
-    LLDBCallStackBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clThemedListCtrl* GetDvListCtrlBacktrace() { return m_dvListCtrlBacktrace; }
+    LLDBCallStackBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBCallStackBase();
 };
-
 
 class LLDBOutputViewBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook205;
+    Notebook* m_notebook205;
     wxPanel* m_pageBreakpoints;
-    wxAuiToolBar* m_auibar;
-    wxDataViewCtrl* m_dataview;
-    wxObjectDataPtr<LLDBBreakpointModel> m_dataviewModel;
-
+    clToolBar* m_tbBreakpoints;
+    clThemedTreeCtrl* m_treeCtrlBreakpoints;
     wxPanel* m_panelConsole;
     wxStyledTextCtrl* m_stcConsole;
     wxTextCtrl* m_textCtrlConsoleSend;
 
 protected:
-    virtual void OnNewBreakpoint(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNewBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDeleteBreakpoint(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteAllUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBreakpointActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnBpActivated(wxTreeEvent& event) { event.Skip(); }
     virtual void OnSendCommandToLLDB(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
-    wxDataViewCtrl* GetDataview() { return m_dataview; }
+    clToolBar* GetTbBreakpoints() { return m_tbBreakpoints; }
+    clThemedTreeCtrl* GetTreeCtrlBreakpoints() { return m_treeCtrlBreakpoints; }
     wxPanel* GetPageBreakpoints() { return m_pageBreakpoints; }
     wxStyledTextCtrl* GetStcConsole() { return m_stcConsole; }
     wxTextCtrl* GetTextCtrlConsoleSend() { return m_textCtrlConsoleSend; }
     wxPanel* GetPanelConsole() { return m_panelConsole; }
-    wxNotebook* GetNotebook205() { return m_notebook205; }
-    LLDBOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    Notebook* GetNotebook205() { return m_notebook205; }
+    LLDBOutputViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBOutputViewBase();
 };
-
 
 class LLDBNewBreakpointDlgBase : public wxDialog
 {
@@ -127,10 +122,11 @@ public:
     wxTextCtrl* GetTextCtrlLine() { return m_textCtrlLine; }
     wxCheckBox* GetCheckBoxFuncName() { return m_checkBoxFuncName; }
     wxTextCtrl* GetTextCtrlFunctionName() { return m_textCtrlFunctionName; }
-    LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Breakpoint"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Breakpoint"),
+                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LLDBNewBreakpointDlgBase();
 };
-
 
 class LLDBLocalsViewBase : public wxPanel
 {
@@ -144,10 +140,10 @@ protected:
 
 public:
     wxAuiToolBar* GetAuibar199() { return m_auibar199; }
-    LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBLocalsViewBase();
 };
-
 
 class LLDBSettingDialogBase : public wxDialog
 {
@@ -193,25 +189,26 @@ public:
     wxPropertyGridManager* GetPgMgrAdvanced() { return m_pgMgrAdvanced; }
     wxPanel* GetPanel142() { return m_panel142; }
     wxNotebook* GetNotebook87() { return m_notebook87; }
-    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    LLDBSettingDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("LLDB Settings"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LLDBSettingDialogBase();
 };
-
 
 class LLDBThreadsViewBase : public wxPanel
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrlThreads;
+    clThemedListCtrl* m_dvListCtrlThreads;
 
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlThreads() { return m_dvListCtrlThreads; }
-    LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    clThemedListCtrl* GetDvListCtrlThreads() { return m_dvListCtrlThreads; }
+    LLDBThreadsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBThreadsViewBase();
 };
-
 
 class FolderMappingBaseDlg : public wxDialog
 {
@@ -234,7 +231,9 @@ public:
     wxDirPickerCtrl* GetDirPickerLocal() { return m_dirPickerLocal; }
     wxStaticText* GetStaticText193() { return m_staticText193; }
     wxTextCtrl* GetTextCtrlRemote() { return m_textCtrlRemote; }
-    FolderMappingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Folder Mapping"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    FolderMappingBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Folder Mapping"),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FolderMappingBaseDlg();
 };
 

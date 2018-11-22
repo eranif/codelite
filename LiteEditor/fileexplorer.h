@@ -26,7 +26,6 @@
 #define FILEEXPLORER_H
 
 #include "clTreeCtrlPanel.h"
-#include "clTreeKeyboardInput.h"
 #include "cl_command_event.h"
 #include "theme_handler_helper.h"
 #include "wx/panel.h"
@@ -40,7 +39,6 @@ class FileExplorer : public wxPanel
 {
 private:
     clTreeCtrlPanel* m_view;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
 
     // FileExplorerTab *m_fileTree;
     wxString m_caption;
@@ -56,7 +54,7 @@ public:
     virtual ~FileExplorer();
     const wxString& GetCaption() const { return m_caption; }
     TreeItemInfo GetItemInfo() { return m_view->GetSelectedItemInfo(); }
-    wxTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
+    clTreeCtrl* GetTree() { return m_view->GetTreeCtrl(); }
     void OpenFolder(const wxString& path);
 };
 

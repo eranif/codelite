@@ -6,111 +6,104 @@
 
 #include "setters_getters.h"
 
-
 // Declare the bitmap loading function
 extern void wxC8861InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC8861InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
-    
-    m_banner6 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
-    m_banner6->SetBitmap(wxNullBitmap);
-    m_banner6->SetText(_("Generate Setters / Getters"), _("Select the functions to generate from the list below"));
-    m_banner6->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION), wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner6->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-    
-    bSizer3->Add(m_banner6, 0, wxALL|wxEXPAND, 5);
-    
-    m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+
+    m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                    wxTE_PROCESS_ENTER);
     m_searchCtrl->SetToolTip(_("Type to filter the options"));
     m_searchCtrl->SetFocus();
     m_searchCtrl->ShowSearchButton(true);
     m_searchCtrl->ShowCancelButton(false);
-    
-    bSizer3->Add(m_searchCtrl, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer1->Add(m_searchCtrl, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer3->Add(bSizer4, 1, wxEXPAND, 5);
-    
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(450,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    m_dataviewModel = new SettersGettersModel;
-    m_dataviewModel->SetColCount( 2 );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
-    
-    bSizer4->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
-    
-    m_dataview->AppendToggleColumn(_("X"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, 50, wxALIGN_LEFT);
-    m_dataview->AppendIconTextColumn(_("Function"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
+
+    bSizer1->Add(bSizer4, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
+
+    bSizer4->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer4->Add(bSizer5, 0, wxEXPAND, 5);
-    
-    m_buttonCheckAll = new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer4->Add(bSizer5, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonCheckAll =
+        new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonCheckAll->SetDefault();
-    
-    bSizer5->Add(m_buttonCheckAll, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonUncheckAll = new wxButton(this, wxID_ANY, _("Clear"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer5->Add(m_buttonUncheckAll, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer5->Add(m_buttonCheckAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonUncheckAll =
+        new wxButton(this, wxID_ANY, _("Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer5->Add(m_buttonUncheckAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxGridSizer* gridSizer12 = new wxGridSizer(0, 2, 0, 0);
-    
-    bSizer3->Add(gridSizer12, 0, wxALL|wxEXPAND, 5);
-    
-    m_checkStartWithUppercase = new wxCheckBox(this, wxID_ANY, _("Function name starts with an upper case letter"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer1->Add(gridSizer12, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkStartWithUppercase = new wxCheckBox(this, wxID_ANY, _("Function name starts with an upper case letter"),
+                                               wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkStartWithUppercase->SetValue(false);
-    
-    gridSizer12->Add(m_checkStartWithUppercase, 0, wxALL, 5);
-    
-    m_checkBoxForamtFileWhenDone = new wxCheckBox(this, wxID_ANY, _("Format the file when done"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    gridSizer12->Add(m_checkStartWithUppercase, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxForamtFileWhenDone = new wxCheckBox(this, wxID_ANY, _("Format the file when done"), wxDefaultPosition,
+                                                  wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxForamtFileWhenDone->SetValue(false);
-    
-    gridSizer12->Add(m_checkBoxForamtFileWhenDone, 0, wxALL, 5);
-    
-    m_checkBoxReturnSelf = new wxCheckBox(this, wxID_ANY, _("Setter returns a reference to the object"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    gridSizer12->Add(m_checkBoxForamtFileWhenDone, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxReturnSelf = new wxCheckBox(this, wxID_ANY, _("Setter returns a reference to the object"),
+                                          wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxReturnSelf->SetValue(false);
-    m_checkBoxReturnSelf->SetToolTip(_("A setter function will return a reference to the object, for example:\nFoo& SetFoo(const Obj& foo) {this->m_foo = foo; return *this;}"));
-    
-    gridSizer12->Add(m_checkBoxReturnSelf, 0, wxALL, 5);
-    
+    m_checkBoxReturnSelf->SetToolTip(_("A setter function will return a reference to the object, for example:\nFoo& "
+                                       "SetFoo(const Obj& foo) {this->m_foo = foo; return *this;}"));
+
+    gridSizer12->Add(m_checkBoxReturnSelf, 0, wxALL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer16 = new wxStdDialogButtonSizer();
-    
-    bSizer1->Add(m_stdBtnSizer16, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button18 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer1->Add(m_stdBtnSizer16, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button18 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button18->SetDefault();
     m_stdBtnSizer16->AddButton(m_button18);
-    
-    m_button20 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button20 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer16->AddButton(m_button20);
     m_stdBtnSizer16->Realize();
-    
+
     SetName(wxT("SettersGettersBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent();
+    } else {
+        CentreOnScreen();
     }
-    CentreOnParent();
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -119,22 +112,35 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
     }
 #endif
     // Connect events
-    m_searchCtrl->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SettersGettersBaseDlg::OnFilter), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(SettersGettersBaseDlg::OnValueChanged), NULL, this);
-    m_buttonCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll), NULL, this);
-    m_buttonUncheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
-    m_checkStartWithUppercase->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL, this);
-    m_checkBoxReturnSelf->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL, this);
-    
+    m_searchCtrl->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SettersGettersBaseDlg::OnFilter), NULL,
+                          this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
+                          wxDataViewEventHandler(SettersGettersBaseDlg::OnValueChanged), NULL, this);
+    m_buttonCheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll),
+                              NULL, this);
+    m_buttonUncheckAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
+    m_checkStartWithUppercase->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                       wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL,
+                                       this);
+    m_checkBoxReturnSelf->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                  wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL, this);
 }
 
 SettersGettersBaseDlg::~SettersGettersBaseDlg()
 {
-    m_searchCtrl->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SettersGettersBaseDlg::OnFilter), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, wxDataViewEventHandler(SettersGettersBaseDlg::OnValueChanged), NULL, this);
-    m_buttonCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll), NULL, this);
-    m_buttonUncheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
-    m_checkStartWithUppercase->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL, this);
-    m_checkBoxReturnSelf->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL, this);
-    
+    m_searchCtrl->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(SettersGettersBaseDlg::OnFilter), NULL,
+                             this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
+                             wxDataViewEventHandler(SettersGettersBaseDlg::OnValueChanged), NULL, this);
+    m_buttonCheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SettersGettersBaseDlg::OnCheckAll),
+                                 NULL, this);
+    m_buttonUncheckAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(SettersGettersBaseDlg::OnUncheckAll), NULL, this);
+    m_checkStartWithUppercase->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                          wxCommandEventHandler(SettersGettersBaseDlg::OnCheckStartWithUpperCase), NULL,
+                                          this);
+    m_checkBoxReturnSelf->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                     wxCommandEventHandler(SettersGettersBaseDlg::OnSettersReturnReference), NULL,
+                                     this);
 }

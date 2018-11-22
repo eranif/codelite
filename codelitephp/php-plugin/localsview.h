@@ -27,34 +27,36 @@
 #define LOCALSVIEW_H
 
 #include "php_ui.h"
-#include <macros.h>
+#include "wxStringHash.h"
 #include "xdebugevent.h"
-#include <map>
+#include <macros.h>
 
+class clThemedTreeCtrl;
 class LocalsView : public LocalsViewBase
 {
     /// Set if items that are expanded in the current locals view
     wxStringSet_t m_localsExpandedItemsFullname;
-    wxDataViewItemArray m_localsExpandedItems;
-    std::map<wxString, wxDataViewItem> m_waitingExpand;
+    wxArrayTreeItemIds m_localsExpandedItems;
+    std::unordered_map<wxString, wxTreeItemId> m_waitingExpand;
 
 public:
     LocalsView(wxWindow* parent);
     virtual ~LocalsView();
 
 protected:
-    virtual void OnLocalsMenu(wxDataViewEvent& event);
-    virtual void OnLocalExpanding(wxDataViewEvent& event);
-    virtual void OnLocalCollapsed(wxDataViewEvent& event);
-    virtual void OnLocalExpanded(wxDataViewEvent& event);
+    virtual void OnLocalsMenu(wxTreeEvent& event);
+    virtual void OnLocalExpanding(wxTreeEvent& event);
+    virtual void OnLocalCollapsed(wxTreeEvent& event);
+    virtual void OnLocalExpanded(wxTreeEvent& event);
+    void ClearView();
     void OnCopyValue(wxCommandEvent& event);
 
-    wxString DoGetItemClientData(const wxDataViewItem& item) const;
+    wxString DoGetItemClientData(const wxTreeItemId& item) const;
 
     void OnLocalsUpdated(XDebugEvent& e);
     void OnXDebugSessionEnded(XDebugEvent& e);
     void OnXDebugSessionStarted(XDebugEvent& e);
     void OnProperytGet(XDebugEvent& e);
-    void AppendVariablesToTree(const wxDataViewItem& parent, const XVariable::List_t& children);
+    void AppendVariablesToTree(const wxTreeItemId& parent, const XVariable::List_t& children);
 };
 #endif // LOCALSVIEW_H

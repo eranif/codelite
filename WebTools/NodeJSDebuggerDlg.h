@@ -33,6 +33,7 @@ class NodeJSDebuggerDlg : public NodeJSDebuggerDlgBase
 public:
     enum eDialogType {
         kDebug,
+        kDebugCLI,
         kExecute,
     };
     eDialogType m_type;
@@ -41,13 +42,13 @@ public:
     NodeJSDebuggerDlg(wxWindow* parent, eDialogType type);
     NodeJSDebuggerDlg(wxWindow* parent, eDialogType type, const wxFileName& script, const wxArrayString& args);
     virtual ~NodeJSDebuggerDlg();
-    wxString GetCommand();
+    void GetCommand(wxString& command, wxString& command_args);
     wxArrayString GetArgs() const
     {
         return wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
     }
     wxString GetScript() const { return m_filePickerScript->GetPath(); }
-    wxString GetWorkingDirectory() const { return m_dirPickerWorkingDirectory->GetPath(); }
+    wxString GetWorkingDirectory() const;
 
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);

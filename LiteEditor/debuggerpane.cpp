@@ -90,9 +90,6 @@ void DebuggerPane::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
 
-#if USE_AUI_NOTEBOOK
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_TAB_SPLIT;
-#else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
     if(!EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection()) { style |= kNotebook_BottomTabs; }
     if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
@@ -101,7 +98,7 @@ void DebuggerPane::CreateGUIControls()
     }
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
     style |= kNotebook_UnderlineActiveTab;
-#endif
+
     GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
@@ -119,9 +116,8 @@ void DebuggerPane::CreateGUIControls()
     detachedPanes = dpi.GetPanes();
 
     wxString name;
-    wxBitmap bmp;
     name = wxGetTranslation(LOCALS);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("locals_view"));
+    wxBitmap bmp = wxNullBitmap;
     // Add the 'Locals View'
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
@@ -135,7 +131,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("watches"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_watchesTable = new WatchesTable(cp);
@@ -148,7 +144,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'ASCII Viewer'
     name = wxGetTranslation(ASCII_VIEWER);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("text_view"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_asciiViewer = new DebuggerAsciiViewer(cp);
@@ -161,7 +157,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Call Stack'
     name = wxGetTranslation(FRAMES);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("frames"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_frameList = new DebuggerCallstackView(cp);
@@ -174,7 +170,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Breakpoints'
     name = wxGetTranslation(BREAKPOINTS);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("breakpoint"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_breakpoints = new BreakpointDlg(cp);
@@ -187,7 +183,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Threads'
     name = wxGetTranslation(THREADS);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("threads"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_threads = new ThreadListPanel(cp);
@@ -200,7 +196,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Memory View'
     name = wxGetTranslation(MEMORY);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("memory_view"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_memory = new MemoryView(cp);
@@ -213,7 +209,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the "Output" tab
     name = wxGetTranslation(DEBUGGER_OUTPUT);
-    bmp = wxXmlResource::Get()->LoadBitmap(wxT("debugger_tab"));
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
@@ -226,7 +222,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the "Output" tab
     name = wxGetTranslation(DISASSEMBLY);
-    bmp = img.Bitmap("dbgAsm");
+    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));

@@ -156,7 +156,7 @@ public:
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
     void ShowQuickBarForPlugins();
     void ShowQuickBar(bool s);
-    void ShowQuickBar(const wxString& findWhat);
+    void ShowQuickBar(const wxString& findWhat, bool showReplace);
     void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
                      const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());

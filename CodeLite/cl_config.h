@@ -71,6 +71,7 @@ public:
 #define kConfigStatusbarShowPosition "StatusbarShowPosition"
 #define kConfigStatusbarShowLength "StatusbarShowLength"
 #define kConfigStatusbarShowSelectedChars "StatusbarShowSelChars"
+#define kConfigToolbarGroupSpacing "ToolbarGroupSpacing"
 #define kConfigAutoDetectCompilerOnStartup "AutoDetectCompilerOnStartup"
 #define kConfigBootstrapCompleted "BootstrapCompleted"
 #define kConfigUpdateParserPaths "updateParserPaths"

@@ -263,8 +263,21 @@ static void RemoveTerminalColoring(char* buffer)
             }
             break;
         case BUFF_STATE_IN_ESC:
-            if(*buffer == 'm') { // end of color sequence
+            switch((*buffer)) {
+            case 'm':
+            case 'K':
+            case 'G':
+            case 'J':
+            case 'H':
+            case 'X':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'd':
                 state = BUFF_STATE_NORMAL;
+                break;
+            default:
+                break;
             }
             break;
         }

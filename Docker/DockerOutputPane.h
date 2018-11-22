@@ -23,6 +23,7 @@ protected:
     void OnClearUnusedImages(wxCommandEvent& event);
     void OnClearUnusedImagesUI(wxUpdateUIEvent& event);
     void OnClearUnusedImagesMenu(wxCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
 
 protected:
     size_t GetSelectedContainers(clDockerContainer::Vect_t& containers);

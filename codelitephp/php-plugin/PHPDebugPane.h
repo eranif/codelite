@@ -26,18 +26,19 @@
 #ifndef PHPDEBUGPANE_H
 #define PHPDEBUGPANE_H
 
-#include "php_ui.h"
-#include <cl_command_event.h>
-#include "XDebugManager.h"
-#include "xdebugevent.h"
-#include <macros.h>
 #include "TerminalEmulatorUI.h"
+#include "XDebugManager.h"
+#include "bitmap_loader.h"
 #include "php_event.h"
+#include "php_ui.h"
+#include "xdebugevent.h"
+#include <cl_command_event.h>
+#include <macros.h>
 
 class PHPDebugPane : public PHPDebugPaneBase
 {
-    PHPImages m_images;
     TerminalEmulatorUI* m_console;
+    BitmapLoader::Vec_t m_bitmaps;
 
 public:
     PHPDebugPane(wxWindow* parent);

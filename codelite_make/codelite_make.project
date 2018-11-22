@@ -143,7 +143,7 @@
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -193,7 +193,7 @@
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>

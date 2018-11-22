@@ -118,7 +118,8 @@ protected:
 protected:
     Manager(void);
     virtual ~Manager(void);
-
+    void OnHideGdbTooltip(clCommandEvent &event);
+    
     //--------------------------- Global State -----------------------------
 public:
     DisplayVariableDlg* GetDebuggerTip();
@@ -449,6 +450,13 @@ public:
      * \param caseSensitive do a case-sensitive search
      */
     wxString GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive = false);
+    /**
+     * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
+     * the first one, or empty string if no match is found
+     * \param fullPathFileName the filepath to search with
+     * \param caseSensitive do a case-sensitive search
+     */
+    wxString GetProjectNameByFile(wxString& fullPathFileName, bool caseSensitive = false);
 
     //--------------------------- Project Settings Mgmt -----------------------------
 public:

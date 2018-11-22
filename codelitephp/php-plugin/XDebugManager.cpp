@@ -43,6 +43,7 @@ XDebugManager::XDebugManager()
 {
     // Connect CodeLite's debugger events to XDebugManager
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
@@ -66,6 +67,7 @@ XDebugManager::XDebugManager()
 XDebugManager::~XDebugManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &XDebugManager::OnDebugStartOrContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &XDebugManager::OnStopDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &XDebugManager::OnDebugStartOrContinue, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &XDebugManager::OnDebugIsRunning, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &XDebugManager::OnToggleBreakpoint, this);
@@ -160,16 +162,20 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     // Notify about debug session started
     XDebugEvent eventStart(wxEVT_XDEBUG_SESSION_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);
+
+    // Fire CodeLite IDE event indicating that a debug session started
+    clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+    EventNotifier::Get()->AddPendingEvent(cl_event);
 }
 
 void XDebugManager::OnSocketInput(const std::string& reply) { ProcessDebuggerMessage(reply); }
 
 void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 {
-    if(m_readerThread) {
-        e.SetAnswer(true);
-
+    if(PHPWorkspace::Get()->IsOpen()) {
+        e.SetAnswer((m_readerThread != nullptr));
     } else {
+        // Not ours to handle
         e.Skip();
     }
 }
@@ -202,6 +208,11 @@ void XDebugManager::DoStopDebugger()
     // Notify about debug session ended
     XDebugEvent eventEnd(wxEVT_XDEBUG_SESSION_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventEnd);
+
+    {
+        clDebugEvent e(wxEVT_DEBUG_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
 }
 
 bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
@@ -610,7 +621,7 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
-bool XDebugManager::IsDebugSessionRunning() const { return m_readerThread != NULL; }
+bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->IsOpen() && (m_readerThread != NULL); }
 
 void XDebugManager::OnBreakpointItemActivated(PHPEvent& e)
 {

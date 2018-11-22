@@ -16,10 +16,7 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     m_stc->SetReadOnly(true);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->Apply(m_stc);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, [&](wxCommandEvent& event) {
-        event.Skip();
-        Clear();
-    });
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
 
     m_styler.reset(new clGenericSTCStyler(m_stc));
     {
@@ -92,7 +89,10 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     });
 }
 
-DockerOutputPane::~DockerOutputPane() {}
+DockerOutputPane::~DockerOutputPane()
+{
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
+}
 
 void DockerOutputPane::Clear()
 {
@@ -111,6 +111,7 @@ void DockerOutputPane::AddOutputTextWithEOL(const wxString& msg)
 void DockerOutputPane::AddOutputTextRaw(const wxString& msg)
 {
     m_stc->SetReadOnly(false);
+    m_stc->SetInsertionPointEnd();
     m_stc->AddText(msg);
     m_stc->SetReadOnly(true);
     m_stc->ScrollToEnd();
@@ -155,13 +156,6 @@ void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers
         cols.push_back(container.GetName());
         m_dvListCtrlContainers->AppendItem(cols, (wxUIntPtr)&container);
     }
-    m_dvListCtrlContainers->GetColumn(0)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(1)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(2)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(3)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(4)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(5)->SetWidth(-2);
-    m_dvListCtrlContainers->GetColumn(6)->SetWidth(-2);
 }
 
 void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)
@@ -178,11 +172,6 @@ void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)
         cols.push_back(image.GetSize());
         m_dvListCtrlImages->AppendItem(cols, (wxUIntPtr)&image);
     }
-    m_dvListCtrlImages->GetColumn(0)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(1)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(2)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(3)->SetWidth(-2);
-    m_dvListCtrlImages->GetColumn(4)->SetWidth(-2);
 }
 
 void DockerOutputPane::SelectTab(const wxString& label) { m_notebook->SetSelection(m_notebook->GetPageIndex(label)); }
@@ -297,4 +286,10 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
               },
               XRCID("delete_container"));
     m_dvListCtrlContainers->PopupMenu(&menu);
+}
+
+void DockerOutputPane::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    Clear();
 }

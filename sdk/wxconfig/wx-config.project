@@ -93,7 +93,7 @@ WXWIN=D:\src\wxWidgets_x64]]>
       <Compiler Options="-O2" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="-O2;-s" Required="yes"/>
+      <Linker Options="-O2;" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="--libs" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
@@ -133,7 +133,7 @@ WXWIN=D:\src\wxWidgets_x64]]>
       <Compiler Options="-O2" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="-O2;-s" Required="yes"/>
+      <Linker Options="-O2;" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="--libs" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

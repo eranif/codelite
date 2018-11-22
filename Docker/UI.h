@@ -8,6 +8,7 @@
 #define _CODELITE_DOCKER_UI_BASE_CLASSES_H
 
 #include "Notebook.h"
+#include "clThemedListCtrl.h"
 #include "clToolBar.h"
 #include <wx/artprov.h>
 #include <wx/button.h>
@@ -135,10 +136,10 @@ protected:
     wxStyledTextCtrl* m_stc;
     wxPanel* m_containersPage;
     clToolBar* m_toolbarContainers;
-    wxDataViewListCtrl* m_dvListCtrlContainers;
+    clThemedListCtrl* m_dvListCtrlContainers;
     wxPanel* m_imagesPage;
     clToolBar* m_toolbarImages;
-    wxDataViewListCtrl* m_dvListCtrlImages;
+    clThemedListCtrl* m_dvListCtrlImages;
 
 protected:
     virtual void OnContainerContextMenu(wxDataViewEvent& event) { event.Skip(); }
@@ -148,10 +149,10 @@ public:
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxPanel* GetOutputPage() { return m_outputPage; }
     clToolBar* GetToolbarContainers() { return m_toolbarContainers; }
-    wxDataViewListCtrl* GetDvListCtrlContainers() { return m_dvListCtrlContainers; }
+    clThemedListCtrl* GetDvListCtrlContainers() { return m_dvListCtrlContainers; }
     wxPanel* GetContainersPage() { return m_containersPage; }
     clToolBar* GetToolbarImages() { return m_toolbarImages; }
-    wxDataViewListCtrl* GetDvListCtrlImages() { return m_dvListCtrlImages; }
+    clThemedListCtrl* GetDvListCtrlImages() { return m_dvListCtrlImages; }
     wxPanel* GetImagesPage() { return m_imagesPage; }
     Notebook* GetNotebook() { return m_notebook; }
     DockerOutputPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

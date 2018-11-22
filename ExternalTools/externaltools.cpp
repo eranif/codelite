@@ -112,7 +112,7 @@ void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
     ExternalToolsData inData;
     m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
     int size = m_mgr->GetToolbarIconSize();
-    toolbar->AddSeparator();
+    toolbar->AddSpacer();
     toolbar->AddButton(XRCID("external_tools_settings"), m_mgr->GetStdIcons()->LoadBitmap("tools", size),
                        _("Configure external tools..."));
     toolbar->AddButton(XRCID("external_tools_monitor"), m_mgr->GetStdIcons()->LoadBitmap("monitor", size),

@@ -26,8 +26,8 @@
 #include "DbSettingDialog.h"
 #include "db_explorer_settings.h"
 #include "editor_config.h"
-#include "windowattrmanager.h"
 #include "globals.h"
+#include "windowattrmanager.h"
 
 #include <wx/dblayer/include/DatabaseLayer.h>
 
@@ -78,8 +78,8 @@ void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 
         wxString serverName = m_txServer->GetValue();
         m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
-
         m_pParent->SetServer(serverName);
+        event.Skip();
     } catch(DatabaseLayerException& e) {
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
@@ -95,29 +95,9 @@ void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 
 void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 {
-#ifdef DBL_USE_SQLITE
-    try {
-
-        // SqliteDatabaseLayer *DbLayer = new SqliteDatabaseLayer(m_filePickerSqlite->GetPath());
-        IDbAdapter* pAdapt = new SQLiteDbAdapter(m_filePickerSqlite->GetPath());
-
-        // m_pParent->SetDbLayer(DbLayer);
-        wxString serverName = m_filePickerSqlite->GetPath();
-        m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
-
-        m_pParent->SetServer(serverName);
-
-    } catch(DatabaseLayerException& e) {
-        wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
-        wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
-        dlg.ShowModal();
-    } catch(...) {
-        wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
-        dlg.ShowModal();
+    if(DoSQLiteItemActivated()) {
+        event.Skip();
     }
-#else
-    wxMessageBox(_("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
-#endif
 }
 
 void DbSettingDialog::OnHistoryClick(wxCommandEvent& event)
@@ -165,11 +145,8 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
         // MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
         long portNumber = 0;
         m_txPgPort->GetValue().ToLong(&portNumber);
-        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),
-                                                    portNumber,
-                                                    m_txPgDatabase->GetValue(),
-                                                    m_txPgUserName->GetValue(),
-                                                    m_txPgPassword->GetValue());
+        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(), portNumber, m_txPgDatabase->GetValue(),
+                                                    m_txPgUserName->GetValue(), m_txPgPassword->GetValue());
 
         wxString serverName = m_txPgServer->GetValue();
         m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
@@ -179,6 +156,7 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
+        event.Skip();
     } catch(...) {
         wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
@@ -200,14 +178,12 @@ void DbSettingDialog::OnPgHistoryDClick(wxCommandEvent& event) { event.Skip(); }
 
 void DbSettingDialog::OnItemActivated(wxListEvent& event)
 {
-    wxCommandEvent dummy;
-
     long selecteditem = -1;
     selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-
     m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0));
-    OnSqliteOkClick(dummy);
-    Close();
+    if(DoSQLiteItemActivated()) {
+        Close();
+    }
 }
 
 void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
@@ -257,7 +233,6 @@ void DbSettingDialog::OnDlgOK(wxCommandEvent& event)
 #ifdef DBL_USE_POSTGRES
     DoSavePgSQLHistory();
 #endif
-    event.Skip();
 }
 
 void DbSettingDialog::DoSaveSqliteHistory()
@@ -391,4 +366,30 @@ void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, c
             return;
         }
     }
+}
+
+bool DbSettingDialog::DoSQLiteItemActivated()
+{
+#ifdef DBL_USE_SQLITE
+    try {
+        IDbAdapter* pAdapt = new SQLiteDbAdapter(m_filePickerSqlite->GetPath());
+
+        // m_pParent->SetDbLayer(DbLayer);
+        wxString serverName = m_filePickerSqlite->GetPath();
+        m_pParent->AddDbConnection(new DbConnection(pAdapt, serverName));
+        m_pParent->SetServer(serverName);
+        return true;
+    } catch(DatabaseLayerException& e) {
+        wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
+        wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
+        dlg.ShowModal();
+        return false;
+    } catch(...) {
+        wxMessageDialog dlg(this, _("Unknown error."), _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
+        dlg.ShowModal();
+        return false;
+    }
+#else
+    wxMessageBox(_("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
+#endif
 }

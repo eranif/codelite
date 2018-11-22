@@ -183,6 +183,25 @@ wxXmlNode* Project::CreateVD(const wxString& vdFullPath, bool mkpath)
 
 bool Project::IsFileExist(const wxString& fileName) { return m_filesTable.count(fileName); }
 
+bool Project::IsFileExist(const wxString& filePath, wxString& fileNameInProject)
+{
+#if defined(__WXGTK__)
+    // The searched-for filepath may be a symlink or a real path;
+    // So might the equivalent filepath contained in the project
+    // This function copes with matching a real filePath with its symlinked project equivalent
+    // It returns that project equivalent in fileNameInProject
+    std::find_if(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
+        if (filePath == CLRealPath(vt.second->GetFilename())) {
+            fileNameInProject = vt.second->GetFilename();
+            return  true;
+        }
+        return false;
+    });
+
+#endif
+    return !fileNameInProject.empty();
+}
+
 bool Project::AddFile(const wxString& fileName, const wxString& virtualDirPath)
 {
     clProjectFolder::Ptr_t folder = GetFolder(virtualDirPath);

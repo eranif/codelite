@@ -32,7 +32,7 @@
       <Compiler Required="yes" Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)">
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Required="yes" Options="-mwindows;-s;$(shell wx-config --debug=no --libs --unicode=yes)"/>
+      <Linker Required="yes" Options="-mwindows;;$(shell wx-config --debug=no --libs --unicode=yes)"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>

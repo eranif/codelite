@@ -51,11 +51,13 @@ endif()
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
                     "${CL_SRC_ROOT}/sdk/codelite_indexer/network" 
-                    "${CL_SRC_ROOT}/CodeLite" 
+                    "${CL_SRC_ROOT}/sdk/websocketpp" 
+                    "${CL_SRC_ROOT}/sdk/asio-1.12.1" 
+                    "${CL_SRC_ROOT}/CodeLite"
                     "${CL_SRC_ROOT}/PCH"
                     "${CL_SRC_ROOT}/Interfaces")
 
-set( ADDITIONAL_LIBRARIES "" )
+set(ADDITIONAL_LIBRARIES "")
 
 if (UNIX)
     if ( IS_FREEBSD )
@@ -119,7 +121,7 @@ else (UNIX AND NOT APPLE)
                           wxsqlite3 
                           ${LIBSSH_LIB} 
                           ${ADDITIONAL_LIBRARIES} 
-                          -lz -lcrypto)
+                          -lz /usr/lib/libcrypto.dylib)
 endif ( UNIX AND NOT APPLE )
 
 if (NOT MINGW)

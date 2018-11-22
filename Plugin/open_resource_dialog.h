@@ -29,6 +29,7 @@
 #include "clAnagram.h"
 #include "codelite_exports.h"
 #include "entry.h"
+#include "fileextmanager.h"
 #include "openresourcedialogbase.h"
 #include "wxStringHash.h"
 #include <vector>
@@ -75,14 +76,13 @@ public:
     bool IsOk() const;
 };
 
-/** Implementing OpenResourceDialogBase */
 class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
     IManager* m_manager;
     std::unordered_multimap<wxString, wxString> m_files;
+    std::unordered_map<wxString, int> m_fileTypeHash;
     wxTimer* m_timer;
     bool m_needRefresh;
-    std::unordered_map<wxString, wxBitmap> m_tagImgMap;
     wxArrayString m_filters;
     wxArrayString m_userFilters;
     long m_lineNumber;
@@ -99,9 +99,10 @@ protected:
     void DoPopulateTags();
     void DoSelectItem(const wxDataViewItem& item);
     void Clear();
-    wxDataViewItem DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
-                                OpenResourceDialogItemData* clientData, const wxBitmap& bmp);
-    wxBitmap DoGetTagImg(TagEntryPtr tag);
+    void DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
+                      OpenResourceDialogItemData* clientData, int imgid);
+    int DoGetTagImg(TagEntryPtr tag);
+    OpenResourceDialogItemData* GetItemData(const wxDataViewItem& item) const;
 
 protected:
     // Handlers for OpenResourceDialogBase events.

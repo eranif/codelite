@@ -25,7 +25,8 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_notebook10 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook10 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                kNotebook_Default | wxBORDER_STATIC);
     m_notebook10->SetName(wxT("m_notebook10"));
 
     mainSizer->Add(m_notebook10, 1, wxEXPAND, WXC_FROM_DIP(0));
@@ -410,7 +411,7 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
     boxSizer21->Add(m_checkBoxShowDebugOnRun, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("EditorSettingsDockingWindowsBase"));
-    SetSize(-1, -1);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_cpCaptionColour->Connect(wxEVT_UPDATE_UI,

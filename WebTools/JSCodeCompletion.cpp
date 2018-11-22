@@ -1,27 +1,26 @@
 #include "JSCodeCompletion.h"
-#include <wx/stc/stc.h>
-#include "macros.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/app.h>
-#include "wxCodeCompletionBoxEntry.h"
-#include <algorithm>
-#include "wxCodeCompletionBoxManager.h"
-#include "cl_standard_paths.h"
+#include "WebToolsConfig.h"
 #include "clZipReader.h"
-#include <wx/filename.h>
-#include "entry.h"
 #include "cl_calltip.h"
-#include <wx/log.h>
-#include <wx/filename.h>
-#include "json_node.h"
+#include "cl_standard_paths.h"
+#include "entry.h"
+#include "event_notifier.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "WebToolsConfig.h"
-#include <wx/msgdlg.h>
-#include <wx/menu.h>
+#include "json_node.h"
+#include "macros.h"
 #include "navigationmanager.h"
-#include "event_notifier.h"
+#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxManager.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 #ifdef __WXMSW__
 #define ZIP_NAME "javascript-win.zip"
@@ -60,14 +59,13 @@ JSCodeCompletion::~JSCodeCompletion()
 
 bool JSCodeCompletion::SanityCheck()
 {
-#ifdef __WXGTK__
     wxFileName nodeJS;
     if(!clTernServer::LocateNodeJS(nodeJS)) {
         wxString msg;
-        msg << _("It seems that NodeJS is not installed on your machine\n(Can't find file "
-                 "'/usr/bin/nodejs' or '/usr/bin/node')\nI have temporarily disabled Code Completion for "
-                 "JavaScript\nPlease install "
-                 "NodeJS and try again");
+        msg << _(
+            "It seems that NodeJS is not installed on your machine\nI have temporarily disabled Code Completion for "
+            "JavaScript\nPlease install "
+            "NodeJS and try again");
         wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
 
         // Disable CC
@@ -76,7 +74,6 @@ bool JSCodeCompletion::SanityCheck()
         conf.Save();
         return false;
     }
-#endif
     return true;
 }
 
@@ -102,9 +99,7 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
             currentPos = ctrl->PositionBefore(currentPos);
             continue;
         }
-        if(prevChar == '(') {
-            isFunctionTip = true;
-        }
+        if(prevChar == '(') { isFunctionTip = true; }
         break;
     }
 
@@ -163,9 +158,7 @@ void JSCodeCompletion::TriggerWordCompletion()
 
 void JSCodeCompletion::FindDefinition(IEditor* editor)
 {
-    if(!IsEnabled()) {
-        return;
-    }
+    if(!IsEnabled()) { return; }
 
     if(!SanityCheck()) return;
 
@@ -202,9 +195,7 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
 
 void JSCodeCompletion::ResetTern()
 {
-    if(!IsEnabled()) {
-        return;
-    }
+    if(!IsEnabled()) { return; }
 
     if(!SanityCheck()) return;
 
@@ -212,11 +203,11 @@ void JSCodeCompletion::ResetTern()
     m_ccPos = wxNOT_FOUND;
 
     // recycle tern
-    //m_ternServer.PostResetCommand(true);
+    // m_ternServer.PostResetCommand(true);
     m_ternServer.RecycleIfNeeded(true);
 }
 
-void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor) 
+void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor)
 {
     wxUnusedVar(editor);
     menu->PrependSeparator();
@@ -231,11 +222,9 @@ void JSCodeCompletion::OnGotoDefinition(wxCommandEvent& event)
 
 void JSCodeCompletion::ReparseFile(IEditor* editor)
 {
-    if(!IsEnabled()) {
-        return;
-    }
+    if(!IsEnabled()) { return; }
     CHECK_PTR_RET(editor);
-    
+
     if(!SanityCheck()) return;
 
     // Sanity

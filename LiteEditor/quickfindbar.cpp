@@ -38,7 +38,6 @@
 #include "plugin.h"
 #include "quickfindbar.h"
 #include "stringsearcher.h"
-#include "wxFlatButtonBar.h"
 #include <wx/dcbuffer.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
@@ -95,8 +94,13 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
     m_findEventsHandler->NoUnbind();
     m_replaceEventsHandler->NoUnbind();
-
-    m_toolbar->EnableFlag(clToolBar::kThemedColour, false);
+    m_toolbar->SetMiniToolBar(true);
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), bmps->LoadBitmap("file_close"), _("Close"), wxITEM_NORMAL);
+    m_toolbar->AddSeparator();
+    m_matchesFound = new wxStaticText(m_toolbar, wxID_ANY, "", wxDefaultPosition, wxSize(250, -1),
+                                      wxST_NO_AUTORESIZE | wxALIGN_LEFT);
+    m_toolbar->AddControl(m_matchesFound);
+    m_toolbar->AddStretchableSpace();
     m_toolbar->AddTool(XRCID("case-sensitive"), _("Case Sensitive"), bmps->LoadBitmap("case-sensitive"), "",
                        wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bmps->LoadBitmap("whole-word"), "", wxITEM_CHECK);
@@ -105,7 +109,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bmps->LoadBitmap("text_selection"), "",
                        wxITEM_CHECK);
     m_toolbar->Realize();
-
+    m_toolbar->Bind(wxEVT_TOOL, &QuickFindBar::OnHide, this, wxID_CLOSE);
     m_toolbar->Bind(wxEVT_TOOL,
                     [&](wxCommandEvent& e) {
                         if(e.IsChecked()) {
@@ -193,12 +197,10 @@ QuickFindBar::~QuickFindBar()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, [&](wxCommandEvent& event) {
         event.Skip();
         // See if we got a new editor
-        if(event.GetClientData()) {
-            IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
-            if(editor) {
-                this->SetEditor(editor->GetCtrl());
-                return;
-            }
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            this->SetEditor(editor->GetCtrl());
+            return;
         }
         SetEditor(NULL);
     });
@@ -440,14 +442,15 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
 
 int QuickFindBar::GetCloseButtonId() { return ID_TOOL_CLOSE; }
 
-bool QuickFindBar::Show(const wxString& findWhat)
+bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat
+    // and show/hide the 'Replace' section depending on the bool
     if(!m_sci) return false;
-    return DoShow(true, findWhat);
+    return DoShow(true, findWhat, showReplace);
 }
 
-bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
+bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
 {
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
@@ -464,7 +467,24 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
         }
     }
 
-    if(res) { GetParent()->GetSizer()->Layout(); }
+    if(s) {
+        // Show or Hide the 'Replace' section as requested
+        wxSizer* flexgridsizer = m_textCtrlFind->GetContainingSizer();
+        if (flexgridsizer) {
+            if (showReplace) {
+                flexgridsizer->ShowItems(true);
+            } else {
+                for (size_t n=4; n < 7; ++n) {
+                    flexgridsizer->Hide(n);
+                }
+            }
+        }
+    }
+    if(res) { 
+        GetParent()->GetSizer()->Layout(); 
+    }
+
+    m_replaceInSelection = !findWhat.IsEmpty() && findWhat.Contains("\n");
     if(!m_sci) {
         // nothing to do
 
@@ -475,15 +495,22 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat)
 
     } else if(!findWhat.IsEmpty()) {
 
-        m_textCtrlFind->ChangeValue(findWhat);
-        m_textCtrlFind->SelectAll();
-        m_textCtrlFind->SetFocus();
-        if(m_highlightMatches) {
-            if(!(m_searchFlags & wxSTC_FIND_REGEXP) || m_textCtrlFind->GetValue().Length() > 2) {
-                DoHighlightMatches(true);
+        if(findWhat.Contains("\n")) {
+            // Multiline selection
+            // enable the 'Replace in Selection'
+            m_textCtrlFind->ChangeValue("");
+            m_textCtrlFind->SetFocus();
+        } else {
+            m_textCtrlFind->ChangeValue(findWhat);
+            m_textCtrlFind->SelectAll();
+            m_textCtrlFind->SetFocus();
+            if(m_highlightMatches) {
+                if(!(m_searchFlags & wxSTC_FIND_REGEXP) || m_textCtrlFind->GetValue().Length() > 2) {
+                    DoHighlightMatches(true);
+                }
             }
+            PostCommandEvent(this, m_textCtrlFind);
         }
-        PostCommandEvent(this, m_textCtrlFind);
 
     } else {
         if(m_sci->GetSelections() > 1) {}
@@ -1088,9 +1115,8 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
         ctrl->SearchAnchor();
         pos = ctrl->SearchNext(flags, find);
         if(pos == wxNOT_FOUND) {
-            if(SHOW_STATUS_MESSAGES(search_flags)) {
-                clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
-            } else if(search_flags & kBreakWhenWrapSearch) {
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
+            if(search_flags & kBreakWhenWrapSearch) {
                 // Stop searching
                 return false;
             }
@@ -1104,9 +1130,8 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
         ctrl->SearchAnchor();
         pos = ctrl->SearchPrev(flags, find);
         if(pos == wxNOT_FOUND) {
-            if(SHOW_STATUS_MESSAGES(search_flags)) {
-                clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
-            } else if(search_flags & kBreakWhenWrapSearch) {
+            clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 1);
+            if(search_flags & kBreakWhenWrapSearch) {
                 // Stop searching
                 return false;
             }

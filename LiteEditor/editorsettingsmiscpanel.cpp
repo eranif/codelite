@@ -53,16 +53,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
         m_toolbarIconSize->SetSelection(1);
     }
 
-    if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
-        m_choiceIconSet->SetSelection(1);
-
-    else if(options->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
-        m_choiceIconSet->SetSelection(2);
-
-    else
-        m_choiceIconSet->SetSelection(0); // Default
-
-    
     m_oldSetLocale = options->GetUseLocale();
     m_SetLocale->SetValue(m_oldSetLocale);
     m_oldpreferredLocale = options->GetPreferredLocale();
@@ -99,13 +89,13 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
     m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
     m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
+    m_textCtrlSeparation->ChangeValue(::wxIntToString(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30)));
 
-    bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
-    m_showSplashScreen->SetValue(showSplash);
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 
     GetWebSearchPrefix()->ChangeValue(options->GetWebSearchPrefix());
+    m_checkBoxDirect2D->SetValue(clConfig::Get().Read("Editor/UseDirect2D", true));
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
@@ -116,13 +106,6 @@ void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
 
 void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 {
-
-    if(m_showSplashScreen->IsChecked()) {
-        clMainFrame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
-    } else {
-        clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
-    }
-
     clConfig::Get().Write(kConfigSingleInstance, m_singleAppInstance->IsChecked());
     clConfig::Get().Write(kConfigCheckForNewVersion, m_versionCheckOnStartup->IsChecked());
     clConfig::Get().Write(kConfigMaxItemsInFindReplaceDialog, ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15));
@@ -134,6 +117,7 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
+    clConfig::Get().Write(kConfigToolbarGroupSpacing, ::wxStringToInt(m_textCtrlSeparation->GetValue(), 30));
 
     // check to see of the icon size was modified
     int oldIconSize(24);
@@ -166,45 +150,20 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     }
 
     size_t flags = options->GetOptions();
-    size_t oldFlags = oldOptions->GetOptions();
-
-    // Keep the old icon-set flags, this is done for deciding whether we should
-    // prompt the user for possible restart
-    size_t oldIconFlags(0);
-    size_t newIconFlags(0);
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_FreshFarm) oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic_Dark) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    if(oldIconFlags == 0) oldIconFlags = OptionsConfig::Opt_IconSet_Classic;
 
     // Clear old settings
     flags &= ~(OptionsConfig::Opt_IconSet_Classic);
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
-
-    if(m_choiceIconSet->GetSelection() == 0) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-        flags |= OptionsConfig::Opt_IconSet_Classic;
-
-    } else if(m_choiceIconSet->GetSelection() == 2) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-        flags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    } else { // 1
-        newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-        flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-    }
-
+    flags |= OptionsConfig::Opt_IconSet_Classic;
+    
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
-    m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
-
     options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
+    bool useDirect2D_Old = clConfig::Get().Read("Editor/UseDirect2D", true);
+    clConfig::Get().Write("Editor/UseDirect2D", m_checkBoxDirect2D->IsChecked());
+    m_restartRequired = (useDirect2D_Old != m_checkBoxDirect2D->IsChecked());
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
@@ -279,6 +238,7 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 
     clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }
+
 void EditorSettingsMiscPanel::OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event)
 {
 #ifdef __WXGTK__
@@ -298,4 +258,14 @@ void EditorSettingsMiscPanel::OnResetAnnoyingDialogsAnswers(wxCommandEvent& even
 void EditorSettingsMiscPanel::OnPromptStableReleaseUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_versionCheckOnStartup->IsChecked());
+}
+
+void EditorSettingsMiscPanel::OnUseDirect2DUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+    event.Enable(true);
+#else
+    event.Enable(false);
+    event.Check(false);
+#endif
 }

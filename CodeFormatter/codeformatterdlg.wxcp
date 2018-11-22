@@ -295,7 +295,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../bitmaps/16-cog.png"
+           "m_path": ""
           }, {
            "type": "bool",
            "m_label": "Selected",
@@ -868,7 +868,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../bitmaps/16-mime-cpp.png"
+           "m_path": ""
           }, {
            "type": "bool",
            "m_label": "Selected",
@@ -3298,7 +3298,7 @@
           }, {
            "type": "bitmapPicker",
            "m_label": "Bitmap File:",
-           "m_path": "../bitmaps/16-mime-php.png"
+           "m_path": ""
           }, {
            "type": "bool",
            "m_label": "Selected",

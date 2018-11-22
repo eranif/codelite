@@ -70,7 +70,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_xdebugLocalsView(NULL)
     , m_xdebugEvalPane(NULL)
     , m_showWelcomePage(false)
-    , m_toggleToolbar(false)
 {
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
@@ -82,8 +81,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Sigleton class
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
-
-    // BitmapLoader::RegisterImage(FileExtManager::TypeWorkspacePHP, images.Bitmap("m_bmpPhpWorkspace"));
 
     // Add our UI
     // create tab (possibly detached)
@@ -553,22 +550,12 @@ void PhpPlugin::OnDebugEnded(XDebugEvent& e)
         m_mgr->GetDockingManager()->LoadPerspective(m_savedPerspective);
         m_savedPerspective.Clear();
     }
-
-    if(m_toggleToolbar) {
-        m_mgr->ShowToolBar(false);
-        m_toggleToolbar = false;
-    }
 }
 
 void PhpPlugin::OnDebugStarted(XDebugEvent& e)
 {
     e.Skip();
     DoEnsureXDebugPanesVisible();
-    m_toggleToolbar = !m_mgr->IsToolBarShown();
-    if(m_toggleToolbar) {
-        // toolbar not shown
-        m_mgr->ShowToolBar();
-    }
 }
 
 void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)

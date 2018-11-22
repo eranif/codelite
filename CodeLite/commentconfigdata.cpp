@@ -25,46 +25,37 @@
 #include "commentconfigdata.h"
 
 CommentConfigData::CommentConfigData()
-    : m_addStarOnCComment(true)
-    , m_continueCppComment(false)
-    , m_useSlash2Stars(true)
-    , m_useShtroodel(true)
-    , m_autoInsertAfterSlash2Stars(true)
 {
-    m_classPattern << wxT(" * @class $(Name)\n");
-    m_classPattern << wxT(" * @author $(User)\n");
-    m_classPattern << wxT(" * @date $(Date)\n");
-    m_classPattern << wxT(" * @file $(CurrentFileName).$(CurrentFileExt)\n");
-    m_classPattern << wxT(" * @brief \n");
-
-    m_functionPattern << wxT(" * @brief \n");
+    m_classPattern << " * @class $(Name)\n";
+    m_classPattern << " * @author $(User)\n";
+    m_classPattern << " * @date $(Date)\n";
+    m_classPattern << " * @file $(CurrentFileName).$(CurrentFileExt)\n";
+    m_classPattern << " * @brief \n";
+    m_functionPattern << " * @brief \n";
 }
 
 CommentConfigData::~CommentConfigData() {}
 
 void CommentConfigData::DeSerialize(Archive& arch)
 {
-    arch.Read(wxT("m_addStarOnCComment"), m_addStarOnCComment);
-    arch.Read(wxT("m_continueCppComment"), m_continueCppComment);
-    arch.Read(wxT("m_useSlash2Stars"), m_useSlash2Stars);
-    arch.Read(wxT("m_useShtroodel"), m_useShtroodel);
-    arch.Read(wxT("m_classPattern"), m_classPattern);
-    m_classPattern.Replace(wxT("|"), wxT("\n"));
-
-    arch.Read(wxT("m_functionPattern"), m_functionPattern);
-    m_functionPattern.Replace(wxT("|"), wxT("\n"));
-    arch.Read("m_autoInsertAfterSlash2Stars", m_autoInsertAfterSlash2Stars);
+    arch.Read("m_addStarOnCComment", m_addStarOnCComment);
+    arch.Read("m_continueCppComment", m_continueCppComment);
+    arch.Read("m_autoInsert", m_autoInsert);
+    arch.Read("m_useQtStyle", m_useQtStyle);
+    m_classPattern.Replace("|", "\n");
+    arch.Read("m_functionPattern", m_functionPattern);
+    m_functionPattern.Replace("|", "\n");
+    arch.Read("m_functionPattern", m_functionPattern);
 }
 
 void CommentConfigData::Serialize(Archive& arch)
 {
-    arch.Write(wxT("m_addStarOnCComment"), m_addStarOnCComment);
-    arch.Write(wxT("m_continueCppComment"), m_continueCppComment);
-    arch.Write(wxT("m_useSlash2Stars"), m_useSlash2Stars);
-    arch.Write(wxT("m_useShtroodel"), m_useShtroodel);
-    m_classPattern.Replace(wxT("\n"), wxT("|"));
-    arch.Write(wxT("m_classPattern"), m_classPattern);
-    m_functionPattern.Replace(wxT("\n"), wxT("|"));
-    arch.Write(wxT("m_functionPattern"), m_functionPattern);
-    arch.Write("m_autoInsertAfterSlash2Stars", m_autoInsertAfterSlash2Stars);
+    arch.Write("m_addStarOnCComment", m_addStarOnCComment);
+    arch.Write("m_continueCppComment", m_continueCppComment);
+    arch.Write("m_autoInsert", m_autoInsert);
+    arch.Write("m_useQtStyle", m_useQtStyle);
+    m_classPattern.Replace("\n", "|");
+    arch.Write("m_classPattern", m_classPattern);
+    m_functionPattern.Replace("\n", "|");
+    arch.Write("m_functionPattern", m_functionPattern);
 }

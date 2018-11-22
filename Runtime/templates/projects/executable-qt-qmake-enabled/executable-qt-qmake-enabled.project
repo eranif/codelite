@@ -36,7 +36,7 @@
       <Compiler Required="yes" Options="-O2;-W">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-s"/>
+      <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>

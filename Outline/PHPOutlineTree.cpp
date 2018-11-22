@@ -12,10 +12,6 @@
 #include <imanager.h>
 #include <wx/wupdlock.h>
 
-#ifndef __WXMSW__
-#include <wx/imaglist.h>
-#endif
-
 class QItemData : public wxTreeItemData
 {
 public:
@@ -30,57 +26,57 @@ public:
 };
 
 PHPOutlineTree::PHPOutlineTree(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxTreeCtrl(parent, id, pos, size, style)
+    : clThemedTreeCtrl(parent, id, pos, size, style)
 {
-    MSWSetNativeTheme(this);
-    SetFont(DrawingUtils::GetDefaultGuiFont());
+    SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 }
 
 PHPOutlineTree::~PHPOutlineTree() {}
 
 int PHPOutlineTree::GetImageId(PHPEntityBase::Ptr_t entry)
 {
+    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     if(entry->Is(kEntityTypeFunction)) {
         PHPEntityFunction* func = entry->Cast<PHPEntityFunction>();
 
         if(func->HasFlag(kFunc_Private))
-            return 1;
+            return bmpLoader->GetImageIndex(BitmapLoader::kFunctionPrivate);
         else if(func->HasFlag(kFunc_Protected))
-            return 2;
+            return bmpLoader->GetImageIndex(BitmapLoader::kFunctionProtected);
         else
             // public
-            return 3;
+            return bmpLoader->GetImageIndex(BitmapLoader::kFunctionPublic);
 
     } else if(entry->Is(kEntityTypeVariable)) {
         PHPEntityVariable* var = entry->Cast<PHPEntityVariable>();
         if(!var->IsMember() && !var->IsConst()) {
             // A global variale
-            return 6;
+            return bmpLoader->GetImageIndex(BitmapLoader::kMemberPublic);
 
         } else if(var->IsMember()) {
-            if(var->HasFlag(kVar_Const)) return 9; // constant
+            if(var->HasFlag(kVar_Const)) return bmpLoader->GetImageIndex(BitmapLoader::kConstant); // constant
             // Member
             if(var->HasFlag(kVar_Private))
-                return 4;
+                return bmpLoader->GetImageIndex(BitmapLoader::kMemberPrivate);
             else if(var->HasFlag(kVar_Protected))
-                return 5;
+                return bmpLoader->GetImageIndex(BitmapLoader::kMemberProtected);
             else
-                return 6;
+                return bmpLoader->GetImageIndex(BitmapLoader::kMemberPublic);
 
         } else if(var->IsConst()) {
             // Constant
-            return 9;
+            return bmpLoader->GetImageIndex(BitmapLoader::kConstant);
         } else {
-            return 6;
+            return bmpLoader->GetImageIndex(BitmapLoader::kMemberPublic);
         }
 
     } else if(entry->Is(kEntityTypeNamespace)) {
         // Namespace
-        return 7;
+        return bmpLoader->GetImageIndex(BitmapLoader::kNamespace);
     } else if(entry->Is(kEntityTypeClass)) {
-        return 8;
+        return bmpLoader->GetImageIndex(BitmapLoader::kClass);
     }
-    return -1; // Unknown
+    return wxNOT_FOUND; // Unknown
 }
 
 void PHPOutlineTree::BuildTree(const wxFileName& filename)
@@ -94,25 +90,10 @@ void PHPOutlineTree::BuildTree(const wxFileName& filename)
 
     wxTreeItemId root = AddRoot(wxT("Root"));
 
-    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/globals")));            // 0
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_private")));   // 1
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_protected"))); // 2
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/function_public")));    // 3
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/member_private")));     // 4
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/member_protected")));   // 5
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/member_public")));      // 6
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/namespace")));          // 7
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/class")));              // 8
-    images->Add(m_manager->GetStdIcons()->LoadBitmap(wxT("cc/16/enumerator")));         // 9
-    AssignImageList(images);
-
     // Build the tree view
     BuildTree(root, sourceFile.Namespace());
 
-    if(HasChildren(GetRootItem())) {
-        ExpandAll();
-    }
+    if(HasChildren(GetRootItem())) { ExpandAll(); }
 }
 
 void PHPOutlineTree::Clear()
@@ -150,9 +131,7 @@ void PHPOutlineTree::ItemSelected(const wxTreeItemId& item, bool focusEditor)
     editor->FindAndSelect(itemData->m_entry->GetShortName(), itemData->m_entry->GetShortName(),
                           editor->PosFromLine(itemData->m_entry->GetLine()), NavMgr::Get());
     // set the focus to the editor
-    if(focusEditor) {
-        CallAfter(&PHPOutlineTree::SetEditorActive, editor);
-    }
+    if(focusEditor) { CallAfter(&PHPOutlineTree::SetEditorActive, editor); }
 }
 
 void PHPOutlineTree::SetEditorActive(IEditor* editor) { editor->SetActive(); }
@@ -171,17 +150,13 @@ bool PHPOutlineTree::Select(const wxString& pattern)
 
 wxTreeItemId PHPOutlineTree::DoFind(const wxString& pattern, const wxTreeItemId& parent)
 {
-    if((GetRootItem() != parent) && FileUtils::FuzzyMatch(pattern, GetItemText(parent))) {
-        return parent;
-    }
+    if((GetRootItem() != parent) && FileUtils::FuzzyMatch(pattern, GetItemText(parent))) { return parent; }
     if(ItemHasChildren(parent)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(parent, cookie);
         while(child.IsOk()) {
             wxTreeItemId match = DoFind(pattern, child);
-            if(match.IsOk()) {
-                return match;
-            }
+            if(match.IsOk()) { return match; }
             child = GetNextChild(parent, cookie);
         }
     }

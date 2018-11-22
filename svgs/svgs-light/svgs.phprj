@@ -1,0 +1,19 @@
+{
+ "m_name": "svgs",
+ "m_isActive": true,
+ "m_importFileSpec": "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sh",
+ "m_excludeFolders": ".git;.svn;.codelite;.clang",
+ "settings": {
+  "m_runAs": 0,
+  "m_phpExe": "D:\\Zend Server (x86)\\ZendServer\\bin\\php.exe",
+  "m_indexFile": "C:\\src\\codelite\\svgs\\create-humanity-icons.php",
+  "m_args": "",
+  "m_workingDirectory": "",
+  "m_projectURL": "",
+  "m_includePath": "",
+  "m_ccIncludePath": "",
+  "m_flags": 5,
+  "m_phpIniFile": "",
+  "m_fileMapping": []
+ }
+}

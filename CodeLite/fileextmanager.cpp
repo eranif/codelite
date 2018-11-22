@@ -108,6 +108,7 @@ void FileExtManager::Init()
         m_map[wxT("png")] = TypeBmp;
         m_map[wxT("ico")] = TypeBmp;
         m_map[wxT("xpm")] = TypeBmp;
+        m_map[wxT("svg")] = TypeSvg;
 
         m_map[wxT("mk")] = TypeMakefile;
 
@@ -132,6 +133,10 @@ void FileExtManager::Init()
         m_map["pri"] = TypeQMake;
         m_map["cmake"] = TypeCMake;
         m_map["s"] = TypeAsm;
+        m_map["yaml"] = TypeYAML;
+        m_map["yml"] = TypeYAML;
+        m_map["db"] = TypeDatabase;
+        m_map["tags"] = TypeDatabase;
 
         // Initialize regexes:
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript)));
@@ -142,6 +147,7 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("SQLite format 3", TypeDatabase, false)));
 
         // STL sources places "-*- C++ -*-" at the top of their headers
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("-*- C++ -*-", TypeSourceCpp, false)));
@@ -219,7 +225,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
-    if(!FileUtils::ReadFileContent(filename, fileContent)) return false;
+    if(!FileUtils::ReadFileContent(filename, fileContent, wxConvLibc)) return false;
 
     // Use only the first 4K bytes from the input file (tested with default STL headers)
     if(fileContent.length() > 4096) { fileContent.Truncate(4096); }

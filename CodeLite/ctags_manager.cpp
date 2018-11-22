@@ -1538,7 +1538,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
             if(!t->IsScopeGlobal() && !t->IsConstructor() && !t->IsDestructor()) { tip << t->GetScope() << wxT("::"); }
 
             // name
-            tip << "<b><color=\"white\">" << t->GetName() << "</color></b>";
+            tip << "<b>" << t->GetName() << "</b>";
 
             // method signature
             tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);

@@ -30,7 +30,6 @@
 #include "SFTPTreeView.h"
 #include "SFTPUploadDialog.h"
 #include "SSHAccountManagerDlg.h"
-#include "SSHTerminal.h"
 #include "bitmap_loader.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButtonBase.h"
@@ -70,8 +69,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     , m_plugin(plugin)
 {
     m_bmpLoader = clGetManager()->GetStdIcons();
-    wxImageList* il = m_bmpLoader->MakeStandardMimeImageList();
-    m_treeCtrl->AssignImageList(il);
+    m_treeCtrl->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
 
     SFTPSettings settings;
     settings.Load();
@@ -97,9 +95,6 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &SFTPTreeView::OnEditorClosing, this);
     m_treeCtrl->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
-
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrl));
-    ::MSWSetNativeTheme(m_treeCtrl);
 
     m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."),
                        m_bmpLoader->LoadBitmap("folder-users"));
@@ -157,8 +152,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     cd->SetIsFolder(true);
 
     wxTreeItemId root =
-        m_treeCtrl->AppendItem(m_treeCtrl->GetRootItem(), initialFolder,
-                               m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+        m_treeCtrl->AddRoot(initialFolder, m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
 
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
@@ -619,7 +613,7 @@ void SFTPTreeView::DoOpenSession()
     if(!GetAccountFromUser(m_account)) { return; }
 
     wxString message;
-    wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10);
+    wxProgressDialog dlg(_("SFTP"), wxString(' ', 100) + "\n\n", 10, EventNotifier::Get()->TopFrame());
     dlg.Show();
     dlg.Update(1, wxString() << _("Connecting to: ") << m_account.GetAccountName() << "..."
                              << _("\n(this may take a few seconds)"));

@@ -209,7 +209,7 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNote
         btny += 2; // We add 2 more pixels here cause of the marker line
         
         wxRect xRect = wxRect(curx, btny, x_button_size, x_button_size);
-        DrawingUtils::DrawButtonX(dc, wnd, xRect, m_markerColour, btnState);
+        DrawingUtils::DrawButtonX(dc, wnd, xRect, m_markerColour, bgColour, btnState);
         *out_button_rect = xRect;
         curx += x_button_size;
         curx += X_PADDING;

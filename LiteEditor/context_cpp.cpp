@@ -23,65 +23,62 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "precompiled_header.h"
-#include "pluginmanager.h"
-#include "refactorengine.h"
-#include "code_completion_manager.h"
-#include "event_notifier.h"
-#include "fileextmanager.h"
-#include "drawingutils.h"
-#include "findusagetab.h"
-#include "buildtabsettingsdata.h"
-#include "cl_editor_tip_window.h"
-#include "implement_parent_virtual_functions.h"
-#include "debuggerasciiviewer.h"
-#include <wx/file.h>
-#include "debuggerconfigtool.h"
-#include "debuggersettings.h"
-#include "parse_thread.h"
-#include <wx/progdlg.h>
-#include "renamesymboldlg.h"
-#include "cpptoken.h"
-#include "globals.h"
-#include "commentconfigdata.h"
-#include "editor_config.h"
-#include "movefuncimpldlg.h"
-#include "context_cpp.h"
-#include "cl_editor.h"
-#include "ctags_manager.h"
-#include "manager.h"
-#include "symbols_dialog.h"
-#include "editor_config.h"
-#include "wx/xrc/xmlres.h"
-#include "algorithm"
-#include "language.h"
-#include "browse_record.h"
-#include "wx/tokenzr.h"
-#include "setters_getters_dlg.h"
-#include "navigationmanager.h"
-#include "wx/regex.h"
-#include <wx/choicdlg.h>
-#include "frame.h"
-#include "debuggermanager.h"
-#include "addincludefiledlg.h"
-#include "workspacetab.h"
-#include "fileview.h"
-#include "refactorindexbuildjob.h"
-#include "new_quick_watch_dlg.h"
-#include "code_completion_api.h"
 #include "AddFunctionsImpDlg.h"
-#include "event_notifier.h"
+#include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
-#include "globals.h"
-#include <parse_thread.h>
-#include "cl_command_event.h"
-#include "codelite_events.h"
-#include "wxCodeCompletionBoxManager.h"
-#include <wx/regex.h>
+#include "addincludefiledlg.h"
+#include "algorithm"
+#include "browse_record.h"
+#include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
 #include "clSelectSymbolDialog.h"
-#include "CxxVariableScanner.h"
+#include "cl_command_event.h"
+#include "cl_editor.h"
+#include "cl_editor_tip_window.h"
+#include "code_completion_api.h"
+#include "code_completion_manager.h"
+#include "codelite_events.h"
+#include "commentconfigdata.h"
+#include "context_cpp.h"
+#include "cpptoken.h"
+#include "ctags_manager.h"
+#include "debuggerasciiviewer.h"
+#include "debuggerconfigtool.h"
+#include "debuggermanager.h"
+#include "debuggersettings.h"
+#include "drawingutils.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileview.h"
+#include "findusagetab.h"
+#include "frame.h"
+#include "globals.h"
+#include "implement_parent_virtual_functions.h"
+#include "language.h"
+#include "manager.h"
+#include "movefuncimpldlg.h"
+#include "navigationmanager.h"
+#include "new_quick_watch_dlg.h"
+#include "parse_thread.h"
+#include "pluginmanager.h"
+#include "precompiled_header.h"
+#include "refactorengine.h"
+#include "refactorindexbuildjob.h"
+#include "renamesymboldlg.h"
+#include "setters_getters_dlg.h"
+#include "symbols_dialog.h"
+#include "workspacetab.h"
+#include "wx/regex.h"
+#include "wx/tokenzr.h"
+#include "wx/xrc/xmlres.h"
+#include "wxCodeCompletionBoxManager.h"
+#include <parse_thread.h>
+#include <wx/choicdlg.h>
+#include <wx/file.h>
+#include <wx/progdlg.h>
+#include <wx/regex.h>
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -111,15 +108,11 @@ static bool IsHeader(const wxString& ext)
     return e == wxT("hpp") || e == wxT("h") || e == wxT("hxx");
 }
 
-#define VALIDATE_PROJECT(ctrl)        \
-    if(ctrl.GetProject().IsEmpty()) { \
-        return;                       \
-    }
+#define VALIDATE_PROJECT(ctrl) \
+    if(ctrl.GetProject().IsEmpty()) { return; }
 
-#define VALIDATE_WORKSPACE()                           \
-    if(ManagerST::Get()->IsWorkspaceOpen() == false) { \
-        return;                                        \
-    }
+#define VALIDATE_WORKSPACE() \
+    if(ManagerST::Get()->IsWorkspaceOpen() == false) { return; }
 
 struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
@@ -226,9 +219,7 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
 
     // get the token
     wxString word = rCtrl.GetTextRange(word_start, end);
-    if(word.IsEmpty()) {
-        return;
-    }
+    if(word.IsEmpty()) { return; }
 
     int foundPos(wxNOT_FOUND);
     if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~')) word.Prepend(wxT("~"));
@@ -256,20 +247,14 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
         rCtrl.DoCancelCalltip();
 
         tooltip.Trim().Trim(false);
-        if(tooltip.IsEmpty() == false) {
-            rCtrl.DoShowCalltip(-1, "", tooltip);
-        }
+        if(tooltip.IsEmpty() == false) { rCtrl.DoShowCalltip(-1, "", tooltip); }
     }
 }
 
 wxString ContextCpp::GetFileImageString(const wxString& ext)
 {
-    if(IsSource(ext)) {
-        return wxT("?15");
-    }
-    if(IsHeader(ext)) {
-        return wxT("?16");
-    }
+    if(IsSource(ext)) { return wxT("?15"); }
+    if(IsHeader(ext)) { return wxT("?16"); }
     return wxT("?17");
 }
 
@@ -319,13 +304,9 @@ void ContextCpp::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) {
-        return;
-    }
+    if(rCtrl.GetDisableSmartIndent()) { return; }
 
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
-        return;
-    }
+    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) { return; }
 
     int curpos = rCtrl.GetCurrentPos();
     if(IsComment(curpos) && nChar == wxT('\n')) {
@@ -474,9 +455,7 @@ void ContextCpp::CodeComplete(long pos)
     CHECK_JS_RETURN_VOID();
     VALIDATE_WORKSPACE();
     long from = pos;
-    if(from == wxNOT_FOUND) {
-        from = GetCtrl().GetCurrentPos();
-    }
+    if(from == wxNOT_FOUND) { from = GetCtrl().GetCurrentPos(); }
     DoCodeComplete(from);
 }
 
@@ -487,9 +466,7 @@ void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<Tag
         if(i == 0) {
             target.push_back(src.at(0));
         } else {
-            if(src.at(i)->GetName() != target.at(target.size() - 1)->GetName()) {
-                target.push_back(src.at(i));
-            }
+            if(src.at(i)->GetName() != target.at(target.size() - 1)->GetName()) { target.push_back(src.at(i)); }
         }
     }
 }
@@ -557,9 +534,7 @@ void ContextCpp::AddMenuDynamicContent(wxMenu* menu)
 
     } else {
         int pos = rCtrl.GetCurrentPos();
-        if(IsCommentOrString(pos)) {
-            return;
-        }
+        if(IsCommentOrString(pos)) { return; }
 
         wxString word = rCtrl.GetWordAtCaret();
         if(word.IsEmpty() == false) {
@@ -595,9 +570,7 @@ void ContextCpp::OnAddForwardDecl(wxCommandEvent& e)
     if(word.IsEmpty()) {
         // try the word under the caret
         word = rCtrl.GetWordAtCaret();
-        if(word.IsEmpty()) {
-            return;
-        }
+        if(word.IsEmpty()) { return; }
     }
 
     int lineNumber = wxNOT_FOUND;
@@ -634,9 +607,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     if(word.IsEmpty()) {
         // try the word under the caret
         word = rCtrl.GetWordAtCaret();
-        if(word.IsEmpty()) {
-            return;
-        }
+        if(word.IsEmpty()) { return; }
     }
 
     std::vector<TagEntryPtr> tags;
@@ -668,9 +639,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
         choice = options.Item(0);
     }
 
-    if(choice.IsEmpty()) {
-        return;
-    }
+    if(choice.IsEmpty()) { return; }
 
     // check to see if this file is a workspace file
     AddIncludeFileDlg dlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
@@ -718,9 +687,7 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
                 *fileNameUpToCaret = partialLine;
             }
 
-            if(fileName) {
-                *fileName = reIncludeFile.GetMatch(tmpLine1, 1);
-            }
+            if(fileName) { *fileName = reIncludeFile.GetMatch(tmpLine1, 1); }
             return true;
         }
     }
@@ -881,10 +848,8 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
         if(token.getOffset() != wxString::npos) {
             // we got a match in the local scope, display it
             clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(rCtrl.GetFileName().GetFullPath(),
-                                                                          rCtrl.GetProject(), 0, token.getOffset());
-            if(editor) {
-                editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
-            }
+                                                                           rCtrl.GetProject(), 0, token.getOffset());
+            if(editor) { editor->SetSelection(token.getOffset(), token.getOffset() + token.getName().length()); }
             return NULL;
         }
         return NULL;
@@ -909,9 +874,7 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
     });
 
     clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
-    if(dlg.ShowModal() != wxID_OK) {
-        return NULL;
-    }
+    if(dlg.ShowModal() != wxID_OK) { return NULL; }
     ContextCpp_ClientData* cd = dynamic_cast<ContextCpp_ClientData*>(dlg.GetSelection());
     return cd->m_ptr;
 }
@@ -922,9 +885,7 @@ void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
     if(tag) {
         clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
-        if(editor) {
-            editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
-        }
+        if(editor) { editor->FindAndSelectV(tag->GetPattern(), tag->GetName()); }
     }
 }
 
@@ -958,9 +919,7 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
     } else if(!file_options.empty()) {
 
         file_to_open = *file_options.begin();
-        if(TryOpenFile(file_to_open, false)) {
-            return;
-        }
+        if(TryOpenFile(file_to_open, false)) { return; }
     }
 
     // We failed to locate matched file, offer the user to create one
@@ -972,9 +931,7 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
                                                           "CreateSwappedFile", _("Create"), _("Don't Create"),
                                                           _("Remember my answer and don't ask me again"),
                                                           wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT);
-    if(res == wxID_YES) {
-        DoCreateFile(otherFile);
-    }
+    if(res == wxID_YES) { DoCreateFile(otherFile); }
 }
 
 bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
@@ -1009,9 +966,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
     std::for_each(exts.begin(), exts.end(), [&](const wxString& ext) {
         wxFileName otherFile = rhs;
         otherFile.SetExt(ext);
-        if(otherFile.FileExists()) {
-            others.insert(otherFile.GetFullPath());
-        }
+        if(otherFile.FileExists()) { others.insert(otherFile.GetFullPath()); }
     });
 
     // if we found a match on the same folder, don't bother continue searching
@@ -1116,7 +1071,7 @@ void ContextCpp::OnSwapFiles(wxCommandEvent& event)
     SwapFiles(GetCtrl().GetFileName());
 }
 
-void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix)
+void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix)
 {
     CHECK_JS_RETURN_VOID();
     clEditor& editor = GetCtrl();
@@ -1127,8 +1082,17 @@ void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blo
     blockStart << "\n";
 
     // prepend the prefix to the
+    wxString sKeywordPrefix;
+    sKeywordPrefix << keywordPrefix;
+
     wxString classPattern = data.GetClassPattern();
     wxString funcPattern = data.GetFunctionPattern();
+    
+    // Make sure we are using the correct keyword prefix
+    classPattern.Replace("@", sKeywordPrefix);
+    classPattern.Replace("\\", sKeywordPrefix);
+    funcPattern.Replace("@", sKeywordPrefix);
+    funcPattern.Replace("\\", sKeywordPrefix);
 
     // replace $(Name) here **before** the call to ExpandAllVariables()
     classPattern.Replace(wxT("$(Name)"), dc.name);
@@ -1159,7 +1123,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
     // We decide whether to use @ or \ based on the current class pattern
-    wxChar keyPrefix = data.GetClassPattern().Find("\\") != -1 ? '\\' : '@';
+    wxChar keyPrefix = data.IsUseQtStyle() ? '\\' : '@';
 
     int curpos = editor.GetCurrentPos();
     int newPos = curpos; // the new position to place the caret after the insertion of the doxy block
@@ -1191,7 +1155,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         // do we have a comment?
         if(dc.comment.IsEmpty()) return;
 
-        DoMakeDoxyCommentString(dc, data.GetCommentBlockPrefix());
+        DoMakeDoxyCommentString(dc, data.GetCommentBlockPrefix(), keyPrefix);
         // To make the doxy block fit in, we need to prepend each line
         // with the exact whitespace of the current line
         wxString lineContent = editor.GetLine(editor.GetCurrentLine());
@@ -1211,8 +1175,9 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
         }
 
         // Join the lines back
-        wxString doxyBlock = ::wxJoin(lines, '\n');
-        doxyBlock << "\n";
+        wxString doxyBlock = ::clJoinLinesWithEOL(lines, GetCtrl().GetEOL());
+        doxyBlock << GetCtrl().GetEolString();
+        doxyBlock.Replace("|", ""); // Remove any marker position
 
         // remove any selection
         editor.ClearSelections();
@@ -1259,9 +1224,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
     long pos = editor.GetCurrentPos();
 
-    if(IsCommentOrString(pos)) {
-        return;
-    }
+    if(IsCommentOrString(pos)) { return; }
 
     TagsManager* tagmgr = TagsManagerST::Get();
     std::vector<TagEntryPtr> tags;
@@ -1270,9 +1233,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     wxString text = editor.GetTextRange(0, pos);
     wxString scopeName = tagmgr->GetScopeName(text);
     tagmgr->TagsByScope(scopeName, wxT("member"), tags, false, false);
-    if(tags.empty()) {
-        return;
-    }
+    if(tags.empty()) { return; }
 
     std::vector<TagEntryPtr> classtags;
     tagmgr->FindByPath(scopeName, classtags);
@@ -1305,12 +1266,8 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         clEditorStateLocker locker(editor.GetCtrl());
         wxString code = dlg.GetGenCode();
-        if(code.IsEmpty() == false) {
-            editor.InsertTextWithIndentation(code, lineno);
-        }
-        if(dlg.GetFormatText()) {
-            DoFormatEditor(&GetCtrl());
-        }
+        if(code.IsEmpty() == false) { editor.InsertTextWithIndentation(code, lineno); }
+        if(dlg.GetFormatText()) { DoFormatEditor(&GetCtrl()); }
     }
 }
 
@@ -1414,9 +1371,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     DebuggerInformation info;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr) {
-        return;
-    }
+    if(!dbgr) { return; }
 
     DebuggerMgr::Get().GetDebuggerInformation(dbgr->GetName(), info);
     if(info.showTooltipsOnlyWithControlKeyIsDown && wxGetMouseState().ControlDown() == false) return;
@@ -1426,9 +1381,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
     int pos = event.GetPosition();
     if(pos != wxNOT_FOUND) {
 
-        if(IsCommentOrString(pos)) {
-            return;
-        }
+        if(IsCommentOrString(pos)) { return; }
 
         long end(0);
         long sel_start(0), sel_end(0);
@@ -1455,9 +1408,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
             GetCtrl().IndicatorFillRange(end - word.length(), word.Length());
         }
 
-        if(word.IsEmpty()) {
-            return;
-        }
+        if(word.IsEmpty()) { return; }
     } else {
         return;
     }
@@ -1480,9 +1431,7 @@ int ContextCpp::FindLineToAddInclude()
     clEditor& ctrl = GetCtrl();
 
     int maxLineToScan = ctrl.GetLineCount();
-    if(maxLineToScan > 500) {
-        maxLineToScan = 500;
-    }
+    if(maxLineToScan > 500) { maxLineToScan = 500; }
 
     int lineno = wxNOT_FOUND;
     bool found = false;
@@ -1501,9 +1450,7 @@ int ContextCpp::FindLineToAddInclude()
     // Try to find the end of the #include list
     for(; i < maxLineToScan; i++) {
         wxString line = ctrl.GetLine(i).Trim().Trim(false);
-        if(line.empty()) {
-            continue;
-        }
+        if(line.empty()) { continue; }
         if(IsIncludeStatement(line)) {
             lineno = i;
             found = true;
@@ -1547,9 +1494,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
     // get the scope name from the text
     wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
-    if(scopeName.IsEmpty()) {
-        scopeName = wxT("<global>");
-    }
+    if(scopeName.IsEmpty()) { scopeName = wxT("<global>"); }
 
     // Find the tag
     TagsManagerST::Get()->TagsByScopeAndName(scopeName, word, tags, ExactMatch);
@@ -1612,9 +1557,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
                         rCtrl.SetTargetStart(blockStartPos);
                         rCtrl.ReplaceTarget(wxT(";"));
                     }
-                    if(insertedLine != wxNOT_FOUND) {
-                        implEditor->CenterLine(insertedLine);
-                    }
+                    if(insertedLine != wxNOT_FOUND) { implEditor->CenterLine(insertedLine); }
                 }
             }
         }
@@ -1633,14 +1576,10 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
         curPos = rCtrl.PositionAfter(curPos);
 
         // eof?
-        if(curPos == rCtrl.GetLength()) {
-            break;
-        }
+        if(curPos == rCtrl.GetLength()) { break; }
 
         // comment?
-        if(IsCommentOrString(curPos)) {
-            continue;
-        }
+        if(IsCommentOrString(curPos)) { continue; }
 
         // valid character
         wxChar ch = rCtrl.GetCharAt(curPos);
@@ -1662,9 +1601,7 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
         while(depth > 0) {
             curPos = rCtrl.PositionAfter(curPos);
             // eof?
-            if(curPos == rCtrl.GetLength()) {
-                break;
-            }
+            if(curPos == rCtrl.GetLength()) { break; }
 
             // comment?
             wxChar ch = rCtrl.GetCharAt(curPos);
@@ -1684,9 +1621,7 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
             content << ch;
         }
 
-        if(depth == 0) {
-            blockEndPos = rCtrl.PositionAfter(curPos);
-        }
+        if(depth == 0) { blockEndPos = rCtrl.PositionAfter(curPos); }
     }
 
     return (blockEndPos > blockStartPos) && (blockEndPos != wxNOT_FOUND) && (blockStartPos != wxNOT_FOUND);
@@ -1725,10 +1660,8 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
 
     // get doxygen comment based on file and line
-    wxChar keyPrefix(wxT('\\'));
-    if(data.GetUseShtroodel()) {
-        keyPrefix = wxT('@');
-    }
+    wxChar keyPrefix = '@';
+    if(data.IsUseQtStyle()) { keyPrefix = '\\'; }
 
     ImplementParentVirtualFunctionsDialog dlg(wxTheApp->GetTopWindow(), scopeName, protos, keyPrefix, this);
     dlg.SetTargetFile(targetFile);
@@ -1838,9 +1771,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
 
         // Open the C++ file
         clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
-        if(!editor) {
-            return;
-        }
+        if(!editor) { return; }
 
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
@@ -1851,9 +1782,7 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
             editor->SetText(sourceContent);
         }
 
-        if(insertedLine != wxNOT_FOUND) {
-            editor->CenterLine(insertedLine);
-        }
+        if(insertedLine != wxNOT_FOUND) { editor->CenterLine(insertedLine); }
     }
 }
 
@@ -1887,9 +1816,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
 
     // get the scope name from the text
     wxString scopeName = TagsManagerST::Get()->GetScopeName(scopeText);
-    if(scopeName.IsEmpty()) {
-        scopeName = wxT("<global>");
-    }
+    if(scopeName.IsEmpty()) { scopeName = wxT("<global>"); }
 
     TagsManagerST::Get()->FindSymbol(word, tags);
     if(tags.empty()) return;
@@ -1932,9 +1859,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
         FindSwappedFile(rCtrl.GetFileName(), targetFile);
 
         // if no swapped file is found, use the current file
-        if(targetFile.IsEmpty()) {
-            targetFile = rCtrl.GetFileName().GetFullPath();
-        }
+        if(targetFile.IsEmpty()) { targetFile = rCtrl.GetFileName().GetFullPath(); }
 
         MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, targetFile);
         dlg.SetTitle(_("Add Function Implementation"));
@@ -1946,9 +1871,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
 
             // Open the C++ file
             clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
-            if(!editor) {
-                return;
-            }
+            if(!editor) { return; }
 
             // Inser the new functions at the proper location
             wxString sourceContent = editor->GetText();
@@ -1959,9 +1882,7 @@ void ContextCpp::OnAddImpl(wxCommandEvent& e)
                 editor->SetText(sourceContent);
             }
 
-            if(insertedLine != wxNOT_FOUND) {
-                editor->CenterLine(insertedLine);
-            }
+            if(insertedLine != wxNOT_FOUND) { editor->CenterLine(insertedLine); }
         }
     }
 }
@@ -1972,9 +1893,7 @@ void ContextCpp::DoFormatEditor(clEditor* editor)
     formatEvent.SetInputString(editor->GetText());
     formatEvent.SetFileName(editor->GetFileName().GetFullPath());
     EventNotifier::Get()->ProcessEvent(formatEvent);
-    if(!formatEvent.GetFormattedString().IsEmpty()) {
-        editor->SetText(formatEvent.GetFormattedString());
-    }
+    if(!formatEvent.GetFormattedString().IsEmpty()) { editor->SetText(formatEvent.GetFormattedString()); }
 }
 
 void ContextCpp::OnFileSaved()
@@ -1989,9 +1908,7 @@ void ContextCpp::OnFileSaved()
         VALIDATE_WORKSPACE();
 
         // if there is nothing to color, go ahead and return
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
-            return;
-        }
+        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) { return; }
 
         // Start a colour request
         ParseRequest* parsingRequest = new ParseRequest(ManagerST::Get());
@@ -2015,9 +1932,7 @@ void ContextCpp::ApplySettings()
     // Set the key words and the lexer
     LexerConf::Ptr_t lexPtr;
     // Read the configuration file
-    if(EditorConfigST::Get()->IsOk()) {
-        lexPtr = EditorConfigST::Get()->GetLexer(wxT("C++"));
-    }
+    if(EditorConfigST::Get()->IsOk()) { lexPtr = EditorConfigST::Get()->GetLexer(wxT("C++")); }
 
     // Update the control
     clEditor& rCtrl = GetCtrl();
@@ -2163,8 +2078,7 @@ void ContextCpp::AutoAddComment()
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsertAfterSlash2Stars() &&
-               !IsJavaScript()) {
+            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert() && !IsJavaScript()) {
 
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
@@ -2173,14 +2087,15 @@ void ContextCpp::AutoAddComment()
                 wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
                 TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
                 if(!tags.empty()) {
-                    TagEntryPtr t = tags.at(0);
+                    TagEntryPtr t = tags[0];
 
+                    wxChar keyPrefix = (textTyped == "/*!") ? '\\' : '@';
                     // get doxygen comment based on file and line
-                    DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, '@');
+                    DoxygenComment dc = TagsManagerST::Get()->DoCreateDoxygenComment(t, keyPrefix);
                     // do we have a comment?
                     if(dc.comment.IsEmpty()) return;
 
-                    DoMakeDoxyCommentString(dc, data.GetCommentBlockPrefix());
+                    DoMakeDoxyCommentString(dc, textTyped, keyPrefix);
                     // To make the doxy block fit in, we need to prepend each line
                     // with the exact whitespace of the line that starts with "/**"
                     int lineStartPos = rCtrl.PositionFromLine(rCtrl.LineFromPos(startPos));
@@ -2196,6 +2111,7 @@ void ContextCpp::AutoAddComment()
 
                     // Join the lines back
                     wxString doxyBlock = ::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
+                    doxyBlock.Replace("|", ""); // Remove any marker position
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
 
@@ -2297,13 +2213,9 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 
     if(projectsCandidateList.GetCount() > 1) {
         SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
-        if(projectSelectorDlg.ShowModal() != wxID_OK) {
-            return;
-        }
+        if(projectSelectorDlg.ShowModal() != wxID_OK) { return; }
         projects = projectSelectorDlg.GetProjects();
-        if(projects.IsEmpty()) {
-            return;
-        }
+        if(projects.IsEmpty()) { return; }
     } else {
         // we have excatly one project. Skip the 'Project Selector' dialog
         projects.swap(projectsCandidateList);
@@ -2341,9 +2253,7 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     if(dlg.ShowModal() == wxID_OK) {
         CppToken::Vec_t matches;
         dlg.GetMatches(matches);
-        if(!matches.empty() && dlg.GetWord() != word) {
-            ReplaceInFiles(dlg.GetWord(), matches);
-        }
+        if(!matches.empty() && dlg.GetWord() != word) { ReplaceInFiles(dlg.GetWord(), matches); }
     }
 }
 
@@ -2360,9 +2270,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     // Otherwise a different editor may be selected, and the original one will have scrolled to the last replacement
     int current_line = wxSTC_INVALID_POSITION;
     clEditor* current = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(current) {
-        current_line = current->GetCurrentLine();
-    }
+    if(current) { current_line = current->GetCurrentLine(); }
 
     clEditor* previous = NULL;
     for(CppToken::Vec_t::const_iterator iter = li.begin(); iter != li.end(); ++iter) {
@@ -2384,9 +2292,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
             // We've loaded a new editor, so start a new bulk undo action for it
             // (this can only be done per editor, not per refactor :( )
             // First end any previous one
-            if(previous) {
-                previous->EndUndoAction();
-            }
+            if(previous) { previous->EndUndoAction(); }
             editor->BeginUndoAction();
             previous = editor;
         }
@@ -2402,23 +2308,17 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     }
 
     // The last editor won't have this done otherwise
-    if(previous) {
-        previous->EndUndoAction();
-    }
+    if(previous) { previous->EndUndoAction(); }
 
     if(current) {
         clMainFrame::Get()->GetMainBook()->SelectPage(current);
-        if(current_line != wxSTC_INVALID_POSITION) {
-            current->GotoLine(current_line);
-        }
+        if(current_line != wxSTC_INVALID_POSITION) { current->GotoLine(current_line); }
     }
 
     // re-enable the feature again
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
-    if(success) {
-        GetCtrl().GetManager()->GetStatusBar()->SetMessage(_("Symbol renamed"));
-    }
+    if(success) { GetCtrl().GetManager()->GetStatusBar()->SetMessage(_("Symbol renamed")); }
 }
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)
@@ -2452,9 +2352,7 @@ void ContextCpp::RetagFile()
 void ContextCpp::OnUserTypedXChars(const wxString& word)
 {
     // user typed more than 3 chars, display completion box with C++ keywords
-    if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
-        return;
-    }
+    if(IsCommentOrString(GetCtrl().GetCurrentPos())) { return; }
 
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
         std::vector<TagEntryPtr> tags;
@@ -2473,9 +2371,7 @@ void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryP
 
     LexerConf::Ptr_t lexPtr;
     // Read the configuration file
-    if(EditorConfigST::Get()->IsOk()) {
-        lexPtr = EditorConfigST::Get()->GetLexer(this->GetName());
-    }
+    if(EditorConfigST::Get()->IsOk()) { lexPtr = EditorConfigST::Get()->GetLexer(this->GetName()); }
 
     wxString cppWords;
 
@@ -2529,9 +2425,7 @@ void ContextCpp::DoCodeComplete(long pos)
     wxChar ch = editor.PreviousChar(pos, pos1);
 
     //	Make sure we are not on a comment section
-    if(IsCommentOrString(editor.PositionBefore(pos))) {
-        return;
-    }
+    if(IsCommentOrString(editor.PositionBefore(pos))) { return; }
 
     // Search for first non-whitespace wxChar
     clDEBUG1() << "Triggering char is:" << ch << clEndl;
@@ -2561,9 +2455,7 @@ void ContextCpp::DoCodeComplete(long pos)
     case '(':
         showFuncProto = true;
         // is this setting is on?
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) {
-            return;
-        }
+        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) { return; }
         editor.PreviousChar(pos1, end);
         break;
     default:
@@ -2583,9 +2475,7 @@ void ContextCpp::DoCodeComplete(long pos)
         TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(editor.GetFileName(), line);
         if(t) {
             startPos = editor.PositionFromLine(t->GetLine() - 1);
-            if(startPos > currentPosition) {
-                startPos = 0;
-            }
+            if(startPos > currentPosition) { startPos = 0; }
         }
     }
 
@@ -2601,17 +2491,13 @@ void ContextCpp::DoCodeComplete(long pos)
         TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(editor.GetFileName());
         if(t2) {
             endPos1 = editor.PositionFromLine(t2->GetLine() - 1);
-            if(endPos1 > 0 && endPos1 <= startPos) {
-                endPos = endPos1;
-            }
+            if(endPos1 > 0 && endPos1 <= startPos) { endPos = endPos1; }
         }
 
         TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(editor.GetFileName());
         if(t3) {
             endPos2 = editor.PositionFromLine(t3->GetLine() - 1);
-            if(endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
-                endPos = endPos2;
-            }
+            if(endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) { endPos = endPos2; }
         }
 
         wxString globalText = editor.GetTextRange(0, endPos);
@@ -2703,9 +2589,7 @@ void ContextCpp::DoOpenWorkspaceFile()
 #endif
 
         curFileName.Replace(wxT("\\"), wxT("/"));
-        if(curFileName.EndsWith(tmpName)) {
-            files2.push_back(files.at(i));
-        }
+        if(curFileName.EndsWith(tmpName)) { files2.push_back(files.at(i)); }
     }
 
     wxString fileToOpen;
@@ -2729,9 +2613,7 @@ void ContextCpp::DoOpenWorkspaceFile()
         fileToOpen = files2.at(0).GetFullPath();
     }
 
-    if(fileToOpen.IsEmpty() == false) {
-        clMainFrame::Get()->GetMainBook()->OpenFile(fileToOpen);
-    }
+    if(fileToOpen.IsEmpty() == false) { clMainFrame::Get()->GetMainBook()->OpenFile(fileToOpen); }
 }
 
 void ContextCpp::DoCreateFile(const wxFileName& fn)
@@ -2760,9 +2642,7 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
         wxFile file;
         if(!file.Create(new_file.GetData(), true)) return;
 
-        if(file.IsOpened()) {
-            file.Close();
-        }
+        if(file.IsOpened()) { file.Close(); }
     }
 
     TryOpenFile(wxFileName(new_file));
@@ -2804,9 +2684,7 @@ void ContextCpp::DoUpdateCalltipHighlight()
 {
     CHECK_JS_RETURN_VOID();
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
-    }
+    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex()); }
 }
 
 void ContextCpp::SemicolonShift()
@@ -2847,32 +2725,24 @@ void ContextCpp::DoSetProjectPaths()
     ManagerST::Get()->GetProjectList(projects);
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr p = ManagerST::Get()->GetProject(projects.Item(i));
-        if(p) {
-            projectPaths.Add(p->GetFileName().GetPath());
-        }
+        if(p) { projectPaths.Add(p->GetFileName().GetPath()); }
     }
     TagsManagerST::Get()->SetProjectPaths(projectPaths);
 }
 
 wxString ContextCpp::GetCurrentScopeName()
 {
-    if(IsJavaScript()) {
-        return wxEmptyString;
-    }
+    if(IsJavaScript()) { return wxEmptyString; }
 
     TagEntryPtr tag =
         TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), GetCtrl().GetCurrentLine() + 1);
-    if(tag) {
-        return tag->GetParent();
-    }
+    if(tag) { return tag->GetParent(); }
     return wxEmptyString;
 }
 
 wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bool forCC)
 {
-    if(IsJavaScript()) {
-        return wxEmptyString;
-    }
+    if(IsJavaScript()) { return wxEmptyString; }
 
     bool cont(true);
     int depth(0);
@@ -2956,19 +2826,19 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
                 cont = false;
             }
             break;
-        case wxT(','):
-        case wxT('*'):
-        case wxT('&'):
-        case wxT('!'):
-        case wxT('~'):
-        case wxT('+'):
-        case wxT('^'):
-        case wxT('|'):
-        case wxT('%'):
-        case wxT('?'):
+        case ',':
+        case '*':
+        case '&':
+        case '!':
+        case '~':
+        case '+':
+        case '^':
+        case '|':
+        case '%':
+        case '?':
+        case '/':
             prevGt = false;
             if(depth <= 0) {
-
                 // dont include this token
                 at = ctrl->PositionAfter(at);
                 cont = false;
@@ -3214,9 +3084,7 @@ wxMenu* ContextCpp::GetMenu()
         // load the context menu from the resource manager
         menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click"));
         wxMenuItem* item = menu->FindItem(XRCID("grep_current_workspace"));
-        if(item) {
-            item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
-        }
+        if(item) { item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles")); }
     } else {
         menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
     }

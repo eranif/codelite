@@ -1,25 +1,23 @@
+#include "NodeJSDebuggerDlg.h"
+#include "NodeJSPackageJSON.h"
+#include "NodeJSWorkspaceConfiguration.h"
 #include "NodeJSWorkspaceView.h"
 #include "NoteJSWorkspace.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <wx/menu.h>
-#include <wx/filename.h>
-#include <wx/msgdlg.h>
-#include "globals.h"
-#include "clWorkspaceView.h"
-#include "imanager.h"
-#include "NodeJSWorkspaceConfiguration.h"
-#include "ieditor.h"
-#include <wx/wupdlock.h>
-#include <wx/msgdlg.h>
-#include "NodeJSPackageJSON.h"
-#include "NodeJSDebuggerDlg.h"
-#include "NodeJSDebugger.h"
-#include "macros.h"
 #include "WebToolsConfig.h"
-#include "environmentconfig.h"
-#include "dirsaver.h"
 #include "bitmap_loader.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "macros.h"
+#include <wx/filename.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
+#include <wx/wupdlock.h>
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -28,14 +26,12 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
-    m_keyboardHelper.reset(new clTreeKeyboardInput(GetTreeCtrl()));
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
-    m_keyboardHelper.reset(NULL); // destory the keyboard input helper
 }
 
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
@@ -97,8 +93,8 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                 menu->Insert(openShellPos, XRCID("nodejs_project_debug"), _("Debug..."));
                 menu->Insert(openShellPos, XRCID("nodejs_project_run"), _("Run..."));
 
-                menu->Bind(
-                    wxEVT_MENU, &NodeJSWorkspaceView::OnOpenPackageJsonFile, this, XRCID("nodejs_project_settings"));
+                menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnOpenPackageJsonFile, this,
+                           XRCID("nodejs_project_settings"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectDebug, this, XRCID("nodejs_project_debug"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectRun, this, XRCID("nodejs_project_run"));
             } else {
@@ -126,8 +122,8 @@ void NodeJSWorkspaceView::OnFolderDropped(clCommandEvent& event)
     if(!NodeJSWorkspace::Get()->IsOpen()) {
         wxFileName workspaceFile(folders.Item(0), "");
         if(!workspaceFile.GetDirCount()) {
-            ::wxMessageBox(
-                _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(_("Can not create workspace in the root folder"), _("New Workspace"),
+                           wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
         workspaceFile.SetName(workspaceFile.GetDirs().Last());
@@ -167,9 +163,7 @@ void NodeJSWorkspaceView::RebuildTree()
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        ExpandToFile(editor->GetFileName());
-    }
+    if(editor) { ExpandToFile(editor->GetFileName()); }
 }
 
 void NodeJSWorkspaceView::ShowHiddenFiles(bool show)
@@ -248,8 +242,8 @@ void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
     NodeJSPackageJSON pj;
     if(!pj.Load(path)) {
         if(!pj.Create(path)) {
-            ::wxMessageBox(
-                _("Failed to load package.json file from path:\n") + path, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(_("Failed to load package.json file from path:\n") + path, "CodeLite",
+                           wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
     }
@@ -257,21 +251,22 @@ void NodeJSWorkspaceView::DoExecuteProject(NodeJSDebuggerDlg::eDialogType type)
     // Sanity
 
     // No debugger?
-    if(!NodeJSWorkspace::Get()->GetDebugger()) return;
-    // Already running?
-    if(NodeJSWorkspace::Get()->GetDebugger()->IsConnected()) return;
+    if(!NodeJSWorkspace::Get()->GetDebugger() &&
+       ((type == NodeJSDebuggerDlg::kDebug) || (type == NodeJSDebuggerDlg::kDebugCLI)))
+        return;
 
     NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), type, pj.GetScript(), pj.GetArgs());
-    if(dlg.ShowModal() != wxID_OK) {
-        return;
-    }
+    if(dlg.ShowModal() != wxID_OK) { return; }
 
     // store the data for future use
     pj.SetScript(dlg.GetScript());
     pj.SetArgs(dlg.GetArgs());
     pj.Save(path);
 
-    NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(dlg.GetCommand(), dlg.GetWorkingDirectory());
+    wxString command;
+    wxString command_args;
+    dlg.GetCommand(command, command_args);
+    NodeJSWorkspace::Get()->GetDebugger()->StartDebugger(command, command_args, dlg.GetWorkingDirectory());
 }
 
 void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
@@ -293,10 +288,7 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
     {
         // change the icon for the parent folder as well
         wxFileName packageJSON(cd->GetPath(), "package.json");
-        if(packageJSON.FileExists()) {
-            GetTreeCtrl()->SetItemImage(item, imageIndex);
-            GetTreeCtrl()->SetItemImage(item, imageIndex, wxTreeItemIcon_Selected);
-        }
+        if(packageJSON.FileExists()) { GetTreeCtrl()->SetItemImage(item, imageIndex); }
     }
 
     wxTreeItemIdValue cookie;
@@ -308,7 +300,6 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
             if(packageJSON.FileExists()) {
                 // A project
                 GetTreeCtrl()->SetItemImage(child, imageIndex);
-                GetTreeCtrl()->SetItemImage(child, imageIndex, wxTreeItemIcon_Selected);
             }
         }
         child = GetTreeCtrl()->GetNextChild(item, cookie);
@@ -326,16 +317,5 @@ void NodeJSWorkspaceView::OnNpmInit(wxCommandEvent& event)
 
     WebToolsConfig conf;
     conf.Load();
-
-#ifdef __WXOSX__
-    wxString command;
-    command << "cd \"" << path << "\" && " << conf.GetNpm() << " init";
-#else
-    wxString command;
-    command << conf.GetNpm();
-    ::WrapWithQuotes(command);
-#endif
-
-    command << " init";
-    m_terminal.ExecuteConsole(command, path, true, "npm init");
+    m_terminal.ExecuteConsole(conf.GetNpm(), true, "init", path, "npm init");
 }

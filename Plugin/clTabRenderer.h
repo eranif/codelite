@@ -28,7 +28,6 @@
 #include <wx/sharedptr.h>
 
 #define CHEVRON_SIZE 20
-#define CLOSE_BUTTON_SIZE 12
 
 class clTabCtrl;
 enum NotebookStyle {
@@ -53,26 +52,24 @@ enum NotebookStyle {
     kNotebook_EnableNavigationEvent = (1 << 8),
     /// Place tabs at the bottom
     kNotebook_BottomTabs = (1 << 9),
-    /// Enable colour customization events
-    kNotebook_EnableColourCustomization = (1 << 10),
+    
+    /// Allow DnD between different book controls
+    kNotebook_AllowForeignDnD = (1 << 10),
+    
     /// Place the tabs on the right
     kNotebook_RightTabs = (1 << 11),
+    
     /// Place th tabs on the left
     kNotebook_LeftTabs = (1 << 12),
-    /// Vertical tabs as buttons
-    kNotebook_VerticalButtons = (1 << 13),
+    
+    /// The notebook colours are changing based on the current editor theme
+    kNotebook_DynamicColours = (1 << 13),
 
     /// Underline the active tab with a 2 pixel line
     kNotebook_UnderlineActiveTab = (1 << 14),
 
     /// When scrolling with the mouse button when hovering the tab control, switch between tabs
     kNotebook_MouseScrollSwitchTabs = (1 << 15),
-
-    /// The notebook colours are changing based on the current editor theme
-    kNotebook_DynamicColours = (1 << 16),
-    
-    /// Allow DnD between different book controls
-    kNotebook_AllowForeignDnD = (1 << 17),
 
     /// Default notebook
     kNotebook_Default = kNotebook_LightTabs | kNotebook_ShowFileListButton,
@@ -173,6 +170,7 @@ public:
     const wxString& GetLabel() const { return m_label; }
     const wxRect& GetRect() const { return m_rect; }
     wxRect& GetRect() { return m_rect; }
+    wxRect GetCloseButtonRect() const;
     wxWindow* GetWindow() { return m_window; }
     wxWindow* GetWindow() const { return m_window; }
     void SetWindow(wxWindow* window) { this->m_window = window; }
@@ -203,12 +201,14 @@ public:
 
 protected:
     void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
-
+    void DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style);
+    void DrawMarkerLine(wxDC& dc, const wxPoint& p1, const wxPoint& p2, wxDirection direction);
+    
 public:
     clTabRenderer(const wxString& name);
     virtual ~clTabRenderer() {}
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
-                      size_t style) = 0;
+                      size_t style, eButtonState buttonState) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
 
@@ -224,18 +224,26 @@ public:
     /**
      * @brief reutrn font suitable for drawing the tab label
      */
-    static wxFont GetTabFont();
+    static wxFont GetTabFont(bool bold);
 
     /**
      * @brief draw a button in a given state at a give location
      */
-    static void DrawButton(wxDC& dc, const wxRect& rect, const clTabColours& colours, eButtonState state);
+    static void DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
+                           eButtonState state);
 
     /**
      * @brief draw cheveron button
      */
     static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
-
+    
+    static int GetXButtonSize();
+    /**
+     * @brief Adjust colours per renderer
+     * @param colours [in/out]
+     * @param style the notebook style
+     */
+    virtual void AdjustColours(clTabColours& colours, size_t style);
     static int GetDefaultBitmapHeight(int Y_spacer);
 
     /**

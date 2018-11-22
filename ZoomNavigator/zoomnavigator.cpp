@@ -346,7 +346,7 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, false);
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, true);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(ZOOM_PANE_TITLE);
         if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }

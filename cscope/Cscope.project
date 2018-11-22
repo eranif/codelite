@@ -146,7 +146,7 @@
         <Library Value="libCodeLiteud.dll"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -158,7 +158,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName).dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -192,7 +192,7 @@
         <IncludePath Value="../PCH"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -245,7 +245,7 @@
         <IncludePath Value="../PCH"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

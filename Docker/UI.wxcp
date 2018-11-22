@@ -2993,11 +2993,11 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl"
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl.h"
               }, {
                "type": "string",
                "m_label": "Style:",
@@ -3527,11 +3527,11 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl"
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": ""
+               "m_value": "clThemedListCtrl.h"
               }, {
                "type": "string",
                "m_label": "Style:",

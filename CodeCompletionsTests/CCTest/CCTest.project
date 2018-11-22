@@ -266,7 +266,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <IncludePath Value="$(CL_HOME)/Plugin"/>
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --libs --unicode=yes --static=no --universal=no )" Required="yes">
+      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes --static=no --universal=no )" Required="yes">
         <LibraryPath Value="$(CL_HOME)/lib/gcc_lib"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>

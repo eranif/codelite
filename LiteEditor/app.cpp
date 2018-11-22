@@ -33,7 +33,6 @@
 #include "clKeyboardManager.h"
 #include "cl_config.h"
 #include "cl_registry.h"
-#include "clsplashscreen.h"
 #include "conffilelocator.h"
 #include "dirsaver.h"
 #include "editor_config.h"
@@ -544,26 +543,6 @@ bool CodeLiteApp::OnInit()
         return false;
     }
 
-#if !defined(__WXMAC__) && !CL_DEBUG_BUILD
-    // Now all image handlers have been added, show splash screen; but only when using Release builds of codelite
-    // Also, if started as debugger interface, disable the splash screen
-    if(!IsStartedInDebuggerMode()) {
-        GeneralInfo inf;
-        cfg->ReadObject(wxT("GeneralInfo"), &inf);
-        if(inf.GetFlags() & CL_SHOW_SPLASH) {
-            wxBitmap bitmap;
-            wxString splashName(clStandardPaths::Get().GetDataDir() + wxT("/images/splashscreen.png"));
-            if(bitmap.LoadFile(splashName, wxBITMAP_TYPE_PNG)) {
-                wxString mainTitle = CODELITE_VERSION_STRING;
-                clSplashScreen::g_splashScreen =
-                    new clSplashScreen(clSplashScreen::CreateSplashScreenBitmap(bitmap),
-                                       wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT, -1, NULL, wxID_ANY);
-                wxYield();
-            }
-        }
-    }
-#endif
-
 #ifdef __WXGTK__
     bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true);
     if(redirect) {
@@ -711,8 +690,7 @@ bool CodeLiteApp::OnInit()
 
     // Especially with the OutputView open, CodeLite was consuming 50% of a cpu, mostly in updateui
     // The next line limits the frequency of UpdateUI events to every 100ms
-    wxUpdateUIEvent::SetUpdateInterval(100);
-
+    wxUpdateUIEvent::SetUpdateInterval(200);
     return TRUE;
 }
 

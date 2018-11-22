@@ -38,6 +38,7 @@
 #include "editor_config.h"
 #include "zn_config_item.h"
 #include "cl_config.h"
+#include <wx/settings.h>
 #include "znSettingsDlg.h"
 #include "event_notifier.h"
 #include "plugin.h"
@@ -45,18 +46,23 @@
 #include "globals.h"
 #include <wx/app.h>
 
-ZoomText::ZoomText(wxWindow* parent,
-                   wxWindowID id,
-                   const wxPoint& pos,
-                   const wxSize& size,
-                   long style,
+ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
-    : wxStyledTextCtrl(parent, id, pos, size, style | wxNO_BORDER, name)
 {
+    Hide();
+    if(!wxStyledTextCtrl::Create(parent, id, pos, size, style | wxNO_BORDER, name)) {
+        return;
+    }
+
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        StyleSetBackground(i, bgColour);
+    }
+
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
     conf.ReadItem(&data);
-    
+
     SetEditable(false);
     SetUseHorizontalScrollBar(false);
     SetUseVerticalScrollBar(data.IsUseScrollbar());
@@ -66,13 +72,12 @@ ZoomText::ZoomText(wxWindow* parent,
     SetMarginWidth(2, 0);
     SetMarginWidth(3, 0);
 
-
     m_zoomFactor = data.GetZoomFactor();
     m_colour = data.GetHighlightColour();
     MarkerSetBackground(1, m_colour);
     SetZoom(m_zoomFactor);
-    EventNotifier::Get()->Connect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL,
+                                  this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
     MarkerDefine(1, wxSTC_MARK_BACKGROUND, m_colour, m_colour);
 
@@ -82,19 +87,20 @@ ZoomText::ZoomText(wxWindow* parent,
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
 #endif
     MarkerSetAlpha(1, 10);
-    
+
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
+    Show();
 }
 
 ZoomText::~ZoomText()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEventHandler(ZoomText::OnSettingsChanged),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(ZoomText::OnThemeChanged), NULL,
+                                     this);
     Unbind(wxEVT_TIMER, &ZoomText::OnTimer, this, m_timer->GetId());
-    
+
     if(m_timer->IsRunning()) {
         m_timer->Stop();
     }
@@ -110,11 +116,11 @@ void ZoomText::UpdateLexer(IEditor* editor)
         DoClear();
         return;
     }
-    
+
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
     conf.ReadItem(&data);
-    
+
     m_filename = editor->GetFileName().GetFullPath();
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(m_filename);
     if(!lexer) {
@@ -192,7 +198,7 @@ void ZoomText::OnTimer(wxTimerEvent& event)
         m_timer->Start(1000, true);
         return;
     }
-    
+
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor) {
         m_timer->Start(1000, true);
@@ -218,7 +224,4 @@ void ZoomText::DoClear()
     SetReadOnly(true);
 }
 
-void ZoomText::Startup()
-{
-    m_timer->Start(1000, true);
-}
+void ZoomText::Startup() { m_timer->Start(1000, true); }

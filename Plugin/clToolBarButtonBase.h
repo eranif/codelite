@@ -8,15 +8,13 @@
 #include <wx/string.h>
 #include <wx/toolbar.h>
 
-#define CL_TOOL_BAR_X_MARGIN 5
-#define CL_TOOL_BAR_Y_MARGIN 5
 #ifdef __WXOSX__
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 5
 #else
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 8
 #endif
 
-class WXDLLIMPEXP_SDK clToolBarButtonBase : public wxToolBarToolBase
+class WXDLLIMPEXP_SDK clToolBarButtonBase
 {
 protected:
     clToolBar* m_toolbar;
@@ -37,6 +35,9 @@ public:
         kDisabled = (1 << 3),
         kSeparator = (1 << 4),
         kControl = (1 << 5),
+        kHidden = (1 << 6),
+        kSpacer = (1 << 7),
+        kStretchalbeSpace = (1 << 8),
     };
 
     enum eRenderFlags {
@@ -103,7 +104,6 @@ public:
     bool IsPressed() const { return m_renderFlags & kPressed; }
     void SetHover(bool b)
     {
-        ClearRenderFlags();
         EnableRenderFlag(kHover, b);
     }
     void SetPressed(bool b)
@@ -114,9 +114,15 @@ public:
     void ClearRenderFlags() { m_renderFlags = 0; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
     bool IsChecked() const { return (m_flags & kChecked); }
-    void Check(bool b) { EnableFlag(kChecked, b); }
+    void Check(bool b)
+    {
+        EnableFlag(kChecked, b);
+        SetPressed(b);
+    }
     bool IsToggle() const { return (m_flags & kToggleButton); }
     bool IsSeparator() const { return m_flags & kSeparator; }
+    bool IsSpacer() const { return m_flags & kSpacer; }
+    bool IsStretchableSpace() const { return m_flags & kStretchalbeSpace; }
     bool IsEnabled() const { return !(m_flags & kDisabled); }
     bool IsControl() const { return m_flags & kControl; }
     bool Enable(bool b)
@@ -124,6 +130,10 @@ public:
         EnableFlag(kDisabled, !b);
         return true;
     }
+    bool IsHidden() const { return m_flags & kHidden; }
+    bool IsShown() const { return !IsHidden(); }
+    void Show(bool b) { EnableFlag(kHidden, !b); }
+
     template <typename T> T* Cast() { return dynamic_cast<T*>(this); }
 };
 

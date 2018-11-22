@@ -166,7 +166,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
 
     EventNotifier::Get()->Connect(wxEVT_DBG_UI_SHOW_CURSOR, clDebugEventHandler(LLDBPlugin::OnDebugShowCursor), NULL,
                                   this);
-    Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
 
     EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
@@ -180,7 +180,7 @@ LLDBPlugin::LLDBPlugin(IManager* manager)
 
 void LLDBPlugin::UnPlug()
 {
-    Unbind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_TOOLTIP_DESTROY, &LLDBPlugin::OnDestroyTip, this);
     m_connector.StopDebugServer();
     DestroyUI();
 
@@ -489,6 +489,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 startCommand.SetRedirectTTY(m_debuggerTerminal.GetTty());
                 m_connector.Start(startCommand);
 
+                clDebugEvent cl_event(wxEVT_DEBUG_STARTED);
+                EventNotifier::Get()->AddPendingEvent(cl_event);
+
             } else {
                 // Failed to connect, notify and perform cleanup
                 DoCleanup();
@@ -532,6 +535,11 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     // Also notify codelite's event
     clDebugEvent e2(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent(e2);
+
+    {
+        clDebugEvent e(wxEVT_DEBUG_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
 }
 
 void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
@@ -1233,6 +1241,7 @@ void LLDBPlugin::SetupPivotFolder(const LLDBConnectReturnObject& ret)
 
 void LLDBPlugin::OnDestroyTip(clCommandEvent& e)
 {
+    e.Skip();
     if(m_tooltip) {
         m_tooltip->Destroy();
         m_tooltip = NULL;

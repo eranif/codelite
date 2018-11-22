@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=12.0.9
+AppVersion=12.0.11
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-x86-12.0.9
+OutputBaseFilename=codelite-x86-12.0.11
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico

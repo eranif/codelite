@@ -53,8 +53,10 @@
 #include <wx/html/htmlwin.h>
 #include <wx/process.h>
 #include <wx/splash.h>
+#include <wx/minifram.h>
 
 // forward decls
+class DebuggerToolBar;
 class clToolBar;
 class WebUpdateJob;
 class CodeLiteApp;
@@ -69,7 +71,6 @@ class FileExplorer;
 class OutputTabWindow;
 class DockablePaneMenuManager;
 class MyMenuBar;
-class clSplashScreen;
 
 //--------------------------------
 // Helper class
@@ -133,6 +134,7 @@ class clMainFrame : public wxFrame
     clMainFrameHelper::Ptr_t m_frameHelper;
     WebUpdateJob* m_webUpdate;
     clToolBar* m_toolbar;
+    DebuggerToolBar* m_debuggerToolbar = nullptr;
 
 public:
     static bool m_initCompleted;
@@ -400,7 +402,7 @@ protected:
     void OnBuildEnded(clCommandEvent& event);
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCloseEvent& event);
-
+    void OnCustomiseToolbar(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event);
     void OnDuplicateTab(wxCommandEvent& event);
     void OnFileSaveUI(wxUpdateUIEvent& event);
@@ -408,7 +410,8 @@ protected:
     void OnFileReload(wxCommandEvent& event);
     void OnFileLoadTabGroup(wxCommandEvent& event);
     void OnNativeTBUnRedoDropdown(wxCommandEvent& event);
-    void OnTBUnRedo(wxAuiToolBarEvent& event);
+    void OnTBUnRedo(wxCommandEvent& event);
+    void OnTBUnRedoMenu(wxCommandEvent& event);
     void OnCodeComplete(wxCommandEvent& event);
     void OnWordComplete(wxCommandEvent& event);
     void OnCompleteWordRefreshList(wxCommandEvent& event);
@@ -592,6 +595,7 @@ protected:
     void OnViewPaneUI(wxUpdateUIEvent& event);
     void OnDetachWorkspaceViewTab(wxCommandEvent& e);
     void OnHideWorkspaceViewTab(wxCommandEvent& e);
+    void OnHideOutputViewTab(wxCommandEvent& e);
     void OnDetachDebuggerViewTab(wxCommandEvent& e);
     void OnNewDetachedPane(wxCommandEvent& e);
     void OnDestroyDetachedPane(wxCommandEvent& e);

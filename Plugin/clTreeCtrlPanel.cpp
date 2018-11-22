@@ -35,7 +35,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     m_bmpLoader = clGetManager()->GetStdIcons();
 
     m_options = GetConfig()->Read("FileExplorer/Options", m_options);
-    GetTreeCtrl()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
     m_toolbar = new clToolBar(this);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
@@ -50,8 +50,8 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     SetDropTarget(new clFileOrFolderDropTarget(this));
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
+    GetTreeCtrl()->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
     GetTreeCtrl()->AddRoot(_("Folders"), wxNOT_FOUND, wxNOT_FOUND, new clTreeCtrlData(clTreeCtrlData::kRoot));
-    GetTreeCtrl()->AssignImageList(m_bmpLoader->MakeStandardMimeImageList());
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
@@ -76,11 +76,7 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     CHECK_ITEM_RET(item);
 
-    GetTreeCtrl()->SetFocusedItem(event.GetItem());
-    GetTreeCtrl()->SelectItem(event.GetItem());
-
     clTreeCtrlData* cd = GetItemData(item);
-
     if(cd && cd->IsFolder()) {
         // Prepare a folder context menu
         wxMenu menu;
@@ -257,7 +253,6 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
 
     // Sort the parent
     if(GetTreeCtrl()->ItemHasChildren(parent)) {
-        GetTreeCtrl()->SortChildren(parent);
         if(expand) {
             GetTreeCtrl()->Expand(parent);
         }
@@ -277,7 +272,6 @@ void clTreeCtrlPanel::AddFolder(const wxString& path)
     wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), path);
     DoExpandItem(itemFolder, false);
     ToggleView();
-    GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
 }
 
 wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxString& path)
@@ -343,7 +337,8 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
     }
 
     int imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
-    wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgIdx, cd);
+    int imgOpenedIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgOpenedIDx, cd);
 
     // Add this entry to the index
     if(parentData->GetIndex()) {
@@ -609,9 +604,15 @@ void clTreeCtrlPanel::OnOpenFile(wxCommandEvent& event)
 {
     wxArrayString folders, files;
     GetSelections(folders, files);
-
+    
     for(size_t i = 0; i < files.size(); ++i) {
-        clGetManager()->OpenFile(files.Item(i));
+        // Fire an event before resolving to the default action
+        clCommandEvent fileEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED);
+        fileEvent.SetEventObject(this);
+        fileEvent.SetFileName(files.Item(i));
+        if(!EventNotifier::Get()->ProcessEvent(fileEvent)) {
+            clGetManager()->OpenFile(files.Item(i));
+        }
     }
 }
 
@@ -698,7 +699,7 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 void clTreeCtrlPanel::GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const
 {
     wxTreeItemIdValue cookie;
-    const wxTreeCtrl* tree = m_treeCtrl;
+    const clTreeCtrl* tree = m_treeCtrl;
     wxTreeItemId child = tree->GetFirstChild(tree->GetRootItem(), cookie);
     while(child.IsOk()) {
         clTreeCtrlData* clientData = GetItemData(child);

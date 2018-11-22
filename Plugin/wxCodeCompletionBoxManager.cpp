@@ -11,11 +11,6 @@
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 
-static bool wxIsWhitespace(wxChar ch)
-{
-    return ch == wxT(' ') || ch == wxT('\t') || ch == wxT('\r') || ch == wxT('\n');
-}
-
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
     wxCodeCompletionClientData()

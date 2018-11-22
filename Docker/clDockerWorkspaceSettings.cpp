@@ -16,9 +16,12 @@ void clDockerWorkspaceSettings::FromJSON(const JSONElement& json)
     JSONElement files = json.namedObject("files");
     int filesCount = files.arraySize();
     for(int i = 0; i < filesCount; ++i) {
-        clDockerfile f;
-        f.FromJSON(files.arrayItem(i), m_workspaceFile.GetPath());
-        m_files.insert({ f.GetPath(), f });
+        JSONElement fileJson = files.arrayItem(i);
+        clDockerBuildableFile::Ptr_t f = clDockerBuildableFile::New(
+            (eDockerFileType)fileJson.namedObject("type").toInt((int)eDockerFileType::kDockerfile));
+        if(!f) { continue; }
+        f->FromJSON(fileJson, m_workspaceFile.GetPath());
+        m_files.insert({ f->GetPath(), f });
     }
 }
 
@@ -28,8 +31,8 @@ JSONElement clDockerWorkspaceSettings::ToJSON() const
     json.addProperty("Version", DOCKER_VERSION);
     JSONElement files = JSONElement::createArray("files");
     json.append(files);
-    std::for_each(m_files.begin(), m_files.end(), [&](const clDockerfile::Map_t::value_type& vt) {
-        files.arrayAppend(vt.second.ToJSON(m_workspaceFile.GetPath()));
+    std::for_each(m_files.begin(), m_files.end(), [&](const clDockerBuildableFile::Map_t::value_type& vt) {
+        files.arrayAppend(vt.second->ToJSON(m_workspaceFile.GetPath()));
     });
     return json;
 }
@@ -58,42 +61,14 @@ void clDockerWorkspaceSettings::Clear()
     m_version.clear();
 }
 
-bool clDockerWorkspaceSettings::GetFileInfo(const wxFileName& file, clDockerfile& info) const
+clDockerBuildableFile::Ptr_t clDockerWorkspaceSettings::GetFileInfo(const wxFileName& file) const
 {
-    if(m_files.count(file.GetFullPath()) == 0) { return false; }
-    info = m_files.find(file.GetFullPath())->second;
-    return true;
+    if(m_files.count(file.GetFullPath()) == 0) { return clDockerBuildableFile::Ptr_t(); }
+    return m_files.find(file.GetFullPath())->second;
 }
 
-void clDockerWorkspaceSettings::SetFileInfo(const wxFileName& file, const clDockerfile& info)
+void clDockerWorkspaceSettings::SetFileInfo(const wxFileName& file, clDockerBuildableFile::Ptr_t info)
 {
     if(m_files.count(file.GetFullPath())) { m_files.erase(file.GetFullPath()); }
     m_files.insert({ file.GetFullPath(), info });
-}
-
-void clDockerfile::FromJSON(const JSONElement& json, const wxString& workspaceDir)
-{
-    m_path = json.namedObject("path").toString();
-    // The file path is relative, make it absolute
-    wxFileName fn(m_path);
-    fn.MakeAbsolute(workspaceDir);
-    m_path = fn.GetFullPath();
-
-    m_buildOptions = json.namedObject("buildOptions").toString();
-    m_runOptions = json.namedObject("runOptions").toString();
-}
-
-JSONElement clDockerfile::ToJSON(const wxString& workspaceDir) const
-{
-    JSONElement json = JSONElement::createObject();
-
-    // m_path is absolute, convert to relative before we save it
-    wxFileName fn(m_path);
-    fn.MakeRelativeTo(workspaceDir); // Use Unix style paths
-    wxString path = fn.GetFullPath();
-    path.Replace("\\", "/");
-    json.addProperty("path", path);
-    json.addProperty("buildOptions", m_buildOptions);
-    json.addProperty("runOptions", m_runOptions);
-    return json;
 }

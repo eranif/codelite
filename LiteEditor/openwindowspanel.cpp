@@ -83,7 +83,9 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     , m_workspaceClosing(false)
     , m_workspaceOpened(false)
 {
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
+    // Disable the built in sorting, this control will take care of it
+    m_dvListCtrl->SetSortFunction(nullptr);
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_toolbar = new clToolBar(this);
     m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
                        wxITEM_CHECK);
@@ -156,35 +158,28 @@ void OpenWindowsPanel::OnCloseSelectedFiles(wxCommandEvent& e)
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
 
-    if(items.IsEmpty()) return;
+    if(items.IsEmpty()) { return; }
 
-    wxArrayString paths;  // list of files
-    wxArrayString others; // list of non files editors
+    // Close the page, it will be removed from the UI later
+    std::vector<wxFileName> files;
+    wxArrayString pages;
     for(size_t i = 0; i < items.GetCount(); ++i) {
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(items.Item(i)));
-        if(data->IsFile()) {
-            paths.Add(data->tab.filename.GetFullPath());
-        } else {
-            others.Add(data->tab.text);
+        if(data && data->IsFile()) {
+            files.push_back(data->tab.filename);
+        } else if(data) {
+            pages.push_back(data->tab.text);
         }
-
-        // Delete the item data
-        wxDELETE(data);
-
-        // Remove the item from the list
-        int row = m_dvListCtrl->ItemToRow(items.Item(i));
-        m_dvListCtrl->DeleteItem(row);
     }
 
     // Close the files
-    for(size_t i = 0; i < paths.GetCount(); ++i) {
-        wxFileName fn(paths.Item(i));
-        m_mgr->ClosePage(fn);
+    for(size_t i = 0; i < files.size(); ++i) {
+        m_mgr->ClosePage(files[i]);
     }
 
-    // Close non file tabs
-    for(size_t i = 0; i < others.GetCount(); ++i) {
-        m_mgr->ClosePage(others.Item(i));
+    // Close non files editors
+    for(size_t i = 0; i < pages.size(); ++i) {
+        m_mgr->ClosePage(pages.Item(i));
     }
 }
 
@@ -227,7 +222,7 @@ void OpenWindowsPanel::DoCloseItem(wxDataViewItem item)
 void OpenWindowsPanel::DoSelectItem(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         if(data->IsFile()) {
@@ -345,7 +340,7 @@ wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
 
 void OpenWindowsPanel::Clear()
 {
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         wxDELETE(data);
@@ -376,7 +371,7 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
     } else {
         menu = wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu"));
     }
-    PopupMenu(menu);
+    m_dvListCtrl->PopupMenu(menu);
     wxDELETE(menu);
 }
 
@@ -389,7 +384,7 @@ bool OpenWindowsPanel::IsEditor(wxDataViewItem item) const
 void OpenWindowsPanel::DoSelectItem(wxWindow* win)
 {
     CHECK_PTR_RET(win);
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
         if(data->tab.window == win) {
@@ -471,20 +466,10 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     }
 
     FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
-    wxBitmap bmp;
-
-    // If the tab had an icon, use it, otherwise, use a bitmap by the file type
-    if(tab.bitmap.IsOk()) {
-        bmp = tab.bitmap;
-    } else if(m_bitmaps.count(ft)) {
-        bmp = m_bitmaps.find(ft)->second;
-    } else {
-        bmp = m_bitmaps.find(FileExtManager::TypeText)->second;
-    }
-
+    int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(ft);
     if(editor && editor->GetModify()) { title.Prepend("*"); }
 
-    wxVariant value = ::MakeIconText(title, bmp);
+    wxVariant value = ::MakeBitmapIndexText(title, imgId);
     return value;
 }
 

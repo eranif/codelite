@@ -11,11 +11,21 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 
+#ifdef __WXMSW__
+#define MARGIN_SPACER 5
+#elif defined(__WXGTK3__)
+#define MARGIN_SPACER 5
+#else
+#define MARGIN_SPACER 3
+#endif
+
 clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,
                                                            const wxSize& size, long style)
     : wxPanel(parent, winid, pos, size, style)
     , m_state(eButtonState::kNormal)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    MSWSetNativeTheme(this);
     Bind(wxEVT_PAINT, &clConfigurationSelectionCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clConfigurationSelectionCtrl::OnEraseBG, this);
     Bind(wxEVT_LEFT_DOWN, &clConfigurationSelectionCtrl::OnLeftDown, this);
@@ -23,8 +33,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
         event.Skip();
         Refresh();
     });
-    //SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp"));
+    SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp", MARGIN_SPACER, MARGIN_SPACER));
 }
 
 clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
@@ -38,22 +47,21 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
-#ifdef __WXGTK3__
-    wxDC& gcdc = bdc;
-#else
     wxGCDC gcdc(bdc);
-#endif
-    PrepareDC(gcdc);
 
     wxRect rect = GetClientRect();
     gcdc.SetPen(DrawingUtils::GetPanelBgColour());
     gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
     gcdc.DrawRectangle(rect);
+    
+#ifdef __WXGTK__
+    rect.Deflate(1);
+#endif
 
     // Build the text to draw
     wxString label;
     label << m_activeProject << " :: " << m_activeConfiguration;
-    DrawingUtils::DrawNativeChoice(this, gcdc, GetClientRect(), label);
+    DrawingUtils::DrawNativeChoice(this, gcdc, rect, label);
 }
 
 void clConfigurationSelectionCtrl::OnEraseBG(wxEraseEvent& e) {}

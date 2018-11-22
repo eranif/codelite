@@ -163,8 +163,8 @@ MainBook::~MainBook()
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
     if(m_findBar) {
-        EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnEditorChanged, this);
-        EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &MainBook::OnAllEditorClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnAllEditorClosed, this);
+        EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &MainBook::OnEditorChanged, this);
     }
 }
 
@@ -572,8 +572,13 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
 
     wxString projName = projectName;
     if(projName.IsEmpty()) {
+        wxString filePath(fileName.GetFullPath());
         // try to match a project name to the file. otherwise, CC may not work
-        projName = ManagerST::Get()->GetProjectNameByFile(fileName.GetFullPath());
+        projName = ManagerST::Get()->GetProjectNameByFile(filePath);
+        // If (in Linux) the project contains a *symlink* this filepath, not the realpath,
+        // filePath will have been changed by GetProjectNameByFile() to that symlink.
+        // So update fileName in case
+        fileName = wxFileName(filePath);
     }
 
     clEditor* editor = GetActiveEditor(true);
@@ -1072,7 +1077,6 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
-        event.SetClientData((void*)dynamic_cast<IEditor*>(editor));
         EventNotifier::Get()->AddPendingEvent(event);
         UpdateNavBar(editor);
     }
@@ -1618,10 +1622,10 @@ void MainBook::ShowQuickBar(bool s)
     }
 }
 
-void MainBook::ShowQuickBar(const wxString& findWhat)
+void MainBook::ShowQuickBar(const wxString& findWhat, bool showReplace)
 {
     if(m_findBar) {
-        m_findBar->Show(findWhat);
+        m_findBar->Show(findWhat, showReplace);
         GetParent()->GetSizer()->Layout();
     }
 }
@@ -1629,13 +1633,10 @@ void MainBook::ShowQuickBar(const wxString& findWhat)
 void MainBook::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
-    // See if we got a new editor
-    if(event.GetClientData()) {
-        IEditor* editor = reinterpret_cast<IEditor*>(event.GetClientData());
-        if(editor) {
-            m_findBar->SetEditor(editor->GetCtrl());
-            return;
-        }
+    IEditor* editor = GetActiveEditor();
+    if(editor) {
+        m_findBar->SetEditor(editor->GetCtrl());
+        return;
     }
     m_findBar->SetEditor(NULL);
 }

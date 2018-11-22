@@ -5,12 +5,12 @@
 
 class WXDLLIMPEXP_SDK clToolBarControl : public clToolBarButtonBase
 {
-    wxWindow* m_control;
+    wxWindow* m_ctrl;
 
 public:
     clToolBarControl(clToolBar* parent, wxWindow* control);
     virtual ~clToolBarControl();
-    wxWindow* GetControl() { return m_control; }
+    wxWindow* GetControl() { return m_ctrl; }
 
 public:
     virtual wxSize CalculateSize(wxDC& dc) const;

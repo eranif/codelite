@@ -26,13 +26,13 @@
 #ifndef TERMINALEMULATOR_H
 #define TERMINALEMULATOR_H
 
-#include "codelite_exports.h"
-#include <wx/string.h>
-#include <wx/event.h>
-#include "cl_command_event.h"
-#include <wx/process.h>
 #include "asyncprocess.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 #include <list>
+#include <wx/event.h>
+#include <wx/process.h>
+#include <wx/string.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_EXIT, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_COMMAND_OUTPUT, clCommandEvent);
@@ -53,8 +53,6 @@ public:
     TerminalEmulator();
     virtual ~TerminalEmulator();
 
-    wxString PrepareCommand(const wxString& str, const wxString& title, bool waitOnExit);
-
     /**
      * @brief terminate the running process
      */
@@ -68,15 +66,14 @@ public:
     /**
      * @brief Execute a command in the OS terminal.
      * @param command the command to execute
-     * @param workingDirectory working directory for the new process
      * @param waitOnExit when set to true, pause the terminal with the message
+     * @param command_args arguments to be appended to the command
+     * @param workingDirectory working directory for the new process
      * "Hit any key to continue"
      * @param title set the terminal title. If an empty string is provided, use the command as the title
      */
-    bool ExecuteConsole(const wxString& command,
-                        const wxString& workingDirectory,
-                        bool waitOnExit,
-                        const wxString& title = wxEmptyString);
+    bool ExecuteConsole(const wxString& command, bool waitOnExit = false, const wxString& command_args = "",
+                        const wxString& workingDirectory = "", const wxString& title = "");
     /**
      * @brief execute a command without attaching console
      */

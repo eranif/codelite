@@ -76,12 +76,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
     , m_scanInProgress(true)
 {
-    MSWSetNativeTheme(m_treeCtrlView);
-    // SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-
     // Initialise images map
-    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-    m_bitmaps = bmpLoader->MakeStandardMimeMap();
     EventNotifier::Get()->Connect(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT,
                                   clExecuteEventHandler(PHPWorkspaceView::OnRunActiveProject), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &PHPWorkspaceView::OnStopExecutedProgram, this);
@@ -98,10 +93,7 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
 
     BitmapLoader* bl = m_mgr->GetStdIcons();
-    wxImageList* imageList = bl->MakeStandardMimeImageList();
-    m_treeCtrlView->AssignImageList(imageList);
-
-    m_keyboardHelper.reset(new clTreeKeyboardInput(m_treeCtrlView));
+    m_treeCtrlView->SetBitmaps(&bl->GetMimeBitmaps().GetBitmaps());
 
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -110,21 +102,21 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 
     // Build the toolbar
-    m_auibar29->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
-                        _("Open active project settings"), wxITEM_NORMAL);
-    m_auibar29
-        ->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("remote-folder"),
-                  _("Setup automatic upload"), wxITEM_NORMAL)
-        ->SetHasDropDown(true);
-    m_auibar29->AddSeparator();
-    m_auibar29->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
-                        wxITEM_NORMAL);
-    m_auibar29->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Collapse All"), bl->LoadBitmap("debugger_restart"),
-                        _("Sync workspace with file system..."), wxITEM_NORMAL);
-    m_auibar29->AddSeparator();
-    m_auibar29->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
-                        bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
-    m_auibar29->Realize();
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
+                       _("Open active project settings"), wxITEM_NORMAL);
+#if USE_SFTP
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("file_open"),
+                       _("Setup automatic upload"), wxITEM_DROPDOWN);
+#endif
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
+                       wxITEM_NORMAL);
+    m_toolbar->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Sync workspace with file system"),
+                       bl->LoadBitmap("debugger_restart"), _("Sync workspace with file system..."), wxITEM_NORMAL);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
+                       bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
+    m_toolbar->Realize();
 
     // Bind events
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnActiveProjectSettings, this, XRCID("ID_PHP_PROJECT_SETTINGS"));
@@ -133,8 +125,10 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
 #if USE_SFTP
     Bind(wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUpload, this,
          XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
-#endif
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnSetupRemoteUploadUI, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_TOOL, &PHPWorkspaceView::OnSetupRemoteUpload, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+    Bind(wxEVT_TOOL_DROPDOWN, &PHPWorkspaceView::OnSetupRemoteUploadMenu, this, XRCID("ID_PHP_PROJECT_REMOTE_SAVE"));
+#endif
 
     Bind(wxEVT_MENU, &PHPWorkspaceView::OnCollapse, this, XRCID("ID_TOOL_COLLAPSE"));
     Bind(wxEVT_UPDATE_UI, &PHPWorkspaceView::OnCollapseUI, this, XRCID("ID_TOOL_COLLAPSE"));
@@ -398,7 +392,6 @@ void PHPWorkspaceView::OnMenu(wxTreeEvent& event)
 
 void PHPWorkspaceView::LoadWorkspaceView()
 {
-    m_itemsToSort.Clear();
     m_filesItems.clear();
     m_foldersItems.clear();
 
@@ -423,7 +416,6 @@ void PHPWorkspaceView::LoadWorkspaceView()
         m_treeCtrlView->AddRoot(workspaceName, bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()),
                                 bl->GetMimeImageId(PHPWorkspace::Get()->GetFilename().GetFullName()), data);
     const PHPProject::Map_t& projects = PHPWorkspace::Get()->GetProjects();
-    m_itemsToSort.PushBack(root, true);
 
     wxBusyCursor bc;
     wxBusyInfo info(_("Building workspace tree view"), FRAME);
@@ -440,24 +432,22 @@ void PHPWorkspaceView::LoadWorkspaceView()
         data->SetFile(iter_project->second->GetFilename().GetFullPath());
         data->SetActive(iter_project->second->IsActive());
 
-        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(root, iter_project->second->GetName(),
-                                                                bl->GetMimeImageId(FileExtManager::TypeProject),
-                                                                bl->GetMimeImageId(FileExtManager::TypeProject), data);
+        wxTreeItemId projectItemId = m_treeCtrlView->AppendItem(
+            root, iter_project->second->GetName(), bl->GetMimeImageId(FileExtManager::TypeProject),
+            bl->GetMimeImageId(FileExtManager::TypeProjectExpanded), data);
         if(data->IsActive()) { m_treeCtrlView->SetItemBold(projectItemId, true); }
 
         // The project is also a folder for the project folder
         m_foldersItems.insert(std::make_pair(iter_project->second->GetFilename().GetPath(), projectItemId));
-        m_itemsToSort.PushBack(projectItemId, true);
         DoBuildProjectNode(projectItemId, iter_project->second);
         if(data->IsActive()) { activeProjectId = projectItemId; }
     }
 
-    if(m_treeCtrlView->HasChildren(root)) { m_treeCtrlView->Expand(root); }
+    if(m_treeCtrlView->ItemHasChildren(root)) { m_treeCtrlView->Expand(root); }
 
     if(activeProjectId.IsOk() && m_treeCtrlView->ItemHasChildren(activeProjectId)) {
         m_treeCtrlView->Expand(activeProjectId);
     }
-    DoSortItems();
     wxCommandEvent dummy;
     OnEditorChanged(dummy);
 }
@@ -551,17 +541,10 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
         wxWindowUpdateLocker locker(m_treeCtrlView);
 
         // Add folder to the tree view
-        int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
         ItemData* itemData = new ItemData(ItemData::Kind_Folder);
         itemData->SetFolderName(name);
         itemData->SetFolderPath(newfolder.GetPath());
         itemData->SetProjectName(proj->GetName());
-
-        m_itemsToSort.Clear();
-        m_itemsToSort.PushBack(parent, true);
-        wxTreeItemId folderItem = m_treeCtrlView->AppendItem(parent, name, imgId, imgId, itemData);
-        m_itemsToSort.PushBack(folderItem, true);
-        DoSortItems();
         // Expand the node
         if(!m_treeCtrlView->IsExpanded(parent)) { m_treeCtrlView->Expand(parent); }
     }
@@ -821,17 +804,6 @@ void PHPWorkspaceView::OnRunProject(wxCommandEvent& e)
     PHPWorkspace::Get()->RunProject(false, debugDlg.GetPath(), DoGetSelectedProject());
 }
 
-wxBitmap PHPWorkspaceView::DoGetBitmapForExt(const wxString& ext) const
-{
-    wxString filename;
-    filename << "dummy"
-             << "." << ext;
-
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(type == FileExtManager::TypeOther) { type = FileExtManager::TypeText; }
-    return m_bitmaps.find(type)->second;
-}
-
 void PHPWorkspaceView::OnActiveProjectSettings(wxCommandEvent& event)
 {
     if(!PHPWorkspace::Get()->GetActiveProject()) {
@@ -953,7 +925,6 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
     if(dlg.ShowModal() == wxID_OK) {
         PHPClassDetails pcd = dlg.GetDetails();
         wxWindowUpdateLocker locker(m_treeCtrlView);
-        m_itemsToSort.Clear();
 
         wxString fileContent;
         wxString eolString = EditorConfigST::Get()->GetOptions()->GetEOLAsString();
@@ -970,7 +941,6 @@ void PHPWorkspaceView::OnNewClass(wxCommandEvent& e)
         if(!event.GetFormattedString().IsEmpty()) { fileContent = event.GetFormattedString(); }
 
         wxTreeItemId fileItem = DoCreateFile(folderId, pcd.GetFilepath().GetFullPath(), fileContent);
-        DoSortItems();
 
         // Set the focus the new class
         if(fileItem.IsOk()) {
@@ -992,38 +962,30 @@ void PHPWorkspaceView::OnRenameWorkspace(wxCommandEvent& e)
 }
 
 #if USE_SFTP
-void PHPWorkspaceView::OnSetupRemoteUpload(wxAuiToolBarEvent& event)
+void PHPWorkspaceView::OnSetupRemoteUploadMenu(wxCommandEvent& event)
 {
-    if(!event.IsDropDownClicked()) {
-        CallAfter(&PHPWorkspaceView::DoOpenSSHAccountManager);
+    SSHWorkspaceSettings settings;
+    settings.Load();
+
+    wxMenu menu;
+    if(!settings.IsRemoteUploadSet()) {
+        // We never setup remote upload for this workspace
+        menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
+        menu.Enable(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
+        menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
 
     } else {
-        SSHWorkspaceSettings settings;
-        settings.Load();
-
-        wxMenu menu;
-        if(!settings.IsRemoteUploadSet()) {
-            // We never setup remote upload for this workspace
-            menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
-            menu.Enable(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
-            menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, false);
-
-        } else {
-            menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
-            menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, settings.IsRemoteUploadEnabled());
-            menu.Connect(ID_TOGGLE_AUTOMATIC_UPLOAD, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
-        }
-
-        wxAuiToolBar* auibar = dynamic_cast<wxAuiToolBar*>(event.GetEventObject());
-        if(auibar) {
-            clAuiToolStickness ts(auibar, event.GetToolId());
-            wxRect rect = auibar->GetToolRect(event.GetId());
-            wxPoint pt = auibar->ClientToScreen(rect.GetBottomLeft());
-            pt = ScreenToClient(pt);
-            PopupMenu(&menu, pt);
-        }
+        menu.AppendCheckItem(ID_TOGGLE_AUTOMATIC_UPLOAD, _("Enable automatic upload"));
+        menu.Check(ID_TOGGLE_AUTOMATIC_UPLOAD, settings.IsRemoteUploadEnabled());
+        menu.Connect(ID_TOGGLE_AUTOMATIC_UPLOAD, wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(PHPWorkspaceView::OnToggleAutoUpload), NULL, this);
     }
+    m_toolbar->ShowMenuForButton(event.GetId(), &menu);
+}
+
+void PHPWorkspaceView::OnSetupRemoteUpload(wxCommandEvent& event)
+{
+    CallAfter(&PHPWorkspaceView::DoOpenSSHAccountManager);
 }
 #endif
 
@@ -1113,15 +1075,6 @@ void PHPWorkspaceView::OnPhpParserProgress(clParseEvent& event)
 
 void PHPWorkspaceView::OnPhpParserStarted(clParseEvent& event) { event.Skip(); }
 
-void PHPWorkspaceView::DoSortItems()
-{
-    wxOrderedMap<wxTreeItemId, bool>::const_iterator iter = m_itemsToSort.begin();
-    for(; iter != m_itemsToSort.end(); ++iter) {
-        m_treeCtrlView->SortItem(iter->first);
-    }
-    m_itemsToSort.Clear();
-}
-
 void PHPWorkspaceView::OnSyncWorkspaceWithFileSystem(wxCommandEvent& e)
 {
     PHPWorkspace::Get()->SyncWithFileSystemAsync(this);
@@ -1165,9 +1118,9 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
     if(!pProject) return wxTreeItemId();
 
     int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+    int imgIdExpanded = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
     wxString curpath;
     wxTreeItemId parent = projectItem;
-    m_itemsToSort.PushBack(parent, true);
     wxFileName fnFolder(path, "dummy.txt");
     fnFolder.MakeRelativeTo(pProject->GetFilename().GetPath());
     if(fnFolder.GetDirCount() == 0) {
@@ -1184,9 +1137,8 @@ wxTreeItemId PHPWorkspaceView::DoAddFolder(const wxString& project, const wxStri
             itemData->SetFolderPath(curdir.GetPath());
             itemData->SetProjectName(project);
             itemData->SetFolderName(parts.Item(i));
-            parent = m_treeCtrlView->AppendItem(parent, parts.Item(i), imgId, imgId, itemData);
+            parent = m_treeCtrlView->AppendItem(parent, parts.Item(i), imgId, imgIdExpanded, itemData);
             m_foldersItems.insert(std::make_pair(curdir.GetPath(), parent));
-            m_itemsToSort.PushBack(parent, true);
         } else {
             parent = m_foldersItems.find(curdir.GetPath())->second;
         }
@@ -1219,7 +1171,6 @@ wxTreeItemId PHPWorkspaceView::DoCreateFile(const wxTreeItemId& parent, const wx
     PHPProject::Ptr_t proj = DoGetProjectForItem(parent);
     if(!proj) return wxTreeItemId();
 
-    m_itemsToSort.Clear();
     wxFileName file(fullpath);
     // Write the file content
     if(FileUtils::WriteFileContent(file, content)) {
@@ -1235,9 +1186,7 @@ wxTreeItemId PHPWorkspaceView::DoCreateFile(const wxTreeItemId& parent, const wx
 
         // Cache the result
         m_filesItems.insert(std::make_pair(file.GetFullPath(), fileItem));
-        m_itemsToSort.PushBack(parent, true);
         proj->FileAdded(file.GetFullPath(), true);
-        DoSortItems();
         return fileItem;
     }
     return wxTreeItemId();
@@ -1353,14 +1302,9 @@ void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
         if(itemData->IsFile()) { ::wxLaunchDefaultApplication(itemData->GetFile()); }
     }
 }
-void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event)
-{
 #if USE_SFTP
-    event.Enable(PHPWorkspace::Get()->IsOpen());
-#else
-    event.Enable(false);
+void PHPWorkspaceView::OnSetupRemoteUploadUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
 #endif
-}
 
 void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 {
@@ -1378,32 +1322,13 @@ void PHPWorkspaceView::DoGetSelectedFiles(wxArrayString& files)
 void PHPWorkspaceView::OnCollapse(wxCommandEvent& event)
 {
     // Collapse the projects
-    wxWindowUpdateLocker locker(m_treeCtrlView);
-    wxTreeItemId root = m_treeCtrlView->GetRootItem();
-    DoCollapseItem(root);
-    if(m_treeCtrlView->ItemHasChildren(root)) {
-        m_treeCtrlView->Expand(root);
-        m_treeCtrlView->Collapse(root);
-    }
+    m_treeCtrlView->CollapseAll();
 }
 
 void PHPWorkspaceView::OnCollapseUI(wxUpdateUIEvent& event) { event.Enable(PHPWorkspace::Get()->IsOpen()); }
 void PHPWorkspaceView::OnStartDebuggerListenerUI(wxUpdateUIEvent& event)
 {
     event.Enable(!XDebugManager::Get().IsDebugSessionRunning());
-}
-
-void PHPWorkspaceView::DoCollapseItem(wxTreeItemId& item)
-{
-    if(m_treeCtrlView->ItemHasChildren(item)) {
-        wxTreeItemIdValue cookie;
-        wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
-        while(child.IsOk()) {
-            DoCollapseItem(child);
-            child = m_treeCtrlView->GetNextChild(item, cookie);
-        }
-        m_treeCtrlView->Collapse(item);
-    }
 }
 
 void PHPWorkspaceView::OnAddExistingProject(wxCommandEvent& e)
@@ -1576,10 +1501,6 @@ void PHPWorkspaceView::OnProjectSyncCompleted(clCommandEvent& event)
 
     // And finally, rebuild the project node
     DoBuildProjectNode(item, pProject);
-
-    DoSortItems();
-    m_itemsToSort.Clear();
-
     DoExpandToActiveEditor();
 }
 
@@ -1593,7 +1514,7 @@ void PHPWorkspaceView::DoGetFilesAndFolders(const wxString& projectName, wxArray
 
 void PHPWorkspaceView::DoGetFilesAndFolders(const wxTreeItemId& item, wxArrayString& folders, wxArrayString& files)
 {
-    if(m_treeCtrlView->HasChildren(item)) {
+    if(m_treeCtrlView->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_treeCtrlView->GetFirstChild(item, cookie);
         while(child.IsOk()) {

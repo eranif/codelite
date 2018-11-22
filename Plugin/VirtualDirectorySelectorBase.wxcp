@@ -241,7 +241,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "300,200"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -277,15 +277,15 @@
         }, {
          "type": "bool",
          "m_label": "Focused",
-         "m_value": false
+         "m_value": true
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedTreeCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -307,7 +307,7 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "string",
          "m_label": "Minimum Size:",
@@ -414,7 +414,7 @@
        "gbSpan": ",",
        "gbPosition": ",",
        "m_styles": [],
-       "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
+       "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_HORIZONTAL"],
        "m_properties": [{
          "type": "string",
          "m_label": "Minimum Size:",
@@ -441,7 +441,7 @@
          "gbSpan": ",",
          "gbPosition": ",",
          "m_styles": [],
-         "m_sizerFlags": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
+         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",

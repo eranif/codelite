@@ -199,6 +199,42 @@ wxString MacroManager::DoExpand(
                     expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
                     expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
                     expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
+                    
+  
+                    // Compiler-related variables
+
+                    wxString cFlags = bldConf->GetCCompileOptions();
+                    cFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(CC)"), bldConf->GetCompiler()->GetTool("CC"));
+                    expandedString.Replace(wxT("$(CFLAGS)"), cFlags);
+                    
+                    wxString cxxFlags = bldConf->GetCompileOptions();
+                    cxxFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(CXX)"), bldConf->GetCompiler()->GetTool("CXX"));
+                    expandedString.Replace(wxT("$(CXXFLAGS)"), cxxFlags);
+                  
+                    wxString ldFlags = bldConf->GetLinkOptions();
+                    ldFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(LDFLAGS)"), ldFlags);
+                    
+                    wxString asFlags = bldConf->GetAssmeblerOptions();
+                    asFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
+                    expandedString.Replace(wxT("$(ASFLAGS)"), asFlags);
+                    
+                    wxString resFlags = bldConf->GetResCompileOptions();
+                    resFlags.Replace(wxT(";"), wxT(" "));
+                    expandedString.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
+                    expandedString.Replace(wxT("$(RESFLAGS)"), resFlags);
+  
+                    expandedString.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
+                    
+                    expandedString.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
+                    
+                    expandedString.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
+                    expandedString.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
+                    expandedString.Replace(wxT("$(ResourcePath)"), bldConf->GetResCmpIncludePath());
+                    expandedString.Replace(wxT("$(LinkLibraries)"), bldConf->GetLibraries());
                 }
 
                 if(expandedString.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)

@@ -32,7 +32,7 @@
 
 class NodeJSWorkspaceUser
 {
-    NodeJSBreakpoint::List_t m_breakpoints;
+    NodeJSBreakpoint::Vec_t m_breakpoints;
     wxString m_workspacePath;
     wxString m_scriptToExecute;
     int m_debuggerPort;
@@ -49,12 +49,12 @@ public:
 
     NodeJSWorkspaceUser& Load();
     NodeJSWorkspaceUser& Save();
-    NodeJSWorkspaceUser& SetBreakpoints(const NodeJSBreakpoint::List_t& breakpoints)
+    NodeJSWorkspaceUser& SetBreakpoints(const NodeJSBreakpoint::Vec_t& breakpoints)
     {
         this->m_breakpoints = breakpoints;
         return *this;
     }
-    const NodeJSBreakpoint::List_t& GetBreakpoints() const { return m_breakpoints; }
+    const NodeJSBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
     NodeJSWorkspaceUser& SetDebuggerHost(const wxString& debuggerHost)
     {
         this->m_debuggerHost = debuggerHost;

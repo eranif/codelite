@@ -38,14 +38,13 @@ class IEditor;
 class OpenWindowsPanel : public OpenWindowsPanelBase
 {
     wxString m_caption;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     IManager* m_mgr;
     bool m_initDone;
     std::map<wxString, wxDataViewItem> m_editors;
     bool m_workspaceClosing;
     bool m_workspaceOpened;
     clToolBar* m_toolbar;
-    
+
 protected:
     wxString GetEditorPath(wxDataViewItem item);
     bool IsEditor(wxDataViewItem item) const;

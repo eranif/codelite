@@ -175,10 +175,7 @@ void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
 void DatabaseExplorer::OnExecuteSQL(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    SQLCommandPanel* panel = dynamic_cast<SQLCommandPanel*>(m_mgr->GetActivePage());
-    CHECK_PTR_RET(panel);
-
-    panel->ExecuteSql();
+    // Pass the command to the active frame
 }
 
 void DatabaseExplorer::UnPlug()
@@ -204,10 +201,9 @@ bool DatabaseExplorer::IsDbViewDetached()
 void DatabaseExplorer::OnAbout(wxCommandEvent& e)
 {
     wxString version = wxString::Format(DBE_VERSION);
-
-    wxString desc = _("Cross-platform database plugin designed for managing data, ERD and code generation.\n\n");
+    wxString desc = _("Cross platform database explorer\n\n");
     desc << wxbuildinfo(long_f) << wxT("\n\n");
-
+    
     wxAboutDialogInfo info;
     info.SetName(_("DatabaseExplorer"));
     info.SetVersion(version);
@@ -224,59 +220,17 @@ void DatabaseExplorer::OnOpenWithDBE(clCommandEvent& e)
 {
     // get the file name
     e.Skip();
-    const wxFileName& filename = e.GetFileName();
-    if(filename.GetExt() == wxT("erd")) {
+    if(FileExtManager::IsFileType(e.GetFileName(), FileExtManager::TypeDatabase)) {
         e.Skip(false);
-        DoOpenFile(filename);
+        // Open the databse file
+        DoOpenFile(e.GetFileName());
     }
 }
 
 void DatabaseExplorer::DoOpenFile(const wxFileName& filename)
 {
-    if(filename.GetExt() == wxT("erd")) {
-        // try to determine used database adapter
-        IDbAdapter* adapter = NULL;
-        IDbAdapter::TYPE type = IDbAdapter::atUNKNOWN;
-
-        wxSFDiagramManager mgr;
-        mgr.AcceptShape(wxT("All"));
-        mgr.SetRootItem(new ErdInfo());
-
-        if(mgr.DeserializeFromXml(filename.GetFullPath())) {
-            ErdInfo* info = wxDynamicCast(mgr.GetRootItem(), ErdInfo);
-
-            if(info) type = info->GetAdapterType();
-
-            switch(type) {
-            case IDbAdapter::atSQLITE:
-#ifdef DBL_USE_SQLITE
-                adapter = new SQLiteDbAdapter();
-#endif
-                break;
-
-            case IDbAdapter::atMYSQL:
-#ifdef DBL_USE_MYSQL
-                adapter = new MySqlDbAdapter();
-#endif
-                break;
-
-            case IDbAdapter::atPOSTGRES:
-                //#ifdef DBL_USE_POSTGRES
-                adapter = new PostgreSqlDbAdapter();
-                //#endif
-                break;
-
-            default:
-                break;
-            }
-
-            if(adapter) {
-                ErdPanel* panel = new ErdPanel(m_mgr->GetEditorPaneNotebook(), adapter, NULL);
-                m_mgr->AddEditorPage(panel, wxString::Format(wxT("ERD [%s]"), filename.GetFullName().c_str()));
-                panel->LoadERD(filename.GetFullPath());
-                return;
-            }
-        }
+    if(m_dbViewerPanel) {
+        m_dbViewerPanel->OpenSQLiteFile(filename, true);
     }
 }
 
@@ -289,7 +243,7 @@ void DatabaseExplorer::OnToggleTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
+        clGetManager()->GetWorkspacePaneNotebook()->AddPage(m_dbViewerPanel, _("DbExplorer"), true);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("DbExplorer"));
         if(where != wxNOT_FOUND) { clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where); }

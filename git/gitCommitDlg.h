@@ -37,6 +37,7 @@
 #include <map>
 #include "clEditorEditEventsHandler.h"
 #include <wx/tokenzr.h> 
+#include "macros.h"
 
 class GitPlugin;
 
@@ -44,7 +45,7 @@ class GitCommitDlg : public GitCommitDlgBase
 {
     GitPlugin* m_plugin;
     wxString m_workingDir;
-    std::map<wxString, wxString> m_diffMap;
+    wxStringMap_t m_diffMap;
     bool m_toggleChecks;
     clEditEventsHandler::Ptr_t m_editEventsHandlerCommitStc;
     clEditEventsHandler::Ptr_t m_editEventsHandlerDiffStc;

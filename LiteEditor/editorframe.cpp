@@ -70,12 +70,12 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_toolbar->AddTool(wxID_REDO, _("Redo"), clGetManager()->GetStdIcons()->LoadBitmap("redo"));
     m_toolbar->Realize();
 
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_SAVE);
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnClose, this, wxID_CLOSE);
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_UNDO);
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, wxID_REDO);
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnEdit, this, XRCID("reload_file"));
-    m_toolbar->Bind(wxEVT_MENU, &EditorFrame::OnFind, this, wxID_FIND);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_SAVE);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnClose, this, wxID_CLOSE);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_UNDO);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_REDO);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, XRCID("reload_file"));
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnFind, this, wxID_FIND);
 
     m_mainPanel->Layout();
     SetTitle(editor->GetFileName().GetFullPath());

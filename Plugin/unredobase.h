@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include <vector>
+#include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
 #include <wx/event.h>

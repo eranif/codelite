@@ -1108,8 +1108,8 @@ bool VimCommand::Command_call()
         break;
     }
     case COMMANDVI::yi91: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
         if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
@@ -1121,8 +1121,8 @@ bool VimCommand::Command_call()
         break;
     }
     case COMMANDVI::yi123: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
         if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
@@ -1173,9 +1173,11 @@ bool VimCommand::Command_call()
             m_ctrl->LineEnd();
             m_ctrl->NewLine();
             m_ctrl->DelLineLeft();
-            wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
-            if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
-            if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            if (m_listCopiedStr.size() > 0) {
+                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            }
         } else {
             m_ctrl->CharRight();
         }
@@ -1189,13 +1191,15 @@ bool VimCommand::Command_call()
     case COMMANDVI::P:
         this->m_saveCommand = false;
         if(this->m_newLineCopy) {
-            m_ctrl->Home();
-            m_ctrl->NewLine();
             m_ctrl->LineUp();
+            m_ctrl->LineEnd();
+            m_ctrl->NewLine();
             m_ctrl->DelLineLeft();
-            wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
-            if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
-            if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            if (m_listCopiedStr.size() > 0) {
+                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            }
         }
         for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
             yanked != this->m_listCopiedStr.end(); ++yanked) {

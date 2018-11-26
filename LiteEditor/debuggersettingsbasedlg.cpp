@@ -856,24 +856,10 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer29 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer29);
 
-    m_auibar31 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                  wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
-    m_auibar31->SetToolBitmapSize(wxSize(16, 16));
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer29->Add(m_auibar31, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar31->AddTool(wxID_REFRESH, _("Refresh"), wxXmlResource::Get()->LoadBitmap(wxT("restart")), wxNullBitmap,
-                        wxITEM_NORMAL, _("Refresh"), _("Refresh"), NULL);
-
-    m_auibar31->AddTool(wxID_NEW, _("New..."), wxXmlResource::Get()->LoadBitmap(wxT("add")), wxNullBitmap,
-                        wxITEM_NORMAL, _("New..."), _("New..."), NULL);
-
-    m_auibar31->AddTool(wxID_DELETE, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-line")), wxNullBitmap,
-                        wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
-
-    m_auibar31->AddTool(ID_SORT_LOCALS, _("Sort Items"), wxXmlResource::Get()->LoadBitmap(wxT("sort")), wxNullBitmap,
-                        wxITEM_NORMAL, _("Sort Items"), _("Sort Items"), NULL);
-    m_auibar31->Realize();
+    boxSizer29->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_listTable = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                        wxTR_SINGLE | wxTR_ROW_LINES | wxTR_HIDE_ROOT | wxTR_ENABLE_SEARCH);
@@ -884,16 +870,6 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    this->Connect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL,
-                  this);
-    this->Connect(wxID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnRefreshUI), NULL, this);
-    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL, this);
-    this->Connect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
-    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch), NULL,
-                  this);
-    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL, this);
-    this->Connect(ID_SORT_LOCALS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnSortItems), NULL,
-                  this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin),
                          NULL, this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd),
@@ -907,18 +883,6 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
 LocalsTableBase::~LocalsTableBase()
 {
-    this->Disconnect(wxID_REFRESH, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnRefresh), NULL,
-                     this);
-    this->Disconnect(wxID_REFRESH, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnRefreshUI), NULL, this);
-    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnNewWatch), NULL,
-                     this);
-    this->Disconnect(wxID_NEW, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnNewWatchUI), NULL, this);
-    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnDeleteWatch),
-                     NULL, this);
-    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LocalsTableBase::OnDeleteWatchUI), NULL,
-                     this);
-    this->Disconnect(ID_SORT_LOCALS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LocalsTableBase::OnSortItems),
-                     NULL, this);
     m_listTable->Disconnect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT,
                             wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
     m_listTable->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd),

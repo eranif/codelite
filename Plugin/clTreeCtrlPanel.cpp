@@ -919,7 +919,7 @@ void clTreeCtrlPanel::OnOpenWithDefaultApplication(wxCommandEvent& event)
 void clTreeCtrlPanel::OnFindInFilesShowing(clCommandEvent& event)
 {
     event.Skip();
-    if(!IsShownOnScreen()) return;
+    if(!IsShownOnScreen() || !GetTreeCtrl()->HasFocus()) return;
 
     wxArrayString folders, files;
     GetSelections(folders, files);

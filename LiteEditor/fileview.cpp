@@ -275,22 +275,6 @@ void FileViewTree::BuildTree()
 wxTreeItemId FileViewTree::GetSingleSelection()
 {
     return GetFocusedItem();
-    //    std::queue<wxTreeItemId> Q;
-    //    Q.push(GetRootItem());
-    //    while(!Q.empty()) {
-    //        wxTreeItemId item = Q.front();
-    //        Q.pop();
-    //        if(IsSelected(item)) { return item; }
-    //
-    //        wxTreeItemIdValue k;
-    //        wxTreeItemId child = GetFirstChild(item, k);
-    //        while(child.IsOk()) {
-    //            Q.push(child);
-    //            child = GetNextChild(item, k);
-    //        }
-    //    }
-    //    // Return an invalid tree-item-id
-    //    return wxTreeItemId();
 }
 
 int FileViewTree::GetIconIndex(const ProjectItem& item)

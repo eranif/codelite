@@ -183,7 +183,8 @@ protected:
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnBuildTree(wxCommandEvent& e);
     void OnFolderDropped(clCommandEvent& event);
-
+    void OnFindInFilesShowing(clCommandEvent& event);
+    
     // Called from the context menu of a workspace folder
     void OnWorkspaceNewWorkspaceFolder(wxCommandEvent& evt);
     void OnNewProject(wxCommandEvent& evt);

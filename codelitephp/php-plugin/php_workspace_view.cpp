@@ -1410,18 +1410,17 @@ void PHPWorkspaceView::OnRenameFolder(wxCommandEvent& e)
 void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
 {
     e.Skip();
-
     if(!PHPWorkspace::Get()->IsOpen()) return;
-    if(!IsShownOnScreen()) return;
+    if(IsShownOnScreen() && HasFocus()) {
+        // Get list of selected folders
+        wxArrayString paths;
+        DoGetSelectedFolders(paths);
+        CHECK_COND_RET(!paths.IsEmpty());
 
-    // Get list of selected folders
-    wxArrayString paths;
-    DoGetSelectedFolders(paths);
-    CHECK_COND_RET(!paths.IsEmpty());
-
-    // PHP workspace is opened and visible
-    wxArrayString& outPaths = e.GetStrings();
-    outPaths.insert(outPaths.end(), paths.begin(), paths.end());
+        // PHP workspace is opened and visible
+        wxArrayString& outPaths = e.GetStrings();
+        outPaths.insert(outPaths.end(), paths.begin(), paths.end());
+    }
 }
 
 void PHPWorkspaceView::OnWorkspaceSyncStart(clCommandEvent& event)

@@ -28,8 +28,8 @@
 
 #include "codelite_exports.h"
 #include <vector>
-#include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
+#include <wx/aui/auibar.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
 #include <wx/sharedptr.h>

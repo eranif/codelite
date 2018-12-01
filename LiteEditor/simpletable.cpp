@@ -41,6 +41,9 @@ WatchesTable::WatchesTable(wxWindow* parent)
     : DebuggerTreeListCtrlBase(parent)
 {
     InitTable();
+    // Only sort top level items, don't sort their children
+    m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
+    
     m_DBG_USERR = DBG_USERR_WATCHTABLE;
     m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
     m_LIST_CHILDS = LIST_WATCH_CHILDS;

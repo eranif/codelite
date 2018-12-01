@@ -14,6 +14,8 @@
 #include <wx/headercol.h>
 
 #define wxTR_ENABLE_SEARCH 0x4000
+// Sorting is applied for top level items (i.e. items whom their direct parent is the root item)
+#define wxTR_SORT_TOP_LEVEL 0x0100
 
 class clScrollBar;
 class WXDLLIMPEXP_SDK clTreeCtrl : public clControlWithItems
@@ -133,7 +135,17 @@ public:
      * @brief does the tree has 'style' enabled?
      */
     bool HasStyle(int style) const { return m_treeStyle & style; }
-
+    
+    /**
+     * @brief add style to the current tree style
+     */
+    void AddTreeStyle(int style) { m_treeStyle |= style; }
+    
+    /**
+     * @brief set style to the tree
+     */
+    void SetTreeStyle(int style) { m_treeStyle = style; }
+    
     /**
      * @brief Calculates which (if any) item is under the given point, returning the tree item id at this point plus
      *  extra information flags.

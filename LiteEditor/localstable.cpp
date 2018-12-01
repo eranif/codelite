@@ -53,7 +53,10 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_listTable->AddHeader(_("Name"));
     m_listTable->AddHeader(_("Value"));
     m_listTable->AddHeader(_("Type"));
-
+    
+    // Only sort top level items, don't sort their children
+    m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
+    
     SetSortingFunction();
     m_DBG_USERR = DBG_USERR_LOCALS;
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;

@@ -486,6 +486,15 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
     CHECK_JS_RETURN_VOID();
     wxUnusedVar(event);
 
+    wxString fileName;
+    clEditor& rCtrl = GetCtrl();
+    wxString line = rCtrl.GetCurLine();
+    if(IsIncludeStatement(line, &fileName)) {
+        m_selectedWord = fileName;
+    } else {
+        m_selectedWord.clear();
+    }
+
     // If the event contains a new selection, use it instead of the m_selectedWord
     if(event.GetString().IsEmpty() == false) m_selectedWord = event.GetString();
 

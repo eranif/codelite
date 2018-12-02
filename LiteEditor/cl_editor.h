@@ -990,6 +990,9 @@ private:
     void DoRestoreMarkers();
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
+    
+    
+    wxFontEncoding DetectEncoding(const wxString& filename);
 
     // Event handlers
     void OpenURL(wxCommandEvent& event);

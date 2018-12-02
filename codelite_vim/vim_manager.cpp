@@ -60,6 +60,7 @@ void VimManager::OnEditorChanged(wxCommandEvent& event)
 void VimManager::OnKeyDown(wxKeyEvent& event)
 {
 
+    int modifier_key = event.GetModifiers();
     wxChar ch = event.GetUnicodeKey();
     bool skip_event = true;
 
@@ -97,6 +98,9 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
             if(m_currentCommand.get_current_modus() == VIM_MODI::SEARCH_CURR_MODUS) {
                 m_currentCommand.set_current_word(get_current_word());
                 m_currentCommand.set_current_modus(VIM_MODI::NORMAL_MODUS);
+            }
+            if (modifier_key == wxMOD_CONTROL && (ch == 'U' || ch == 'D')) {
+                OnCharEvt(event);
             }
             skip_event = true;
             break;
@@ -141,9 +145,8 @@ void VimManager::updateView()
 
     updateCarret();
 
-    if(m_currentCommand.getError() == MESSAGES_VIM::NO_ERROR_VIM_MSG) {
-        updateMessageModus();
-    } else {
+    updateMessageModus();
+    if (m_currentCommand.getError() != MESSAGES_VIM::NO_ERROR_VIM_MSG) {
         updateVimMessage();
     }
 }

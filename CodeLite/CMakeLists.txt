@@ -111,7 +111,8 @@ if (UNIX AND NOT APPLE )
                          ${SQLITE3_LIBRARY}
                          wxsqlite3 
                          ${LIBSSH_LIB} 
-                         ${ADDITIONAL_LIBRARIES})
+                         ${ADDITIONAL_LIBRARIES}
+                         ${LIBUCHARDET_LIB})
 else (UNIX AND NOT APPLE)
     target_link_libraries(libcodelite 
                           ${LINKER_OPTIONS} 
@@ -121,6 +122,7 @@ else (UNIX AND NOT APPLE)
                           wxsqlite3 
                           ${LIBSSH_LIB} 
                           ${ADDITIONAL_LIBRARIES} 
+                          ${LIBUCHARDET_LIB}
                           -lz /usr/lib/libcrypto.dylib)
 endif ( UNIX AND NOT APPLE )
 

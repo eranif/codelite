@@ -289,6 +289,28 @@ if (COPY_WX_LIBS MATCHES 1)
 endif()
 unset(COPY_WX_LIBS CACHE)
 
+## file encoding detect
+if (UNIX AND NOT APPLE OR MINGW)
+    ## Linux
+    if (MINGW)
+        find_library(LIBUCHARDET_LIB NAMES uchardet PATH_SUFFIXES lib)
+        find_path(LIBUCHARDET_INCLUDE_DIR NAMES uchardet.h PATH_SUFFIXES include/uchardet)
+    else()
+        find_library(LIBUCHARDET_LIB NAMES libuchardet.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+        find_path(LIBUCHARDET_INCLUDE_DIR NAMES uchardet.h HINTS /usr/local/include /usr/include PATH_SUFFIXES uchardet)
+    endif()
+else ( UNIX AND NOT APPLE OR MINGW )
+    ## OSX
+    #set( LIBUCHARDET_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/uchardet/include)
+    #set( LIBUCHARDET_LIB ${CL_SRC_ROOT}/sdk/uchardet/lib/osx/uchardet.a)
+endif ( UNIX AND NOT APPLE OR MINGW )
+if (LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
+    add_definitions(-DUSE_UCHARDET=1)
+    include_directories(${LIBUCHARDET_INCLUDE_DIR})
+else ( UNIX AND NOT APPLE OR MINGW )
+    set (LIBUCHARDET_LIB "")
+endif (LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
+
 ## Will set PLUGINS_DIR to the proper location on Linux / OSX
 include(OSXInstall)
 

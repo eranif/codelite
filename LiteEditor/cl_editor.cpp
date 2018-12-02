@@ -86,6 +86,10 @@
 #include "wx/paper.h"
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
+#if defined(USE_UCHARDET)
+#include "uchardet/uchardet.h"
+#endif
+
 #define NUMBER_MARGIN_ID 0
 #define EDIT_TRACKER_MARGIN_ID 1
 #define SYMBOLS_MARGIN_ID 2
@@ -2853,6 +2857,67 @@ void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
     }
 }
 
+
+wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
+{
+    wxFontEncoding encoding = GetOptions()->GetFileFontEncoding();
+#if defined(USE_UCHARDET)
+    wxFile file(filename);
+    if (!file.IsOpened())
+        return encoding;
+    
+    size_t size = file.Length();
+    if (size == 0) {
+        file.Close();
+        return encoding;
+    }
+
+    wxByte* buffer = (wxByte*) malloc(sizeof(wxByte) * (size + 4));
+    if (!buffer) {
+        file.Close();
+        return encoding;
+    }
+    buffer[size + 0] = 0;
+    buffer[size + 1] = 0;
+    buffer[size + 2] = 0;
+    buffer[size + 3] = 0;
+
+    size_t readBytes = file.Read((void*)buffer, size);
+    bool result = false;
+    if (readBytes > 0) {
+        uchardet_t ud = uchardet_new();
+        if (0 == uchardet_handle_data(ud, (const char *)buffer, readBytes)) {
+            uchardet_data_end(ud);
+            wxString charset(uchardet_get_charset(ud));
+            charset.MakeUpper();
+            if (charset.find("UTF-8") != wxString::npos) {
+                encoding = wxFONTENCODING_UTF8;
+            } else if (charset.find("GB18030") != wxString::npos) {
+                encoding = wxFONTENCODING_GB2312;
+            } else if (charset.find("BIG5") != wxString::npos) {
+                encoding = wxFONTENCODING_BIG5;
+            } else if (charset.find("EUC-JP") != wxString::npos) {
+                encoding = wxFONTENCODING_EUC_JP;
+            } else if (charset.find("EUC-KR") != wxString::npos) {
+                encoding = wxFONTENCODING_EUC_KR;
+            } else if (charset.find("WINDOWS-1252") != wxString::npos) {
+                encoding = wxFONTENCODING_CP1252;
+            } else if (charset.find("WINDOWS-1255") != wxString::npos) {
+                encoding = wxFONTENCODING_CP1255;
+            } else if (charset.find("ISO-8859-8") != wxString::npos) {
+                encoding = wxFONTENCODING_ISO8859_8;
+            } else if (charset.find("SHIFT_JIS") != wxString::npos) {
+                encoding = wxFONTENCODING_SHIFT_JIS;
+            }
+        }
+        uchardet_delete(ud);
+    }
+    file.Close();
+    free(buffer);
+#endif
+    return encoding;
+}
+
 void clEditor::OpenFile()
 {
     wxWindowUpdateLocker locker(this);
@@ -2878,7 +2943,7 @@ void clEditor::OpenFile()
     // Read the file we currently support:
     // BOM, Auto-Detect encoding & User defined encoding
     m_fileBom.Clear();
-    ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
+    ReadFileWithConversion(m_fileName.GetFullPath(), text, DetectEncoding(m_fileName.GetFullPath()), &m_fileBom);
 
     SetText(text);
 

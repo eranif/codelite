@@ -529,7 +529,7 @@ public:
      * \param vdFullPath virtual directory
      * \param files [output] list of files under this vdFullPath. The files format are in absolute path!
      */
-    void GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& files);
+    void GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& files, bool recurse = false);
 
     /**
      * Save project settings

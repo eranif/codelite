@@ -989,7 +989,7 @@ wxTreeItemId FileViewTree::DoAddVirtualFolder(wxTreeItemId& parent, const wxStri
     return item;
 }
 
-wxString FileViewTree::GetItemPath(const wxTreeItemId& item) const
+wxString FileViewTree::GetItemPath(const wxTreeItemId& item, const wxChar& sep) const
 {
     std::deque<wxString> queue;
     wxString text = GetItemText(item);
@@ -1017,14 +1017,14 @@ wxString FileViewTree::GetItemPath(const wxTreeItemId& item) const
     size_t count = queue.size();
     for(size_t i = 0; i < count; i++) {
         path += queue.front();
-        path += wxT(":");
+        path += sep;
         queue.pop_front();
     }
 
     if(!queue.empty()) {
         path += queue.front();
     } else {
-        path = path.BeforeLast(wxT(':'));
+        path = path.BeforeLast(sep);
     }
 
     return path;
@@ -2966,5 +2966,31 @@ void FileViewTree::OnTreeKeyDown(wxTreeEvent& event)
 void FileViewTree::OnFindInFilesShowing(clCommandEvent& event)
 {
     event.Skip();
-    if(IsShownOnScreen() && HasFocus()) {}
+    if(IsShownOnScreen() && HasFocus()) {
+        wxArrayString selections;
+        wxArrayTreeItemIds items;
+        if(GetSelections(items) == 0) { return; }
+        for(size_t i = 0; i < items.size(); ++i) {
+            const wxTreeItemId& item = items.Item(i);
+            FilewViewTreeItemData* cd = ItemData(item);
+            if(!cd) { continue; }
+            switch(cd->GetData().GetKind()) {
+            case ProjectItem::TypeFile:
+                selections.Add(wxString() << "F: " << cd->GetData().GetFile());
+                break;
+            case ProjectItem::TypeVirtualDirectory:
+                selections.Add(wxString() << "V: " << GetItemPath(item, '/'));
+                break;
+            case ProjectItem::TypeProject:
+                selections.Add(wxString() << "P: " << cd->GetData().GetDisplayName());
+                break;
+            case ProjectItem::TypeWorkspace:
+                selections.Add(wxString() << "W: " << cd->GetData().GetDisplayName());
+                break;
+            default:
+                break;
+            }
+        }
+        event.SetStrings(selections);
+    }
 }

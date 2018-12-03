@@ -233,7 +233,7 @@ private:
     wxTreeItemId AddWorkspaceFolder(const wxString& folderPath);
 
     int GetIconIndex(const ProjectItem& item);
-    wxString GetItemPath(const wxTreeItemId& item) const;
+    wxString GetItemPath(const wxTreeItemId& item, const wxChar& sep = ':') const;
     bool IsFileExcludedFromBuild(const wxTreeItemId& item) const;
 
     void DoGetProjectIconIndex(const wxString& projectName, int& iconIndex, bool& fromPlugin);

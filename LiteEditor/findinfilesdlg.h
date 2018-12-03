@@ -51,7 +51,8 @@ protected:
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
     void DoSetFileMask();
-
+    void DoAddProjectFiles(const wxString& projectName, wxArrayString& files);
+    
     // Append new search path, ensure singularity
     void DoAddSearchPath(const wxString& path);
     void DoAddSearchPaths(const wxArrayString& paths);

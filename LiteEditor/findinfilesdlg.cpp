@@ -38,6 +38,8 @@
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
 #include "sessionmanager.h"
+#include "workspace.h"
+#include <project.h>
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
                                      const wxArrayString& additionalSearchPaths)
@@ -236,8 +238,37 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     for(size_t i = 0; i < searchWhere.GetCount(); ++i) {
         const wxString& rootDir = searchWhere.Item(i);
-        // Check both translations and otherwise: the history may contain either
-        if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) && clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        if(rootDir.StartsWith("F: ")) {
+            // a file
+            files.Add(rootDir.Mid(3));
+        } else if(rootDir.StartsWith("W: ")) {
+            // Add all project files
+            wxArrayString projects;
+            clCxxWorkspaceST::Get()->GetProjectList(projects);
+            for(size_t n = 0; n < projects.size(); ++n) {
+                DoAddProjectFiles(projects.Item(n), files);
+            }
+        } else if(rootDir.StartsWith("V: ")) {
+            // a virtual folder
+            if(clCxxWorkspaceST::Get()->IsOpen()) {
+                wxString vd = rootDir.Mid(3);
+                vd.Replace("/", ":"); // Virtual directory is expecting colons as the separator
+                wxString projectName = vd.BeforeFirst(':');
+                vd = vd.AfterFirst(':');
+                ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+                if(p) {
+                    wxArrayString vdFiles;
+                    p->GetFilesByVirtualDir(vd, vdFiles, true);
+                    files.insert(files.end(), vdFiles.begin(), vdFiles.end());
+                }
+            }
+        } else if(rootDir.StartsWith("P: ")) {
+            // Project
+            wxString projectName = rootDir.Mid(3);
+            DoAddProjectFiles(projectName, files);
+
+        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) &&
+                  clWorkspaceManager::Get().IsWorkspaceOpened()) {
             // Add the workspace folder
             rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
 
@@ -290,6 +321,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
     // Remove duplicates
     wxStringSet_t filesSet;
     wxArrayString uniqueFiles;
+    // Unique files may contain up to files.size() elements
+    uniqueFiles.Alloc(files.size());
     std::for_each(files.begin(), files.end(), [&](const wxString& file) {
         if(filesSet.count(file) == 0) {
             filesSet.insert(file);
@@ -297,6 +330,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
         }
     });
 
+    // Release unused memory
+    uniqueFiles.Shrink();
     files.swap(uniqueFiles);
 
     data.SetFiles(files);       // list of files
@@ -479,6 +514,22 @@ void FindInFilesDialog::DoDeletedSelectedPaths()
     if(!selections.IsEmpty()) {
         for(int i = (selectionsCount - 1); i >= 0; --i) {
             m_listPaths->Delete(selections.Item(i));
+        }
+    }
+}
+
+void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArrayString& files)
+{
+    if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if(p) {
+        const Project::FilesMap_t& filesMap = p->GetFiles();
+        if(!filesMap.empty()) {
+            wxArrayString tmpArr;
+            tmpArr.Alloc(filesMap.size());
+            std::for_each(filesMap.begin(), filesMap.end(),
+                          [&](const Project::FilesMap_t::value_type& vt) { tmpArr.Add(vt.second->GetFilename()); });
+            files.insert(files.end(), tmpArr.begin(), tmpArr.end());
         }
     }
 }

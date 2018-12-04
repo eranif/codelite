@@ -24,6 +24,9 @@
 #include "memcheckui.h"
 #include "processreaderthread.h"
 #include "valgrindprocessor.h"
+#include "build_config.h"
+#include "macromanager.h"
+#include "globals.h"
 
 static MemCheckPlugin* thePlugin = NULL;
 
@@ -392,5 +395,56 @@ void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event) { event.Enable(IsRu
 
 wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& wd)
 {
-    return m_mgr->GetProjectExecutionCommand(projectName, wd);
+    wd.clear();
+    if(!clCxxWorkspaceST::Get()->IsOpen()) { return ""; }
+
+    ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if(!proj) {
+        clWARNING() << "MemCheckPlugin::PrepareCommand(): could not find project:" << projectName;
+        return wxEmptyString;
+    }
+
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if(!bldConf) {
+        clWARNING() << "MemCheckPlugin::PrepareCommand(): failed to find project configuration for project:"
+                    << projectName;
+        return wxEmptyString;
+    }
+
+    wxString projectPath = proj->GetFileName().GetPath();
+
+    // expand variables
+    wxString cmd = bldConf->GetCommand();
+    cmd = MacroManager::Instance()->Expand(cmd, NULL, projectName);
+
+    wxString cmdArgs = bldConf->GetCommandArguments();
+    cmdArgs = MacroManager::Instance()->Expand(cmdArgs, NULL, projectName);
+
+    // Execute command & cmdArgs
+    wd = bldConf->GetWorkingDirectory();
+    wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
+
+    wxFileName workingDir(wd, "");
+    if(workingDir.IsRelative()) { workingDir.MakeAbsolute(projectPath); }
+
+    wxFileName fileExe(cmd);
+    if(fileExe.IsRelative()) { fileExe.MakeAbsolute(workingDir.GetPath()); }
+    fileExe.Normalize();
+
+#ifdef __WXMSW__
+    if(!fileExe.Exists() && fileExe.GetExt().IsEmpty()) {
+        // Try with .exe
+        wxFileName withExe(fileExe);
+        withExe.SetExt("exe");
+        if(withExe.Exists()) { fileExe = withExe; }
+    }
+#endif
+    wd = workingDir.GetPath();
+    cmd = fileExe.GetFullPath();
+
+    cmd = ::WrapWithQuotes(cmd);
+    cmd << " " << cmdArgs;
+    clDEBUG() << "Command to execute:" << cmd;
+    clDEBUG() << "Working directory:" << wd;
+    return cmd;
 }

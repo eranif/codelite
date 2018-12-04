@@ -7,42 +7,39 @@
 #ifndef _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include "clThemedListCtrl.h"
-#include "clThemedTreeCtrl.h"
-#include <map>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibar.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/choicebk.h>
-#include <wx/dataview.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/listctrl.h>
-#include <wx/menu.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/spinctrl.h>
-#include <wx/splitter.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
+#include <wx/notebook.h>
+#include "Notebook.h"
+#include <wx/button.h>
+#include <wx/panel.h>
 #include <wx/stc/stc.h>
+#include <wx/listctrl.h>
+#include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/checkbox.h>
+#include <wx/imaglist.h>
+#include <wx/spinctrl.h>
+#include <wx/statbox.h>
+#include <wx/choicebk.h>
+#include <wx/splitter.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/treectrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clThemedTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -288,23 +285,11 @@ public:
 
 class LocalsTableBase : public wxPanel
 {
-public:
-    enum {
-        ID_SORT_LOCALS = 7334,
-    };
-
 protected:
-    wxAuiToolBar* m_auibar31;
+    clToolBar* m_toolbar;
     clThemedTreeCtrl* m_listTable;
 
 protected:
-    virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnNewWatch(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNewWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDeleteWatch(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteWatchUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSortItems(wxCommandEvent& event) { event.Skip(); }
     virtual void OnListEditLabelBegin(wxTreeEvent& event) { event.Skip(); }
     virtual void OnListEditLabelEnd(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }
@@ -312,7 +297,7 @@ protected:
     virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar31() { return m_auibar31; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedTreeCtrl* GetListTable() { return m_listTable; }
     LocalsTableBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);

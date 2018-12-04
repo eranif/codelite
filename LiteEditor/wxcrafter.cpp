@@ -415,31 +415,40 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* boxSizer324 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer324);
 
-    m_toolbar = this->CreateToolBar(wxTB_NOALIGN | wxTB_FLAT, wxID_ANY);
+    m_toolbar = new clToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
+                              wxTB_NOALIGN | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(24, 24));
 
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_save")),
-                       wxNullBitmap, wxITEM_NORMAL, _("Save"), _("Save"), NULL);
+    boxSizer324->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_close")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Close"), _("Close"), NULL);
+    m_menuBar587 = new wxMenuBar(0);
+    this->SetMenuBar(m_menuBar587);
 
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload File"), wxXmlResource::Get()->LoadBitmap(wxT("24-file_reload")),
-                       wxNullBitmap, wxITEM_NORMAL, _("Reload File"), _("Reload File"), NULL);
+    FILE = new wxMenu();
+    m_menuBar587->Append(FILE, _("File"));
 
-    m_toolbar->AddTool(wxID_FIND, _("Find"), wxXmlResource::Get()->LoadBitmap(wxT("24-find")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Find"), _("Find"), NULL);
+    m_menuItemSave = new wxMenuItem(FILE, XRCID("file-save"), _("Save\tCtrl-S"), wxT(""), wxITEM_NORMAL);
+    FILE->Append(m_menuItemSave);
 
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), wxXmlResource::Get()->LoadBitmap(wxT("24-undo")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Undo"), wxT(""), NULL);
+    m_menuItemReload = new wxMenuItem(FILE, XRCID("reload_file"), _("Reload File\tCtrl-R"), wxT(""), wxITEM_NORMAL);
+    FILE->Append(m_menuItemReload);
 
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), wxXmlResource::Get()->LoadBitmap(wxT("24-redo")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Redo"), wxT(""), NULL);
+    FILE->AppendSeparator();
 
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"),
-                       wxXmlResource::Get()->LoadBitmap(wxT("24-bookmark")), wxNullBitmap, wxITEM_DROPDOWN,
-                       _("Toggle Bookmark"), _("Toggle Bookmark"), NULL);
-    m_toolbar->Realize();
+    m_menuItemClose = new wxMenuItem(FILE, XRCID("file-close"), _("Close\tCtrl-W"), wxT(""), wxITEM_NORMAL);
+    FILE->Append(m_menuItemClose);
+
+    EDIT = new wxMenu();
+    m_menuBar587->Append(EDIT, _("Edit"));
+
+    m_menuItemFind = new wxMenuItem(EDIT, XRCID("show-find-bar"), _("Find\tCtrl-F"), wxT(""), wxITEM_NORMAL);
+    EDIT->Append(m_menuItemFind);
+
+    m_menuItemUndo = new wxMenuItem(EDIT, wxID_UNDO, _("Undo"), wxT(""), wxITEM_NORMAL);
+    EDIT->Append(m_menuItemUndo);
+
+    m_menuItemRedo = new wxMenuItem(EDIT, wxID_REDO, _("Redo"), wxT(""), wxITEM_NORMAL);
+    EDIT->Append(m_menuItemRedo);
 
     SetName(wxT("EditorFrameBase"));
     SetMinClientSize(wxSize(800, 600));
@@ -459,20 +468,55 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
 #endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Connect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
-    this->Connect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
-    this->Connect(wxID_FIND, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
-    this->Connect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL, this);
+    this->Connect(m_menuItemSave->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnSave),
+                  NULL, this);
+    this->Connect(m_menuItemSave->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL,
+                  this);
+    this->Connect(m_menuItemReload->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                  wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
+    this->Connect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                  wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
+    this->Connect(m_menuItemClose->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL,
+                  this);
+    this->Connect(m_menuItemFind->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnFind),
+                  NULL, this);
+    this->Connect(m_menuItemFind->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL,
+                  this);
+    this->Connect(m_menuItemUndo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnUndo),
+                  NULL, this);
+    this->Connect(m_menuItemUndo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnUndoUI), NULL,
+                  this);
+    this->Connect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnRedo),
+                  NULL, this);
+    this->Connect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnRedoUI), NULL,
+                  this);
 }
 
 EditorFrameBase::~EditorFrameBase()
 {
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Disconnect(wxID_CLOSE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnClose), NULL,
+    this->Disconnect(m_menuItemSave->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnSave), NULL, this);
+    this->Disconnect(m_menuItemSave->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL,
                      this);
-    this->Disconnect(wxID_CLOSE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL, this);
-    this->Disconnect(wxID_FIND, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
-    this->Disconnect(wxID_FIND, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL, this);
+    this->Disconnect(m_menuItemReload->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
+    this->Disconnect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
+    this->Disconnect(m_menuItemClose->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI),
+                     NULL, this);
+    this->Disconnect(m_menuItemFind->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
+    this->Disconnect(m_menuItemFind->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL,
+                     this);
+    this->Disconnect(m_menuItemUndo->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnUndo), NULL, this);
+    this->Disconnect(m_menuItemUndo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnUndoUI), NULL,
+                     this);
+    this->Disconnect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(EditorFrameBase::OnRedo), NULL, this);
+    this->Disconnect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnRedoUI), NULL,
+                     this);
 }
 
 NewProjectWizardBase::NewProjectWizardBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp,

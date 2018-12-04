@@ -125,7 +125,8 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     EventNotifier::Get()->ProcessEvent(fifDlgShowing);
 
     // Display the Find In Files dialog
-    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData", fifDlgShowing.GetStrings());
+    const wxArrayString& additionalPaths = fifDlgShowing.GetStrings();
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData", additionalPaths);
     wxArrayString* paths = (wxArrayString*)e.GetClientData();
     if(paths) {
         dlg.SetSearchPaths(*paths);
@@ -245,10 +246,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     }
 }
 
-void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
-{
-    AppendText(_("====== Search cancelled by user ======\n"));
-}
+void FindResultsTab::OnSearchCancel(wxCommandEvent& e) { AppendText(_("====== Search cancelled by user ======\n")); }
 
 void FindResultsTab::OnClearAll(wxCommandEvent& e)
 {

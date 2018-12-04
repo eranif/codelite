@@ -34,24 +34,20 @@
 #include "quickfindbar.h"
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "frame.h"
 
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
 EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle)
     : EditorFrameBase(parent)
-    , m_myMenuBar(NULL)
+    , m_editor(editor)
 {
-    m_book = new Notebook(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                          notebookStyle | kNotebook_AllowForeignDnD);
-    m_book->Bind(wxEVT_BOOK_PAGE_CLOSED, &EditorFrame::OnPageClosed, this);
-    m_book->Bind(wxEVT_BOOK_PAGE_CLOSING, &EditorFrame::OnPageClosing, this);
+    m_editor->Reparent(m_mainPanel);
+    m_mainPanel->GetSizer()->Add(editor, 1, wxEXPAND);
 
-    m_mainPanel->GetSizer()->Add(m_book, 1, wxEXPAND);
-    editor->Reparent(m_book);
-    m_book->AddPage(editor, editor->GetFileName().GetFullName(), true);
     // Notebook::RemovePage hides the detached tab
     if(!editor->IsShown()) { editor->Show(); }
-    
+
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
     m_findBar->SetEditor(editor);
@@ -59,30 +55,31 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
 
+    m_toolbar->SetMiniToolBar(false);
+    m_toolbar->AddTool(XRCID("file-save"), _("Save"), clGetManager()->GetStdIcons()->LoadBitmap("file_save"));
+    m_toolbar->AddTool(XRCID("file-close"), _("Close"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
+    m_toolbar->AddTool(XRCID("reload_file"), _("Reload"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    m_toolbar->AddTool(XRCID("show-find-bar"), _("Find"), clGetManager()->GetStdIcons()->LoadBitmap("cscope"));
+    m_toolbar->AddSpacer();
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), clGetManager()->GetStdIcons()->LoadBitmap("undo"));
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), clGetManager()->GetStdIcons()->LoadBitmap("redo"));
+    m_toolbar->Realize();
+
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnSave, this, XRCID("file-save"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &EditorFrame::OnSaveUI, this, XRCID("file-save"));
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnClose, this, XRCID("file-close"));
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_UNDO);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_REDO);
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnFind, this, XRCID("show-find-bar"));
+    m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnReload, this, XRCID("reload_file"));
+    
     m_mainPanel->Layout();
     SetTitle(editor->GetFileName().GetFullPath());
-
-    // Update the accelerator table for this frame
-    //ManagerST::Get()->UpdateMenuAccelerators(this);
     SetSize(600, 600);
     CentreOnScreen();
 }
 
-EditorFrame::~EditorFrame()
-{
-// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
-// see this wxWidgets bug report for more details:
-//  http://trac.wxwidgets.org/ticket/14292
-#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-    wxDELETE(m_myMenuBar);
-#endif
-
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
-        if(!editor) continue;
-        DoCloseEditor(editor);
-    }
-}
+EditorFrame::~EditorFrame() { DoCloseEditor(m_editor); }
 
 void EditorFrame::OnClose(wxCommandEvent& event)
 {
@@ -104,60 +101,6 @@ void EditorFrame::OnFindUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void EditorFrame::OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
 
-void EditorFrame::GetAllEditors(std::vector<clEditor*>& editors)
-{
-    for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
-        if(!editor) continue;
-        editors.push_back(editor);
-    }
-}
-
-clEditor* EditorFrame::GetEditor() const { return GetEditor(m_book->GetSelection()); }
-
-void EditorFrame::OnPageClosed(wxBookCtrlEvent& event)
-{
-    event.Skip();
-    if(m_book->GetPageCount() == 0) {
-        Close();
-        m_findBar->SetEditor(NULL);
-    } else {
-        clEditor* editor = reinterpret_cast<clEditor*>(m_book->GetCurrentPage());
-        if(editor) {
-            m_findBar->SetEditor(editor->GetCtrl());
-        } else {
-            m_findBar->SetEditor(NULL);
-        }
-    }
-}
-
-void EditorFrame::OnPageClosing(wxBookCtrlEvent& event)
-{
-    // Are we closing a modified editor?
-    clEditor* editor = GetEditor(event.GetSelection());
-    if(!editor) return;
-
-    event.Skip();
-    if(editor->IsModified()) {
-        // Ask the user
-        if(::wxMessageBox(wxString() << editor->GetFileName().GetFullName() << " is modified, continue?", "CodeLite",
-                          wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
-            event.Skip(false);
-            event.Veto();
-            return;
-        }
-    }
-
-    // Perform the cleanup needed before the page is destroyed
-    DoCloseEditor(editor);
-}
-
-clEditor* EditorFrame::GetEditor(size_t index) const
-{
-    if(index >= m_book->GetPageCount()) return nullptr;
-    return dynamic_cast<clEditor*>(m_book->GetPage(index));
-}
-
 void EditorFrame::DoCloseEditor(clEditor* editor)
 {
     clCommandEvent evntInternalClosed(wxEVT_DETACHED_EDITOR_CLOSED);
@@ -169,4 +112,28 @@ void EditorFrame::DoCloseEditor(clEditor* editor)
     wxCommandEvent eventClose(wxEVT_EDITOR_CLOSING);
     eventClose.SetClientData((IEditor*)editor);
     EventNotifier::Get()->ProcessEvent(eventClose);
+}
+
+void EditorFrame::OnEdit(wxCommandEvent& event) { m_editor->OnMenuCommand(event); }
+
+void EditorFrame::OnSave(wxCommandEvent& event)
+{
+    m_editor->SaveFile();
+    SetTitle(m_editor->GetFileName().GetFullPath());
+}
+
+void EditorFrame::OnSaveUI(wxUpdateUIEvent& event) { event.Enable(m_editor && m_editor->GetModify()); }
+
+void EditorFrame::OnUndo(wxCommandEvent& event) { m_editor->GetCtrl()->Undo(); }
+
+void EditorFrame::OnRedo(wxCommandEvent& event) { m_editor->GetCtrl()->Redo(); }
+
+void EditorFrame::OnUndoUI(wxUpdateUIEvent& event) { event.Enable(m_editor && m_editor->CanUndo()); }
+
+void EditorFrame::OnRedoUI(wxUpdateUIEvent& event) { event.Enable(m_editor && m_editor->CanRedo()); }
+
+void EditorFrame::OnReload(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_editor->ReloadFromDisk();
 }

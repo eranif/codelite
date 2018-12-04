@@ -228,6 +228,18 @@
                 <label>&amp;Display EOL</label>
                 <checkable>1</checkable>
             </object>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Zoom</label>
+                <object class="wxMenuItem" name="wxID_ZOOM_IN">
+                    <label>Zoom In</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_ZOOM_OUT">
+                    <label>Zoom Out</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_ZOOM_FIT">
+                    <label>Reset Zoom</label>
+                </object>
+            </object>
             <object class="wxMenu" name="display_whitespaces">
                 <label>Show Whitespace</label>
                 <object class="wxMenuItem" name="whitepsace_invisible">
@@ -1095,6 +1107,7 @@
 
 
 
+    
     
     <object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">

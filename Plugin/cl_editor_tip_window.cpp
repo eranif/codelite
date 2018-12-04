@@ -36,6 +36,8 @@
 #include <wx/msgdlg.h>
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
+#include "ieditor.h"
+#include "imanager.h"
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
 EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -49,7 +51,12 @@ clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     , m_highlighIndex(0)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_font = DrawingUtils::GetDefaultFixedFont();
+    IEditor* editor = ::clGetManager()->GetActiveEditor();
+    if(editor) {
+        m_font = editor->GetCtrl()->StyleGetFont(0);
+    } else {
+        m_font = DrawingUtils::GetDefaultFixedFont();
+    }
     Hide();
     EventNotifier::Get()->Connect(wxEVT_CMD_COLOURS_FONTS_UPDATED,
                                   clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
@@ -73,11 +80,11 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     // Define the colours used by this tooltip window
     clColours colours = DrawingUtils::GetColours();
-    
+
     // If we got an active editor, adjust the coluors to match editor's colours
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) { colours.InitFromColour(editor->GetCtrl()->StyleGetBackground(0)); }
-    
+
     wxColour bgColour, penColour, textColour, highlightBgColour, highlightFgColour;
     bgColour = colours.GetBgColour();
     penColour = colours.GetBorderColour();

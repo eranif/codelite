@@ -34,8 +34,8 @@ class FindInFilesDialog : public FindInFilesDialogBase
 {
     FindReplaceData m_data;
     wxArrayString m_pluginFileMask;
-    wxStringSet_t m_nonPersistentSearchPaths;
-    
+    wxStringSet_t m_customPaths;
+
 protected:
     virtual void OnLookInKeyDown(wxKeyEvent& event);
     virtual void OnReplaceUI(wxUpdateUIEvent& event);
@@ -51,12 +51,13 @@ protected:
     SearchData DoGetSearchData();
     void DoSaveOpenFiles();
     void DoSetFileMask();
-
+    void DoAddProjectFiles(const wxString& projectName, wxArrayString& files);
+    
     // Append new search path, ensure singularity
     void DoAddSearchPath(const wxString& path);
     void DoAddSearchPaths(const wxArrayString& paths);
     void DoDeletedSelectedPaths();
-    
+
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnAddPath(wxCommandEvent& event);

@@ -127,7 +127,7 @@ protected:
      * It also ensures that we draw as much tabs as we can.
      * @param offset reset the 0 based index from m_tabs
      */
-    void UpdateVisibleTabs();
+    void UpdateVisibleTabs(bool forceReshuffle = false);
 
     /**
      * @brief calculate and set the tab ctrl size

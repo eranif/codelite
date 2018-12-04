@@ -82,44 +82,46 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
 #endif
             // Make sure we draw only when the "art" objects are in sync with the field
             // and with the bar itself
-            wxBitmap bmp(m_rect.GetSize());
-            wxMemoryDC memDc;
-            m_parent->PrepareDC(memDc);
+            if((m_rect.GetHeight() > 0) && (m_rect.GetWidth() > 0)) {
+                wxBitmap bmp(m_rect.GetSize());
+                wxMemoryDC memDc;
+                m_parent->PrepareDC(memDc);
 
-            memDc.SelectObject(bmp);
-            wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-            memDc.SetFont(font);
-            wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
+                memDc.SelectObject(bmp);
+                wxFont font = DrawingUtils::GetDefaultGuiFont();
+                memDc.SetFont(font);
+                wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
 
-            // Draw the field background
-            memDc.SetBrush(art->GetBgColour());
-            memDc.SetPen(art->GetBgColour());
-            memDc.DrawRectangle(rect);
+                // Draw the field background
+                memDc.SetBrush(art->GetBgColour());
+                memDc.SetPen(art->GetBgColour());
+                memDc.DrawRectangle(rect);
 
-            // Draw top separator line
-            wxPoint topLeft = rect.GetTopLeft();
-            wxPoint topRight = rect.GetTopRight();
-            topRight.x += 1;
-            memDc.SetPen(art->GetSeparatorColour());
-            memDc.DrawLine(topLeft, topRight);
+                // Draw top separator line
+                wxPoint topLeft = rect.GetTopLeft();
+                wxPoint topRight = rect.GetTopRight();
+                topRight.x += 1;
+                memDc.SetPen(art->GetSeparatorColour());
+                memDc.DrawLine(topLeft, topRight);
 
-            // Draw the bottom separator using the pen colour
-            // this will give a "sink" look to the status bar
-            topLeft.y += 1;
-            topRight.y += 1;
-            memDc.SetPen(art->GetPenColour());
-            memDc.DrawLine(topLeft, topRight);
+                // Draw the bottom separator using the pen colour
+                // this will give a "sink" look to the status bar
+                topLeft.y += 1;
+                topRight.y += 1;
+                memDc.SetPen(art->GetPenColour());
+                memDc.DrawLine(topLeft, topRight);
 
-            // Render will override m_rect, we so keep a copy
-            wxRect origRect = m_rect;
-            Render(memDc, rect, art);
-            m_rect = origRect;
-            memDc.SelectObject(wxNullBitmap);
+                // Render will override m_rect, we so keep a copy
+                wxRect origRect = m_rect;
+                Render(memDc, rect, art);
+                m_rect = origRect;
+                memDc.SelectObject(wxNullBitmap);
 
-            // bmp contains the field content, draw it
-            wxClientDC dc(m_parent);
-            m_parent->PrepareDC(dc);
-            dc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
+                // bmp contains the field content, draw it
+                wxClientDC dc(m_parent);
+                m_parent->PrepareDC(dc);
+                dc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
+            }
         }
     }
 }
@@ -229,9 +231,9 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     PrepareDC(abdc);
     wxGCDC dc(abdc);
     wxRect rect = GetClientRect();
-    
+
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
-    
+
     // Remember which art name used for painting
     SetLastArtNameUsedForPaint(m_art->GetName());
 

@@ -183,7 +183,8 @@ protected:
     virtual void OnOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnBuildTree(wxCommandEvent& e);
     void OnFolderDropped(clCommandEvent& event);
-
+    void OnFindInFilesShowing(clCommandEvent& event);
+    
     // Called from the context menu of a workspace folder
     void OnWorkspaceNewWorkspaceFolder(wxCommandEvent& evt);
     void OnNewProject(wxCommandEvent& evt);
@@ -232,7 +233,7 @@ private:
     wxTreeItemId AddWorkspaceFolder(const wxString& folderPath);
 
     int GetIconIndex(const ProjectItem& item);
-    wxString GetItemPath(const wxTreeItemId& item) const;
+    wxString GetItemPath(const wxTreeItemId& item, const wxChar& sep = ':') const;
     bool IsFileExcludedFromBuild(const wxTreeItemId& item) const;
 
     void DoGetProjectIconIndex(const wxString& projectName, int& iconIndex, bool& fromPlugin);

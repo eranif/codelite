@@ -46,13 +46,23 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID 
     , m_withButtons(withButtonsPane)
 {
     m_listTable->SetShowHeader(true);
-    if(!m_withButtons) {
-        m_auibar31->DeleteTool(wxID_DELETE);
-        m_auibar31->DeleteTool(wxID_NEW);
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnRefresh, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnRefreshUI, this, wxID_REFRESH);
+
+    if(m_withButtons) {
+        m_toolbar->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnDeleteWatch, this, wxID_DELETE);
+        m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnDeleteWatchUI, this, wxID_DELETE);
+
+        m_toolbar->AddTool(wxID_NEW, _("New"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnNewWatch, this, wxID_NEW);
+        m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnNewWatchUI, this, wxID_NEW);
     } else {
-        m_auibar31->DeleteTool(ID_SORT_LOCALS);
+        m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnSortItems, this, wxID_SORT_ASCENDING);
     }
-    m_auibar31->Realize();
+    m_toolbar->Realize();
 }
 
 DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase() {}

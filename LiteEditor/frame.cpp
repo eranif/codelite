@@ -331,6 +331,12 @@ EVT_UPDATE_UI(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbarUI)
 EVT_MENU(XRCID("show_tab_bar"), clMainFrame::OnShowTabBar)
 EVT_UPDATE_UI(XRCID("show_tab_bar"), clMainFrame::OnShowTabBarUI)
 EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
+EVT_MENU(wxID_ZOOM_FIT, clMainFrame::DispatchCommandEvent)
+EVT_MENU(wxID_ZOOM_IN, clMainFrame::DispatchCommandEvent)
+EVT_MENU(wxID_ZOOM_OUT, clMainFrame::DispatchCommandEvent)
+EVT_UPDATE_UI(wxID_ZOOM_OUT, clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(wxID_ZOOM_IN, clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(wxID_ZOOM_OUT, clMainFrame::OnFileExistUpdateUI)
 
 EVT_UPDATE_UI(XRCID("word_wrap"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("toggle_fold"), clMainFrame::OnFileExistUpdateUI)
@@ -1610,7 +1616,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     info.SetName(_("CodeLite IDE"));
     info.SetDescription(_("A free, open source, C/C++/PHP and JavaScript IDE"));
 
-    wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 256);
+    wxBitmap iconBmp = clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 64);
     if(iconBmp.IsOk()) {
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);

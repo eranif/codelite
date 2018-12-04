@@ -38,35 +38,27 @@
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
 #include "sessionmanager.h"
+#include "workspace.h"
+#include <project.h>
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
                                      const wxArrayString& additionalSearchPaths)
     : FindInFilesDialogBase(parent, wxID_ANY)
 {
     m_data.SetName(dataName);
-    m_nonPersistentSearchPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
+    m_customPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
 
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
     wxString filemask = SessionManager::Get().GetFindInFilesMaskForCurrentWorkspace();
-    if(!filemask.IsEmpty()) {
-        m_data.SetSelectedMask(filemask);
+    if(!filemask.IsEmpty()) { m_data.SetSelectedMask(filemask); }
+    wxArrayString paths;
+    if(m_customPaths.empty()) {
+        paths = m_data.GetSearchPaths();
+    } else {
+        std::for_each(m_customPaths.begin(), m_customPaths.end(), [&](const wxString& path) { paths.Add(path); });
     }
-    wxArrayString paths = m_data.GetSearchPaths();
 
-    wxStringSet_t persistentSearchPaths, d;
-    persistentSearchPaths.insert(m_data.GetSearchPaths().begin(), m_data.GetSearchPaths().end());
-
-    // Create a new set 'd' which contains the elements that appear in 'm_nonPersistentSearchPaths' but not in
-    // 'persistentSearchPaths' set
-    std::set_difference(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(),
-                        persistentSearchPaths.begin(), persistentSearchPaths.end(), std::inserter(d, d.end()));
-    m_nonPersistentSearchPaths.swap(d);
-
-    // At this point, m_nonPersistentSearchPaths contains list of paths that we should not persist
-    // Append them to the list of paths to search
-    std::for_each(m_nonPersistentSearchPaths.begin(), m_nonPersistentSearchPaths.end(),
-                  [&](const wxString& path) { paths.Add(path); });
     DoAddSearchPaths(paths);
 
     // Search for
@@ -117,7 +109,6 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
 
 FindInFilesDialog::~FindInFilesDialog()
 {
-    // Update the data
     m_data.SetFlags(GetSearchFlags());
     m_data.SetFindString(m_findString->GetValue());
     m_data.SetReplaceString(m_replaceString->GetValue());
@@ -131,21 +122,16 @@ FindInFilesDialog::~FindInFilesDialog()
     m_data.SetSelectedMask(value);
     m_data.SetFileMask(masks);
 
-    // Before we write the search paths, remove all 'non-persistent' entries from it
-    wxStringSet_t searchPaths, d;
-    wxArrayString searchPathsArr = m_listPaths->GetStrings();
-    searchPaths.insert(searchPathsArr.begin(), searchPathsArr.end());
-    std::set_difference(searchPaths.begin(), searchPaths.end(), m_nonPersistentSearchPaths.begin(),
-                        m_nonPersistentSearchPaths.end(), std::inserter(d, d.end()));
+    // If the search paths were provided by the user, dont store them
+    wxArrayString searchPathsArr;
+    if(m_customPaths.empty()) {
+        wxArrayString searchPathsArr = m_listPaths->GetStrings();
+        m_data.SetSearchPaths(searchPathsArr);
+    }
 
-    // Copy the entries from the set back to the wxArrayString
-    searchPathsArr.clear();
-    std::for_each(d.begin(), d.end(), [&](const wxString& s) { searchPathsArr.Add(s); });
-    m_data.SetSearchPaths(searchPathsArr);
-    
     clConfig::Get().WriteItem(&m_data);
     SessionManager::Get().UpdateFindInFilesMaskForCurrentWorkspace(m_data.GetSelectedMask());
-    
+
     // Notify about the dialog dismissal
     clCommandEvent event(wxEVT_CMD_FIND_IN_FILES_DISMISSED, GetId());
     event.SetEventObject(this);
@@ -214,7 +200,7 @@ void FindInFilesDialog::DoSearch()
 {
     SearchData data = DoGetSearchData();
     data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetFindResultsTab());
-    
+
     // check to see if we require to save the files
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
@@ -252,11 +238,40 @@ SearchData FindInFilesDialog::DoGetSearchData()
 
     for(size_t i = 0; i < searchWhere.GetCount(); ++i) {
         const wxString& rootDir = searchWhere.Item(i);
-        // Check both translations and otherwise: the history may contain either
-        if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) && clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        if(rootDir.StartsWith("F: ")) {
+            // a file
+            files.Add(rootDir.Mid(3));
+        } else if(rootDir.StartsWith("W: ")) {
+            // Add all project files
+            wxArrayString projects;
+            clCxxWorkspaceST::Get()->GetProjectList(projects);
+            for(size_t n = 0; n < projects.size(); ++n) {
+                DoAddProjectFiles(projects.Item(n), files);
+            }
+        } else if(rootDir.StartsWith("V: ")) {
+            // a virtual folder
+            if(clCxxWorkspaceST::Get()->IsOpen()) {
+                wxString vd = rootDir.Mid(3);
+                vd.Replace("/", ":"); // Virtual directory is expecting colons as the separator
+                wxString projectName = vd.BeforeFirst(':');
+                vd = vd.AfterFirst(':');
+                ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+                if(p) {
+                    wxArrayString vdFiles;
+                    p->GetFilesByVirtualDir(vd, vdFiles, true);
+                    files.insert(files.end(), vdFiles.begin(), vdFiles.end());
+                }
+            }
+        } else if(rootDir.StartsWith("P: ")) {
+            // Project
+            wxString projectName = rootDir.Mid(3);
+            DoAddProjectFiles(projectName, files);
+
+        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) &&
+                  clWorkspaceManager::Get().IsWorkspaceOpened()) {
             // Add the workspace folder
             rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
-            
+
         } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE)) || (rootDir == SEARCH_IN_WORKSPACE)) {
             if(!clWorkspaceManager::Get().IsWorkspaceOpened()) { continue; }
             clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
@@ -306,6 +321,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
     // Remove duplicates
     wxStringSet_t filesSet;
     wxArrayString uniqueFiles;
+    // Unique files may contain up to files.size() elements
+    uniqueFiles.Alloc(files.size());
     std::for_each(files.begin(), files.end(), [&](const wxString& file) {
         if(filesSet.count(file) == 0) {
             filesSet.insert(file);
@@ -313,6 +330,8 @@ SearchData FindInFilesDialog::DoGetSearchData()
         }
     });
 
+    // Release unused memory
+    uniqueFiles.Shrink();
     files.swap(uniqueFiles);
 
     data.SetFiles(files);       // list of files
@@ -443,7 +462,7 @@ size_t FindInFilesDialog::GetSearchFlags()
 void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
 {
     m_listPaths->Clear();
-    m_nonPersistentSearchPaths.clear();
+    m_customPaths.clear();
     DoAddSearchPaths(paths);
 }
 
@@ -495,6 +514,22 @@ void FindInFilesDialog::DoDeletedSelectedPaths()
     if(!selections.IsEmpty()) {
         for(int i = (selectionsCount - 1); i >= 0; --i) {
             m_listPaths->Delete(selections.Item(i));
+        }
+    }
+}
+
+void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArrayString& files)
+{
+    if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
+    if(p) {
+        const Project::FilesMap_t& filesMap = p->GetFiles();
+        if(!filesMap.empty()) {
+            wxArrayString tmpArr;
+            tmpArr.Alloc(filesMap.size());
+            std::for_each(filesMap.begin(), filesMap.end(),
+                          [&](const Project::FilesMap_t::value_type& vt) { tmpArr.Add(vt.second->GetFilename()); });
+            files.insert(files.end(), tmpArr.begin(), tmpArr.end());
         }
     }
 }

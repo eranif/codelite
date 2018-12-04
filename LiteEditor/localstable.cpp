@@ -53,18 +53,17 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_listTable->AddHeader(_("Name"));
     m_listTable->AddHeader(_("Value"));
     m_listTable->AddHeader(_("Type"));
-    // Should a be placed before b?
-    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
-        return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
-    };
-    m_listTable->SetSortFunction(func);
     
+    // Only sort top level items, don't sort their children
+    m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
+    
+    SetSortingFunction();
     m_DBG_USERR = DBG_USERR_LOCALS;
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
     m_LIST_CHILDS = LIST_LOCALS_CHILDS;
 
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected),
+                                  NULL, this);
 }
 
 LocalsTable::~LocalsTable() {}
@@ -153,9 +152,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
                     m_listTable->SetItemText(child, ch.type, 2);
 
                     // Add a dummy node
-                    if(child.IsOk() && ch.numChilds > 0) {
-                        m_listTable->AppendItem(child, wxT("<dummy>"));
-                    }
+                    if(child.IsOk() && ch.numChilds > 0) { m_listTable->AppendItem(child, wxT("<dummy>")); }
 
                     // refresh this item only
                     dbgr->EvaluateVariableObject(data->_gdbId, m_DBG_USERR);
@@ -232,9 +229,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
             // create a variable object
             wxString expres = m_listTable->GetItemText(event.GetItem());
             DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(event.GetItem());
-            if(data && data->_kind == DbgTreeItemData::FuncRetValue) {
-                expres = data->_retValueGdbValue;
-            }
+            if(data && data->_kind == DbgTreeItemData::FuncRetValue) { expres = data->_retValueGdbValue; }
 
             dbgr->CreateVariableObject(expres,                                       // the expression
                                        data->_kind == DbgTreeItemData::FuncRetValue, // bound to creation frame?
@@ -244,8 +239,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
     }
 }
 
-void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved,
-                                                  size_t flags,
+void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags,
                                                   std::map<wxString, wxString>& oldValues)
 {
     wxTreeItemIdValue cookie;
@@ -276,14 +270,6 @@ void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved
 void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t kind)
 {
     LocalVariables locals = localsUnSorted;
-    std::sort(locals.begin(), locals.end(), [&](const LocalVariable& v1, const LocalVariable& v2) {
-        if(m_sortAsc) {
-            return v1.name.Lower().CmpNoCase(v2.name.Lower()) < 0;
-        } else {
-            return v1.name.Lower().CmpNoCase(v2.name.Lower()) >= 0;
-        }
-    });
-
     wxTreeItemId root = m_listTable->GetRootItem();
     if(!root.IsOk()) return;
 
@@ -298,9 +284,7 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
 
         // try to replace the
         wxString newVarName;
-        if(m_resolveLocals) {
-            newVarName = m_preDefTypes.GetPreDefinedTypeForTypename(locals[i].type, locals[i].name);
-        }
+        if(m_resolveLocals) { newVarName = m_preDefTypes.GetPreDefinedTypeForTypename(locals[i].type, locals[i].name); }
 
         // Evaluate arrays as char*?
         static wxRegEx reConstArr(wxT("(const )?[ ]*(w)?char(_t)? *[\\[0-9\\]]*"));
@@ -447,9 +431,7 @@ void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
     // remove the non-variable objects and return a list
     // of all the variable objects (at the top level)
     wxTreeItemId item = DoFindItemByExpression(wxT("Function Returned"));
-    if(item.IsOk()) {
-        DoDeleteWatch(item);
-    }
+    if(item.IsOk()) { DoDeleteWatch(item); }
     m_listTable->Delete(item);
 
     DbgTreeItemData* data = new DbgTreeItemData();
@@ -457,7 +439,7 @@ void LocalsTable::UpdateFuncReturnValue(const wxString& retValueGdbId)
     data->_retValueGdbValue = retValueGdbId;
 
     item = m_listTable->AppendItem(root, wxT("Function Returned"), -1, -1, data);
-    
+
     m_listTable->SetItemText(item, retValueGdbId, 1);
     m_listTable->SetItemText(item, wxT(""), 2);
     m_listTable->SetItemTextColour(item, *wxRED, 1);
@@ -485,5 +467,20 @@ void LocalsTable::OnSortItems(wxCommandEvent& event)
 {
     // Change the sorting type and refresh the view
     m_sortAsc = !m_sortAsc;
+    // Update the sorting function
+    SetSortingFunction();
     OnRefresh(event);
+}
+
+void LocalsTable::SetSortingFunction()
+{
+    // Should a be placed before b?
+    clSortFunc_t func = [=](clRowEntry* a, clRowEntry* b) {
+        if(m_sortAsc) {
+            return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
+        } else {
+            return (a->GetLabel().CmpNoCase(b->GetLabel()) > 0);
+        }
+    };
+    m_listTable->SetSortFunction(func);
 }

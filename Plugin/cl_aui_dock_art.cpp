@@ -65,6 +65,13 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     return ret;
 }
 
+static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour)
+{
+    bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    bgColour = bgColour.ChangeLightness(80);
+    penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+}
+
 // ------------------------------------------------------------
 
 clAuiDockArt::clAuiDockArt(IManager* manager)
@@ -129,15 +136,11 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
         buttonState = eButtonState::kNormal;
         break;
     }
-    
+
     // Prepare the colours
-    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    wxColour penColour;
-    if(DrawingUtils::IsDark(bgColour)) {
-        penColour = wxColour("#fdfefe");
-    } else {
-        penColour = wxColour("#17202a");
-    }
+    wxColour bgColour, penColour;
+    clDockArtGetColours(bgColour, penColour);
+    
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
         DrawingUtils::DrawButtonX(dc, window, buttonRect, penColour, bgColour, buttonState);
@@ -216,7 +219,10 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
-        wxColour captionBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+        
+        wxColour captionBgColour, textColour;
+        clDockArtGetColours(captionBgColour, textColour);
+    
         pDC->SetPen(captionBgColour);
         pDC->SetBrush(captionBgColour);
         pDC->DrawRectangle(tmpRect);
@@ -237,12 +243,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         textRect = textRect.CenterIn(clip_rect, wxVERTICAL);
         textRect.SetX(caption_offset);
 
-        wxColour textColour;
-        if(DrawingUtils::IsDark(captionBgColour)) {
-            textColour = wxColour("#fdfefe");
-        } else {
-            textColour = wxColour("#17202a");
-        }
         pDC->SetTextForeground(textColour);
         pDC->DrawText(draw_text, textRect.GetTopLeft());
         memDc.SelectObject(wxNullBitmap);

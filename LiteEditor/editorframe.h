@@ -42,27 +42,28 @@ public:
     typedef std::list<EditorFrame*> List_t;
 
 protected:
-    virtual void OnCloseWindow(wxCloseEvent& event);
     QuickFindBar* m_findBar;
-    MyMenuBar* m_myMenuBar;
-    Notebook* m_book;
+    clEditor* m_editor = nullptr;
 
 protected:
+    virtual void OnCloseWindow(wxCloseEvent& event);
     virtual void OnFindUI(wxUpdateUIEvent& event);
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
-
-    void OnPageClosed(wxBookCtrlEvent& event);
-    void OnPageClosing(wxBookCtrlEvent& event);
-
-    clEditor* GetEditor(size_t index) const;
+    void OnSave(wxCommandEvent& event);
+    void OnSaveUI(wxUpdateUIEvent& event);
+    void OnUndoUI(wxUpdateUIEvent& event);
+    void OnRedoUI(wxUpdateUIEvent& event);
+    void OnEdit(wxCommandEvent& event);
     void DoCloseEditor(clEditor* editor);
+    void OnUndo(wxCommandEvent& event);
+    void OnRedo(wxCommandEvent& event);
+    void OnReload(wxCommandEvent& event);
 
 public:
     EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle);
     virtual ~EditorFrame();
-    void GetAllEditors(std::vector<clEditor*>& editors);
-    clEditor* GetEditor() const;
+    clEditor* GetEditor() const { return m_editor; }
 };
 #endif // EDITORFRAME_H

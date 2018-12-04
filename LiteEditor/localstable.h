@@ -44,11 +44,9 @@ protected:
     bool m_arrayAsCharPtr;
     bool m_sortAsc;
     bool m_defaultHexDisplay;
-    
 
 protected:
-    void DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved,
-                                         size_t flags,
+    void DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags,
                                          std::map<wxString, wxString>& oldValues);
     void DoUpdateLocals(const LocalVariables& locals, size_t kind);
 
@@ -61,6 +59,7 @@ protected:
     void OnEditValueUI(wxUpdateUIEvent& event);
     void OnStackSelected(clCommandEvent& event);
     void OnSortItems(wxCommandEvent& event);
+    void SetSortingFunction();
 
 public:
     LocalsTable(wxWindow* parent);

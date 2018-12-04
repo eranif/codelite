@@ -199,7 +199,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     WORKSPACE_FOLDER_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeWorkspaceFolder);
     WORKSPACE_FOLDER_EXPANDED_IMG_IDX = bmpLoader->GetMimeImageId(FileExtManager::TypeWorkspaceFolderExpanded);
     SetBitmaps(bmpLoader->GetStandardMimeBitmapListPtr());
-    
+
     Bind(wxEVT_TREE_ITEM_ACTIVATED, &FileViewTree::OnItemActivated, this);
     Bind(wxEVT_TREE_KEY_DOWN, &FileViewTree::OnTreeKeyDown, this);
     EventNotifier::Get()->Connect(wxEVT_REBUILD_WORKSPACE_TREE, wxCommandEventHandler(FileViewTree::OnBuildTree), NULL,
@@ -209,6 +209,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     EventNotifier::Get()->Connect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                   wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     Bind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Bind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Bind(wxEVT_TREE_DELETE_ITEM, &FileViewTree::OnItemExpanding, this);
@@ -225,6 +226,7 @@ FileViewTree::~FileViewTree()
     EventNotifier::Get()->Disconnect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                      wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
@@ -236,7 +238,7 @@ void FileViewTree::BuildTree()
     wxWindowUpdateLocker locker(this);
     clCommandEvent event(wxEVT_WORKSPACE_VIEW_BUILD_STARTING);
     EventNotifier::Get()->ProcessEvent(event);
-    
+
     DoClear();
     DoBindEvents(); // This only works once
     long flags = GetWindowStyle();
@@ -272,26 +274,7 @@ void FileViewTree::BuildTree()
     ExpandToPath(clCxxWorkspaceST::Get()->GetActiveProjectName(), wxFileName());
 }
 
-wxTreeItemId FileViewTree::GetSingleSelection()
-{
-    return GetFocusedItem();
-    //    std::queue<wxTreeItemId> Q;
-    //    Q.push(GetRootItem());
-    //    while(!Q.empty()) {
-    //        wxTreeItemId item = Q.front();
-    //        Q.pop();
-    //        if(IsSelected(item)) { return item; }
-    //
-    //        wxTreeItemIdValue k;
-    //        wxTreeItemId child = GetFirstChild(item, k);
-    //        while(child.IsOk()) {
-    //            Q.push(child);
-    //            child = GetNextChild(item, k);
-    //        }
-    //    }
-    //    // Return an invalid tree-item-id
-    //    return wxTreeItemId();
-}
+wxTreeItemId FileViewTree::GetSingleSelection() { return GetFocusedItem(); }
 
 int FileViewTree::GetIconIndex(const ProjectItem& item)
 {
@@ -339,9 +322,9 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
     DoGetProjectIconIndex(projectName, projectIconIndex, iconFromPlugin);
 
     ProjectItem item(projectName, projectName, prj->GetFileName().GetFullPath(), ProjectItem::TypeProject);
-    wxTreeItemId hti = AppendItem(rootItem,         // parent
-                                  projectName,      // display name
-                                  projectIconIndex, // item image index
+    wxTreeItemId hti = AppendItem(rootItem,               // parent
+                                  projectName,            // display name
+                                  projectIconIndex,       // item image index
                                   PROJECT_EXPAND_IMG_IDX, // selected item image
                                   new FilewViewTreeItemData(item));
     DoSetItemBackgroundColour(hti, coloursList, item);
@@ -1006,7 +989,7 @@ wxTreeItemId FileViewTree::DoAddVirtualFolder(wxTreeItemId& parent, const wxStri
     return item;
 }
 
-wxString FileViewTree::GetItemPath(const wxTreeItemId& item) const
+wxString FileViewTree::GetItemPath(const wxTreeItemId& item, const wxChar& sep) const
 {
     std::deque<wxString> queue;
     wxString text = GetItemText(item);
@@ -1034,14 +1017,14 @@ wxString FileViewTree::GetItemPath(const wxTreeItemId& item) const
     size_t count = queue.size();
     for(size_t i = 0; i < count; i++) {
         path += queue.front();
-        path += wxT(":");
+        path += sep;
         queue.pop_front();
     }
 
     if(!queue.empty()) {
         path += queue.front();
     } else {
-        path = path.BeforeLast(wxT(':'));
+        path = path.BeforeLast(sep);
     }
 
     return path;
@@ -2835,9 +2818,9 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
         wxString displayName = childVdFullPath.AfterLast(':');
         ProjectItem folderItem(proj->GetName() + ":" + childVdFullPath, displayName, "",
                                ProjectItem::TypeVirtualDirectory);
-        wxTreeItemId hti = AppendItem(parentItem,     // parent
-                                      displayName,    // display name
-                                      FOLDER_IMG_IDX, // item image index
+        wxTreeItemId hti = AppendItem(parentItem,            // parent
+                                      displayName,           // display name
+                                      FOLDER_IMG_IDX,        // item image index
                                       FOLDER_EXPAND_IMG_IDX, // selected item image
                                       new FilewViewTreeItemData(folderItem));
         DoSetItemBackgroundColour(hti, coloursList, folderItem);
@@ -2978,4 +2961,36 @@ void FileViewTree::OnTreeKeyDown(wxTreeEvent& event)
 {
     event.Skip();
     if(event.GetKeyCode() == WXK_NUMPAD_DELETE || event.GetKeyCode() == WXK_DELETE) { DoRemoveItems(); }
+}
+
+void FileViewTree::OnFindInFilesShowing(clCommandEvent& event)
+{
+    event.Skip();
+    if(IsShownOnScreen() && HasFocus()) {
+        wxArrayString selections;
+        wxArrayTreeItemIds items;
+        if(GetSelections(items) == 0) { return; }
+        for(size_t i = 0; i < items.size(); ++i) {
+            const wxTreeItemId& item = items.Item(i);
+            FilewViewTreeItemData* cd = ItemData(item);
+            if(!cd) { continue; }
+            switch(cd->GetData().GetKind()) {
+            case ProjectItem::TypeFile:
+                selections.Add(wxString() << "F: " << cd->GetData().GetFile());
+                break;
+            case ProjectItem::TypeVirtualDirectory:
+                selections.Add(wxString() << "V: " << GetItemPath(item, '/'));
+                break;
+            case ProjectItem::TypeProject:
+                selections.Add(wxString() << "P: " << cd->GetData().GetDisplayName());
+                break;
+            case ProjectItem::TypeWorkspace:
+                selections.Add(wxString() << "W: " << cd->GetData().GetDisplayName());
+                break;
+            default:
+                break;
+            }
+        }
+        event.SetStrings(selections);
+    }
 }

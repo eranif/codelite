@@ -311,7 +311,7 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     wxString path = project->GetFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
 
     wxString wd;
-    wxString command = m_mgr->GetProjectExecutionCommand(projectName, wd);
+    wxString command = PrepareCommand(projectName, wd);
 
     DirSaver ds;
     EnvSetter envGuard(m_mgr->GetEnv());
@@ -389,3 +389,8 @@ void MemCheckPlugin::OnStopProcess(wxCommandEvent& event)
 }
 
 void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event) { event.Enable(IsRunning()); }
+
+wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& wd)
+{
+    return m_mgr->GetProjectExecutionCommand(projectName, wd);
+}

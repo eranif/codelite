@@ -104,7 +104,9 @@ protected:
 protected:
     void OnWorkspaceLoaded(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
-
+    
+    wxString PrepareCommand(const wxString& projectName, wxString& wd);
+    
     /**
      * @brief After settings dialogue is closed, settings are reapplied in plugin.
      */

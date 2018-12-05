@@ -52,12 +52,12 @@ void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalComm
     wxString suppresions;
     for(wxArrayString::iterator it = suppFiles.begin(); it != suppFiles.end(); ++it)
         suppresions.Append(
-            wxString::Format(" %s='%s'", m_settings->GetValgrindSettings().GetSuppressionFileOption(), *it));
+            wxString::Format(" %s=%s", m_settings->GetValgrindSettings().GetSuppressionFileOption(), *it));
 
     command = m_settings->GetValgrindSettings().GetBinary();
     command_args = wxString::Format(
         "%s %s %s %s %s", m_settings->GetValgrindSettings().GetMandatoryOptions(),
-        wxString::Format("%s='%s'", m_settings->GetValgrindSettings().GetOutputFileOption(), m_outputLogFileName),
+        wxString::Format("%s=%s", m_settings->GetValgrindSettings().GetOutputFileOption(), m_outputLogFileName),
         suppresions, m_settings->GetValgrindSettings().GetOptions(), originalCommand);
 }
 

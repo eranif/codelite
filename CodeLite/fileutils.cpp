@@ -449,7 +449,7 @@ wxString FileUtils::NormaliseName(const wxString& name)
     if(!initialised) {
         memset(invalidChars, 0, sizeof(invalidChars));
         std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(',
-                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.' };
+                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
         for(size_t i = 0; i < V.size(); ++i) {
             invalidChars[V[i]] = 1;
         }

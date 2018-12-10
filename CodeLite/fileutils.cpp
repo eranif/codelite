@@ -156,7 +156,8 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     fileContent << "tty > " << tmpfile << "\n";
     fileContent << "sleep 12345";
     FileUtils::WriteFileContent(helperScript, fileContent);
-    system("chmod +x /tmp/codelite-lldb-helper.sh");
+    int rc = system("chmod +x /tmp/codelite-lldb-helper.sh");
+    wxUnusedVar(rc);
     
     command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh" ;
     clDEBUG() << "Executing: " << command;

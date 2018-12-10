@@ -1181,7 +1181,10 @@ void MainBook::SetViewWordWrap(bool b)
 void MainBook::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
-    ShowWelcomePage(true);
+    // Show the welcome page, but only if there are no open files
+    if(GetPageCount() == 0) {
+        ShowWelcomePage(true);
+    }
 }
 
 wxWindow* MainBook::GetPage(size_t page) { return m_book->GetPage(page); }

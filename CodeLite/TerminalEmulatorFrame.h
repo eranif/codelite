@@ -28,7 +28,7 @@
 
 #include "TerminalEmulatorUIBase.h"
 #include "TerminalEmulatorUI.h"
-
+#if wxUSE_GUI
 class WXDLLIMPEXP_CL TerminalEmulatorFrame : public TerminalEmulatorFrameBase
 {
     TerminalEmulatorUI* m_terminal;
@@ -37,4 +37,5 @@ public:
     virtual ~TerminalEmulatorFrame();
     TerminalEmulatorUI* GetTerminalUI() { return m_terminal; }
 };
+#endif // wxUSE_GUI
 #endif // TERMINALEMULATORFRAME_H

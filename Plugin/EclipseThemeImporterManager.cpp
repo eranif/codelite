@@ -1,27 +1,29 @@
-#include "EclipseThemeImporterManager.h"
-#include "EclipseCXXThemeImporter.h"
-#include "EclipseCMakeThemeImporter.h"
-#include "EclipseTextThemeImporter.h"
-#include "EclipseMakefileThemeImporter.h"
-#include "EclipseDiffThemeImporter.h"
-#include "EclipsePHPThemeImporter.h"
-#include "EclipseCSSThemeImporter.h"
-#include "EclipseXMLThemeImporter.h"
-#include "EclipseJavaScriptThemeImporter.h"
 #include "ColoursAndFontsManager.h"
-#include "EclipseINIThemeImporter.h"
 #include "EclipseASMThemeImporter.h"
 #include "EclipseBatchThemeImporter.h"
-#include "EclipsePythonThemeImporter.h"
-#include "EclipseCobraThemeImporter.h"
+#include "EclipseCMakeThemeImporter.h"
+#include "EclipseCSSThemeImporter.h"
+#include "EclipseCXXThemeImporter.h"
 #include "EclipseCobraAltThemeImporter.h"
+#include "EclipseCobraThemeImporter.h"
+#include "EclipseDiffThemeImporter.h"
+#include "EclipseDockerfileThemeImporter.h"
 #include "EclipseFortranThemeImporter.h"
+#include "EclipseINIThemeImporter.h"
 #include "EclipseInnoSetupThemeImporter.h"
+#include "EclipseJavaScriptThemeImporter.h"
 #include "EclipseJavaThemeImporter.h"
 #include "EclipseLuaThemeImporter.h"
-#include "EclipseScriptThemeImporter.h"
-#include "EclipseSQLThemeImporter.h"
+#include "EclipseMakefileThemeImporter.h"
+#include "EclipsePHPThemeImporter.h"
+#include "EclipsePythonThemeImporter.h"
 #include "EclipseSCSSThemeImporter.h"
+#include "EclipseSQLThemeImporter.h"
+#include "EclipseScriptThemeImporter.h"
+#include "EclipseTextThemeImporter.h"
+#include "EclipseThemeImporterManager.h"
+#include "EclipseXMLThemeImporter.h"
+#include "EclipseYAMLThemeImporter.h"
 
 EclipseThemeImporterManager::EclipseThemeImporterManager()
 {
@@ -47,6 +49,8 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseScriptThemeImporter());
     m_importers.push_back(new EclipseSQLThemeImporter());
     m_importers.push_back(new EclipseSCSSThemeImporter());
+    m_importers.push_back(new EclipseDockerfileThemeImporter());
+    m_importers.push_back(new EclipseYAMLThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}
@@ -67,11 +71,9 @@ bool EclipseThemeImporterManager::ImportCxxToAll()
         wxString eclipseXml = files.at(i).GetFullPath();
         EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
         for(; iter != m_importers.end(); ++iter) {
-            if((*iter)->GetLangName() != "c++") {
-                ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml));
-            }
+            if((*iter)->GetLangName() != "c++") { ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml)); }
         }
     }
-    ColoursAndFontsManager::Get().Save();
+    ColoursAndFontsManager::Get().Save(true);
     return true;
 }

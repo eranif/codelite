@@ -1,23 +1,20 @@
+#include "NodeFileManager.h"
 #include "NodeJSDebuggerBreakpoint.h"
 
-NodeJSBreakpoint::NodeJSBreakpoint()
-    : m_line(wxNOT_FOUND)
-    , m_nodeBpID(wxNOT_FOUND)
-{
-}
+NodeJSBreakpoint::NodeJSBreakpoint() {}
 
 NodeJSBreakpoint::~NodeJSBreakpoint() {}
 
 void NodeJSBreakpoint::FromJSON(const JSONElement& json)
 {
-    m_filename = json.namedObject("file").toString();
-    m_line = json.namedObject("line").toInt();
+    m_filename = json.namedObject("url").toString();
+    m_line = json.namedObject("lineNumber").toInt();
 }
 
-JSONElement NodeJSBreakpoint::ToJSON() const
+JSONElement NodeJSBreakpoint::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty("file", m_filename);
-    json.addProperty("line", m_line);
+    JSONElement json = JSONElement::createObject(name);
+    json.addProperty("url", NodeFileManager::FileNameToURI(m_filename));
+    json.addProperty("lineNumber", m_line);
     return json;
 }

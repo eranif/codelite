@@ -13,6 +13,7 @@
 #include <wx/log.h>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
+#include "clFilesCollector.h"
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);
 wxDEFINE_EVENT(wxPHP_PARSE_ENDED, clParseEvent);
@@ -1372,4 +1373,54 @@ size_t PHPLookupTable::FindFunctionsByFile(const wxFileName& filename, PHPEntity
         clWARNING() << "SQLite 3 error:" << e.GetMessage() << clEndl;
     }
     return functions.size();
+}
+
+void PHPLookupTable::ParseFolder(const wxString& folder, const wxString& filemask, eUpdateMode updateMode)
+{
+    clFilesScanner scanner;
+    std::vector<wxString> files;
+    if(scanner.Scan(folder, files, filemask) == 0) {
+        return;
+    }
+    std::for_each(files.begin(), files.end(), [&](const wxString& file) {
+        try {
+            wxFileName fnFile(file);
+            bool reParseNeeded(true);
+            if(updateMode == kUpdateMode_Fast) {
+                // Check to see if we need to re-parse this file
+                // and store it to the database
+
+                if(!fnFile.Exists()) {
+                    reParseNeeded = false;
+                } else {
+                    time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
+                    wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
+                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                        reParseNeeded = false;
+                    }
+                }
+            }
+
+            // Ensure that the file exists
+            if(!fnFile.Exists()) {
+                reParseNeeded = false;
+            }
+            if(!reParseNeeded) return;
+
+            wxString content;
+            if(!FileUtils::ReadFileContent(fnFile, content, wxConvISO8859_1)) {
+                clWARNING() << "PHP: Failed to read file:" << fnFile << "for parsing";
+                return;
+            }
+            clDEBUG1() << "Parsing PHP file:" << fnFile;
+            PHPSourceFile sourceFile(content, this);
+            sourceFile.SetFilename(fnFile);
+            sourceFile.SetParseFunctionBody(true);
+            sourceFile.Parse();
+            UpdateSourceFile(sourceFile, false);
+        } catch(wxSQLite3Exception& e) {
+            try { m_db.Rollback(); } catch(...) {}
+            clWARNING() << "PHPLookupTable::ParseFolder:" << e.GetMessage();
+        }
+    });
 }

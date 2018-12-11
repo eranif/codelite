@@ -7,26 +7,27 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
-#include <wx/stattext.h>
-#include <wx/choice.h>
+#include "Notebook.h"
 #include <wx/arrstr.h>
-#include <wx/clrpicker.h>
-#include <wx/statline.h>
+#include <wx/artprov.h>
 #include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/clrpicker.h>
+#include <wx/imaglist.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
 #include <wx/radiobox.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/statbox.h>
+#include <wx/statline.h>
+#include <wx/stattext.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -39,11 +40,10 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook10;
+    Notebook* m_notebook10;
     wxPanel* m_panelTabs;
     wxStaticText* m_staticText46;
     wxChoice* m_choiceTabStyle;
@@ -58,18 +58,17 @@ protected:
     wxStaticLine* m_staticLine61;
     wxCheckBox* m_checkBoxShowXButton;
     wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
-    wxCheckBox* m_checkBoxUseDarkTabTheme;
     wxCheckBox* m_checkBoxMouseScrollSwitchTabs;
     wxCheckBox* m_checkBoxSortTabsDropdownAlphabetically;
     wxCheckBox* m_checkBoxEnableTabSwitchingKey;
     wxPanel* m_panel12;
     wxRadioBox* m_radioBoxHint;
+    wxCheckBox* m_checkBoxCustomCaptionColour;
+    wxColourPickerCtrl* m_cpCaptionColour;
     wxCheckBox* m_checkBoxHideCaptions;
     wxCheckBox* m_checkBoxEnsureCaptionsVisible;
-    wxCheckBox* m_checkBoxNavBarTop;
     wxCheckBox* m_checkBoxNavBarSortDropdown;
     wxPanel* m_panel14;
-    wxCheckBox* m_checkBoxFindBarAtBottom;
     wxCheckBox* m_checkBoxDontFoldSearchResults;
     wxCheckBox* m_checkBoxDontOverrideSearchStringWithSelection;
     wxPanel* m_panel16;
@@ -91,6 +90,7 @@ protected:
     wxCheckBox* m_checkBoxShowDebugOnRun;
 
 protected:
+    virtual void OnUseCustomCaptionColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
@@ -108,20 +108,22 @@ public:
     wxStaticLine* GetStaticLine61() { return m_staticLine61; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
     wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
-    wxCheckBox* GetCheckBoxUseDarkTabTheme() { return m_checkBoxUseDarkTabTheme; }
     wxCheckBox* GetCheckBoxMouseScrollSwitchTabs() { return m_checkBoxMouseScrollSwitchTabs; }
     wxCheckBox* GetCheckBoxSortTabsDropdownAlphabetically() { return m_checkBoxSortTabsDropdownAlphabetically; }
     wxCheckBox* GetCheckBoxEnableTabSwitchingKey() { return m_checkBoxEnableTabSwitchingKey; }
     wxPanel* GetPanelTabs() { return m_panelTabs; }
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
+    wxCheckBox* GetCheckBoxCustomCaptionColour() { return m_checkBoxCustomCaptionColour; }
+    wxColourPickerCtrl* GetCpCaptionColour() { return m_cpCaptionColour; }
     wxCheckBox* GetCheckBoxHideCaptions() { return m_checkBoxHideCaptions; }
     wxCheckBox* GetCheckBoxEnsureCaptionsVisible() { return m_checkBoxEnsureCaptionsVisible; }
-    wxCheckBox* GetCheckBoxNavBarTop() { return m_checkBoxNavBarTop; }
     wxCheckBox* GetCheckBoxNavBarSortDropdown() { return m_checkBoxNavBarSortDropdown; }
     wxPanel* GetPanel12() { return m_panel12; }
-    wxCheckBox* GetCheckBoxFindBarAtBottom() { return m_checkBoxFindBarAtBottom; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
-    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection() { return m_checkBoxDontOverrideSearchStringWithSelection; }
+    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection()
+    {
+        return m_checkBoxDontOverrideSearchStringWithSelection;
+    }
     wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfBuild() { return m_checkBoxHideOutputPaneNotIfBuild; }
@@ -140,8 +142,9 @@ public:
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfMemCheck() { return m_checkBoxHideOutputPaneNotIfMemCheck; }
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
     wxPanel* GetPanel16() { return m_panel16; }
-    wxNotebook* GetNotebook10() { return m_notebook10; }
-    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    Notebook* GetNotebook10() { return m_notebook10; }
+    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();
 };
 

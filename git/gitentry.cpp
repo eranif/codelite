@@ -25,12 +25,12 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
+#include "GitLocator.h"
 #include "gitentry.h"
-#include <wx/sstream.h>
+#include <wx/ffile.h>
 #include <wx/fileconf.h>
 #include <wx/msgdlg.h>
-#include <wx/ffile.h>
-#include "GitLocator.h"
+#include <wx/sstream.h>
 
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
@@ -66,9 +66,7 @@ GitEntry::GitEntry()
 {
     GitLocator locator;
     wxFileName gitpath;
-    if(locator.GetExecutable(gitpath)) {
-        m_pathGIT = gitpath.GetFullPath();
-    }
+    if(locator.GetExecutable(gitpath)) { m_pathGIT = gitpath.GetFullPath(); }
     locator.MSWGetGitShellCommand(m_gitShellCommand);
 }
 
@@ -82,6 +80,17 @@ void GitEntry::FromJSON(const JSONElement& json)
     track = json.namedObject("m_colourTrackedFile").toString();
     diff = json.namedObject("m_colourDiffFile").toString();
     m_pathGIT = json.namedObject("m_pathGIT").toString(m_pathGIT);
+
+    // If the current path does not exists, search again
+    bool updateGitShell = false;
+    if(!wxFileName::FileExists(m_pathGIT)) {
+        GitLocator locator;
+        wxFileName gitpath;
+        if(locator.GetExecutable(gitpath)) {
+            updateGitShell = true;
+            m_pathGIT = gitpath.GetFullPath();
+        }
+    }
     m_pathGITK = json.namedObject("m_pathGITK").toString(m_pathGITK);
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_gitDiffDlgSashPos = json.namedObject("m_gitDiffDlgSashPos").toInt(m_gitDiffDlgSashPos);
@@ -97,18 +106,18 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_gitBlameDlgMainSashPos = json.namedObject("m_gitBlameDlgMainSashPos").toInt(m_gitBlameDlgMainSashPos);
     m_gitBlameDlgHSashPos = json.namedObject("m_gitBlameDlgHSashPos").toInt(m_gitBlameDlgHSashPos);
     m_gitBlameDlgVSashPos = json.namedObject("m_gitBlameDlgVSashPos").toInt(m_gitBlameDlgVSashPos);
-    
+
     wxString defaultGitShell;
     locator.MSWGetGitShellCommand(defaultGitShell);
-    m_gitShellCommand = json.namedObject("m_gitShellCommand").toString(defaultGitShell);
-    
+    if(updateGitShell) {
+        m_gitShellCommand = defaultGitShell;
+    } else {
+        m_gitShellCommand = json.namedObject("m_gitShellCommand").toString(defaultGitShell);
+    }
+
     // override the colour only if it is a valid colour
-    if(!track.IsEmpty()) {
-        m_colourTrackedFile = track;
-    }
-    if(!diff.IsEmpty()) {
-        m_colourDiffFile = diff;
-    }
+    if(!track.IsEmpty()) { m_colourTrackedFile = track; }
+    if(!diff.IsEmpty()) { m_colourDiffFile = diff; }
 
     m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
 
@@ -159,7 +168,7 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitBlameDlgMainSashPos", m_gitBlameDlgMainSashPos);
     json.addProperty("m_gitBlameDlgHSashPos", m_gitBlameDlgHSashPos);
     json.addProperty("m_gitBlameDlgVSashPos", m_gitBlameDlgVSashPos);
-    
+
     // Add the git commands array
     JSONElement arrCommands = JSONElement::createArray("Commands");
     json.append(arrCommands);
@@ -255,9 +264,7 @@ GitCommandsEntries& GitEntry::GetGitCommandsEntries(const wxString& entryName)
 
 void GitEntry::AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName)
 {
-    if(!m_commandsMap.count(entryName)) {
-        m_commandsMap.insert(std::make_pair(entryName, entries));
-    }
+    if(!m_commandsMap.count(entryName)) { m_commandsMap.insert(std::make_pair(entryName, entries)); }
     // Possible TODO: Append any novel items to the existing vector
 }
 
@@ -289,7 +296,7 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                     }
                 } else {
                     ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified", "git",
-                        wxICON_WARNING | wxOK | wxCENTER);
+                                   wxICON_WARNING | wxOK | wxCENTER);
                 }
             }
         }
@@ -319,7 +326,7 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                 }
             } else {
                 ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified", "git",
-                    wxICON_WARNING | wxOK | wxCENTER);
+                               wxICON_WARNING | wxOK | wxCENTER);
             }
         }
     }
@@ -344,9 +351,7 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
     msg.Trim().Trim(false);
     if(msg.IsEmpty()) return;
 
-    if(m_recentCommits.Index(msg) == wxNOT_FOUND) {
-        m_recentCommits.Insert(msg, 0);
-    }
+    if(m_recentCommits.Index(msg) == wxNOT_FOUND) { m_recentCommits.Insert(msg, 0); }
 
     if(m_recentCommits.size() > 20) {
         m_recentCommits.RemoveAt(m_recentCommits.size() - 1); // Remove the last commit
@@ -355,19 +360,17 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
 
 void GitEntry::DeleteEntry(const wxString& workspace)
 {
-    if(m_entries.count(workspace)) {
-        m_entries.erase(workspace);
-    }
+    if(m_entries.count(workspace)) { m_entries.erase(workspace); }
 }
 
 wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName)
 {
-    wxString path; 
+    wxString path;
     if(workspaceName.empty() || projectName.empty()) return "";
 
     GitWorkspaceMap_t::iterator iter;
-    
-    if (!m_workspacesMap.count(workspaceName)) {
+
+    if(!m_workspacesMap.count(workspaceName)) {
         // A new workspace so add it
         GitWorkspace workspace(workspaceName);
         m_workspacesMap.insert(std::make_pair(workspaceName, workspace));
@@ -381,13 +384,14 @@ wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const w
     return path;
 }
 
-void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath)
+void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName,
+                                      const wxString& lastRepoPath)
 {
     if(workspaceName.empty() || projectName.empty()) return;
 
     GitWorkspaceMap_t::iterator iter;
-    
-    if (!m_workspacesMap.count(workspaceName)) {
+
+    if(!m_workspacesMap.count(workspaceName)) {
         // A new workspace so add it
         GitWorkspace workspace(workspaceName);
         m_workspacesMap.insert(std::make_pair(workspaceName, workspace));
@@ -398,7 +402,6 @@ void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxStr
     GitWorkspace& workspace = iter->second;
     workspace.SetProjectLastRepoPath(projectName, lastRepoPath);
 }
-
 
 void GitCommandsEntries::FromJSON(const JSONElement& json)
 {
@@ -434,10 +437,7 @@ void GitCommandsEntries::ToJSON(JSONElement& arr) const
     arr.arrayAppend(obj);
 }
 
-const wxString GitWorkspace::GetProjectLastRepoPath(const wxString& projectName)
-{
-    return m_projectData[projectName];
-}
+const wxString GitWorkspace::GetProjectLastRepoPath(const wxString& projectName) { return m_projectData[projectName]; }
 
 void GitWorkspace::SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath)
 {
@@ -453,7 +453,7 @@ void GitWorkspace::FromJSON(const JSONElement& json)
 
 void GitWorkspace::ToJSON(JSONElement& arr) const
 {
-    if (!GetWorkspaceName().empty()) {
+    if(!GetWorkspaceName().empty()) {
         JSONElement json = JSONElement::createObject(GetWorkspaceName());
         json.addProperty("m_workspaceName", GetWorkspaceName());
         json.addProperty("m_projectData", m_projectData);

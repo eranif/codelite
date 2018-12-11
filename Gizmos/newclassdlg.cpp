@@ -23,40 +23,39 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "VirtualDirectorySelectorDlg.h"
+#include "editor_config.h"
+#include "globals.h"
+#include "imanager.h"
+#include "new_class_dlg_data.h"
 #include "newclassdlg.h"
+#include "newinheritancedlg.h"
 #include "open_resource_dialog.h"
 #include "windowattrmanager.h"
-#include <wx/dirdlg.h>
-#include <wx/msgdlg.h>
-#include "VirtualDirectorySelectorDlg.h"
-#include "wx/xrc/xmlres.h"
-#include <wx/tokenzr.h>
-#include "newinheritancedlg.h"
-#include "imanager.h"
-#include "globals.h"
-#include "wx/dir.h"
 #include "workspace.h"
-#include "editor_config.h"
-#include "new_class_dlg_data.h"
+#include "wx/dir.h"
+#include "wx/xrc/xmlres.h"
+#include <wx/dirdlg.h>
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 
 NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     : NewClassBaseDlg(parent)
     , m_selectedItem(wxNOT_FOUND)
     , m_mgr(mgr)
 {
+    EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &m_options);
 
-    NewClassDlgData data;
-    EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &data);
-
-    m_checkBoxCopyable->SetValue(data.GetFlags() & NewClassDlgData::NonCopyable);
-    m_checkBoxImplPureVirtual->SetValue(data.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
-    m_checkBoxImplVirtual->SetValue(data.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
-    m_checkBoxInline->SetValue(data.GetFlags() & NewClassDlgData::FileIniline);
-    m_checkBoxHpp->SetValue(data.GetFlags() & NewClassDlgData::HppHeader);
-    m_checkBoxSingleton->SetValue(data.GetFlags() & NewClassDlgData::Singleton);
-    m_checkBoxVirtualDtor->SetValue(data.GetFlags() & NewClassDlgData::VirtualDtor);
-    m_checkBoxPragmaOnce->SetValue(data.GetFlags() & NewClassDlgData::UsePragma);
+    m_checkBoxCopyable->SetValue(m_options.GetFlags() & NewClassDlgData::NonCopyable);
+    m_checkBoxImplPureVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
+    m_checkBoxImplVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
+    m_checkBoxInline->SetValue(m_options.GetFlags() & NewClassDlgData::FileIniline);
+    m_checkBoxHpp->SetValue(m_options.GetFlags() & NewClassDlgData::HppHeader);
+    m_checkBoxSingleton->SetValue(m_options.GetFlags() & NewClassDlgData::Singleton);
+    m_checkBoxVirtualDtor->SetValue(m_options.GetFlags() & NewClassDlgData::VirtualDtor);
+    m_checkBoxPragmaOnce->SetValue(m_options.GetFlags() & NewClassDlgData::UsePragma);
+    m_checkBoxLowercaseFileName->SetValue(m_options.GetFlags() & NewClassDlgData::UseLowerCase);
 
     // set two columns to our list
     m_listCtrl1->InsertColumn(0, _("Name"));
@@ -66,10 +65,8 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-        wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false);
-        if(path.IsEmpty() == false) {
-            m_textCtrlVD->ChangeValue(path);
-        }
+        wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
+        if(path.IsEmpty() == false) { m_textCtrlVD->ChangeValue(path); }
     }
 
     // set the class path to be the active project path
@@ -83,9 +80,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
             wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
-            if(proj) {
-                m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
-            }
+            if(proj) { m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME); }
         }
     }
 
@@ -173,9 +168,7 @@ void NewClassDlg::GetInheritance(std::vector<ClassParentInfo>& inheritVec)
 void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!ValidateInput()) {
-        return;
-    }
+    if(!ValidateInput()) { return; }
     DoSaveOptions();
     EndModal(wxID_OK);
 }
@@ -227,8 +220,7 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(cpp_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
-               _("CodeLite"),
-               wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -237,8 +229,7 @@ bool NewClassDlg::ValidateInput()
     if(wxFileName::FileExists(h_file)) {
         if(wxMessageBox(
                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
-               _("CodeLite"),
-               wxYES_NO | wxICON_WARNING) == wxNO) {
+               _("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
@@ -276,13 +267,11 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo& info)
 
 wxString NewClassDlg::GetClassFile() { return m_textCtrlFileName->GetValue(); }
 
-void NewClassDlg::OnTextEnter(wxCommandEvent& e) { m_textCtrlFileName->ChangeValue(m_textClassName->GetValue()); }
+void NewClassDlg::OnTextEnter(wxCommandEvent& e) { m_textCtrlFileName->ChangeValue(CreateFileName()); }
 
 void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& e)
 {
-    if(e.IsChecked()) {
-        m_checkBoxImplPureVirtual->SetValue(true);
-    }
+    if(e.IsChecked()) { m_checkBoxImplPureVirtual->SetValue(true); }
 }
 
 wxString NewClassDlg::GetClassPath()
@@ -298,14 +287,10 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxString initPath;
-    if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) {
-        initPath = m_textCtrlGenFilePath->GetValue();
-    }
+    if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) { initPath = m_textCtrlGenFilePath->GetValue(); }
     wxString new_path =
         wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) {
-        m_textCtrlGenFilePath->ChangeValue(new_path);
-    }
+    if(new_path.IsEmpty() == false) { m_textCtrlGenFilePath->ChangeValue(new_path); }
 }
 
 void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
@@ -336,7 +321,6 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
             }
             nameSpace << item->m_name;
             m_textCtrlNamespace->ChangeValue(nameSpace);
-
         }
     }
 }
@@ -402,13 +386,10 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
     }
 
     // replace any double underscores with single one
-    while(output.Replace(wxT("__"), wxT("_"))) {
-    }
+    while(output.Replace(wxT("__"), wxT("_"))) {}
 
     // remove any underscore from the start of the word
-    if(output.StartsWith(wxT("_"))) {
-        output.Remove(0, 1);
-    }
+    if(output.StartsWith(wxT("_"))) { output.Remove(0, 1); }
     return output;
 }
 
@@ -421,9 +402,7 @@ void NewClassDlg::DoUpdateGeneratedPath()
     vd = vdPath.AfterFirst(wxT(':'));
 
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(proj) {
-        m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd));
-    }
+    if(proj) { m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd)); }
 }
 
 void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
@@ -445,8 +424,20 @@ void NewClassDlg::DoSaveOptions()
     if(m_checkBoxSingleton->IsChecked()) flags |= NewClassDlgData::Singleton;
     if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
     if(m_checkBoxPragmaOnce->IsChecked()) flags |= NewClassDlgData::UsePragma;
+    if(m_checkBoxLowercaseFileName->IsChecked()) flags |= NewClassDlgData::UseLowerCase;
 
-    NewClassDlgData data;
-    data.SetFlags(flags);
-    EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &data);
+    m_options.SetFlags(flags);
+    EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &m_options);
+}
+
+void NewClassDlg::OnUseLowerCaseFileName(wxCommandEvent& event)
+{
+    m_options.EnableFlag(NewClassDlgData::UseLowerCase, event.IsChecked());
+    m_textCtrlFileName->ChangeValue(CreateFileName());
+}
+
+wxString NewClassDlg::CreateFileName() const
+{
+    if(m_options.HasFlag(NewClassDlgData::UseLowerCase)) { return m_textClassName->GetValue().Lower(); }
+    return m_textClassName->GetValue();
 }

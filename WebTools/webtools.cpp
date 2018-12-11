@@ -1,36 +1,35 @@
-#include "webtools.h"
-#include <wx/xrc/xmlres.h>
-#include "fileextmanager.h"
-#include <wx/stc/stc.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "WebToolsSettings.h"
-#include <wx/menu.h>
-#include "NoteJSWorkspace.h"
-#include "NodeJSWorkspaceView.h"
-#include "clWorkspaceManager.h"
-#include "globals.h"
-#include "clWorkspaceView.h"
-#include <wx/dirdlg.h>
-#include "tags_options_data.h"
-#include "ctags_manager.h"
-#include "PhpLexerAPI.h"
-#include "PHPSourceFile.h"
-#include "NodeJSDebuggerPane.h"
-#include "WebToolsConfig.h"
-#include "fileutils.h"
+#include "NodeDebuggerPane.h"
 #include "NodeJSEvents.h"
+#include "NodeJSWorkspaceView.h"
+#include "NoteJSWorkspace.h"
+#include "PHPSourceFile.h"
+#include "PhpLexerAPI.h"
 #include "WebToolsBase.h"
+#include "WebToolsConfig.h"
+#include "WebToolsSettings.h"
 #include "bitmap_loader.h"
+#include "clWorkspaceManager.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "ctags_manager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "tags_options_data.h"
+#include "webtools.h"
+#include <wx/dirdlg.h>
+#include <wx/menu.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 static WebTools* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new WebTools(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new WebTools(manager); }
     return thePlugin;
 }
 
@@ -50,8 +49,6 @@ WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
     , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
-    , m_nodejsDebuggerPane(NULL)
-    , m_hideToolBarOnDebugStop(false)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
@@ -61,7 +58,6 @@ WebTools::WebTools(IManager* manager)
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
 
     WebToolsImages images;
-    // BitmapLoader::RegisterImage(FileExtManager::TypeWorkspaceNodeJS, images.Bitmap("m_bmpNodeJS"));
 
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);
@@ -89,7 +85,7 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
 
     // Debugger related
-    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
     EventNotifier::Get()->Bind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
@@ -98,7 +94,7 @@ WebTools::WebTools(IManager* manager)
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
     m_cssCodeComplete.Reset(new CSSCodeCompletion());
     m_jsctags.Reset(new clJSCTags());
-    
+
     // Connect the timer
     m_timer = new wxTimer(this);
     m_timer->Start(3000);
@@ -109,12 +105,7 @@ WebTools::WebTools(IManager* manager)
 
 WebTools::~WebTools() { NodeJSWorkspace::Free(); }
 
-clToolBar* WebTools::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void WebTools::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -127,18 +118,22 @@ void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void WebTools::UnPlug()
 {
+    if(NodeJSWorkspace::Get()->IsOpen() && NodeJSWorkspace::Get()->GetDebugger()->IsRunning()) {
+        NodeJSWorkspace::Get()->GetDebugger()->StopDebugger();
+    }
+    
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &WebTools::OnEditorContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip,
+                                 this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSDebuggerStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STARTED, &WebTools::OnNodeJSCliDebuggerStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_NODEJS_DEBUGGER_STOPPED, &WebTools::OnNodeJSDebuggerStopped, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
@@ -157,9 +152,7 @@ void WebTools::UnPlug()
 
 void WebTools::DoRefreshColours(const wxString& filename)
 {
-    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) {
-        m_jsColourThread->QueueFile(filename);
-    }
+    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) { m_jsColourThread->QueueFile(filename); }
 }
 
 void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply)
@@ -245,14 +238,16 @@ void WebTools::OnEditorChanged(wxCommandEvent& event)
 void WebTools::OnSettings(wxCommandEvent& event)
 {
     WebToolsSettings settings(m_mgr->GetTheApp()->GetTopWindow());
-    settings.ShowModal();
-    if(m_jsCodeComplete) {
-        m_jsCodeComplete->Reload();
-        m_jsCodeComplete->ClearFatalError();
-    }
-    if(m_xmlCodeComplete) {
-        m_xmlCodeComplete->Reload();
-        m_jsCodeComplete->ClearFatalError();
+    if(settings.ShowModal() == wxID_OK) {
+        NodeJSWorkspace::Get()->AllocateDebugger();
+        if(m_jsCodeComplete) {
+            m_jsCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
+        }
+        if(m_xmlCodeComplete) {
+            m_xmlCodeComplete->Reload();
+            m_jsCodeComplete->ClearFatalError();
+        }
     }
 }
 
@@ -283,9 +278,7 @@ bool WebTools::IsJavaScriptFile(IEditor* editor)
     if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         int styleAtCurPos = ctrl->GetStyleAt(ctrl->GetCurrentPos());
-        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
-            return true;
-        }
+        if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) { return true; }
     }
     return false;
 }
@@ -297,13 +290,13 @@ bool WebTools::InsideJSComment(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_COMMENT || styleAtCurPos == wxSTC_C_COMMENTLINE ||
-            styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
-            styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
-            styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
+               styleAtCurPos == wxSTC_C_COMMENTDOC || styleAtCurPos == wxSTC_C_COMMENTLINEDOC ||
+               styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORD || styleAtCurPos == wxSTC_C_COMMENTDOCKEYWORDERROR ||
+               styleAtCurPos == wxSTC_C_PREPROCESSORCOMMENT;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_COMMENT || styleAtCurPos == wxSTC_HJ_COMMENTLINE ||
-                styleAtCurPos == wxSTC_HJ_COMMENTDOC;
+                   styleAtCurPos == wxSTC_HJ_COMMENTDOC;
         }
     }
     return false;
@@ -316,12 +309,12 @@ bool WebTools::InsideJSString(IEditor* editor)
     if(FileExtManager::IsJavascriptFile(editor->GetFileName())) {
         // Use the Cxx macros
         return styleAtCurPos == wxSTC_C_STRING || styleAtCurPos == wxSTC_C_CHARACTER ||
-            styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
-            styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
+               styleAtCurPos == wxSTC_C_STRINGEOL || styleAtCurPos == wxSTC_C_STRINGRAW ||
+               styleAtCurPos == wxSTC_C_HASHQUOTEDSTRING;
     } else if(FileExtManager::IsPHPFile(editor->GetFileName())) {
         if(styleAtCurPos >= wxSTC_HJ_START && styleAtCurPos <= wxSTC_HJA_REGEX) {
             return styleAtCurPos == wxSTC_HJ_DOUBLESTRING || styleAtCurPos == wxSTC_HJ_SINGLESTRING ||
-                styleAtCurPos == wxSTC_HJ_STRINGEOL;
+                   styleAtCurPos == wxSTC_HJ_STRINGEOL;
         }
     }
     return false;
@@ -370,46 +363,15 @@ bool WebTools::IsHTMLFile(IEditor* editor)
     return false;
 }
 
-void WebTools::OnNodeJSDebuggerStarted(clDebugEvent& event)
-{
-    event.Skip();
-    m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
-
-    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
-    // Show the debugger pane
-    if(!m_nodejsDebuggerPane) {
-        m_nodejsDebuggerPane = new NodeJSDebuggerPane(parent);
-        clGetManager()->GetDockingManager()->AddPane(m_nodejsDebuggerPane, wxAuiPaneInfo()
-                                                                               .Layer(5)
-                                                                               .Name("nodejs_debugger")
-                                                                               .Caption("Node.js Debugger")
-                                                                               .CloseButton(false)
-                                                                               .MaximizeButton()
-                                                                               .Bottom()
-                                                                               .Position(0));
-    }
-
-    wxString layout;
-    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
-    fnNodeJSLayout.AppendDir("config");
-    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) {
-        m_mgr->GetDockingManager()->LoadPerspective(layout);
-    }
-    EnsureAuiPaneIsVisible("nodejs_debugger", true);
-
-    m_hideToolBarOnDebugStop = false;
-    if(!m_mgr->AllowToolbar()) {
-        // Using native toolbar
-        m_hideToolBarOnDebugStop = !m_mgr->IsToolBarShown();
-        m_mgr->ShowToolBar(true);
-    }
-}
-
 void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
 {
     event.Skip();
 
-    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs.layout");
+    clDEBUG1() << "Saving NodeJS debugger perspective";
+
+    wxString layoutFileName = "nodejs.layout";
+    if(event.GetEventType() == wxEVT_NODEJS_DEBUGGER_STOPPED) { layoutFileName = "nodejs_cli.layout"; }
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), layoutFileName);
     fnNodeJSLayout.AppendDir("config");
     FileUtils::WriteFileContent(fnNodeJSLayout, m_mgr->GetDockingManager()->SavePerspective());
 
@@ -417,21 +379,13 @@ void WebTools::OnNodeJSDebuggerStopped(clDebugEvent& event)
         m_mgr->GetDockingManager()->LoadPerspective(m_savePerspective);
         m_savePerspective.clear();
     }
-
-    if(m_hideToolBarOnDebugStop) {
-        m_mgr->ShowToolBar(false);
-    }
 }
 
 void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
 {
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
-    if(pi.IsOk() && !pi.IsShown()) {
-        pi.Show();
-    }
-    if(update) {
-        m_mgr->GetDockingManager()->Update();
-    }
+    if(pi.IsOk() && !pi.IsShown()) { pi.Show(); }
+    if(update) { m_mgr->GetDockingManager()->Update(); }
 }
 
 void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
@@ -493,4 +447,33 @@ void WebTools::OnIsDebugger(clDebugEvent& event)
 {
     event.Skip(); // always call skip
     // event.GetStrings().Add("NodeJS Debugger");
+}
+
+void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
+{
+    event.Skip();
+    m_savePerspective = clGetManager()->GetDockingManager()->SavePerspective();
+
+    wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
+    // Show the debugger pane
+    if(!m_nodejsCliDebuggerPane) {
+        m_nodejsCliDebuggerPane = new NodeDebuggerPane(parent);
+        // Let the pane process the 'startup' event as well
+        m_nodejsCliDebuggerPane->GetEventHandler()->ProcessEvent(event);
+        clGetManager()->GetDockingManager()->AddPane(m_nodejsCliDebuggerPane, wxAuiPaneInfo()
+                                                                                  .MinSize(wxSize(-1, 300))
+                                                                                  .Layer(5)
+                                                                                  .Name("nodejs_cli_debugger")
+                                                                                  .Caption("Node.js Debugger")
+                                                                                  .CloseButton(false)
+                                                                                  .MaximizeButton()
+                                                                                  .Bottom()
+                                                                                  .Position(0));
+    }
+
+    wxString layout;
+    wxFileName fnNodeJSLayout(clStandardPaths::Get().GetUserDataDir(), "nodejs_cli.layout");
+    fnNodeJSLayout.AppendDir("config");
+    if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
+    EnsureAuiPaneIsVisible("nodejs_cli_debugger", true);
 }

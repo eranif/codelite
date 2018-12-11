@@ -23,18 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-
 class wxEvtHandler;
 class IProcess;
 #include <wx/string.h>
 
 #ifdef __WXMSW__
-#   include "winprocess_impl.h"
+#include "winprocess_impl.h"
 #else
-#   include "unixprocess_impl.h"
+#include "unixprocess_impl.h"
 #endif
 
-IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, size_t flags, const wxString &workingDir)
+IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir)
 {
 #ifdef __WXMSW__
     wxString errMsg;
@@ -44,7 +43,8 @@ IProcess* CreateAsyncProcess(wxEvtHandler *parent, const wxString& cmd, size_t f
 #endif
 }
 
-IProcess* CreateAsyncProcessCB(wxEvtHandler *parent, IProcessCallback* cb, const wxString& cmd, size_t flags, const wxString &workingDir)
+IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd, size_t flags,
+                               const wxString& workingDir)
 {
 #ifdef __WXMSW__
     wxString errMsg;
@@ -58,14 +58,14 @@ IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& w
 {
 #ifdef __WXMSW__
     wxString errMsg;
-    return WinProcessImpl::Execute(NULL, cmd, errMsg, flags|IProcessCreateSync, workingDir);
+    return WinProcessImpl::Execute(NULL, cmd, errMsg, flags | IProcessCreateSync, workingDir);
 #else
-    return UnixProcessImpl::Execute(NULL, cmd, flags|IProcessCreateSync, workingDir);
+    return UnixProcessImpl::Execute(NULL, cmd, flags | IProcessCreateSync, workingDir);
 #endif
 }
 
 // Static methods:
-bool IProcess::GetProcessExitCode(int pid, int &exitCode)
+bool IProcess::GetProcessExitCode(int pid, int& exitCode)
 {
     wxUnusedVar(pid);
     wxUnusedVar(exitCode);
@@ -82,8 +82,15 @@ void IProcess::SetProcessExitCode(int pid, int exitCode)
 
 void IProcess::WaitForTerminate(wxString& output)
 {
-    wxString buff;
-    while ( Read(buff) ) {
-        output << buff;
+    if(IsRedirect()) {
+        wxString buff;
+        while(Read(buff)) {
+            output << buff;
+        }
+    } else {
+        // Just wait for the process to terminate in a busy loop
+        while(IsAlive()) {
+            wxThread::Sleep(10);
+        }
     }
 }

@@ -26,8 +26,8 @@
 #ifndef __externaltoolsdata__
 #define __externaltoolsdata__
 
-#include <vector>
 #include "serialized_object.h"
+#include <vector>
 
 #define MAX_TOOLS 10
 
@@ -35,7 +35,6 @@ class ToolInfo : public SerializedObject
 {
     wxString m_id;
     wxString m_path;
-    wxString m_arguments;
     wxString m_wd;
     wxString m_name;
     wxString m_icon16;
@@ -66,11 +65,9 @@ public:
     virtual void DeSerialize(Archive& arch);
     virtual void Serialize(Archive& arch);
 
-    void SetArguments(const wxString& arguments) { this->m_arguments = arguments; }
     void SetId(const wxString& id) { this->m_id = id; }
     void SetPath(const wxString& path) { this->m_path = path; }
     void SetWd(const wxString& wd) { this->m_wd = wd; }
-    const wxString& GetArguments() const { return m_arguments; }
     const wxString& GetId() const { return m_id; }
     const wxString& GetPath() const { return m_path; }
     const wxString& GetWd() const { return m_wd; }

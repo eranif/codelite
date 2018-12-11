@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=12.0.4
+AppVersion=12.0.11
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-amd64-12.0.4
+OutputBaseFilename=codelite-amd64-12.0.11
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -47,18 +47,18 @@ Source: "{#CODELITE_ROOT}\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flag
 Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; 
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase311u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw311u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase312u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase312u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase312u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw312u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls
 Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;
@@ -120,7 +120,6 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\UnitTestPP.dll"; DestDir: "{app}\plugi
 Source: "{#CODELITE_ROOT}\Runtime\plugins\wxFormBuilder.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\ZoomNavigator.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SFTP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime\plugins\Tweaks.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\LLDBDebugger.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
@@ -137,6 +136,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\codelite_vim.dll"; DestDir: "{app}\plu
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPLint.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPRefactoring.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\Docker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 

@@ -28,12 +28,14 @@
 #include "entry.h"
 #include "ctags_manager.h"
 #include "fileextmanager.h"
+#if wxUSE_GUI
 #include <wx/progdlg.h>
 #include <wx/sizer.h>
 #include "progress_dialog.h"
+#endif
 #include "refactoring_storage.h"
 
-const wxEventType wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING = wxNewEventType();
+wxDEFINE_EVENT(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEvent);
 
 RefactoringEngine::RefactoringEngine() {}
 
@@ -300,6 +302,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
     return expression;
 }
 
+#if wxUSE_GUI
 clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, int maxValue)
 {
     clProgressDlg* prgDlg = NULL;
@@ -307,6 +310,7 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
     prgDlg = new clProgressDlg(NULL, title, wxT(""), maxValue);
     return prgDlg;
 }
+#endif
 
 void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
                                        const wxFileList_t& files)
@@ -340,9 +344,14 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs)) return;
 
     wxFileList_t modifiedFilesList = m_storage.FilterUpToDateFiles(files);
+#if wxUSE_GUI
     clProgressDlg* prgDlg = NULL;
+#endif
+
     if(!modifiedFilesList.empty()) {
+#if wxUSE_GUI
         prgDlg = CreateProgressDialog(_("Updating cache..."), files.size());
+#endif
         // Search the provided input files for the symbol to rename and prepare
         // a CppTokensMap
         for(size_t i = 0; i < modifiedFilesList.size(); i++) {
@@ -350,13 +359,14 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
             wxString msg;
             msg << _("Caching file: ") << curfile.GetFullName();
+#if wxUSE_GUI
             // update the progress bar
             if(!prgDlg->Update(i, msg)) {
                 prgDlg->Destroy();
                 Clear();
                 return;
             }
-
+#endif
             // Scan only valid C / C++ files
             switch(FileExtManager::GetType(curfile.GetFullName())) {
             case FileExtManager::TypeHeader:
@@ -369,7 +379,9 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
                 break;
             }
         }
+#if wxUSE_GUI
         prgDlg->Destroy();
+#endif
     }
     // load all tokens, first we need to parse the workspace files...
     CppToken::Vec_t tokens = m_storage.GetTokens(symname, files);
@@ -384,21 +396,23 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
     TextStatesPtr statesPtr(NULL);
     wxString statesPtrFileName;
+#if wxUSE_GUI
     prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int)tokens.size());
-
+#endif
     for(; iter != tokens.end(); ++iter) {
 
         // TODO :: send an event here to report our progress
         wxFileName f(iter->getFilename());
         wxString msg;
         msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
+#if wxUSE_GUI
         if(!prgDlg->Update(counter, msg)) {
             // user clicked 'Cancel'
             Clear();
             prgDlg->Destroy();
             return;
         }
-
+#endif
         counter++;
         // reset the result
         target.Reset();
@@ -440,8 +454,9 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
             m_possibleCandidates.push_back(*iter);
         }
     }
-
+#if wxUSE_GUI
     prgDlg->Destroy();
+#endif
 }
 
 TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn, int line, int pos, const wxString& word,

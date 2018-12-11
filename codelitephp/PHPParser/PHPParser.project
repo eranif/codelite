@@ -103,6 +103,13 @@
     <File Name="FilesCollector.h"/>
     <File Name="FilesCollector.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -118,13 +125,14 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cflags --debug=yes);-O0;-fPIC" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cflags );-O0;-fPIC" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/build-debug/bin/PHPUnitTests" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/codelite/codelitephp/PHPParserUnitTests" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -164,14 +172,14 @@ php_expr_lexer.cpp: php_expr.l
 	flex -L  -Pphp_expr_ php_expr.l
 	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cflags --debug=no);-O2" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
@@ -188,6 +196,7 @@ php_expr_lexer.cpp: php_expr.l
       <Linker Options="$(shell wx-config --libs --debug=no);-Os" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../../lib/gcc_lib/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -214,20 +223,21 @@ php_expr_lexer.cpp: php_expr.l
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cflags --debug=no);-O3;-fPIC" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="Default">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
       ]]>
@@ -268,7 +278,7 @@ php_expr_lexer.cpp: php_expr.l
 	flex -L  -Pphp_expr_ php_expr.l
 	mv lex.php_expr_.c php_expr_lexer.cpp</CustomPreBuild>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -276,7 +286,7 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cflags --debug=yes);-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;$(shell wx-config --cflags );-O0;-Wall" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
@@ -288,9 +298,10 @@ php_expr_lexer.cpp: php_expr.l
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName)-dbg.a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -317,7 +328,7 @@ php_expr_lexer.cpp: php_expr.l
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -325,7 +336,7 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
@@ -341,6 +352,7 @@ php_expr_lexer.cpp: php_expr.l
       <Linker Options="$(shell wx-config --libs --debug=no);-Os" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -367,7 +379,7 @@ php_expr_lexer.cpp: php_expr.l
         <CustomPostBuild/>
         <CustomPreBuild/>
       </AdditionalRules>
-      <Completion EnableCpp11="no">
+      <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
         <ClangCmpFlags/>
         <ClangPP/>
@@ -375,11 +387,4 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
 </CodeLite_Project>

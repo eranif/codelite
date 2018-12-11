@@ -28,7 +28,7 @@
 
 #include "unredobase.h"
 
-class LEditor;
+class clEditor;
 
 
 class CLTextCommand : public CLCommand
@@ -78,11 +78,11 @@ public:
     
     virtual void ProcessOpenCommand();
 
-    LEditor* GetParent() const {
+    clEditor* GetParent() const {
         return m_parent;
     }
 
-    void SetParent(LEditor* parent) {
+    void SetParent(clEditor* parent) {
         m_parent = parent;
     }
 
@@ -97,7 +97,7 @@ public:
     virtual bool DoRedo();
 
 protected:
-    LEditor* m_parent;
+    clEditor* m_parent;
 
 };
 

@@ -38,6 +38,7 @@
 #include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
+#include "clToolBar.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6
@@ -56,21 +57,56 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
     , m_darkTheme(DrawingUtils::IsThemeDark())
     , m_flags(0)
-    , m_ignoreWhitespaceDiffs(false)
-    , m_showLinenos(false)
-    , m_showOverviewBar(true)
     , m_storeFilepaths(true)
 {
     m_config.Load();
-    m_showLinenos = m_config.ShowLineNumbers();
-    m_showOverviewBar = !m_config.HideOverviewBar();
+
+    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    m_toolbar = new clToolBar(this);
+    m_toolbar->SetMiniToolBar(false);
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_REFRESH"), _("Refresh"), bmps->LoadBitmap("debugger_restart"));
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SAVE"), _("Save"), bmps->LoadBitmap("file_save"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_NEXT"), _("Next Diff"), bmps->LoadBitmap("next"));
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_PREV"), _("Previous Diff"), bmps->LoadBitmap("up"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_RIGHT"), _("Copy Right"), bmps->LoadBitmap("forward"));
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_LEFT"), _("Copy Left"), bmps->LoadBitmap("back"));
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_ALL"), _("Copy All"), bmps->LoadBitmap("copy"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_VIEW"), _("View Type"), bmps->LoadBitmap("find"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), bmps->LoadBitmap("cog"), "", wxITEM_DROPDOWN);
+    m_toolbar->Realize();
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, XRCID("ID_DIFF_TOOL_REFRESH"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, XRCID("ID_DIFF_TOOL_REFRESH"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnSaveChanges, this, XRCID("ID_DIFF_TOOL_SAVE"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnSaveChangesUI, this, XRCID("ID_DIFF_TOOL_SAVE"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnNextDiffSequence, this, XRCID("ID_DIFF_TOOL_NEXT"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnNextDiffUI, this, XRCID("ID_DIFF_TOOL_NEXT"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnPrevDiffSequence, this, XRCID("ID_DIFF_TOOL_PREV"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnPrevDiffUI, this, XRCID("ID_DIFF_TOOL_PREV"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnCopyLeftToRight, this, XRCID("ID_DIFF_TOOL_COPY_RIGHT"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnCopyLeftToRightUI, this, XRCID("ID_DIFF_TOOL_COPY_RIGHT"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnCopyRightToLeft, this, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnCopyRightToLeftUI, this, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
+
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnCopyAllMenu, this, XRCID("ID_DIFF_TOOL_COPY_ALL"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnViewMenu, this, XRCID("ID_DIFF_TOOL_VIEW"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &DiffSideBySidePanel::OnPreferences, this, XRCID("ID_DIFF_TOOL_SETTINGS"));
 
     // Vertical is the default; DoLayout() unsplits; but nothing implements Horizontal. So:
     if(m_config.IsSplitHorizontal()) {
         m_splitter->Unsplit();
         m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
     }
-
     EventNotifier::Get()->Connect(wxEVT_NOTIFY_PAGE_CLOSING, wxNotifyEventHandler(DiffSideBySidePanel::OnPageClosing),
                                   NULL, this);
 
@@ -168,7 +204,7 @@ void DiffSideBySidePanel::Diff()
         return;
     }
 
-    if(m_ignoreWhitespaceDiffs && !m_config.IsSingleViewMode()) {
+    if(m_config.IsIgnoreWhitespace() && !m_config.IsSingleViewMode()) {
         // If the user wants to ignore whitespace diffs, go through first to remove them
         // Note that this doesn't work in singleview mode where each change is shown on
         // 2 lines, before & after. Having those unmarked would be very confusing
@@ -287,7 +323,7 @@ void DiffSideBySidePanel::PrepareViews()
         stc->SetMarginMask(NUMBER_MARGIN_ID,
                            ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
         int pixelWidth = 4 + 5 * stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
-        stc->SetMarginWidth(NUMBER_MARGIN_ID, m_showLinenos ? pixelWidth : 0);
+        stc->SetMarginWidth(NUMBER_MARGIN_ID, m_config.ShowLineNumbers() ? pixelWidth : 0);
     }
 }
 
@@ -399,7 +435,7 @@ void DiffSideBySidePanel::OnRightStcPainted(wxStyledTextEvent& event)
 void DiffSideBySidePanel::OnLeftStcUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_showOverviewBar) {
+    if(m_config.IsOverviewBarShown()) {
         // This makes the Overview bar's 'Where are we?' marker react to scrolling
         if(m_config.IsSingleViewMode()) {
             m_panelOverviewL->Refresh();
@@ -817,12 +853,12 @@ void DiffSideBySidePanel::DoLayout()
 {
     if(m_config.IsSingleViewMode()) {
         m_panelOverviewFull->Hide();
-        m_panelOverviewL->Show(m_showOverviewBar);
+        m_panelOverviewL->Show(m_config.IsOverviewBarShown());
         m_panelOverviewR->Hide();
         m_splitter->Unsplit();
     }
     if(m_config.IsSplitHorizontal()) {
-        m_panelOverviewFull->Show(m_showOverviewBar);
+        m_panelOverviewFull->Show(m_config.IsOverviewBarShown());
         m_panelOverviewL->Hide();
         m_panelOverviewR->Hide();
         m_splitter->SplitHorizontally(m_splitterPageLeft, m_splitterPageRight);
@@ -830,7 +866,7 @@ void DiffSideBySidePanel::DoLayout()
     if(m_config.IsSplitVertical()) {
         m_panelOverviewFull->Hide();
         m_panelOverviewL->Hide();
-        m_panelOverviewR->Show(m_showOverviewBar);
+        m_panelOverviewR->Show(m_config.IsOverviewBarShown());
         m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight);
     }
     m_panelOverviewFull->GetParent()->Layout();
@@ -864,42 +900,41 @@ void DiffSideBySidePanel::OnBrowseRightFile(wxCommandEvent& event)
 void DiffSideBySidePanel::OnIgnoreWhitespaceClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_ignoreWhitespaceDiffs = !m_ignoreWhitespaceDiffs;
+    m_config.SetIgnoreWhitespace(event.IsChecked());
+    m_config.Save();
     Diff();
     Refresh();
 }
 
 void DiffSideBySidePanel::OnIgnoreWhitespaceUI(wxUpdateUIEvent& event)
 {
-    event.Check(m_ignoreWhitespaceDiffs);
+    event.Check(m_config.IsIgnoreWhitespace());
     event.Enable(!m_config.IsSingleViewMode());
 }
 
 void DiffSideBySidePanel::OnShowLinenosClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_showLinenos = !m_showLinenos;
-    m_config.SetShowLineNumbers(m_showLinenos);
+    m_config.SetShowLineNumbers(event.IsChecked());
+    m_config.Save();
     Diff();
 }
 
-void DiffSideBySidePanel::OnShowLinenosUI(wxUpdateUIEvent& event) { event.Check(m_showLinenos); }
+void DiffSideBySidePanel::OnShowLinenosUI(wxUpdateUIEvent& event) { event.Check(m_config.ShowLineNumbers()); }
 
 void DiffSideBySidePanel::OnShowOverviewBarClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_showOverviewBar = !m_showOverviewBar;
-    // m_config thinks 'Hide' not 'Show' so that the default state will be shown
-    m_config.SetHideOverviewBar(!m_showOverviewBar);
-
+    m_config.SetOverviewBarShow(event.IsChecked());
+    m_config.Save();
     CallAfter(&DiffSideBySidePanel::DoLayout);
 }
 
-void DiffSideBySidePanel::OnShowOverviewBarUI(wxUpdateUIEvent& event) { event.Check(m_showOverviewBar); }
+void DiffSideBySidePanel::OnShowOverviewBarUI(wxUpdateUIEvent& event) { event.Check(m_config.IsOverviewBarShown()); }
 
 void DiffSideBySidePanel::OnPaneloverviewEraseBackground(wxEraseEvent& event)
 {
-    if(!m_showOverviewBar) { return; }
+    if(!m_config.IsOverviewBarShown()) { return; }
 
     wxWindow* win;
     if(m_config.IsSplitHorizontal()) {
@@ -985,7 +1020,7 @@ void DiffSideBySidePanel::OnPaneloverviewLeftDown(wxMouseEvent& event)
 {
     event.Skip();
 
-    if(!m_showOverviewBar) { return; }
+    if(!m_config.IsOverviewBarShown()) { return; }
 
     wxWindow* panel = static_cast<wxWindow*>(event.GetEventObject());
     wxWindow* win;
@@ -1013,4 +1048,56 @@ void DiffSideBySidePanel::OnPaneloverviewLeftDown(wxMouseEvent& event)
 
     // Make the wxSTCs scroll to the line matching the mouse-click
     m_stcLeft->ScrollToLine((lines * pos) / ht);
+}
+
+void DiffSideBySidePanel::OnCopyAllMenu(wxCommandEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT"), _("Copy all: left <- right"));
+    menu.Append(XRCID("ID_DIFF_TOOL_COPY_ALL_LEFT_TO_RIGHT"), _("Copy all: left -> right"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileLeftToRight, this,
+              XRCID("ID_DIFF_TOOL_COPY_ALL_LEFT_TO_RIGHT"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileFromRight, this,
+              XRCID("ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT"));
+
+    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_COPY_ALL"), &menu);
+}
+
+void DiffSideBySidePanel::OnViewMenu(wxCommandEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("ID_DIFF_TOOL_VIEW_SINGLE"), _("Single View"), "", wxITEM_RADIO);
+    menu.Check(XRCID("ID_DIFF_TOOL_VIEW_SINGLE"), m_config.IsSingleViewMode());
+
+    menu.Append(XRCID("ID_DIFF_TOOL_VIEW_HORIZONTAL"), _("Horizontal Split"), "", wxITEM_RADIO);
+    menu.Check(XRCID("ID_DIFF_TOOL_VIEW_HORIZONTAL"), m_config.IsSplitHorizontal());
+
+    menu.Append(XRCID("ID_DIFF_TOOL_VERTICAL_VIEW"), _("Vertical Split"), "", wxITEM_RADIO);
+    menu.Check(XRCID("ID_DIFF_TOOL_VERTICAL_VIEW"), m_config.IsSplitVertical());
+
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnSingleView, this, XRCID("ID_DIFF_TOOL_VIEW_SINGLE"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnHorizontal, this, XRCID("ID_DIFF_TOOL_VIEW_HORIZONTAL"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnVertical, this, XRCID("ID_DIFF_TOOL_VERTICAL_VIEW"));
+
+    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_VIEW"), &menu);
+}
+
+void DiffSideBySidePanel::OnPreferences(wxCommandEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("ID_DIFF_TOOL_IGNORE_WHITESPACE"), _("Ignore Whitespace"), "", wxITEM_CHECK);
+    menu.Check(XRCID("ID_DIFF_TOOL_IGNORE_WHITESPACE"), m_config.IsIgnoreWhitespace());
+
+    menu.Append(XRCID("ID_DIFF_TOOL_SHOW_LINENUMBERS"), _("Show Line Numbers"), "", wxITEM_CHECK);
+    menu.Check(XRCID("ID_DIFF_TOOL_SHOW_LINENUMBERS"), m_config.ShowLineNumbers());
+
+    menu.Append(XRCID("ID_DIFF_TOOL_SHOW_OVERVIEW_BAR"), _("Show Overview Bar"), "", wxITEM_CHECK);
+    menu.Check(XRCID("ID_DIFF_TOOL_SHOW_OVERVIEW_BAR"), m_config.IsOverviewBarShown());
+
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnIgnoreWhitespaceClicked, this,
+              XRCID("ID_DIFF_TOOL_IGNORE_WHITESPACE"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnShowLinenosClicked, this, XRCID("ID_DIFF_TOOL_SHOW_LINENUMBERS"));
+    menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnShowOverviewBarClicked, this,
+              XRCID("ID_DIFF_TOOL_SHOW_OVERVIEW_BAR"));
+    m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_SETTINGS"), &menu);
 }

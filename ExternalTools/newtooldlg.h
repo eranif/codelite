@@ -35,6 +35,7 @@ class NewToolDlg : public NewToolBase
     IManager* m_mgr;
 
 protected:
+    virtual void OnButtonOkUI(wxUpdateUIEvent& event);
     virtual void OnIdSelected(wxCommandEvent& event);
     // Handlers for NewToolBase events.
     void OnButtonBrowsePath(wxCommandEvent& event);
@@ -52,7 +53,6 @@ public:
 
     wxString GetPath() const { return m_textCtrlPath->GetValue(); }
     wxString GetWorkingDirectory() const { return m_textCtrlWd->GetValue(); }
-    wxString GetArguments() const { return m_textCtrlArguments->GetValue(); }
     wxString GetToolId() const { return m_choiceId->GetStringSelection(); }
     wxString GetToolName() const { return m_textCtrlName->GetValue(); }
     wxString GetIcon16() const { return m_textCtrlIcon16->GetValue(); }

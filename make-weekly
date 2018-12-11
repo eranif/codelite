@@ -6,17 +6,9 @@ curdir=`pwd`
 # Clear old installers
 os_name=`uname -s`
 upload_file="no"
-build_gtk3="no"
-if [ "$1" == "--with-gtk3" ] || [ "$2" == "--with-gtk3" ] ; then
-    build_gtk3="yes"
-fi
-
-if [ "$1" == "--upload" ] || [ "$2" == "--upload" ] ; then
-    upload_file="yes"
-fi
+build_php="no"
 
 
-# Clear old installers
 os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
     echo rm -f $curdir/build-release/codelite.app.tar.gz
@@ -26,11 +18,29 @@ else
     cpu_count=`grep -c ^processor /proc/cpuinfo`
 fi
 
+## parse the command line arguments and over defaults
+for i in "$@"
+do
+    case $i in
+        "--with-php")
+            build_php="yes"
+	    shift
+            ;;
+        "--upload")
+            upload_file="yes"
+	    shift
+            ;;
+	--cpu-count=*)
+            cpu_count="${i#*=}"
+	    shift
+	    ;;
+    esac
+done
+
 echo "Platform     : ${os_name}"
 echo "CPU count    : ${cpu_count}"
-echo "Build GTK2   : yes"
-echo "Build GTK3   : ${build_gtk3}"
 echo "Upload binary: ${upload_file}"
+echo "PHP Build    : ${build_php}"
 
 # Update our source tree
 cd $curdir
@@ -50,11 +60,26 @@ fi
 cd $curdir
 
 linux_build() {
+    mkdir -p $curdir/$1
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
-
     PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    make -j${cpu_count} && make package
+    if [ "${upload_file}" == "yes" ]; then
+        deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
+        echo Uploading deb file ${deb_file}
+        scp ${deb_file} root@codelite.org:/var/www/html/downloads/codelite/wip
+    fi
+    cd $curdir
+}
+
+linux_build_php() {
+    mkdir -p $curdir/$1
+    cd $curdir/$1 # cd to the build folder
+    echo rm -fr *.deb
+    rm -fr *.deb
+    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. -DPHP_BUILD=1
     make -j${cpu_count} && make package
     if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
@@ -74,15 +99,8 @@ if [ ${os_name} == "Darwin" ]; then
         scp codelite.app.tar.gz root@codelite.org:/var/www/html/downloads/codelite/wip
     fi
 else
-    if [ "${build_gtk3}" == "yes" ]; then
-        echo "Building for GTK2 and GTK3"
-    else
-        echo "Building for GTK2 only"
-    fi
     linux_build build-release
-    if [ "${build_gtk3}" == "yes" ]; then
-        linux_build build-release-gtk3
+    if [ "${build_php}" == "yes" ]; then
+        linux_build_php build-release-php
     fi
 fi
-
-

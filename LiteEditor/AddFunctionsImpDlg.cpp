@@ -25,49 +25,22 @@
 
 #include "AddFunctionsImpDlg.h"
 #include "ctags_manager.h"
+#include "globals.h"
 #include "windowattrmanager.h"
-
-class MyAddFunctionsModel : public AddFunctionsModel
-{
-public:
-    MyAddFunctionsModel() {}
-    virtual ~MyAddFunctionsModel() {}
-
-    virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
-    {
-
-        if(col == 1) {
-            wxVariant v;
-            GetValue(v, item, 0);
-            if(!v.GetBool()) {
-                attr.SetColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-                attr.SetBold(false);
-
-            } else {
-                attr.SetBold(true);
-            }
-            return true;
-
-        } else {
-            return false;
-        }
-    }
-};
 
 AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile)
     : AddFunctionsImplBaseDlg(parent)
 {
-    unsigned int colCount = m_dataviewModel->GetColCount();
-    m_dataviewModel = new MyAddFunctionsModel();
-    m_dataviewModel->SetColCount(colCount);
-    m_dataview->AssociateModel(m_dataviewModel.get());
-
-    m_tags.insert(m_tags.end(), tags.begin(), tags.end());
+    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    int functionIndex = clGetManager()->GetStdIcons()->GetMimeImageId(BitmapLoader::kFunctionPublic);
+    m_dvListCtrl->SetSortFunction(nullptr); // Disable sorting
+    // Keep the tags
+    m_tags = tags;
+    // Clear the impl array
+    m_implArr.Clear();
     for(size_t i = 0; i < m_tags.size(); ++i) {
-
         wxVector<wxVariant> cols;
-        cols.push_back(true);
-        cols.push_back(m_tags.at(i)->GetDisplayName());
+        cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));
 
         // keep the implementation as the client data
         wxString body;
@@ -76,7 +49,8 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
             tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro));
         body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
         body << wxT("\n");
-        m_dataviewModel->AppendItem(wxDataViewItem(0), cols, new wxStringClientData(body));
+        m_implArr.Add(body);
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&m_implArr.Item(i));
     }
     m_filePicker->SetPath(targetFile);
     SetName("AddFunctionsImpDlg");
@@ -90,60 +64,38 @@ wxString AddFunctionsImpDlg::GetFileName() const { return m_filePicker->GetPath(
 wxString AddFunctionsImpDlg::GetText() const
 {
     wxString text;
-    wxDataViewItemArray items;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
-
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
-        if(cols.at(0).GetBool()) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(m_dvListCtrl->IsItemChecked(item, 0)) {
             if(text.IsEmpty()) text << "\n";
             // checked
-            wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_dataviewModel->GetClientObject(items.Item(i)));
-            if(cd) { text << cd->GetData(); }
+            wxString* impl = reinterpret_cast<wxString*>(m_dvListCtrl->GetItemData(item));
+            if(impl) { text << (*impl); }
         }
     }
 
-    if(!text.IsEmpty()) text.RemoveLast();
+    if(!text.IsEmpty()) { text.RemoveLast(); }
     return text;
 }
 
-void AddFunctionsImpDlg::OnCheckAll(wxCommandEvent& event)
-{
-    wxDataViewItemArray items;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
+void AddFunctionsImpDlg::OnCheckAll(wxCommandEvent& event) { DoCheckAll(true); }
 
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
-        cols.at(0) = true;
-        m_dataviewModel->UpdateItem(items.Item(i), cols);
-    }
-}
-
-void AddFunctionsImpDlg::OnUncheckAll(wxCommandEvent& event)
-{
-    wxDataViewItemArray items;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
-
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
-        cols.at(0) = false;
-        m_dataviewModel->UpdateItem(items.Item(i), cols);
-    }
-}
+void AddFunctionsImpDlg::OnUncheckAll(wxCommandEvent& event) { DoCheckAll(false); }
 
 void AddFunctionsImpDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    wxDataViewItemArray items;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), items);
-
-    bool atLeastOneChecked = false;
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        wxVector<wxVariant> cols = m_dataviewModel->GetItemColumnsData(items.Item(i));
-        if(cols.at(0).GetBool()) {
-            atLeastOneChecked = true;
-            break;
+    event.Enable(false);
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        if(m_dvListCtrl->IsItemChecked(m_dvListCtrl->RowToItem(i), 0)) {
+            event.Enable(true);
+            return;
         }
     }
+}
 
-    event.Enable(atLeastOneChecked);
+void AddFunctionsImpDlg::DoCheckAll(bool checked)
+{
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), checked, 0);
+    }
 }

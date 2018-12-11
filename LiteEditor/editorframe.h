@@ -26,14 +26,15 @@
 #ifndef EDITORFRAME_H
 #define EDITORFRAME_H
 
+#include "cl_command_event.h"
 #include "wxcrafter.h"
 #include <list>
-#include "cl_command_event.h"
 
+class Notebook;
 class MyMenuBar;
 wxDECLARE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
-class LEditor;
+class clEditor;
 class QuickFindBar;
 class EditorFrame : public EditorFrameBase
 {
@@ -41,23 +42,28 @@ public:
     typedef std::list<EditorFrame*> List_t;
 
 protected:
-    virtual void OnCloseWindow(wxCloseEvent& event);
-    LEditor* m_editor;
     QuickFindBar* m_findBar;
-    MyMenuBar* m_myMenuBar;
+    clEditor* m_editor = nullptr;
 
 protected:
-    bool ConfirmClose();
-
-protected:
+    virtual void OnCloseWindow(wxCloseEvent& event);
     virtual void OnFindUI(wxUpdateUIEvent& event);
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
+    void OnSave(wxCommandEvent& event);
+    void OnSaveUI(wxUpdateUIEvent& event);
+    void OnUndoUI(wxUpdateUIEvent& event);
+    void OnRedoUI(wxUpdateUIEvent& event);
+    void OnEdit(wxCommandEvent& event);
+    void DoCloseEditor(clEditor* editor);
+    void OnUndo(wxCommandEvent& event);
+    void OnRedo(wxCommandEvent& event);
+    void OnReload(wxCommandEvent& event);
 
 public:
-    EditorFrame(wxWindow* parent, LEditor* editor);
+    EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle);
     virtual ~EditorFrame();
-    LEditor* GetEditor() { return m_editor; }
+    clEditor* GetEditor() const { return m_editor; }
 };
 #endif // EDITORFRAME_H

@@ -23,11 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clFontHelper.h"
+#include "fileutils.h"
 #include "json_node.h"
 #include <stdlib.h>
-#include <wx/filename.h>
 #include <wx/ffile.h>
-#include "clFontHelper.h"
+#include <wx/filename.h>
 
 JSONRoot::JSONRoot(const wxString& text)
     : _json(NULL)
@@ -48,12 +49,10 @@ JSONRoot::JSONRoot(const wxFileName& filename)
     : _json(NULL)
 {
     wxString content;
-    wxFFile fp(filename.GetFullPath(), wxT("rb"));
-    if(fp.IsOpened()) {
-        if(fp.ReadAll(&content, wxConvUTF8)) {
-            _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
-        }
+    if(!FileUtils::ReadFileContent(filename, content)) {
+        return;
     }
+    _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
 
     if(!_json) {
         _json = cJSON_CreateObject();
@@ -304,13 +303,13 @@ char* JSONElement::FormatRawString(bool formatted) const
     }
 }
 
-wxString JSONElement::format() const
+wxString JSONElement::format(bool formatted) const
 {
     if(!_json) {
         return wxT("");
     }
 
-    char* p = cJSON_Print(_json);
+    char* p = formatted ? cJSON_Print(_json) : cJSON_PrintUnformatted(_json);
     wxString output(p, wxConvUTF8);
     free(p);
     return output;
@@ -433,7 +432,7 @@ bool JSONElement::hasNamedObject(const wxString& name) const
     cJSON* obj = cJSON_GetObjectItem(_json, name.mb_str(wxConvUTF8).data());
     return obj != NULL;
 }
-
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxPoint& pt)
 {
     wxString szStr;
@@ -446,15 +445,6 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
     wxString szStr;
     szStr << sz.x << "," << sz.y;
     return addProperty(name, szStr);
-}
-
-JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
-{
-    if(!_json) {
-        return *this;
-    }
-    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
-    return *this;
 }
 
 wxPoint JSONElement::toPoint() const
@@ -486,7 +476,6 @@ wxColour JSONElement::toColour(const wxColour& defaultColour) const
     if(_json->type != cJSON_String) {
         return defaultColour;
     }
-
     return wxColour(_json->valuestring);
 }
 
@@ -494,6 +483,16 @@ wxSize JSONElement::toSize() const
 {
     wxPoint pt = toPoint();
     return wxSize(pt.x, pt.y);
+}
+#endif
+
+JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
+{
+    if(!_json) {
+        return *this;
+    }
+    cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
+    return *this;
 }
 
 void JSONElement::removeProperty(const wxString& name)
@@ -504,7 +503,7 @@ void JSONElement::removeProperty(const wxString& name)
     }
     cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
 }
-
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t& stringMap)
 {
     if(!_json) return *this;
@@ -520,7 +519,7 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t&
     append(arr);
     return *this;
 }
-
+#endif
 wxStringMap_t JSONElement::toStringMap() const
 {
     wxStringMap_t res;
@@ -539,9 +538,9 @@ wxStringMap_t JSONElement::toStringMap() const
     }
     return res;
 }
-
 JSONElement& JSONElement::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
 
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colour)
 {
     wxString colourValue;
@@ -550,7 +549,7 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colo
     }
     return addProperty(name, colourValue);
 }
-
+#endif
 JSONElement JSONElement::firstChild()
 {
     _walker = NULL;
@@ -576,12 +575,12 @@ JSONElement JSONElement::nextChild()
     _walker = _walker->next;
     return element;
 }
-
 JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
 }
 
+#if wxUSE_GUI
 JSONElement& JSONElement::addProperty(const wxString& name, const wxFont& font)
 {
     return addProperty(name, clFontHelper::ToString(font));
@@ -594,6 +593,7 @@ wxFont JSONElement::toFont(const wxFont& defaultFont) const
     wxFont f = clFontHelper::FromString(str);
     return f;
 }
+#endif
 
 bool JSONElement::isArray() const
 {

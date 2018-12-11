@@ -22,24 +22,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "csscopeconfdata.h"
-#include "globals.h"
-#include "plugin.h"
-#include <wx/app.h>
-#include <wx/log.h>
-#include "cscopetab.h"
-#include "drawingutils.h"
-#include "cscopedbbuilderthread.h"
-#include "imanager.h"
-#include "fileextmanager.h"
-#include "workspace.h"
 #include "bitmap_loader.h"
-#include <wx/treectrl.h>
-#include <wx/imaglist.h>
-#include <set>
+#include "cscopedbbuilderthread.h"
+#include "cscopetab.h"
+#include "csscopeconfdata.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
+#include "globals.h"
+#include "imanager.h"
+#include "plugin.h"
+#include "workspace.h"
+#include <set>
+#include <wx/app.h>
+#include <wx/imaglist.h>
+#include <wx/log.h>
+#include <wx/treectrl.h>
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)
@@ -47,14 +46,13 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
 {
     m_styler.Reset(new clFindResultsStyler(m_stc));
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
 
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
     const wxString SearchScope[] = { wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project") };
-    m_stringManager.AddStrings(
-        sizeof(SearchScope) / sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
+    m_stringManager.AddStrings(sizeof(SearchScope) / sizeof(wxString), SearchScope, data.GetScanScope(),
+                               m_choiceSearchScope);
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_font = wxFont(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
@@ -69,8 +67,8 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
 
 CscopeTab::~CscopeTab()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL,
+                                     this);
 }
 
 void CscopeTab::Clear()
@@ -135,9 +133,7 @@ void CscopeTab::FreeTable()
 
 void CscopeTab::SetMessage(const wxString& msg, int percent)
 {
-    if(m_mgr->GetStatusBar()) {
-        m_mgr->GetStatusBar()->SetMessage(msg, 3);
-    }
+    if(m_mgr->GetStatusBar()) { m_mgr->GetStatusBar()->SetMessage(msg, 3); }
     m_gauge->SetValue(percent);
 }
 
@@ -186,16 +182,6 @@ void CscopeTab::OnThemeChanged(wxCommandEvent& e)
     m_styler->SetStyles(m_stc);
 }
 
-wxBitmap CscopeTab::GetBitmap(const wxString& filename) const
-{
-    wxFileName fn(filename);
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(m_bitmaps.count(type) == 0) {
-        type = FileExtManager::TypeText;
-    }
-    return m_bitmaps.find(type)->second;
-}
-
 void CscopeTab::ClearText()
 {
     m_stc->SetEditable(true);
@@ -239,10 +225,10 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
             }
             m_mgr->OpenFile(fn.GetFullPath(), "", iter->second.GetLine() - 1);
 
-        // In theory this isn't needed as it happened in OpenFile()
-        // In practice there's a timing issue: if the file needs to be loaded,
-        // the CenterLine() call arrives too soon. So repeat it here, delayed.
-        CallAfter(&CscopeTab::CenterEditorLine, iter->second.GetLine() - 1);
+            // In theory this isn't needed as it happened in OpenFile()
+            // In practice there's a timing issue: if the file needs to be loaded,
+            // the CenterLine() call arrives too soon. So repeat it here, delayed.
+            CallAfter(&CscopeTab::CenterEditorLine, iter->second.GetLine() - 1);
         }
     }
 }
@@ -250,7 +236,5 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
 void CscopeTab::CenterEditorLine(int lineno)
 {
     IEditor* editor = m_mgr->GetActiveEditor();
-    if (editor) {
-        editor->CenterLine(lineno);
-    }
+    if(editor) { editor->CenterLine(lineno); }
 }

@@ -14,15 +14,16 @@ clMultiBook::clMultiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL, name)
     , m_style(style)
     , m_selection(wxNOT_FOUND)
+    , m_defaultPage(nullptr)
 {
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH|wxSP_LIVE_UPDATE);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3DSASH | wxSP_LIVE_UPDATE);
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     GetSizer()->Add(m_splitter, 1, wxEXPAND, 0);
-    
+
     // Create the books
     m_leftBook = CreateNotebook(m_splitter);
     m_rightBook = CreateNotebook(m_splitter);
-    
+
     // Hide the right book and initialise the splitter
     m_rightBook->Show(false);
     m_splitter->Initialize(m_leftBook);
@@ -66,7 +67,7 @@ bool clMultiBook::GetActivePageBook(Notebook** book, size_t& bookIndex, size_t& 
 void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* destbook)
 {
     if(!srcbook || !destbook) return;
-    
+
     bool updateViewNeeded = (destbook->GetPageCount() == 0);
     wxString text = srcbook->GetPageText(index);
     wxBitmap bmp = srcbook->GetPageBitmap(index);
@@ -74,10 +75,10 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 
     srcbook->RemovePage(index, false);
     destbook->AddPage(page, text, true, bmp);
-    
+
     // Make the newly added tab the focused one
     page->CallAfter(&wxWindow::SetFocus);
-    
+
     // If we add the first page to the destination notebook or removing the last page from the source notebook
     // a view update is required
     if(updateViewNeeded || (srcbook->GetPageCount() == 0)) { CallAfter(&clMultiBook::UpdateView); }
@@ -86,10 +87,8 @@ void clMultiBook::MovePageToNotebook(Notebook* srcbook, size_t index, Notebook* 
 void clMultiBook::UpdateView()
 {
     if(m_rightBook->GetPageCount() == 0) {
-        if(m_splitter->IsSplit()) {
-            m_splitter->Unsplit();
-        }
-    } else if(!m_splitter->IsSplit()){
+        if(m_splitter->IsSplit()) { m_splitter->Unsplit(); }
+    } else if(!m_splitter->IsSplit()) {
         m_splitter->SplitVertically(m_leftBook, m_rightBook);
     }
 }
@@ -111,7 +110,7 @@ int clMultiBook::BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const
 {
     bool found = false;
     int globalIndex = pageIndex;
-    
+
     std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     for(size_t i = 0; i < books.size(); ++i) {
         if(book == books[i]) {
@@ -162,6 +161,9 @@ void clMultiBook::MoveToLeftTabGroup()
 
 void clMultiBook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
 {
+    // Hide the default page if needed
+    wxWindowUpdateLocker locker(this);
+    ShowNotebook();
     m_leftBook->AddPage(page, label, selected, bmp);
     m_history->Push(page);
 }
@@ -171,7 +173,11 @@ bool clMultiBook::InsertPage(size_t index, wxWindow* page, const wxString& label
     Notebook* b;
     size_t modindex;
     size_t bookindex;
+    wxWindowUpdateLocker locker(this);
+    ShowNotebook();
     if(GetBookByPageIndex(index, &b, bookindex, modindex)) {
+        DoShowWindow(m_defaultPage, false);
+        DoShowWindow(m_splitter, true);
         bool res = b->InsertPage(modindex, page, label, selected, bmp);
         if(res) { m_history->Push(page); }
         return res;
@@ -215,11 +221,7 @@ wxWindow* clMultiBook::GetCurrentPage() const
     return nullptr;
 }
 
-size_t clMultiBook::GetPageCount() const
-{
-    size_t count = 0;
-    return m_leftBook->GetPageCount() + m_rightBook->GetPageCount();
-}
+size_t clMultiBook::GetPageCount() const { return m_leftBook->GetPageCount() + m_rightBook->GetPageCount(); }
 
 int clMultiBook::GetSelection() const { return m_selection; }
 
@@ -276,11 +278,11 @@ int clMultiBook::SetSelection(size_t tabIdx)
                 changingEvent.SetSelection(tabIdx);
                 GetEventHandler()->ProcessEvent(changingEvent);
                 if(!changingEvent.IsAllowed()) { return wxNOT_FOUND; } // User vetoed
-                
+
                 // Update the history
                 m_history->Pop(focusedPage);
                 m_history->Push(focusedPage);
-                
+
                 // Update the selection before we fire the event again
                 // Or we might end up with stackoverflow...
                 m_selection = tabIdx;
@@ -315,6 +317,7 @@ wxString clMultiBook::GetPageText(size_t page) const
 
 bool clMultiBook::DeleteAllPages()
 {
+    wxWindowUpdateLocker locker(this);
     std::vector<Notebook*> books = { m_leftBook, m_rightBook };
     std::for_each(books.begin(), books.end(), [&](Notebook* book) { book->DeleteAllPages(); });
     // Update the history
@@ -399,19 +402,9 @@ Notebook* clMultiBook::CreateNotebook(wxWindow* parent)
     book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &clMultiBook::OnEventProxy, this);
     book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &clMultiBook::OnEventProxy, this);
     book->Bind(wxEVT_BOOK_TAB_DCLICKED, &clMultiBook::OnEventProxy, this);
-    book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &clMultiBook::OnEventProxy, this); 
+    book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &clMultiBook::OnEventProxy, this);
     return book;
 }
-
-//Notebook* clMultiBook::AddNotebook()
-//{
-//    wxWindowUpdateLocker locker(this);
-//    Notebook* book = CreateNotebook(this);
-//    m_books.push_back(book);
-//    GetSizer()->Add(book, 1, wxEXPAND, 0);
-//    GetSizer()->Layout();
-//    return book;
-//}
 
 void clMultiBook::OnEventProxy(wxBookCtrlEvent& event)
 {
@@ -501,4 +494,46 @@ wxBitmap clMultiBook::GetPageBitmap(size_t page) const
     size_t modIndex;
     if(GetBookByPageIndex(page, &book, bookIndex, modIndex)) { return book->GetPageBitmap(modIndex); }
     return wxNullBitmap;
+}
+
+void clMultiBook::SetDefaultPage(wxWindow* page)
+{
+    bool needToShow = false;
+    if(page) { page->Reparent(this); }
+    // if we already have a default page, remove it
+    if(m_defaultPage && GetSizer()->GetItem(m_defaultPage)) {
+        // Detach it from the main sizer
+        DoShowWindow(m_defaultPage, false);
+        needToShow = true;
+    }
+    m_defaultPage = page;
+    if(needToShow) { DoShowWindow(m_defaultPage, true); }
+}
+
+void clMultiBook::DoShowWindow(wxWindow* win, bool show)
+{
+    if(!win) return;
+    if(show) {
+        if(GetSizer()->GetItem(win)) return; // already visible
+        GetSizer()->Add(win, 1, wxEXPAND);
+        win->Show();
+    } else {
+        if(!GetSizer()->GetItem(win)) return;
+        GetSizer()->Detach(win);
+        win->Hide();
+    }
+}
+
+void clMultiBook::ShowNotebook()
+{
+    DoShowWindow(m_defaultPage, false);
+    DoShowWindow(m_splitter, true);
+}
+
+void clMultiBook::ShowDefaultPage(bool show)
+{
+    // Avoid unneeded flickers
+    wxWindowUpdateLocker locker(this);
+    DoShowWindow(m_splitter, !show);
+    DoShowWindow(m_defaultPage, show);
 }

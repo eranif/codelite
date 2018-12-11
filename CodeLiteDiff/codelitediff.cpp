@@ -40,9 +40,7 @@ static CodeLiteDiff* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new CodeLiteDiff(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new CodeLiteDiff(manager); }
     return thePlugin;
 }
 
@@ -73,12 +71,7 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
 
 CodeLiteDiff::~CodeLiteDiff() {}
 
-clToolBar* CodeLiteDiff::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void CodeLiteDiff::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -182,9 +175,7 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
     tpath << wxFileName::GetPathSeparator() << "CLdiff" << wxFileName::GetPathSeparator();
     wxFileName::Mkdir(tpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     wxFileName tmpFile(wxFileName::CreateTempFileName(tpath + editor->GetFileName().GetName()));
-    if(!tmpFile.IsOk()) {
-        return wxFileName();
-    }
+    if(!tmpFile.IsOk()) { return wxFileName(); }
 
     tmpFile.SetExt(editor->GetFileName().GetExt());
     wxFFile fp(tmpFile.GetFullPath(), "w+b");

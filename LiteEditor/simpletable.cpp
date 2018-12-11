@@ -32,6 +32,7 @@
 #include "debugger.h"
 #include "simpletablebase.h"
 #include "event_notifier.h"
+#include <wx/utils.h>
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -40,10 +41,17 @@ WatchesTable::WatchesTable(wxWindow* parent)
     : DebuggerTreeListCtrlBase(parent)
 {
     InitTable();
+    // Only sort top level items, don't sort their children
+    m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
+    
     m_DBG_USERR = DBG_USERR_WATCHTABLE;
     m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
     m_LIST_CHILDS = LIST_WATCH_CHILDS;
-
+    // Should a be placed before b?
+    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
+        return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
+    };
+    
     // Load the right click menu
     m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("dbg_watch_rmenu"));
     Connect(
@@ -120,7 +128,7 @@ WatchesTable::~WatchesTable()
     }
 
     Clear();
-    m_listTable->DeleteRoot();
+    m_listTable->DeleteAllItems();
 }
 
 void WatchesTable::Clear()
@@ -135,10 +143,10 @@ void WatchesTable::Clear()
 
 void WatchesTable::InitTable()
 {
-    m_listTable->AddColumn(_("Expression"), 150);
-    m_listTable->AddColumn(_("Value"), 500);
-    m_listTable->AddColumn(_("Type"), 200);
-    m_listTable->AddRoot(_("Watches"));
+    m_listTable->AddRoot("Watches");
+    m_listTable->AddHeader(_("Expression"));
+    m_listTable->AddHeader(_("Value"));
+    m_listTable->AddHeader(_("Type"));
 }
 
 void WatchesTable::OnListKeyDown(wxTreeEvent& event)
@@ -362,7 +370,7 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
                 data->_gdbId = event.m_variableObject.gdbId;
 
                 // set the type
-                m_listTable->SetItemText(item, 2, event.m_variableObject.typeName);
+                m_listTable->SetItemText(item, event.m_variableObject.typeName, 2);
                 if (dbgr->GetDebuggerInformation().defaultHexDisplay == true)
                   dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
                 // refresh this item only
@@ -414,7 +422,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
                     DbgTreeItemData* data = new DbgTreeItemData();
                     data->_gdbId = ch.gdbId;
                     wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
-                    m_listTable->SetItemText(child, 2, ch.type);
+                    m_listTable->SetItemText(child,ch.type, 2);
 
                     // Add a dummy node
                     if(child.IsOk() && ch.numChilds > 0) {
@@ -433,6 +441,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
 
 void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 {
+    wxBusyCursor bc;
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_listTable->GetFirstChild(event.GetItem(), cookie);
 
@@ -601,11 +610,11 @@ void WatchesTable::OnTypeResolveError(clCommandEvent& event)
         wxTreeItemId id = DoFindItemByExpression(ded->m_expression);
         if(id.IsOk()) {
             // update
-            m_listTable->SetItemText(id, 1, ded->m_text);
+            m_listTable->SetItemText(id, ded->m_text, 1);
         } else {
             // add
             wxTreeItemId child = m_listTable->AppendItem(m_listTable->GetRootItem(), ded->m_expression);
-            m_listTable->SetItemText(child, 1, ded->m_text);
+            m_listTable->SetItemText(child, ded->m_text, 1);
         }
     } else {
         event.Skip();

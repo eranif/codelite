@@ -228,6 +228,18 @@
                 <label>&amp;Display EOL</label>
                 <checkable>1</checkable>
             </object>
+            <object class="wxMenu" name="wxID_ANY">
+                <label>Zoom</label>
+                <object class="wxMenuItem" name="wxID_ZOOM_IN">
+                    <label>Zoom In</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_ZOOM_OUT">
+                    <label>Zoom Out</label>
+                </object>
+                <object class="wxMenuItem" name="wxID_ZOOM_FIT">
+                    <label>Reset Zoom</label>
+                </object>
+            </object>
             <object class="wxMenu" name="display_whitespaces">
                 <label>Show Whitespace</label>
                 <object class="wxMenuItem" name="whitepsace_invisible">
@@ -259,14 +271,6 @@
                 <label>Full Screen...</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="view_welcome_page">
-                <label>Show &amp;Welcome Page</label>
-            </object>
-            <object class="wxMenuItem" name="view_welcome_page_at_startup">
-                <label>Load Welcome Page at &amp;Startup</label>
-                <checkable>1</checkable>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="output_pane">
                 <label>&amp;Output Pane</label>
                 <checkable>1</checkable>
@@ -284,6 +288,7 @@
                 <checkable>1</checkable>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <!--
             <object class="wxMenu" name="toolbars_menu">
                 <label>Tool&amp;bars</label>
                 <style>wxMENU_TEAROFF</style>
@@ -315,6 +320,7 @@
                 <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+-->
             <object class="wxMenuItem" name="toggle_panes">
                 <label>&amp;Toggle All Panes</label>
             </object>
@@ -770,13 +776,6 @@
             <label>Detach Editor</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="ID_EDITOR_TO_RIGHT_TAB_CTRL">
-            <label>Move Editor to Right Tab Group</label>
-        </object>
-        <object class="wxMenuItem" name="ID_EDITOR_TO_LEFT_TAB_CTRL">
-            <label>Move Editor to Left Tab Group</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="open_shell_from_filepath">
             <label>Open Shell</label>
         </object>
@@ -946,10 +945,6 @@
             <label>New Virtual Folder</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="sort_item">
-            <label>Sort Item</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="remove_virtual_folder">
             <label>Remove Virtual Folder</label>
         </object>
@@ -962,7 +957,6 @@
             <label>Clear Background Colour</label>
         </object>
     </object>
-
     <!-- Workspace popup menu -->
     <object class="wxMenu" name="workspace_popup_menu">
         <object class="wxMenu" name="wxID_ANY">
@@ -1017,6 +1011,11 @@
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="hide_wv_tab">
+            <label>Hide</label>
+        </object>
+    </object>
+    <object class="wxMenu" name="outputview_view_rmenu">
+        <object class="wxMenuItem" name="hide_ov_tab">
             <label>Hide</label>
         </object>
     </object>
@@ -1108,6 +1107,8 @@
 
 
 
+    
+    
     <object class="wxMenu" name="file_explorer_menu">
         <object class="wxMenuItem" name="refresh_node">
             <label>Refresh</label>

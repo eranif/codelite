@@ -25,18 +25,27 @@
 
 #ifndef ADDFUNCTIONSIMPDLG_H
 #define ADDFUNCTIONSIMPDLG_H
-#include "wxcrafter.h"
+
+#include <wx/treebase.h>
 #include "entry.h"
+#include "wxcrafter.h"
+#include <wx/arrstr.h>
 
 class AddFunctionsImpDlg : public AddFunctionsImplBaseDlg
 {
     TagEntryPtrVector_t m_tags;
+    wxArrayString m_implArr;
+
+protected:
+    void DoCheckAll(bool checked);
+
 public:
-    AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t &tags, const wxString &targetFile);
+    AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile);
     virtual ~AddFunctionsImpDlg();
 
     wxString GetText() const;
     wxString GetFileName() const;
+
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnCheckAll(wxCommandEvent& event);

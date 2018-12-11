@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clConsoleBase.h"
+#include "cl_config.h"
 #include "editor_config.h"
 #include "editorsettingsterminal.h"
 
@@ -30,27 +32,14 @@ EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent)
     : EditorSettingsTerminalBase(parent)
     , TreeBookNode<EditorSettingsTerminal>()
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_textCtrlProgramConsoleCmd->SetValue(options->GetProgramConsoleCommand());
-    m_checkBoxUseCodeLiteTerminal->SetValue(options->HasOption(OptionsConfig::Opt_Use_CodeLite_Terminal));
+    wxArrayString terminals = clConsoleBase::GetAvailaleTerminals();
+    m_choiceTerminals->Append(terminals);
+    wxString selection = clConsoleBase::GetSelectedTerminalName();
+    if(!selection.IsEmpty()) { m_choiceTerminals->SetStringSelection(selection); }
 }
 
 void EditorSettingsTerminal::Save(OptionsConfigPtr options)
 {
-    options->SetProgramConsoleCommand(m_textCtrlProgramConsoleCmd->GetValue());
-    options->EnableOption(OptionsConfig::Opt_Use_CodeLite_Terminal, m_checkBoxUseCodeLiteTerminal->IsChecked());
-}
-
-void EditorSettingsTerminal::OnUseCodeLiteTerminalUI(wxUpdateUIEvent& event)
-{
-    event.Check(m_checkBoxUseCodeLiteTerminal->IsChecked());
-}
-
-void EditorSettingsTerminal::OnCheckboxmswwrapdoublequotesUpdateUi(wxUpdateUIEvent& event)
-{
-#ifdef __WXMSW__
-    event.Enable(true);
-#else
-    event.Enable(false);
-#endif
+    wxUnusedVar(options);
+    clConfig::Get().Write("Terminal", m_choiceTerminals->GetStringSelection());
 }

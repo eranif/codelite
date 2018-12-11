@@ -23,13 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "wxterminal.h"
+#include "ColoursAndFontsManager.h"
 #include "asyncprocess.h"
-#include <wx/filename.h>
-#include <wx/app.h>
-#include "processreaderthread.h"
+#include "clTerminalHistory.h"
+#include "codelite_events.h"
 #include "drawingutils.h"
+#include "event_notifier.h"
 #include "globals.h"
+#include "lexer_configuration.h"
+#include "processreaderthread.h"
+#include "wxterminal.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/filename.h>
 
 #define OUTPUT_BUFFER_MAX_SIZE 1024 * 1024 /* 1MB of buffer */
 
@@ -52,149 +58,92 @@
 
 #if defined(__WXGTK__)
 #ifdef __FreeBSD__
+#include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <libutil.h>
 #else
 #include <pty.h>
 #endif
 #include "unixprocess_impl.h"
 #elif defined(__WXMAC__)
-#include <util.h>
 #include "unixprocess_impl.h"
+#include <util.h>
 #endif
 
-//-------------------------------------------------------------
-BEGIN_EVENT_TABLE(wxTerminal, wxTerminalBase)
-EVT_IDLE(wxTerminal::OnIdle)
-END_EVENT_TABLE()
+wxDEFINE_EVENT(wxEVT_TERMINAL_EXECUTE_COMMAND, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_C, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_KILL_INFERIOR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_EXIT_WHEN_DONE, clCommandEvent);
+
+#define MARKER_ID 1
 
 wxTerminal::wxTerminal(wxWindow* parent)
     : wxTerminalBase(parent)
     , m_process(NULL)
     , m_exitWhenProcessDies(false)
     , m_exitOnKey(false)
-    , m_inferiorEnd(0)
 #if defined(__WXMAC__) || defined(__WXGTK__)
     , m_dummyProcess(NULL)
 #endif
     , m_interactive(false)
+    , m_history(new clTerminalHistory())
 {
-    m_defaultStyle.SetFont(m_textCtrl->GetFont());
-    m_defaultStyle.SetTextColour(DrawingUtils::GetOutputPaneFgColour());
-    m_defaultStyle.SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
+    Bind(wxEVT_IDLE, &wxTerminal::OnIdle, this);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_textCtrl);
+        m_textCtrl->MarkerSetForeground(MARKER_ID, lexer->GetProperty(0).GetFgColour());
+        m_textCtrl->MarkerSetBackground(MARKER_ID, lexer->GetProperty(0).GetBgColour());
+    }
 
-    m_textCtrl->SetForegroundColour(DrawingUtils::GetOutputPaneFgColour());
-    m_textCtrl->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
-    m_textCtrl->SetDefaultStyle(m_defaultStyle);
+    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_COPY);
+    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_CUT);
+    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnSelectAll, this, wxID_SELECTALL);
 
-    wxTheApp->Connect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
-    wxTheApp->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
-    wxTheApp->Connect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminal::OnReadProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminal::OnProcessEnd, this);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &wxTerminal::OnThemeChanged, this);
+    m_textCtrl->SetSize(wxSize(400, 300));
 }
 
 wxTerminal::~wxTerminal()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &wxTerminal::OnThemeChanged, this);
+    wxDELETE(m_history);
 #if defined(__WXMAC__) || defined(__WXGTK__)
     StopTTY();
 #endif
-
-    wxTheApp->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
-    wxTheApp->Disconnect(
-        wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(wxTerminal::OnEdit), NULL, this);
+    Unbind(wxEVT_IDLE, &wxTerminal::OnIdle, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminal::OnReadProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminal::OnProcessEnd, this);
+    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_COPY);
+    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_CUT);
+    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnSelectAll, this, wxID_SELECTALL);
 }
 
-void wxTerminal::OnText(wxCommandEvent& event) { event.Skip(); }
-
-void wxTerminal::OnEnter(wxCommandEvent& event)
+void wxTerminal::OnEnter()
 {
-    event.Skip();
     if(m_interactive) {
-        wxString lineText = m_textCtrl->GetRange(m_inferiorEnd, m_textCtrl->GetInsertionPoint());
-        lineText.Trim().Trim(false);
-        DoProcessCommand(lineText);
+        wxString lineText = GetCommandText();
+        if(lineText.IsEmpty()) { return; }
+        clCommandEvent event(wxEVT_TERMINAL_EXECUTE_COMMAND);
+        event.SetEventObject(this);
+        event.SetString(lineText);
+        // We first try the event way
+        if(!GetEventHandler()->ProcessEvent(event)) {
+            // Do the default action
+            DoProcessCommand(lineText);
+        } else {
+            m_history->Add(lineText);
+        }
     }
 }
 
-void wxTerminal::OnURL(wxTextUrlEvent& event) { event.Skip(); }
-
-void wxTerminal::OnKey(wxKeyEvent& event)
+void wxTerminal::OnUp(wxKeyEvent& event)
 {
-    // We don't want to allow much editing in the textctrl, but it's nice to let the DEL key delete the selection
-    if((event.GetKeyCode() == WXK_DELETE) && (m_textCtrl->HasSelection())) {
-        m_textCtrl->Cut(); // which is close enough for our purposes
-        return;
-    }
-
-    long curPos = m_textCtrl->GetInsertionPoint();
-    if(curPos < m_inferiorEnd) {
-        int keyCode = event.GetKeyCode();
-        // Dont allow any key down when
-        switch(keyCode) {
-        case WXK_UP:
-        case WXK_DOWN:
-        case WXK_LEFT:
-        case WXK_RIGHT:
-        case WXK_NUMPAD_UP:
-        case WXK_NUMPAD_DOWN:
-        case WXK_NUMPAD_LEFT:
-        case WXK_NUMPAD_RIGHT:
-            event.Skip();
-            break;
-
-        case WXK_RETURN:
-        case WXK_NUMPAD_ENTER:
-            event.Skip();
-            break;
-
-        default:
-            break;
-        }
-
-        return;
-    }
-
-#ifndef __WXMSW__
-    if(m_dummyProcess) {
-        switch(event.GetKeyCode()) {
-        case WXK_NUMPAD_ENTER:
-        case WXK_RETURN: {
-            // get last line and pass it to the caller
-            wxString lineText = m_textCtrl->GetRange(m_inferiorEnd, curPos);
-            lineText.Trim().Trim(false);
-            m_dummyProcess->Write(lineText);
-            break;
-        }
-        }
-    }
-#endif
-    event.Skip();
-}
-
-void wxTerminal::OnEdit(wxCommandEvent& event)
-{
-    if(wxWindow::FindFocus() != m_textCtrl) {
-        event.Skip();
-        return;
-    }
-
-    switch(event.GetId()) {
-    case wxID_COPY:
-        m_textCtrl->Copy();
-        break;
-    case wxID_CUT:
-        m_textCtrl->Cut();
-        break;
-    case wxID_SELECTALL:
-        m_textCtrl->SelectAll();
-        break;
-    default:
-        event.Skip();
-    }
+    const wxString& command = m_history->ArrowUp();
+    if(command.IsEmpty()) return;
+    InsertCommandText(command);
 }
 
 void wxTerminal::OnProcessEnd(clProcessEvent& event)
@@ -205,8 +154,7 @@ void wxTerminal::OnProcessEnd(clProcessEvent& event)
     DoFlushOutputBuffer();
 
     if(m_exitWhenProcessDies) {
-        m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->AppendText(wxString(wxT("\n")) + _("Press any key to continue..."));
+        AddTextWithEOL(_("\nPress any key to continue..."));
         m_exitOnKey = true;
     }
 }
@@ -215,28 +163,17 @@ void wxTerminal::OnReadProcessOutput(clProcessEvent& event) { m_outputBuffer << 
 
 void wxTerminal::DoCtrlC()
 {
-    if(!m_process) return;
-
-#ifdef __WXMSW__
-    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_process->GetPid());
-    if(hProcess) {
-        TerminateProcess(hProcess, 0);
-        CloseHandle(hProcess);
+    clCommandEvent event(wxEVT_TERMINAL_CTRL_C);
+    event.SetEventObject(this);
+    if(!GetEventHandler()->ProcessEvent(event) && m_process) {
+        wxKill(m_process->GetPid(), wxSIGINT, nullptr, wxKILL_CHILDREN);
     }
-#else
-    // int status(0); Commented out as 'Unused variable'
-    wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
-#endif
 }
 
 void wxTerminal::Execute(const wxString& command, bool exitWhenDone, const wxString& workingDir)
 {
     if(m_process) return;
-
-    m_textCtrl->Clear();
-
-    // restore default style
-    m_textCtrl->SetDefaultStyle(m_defaultStyle);
+    m_textCtrl->ClearAll();
     m_textCtrl->SetFocus();
 
     m_exitWhenProcessDies = exitWhenDone;
@@ -248,36 +185,50 @@ void wxTerminal::DoProcessCommand(const wxString& command)
 {
     wxString cmd(command);
     cmd.Trim().Trim(false);
+    if(cmd.IsEmpty()) return;
+    m_history->Add(cmd);
+
     wxString path;
     // Add the shell prefix
     ::WrapInShell(cmd);
     wxString cmdShell;
     cmdShell.swap(cmd);
-    
+
     // real command
-    IProcess* cmdPrc = CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, m_workingDir);
+    IProcess* cmdPrc = ::CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole, m_workingDir);
     if(cmdPrc) {
         m_process = cmdPrc;
 
     } else {
         m_process = NULL;
-        m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->AppendText(wxString::Format(
-            _("Failed to execute command: %s\nWorking Directory: %s\n"), cmdShell.c_str(), m_workingDir.c_str()));
+        AddTextWithEOL(wxString() << _("\nFailed to execute command: ") << cmdShell << _("\nWorking directory")
+                                  << m_workingDir);
 
         if(m_exitWhenProcessDies) {
-            m_textCtrl->SetInsertionPointEnd();
-            m_textCtrl->AppendText(wxString(wxT("\n")) + _("Press any key to continue..."));
+            AddTextWithEOL(_("\nPress any key to continue..."));
             m_exitOnKey = true;
         }
     }
 }
 
-void wxTerminal::KillInferior() { DoCtrlC(); }
+void wxTerminal::KillInferior()
+{
+    clCommandEvent event(wxEVT_TERMINAL_KILL_INFERIOR);
+    event.SetEventObject(this);
+    if(!GetEventHandler()->ProcessEvent(event) && m_process) {
+        wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
+    }
+}
 
 bool wxTerminal::IsRunning() { return m_process != NULL; }
 
-void wxTerminal::Clear() { m_textCtrl->Clear(); }
+void wxTerminal::Clear()
+{
+    m_textCtrl->SetReadOnly(false);
+    m_textCtrl->ClearAll();
+    m_textCtrl->SetReadOnly(true);
+    CaretToEnd();
+}
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
 wxString wxTerminal::StartTTY()
@@ -285,9 +236,7 @@ wxString wxTerminal::StartTTY()
     m_process = NULL;
     // Open the master side of a pseudo terminal
     int master = ::posix_openpt(O_RDWR | O_NOCTTY);
-    if(master < 0) {
-        return "";
-    }
+    if(master < 0) { return ""; }
 
     // Grant access to the slave pseudo terminal
     if(::grantpt(master) < 0) {
@@ -338,10 +287,129 @@ void wxTerminal::OnIdle(wxIdleEvent& event)
 void wxTerminal::DoFlushOutputBuffer()
 {
     if(!m_outputBuffer.IsEmpty()) {
-        m_textCtrl->SetInsertionPointEnd();
-        m_textCtrl->AppendText(m_outputBuffer);
-        m_textCtrl->SetSelection(m_textCtrl->GetLastPosition(), m_textCtrl->GetLastPosition());
-        m_inferiorEnd = m_textCtrl->GetLastPosition();
+        CaretToEnd();
+        if(!m_outputBuffer.EndsWith("\n")) { m_outputBuffer << "\n"; }
+        AddTextRaw(m_outputBuffer);
         m_outputBuffer.Clear();
+    }
+}
+
+void wxTerminal::OnCopy(wxCommandEvent& event)
+{
+    if(wxWindow::FindFocus() != m_textCtrl) {
+        event.Skip();
+        return;
+    }
+    if(m_textCtrl->CanCopy()) { m_textCtrl->Copy(); }
+}
+
+void wxTerminal::OnCut(wxCommandEvent& event)
+{
+    if(wxWindow::FindFocus() != m_textCtrl) {
+        event.Skip();
+        return;
+    }
+    if(m_textCtrl->CanCut()) { m_textCtrl->Cut(); }
+}
+
+void wxTerminal::OnSelectAll(wxCommandEvent& event)
+{
+    if(wxWindow::FindFocus() != m_textCtrl) {
+        event.Skip();
+        return;
+    }
+    m_textCtrl->SelectAll();
+}
+
+void wxTerminal::OnDown(wxKeyEvent& event)
+{
+    const wxString& command = m_history->ArrowDown();
+    if(command.IsEmpty()) return;
+    InsertCommandText(command);
+}
+
+void wxTerminal::OnLeft(wxKeyEvent& event)
+{
+    // Don't allow moving LEFT when at the begin of a line
+    if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) { return; }
+
+    // Right / Left movement is allowed only on the last line
+    int curline = m_textCtrl->GetCurrentLine();
+    if(curline == (m_textCtrl->GetLineCount() - 1)) { event.Skip(); }
+}
+
+void wxTerminal::OnRight(wxKeyEvent& event)
+{
+    // Right / Left movement is allowed only on the last line
+    int curline = m_textCtrl->GetCurrentLine();
+    if(curline == (m_textCtrl->GetLineCount() - 1)) { event.Skip(); }
+}
+
+void wxTerminal::InsertCommandText(const wxString& command)
+{
+    int lastLineStartPos = m_textCtrl->PositionFromLine(m_textCtrl->GetLineCount() - 1);
+    int lastLineEndPos = m_textCtrl->GetLastPosition();
+    m_textCtrl->SetSelection(lastLineStartPos, lastLineEndPos);
+    m_textCtrl->ReplaceSelection(command);
+    CaretToEnd();
+}
+
+wxString wxTerminal::GetCommandText()
+{
+    int line_before_last = m_textCtrl->GetLineCount() - 2;
+    if(line_before_last < 0) return "";
+    int lineStartPos = m_textCtrl->PositionFromLine(line_before_last);
+    int lineLen = m_textCtrl->LineLength(line_before_last);
+    wxString cmd = m_textCtrl->GetTextRange(lineStartPos, lineStartPos + lineLen);
+    cmd.Trim().Trim(false);
+    return cmd;
+}
+
+void wxTerminal::OnThemeChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_textCtrl);
+        m_textCtrl->MarkerSetForeground(MARKER_ID, lexer->GetProperty(0).GetFgColour());
+        m_textCtrl->MarkerSetBackground(MARKER_ID, lexer->GetProperty(0).GetBgColour());
+    }
+}
+
+void wxTerminal::OnCtrlC(wxKeyEvent& event)
+{
+    wxUnusedVar(event);
+    DoCtrlC();
+}
+
+void wxTerminal::AddTextWithEOL(const wxString& text)
+{
+    wxString textToAdd = text;
+    textToAdd.Trim().Trim(false);
+    if(textToAdd.IsEmpty()) { return; }
+    if(!textToAdd.EndsWith("\n")) { textToAdd << "\n"; }
+    m_textCtrl->SetReadOnly(false);
+    m_textCtrl->AppendText(textToAdd);
+    m_textCtrl->GotoPos(m_textCtrl->GetLastPosition());
+    m_textCtrl->SetReadOnly(true);
+}
+
+void wxTerminal::AddTextRaw(const wxString& text)
+{
+    m_textCtrl->SetReadOnly(false);
+    m_textCtrl->AppendText(text);
+    m_textCtrl->ScrollToEnd();
+    m_textCtrl->ClearSelections();
+    m_textCtrl->GotoPos(m_textCtrl->GetLength());
+    m_textCtrl->SetReadOnly(true);
+}
+
+void wxTerminal::OnKey(wxKeyEvent& event)
+{
+    if(m_exitOnKey) {
+        clCommandEvent event(wxEVT_TERMINAL_EXIT_WHEN_DONE);
+        GetEventHandler()->AddPendingEvent(event);
+    } else {
+        wxTerminalBase::OnKey(event);
     }
 }

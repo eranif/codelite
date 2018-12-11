@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="DatabaseExplorer">
+<CodeLite_Project Name="DatabaseExplorer" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00050001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0013Win_x64_Debug000000000000]]>
@@ -27,6 +27,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="DbExplorerFrame.cpp"/>
+    <File Name="DbExplorerFrame.h"/>
     <File Name="wx_pch.cpp"/>
     <File Name="ViewSettings.cpp"/>
     <File Name="view.cpp"/>
@@ -138,8 +140,8 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="DebugUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags --debug=yes --unicode=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="DebugUnicode" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags  --unicode=yes)" C_Options="-g;$(shell wx-config --cxxflags  --unicode=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
@@ -151,7 +153,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes">
+      <Linker Options="$(shell wx-config  --libs --unicode=yes);" Required="yes">
         <LibraryPath Value="../../CodeLite_dev/lib"/>
         <Library Value="libpluginud.dll"/>
         <Library Value="libcodeliteud.dll"/>
@@ -192,7 +194,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="ReleaseUnicode" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="ReleaseUnicode" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" C_Options="$(shell wx-config --cxxflags --debug=no --unicode=yes); -O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../CodeLite_dev/Interfaces"/>
@@ -205,7 +207,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
         <LibraryPath Value="../../CodeLite_dev/lib"/>
         <Library Value="libpluginu.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -248,7 +250,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x86_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Wall;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
@@ -261,7 +263,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -305,7 +307,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes );-Winvalid-pch" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
@@ -316,7 +318,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs std,stc --unicode=yes);" Required="yes">
+      <Linker Options="$(shell wx-config  --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -372,7 +374,7 @@
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="DBL_USE_SQLITE"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);-s" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

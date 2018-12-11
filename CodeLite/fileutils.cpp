@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "clConsoleBase.h"
+#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "file_logger.h"
@@ -33,11 +35,13 @@
 #include <map>
 #include <wx/ffile.h>
 #include <wx/log.h>
+#if wxUSE_GUI
 #include <wx/msgdlg.h>
+#endif
 #include <wx/strconv.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
-
+#include <string.h> // strerror
 #ifdef __WXGTK__
 #include <signal.h>
 #include <sys/wait.h>
@@ -64,114 +68,13 @@ void FileUtils::OpenFileExplorer(const wxString& path)
     }
 }
 
-#ifdef __WXGTK__
-struct TerminalCookie {
-    size_t idx = 0;
-    bool IsOk(const std::vector<std::pair<wxString, wxString> >& terminals) const { return (idx < terminals.size()); }
-};
-
-static wxString GTKGetTerminal(const wxString& command, TerminalCookie& cookie)
+void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command, bool pause_when_exit)
 {
-    static std::vector<std::pair<wxString, wxString> > Terminals;
-    if(Terminals.empty()) {
-        // Try to locate gnome-terminal
-        if(wxFileName::FileExists("/usr/bin/lxterminal")) {
-            wxString cmd = "lxterminal";
-            wxString titlePattern = "-e \"$COMMAND\"";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/konsole")) {
-            wxString cmd = "konsole -p font=\"Monospace,12\"";
-            wxString titlePattern = "-e $COMMAND";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/gnome-terminal")) {
-            wxString cmd = "/usr/bin/gnome-terminal";
-            wxString titlePattern = "-e \"$COMMAND\"";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/xterm")) {
-            wxString cmd = "xterm";
-            wxString titlePattern = "-e \"$COMMAND\"";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-
-        if(wxFileName::FileExists("/usr/bin/uxterm")) {
-            wxString cmd = "uxterm";
-            wxString titlePattern = "-e \"$COMMAND\"";
-            Terminals.push_back({ cmd, titlePattern });
-        }
-    }
-    if(!cookie.IsOk(Terminals)) { return ""; }
-    wxString cmd = Terminals[cookie.idx].first;
-    wxString extra = Terminals[cookie.idx].second;
-    ++cookie.idx;
-    if(!command.IsEmpty()) {
-        extra.Replace("$COMMAND", command);
-        return cmd + " " + extra;
-    } else {
-        return cmd;
-    }
-}
-
-static void GTKOpenTerminal(const wxString& command, const wxString& path)
-{
-    DirSaver ds;
-    if(!path.IsEmpty() && wxDirExists(path)) { ::wxSetWorkingDirectory(path); }
-
-    TerminalCookie cookie;
-    while(true) {
-        wxString cmd = GTKGetTerminal(command, cookie);
-        if(cmd.IsEmpty()) { return; }
-        clDEBUG() << "Trying terminal" << cmd;
-        long PID = ::wxExecute(cmd);
-        if(PID != wxNOT_FOUND) {
-            // Successful launch
-            wxThread::Sleep(150);
-            // Check that the process is actually running
-            if(::kill(PID, 0) == 0) {
-                clDEBUG() << "Launched terminal (PID=" << PID << "):" << cmd;
-                break;
-            } else {
-                // The process terminated
-                clDEBUG() << "Failed to launch terminal:" << cmd;
-            }
-        }
-        // Try another terminal
-    }
-}
-
-#endif
-
-void FileUtils::OpenTerminal(const wxString& path)
-{
-    wxString strPath = path;
-    if(strPath.Contains(" ")) { strPath.Prepend("\"").Append("\""); }
-
-    wxString cmd;
-#ifdef __WXMSW__
-    cmd << "cmd";
-    DirSaver ds;
-    ::wxSetWorkingDirectory(path);
-
-#elif defined(__WXGTK__)
-    GTKOpenTerminal("", path);
-    return;
-
-#elif defined(__WXMAC__)
-    strPath = path;
-    if(strPath.Contains(" ")) { strPath.Prepend("\\\"").Append("\\\""); }
-    // osascript -e 'tell app "Terminal" to do script "echo hello"'
-    cmd << "osascript -e 'tell app \"Terminal\" to do script \"cd " << strPath << "\"'";
-    CL_DEBUG(cmd);
-    ::system(cmd.mb_str(wxConvUTF8).data());
-    return;
-#endif
-    if(cmd.IsEmpty()) return;
-    ::wxExecute(cmd);
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetCommand(user_command, "");
+    console->SetWorkingDirectory(path);
+    console->SetWaitWhenDone(pause_when_exit);
+    console->Start();
 }
 
 bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
@@ -186,12 +89,45 @@ bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)
 {
     wxString filename = fn.GetFullPath();
-    wxFFile file(filename, wxT("rb"));
-    if(file.IsOpened() == false) {
+    data.clear();
+    const char* cfile = filename.mb_str(wxConvUTF8).data();
+    FILE* fp = fopen(cfile, "rb");
+    if(!fp) {
         // Nothing to be done
+        clERROR() << "Failed to open file:" << fn << "." << strerror(errno);
         return false;
     }
-    return file.ReadAll(&data, conv);
+
+    // Get the file size
+    fseek(fp, 0, SEEK_END);
+    long fsize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    // Allocate buffer for the read
+    char* buffer = (char*)malloc(fsize + 1);
+    long bytes_read = fread(buffer, 1, fsize, fp);
+    if(bytes_read != fsize) {
+        // failed to read
+        clERROR() << "Failed to read file content:" << fn << "." << strerror(errno);
+        fclose(fp);
+        free(buffer);
+        return false;
+    }
+    buffer[fsize] = 0;
+
+    // Close the handle
+    fclose(fp);
+
+    // Convert it into wxString
+    data = wxString(buffer, conv, fsize);
+    if(data.IsEmpty() && fsize != 0) {
+        // Conversion failed
+        data = wxString::From8BitData(buffer, fsize);
+    }
+
+    // Release the C-buffer allocated earlier
+    free(buffer);
+    return true;
 }
 
 void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
@@ -207,19 +143,27 @@ void FileUtils::OpenFileExplorerAndSelect(const wxFileName& filename)
 #endif
 }
 
-void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid)
+void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty,
+                                                 long& pid)
 {
     tty.Clear();
     wxString command;
     wxString tmpfile;
-    wxString escapedPath = path;
-    if(escapedPath.Contains(" ")) { escapedPath.Prepend("\"").Append("\""); }
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
-    command << "osascript -e 'tell app \"Terminal\" to do script \"tty > " << tmpfile << " && clear && sleep 12345\"'";
-    CL_DEBUG("Executing: %s", command);
+    wxFileName helperScript("/tmp", "codelite-lldb-helper.sh");
+    wxString fileContent;
+    fileContent << "#!/bin/bash\n";
+    fileContent << "tty > " << tmpfile << "\n";
+    fileContent << "sleep 12345";
+    FileUtils::WriteFileContent(helperScript, fileContent);
+    int rc = system("chmod +x /tmp/codelite-lldb-helper.sh");
+    wxUnusedVar(rc);
+    
+    command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh" ;
+    clDEBUG() << "Executing: " << command;
     long res = ::wxExecute(command);
     if(res == 0) {
-        CL_WARNING("Failed to execute command:\n%s", command);
+        clWARNING() << "Failed to execute command:" << command;
         return;
     }
 
@@ -242,14 +186,14 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         wxString psCommand;
         psCommand << "ps -A -o ppid,command";
         wxString psOutput = ProcUtils::SafeExecuteCommand(psCommand);
-        CL_DEBUG("PS output:\n%s\n", psOutput);
+        clDEBUG() << "ps command output:\n" << psOutput;
         wxArrayString lines = ::wxStringTokenize(psOutput, "\n", wxTOKEN_STRTOK);
         for(size_t u = 0; u < lines.GetCount(); ++u) {
             wxString l = lines.Item(u);
             l.Trim().Trim(false);
             if(l.Contains("sleep") && l.Contains("12345")) {
                 // we got a match
-                CL_DEBUG("Got a match!");
+                clDEBUG() << "Got a match!";
                 wxString ppidString = l.BeforeFirst(' ');
                 ppidString.ToCLong(&pid);
                 break;
@@ -257,43 +201,24 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString&
         }
         break;
     }
-    CL_DEBUG("PID is: %d\n", (int)pid);
-    CL_DEBUG("TTY is: %s\n", tty);
+    clDEBUG() << "PID is:" << pid;
+    clDEBUG() << "TTY is:" << tty;
 }
 
 void FileUtils::OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
                                 int port)
 {
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    wxString args;
 #ifdef __WXMSW__
-    wxString command;
-    wxFileName putty(sshClient);
-    if(!putty.Exists()) {
-        wxMessageBox(_("Can't launch PuTTY. Don't know where it is ...."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
-        return;
-    }
-
-    wxString puttyClient = putty.GetFullPath();
-    if(puttyClient.Contains(" ")) { puttyClient.Prepend("\"").Append("\""); }
-
-    if(password.IsEmpty()) {
-        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << "\"";
-    } else {
-        command << "cmd /C \"" << puttyClient << " -P " << port << " " << connectString << " -pw " << password << "\"";
-    }
-    ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_HIDE_CONSOLE);
-
-#elif defined(__WXGTK__)
-    // Linux, we can't pass the password in the command line
-    wxString command;
-    command << sshClient << " -p " << port << " " << connectString;
-    GTKOpenTerminal(command, "");
+    args << "-P " << port << " " << connectString;
+    if(!password.IsEmpty()) { args << " -pw " << password; }
+    console->SetExecExtraFlags(wxEXEC_HIDE_CONSOLE);
 #else
-    // OSX
-    wxString command;
-    command << "osascript -e 'tell app \"Terminal\" to do script \"" << sshClient << " " << connectString << " -p "
-            << port << "\"'";
-    ::wxExecute(command);
+    args << "-p " << port << " " << connectString;
 #endif
+    console->SetCommand(sshClient, args);
+    console->Start();
 }
 
 static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wxArrayString& excludeMask)
@@ -487,9 +412,15 @@ time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
 
 size_t FileUtils::GetFileSize(const wxFileName& filename)
 {
-    wxFFile fp(filename.GetFullPath(), "rb");
-    if(fp.IsOpened()) { return fp.Length(); }
-    return 0;
+    struct stat b;
+    wxString file_name = filename.GetFullPath();
+    const char* cfile = file_name.mb_str(wxConvUTF8).data();
+    if(::stat(cfile, &b) == 0) {
+        return b.st_size;
+    } else {
+        clERROR() << "Failed to open file:" << file_name << "." << strerror(errno);
+        return 0;
+    }
 }
 
 wxString FileUtils::EscapeString(const wxString& str)
@@ -519,7 +450,7 @@ wxString FileUtils::NormaliseName(const wxString& name)
     if(!initialised) {
         memset(invalidChars, 0, sizeof(invalidChars));
         std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(',
-                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.' };
+                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
         for(size_t i = 0; i < V.size(); ++i) {
             invalidChars[V[i]] = 1;
         }
@@ -579,4 +510,69 @@ bool FileUtils::RemoveFile(const wxString& filename, const wxString& context)
     clDEBUG1() << "Deleting file:" << filename << "(" << context << ")";
     wxLogNull NOLOG;
     return ::wxRemoveFile(filename);
+}
+
+unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
+{
+#define SURROGATE_LEAD_FIRST 0xD800
+#define SURROGATE_TRAIL_FIRST 0xDC00
+#define SURROGATE_TRAIL_LAST 0xDFFF
+    unsigned int len = 0;
+    for(unsigned int i = 0; i < tlen && uptr[i];) {
+        unsigned int uch = uptr[i];
+        if(uch < 0x80) {
+            len++;
+        } else if(uch < 0x800) {
+            len += 2;
+        } else if((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
+            len += 4;
+            i++;
+        } else {
+            len += 3;
+        }
+        i++;
+    }
+#undef SURROGATE_LEAD_FIRST
+#undef SURROGATE_TRAIL_FIRST
+#undef SURROGATE_TRAIL_LAST
+    return len;
+}
+
+// This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
+wxString FileUtils::RealPath(const wxString& filepath)
+{
+#if defined(__WXGTK__)
+    if(!filepath.empty()) {
+        char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
+        if(buf != NULL) {
+            wxString result(buf, wxConvUTF8);
+            free(buf);
+            return result;
+        }
+    }
+#endif
+
+    return filepath;
+}
+
+void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit)
+{
+    wxString title(user_command);
+
+    wxFileName fnCodeliteTerminal(clStandardPaths::Get().GetExecutablePath());
+    fnCodeliteTerminal.SetFullName("codelite-terminal");
+
+    wxString newCommand;
+    newCommand << fnCodeliteTerminal.GetFullPath() << " --exit ";
+    if(pause_when_exit) { newCommand << " --wait "; }
+    if(wxDirExists(wd)) {
+        wxString workingDirectory = wd;
+        workingDirectory.Trim().Trim(false);
+        if(workingDirectory.Contains(" ") && !workingDirectory.StartsWith("\"")) {
+            workingDirectory.Prepend("\"").Append("\"");
+        }
+        newCommand << " --working-directory " << wd;
+    }
+    newCommand << " --cmd " << title;
+    ::wxExecute(newCommand, wxEXEC_ASYNC);
 }

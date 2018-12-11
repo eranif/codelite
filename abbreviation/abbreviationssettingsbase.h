@@ -32,30 +32,30 @@
 #ifndef CODELITE_ABBREVIATION_ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
 #define CODELITE_ABBREVIATION_ABBREVIATIONSSETTINGSBASE_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include <map>
+#include <wx/artprov.h>
+#include <wx/aui/auibar.h>
+#include <wx/bannerwindow.h>
+#include <wx/button.h>
+#include <wx/checkbox.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/bannerwindow.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/listbox.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/stc/stc.h>
-#include <wx/checkbox.h>
+#include <wx/menu.h>
+#include <wx/pen.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/statline.h>
-#include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
+#include <wx/toolbar.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -68,6 +68,7 @@ public:
         ID_TOOL_IMPORT = 1003,
         ID_TOOL_NEW = 1004,
     };
+
 protected:
     wxBannerWindow* m_banner4;
     wxAuiToolBar* m_auibar9;
@@ -104,7 +105,10 @@ public:
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxCheckBox* GetCheckBoxImmediateInsert() { return m_checkBoxImmediateInsert; }
     wxStaticLine* GetStaticline1() { return m_staticline1; }
-    AbbreviationsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Abbreviations Settings..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AbbreviationsSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("Abbreviations Settings..."),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AbbreviationsSettingsBase();
 };
 

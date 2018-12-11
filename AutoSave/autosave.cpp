@@ -40,12 +40,7 @@ AutoSave::AutoSave(IManager* manager)
 
 AutoSave::~AutoSave() {}
 
-clToolBar* AutoSave::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void AutoSave::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu)
 {

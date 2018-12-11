@@ -11,8 +11,8 @@ PHPConfigurationData::PHPConfigurationData()
     , m_xdebugPort(9000)
     , m_xdebugIdeKey("codeliteide")
     , m_xdebugHost("127.0.0.1")
-    , m_findInFilesMask(
-          "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sql")
+    , m_findInFilesMask("*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*."
+                        "sql;.gitignore")
     , m_workspaceType(0)
     , m_settersGettersFlags(kSG_None)
 {
@@ -34,9 +34,7 @@ void PHPConfigurationData::FromJSON(const JSONElement& json)
 
     // xdebug IDE can not be an empty string, or else debugging in command line
     // will not work
-    if(m_xdebugIdeKey.IsEmpty()) {
-        m_xdebugIdeKey = "codeliteide";
-    }
+    if(m_xdebugIdeKey.IsEmpty()) { m_xdebugIdeKey = "codeliteide"; }
     m_ccIncludePath = json.namedObject("m_ccIncludePath").toArrayString();
 }
 
@@ -60,9 +58,7 @@ wxString PHPConfigurationData::GetIncludePathsAsString() const
     for(size_t i = 0; i < GetIncludePaths().GetCount(); i++) {
         str << GetIncludePaths().Item(i) << wxT("\n");
     }
-    if(str.IsEmpty() == false) {
-        str.RemoveLast();
-    }
+    if(str.IsEmpty() == false) { str.RemoveLast(); }
     return str;
 }
 
@@ -72,9 +68,7 @@ wxString PHPConfigurationData::GetCCIncludePathsAsString() const
     for(size_t i = 0; i < m_ccIncludePath.GetCount(); i++) {
         str << m_ccIncludePath.Item(i) << wxT("\n");
     }
-    if(str.IsEmpty() == false) {
-        str.RemoveLast();
-    }
+    if(str.IsEmpty() == false) { str.RemoveLast(); }
     return str;
 }
 

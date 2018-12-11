@@ -113,8 +113,8 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="CMake_Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="CMake_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/Plugin"/>
@@ -122,7 +122,7 @@
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes --static=no --universal=no );" Required="yes">
+      <Linker Options="$(shell wx-config  --libs --unicode=yes --static=no --universal=no );" Required="yes">
         <LibraryPath Value="$(CL_HOME)/lib/gcc_lib"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -164,7 +164,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  );-Wall" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  );-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/Plugin"/>
@@ -172,7 +172,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=yes --libs --unicode=yes --static=no --universal=no );" Required="yes">
+      <Linker Options="$(shell wx-config  --libs --unicode=yes --static=no --universal=no );" Required="yes">
         <LibraryPath Value="$(CL_HOME)/lib/gcc_lib"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -212,14 +212,14 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes )" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  )" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no  )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
         <IncludePath Value="$(CL_HOME)/Plugin"/>
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --unicode=yes  --debug=yes )" Required="yes">
+      <Linker Options="$(shell wx-config --libs --unicode=yes   )" Required="yes">
         <LibraryPath Value="$(CL_HOME)/lib/"/>
         <Library Value="libcodeliteud.so"/>
         <Library Value="libwxsqlite3ud.so"/>
@@ -266,7 +266,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <IncludePath Value="$(CL_HOME)/Plugin"/>
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --debug=no --libs --unicode=yes --static=no --universal=no )" Required="yes">
+      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes --static=no --universal=no )" Required="yes">
         <LibraryPath Value="$(CL_HOME)/lib/gcc_lib"/>
         <Library Value="libCodeLiteu.a"/>
         <Library Value="libwxsqlite3u.a"/>
@@ -307,7 +307,7 @@ PATH=../../../lib/gcc_lib;$(WXWIN)/lib/gcc_dll;$(PATH)]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=no )" C_Options="-g;;$(shell wx-config --cxxflags --unicode=yes --static=no --universal=no --debug=no )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="$(CL_HOME)/CodeLite"/>
         <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>

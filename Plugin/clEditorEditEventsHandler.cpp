@@ -9,6 +9,7 @@ clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd)
     : m_stc(wnd)
     , m_textCtrl(nullptr)
     , m_combo(nullptr)
+    , m_noUnbind(false)
 {
     DoInitialize();
 }
@@ -17,6 +18,7 @@ clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd)
     : m_stc(nullptr)
     , m_textCtrl(wnd)
     , m_combo(nullptr)
+    , m_noUnbind(false)
 {
     DoInitialize();
 }
@@ -25,13 +27,14 @@ clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd)
     : m_stc(nullptr)
     , m_textCtrl(nullptr)
     , m_combo(wnd)
+    , m_noUnbind(false)
 {
     DoInitialize();
 }
 
 clEditEventsHandler::~clEditEventsHandler()
 {
-    if(m_stc || m_textCtrl || m_combo) {
+    if(!m_noUnbind && (m_stc || m_textCtrl || m_combo)) {
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
         EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);

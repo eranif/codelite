@@ -134,6 +134,7 @@ public:
     ThreadListPanel* GetThreadsView() { return m_threads; }
     MemoryView* GetMemoryView() { return m_memory; }
     DebuggerAsciiViewer* GetAsciiViewer() { return m_asciiViewer; }
+    DebuggerDisassemblyTab* GetDisassemblyTab() { return m_disassemble; }
     DebugTab* GetDebugWindow() { return m_outputDebug; }
 
     Notebook* GetNotebook() { return m_book; }

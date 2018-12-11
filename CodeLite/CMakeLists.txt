@@ -51,11 +51,13 @@ endif()
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
                     "${CL_SRC_ROOT}/sdk/codelite_indexer/network" 
-                    "${CL_SRC_ROOT}/CodeLite" 
+                    "${CL_SRC_ROOT}/sdk/websocketpp" 
+                    "${CL_SRC_ROOT}/sdk/asio-1.12.1" 
+                    "${CL_SRC_ROOT}/CodeLite"
                     "${CL_SRC_ROOT}/PCH"
                     "${CL_SRC_ROOT}/Interfaces")
 
-set( ADDITIONAL_LIBRARIES "" )
+set(ADDITIONAL_LIBRARIES "")
 
 if (UNIX)
     if ( IS_FREEBSD )
@@ -73,6 +75,7 @@ endif (UNIX)
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_CL)
 endif(WIN32)
+add_definitions(-DwxUSE_GUI=1)
 
 if ( USE_PCH )
     add_definitions(-include "${CL_PCH_FILE}")
@@ -108,7 +111,8 @@ if (UNIX AND NOT APPLE )
                          ${SQLITE3_LIBRARY}
                          wxsqlite3 
                          ${LIBSSH_LIB} 
-                         ${ADDITIONAL_LIBRARIES})
+                         ${ADDITIONAL_LIBRARIES}
+                         ${LIBUCHARDET_LIB})
 else (UNIX AND NOT APPLE)
     target_link_libraries(libcodelite 
                           ${LINKER_OPTIONS} 
@@ -118,7 +122,8 @@ else (UNIX AND NOT APPLE)
                           wxsqlite3 
                           ${LIBSSH_LIB} 
                           ${ADDITIONAL_LIBRARIES} 
-                          -lz -lcrypto)
+                          ${LIBUCHARDET_LIB}
+                          -lz /usr/lib/libcrypto.dylib)
 endif ( UNIX AND NOT APPLE )
 
 if (NOT MINGW)

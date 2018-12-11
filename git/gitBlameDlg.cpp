@@ -10,6 +10,7 @@
 #include "processreaderthread.h"
 #include <wx/dcmemory.h>
 #include <wx/bitmap.h>
+#include "GitDiffOutputParser.h"
 
 #define TEXT_MARGIN_ID 0
 #define LINENUMBER_MARGIN_ID 1
@@ -20,9 +21,7 @@
 size_t FindAuthorLine(wxArrayString& blameArr, size_t n, wxString* author) // Helper function
 {
     for(; n < blameArr.GetCount(); ++n) {
-        if(blameArr.Item(n).StartsWith("author ", author)) {
-            break;
-        }
+        if(blameArr.Item(n).StartsWith("author ", author)) { break; }
     }
     return n; // which will now index either the next 'author ' field, or the end of the array
 }
@@ -46,15 +45,14 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t&
 
     // OK, we've found the author field. The hash should be the previous field
     hash = blameArr.Item(n - 1);
-    wxCHECK_MSG(hash.Len() > 39, arr,
+    wxCHECK_MSG(
+        hash.Len() > 39, arr,
         "What should have been the 'commit-hash' field is too short"); // Something went seriously wrong, or the output
                                                                        // is very strange. Skip.
     hash = ' ' + hash.Left(8);
 
     for(size_t c = n + 1; c < blameArr.GetCount(); ++c) {
-        if(blameArr.Item(c).StartsWith("author-time ", &dtstring)) {
-            break;
-        }
+        if(blameArr.Item(c).StartsWith("author-time ", &dtstring)) { break; }
         if(blameArr.Item(c).StartsWith("author ")) {
             break; // Abort as we've overrun into the next blame line!
         }
@@ -63,9 +61,7 @@ wxArrayString ParseBlame(wxStyledTextCtrl* stc, wxArrayString& blameArr, size_t&
         long datetime;
         if(dtstring.ToLong(&datetime)) {
             wxDateTime dt((time_t)datetime);
-            if(dt.IsValid()) {
-                date = dt.Format("%d-%m-%Y ");
-            }
+            if(dt.IsValid()) { date = dt.Format("%d-%m-%Y "); }
         }
     }
 
@@ -99,9 +95,7 @@ void StoreExtraArgs(wxComboBox* m_comboExtraArgs, const wxString extraArgs) // H
         if(pos == 0) {
             return; // It's already the first item in the list
         }
-        if(pos != wxNOT_FOUND) {
-            m_comboExtraArgs->Delete(pos);
-        }
+        if(pos != wxNOT_FOUND) { m_comboExtraArgs->Delete(pos); }
         m_comboExtraArgs->Insert(extraArgs, 0);
     }
 }
@@ -122,19 +116,18 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 
     m_showParentCommit = data.GetGitBlameShowParentCommit();
     m_showLogControls = data.GetGitBlameShowLogControls();
-    
+
     m_sashPositionMain = data.GetGitBlameDlgMainSashPos();
     m_sashPositionV = data.GetGitBlameDlgVSashPos();
-    m_sashPositionH = data.GetGitBlameDlgHSashPos();;
-    
-    if (m_splitterMain->IsSplit()) {
+    m_sashPositionH = data.GetGitBlameDlgHSashPos();
+    ;
+
+    if(m_splitterMain->IsSplit()) {
         m_splitterMain->SetSashPosition(m_sashPositionMain);
         m_splitterH->SetSashPosition(m_sashPositionH);
         m_splitterV->SetSashPosition(m_sashPositionV);
-        if (!m_showLogControls) {
-            m_splitterMain->Unsplit();
-        }
-    } else if (m_showLogControls && !m_splitterMain->IsSplit()) {
+        if(!m_showLogControls) { m_splitterMain->Unsplit(); }
+    } else if(m_showLogControls && !m_splitterMain->IsSplit()) {
         m_splitterMain->SplitHorizontally(m_splitterPageBottom, m_splitterPageBottom, m_sashPositionMain);
         m_splitterH->SetSashPosition(m_sashPositionH);
         m_splitterV->SetSashPosition(m_sashPositionV);
@@ -142,11 +135,11 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 
     m_gitPath = data.GetGITExecutablePath();
     m_gitPath.Trim().Trim(false);
-    
+
     m_gitPath = data.GetGITExecutablePath();
 
     m_comboExtraArgs->Clear(); // Remove the placeholder string (there to make the control wider)
-    
+
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitBlameDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitBlameDlg::OnProcessTerminated, this);
 }
@@ -154,12 +147,12 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 GitBlameDlg::~GitBlameDlg()
 {
     m_editEventsHandler.Reset(NULL);
-    
+
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
 
-    if (m_showLogControls && m_splitterMain->IsSplit()) {
+    if(m_showLogControls && m_splitterMain->IsSplit()) {
         data.SetGitBlameDlgMainSashPos(m_splitterMain->GetSashPosition());
         data.SetGitBlameDlgHSashPos(m_splitterH->GetSashPosition());
         data.SetGitBlameDlgVSashPos(m_splitterV->GetSashPosition());
@@ -168,10 +161,10 @@ GitBlameDlg::~GitBlameDlg()
         data.SetGitBlameDlgHSashPos(m_sashPositionH);
         data.SetGitBlameDlgVSashPos(m_sashPositionV);
     }
-    
+
     data.SetGitBlameShowParentCommit(m_showParentCommit);
     data.SetGitBlameShowLogControls(m_showLogControls);
-    
+
     conf.WriteItem(&data);
 }
 
@@ -191,9 +184,7 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
 {
     wxString filename = args;
     size_t where = args.Find(" -- ");
-    if(where != wxNOT_FOUND) {
-        filename = args.Mid(where + 4);
-    }
+    if(where != wxNOT_FOUND) { filename = args.Mid(where + 4); }
     filename.Trim().Trim(false);
 
     clDEBUG() << "GitBlame is called for file:" << filename << clEndl;
@@ -201,26 +192,22 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
 
     // Set blame editor style and fonts
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(wxFileName(filename).GetFullName());
-    if(!lexer) {
-        lexer = ColoursAndFontsManager::Get().GetLexer("default");
-    }
+    if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("default"); }
     lexer->Apply(m_stcBlame, true);
 
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
-    if(lex) {
-        lex->Apply(m_stcDiff, true);
-    }
+    if(lex) { lex->Apply(m_stcDiff, true); }
 
     LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
     textLex->Apply(m_stcCommitMessage, true);
-    
+
     m_stcBlame->SetMarginType(TEXT_MARGIN_ID, wxSTC_MARGIN_RTEXT);
     // The text margin needs to be 24 chars wide for the date & hash, the max author-width, plus 2 spaces between
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     memDC.SetFont(m_stcBlame->StyleGetFont(0));
     int charWidth = memDC.GetTextExtent("W").x;
-    
+
     m_stcBlame->SetMarginWidth(TEXT_MARGIN_ID, marginwidth * charWidth);
     m_stcBlame->SetMarginSensitive(TEXT_MARGIN_ID, true);
 
@@ -258,9 +245,7 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
     m_commitStore.LoadChoice(m_choiceHistory);
     if(!blameCommit.empty()) {
         for(size_t n = 0; n < m_choiceHistory->GetCount(); ++n) {
-            if(m_choiceHistory->GetString(n).Left(8) == blameCommit.Left(8)) {
-                m_choiceHistory->SetSelection(n);
-            }
+            if(m_choiceHistory->GetString(n).Left(8) == blameCommit.Left(8)) { m_choiceHistory->SetSelection(n); }
         }
     }
 
@@ -270,10 +255,8 @@ void GitBlameDlg::SetBlame(const wxString& blame, const wxString& args)
             m_plugin->OnGitBlameRevList("--parents ", filepath); // Find each commit's parent(s)
         }
     }
-    
-    if (!blameCommit.Left(8).empty()) {
-        UpdateLogControls(blameCommit.Left(8));
-    }
+
+    if(!blameCommit.Left(8).empty()) { UpdateLogControls(blameCommit.Left(8)); }
 }
 
 void GitBlameDlg::OnRevListOutput(const wxString& output, const wxString& Arguments)
@@ -288,10 +271,8 @@ void GitBlameDlg::OnRevListOutput(const wxString& output, const wxString& Argume
         wxString head = revlistOutput.Item(0).BeforeFirst(' '); // Add HEAD
         m_commitStore.AddCommit(head.Left(8) + " (HEAD)");
         m_commitStore.LoadChoice(m_choiceHistory);
-                
-        if (m_stcCommitMessage->IsEmpty()) {
-            UpdateLogControls(head.Left(8));
-        }
+
+        if(m_stcCommitMessage->IsEmpty()) { UpdateLogControls(head.Left(8)); }
     }
 }
 
@@ -378,7 +359,7 @@ void GitBlameDlg::GetNewCommitBlame(const wxString& commit)
 
         args << " -- " << filepath;
         m_plugin->DoGitBlame(args);
-        
+
         ClearLogControls();
     }
 }
@@ -387,12 +368,12 @@ void GitBlameDlg::ClearLogControls()
 {
     m_stcCommitMessage->SetEditable(true);
     m_stcDiff->SetEditable(true);
-    
+
     m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
     m_diffMap.clear();
     m_stcDiff->ClearAll();
-    
+
     m_stcCommitMessage->SetEditable(false);
     m_stcDiff->SetEditable(false);
 }
@@ -410,13 +391,13 @@ void GitBlameDlg::OnSettings(wxCommandEvent& event)
         data.SetGitBlameShowParentCommit(m_showParentCommit);
         data.SetGitBlameShowLogControls(m_showLogControls);
         conf.WriteItem(&data);
-        
-        if (m_splitterMain->IsSplit() && !m_showLogControls) {
+
+        if(m_splitterMain->IsSplit() && !m_showLogControls) {
             m_sashPositionMain = m_splitterMain->GetSashPosition();
             m_sashPositionH = m_splitterH->GetSashPosition();
             m_sashPositionV = m_splitterV->GetSashPosition();
             m_splitterMain->Unsplit();
-        } else if (m_showLogControls && !m_splitterMain->IsSplit()) {
+        } else if(m_showLogControls && !m_splitterMain->IsSplit()) {
             m_splitterMain->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, m_sashPositionMain);
             m_splitterH->SetSashPosition(m_sashPositionH);
             m_splitterV->SetSashPosition(m_sashPositionV);
@@ -451,34 +432,11 @@ void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
     m_fileListBox->Clear();
     m_diffMap.clear();
     m_stcDiff->ClearAll();
-
-
     m_commandOutput.Replace(wxT("\r"), wxT(""));
-    wxArrayString diffList = wxStringTokenize(m_commandOutput, wxT("\n"));
 
+    GitDiffOutputParser diff_parser;
+    diff_parser.GetDiffMap(m_commandOutput, m_diffMap);
 
-    bool foundFirstDiff = false;
-    unsigned index = 0;
-    wxString currentFile;
-    while(index < diffList.GetCount()) {
-
-        wxString line = diffList[index];
-        if(line.StartsWith(wxT("diff"))) {
-            line.Replace(wxT("diff --git a/"), wxT(""));
-            currentFile = line.Left(line.Find(wxT(" ")));
-            foundFirstDiff = true;
-
-        } else if(line.StartsWith(wxT("Binary"))) {
-            m_diffMap[currentFile] = wxT("Binary diff");
-
-        } else if(!foundFirstDiff) {
-            m_stcCommitMessage->AppendText(line + wxT("\n"));
-
-        } else {
-            m_diffMap[currentFile].Append(line + wxT("\n"));
-        }
-        ++index;
-    }
     for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
     }
@@ -498,9 +456,8 @@ void GitBlameDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Appen
 
 void GitBlameDlg::UpdateLogControls(const wxString& commit)
 {
-    if (!commit.empty()) {
+    if(!commit.empty()) {
         wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath, commit);
         m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
     }
 }
-

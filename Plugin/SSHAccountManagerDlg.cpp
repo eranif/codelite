@@ -27,8 +27,9 @@
 #if USE_SFTP
 
 #include "AddSSHAcountDlg.h"
-#include "ssh_account_info.h"
+#include "globals.h"
 #include "sftp_settings.h"
+#include "ssh_account_info.h"
 #include "windowattrmanager.h"
 #include <wx/msgdlg.h>
 
@@ -49,14 +50,13 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
 
 SSHAccountManagerDlg::~SSHAccountManagerDlg()
 {
-    for(int i = 0; i < m_dvListCtrlAccounts->GetItemCount(); ++i) {
-        wxDataViewItem item = m_dvListCtrlAccounts->RowToItem(i);
-        SSHAccountInfo* pAccount = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(item));
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        SSHAccountInfo* pAccount = (SSHAccountInfo*)(m_dvListCtrl->GetItemData(item));
         delete pAccount;
-        m_dvListCtrlAccounts->SetItemData(item, (wxUIntPtr)NULL);
+        m_dvListCtrl->SetItemData(item, (wxUIntPtr)NULL);
     }
-    m_dvListCtrlAccounts->DeleteAllItems();
-    
+    m_dvListCtrl->DeleteAllItems();
 }
 
 void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
@@ -72,29 +72,26 @@ void SSHAccountManagerDlg::OnAddAccount(wxCommandEvent& event)
 void SSHAccountManagerDlg::OnDeleteAccount(wxCommandEvent& event)
 {
     wxDataViewItemArray sels;
-    m_dvListCtrlAccounts->GetSelections(sels);
+    m_dvListCtrl->GetSelections(sels);
 
-    if(::wxMessageBox(_("Are you sure you want to delete the selected accounts?"),
-                      "SFTP",
+    if(::wxMessageBox(_("Are you sure you want to delete the selected accounts?"), "SFTP",
                       wxYES_NO | wxCENTER | wxCANCEL | wxICON_QUESTION | wxNO_DEFAULT) != wxYES) {
         return;
     }
 
     for(size_t i = 0; i < sels.GetCount(); ++i) {
         wxDataViewItem item = sels.Item(i);
-        m_dvListCtrlAccounts->DeleteItem(m_dvListCtrlAccounts->ItemToRow(item));
+        m_dvListCtrl->DeleteItem(m_dvListCtrl->ItemToRow(item));
     }
 
-    m_dvListCtrlAccounts->Refresh();
+    m_dvListCtrl->Refresh();
 }
 
 void SSHAccountManagerDlg::OnEditAccount(wxCommandEvent& event)
 {
     wxDataViewItemArray sels;
-    m_dvListCtrlAccounts->GetSelections(sels);
-    if(sels.GetCount() == 1) {
-        DoEditAccount(sels.Item(0));
-    }
+    m_dvListCtrl->GetSelections(sels);
+    if(sels.GetCount() == 1) { DoEditAccount(sels.Item(0)); }
 }
 
 void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
@@ -103,47 +100,43 @@ void SSHAccountManagerDlg::DoAddAccount(const SSHAccountInfo& account)
     cols.push_back(account.GetAccountName());
     cols.push_back(account.GetHost());
     cols.push_back(account.GetUsername());
-    m_dvListCtrlAccounts->AppendItem(cols, (wxUIntPtr)(new SSHAccountInfo(account)));
+    m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new SSHAccountInfo(account)));
 }
 
 SSHAccountInfo::Vect_t SSHAccountManagerDlg::GetAccounts() const
 {
     SSHAccountInfo::Vect_t accounts;
-    for(int i = 0; i < m_dvListCtrlAccounts->GetItemCount(); ++i) {
-        accounts.push_back(*(SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(m_dvListCtrlAccounts->RowToItem(i))));
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        accounts.push_back(*(SSHAccountInfo*)(m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i))));
     }
     return accounts;
 }
 
 void SSHAccountManagerDlg::OnDeleteAccountUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
+    event.Enable(m_dvListCtrl->GetSelectedItemsCount());
 }
 
-void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event) 
+void SSHAccountManagerDlg::OnEditAccountUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_dvListCtrlAccounts->GetSelectedItemsCount());
+    event.Enable(m_dvListCtrl->GetSelectedItemsCount());
 }
 
-void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event)
-{
-    DoEditAccount(event.GetItem());
-}
+void SSHAccountManagerDlg::OnItemActivated(wxDataViewEvent& event) { DoEditAccount(event.GetItem()); }
 
 void SSHAccountManagerDlg::DoEditAccount(const wxDataViewItem& item)
 {
-    SSHAccountInfo* account = (SSHAccountInfo*)(m_dvListCtrlAccounts->GetItemData(item));
+    SSHAccountInfo* account = (SSHAccountInfo*)(m_dvListCtrl->GetItemData(item));
     if(account) {
         AddSSHAcountDlg dlg(this, *account);
         if(dlg.ShowModal() == wxID_OK) {
             // update the user info
             dlg.GetAccountInfo(*account);
-
             // update the UI
-            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetAccountName(), item, 0);
-            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetHost(), item, 1);
-            m_dvListCtrlAccounts->GetStore()->SetValue(account->GetUsername(), item, 2);
-            m_dvListCtrlAccounts->Refresh();
+            m_dvListCtrl->SetItemText(item, account->GetAccountName(), 0);
+            m_dvListCtrl->SetItemText(item, account->GetHost(), 1);
+            m_dvListCtrl->SetItemText(item, account->GetUsername(), 2);
+            m_dvListCtrl->Refresh();
         }
     }
 }

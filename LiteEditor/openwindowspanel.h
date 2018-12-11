@@ -25,25 +25,27 @@
 #ifndef __openwindowspanel__
 #define __openwindowspanel__
 
-#include "openwindowspanelbase.h"
-#include "theme_handler_helper.h"
-#include "bitmap_loader.h"
 #include "Notebook.h"
-#include <map>
+#include "bitmap_loader.h"
 #include "cl_command_event.h"
 #include "imanager.h"
+#include "openwindowspanelbase.h"
+#include "theme_handler_helper.h"
+#include <map>
 
+class clToolBar;
 class IEditor;
 class OpenWindowsPanel : public OpenWindowsPanelBase
 {
     wxString m_caption;
-    BitmapLoader::BitmapMap_t m_bitmaps;
     IManager* m_mgr;
     bool m_initDone;
     std::map<wxString, wxDataViewItem> m_editors;
     bool m_workspaceClosing;
     bool m_workspaceOpened;
-    
+    clToolBar* m_toolbar;
+
+protected:
     wxString GetEditorPath(wxDataViewItem item);
     bool IsEditor(wxDataViewItem item) const;
     void DoSaveItem(wxDataViewItem item);
@@ -57,13 +59,13 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     void PopulateView();
     void DoMarkModify(const wxString& filename, bool b);
     wxVariant PrepareValue(const clTab& tab);
-    
+
 protected:
     virtual void OnMenu(wxDataViewEvent& event);
     virtual void OnTabActivated(wxDataViewEvent& event);
     virtual void OnTabSelected(wxDataViewEvent& event);
-    void OnInitDone(wxCommandEvent &event);
-    
+    void OnInitDone(wxCommandEvent& event);
+
     // Handlers for OpenWindowsPanelBase events.
     void OnSortItems(wxCommandEvent& event);
     void OnSortItemsUpdateUI(wxUpdateUIEvent& event);
@@ -75,11 +77,11 @@ protected:
 
     void OnCloseSelectedFiles(wxCommandEvent& e);
     void OnSaveSelectedFiles(wxCommandEvent& e);
-    void OnIdle(wxIdleEvent &event);
-    void OnEditorModified(clCommandEvent &event);
-    void OnEditorSaved(clCommandEvent &event);
-    void OnWorkspaceClosed(wxCommandEvent &event);
-    void OnWorkspaceClosing(wxCommandEvent &event);
+    void OnIdle(wxIdleEvent& event);
+    void OnEditorModified(clCommandEvent& event);
+    void OnEditorSaved(clCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosing(wxCommandEvent& event);
 
     DECLARE_EVENT_TABLE()
 

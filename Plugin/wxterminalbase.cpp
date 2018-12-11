@@ -30,36 +30,109 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
+#include "lexer_configuration.h"
 #include "wxterminalbase.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-wxTerminalBase::wxTerminalBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : wxPanel( parent, id, pos, size, style )
+#define MARKER_ID 1
+
+wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
 {
-	wxBoxSizer* mainSizer;
-	mainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* mainSizer;
+    mainSizer = new wxBoxSizer(wxVERTICAL);
 
-	m_textCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_AUTO_URL|wxTE_MULTILINE|wxTE_PROCESS_ENTER|wxTE_PROCESS_TAB|wxTE_RICH2 );
-	m_textCtrl->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 76, 90, 90, false, wxEmptyString ) );
+    m_textCtrl = new wxStyledTextCtrl(this);
+    m_textCtrl->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrl->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrl->SetMarginWidth(2, 4);
+    m_textCtrl->SetMarginSensitive(2, true);
+    m_textCtrl->MarkerDefine(MARKER_ID, wxSTC_MARK_ARROWS);
+    m_textCtrl->MarkerAdd(0, MARKER_ID);
 
-	mainSizer->Add( m_textCtrl, 4, wxEXPAND, 5 );
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_textCtrl); }
+    mainSizer->Add(m_textCtrl, 1, wxEXPAND, 0);
+    this->SetSizer(mainSizer);
+    this->Layout();
+    mainSizer->Fit(this);
 
-	this->SetSizer( mainSizer );
-	this->Layout();
-	mainSizer->Fit( this );
-
-	// Connect Events
-	m_textCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( wxTerminalBase::OnKey ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( wxTerminalBase::OnText ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( wxTerminalBase::OnEnter ), NULL, this );
-	m_textCtrl->Connect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( wxTerminalBase::OnURL ), NULL, this );
+    // Connect Events
+    m_textCtrl->Bind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
+    m_textCtrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalBase::OnCharAdded, this);
+    m_textCtrl->Bind(wxEVT_LEFT_UP, [&](wxMouseEvent& event) {
+        if(m_textCtrl->GetSelectedText().IsEmpty()) { this->CallAfter(&wxTerminalBase::CaretToEnd); }
+        event.Skip();
+    });
+    m_textCtrl->SetReadOnly(true);
 }
 
 wxTerminalBase::~wxTerminalBase()
 {
-	// Disconnect Events
-	m_textCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( wxTerminalBase::OnKey ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( wxTerminalBase::OnText ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( wxTerminalBase::OnEnter ), NULL, this );
-	m_textCtrl->Disconnect( wxEVT_COMMAND_TEXT_URL, wxTextUrlEventHandler( wxTerminalBase::OnURL ), NULL, this );
+    m_textCtrl->Unbind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
+    m_textCtrl->Unbind(wxEVT_STC_CHARADDED, &wxTerminalBase::OnCharAdded, this);
+}
+
+void wxTerminalBase::OnKey(wxKeyEvent& event)
+{
+    bool isLastLine = (m_textCtrl->LineFromPosition(m_textCtrl->GetCurrentPos()) == (m_textCtrl->GetLineCount() - 1));
+    m_textCtrl->SetReadOnly(!isLastLine);
+    switch(event.GetKeyCode()) {
+    case WXK_BACK: {
+        if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
+            return;
+        } else {
+            event.Skip();
+        }
+        break;
+    }
+    case WXK_DOWN:
+        OnDown(event);
+        break;
+    case WXK_UP:
+        OnUp(event);
+        break;
+    case WXK_RIGHT:
+        OnRight(event);
+        break;
+    case WXK_LEFT:
+        OnLeft(event);
+        break;
+    case 'C':
+    case 'c':
+        if(event.GetModifiers() == wxMOD_RAW_CONTROL) {
+            OnCtrlC(event);
+        } else {
+            event.Skip();
+        }
+        break;
+    default:
+        event.Skip();
+    }
+}
+
+void wxTerminalBase::OnCharAdded(wxStyledTextEvent& event)
+{
+    event.Skip();
+    if(event.GetKey() == '\n') {
+        AddMarker();
+        OnEnter();
+    }
+}
+
+void wxTerminalBase::AddMarker()
+{
+    int lastLine = m_textCtrl->LineFromPosition(m_textCtrl->GetLastPosition());
+    // m_textCtrl->MarkerDeleteAll(MARKER_ID);
+    m_textCtrl->MarkerAdd(lastLine, MARKER_ID);
+}
+
+void wxTerminalBase::CaretToEnd()
+{
+    m_textCtrl->ScrollToEnd();
+    m_textCtrl->ClearSelections();
+    m_textCtrl->GotoPos(m_textCtrl->GetLength());
+    AddMarker();
 }

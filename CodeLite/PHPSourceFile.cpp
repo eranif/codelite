@@ -11,6 +11,7 @@
 #include "PHPEntityFunctionAlias.h"
 #include <unordered_set>
 #include "PHPLookupTable.h"
+#include "fileutils.h"
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \
@@ -42,22 +43,15 @@ PHPSourceFile::PHPSourceFile(const wxFileName& filename, PHPLookupTable* lookup)
 {
     // Filename is kept in absolute path
     m_filename.MakeAbsolute();
-
+    
     wxString content;
-    wxFFile fp(filename.GetFullPath(), "rb");
-    if(fp.IsOpened()) {
-        fp.ReadAll(&content, wxConvISO8859_1);
-        fp.Close();
-    }
-    m_text.swap(content);
+    if(FileUtils::ReadFileContent(filename, content, wxConvISO8859_1)) { m_text.swap(content); }
     m_scanner = ::phpLexerNew(m_text, kPhpLexerOpt_ReturnComments);
 }
 
 PHPSourceFile::~PHPSourceFile()
 {
-    if(m_scanner) {
-        ::phpLexerDestroy(&m_scanner);
-    }
+    if(m_scanner) { ::phpLexerDestroy(&m_scanner); }
 }
 
 bool PHPSourceFile::IsInPHPSection(const wxString& buffer)
@@ -91,9 +85,7 @@ void PHPSourceFile::Parse(int exitDepth)
             break;
         case '}':
             m_lookBackTokens.clear();
-            if(m_depth == retDepth) {
-                return;
-            }
+            if(m_depth == retDepth) { return; }
             break;
         case ';':
             m_lookBackTokens.clear();
@@ -147,9 +139,7 @@ void PHPSourceFile::Parse(int exitDepth)
                     if(t.type == '=') {
                         // assignment
                         wxString expr;
-                        if(!ReadExpression(expr)) {
-                            return;
-                        }
+                        if(!ReadExpression(expr)) { return; }
 
                         // Optimize 'new ClassName(..)' expression
                         if(expr.StartsWith("new")) {
@@ -263,17 +253,13 @@ void PHPSourceFile::OnUse()
                 // use \Zend\Mvc\Controll\Action;
                 // For simplicitiy, we change it to fully qualified path
                 // so parsing is easier
-                if(!fullname.StartsWith("\\")) {
-                    fullname.Prepend("\\");
-                }
+                if(!fullname.StartsWith("\\")) { fullname.Prepend("\\"); }
                 m_aliases.insert(std::make_pair(alias, MakeIdentifierAbsolute(fullname)));
             }
             temp.clear();
             fullname.clear();
             alias.clear();
-            if(token.type == ';') {
-                cont = false;
-            }
+            if(token.type == ';') { cont = false; }
         } break;
         case kPHP_T_AS: {
             fullname.swap(temp);
@@ -292,15 +278,11 @@ void PHPSourceFile::OnNamespace()
     wxString path;
     phpLexerToken token;
     while(NextToken(token)) {
-        if(token.type == ';') {
-            break;
-        }
+        if(token.type == ';') { break; }
 
         // Make sure that the namespace path is alway set in absolute path
         // i.e. starts with kPHP_T_NS_SEPARATOR
-        if(path.IsEmpty() && token.type != kPHP_T_NS_SEPARATOR) {
-            path << "\\";
-        }
+        if(path.IsEmpty() && token.type != kPHP_T_NS_SEPARATOR) { path << "\\"; }
         path << token.Text();
     }
 
@@ -320,16 +302,12 @@ void PHPSourceFile::OnFunction()
 {
     // read the next token
     phpLexerToken token;
-    if(!NextToken(token)) {
-        return;
-    }
+    if(!NextToken(token)) { return; }
 
     bool funcReturnRef = false;
     if(token.type == '&') {
         funcReturnRef = true;
-        if(!NextToken(token)) {
-            return;
-        }
+        if(!NextToken(token)) { return; }
     }
 
     PHPEntityFunction* func(NULL);
@@ -349,9 +327,7 @@ void PHPSourceFile::OnFunction()
 
     if(!func) return;
     PHPEntityBase::Ptr_t funcPtr(func);
-    if(funcReturnRef) {
-        funcPtr->SetFlag(kFunc_ReturnReference);
-    }
+    if(funcReturnRef) { funcPtr->SetFlag(kFunc_ReturnReference); }
 
     // add the function to the current scope
     CurrentScope()->AddChild(funcPtr);
@@ -408,9 +384,7 @@ void PHPSourceFile::OnFunction()
     }
 
     // Remove the current function from the scope list
-    if(!m_reachedEOF) {
-        m_scopes.pop_back();
-    }
+    if(!m_reachedEOF) { m_scopes.pop_back(); }
     m_lookBackTokens.clear();
 }
 
@@ -498,9 +472,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             break;
         case '(':
             depth++;
-            if(collectingDefaultValue) {
-                defaultValue << "(";
-            }
+            if(collectingDefaultValue) { defaultValue << "("; }
             break;
         case ')':
             depth--;
@@ -537,9 +509,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
                 var = new PHPEntityVariable();
                 UngetToken(token);
                 typeHint = ReadType();
-                if(!typeHint.IsEmpty()) {
-                    break;
-                }
+                if(!typeHint.IsEmpty()) { break; }
             }
         // all "else" cases simply fall into the default case
         default:
@@ -571,9 +541,7 @@ bool PHPSourceFile::ReadUntilFound(int delim, phpLexerToken& token)
 {
     // loop until we find the open brace
     while(NextToken(token)) {
-        if(token.type == delim) {
-            return true;
-        }
+        if(token.type == delim) { return true; }
     }
     return false;
 }
@@ -585,9 +553,7 @@ void PHPSourceFile::ConsumeFunctionBody()
     while(NextToken(token)) {
         switch(token.type) {
         case '}':
-            if(m_depth < depth) {
-                return;
-            }
+            if(m_depth < depth) { return; }
             break;
         default:
             break;
@@ -610,9 +576,7 @@ void PHPSourceFile::ParseFunctionBody()
             break;
         case '}':
             m_lookBackTokens.clear();
-            if(m_depth == exitDepth) {
-                return;
-            }
+            if(m_depth == exitDepth) { return; }
             break;
         case ';':
             m_lookBackTokens.clear();
@@ -660,9 +624,7 @@ wxString PHPSourceFile::ReadType()
 
 PHPEntityBase::Ptr_t PHPSourceFile::Namespace()
 {
-    if(m_scopes.empty()) {
-        return CurrentScope();
-    }
+    if(m_scopes.empty()) { return CurrentScope(); }
     return *m_scopes.begin();
 }
 
@@ -729,9 +691,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
 {
     wxString classDoc;
     const phpLexerToken& prevToken = GetPreviousToken();
-    if(!prevToken.IsNull() && prevToken.IsDocComment()) {
-        classDoc = prevToken.Text();
-    }
+    if(!prevToken.IsNull() && prevToken.IsDocComment()) { classDoc = prevToken.Text(); }
 
     // A "complex" example: class A extends BaseClass implements C, D {}
     bool isAbstractClass = LookBackTokensContains(kPHP_T_ABSTRACT);
@@ -782,9 +742,7 @@ void PHPSourceFile::OnClass(const phpLexerToken& tok)
             CurrentScope()->AddChild(klass);
             m_scopes.push_back(klass);
             Parse(m_depth - 1);
-            if(!m_reachedEOF) {
-                m_scopes.pop_back();
-            }
+            if(!m_reachedEOF) { m_scopes.pop_back(); }
             return;
         }
         default:
@@ -800,18 +758,14 @@ bool PHPSourceFile::ReadCommaSeparatedIdentifiers(int delim, wxArrayString& list
     while(NextToken(token)) {
         if(token.IsAnyComment()) continue;
         if(token.type == delim) {
-            if(!temp.IsEmpty() && list.Index(temp) == wxNOT_FOUND) {
-                list.Add(MakeIdentifierAbsolute(temp));
-            }
+            if(!temp.IsEmpty() && list.Index(temp) == wxNOT_FOUND) { list.Add(MakeIdentifierAbsolute(temp)); }
             UngetToken(token);
             return true;
         }
 
         switch(token.type) {
         case ',':
-            if(list.Index(temp) == wxNOT_FOUND) {
-                list.Add(MakeIdentifierAbsolute(temp));
-            }
+            if(list.Index(temp) == wxNOT_FOUND) { list.Add(MakeIdentifierAbsolute(temp)); }
             temp.clear();
             break;
         default:
@@ -826,9 +780,7 @@ bool PHPSourceFile::ConsumeUntil(int delim)
 {
     phpLexerToken token;
     while(NextToken(token)) {
-        if(token.type == delim) {
-            return true;
-        }
+        if(token.type == delim) { return true; }
     }
     return false;
 }
@@ -868,19 +820,13 @@ bool PHPSourceFile::ReadExpression(wxString& expression)
             break;
         case ')':
             depth--;
-            if(depth == 0) {
-                expression << ")";
-            }
+            if(depth == 0) { expression << ")"; }
             break;
         case kPHP_T_NEW:
-            if(depth == 0) {
-                expression << token.Text() << " ";
-            }
+            if(depth == 0) { expression << token.Text() << " "; }
             break;
         default:
-            if(depth == 0) {
-                expression << token.Text();
-            }
+            if(depth == 0) { expression << token.Text(); }
             break;
         }
     }
@@ -973,9 +919,7 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
     var->SetFullName(tok.Text());
     var->SetFilename(m_filename.GetFullPath());
     var->SetLine(tok.lineNumber);
-    if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
-        CurrentScope()->AddChild(var);
-    }
+    if(!CurrentScope()->FindChild(var->GetFullName(), true)) { CurrentScope()->AddChild(var); }
 
     if(!ReadVariableInitialization(var)) {
         m_lookBackTokens.clear();
@@ -986,9 +930,7 @@ void PHPSourceFile::OnVariable(const phpLexerToken& tok)
 bool PHPSourceFile::ReadVariableInitialization(PHPEntityBase::Ptr_t var)
 {
     phpLexerToken token;
-    if(!NextToken(token)) {
-        return false;
-    }
+    if(!NextToken(token)) { return false; }
 
     if(token.type != '=') {
         // restore the token
@@ -1054,9 +996,7 @@ void PHPSourceFile::OnDefine(const phpLexerToken& tok)
         PHPEntityBase::Ptr_t var(new PHPEntityVariable());
 
         // Convert the variable into fullpath + relative name
-        if(!varName.StartsWith("\\")) {
-            varName.Prepend("\\");
-        }
+        if(!varName.StartsWith("\\")) { varName.Prepend("\\"); }
         wxString shortName = varName.AfterLast('\\');
         var->SetFullName(varName);
         var->SetShortName(shortName);
@@ -1084,9 +1024,7 @@ void PHPSourceFile::OnUseTrait()
     while(NextToken(token)) {
         switch(token.type) {
         case ',': {
-            if(!tempname.IsEmpty()) {
-                identifiers.Add(MakeIdentifierAbsolute(tempname));
-            }
+            if(!tempname.IsEmpty()) { identifiers.Add(MakeIdentifierAbsolute(tempname)); }
             tempname.clear();
         } break;
         case '{': {
@@ -1102,9 +1040,7 @@ void PHPSourceFile::OnUseTrait()
             return;
         } break;
         case ';': {
-            if(!tempname.IsEmpty()) {
-                identifiers.Add(MakeIdentifierAbsolute(tempname));
-            }
+            if(!tempname.IsEmpty()) { identifiers.Add(MakeIdentifierAbsolute(tempname)); }
             tempname.clear();
 
             // add the traits as list of 'extends'
@@ -1149,9 +1085,7 @@ void PHPSourceFile::OnCatch()
         var->Cast<PHPEntityVariable>()->SetTypeHint(MakeIdentifierAbsolute(typehint));
 
         // add the variable to the current scope
-        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
-            CurrentScope()->AddChild(var);
-        }
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) { CurrentScope()->AddChild(var); }
     }
 }
 
@@ -1185,9 +1119,7 @@ void PHPSourceFile::ReadImplements(wxArrayString& impls)
             // More to come
             if(!type.IsEmpty()) {
                 wxString fullyQualifiedType = MakeIdentifierAbsolute(type);
-                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) {
-                    impls.Add(fullyQualifiedType);
-                }
+                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) { impls.Add(fullyQualifiedType); }
                 type.clear();
             }
             break;
@@ -1195,9 +1127,7 @@ void PHPSourceFile::ReadImplements(wxArrayString& impls)
             // unexpected token
             if(!type.IsEmpty()) {
                 wxString fullyQualifiedType = MakeIdentifierAbsolute(type);
-                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) {
-                    impls.Add(fullyQualifiedType);
-                }
+                if(impls.Index(fullyQualifiedType) == wxNOT_FOUND) { impls.Add(fullyQualifiedType); }
                 type.clear();
             }
             UngetToken(token);
@@ -1231,16 +1161,12 @@ void PHPSourceFile::OnForEach()
         var->SetFullName(token.Text());
         var->SetFilename(m_filename.GetFullPath());
         var->SetLine(token.lineNumber);
-        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
-            CurrentScope()->AddChild(var);
-        }
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) { CurrentScope()->AddChild(var); }
     }
     // Check to see if we are using the syntax of:
     // foreach (array_expression as $key => $value)
     if(peekToken.type == kPHP_T_DOUBLE_ARROW) {
-        if(!NextToken(token) || token.type != kPHP_T_VARIABLE) {
-            return;
-        }
+        if(!NextToken(token) || token.type != kPHP_T_VARIABLE) { return; }
 
         // Add the value as well
         // Create a new variable
@@ -1249,9 +1175,7 @@ void PHPSourceFile::OnForEach()
         var->SetFilename(m_filename.GetFullPath());
         var->SetLine(token.lineNumber);
 
-        if(!CurrentScope()->FindChild(var->GetFullName(), true)) {
-            CurrentScope()->AddChild(var);
-        }
+        if(!CurrentScope()->FindChild(var->GetFullName(), true)) { CurrentScope()->AddChild(var); }
 
     } else {
         UngetToken(peekToken);
@@ -1291,9 +1215,7 @@ void PHPSourceFile::ParseUseTraitsBody()
                 // use \Zend\Mvc\Controll\Action;
                 // For simplicitiy, we change it to fully qualified path
                 // so parsing is easier
-                if(!fullname.StartsWith("\\")) {
-                    fullname.Prepend("\\");
-                }
+                if(!fullname.StartsWith("\\")) { fullname.Prepend("\\"); }
                 PHPEntityBase::Ptr_t funcAlias(new PHPEntityFunctionAlias());
                 funcAlias->Cast<PHPEntityFunctionAlias>()->SetRealname(MakeIdentifierAbsolute(fullname));
                 funcAlias->Cast<PHPEntityFunctionAlias>()->SetScope(CurrentScope()->GetFullName());
@@ -1425,9 +1347,7 @@ wxString PHPSourceFile::ReadFunctionReturnValueFromSignature()
 wxString PHPSourceFile::PrependCurrentScope(const wxString& className)
 {
     wxString currentScope = Namespace()->GetFullName();
-    if(!currentScope.EndsWith("\\")) {
-        currentScope << "\\";
-    }
+    if(!currentScope.EndsWith("\\")) { currentScope << "\\"; }
     return currentScope + className;
 }
 
@@ -1435,9 +1355,7 @@ wxString PHPSourceFile::MakeTypehintAbsolute(const wxString& type) { return DoMa
 
 wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exactMatch)
 {
-    if(m_converter) {
-        return m_converter->MakeIdentifierAbsolute(type);
-    }
+    if(m_converter) { return m_converter->MakeIdentifierAbsolute(type); }
 
     static std::unordered_set<std::string> phpKeywords;
     if(phpKeywords.empty()) {
@@ -1463,9 +1381,7 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
     if(typeWithNS.IsEmpty()) return "";
 
     // A fully qualified type? don't touch it
-    if(typeWithNS.StartsWith("\\")) {
-        return typeWithNS;
-    }
+    if(typeWithNS.StartsWith("\\")) { return typeWithNS; }
 
     // Handle 'use' cases:
     // use Zend\Form; // create an alias entry: Form => Zend\Form
@@ -1479,22 +1395,16 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
             typeWithNS << m_aliases.find(scopePart)->second << "\\" << className;
             // Remove duplicate NS separators
             typeWithNS.Replace("\\\\", "\\");
-            if(!typeWithNS.StartsWith("\\")) {
-                typeWithNS << "\\";
-            }
+            if(!typeWithNS.StartsWith("\\")) { typeWithNS << "\\"; }
             return typeWithNS;
         }
     }
 
     // Use the alias table first
-    if(m_aliases.find(type) != m_aliases.end()) {
-        return m_aliases.find(type)->second;
-    }
+    if(m_aliases.find(type) != m_aliases.end()) { return m_aliases.find(type)->second; }
 
     wxString ns = Namespace()->GetFullName();
-    if(!ns.EndsWith("\\")) {
-        ns << "\\";
-    }
+    if(!ns.EndsWith("\\")) { ns << "\\"; }
 
     if(exactMatch && m_lookup && !typeWithNS.Contains("\\") && !m_lookup->ClassExists(ns + typeWithNS)) {
         // Only when "exactMatch" apply this logic, otherwise, we might be getting a partialy typed string

@@ -1,27 +1,24 @@
-#include "helpplugin.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/stc/stc.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <wx/uri.h>
-#include <wx/xrc/xmlres.h>
-#include "fileextmanager.h"
-#include "clKeyboardManager.h"
-#include <wx/msgdlg.h>
 #include "HelpPluginMessageDlg.h"
-#include "fileutils.h"
 #include "HelpPluginSettings.h"
 #include "HelpPluginSettingsDlg.h"
+#include "clKeyboardManager.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "helpplugin.h"
+#include <wx/msgdlg.h>
+#include <wx/stc/stc.h>
+#include <wx/uri.h>
+#include <wx/xrc/xmlres.h>
 
 static HelpPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new HelpPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new HelpPlugin(manager); }
     return thePlugin;
 }
 
@@ -50,12 +47,7 @@ HelpPlugin::HelpPlugin(IManager* manager)
 
 HelpPlugin::~HelpPlugin() {}
 
-clToolBar* HelpPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void HelpPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void HelpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -87,12 +79,8 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 
     // Ensure we only use 15 chars of the selected text, otherwise the menu label
     // will overflow
-    if(modSelection.length() > 15) {
-        modSelection = modSelection.Mid(0, 15);
-    }
-    if(selection.Contains("\n")) {
-        modSelection << "...";
-    }
+    if(modSelection.length() > 15) { modSelection = modSelection.Mid(0, 15); }
+    if(selection.Contains("\n")) { modSelection << "..."; }
 
     // Get the context menu
     wxMenu* menu = event.GetMenu();

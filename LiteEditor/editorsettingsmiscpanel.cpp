@@ -23,18 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_config.h"
+#include "ctags_manager.h"
 #include "editorsettingsmiscpanel.h"
-#include "generalinfo.h"
+#include "file_logger.h"
 #include "frame.h"
+#include "generalinfo.h"
+#include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "file_logger.h"
 #include "wx/wxprec.h"
-#include <wx/intl.h>
 #include <wx/fontmap.h>
-#include "ctags_manager.h"
-#include "globals.h"
-#include "cl_config.h"
+#include <wx/intl.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -53,26 +53,12 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
         m_toolbarIconSize->SetSelection(1);
     }
 
-    if(options->GetOptions() & OptionsConfig::Opt_IconSet_FreshFarm)
-        m_choiceIconSet->SetSelection(1);
-
-    else if(options->GetOptions() & OptionsConfig::Opt_IconSet_Classic_Dark)
-        m_choiceIconSet->SetSelection(2);
-
-    else
-        m_choiceIconSet->SetSelection(0); // Default
-
-    m_checkBoxEnableMSWTheme->SetValue(options->GetMswTheme());
-    m_useSingleToolbar->SetValue(!PluginManager::Get()->AllowToolbar());
-
     m_oldSetLocale = options->GetUseLocale();
     m_SetLocale->SetValue(m_oldSetLocale);
     m_oldpreferredLocale = options->GetPreferredLocale();
     // Load the available locales and feed them to the wxchoice
     int select = FindAvailableLocales();
-    if(select != wxNOT_FOUND) {
-        m_AvailableLocales->SetSelection(select);
-    }
+    if(select != wxNOT_FOUND) { m_AvailableLocales->SetSelection(select); }
 
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -84,9 +70,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
             continue;
         }
         astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-        if(fontEnc == options->GetFileFontEncoding()) {
-            iCurrSelId = i;
-        }
+        if(fontEnc == options->GetFileFontEncoding()) { iCurrSelId = i; }
     }
 
     m_fileEncoding->Append(astrEncodings);
@@ -105,15 +89,13 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_statusbarShowPos->SetValue(clConfig::Get().Read(kConfigStatusbarShowPosition, false));
     m_statusbarShowFileLength->SetValue(clConfig::Get().Read(kConfigStatusbarShowLength, false));
     m_statusBarShowSelChars->SetValue(clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true));
-
-    bool showSplash = info.GetFlags() & CL_SHOW_SPLASH ? true : false;
-    m_showSplashScreen->SetValue(showSplash);
-    m_oldMswUseTheme = m_checkBoxEnableMSWTheme->IsChecked();
+    m_textCtrlSeparation->ChangeValue(::wxIntToString(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30)));
 
     m_redirectLogOutput->SetValue(clConfig::Get().Read(kConfigRedirectLogOutput, true));
     m_checkBoxPromptReleaseOnly->SetValue(clConfig::Get().Read("PromptForNewReleaseOnly", false));
 
     GetWebSearchPrefix()->ChangeValue(options->GetWebSearchPrefix());
+    m_checkBoxDirect2D->SetValue(clConfig::Get().Read("Editor/UseDirect2D", true));
 }
 
 void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
@@ -124,20 +106,6 @@ void EditorSettingsMiscPanel::OnClearButtonClick(wxCommandEvent&)
 
 void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
 {
-
-    if(m_showSplashScreen->IsChecked()) {
-        clMainFrame::Get()->SetFrameFlag(true, CL_SHOW_SPLASH);
-    } else {
-        clMainFrame::Get()->SetFrameFlag(false, CL_SHOW_SPLASH);
-    }
-
-    // Set the theme support.
-    // This option requires a restart of codelite
-    options->SetMswTheme(m_checkBoxEnableMSWTheme->IsChecked());
-    if(m_oldMswUseTheme != m_checkBoxEnableMSWTheme->IsChecked()) {
-        m_restartRequired = true;
-    }
-
     clConfig::Get().Write(kConfigSingleInstance, m_singleAppInstance->IsChecked());
     clConfig::Get().Write(kConfigCheckForNewVersion, m_versionCheckOnStartup->IsChecked());
     clConfig::Get().Write(kConfigMaxItemsInFindReplaceDialog, ::wxStringToInt(m_maxItemsFindReplace->GetValue(), 15));
@@ -149,22 +117,16 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     clConfig::Get().Write(kConfigStatusbarShowPosition, m_statusbarShowPos->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowLength, m_statusbarShowFileLength->IsChecked());
     clConfig::Get().Write(kConfigStatusbarShowSelectedChars, m_statusBarShowSelChars->IsChecked());
-
-    bool oldUseSingleToolbar = !PluginManager::Get()->AllowToolbar();
-    EditorConfigST::Get()->SetInteger(wxT("UseSingleToolbar"), m_useSingleToolbar->IsChecked() ? 1 : 0);
+    clConfig::Get().Write(kConfigToolbarGroupSpacing, ::wxStringToInt(m_textCtrlSeparation->GetValue(), 30));
 
     // check to see of the icon size was modified
     int oldIconSize(24);
 
     OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
-    if(oldOptions) {
-        oldIconSize = oldOptions->GetIconsSize();
-    }
+    if(oldOptions) { oldIconSize = oldOptions->GetIconsSize(); }
 
     int iconSize(24);
-    if(m_toolbarIconSize->GetSelection() == 0) {
-        iconSize = 16;
-    }
+    if(m_toolbarIconSize->GetSelection() == 0) { iconSize = 16; }
     options->SetIconsSize(iconSize);
 
     bool setlocale = m_SetLocale->IsChecked();
@@ -173,15 +135,13 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     // I don't think we should check if newLocaleString is empty; that's still useful information
     newLocaleString = newLocaleString.BeforeFirst(wxT(':')); // Store it as "fr_FR", not "fr_FR: French"
     options->SetPreferredLocale(newLocaleString);
-    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) {
-        m_restartRequired = true;
-    }
+    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) { m_restartRequired = true; }
 
     // save file font encoding
     options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
     TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
 
-    if(oldIconSize != iconSize || oldUseSingleToolbar != m_useSingleToolbar->IsChecked()) {
+    if(oldIconSize != iconSize) {
         EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 0);
         // notify the user
         m_restartRequired = true;
@@ -190,45 +150,20 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     }
 
     size_t flags = options->GetOptions();
-    size_t oldFlags = oldOptions->GetOptions();
-
-    // Keep the old icon-set flags, this is done for deciding whether we should
-    // prompt the user for possible restart
-    size_t oldIconFlags(0);
-    size_t newIconFlags(0);
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_FreshFarm) oldIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-
-    if(oldFlags & OptionsConfig::Opt_IconSet_Classic_Dark) oldIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    if(oldIconFlags == 0) oldIconFlags = OptionsConfig::Opt_IconSet_Classic;
 
     // Clear old settings
     flags &= ~(OptionsConfig::Opt_IconSet_Classic);
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
-
-    if(m_choiceIconSet->GetSelection() == 0) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic;
-        flags |= OptionsConfig::Opt_IconSet_Classic;
-
-    } else if(m_choiceIconSet->GetSelection() == 2) {
-        newIconFlags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-        flags |= OptionsConfig::Opt_IconSet_Classic_Dark;
-
-    } else { // 1
-        newIconFlags |= OptionsConfig::Opt_IconSet_FreshFarm;
-        flags |= OptionsConfig::Opt_IconSet_FreshFarm;
-    }
-
+    flags |= OptionsConfig::Opt_IconSet_Classic;
+    
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
-    m_restartRequired = ((oldIconFlags != newIconFlags) || m_restartRequired);
-
     options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
+    bool useDirect2D_Old = clConfig::Get().Read("Editor/UseDirect2D", true);
+    clConfig::Get().Write("Editor/UseDirect2D", m_checkBoxDirect2D->IsChecked());
+    m_restartRequired = (useDirect2D_Old != m_checkBoxDirect2D->IsChecked());
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
@@ -239,10 +174,7 @@ void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
     e.Enable(!a1.IsEmpty() && !a2.IsEmpty());
 }
 
-void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event)
-{
-    event.Enable(false);
-}
+void EditorSettingsMiscPanel::OnEnableThemeUI(wxUpdateUIEvent& event) { event.Enable(false); }
 
 void EditorSettingsMiscPanel::LocaleChkUpdateUI(wxUpdateUIEvent& event)
 {
@@ -306,6 +238,7 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 
     clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }
+
 void EditorSettingsMiscPanel::OnLogoutputCheckUpdateUI(wxUpdateUIEvent& event)
 {
 #ifdef __WXGTK__
@@ -325,4 +258,14 @@ void EditorSettingsMiscPanel::OnResetAnnoyingDialogsAnswers(wxCommandEvent& even
 void EditorSettingsMiscPanel::OnPromptStableReleaseUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_versionCheckOnStartup->IsChecked());
+}
+
+void EditorSettingsMiscPanel::OnUseDirect2DUI(wxUpdateUIEvent& event)
+{
+#ifdef __WXMSW__
+    event.Enable(true);
+#else
+    event.Enable(false);
+    event.Check(false);
+#endif
 }

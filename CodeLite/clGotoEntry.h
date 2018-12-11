@@ -3,7 +3,9 @@
 
 #include "codelite_exports.h"
 #include <vector>
+#if wxUSE_GUI
 #include <wx/bitmap.h>
+#endif
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL clGotoEntry
@@ -12,7 +14,9 @@ private:
     wxString m_desc;
     wxString m_keyboardShortcut;
     int m_resourceID;
+#if wxUSE_GUI
     wxBitmap m_bitmap;
+#endif
     size_t m_flags;
 
 public:
@@ -36,8 +40,10 @@ public:
     const wxString& GetDesc() const { return m_desc; }
     const wxString& GetKeyboardShortcut() const { return m_keyboardShortcut; }
     int GetResourceID() const { return m_resourceID; }
+#if wxUSE_GUI
     const wxBitmap& GetBitmap() const { return m_bitmap; }
     void SetBitmap(const wxBitmap& bitmap) { m_bitmap = bitmap; }
+#endif
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
     bool IsChecked() const { return m_flags & kItemStateChecked; }

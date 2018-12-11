@@ -26,10 +26,12 @@
 #ifndef FILELOGGER_H
 #define FILELOGGER_H
 
-#include <wx/ffile.h>
 #include "codelite_exports.h"
-#include <wx/stopwatch.h>
+#include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/stopwatch.h>
+#include <wx/thread.h>
+#include <wxStringHash.h>
 
 // manipulator function
 class FileLogger;
@@ -46,6 +48,11 @@ protected:
     int _requestedLogLevel;
     FILE* m_fp;
     wxString m_buffer;
+    static std::unordered_map<wxThreadIdType, wxString> m_threads;
+    static wxCriticalSection m_cs;
+
+protected:
+    static wxString GetCurrentThreadName();
 
 public:
     FileLogger(int requestedVerbo);
@@ -58,6 +65,12 @@ public:
     }
 
     int GetRequestedLogLevel() const { return _requestedLogLevel; }
+
+    /**
+     * @brief give a thread-id a unique name which will be displayed in log
+     */
+    static void RegisterThread(wxThreadIdType id, const wxString& name);
+    static void UnRegisterThread(wxThreadIdType id);
 
     /**
      * @brief create log entry prefix
@@ -98,12 +111,8 @@ public:
      */
     inline FileLogger& operator<<(const wxArrayString& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
-            return *this;
-        }
-        if(!m_buffer.IsEmpty()) {
-            m_buffer << " ";
-        }
+        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
+        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
         m_buffer << "[";
         if(!arr.IsEmpty()) {
             for(size_t i = 0; i < arr.size(); ++i) {
@@ -122,27 +131,19 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
-            return *this;
-        }
-        if(!m_buffer.IsEmpty()) {
-            m_buffer << " ";
-        }
+        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
+        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
         m_buffer << str;
         return *this;
     }
-    
+
     /**
      * @brief special wxFileName printing
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
-            return *this;
-        }
-        if(!m_buffer.IsEmpty()) {
-            m_buffer << " ";
-        }
+        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
+        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
         m_buffer << fn.GetFullPath();
         return *this;
     }
@@ -152,12 +153,8 @@ public:
      */
     template <typename T> FileLogger& Append(const T& elem, int level)
     {
-        if(level > m_verbosity) {
-            return *this;
-        }
-        if(!m_buffer.IsEmpty()) {
-            m_buffer << " ";
-        }
+        if(level > m_verbosity) { return *this; }
+        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
         m_buffer << elem;
         return *this;
     }
@@ -199,5 +196,12 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg
+
+class WXDLLIMPEXP_CL FileLoggerNameRegistrar
+{
+public:
+    FileLoggerNameRegistrar(const wxString& name) { FileLogger::RegisterThread(wxThread::GetCurrentId(), name); }
+    ~FileLoggerNameRegistrar() { FileLogger::UnRegisterThread(wxThread::GetCurrentId()); }
+};
 
 #endif // FILELOGGER_H

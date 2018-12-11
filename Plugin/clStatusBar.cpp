@@ -52,11 +52,12 @@ public:
     clStatusBarArtNormal()
         : wxCustomStatusBarArt("Light")
     {
-        m_textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        m_textShadowColour = DrawingUtils::GetPanelBgColour();
-        m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        m_bgColour = DrawingUtils::GetPanelBgColour();
-        m_separatorColour = *wxWHITE;
+        const clColours& colours = DrawingUtils::GetColours();
+        m_textColour = colours.GetItemTextColour();
+        m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        m_textShadowColour = m_bgColour;
+        m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT);
+        m_separatorColour = m_bgColour;
     }
     virtual ~clStatusBarArtNormal() {}
 };
@@ -147,15 +148,15 @@ void clStatusBar::DoUpdateColour()
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgColour)) {
             // Using dark theme background
-            art.reset(new wxCustomStatusBarArt("Dark"));
+            art.reset(new clStatusBarArtNormal());
             SetArt(art);
         } else {
-            art.reset(new wxCustomStatusBarArt("Dark"));
+            art.reset(new clStatusBarArtNormal());
             SetArt(art);
         }
     } else {
         // Non editor, set "normal" art
-        art.reset(new wxCustomStatusBarArt("Dark"));
+        art.reset(new clStatusBarArtNormal());
         SetArt(art);
     }
     Refresh();

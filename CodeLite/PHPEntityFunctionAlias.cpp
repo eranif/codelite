@@ -1,6 +1,7 @@
 #include "PHPEntityFunctionAlias.h"
 #include "file_logger.h"
 #include "PHPLookupTable.h"
+#include "PHPEntityFunction.h"
 
 PHPEntityFunctionAlias::PHPEntityFunctionAlias() {}
 
@@ -59,4 +60,28 @@ wxString PHPEntityFunctionAlias::Type() const
         return m_func->Type();
     }
     return "";
+}
+
+void PHPEntityFunctionAlias::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+    m_realname = json.namedObject("realName").toString();
+    m_scope = json.namedObject("scope").toString();
+    if(json.hasNamedObject("func")) {
+        JSONElement func = json.namedObject("func");
+        m_func.Reset(new PHPEntityFunction());
+        m_func->FromJSON(func);
+    }
+}
+
+JSONElement PHPEntityFunctionAlias::ToJSON() const
+{
+    JSONElement json = BaseToJSON("a");
+    json.addProperty("realName", m_realname);
+    json.addProperty("scope", m_scope);
+    if(m_func) {
+        JSONElement func = m_func->ToJSON();
+        json.addProperty("func", func);
+    }
+    return json;
 }

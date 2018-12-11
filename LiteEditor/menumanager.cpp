@@ -37,6 +37,9 @@ MenuManager::MenuManager(void)
     PushHandler(new EditHandler(wxID_SELECTALL));
     PushHandler(new EditHandler(wxID_DUPLICATE));
     PushHandler(new EditHandler(wxID_DELETE));
+    PushHandler(new EditHandler(wxID_ZOOM_FIT));
+    PushHandler(new EditHandler(wxID_ZOOM_IN));
+    PushHandler(new EditHandler(wxID_ZOOM_OUT));
     PushHandler(new EditHandler(XRCID("delete_line")));
     PushHandler(new EditHandler(XRCID("delete_line_end")));
     PushHandler(new EditHandler(XRCID("delete_line_start")));

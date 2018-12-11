@@ -6,70 +6,136 @@
 
 #include "editorsettingscommentsdoxygenpanelbase.h"
 
-
 // Declare the bitmap loading function
 extern void wxCB83BInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+EditorSettingsCommentsDoxygenPanelBase::EditorSettingsCommentsDoxygenPanelBase(wxWindow* parent, wxWindowID id,
+                                                                               const wxPoint& pos, const wxSize& size,
+                                                                               long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB83BInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
-    wxArrayString m_pgMgrDoxyArr;
-    wxUnusedVar(m_pgMgrDoxyArr);
-    wxArrayInt m_pgMgrDoxyIntArr;
-    wxUnusedVar(m_pgMgrDoxyIntArr);
-    m_pgMgrDoxy = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer1->Add(m_pgMgrDoxy, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_pgProp10 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("General") ) );
-    m_pgProp10->SetHelpString(wxT(""));
-    
-    m_pgPropAutoGen = m_pgMgrDoxy->AppendIn( m_pgProp10,  new wxBoolProperty( _("Generate comment after \"/**\" or \"/*!\""), wxPG_LABEL, 1) );
-    m_pgPropAutoGen->SetHelpString(_("When the user hit ENTER after \"/**\" generate the proper documentation block"));
-    
-    m_pgMgrDoxyArr.Clear();
-    m_pgMgrDoxyIntArr.Clear();
-    m_pgMgrDoxyArr.Add(_("/**"));
-    m_pgMgrDoxyArr.Add(_("/*!"));
-    m_pgPropCommentBlockPrefix = m_pgMgrDoxy->AppendIn( m_pgProp10,  new wxEnumProperty( _("Comment block start"), wxPG_LABEL, m_pgMgrDoxyArr, m_pgMgrDoxyIntArr, 0) );
-    m_pgPropCommentBlockPrefix->SetHelpString(_("Select the comment block prefix (\"/**\" or \"/*!\")"));
-    
-    m_pgProp4 = m_pgMgrDoxy->Append(  new wxPropertyCategory( _("Templates") ) );
-    m_pgProp4->SetHelpString(wxT(""));
-    
-    m_pgPropDoxyClassPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Class documentation template"), wxPG_LABEL, wxT("")) );
-    m_pgPropDoxyClassPrefix->SetHelpString(_("Set the template to use when generating documentation for a class (or C/C++ struct).\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
-    m_pgPropDoxyClassPrefix->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropDoxyFunctionPrefix = m_pgMgrDoxy->AppendIn( m_pgProp4,  new wxStringProperty( _("Function documentation template"), wxPG_LABEL, wxT("")) );
-    m_pgPropDoxyFunctionPrefix->SetHelpString(_("Set the template to use when generating documentation for a function\nThe following macros are available: $(CurrentFileName), $(CurrentFilePath), $(User), $(Date), $(Name) $(CurrentFileFullPath), $(CurrentFileExt), $(ProjectName), $(WorkspaceName)"));
-    m_pgPropDoxyFunctionPrefix->SetEditor( wxT("TextCtrlAndButton") );
-    
+
+    m_staticText22 = new wxStaticText(this, wxID_ANY, _("Class doc template:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer1->Add(m_staticText22, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stcClassTemplate = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stcClassTemplate->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcClassTemplate->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcClassTemplate->SetMarginSensitive(4, true);
+    m_stcClassTemplate->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcClassTemplate->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcClassTemplate->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcClassTemplate->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcClassTemplate->SetMarginWidth(2, 0);
+    m_stcClassTemplate->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcClassTemplate->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcClassTemplate->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcClassTemplate->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcClassTemplate->SetMarginMask(3, 0);
+    m_stcClassTemplate->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcClassTemplate->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcClassTemplate->StyleClearAll();
+    m_stcClassTemplate->SetWrapMode(2);
+    m_stcClassTemplate->SetIndentationGuides(0);
+    m_stcClassTemplate->SetEOLMode(2);
+    m_stcClassTemplate->SetKeyWords(0, wxT(""));
+    m_stcClassTemplate->SetKeyWords(1, wxT(""));
+    m_stcClassTemplate->SetKeyWords(2, wxT(""));
+    m_stcClassTemplate->SetKeyWords(3, wxT(""));
+    m_stcClassTemplate->SetKeyWords(4, wxT(""));
+
+    bSizer1->Add(m_stcClassTemplate, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText26 = new wxStaticText(this, wxID_ANY, _("Function doc template:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer1->Add(m_staticText26, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stcFunctionTemplate =
+        new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stcFunctionTemplate->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcFunctionTemplate->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcFunctionTemplate->SetMarginSensitive(4, true);
+    m_stcFunctionTemplate->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcFunctionTemplate->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcFunctionTemplate->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcFunctionTemplate->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcFunctionTemplate->SetMarginWidth(2, 0);
+    m_stcFunctionTemplate->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcFunctionTemplate->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcFunctionTemplate->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcFunctionTemplate->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcFunctionTemplate->SetMarginMask(3, 0);
+    m_stcFunctionTemplate->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcFunctionTemplate->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcFunctionTemplate->StyleClearAll();
+    m_stcFunctionTemplate->SetWrapMode(2);
+    m_stcFunctionTemplate->SetIndentationGuides(0);
+    m_stcFunctionTemplate->SetEOLMode(2);
+    m_stcFunctionTemplate->SetKeyWords(0, wxT(""));
+    m_stcFunctionTemplate->SetKeyWords(1, wxT(""));
+    m_stcFunctionTemplate->SetKeyWords(2, wxT(""));
+    m_stcFunctionTemplate->SetKeyWords(3, wxT(""));
+    m_stcFunctionTemplate->SetKeyWords(4, wxT(""));
+
+    bSizer1->Add(m_stcFunctionTemplate, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
+
+    bSizer1->Add(boxSizer29, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxAutoInsert = new wxCheckBox(this, wxID_ANY, _("Auto generate document block"), wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxAutoInsert->SetValue(true);
+    m_checkBoxAutoInsert->SetToolTip(
+        _("Generate document block when user types '/**' and hits ENTER\non top of a function"));
+
+    boxSizer29->Add(m_checkBoxAutoInsert, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxQtStyle = new wxCheckBox(this, wxID_ANY, _("Use Qt document style"), wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxQtStyle->SetValue(false);
+
+    boxSizer29->Add(m_checkBoxQtStyle, 0, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("EditorSettingsCommentsDoxygenPanelBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
-    // Connect events
-    m_pgMgrDoxy->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsCommentsDoxygenPanelBase::OnButtonClicked), NULL, this);
-    
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
-EditorSettingsCommentsDoxygenPanelBase::~EditorSettingsCommentsDoxygenPanelBase()
-{
-    m_pgMgrDoxy->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EditorSettingsCommentsDoxygenPanelBase::OnButtonClicked), NULL, this);
-    
-}
+EditorSettingsCommentsDoxygenPanelBase::~EditorSettingsCommentsDoxygenPanelBase() {}

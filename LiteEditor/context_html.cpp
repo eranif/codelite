@@ -28,7 +28,7 @@
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 
-ContextHtml::ContextHtml(LEditor *editor)
+ContextHtml::ContextHtml(clEditor *editor)
     : ContextBase(editor)
 {
     SetName("html");
@@ -59,7 +59,7 @@ void ContextHtml::ApplySettings()
     if (EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
-    LEditor &rCtrl = GetCtrl();
+    clEditor &rCtrl = GetCtrl();
     if (lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
         for (int i = 0; i <= 4; ++i) {
@@ -77,7 +77,7 @@ void ContextHtml::ApplySettings()
 
 void ContextHtml::AutoIndent(const wxChar& nChar)
 {
-    LEditor &rCtrl = GetCtrl();
+    clEditor &rCtrl = GetCtrl();
 
     if (rCtrl.GetDisableSmartIndent()) {
         return;
@@ -276,7 +276,7 @@ bool ContextHtml::IsDefaultContext() const
     return false;
 }
 
-ContextBase* ContextHtml::NewInstance(LEditor* container)
+ContextBase* ContextHtml::NewInstance(clEditor* container)
 {
     return new ContextHtml(container);
 }
@@ -320,7 +320,7 @@ void ContextHtml::OnKeyDown(wxKeyEvent& event)
 
 void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
 {
-    LEditor &ctrl = GetCtrl();
+    clEditor &ctrl = GetCtrl();
     if (ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
@@ -338,7 +338,7 @@ void ContextHtml::SemicolonShift()
 {
     int foundPos    (wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
-    LEditor &ctrl = GetCtrl();
+    clEditor &ctrl = GetCtrl();
     if (ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement

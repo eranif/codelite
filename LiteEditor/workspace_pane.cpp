@@ -43,6 +43,7 @@
 #include "fileexplorer.h"
 #include "fileview.h"
 #include "frame.h"
+#include "globals.h"
 #include "macros.h"
 #include "manager.h"
 #include "openwindowspanel.h"
@@ -54,6 +55,7 @@
 #include "workspacetab.h"
 #include <algorithm>
 #include <wx/app.h>
+#include <wx/menu.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
@@ -109,6 +111,7 @@ void WorkspacePane::CreateGUIControls()
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
+    m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
 
 #if !USE_AUI_NOTEBOOK
     m_book->SetArt(GetNotebookRenderer());
@@ -431,7 +434,7 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
         // Insert the page
         int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
         if(where == wxNOT_FOUND) {
-            GetNotebook()->AddPage(t.m_window, t.m_label, false, t.m_bmp);
+            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmp);
         } else {
             GetNotebook()->SetSelection(where);
         }
@@ -442,23 +445,47 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
     }
 }
 
-#if !USE_AUI_NOTEBOOK
-clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
+clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer::CreateRenderer(m_book->GetStyle()); }
+
+void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
 {
-    if(m_book->GetStyle() & kNotebook_RightTabs || m_book->GetStyle() & kNotebook_LeftTabs) {
-        // Vertical tabs, change the art provider to use the square shape
-        return clTabRenderer::Ptr_t(new clTabRendererSquare());
-    } else {
-        // Else, use the settings
-        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
-        if(options & OptionsConfig::Opt_TabStyleMinimal) {
-            return clTabRenderer::Ptr_t(new clTabRendererSquare);
-        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-            return clTabRenderer::Ptr_t(new clTabRendererCurved());
-        } else {
-            // the default
-            return clTabRenderer::Ptr_t(new clTabRendererClassic);
+    wxMenu* menu = event.GetMenu();
+    DetachedPanesInfo dpi;
+    EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);
+
+    wxMenu* hiddenTabsMenu = new wxMenu();
+    const wxArrayString& tabs = clGetManager()->GetWorkspaceTabs();
+    for(size_t i = 0; i < tabs.size(); ++i) {
+        const wxString& label = tabs.Item(i);
+        if((m_book->GetPageIndex(label) != wxNOT_FOUND)) {
+            // Tab is visible, dont show it
+            continue;
         }
+        
+        if(hiddenTabsMenu->GetMenuItemCount() == 0) {
+            // we are adding the first menu item
+            menu->AppendSeparator();
+        }
+        
+        int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
+        hiddenTabsMenu->Append(tabId, label);
+
+        // If the tab is detached, disable it's menu entry
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { hiddenTabsMenu->Enable(tabId, false); }
+
+        // Bind the event
+        hiddenTabsMenu->Bind(wxEVT_MENU,
+                             // Use lambda by value here so we make a copy
+                             [=](wxCommandEvent& e) {
+                                 clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
+                                 eventShow.SetSelected(true).SetString(label);
+                                 EventNotifier::Get()->AddPendingEvent(eventShow);
+                             },
+                             tabId);
+    }
+    if(hiddenTabsMenu->GetMenuItemCount() == 0) {
+        wxDELETE(hiddenTabsMenu);
+    } else {
+        menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
     }
 }
-#endif

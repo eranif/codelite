@@ -201,16 +201,6 @@ public:
     void SetTagsDatabase(const wxString& dbName);
 
     /**
-     * Store in the current LexersInfo, the outputview's foreground colour as it's global to a theme
-     */
-    void SetCurrentOutputviewFgColour(const wxString& colourstring);
-
-    /**
-     * Store in the current LexersInfo, the outputview's background colour as it's global to a theme
-     */
-    void SetCurrentOutputviewBgColour(const wxString& colourstring);
-
-    /**
      * save lexers settings
      */
     void SaveLexers();

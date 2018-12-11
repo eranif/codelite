@@ -49,8 +49,8 @@ ConfigurationManagerDlg::ConfigurationManagerDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(
-    const wxString& projectName, const wxString& selectedConf, wxPGProperty* prop)
+ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(const wxString& projectName,
+                                                               const wxString& selectedConf, wxPGProperty* prop)
 {
     wxPGChoices choices;
 
@@ -63,9 +63,7 @@ ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(
         BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
         while(bldConf) {
             choices.Add(bldConf->GetName());
-            if(bldConf->GetName() == selectedConf) {
-                defaultValue = counter;
-            }
+            if(bldConf->GetName() == selectedConf) { defaultValue = counter; }
             bldConf = settings->GetNextBuildConfiguration(cookie);
             ++counter;
         }
@@ -84,13 +82,8 @@ ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(
     entry.project = projectName;
     entry.projectSettings = settings;
     entry.choiceControl = p;
-    if(m_projectPropertiesMap.count(projectName)) {
-        m_projectPropertiesMap.erase(projectName);
-    }
+    if(m_projectPropertiesMap.count(projectName)) { m_projectPropertiesMap.erase(projectName); }
     m_projectPropertiesMap.insert(std::make_pair(projectName, entry));
-    if(m_projectPropertiesMap.size() % 2 == 0) {
-        p->SetBackgroundColour("#E0E0E0");
-    }
     return entry;
 }
 
@@ -104,9 +97,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     m_pgMgr->GetGrid()->Clear();
     // popuplate the configurations
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) {
-        return;
-    }
+    if(!matrix) { return; }
 
     wxWindowUpdateLocker locker(this);
     m_projectPropertiesMap.clear();
@@ -114,7 +105,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     std::list<WorkspaceConfigurationPtr> configs = matrix->GetConfigurations();
     m_choiceConfigurations->Clear();
     std::for_each(configs.begin(), configs.end(),
-        [&](WorkspaceConfigurationPtr config) { m_choiceConfigurations->Append(config->GetName()); });
+                  [&](WorkspaceConfigurationPtr config) { m_choiceConfigurations->Append(config->GetName()); });
 
     // append the 'New' & 'Delete' commands
     m_choiceConfigurations->Append(wxGetTranslation(clCMD_NEW));
@@ -145,9 +136,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 void ConfigurationManagerDlg::LoadWorkspaceConfiguration(const wxString& confName)
 {
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) {
-        return;
-    }
+    if(!matrix) { return; }
 
     m_choiceConfigurations->SetStringSelection(confName);
     std::map<wxString, ConfigEntry>::iterator iter = m_projectPropertiesMap.begin();
@@ -167,9 +156,7 @@ void ConfigurationManagerDlg::LoadProjectConfiguration(const wxString& projectNa
             if(proSet) {
                 // select the build configuration according to the build matrix
                 BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-                if(!matrix) {
-                    return;
-                }
+                if(!matrix) { return; }
                 wxString configName =
                     matrix->GetProjectSelectedConf(m_choiceConfigurations->GetStringSelection(), projectName);
                 DoCreateChoicesForProject(projectName, configName, prop);
@@ -218,9 +205,7 @@ void ConfigurationManagerDlg::OnButtonNew(wxCommandEvent& event)
         TrimString(value);
         if(value.IsEmpty() == false) {
             BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-            if(!matrix) {
-                return;
-            }
+            if(!matrix) { return; }
 
             WorkspaceConfigurationPtr conf(new WorkspaceConfiguration(NULL));
             conf->SetName(value);
@@ -268,9 +253,7 @@ void ConfigurationManagerDlg::SaveCurrentSettings()
     m_currentWorkspaceConfiguration = m_currentWorkspaceConfiguration.Trim().Trim(false);
 
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) {
-        return;
-    }
+    if(!matrix) { return; }
 
     matrix->SetSelectedConfigurationName(m_currentWorkspaceConfiguration);
 

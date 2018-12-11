@@ -132,3 +132,18 @@ wxString PHPEntityFunction::GetFullPath() const
     fullpath << GetSignature();
     return fullpath;
 }
+
+void PHPEntityFunction::FromJSON(const JSONElement& json)
+{
+    BaseFromJSON(json);
+    m_strReturnValue = json.namedObject("returns").toString();
+    m_strSignature = json.namedObject("signature").toString();
+}
+
+JSONElement PHPEntityFunction::ToJSON() const
+{
+    JSONElement json = BaseToJSON("f");
+    json.addProperty("returns", m_strReturnValue);
+    json.addProperty("signature", m_strSignature);
+    return json;
+}

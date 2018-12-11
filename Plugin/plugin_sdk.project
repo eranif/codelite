@@ -44,6 +44,65 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clThemedListCtrl.cpp"/>
+    <File Name="clThemedListCtrl.h"/>
+    <File Name="clControlWithItems.cpp"/>
+    <File Name="clControlWithItems.h"/>
+    <File Name="clDataViewListCtrl.cpp"/>
+    <File Name="clDataViewListCtrl.h"/>
+    <File Name="clHeaderItem.h"/>
+    <File Name="clHeaderItem.cpp"/>
+    <File Name="clHeaderBar.h"/>
+    <File Name="clHeaderBar.cpp"/>
+    <File Name="clCellValue.h"/>
+    <File Name="clCellValue.cpp"/>
+    <File Name="clRowEntry.h"/>
+    <File Name="clRowEntry.cpp"/>
+    <File Name="clColours.h"/>
+    <File Name="clColours.cpp"/>
+    <File Name="clScrolledPanel.h"/>
+    <File Name="clScrolledPanel.cpp"/>
+    <File Name="clScrollBar.cpp"/>
+    <File Name="clScrollBar.h"/>
+    <File Name="clThemedTreeCtrl.cpp"/>
+    <File Name="clThemedTreeCtrl.h"/>
+    <File Name="clTreeCtrl.cpp"/>
+    <File Name="clTreeCtrl.h"/>
+    <File Name="clTreeCtrlModel.cpp"/>
+    <File Name="clTreeCtrlModel.h"/>
+    <File Name="clTreeNodeVisitor.cpp"/>
+    <File Name="clTreeNodeVisitor.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="clToolBar">
+    <File Name="clToolBarStretchableSpace.h"/>
+    <File Name="clToolBarStretchableSpace.cpp"/>
+    <File Name="clToolBarSpacer.h"/>
+    <File Name="clToolBarSpacer.cpp"/>
+    <VirtualDirectory Name="UI">
+      <File Name="clCustomiseToolBarDlg.cpp"/>
+      <File Name="clCustomiseToolBarDlg.h"/>
+      <File Name="ToolBarUI.h"/>
+      <File Name="ToolBarUI.cpp"/>
+      <File Name="ToolBar_liteeditor_bitmaps.xrc"/>
+      <File Name="ToolBar_liteeditor_bitmaps.cpp"/>
+      <File Name="ToolBar.wxcp"/>
+    </VirtualDirectory>
+    <File Name="cLToolBarControl.h"/>
+    <File Name="cLToolBarControl.cpp"/>
+    <File Name="clToolBarToggleButton.h"/>
+    <File Name="clToolBarToggleButton.cpp"/>
+    <File Name="clToolBarSeparator.h"/>
+    <File Name="clToolBarSeparator.cpp"/>
+    <File Name="clToolBarMenuButton.h"/>
+    <File Name="clToolBarMenuButton.cpp"/>
+    <File Name="clToolBarButtonBase.h"/>
+    <File Name="clToolBarButtonBase.cpp"/>
+    <File Name="clToolBarButton.h"/>
+    <File Name="clToolBarButton.cpp"/>
+    <File Name="clToolBar.h"/>
+    <File Name="clToolBar.cpp"/>
+  </VirtualDirectory>
   <Reconciliation>
     <Regexes/>
     <Excludepaths/>
@@ -65,7 +124,6 @@
     <File Name="project.cpp"/>
     <File Name="project_settings.cpp"/>
     <File Name="regex_processor.cpp"/>
-    <File Name="search_thread.cpp"/>
     <File Name="workspace.cpp"/>
     <File Name="stringsearcher.cpp"/>
     <File Name="stringsearcher.h"/>
@@ -92,6 +150,10 @@
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="EclipseImporters">
+      <File Name="EclipseYAMLThemeImporter.cpp"/>
+      <File Name="EclipseYAMLThemeImporter.h"/>
+      <File Name="EclipseDockerfileThemeImporter.cpp"/>
+      <File Name="EclipseDockerfileThemeImporter.h"/>
       <File Name="EclipseCMakeThemeImporter.cpp"/>
       <File Name="EclipseCMakeThemeImporter.h"/>
       <File Name="EclipseCXXThemeImporter.cpp"/>
@@ -176,7 +238,6 @@
     <File Name="project.h"/>
     <File Name="project_settings.h"/>
     <File Name="regex_processor.h"/>
-    <File Name="search_thread.h"/>
     <File Name="workspace.h"/>
     <File Name="queuecommand.cpp"/>
     <File Name="queuecommand.h"/>
@@ -185,6 +246,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="clGenericSTCStyler.cpp"/>
+    <File Name="clGenericSTCStyler.h"/>
     <File Name="xmlutils.cpp"/>
     <File Name="sync_queue.cpp"/>
     <File Name="xmlutils.h"/>
@@ -248,6 +311,8 @@
     <File Name="EnvVarImporterDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
+    <File Name="DebuggerToolBar.cpp"/>
+    <File Name="DebuggerToolBar.h"/>
     <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>
     <File Name="memoryviewbase.wxcp"/>
     <File Name="memoryviewbase.h"/>
@@ -306,6 +371,12 @@
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">
+      <File Name="symbol_tree.h"/>
+      <File Name="symbol_tree.cpp"/>
+      <File Name="clTableLineEditorDlg.cpp"/>
+      <File Name="clTableLineEditorDlg.h"/>
+      <File Name="clTableWithPagination.cpp"/>
+      <File Name="clTableWithPagination.h"/>
       <File Name="filepicker.cpp"/>
       <File Name="filepicker.h"/>
       <File Name="dirpicker.cpp"/>
@@ -361,6 +432,8 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="clAboutDialog.cpp"/>
+      <File Name="clAboutDialog.h"/>
       <File Name="nameanddescdlg.h"/>
       <File Name="nameanddescbasedlg.cpp"/>
       <File Name="nameanddescbasedlg.h"/>
@@ -392,13 +465,13 @@
       <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
+      <File Name="clTabRendererGTK3.cpp"/>
+      <File Name="clTabRendererGTK3.h"/>
       <File Name="clMultiBook.cpp"/>
       <File Name="clMultiBook.h"/>
       <File Name="clTab.h"/>
       <File Name="clTabHistory.cpp"/>
       <File Name="clTabHistory.h"/>
-      <File Name="clAuiNotebook.cpp"/>
-      <File Name="clAuiNotebook.h"/>
       <File Name="drawingutils.cpp"/>
       <File Name="drawingutils.h"/>
       <File Name="dockablepane.cpp"/>
@@ -475,6 +548,8 @@
     <File Name="renamefilebasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Terminal">
+    <File Name="clTerminalHistory.cpp"/>
+    <File Name="clTerminalHistory.h"/>
     <File Name="wxterminalbase.h"/>
     <File Name="wxterminal.cpp"/>
     <File Name="wxterminal.h"/>
@@ -495,7 +570,11 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="clResizableTooltipBase.wxcp"/>
+    <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="clResizableTooltipBase_plugin_bitmaps.cpp"/>
+      <File Name="clAboutDialogBase_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelectorBase_plugin_bitmaps.cpp"/>
       <File Name="openresourcedialogbase_plugin_bitmaps.cpp"/>
@@ -512,6 +591,10 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="clResizableTooltipBase.cpp"/>
+      <File Name="clResizableTooltipBase.h"/>
+      <File Name="clAboutDialogBase.cpp"/>
+      <File Name="clAboutDialogBase.h"/>
       <File Name="VirtualDirectorySelectorBase.h"/>
       <File Name="VirtualDirectorySelectorBase.cpp"/>
       <File Name="plugin_general_wxcp.h"/>
@@ -560,10 +643,6 @@
     <File Name="SSHAccountManagerDlg.h"/>
     <File Name="sftp_settings.cpp"/>
     <File Name="sftp_settings.h"/>
-    <File Name="my_sftp_tree_model.cpp"/>
-    <File Name="my_sftp_tree_model.h"/>
-    <File Name="SSHTerminal.h"/>
-    <File Name="SSHTerminal.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Diff">
     <File Name="clDiffFrame.cpp"/>
@@ -611,16 +690,7 @@
     <File Name="clZipWriter.h"/>
     <File Name="clZipWriter.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="wxFlatButtonBar">
-    <File Name="wxFlatButton.cpp"/>
-    <File Name="wxFlatButton.h"/>
-    <File Name="wxFlatButton.wxcp"/>
-    <File Name="wxFlatButtonBar.cpp"/>
-    <File Name="wxFlatButtonBar.h"/>
-    <File Name="wxFlatButtonBase.cpp"/>
-    <File Name="wxFlatButtonBase.h"/>
-    <File Name="wxFlatButtonBaseBitmaps.cpp"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="wxFlatButtonBar"/>
   <VirtualDirectory Name="Keyboard">
     <File Name="clKeyboardManager.cpp"/>
     <File Name="clKeyboardManager.h"/>
@@ -665,7 +735,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Custom" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Custom" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g -Wall" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
@@ -708,15 +778,15 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Win_wxWidgets_29" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-Wall" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../Interfaces"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc  --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -760,7 +830,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --debug=yes --unicode=yes);-Winvalid-pch" C_Options="-Wall;-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags  --unicode=yes);-Winvalid-pch" C_Options="-Wall;-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -769,7 +839,7 @@
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc,ribbon,propgrid --debug=yes --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc,ribbon,propgrid  --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -823,7 +893,7 @@
         <Preprocessor Value="USE_SFTP=1"/>
         <Preprocessor Value="CL_BUILD=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc,ribbon,propgrid --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc,ribbon,propgrid --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -866,7 +936,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x86_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch;-O2" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
@@ -877,7 +947,7 @@
         <IncludePath Value="../sdk/libssh/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-s;$(shell wx-config --libs std,stc,ribbon,propgrid --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc,ribbon,propgrid --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>

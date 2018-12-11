@@ -70,7 +70,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     , m_xdebugLocalsView(NULL)
     , m_xdebugEvalPane(NULL)
     , m_showWelcomePage(false)
-    , m_toggleToolbar(false)
 {
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new PHPWorkspace());
@@ -82,8 +81,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
     // Sigleton class
     PHPWorkspace::Get()->SetPluginManager(m_mgr);
     XDebugManager::Initialize(this);
-
-    // BitmapLoader::RegisterImage(FileExtManager::TypeWorkspacePHP, images.Bitmap("m_bmpPhpWorkspace"));
 
     // Add our UI
     // create tab (possibly detached)
@@ -183,7 +180,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 #if USE_SFTP
     // Allocate SFTP handler
     m_sftpHandler.reset(new PhpSFTPHandler());
-#endif //USE_SFTP
+#endif // USE_SFTP
 }
 
 PhpPlugin::~PhpPlugin() {}
@@ -196,12 +193,7 @@ bool PhpPlugin::IsWorkspaceViewDetached()
     return detachedPanes.Index(PHPStrings::PHP_WORKSPACE_VIEW_TITLE) != wxNOT_FOUND;
 }
 
-clToolBar* PhpPlugin::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void PhpPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -218,7 +210,7 @@ void PhpPlugin::UnPlug()
 {
 #if USE_SFTP
     m_sftpHandler.reset(nullptr);
-#endif //USE_SFTP
+#endif // USE_SFTP
     XDebugManager::Free();
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,
                                      clDebugEventHandler(PhpPlugin::OnXDebugDeleteAllBreakpoints), NULL, this);
@@ -558,22 +550,12 @@ void PhpPlugin::OnDebugEnded(XDebugEvent& e)
         m_mgr->GetDockingManager()->LoadPerspective(m_savedPerspective);
         m_savedPerspective.Clear();
     }
-
-    if(m_toggleToolbar) {
-        m_mgr->ShowToolBar(false);
-        m_toggleToolbar = false;
-    }
 }
 
 void PhpPlugin::OnDebugStarted(XDebugEvent& e)
 {
     e.Skip();
     DoEnsureXDebugPanesVisible();
-    m_toggleToolbar = !m_mgr->IsToolBarShown();
-    if(m_toggleToolbar) {
-        // toolbar not shown
-        m_mgr->ShowToolBar();
-    }
 }
 
 void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)

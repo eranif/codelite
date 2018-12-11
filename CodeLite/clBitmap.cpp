@@ -1,4 +1,5 @@
 #include "clBitmap.h"
+#if wxUSE_GUI
 #include <wx/dcscreen.h>
 #include <wx/filename.h>
 #include <wx/window.h>
@@ -22,7 +23,7 @@ clBitmap::~clBitmap() {}
 bool clBitmap::LoadFile(const wxString& name, wxBitmapType type)
 {
     wxFileName filename(name);
-#ifndef __WXOSX__
+#if !defined(__WXOSX__)
     double scale = 1.0;
     if(ShouldLoadHiResImages()) {
         wxFileName hiResFileName = filename;
@@ -60,3 +61,4 @@ bool clBitmap::ShouldLoadHiResImages()
     }
     return shouldLoad;
 }
+#endif // LIBCODELITE_WITH_UI

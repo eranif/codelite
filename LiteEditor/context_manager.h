@@ -45,8 +45,8 @@ public:
      * \param parent the context parent
      * \return
      */
-    ContextBasePtr NewContext(LEditor *parent, const wxString &lexerName);
-    ContextBasePtr NewContextByFileName(LEditor *parent, const wxFileName &fileName);
+    ContextBasePtr NewContext(clEditor *parent, const wxString &lexerName);
+    ContextBasePtr NewContextByFileName(clEditor *parent, const wxFileName &fileName);
     void Initialize();
     
 private:

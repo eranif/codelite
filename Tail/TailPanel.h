@@ -1,15 +1,17 @@
 #ifndef TAILPANEL_H
 #define TAILPANEL_H
 
-#include "TailUI.h"
-#include "clFileSystemWatcher.h"
-#include <wx/filename.h>
-#include <vector>
-#include "clFileSystemEvent.h"
-#include "clEditorEditEventsHandler.h"
-#include <map>
 #include "TailData.h"
+#include "TailUI.h"
+#include "clEditorEditEventsHandler.h"
+#include "clFileSystemEvent.h"
+#include "clFileSystemWatcher.h"
+#include <map>
+#include <vector>
+#include <wx/filename.h>
 
+class TailFrame;
+class clToolBar;
 class Tail;
 class TailPanel : public TailPanelBase
 {
@@ -20,11 +22,14 @@ class TailPanel : public TailPanelBase
     std::map<int, wxString> m_recentItemsMap;
     Tail* m_plugin;
     bool m_isDetached;
+    clToolBar* m_toolbar;
+    TailFrame* m_frame;
 
 protected:
     virtual void OnDetachWindow(wxCommandEvent& event);
     virtual void OnDetachWindowUI(wxUpdateUIEvent& event);
-    virtual void OnOpen(wxAuiToolBarEvent& event);
+    virtual void OnOpen(wxCommandEvent& event);
+    virtual void OnOpenMenu(wxCommandEvent& event);
     virtual void OnClear(wxCommandEvent& event);
     virtual void OnClearUI(wxUpdateUIEvent& event);
     virtual void OnClose(wxCommandEvent& event);
@@ -32,6 +37,7 @@ protected:
     void OnOpenRecentItem(wxCommandEvent& event);
 
 private:
+    void DoBuildToolbar();
     void DoClear();
     void DoOpen(const wxString& filename);
     void DoAppendText(const wxString& text);
@@ -46,6 +52,9 @@ public:
     void SetIsDetached(bool isDetached) { this->m_isDetached = isDetached; }
     bool IsDetached() const { return m_isDetached; }
 
+    void SetFrame(TailFrame* frame) { this->m_frame = frame; }
+    TailFrame* GetFrame() { return m_frame; }
+    
     /**
      * @brief duplicate the settings from src into this tail panel
      */

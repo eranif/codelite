@@ -27,7 +27,7 @@
 #include "editor_config.h"
 #include "cl_editor_tip_window.h"
 
-ContextJavaScript::ContextJavaScript(LEditor* editor)
+ContextJavaScript::ContextJavaScript(clEditor* editor)
     : ContextBase(editor)
 {
     editor->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$"));
@@ -51,7 +51,7 @@ void ContextJavaScript::ApplySettings()
     if(EditorConfigST::Get()->IsOk()) {
         lexPtr = EditorConfigST::Get()->GetLexer(GetName());
     }
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
         for(int i = 0; i <= 4; ++i) {
@@ -68,7 +68,7 @@ void ContextJavaScript::ApplySettings()
 
 void ContextJavaScript::AutoIndent(const wxChar& nChar)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     if(rCtrl.GetDisableSmartIndent()) {
         return;
@@ -194,7 +194,7 @@ bool ContextJavaScript::IsCommentOrString(long pos)
 
 bool ContextJavaScript::IsDefaultContext() const { return false; }
 
-ContextBase* ContextJavaScript::NewInstance(LEditor* container) { return new ContextJavaScript(container); }
+ContextBase* ContextJavaScript::NewInstance(clEditor* container) { return new ContextJavaScript(container); }
 
 void ContextJavaScript::OnCallTipClick(wxStyledTextEvent& event) {}
 
@@ -216,7 +216,7 @@ void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
 {
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.GetFunctionTip()->IsActive()) {
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
@@ -230,7 +230,7 @@ void ContextJavaScript::SemicolonShift()
 {
     int foundPos(wxNOT_FOUND);
     int semiColonPos(wxNOT_FOUND);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     if(ctrl.NextChar(ctrl.GetCurrentPos(), semiColonPos) == wxT(')')) {
 
         // test to see if we are inside a 'for' statement

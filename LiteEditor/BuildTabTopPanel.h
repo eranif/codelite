@@ -26,20 +26,19 @@
 #ifndef BUILDTABTOPPANEL_H
 #define BUILDTABTOPPANEL_H
 #include "cl_defs.h"
-
-#if 1
-
-#include "wxcrafter.h"
+#include "clToolBar.h"
 
 class NewBuildTab;
-class BuildTabTopPanel : public BuildTabTopPanelBaseClass
+class BuildTabTopPanel : public wxPanel
 {
 private:
     NewBuildTab* m_buildTab;
+    clToolBar* m_toolbar;
 
 public:
     BuildTabTopPanel(wxWindow* parent);
     virtual ~BuildTabTopPanel();
+
 protected:
     virtual void OnAutoScrollUI(wxUpdateUIEvent& event);
     virtual void OnAutoScroll(wxCommandEvent& event);
@@ -53,5 +52,5 @@ protected:
     virtual void OnSaveBuildOutputUI(wxUpdateUIEvent& event);
     virtual void OnToolPinCommandToolClicked(wxCommandEvent& event);
 };
-#endif // CL_USE_NEW_BUILD_TAB
+
 #endif // BUILDTABTOPPANEL_H

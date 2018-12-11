@@ -18,6 +18,7 @@
 #include "memcheckdefs.h"
 #include "memcheckoutputview.h"
 #include "memchecksettings.h"
+#include "search_thread.h"
 
 MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin, IManager* mgr)
     : MemCheckOutputViewBase(parent)

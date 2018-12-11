@@ -32,10 +32,10 @@
 #include <wx/thread.h>
 
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "imanager.h"
 #include "outline_symbol_tree.h"
 #include <algorithm>
-#include "file_logger.h"
 
 //#include "manager.h"
 //#include "frame.h"
@@ -48,34 +48,6 @@
 IMPLEMENT_DYNAMIC_CLASS(svSymbolTree, SymbolTree)
 
 const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
-
-//----------------------------------------------------------------
-// accessory function
-//----------------------------------------------------------------
-wxImageList* svSymbolTree::CreateSymbolTreeImages()
-{
-    wxImageList* images = new wxImageList(clGetScaledSize(16), clGetScaledSize(16), true);
-
-    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 0
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/namespace")));          // 1
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/globals")));            // 2
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/class")));              // 3
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/struct")));             // 4
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_public")));    // 5
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_protected"))); // 6
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/function_private")));   // 7
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_public")));      // 8
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_protected")));   // 9
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/member_private")));     // 10
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/typedef")));            // 11
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/macro")));              // 12
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enum")));               // 13
-    images->Add(bmpLoader->LoadBitmap(wxT("cc/16/enumerator")));         // 14
-    images->Add(bmpLoader->LoadBitmap(wxT("mime-cpp")));                 // 15
-    images->Add(bmpLoader->LoadBitmap(wxT("mime-h")));                   // 16
-    return images;
-}
 
 svSymbolTree::svSymbolTree() { m_sortByLineNumber = true; }
 
@@ -94,8 +66,7 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
     Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, &svSymbolTree::OnCacheInvalidated, this);
-    MSWSetNativeTheme(this);
-    // SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
@@ -113,7 +84,8 @@ void svSymbolTree::OnMouseDblClick(wxMouseEvent& event)
 {
     // Make sure the double click was done on an actual item
     int flags = 0;
-    wxTreeItemId where = HitTest(event.GetPosition(), flags);
+    int column = wxNOT_FOUND;
+    wxTreeItemId where = HitTest(event.GetPosition(), flags, column);
 
     if(where.IsOk() && (flags & wxTREE_HITTEST_ONITEMLABEL)) {
         SelectItem(where);
@@ -155,7 +127,7 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool notif
         // Open the file and set the cursor to line number
         if(clMainFrame::Get()->GetMainBook()->OpenFile(filename, project, lineno-1)) {
                 // get the editor, and search for the pattern in the file
-                LEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+                clEditor *editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
                 if (editor) {
                         FindAndSelect(editor, pattern, GetItemText(item));
                 }
@@ -184,40 +156,11 @@ void svSymbolTree::OnItemActivated(wxTreeEvent& event)
 
 void svSymbolTree::AdvanceSelection(bool forward)
 {
-    wxTreeItemId item = GetSelection();
-    if(!item.IsOk()) { return; }
-
-    wxTreeItemId nextItem;
-    if(forward) {
-        // Item is visible, scroll to it to make sure GetNextVisible() wont
-        // fail
-        ScrollTo(item);
-        nextItem = GetNextVisible(item);
-    } else {
-        nextItem = TryGetPrevItem(item);
+    wxTreeItemId item = forward ? GetNextItem(GetSelection()) : GetPrevItem(GetSelection());
+    if(item.IsOk()) {
+        SelectItem(item);
+        EnsureVisible(item);
     }
-
-    if(nextItem.IsOk()) { SelectItem(nextItem); }
-}
-
-wxTreeItemId svSymbolTree::TryGetPrevItem(wxTreeItemId item)
-{
-    wxCHECK_MSG(item.IsOk(), wxTreeItemId(), wxT("invalid tree item"));
-
-    // find out the starting point
-    wxTreeItemId prevItem = GetPrevSibling(item);
-    if(!prevItem.IsOk()) { prevItem = GetItemParent(item); }
-
-    // from there we must be able to navigate until this item
-    while(prevItem.IsOk()) {
-        ScrollTo(prevItem);
-        const wxTreeItemId nextItem = GetNextVisible(prevItem);
-        if(!nextItem.IsOk() || nextItem == item) return prevItem;
-
-        prevItem = nextItem;
-    }
-
-    return wxTreeItemId();
 }
 
 void svSymbolTree::FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name)

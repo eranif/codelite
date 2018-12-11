@@ -23,34 +23,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <algorithm>
-#include <wx/textdlg.h>
+#include "abbreviation.h"
 #include "abbreviationentry.h"
 #include "abbreviationssettingsdlg.h"
-#include <wx/bitmap.h>
-#include <wx/menu.h>
-#include "event_notifier.h"
-#include "abbreviation.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/app.h>
-#include <wx/log.h>
-#include <wx/regex.h>
-#include "cl_config.h"
-#include "macromanager.h"
 #include "clKeyboardManager.h"
+#include "cl_config.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "macromanager.h"
 #include "wxCodeCompletionBoxEntry.h"
 #include "wxCodeCompletionBoxManager.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/bitmap.h>
 #include <wx/clntdata.h>
-#include "globals.h"
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/regex.h>
+#include <wx/textdlg.h>
+#include <wx/xrc/xmlres.h>
 
 static AbbreviationPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new AbbreviationPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new AbbreviationPlugin(manager); }
     return thePlugin;
 }
 
@@ -89,11 +87,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
 
 AbbreviationPlugin::~AbbreviationPlugin() {}
 
-clToolBar* AbbreviationPlugin::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void AbbreviationPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -240,15 +234,11 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         wxString textOrig;
         wxString textLeadingSpaces;
 
-        if(typedWordLen < 0) {
-            typedWordLen = 0;
-        }
+        if(typedWordLen < 0) { typedWordLen = 0; }
 
         // format the text to insert
         bool appendEol(false);
-        if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
-            appendEol = true;
-        }
+        if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) { appendEol = true; }
 
         textOrig = text;
         text.Trim(false);

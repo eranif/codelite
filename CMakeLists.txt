@@ -26,6 +26,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
 ##      -DENABLE_LLDB=1|0                          // When set to 0 codelite won't try to build or link to the lldb debugger. Default is 1 on Unix platforms    #
+##      -DPHP_BUILD=1|0                            // When set to 1, build CodeLite for PHP / WEB languages without any C++ plugins                             #
 #################################################################################################################################################################
 
 if (NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
@@ -189,6 +190,14 @@ if(ENABLE_LLDB MATCHES 0)
 endif ()
 unset(ENABLE_LLDB CACHE)
 
+set(DISABLE_CXX 0)
+if(PHP_BUILD MATCHES 1)
+    set(DISABLE_CXX 1)
+    add_definitions(-DPHP_BUILD=1)
+else()
+    set(DISABLE_CXX 0)
+endif()
+
 #######################################
 ## Locate libssh
 #######################################
@@ -223,7 +232,7 @@ if ( WITH_SFTP )
     else ( UNIX AND NOT APPLE OR MINGW )
         ## OSX
         set( LIBSSH_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/libssh/include)
-        set( LIBSSH_LIB ${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a)
+        set( LIBSSH_LIB "${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a;${CL_SRC_ROOT}/sdk/libssh/lib/osx/libcrypto.a")
         include_directories(${LIBSSH_INCLUDE_DIR})
     endif ( UNIX AND NOT APPLE OR MINGW )
     message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
@@ -280,6 +289,28 @@ if (COPY_WX_LIBS MATCHES 1)
 endif()
 unset(COPY_WX_LIBS CACHE)
 
+## file encoding detect
+if (UNIX AND NOT APPLE OR MINGW)
+    ## Linux
+    if (MINGW)
+        find_library(LIBUCHARDET_LIB NAMES uchardet PATH_SUFFIXES lib)
+        find_path(LIBUCHARDET_INCLUDE_DIR NAMES uchardet.h PATH_SUFFIXES include/uchardet)
+    else()
+        find_library(LIBUCHARDET_LIB NAMES libuchardet.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
+        find_path(LIBUCHARDET_INCLUDE_DIR NAMES uchardet.h HINTS /usr/local/include /usr/include PATH_SUFFIXES uchardet)
+    endif()
+else ( UNIX AND NOT APPLE OR MINGW )
+    ## OSX
+    #set( LIBUCHARDET_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/uchardet/include)
+    #set( LIBUCHARDET_LIB ${CL_SRC_ROOT}/sdk/uchardet/lib/osx/uchardet.a)
+endif ( UNIX AND NOT APPLE OR MINGW )
+if (LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
+    add_definitions(-DUSE_UCHARDET=1)
+    include_directories(${LIBUCHARDET_INCLUDE_DIR})
+else ( UNIX AND NOT APPLE OR MINGW )
+    set (LIBUCHARDET_LIB "")
+endif (LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
+
 ## Will set PLUGINS_DIR to the proper location on Linux / OSX
 include(OSXInstall)
 
@@ -287,6 +318,7 @@ include(OSXInstall)
 OSX_MAKE_BUNDLE_DIRECTORY()
 
 add_definitions(-DYY_NEVER_INTERACTIVE=1)
+add_definitions(-DwxUSE_GUI=1)
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 
 if (NOT MINGW)
@@ -453,9 +485,12 @@ if ( MAKE_DEB )
         set(LIBGTK "libgtk2.0-0")
         set(GTKNAME "gtk2")
     endif()
+    if(PHP_BUILD)
+        set(GTKNAME "${GTKNAME}-php")
+    endif()
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "CodeLite")
-    set(CPACK_PACKAGE_VERSION             "12.0.4-${GTKNAME}")
+    set(CPACK_PACKAGE_VERSION             "12.0.11-${GTKNAME}")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/PHP and Node.js IDE (Integrated Development Environment)")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
@@ -463,6 +498,10 @@ if ( MAKE_DEB )
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
     if(OS_CODENAME STREQUAL "xenial")
         message("-- CPack deps for Ubuntu-Xenial")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS
+            "libc6, ${LIBGTK}, libsqlite3-dev, libedit-dev, libhunspell-dev, libclang-6.0-dev, clang-format-6.0, python-lldb-6.0, liblldb-6.0-dev")
+    elseif(OS_CODENAME STREQUAL "stretch")
+        message("-- CPack deps for Debian-Stretch")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS
             "libc6, ${LIBGTK}, libsqlite3-dev, libedit-dev, libhunspell-dev, libclang-4.0-dev, clang-format-4.0, python-lldb-4.0, liblldb-4.0-dev")
     elseif(OS_CODENAME STREQUAL "bionic")
@@ -584,18 +623,23 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 
 if(NOT NO_CORE_PLUGINS)
+    if(NOT DISABLE_CXX)
+        add_subdirectory(Gizmos)
+        add_subdirectory(CallGraph)
+        add_subdirectory(ContinuousBuild)
+        add_subdirectory(Debugger)
+        add_subdirectory(UnitTestCPP)
+        add_subdirectory(QmakePlugin)
+        add_subdirectory(cppchecker)
+        add_subdirectory(wxformbuilder)
+        add_subdirectory(CMakePlugin)
+        add_subdirectory(cscope)
+    endif()
+    add_subdirectory(CodeLiteDiff)
+    add_subdirectory(git)
+    #add_subdirectory(Tweaks)
     add_subdirectory(abbreviation)
-    add_subdirectory(CallGraph)
-    add_subdirectory(ContinuousBuild)
-    add_subdirectory(Debugger)
-    add_subdirectory(Gizmos)
     add_subdirectory(Outline)
-    add_subdirectory(QmakePlugin)
-    add_subdirectory(UnitTestCPP)
-    add_subdirectory(cppchecker)
-    add_subdirectory(cscope)
-    add_subdirectory(wxformbuilder)
-    add_subdirectory(Tweaks)
     add_subdirectory(CodeFormatter)
     add_subdirectory(Copyright)
     add_subdirectory(DatabaseExplorer)
@@ -603,9 +647,6 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(SnipWiz)
     add_subdirectory(Subversion2)
     add_subdirectory(ZoomNavigator)
-    add_subdirectory(git)
-    add_subdirectory(CMakePlugin)
-    add_subdirectory(CodeLiteDiff)
     add_subdirectory(SpellChecker)
     add_subdirectory(AutoSave)
     add_subdirectory(Tail)
@@ -613,12 +654,13 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(PHPLint)
     add_subdirectory(PHPRefactoring)
     add_subdirectory(codelite_vim)
-
+    add_subdirectory(Docker)
+    
     if (WITH_SFTP)
         add_subdirectory(SFTP)
     endif(WITH_SFTP)
 
-    if (WITH_LLDB)
+    if (WITH_LLDB AND NOT DISABLE_CXX)
         add_subdirectory(LLDBDebugger)
     endif()
 
@@ -628,19 +670,19 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(WebTools)
     add_subdirectory(SmartCompletion)
 
-    if(UNIX AND NOT APPLE)
+    if(UNIX AND NOT APPLE AND NOT DISABLE_CXX)
         ## Add valgrind plugin
         add_subdirectory(MemCheck)
-    endif(UNIX AND NOT APPLE)
+    endif()
 
-    if(APPLE)
+    if(APPLE AND NOT DISABLE_CXX)
         message("-- Adding MacBundler...")
         add_subdirectory(MacBundler)
-    endif(APPLE)
+    endif()
 endif(NOT NO_CORE_PLUGINS)
 
 # wxCrafter is not a core plugin so we include it we find the directory
-if(IS_DIRECTORY "${CL_SRC_ROOT}/wxcrafter")
+if(IS_DIRECTORY "${CL_SRC_ROOT}/wxcrafter" AND NOT DISABLE_CXX AND NOT NO_CORE_PLUGINS)
     add_subdirectory(wxcrafter)
 endif()
 

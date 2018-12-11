@@ -38,6 +38,7 @@
 #include <map>
 #include "plugindata.h"
 
+class clToolBar;
 class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
@@ -79,9 +80,11 @@ public:
     //------------------------------------
     void EnableClangCodeCompletion(bool b);
     IEditor* GetActiveEditor();
+    clToolBar* GetToolBar();
     IConfigTool* GetConfigTool();
     TreeItemInfo GetSelectedTreeItemInfo(TreeType type);
-    wxTreeCtrl* GetTree(TreeType type);
+    clTreeCtrl* GetFileExplorerTree();
+    clTreeCtrl* GetWorkspaceTree();
     Notebook* GetOutputPaneNotebook();
     Notebook* GetWorkspacePaneNotebook();
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND);
@@ -118,6 +121,7 @@ public:
     void StopAndClearQueue();
     bool IsBuildInProgress() const;
     bool IsBuildEndedSuccessfully() const;
+    wxString GetProjectNameByFile(wxString& fullPathFileName);
     wxString GetProjectNameByFile(const wxString& fullPathFileName);
     BuildManager* GetBuildManager();
     BuildSettingsConfig* GetBuildSettingsConfigManager();

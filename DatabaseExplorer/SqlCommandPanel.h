@@ -26,76 +26,73 @@
 #ifndef SQLCOMMANDPANEL_H
 #define SQLCOMMANDPANEL_H
 
-#include <wx/wx.h>
-#include <wx/dblayer/include/DatabaseLayerException.h>
 #include "GUI.h" // Base class: _SqlCommandPanel
+#include "clEditorEditEventsHandler.h"
 #include <wx/dblayer/include/DatabaseLayer.h>
+#include <wx/dblayer/include/DatabaseLayerException.h>
+#include <wx/wx.h>
 
 //#ifdef DBL_USE_MYSQL
 //#include <wx/dblayer/include/MysqlDatabaseLayer.h>
 //#endif
 
-#include <wx/dblayer/include/DatabaseErrorCodes.h>
 #include "IDbAdapter.h"
+#include <wx/dblayer/include/DatabaseErrorCodes.h>
 
 #include <map>
 
 // ----------------------------------------------------------------
+class clToolBar;
 class ColumnInfo
 {
     int m_type;
     wxString m_name;
+
 public:
     typedef std::vector<ColumnInfo> Vector_t;
-    
-public:
-    ColumnInfo()
-    {}
 
-    ColumnInfo(int type, const wxString &name)
+public:
+    ColumnInfo() {}
+
+    ColumnInfo(int type, const wxString& name)
         : m_type(type)
         , m_name(name)
-    {}
+    {
+    }
 
-    virtual ~ColumnInfo()
-    {}
+    virtual ~ColumnInfo() {}
 
-    void SetName(const wxString& name) {
-        this->m_name = name;
-    }
-    void SetType(int type) {
-        this->m_type = type;
-    }
-    const wxString& GetName() const {
-        return m_name;
-    }
-    int GetType() const {
-        return m_type;
-    }
+    void SetName(const wxString& name) { this->m_name = name; }
+    void SetType(int type) { this->m_type = type; }
+    const wxString& GetName() const { return m_name; }
+    int GetType() const { return m_type; }
 };
 
 // ----------------------------------------------------------------
 class SQLCommandPanel : public _SqlCommandPanel
 {
-    
+
     int m_OperatorStyle;
     int m_CommentStyle;
-protected:
-    virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event);
-    IDbAdapter*                              m_pDbAdapter;
-    wxString                                 m_dbName;
-    wxString                                 m_dbTable;
-    wxString                                 m_cellValue;
-    std::map<std::pair<int, int>, wxString > m_gridValues;
-    ColumnInfo::Vector_t                     m_colsMetaData;
 
 protected:
-    bool IsBlobColumn(const wxString &str);
+    virtual void OnHistoryToolClicked(wxAuiToolBarEvent& event);
+    IDbAdapter* m_pDbAdapter;
+    wxString m_dbName;
+    wxString m_dbTable;
+    wxString m_cellValue;
+    std::map<std::pair<int, int>, wxString> m_gridValues;
+    ColumnInfo::Vector_t m_colsMetaData;
+    clEditEventsHandler::Ptr_t m_editHelper;
+    clToolBar* m_toolbar;
+
+protected:
+    bool IsBlobColumn(const wxString& str);
     wxArrayString ParseSql() const;
     void SaveSqlHistory(wxArrayString sqls);
 
 public:
-    SQLCommandPanel(wxWindow *parent,IDbAdapter* dbAdapter, const wxString& dbName,const wxString& dbTable);
+    SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const wxString& dbName, const wxString& dbTable);
     virtual ~SQLCommandPanel();
     virtual void OnExecuteClick(wxCommandEvent& event);
     virtual void OnScintilaKeyDown(wxKeyEvent& event);
@@ -105,20 +102,12 @@ public:
     virtual void OnTeplatesLeftDown(wxMouseEvent& event);
     virtual void OnTemplatesBtnClick(wxAuiToolBarEvent& event);
 
-    void OnPopupClick(wxCommandEvent &evt);
+    void OnPopupClick(wxCommandEvent& evt);
     void ExecuteSql();
     void SetDefaultSelect();
-
-    void OnGridCellRightClick(wxGridEvent& event);
-    void OnCopyCellValue(wxCommandEvent &e);
-
-    virtual void OnGridLabelRightClick(wxGridEvent& event);
-
+    void OnCopyCellValue(wxCommandEvent& e);
     DECLARE_EVENT_TABLE()
-    void OnExecuteSQL(wxCommandEvent &e);
-    void OnEdit      (wxCommandEvent &e);
-    void OnEditUI    (wxUpdateUIEvent &e);
-
+    void OnExecuteSQL(wxCommandEvent& e);
 };
 
 #endif // SQLCOMMANDPANEL_H

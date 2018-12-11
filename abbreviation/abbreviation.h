@@ -26,8 +26,8 @@
 #ifndef __abbreviation__
 #define __abbreviation__
 
-#include "plugin.h"
 #include "cl_command_event.h"
+#include "plugin.h"
 
 class AbbreviationPlugin : public IPlugin
 {
@@ -50,7 +50,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();

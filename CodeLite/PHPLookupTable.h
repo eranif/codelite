@@ -287,7 +287,12 @@ public:
     template <typename GoindDownFunc>
     void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, GoindDownFunc pFuncGoingDown,
                                  bool parseFuncBodies = true);
-
+    
+    /**
+     * @brief parse folder
+     */
+    void ParseFolder(const wxString& folder, const wxString& filemask, eUpdateMode updateMode);
+    
     /**
      * @brief delete all entries belonged to filename.
      * @param filename the file name

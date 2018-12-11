@@ -42,7 +42,6 @@
 #include <wx/ffile.h>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
-#include <wx/xrc/xmlres.h>
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -437,9 +436,6 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
             wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
             retaggingProgressEvent.SetInt((int)precent);
             req->_evtHandler->AddPendingEvent(retaggingProgressEvent);
-
-        } else if(lastPercentageReported != precent) {
-            wxPrintf(wxT("parsing: %%%d completed\n"), precent);
         }
 
         TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);

@@ -46,7 +46,10 @@ public:
     virtual void Store(PHPLookupTable* lookup);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
-
+    
+    void FromJSON(const JSONElement& json);
+    JSONElement ToJSON() const;
+    
     /**
      * @brief return an array of inheritance (extends, implementes and traits)
      */

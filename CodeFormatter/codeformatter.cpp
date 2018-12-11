@@ -44,12 +44,12 @@
 #include "wx/ffile.h"
 #include "wx/log.h"
 #include "wx/menu.h"
+#include <algorithm>
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
-#include <algorithm>
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 
@@ -121,24 +121,17 @@ CodeFormatter::CodeFormatter(IManager* manager)
 
 CodeFormatter::~CodeFormatter() {}
 
-clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
+void CodeFormatter::CreateToolBar(clToolBar* toolbar)
 {
-    clToolBar* tb(NULL);
-    if(m_mgr->AllowToolbar()) {
-        // support both toolbars icon size
-        int size = m_mgr->GetToolbarIconSize();
+    // support both toolbars icon size
+    int size = m_mgr->GetToolbarIconSize();
 
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-        tb->SetToolBitmapSize(wxSize(size, size));
-
-        BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-        tb->AddTool(XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size),
-                    _("Format Source Code"));
-        tb->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
-                    _("Source Code Formatter Options..."));
-        tb->Realize();
-    }
-
+    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    toolbar->AddSpacer();
+    toolbar->AddTool(XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size),
+                     _("Format Source Code"));
+    toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
+                     _("Source Code Formatter Options..."));
     // Connect the events to us
     m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
@@ -148,7 +141,6 @@ clToolBar* CodeFormatter::CreateToolBar(wxWindow* parent)
                                 wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
-    return tb;
 }
 
 void CodeFormatter::CreatePluginMenu(wxMenu* pluginsMenu)
@@ -640,7 +632,17 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
     }
 }
 
-void CodeFormatter::OnFormatFile(clSourceFormatEvent& e) { wxUnusedVar(e); }
+void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
+{
+    wxFileName fn = e.GetFileName();
+    std::vector<wxFileName> filesToFormat;
+    FormatterEngine engine = FindFormatter(fn);
+    if(engine != kFormatEngineNone) {
+        // TODO skip files based on size, 4.5MB as the default
+        filesToFormat.push_back(fn);
+    }
+    BatchFormat(filesToFormat, true);
+}
 
 void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
 {
@@ -683,32 +685,35 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
             filesToFormat.push_back(vt.second->GetFilename());
         }
     });
-    BatchFormat(filesToFormat);
+    BatchFormat(filesToFormat, false);
 }
 
-void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files)
+void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files, bool silent)
 {
     if(files.empty()) {
-        ::wxMessageBox(_("Project contains no supported files"));
+        if(!silent) { ::wxMessageBox(_("Project contains no supported files")); }
         return;
     }
 
-    wxString msg;
-    msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
-    if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) { return; }
+    wxProgressDialog* dlg = nullptr;
+    if(!silent) {
+        wxString msg;
+        msg << _("You are about to beautify ") << files.size() << _(" files\nContinue?");
+        if(wxYES != ::wxMessageBox(msg, _("Source Code Formatter"), wxYES_NO | wxCANCEL | wxCENTER)) { return; }
 
-    wxProgressDialog dlg(_("Source Code Formatter"), _("Formatting files..."), (int)files.size(),
-                         m_mgr->GetTheApp()->GetTopWindow());
-
+        dlg = new wxProgressDialog(_("Source Code Formatter"), _("Formatting files..."), (int)files.size(),
+                                   m_mgr->GetTheApp()->GetTopWindow());
+    }
     for(size_t i = 0; i < files.size(); ++i) {
         wxString msg;
         msg << "[ " << i << " / " << files.size() << " ] " << files.at(i).GetFullName();
-        dlg.Update(i, msg);
+        if(dlg) { dlg->Update(i, msg); }
 
         FormatterEngine engine = FindFormatter(files.at(i).GetFullPath());
         DoFormatFile(files.at(i).GetFullPath(), engine);
     }
 
+    if(dlg) { dlg->Destroy(); }
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 }
 

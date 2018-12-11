@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 9,
+  "m_objCounter": 11,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterFrb2RoInitBitmapResources",
   "m_bitmapsFile": "breakpoint_dlg_liteeditor_bitmaps.cpp",
@@ -128,12 +128,12 @@
       }],
      "m_events": [],
      "m_children": [{
-       "m_type": 4413,
+       "m_type": 4469,
        "proportion": 1,
-       "border": 5,
-       "gbSpan": ",",
-       "gbPosition": ",",
-       "m_styles": ["wxLC_SINGLE_SEL", "wxLC_REPORT"],
+       "border": 2,
+       "gbSpan": "1,1",
+       "gbPosition": "0,0",
+       "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -142,7 +142,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": ""
+         "m_value": "-1,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -150,7 +150,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_listCtrlBreakpoints"
+         "m_value": "m_dvListCtrlBreakpoints"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -178,7 +178,7 @@
         }, {
          "type": "bool",
          "m_label": "Focused",
-         "m_value": true
+         "m_value": false
         }, {
          "type": "string",
          "m_label": "Class Name:",
@@ -193,32 +193,18 @@
          "m_value": ""
         }],
        "m_events": [{
-         "m_eventName": "wxEVT_COMMAND_LIST_ITEM_ACTIVATED",
-         "m_eventClass": "wxListEvent",
-         "m_eventHandler": "wxListEventHandler",
-         "m_functionNameAndSignature": "OnItemActivated(wxListEvent& event)",
-         "m_description": "The item has been activated (ENTER or double click)",
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnContextMenu(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks inside the control.\nNotice that this menu is generated even if the click didn't occur on any valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item.",
          "m_noBody": false
         }, {
-         "m_eventName": "wxEVT_COMMAND_LIST_ITEM_DESELECTED",
-         "m_eventClass": "wxListEvent",
-         "m_eventHandler": "wxListEventHandler",
-         "m_functionNameAndSignature": "OnItemDeselected(wxListEvent& event)",
-         "m_description": "The item has been deselected",
-         "m_noBody": false
-        }, {
-         "m_eventName": "wxEVT_COMMAND_LIST_ITEM_SELECTED",
-         "m_eventClass": "wxListEvent",
-         "m_eventHandler": "wxListEventHandler",
-         "m_functionNameAndSignature": "OnItemSelected(wxListEvent& event)",
-         "m_description": "The item has been selected",
-         "m_noBody": false
-        }, {
-         "m_eventName": "wxEVT_CONTEXT_MENU",
-         "m_eventClass": "wxContextMenuEvent",
-         "m_eventHandler": "wxContextMenuEventHandler",
-         "m_functionNameAndSignature": "OnContextMenu(wxContextMenuEvent& event)",
-         "m_description": "A right click (or other context menu command depending on platform) has been detected",
+         "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+         "m_eventClass": "wxDataViewEvent",
+         "m_eventHandler": "wxDataViewEventHandler",
+         "m_functionNameAndSignature": "OnBreakpointActivated(wxDataViewEvent& event)",
+         "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
          "m_noBody": false
         }],
        "m_children": []

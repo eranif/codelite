@@ -25,8 +25,8 @@
 #ifndef FIND_REPLACE_DLG_H
 #define FIND_REPLACE_DLG_H
 
-#include <wx/dialog.h>
 #include "cl_config.h"
+#include <wx/dialog.h>
 
 class wxTextCtrl;
 class wxCheckBox;
@@ -60,12 +60,12 @@ class wxStaticText;
 #endif // WXDLLIMPEXP_LE
 #endif
 
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_FIND_NEXT, -1)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_CLOSE, -1)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACE, -1)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACEALL, -1)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_BOOKMARKALL, -1)
-DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_LE, wxEVT_FRD_CLEARBOOKMARKS, -1)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_FIND_NEXT, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_CLOSE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACE, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_REPLACEALL, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_BOOKMARKALL, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_LE, wxEVT_FRD_CLEARBOOKMARKS, wxCommandEvent);
 
 class FindReplaceData : public clConfigItem
 {
@@ -154,22 +154,14 @@ class FindReplaceDialog : public wxDialog
 public:
     virtual ~FindReplaceDialog();
     FindReplaceDialog();
-    FindReplaceDialog(wxWindow* parent,
-                      const FindReplaceData& data,
-                      wxWindowID id = wxID_ANY,
-                      const wxString& caption = _("Find / Replace"),
-                      const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxDefaultSize,
-                      long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    FindReplaceDialog(wxWindow* parent, const FindReplaceData& data, wxWindowID id = wxID_ANY,
+                      const wxString& caption = _("Find / Replace"), const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
 
     // Creation
-    bool Create(wxWindow* parent,
-                const FindReplaceData& data,
-                wxWindowID id = wxID_ANY,
-                const wxString& caption = _("Find / Replace"),
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    bool Create(wxWindow* parent, const FindReplaceData& data, wxWindowID id = wxID_ANY,
+                const wxString& caption = _("Find / Replace"), const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
 
     // Return the data
     FindReplaceData& GetData() { return m_data; }

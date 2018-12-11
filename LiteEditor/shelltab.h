@@ -25,9 +25,10 @@
 #ifndef SHELLTAB_H
 #define SHELLTAB_H
 
-#include "outputtabwindow.h"
 #include "OutputDebugStringThread.h"
+#include "outputtabwindow.h"
 
+class wxTerminal;
 class AsyncExeCmd;
 
 class ShellTab : public OutputTabWindow
@@ -87,20 +88,23 @@ public:
     void OnWorkspaceClosed(wxCommandEvent& event);
 };
 
-class DebugTab : public ShellTab
+class DebugTab : public wxPanel
 {
+    wxTerminal* m_terminal;
+    clToolBar* m_toolbar;
+
 protected:
-    bool DoSendInput(const wxString& line);
-    void OnStopProc(wxCommandEvent& e);
     void OnUpdateUI(wxUpdateUIEvent& e);
-    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    virtual void OnEnableDbgLog(wxCommandEvent& event);
-    virtual void OnEnableDbgLogUI(wxUpdateUIEvent& event);
+    void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
+    void OnEnableDbgLog(wxCommandEvent& event);
+    void OnEnableDbgLogUI(wxUpdateUIEvent& event);
+    void OnCtrlC(clCommandEvent& event);
+    void OnExecuteCommand(clCommandEvent& event);
 
 public:
     DebugTab(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~DebugTab();
-    wxAuiToolBar* GetToolBar() { return m_tb; }
+    clToolBar* GetToolBar() { return m_toolbar; }
     void AppendLine(const wxString& line);
 };
 

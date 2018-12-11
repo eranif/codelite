@@ -51,7 +51,7 @@ ClassGenerateDialog::ClassGenerateDialog(
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         m_txVirtualDir->SetValue(
-            VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetTree(TreeFileView), item.m_item, false));
+            VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false));
     }
 }
 

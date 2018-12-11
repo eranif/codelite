@@ -49,6 +49,7 @@
 #include "GitApplyPatchDlg.h"
 #include "GitConsole.h"
 #include "GitLocator.h"
+#include "GitUserEmailDialog.h"
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
@@ -185,11 +186,7 @@ GitPlugin::GitPlugin(IManager* manager)
 GitPlugin::~GitPlugin() { delete m_gitBlameDlg; }
 
 /*******************************************************************************/
-clToolBar* GitPlugin::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void GitPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 /*******************************************************************************/
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
@@ -514,7 +511,7 @@ void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
         conf.WriteItem(&data);
         conf.Save();
 
-        GIT_MESSAGE("Git repo path is now set to '%s'", m_repositoryDirectory);
+        GIT_MESSAGE1("Git repo path is now set to '%s'", m_repositoryDirectory);
 
         // Update the status bar icon to reflect that we are using "Git"
         clStatusBar* sb = m_mgr->GetStatusBar();
@@ -868,8 +865,8 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
     if(!choice.IsEmpty()) {
         wxTreeItemId id = modifiedIDs[choice];
         if(id.IsOk()) {
-            m_mgr->GetTree(TreeFileView)->EnsureVisible(id);
-            m_mgr->GetTree(TreeFileView)->SelectItem(id);
+            m_mgr->GetWorkspaceTree()->EnsureVisible(id);
+            m_mgr->GetWorkspaceTree()->SelectItem(id);
         }
     }
 }
@@ -980,7 +977,7 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
             m_gitActionQueue.push_back(ga);
             break;
         }
-        DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), it->second, OverlayTool::Bmp_Modified);
+        DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), it->second, OverlayTool::Bmp_Modified);
     }
 
     gitAction ga(gitListModified, wxT(""));
@@ -1251,7 +1248,10 @@ void GitPlugin::ProcessGitActionQueue()
         command << wxT(" --no-pager rebase ") << ga.arguments;
         GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
         break;
-
+    case gitConfig:
+        command << wxT(" --no-pager config ") << ga.arguments;
+        GIT_MESSAGE(wxT("%s. Repo path: %s"), command.c_str(), m_repositoryDirectory.c_str());
+        break;
     case gitGarbageCollection:
         GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."), false);
@@ -1325,13 +1325,13 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 
     if(ga.action == gitListAll) {
         m_mgr->SetStatusMessage(_("Colouring tracked git files..."), 0);
-        ColourFileTree(m_mgr->GetTree(TreeFileView), gitFileSet, OverlayTool::Bmp_OK);
+        ColourFileTree(m_mgr->GetWorkspaceTree(), gitFileSet, OverlayTool::Bmp_OK);
         m_trackedFiles.swap(gitFileSet);
 
     } else if(ga.action == gitListModified) {
         m_mgr->SetStatusMessage(_("Colouring modifed git files..."), 0);
         // Reset modified files
-        ColourFileTree(m_mgr->GetTree(TreeFileView), m_modifiedFiles, OverlayTool::Bmp_OK);
+        ColourFileTree(m_mgr->GetWorkspaceTree(), m_modifiedFiles, OverlayTool::Bmp_OK);
         // First get an up to date map of the filepaths/treeitemids
         // (Trying to cache these results in segfaults when the tree has been modified)
         std::map<wxString, wxTreeItemId> IDs;
@@ -1343,14 +1343,14 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         for(; iter != gitFileSet.end(); ++iter) {
             wxTreeItemId id = IDs[(*iter)];
             if(id.IsOk()) {
-                DoSetTreeItemImage(m_mgr->GetTree(TreeFileView), id, OverlayTool::Bmp_Modified);
+                DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), id, OverlayTool::Bmp_Modified);
 
             } else {
                 toColour.insert(*iter);
             }
         }
 
-        if(!toColour.empty()) { ColourFileTree(m_mgr->GetTree(TreeFileView), toColour, OverlayTool::Bmp_Modified); }
+        if(!toColour.empty()) { ColourFileTree(m_mgr->GetWorkspaceTree(), toColour, OverlayTool::Bmp_Modified); }
 
         // Finally, cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
@@ -1521,12 +1521,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     }
 
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
-        wxString msg = _("There was a problem while performing a git action.\n"
-                         "Last command output:\n");
-        msg << m_commandOutput;
-        wxMessageBox(msg, _("git error"), wxICON_ERROR | wxOK, m_topWindow);
         // Last action failed, clear queue
         DoRecoverFromGitCommandError();
+        GetConsole()->ShowLog();
         return;
     }
 
@@ -1591,8 +1588,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
               ga.action == gitResetRepo) {
         if(ga.action == gitPull) {
             if(m_commandOutput.Contains(wxT("Already"))) {
-                wxMessageBox(_("Nothing to pull, already up-to-date."), wxT("CodeLite"), wxICON_INFORMATION | wxOK,
-                             m_topWindow);
+                // do nothing
             } else {
 
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
@@ -1618,10 +1614,8 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                         m_gitActionQueue.push_back(ga);
                     }
                 } else if(m_commandOutput.Contains(wxT("CONFLICT"))) {
-                    wxMessageBox(wxT("There was a conflict during merge.\n"
-                                     "Please resolve conflicts and commit by hand.\n"
-                                     "After resolving conflicts, be sure to reload the current project."),
-                                 _("Conflict found during merge"), wxOK, m_topWindow);
+                    // Do nothing, will be coloured in the console view
+                    GetConsole()->ShowLog();
                 }
                 if(m_commandOutput.Contains(wxT("Updating"))) m_bActionRequiresTreUpdate = true;
 
@@ -1705,12 +1699,26 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
             m_process->Terminate();
-            ::wxMessageBox(output, "Git", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
-
+            GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
+            if(userEmailDialog.ShowModal() == wxID_OK) {
+                wxString username = userEmailDialog.GetUsername();
+                wxString emaiil = userEmailDialog.GetEmail();
+                {
+                    wxString args;
+                    args << " user.email \"" << emaiil << "\"";
+                    gitAction act(gitConfig, args);
+                    m_gitActionQueue.push_back(act);
+                }
+                {
+                    wxString args;
+                    args << " user.name \"" << username << "\"";
+                    gitAction act(gitConfig, args);
+                    m_gitActionQueue.push_back(act);
+                }
+            }
         } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
 
             // Password is required
@@ -1828,7 +1836,7 @@ void GitPlugin::AddDefaultActions()
 }
 
 /*******************************************************************************/
-void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
+void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
     GitEntry data;
@@ -1862,7 +1870,7 @@ void GitPlugin::ColourFileTree(wxTreeCtrl* tree, const wxStringSet_t& files, Ove
 
 void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
 {
-    wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) { return; }
 
     IDs.clear();
@@ -1956,7 +1964,7 @@ void GitPlugin::DoCreateTreeImages()
 //                    m_baseImageCount + img-base + 2 => Modified
 #if 0
     if(m_treeImageMapping.empty()) {
-        wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+        wxTreeCtrl* tree = m_mgr->GetWorkspaceTree();
 
         // Create 2 sets: modified & normal
         wxImageList* il = tree->GetImageList();
@@ -1977,29 +1985,26 @@ void GitPlugin::DoCreateTreeImages()
 #endif
 }
 
-void GitPlugin::DoSetTreeItemImage(wxTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
+void GitPlugin::DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-
-    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
-
-    // get the base image first
-    int curImgIdx = ctrl->GetItemImage(item);
-    if(m_treeImageMapping.count(curImgIdx)) {
-        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
-
-        // now get the new image index based on the following:
-        // baseCount + (imgIdx * bitmapCount) + BmpType
-        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
-
-        // the below condition should never met, but I am paranoid..
-        if(ctrl->GetImageList()->GetImageCount() > newImg) {
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Selected);
-            ctrl->SetItemImage(item, newImg, wxTreeItemIcon_Normal);
-        }
-    }
+//    clConfig conf("git.conf");
+//    GitEntry data;
+//    conf.ReadItem(&data);
+//
+//    if(!(data.GetFlags() & GitEntry::Git_Colour_Tree_View)) return;
+//
+//    // get the base image first
+//    int curImgIdx = ctrl->GetItemImage(item);
+//    if(m_treeImageMapping.count(curImgIdx)) {
+//        int baseImg = m_treeImageMapping.find(curImgIdx)->second;
+//
+//        // now get the new image index based on the following:
+//        // baseCount + (imgIdx * bitmapCount) + BmpType
+//        int newImg = m_baseImageCount + (baseImg * 2) + bmpType;
+//
+//        // the below condition should never met, but I am paranoid..
+//        if(ctrl->GetBitmaps() && ctrl->GetBitmaps()->size() > newImg) { ctrl->SetItemImage(item, newImg); }
+//    }
 }
 
 void GitPlugin::OnClone(wxCommandEvent& e)
@@ -2080,7 +2085,7 @@ void GitPlugin::RefreshFileListView()
 void GitPlugin::DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo)
 {
     files.Clear();
-    wxTreeCtrl* tree = m_mgr->GetTree(TreeFileView);
+    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
     if(!tree) return;
 
     wxArrayTreeItemIds items;
@@ -2385,9 +2390,6 @@ void GitPlugin::OnCommandOutput(clCommandEvent& event)
     if(processOutput.Contains("password for")) {
         wxString pass = ::wxGetPasswordFromUser(event.GetString(), "Git");
         if(!pass.IsEmpty()) { event.SetString(pass); }
-    } else if(processOutput.Contains("fatal:") || processOutput.Contains("not a git repository")) {
-        // prompt the user for the error
-        ::wxMessageBox(processOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
     }
 }
 
@@ -2453,10 +2455,10 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
             }
             wxArrayString selectedFiles = dlg.GetSelectedFiles();
             for(unsigned i = 0; i < selectedFiles.GetCount(); ++i)
-                commitArgs << selectedFiles.Item(i) << wxT(" ");
+                commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
-            wxMessageBox(_("No commit message given, aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK, m_topWindow);
+            m_console->AddRawText(_("No commit message given, aborting"));
         }
     }
 }
@@ -2500,7 +2502,6 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     const wxString lcOutput = commandOutput.Lower();
     if(lcOutput.Contains("fatal:") || lcOutput.Contains("not a git repository")) {
         // prompt the user for the error
-        ::wxMessageBox(commandOutput, "Git", wxICON_WARNING | wxCENTER | wxOK);
         commandOutput.clear();
         return false;
     }

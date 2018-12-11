@@ -39,6 +39,7 @@
 #include <set>
 #include "commentconfigdata.h"
 #include "wxStringHash.h"
+#include "json_node.h"
 
 // The entity type
 class WXDLLIMPEXP_CL PHPLookupTable;
@@ -103,7 +104,11 @@ protected:
 
     // The database identifier
     wxLongLong m_dbId;
-
+    
+protected:
+    JSONElement BaseToJSON(const wxString& entityType) const;
+    void BaseFromJSON(const JSONElement& json);
+    
 public:
     PHPEntityBase();
     virtual ~PHPEntityBase(){};
@@ -125,7 +130,16 @@ public:
      * @brief generate a php doc comment that matches this entry
      */
     virtual wxString FormatPhpDoc(const CommentConfigData& data) const = 0;
-
+    
+    /**
+     * @brief serialization to JSON
+     */
+    virtual JSONElement ToJSON() const = 0;
+    /**
+     * @brief serialization from JSON
+     */
+    virtual void FromJSON(const JSONElement& json) = 0;
+    
     // Setters / Getters
     void SetFlag(size_t flag, bool b = true) { b ? this->m_flags |= flag : this->m_flags &= ~flag; }
     bool HasFlag(size_t flag) const { return m_flags & flag; }

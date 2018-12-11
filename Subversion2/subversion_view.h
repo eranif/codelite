@@ -26,6 +26,7 @@
 #ifndef __subversion_page__
 #define __subversion_page__
 
+#include "bitmap_loader.h"
 #include "clFileSystemEvent.h"
 #include "cl_command_event.h"
 #include "subversion2_ui.h"
@@ -34,7 +35,6 @@
 #include "svninfo.h"
 #include "svntreedata.h"
 #include "theme_handler_helper.h"
-#include "bitmap_loader.h"
 
 class Subversion2;
 class wxMenu;
@@ -73,8 +73,7 @@ class SubversionView : public SubversionPageBase
     ThemeHandlerHelper* m_themeHelper;
     wxFileName m_workspaceFile;
     IProcess* m_codeliteEcho;
-    BitmapLoader::BitmapMap_t m_standardBitmaps;
-    
+
 public:
     enum { SvnInfo_Tag, SvnInfo_Branch, SvnInfo_Info };
 
@@ -106,6 +105,7 @@ protected:
     void DoRootDirChanged(const wxString& path);
     wxString DoGetCurRepoPath() const;
     wxArrayString GetSelectedUnversionedFiles() const;
+    int GetImageIndex(const wxFileName& filepath) const;
     
 protected:
     // Menu management
@@ -131,15 +131,15 @@ protected:
     void OnSettings(wxCommandEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnOpenFile(wxCommandEvent& event);
-    void OnAppActivated(wxCommandEvent &event);
-    
+    void OnAppActivated(wxCommandEvent& event);
+
     // Svn events
     void OnCommit(wxCommandEvent& event);
     void OnCommitGotoAnything(wxCommandEvent& event);
     void OnUpdateGotoAnything(wxCommandEvent& event);
     void OnUpdate(wxCommandEvent& event);
     void OnRevert(wxCommandEvent& event);
-    //void OnAdd(wxCommandEvent& event);
+    // void OnAdd(wxCommandEvent& event);
     void OnDelete(wxCommandEvent& event);
     void OnBranch(wxCommandEvent& event);
     void OnTag(wxCommandEvent& event);

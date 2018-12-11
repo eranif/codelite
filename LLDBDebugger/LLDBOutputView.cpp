@@ -33,8 +33,11 @@
 #include "file_logger.h"
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
+#include "bitmap_loader.h"
+#include "imanager.h"
+#include "globals.h"
 
-class LLDBBreakpointClientData : public wxClientData
+class LLDBBreakpointClientData : public wxTreeItemData
 {
     LLDBBreakpoint::Ptr_t m_breakpoint;
 
@@ -52,14 +55,31 @@ LLDBOutputView::LLDBOutputView(wxWindow* parent, LLDBPlugin* plugin)
     , m_plugin(plugin)
     , m_connector(plugin->GetLLDB())
 {
+    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete Breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("minus"));
+    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete All Breakpoints"),
+                             clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+    m_tbBreakpoints->AddTool(wxID_NEW, _("New Breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("plus"));
+    m_tbBreakpoints->Realize();
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &LLDBOutputView::OnDeleteBreakpoint, this, wxID_DELETE);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &LLDBOutputView::OnDeleteBreakpointUI, this, wxID_DELETE);
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &LLDBOutputView::OnDeleteAll, this, wxID_CLEAR);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &LLDBOutputView::OnDeleteAllUI, this, wxID_CLEAR);
+    m_tbBreakpoints->Bind(wxEVT_TOOL, &LLDBOutputView::OnNewBreakpoint, this, wxID_NEW);
+    m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &LLDBOutputView::OnNewBreakpointUI, this, wxID_NEW);
+
     Initialize();
     m_connector->Bind(wxEVT_LLDB_INTERPERTER_REPLY, &LLDBOutputView::OnConsoleOutput, this);
     m_connector->Bind(wxEVT_LLDB_STARTED, &LLDBOutputView::OnLLDBStarted, this);
     m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBOutputView::OnBreakpointsUpdated, this);
     m_connector->Bind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBOutputView::OnBreakpointsUpdated, this);
-    EventNotifier::Get()->TopFrame()->Bind(
-        wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnSelectAll, this, wxID_SELECTALL);
+    EventNotifier::Get()->TopFrame()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnSelectAll, this,
+                                           wxID_SELECTALL);
     EventNotifier::Get()->TopFrame()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnCopy, this, wxID_COPY);
+    m_treeCtrlBreakpoints->AddHeader("#");
+    m_treeCtrlBreakpoints->AddHeader("Function");
+    m_treeCtrlBreakpoints->AddHeader("File");
+    m_treeCtrlBreakpoints->AddHeader("Line");
+    m_treeCtrlBreakpoints->AddRoot("Breakpoints");
 }
 
 LLDBOutputView::~LLDBOutputView()
@@ -68,30 +88,23 @@ LLDBOutputView::~LLDBOutputView()
     m_connector->Unbind(wxEVT_LLDB_STARTED, &LLDBOutputView::OnLLDBStarted, this);
     m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_UPDATED, &LLDBOutputView::OnBreakpointsUpdated, this);
     m_connector->Unbind(wxEVT_LLDB_BREAKPOINTS_DELETED_ALL, &LLDBOutputView::OnBreakpointsUpdated, this);
-    EventNotifier::Get()->TopFrame()->Unbind(
-        wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnSelectAll, this, wxID_SELECTALL);
+    EventNotifier::Get()->TopFrame()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnSelectAll, this,
+                                             wxID_SELECTALL);
     EventNotifier::Get()->TopFrame()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBOutputView::OnCopy, this, wxID_COPY);
-}
-
-void LLDBOutputView::OnBreakpointActivated(wxDataViewEvent& event)
-{
-    event.Skip();
-    CallAfter(&LLDBOutputView::GotoBreakpoint, GetBreakpoint(event.GetItem()));
 }
 
 void LLDBOutputView::Clear()
 {
     // free all user data from the list
-    m_dataviewModel->Clear();
+    m_treeCtrlBreakpoints->DeleteAllItems();
+    m_treeCtrlBreakpoints->AddRoot("Breakpoints");
 }
 
 void LLDBOutputView::Initialize()
 {
     Clear();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_stcConsole);
-    }
+    if(lexer) { lexer->Apply(m_stcConsole); }
 
     // initialize the console view
     m_stcConsole->SetReadOnly(true);
@@ -99,26 +112,26 @@ void LLDBOutputView::Initialize()
     LLDBBreakpoint::Vec_t breakpoints = m_connector->GetAllBreakpoints();
     for(size_t i = 0; i < breakpoints.size(); ++i) {
 
-        wxVector<wxVariant> cols;
         LLDBBreakpoint::Ptr_t bp = breakpoints.at(i);
-        cols.push_back(wxString() << bp->GetId());
-        cols.push_back(bp->GetName());
-        cols.push_back(m_plugin->GetFilenameForDisplay(bp->GetFilename()));
-        cols.push_back(wxString() << bp->GetLineNumber());
-        wxDataViewItem parent =
-            m_dataviewModel->AppendItem(wxDataViewItem(NULL), cols, new LLDBBreakpointClientData(bp));
+        wxTreeItemId parent =
+            m_treeCtrlBreakpoints->AppendItem(m_treeCtrlBreakpoints->GetRootItem(), wxString() << bp->GetId(),
+                                              wxNOT_FOUND, wxNOT_FOUND, new LLDBBreakpointClientData(bp));
+        m_treeCtrlBreakpoints->SetItemText(parent, bp->GetName(), 1);
+        m_treeCtrlBreakpoints->SetItemText(parent, m_plugin->GetFilenameForDisplay(bp->GetFilename()), 2);
+        m_treeCtrlBreakpoints->SetItemText(parent, wxString() << bp->GetLineNumber(), 3);
 
         // add the children breakpoints (sites)
         if(!bp->GetChildren().empty()) {
             const LLDBBreakpoint::Vec_t& children = bp->GetChildren();
             for(size_t i = 0; i < children.size(); ++i) {
-                cols.clear();
                 LLDBBreakpoint::Ptr_t breakpoint = children.at(i);
-                cols.push_back("");
-                cols.push_back(breakpoint->GetName());
-                cols.push_back(m_plugin->GetFilenameForDisplay(breakpoint->GetFilename()));
-                cols.push_back(wxString() << breakpoint->GetLineNumber());
-                m_dataviewModel->AppendItem(parent, cols, new LLDBBreakpointClientData(breakpoint));
+                wxTreeItemId child =
+                    m_treeCtrlBreakpoints->AppendItem(parent, wxString() << breakpoint->GetId(), wxNOT_FOUND,
+                                                      wxNOT_FOUND, new LLDBBreakpointClientData(breakpoint));
+                m_treeCtrlBreakpoints->SetItemText(child, breakpoint->GetName(), 1);
+                m_treeCtrlBreakpoints->SetItemText(child, m_plugin->GetFilenameForDisplay(breakpoint->GetFilename()),
+                                                   2);
+                m_treeCtrlBreakpoints->SetItemText(child, wxString() << breakpoint->GetLineNumber(), 3);
             }
         }
     }
@@ -127,9 +140,9 @@ void LLDBOutputView::Initialize()
 void LLDBOutputView::OnBreakpointsUpdated(LLDBEvent& event)
 {
     event.Skip();
-    CL_DEBUG("Setting LLDB breakpoints to:");
+    clDEBUG() << "Setting LLDB breakpoints to:";
     for(size_t i = 0; i < event.GetBreakpoints().size(); ++i) {
-        CL_DEBUG("%s", event.GetBreakpoints().at(i)->ToString());
+        clDEBUG() << event.GetBreakpoints().at(i)->ToString();
     }
     m_connector->UpdateAppliedBreakpoints(event.GetBreakpoints());
     Initialize();
@@ -155,34 +168,38 @@ void LLDBOutputView::OnDeleteAll(wxCommandEvent& event)
     m_connector->DeleteAllBreakpoints();
 }
 
-void LLDBOutputView::OnDeleteAllUI(wxUpdateUIEvent& event) { event.Enable(!m_dataviewModel->IsEmpty()); }
+void LLDBOutputView::OnDeleteAllUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_treeCtrlBreakpoints->GetChildrenCount(m_treeCtrlBreakpoints->GetRootItem()));
+}
 
 void LLDBOutputView::OnDeleteBreakpoint(wxCommandEvent& event)
 {
     // get the breakpoint we want to delete
-    wxDataViewItemArray items;
-    m_dataview->GetSelections(items);
-    for(size_t i = 0; i < items.GetCount(); ++i) {
-        m_connector->MarkBreakpointForDeletion(GetBreakpoint(items.Item(i)));
+    wxArrayTreeItemIds selections;
+    m_treeCtrlBreakpoints->GetSelections(selections);
+    for(size_t i = 0; i < selections.GetCount(); ++i) {
+        m_connector->MarkBreakpointForDeletion(GetBreakpoint(selections.Item(i)));
     }
     m_connector->DeleteBreakpoints();
 }
 
 void LLDBOutputView::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 {
-    wxDataViewItem item = m_dataview->GetSelection();
+    wxTreeItemId item = m_treeCtrlBreakpoints->GetSelection();
     LLDBBreakpoint::Ptr_t bp = GetBreakpoint(item);
     event.Enable(bp && !bp->IsLocation());
 }
 
-LLDBBreakpoint::Ptr_t LLDBOutputView::GetBreakpoint(const wxDataViewItem& item)
+LLDBBreakpoint::Ptr_t LLDBOutputView::GetBreakpoint(const wxTreeItemId& item)
 {
-    if(!item.IsOk()) {
+    if(!item.IsOk()) { return LLDBBreakpoint::Ptr_t(NULL); }
+    LLDBBreakpointClientData* cd = dynamic_cast<LLDBBreakpointClientData*>(m_treeCtrlBreakpoints->GetItemData(item));
+    if(cd) {
+        return cd->GetBreakpoint();
+    } else {
         return LLDBBreakpoint::Ptr_t(NULL);
     }
-
-    LLDBBreakpointClientData* cd = dynamic_cast<LLDBBreakpointClientData*>(m_dataviewModel->GetClientObject(item));
-    return cd->GetBreakpoint();
 }
 
 void LLDBOutputView::GotoBreakpoint(LLDBBreakpoint::Ptr_t bp)
@@ -192,9 +209,7 @@ void LLDBOutputView::GotoBreakpoint(LLDBBreakpoint::Ptr_t bp)
     if(fileLoc.Exists()) {
         if(m_plugin->GetManager()->OpenFile(fileLoc.GetFullPath(), "", bp->GetLineNumber() - 1)) {
             IEditor* editor = m_plugin->GetManager()->GetActiveEditor();
-            if(editor) {
-                editor->SetActive();
-            }
+            if(editor) { editor->SetActive(); }
         }
     }
 }
@@ -222,9 +237,7 @@ void LLDBOutputView::OnConsoleOutput(LLDBEvent& event)
     event.Skip();
     m_stcConsole->SetReadOnly(false);
     wxString text;
-    if(!m_stcConsole->IsEmpty() && !m_stcConsole->GetText().EndsWith("\n")) {
-        text << "\n";
-    }
+    if(!m_stcConsole->IsEmpty() && !m_stcConsole->GetText().EndsWith("\n")) { text << "\n"; }
     text << event.GetString();
     text.Trim();
     if(text.IsEmpty()) return;
@@ -261,4 +274,9 @@ void LLDBOutputView::OnLLDBStarted(LLDBEvent& event)
     m_stcConsole->SetReadOnly(false);
     m_stcConsole->ClearAll();
     m_stcConsole->SetReadOnly(true);
+}
+void LLDBOutputView::OnBpActivated(wxTreeEvent& event)
+{
+    event.Skip();
+    CallAfter(&LLDBOutputView::GotoBreakpoint, GetBreakpoint(event.GetItem()));
 }

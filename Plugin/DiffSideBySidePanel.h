@@ -26,12 +26,13 @@
 #ifndef DIFFSIDEBYSIDEPANEL_H
 #define DIFFSIDEBYSIDEPANEL_H
 
-#include "wxcrafter_plugin.h"
-#include <wx/filename.h>
-#include <vector>
-#include "clDTL.h"
 #include "DiffConfig.h"
+#include "clDTL.h"
+#include "wxcrafter_plugin.h"
+#include <vector>
+#include <wx/filename.h>
 
+class clToolBar;
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
 {
     enum {
@@ -74,6 +75,27 @@ public:
     };
 
 protected:
+    Markers_t m_leftRedMarkers;
+    Markers_t m_leftGreenMarkers;
+    Markers_t m_leftPlaceholdersMarkers;
+
+    Markers_t m_rightGreenMarkers;
+    Markers_t m_rightRedMarkers;
+    Markers_t m_rightPlaceholdersMarkers;
+
+    wxArrayInt m_overviewPanelMarkers;
+
+    bool m_darkTheme;
+
+    std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
+    int m_cur_sequence;
+
+    size_t m_flags;
+    DiffConfig m_config;
+    bool m_storeFilepaths;
+    clToolBar* m_toolbar;
+    
+protected:
     virtual void OnBrowseLeftFile(wxCommandEvent& event);
     virtual void OnBrowseRightFile(wxCommandEvent& event);
     virtual void OnMouseWheel(wxMouseEvent& event);
@@ -85,29 +107,9 @@ protected:
 
     void OnMenuCopyLeft2Right(wxCommandEvent& event);
     void OnMenuCopyRight2Left(wxCommandEvent& event);
-
-    Markers_t m_leftRedMarkers;
-    Markers_t m_leftGreenMarkers;
-    Markers_t m_leftPlaceholdersMarkers;
-
-    Markers_t m_rightGreenMarkers;
-    Markers_t m_rightRedMarkers;
-    Markers_t m_rightPlaceholdersMarkers;
-    
-    wxArrayInt m_overviewPanelMarkers;
-    
-    bool m_darkTheme;
-
-
-    std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
-    int m_cur_sequence;
-
-    size_t m_flags;
-    DiffConfig m_config;
-    bool m_ignoreWhitespaceDiffs;
-    bool m_showLinenos;
-    bool m_showOverviewBar;
-    bool m_storeFilepaths;
+    void OnCopyAllMenu(wxCommandEvent& event);
+    void OnViewMenu(wxCommandEvent& event);
+    void OnPreferences(wxCommandEvent& event);
 
 protected:
     wxString DoGetContentNoPlaceholders(wxStyledTextCtrl* stc) const;
@@ -154,11 +156,8 @@ protected:
     void DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl);
     void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
-    void DoGetPositionsToCopy(wxStyledTextCtrl* stc,
-        int& startPos,
-        int& endPos,
-        int& placeHolderMarkerFirstLine,
-        int& placeHolderMarkerLastLine);
+    void DoGetPositionsToCopy(wxStyledTextCtrl* stc, int& startPos, int& endPos, int& placeHolderMarkerFirstLine,
+                              int& placeHolderMarkerLastLine);
     void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
 
     bool CanNextDiff();
@@ -184,23 +183,21 @@ public:
      * @brief start a new empty diff
      */
     void DiffNew();
-    
+
     /**
      * @brief start a new diff for two input files
      */
     void DiffNew(const wxFileName& left, const wxFileName& right);
-    
+
     /**
      * @brief set the initial files to diff
      * Once set, you should call Diff() function
      */
-    void SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile);    
+    void SetFilesDetails(const DiffSideBySidePanel::FileInfo& leftFile, const DiffSideBySidePanel::FileInfo& rightFile);
 
     /**
      * @brief set whether to store the diff's filepaths for later reload
      */
-    void SetSaveFilepaths(bool save) {
-        m_storeFilepaths = save;
-    }
+    void SetSaveFilepaths(bool save) { m_storeFilepaths = save; }
 };
 #endif // DIFFSIDEBYSIDEPANEL_H

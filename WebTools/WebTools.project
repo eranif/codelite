@@ -89,6 +89,8 @@
     <File Name="XMLBuffer.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="NodeJS">
+    <File Name="NodeJSExecutable.cpp"/>
+    <File Name="NodeJSExecutable.h"/>
     <File Name="NoteJSWorkspace.h"/>
     <File Name="NoteJSWorkspace.cpp"/>
     <File Name="NodeJSWorkspaceView.h"/>
@@ -96,38 +98,64 @@
     <File Name="NodeJSWorkspaceConfiguration.h"/>
     <File Name="NodeJSWorkspaceConfiguration.cpp"/>
     <VirtualDirectory Name="Debugger">
-      <File Name="NodeJSDebugger.h"/>
-      <File Name="NodeJSDebugger.cpp"/>
-      <File Name="NodeJSSocket.h"/>
-      <File Name="NodeJSSocket.cpp"/>
-      <File Name="NodeJSDebuggerDlg.h"/>
-      <File Name="NodeJSDebuggerDlg.cpp"/>
-      <File Name="NodeJSDebuggerBreakpoint.h"/>
-      <File Name="NodeJSDebuggerBreakpoint.cpp"/>
-      <File Name="NodeJSDebuggerBreakpointManager.h"/>
-      <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
-      <VirtualDirectory Name="Handlers">
-        <File Name="NodeJSSetBreakpointHandler.h"/>
-        <File Name="NodeJSSetBreakpointHandler.cpp"/>
-        <File Name="NodeJSHandlerBase.h"/>
-        <File Name="NodeJSHandlerBase.cpp"/>
-        <File Name="NodeJSContinueHandler.h"/>
-        <File Name="NodeJSContinueHandler.cpp"/>
-        <File Name="NodeJSCallstackHandler.h"/>
-        <File Name="NodeJSCallstackHandler.cpp"/>
-        <File Name="NodeJSSelectFrameHandler.h"/>
-        <File Name="NodeJSSelectFrameHandler.cpp"/>
-        <File Name="NodeJSGetScriptHandler.h"/>
-        <File Name="NodeJSGetScriptHandler.cpp"/>
-        <File Name="NodeJSEvaluateExprHandler.h"/>
-        <File Name="NodeJSEvaluateExprHandler.cpp"/>
-        <File Name="NodeJSLookupHandler.h"/>
-        <File Name="NodeJSLookupHandler.cpp"/>
+      <File Name="NodeDebuggerTooltip.cpp"/>
+      <File Name="NodeDebuggerTooltip.h"/>
+      <VirtualDirectory Name="DebuggerNew">
+        <File Name="NodeDebuggerPane.cpp"/>
+        <File Name="NodeDebuggerPane.h"/>
+        <File Name="NodeDebugger.h"/>
+        <File Name="NodeDebugger.cpp"/>
+        <File Name="NodeFileManager.cpp"/>
+        <File Name="NodeFileManager.h"/>
+        <VirtualDirectory Name="MessageHandlers">
+          <File Name="BreakpointResolved.cpp"/>
+          <File Name="BreakpointResolved.h"/>
+          <File Name="clDebugRemoteObjectEvent.cpp"/>
+          <File Name="clDebugRemoteObjectEvent.h"/>
+          <File Name="RuntimeExecutionContextDestroyed.cpp"/>
+          <File Name="RuntimeExecutionContextDestroyed.h"/>
+          <File Name="clDebugCallFramesEvent.h"/>
+          <File Name="clDebugCallFramesEvent.cpp"/>
+          <File Name="DebuggerResumed.cpp"/>
+          <File Name="DebuggerResumed.h"/>
+          <File Name="DebuggerScriptParsed.cpp"/>
+          <File Name="DebuggerScriptParsed.h"/>
+          <File Name="MessageManager.cpp"/>
+          <File Name="MessageManager.h"/>
+          <File Name="NodeMessageBase.cpp"/>
+          <File Name="NodeMessageBase.h"/>
+          <File Name="DebuggerPaused.h"/>
+          <File Name="DebuggerPaused.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Protocol">
+          <File Name="CallFrameScope.cpp"/>
+          <File Name="CallFrameScope.h"/>
+          <File Name="PropertyDescriptor.cpp"/>
+          <File Name="PropertyDescriptor.h"/>
+          <File Name="ObjectPreview.cpp"/>
+          <File Name="ObjectPreview.h"/>
+          <File Name="PropertyPreview.cpp"/>
+          <File Name="PropertyPreview.h"/>
+          <File Name="nSerializableObject.h"/>
+          <File Name="nSerializableObject.cpp"/>
+          <File Name="RemoteObject.h"/>
+          <File Name="RemoteObject.cpp"/>
+          <File Name="Location.h"/>
+          <File Name="Location.cpp"/>
+          <File Name="CallFrame.h"/>
+          <File Name="CallFrame.cpp"/>
+          <File Name="NodeJSDevToolsProtocol.cpp"/>
+          <File Name="NodeJSDevToolsProtocol.h"/>
+        </VirtualDirectory>
       </VirtualDirectory>
-      <File Name="NodeJSDebuggerPane.h"/>
-      <File Name="NodeJSDebuggerPane.cpp"/>
-      <File Name="NodeJSOuptutParser.h"/>
-      <File Name="NodeJSOuptutParser.cpp"/>
+      <VirtualDirectory Name="DebuggerCommon">
+        <File Name="NodeJSDebuggerDlg.h"/>
+        <File Name="NodeJSDebuggerDlg.cpp"/>
+        <File Name="NodeJSDebuggerBreakpoint.cpp"/>
+        <File Name="NodeJSDebuggerBreakpoint.h"/>
+        <File Name="NodeJSDebuggerBreakpointManager.cpp"/>
+        <File Name="NodeJSDebuggerBreakpointManager.h"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <File Name="NodeJSWorkspaceUserConfiguration.h"/>
     <File Name="NodeJSWorkspaceUserConfiguration.cpp"/>
@@ -135,8 +163,6 @@
     <File Name="NodeJSEvents.cpp"/>
     <File Name="NodeJSNewWorkspaceDlg.h"/>
     <File Name="NodeJSNewWorkspaceDlg.cpp"/>
-    <File Name="NodeJSDebuggerTooltip.h"/>
-    <File Name="NodeJSDebuggerTooltip.cpp"/>
     <File Name="NodeJS.h"/>
     <File Name="NodeJSPackageJSON.h"/>
     <File Name="NodeJSPackageJSON.cpp"/>
@@ -203,14 +229,14 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes);-Winvalid-pch" C_Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes );-Winvalid-pch" C_Options="-g;-Wall;$(shell wx-config --cxxflags --unicode=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs std,stc,propgrid --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config  --libs std,stc,propgrid --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -304,7 +330,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x86_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no);-Winvalid-pch" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>

@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "macbundler.h"
-#include "wx/xrc/xmlres.h"
-#include "wx/textfile.h"
-#include "workspace.h"
 #include "windowattrmanager.h"
+#include "workspace.h"
 #include "wx/msgdlg.h"
+#include "wx/textfile.h"
 #include "wx/wx.h"
+#include "wx/xrc/xmlres.h"
 
 static MacBundler* thePlugin = NULL;
 
@@ -80,17 +80,13 @@ public:
     {
         wxPaintDC dc(this);
 
-        if(m_image.IsOk()) {
-            dc.DrawBitmap(m_image, 10, 10, false);
-        }
+        if(m_image.IsOk()) { dc.DrawBitmap(m_image, 10, 10, false); }
     }
 
     void doubleClick(wxMouseEvent& evt)
     {
         wxString filename = wxFileSelector(_("Choose the icon file"));
-        if(not filename.IsEmpty()) {
-            setImage(filename);
-        }
+        if(not filename.IsEmpty()) { setImage(filename); }
     }
 
     wxString getImagePath() { return m_image_path; }
@@ -123,11 +119,7 @@ class BundleConfigDialog : public wxDialog
 
 public:
     BundleConfigDialog(ProjectPtr project, wxWindow* parent, const wxArrayString& choices, IManager* manager)
-        : wxDialog(parent,
-                   wxID_ANY,
-                   _("Mac Bundler Configuration"),
-                   wxDefaultPosition,
-                   wxDefaultSize,
+        : wxDialog(parent, wxID_ANY, _("Mac Bundler Configuration"), wxDefaultPosition, wxDefaultSize,
                    wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
         , m_pluginManager(manager)
     {
@@ -190,18 +182,12 @@ public:
         subsizer->Add(okBtn, 0, wxLEFT | wxRIGHT, 5);
         sizer->Add(subsizer, 0, wxEXPAND | wxALL, 10);
 
-        okBtn->Connect(
-            okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk), NULL, this);
-        cancelBtn->Connect(cancelBtn->GetId(),
-                           wxEVT_COMMAND_BUTTON_CLICKED,
-                           wxCommandEventHandler(BundleConfigDialog::onCancel),
-                           NULL,
-                           this);
-        m_info_plist_cb->Connect(m_info_plist_cb->GetId(),
-                                 wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                 wxCommandEventHandler(BundleConfigDialog::onPlistCheckboxPressed),
-                                 NULL,
-                                 this);
+        okBtn->Connect(okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk),
+                       NULL, this);
+        cancelBtn->Connect(cancelBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(BundleConfigDialog::onCancel), NULL, this);
+        m_info_plist_cb->Connect(m_info_plist_cb->GetId(), wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                 wxCommandEventHandler(BundleConfigDialog::onPlistCheckboxPressed), NULL, this);
 
         this->SetSizerAndFit(sizer);
         this->Centre();
@@ -301,9 +287,7 @@ public:
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new MacBundler(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new MacBundler(manager); }
     return thePlugin;
 }
 
@@ -413,8 +397,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
             if(wxFileExists(infoPlistFile)) {
                 int out = wxMessageBox(wxString::Format(_("The following file:\n%s\nalready exists, overwrite it?\n"),
                                                         infoPlistFile.c_str()),
-                                       _("Warning"),
-                                       wxYES_NO);
+                                       _("Warning"), wxYES_NO);
                 if(out == wxYES) {
                     wxTextFile file;
                     file.Open(infoPlistFile);
@@ -458,9 +441,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
                 std::cout << "Copying icon '" << iconSourcePath.mb_str() << "' to project\n";
 
                 if(iconSourcePath.EndsWith(wxT(".icns"))) {
-                    if(not wxCopyFile(iconSourcePath, iconFileDest)) {
-                        wxMessageBox(_("Sorry, could not copy icon"));
-                    }
+                    if(not wxCopyFile(iconSourcePath, iconFileDest)) { wxMessageBox(_("Sorry, could not copy icon")); }
                 } else {
                     wxString cmd =
                         wxT("sips -s format icns '") + iconSourcePath + wxT("' --out '") + iconFileDest + wxT("'");
@@ -549,51 +530,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
     project->SetSettings(settings);
 }
 
-clToolBar* MacBundler::CreateToolBar(wxWindow* parent)
-{
-    return NULL;
-
-    // Create the toolbar to be used by the plugin
-    // clToolBar *tb(NULL);
-
-    /*
-            // You can use the below code a snippet:
-            // First, check that CodeLite allows plugin to register plugins
-            if (m_mgr->AllowToolbar()) {
-                    // Support both toolbars icon size
-                    int size = m_mgr->GetToolbarIconSize();
-
-                    // Allocate new toolbar, which will be freed later by CodeLite
-                    tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-
-                    // Set the toolbar size
-                    tb->SetToolBitmapSize(wxSize(size, size));
-
-                    // Add tools to the plugins toolbar. You must provide 2 sets of icons: 24x24 and 16x16
-                    if (size == 24) {
-                            tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("plugin24")), wxT("New Plugin Wizard..."));
-                            tb->AddTool(XRCID("new_class"), wxT("Create New Class"),
-       wxXmlResource::Get()->LoadBitmap(wxT("class24")), wxT("New Class..."));
-                            tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project24")), wxT("New wxWidget Project"));
-                    } else {
-                            tb->AddTool(XRCID("new_plugin"), wxT("New CodeLite Plugin Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("plugin16")), wxT("New Plugin Wizard..."));
-                            tb->AddTool(XRCID("new_class"), wxT("Create New Class"),
-       wxXmlResource::Get()->LoadBitmap(wxT("class16")), wxT("New Class..."));
-                            tb->AddTool(XRCID("new_wx_project"), wxT("New wxWidget Project"),
-       wxXmlResource::Get()->LoadBitmap(wxT("new_wx_project16")), wxT("New wxWidget Project"));
-                    }
-                    // And finally, we must call 'Realize()'
-                    tb->Realize();
-            }
-
-            // return the toolbar, it can be NULL if CodeLite does not allow plugins to register toolbars
-            // or in case the plugin simply does not require toolbar
-    */
-    // return tb;
-}
+void MacBundler::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -606,11 +543,8 @@ void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
     // item = new wxMenuItem(menu, wxID_ANY, _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
     // menu->Append(item);
 
-    m_mgr->GetTheApp()->Connect(item->GetId(),
-                                wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MacBundler::onBundleInvoked_active),
-                                NULL,
-                                this);
+    m_mgr->GetTheApp()->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MacBundler::onBundleInvoked_active), NULL, this);
 
     pluginsMenu->Append(wxID_ANY, _("MacBundler"), menu);
 
@@ -634,13 +568,10 @@ void MacBundler::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if(type == MenuTypeFileView_Project) {
         if(!menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"))) {
-            menu->Append(
-                XRCID("MACBUNDLER_PROJECT_MENU"), _("Make this project output a bundle"), wxEmptyString, wxITEM_NORMAL);
-            m_mgr->GetTheApp()->Connect(XRCID("MACBUNDLER_PROJECT_MENU"),
-                                        wxEVT_COMMAND_MENU_SELECTED,
-                                        wxCommandEventHandler(MacBundler::onBundleInvoked_selected),
-                                        NULL,
-                                        this);
+            menu->Append(XRCID("MACBUNDLER_PROJECT_MENU"), _("Make this project output a bundle"), wxEmptyString,
+                         wxITEM_NORMAL);
+            m_mgr->GetTheApp()->Connect(XRCID("MACBUNDLER_PROJECT_MENU"), wxEVT_COMMAND_MENU_SELECTED,
+                                        wxCommandEventHandler(MacBundler::onBundleInvoked_selected), NULL, this);
         }
     }
 }

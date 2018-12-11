@@ -98,7 +98,7 @@ public:
     /**
      * @brief convert the lexer settings into a JSON object
      */
-    JSONElement ToJSON() const;
+    JSONElement ToJSON(bool forExport = false) const;
 
     /**
      * @brief construt this object from a JSON object

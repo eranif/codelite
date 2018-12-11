@@ -76,7 +76,9 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
     m_lineNumber = rhs.m_lineNumber;
     m_name = rhs.m_name.c_str();
     m_path = rhs.m_path.c_str();
+#if wxUSE_GUI
     m_hti = rhs.m_hti;
+#endif
     m_scope = rhs.m_scope.c_str();
     m_isClangTag = rhs.m_isClangTag;
     m_differOnByLineNumber = rhs.m_differOnByLineNumber;

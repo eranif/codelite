@@ -1,25 +1,23 @@
-#include "wordcompletion.h"
-#include <wx/xrc/xmlres.h>
-#include "WordCompletionThread.h"
-#include <wx/stc/stc.h>
-#include "clKeyboardManager.h"
-#include <wx/app.h>
-#include "WordCompletionSettingsDlg.h"
-#include "event_notifier.h"
-#include "cl_command_event.h"
-#include "wxCodeCompletionBoxManager.h"
-#include "WordCompletionDictionary.h"
-#include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "WordCompletionDictionary.h"
+#include "WordCompletionSettingsDlg.h"
+#include "WordCompletionThread.h"
+#include "clKeyboardManager.h"
+#include "cl_command_event.h"
+#include "event_notifier.h"
+#include "lexer_configuration.h"
+#include "wordcompletion.h"
+#include "wxCodeCompletionBoxManager.h"
+#include <wx/app.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 static WordCompletionPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new WordCompletionPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new WordCompletionPlugin(manager); }
     return thePlugin;
 }
 
@@ -48,12 +46,7 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
 
 WordCompletionPlugin::~WordCompletionPlugin() {}
 
-clToolBar* WordCompletionPlugin::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    clToolBar* tb(NULL);
-    return tb;
-}
+void WordCompletionPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -80,15 +73,11 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
     settings.Load();
 
     // Enabled?
-    if(!settings.IsEnabled()) {
-        return;
-    }
+    if(!settings.IsEnabled()) { return; }
 
     // Build the suggetsion list
     static wxBitmap sBmp = wxNullBitmap;
-    if(!sBmp.IsOk()) {
-        sBmp = m_mgr->GetStdIcons()->LoadBitmap("word");
-    }
+    if(!sBmp.IsOk()) { sBmp = m_mgr->GetStdIcons()->LoadBitmap("word"); }
 
     // Filter (what the user has typed so far)
     // wxStyledTextCtrl* stc = activeEditor->GetCtrl();
@@ -134,13 +123,9 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
             wxString word = *iter;
             wxString lcWord = word.Lower();
             if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-                if(lcWord.StartsWith(filter) && filter != word) {
-                    filterdSet.insert(word);
-                }
+                if(lcWord.StartsWith(filter) && filter != word) { filterdSet.insert(word); }
             } else {
-                if(lcWord.Contains(filter) && filter != word) {
-                    filterdSet.insert(word);
-                }
+                if(lcWord.Contains(filter) && filter != word) { filterdSet.insert(word); }
             }
         }
     }

@@ -25,22 +25,40 @@
 #ifndef CODELITE_PRECOMPILED_HEADER_RELEASE_H
 #define CODELITE_PRECOMPILED_HEADER_RELEASE_H
 
+
 #ifdef __cplusplus
 
 // Only include the headers we need here
 #include "../CodeLite/MSWPrivate.h"
-#include "../CodeLite/cl_defs.h"
-#include <wx/wx.h>
+
 #include <wx/app.h>
-#include <wx/frame.h>
 #include <wx/string.h>
 #include <wx/process.h>
 #include <wx/filename.h>
+#include <set>
+#include <list>
+#include <wx/ffile.h>
+#include <wx/dir.h>
+#include <wx/socket.h>
+#include "wx/txtstrm.h"
+#include "wx/wfstream.h"
+#include <wx/stdpaths.h>
+#include <wx/snglinst.h>
+#include <wx/filefn.h>
+#include <map>
+#include <stack>
+#include <vector>
+#include <iostream>
+#include "wx/tokenzr.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#if wxUSE_GUI
+#include <wx/wx.h>
+#include <wx/frame.h>
 #include <wx/treectrl.h>
-#include <wx/string.h>
 #include <wx/log.h>
 #include <wx/settings.h>
-#include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -52,8 +70,6 @@
 #include <wx/statline.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
-#include <set>
-#include <list>
 #include <wx/fontmap.h>
 #include <wx/clipbrd.h>
 #include <wx/numdlg.h>
@@ -62,36 +78,20 @@
 #include <wx/splitter.h>
 #include <wx/aboutdlg.h>
 #include <wx/aui/framemanager.h>
-#include <wx/ffile.h>
-#include <wx/dir.h>
-#include <wx/socket.h>
 #include <wx/splash.h>
 #include <wx/fileconf.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/sysopt.h>
-#include "wx/txtstrm.h"
-#include "wx/wfstream.h"
 #include <wx/cmdline.h>
 #include "wx/tokenzr.h"
-#include "wx/dir.h"
-#include <wx/stdpaths.h>
-#include <wx/snglinst.h>
 #include <wx/image.h>
-#include <wx/filefn.h>
-#include <iostream>
-#include <vector>
-#include <map>
-#include <stack>
 #include <wx/fontmap.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/ffile.h>
 #include <wx/tooltip.h>
 #include <wx/settings.h>
 #include <wx/fdrepdlg.h>
-#include "wx/tokenzr.h"
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <wx/wupdlock.h>
+#endif // #if wxUSE_GUI
 
 /////////////////////////////////////////////////////////////////////////////
 // Unicode:

@@ -39,6 +39,7 @@ public:
     virtual GenericWorkspacePtr PerformImport();
 
 private:
+    void ConvertToLinuxStyle(wxString& filepath);
     void GenerateFromVC6(GenericWorkspacePtr genericWorkspace);
     void GenerateFromProjectVC6(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     void GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace);

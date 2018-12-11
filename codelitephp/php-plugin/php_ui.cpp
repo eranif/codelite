@@ -6,36 +6,33 @@
 
 #include "php_ui.h"
 
-
 // Declare the bitmap loading function
 extern void wxCF01InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                         const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
+
     m_treeCtrlLayout = new PHPFileLayoutTree(this);
-    bSizer1->Add(m_treeCtrlLayout, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    m_treeCtrlLayout->SetMinSize(wxSize(400,300));
-    
+    bSizer1->Add(m_treeCtrlLayout, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    m_treeCtrlLayout->SetMinSize(wxSize(400, 300));
+
     SetName(wxT("QuickOutlineDlgBase"));
-    SetMinClientSize(wxSize(400,300));
-    SetSize(400,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(400, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -50,86 +47,87 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
 #endif
 }
 
-QuickOutlineDlgBase::~QuickOutlineDlgBase()
-{
-}
+QuickOutlineDlgBase::~QuickOutlineDlgBase() {}
 
-NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer3);
-    
+
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer1->SetFlexibleDirection(wxBOTH);
+    fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer1->AddGrowableCol(1);
-    
-    bSizer3->Add(fgSizer1, 1, wxALL|wxEXPAND, WXC_FROM_DIP(10));
-    
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,-1)), 0);
+
+    bSizer3->Add(fgSizer1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_staticText3 =
+        new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer1->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, -1)), 0);
     m_textCtrlPath->SetToolTip(_("The workspace path. This path must exist"));
     m_textCtrlPath->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlPath->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlPath, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_button49 = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBU_EXACTFIT);
+#endif
+
+    fgSizer1->Add(m_textCtrlPath, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button49 =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
     m_button49->SetToolTip(_("Browse for folder"));
-    
+
     fgSizer1->Add(m_button49, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    m_staticText2 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer1->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlName->SetToolTip(_("Set here the workspace name"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer1->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     fgSizer1->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPreview = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTE_READONLY);
-    #if wxVERSION_NUMBER >= 3000
+
+    m_textCtrlPreview =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlPreview->SetHint(wxT(""));
-    #endif
-    
-    bSizer3->Add(m_textCtrlPreview, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    bSizer3->Add(m_textCtrlPreview, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer685 = new wxStdDialogButtonSizer();
-    
-    bSizer3->Add(m_stdBtnSizer685, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
-    
+
+    bSizer3->Add(m_stdBtnSizer685, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
     m_button687 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button687->SetDefault();
     m_stdBtnSizer685->AddButton(m_button687);
-    
+
     m_button689 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer685->AddButton(m_button689);
     m_stdBtnSizer685->Realize();
-    
+
     SetName(wxT("NewPHPWorkspaceBaseDlg"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -143,84 +141,92 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_textCtrlPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
-    m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL, this);
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
+    m_textCtrlPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected),
+                            NULL, this);
+    m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL,
+                        this);
+    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated),
+                            NULL, this);
     m_button687->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL, this);
     m_button687->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
-    
 }
 
 NewPHPWorkspaceBaseDlg::~NewPHPWorkspaceBaseDlg()
 {
-    m_textCtrlPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
-    m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL, this);
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated), NULL, this);
-    m_button687->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL, this);
+    m_textCtrlPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                               wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnFolderSelected), NULL, this);
+    m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnBrowse), NULL,
+                           this);
+    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnNameUpdated),
+                               NULL, this);
+    m_button687->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPWorkspaceBaseDlg::OnOK), NULL,
+                            this);
     m_button687->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewPHPWorkspaceBaseDlg::OnOKUI), NULL, this);
-    
 }
 
-NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                               const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer6);
-    
+
     wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection( wxBOTH );
-    fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer2->SetFlexibleDirection(wxBOTH);
+    fgSizer2->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer2->AddGrowableCol(1);
-    
-    bSizer6->Add(fgSizer2, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    bSizer6->Add(fgSizer2, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText4 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_textCtrlName, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer2->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_dirPickerPath = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
-    
-    fgSizer2->Add(m_dirPickerPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer2->Add(m_textCtrlName, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText5 =
+        new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText5, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPickerPath = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(-1, -1)),
+                                          wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
+
+    fgSizer2->Add(m_dirPickerPath, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     bSizer6->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer6->Add(bSizer7, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer6->Add(bSizer7, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button5 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button5->SetDefault();
-    
+
     bSizer7->Add(m_button5, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button6 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer7->Add(m_button6, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("NewFileDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -235,49 +241,53 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 #endif
 }
 
-NewFileDlgBase::~NewFileDlgBase()
-{
-}
+NewFileDlgBase::~NewFileDlgBase() {}
 
-OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                         const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
-    
-    m_staticText9 = new wxStaticText(this, wxID_ANY, _("Type the resource name (file, variable, class, function, constant or define):"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    bSizer10->Add(m_staticText9, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
-    
-    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+
+    m_staticText9 = new wxStaticText(this, wxID_ANY,
+                                     _("Type the resource name (file, variable, class, function, constant or define):"),
+                                     wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer10->Add(m_staticText9, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
+    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                      wxTE_PROCESS_ENTER);
     m_textCtrlFilter->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlFilter->SetHint(wxT(""));
-    #endif
-    
-    bSizer10->Add(m_textCtrlFilter, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,200)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    bSizer10->Add(m_dvListCtrl, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Kind"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(80), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(250), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    
+#endif
+
+    bSizer10->Add(m_textCtrlFilter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
+
+    bSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
+
     SetName(wxT("OpenResourceDlgBase"));
-    SetMinClientSize(wxSize(400,300));
-    SetSize(400,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(400, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -292,113 +302,132 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
 #endif
     // Connect events
     m_textCtrlFilter->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDlgBase::OnKeyDown), NULL, this);
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText), NULL, this);
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter), NULL, this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
-    
+    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText),
+                              NULL, this);
+    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter), NULL,
+                              this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                          wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
 }
 
 OpenResourceDlgBase::~OpenResourceDlgBase()
 {
     m_textCtrlFilter->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDlgBase::OnKeyDown), NULL, this);
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText), NULL, this);
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter), NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
-    
+    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDlgBase::OnFilterText),
+                                 NULL, this);
+    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDlgBase::OnFilterEnter),
+                                 NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                             wxDataViewEventHandler(OpenResourceDlgBase::OnDVItemActivated), NULL, this);
 }
 
-PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer12);
-    
-    m_treebook9 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+
+    m_treebook9 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treebook9->SetName(wxT("m_treebook9"));
-    
-    bSizer12->Add(m_treebook9, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel11 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    bSizer12->Add(m_treebook9, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel11 =
+        new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel11, _("General"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel11->SetSizer(bSizer13);
-    
+
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer4->SetFlexibleDirection( wxBOTH );
-    fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer4->SetFlexibleDirection(wxBOTH);
+    fgSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer4->AddGrowableCol(1);
-    
+
     bSizer13->Add(fgSizer4, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText9 = new wxStaticText(m_panel11, wxID_ANY, _("PHP Executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
-    
-    fgSizer4->Add(m_staticText9, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPHPPath = new wxFilePickerCtrl(m_panel11, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL|wxFLP_FILE_MUST_EXIST);
-    m_filePickerPHPPath->SetToolTip(_("Select the PHP executable to use when debugging / running command line scripts"));
+
+    m_staticText9 = new wxStaticText(m_panel11, wxID_ANY, _("PHP Executable:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+
+    fgSizer4->Add(m_staticText9, 0, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                  WXC_FROM_DIP(5));
+
+    m_filePickerPHPPath =
+        new wxFilePickerCtrl(m_panel11, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All Files (*)|*"),
+                             wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)),
+                             wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL | wxFLP_FILE_MUST_EXIST);
+    m_filePickerPHPPath->SetToolTip(
+        _("Select the PHP executable to use when debugging / running command line scripts"));
     m_filePickerPHPPath->SetFocus();
-    
-    fgSizer4->Add(m_filePickerPHPPath, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText11 = new wxStaticText(m_panel11, wxID_ANY, _("error_reporting:"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
-    
-    fgSizer4->Add(m_staticText11, 0, wxRIGHT|wxTOP|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlErrorReporting = new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+
+    fgSizer4->Add(m_filePickerPHPPath, 0, wxLEFT | wxTOP | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_VERTICAL,
+                  WXC_FROM_DIP(5));
+
+    m_staticText11 = new wxStaticText(m_panel11, wxID_ANY, _("error_reporting:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+
+    fgSizer4->Add(m_staticText11, 0, wxRIGHT | wxTOP | wxBOTTOM | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                  WXC_FROM_DIP(5));
+
+    m_textCtrlErrorReporting =
+        new wxTextCtrl(m_panel11, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
     m_textCtrlErrorReporting->SetToolTip(_("Set the PHP error reporting level (affects command line only)"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlErrorReporting->SetHint(wxT(""));
-    #endif
-    
-    fgSizer4->Add(m_textCtrlErrorReporting, 0, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer4->Add(m_textCtrlErrorReporting, 0, wxLEFT | wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer18 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizer13->Add(bSizer18, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText14 = new wxStaticText(m_panel11, wxID_ANY, _("Add include path:"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
-    
-    bSizer18->Add(m_staticText14, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_buttonBrowseIncludePath = new wxButton(m_panel11, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+
+    m_staticText14 = new wxStaticText(m_panel11, wxID_ANY, _("Add include path:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
+
+    bSizer18->Add(m_staticText14, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonBrowseIncludePath =
+        new wxButton(m_panel11, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
     m_buttonBrowseIncludePath->SetToolTip(_("Add include path for PHP"));
-    
+
     bSizer18->Add(m_buttonBrowseIncludePath, 0, wxALL, WXC_FROM_DIP(5));
-    
-    bSizer18->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_stcIncludePaths = new wxStyledTextCtrl(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1,-1)), 0);
+
+    bSizer18->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stcIncludePaths =
+        new wxStyledTextCtrl(m_panel11, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel11, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stcIncludePaths->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcIncludePaths->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcIncludePaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcIncludePaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stcIncludePaths->SetMarginSensitive(4, true);
-    m_stcIncludePaths->SetMarginWidth    (4, 0);
-    
+    m_stcIncludePaths->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stcIncludePaths->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stcIncludePaths->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcIncludePaths->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcIncludePaths->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcIncludePaths->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stcIncludePaths->SetMarginWidth(2, 0);
     m_stcIncludePaths->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stcIncludePaths->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcIncludePaths->SetMarginWidth(0,0);
-    
+    m_stcIncludePaths->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stcIncludePaths->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stcIncludePaths->SetMarginMask(3, 0);
-    m_stcIncludePaths->SetMarginWidth(3,0);
+    m_stcIncludePaths->SetMarginWidth(3, 0);
     // Select the lexer
     m_stcIncludePaths->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -410,119 +439,133 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_stcIncludePaths->SetKeyWords(2, wxT(""));
     m_stcIncludePaths->SetKeyWords(3, wxT(""));
     m_stcIncludePaths->SetKeyWords(4, wxT(""));
-    
-    bSizer13->Add(m_stcIncludePaths, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel15 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    bSizer13->Add(m_stcIncludePaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel15 =
+        new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel15, _("Code Completion"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizer20 = new wxBoxSizer(wxVERTICAL);
     m_panel15->SetSizer(bSizer20);
-    
+
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizer20->Add(bSizer23, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     bSizer23->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText13 = new wxStaticText(m_panel15, wxID_ANY, _("Add include path for code completion:"), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
-    m_staticText13->SetToolTip(_("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
-    
-    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button15 = new wxButton(m_panel15, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
+
+    m_staticText13 = new wxStaticText(m_panel15, wxID_ANY, _("Add include path for code completion:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
+    m_staticText13->SetToolTip(_("Paths added here will only be used for code completion and NOT during runtime.\nIf "
+                                 "you want to add search paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
+
+    bSizer23->Add(m_staticText13, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button15 =
+        new wxButton(m_panel15, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
     m_button15->SetDefault();
     m_button15->SetFocus();
-    
+
     bSizer23->Add(m_button15, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_textCtrCClIncludePath = new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
-    m_textCtrCClIncludePath->SetToolTip(_("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
-    
-    bSizer20->Add(m_textCtrCClIncludePath, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel13 = new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_textCtrCClIncludePath =
+        new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)),
+                       wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE | wxTE_DONTWRAP);
+    m_textCtrCClIncludePath->SetToolTip(
+        _("Paths added here will only be used for code completion and NOT during runtime.\nIf you want to add search "
+          "paths for runtime (CLI mode only), Use the 'PHP CLI' tab"));
+
+    bSizer20->Add(m_textCtrCClIncludePath, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel13 =
+        new wxPanel(m_treebook9, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook9, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_treebook9->AddPage(m_panel13, _("XDebug"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panel13->SetSizer(bSizer14);
-    
+
     wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer5->SetFlexibleDirection( wxBOTH );
-    fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer5->SetFlexibleDirection(wxBOTH);
+    fgSizer5->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer5->AddGrowableCol(1);
-    
+
     bSizer14->Add(fgSizer5, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticTextHost = new wxStaticText(m_panel13, wxID_ANY, _("Listen host:"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1,-1)), 0);
-    
-    fgSizer5->Add(m_staticTextHost, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlHost = new wxTextCtrl(m_panel13, wxID_ANY, wxT("127.0.0.1"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1,-1)), 0);
+
+    m_staticTextHost = new wxStaticText(m_panel13, wxID_ANY, _("Listen host:"), wxDefaultPosition,
+                                        wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
+
+    fgSizer5->Add(m_staticTextHost, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlHost = new wxTextCtrl(m_panel13, wxID_ANY, wxT("127.0.0.1"), wxDefaultPosition,
+                                    wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
     m_textCtrlHost->SetToolTip(_("Wait for connection from XDebug on this host"));
     m_textCtrlHost->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlHost->SetHint(wxT(""));
-    #endif
-    
-    fgSizer5->Add(m_textCtrlHost, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText10 = new wxStaticText(m_panel13, wxID_ANY, _("Port:"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
-    m_staticText10->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
-    
-    fgSizer5->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlXDebugPort = new wxTextCtrl(m_panel13, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
-    m_textCtrlXDebugPort->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer5->Add(m_textCtrlHost, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText10 =
+        new wxStaticText(m_panel13, wxID_ANY, _("Port:"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
+    m_staticText10->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must "
+                                 "be the same as the value set in the 'xdebug.remote_port'\ndirective"));
+
+    fgSizer5->Add(m_staticText10, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlXDebugPort =
+        new wxTextCtrl(m_panel13, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
+    m_textCtrlXDebugPort->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value "
+                                       "must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlXDebugPort->SetHint(wxT(""));
-    #endif
-    
-    fgSizer5->Add(m_textCtrlXDebugPort, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText152 = new wxStaticText(m_panel13, wxID_ANY, _("IDE Key:"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1,-1)), 0);
+#endif
+
+    fgSizer5->Add(m_textCtrlXDebugPort, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText152 = new wxStaticText(m_panel13, wxID_ANY, _("IDE Key:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
     m_staticText152->SetToolTip(_("This field defines the session name between CodeLite and XDebug"));
-    
-    fgSizer5->Add(m_staticText152, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlIdeKey = new wxTextCtrl(m_panel13, wxID_ANY, wxT("codeliteide"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1,-1)), 0);
+
+    fgSizer5->Add(m_staticText152, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlIdeKey = new wxTextCtrl(m_panel13, wxID_ANY, wxT("codeliteide"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
     m_textCtrlIdeKey->SetToolTip(_("The XDebug session name"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlIdeKey->SetHint(wxT(""));
-    #endif
-    
-    fgSizer5->Add(m_textCtrlIdeKey, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer5->Add(m_textCtrlIdeKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer12->Add(bSizer16, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer12->Add(bSizer16, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button9 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button9->SetDefault();
-    
+
     bSizer16->Add(m_button9, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button10 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer16->Add(m_button10, 0, wxALL, WXC_FROM_DIP(5));
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook9)){
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook9)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook9);
     } else {
         wxPersistenceManager::Get().Restore(m_treebook9);
     }
-    #endif
-    m_treebook9->ExpandNode( 0, true );
-    m_treebook9->ExpandNode( 1, true );
-    m_treebook9->ExpandNode( 2, true );
-    
+#endif
+    m_treebook9->ExpandNode(0, true);
+    m_treebook9->ExpandNode(1, true);
+    m_treebook9->ExpandNode(2, true);
+
     SetName(wxT("PHPSettingsBaseDlg"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -536,330 +579,385 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     }
 #endif
     // Connect events
-    m_buttonBrowseIncludePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
-    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL, this);
-    m_textCtrCClIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
+    m_buttonBrowseIncludePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
+    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL,
+                        this);
+    m_textCtrCClIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
     m_button9->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnOK), NULL, this);
-    
 }
 
 PHPSettingsBaseDlg::~PHPSettingsBaseDlg()
 {
-    m_buttonBrowseIncludePath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
-    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL, this);
-    m_textCtrCClIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
+    m_buttonBrowseIncludePath->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnBrowseForIncludePath), NULL, this);
+    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnAddCCPath), NULL,
+                           this);
+    m_textCtrCClIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                        wxCommandEventHandler(PHPSettingsBaseDlg::OnUpdateApplyUI), NULL, this);
     m_button9->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPSettingsBaseDlg::OnOK), NULL, this);
-    
 }
 
-PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer19);
-    
-    m_treebook41 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+
+    m_treebook41 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treebook41->SetName(wxT("m_treebook41"));
-    
-    bSizer19->Add(m_treebook41, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel43 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    bSizer19->Add(m_treebook41, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel43 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_treebook41->AddPage(m_panel43, _("General"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizer21 = new wxBoxSizer(wxVERTICAL);
     m_panel43->SetSizer(bSizer21);
-    
-    m_staticText457 = new wxStaticText(m_panel43, wxID_ANY, _("Select the project execution mode:"), wxDefaultPosition, wxDLG_UNIT(m_panel43, wxSize(-1,-1)), 0);
+
+    m_staticText457 = new wxStaticText(m_panel43, wxID_ANY, _("Select the project execution mode:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel43, wxSize(-1, -1)), 0);
     wxFont m_staticText457Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText457Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText457->SetFont(m_staticText457Font);
-    
-    bSizer21->Add(m_staticText457, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
-    
+
+    bSizer21->Add(m_staticText457, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     m_choicebook1 = new wxChoicebook(m_panel43, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel43, wxSize(-1, -1)), 0);
     m_choicebook1->SetName(wxT("m_choicebook1"));
-    
-    bSizer21->Add(m_choicebook1, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel5 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer21->Add(m_choicebook1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel5 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook1, wxSize(-1, -1)),
+                           wxTAB_TRAVERSAL);
     m_choicebook1->AddPage(m_panel5, _("Run project as command line"), false);
-    
+
     wxBoxSizer* bSizer25 = new wxBoxSizer(wxVERTICAL);
     m_panel5->SetSizer(bSizer25);
-    
+
     wxFlexGridSizer* fgSizer6 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer6->SetFlexibleDirection( wxBOTH );
-    fgSizer6->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer6->SetFlexibleDirection(wxBOTH);
+    fgSizer6->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer6->AddGrowableCol(1);
     fgSizer6->AddGrowableRow(4);
-    
-    bSizer25->Add(fgSizer6, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText19 = new wxStaticText(m_panel5, wxID_ANY, _("PHP executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    fgSizer6->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPHPExe = new wxFilePickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All files(*)|*"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+
+    bSizer25->Add(fgSizer6, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText19 = new wxStaticText(m_panel5, wxID_ANY, _("PHP executable:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    fgSizer6->Add(m_staticText19, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerPHPExe = new wxFilePickerCtrl(
+        m_panel5, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All files(*)|*"), wxDefaultPosition,
+        wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
     m_filePickerPHPExe->SetToolTip(_("Select the PHP interperter to use for running this project"));
     m_filePickerPHPExe->SetFocus();
-    
-    fgSizer6->Add(m_filePickerPHPExe, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText75 = new wxStaticText(m_panel5, wxID_ANY, _("Select PHP INI file:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1,-1)), 0);
+
+    fgSizer6->Add(m_filePickerPHPExe, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText75 = new wxStaticText(m_panel5, wxID_ANY, _("Select PHP INI file:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
     m_staticText75->SetToolTip(_("Select the PHP INI file to use with PHP (leave empty for default)"));
-    
-    fgSizer6->Add(m_staticText75, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPhpIni = new wxFilePickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All files(*)|*"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+
+    fgSizer6->Add(m_staticText75, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerPhpIni = new wxFilePickerCtrl(
+        m_panel5, wxID_ANY, wxEmptyString, _("Select a file"), wxT("All files(*)|*"), wxDefaultPosition,
+        wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
     m_filePickerPhpIni->SetToolTip(_("Select the PHP INI file to use with PHP (leave empty for default)"));
-    
-    fgSizer6->Add(m_filePickerPhpIni, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText15 = new wxStaticText(m_panel5, wxID_ANY, _("Index File:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    fgSizer6->Add(m_staticText15, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerIndex = new wxFilePickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a file"), wxT("PHP Files (*.php)|*.php|All files(*)|*"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
+
+    fgSizer6->Add(m_filePickerPhpIni, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText15 = new wxStaticText(m_panel5, wxID_ANY, _("Index File:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    fgSizer6->Add(m_staticText15, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerIndex = new wxFilePickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a file"),
+                                             wxT("PHP Files (*.php)|*.php|All files(*)|*"), wxDefaultPosition,
+                                             wxDLG_UNIT(m_panel5, wxSize(-1, -1)),
+                                             wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
     m_filePickerIndex->SetToolTip(_("Select the project index file"));
-    
-    fgSizer6->Add(m_filePickerIndex, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText18 = new wxStaticText(m_panel5, wxID_ANY, _("Working directory:"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
-    
-    fgSizer6->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_dirPickerWorkingDirectory = new wxDirPickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST);
-    
-    fgSizer6->Add(m_dirPickerWorkingDirectory, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText41 = new wxStaticText(m_panel5, wxID_ANY, _("Program arguments"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1,-1)), 0);
+
+    fgSizer6->Add(m_filePickerIndex, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText18 = new wxStaticText(m_panel5, wxID_ANY, _("Working directory:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
+
+    fgSizer6->Add(m_staticText18, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPickerWorkingDirectory =
+        new wxDirPickerCtrl(m_panel5, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
+                            wxDLG_UNIT(m_panel5, wxSize(-1, -1)),
+                            wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+
+    fgSizer6->Add(m_dirPickerWorkingDirectory, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText41 = new wxStaticText(m_panel5, wxID_ANY, _("Program arguments"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
     m_staticText41->SetToolTip(_("Insert the program arguments here\nPlace each argument on a separate line"));
-    
-    fgSizer6->Add(m_staticText41, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, WXC_FROM_DIP(5));
-    
-    m_textCtrlProgramArgs = new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1,-1)), wxTE_RICH2|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    fgSizer6->Add(m_staticText41, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
+
+    m_textCtrlProgramArgs = new wxTextCtrl(m_panel5, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panel5, wxSize(-1, -1)), wxTE_RICH2 | wxTE_MULTILINE);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlProgramArgsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlProgramArgsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlProgramArgsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlProgramArgsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlProgramArgs->SetFont(m_textCtrlProgramArgsFont);
     m_textCtrlProgramArgs->SetToolTip(_("Insert the program arguments here\nPlace each argument on a separate line"));
-    
-    fgSizer6->Add(m_textCtrlProgramArgs, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    fgSizer6->Add(m_textCtrlProgramArgs, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     fgSizer6->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxPauseWhenExecutionEnds = new wxCheckBox(m_panel5, wxID_ANY, _("Pause when execution ends"), wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1,-1)), 0);
+
+    m_checkBoxPauseWhenExecutionEnds = new wxCheckBox(m_panel5, wxID_ANY, _("Pause when execution ends"),
+                                                      wxDefaultPosition, wxDLG_UNIT(m_panel5, wxSize(-1, -1)), 0);
     m_checkBoxPauseWhenExecutionEnds->SetValue(true);
-    
+
     fgSizer6->Add(m_checkBoxPauseWhenExecutionEnds, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_panel6 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    m_panel6 = new wxPanel(m_choicebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebook1, wxSize(-1, -1)),
+                           wxTAB_TRAVERSAL);
     m_choicebook1->AddPage(m_panel6, _("Run project as web site"), false);
-    
+
     wxFlexGridSizer* fgSizer8 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer8->SetFlexibleDirection( wxBOTH );
-    fgSizer8->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer8->SetFlexibleDirection(wxBOTH);
+    fgSizer8->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer8->AddGrowableCol(1);
     m_panel6->SetSizer(fgSizer8);
-    
-    m_staticText16 = new wxStaticText(m_panel6, wxID_ANY, _("Project URL:"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
-    
-    fgSizer8->Add(m_staticText16, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlWebSiteURL = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    m_staticText16 = new wxStaticText(m_panel6, wxID_ANY, _("Project URL:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+
+    fgSizer8->Add(m_staticText16, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlWebSiteURL =
+        new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlWebSiteURL->SetHint(wxT(""));
-    #endif
-    
-    fgSizer8->Add(m_textCtrlWebSiteURL, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    fgSizer8->Add(m_textCtrlWebSiteURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     fgSizer8->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxSystemBrowser = new wxCheckBox(m_panel6, wxID_ANY, _("Use system default browser"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1,-1)), 0);
+
+    m_checkBoxSystemBrowser = new wxCheckBox(m_panel6, wxID_ANY, _("Use system default browser"), wxDefaultPosition,
+                                             wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
     m_checkBoxSystemBrowser->SetValue(true);
     m_checkBoxSystemBrowser->Enable(false);
-    
+
     fgSizer8->Add(m_checkBoxSystemBrowser, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_panel59 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_panel59 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_treebook41->InsertSubPage(0, m_panel59, _("Include path"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizer27 = new wxBoxSizer(wxVERTICAL);
     m_panel59->SetSizer(bSizer27);
-    
+
     wxBoxSizer* bSizer28 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizer27->Add(bSizer28, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     bSizer28->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText20 = new wxStaticText(m_panel59, wxID_ANY, _("Add include path:"), wxDefaultPosition, wxDLG_UNIT(m_panel59, wxSize(-1, -1)), 0);
-    
-    bSizer28->Add(m_staticText20, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button17 = new wxButton(m_panel59, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel59, wxSize(-1, -1)), 0);
-    
-    bSizer28->Add(m_button17, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPHPIncludePath = new wxTextCtrl(m_panel59, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel59, wxSize(-1, -1)), wxTE_RICH2|wxTE_MULTILINE|wxTE_DONTWRAP);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_staticText20 = new wxStaticText(m_panel59, wxID_ANY, _("Add include path:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel59, wxSize(-1, -1)), 0);
+
+    bSizer28->Add(m_staticText20, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button17 =
+        new wxButton(m_panel59, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel59, wxSize(-1, -1)), 0);
+
+    bSizer28->Add(m_button17, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPHPIncludePath =
+        new wxTextCtrl(m_panel59, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel59, wxSize(-1, -1)),
+                       wxTE_RICH2 | wxTE_MULTILINE | wxTE_DONTWRAP);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlPHPIncludePathFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlPHPIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlPHPIncludePathFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlPHPIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlPHPIncludePath->SetFont(m_textCtrlPHPIncludePathFont);
-    m_textCtrlPHPIncludePath->SetToolTip(_("When running project with PHP CLI tool, pass the following\ninclude paths"));
-    
-    bSizer27->Add(m_textCtrlPHPIncludePath, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panel447 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_textCtrlPHPIncludePath->SetToolTip(
+        _("When running project with PHP CLI tool, pass the following\ninclude paths"));
+
+    bSizer27->Add(m_textCtrlPHPIncludePath, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel447 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
     m_treebook41->InsertSubPage(0, m_panel447, _("View"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* boxSizer449 = new wxBoxSizer(wxVERTICAL);
     m_panel447->SetSizer(boxSizer449);
-    
+
     wxArrayString m_pgMgrViewArr;
     wxUnusedVar(m_pgMgrViewArr);
     wxArrayInt m_pgMgrViewIntArr;
     wxUnusedVar(m_pgMgrViewIntArr);
-    m_pgMgrView = new wxPropertyGridManager(m_panel447, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel447, wxSize(-1,-1)), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    boxSizer449->Add(m_pgMgrView, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    m_pgMgrView =
+        new wxPropertyGridManager(m_panel447, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel447, wxSize(-1, -1)),
+                                  wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    boxSizer449->Add(m_pgMgrView, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_pgMgrViewArr.Clear();
-    m_pgPropFileTypes = m_pgMgrView->Append(  new wxArrayStringProperty( _("Project file types"), wxPG_LABEL, m_pgMgrViewArr) );
-    m_pgPropFileTypes->SetHelpString(_("Set the file extensions to include in this project\nCodeLite will only display these file types in the project view"));
-    
+    m_pgPropFileTypes =
+        m_pgMgrView->Append(new wxArrayStringProperty(_("Project file types"), wxPG_LABEL, m_pgMgrViewArr));
+    m_pgPropFileTypes->SetHelpString(_("Set the file extensions to include in this project\nCodeLite will only display "
+                                       "these file types in the project view"));
+
     m_pgMgrViewArr.Clear();
-    m_pgPropExcludeFolders = m_pgMgrView->Append(  new wxArrayStringProperty( _("Exclude folders"), wxPG_LABEL, m_pgMgrViewArr) );
-    m_pgPropExcludeFolders->SetHelpString(_("Set a list of folders to exclude from the project.\nIf the last part of the folder path is equal to one of the entries in this exclude list, it will not\nbe shown in the project view"));
-    
-    m_panel45 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    m_pgPropExcludeFolders =
+        m_pgMgrView->Append(new wxArrayStringProperty(_("Exclude folders"), wxPG_LABEL, m_pgMgrViewArr));
+    m_pgPropExcludeFolders->SetHelpString(
+        _("Set a list of folders to exclude from the project.\nIf the last part of the folder path is equal to one of "
+          "the entries in this exclude list, it will not\nbe shown in the project view"));
+
+    m_panel45 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_treebook41->AddPage(m_panel45, _("Debug"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* boxSizer51 = new wxBoxSizer(wxVERTICAL);
     m_panel45->SetSizer(boxSizer51);
-    
-    m_staticText105 = new wxStaticText(m_panel45, wxID_ANY, _("File mapping"), wxDefaultPosition, wxDLG_UNIT(m_panel45, wxSize(-1,-1)), 0);
+
+    m_staticText105 = new wxStaticText(m_panel45, wxID_ANY, _("File mapping"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel45, wxSize(-1, -1)), 0);
     wxFont m_staticText105Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText105Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText105->SetFont(m_staticText105Font);
-    
+
     boxSizer51->Add(m_staticText105, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlFileMapping = new wxDataViewListCtrl(m_panel45, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel45, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
-    
-    boxSizer51->Add(m_dvListCtrlFileMapping, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlFileMapping->AppendTextColumn(_("Source folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlFileMapping->AppendTextColumn(_("Target folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_panel47 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_dvListCtrlFileMapping =
+        new wxDataViewListCtrl(m_panel45, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel45, wxSize(-1, -1)),
+                               wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+
+    boxSizer51->Add(m_dvListCtrlFileMapping, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlFileMapping->AppendTextColumn(_("Source folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFileMapping->AppendTextColumn(_("Target folder"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_panel47 = new wxPanel(m_treebook41, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook41, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_panel47Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_panel47Font.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_panel47Font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_panel47Font.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_panel47->SetFont(m_panel47Font);
     m_treebook41->AddPage(m_panel47, _("Code Completion"), false, wxNOT_FOUND);
-    
+
     wxBoxSizer* bSizerCCPage = new wxBoxSizer(wxVERTICAL);
     m_panel47->SetSizer(bSizerCCPage);
-    
+
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     bSizerCCPage->Add(bSizer23, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     bSizer23->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_staticText13 = new wxStaticText(m_panel47, wxID_ANY, _("Add include path for code completion:"), wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)), 0);
+
+    m_staticText13 = new wxStaticText(m_panel47, wxID_ANY, _("Add include path for code completion:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)), 0);
     wxFont m_staticText13Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText13->SetFont(m_staticText13Font);
-    
-    bSizer23->Add(m_staticText13, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button15 = new wxButton(m_panel47, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)), 0);
+
+    bSizer23->Add(m_staticText13, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button15 =
+        new wxButton(m_panel47, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)), 0);
     m_button15->SetDefault();
     wxFont m_button15Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_button15->SetFont(m_button15Font);
-    
-    bSizer23->Add(m_button15, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlCCIncludePath = new wxTextCtrl(m_panel47, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    bSizer23->Add(m_button15, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlCCIncludePath =
+        new wxTextCtrl(m_panel47, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel47, wxSize(-1, -1)),
+                       wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlCCIncludePathFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlCCIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlCCIncludePathFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlCCIncludePathFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlCCIncludePath->SetFont(m_textCtrlCCIncludePathFont);
-    
-    bSizerCCPage->Add(m_textCtrlCCIncludePath, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    bSizerCCPage->Add(m_textCtrlCCIncludePath, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer20 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer19->Add(bSizer20, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    bSizer19->Add(bSizer20, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button12 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button12->SetDefault();
-    
+
     bSizer20->Add(m_button12, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button13 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer20->Add(m_button13, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_button14 = new wxButton(this, wxID_APPLY, _("&Apply"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
     bSizer20->Add(m_button14, 0, wxALL, WXC_FROM_DIP(5));
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook41)){
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook41)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook41);
     } else {
         wxPersistenceManager::Get().Restore(m_treebook41);
     }
-    #endif
-    m_treebook41->ExpandNode( 0, true );
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_choicebook1)){
+#endif
+    m_treebook41->ExpandNode(0, true);
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_choicebook1)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_choicebook1);
     } else {
         wxPersistenceManager::Get().Restore(m_choicebook1);
     }
-    #endif
-    m_treebook41->ExpandNode( 1, true );
-    m_treebook41->ExpandNode( 2, true );
-    m_treebook41->ExpandNode( 3, true );
-    m_treebook41->ExpandNode( 4, true );
-    
+#endif
+    m_treebook41->ExpandNode(1, true);
+    m_treebook41->ExpandNode(2, true);
+    m_treebook41->ExpandNode(3, true);
+    m_treebook41->ExpandNode(4, true);
+
     SetName(wxT("PHPProjectSettingsBase"));
-    SetMinClientSize(wxSize(600,500));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(600, 500));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -873,110 +971,152 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_choicebook1->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
-    m_filePickerPHPExe->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
-    m_filePickerPhpIni->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
-    m_filePickerIndex->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
-    m_dirPickerWorkingDirectory->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged), NULL, this);
-    m_textCtrlProgramArgs->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_checkBoxPauseWhenExecutionEnds->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates), NULL, this);
-    m_textCtrlWebSiteURL->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
-    m_checkBoxSystemBrowser->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
-    m_button17->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
-    m_textCtrlPHPIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_pgMgrView->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged), NULL, this);
-    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
-    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL, this);
-    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL, this);
-    m_textCtrlCCIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_choicebook1->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
+                           wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
+    m_filePickerPHPExe->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                                wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
+    m_filePickerPhpIni->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                                wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
+    m_filePickerIndex->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                               wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
+    m_dirPickerWorkingDirectory->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                                         wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged),
+                                         NULL, this);
+    m_textCtrlProgramArgs->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                   wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_checkBoxPauseWhenExecutionEnds->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                              wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates),
+                                              NULL, this);
+    m_textCtrlWebSiteURL->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                  wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
+    m_checkBoxSystemBrowser->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                     wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
+    m_button17->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath),
+                        NULL, this);
+    m_textCtrlPHPIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                      wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_pgMgrView->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged),
+                         NULL, this);
+    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                     wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
+    m_dvListCtrlFileMapping->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                     wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL,
+                                     this);
+    m_button15->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL,
+                        this);
+    m_textCtrlCCIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
     m_button12->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnOK), NULL, this);
-    m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL, this);
+    m_button14->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL,
+                        this);
     m_button14->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPProjectSettingsBase::OnApplyUI), NULL, this);
-    
 }
 
 PHPProjectSettingsBase::~PHPProjectSettingsBase()
 {
-    m_choicebook1->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
-    m_filePickerPHPExe->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
-    m_filePickerPhpIni->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
-    m_filePickerIndex->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
-    m_dirPickerWorkingDirectory->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged), NULL, this);
-    m_textCtrlProgramArgs->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_checkBoxPauseWhenExecutionEnds->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates), NULL, this);
-    m_textCtrlWebSiteURL->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
-    m_checkBoxSystemBrowser->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
-    m_button17->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
-    m_textCtrlPHPIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_pgMgrView->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged), NULL, this);
-    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
-    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated), NULL, this);
-    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath), NULL, this);
-    m_textCtrlCCIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
-    m_button12->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnOK), NULL, this);
-    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL, this);
+    m_choicebook1->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
+                              wxChoicebookEventHandler(PHPProjectSettingsBase::OnPageChanged), NULL, this);
+    m_filePickerPHPExe->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                                   wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPExecChanged), NULL, this);
+    m_filePickerPhpIni->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                                   wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnPHPIniSelected), NULL, this);
+    m_filePickerIndex->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
+                                  wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnIndexFileSelected), NULL, this);
+    m_dirPickerWorkingDirectory->Disconnect(
+        wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(PHPProjectSettingsBase::OnWorkingDirectoryChanged),
+        NULL, this);
+    m_textCtrlProgramArgs->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                      wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_checkBoxPauseWhenExecutionEnds->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnPauseWhenExeTerminates), NULL,
+        this);
+    m_textCtrlWebSiteURL->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(PHPProjectSettingsBase::OnProjectURLChanged), NULL, this);
+    m_checkBoxSystemBrowser->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                        wxCommandEventHandler(PHPProjectSettingsBase::OnUseSystemBrowser), NULL, this);
+    m_button17->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(PHPProjectSettingsBase::OnAddIncludePath), NULL, this);
+    m_textCtrlPHPIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                         wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_pgMgrView->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PHPProjectSettingsBase::OnPgmgrviewPgChanged),
+                            NULL, this);
+    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                        wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingMenu), NULL, this);
+    m_dvListCtrlFileMapping->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                        wxDataViewEventHandler(PHPProjectSettingsBase::OnFileMappingItemActivated),
+                                        NULL, this);
+    m_button15->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnAddCCPath),
+                           NULL, this);
+    m_textCtrlCCIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                        wxCommandEventHandler(PHPProjectSettingsBase::OnUpdateApplyUI), NULL, this);
+    m_button12->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnOK), NULL,
+                           this);
+    m_button14->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PHPProjectSettingsBase::OnApply), NULL,
+                           this);
     m_button14->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPProjectSettingsBase::OnApplyUI), NULL, this);
-    
 }
 
-FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer109 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer109);
-    
+
     wxFlexGridSizer* flexGridSizer117 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer117->SetFlexibleDirection( wxBOTH );
-    flexGridSizer117->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer117->SetFlexibleDirection(wxBOTH);
+    flexGridSizer117->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer117->AddGrowableCol(1);
-    
-    boxSizer109->Add(flexGridSizer117, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText119 = new wxStaticText(this, wxID_ANY, _("Local folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer117->Add(m_staticText119, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_dirPickerSource = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+
+    boxSizer109->Add(flexGridSizer117, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText119 =
+        new wxStaticText(this, wxID_ANY, _("Local folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer117->Add(m_staticText119, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPickerSource = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)),
+                                            wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
     m_dirPickerSource->SetToolTip(_("The source folder usually points to the location where you develop your code"));
     m_dirPickerSource->SetFocus();
-    
-    flexGridSizer117->Add(m_dirPickerSource, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText123 = new wxStaticText(this, wxID_ANY, _("Remote folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
-    flexGridSizer117->Add(m_staticText123, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    flexGridSizer117->Add(m_dirPickerSource, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText123 =
+        new wxStaticText(this, wxID_ANY, _("Remote folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer117->Add(m_staticText123, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlRemote = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlRemote->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer117->Add(m_textCtrlRemote, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer117->Add(m_textCtrlRemote, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer111 = new wxStdDialogButtonSizer();
-    
-    boxSizer109->Add(m_stdBtnSizer111, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    boxSizer109->Add(m_stdBtnSizer111, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer111->AddButton(m_buttonOK);
-    
+
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer111->AddButton(m_buttonCancel);
     m_stdBtnSizer111->Realize();
-    
+
     SetName(wxT("FileMappingDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -991,430 +1131,227 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
 #endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileMappingDlgBase::OnOkUI), NULL, this);
-    
 }
 
 FileMappingDlgBase::~FileMappingDlgBase()
 {
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FileMappingDlgBase::OnOkUI), NULL, this);
-    
 }
 
-PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer5);
-    
-    m_auibar29 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
-    m_auibar29->SetToolBitmapSize(wxSize(16,16));
-    
-    bSizer5->Add(m_auibar29, 0, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_gaugeParseProgress = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,8)), wxGA_HORIZONTAL);
+
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                              wxTB_HORIZONTAL | wxNO_BORDER);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    bSizer5->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_gaugeParseProgress =
+        new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 8)), wxGA_HORIZONTAL);
     m_gaugeParseProgress->Hide();
     m_gaugeParseProgress->SetValue(0);
-    
-    bSizer5->Add(m_gaugeParseProgress, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE|wxTR_MULTIPLE|wxTR_FULL_ROW_HIGHLIGHT|wxTR_NO_LINES|wxBORDER_STATIC);
-    
-    bSizer5->Add(m_treeCtrlView, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
+
+    bSizer5->Add(m_gaugeParseProgress, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                    wxTR_MULTIPLE | wxTR_ROW_LINES | wxBORDER_THEME);
+
+    bSizer5->Add(m_treeCtrlView, 1, wxEXPAND, WXC_FROM_DIP(2));
+
     SetName(wxT("PHPWorkspaceViewBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
-    m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
-    
+    m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
+                            wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
 }
 
 PHPWorkspaceViewBase::~PHPWorkspaceViewBase()
 {
-    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
-    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
-    
+    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL,
+                               this);
+    m_treeCtrlView->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
+                               wxTreeEventHandler(PHPWorkspaceViewBase::OnItemActivated), NULL, this);
 }
 
 PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer129 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer129);
-    
-    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,300)), wxAUI_NB_TAB_MOVE|wxAUI_NB_TAB_SPLIT);
+
+    m_auiBook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 300)), 0);
     m_auiBook->SetName(wxT("m_auiBook"));
-    
-    boxSizer129->Add(m_auiBook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_panel140 = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    boxSizer129->Add(m_auiBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_panel140 =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panel140, _("Call Stack"), false);
-    
+
     wxBoxSizer* boxSizer144 = new wxBoxSizer(wxVERTICAL);
     m_panel140->SetSizer(boxSizer144);
-    
-    m_dvListCtrlStackTrace = new wxDataViewListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel140, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dvListCtrlStackTrace->AppendIconTextColumn(_("Level"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlStackTrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_panel142 = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    m_dvListCtrlStackTrace =
+        new clThemedListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel140, wxSize(-1, -1)),
+                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_dvListCtrlStackTrace->AppendIconTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                 wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("Where"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                             wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                             wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlStackTrace->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                             wxDATAVIEW_COL_RESIZABLE);
+    m_panel142 =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panel142, _("Breakpoints"), false);
-    
+
     wxBoxSizer* boxSizer156 = new wxBoxSizer(wxVERTICAL);
     m_panel142->SetSizer(boxSizer156);
-    
-    wxBoxSizer* boxSizer204 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer156->Add(boxSizer204, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlBreakpoints = new wxDataViewListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1,-1)), wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
-    
-    boxSizer204->Add(m_dvListCtrlBreakpoints, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("ID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    wxBoxSizer* boxSizer206 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer204->Add(boxSizer206, 0, 0, WXC_FROM_DIP(5));
-    
-    m_auibar218 = new wxAuiToolBar(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE|wxAUI_TB_VERTICAL);
-    m_auibar218->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer204->Add(m_auibar218, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_auibar218->AddTool(ID_DELETE_BREAKPOINTS, _("Delete"), wxXmlResource::Get()->LoadBitmap(wxT("delete-one")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete the selected breakpoints"), NULL);
-    
-    m_auibar218->AddTool(ID_DELETE_ALL_BREAKPOINTS, _("Delete all breakpoints"), wxXmlResource::Get()->LoadBitmap(wxT("delete-all")), wxNullBitmap, wxITEM_NORMAL, wxT(""), _("Delete all breakpoints"), NULL);
-    m_auibar218->Realize();
-    m_auiBook->SetMinSize(wxSize(300,300));
-    
+
+    m_tbBreakpoints =
+        new wxToolBar(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)), wxTB_FLAT);
+    m_tbBreakpoints->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer156->Add(m_tbBreakpoints, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlBreakpoints =
+        new clThemedListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)),
+                             wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+
+    boxSizer156->Add(m_dvListCtrlBreakpoints, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlBreakpoints->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_auiBook->SetMinSize(wxSize(300, 300));
+
     SetName(wxT("PHPDebugPaneBase"));
-    SetSize(300,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(300, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
-    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
-    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
-    this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Connect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Connect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnClearAll), NULL, this);
-    this->Connect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnClearAllUI), NULL, this);
-    
+    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                    wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
+    m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                    wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
+    m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                     wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
 }
 
 PHPDebugPaneBase::~PHPDebugPaneBase()
 {
-    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
-    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
-    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL, this);
-    this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnDeleteBreakpoint), NULL, this);
-    this->Disconnect(ID_DELETE_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnDeleteBreakpointUI), NULL, this);
-    this->Disconnect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(PHPDebugPaneBase::OnClearAll), NULL, this);
-    this->Disconnect(ID_DELETE_ALL_BREAKPOINTS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugPaneBase::OnClearAllUI), NULL, this);
-    
+    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                       wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
+    m_dvListCtrlStackTrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                       wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackMenu), NULL, this);
+    m_dvListCtrlBreakpoints->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                        wxDataViewEventHandler(PHPDebugPaneBase::OnBreakpointItemActivated), NULL,
+                                        this);
 }
 
 LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer236 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer236);
-    
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,150)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_MULTIPLE);
-    
-    m_dataviewModel = new XDebugLocalsViewModel;
-    m_dataviewModel->SetColCount( 4 );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
-    
-    boxSizer236->Add(m_dataview, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_dataview->AppendTextColumn(_("Name"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Type"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Classname"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dataview->AppendTextColumn(_("Value"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    
+
+    m_tree = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                  wxTR_ROW_LINES | wxTR_HIDE_ROOT);
+
+    boxSizer236->Add(m_tree, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
     SetName(wxT("LocalsViewBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
-    // Connect events
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu), NULL, this);
-    
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
-LocalsViewBase::~LocalsViewBase()
-{
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED, wxDataViewEventHandler(LocalsViewBase::OnLocalCollapsed), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanded), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING, wxDataViewEventHandler(LocalsViewBase::OnLocalExpanding), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(LocalsViewBase::OnLocalsMenu), NULL, this);
-    
-}
-
-PHPImages::PHPImages()
-    : wxImageList(16, 16, true)
-    , m_imagesWidth(16)
-    , m_imagesHeight(16)
-{
-    if ( !bBitmapLoaded ) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCF01InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpArrowActive@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpArrowActive@2x"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpConsole@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpConsole@2x"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpDevil@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpDevil@2x"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpElephant@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpElephant@2x"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpFile"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpFile"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpSync@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpSync@2x"), bmp));
-        }
-    }
-    
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("m_bmpPhpWorkspace@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("m_bmpPhpWorkspace@2x"), bmp));
-        }
-    }
-    
-}
-
-PHPImages::~PHPImages()
-{
-}
+LocalsViewBase::~LocalsViewBase() {}
 
 EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
-    
-    m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxNB_FIXEDWIDTH|wxBK_DEFAULT);
+
+    m_notebook257 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                 wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook257->SetName(wxT("m_notebook257"));
-    
-    boxSizer255->Add(m_notebook257, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_panel259 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook257, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    boxSizer255->Add(m_notebook257, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_panel259 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook257, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
     m_notebook257->AddPage(m_panel259, _("Eval"), true);
-    
+
     wxBoxSizer* boxSizer254 = new wxBoxSizer(wxVERTICAL);
     m_panel259->SetSizer(boxSizer254);
-    
-    m_stcOutput = new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
+
+    m_stcOutput =
+        new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stcOutput->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcOutput->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stcOutput->SetMarginSensitive(4, true);
-    m_stcOutput->SetMarginWidth    (4, 0);
-    
+    m_stcOutput->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stcOutput->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stcOutput->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcOutput->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcOutput->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcOutput->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stcOutput->SetMarginWidth(2, 0);
     m_stcOutput->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stcOutput->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcOutput->SetMarginWidth(0,0);
-    
+    m_stcOutput->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stcOutput->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stcOutput->SetMarginMask(3, 0);
-    m_stcOutput->SetMarginWidth(3,0);
+    m_stcOutput->SetMarginWidth(3, 0);
     // Select the lexer
     m_stcOutput->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -1426,66 +1363,72 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_stcOutput->SetKeyWords(2, wxT(""));
     m_stcOutput->SetKeyWords(3, wxT(""));
     m_stcOutput->SetKeyWords(4, wxT(""));
-    
-    boxSizer254->Add(m_stcOutput, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
+
+    boxSizer254->Add(m_stcOutput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
     wxBoxSizer* boxSizer247 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     boxSizer254->Add(boxSizer247, 0, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_textCtrlExpression = new wxTextCtrl(m_panel259, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_textCtrlExpression = new wxTextCtrl(m_panel259, wxID_ANY, wxT(""), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panel259, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlExpressionFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlExpressionFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlExpressionFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlExpressionFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlExpression->SetFont(m_textCtrlExpressionFont);
-    m_textCtrlExpression->SetToolTip(_("Type an expression and hit the 'Send' button\nThis works best when wrapping the command inside a print_r function, e.g.\nprint_r( $mystr, true )"));
+    m_textCtrlExpression->SetToolTip(_("Type an expression and hit the 'Send' button\nThis works best when wrapping "
+                                       "the command inside a print_r function, e.g.\nprint_r( $mystr, true )"));
     m_textCtrlExpression->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlExpression->SetHint(wxT(""));
-    #endif
-    
-    boxSizer247->Add(m_textCtrlExpression, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    
-    m_buttonSend = new wxButton(m_panel259, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
+#endif
+
+    boxSizer247->Add(m_textCtrlExpression, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
+    m_buttonSend =
+        new wxButton(m_panel259, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)), 0);
     m_buttonSend->SetDefault();
-    
-    boxSizer247->Add(m_buttonSend, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    
-    m_panel261 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook257, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    boxSizer247->Add(m_buttonSend, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
+    m_panel261 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook257, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL);
     m_notebook257->AddPage(m_panel261, _("XDebug Console"), false);
-    
+
     wxBoxSizer* boxSizer263 = new wxBoxSizer(wxVERTICAL);
     m_panel261->SetSizer(boxSizer263);
-    
-    m_stcOutputXDebug = new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1,-1)), 0);
+
+    m_stcOutputXDebug =
+        new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1, -1)), 0);
     // Configure the fold margin
-    m_stcOutputXDebug->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stcOutputXDebug->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stcOutputXDebug->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcOutputXDebug->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stcOutputXDebug->SetMarginSensitive(4, true);
-    m_stcOutputXDebug->SetMarginWidth    (4, 0);
-    
+    m_stcOutputXDebug->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stcOutputXDebug->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stcOutputXDebug->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stcOutputXDebug->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stcOutputXDebug->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcOutputXDebug->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stcOutputXDebug->SetMarginWidth(2, 0);
     m_stcOutputXDebug->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stcOutputXDebug->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stcOutputXDebug->SetMarginWidth(0,0);
-    
+    m_stcOutputXDebug->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stcOutputXDebug->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stcOutputXDebug->SetMarginMask(3, 0);
-    m_stcOutputXDebug->SetMarginWidth(3,0);
+    m_stcOutputXDebug->SetMarginWidth(3, 0);
     // Select the lexer
     m_stcOutputXDebug->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -1497,66 +1440,75 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_stcOutputXDebug->SetKeyWords(2, wxT(""));
     m_stcOutputXDebug->SetKeyWords(3, wxT(""));
     m_stcOutputXDebug->SetKeyWords(4, wxT(""));
-    
-    boxSizer263->Add(m_stcOutputXDebug, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
-    
+
+    boxSizer263->Add(m_stcOutputXDebug, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
     wxBoxSizer* boxSizer2472 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     boxSizer263->Add(boxSizer2472, 0, wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_textCtrlExpressionXdebug = new wxTextCtrl(m_panel261, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_textCtrlExpressionXdebug = new wxTextCtrl(m_panel261, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                wxDLG_UNIT(m_panel261, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlExpressionXdebugFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlExpressionXdebugFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlExpressionXdebugFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlExpressionXdebugFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlExpressionXdebug->SetFont(m_textCtrlExpressionXdebugFont);
-    m_textCtrlExpressionXdebug->SetToolTip(_("Type an expression and hit the 'Send' button\nThis works best when wrapping the command inside a print_r function, e.g.\nprint_r( $mystr, true )"));
+    m_textCtrlExpressionXdebug->SetToolTip(
+        _("Type an expression and hit the 'Send' button\nThis works best when wrapping the command inside a print_r "
+          "function, e.g.\nprint_r( $mystr, true )"));
     m_textCtrlExpressionXdebug->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlExpressionXdebug->SetHint(wxT(""));
-    #endif
-    
-    boxSizer2472->Add(m_textCtrlExpressionXdebug, 1, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    
-    m_buttonSendXdebug = new wxButton(m_panel261, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1,-1)), 0);
+#endif
+
+    boxSizer2472->Add(m_textCtrlExpressionXdebug, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
+    m_buttonSendXdebug =
+        new wxButton(m_panel261, wxID_ANY, _("Send"), wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1, -1)), 0);
     m_buttonSendXdebug->SetDefault();
-    
-    boxSizer2472->Add(m_buttonSendXdebug, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
-    
+
+    boxSizer2472->Add(m_buttonSendXdebug, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
+
     SetName(wxT("EvalPaneBase"));
-    SetSize(500,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL, this);
     m_buttonSend->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
     m_buttonSend->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendUI), NULL, this);
-    m_textCtrlExpressionXdebug->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL, this);
-    
+    m_textCtrlExpressionXdebug->Connect(wxEVT_COMMAND_TEXT_ENTER,
+                                        wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
+    m_buttonSendXdebug->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand),
+                                NULL, this);
+    m_buttonSendXdebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL,
+                                this);
 }
 
 EvalPaneBase::~EvalPaneBase()
 {
-    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL, this);
+    m_textCtrlExpression->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL,
+                                     this);
     m_buttonSend->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
     m_buttonSend->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendUI), NULL, this);
-    m_textCtrlExpressionXdebug->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
-    m_buttonSendXdebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL, this);
-    
+    m_textCtrlExpressionXdebug->Disconnect(wxEVT_COMMAND_TEXT_ENTER,
+                                           wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
+    m_buttonSendXdebug->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(EvalPaneBase::OnSendXDebugCommand), NULL, this);
+    m_buttonSendXdebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EvalPaneBase::OnSendXDebugCommandUI), NULL,
+                                   this);
 }
 
-PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                           const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
@@ -1568,114 +1520,118 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
         wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("xdebug-16"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon( icn );
+        app_icons.AddIcon(icn);
     }
-    SetIcons( app_icons );
+    SetIcons(app_icons);
 
-    
     wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer359);
-    
+
     wxArrayString m_choiceArr;
     m_choiceArr.Add(wxT("Run / Debug URL"));
     m_choiceArr.Add(wxT("Run / Debug with PHP command line"));
-    m_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), m_choiceArr, 0);
+    m_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceArr, 0);
     m_choice->SetToolTip(_("Select the debugging method"));
     m_choice->SetSelection(0);
-    
-    boxSizer359->Add(m_choice, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
+
+    boxSizer359->Add(m_choice, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_simpleBook->SetName(wxT("m_simpleBook"));
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
-    
-    boxSizer359->Add(m_simpleBook, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_panelDebugURL = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_simpleBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+
+    boxSizer359->Add(m_simpleBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelDebugURL = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_simpleBook, wxSize(-1, -1)),
+                                  wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelDebugURL, _("Page"), false);
-    
+
     wxBoxSizer* boxSizer387 = new wxBoxSizer(wxVERTICAL);
     m_panelDebugURL->SetSizer(boxSizer387);
-    
+
     wxFlexGridSizer* flexGridSizer375 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer375->SetFlexibleDirection( wxBOTH );
-    flexGridSizer375->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer375->SetFlexibleDirection(wxBOTH);
+    flexGridSizer375->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer375->AddGrowableCol(1);
-    
+
     boxSizer387->Add(flexGridSizer375, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText377 = new wxStaticText(m_panelDebugURL, wxID_ANY, _("URL to Run / Debug:"), wxDefaultPosition, wxDLG_UNIT(m_panelDebugURL, wxSize(-1,-1)), 0);
-    
-    flexGridSizer375->Add(m_staticText377, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    m_staticText377 = new wxStaticText(m_panelDebugURL, wxID_ANY, _("URL to Run / Debug:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelDebugURL, wxSize(-1, -1)), 0);
+
+    flexGridSizer375->Add(m_staticText377, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_comboBoxURLArr;
-    m_comboBoxURL = new wxComboBox(m_panelDebugURL, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelDebugURL, wxSize(-1,-1)), m_comboBoxURLArr, 0);
+    m_comboBoxURL = new wxComboBox(m_panelDebugURL, wxID_ANY, wxT(""), wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelDebugURL, wxSize(-1, -1)), m_comboBoxURLArr, 0);
     m_comboBoxURL->SetToolTip(_("Enter the URL to debug"));
     m_comboBoxURL->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_comboBoxURL->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer375->Add(m_comboBoxURL, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_panelCommandLine = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_simpleBook, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+#endif
+
+    flexGridSizer375->Add(m_comboBoxURL, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_panelCommandLine = new wxPanel(m_simpleBook, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_simpleBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelCommandLine, _("Page"), false);
-    
+
     wxBoxSizer* boxSizer386 = new wxBoxSizer(wxVERTICAL);
     m_panelCommandLine->SetSizer(boxSizer386);
-    
+
     wxFlexGridSizer* flexGridSizer381 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer381->SetFlexibleDirection( wxBOTH );
-    flexGridSizer381->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer381->SetFlexibleDirection(wxBOTH);
+    flexGridSizer381->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer381->AddGrowableCol(1);
-    
+
     boxSizer386->Add(flexGridSizer381, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("File to Run / Debug:"), wxDefaultPosition, wxDLG_UNIT(m_panelCommandLine, wxSize(-1,-1)), 0);
-    
-    flexGridSizer381->Add(m_staticText383, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlScriptToDebug = new wxTextCtrl(m_panelCommandLine, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelCommandLine, wxSize(-1,-1)), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    m_staticText383 = new wxStaticText(m_panelCommandLine, wxID_ANY, _("File to Run / Debug:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelCommandLine, wxSize(-1, -1)), 0);
+
+    flexGridSizer381->Add(m_staticText383, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlScriptToDebug = new wxTextCtrl(m_panelCommandLine, wxID_ANY, wxT(""), wxDefaultPosition,
+                                             wxDLG_UNIT(m_panelCommandLine, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlScriptToDebug->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer381->Add(m_textCtrlScriptToDebug, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer381->Add(m_textCtrlScriptToDebug, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     flexGridSizer381->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxDebugActiveEditor = new wxCheckBox(m_panelCommandLine, wxID_ANY, _("Use the active file opened in the editor"), wxDefaultPosition, wxDLG_UNIT(m_panelCommandLine, wxSize(-1,-1)), 0);
+
+    m_checkBoxDebugActiveEditor =
+        new wxCheckBox(m_panelCommandLine, wxID_ANY, _("Use the active file opened in the editor"), wxDefaultPosition,
+                       wxDLG_UNIT(m_panelCommandLine, wxSize(-1, -1)), 0);
     m_checkBoxDebugActiveEditor->SetValue(true);
-    
+
     flexGridSizer381->Add(m_checkBoxDebugActiveEditor, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_stdBtnSizer361 = new wxStdDialogButtonSizer();
-    
-    boxSizer359->Add(m_stdBtnSizer361, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    boxSizer359->Add(m_stdBtnSizer361, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_button363 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button363->SetDefault();
     m_stdBtnSizer361->AddButton(m_button363);
-    
+
     m_button365 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer361->AddButton(m_button365);
     m_stdBtnSizer361->Realize();
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_simpleBook)){
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_simpleBook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_simpleBook);
     } else {
         wxPersistenceManager::Get().Restore(m_simpleBook);
     }
-    #endif
-    
+#endif
+
     SetName(wxT("PHPDebugStartDlgBase"));
-    SetMinClientSize(wxSize(400,200));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(400, 200));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1689,222 +1645,253 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     }
 #endif
     // Connect events
-    m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
-    m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
-    m_checkBoxDebugActiveEditor->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
+    m_choice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged),
+                      NULL, this);
+    m_textCtrlScriptToDebug->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI),
+                                     NULL, this);
+    m_checkBoxDebugActiveEditor->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                         wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
     m_button363->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
-    
 }
 
 PHPDebugStartDlgBase::~PHPDebugStartDlgBase()
 {
-    m_choice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
-    m_textCtrlScriptToDebug->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
-    m_checkBoxDebugActiveEditor->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
+    m_choice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                         wxCommandEventHandler(PHPDebugStartDlgBase::OnDebugMethodChanged), NULL, this);
+    m_textCtrlScriptToDebug->Disconnect(wxEVT_UPDATE_UI,
+                                        wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnScriptToDebugUI), NULL, this);
+    m_checkBoxDebugActiveEditor->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                            wxCommandEventHandler(PHPDebugStartDlgBase::OnUseActiveEditor), NULL, this);
     m_button363->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PHPDebugStartDlgBase::OnOkUI), NULL, this);
-    
 }
 
-NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp, const wxPoint& pos, long style)
+NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                 const wxBitmap& bmp, const wxPoint& pos, long style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
     Create(parent, id, title, wxNullBitmap, pos, style);
-    
+
     m_wizardPageCreateMethod = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageCreateMethod);
-    
+
     wxBoxSizer* boxSizer491 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageCreateMethod->SetSizer(boxSizer491);
-    
-    m_banner495 = new wxBannerWindow(m_wizardPageCreateMethod, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPageCreateMethod, wxSize(-1,-1)), 0);
+
+    m_banner495 = new wxBannerWindow(m_wizardPageCreateMethod, wxID_ANY, wxTOP, wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageCreateMethod, wxSize(-1, -1)), 0);
     m_banner495->SetBitmap(wxNullBitmap);
     m_banner495->SetText(_("Project Creation"), _("Select the project creation method"));
     m_banner495->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner495->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer491->Add(m_banner495, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer491->Add(m_banner495, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_radioBoxCreateMethodArr;
     m_radioBoxCreateMethodArr.Add(_("Create an empty PHP project"));
     m_radioBoxCreateMethodArr.Add(_("Create a project from an existing source files"));
-    m_radioBoxCreateMethod = new wxRadioBox(m_wizardPageCreateMethod, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageCreateMethod, wxSize(-1,-1)), m_radioBoxCreateMethodArr, 1, wxRA_SPECIFY_COLS);
+    m_radioBoxCreateMethod = new wxRadioBox(m_wizardPageCreateMethod, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_wizardPageCreateMethod, wxSize(-1, -1)),
+                                            m_radioBoxCreateMethodArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxCreateMethod->SetFocus();
     m_radioBoxCreateMethod->SetSelection(0);
-    
-    boxSizer491->Add(m_radioBoxCreateMethod, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer491->Add(m_radioBoxCreateMethod, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_wizardPageProjectDetails = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageProjectDetails);
-    
+
     wxBoxSizer* boxSizer493 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageProjectDetails->SetSizer(boxSizer493);
-    
-    m_banner517 = new wxBannerWindow(m_wizardPageProjectDetails, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
+
+    m_banner517 = new wxBannerWindow(m_wizardPageProjectDetails, wxID_ANY, wxTOP, wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
     m_banner517->SetBitmap(wxNullBitmap);
     m_banner517->SetText(_("Project Details"), _("Set the project name and path"));
     m_banner517->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner517->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer493->Add(m_banner517, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer493->Add(m_banner517, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer519 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer519->SetFlexibleDirection( wxBOTH );
-    flexGridSizer519->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer519->SetFlexibleDirection(wxBOTH);
+    flexGridSizer519->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer519->AddGrowableCol(1);
     flexGridSizer519->AddGrowableRow(2);
-    
-    boxSizer493->Add(flexGridSizer519, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText521 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project Name:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
-    
-    flexGridSizer519->Add(m_staticText521, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlName = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
+
+    boxSizer493->Add(flexGridSizer519, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText521 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project Name:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
+
+    flexGridSizer519->Add(m_staticText521, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition,
+                                    wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
     m_textCtrlName->SetToolTip(_("Set the project name"));
     m_textCtrlName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer519->Add(m_textCtrlName, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText525 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project path:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
-    
-    flexGridSizer519->Add(m_staticText525, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_dirPickerPath = new wxDirPickerCtrl(m_wizardPageProjectDetails, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), wxDIRP_SMALL|wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL);
+#endif
+
+    flexGridSizer519->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText525 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Project path:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
+
+    flexGridSizer519->Add(m_staticText525, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPickerPath = new wxDirPickerCtrl(m_wizardPageProjectDetails, wxID_ANY, wxEmptyString, _("Select a folder"),
+                                          wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)),
+                                          wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
     m_dirPickerPath->SetToolTip(_("Select the project path"));
-    
-    flexGridSizer519->Add(m_dirPickerPath, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    flexGridSizer519->Add(m_dirPickerPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     flexGridSizer519->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxSeparateFolder = new wxCheckBox(m_wizardPageProjectDetails, wxID_ANY, _("Create the project under a separate folder"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
+
+    m_checkBoxSeparateFolder =
+        new wxCheckBox(m_wizardPageProjectDetails, wxID_ANY, _("Create the project under a separate folder"),
+                       wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
     m_checkBoxSeparateFolder->SetValue(false);
-    
+
     flexGridSizer519->Add(m_checkBoxSeparateFolder, 0, wxALL, WXC_FROM_DIP(5));
-    
-    flexGridSizer519->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    flexGridSizer519->Add(0, 0, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText535 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Preview:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
-    
-    flexGridSizer519->Add(m_staticText535, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPreview = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1,-1)), 0);
+
+    flexGridSizer519->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer519->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText535 = new wxStaticText(m_wizardPageProjectDetails, wxID_ANY, _("Preview:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
+
+    flexGridSizer519->Add(m_staticText535, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPreview = new wxTextCtrl(m_wizardPageProjectDetails, wxID_ANY, wxT(""), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageProjectDetails, wxSize(-1, -1)), 0);
     m_textCtrlPreview->Enable(false);
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlPreview->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer519->Add(m_textCtrlPreview, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer519->Add(m_textCtrlPreview, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_wizardPageFinalize = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageFinalize);
-    
+
     wxBoxSizer* boxSizer549 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageFinalize->SetSizer(boxSizer549);
-    
-    m_banner4951 = new wxBannerWindow(m_wizardPageFinalize, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1,-1)), 0);
+
+    m_banner4951 = new wxBannerWindow(m_wizardPageFinalize, wxID_ANY, wxTOP, wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), 0);
     m_banner4951->SetBitmap(wxNullBitmap);
     m_banner4951->SetText(_("PHP Execution"), _("Set PHP execution method"));
     m_banner4951->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner4951->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer549->Add(m_banner4951, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer549->Add(m_banner4951, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer3152 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer3152->SetFlexibleDirection( wxBOTH );
-    flexGridSizer3152->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer3152->SetFlexibleDirection(wxBOTH);
+    flexGridSizer3152->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer3152->AddGrowableCol(1);
-    
-    boxSizer549->Add(flexGridSizer3152, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText3173 = new wxStaticText(m_wizardPageFinalize, wxID_ANY, _("Project type:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1,-1)), 0);
-    
-    flexGridSizer3152->Add(m_staticText3173, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    boxSizer549->Add(flexGridSizer3152, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText3173 = new wxStaticText(m_wizardPageFinalize, wxID_ANY, _("Project type:"), wxDefaultPosition,
+                                        wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), 0);
+
+    flexGridSizer3152->Add(m_staticText3173, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceProjectTypeArr;
     m_choiceProjectTypeArr.Add(wxT("Run project as command line"));
     m_choiceProjectTypeArr.Add(wxT("Run project as web site"));
-    m_choiceProjectType = new wxChoice(m_wizardPageFinalize, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1,-1)), m_choiceProjectTypeArr, 0);
+    m_choiceProjectType = new wxChoice(m_wizardPageFinalize, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), m_choiceProjectTypeArr, 0);
     m_choiceProjectType->SetToolTip(_("Select the project type from the list"));
     m_choiceProjectType->SetSelection(0);
-    
-    flexGridSizer3152->Add(m_choiceProjectType, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText3215 = new wxStaticText(m_wizardPageFinalize, wxID_ANY, _("PHP executable:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1,-1)), 0);
-    
-    flexGridSizer3152->Add(m_staticText3215, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPhpExe = new wxFilePickerCtrl(m_wizardPageFinalize, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+
+    flexGridSizer3152->Add(m_choiceProjectType, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText3215 = new wxStaticText(m_wizardPageFinalize, wxID_ANY, _("PHP executable:"), wxDefaultPosition,
+                                        wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), 0);
+
+    flexGridSizer3152->Add(m_staticText3215, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL,
+                           WXC_FROM_DIP(5));
+
+    m_filePickerPhpExe = new wxFilePickerCtrl(
+        m_wizardPageFinalize, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
+        wxDLG_UNIT(m_wizardPageFinalize, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_OPEN);
     m_filePickerPhpExe->SetToolTip(_("Select the PHP command line executable to use"));
-    
-    flexGridSizer3152->Add(m_filePickerPhpExe, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
+
+    flexGridSizer3152->Add(m_filePickerPhpExe, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_wizardPage634 = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPage634);
-    if (m_pages.size() > 1) {
-        for(size_t i=1; i<m_pages.size(); i++) {
-            wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));
+    if(m_pages.size() > 1) {
+        for(size_t i = 1; i < m_pages.size(); i++) {
+            wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i));
         }
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
-    
+
     wxBoxSizer* boxSizer636 = new wxBoxSizer(wxVERTICAL);
     m_wizardPage634->SetSizer(boxSizer636);
-    
-    m_banner49511 = new wxBannerWindow(m_wizardPage634, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPage634, wxSize(-1,-1)), 0);
+
+    m_banner49511 = new wxBannerWindow(m_wizardPage634, wxID_ANY, wxTOP, wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPage634, wxSize(-1, -1)), 0);
     m_banner49511->SetBitmap(wxNullBitmap);
     m_banner49511->SetText(_("Code Completion"), _("Add include paths for Code Completion"));
     m_banner49511->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_banner49511->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer636->Add(m_banner49511, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer636->Add(m_banner49511, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer645 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer636->Add(boxSizer645, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer636->Add(boxSizer645, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer649 = new wxBoxSizer(wxHORIZONTAL);
-    
+
     boxSizer645->Add(boxSizer649, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText653 = new wxStaticText(m_wizardPage634, wxID_ANY, _("Browse for code completion folder..."), wxDefaultPosition, wxDLG_UNIT(m_wizardPage634, wxSize(-1,-1)), 0);
-    
-    boxSizer649->Add(m_staticText653, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button651 = new wxButton(m_wizardPage634, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_wizardPage634, wxSize(-1,-1)), 0);
+
+    m_staticText653 = new wxStaticText(m_wizardPage634, wxID_ANY, _("Browse for code completion folder..."),
+                                       wxDefaultPosition, wxDLG_UNIT(m_wizardPage634, wxSize(-1, -1)), 0);
+
+    boxSizer649->Add(m_staticText653, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button651 = new wxButton(m_wizardPage634, wxID_ANY, _("Browse"), wxDefaultPosition,
+                               wxDLG_UNIT(m_wizardPage634, wxSize(-1, -1)), 0);
     m_button651->SetDefault();
-    
+
     boxSizer649->Add(m_button651, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_textCtrlCCPaths = new wxTextCtrl(m_wizardPage634, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPage634, wxSize(-1,-1)), wxTE_RICH2|wxTE_PROCESS_ENTER|wxTE_MULTILINE|wxTE_DONTWRAP);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_textCtrlCCPaths = new wxTextCtrl(m_wizardPage634, wxID_ANY, wxT(""), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPage634, wxSize(-1, -1)),
+                                       wxTE_RICH2 | wxTE_PROCESS_ENTER | wxTE_MULTILINE | wxTE_DONTWRAP);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlCCPathsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlCCPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlCCPathsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlCCPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlCCPaths->SetFont(m_textCtrlCCPathsFont);
-    m_textCtrlCCPaths->SetToolTip(_("You can add folders here for better code completion.\nCodeLite will scan these folder for any PHP files for better code complete\n\nThere is no need to add the project folders, these are parsed automatically"));
-    
-    boxSizer645->Add(m_textCtrlCCPaths, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    m_textCtrlCCPaths->SetToolTip(
+        _("You can add folders here for better code completion.\nCodeLite will scan these folder for any PHP files for "
+          "better code complete\n\nThere is no need to add the project folders, these are parsed automatically"));
+
+    boxSizer645->Add(m_textCtrlCCPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("NewPHPProjectWizardBase"));
-    SetMinClientSize(wxSize(500,300));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(500, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1919,178 +1906,205 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
 #endif
     // Connect events
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL, this);
-    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
-    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
-    m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
-    m_button651->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
-    
+    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL,
+                  this);
+    m_textCtrlName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated),
+                            NULL, this);
+    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                             wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
+    m_checkBoxSeparateFolder->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                      wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL,
+                                      this);
+    m_button651->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                         wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
 }
 
 NewPHPProjectWizardBase::~NewPHPProjectWizardBase()
 {
     this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(NewPHPProjectWizardBase::OnFinish), NULL, this);
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL, this);
-    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
-    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
-    m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL, this);
-    m_button651->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
-    
+    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(NewPHPProjectWizardBase::OnPageChanging), NULL,
+                     this);
+    m_textCtrlName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                               wxCommandEventHandler(NewPHPProjectWizardBase::OnNameUpdated), NULL, this);
+    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                                wxFileDirPickerEventHandler(NewPHPProjectWizardBase::OnDirSelected), NULL, this);
+    m_checkBoxSeparateFolder->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                         wxCommandEventHandler(NewPHPProjectWizardBase::OnCheckSeparateFolder), NULL,
+                                         this);
+    m_button651->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(NewPHPProjectWizardBase::OnBrowseForCCFolder), NULL, this);
 }
 
-PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp, const wxPoint& pos, long style)
+PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                   const wxBitmap& bmp, const wxPoint& pos, long style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
     Create(parent, id, title, wxNullBitmap, pos, style);
-    
+
     m_wizardPagePort = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePort);
-    
+
     wxBoxSizer* boxSizer575 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePort->SetSizer(boxSizer575);
-    
-    m_bannerPort = new wxBannerWindow(m_wizardPagePort, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPagePort, wxSize(-1,-1)), 0);
+
+    m_bannerPort = new wxBannerWindow(m_wizardPagePort, wxID_ANY, wxTOP, wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPagePort, wxSize(-1, -1)), 0);
     m_bannerPort->SetBitmap(wxNullBitmap);
-    m_bannerPort->SetText(_("XDebug Port"), _("Setup XDebug port number\nCodeLite will listen on this port for new incoming messages from XDebug"));
+    m_bannerPort->SetText(
+        _("XDebug Port"),
+        _("Setup XDebug port number\nCodeLite will listen on this port for new incoming messages from XDebug"));
     m_bannerPort->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_bannerPort->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer575->Add(m_bannerPort, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer575->Add(m_bannerPort, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer583 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer583->SetFlexibleDirection( wxBOTH );
-    flexGridSizer583->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer583->SetFlexibleDirection(wxBOTH);
+    flexGridSizer583->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer583->AddGrowableCol(1);
-    
-    boxSizer575->Add(flexGridSizer583, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText585 = new wxStaticText(m_wizardPagePort, wxID_ANY, _("Port number:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePort, wxSize(-1,-1)), 0);
-    
-    flexGridSizer583->Add(m_staticText585, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPort = new wxTextCtrl(m_wizardPagePort, wxID_ANY, wxT("9000"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePort, wxSize(-1,-1)), 0);
-    m_textCtrlPort->SetToolTip(_("Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9000"));
-    #if wxVERSION_NUMBER >= 3000
+
+    boxSizer575->Add(flexGridSizer583, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText585 = new wxStaticText(m_wizardPagePort, wxID_ANY, _("Port number:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPagePort, wxSize(-1, -1)), 0);
+
+    flexGridSizer583->Add(m_staticText585, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPort = new wxTextCtrl(m_wizardPagePort, wxID_ANY, wxT("9000"), wxDefaultPosition,
+                                    wxDLG_UNIT(m_wizardPagePort, wxSize(-1, -1)), 0);
+    m_textCtrlPort->SetToolTip(_(
+        "Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9000"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlPort->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer583->Add(m_textCtrlPort, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer583->Add(m_textCtrlPort, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_wizardPageHost = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageHost);
-    
+
     wxBoxSizer* boxSizer577 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageHost->SetSizer(boxSizer577);
-    
-    m_bannerHost = new wxBannerWindow(m_wizardPageHost, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPageHost, wxSize(-1,-1)), 0);
+
+    m_bannerHost = new wxBannerWindow(m_wizardPageHost, wxID_ANY, wxTOP, wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageHost, wxSize(-1, -1)), 0);
     m_bannerHost->SetBitmap(wxNullBitmap);
     m_bannerHost->SetText(_("CodeLite IP address"), _("Set the IP address on which CodeLite is running"));
     m_bannerHost->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_bannerHost->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer577->Add(m_bannerHost, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer577->Add(m_bannerHost, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer5832 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer5832->SetFlexibleDirection( wxBOTH );
-    flexGridSizer5832->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer5832->SetFlexibleDirection(wxBOTH);
+    flexGridSizer5832->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer5832->AddGrowableCol(1);
-    
-    boxSizer577->Add(flexGridSizer5832, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText5853 = new wxStaticText(m_wizardPageHost, wxID_ANY, _("IP address:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageHost, wxSize(-1,-1)), 0);
-    
-    flexGridSizer5832->Add(m_staticText5853, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlIP = new wxTextCtrl(m_wizardPageHost, wxID_ANY, wxT("127.0.0.1"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageHost, wxSize(-1,-1)), 0);
-    m_textCtrlIP->SetToolTip(_("Set the IP address on which CodeLite is listening.\nThis IP needs to be visible to the machine where XDebug is running."));
-    #if wxVERSION_NUMBER >= 3000
+
+    boxSizer577->Add(flexGridSizer5832, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText5853 = new wxStaticText(m_wizardPageHost, wxID_ANY, _("IP address:"), wxDefaultPosition,
+                                        wxDLG_UNIT(m_wizardPageHost, wxSize(-1, -1)), 0);
+
+    flexGridSizer5832->Add(m_staticText5853, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlIP = new wxTextCtrl(m_wizardPageHost, wxID_ANY, wxT("127.0.0.1"), wxDefaultPosition,
+                                  wxDLG_UNIT(m_wizardPageHost, wxSize(-1, -1)), 0);
+    m_textCtrlIP->SetToolTip(_("Set the IP address on which CodeLite is listening.\nThis IP needs to be visible to the "
+                               "machine where XDebug is running."));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlIP->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer5832->Add(m_textCtrlIP, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer5832->Add(m_textCtrlIP, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_wizardPageIDEKey = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageIDEKey);
-    
+
     wxBoxSizer* boxSizer601 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageIDEKey->SetSizer(boxSizer601);
-    
-    m_bannerSessionID = new wxBannerWindow(m_wizardPageIDEKey, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1,-1)), 0);
+
+    m_bannerSessionID = new wxBannerWindow(m_wizardPageIDEKey, wxID_ANY, wxTOP, wxDefaultPosition,
+                                           wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1, -1)), 0);
     m_bannerSessionID->SetBitmap(wxNullBitmap);
     m_bannerSessionID->SetText(_("IDE Key"), _("Set the IDE key between CodeLite and XDebug"));
     m_bannerSessionID->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_bannerSessionID->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer601->Add(m_bannerSessionID, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer601->Add(m_bannerSessionID, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer58326 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer58326->SetFlexibleDirection( wxBOTH );
-    flexGridSizer58326->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer58326->SetFlexibleDirection(wxBOTH);
+    flexGridSizer58326->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer58326->AddGrowableCol(1);
-    
-    boxSizer601->Add(flexGridSizer58326, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText58537 = new wxStaticText(m_wizardPageIDEKey, wxID_ANY, _("IDE Key:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1,-1)), 0);
-    
-    flexGridSizer58326->Add(m_staticText58537, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_textCtrlKey = new wxTextCtrl(m_wizardPageIDEKey, wxID_ANY, wxT("codeliteide"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1,-1)), 0);
+
+    boxSizer601->Add(flexGridSizer58326, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText58537 = new wxStaticText(m_wizardPageIDEKey, wxID_ANY, _("IDE Key:"), wxDefaultPosition,
+                                         wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1, -1)), 0);
+
+    flexGridSizer58326->Add(m_staticText58537, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlKey = new wxTextCtrl(m_wizardPageIDEKey, wxID_ANY, wxT("codeliteide"), wxDefaultPosition,
+                                   wxDLG_UNIT(m_wizardPageIDEKey, wxSize(-1, -1)), 0);
     m_textCtrlKey->SetToolTip(_("Set the IDE key between CodeLite and XDebug"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlKey->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer58326->Add(m_textCtrlKey, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+#endif
+
+    flexGridSizer58326->Add(m_textCtrlKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_wizardPagePHP = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPagePHP);
-    if (m_pages.size() > 1) {
-        for(size_t i=1; i<m_pages.size(); i++) {
-            wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));
+    if(m_pages.size() > 1) {
+        for(size_t i = 1; i < m_pages.size(); i++) {
+            wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i));
         }
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
-    
+
     wxBoxSizer* boxSizer6019 = new wxBoxSizer(wxVERTICAL);
     m_wizardPagePHP->SetSizer(boxSizer6019);
-    
-    m_bannerSessionID10 = new wxBannerWindow(m_wizardPagePHP, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(m_wizardPagePHP, wxSize(-1,-1)), 0);
+
+    m_bannerSessionID10 = new wxBannerWindow(m_wizardPagePHP, wxID_ANY, wxTOP, wxDefaultPosition,
+                                             wxDLG_UNIT(m_wizardPagePHP, wxSize(-1, -1)), 0);
     m_bannerSessionID10->SetBitmap(wxNullBitmap);
     m_bannerSessionID10->SetText(_("XDebug INI Settings"), _("Setup XDebug INI settings"));
     m_bannerSessionID10->SetGradient(wxColour(wxT("rgb(0,128,0)")), wxColour(wxT("rgb(0,128,0)")));
     m_bannerSessionID10->SetForegroundColour(wxColour(wxT("rgb(255,255,255)")));
-    
-    boxSizer6019->Add(m_bannerSessionID10, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticText625 = new wxStaticText(m_wizardPagePHP, wxID_ANY, _("Copy the below text and paste it in your php.ini file:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePHP, wxSize(-1,-1)), 0);
-    
+
+    boxSizer6019->Add(m_bannerSessionID10, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText625 =
+        new wxStaticText(m_wizardPagePHP, wxID_ANY, _("Copy the below text and paste it in your php.ini file:"),
+                         wxDefaultPosition, wxDLG_UNIT(m_wizardPagePHP, wxSize(-1, -1)), 0);
+
     boxSizer6019->Add(m_staticText625, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_textCtrlPHPIni = new wxTextCtrl(m_wizardPagePHP, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPagePHP, wxSize(-1,-1)), wxTE_RICH2|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    m_textCtrlPHPIni = new wxTextCtrl(m_wizardPagePHP, wxID_ANY, wxT(""), wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPagePHP, wxSize(-1, -1)), wxTE_RICH2 | wxTE_MULTILINE);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlPHPIniFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlPHPIniFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlPHPIniFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlPHPIniFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlPHPIni->SetFont(m_textCtrlPHPIniFont);
     m_textCtrlPHPIni->SetFocus();
-    
-    boxSizer6019->Add(m_textCtrlPHPIni, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+
+    boxSizer6019->Add(m_textCtrlPHPIni, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("PHPXDebugSetupWizardBase"));
-    SetMinClientSize(wxSize(500,300));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(500, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2104,79 +2118,85 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL, this);
+    this->Connect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL,
+                  this);
     this->Connect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
-    
 }
 
 PHPXDebugSetupWizardBase::~PHPXDebugSetupWizardBase()
 {
-    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL, this);
+    this->Disconnect(wxEVT_WIZARD_PAGE_CHANGING, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnPageChanging), NULL,
+                     this);
     this->Disconnect(wxEVT_WIZARD_FINISHED, wxWizardEventHandler(PHPXDebugSetupWizardBase::OnFinished), NULL, this);
-    
 }
 
-PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                         const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCF01InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer657 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer657);
-    
-    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,200)), wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(40), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+
+    m_dvListCtrlFunctions = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
+                                                   wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer657->Add(m_dvListCtrlFunctions, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlFunctions->AppendToggleColumn(_("?"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(40), wxALIGN_LEFT,
+                                              wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFunctions->AppendIconTextColumn(_("Variable"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                wxDATAVIEW_COL_RESIZABLE);
     wxFlexGridSizer* flexGridSizer667 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer667->SetFlexibleDirection( wxBOTH );
-    flexGridSizer667->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    
-    boxSizer657->Add(flexGridSizer667, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_checkBoxLowercase = new wxCheckBox(this, wxID_ANY, _("Functions start with lowercase"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    flexGridSizer667->SetFlexibleDirection(wxBOTH);
+    flexGridSizer667->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+
+    boxSizer657->Add(flexGridSizer667, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxLowercase = new wxCheckBox(this, wxID_ANY, _("Functions start with lowercase"), wxDefaultPosition,
+                                         wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxLowercase->SetValue(false);
     m_checkBoxLowercase->SetToolTip(_("Generated functions start with lowercase letter"));
-    
+
     flexGridSizer667->Add(m_checkBoxLowercase, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxPrefixGetter = new wxCheckBox(this, wxID_ANY, _("Prefix getter with 'get' or 'is'"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    m_checkBoxPrefixGetter = new wxCheckBox(this, wxID_ANY, _("Prefix getter with 'get' or 'is'"), wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxPrefixGetter->SetValue(true);
-    m_checkBoxPrefixGetter->SetToolTip(_("When checked, the getter function is prefixed with 'get', otherwise, the getter is same as the variable name (without the $ sign)"));
-    
+    m_checkBoxPrefixGetter->SetToolTip(_("When checked, the getter function is prefixed with 'get', otherwise, the "
+                                         "getter is same as the variable name (without the $ sign)"));
+
     flexGridSizer667->Add(m_checkBoxPrefixGetter, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Setter returns $this"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Setter returns $this"), wxDefaultPosition,
+                                         wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxReurnThis->SetValue(false);
     m_checkBoxReurnThis->SetToolTip(_("The getter returns $this object"));
-    
+
     flexGridSizer667->Add(m_checkBoxReurnThis, 0, wxALL, WXC_FROM_DIP(5));
-    
+
     m_stdBtnSizer659 = new wxStdDialogButtonSizer();
-    
-    boxSizer657->Add(m_stdBtnSizer659, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-    
+
+    boxSizer657->Add(m_stdBtnSizer659, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer659->AddButton(m_buttonOK);
-    
+
     m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer659->AddButton(m_buttonCancel);
     m_stdBtnSizer659->Realize();
-    
+
     SetName(wxT("PHPSettersGettersDialogBase"));
-    SetMinClientSize(wxSize(500,300));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetMinClientSize(wxSize(500, 300));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2191,6 +2211,4 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
 #endif
 }
 
-PHPSettersGettersDialogBase::~PHPSettersGettersDialogBase()
-{
-}
+PHPSettersGettersDialogBase::~PHPSettersGettersDialogBase() {}

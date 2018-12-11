@@ -1,25 +1,25 @@
-#include "php_open_resource_dlg.h"
-#include <globals.h>
-#include <windowattrmanager.h>
-#include <imanager.h>
-#include <wx/imaglist.h>
-#include <ieditor.h>
-#include <bitmap_loader.h>
-#include "php_workspace.h"
-#include <macros.h>
-#include "PHPLookupTable.h"
-#include <wx/tokenzr.h>
 #include "FilesCollector.h"
-#include "fileutils.h"
+#include "PHPLookupTable.h"
 #include "cl_config.h"
+#include "fileutils.h"
+#include "php_open_resource_dlg.h"
+#include "php_workspace.h"
+#include <bitmap_loader.h>
+#include <globals.h>
+#include <ieditor.h>
+#include <imanager.h>
+#include <macros.h>
+#include <windowattrmanager.h>
+#include <wx/imaglist.h>
+#include <wx/tokenzr.h>
 
 static int TIMER_ID = 5647;
-static wxBitmap CLASS_IMG_ID = wxNullBitmap;
-static wxBitmap FUNC_IMG_ID = wxNullBitmap;
-static wxBitmap CONST_IMG_ID = wxNullBitmap;
-static wxBitmap DEFINE_IMG_ID = wxNullBitmap;
-static wxBitmap VARIABLE_IMG_ID = wxNullBitmap;
-static wxBitmap NAMESPACE_IMG_ID = wxNullBitmap;
+static int CLASS_IMG_ID = wxNOT_FOUND;
+static int FUNC_IMG_ID = wxNOT_FOUND;
+static int CONST_IMG_ID = wxNOT_FOUND;
+static int DEFINE_IMG_ID = wxNOT_FOUND;
+static int VARIABLE_IMG_ID = wxNOT_FOUND;
+static int NAMESPACE_IMG_ID = wxNOT_FOUND;
 
 BEGIN_EVENT_TABLE(OpenResourceDlg, OpenResourceDlgBase)
 EVT_TIMER(TIMER_ID, OpenResourceDlg::OnTimer)
@@ -88,14 +88,14 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 void OpenResourceDlg::DoInitialize()
 {
     BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
-    m_fileImages = bmpLoader->MakeStandardMimeMap();
+    m_dvListCtrl->SetBitmaps(bmpLoader->GetStandardMimeBitmapListPtr());
 
-    CLASS_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/class"));
-    FUNC_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/function_public"));
-    CONST_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/enumerator"));
-    DEFINE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/macro"));
-    VARIABLE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/member_public"));
-    NAMESPACE_IMG_ID = bmpLoader->LoadBitmap(wxT("cc/16/namespace"));
+    CLASS_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kClass);
+    FUNC_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kFunctionPublic);
+    CONST_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kEnumerator);
+    DEFINE_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kMacro);
+    VARIABLE_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kMemberPublic);
+    NAMESPACE_IMG_ID = bmpLoader->GetImageIndex(BitmapLoader::kNamespace);
 
     SetName("OpenResourceDlg");
     WindowAttrManager::Load(this);
@@ -105,9 +105,7 @@ void OpenResourceDlg::DoInitialize()
 OpenResourceDlg::~OpenResourceDlg()
 {
     wxDELETE(m_timer);
-
-    // list control does not own the client data, we need to free it ourselves
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         ResourceItem* data = (ResourceItem*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(data);
     }
@@ -183,13 +181,11 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
     wxDataViewItem selection;
     for(size_t i = 0; i < items.size(); ++i) {
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(items.at(i).displayName, DoGetImgIdx(&items.at(i))));
+        cols.push_back(::MakeBitmapIndexText(items.at(i).displayName, DoGetImgIdx(&items.at(i))));
         cols.push_back(items.at(i).TypeAsString());
         cols.push_back(items.at(i).filename.GetFullPath());
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(items.at(i))));
-        if(!selection.IsOk()) {
-            selection = m_dvListCtrl->RowToItem(0);
-        }
+        if(!selection.IsOk()) { selection = m_dvListCtrl->RowToItem(0); }
     }
 
     if(selection.IsOk()) {
@@ -271,8 +267,8 @@ void OpenResourceDlg::DoSelectNext()
     if(selecteditem.IsOk()) {
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         ++row;
-        if(m_dvListCtrl->GetItemCount() > row) {
-            m_dvListCtrl->SelectRow(row);
+        if(m_dvListCtrl->GetItemCount() > (size_t)row) {
+            m_dvListCtrl->Select(m_dvListCtrl->RowToItem(row));
             m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
     }
@@ -285,13 +281,13 @@ void OpenResourceDlg::DoSelectPrev()
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         --row;
         if(row >= 0) {
-            m_dvListCtrl->SelectRow(row);
+            m_dvListCtrl->Select(m_dvListCtrl->RowToItem(row));
             m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
     }
 }
 
-wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
+int OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
 {
     switch(item->type) {
     case ResourceItem::kRI_Namespace:
@@ -300,16 +296,8 @@ wxBitmap OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
         return CLASS_IMG_ID;
     case ResourceItem::kRI_Constant:
         return CONST_IMG_ID;
-    case ResourceItem::kRI_File: {
-        FileExtManager::FileType fileType = FileExtManager::GetType(item->filename.GetFullName());
-        if(m_fileImages.count(fileType)) {
-            // CodeLite has a knowledge about this file type, return the associated image
-            return m_fileImages.find(fileType)->second;
-        } else {
-            // Default text file image
-            return m_fileImages.find(FileExtManager::TypeText)->second;
-        }
-    }
+    case ResourceItem::kRI_File:
+        return clGetManager()->GetStdIcons()->GetMimeImageId(item->filename.GetFullName());
     case ResourceItem::kRI_Function:
         return FUNC_IMG_ID;
     default:

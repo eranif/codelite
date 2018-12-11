@@ -1068,187 +1068,6 @@
            "m_noBody": false
           }],
          "m_children": []
-        }, {
-         "m_type": 4405,
-         "proportion": 0,
-         "border": 5,
-         "gbSpan": ",",
-         "gbPosition": ",",
-         "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_RIGHT", "wxALIGN_CENTER_VERTICAL"],
-         "m_properties": [{
-           "type": "winid",
-           "m_label": "ID:",
-           "m_winid": "wxID_ANY"
-          }, {
-           "type": "string",
-           "m_label": "Size:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Minimum Size:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Name:",
-           "m_value": "m_staticText3"
-          }, {
-           "type": "multi-string",
-           "m_label": "Tooltip:",
-           "m_value": ""
-          }, {
-           "type": "colour",
-           "m_label": "Bg Colour:",
-           "colour": "<Default>"
-          }, {
-           "type": "colour",
-           "m_label": "Fg Colour:",
-           "colour": "<Default>"
-          }, {
-           "type": "font",
-           "m_label": "Font:",
-           "m_value": ""
-          }, {
-           "type": "bool",
-           "m_label": "Hidden",
-           "m_value": false
-          }, {
-           "type": "bool",
-           "m_label": "Disabled",
-           "m_value": false
-          }, {
-           "type": "bool",
-           "m_label": "Focused",
-           "m_value": false
-          }, {
-           "type": "string",
-           "m_label": "Class Name:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Include File:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Style:",
-           "m_value": ""
-          }, {
-           "type": "multi-string",
-           "m_label": "Label:",
-           "m_value": "Arguments:"
-          }, {
-           "type": "string",
-           "m_label": "Wrap:",
-           "m_value": "-1"
-          }],
-         "m_events": [],
-         "m_children": []
-        }, {
-         "m_type": 4406,
-         "proportion": 1,
-         "border": 5,
-         "gbSpan": ",",
-         "gbPosition": ",",
-         "m_styles": [],
-         "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
-         "m_properties": [{
-           "type": "winid",
-           "m_label": "ID:",
-           "m_winid": "wxID_ANY"
-          }, {
-           "type": "string",
-           "m_label": "Size:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Minimum Size:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Name:",
-           "m_value": "m_textCtrlArguments"
-          }, {
-           "type": "multi-string",
-           "m_label": "Tooltip:",
-           "m_value": "Set a list of arguments to pass to the tool"
-          }, {
-           "type": "colour",
-           "m_label": "Bg Colour:",
-           "colour": "<Default>"
-          }, {
-           "type": "colour",
-           "m_label": "Fg Colour:",
-           "colour": "<Default>"
-          }, {
-           "type": "font",
-           "m_label": "Font:",
-           "m_value": ""
-          }, {
-           "type": "bool",
-           "m_label": "Hidden",
-           "m_value": false
-          }, {
-           "type": "bool",
-           "m_label": "Disabled",
-           "m_value": false
-          }, {
-           "type": "bool",
-           "m_label": "Focused",
-           "m_value": false
-          }, {
-           "type": "string",
-           "m_label": "Class Name:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Include File:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Style:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Value:",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Text Hint",
-           "m_value": ""
-          }, {
-           "type": "string",
-           "m_label": "Max Length:",
-           "m_value": "0"
-          }, {
-           "type": "bool",
-           "m_label": "Auto Complete Directories:",
-           "m_value": false
-          }, {
-           "type": "bool",
-           "m_label": "Auto Complete Files:",
-           "m_value": false
-          }],
-         "m_events": [],
-         "m_children": []
-        }, {
-         "m_type": 4454,
-         "proportion": 1,
-         "border": 5,
-         "gbSpan": ",",
-         "gbPosition": ",",
-         "m_styles": [],
-         "m_sizerFlags": ["wxEXPAND"],
-         "m_properties": [{
-           "type": "string",
-           "m_label": "Name:",
-           "m_value": "Spacer18"
-          }, {
-           "type": "string",
-           "m_label": "Size:",
-           "m_value": "0,0"
-          }],
-         "m_events": [],
-         "m_children": []
         }]
       }, {
        "m_type": 4449,
@@ -2217,6 +2036,13 @@
            "m_eventHandler": "wxCommandEventHandler",
            "m_functionNameAndSignature": "OnButtonOk(wxCommandEvent& event)",
            "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+           "m_noBody": false
+          }, {
+           "m_eventName": "wxEVT_UPDATE_UI",
+           "m_eventClass": "wxUpdateUIEvent",
+           "m_eventHandler": "wxUpdateUIEventHandler",
+           "m_functionNameAndSignature": "OnButtonOkUI(wxUpdateUIEvent& event)",
+           "m_description": "Process a wxEVT_UPDATE_UI event",
            "m_noBody": false
           }],
          "m_children": []

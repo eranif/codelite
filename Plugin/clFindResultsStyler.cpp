@@ -1,7 +1,7 @@
-#include "clFindResultsStyler.h"
 #include "ColoursAndFontsManager.h"
-#include "lexer_configuration.h"
+#include "clFindResultsStyler.h"
 #include "editor_config.h"
+#include "lexer_configuration.h"
 #include "optionsconfig.h"
 
 clFindResultsStyler::clFindResultsStyler()
@@ -21,17 +21,13 @@ clFindResultsStyler::clFindResultsStyler(wxStyledTextCtrl* stc)
 
 clFindResultsStyler::~clFindResultsStyler()
 {
-    if(m_stc) {
-        m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this);
-    }
+    if(m_stc) { m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this); }
 }
 
 void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(!lexer) {
-        lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    }
+    if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("text"); }
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     wxFont defaultFont = lexer->GetFontForSyle(0);
@@ -85,9 +81,10 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "ORANGE");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
 #else
-    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "#FFD700" : "#FF4500");
+    sci->MarkerDefine(7, wxSTC_MARK_BACKGROUND);
+    sci->MarkerSetBackground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
+    sci->MarkerSetForeground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
+    sci->MarkerSetAlpha(7, 40);
 
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "#FFD700" : "#FF4500");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
@@ -116,10 +113,10 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     int endPos = e.GetPosition();
     wxString text = ctrl->GetTextRange(startPos, endPos);
 #if wxCHECK_VERSION(3, 1, 1) && !defined(__WXOSX__)
-        // The scintilla syntax in wx3.1.1 changed
-        ctrl->StartStyling(startPos);
+    // The scintilla syntax in wx3.1.1 changed
+    ctrl->StartStyling(startPos);
 #else
-        ctrl->StartStyling(startPos, 0x1f);
+    ctrl->StartStyling(startPos, 0x1f);
 #endif
 
     wxString::const_iterator iter = text.begin();
@@ -132,9 +129,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     for(; iter != text.end(); ++iter) {
         bool advance2Pos = false;
         const wxUniChar& ch = *iter;
-        if((long)ch >= 128) {
-            advance2Pos = true;
-        }
+        if((long)ch >= 128) { advance2Pos = true; }
 
         switch(m_curstate) {
         default:
@@ -181,9 +176,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kMatch:
             ++matchStyleLen;
-            if(advance2Pos) {
-                ++matchStyleLen;
-            }
+            if(advance2Pos) { ++matchStyleLen; }
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);

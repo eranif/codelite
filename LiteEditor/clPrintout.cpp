@@ -6,7 +6,7 @@
 //----------------------------------------------------------------------------
 extern wxPageSetupDialogData* g_pageSetupData;
 
-clPrintout::clPrintout(LEditor* edit, const wxString& title)
+clPrintout::clPrintout(clEditor* edit, const wxString& title)
     : wxPrintout(title)
     , m_edit(edit)
     , m_minPage(0)

@@ -17,9 +17,8 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxColour m_bgColour;
     wxFont m_textFont;
     wxRect m_scopeRect;
-    eButtonState m_scopeButtonState;
     wxBitmap m_functionBmp;
-    
+
     // Breadcrumbs
     wxString m_filename;
     wxString m_filenameRelative;
@@ -28,7 +27,6 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxArrayString m_breadcrumbs;
 
     wxRect m_filenameRect;
-    eButtonState m_state;
 
     // Bookmarks button
     wxBitmap m_bookmarksBmp;

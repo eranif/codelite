@@ -1,16 +1,15 @@
 #include "wxCodeCompletionBoxManager.h"
 
-#include <algorithm>
-#include <wx/app.h>
-#include "globals.h"
-#include "ieditor.h"
-#include <wx/stc/stc.h>
 #include "cl_command_event.h"
 #include "codelite_events.h"
-#include "imanager.h"
-#include "file_logger.h"
-#include <wx/app.h>
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/stc/stc.h>
 
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
@@ -50,17 +49,12 @@ wxCodeCompletionBoxManager::~wxCodeCompletionBoxManager()
 static wxCodeCompletionBoxManager* manager = NULL;
 wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 {
-    if(!manager) {
-        manager = new wxCodeCompletionBoxManager();
-    }
+    if(!manager) { manager = new wxCodeCompletionBoxManager(); }
     return *manager;
 }
 
-void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const TagEntryPtrVector_t& tags,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
+                                                   size_t flags, int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
@@ -74,10 +68,8 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const wxCodeCompletionBoxEntry::Vec_t& entries,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+                                                   const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
@@ -93,9 +85,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 void wxCodeCompletionBoxManager::DestroyCCBox()
 {
     if(m_box) {
-        if(m_box->IsShown()) {
-            m_box->Hide();
-        }
+        if(m_box->IsShown()) { m_box->Hide(); }
         m_box->Destroy();
     }
     m_box = NULL;
@@ -104,14 +94,12 @@ void wxCodeCompletionBoxManager::DestroyCCBox()
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
-                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps,
-                                                   size_t flags,
-                                                   int startPos,
-                                                   wxEvtHandler* eventObject)
+                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
 {
     DestroyCurrent();
     CHECK_PTR_RET(ctrl);
-    //CHECK_COND_RET(!entries.empty());
+    // CHECK_COND_RET(!entries.empty());
 
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetBitmaps(bitmaps);
@@ -130,6 +118,8 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
     if(editor) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         bool addParens(false);
+        bool moveCaretRight = false;
+        bool moveCaretLeft = false;
         int start = wxNOT_FOUND, end = wxNOT_FOUND;
         std::vector<std::pair<int, int> > ranges;
         if(ctrl->GetSelections() > 1) {
@@ -142,13 +132,17 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
                 return e1.first < e2.first;
             });
         } else {
-            // Default behviour: remove the partial text from teh editor and replace it
+            // Default behviour: remove the partial text from the editor and replace it
             // with the selection
             start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
             end = ctrl->GetCurrentPos();
             ctrl->SetSelection(start, end);
-            if(ctrl->GetCharAt(end) != '(') {
+            wxChar endChar = ctrl->GetCharAt(end);
+            if((ctrl->GetCharAt(end) != '(')) {
                 addParens = true;
+                moveCaretLeft = true;
+            } else if(endChar == '(') {
+                moveCaretRight = true;
             }
         }
 
@@ -162,13 +156,11 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             funcSig = funcSig.BeforeLast(')');
             funcSig.Trim().Trim(false);
 
-            CL_DEBUG("Inserting selection: %s", textToInsert);
-            CL_DEBUG("Signature is: %s", funcSig);
+            clDEBUG() << "Inserting selection:" << textToInsert;
+            clDEBUG() << "Signature is:" << funcSig;
 
             // Check if already have an open paren, don't add another
-            if(addParens) {
-                textToInsert << "()";
-            }
+            if(addParens) { textToInsert << "()"; }
 
             if(!ranges.empty()) {
                 // Multiple carets
@@ -191,12 +183,15 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 
                     // Place the caret between the parenthesis
                     int caretPos(wxNOT_FOUND);
-                    if(addParens) {
+                    if(moveCaretLeft) {
                         caretPos = start + textToInsert.length() - 1;
-                    } else {
+                    } else if(moveCaretRight) {
                         // Move the caret one char to the right
                         caretPos = start + textToInsert.length() + 1;
+                    } else {
+                        caretPos = start + textToInsert.length();
                     }
+
                     ctrl->SetCurrentPos(caretPos);
                     ctrl->SetSelection(caretPos, caretPos);
 
@@ -234,17 +229,13 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
 void wxCodeCompletionBoxManager::OnStcCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
-        m_box->StcCharAdded(event);
-    }
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) { m_box->StcCharAdded(event); }
 }
 
 void wxCodeCompletionBoxManager::OnStcModified(wxStyledTextEvent& event)
 {
     event.Skip();
-    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) {
-        m_box->StcModified(event);
-    }
+    if(m_box && m_box->IsShown() && m_box->m_stc == event.GetEventObject()) { m_box->StcModified(event); }
 }
 
 void wxCodeCompletionBoxManager::DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries)
@@ -308,9 +299,7 @@ void wxCodeCompletionBoxManager::DoConnectStcEventHandlers(wxStyledTextCtrl* ctr
         // Connect the event handlers only once. We ensure that we do that only once by attaching
         // a client data to the stc control with a single member "m_connected"
         wxCodeCompletionClientData* cd = dynamic_cast<wxCodeCompletionClientData*>(ctrl->GetClientObject());
-        if(cd && cd->m_connected) {
-            return;
-        }
+        if(cd && cd->m_connected) { return; }
         cd = new wxCodeCompletionClientData();
         cd->m_connected = true;
         ctrl->SetClientObject(cd);

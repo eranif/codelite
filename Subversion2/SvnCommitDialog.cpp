@@ -24,17 +24,19 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "SvnCommitDialog.h"
-#include <wx/tokenzr.h>
-#include "windowattrmanager.h"
-#include "imanager.h"
-#include "subversion2.h"
-#include "svnsettingsdata.h"
-#include "svn_local_properties.h"
-#include "processreaderthread.h"
 #include "asyncprocess.h"
-#include "lexer_configuration.h"
-#include "editor_config.h"
+#include "bitmap_loader.h"
 #include "clSingleChoiceDialog.h"
+#include "editor_config.h"
+#include "globals.h"
+#include "imanager.h"
+#include "lexer_configuration.h"
+#include "processreaderthread.h"
+#include "subversion2.h"
+#include "svn_local_properties.h"
+#include "svnsettingsdata.h"
+#include "windowattrmanager.h"
+#include <wx/tokenzr.h>
 
 class CommitMessageStringData : public wxClientData
 {
@@ -73,21 +75,24 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     m_checkListFiles->Disable();
     m_panel1->Disable();
 
-    SetName("SvnCommitDialog");
-    WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if(sashPos != wxNOT_FOUND) {
-        m_splitterH->SetSashPosition(sashPos);
-    }
+    if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if(textLexer) {
-        textLexer->Apply(m_stcMessage);
-    }
+    if(textLexer) { textLexer->Apply(m_stcMessage); }
+
+    // These two classes will allow copy / paste etc using the keyboard on the STC classes
+    m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
+    m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
+    
+    DoCreateToolbar();
+    SetName("SvnCommitDialog");
+    GetSizer()->Fit(this);
+    // WindowAttrManager::Load(this);
 }
 
-SvnCommitDialog::SvnCommitDialog(
-    wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin, const wxString& repoPath)
+SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,
+                                 const wxString& repoPath)
     : SvnCommitDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_url(url)
@@ -113,16 +118,14 @@ SvnCommitDialog::SvnCommitDialog(
     }
 
     SetName("SvnCommitDialog");
+    DoCreateToolbar();
+    
     WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if(sashPos != wxNOT_FOUND) {
-        m_splitterH->SetSashPosition(sashPos);
-    }
+    if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
 
     int sashHPos = m_plugin->GetSettings().GetCommitDlgHSashPos();
-    if(sashHPos != wxNOT_FOUND) {
-        m_splitterV->SetSashPosition(sashHPos);
-    }
+    if(sashHPos != wxNOT_FOUND) { m_splitterV->SetSashPosition(sashHPos); }
 
     LexerConf::Ptr_t diffLexer = EditorConfigST::Get()->GetLexer("Diff");
     if(diffLexer) {
@@ -131,9 +134,7 @@ SvnCommitDialog::SvnCommitDialog(
     }
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if(textLexer) {
-        textLexer->Apply(m_stcMessage);
-    }
+    if(textLexer) { textLexer->Apply(m_stcMessage); }
 }
 
 SvnCommitDialog::~SvnCommitDialog()
@@ -227,9 +228,7 @@ wxArrayString SvnCommitDialog::GetPaths()
 {
     wxArrayString paths;
     for(size_t i = 0; i < m_checkListFiles->GetCount(); i++) {
-        if(m_checkListFiles->IsChecked(i)) {
-            paths.Add(m_checkListFiles->GetString(i));
-        }
+        if(m_checkListFiles->IsChecked(i)) { paths.Add(m_checkListFiles->GetString(i)); }
     }
     return paths;
 }
@@ -256,9 +255,7 @@ void SvnCommitDialog::DoShowDiff(int selection)
 
     wxString filename = m_checkListFiles->GetString(selection);
 
-    if(filename.Contains(" ")) {
-        filename.Prepend("\"").Append("\"");
-    }
+    if(filename.Contains(" ")) { filename.Prepend("\"").Append("\""); }
 
     if(m_cache.count(filename)) {
         m_stcDiff->SetReadOnly(false);
@@ -294,4 +291,17 @@ void SvnCommitDialog::OnClearHistory(wxCommandEvent& event) { m_plugin->GetCommi
 void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_plugin->GetCommitMessagesCache().IsEmpty());
+}
+
+void SvnCommitDialog::DoCreateToolbar()
+{
+    m_toolbar->AddTool(XRCID("commit-history"), _("Commit History"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("history"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear History"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    m_toolbar->Realize();
+
+    m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnShowCommitHistory, this, XRCID("commit-history"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnShowCommitHistoryUI, this, XRCID("commit-history"));
+    m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnClearHistory, this, wxID_CLEAR);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnClearHistoryUI, this, wxID_CLEAR);
 }

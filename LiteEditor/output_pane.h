@@ -27,8 +27,8 @@
 
 #include <wx/panel.h>
 
-#include "shelltab.h"
 #include "cl_command_event.h"
+#include "shelltab.h"
 
 class ClangOutputTab;
 class FindResultsTab;
@@ -62,8 +62,7 @@ class FindUsageTab;
 class OutputPane : public wxPanel
 {
 protected:
-    struct Tab
-    {
+    struct Tab {
         wxString m_label;
         wxWindow* m_window;
         wxBitmap m_bmp;
@@ -111,6 +110,7 @@ protected:
     void OnBuildEnded(clBuildEvent& e);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleTab(clCommandEvent& event);
+    void OnOutputBookFileListMenu(clContextMenuEvent& event);
 
 public:
     /**

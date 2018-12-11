@@ -16,11 +16,6 @@
 #include <wx/textctrl.h>
 #include <wx/simplebook.h>
 #include <wx/imaglist.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
 #include <wx/treectrl.h>
 #include "PHPOutlineTree.h"
 #if wxVERSION_NUMBER >= 2900
@@ -42,15 +37,10 @@
 
 class OutlineTabBaseClass : public wxPanel
 {
-public:
-    enum {
-        ID_TOOL_SORT_ALPHABETICALLY = 1001,
-    };
 protected:
     wxTextCtrl* m_textCtrlSearch;
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
-    wxAuiToolBar* m_auibar;
     wxPanel* m_panelPhp;
     PHPOutlineTree* m_treeCtrlPhp;
     wxPanel* m_panelPlaceHolder;
@@ -59,14 +49,11 @@ protected:
 protected:
     virtual void OnSearchEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSearchSymbol(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSortAlpha(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSortAlphaUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnPhpItemSelected(wxTreeEvent& event) { event.Skip(); }
     virtual void OnPhpItemActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
     wxTextCtrl* GetTextCtrlSearch() { return m_textCtrlSearch; }
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     PHPOutlineTree* GetTreeCtrlPhp() { return m_treeCtrlPhp; }
     wxPanel* GetPanelPhp() { return m_panelPhp; }

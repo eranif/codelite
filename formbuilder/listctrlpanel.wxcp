@@ -133,7 +133,7 @@
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": ["wxDV_SINGLE"],
+       "m_styles": ["wxDV_ROW_LINES", "wxDV_SINGLE"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",
@@ -182,11 +182,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl"
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": ""
+         "m_value": "clThemedListCtrl.h"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -218,11 +218,11 @@
          "m_properties": [{
            "type": "string",
            "m_label": "Name:",
-           "m_value": "Level"
+           "m_value": "#"
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-1"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -264,7 +264,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "200"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -306,7 +306,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "400"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -348,7 +348,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-1"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",
@@ -390,7 +390,7 @@
           }, {
            "type": "string",
            "m_label": "Width:",
-           "m_value": "-1"
+           "m_value": "-2"
           }, {
            "type": "choice",
            "m_label": "Column Type",

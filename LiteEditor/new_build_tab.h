@@ -143,7 +143,7 @@ struct CmpPatterns {
 };
 
 ///////////////////////////////////////////////////////////////////
-class LEditor;
+class clEditor;
 class NewBuildTab : public wxPanel
 {
     enum BuildpaneScrollTo { ScrollToFirstError, ScrollToFirstItem, ScrollToEnd };
@@ -185,11 +185,11 @@ protected:
     void DoSearchForDirectory(const wxString& line);
     bool DoGetCompilerPatterns(const wxString& compilerName, CmpPatterns& patterns);
     void DoClear();
-    void MarkEditor(LEditor* editor);
+    void MarkEditor(clEditor* editor);
     void DoToggleWindow();
     bool DoSelectAndOpen(int buildViewLine, bool centerLine);
     wxFont DoGetFont() const;
-    void DoCentreErrorLine(BuildLineInfo* bli, LEditor* editor, bool centerLine);
+    void DoCentreErrorLine(BuildLineInfo* bli, clEditor* editor, bool centerLine);
     void ColourOutput();
     CmpPatternPtr GetMatchingRegex(const wxString& lineText, LINE_SEVERITY& severity);
 

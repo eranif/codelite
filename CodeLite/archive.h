@@ -29,12 +29,14 @@
 #include "wx/hashmap.h"
 #include <wx/arrstr.h>
 #include "wx/filename.h"
+#if wxUSE_GUI
 #include <wx/gdicmn.h>
+#include <wx/font.h>
+#endif
 #include <vector>
 #include <map>
 #include <set>
 #include "codelite_exports.h"
-#include <wx/font.h>
 #include "macros.h"
 
 class wxXmlNode;
@@ -76,15 +78,17 @@ public:
     bool Write(const wxString& name, const wxArrayString& arr);
     bool Write(const wxString& name, const wxFileName& fileName);
     bool Write(const wxString& name, size_t value);
+#if wxUSE_GUI
     bool Write(const wxString& name, wxSize size);
     bool Write(const wxString& name, wxPoint pt);
-    bool Write(const wxString& name, const StringMap& str_map);
+    bool Write(const wxString& name, const wxFont& font);
     bool Write(const wxString& name, const wxColour& colour);
+#endif
+    bool Write(const wxString& name, const StringMap& str_map);
     bool Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Write(const wxString& name, std::vector<int>& _vInt);
     bool Write(const wxString& name, const wxStringMap_t& strinMap);
     bool Write(const wxString& name, const wxStringSet_t& s);
-    bool Write(const wxString& name, const wxFont& font);
     bool WriteCData(const wxString& name, const wxString& value);
 
     //--------------------
@@ -97,17 +101,19 @@ public:
     bool Read(const wxString& name, wxArrayString& arr);
     bool Read(const wxString& name, wxFileName& fileName);
     bool Read(const wxString& name, size_t& value);
-    bool Read(const wxString& name, wxSize& size);
+#if wxUSE_GUI
     bool Read(const wxString& name, wxPoint& pt);
+    bool Read(const wxString& name, wxSize& size);
+    bool Read(const wxString& name, wxColour& colour);
+    bool Read(const wxString& name, wxFont& font, const wxFont& defaultFont = wxNullFont);
+#endif
     bool Read(const wxString& name, StringMap& str_map);
     bool Read(const wxString& name, SerializedObject* obj);
-    bool Read(const wxString& name, wxColour& colour);
     bool Read(const wxString& name, std::vector<TabInfo>& _vTabInfoArr);
     bool Read(const wxString& name, std::vector<int>& _vInt);
     bool Read(const wxString& name, wxStringMap_t& strinMap);
     bool Read(const wxString& name, wxStringSet_t& s);
     bool ReadCData(const wxString& name, wxString& value);
-    bool Read(const wxString& name, wxFont& font, const wxFont& defaultFont = wxNullFont);
 
 private:
     bool WriteSimple(long value, const wxString& typeName, const wxString& name);

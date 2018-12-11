@@ -29,7 +29,6 @@
 #include "SFTPSessionInfo.h"
 #include "UI.h"
 #include "bitmap_loader.h"
-#include "clTreeKeyboardInput.h"
 #include "cl_command_event.h"
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
@@ -47,7 +46,6 @@ class SFTPTreeView : public SFTPTreeViewBase
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
-    clTreeKeyboardInput::Ptr_t m_keyboardHelper;
     SFTPSessionInfoList m_sessions;
 
 public:
@@ -64,7 +62,8 @@ public:
 
 protected:
     virtual void OnSftpSettings(wxCommandEvent& event);
-    virtual void OnOpenTerminal(wxAuiToolBarEvent& event);
+    virtual void OnOpenTerminal(wxCommandEvent& event);
+    virtual void OnOpenTerminalMenu(wxCommandEvent& event);
     virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
     virtual void OnConnection(wxCommandEvent& event);
     virtual void OnSelectionChanged(wxTreeEvent& event);
@@ -72,7 +71,8 @@ protected:
     virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
     virtual void OnGotoLocation(wxCommandEvent& event);
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
-    virtual void OnAddBookmark(wxAuiToolBarEvent& event);
+    virtual void OnAddBookmark(wxCommandEvent& event);
+    virtual void OnAddBookmarkMenu(wxCommandEvent& event);
     virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
     virtual void OnContextMenu(wxContextMenuEvent& event);
     virtual void OnDisconnect(wxCommandEvent& event);
@@ -86,6 +86,7 @@ protected:
     virtual void OnMenuOpenWithDefaultApplication(wxCommandEvent& event);
     virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
     virtual void OnMenuRefreshFolder(wxCommandEvent& event);
+    virtual void OnExecuteCommand(wxCommandEvent& event);
     void OnFileDropped(clCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& evt);
 

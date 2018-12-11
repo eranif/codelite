@@ -36,6 +36,7 @@
 #include <map>
 #include "gitui.h"
 #include "cl_command_event.h"
+#include "macros.h"
 
 class GitCommitEditor;
 class IProcess;
@@ -43,7 +44,7 @@ class GitPlugin;
 
 class GitDiffDlg : public GitDiffDlgBase
 {
-    std::map<wxString, wxString> m_diffMap;
+    wxStringMap_t m_diffMap;
     wxString m_workingDir;
     wxString m_gitPath;
     wxString m_commits; // Empty unless the ChooseCommits dialog is used
@@ -59,6 +60,7 @@ private:
     void OnChangeFile(wxCommandEvent& e);
 
     DECLARE_EVENT_TABLE();
+
 protected:
     virtual void OnOptionsChanged(wxCommandEvent& event);
     wxString PrepareCommand() const;

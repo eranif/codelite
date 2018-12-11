@@ -190,7 +190,7 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             DESTINATION 
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/Resources)
 
-        file(COPY ${CL_SRC_ROOT}/bitmaps/osx/icon.icns 
+        file(COPY ${CL_SRC_ROOT}/bitmaps-light/osx/icon.icns 
             DESTINATION 
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/Resources)
             

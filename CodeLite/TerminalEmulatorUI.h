@@ -25,7 +25,7 @@
 
 #ifndef TERMINALEMULATORUI_H
 #define TERMINALEMULATORUI_H
-
+#if wxUSE_GUI
 #include "TerminalEmulatorUIBase.h"
 #include "TerminalEmulator.h"
 
@@ -50,4 +50,5 @@ protected:
     void OnProcessExit(clCommandEvent& e);
     void OnProcessOutput(clCommandEvent& e);
 };
+#endif // LIBCODELITE_WITH_UI
 #endif // TERMINALEMULATORUI_H

@@ -23,18 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "clSocketServer.h"
 #include "clConnectionString.h"
+#include "clSocketServer.h"
 
 #ifndef _WIN32
-#include <unistd.h>
-#include <sys/stat.h>
 #include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/un.h>
+#include <unistd.h>
 #endif
 
 clSocketServer::clSocketServer() {}
@@ -80,19 +80,6 @@ void clSocketServer::CreateServer(const std::string& pipePath)
 #endif
 }
 
-clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout)
-{
-    if(SelectRead(timeout) == kTimeout) {
-        return clSocketBase::Ptr_t(NULL);
-    }
-
-    int fd = ::accept(m_socket, 0, 0);
-    if(fd < 0) {
-        throw clSocketException("accept error: " + error());
-    }
-    return clSocketBase::Ptr_t(new clSocketBase(fd));
-}
-
 void clSocketServer::CreateServer(const std::string& address, int port)
 {
     // Create a socket
@@ -128,12 +115,23 @@ void clSocketServer::CreateServer(const std::string& address, int port)
 void clSocketServer::Start(const wxString& connectionString)
 {
     clConnectionString cs(connectionString);
-    if(!cs.IsOK()) {
-        throw clSocketException("Invalid connection string provided");
-    }
+    if(!cs.IsOK()) { throw clSocketException("Invalid connection string provided"); }
     if(cs.GetProtocol() == clConnectionString::kTcp) {
         CreateServer(cs.GetHost().mb_str(wxConvUTF8).data(), cs.GetPort());
     } else {
         CreateServer(cs.GetPath().mb_str(wxConvUTF8).data());
     }
+}
+
+clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout)
+{
+    return clSocketBase::Ptr_t(WaitForNewConnectionRaw(timeout));
+}
+
+clSocketBase* clSocketServer::WaitForNewConnectionRaw(long timeout)
+{
+    if(SelectRead(timeout) == kTimeout) { return NULL; }
+    int fd = ::accept(m_socket, 0, 0);
+    if(fd < 0) { throw clSocketException("accept error: " + error()); }
+    return new clSocketBase(fd);
 }

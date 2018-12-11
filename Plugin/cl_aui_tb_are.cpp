@@ -28,6 +28,7 @@
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include <wx/dcmemory.h>
 #include <wx/settings.h>
 
 CLMainAuiTBArt::CLMainAuiTBArt(bool isMainBook)
@@ -46,9 +47,14 @@ CLMainAuiTBArt::~CLMainAuiTBArt()
 void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
-    dc.SetPen(DrawingUtils::GetPanelBgColour());
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
-    dc.DrawRectangle(rect);
+    wxBitmap bmp(rect.GetSize());
+    wxMemoryDC dcMem;
+    dcMem.SelectObject(bmp);
+    dcMem.SetPen(DrawingUtils::GetPanelBgColour());
+    dcMem.SetBrush(DrawingUtils::GetPanelBgColour());
+    dcMem.DrawRectangle(rect);
+    dcMem.SelectObject(wxNullBitmap);
+    dc.DrawBitmap(bmp, wxPoint(0, 0));
 }
 
 void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) { DrawPlainBackground(dc, wnd, rect); }

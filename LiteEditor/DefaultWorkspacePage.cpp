@@ -14,6 +14,8 @@ DefaultWorkspacePage::DefaultWorkspacePage(wxWindow* parent)
 {
     // Allow the PHP view to accepts folders
     SetDropTarget(new clFileOrFolderDropTarget(this));
+    m_staticText523->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
     m_staticBitmap521->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &DefaultWorkspacePage::OnFolderDropped, this);
 }

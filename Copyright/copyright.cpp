@@ -44,8 +44,8 @@
 
 #include "copyrightsconfigdata.h"
 #include "event_notifier.h"
-#include "globals.h"
 #include "file_logger.h"
+#include "globals.h"
 
 static Copyright* thePlugin = NULL;
 
@@ -92,11 +92,7 @@ Copyright::Copyright(IManager* manager)
 
 Copyright::~Copyright() {}
 
-clToolBar* Copyright::CreateToolBar(wxWindow* parent)
-{
-    wxUnusedVar(parent);
-    return NULL;
-}
+void Copyright::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)
 {

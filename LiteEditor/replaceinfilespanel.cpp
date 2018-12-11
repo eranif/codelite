@@ -80,8 +80,8 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mainSizer->Detach(m_sci);
     vertSizer->Add(m_sci, 1, wxEXPAND | wxALL, 1);
 
-    m_tb->DeleteTool(XRCID("repeat_output"));
-    m_tb->DeleteTool(XRCID("recent_searches"));
+    m_tb->DeleteById(XRCID("repeat_output"));
+    m_tb->DeleteById(XRCID("recent_searches"));
     m_tb->Realize();
 
 #ifdef __WXMAC__
@@ -173,7 +173,7 @@ void ReplaceInFilesPanel::DoSaveResults(
 {
     if(!sci || begin == end) return;
     bool ok = true;
-    if(dynamic_cast<LEditor*>(sci) == NULL) {
+    if(dynamic_cast<clEditor*>(sci) == NULL) {
         // it's a temp editor, check if we have any changes to save
         if(sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
             wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(), _("CodeLite - Replace"),
@@ -224,7 +224,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     m_filesModified.clear();
     // FIX bug#2770561
     int lineNumber(0);
-    LEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
+    clEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(activeEditor) {
         lineNumber = activeEditor->GetCurrentLine();
     }
@@ -342,7 +342,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         }
 
         if(m_sci->MarkerGet(line) & 1 << 0x9) {
-            LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(lastFile);
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(lastFile);
             if(editor && editor->GetModify()) {
                 updatedEditors.insert(lastFile);
             }
@@ -383,7 +383,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
             _("Some files are modified.\nChoose the files you would like to save."), true)) {
         for(size_t i = 0; i < filesToSave.size(); i++) {
             if(filesToSave[i].second) {
-                LEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());
+                clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());
                 if(editor) {
                     editor->SaveFile();
                 }

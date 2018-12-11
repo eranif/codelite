@@ -1,31 +1,32 @@
-#include "phpexecutor.h"
-#include <globals.h>
-#include <wx/tokenzr.h>
-#include <processreaderthread.h>
-#include <wx/app.h>
+#include "PHPTerminal.h"
+#include "TerminalEmulatorFrame.h"
+#include "asyncprocess.h"
 #include "clplatform.h"
-#include "php_project_settings_data.h"
+#include "console_frame.h"
 #include "environmentconfig.h"
 #include "file_logger.h"
-#include <wx/msgdlg.h>
-#include "php_workspace.h"
-#include <dirsaver.h>
-#include <wx/process.h>
-#include <cl_config.h>
 #include "php_configuration_data.h"
 #include "php_event.h"
+#include "php_project_settings_data.h"
+#include "php_workspace.h"
+#include "phpexecutor.h"
+#include <cl_config.h>
+#include <dirsaver.h>
 #include <event_notifier.h>
+#include <globals.h>
+#include <processreaderthread.h>
+#include <wx/app.h>
+#include <wx/msgdlg.h>
+#include <wx/process.h>
+#include <wx/tokenzr.h>
 #include <wx/uri.h>
-#include "asyncprocess.h"
-#include "TerminalEmulatorFrame.h"
-#include "PHPTerminal.h"
 
 PHPExecutor::PHPExecutor() {}
 
 PHPExecutor::~PHPExecutor() {}
 
 bool PHPExecutor::Exec(const wxString& projectName, const wxString& urlOrFilePath, const wxString& xdebugSessionName,
-    bool neverPauseOnExit)
+                       bool neverPauseOnExit)
 {
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectName);
     CHECK_PTR_RET_FALSE(proj);
@@ -65,12 +66,12 @@ bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, c
     return true;
 }
 
-bool PHPExecutor::DoRunCLI(
-    const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit)
+bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName,
+                           bool neverPauseOnExit)
 {
     if(IsRunning()) {
         ::wxMessageBox(_("Another process is already running"), wxT("CodeLite"), wxOK | wxICON_INFORMATION,
-            wxTheApp->GetTopWindow());
+                       wxTheApp->GetTopWindow());
         return false;
     }
 
@@ -111,14 +112,9 @@ bool PHPExecutor::DoRunCLI(
         return m_terminal.ExecuteNoConsole(cmd, wd);
     } else {
         // Launch the terminal UI
-        PHPTerminal* frame = new PHPTerminal(EventNotifier::Get()->TopFrame());
-        frame->GetTerminalUI()->SetTerminal(&m_terminal);
-        frame->Show();
-        if(!m_terminal.ExecuteNoConsole(cmd, wd)) {
-            ::wxMessageBox(wxString::Format("Could not execute: %s", cmd), "CodeLite", wxICON_ERROR | wxOK);
-            frame->Destroy();
-            return false;
-        }
+        ConsoleFrame* console = new ConsoleFrame(EventNotifier::Get()->TopFrame());
+        console->Show();
+        console->Execute(cmd, wd);
         return true;
     }
 }

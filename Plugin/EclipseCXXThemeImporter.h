@@ -34,9 +34,9 @@ class WXDLLIMPEXP_SDK EclipseCXXThemeImporter : public EclipseThemeImporterBase
 {
 private:
     /**
-     * @brief convert a single XML file to eclipse XML format
+     * @brief convert a lexer object into eclipse XML format
      */
-    static wxFileName ToEclipseXML(const wxFileName& codeliteXml, size_t id);
+    static wxFileName ToEclipseXML(LexerConf::Ptr_t cxxLexer, size_t id);
     
 public:
     EclipseCXXThemeImporter();

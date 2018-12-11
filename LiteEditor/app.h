@@ -61,11 +61,6 @@ private: // Methods
     wxString DoFindMenuFile(const wxString& installDirectory, const wxString& requiredVersion);
     void AdjustPathForCygwinIfNeeded();
     void AdjustPathForMSYSIfNeeded();
-
-#ifdef __WXMSW__
-    HINSTANCE m_handler;
-    HINSTANCE m_user32Dll;
-#endif
     void PrintUsage(const wxCmdLineParser& parser);
 
 public:
@@ -93,13 +88,14 @@ public:
     const wxString& GetDebuggerArgs() const { return m_debuggerArgs; }
     const wxString& GetDebuggerWorkingDirectory() const { return m_debuggerWorkingDirectory; }
     const wxString& GetExeToDebug() const { return m_exeToDebug; }
+
 protected:
     virtual bool OnInit();
     virtual int OnExit();
     virtual void OnFatalException();
-
-    //    DECLARE_EVENT_TABLE()
-    //    void OnAppAcitvated(wxActivateEvent &e);
+    void OpenFolder(const wxString& path);
+    void OpenFile(const wxString& path, long lineNumber);
+    void OpenItem(const wxString& path, long lineNumber);
 };
 
 #endif // LITEEDITOR_APP_H

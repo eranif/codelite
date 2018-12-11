@@ -7,37 +7,36 @@
 #ifndef _CODELITE_SFTP_UI_BASE_CLASSES_H
 #define _CODELITE_SFTP_UI_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/dataview.h>
-#include <wx/imaglist.h>
-#include <wx/bitmap.h>
+#include "clThemedTreeCtrl.h"
+#include "clToolBar.h"
 #include <map>
-#include <wx/icon.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/treectrl.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
-#include <wx/listbox.h>
+#include <wx/arrstr.h>
+#include <wx/artprov.h>
+#include <wx/bitmap.h>
 #include <wx/button.h>
-#include <wx/filepicker.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
-#include <wx/arrstr.h>
+#include <wx/dialog.h>
+#include <wx/filepicker.h>
+#include <wx/icon.h>
+#include <wx/iconbndl.h>
+#include <wx/imaglist.h>
+#include <wx/listbox.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/statline.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
+#include <wx/toolbar.h>
+#include <wx/treectrl.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -50,21 +49,20 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class SFTPStatusPageBase : public wxPanel
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrl;
+    wxStyledTextCtrl* m_stcOutput;
 
 protected:
-    virtual void OnContentMenu(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnContentMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
+    SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPStatusPageBase();
 };
-
 
 class SFTPImages : public wxImageList
 {
@@ -76,53 +74,29 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
-
 protected:
-
 public:
     SFTPImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name + m_resolution) )
-            return wxNullBitmap;
+    const wxBitmap& Bitmap(const wxString& name) const
+    {
+        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString &res = wxEmptyString) {
-        m_resolution = res;
-    }
+    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~SFTPImages();
 };
 
-
 class SFTPTreeViewBase : public wxPanel
 {
-public:
-    enum {
-        ID_SFTP_CUSTOMIZE = 1001,
-        ID_SSH_OPEN_TERMINAL = 1002,
-        ID_ADD_BOOKMARK = 1003,
-        ID_SFTP_CONNECT = 1004,
-        ID_OPEN_ACCOUNT_MANAGER = 1005,
-    };
 protected:
-    wxAuiToolBar* m_auibar;
-    std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu115;
-    wxMenu* m_menu96;
-    wxMenuItem* m_menuItemCustomize;
+    clToolBar* m_toolbar;
     wxStaticText* m_staticText49;
     wxTextCtrl* m_textCtrlQuickJump;
-    wxTreeCtrl* m_treeCtrl;
+    clThemedTreeCtrl* m_treeCtrl;
 
 protected:
-    virtual void OnOpenAccountManager(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnConnection(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAddBookmark(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOpenTerminal(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnSftpSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGotoLocationUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnGotoLocation(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxTreeEvent& event) { event.Skip(); }
@@ -130,16 +104,14 @@ protected:
     virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxStaticText* GetStaticText49() { return m_staticText49; }
     wxTextCtrl* GetTextCtrlQuickJump() { return m_textCtrlQuickJump; }
-    wxTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    SFTPTreeViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPTreeViewBase();
 };
-
 
 class SFTPManageBookmarkDlgBase : public wxDialog
 {
@@ -157,10 +129,11 @@ protected:
 public:
     wxListBox* GetListBoxBookmarks() { return m_listBoxBookmarks; }
     wxButton* GetButton70() { return m_button70; }
-    SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Bookmarks"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPManageBookmarkDlgBase();
 };
-
 
 class SFTPSettingsDialogBase : public wxDialog
 {
@@ -177,10 +150,11 @@ protected:
 public:
     wxStaticText* GetStaticSSHClient() { return m_staticSSHClient; }
     wxFilePickerCtrl* GetSshClientPath() { return m_sshClientPath; }
-    SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP / SSH Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP / SSH Settings"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPSettingsDialogBase();
 };
-
 
 class SFTPUploadDialogBase : public wxDialog
 {
@@ -197,10 +171,11 @@ protected:
 public:
     wxStaticText* GetStaticText110() { return m_staticText110; }
     wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
-    SFTPUploadDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Upload Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SFTPUploadDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Upload Files"),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPUploadDialogBase();
 };
-
 
 class SFTPQuickConnectBaseDlg : public wxDialog
 {
@@ -241,7 +216,9 @@ public:
     wxTextCtrl* GetTextCtrlUsername() { return m_textCtrlUsername; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
-    SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Connect"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Connect"),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPQuickConnectBaseDlg();
 };
 

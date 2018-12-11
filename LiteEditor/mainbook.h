@@ -48,8 +48,7 @@ class MainBook : public wxPanel
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
-    clMultiBook* m_book;
-    QuickFindBar* m_quickFindBar;
+    Notebook* m_book;
     MessagePane* m_messagePane;
     bool m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
@@ -57,6 +56,8 @@ private:
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
+    wxWindow* m_welcomePage;
+    QuickFindBar* m_findBar;
 
 public:
     enum {
@@ -74,7 +75,6 @@ private:
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
     void DoUpdateEditorsThemes();
-    void DoPlaceNavigationBar();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
     void OnTabDClicked(wxBookCtrlEvent& e);
@@ -94,8 +94,7 @@ private:
     void OnThemeChanged(wxCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
-    void DoPositionFindBar();
-    void DoHandleFrameMenu(LEditor* editor);
+    void DoHandleFrameMenu(clEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
     void OnWorkspaceReloadStarted(clCommandEvent& e);
     void OnWorkspaceReloadEnded(clCommandEvent& e);
@@ -115,25 +114,31 @@ private:
      * @brief update the navigation bar (C++)
      * @param editor
      */
-    void UpdateNavBar(LEditor* editor);
+    void UpdateNavBar(clEditor* editor);
+
+    /**
+     * @brief display the welcome page
+     */
+    void ShowWelcomePage(bool show);
+    void DoShowWindow(wxWindow* win, bool show);
+
+    void OnEditorChanged(wxCommandEvent& event);
+    void OnAllEditorClosed(wxCommandEvent& event);
 
 public:
     MainBook(wxWindow* parent);
-    ~MainBook();
+    virtual ~MainBook();
+
+    void SetFindBar(QuickFindBar* findBar);
+    QuickFindBar* GetFindBar() const { return m_findBar; }
     
     /**
-     * @brief move the active tab to another tab group (notebook). To the left
+     * @brief register a welcome page. This page is displayed whenever there are no tabs open
+     * in CodeLite. If there is already a welcome page registered, this call destroys the previous one
      */
-    void MoveActiveTabToLeftTabGroup();
-    /**
-     * @brief move the active tab to another tab group (notebook). To the right
-     */
-    void MoveActiveTabToRIghtTabGroup();
-    
-    bool CanMoveActiveTabToRIghtTabGroup() const;
-    bool CanMoveActiveTabToLeftTabGroup() const;
-    
-    static bool AskUserToSave(LEditor* editor);
+    void RegisterWelcomePage(wxWindow* welcomePage);
+
+    static bool AskUserToSave(clEditor* editor);
     /**
      * @brief show the navigation dialog
      */
@@ -149,18 +154,19 @@ public:
     void ClearFileHistory();
     void GetRecentlyOpenedFiles(wxArrayString& files);
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
-    void ShowQuickBarForPlugins() { m_quickFindBar->ShowForPlugins(); }
-    void ShowQuickBar(bool s, bool replaceBar = false) { m_quickFindBar->Show(s, replaceBar); }
-    void ShowQuickBar(const wxString& findWhat, bool replaceBar = false) { m_quickFindBar->Show(findWhat, replaceBar); }
-    void ShowQuickReplaceBar(bool show) { m_quickFindBar->ShowReplacebar(show); }
+    void ShowQuickBarForPlugins();
+    void ShowQuickBar(bool s);
+    void ShowQuickBar(const wxString& findWhat, bool showReplace);
     void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
                      const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
                      const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());
 
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
-    bool IsNavBarShown() { return m_navBar->IsShown(); }
+    bool IsNavBarShown() { return m_navBar && m_navBar->IsShown(); }
     clEditorBar* GetEditorBar() { return m_navBar; }
+    void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
+    
     void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
     void RestoreSession(SessionEntry& session);
     /**
@@ -168,13 +174,13 @@ public:
      */
     void CreateSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
 
-    LEditor* GetActiveEditor(bool includeDetachedEditors = false);
+    clEditor* GetActiveEditor(bool includeDetachedEditors = false);
     /**
-     * @brief return vector of all editors in the notebook. This function only returns instances of type LEditor
+     * @brief return vector of all editors in the notebook. This function only returns instances of type clEditor
      * @param editors [output]
      * @param flags kGetAll_*
      */
-    void GetAllEditors(LEditor::Vec_t& editors, size_t flags);
+    void GetAllEditors(clEditor::Vec_t& editors, size_t flags);
     /**
      * @brief return vector of all tabs in the notebook
      * @param tabs [output]
@@ -186,7 +192,7 @@ public:
      */
     void GetDetachedTabs(clTab::Vec_t& tabs);
 
-    LEditor* FindEditor(const wxString& fileName);
+    clEditor* FindEditor(const wxString& fileName);
     bool CloseEditor(const wxString& fileName) { return ClosePage(FindEditor(fileName)); }
 
     wxWindow* GetCurrentPage();
@@ -195,20 +201,20 @@ public:
     size_t GetPageCount() const;
     wxWindow* FindPage(const wxString& text);
 
-    LEditor* NewEditor();
+    clEditor* NewEditor();
 
-    LEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
-                      long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
-                      const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
+    clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
+                       long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
+                       const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
     /**
      * @brief open file based on a browsing record
      */
-    LEditor* OpenFile(const BrowseRecord& rec);
+    clEditor* OpenFile(const BrowseRecord& rec);
 
     /**
      * @brief a simpler version: open a file with a given tooltip and bitmap
      */
-    LEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
+    clEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
     {
         return OpenFile(file_name, "", wxNOT_FOUND, wxNOT_FOUND, OF_AddJump, false, bmp, tooltip);
     }
@@ -250,7 +256,7 @@ public:
     void ShowWhitespace(int ws);
     void UpdateColours();
     void UpdateBreakpoints();
-    void MarkEditorReadOnly(LEditor* editor);
+    void MarkEditorReadOnly(clEditor* editor);
 
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }

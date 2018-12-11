@@ -49,8 +49,9 @@ public:
     void OnBreakpointsUpdated(LLDBEvent &event);
     void OnConsoleOutput(LLDBEvent &event);
     void OnLLDBStarted(LLDBEvent &event);
-    LLDBBreakpoint::Ptr_t GetBreakpoint(const wxDataViewItem& item);
+    LLDBBreakpoint::Ptr_t GetBreakpoint(const wxTreeItemId& item);
 protected:
+    virtual void OnBpActivated(wxTreeEvent& event);
     virtual void OnSendCommandToLLDB(wxCommandEvent& event);
     void GotoBreakpoint(LLDBBreakpoint::Ptr_t bp);
     
@@ -61,7 +62,6 @@ protected:
     virtual void OnDeleteBreakpointUI(wxUpdateUIEvent& event);
     virtual void OnNewBreakpoint(wxCommandEvent& event);
     virtual void OnNewBreakpointUI(wxUpdateUIEvent& event);
-    virtual void OnBreakpointActivated(wxDataViewEvent& event);
     
     void OnSelectAll(wxCommandEvent &event);
     void OnCopy(wxCommandEvent &event);

@@ -31,11 +31,8 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 
-class wxToolBar;
-
 class ExternalToolsPlugin : public IPlugin
 {
-    clToolBar* m_tb;
     wxEvtHandler* topWin;
     wxMenu* m_parentMenu;
 
@@ -56,7 +53,7 @@ public:
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();

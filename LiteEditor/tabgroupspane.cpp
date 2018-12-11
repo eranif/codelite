@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clThemedTreeCtrl.h"
 #include "codelite_events.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -67,16 +68,13 @@ TabgroupsPane::TabgroupsPane(wxWindow* parent, const wxString& caption)
 {
     m_node = NULL;
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
-    m_tree = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                            wxTR_LINES_AT_ROOT | wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_EDIT_LABELS,
-                            wxDefaultValidator, wxT("tabgrouptree"));
-    MSWSetNativeTheme(m_tree);
+    m_tree = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT);
     m_tree->SetDropTarget(new MyDropTarget(this));
 
     // Add icons to the tree
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    wxImageList* imgList = bmpLoader->MakeStandardMimeImageList();
-    m_tree->AssignImageList(imgList);
+    m_tree->SetBitmaps(bmpLoader->GetStandardMimeBitmapListPtr());
+
     sz->Add(m_tree, 1, wxEXPAND);
 
     // DisplayTabgroups(); No, we can't do this here: it's too soon, a 'session' hasn't been loaded
@@ -177,8 +175,8 @@ void TabgroupsPane::AddTreeItem(bool isGlobal, const wxString& tabgroupfpath, co
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     if(insertafter.IsOk()) {
         // There's a valid id to insert after, so..
-        tbnameId = m_tree->InsertItem(GetRootItemForTabgroup(isGlobal), insertafter, tabgroupname, folderImgID, folderImgID,
-                                      new TabGrpTreeItemData(tabgroupfpath, TGT_group));
+        tbnameId = m_tree->InsertItem(GetRootItemForTabgroup(isGlobal), insertafter, tabgroupname, folderImgID,
+                                      folderImgID, new TabGrpTreeItemData(tabgroupfpath, TGT_group));
     } else {
         // Otherwise, append
         tbnameId = m_tree->AppendItem(GetRootItemForTabgroup(isGlobal), tabgroupname, folderImgID, folderImgID,
@@ -219,7 +217,7 @@ void TabgroupsPane::OnItemActivated(wxTreeEvent& event)
             return;
         }
 
-        std::vector<LEditor*> editors;
+        std::vector<clEditor*> editors;
         clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_IncludeDetached |
                                                                       MainBook::kGetAll_RetainOrder);
         if(editors.size() > 0) {
@@ -275,8 +273,7 @@ void TabgroupsPane::OnItemRtClick(wxTreeEvent& event)
         if(m_node) { menu.Append(TGM_ID_Paste, _("&Paste an item into this tabgroup")); }
         menu.Append(TGM_ID_RemoveItem, _("&Remove this item from the tabgroup"));
     }
-    wxPoint pt = event.GetPoint();
-    PopupMenu(&menu, pt.x, pt.y);
+    PopupMenu(&menu);
 }
 
 void TabgroupsPane::OnContextMenu(wxCommandEvent& event)
@@ -563,7 +560,7 @@ void TabgroupsPane::DuplicateTabgroup()
                                          _("Duplicate a tabgroup"), oldfilepath.GetFullName(), this);
     if(newname.IsEmpty() || newname == oldfilepath.GetFullName()) { return; }
 
-    if (!newname.EndsWith(".tabgroup")) {
+    if(!newname.EndsWith(".tabgroup")) {
         newname << ".tabgroup"; // Otherwise things break
     }
     wxFileName newfilepath(oldfilepath.GetPath(), newname);
@@ -589,7 +586,8 @@ void TabgroupsPane::DuplicateTabgroup()
     }
 }
 
-bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal, const wxString& newfilepath, wxTreeItemId selection /*=wxTreeItemId()*/)
+bool TabgroupsPane::AddNewTabgroupToTree(bool isGlobal, const wxString& newfilepath,
+                                         wxTreeItemId selection /*=wxTreeItemId()*/)
 {
     // Tell TabGroupsManager to load the new group. Probably a good idea anyway, but we'll need it below
     TabGroupsManager::Get()->LoadTabgroupData(isGlobal, newfilepath);
@@ -737,15 +735,13 @@ wxTreeItemId TabgroupsPane::GetRootItemForTabgroup(bool global)
     // First see if the appropriate tabgroup base-item has already been created
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_tree->GetFirstChild(m_tree->GetRootItem(), cookie);
-    while (child.IsOk()) {
+    while(child.IsOk()) {
         TabGrpTreeItemData* data = (TabGrpTreeItemData*)m_tree->GetItemData(child);
-        if(data && data->GetFilepath() == label) {
-            return child;
-        }
+        if(data && data->GetFilepath() == label) { return child; }
         child = m_tree->GetNextSibling(child);
     }
     // Nope, so create it
     int folderImgID = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
     return m_tree->AppendItem(m_tree->GetRootItem(), label, folderImgID, folderImgID,
-                                      new TabGrpTreeItemData(label, TGT_group));
+                              new TabGrpTreeItemData(label, TGT_group));
 }

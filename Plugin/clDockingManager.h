@@ -26,9 +26,9 @@
 #ifndef CLDOCKINGMANAGER_H
 #define CLDOCKINGMANAGER_H
 
+#include "Notebook.h"
 #include "codelite_exports.h"
 #include <wx/aui/framemanager.h>
-#include "Notebook.h"
 
 class WXDLLIMPEXP_SDK clDockingManager : public wxAuiManager
 {
@@ -39,7 +39,7 @@ protected:
 
     void ShowWorkspaceOpenTabMenu();
     void ShowOutputViewOpenTabMenu();
-
+    
     /**
      * @brief show a popup menu and return the selected string
      * return an empty string if no selection was made

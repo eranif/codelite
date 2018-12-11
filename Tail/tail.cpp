@@ -1,19 +1,17 @@
+#include "TailFrame.h"
+#include "TailPanel.h"
+#include "cl_command_event.h"
+#include "cl_config.h"
+#include "event_notifier.h"
 #include "tail.h"
 #include <wx/xrc/xmlres.h>
-#include "TailPanel.h"
-#include "cl_config.h"
-#include "cl_command_event.h"
-#include "event_notifier.h"
-#include "TailFrame.h"
 
 static Tail* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) {
-        thePlugin = new Tail(manager);
-    }
+    if(thePlugin == NULL) { thePlugin = new Tail(manager); }
     return thePlugin;
 }
 
@@ -54,12 +52,7 @@ void Tail::OnInitDone(wxCommandEvent& event)
     clConfig::Get().Write("force-show-tail-tab", false);
 }
 
-clToolBar* Tail::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void Tail::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void Tail::CreatePluginMenu(wxMenu* pluginsMenu) {}
 
@@ -75,6 +68,9 @@ void Tail::UnPlug()
         DoDetachWindow();
         m_view->Destroy();
         m_view = NULL;
+    } else if(m_view && m_view->GetFrame()) {
+        m_view->GetFrame()->Destroy();
+        m_view->SetFrame(NULL);
     }
 }
 
@@ -84,7 +80,8 @@ void Tail::DetachTailWindow(const TailData& d)
     TailFrame* frame = new TailFrame(EventNotifier::Get()->TopFrame(), this);
     InitTailWindow(frame, false, d, false);
     m_view->SetIsDetached(true); // set the window as detached
-    frame->GetSizer()->Add(m_view, 1, wxEXPAND | wxALL);
+    m_view->SetFrame(frame);
+    frame->GetSizer()->Add(m_view, 1, wxEXPAND);
     frame->GetSizer()->Fit(frame);
     m_view->SetFrameTitle();
     frame->Show();

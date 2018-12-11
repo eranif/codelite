@@ -212,44 +212,11 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 
     if(dynamic_cast<Notebook*>(win)) {
         Notebook* book = dynamic_cast<Notebook*>(win);
-#if !USE_AUI_NOTEBOOK
-        if(book->GetStyle() & kNotebook_RightTabs || book->GetStyle() & kNotebook_LeftTabs) {
-            // Vertical tabs, change the art provider to use the square shape
-            book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
-        } else {
-            // Else, use the settings
-            size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
-            if(options & OptionsConfig::Opt_TabStyleMinimal) {
-                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererSquare()));
-            } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererCurved()));
-            } else {
-                // the default
-                book->SetArt(clTabRenderer::Ptr_t(new clTabRendererClassic()));
-            }
-        }
-#else
+        book->SetArt(clTabRenderer::CreateRenderer(book->GetStyle()));
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
         wxColour activeTabBgColuor;
         if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
 
-        size_t options = EditorConfigST::Get()->GetOptions()->GetOptions();
-        if(options & OptionsConfig::Opt_TabStyleMinimal) {
-            wxAuiTabArt* art = new wxAuiDefaultTabArt();
-            //if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
-            book->SetArtProvider(art);
-
-        } else if(options & OptionsConfig::Opt_TabStyleTRAPEZOID) {
-            wxAuiTabArt* art = new MySimpleTabArt();
-            if(book->GetCustomFlags() & kNotebook_DynamicColours) { art->SetActiveColour(activeTabBgColuor); }
-            book->SetArtProvider(art);
-        } else {
-            // the default
-            clAuiMainNotebookTabArt* art = new clAuiMainNotebookTabArt();
-            art->RefreshColours(book->GetCustomFlags());
-            book->SetArtProvider(art);
-        }
-#endif
         // Enable tab switching using the mouse scrollbar
         book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
                           EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());

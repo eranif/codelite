@@ -80,15 +80,18 @@ void ToolsTaskManager::OnProcessOutput(clProcessEvent& event)
     clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
 }
 
-void ToolsTaskManager::StartTool(const ToolInfo& ti)
+void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 {
     wxString command, working_dir;
     command << ti.GetPath();
-    ::WrapWithQuotes(command);
-
-    command << " " << ti.GetArguments();
+    //::WrapWithQuotes(command);
+    if(!filename.IsEmpty()) {
+        // If an input file was given, append it to the command
+        wxString fileName = filename;
+        ::WrapWithQuotes(fileName);
+        command << " " << fileName;
+    }
     working_dir = ti.GetWd();
-
     command = MacroManager::Instance()->Expand(
         command,
         clGetManager(),
@@ -109,7 +112,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti)
     }
 
     EnvSetter envGuard(clGetManager()->GetEnv(), NULL, projectName, configName);
-    //::WrapInShell(command);
+    ::WrapInShell(command);
     
     clDEBUG() << "Running command:" << command << clEndl;
     

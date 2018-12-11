@@ -25,54 +25,55 @@
 #ifndef DEBUGGER_MANAGER_H
 #define DEBUGGER_MANAGER_H
 
-#include "map"
-#include "list"
-#include "vector"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "wx/string.h"
 #include "debugger.h"
-#include "wx/arrstr.h"
-#include "serialized_object.h"
 #include "dynamiclibrary.h"
+#include "list"
+#include "map"
+#include "serialized_object.h"
+#include "vector"
+#include "wx/arrstr.h"
+#include "wx/string.h"
 
 class EnvironmentConfig;
 class BreakptMgr;
 
 // sent when a "QueryLocals" command is completed (only for locals - not for function arguments)
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);
 
 // sent when a variable object createion is completed
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_VAROBJECT_CREATED, clCommandEvent);
 
 // sent by codelite when a pane is needed to refresh its content
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEvent);
 
 // sent by the debugger when a "ListChildren" command is completed
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_LIST_CHILDREN, clCommandEvent);
 
 // sent by the debugger after a successfull evaluation of variable object
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_VAROBJ_EVALUATED, clCommandEvent);
 
 // sent by the debugger when a "disasseble" command returned
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, clCommandEvent);
 
 // sent by the debugger when a "disasseble" current line command returns
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEvent);
 
 // sent by the debugger when a "QueryFileLine" command has completed
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEvent);
 
 // sent by the debugger in case "ResolveType" command failed (i.e. gdb could not resolve its type)
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEvent);
 
 // sent by the debugger when 'ListRegisters' function completed
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEvent);
 
 // Call stack
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_LIST_FRAMES;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_LIST_FRAMES, clCommandEvent);
 
 // frame selected (user double clicked a stack entry)
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEvent);
 
 class WXDLLIMPEXP_SDK DebuggerMgr
 {
@@ -82,7 +83,7 @@ class WXDLLIMPEXP_SDK DebuggerMgr
     std::vector<clDynamicLibrary*> m_dl;
     wxString m_activeDebuggerName;
     EnvironmentConfig* m_env;
-    
+
 private:
     DebuggerMgr();
     virtual ~DebuggerMgr();
@@ -129,7 +130,7 @@ public:
     // get/set debugger information
     void SetDebuggerInformation(const wxString& name, const DebuggerInformation& info);
     bool GetDebuggerInformation(const wxString& name, DebuggerInformation& info);
-    
+
     /**
      * @brief do we have an active debugger which is running?
      */

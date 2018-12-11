@@ -56,7 +56,7 @@
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
 #define MARKER_CONTEXT_WORD_HIGHLIGHT 6
 
-#if(wxVERSION_NUMBER < 3101) || defined(__WXOSX__)
+#if(wxVERSION_NUMBER < 3101)
 // Some wxSTC keycodes names were altered in 311, & the old versions deprecated
 // So, to avoid deprecation-warning spam, #define for older versions
 #define wxSTC_KEYMOD_NORM wxSTC_SCMOD_NORM
@@ -92,13 +92,13 @@ typedef struct _BPtoMarker {
     marker_mask_type mask_disabled;
 } BPtoMarker;
 
-extern const wxEventType wxCMD_EVENT_REMOVE_MATCH_INDICATOR;
-extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
+wxDECLARE_EVENT(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, wxCommandEvent);
+wxDECLARE_EVENT(wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT, wxCommandEvent);
 
 /**
  * \ingroup LiteEditor
- * LEditor CodeLite editing component based on Scintilla
- * LEditor provides most of the C++/C editing capablities including:
+ * clEditor CodeLite editing component based on Scintilla
+ * clEditor provides most of the C++/C editing capablities including:
  * -# Auto Completion
  * -# Find and replace
  * -# Bookmarks
@@ -114,7 +114,7 @@ extern const wxEventType wxCMD_EVENT_ENABLE_WORD_HIGHLIGHT;
  * \author Eran
  *
  */
-class LEditor : public wxStyledTextCtrl, public IEditor
+class clEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
     struct SelectionInfo {
@@ -266,7 +266,7 @@ public:
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
 
-    typedef std::vector<LEditor*> Vec_t;
+    typedef std::vector<clEditor*> Vec_t;
 
     IManager* GetManager() { return m_mgr; }
 
@@ -301,11 +301,11 @@ public:
     CLCommandProcessor& GetCommandsProcessor() { return m_commandsProcessor; }
 
 public:
-    /// Construct a LEditor object
-    LEditor(wxWindow* parent);
+    /// Construct a clEditor object
+    clEditor(wxWindow* parent);
 
     /// Default destructor
-    virtual ~LEditor();
+    virtual ~clEditor();
 
     // Save the editor data into file
     virtual bool SaveFile();
@@ -990,8 +990,11 @@ private:
     void DoRestoreMarkers();
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
+    
+    
+    wxFontEncoding DetectEncoding(const wxString& filename);
 
-    DECLARE_EVENT_TABLE()
+    // Event handlers
     void OpenURL(wxCommandEvent& event);
     void OnHighlightWordChecked(wxCommandEvent& e);
     void OnRemoveMatchInidicator(wxCommandEvent& e);

@@ -22,18 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "debuggersettingsdlg.h"
-#include "windowattrmanager.h"
+#include "ColoursAndFontsManager.h"
+#include "dbgcommanddlg.h"
 #include "debugger_predefined_types_page.h"
-#include "editor_config.h"
+#include "debuggerconfigtool.h"
 #include "debuggermanager.h"
+#include "debuggersettingsdlg.h"
+#include "editor_config.h"
+#include "globals.h"
+#include "lexer_configuration.h"
 #include "macros.h"
 #include "manager.h"
-#include "globals.h"
-#include "dbgcommanddlg.h"
-#include "debuggerconfigtool.h"
-#include "ColoursAndFontsManager.h"
-#include "lexer_configuration.h"
+#include "windowattrmanager.h"
 
 ///////////////////////////////////////////////////
 // Misc Page
@@ -77,10 +77,8 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
     : DbgPageStartupCmdsBase(parent)
     , m_title(title)
 {
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text", "Default");
-    if(lexer) {
-        lexer->Apply(m_textCtrlStartupCommands);
-    }
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_textCtrlStartupCommands); }
 
     DebuggerInformation info;
     if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
@@ -130,16 +128,12 @@ void DebuggerPage::OnBrowse(wxCommandEvent& e)
         newfilepath = wxFileSelector(wxT("Select file:"));
     }
 
-    if(!newfilepath.IsEmpty()) {
-        m_textCtrDbgPath->SetValue(newfilepath);
-    }
+    if(!newfilepath.IsEmpty()) { m_textCtrDbgPath->SetValue(newfilepath); }
 }
 
 void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
 {
-    if(e.IsChecked()) {
-        m_checkBoxEnablePendingBreakpoints->SetValue(true);
-    }
+    if(e.IsChecked()) { m_checkBoxEnablePendingBreakpoints->SetValue(true); }
 }
 
 void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
@@ -161,8 +155,8 @@ DbgPagePreDefTypes::DbgPagePreDefTypes(wxWindow* parent)
 
     std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = data.GePreDefinedTypesMap().begin();
     for(; iter != data.GePreDefinedTypesMap().end(); iter++) {
-        m_notebookPreDefTypes->AddPage(
-            new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first, iter->second.IsActive());
+        m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, iter->second), iter->first,
+                                       iter->second.IsActive());
     }
 }
 
@@ -232,7 +226,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
         for(size_t i = 0; i < m_notebookPreDefTypes->GetPageCount(); i++) {
             if(m_notebookPreDefTypes->GetPageText((size_t)i) == newName) {
                 wxMessageBox(wxT("A set with this name already exist"), wxT("Name Already Exists"),
-                    wxICON_WARNING | wxOK | wxCENTER);
+                             wxICON_WARNING | wxOK | wxCENTER);
                 return;
             }
         }
@@ -251,7 +245,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
 
         initialValues.SetName(newName);
         m_notebookPreDefTypes->AddPage(new PreDefinedTypesPage(m_notebookPreDefTypes, initialValues),
-            initialValues.GetName(), dlg.GetCheckBoxMakeActive()->IsChecked());
+                                       initialValues.GetName(), dlg.GetCheckBoxMakeActive()->IsChecked());
     }
 }
 
@@ -263,7 +257,6 @@ DebuggerSettingsDlg::DebuggerSettingsDlg(wxWindow* parent)
 {
     // fill the notebook with the available debuggers
     Initialize();
-    ConnectButton(m_buttonOK, DebuggerSettingsDlg::OnOk);
 
     GetSizer()->Fit(this);
     CenterOnParent();
@@ -274,25 +267,32 @@ DebuggerSettingsDlg::DebuggerSettingsDlg(wxWindow* parent)
 
 void DebuggerSettingsDlg::Initialize()
 {
-    MSWSetNativeTheme(m_treebook2->GetTreeCtrl());
-
-    // create page per-debugger
-    m_treebook2->AddPage(0, "GNU gdb debugger", true);
-
     // for each debugger, add page
-    m_treebook2->AddSubPage(new DebuggerPage(m_treebook2, "GNU gdb debugger"), wxT("General"), true);
-    m_treebook2->AddSubPage(new DebuggerPageMisc(m_treebook2, "GNU gdb debugger"), wxT("Misc"), false);
-    m_treebook2->AddSubPage(
-        new DebuggerPageStartupCmds(m_treebook2, "GNU gdb debugger"), wxT("Startup Commands"), false);
-    m_treebook2->AddPage(new DbgPagePreDefTypes(m_treebook2), wxT("Pre Defined Types"), false);
+    m_pages.clear();
+    DebuggerPage* p = new DebuggerPage(m_notebook, "GNU gdb debugger");
+    m_notebook->AddPage(p, wxT("GNU gdb debugger"), true);
+    m_pages.push_back(p);
+
+    Notebook* innerBook = p->GetNotebook73();
+    DebuggerPageMisc* misc = new DebuggerPageMisc(innerBook, "GNU gdb debugger");
+    innerBook->AddPage(misc, wxT("Misc"), false);
+    m_pages.push_back(misc);
+
+    DebuggerPageStartupCmds* cmds = new DebuggerPageStartupCmds(innerBook, "GNU gdb debugger");
+    innerBook->AddPage(cmds, wxT("Startup Commands"), false);
+    m_pages.push_back(cmds);
+
+    DbgPagePreDefTypes* types = new DbgPagePreDefTypes(m_notebook);
+    m_notebook->AddPage(types, wxT("Pre-Defined Types"), false);
+    m_pages.push_back(types);
 }
 
 void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // go over the debuggers and set the debugger path
-    for(size_t i = 0; i < (size_t)m_treebook2->GetPageCount(); i++) {
-        wxWindow* win = m_treebook2->GetPage(i);
+    for(size_t i = 0; i < (size_t)m_pages.size(); ++i) {
+        wxWindow* win = m_pages[i];
         if(!win) continue;
 
         DebuggerPage* page = dynamic_cast<DebuggerPage*>(win);
@@ -360,9 +360,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
         }
 
         DbgPagePreDefTypes* pd = dynamic_cast<DbgPagePreDefTypes*>(win);
-        if(pd) {
-            pd->Save();
-        }
+        if(pd) { pd->Save(); }
     }
 
     EndModal(wxID_OK);

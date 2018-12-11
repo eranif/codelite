@@ -1,5 +1,5 @@
 #include "TerminalEmulatorUI.h"
-
+#if wxUSE_GUI
 TerminalEmulatorUI::TerminalEmulatorUI(wxWindow* parent)
     : TerminalEmulatorUIBase(parent)
     , m_terminal(NULL)
@@ -66,3 +66,4 @@ void TerminalEmulatorUI::Clear()
     m_stc->ClearAll();
     m_stc->SetReadOnly(true);
 }
+#endif // LIBCODELITE_WITH_UI

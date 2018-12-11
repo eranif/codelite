@@ -73,7 +73,12 @@ public:
     /**
      * @brief launch the OS default terminal at a given path
      */
-    static void OpenTerminal(const wxString& path);
+    static void OpenTerminal(const wxString& path, const wxString& user_command = "", bool pause_when_exit = false);
+
+    /**
+     * @brief open the built-in terminal
+     */
+    static void OpenBuiltInTerminal(const wxString& wd, const wxString& user_command, bool pause_when_exit = false);
 
     /**
      * @brief open ssh terminal
@@ -90,7 +95,8 @@ public:
      * @param path working directory
      * @param [output] tty the TTY of the launched terminal
      */
-    static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, wxString& tty, long& pid);
+    static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty,
+                                                 long& pid);
 
     /**
      * @brief return the command needed to open OSX terminal at a given directory and launch a command
@@ -206,5 +212,12 @@ public:
      * @brief same as above
      */
     static bool RemoveFile(const wxString& filename, const wxString& context = "");
+
+    static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
+
+    /**
+     * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
+     */
+    static wxString RealPath(const wxString& filepath);
 };
 #endif // FILEUTILS_H

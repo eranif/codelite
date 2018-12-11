@@ -26,14 +26,14 @@
 #ifndef CLAUIDOCKART_H
 #define CLAUIDOCKART_H
 
-#include <wx/window.h>
+#include "codelite_exports.h"
+#include "imanager.h"
+#include <wx/aui/auibar.h>
+#include <wx/aui/dockart.h>
 #include <wx/aui/framemanager.h>
 #include <wx/dc.h>
 #include <wx/gdicmn.h>
-#include <wx/aui/dockart.h>
-#include "imanager.h"
-#include "codelite_exports.h"
-#include <wx/aui/auibar.h>
+#include <wx/window.h>
 
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDockArt
 {
@@ -46,6 +46,9 @@ class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDoc
     bool m_useDarkColours;
     wxColour m_darkBgColour;
     wxColour m_notebookTabAreaDarkBgColour;
+    wxColour m_captionColour;
+    wxColour m_captionTextColour;
+    bool m_useCustomCaptionColour;
 
 public:
     void OnSettingsChanged(wxCommandEvent& event);
@@ -57,8 +60,8 @@ public:
     virtual void DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane);
     virtual void DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane);
 
-    virtual void DrawPaneButton(
-        wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane);
+    virtual void DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
+                                wxAuiPaneInfo& pane);
     virtual void DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
 
     virtual void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);

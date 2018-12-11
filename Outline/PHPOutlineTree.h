@@ -26,12 +26,12 @@
 #ifndef PHPOUTLINETREE_H
 #define PHPOUTLINETREE_H
 
-#include <wx/treectrl.h>
-#include <wx/filename.h>
 #include "PHPEntityBase.h"
+#include "clThemedTreeCtrl.h"
 #include "imanager.h"
+#include <wx/filename.h>
 
-class PHPOutlineTree : public wxTreeCtrl
+class PHPOutlineTree : public clThemedTreeCtrl
 {
     wxFileName m_filename;
     IManager* m_manager;
@@ -43,11 +43,8 @@ protected:
     wxTreeItemId DoFind(const wxString& pattern, const wxTreeItemId& parent);
 
 public:
-    PHPOutlineTree(wxWindow* parent,
-                   wxWindowID id = wxID_ANY,
-                   const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize,
-                   long style = 0);
+    PHPOutlineTree(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~PHPOutlineTree();
     void BuildTree(const wxFileName& filename);
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }

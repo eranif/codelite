@@ -35,7 +35,7 @@
 #include <set>
 #include "macros.h"
 
-class LEditor;
+class clEditor;
 
 /**
  * \ingroup LiteEditor
@@ -52,7 +52,7 @@ class LEditor;
 class ContextBase : public wxEvtHandler
 {
 protected:
-    LEditor* m_container;
+    clEditor* m_container;
     wxString m_name;
     wxString m_selectedWord;
     std::vector<wxMenuItem*> m_dynItems;
@@ -76,7 +76,7 @@ protected:
 
 public:
     // ctor-dtor
-    ContextBase(LEditor* container);
+    ContextBase(clEditor* container);
     ContextBase(const wxString& name);
     virtual ~ContextBase();
 
@@ -94,16 +94,16 @@ public:
     /**
      * Return the context parent control
      */
-    LEditor& GetCtrl() { return *m_container; }
+    clEditor& GetCtrl() { return *m_container; }
 
-    LEditor& GetCtrl() const { return *m_container; }
+    clEditor& GetCtrl() const { return *m_container; }
     /**
      * Return the context name
      */
     const wxString& GetName() const { return m_name; }
 
     // every Context derived class must implement the following methods
-    virtual ContextBase* NewInstance(LEditor* container) = 0;
+    virtual ContextBase* NewInstance(clEditor* container) = 0;
     virtual void ApplySettings() = 0;
 
     // functions with default implementation:

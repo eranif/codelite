@@ -22,96 +22,57 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "windowstack.h"
-#include <wx/dcbuffer.h>
 #include "drawingutils.h"
+#include "windowstack.h"
+#include <algorithm>
+#include <wx/dcbuffer.h>
+#include <wx/wupdlock.h>
 
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
-    : wxPanel(parent, id)
-    , m_selection(NULL)
+    : wxWindow(parent, id)
 {
-    m_windows.clear();
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
-    Bind(wxEVT_PAINT, &WindowStack::OnPaint, this);
-    Bind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
+    // Disable the events by capturing them and not calling 'Skip()'
+    //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
+    //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
 }
 
-WindowStack::~WindowStack()
-{
-    Clear();
-    Unbind(wxEVT_PAINT, &WindowStack::OnPaint, this);
-    Unbind(wxEVT_ERASE_BACKGROUND, &WindowStack::OnEraseBG, this);
-    Unbind(wxEVT_SIZE, &WindowStack::OnSize, this);
-}
-
-void WindowStack::DoSelect(wxWindow* win)
-{
-    Freeze();
-    if(m_selection) {
-        m_selection->Hide();
-    }
-    if(win) {
-        m_selection = win;
-        wxRect clientSize = GetClientRect();
-        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
-        m_selection->Show();
-    } else {
-        m_selection = NULL;
-    }
-    Thaw();
-}
+WindowStack::~WindowStack() { Unbind(wxEVT_SIZE, &WindowStack::OnSize, this); }
 
 void WindowStack::Select(wxWindow* win)
 {
-    if(!Contains(win)) return;
-    DoSelect(win);
+    //#ifndef __WXOSX__
+    //    wxWindowUpdateLocker locker(this);
+    //#endif
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) { return; }
+    ChangeSelection(index);
 }
-
-void WindowStack::SelectNone() { DoSelect(NULL); }
 
 void WindowStack::Clear()
 {
-    SelectNone();
-    m_selection = NULL;
-
-    std::set<wxWindow*>::iterator iter = m_windows.begin();
-    for(; iter != m_windows.end(); iter++) {
-        (*iter)->Destroy();
-    }
+    std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
+        w->Hide();
+        w->Destroy();
+    });
     m_windows.clear();
+    m_activeWin = nullptr;
 }
 
 bool WindowStack::Remove(wxWindow* win)
 {
-    if(!Contains(win)) return false;
-    m_windows.erase(win);
-
-    if(win == m_selection) {
-        // GetParent()->Freeze();
-        // m_mainSizer->Detach(m_selection);
-        // m_mainSizer->Layout();
-        // m_selection = NULL;
-        // GetParent()->Thaw();
-        SelectNone();
-    }
-    return true;
-}
-
-bool WindowStack::Delete(wxWindow* win)
-{
-    if(!Remove(win)) return false;
-    win->Destroy();
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) { return false; }
+    m_windows.erase(m_windows.begin() + index);
+    if(win == m_activeWin) { m_activeWin = nullptr; }
     return true;
 }
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
-    if(!win || Contains(win)) {
-        return false;
-    }
+    if(!win || Contains(win)) { return false; }
     win->Reparent(this);
-    m_windows.insert(win);
+    m_windows.push_back(win);
     if(select) {
         DoSelect(win);
     } else {
@@ -120,23 +81,51 @@ bool WindowStack::Add(wxWindow* win, bool select)
     return true;
 }
 
-bool WindowStack::Contains(wxWindow* win) { return m_windows.count(win); }
+bool WindowStack::Contains(wxWindow* win) { return FindPage(win) != wxNOT_FOUND; }
 
-void WindowStack::OnPaint(wxPaintEvent& evt)
+int WindowStack::FindPage(wxWindow* page) const
 {
-    wxBufferedPaintDC dc(this);
-    dc.SetBrush(DrawingUtils::GetPanelBgColour());
-    dc.SetPen(DrawingUtils::GetPanelBgColour());
-    dc.DrawRectangle(GetClientRect());
+    for(size_t i = 0; i < m_windows.size(); ++i) {
+        if(m_windows[i] == page) { return i; }
+    }
+    return wxNOT_FOUND;
 }
 
-void WindowStack::OnEraseBG(wxEraseEvent& evt) { wxUnusedVar(evt); }
+wxWindow* WindowStack::GetSelected() const { return m_activeWin; }
 
-void WindowStack::OnSize(wxSizeEvent& evt)
+void WindowStack::ChangeSelection(size_t index)
 {
-    evt.Skip();
-    if(m_selection) {
-        wxRect clientSize = GetClientRect();
-        m_selection->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
+    if(index >= m_windows.size()) { return; }
+    DoSelect(m_windows[index]);
+}
+
+void WindowStack::DoSelect(wxWindow* win)
+{
+    if(!win) { return; }
+    // Firsr, show the window
+    win->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
+    win->Show();
+    m_activeWin = win;
+    // Hide the rest
+    CallAfter(&WindowStack::DoHideNoActiveWindows);
+}
+
+void WindowStack::OnSize(wxSizeEvent& e)
+{
+    e.Skip();
+    if(!m_activeWin) { return; }
+    m_activeWin->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
+}
+
+void WindowStack::DoHideNoActiveWindows()
+{
+    std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
+        if(w != m_activeWin) { w->Hide(); }
+    });
+    
+#ifdef __WXOSX__
+    if(m_activeWin) {
+        m_activeWin->Refresh();
     }
+#endif
 }

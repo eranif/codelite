@@ -40,18 +40,18 @@
 //---------------------------------------------------------
 static DebuggerMgr* ms_instance = NULL;
 
-const wxEventType wxEVT_DEBUGGER_UPDATE_VIEWS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_LOCALS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_CHILDREN = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJ_EVALUATED = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_VAROBJECT_CREATED = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_DISASSEBLE_OUTPUT = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_DISASSEBLE_CURLINE = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_QUERY_FILELINE = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_REGISTERS = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_LIST_FRAMES = ::wxNewEventType();
-const wxEventType wxEVT_DEBUGGER_FRAME_SELECTED = ::wxNewEventType();
+wxDEFINE_EVENT(wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_CHILDREN, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_VAROBJ_EVALUATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_VAROBJECT_CREATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_DISASSEBLE_CURLINE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_QUERY_FILELINE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_FRAMES, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEvent);
 
 DebuggerMgr::DebuggerMgr() {}
 
@@ -113,27 +113,13 @@ bool DebuggerMgr::LoadDebuggers()
     wxString debuggersPath(debuggersFolder.GetPath());
 #endif
 
-    CL_DEBUG("Loading debuggers from: %s", debuggersPath);
+    clDEBUG() << "Loading debuggers from:" << debuggersPath;
     wxDir::GetAllFiles(debuggersPath, &files, fileSpec, wxDIR_FILES);
 
     for(size_t i = 0; i < files.GetCount(); i++) {
         clDynamicLibrary* dl = new clDynamicLibrary();
         wxString fileName(files.Item(i));
-        CL_DEBUG("Attempting to load debugger: %s", fileName);
-#if defined(__WXMSW__) && !defined(NDEBUG)
-        // Under MSW loading a release plugin while in debug mode will cause a crash
-        if(!fileName.EndsWith("-dbg.dll")) {
-            wxDELETE(dl);
-            continue;
-        }
-#elif defined(__WXMSW__)
-
-        // filter debug plugins
-        if(fileName.EndsWith("-dbg.dll")) {
-            wxDELETE(dl);
-            continue;
-        }
-#endif
+        clDEBUG() << "Attempting to load debugger:" << fileName;
         if(!dl->Load(fileName)) {
             CL_WARNING("Failed to load debugger: %s", fileName);
             if(!dl->GetError().IsEmpty()) { CL_WARNING("%s", dl->GetError()); }

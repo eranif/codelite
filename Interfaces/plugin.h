@@ -32,20 +32,18 @@
 #endif
 #endif
 
-#include <wx/app.h>
-#include "imanager.h"
-#include "wx/toolbar.h"
-#include <wx/pen.h>
+#include "clToolBar.h"
 #include "cl_aui_tb_are.h"
 #include "cl_defs.h"
-#if USE_AUI_TOOLBAR
-#include <wx/aui/auibar.h>
-#endif
+#include "codelite_events.h"
+#include "imanager.h"
+#include "plugin_version.h"
+#include "plugindata.h"
 #include "wx/event.h"
 #include "wx/notebook.h"
-#include "plugindata.h"
-#include "plugin_version.h"
-#include "codelite_events.h"
+#include "wx/toolbar.h"
+#include <wx/app.h>
+#include <wx/pen.h>
 
 #ifdef _WIN32
 #define STDCALL __stdcall
@@ -57,7 +55,7 @@
 
 #if defined(__WXMSW__) || defined(__WXGTK__)
 #define CL_PLUGIN_API extern "C" EXPORT
-#else 
+#else
 // OSX
 #define CL_PLUGIN_API extern "C" EXPORT
 #endif
@@ -117,13 +115,10 @@ public:
     virtual const wxString& GetLongName() const { return m_longName; }
 
     /**
-     * When LiteEditor loads all the plugins, this function is called. If toolbar
-     * is provided by the plugin, the Plugin Manager will palce it in the appropriate
-     * place on the toolbar pane.
-     * \param parent toolbar parent, usually this is the main frame
-     * \return toolbar or NULL
+     * When CodeLite loads all the plugins, this function is called.
+     * \param toolbar
      */
-    virtual clToolBar* CreateToolBar(wxWindow* parent) = 0;
+    virtual void CreateToolBar(clToolBar* toolbar) = 0;
 
     /**
      * Every plugin can place a sub menu in the 'Plugins' Menu at the menu bar
@@ -170,9 +165,7 @@ public:
         wxString basePath(pluginsDir + wxT("/resources/"));
 
         bmp.LoadFile(basePath + name, type);
-        if(bmp.IsOk()) {
-            return bmp;
-        }
+        if(bmp.IsOk()) { return bmp; }
         return wxNullBitmap;
     }
 
@@ -181,8 +174,8 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void
-    HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
+    virtual void HookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName,
+                                        const wxString& configName)
     {
         wxUnusedVar(notebook);
         wxUnusedVar(projectName);
@@ -194,8 +187,8 @@ public:
      * @param notebook the parent
      * @param configName the associated configuration name
      */
-    virtual void
-    UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName, const wxString& configName)
+    virtual void UnHookProjectSettingsTab(wxBookCtrlBase* notebook, const wxString& projectName,
+                                          const wxString& configName)
     {
         wxUnusedVar(notebook);
         wxUnusedVar(projectName);

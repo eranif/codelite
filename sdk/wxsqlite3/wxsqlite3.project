@@ -80,13 +80,13 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Win_x86_Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Win_x86_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
@@ -125,13 +125,13 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Win_wxWidgets_29" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Win_wxWidgets_29" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cxxflags  --unicode=yes);-g" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=yes --unicode=yes);" Required="yes">
+      <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib/"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
@@ -171,12 +171,12 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=yes --unicode=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags --debug=yes --unicode=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-std=c++11;-Wall;$(shell wx-config --cxxflags  --unicode=yes);-Winvalid-pch" C_Options="$(shell wx-config --cxxflags  --unicode=yes);-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=yes --unicode=yes);" Required="yes">
+      <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib/"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
@@ -222,7 +222,7 @@
         <IncludePath Value="./include"/>
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
-      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);-s" Required="yes">
+      <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
         <LibraryPath Value="../../lib/gcc_lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>

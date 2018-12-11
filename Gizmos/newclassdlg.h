@@ -27,6 +27,7 @@
 
 #include "newclassbasedlg.h"
 #include "vector"
+#include "new_class_dlg_data.h"
 
 class IManager;
 
@@ -74,8 +75,10 @@ class NewClassDlg : public NewClassBaseDlg
     long m_selectedItem;
     IManager* m_mgr;
     wxString m_basePath;
+    NewClassDlgData m_options;
 
 protected:
+    virtual void OnUseLowerCaseFileName(wxCommandEvent& event);
     virtual void OnBlockGuardUI(wxUpdateUIEvent& event);
     // Handlers for NewClassBaseDlg events.
     void OnListItemActivated(wxListEvent& event);
@@ -97,7 +100,8 @@ protected:
     wxString doSpliteByCaptilization(const wxString& str);
     void DoUpdateGeneratedPath();
     void DoSaveOptions();
-    
+    wxString CreateFileName() const;
+
 public:
     /** Constructor */
     NewClassDlg(wxWindow* parent, IManager* mgr);

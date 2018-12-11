@@ -30,45 +30,42 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include "simpletablebase.h"
-#include "manager.h"
 #include "debugger.h"
-#include "globals.h"
-#include "event_notifier.h"
-#include "plugin.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "manager.h"
+#include "plugin.h"
+#include "simpletablebase.h"
 
 ///////////////////////////////////////////////////////////////////////////
 
-DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent,
-                                                   wxWindowID id,
-                                                   bool withButtonsPane,
-                                                   const wxPoint& pos,
-                                                   const wxSize& size,
-                                                   long style)
+DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID id, bool withButtonsPane,
+                                                   const wxPoint& pos, const wxSize& size, long style)
     : LocalsTableBase(parent, id, pos, size, style)
     , m_withButtons(withButtonsPane)
 {
-    m_listTable->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());
+    m_listTable->SetShowHeader(true);
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnRefresh, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnRefreshUI, this, wxID_REFRESH);
 
-    if(!m_withButtons) {
-        m_auibar31->DeleteTool(wxID_DELETE);
-        m_auibar31->DeleteTool(wxID_NEW);
+    if(m_withButtons) {
+        m_toolbar->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnDeleteWatch, this, wxID_DELETE);
+        m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnDeleteWatchUI, this, wxID_DELETE);
+
+        m_toolbar->AddTool(wxID_NEW, _("New"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnNewWatch, this, wxID_NEW);
+        m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnNewWatchUI, this, wxID_NEW);
     } else {
-        m_auibar31->DeleteTool(ID_SORT_LOCALS);
+        m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"));
+        m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnSortItems, this, wxID_SORT_ASCENDING);
     }
-    m_auibar31->Realize();
-
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
+    m_toolbar->Realize();
 }
 
-DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase()
-{
-    // Disconnect Events
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(DebuggerTreeListCtrlBase::OnThemeColourChanged), NULL, this);
-}
+DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase() {}
 
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 {
@@ -80,8 +77,8 @@ IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 
 void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_t itemKind)
 {
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxColour bgColour = wxNullColour;
+    wxColour fgColour = wxNullColour;
 
     wxTreeItemIdValue cookieOne;
     wxTreeItemId child = m_listTable->GetFirstChild(item, cookieOne);
@@ -89,15 +86,11 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
         DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(child);
 
         bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
-        if(resetColor) {
-            m_listTable->SetItemTextColour(child, fgColour);
-        }
+        if(resetColor) { m_listTable->SetItemTextColour(child, fgColour, 1); }
 
-        m_listTable->SetItemBackgroundColour(child, bgColour);
+        m_listTable->SetItemBackgroundColour(child, bgColour, 1);
 
-        if(m_listTable->HasChildren(child)) {
-            DoResetItemColour(child, itemKind);
-        }
+        if(m_listTable->HasChildren(child)) { DoResetItemColour(child, itemKind); }
         child = m_listTable->GetNextChild(item, cookieOne);
     }
 }
@@ -109,21 +102,17 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEventData& ev
 
     std::map<wxString, wxTreeItemId>::iterator iter = m_gdbIdToTreeId.find(gdbId);
     if(iter != m_gdbIdToTreeId.end()) {
-
         wxString newValue = value;
         wxString curValue = m_listTable->GetItemText(iter->second, 1);
-
-        if(!(newValue == curValue || curValue.IsEmpty())) m_listTable->SetItemTextColour(iter->second, *wxRED);
-
-        m_listTable->SetItemText(iter->second, 1, value);
+        if(!(newValue == curValue || curValue.IsEmpty())) { m_listTable->SetItemTextColour(iter->second, *wxRED, 1); }
+        m_listTable->SetItemText(iter->second, value, 1);
 
         // keep the red items IDs in the array
         m_gdbIdToTreeId.erase(iter);
     }
 }
 
-void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr,
-                                                        const wxTreeItemId& item,
+void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr, const wxTreeItemId& item,
                                                         wxArrayString& itemsToRefresh)
 {
     if(itemsToRefresh.IsEmpty()) return;
@@ -142,9 +131,7 @@ void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr,
             }
         }
 
-        if(m_listTable->HasChildren(exprItem)) {
-            DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh);
-        }
+        if(m_listTable->HasChildren(exprItem)) { DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh); }
         exprItem = m_listTable->GetNextChild(item, cookieOne);
     }
 }
@@ -202,9 +189,7 @@ wxString DebuggerTreeListCtrlBase::DoGetGdbId(const wxTreeItemId& item)
     if(!item.IsOk()) return gdbId;
 
     DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(item);
-    if(data) {
-        return data->_gdbId;
-    }
+    if(data) { return data->_gdbId; }
     return gdbId;
 }
 
@@ -226,14 +211,10 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByGdbId(const wxString& gdbId)
 void DebuggerTreeListCtrlBase::DoDeleteWatch(const wxTreeItemId& item)
 {
     IDebugger* dbgr = DoGetDebugger();
-    if(!dbgr || !item.IsOk()) {
-        return;
-    }
+    if(!dbgr || !item.IsOk()) { return; }
 
     wxString gdbId = DoGetGdbId(item);
-    if(gdbId.IsEmpty() == false) {
-        dbgr->DeleteVariableObject(gdbId);
-    }
+    if(gdbId.IsEmpty() == false) { dbgr->DeleteVariableObject(gdbId); }
 
 #ifdef __WXMAC__
 
@@ -246,13 +227,9 @@ void DebuggerTreeListCtrlBase::DoDeleteWatch(const wxTreeItemId& item)
         wxTreeItemId child = m_listTable->GetFirstChild(item, cookie);
         while(child.IsOk()) {
             gdbId = DoGetGdbId(child);
-            if(gdbId.IsEmpty() == false) {
-                dbgr->DeleteVariableObject(gdbId);
-            }
+            if(gdbId.IsEmpty() == false) { dbgr->DeleteVariableObject(gdbId); }
 
-            if(m_listTable->HasChildren(child)) {
-                DoDeleteWatch(child);
-            }
+            if(m_listTable->HasChildren(child)) { DoDeleteWatch(child); }
 
             child = m_listTable->GetNextChild(item, cookie);
         }
@@ -289,9 +266,7 @@ wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId& item)
     wxTreeItemId parent = item;
     while(parent.IsOk() && m_listTable->GetRootItem() != parent) {
         DbgTreeItemData* itemData = (DbgTreeItemData*)m_listTable->GetItemData(parent);
-        if(itemData && !itemData->_isFake) {
-            pathArr.Add(m_listTable->GetItemText(parent));
-        }
+        if(itemData && !itemData->_isFake) { pathArr.Add(m_listTable->GetItemText(parent)); }
         parent = m_listTable->GetItemParent(parent);
     }
 
@@ -320,21 +295,6 @@ void DebuggerTreeListCtrlBase::OnCreateVariableObjError(const DebuggerEventData&
         }
         item = m_listTable->GetNextChild(root, cookieOne);
     }
-}
-
-void DebuggerTreeListCtrlBase::OnThemeColourChanged(wxCommandEvent& e)
-{
-    e.Skip();
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-
-    m_listTable->SetBackgroundColour(bgColour);
-    m_listTable->SetForegroundColour(fgColour);
-
-    SetBackgroundColour(bgColour);
-    SetForegroundColour(fgColour);
-
-    Refresh();
 }
 
 void DebuggerTreeListCtrlBase::OnDeleteWatch(wxCommandEvent& event) { event.Skip(); }

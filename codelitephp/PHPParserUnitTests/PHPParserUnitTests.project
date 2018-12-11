@@ -131,11 +131,11 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags );-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs )" Required="yes">
         <LibraryPath Value="../lib"/>
         <Library Value="PHPParser"/>
       </Linker>
@@ -174,7 +174,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>
@@ -227,11 +227,11 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Release_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="$(shell wx-config --cflags );-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs )" Required="yes">
         <LibraryPath Value="../lib"/>
         <Library Value="PHPParser"/>
       </Linker>
@@ -270,7 +270,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --debug=yes);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cflags );-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="../PHPParser"/>
         <IncludePath Value="."/>
         <IncludePath Value="../../sdk/wxsqlite3/include"/>
@@ -280,7 +280,7 @@
         <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc --debug=yes)" Required="yes">
+      <Linker Options="$(shell wx-config --libs std,stc )" Required="yes">
         <LibraryPath Value="../lib"/>
         <LibraryPath Value="../../lib/gcc_lib"/>
         <Library Value="PHPParser-dbg"/>

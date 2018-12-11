@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     DWORD ret;
     GetExitCodeProcess(pi.hProcess, &ret);
 
-    std::cout << "Time elapsed: " << std::setfill('0') << std::setw(3) << minutes << ":" << std::setw(2) << seconds << ":"
+    std::cout << "\r\nTime elapsed: " << std::setfill('0') << std::setw(3) << minutes << ":" << std::setw(2) << seconds << ":"
               << std::setw(3) << ms << std::endl;
     std::cout << "Press any key to continue" << std::endl;
     wait_key();

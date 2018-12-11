@@ -26,15 +26,14 @@
 #if USE_SFTP
 
 #include "SFTPBrowserDlg.h"
-#include "sftp_settings.h"
-#include "ssh_account_info.h"
-#include <wx/msgdlg.h>
-#include "windowattrmanager.h"
-#include "fileextmanager.h"
-#include "my_sftp_tree_model.h"
 #include "SSHAccountManagerDlg.h"
+#include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
+#include "sftp_settings.h"
+#include "ssh_account_info.h"
+#include "windowattrmanager.h"
+#include <wx/msgdlg.h>
 
 // ================================================================================
 // ================================================================================
@@ -79,26 +78,17 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     , m_filter(filter)
     , m_flags(flags)
 {
-    m_dataviewModel = new MySFTPTreeModel();
-    m_dataview->AssociateModel(m_dataviewModel.get());
-
     SetLabel(title);
-
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
-
     SFTPSettings settings;
     settings.Load();
-
+    m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
     SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
     for(; iter != accounts.end(); ++iter) {
         m_choiceAccount->Append(iter->GetAccountName());
     }
 
-    if(!m_choiceAccount->IsEmpty()) {
-        m_choiceAccount->SetSelection(0);
-    }
-
+    if(!m_choiceAccount->IsEmpty()) { m_choiceAccount->SetSelection(0); }
     SetName("SFTPBrowserDlg");
     WindowAttrManager::Load(this);
 }
@@ -115,8 +105,8 @@ void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
 
     SSHAccountInfo account;
     if(!settings.GetAccount(accountName, account)) {
-        ::wxMessageBox(
-            wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK, this);
+        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "codelite", wxICON_ERROR | wxOK,
+                       this);
         return;
     }
 
@@ -171,28 +161,25 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             wxVector<wxVariant> cols;
 
             // determine the bitmap type
-            wxBitmap bmp = m_bitmaps[FileExtManager::TypeText];
+            BitmapLoader* loader = clGetManager()->GetStdIcons();
+            int imgid = loader->GetMimeImageId(FileExtManager::TypeText);
             wxString fullname;
             fullname << folder << "/" << (*iter)->GetName();
 
             if((*iter)->IsFolder()) {
-                bmp = m_bitmaps[FileExtManager::TypeFolder];
+                imgid = loader->GetMimeImageId(FileExtManager::TypeFolder);
             } else {
                 wxFileName fn(fullname);
-                FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName());
-                if(m_bitmaps.count(type)) {
-                    bmp = m_bitmaps[type];
-                }
+                imgid = loader->GetMimeImageId(fn.GetFullName());
             }
 
-            cols.push_back(SFTPTreeModel::CreateIconTextVariant((*iter)->GetName(), bmp));
+            cols.push_back(::MakeBitmapIndexText((*iter)->GetName(), imgid));
             cols.push_back((*iter)->GetTypeAsString());
             cols.push_back(wxString() << (*iter)->GetSize());
 
             SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData((*iter), fullname);
-            m_dataviewModel->AppendItem(wxDataViewItem(0), cols, cd);
+            m_dataview->AppendItem(cols, (wxUIntPtr)cd);
         }
-        m_dataview->Refresh();
         m_dataview->SetFocus();
 
     } catch(clException& e) {
@@ -204,7 +191,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
 void SFTPBrowserDlg::DoCloseSession()
 {
     m_sftp.reset(NULL);
-    m_dataviewModel->Clear();
+    ClearView();
 }
 
 void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
@@ -214,11 +201,10 @@ void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
         return;
     }
 
-    SFTPBrowserEntryClientData* cd =
-        dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(event.GetItem()));
+    SFTPBrowserEntryClientData* cd = DoGetItemData(event.GetItem());
     if(cd && cd->GetAttribute()->IsFolder()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
-        m_dataviewModel->Clear();
+        ClearView();
         DoDisplayEntriesForPath();
     }
 }
@@ -228,7 +214,7 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
     if(!m_sftp) {
         OnRefresh(event);
     } else {
-        m_dataviewModel->Clear();
+        ClearView();
         DoDisplayEntriesForPath();
     }
 }
@@ -251,11 +237,8 @@ void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
 {
-    if(!item.IsOk()) {
-        return NULL;
-    }
-
-    SFTPBrowserEntryClientData* cd = dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(item));
+    if(!item.IsOk()) { return NULL; }
+    SFTPBrowserEntryClientData* cd = reinterpret_cast<SFTPBrowserEntryClientData*>(m_dataview->GetItemData(item));
     return cd;
 }
 
@@ -264,9 +247,7 @@ wxString SFTPBrowserDlg::GetPath() const { return m_textCtrlRemoteFolder->GetVal
 void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
 {
     SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->GetSelection());
-    if(cd) {
-        m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
-    }
+    if(cd) { m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath()); }
 }
 
 wxString SFTPBrowserDlg::GetAccount() const { return m_choiceAccount->GetStringSelection(); }
@@ -275,9 +256,7 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
     m_textCtrlRemoteFolder->ChangeValue(path);
     int where = m_choiceAccount->FindString(account);
-    if(where != wxNOT_FOUND) {
-        m_choiceAccount->SetSelection(where);
-    }
+    if(where != wxNOT_FOUND) { m_choiceAccount->SetSelection(where); }
 }
 
 void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
@@ -302,30 +281,22 @@ void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
 void SFTPBrowserDlg::OnInlineSearch()
 {
     wxString text = m_textCtrlInlineSearch->GetValue();
-    wxDataViewItemArray children;
-    m_dataviewModel->GetChildren(wxDataViewItem(0), children);
-
-    for(size_t i = 0; i < children.GetCount(); ++i) {
-        SFTPBrowserEntryClientData* cd = DoGetItemData(children.Item(i));
-        if(cd && cd->GetDisplayName().StartsWith(text)) {
-            m_dataview->Select(children.Item(i));
-            m_dataview->EnsureVisible(children.Item(i));
-            break;
-        }
+    wxDataViewItem matchedItem = m_dataview->FindNext(wxDataViewItem(nullptr), text);
+    if(matchedItem.IsOk()) {
+        m_dataview->Select(matchedItem);
+        m_dataview->EnsureVisible(matchedItem);
     }
 }
 
 void SFTPBrowserDlg::OnInlineSearchEnter()
 {
     wxDataViewItem item = m_dataview->GetSelection();
-    if(!item.IsOk()) {
-        return;
-    }
+    if(!item.IsOk()) { return; }
 
-    SFTPBrowserEntryClientData* cd = dynamic_cast<SFTPBrowserEntryClientData*>(m_dataviewModel->GetClientObject(item));
+    SFTPBrowserEntryClientData* cd = DoGetItemData(item);
     if(cd && cd->GetAttribute()->IsFolder()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
-        m_dataviewModel->Clear();
+        ClearView();
         DoDisplayEntriesForPath();
         m_dataview->SetFocus();
     }
@@ -351,7 +322,7 @@ void SFTPBrowserDlg::OnTextUpdated(wxCommandEvent& event)
 
 void SFTPBrowserDlg::OnCdUp(wxCommandEvent& event)
 {
-    m_dataviewModel->Clear();
+    ClearView();
     DoDisplayEntriesForPath("..");
 }
 
@@ -392,4 +363,14 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
         }
     }
 }
+
+void SFTPBrowserDlg::ClearView()
+{
+    for(size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
+        SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->RowToItem(i));
+        wxDELETE(cd);
+    }
+    m_dataview->DeleteAllItems();
+}
+
 #endif // USE_SFTP

@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "clAuiCaptionEnabler.h"
 #include "clTabRenderer.h"
+#include "cl_command_event.h"
 #include "cl_defs.h"
 #include <map>
 #include <wx/bitmap.h>
@@ -90,10 +91,9 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
-    
-#if !USE_AUI_NOTEBOOK
     clTabRenderer::Ptr_t GetNotebookRenderer();
-#endif
+
+    void OnWorkspaceBookFileListMenu(clContextMenuEvent& event);
 
 public:
     WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr);

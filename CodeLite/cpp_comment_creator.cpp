@@ -44,16 +44,13 @@ CppCommentCreator::~CppCommentCreator() {}
 
 wxString CppCommentCreator::CreateComment()
 {
-    if(m_tag->GetKind() == wxT("class") || m_tag->GetKind() == wxT("struct"))
+    if(m_tag->GetKind() == wxT("class") || m_tag->GetKind() == wxT("struct")) {
         return wxT("$(ClassPattern)\n");
-
-    else if(m_tag->GetKind() == wxT("function"))
+    } else if(m_tag->IsMethod()) {
         return FunctionComment();
-
-    else if(m_tag->GetKind() == wxT("prototype"))
-        return FunctionComment();
-
-    return wxEmptyString;
+    } else {
+        return wxEmptyString;
+    }
 }
 
 wxString CppCommentCreator::FunctionComment()
@@ -88,7 +85,7 @@ wxString CppCommentCreator::FunctionComment()
         trimMe(name);
 
         if(type != wxT("void") // void has no return value
-           && name != type) {  // constructor
+           && name != type) {  // and not a constructor
             comment << wxT(" * ") << m_keyPrefix << wxT("return \n");
         }
     }

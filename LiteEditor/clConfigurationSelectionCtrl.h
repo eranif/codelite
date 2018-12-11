@@ -43,8 +43,6 @@ protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnLeftDown(wxMouseEvent& e);
-    void OnEnterWindow(wxMouseEvent& e);
-    void OnLeaveWindow(wxMouseEvent& e);
 };
 
 #endif // CLCONFIGURATIONSELECTIONCTRL_H

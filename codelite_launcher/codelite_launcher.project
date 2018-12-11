@@ -31,11 +31,11 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes --debug=yes)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes )" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=yes --libs --unicode=yes);" Required="yes"/>
+      <Linker Options="-O2;$(shell wx-config  --libs --unicode=yes);" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_launcher" IntermediateDirectory="./Debug" Command="./codelite_launcher" CommandArguments="--pid=1023 --name=&quot;C:/Program Files/CodeLite/CodeLite.exe&quot;" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
@@ -69,11 +69,11 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;-s" Required="yes"/>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_launcher" IntermediateDirectory="./Release" Command="./codelite_launcher" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
@@ -113,7 +113,7 @@
       <Compiler Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options=";$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <Preprocessor Value="__WX__"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;-s" Required="yes"/>
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);-mwindows;" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_launcher" IntermediateDirectory="$(ConfigurationName)" Command="./codelite_launcher" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

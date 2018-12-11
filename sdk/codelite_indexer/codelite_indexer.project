@@ -146,7 +146,7 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cflags)" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
@@ -187,14 +187,14 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Debug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config --cflags --debug=yes)" C_Options="-g;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Debug_Win" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-Wall;$(shell wx-config --cflags )" C_Options="-g;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
         <Preprocessor Value="__DEBUG"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs --debug=yes)" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
@@ -229,13 +229,13 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-s;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;-s" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
+      <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
@@ -272,7 +272,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="ReleaseDebug_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="ReleaseDebug_Win" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-Wall;$(shell wx-config --cflags --unicode)" C_Options="-g;-Wall;$(shell wx-config --cflags --unicode)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
@@ -315,7 +315,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Unix" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release_Unix" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
@@ -358,13 +358,13 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Win" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-s;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;-s" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="Release_Win" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
+      <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="./Release/codelite_indexer" IntermediateDirectory="./Release" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
@@ -402,12 +402,12 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-s;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;-s" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-Wall;;$(shell wx-config --cflags --unicode)" C_Options="-O2;-Wall;" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="libctags/"/>
         <Preprocessor Value="__WXMSW__"/>
       </Compiler>
-      <Linker Options="-s;-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
+      <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite_indexer.exe" IntermediateDirectory="$(ConfigurationName)" Command="C:\Development\C++\codelite\CL_trunk\sdk\codelite_indexer\Release\$(ProjectName)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>

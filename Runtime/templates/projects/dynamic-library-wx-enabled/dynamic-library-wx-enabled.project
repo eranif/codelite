@@ -9,7 +9,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++).
   <VirtualDirectory Name="src"></VirtualDirectory>
   <VirtualDirectory Name="include"></VirtualDirectory>
   <Settings Type="Dynamic Library">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;$(shell wx-config --cxxflags   --unicode=yes)" Required="yes">
         <IncludePath Value="."/>
       </Compiler>
@@ -38,11 +38,11 @@ Note that this project is set to work with the GNU toolchain (gdb, g++).
 </CustomPreBuild>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;$(shell wx-config --cxxflags --debug=no --unicode=yes)" Required="yes">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes);-s" Required="yes"/>
+      <Linker Options="$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).so" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">

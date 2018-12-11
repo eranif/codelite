@@ -1,10 +1,10 @@
 #include "vimCommands.h"
 
-#include "macros.h"
-#include "imanager.h"
-#include "globals.h"
-#include "codelite_events.h"
 #include "clMainFrameHelper.h"
+#include "codelite_events.h"
+#include "globals.h"
+#include "imanager.h"
+#include "macros.h"
 /*EXPERIMENTAL*/
 #include "wx/uiaction.h"
 
@@ -15,6 +15,7 @@ VimCommand::VimCommand(IManager* m_mgr)
     , m_repeat(0)
     , m_baseCommand('\0')
     , m_actionCommand('\0')
+    , m_externalCommand('\0')
     , m_actions(0)
     , m_listCopiedStr()
     , m_cumulativeUndo(0)
@@ -86,6 +87,7 @@ bool VimCommand::OnEscapeDown()
     m_currentCommandPart = COMMAND_PART::REPEAT_NUM;
     m_currentModus = VIM_MODI::NORMAL_MODUS;
     m_tmpbuf.Clear();
+    ResetCommand();
     return true;
 }
 
@@ -98,6 +100,7 @@ void VimCommand::ResetCommand()
     m_repeat = 0;
     m_baseCommand = '\0';
     m_actionCommand = '\0';
+    m_externalCommand = '\0';
     m_actions = 0;
     // m_message_ID = MESSAGES_VIM::NO_ERROR;
 }
@@ -181,6 +184,7 @@ void VimCommand::completing_command(wxChar ch)
            m_baseCommand != 't' && m_baseCommand != 'T') {
             m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
         } else {
+            m_externalCommand = m_actionCommand;
             m_actionCommand = ch;
         }
         break;
@@ -195,12 +199,8 @@ void VimCommand::completing_command(wxChar ch)
  */
 void VimCommand::normal_modus(wxChar ch)
 {
-
+    if(m_currentCommandPart == COMMAND_PART::REPLACING) { m_actionCommand = ch; }
     completing_command(ch);
-
-    if(m_currentCommandPart == COMMAND_PART::REPLACING) {
-        m_actionCommand = ch;
-    }
 }
 
 void VimCommand::visual_modus(wxChar ch) { completing_command(ch); }
@@ -253,16 +253,14 @@ bool VimCommand::OnReturnDown(VimCommand::eAction& action)
         m_tmpbuf.Clear();
         ResetCommand();
         m_currentModus = VIM_MODI::NORMAL_MODUS;
-    } else if (m_currentModus == VIM_MODI::NORMAL_MODUS){
+    } else if(m_currentModus == VIM_MODI::NORMAL_MODUS) {
         m_ctrl->LineDown();
         skip_event = false;
     }
     return skip_event;
 }
 
-wxString VimCommand::getSearchedWord() {
-    return m_searchWord;
-}
+wxString VimCommand::getSearchedWord() { return m_searchWord; }
 
 void VimCommand::parse_cmd_string()
 {
@@ -277,9 +275,7 @@ void VimCommand::parse_cmd_string()
     for(size_t i = 0; i < len_buf; ++i) {
         switch(m_tmpbuf[i].GetValue()) {
         case '%':
-            if(i + 1 < len_buf && m_tmpbuf[i + 1].GetValue() == 's') {
-                all_file = true;
-            }
+            if(i + 1 < len_buf && m_tmpbuf[i + 1].GetValue() == 's') { all_file = true; }
             break;
         case '/':
             replace = search_forward;
@@ -302,14 +298,12 @@ void VimCommand::parse_cmd_string()
         m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         long pos = -1L;
         if(all_file) pos = 0L;
-        search_word(SEARCH_DIRECTION::FORWARD, pos);
-        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos);
+        search_word(SEARCH_DIRECTION::FORWARD, 0, pos);
     } else if(search_backward && !replace) {
         m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
         long pos = -1L;
         if(all_file) pos = 0L;
-        search_word(SEARCH_DIRECTION::BACKWARD, pos);
-        //m_mgr->FindAndSelect(m_searchWord, m_searchWord, pos)
+        search_word(SEARCH_DIRECTION::BACKWARD, 0, pos);
     }
 }
 
@@ -325,15 +319,12 @@ void VimCommand::command_modus(wxChar ch) { m_tmpbuf.Append(ch); }
 bool VimCommand::Command_call()
 {
 
-    if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
-        return Command_call_visual_mode();
-    }
+    if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
 
-    wxUIActionSimulator sim;
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
-    /*======= MOVEMENT ===========*/
+        /*======= MOVEMENT ===========*/
 
     case COMMANDVI::j:
         m_ctrl->LineDown();
@@ -351,6 +342,37 @@ bool VimCommand::Command_call()
         m_ctrl->CharRight();
         this->m_saveCommand = false;
         break;
+    case COMMANDVI::H: {
+        int firstLine = m_ctrl->GetFirstVisibleLine();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine > firstLine; --curLine) {
+            m_ctrl->LineUp();
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::M: {
+        int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
+        int curLine = m_ctrl->GetCurrentLine();
+        if (curLine > medLine) {
+            for (; curLine > medLine; --curLine) {
+                m_ctrl->LineUp();
+            }
+        } else if (curLine < medLine) {
+            for (; curLine < medLine; ++curLine) {
+                m_ctrl->LineDown();
+            }
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::L: {
+        int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine < lastLine; ++curLine) {
+            m_ctrl->LineDown();
+        }
+        this->m_saveCommand = false;
+    } break;
+    
     case COMMANDVI::_0:
         m_ctrl->Home();
         this->m_saveCommand = false;
@@ -358,6 +380,12 @@ bool VimCommand::Command_call()
     case COMMANDVI::_$:
         m_ctrl->LineEnd();
         m_ctrl->CharLeft();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::_V:
+        m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
         this->m_saveCommand = false;
         break;
     case COMMANDVI::w:
@@ -497,14 +525,18 @@ bool VimCommand::Command_call()
         }
         if(eoline != true) m_ctrl->GotoPos(pos + i - 1);
     } break;
-    case COMMANDVI::ctrl_D:
-        m_ctrl->PageDown();
+    case COMMANDVI::ctrl_D: {
+        int lines = m_ctrl->LinesOnScreen() / 2;
+        m_ctrl->SetFirstVisibleLine(std::min(m_ctrl->GetLineCount(), m_ctrl->GetFirstVisibleLine() + lines));
+        m_ctrl->MoveCaretInsideView();
         this->m_saveCommand = false;
-        break;
-    case COMMANDVI::ctrl_U:
-        m_ctrl->PageUp();
+    } break;
+    case COMMANDVI::ctrl_U: {
+        int lines = m_ctrl->LinesOnScreen() / 2;
+        m_ctrl->SetFirstVisibleLine(std::max(0, m_ctrl->GetFirstVisibleLine() - lines));
+        m_ctrl->MoveCaretInsideView();
         this->m_saveCommand = false;
-        break;
+    } break;
     case COMMANDVI::G: /*====== START G =======*/
         this->m_saveCommand = false;
         switch(m_repeat) {
@@ -521,9 +553,7 @@ bool VimCommand::Command_call()
         break;          /*~~~~~~~ END G ~~~~~~~~*/
     case COMMANDVI::gg: /*====== START G =======*/
         this->m_saveCommand = false;
-        if(m_repeat == 0) {
-            m_repeat = 1;
-        }
+        if(m_repeat == 0) { m_repeat = 1; }
         m_ctrl->GotoLine(m_repeat - 1);
         repeat_command = false;
         break;
@@ -536,6 +566,8 @@ bool VimCommand::Command_call()
     case COMMANDVI::I:
         this->m_tmpbuf.Clear();
         m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
         break;
     case COMMANDVI::a:
         this->m_tmpbuf.Clear();
@@ -552,9 +584,9 @@ bool VimCommand::Command_call()
         break;
     case COMMANDVI::O:
         this->m_tmpbuf.Clear();
-        m_ctrl->LineUp();
-        m_ctrl->LineEnd();
+        m_ctrl->Home();
         m_ctrl->NewLine();
+        m_ctrl->LineUp();
         break;
 
     /*=============== VISUAL MODE ===============*/
@@ -579,7 +611,10 @@ bool VimCommand::Command_call()
     case COMMANDVI::u:
         m_ctrl->Undo();
         break;
-
+    /*========= REDO =============*/
+    case COMMANDVI::ctrl_R:
+        m_ctrl->Redo();
+        break;
     /*======== REPLACE ===========*/
     case COMMANDVI::r:
         this->m_tmpbuf.Clear();
@@ -594,22 +629,132 @@ bool VimCommand::Command_call()
         m_ctrl->AddText(m_actionCommand);
         repeat_command = false;
         break;
+    case COMMANDVI::c0:
+        this->m_tmpbuf.Clear();
+        m_ctrl->DelLineLeft();
+        break;
+    case COMMANDVI::c$:
+        this->m_tmpbuf.Clear();
+        m_ctrl->DelLineRight();
+        break;
+    case COMMANDVI::cV: {
+        this->m_tmpbuf.Clear();
+        int pos_init_cV = m_ctrl->GetCurrentPos();
+        m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
+        int pos_end_cV = m_ctrl->GetCurrentPos();
+        if (pos_end_cV < pos_init_cV) {
+            m_ctrl->DeleteRange(pos_end_cV, pos_init_cV - pos_end_cV);
+        } else {
+            m_ctrl->SetCurrentPos(pos_init_cV);
+            m_ctrl->CharLeft();
+        }
+        break;
+    }
     case COMMANDVI::cw:
         this->m_tmpbuf.Clear();
+        m_actions = std::max(1, m_actions);
         for( int i = 0; i < m_actions; ++i )
             m_ctrl->DelWordRight();
         break;
     case COMMANDVI::cb:
         this->m_tmpbuf.Clear();
+        m_actions = std::max(1, m_actions);
         for( int i = 0; i < m_actions; ++i )
             m_ctrl->DelWordLeft();
         break;
     case COMMANDVI::ce:
         this->m_tmpbuf.Clear();
+        m_actions = std::max(1, m_actions);
         for( int i = 0; i < m_actions; ++i )
             m_ctrl->DelWordRightEnd();
         break;
-
+    case COMMANDVI::caw:
+        this->m_tmpbuf.Clear();
+        m_ctrl->CharRight();
+        m_ctrl->WordLeft();
+        m_ctrl->DelWordRight();
+        break;
+    case COMMANDVI::ci34: {
+        this->m_tmpbuf.Clear();
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::ci39: {
+        this->m_tmpbuf.Clear();
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::ci40: {
+        this->m_tmpbuf.Clear();
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::ci60: {
+        this->m_tmpbuf.Clear();
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::ci91: {
+        this->m_tmpbuf.Clear();
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::ci123: {
+        this->m_tmpbuf.Clear();
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    
     case COMMANDVI::S: {
         this->m_tmpbuf.Clear();
         int repeat_S = std::max(1, m_repeat);
@@ -639,7 +784,9 @@ bool VimCommand::Command_call()
         for(int i = 0; i < repeat_cc; ++i) {
             m_ctrl->LineDelete();
         }
-        // m_ctrl->NewLine();
+        m_ctrl->LineUp();
+        m_ctrl->LineEnd();
+        m_ctrl->NewLine();
         repeat_command = false;
     } break;
 
@@ -650,8 +797,6 @@ bool VimCommand::Command_call()
         break;
     case COMMANDVI::X:
         this->m_tmpbuf.Clear();
-        m_ctrl->CharRight();
-        m_ctrl->CharRight();
         m_ctrl->DeleteBackNotLine();
         break;
 
@@ -699,6 +844,105 @@ bool VimCommand::Command_call()
             m_ctrl->LineDelete();
         }
     } break;
+    case COMMANDVI::d0:
+        m_ctrl->DelLineLeft();
+        break;
+    case COMMANDVI::d$:
+        m_ctrl->DelLineRight();
+        break;
+    case COMMANDVI::dV: {
+        int pos_init_cV = m_ctrl->GetCurrentPos();
+        m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
+        int pos_end_cV = m_ctrl->GetCurrentPos();
+        if (pos_end_cV < pos_init_cV) {
+            m_ctrl->DeleteRange(pos_end_cV, pos_init_cV - pos_end_cV);
+        } else {
+            m_ctrl->SetCurrentPos(pos_init_cV);
+            m_ctrl->CharLeft();
+        }
+        break;
+    }
+    
+    case COMMANDVI::daw:
+        m_ctrl->CharRight();
+        m_ctrl->WordLeft();
+        m_ctrl->DelWordRight();
+        break;
+    case COMMANDVI::di34: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::di39: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::di40: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::di60: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::di91: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    case COMMANDVI::di123: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
+        {
+            m_ctrl->SetCurrentPos(leftPos + 1);
+            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        }
+        break;
+    }
+    
 
     case COMMANDVI::D:
         this->m_listCopiedStr.push_back(get_text_at_position(kFromPositionToEndLine));
@@ -716,7 +960,7 @@ bool VimCommand::Command_call()
         repeat_command = false;
         m_ctrl->SetCurrentPos(pos_init_yw);
         m_ctrl->CharLeft();
-        m_ctrl->CharRight();
+        //m_ctrl->CharRight();
         m_newLineCopy = false;
     } break;
     case COMMANDVI::yb: {
@@ -728,23 +972,23 @@ bool VimCommand::Command_call()
         int pos_end_yb = m_ctrl->GetCurrentPos();
         m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yb, pos_end_yb));
         repeat_command = false;
-        m_ctrl->SetCurrentPos(pos_init_yb);
+        m_ctrl->SetCurrentPos(pos_end_yb);
         m_ctrl->CharLeft();
-        m_ctrl->CharRight();
+        //m_ctrl->CharRight();
         m_newLineCopy = false;
     } break;
     case COMMANDVI::ye: {
         int pos_init_ye = m_ctrl->GetCurrentPos();
         int repeat_ye = std::max(1, m_repeat) * std::max(1, m_actions);
         for(int i = 0; i < repeat_ye; ++i) {
-            m_ctrl->WordLeftEnd();
+            m_ctrl->WordRightEnd();
         }
         int pos_end_ye = m_ctrl->GetCurrentPos();
         m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_ye, pos_end_ye));
         repeat_command = false;
         m_ctrl->SetCurrentPos(pos_init_ye);
         m_ctrl->CharLeft();
-        m_ctrl->CharRight();
+        //m_ctrl->CharRight();
         m_newLineCopy = false;
     } break;
     case COMMANDVI::yy: {
@@ -758,13 +1002,148 @@ bool VimCommand::Command_call()
         repeat_command = false;
         m_ctrl->SetCurrentPos(position_init_yy);
         m_ctrl->CharLeft();
-        m_ctrl->CharRight();
+        //m_ctrl->CharRight();
     } break;
-
+    
+    case COMMANDVI::y0: {
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
+        m_ctrl->Home();
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        repeat_command = false;
+        m_ctrl->SetCurrentPos(pos_init_yw);
+        m_ctrl->CharLeft();
+        m_newLineCopy = false;
+    } break;
+    case COMMANDVI::y$: {
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
+        m_ctrl->LineEnd();
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        repeat_command = false;
+        m_ctrl->SetCurrentPos(pos_init_yw);
+        m_ctrl->CharLeft();
+        m_newLineCopy = false;
+    } break;
+    case COMMANDVI::yV: {
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
+        m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        repeat_command = false;
+        m_ctrl->SetCurrentPos(pos_init_yw);
+        m_ctrl->CharLeft();
+        m_newLineCopy = false;
+        break;
+    }
+    case COMMANDVI::yaw: {
+        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
+        m_ctrl->CharRight();
+        m_ctrl->WordLeft();
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_ctrl->WordRightEnd();
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        repeat_command = false;
+        m_ctrl->SetCurrentPos(pos_init_yw);
+        m_ctrl->CharLeft();
+        m_newLineCopy = false;
+        break;
+    }
+    case COMMANDVI::yi34: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yi39: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yi40: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yi60: {
+        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yi91: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yi123: {
+        int minPos = 0;
+        int maxPos = m_ctrl->GetLastPosition();
+        long leftPos = -1;
+        long rightPos = -1;
+        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
+        {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            repeat_command = false;
+            m_newLineCopy = false;
+        }
+        break;
+    }
+    
     case COMMANDVI::diesis: {
         m_searchWord = get_text_at_position();
         // m_ctrl->SetCurrentPos( /*FIXME*/ );
-        search_word(SEARCH_DIRECTION::BACKWARD);
+        search_word(SEARCH_DIRECTION::BACKWARD, wxSTC_FIND_WHOLEWORD);
+        m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
+    } break;
+    
+    case COMMANDVI::diesis_N: {
+        m_searchWord = get_text_at_position();
+        search_word(SEARCH_DIRECTION::FORWARD, wxSTC_FIND_WHOLEWORD);
         m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
     } break;
     /*
@@ -793,13 +1172,21 @@ bool VimCommand::Command_call()
         if(this->m_newLineCopy) {
             m_ctrl->LineEnd();
             m_ctrl->NewLine();
+            m_ctrl->DelLineLeft();
+            if (m_listCopiedStr.size() > 0) {
+                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            }
+        } else {
+            m_ctrl->CharRight();
         }
         for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
             yanked != this->m_listCopiedStr.end(); ++yanked) {
             m_ctrl->AddText(*yanked);
         }
         // FIXME: troppo contorto!
-        if(this->m_newLineCopy) m_ctrl->LineDelete();
+        if(this->m_newLineCopy) m_ctrl->Home();
         break;
     case COMMANDVI::P:
         this->m_saveCommand = false;
@@ -807,15 +1194,19 @@ bool VimCommand::Command_call()
             m_ctrl->LineUp();
             m_ctrl->LineEnd();
             m_ctrl->NewLine();
-        } else {
-            m_ctrl->CharLeft(); /*Is one char before andd the the same as p!*/
+            m_ctrl->DelLineLeft();
+            if (m_listCopiedStr.size() > 0) {
+                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+            }
         }
         for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
             yanked != this->m_listCopiedStr.end(); ++yanked) {
             m_ctrl->AddText(*yanked);
         }
         // FIXME: troppo contorto!
-        if(this->m_newLineCopy) m_ctrl->LineDelete();
+        if(this->m_newLineCopy) m_ctrl->Home();
         break;
     case COMMANDVI::repeat:
         // RepeatCommand( m_ctrl );
@@ -829,6 +1220,9 @@ bool VimCommand::Command_call()
             m_ctrl->LineDown();
             m_ctrl->Home();
             m_ctrl->DeleteBack();
+            if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+                m_ctrl->DelWordRight();
+            m_ctrl->AddText(" ");
             m_ctrl->SetCurrentPos(curr_pos);
             /*FIXME: Workaround to avoid selection between previous
               end of line and current position*/
@@ -847,11 +1241,10 @@ bool VimCommand::Command_call()
 bool VimCommand::Command_call_visual_mode()
 {
 
-    wxUIActionSimulator sim;
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
-    /*======= MOVEMENT ===========*/
+        /*======= MOVEMENT ===========*/
 
     case COMMANDVI::j:
         m_ctrl->LineDownExtend();
@@ -869,6 +1262,36 @@ bool VimCommand::Command_call_visual_mode()
         m_ctrl->CharRightExtend();
         this->m_saveCommand = false;
         break;
+    case COMMANDVI::H: {
+        int firstLine = m_ctrl->GetFirstVisibleLine();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine > firstLine; --curLine) {
+            m_ctrl->LineUpExtend();
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::M: {
+        int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
+        int curLine = m_ctrl->GetCurrentLine();
+        if (curLine > medLine) {
+            for (; curLine > medLine; --curLine) {
+                m_ctrl->LineUpExtend();
+            }
+        } else if (curLine < medLine) {
+            for (; curLine < medLine; ++curLine) {
+                m_ctrl->LineDownExtend();
+            }
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::L: {
+        int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine < lastLine; ++curLine) {
+            m_ctrl->LineDownExtend();
+        }
+        this->m_saveCommand = false;
+    } break;
     case COMMANDVI::_0:
         m_ctrl->HomeExtend();
         this->m_saveCommand = false;
@@ -1042,9 +1465,9 @@ bool VimCommand::Command_call_visual_mode()
         //     m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
         //     repeat_command = false;
     } break;
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    /*========== DELETE AND COPY =======================*/
+        /*========== DELETE AND COPY =======================*/
 
     case COMMANDVI::d:
         this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
@@ -1080,16 +1503,12 @@ wxString VimCommand::get_text_at_position(VimCommand::eTypeTextSearch typeTextTo
     case kFromPosToEndWord:
         start = pos;
         end = m_ctrl->WordEndPosition(pos, true);
-        if(start == end) {
-            end++;
-        }
+        if(start == end) { end++; }
         break;
     case kFromPosToBeginWord:
         end = pos;
         start = m_ctrl->WordStartPosition(pos, true);
-        if(start == end) {
-            start--;
-        }
+        if(start == end) { start--; }
         break;
     case kFromPositionToEndLine:
         start = pos;
@@ -1154,7 +1573,7 @@ wxString VimCommand::add_preceding_spaces()
     return white_spaces_buf;
 }
 
-bool VimCommand::search_word(SEARCH_DIRECTION direction, long start_pos)
+bool VimCommand::search_word(SEARCH_DIRECTION direction, int flag, long start_pos)
 {
 
     // /*flag 2: word separated, Big pr small!*/
@@ -1168,7 +1587,6 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction, long start_pos)
     }
     m_mgr->GetStatusBar()->SetMessage("Searching:" + m_searchWord);
     bool found = false;
-    int flag = 0;
     int pos_prev;
     if(direction == SEARCH_DIRECTION::BACKWARD) {
         pos_prev = m_ctrl->FindText(0, pos, m_searchWord, flag);
@@ -1198,7 +1616,7 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction, long start_pos)
     return found;
 }
 
-bool VimCommand::search_word(SEARCH_DIRECTION direction)
+bool VimCommand::search_word(SEARCH_DIRECTION direction, int flag)
 {
 
     // /*flag 2: word separated, Big pr small!*/
@@ -1207,7 +1625,6 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction)
     long pos = m_ctrl->GetCurrentPos();
 
     bool found = false;
-    int flag = 0;
     int pos_prev;
     if(direction == SEARCH_DIRECTION::BACKWARD) {
         pos_prev = m_ctrl->FindText(0, pos, m_searchWord, flag);
@@ -1223,7 +1640,9 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction)
 
         if(direction == SEARCH_DIRECTION::BACKWARD) {
             pos_word = m_ctrl->SearchPrev(flag, m_searchWord);
-            m_ctrl->GotoPos(pos_word);
+            if (pos_word != wxNOT_FOUND) {
+                m_ctrl->GotoPos(pos_word);
+            }
         } else {
             pos_word = m_ctrl->SearchNext(flag, m_searchWord);
             /*FIXME error searching next: we get the current*/
@@ -1282,6 +1701,21 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::k;
             command_complete = true;
             break;
+        case 'H':
+            possible_command = true;
+            m_commandID = COMMANDVI::H;
+            command_complete = true;
+            break;
+        case 'M':
+            possible_command = true;
+            m_commandID = COMMANDVI::M;
+            command_complete = true;
+            break;
+        case 'L':
+            possible_command = true;
+            m_commandID = COMMANDVI::L;
+            command_complete = true;
+            break;
 
         case '$':
             possible_command = true;
@@ -1291,6 +1725,11 @@ bool VimCommand::is_cmd_complete()
         case '0':
             possible_command = true;
             m_commandID = COMMANDVI::_0;
+            command_complete = true;
+            break;
+        case '^':
+            possible_command = true;
+            m_commandID = COMMANDVI::_V;
             command_complete = true;
             break;
         case 'w':
@@ -1326,32 +1765,24 @@ bool VimCommand::is_cmd_complete()
         case 'f':
             possible_command = true;
             m_commandID = COMMANDVI::f;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 'F':
             possible_command = true;
             m_commandID = COMMANDVI::F;
             command_complete = false;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 't':
             possible_command = true;
             m_commandID = COMMANDVI::t;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
         case 'T':
             possible_command = true;
             m_commandID = COMMANDVI::T;
             command_complete = false;
-            if(this->m_actionCommand != '\0') {
-                command_complete = true;
-            }
+            if(this->m_actionCommand != '\0') { command_complete = true; }
             break;
 
         case 'G':
@@ -1434,7 +1865,14 @@ bool VimCommand::is_cmd_complete()
         m_commandID = COMMANDVI::u;
         command_complete = true;
         break;
-
+    case 18:
+        if(this->m_modifierKey == wxMOD_CONTROL) {
+            command_complete = true;
+            possible_command = true;
+            m_commandID = COMMANDVI::ctrl_R;
+            m_modifierKey = 0;
+        }
+        break;
     /*==================== REPLACE =================*/
     case 'r':
         possible_command = true;
@@ -1456,7 +1894,7 @@ bool VimCommand::is_cmd_complete()
         }
         break;
 
-    /*===================== DELETE TEXT ===============*/
+        /*===================== DELETE TEXT ===============*/
 
     case 'c': /*~~~~~~ c[...] ~~~~~~~*/
         possible_command = true;
@@ -1464,7 +1902,28 @@ bool VimCommand::is_cmd_complete()
         case '\0':
             command_complete = false;
             break;
+        case '0':
+            command_complete = true;
+            m_commandID = COMMANDVI::c0;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '^':
+            command_complete = true;
+            m_commandID = COMMANDVI::cV;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '$':
+            command_complete = true;
+            m_commandID = COMMANDVI::c$;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
         case 'w':
+            if (m_externalCommand == 'a') {
+                command_complete = true;
+                m_commandID = COMMANDVI::caw;
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                break;
+            }
             command_complete = true;
             m_commandID = COMMANDVI::cw;
             m_currentModus = VIM_MODI::INSERT_MODUS;
@@ -1483,6 +1942,46 @@ bool VimCommand::is_cmd_complete()
         case 'e':
             command_complete = true;
             m_commandID = COMMANDVI::ce;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '\"':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci34;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '\'':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci39;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '{':
+        case '}':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci123;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '[':
+        case ']':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci91;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '(':
+        case ')':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci40;
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+            break;
+        case '<':
+        case '>':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ci60;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         }
@@ -1517,12 +2016,31 @@ bool VimCommand::is_cmd_complete()
             if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::d;
+                this->m_newLineCopy = false;
                 this->m_listCopiedStr.clear();
             } else {
                 command_complete = false;
             }
             break;
+        case '0':
+            command_complete = true;
+            m_commandID = COMMANDVI::d0;
+            this->m_listCopiedStr.clear();
+            break;
+        case '^':
+            command_complete = true;
+            m_commandID = COMMANDVI::dV;
+            break;
+        case '$':
+            command_complete = true;
+            m_commandID = COMMANDVI::d$;
+            break;
         case 'w':
+            if (m_externalCommand == 'a') {
+                command_complete = true;
+                m_commandID = COMMANDVI::daw;
+                break;
+            }
             command_complete = true;
             m_commandID = COMMANDVI::dw;
             this->m_listCopiedStr.clear();
@@ -1543,7 +2061,43 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::de;
             this->m_listCopiedStr.clear();
             break;
+            
+        case '\"':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di34;
+            break;
+        case '\'':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di39;
+            break;
+        case '{':
+        case '}':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di123;
+            break;
+        case '[':
+        case ']':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di91;
+            break;
+        case '(':
+        case ')':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di40;
+            break;
+        case '<':
+        case '>':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::di60;
+            break;
         }
+        
         break;
     case 'D':
         possible_command = true;
@@ -1576,12 +2130,19 @@ bool VimCommand::is_cmd_complete()
             if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::y;
+                this->m_newLineCopy = false;
                 this->m_listCopiedStr.clear();
             } else {
                 command_complete = false;
             }
             break;
         case 'w':
+            if (m_externalCommand == 'a') {
+                command_complete = true;
+                m_commandID = COMMANDVI::yaw;
+                this->m_listCopiedStr.clear();
+                break;
+            }
             command_complete = true;
             m_commandID = COMMANDVI::yw;
             this->m_listCopiedStr.clear();
@@ -1603,6 +2164,61 @@ bool VimCommand::is_cmd_complete()
             this->m_listCopiedStr.clear();
             this->m_newLineCopy = true;
             break;
+        case '0':
+            command_complete = true;
+            m_commandID = COMMANDVI::y0;
+            this->m_listCopiedStr.clear();
+            break;
+        case '^':
+            command_complete = true;
+            m_commandID = COMMANDVI::yV;
+            this->m_listCopiedStr.clear();
+            break;
+        case '$':
+            command_complete = true;
+            m_commandID = COMMANDVI::y$;
+            this->m_listCopiedStr.clear();
+            break;
+        case '\"':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi34;
+            this->m_listCopiedStr.clear();
+            break;
+        case '\'':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi39;
+            this->m_listCopiedStr.clear();
+            break;
+        case '{':
+        case '}':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi123;
+            this->m_listCopiedStr.clear();
+            break;
+        case '[':
+        case ']':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi91;
+            this->m_listCopiedStr.clear();
+            break;
+        case '(':
+        case ')':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi40;
+            this->m_listCopiedStr.clear();
+            break;
+        case '<':
+        case '>':
+            if (m_externalCommand != 'i') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::yi60;
+            this->m_listCopiedStr.clear();
+            break;
         }
         break;
     /*================== SEARCH ====================*/
@@ -1610,6 +2226,12 @@ bool VimCommand::is_cmd_complete()
         possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::diesis;
+        m_repeat = 1;
+        break;
+    case '*':
+        possible_command = true;
+        command_complete = true;
+        m_commandID = COMMANDVI::diesis_N;
         m_repeat = 1;
         break;
 
@@ -1728,9 +2350,17 @@ bool VimCommand::DeleteLastCommandChar()
 long VimCommand::goToMatchingParentesis(long start_pos)
 {
     const wxChar parentesis[] = {
-        '(', ')', '[',  ']',  '{', '}',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
         /*NOT VIM STANDARD, but useful*/
-        '<', '>', '\"', '\"',
+        '<',
+        '>',
+        '\"',
+        '\"',
     };
     SEARCH_DIRECTION direction;
     long pos = start_pos;
@@ -1741,7 +2371,7 @@ long VimCommand::goToMatchingParentesis(long start_pos)
     int increment = 0;
     bool found = false;
 
-    for(index_parentesis = 0; index_parentesis < sizeof(parentesis); ++index_parentesis) {
+    for(index_parentesis = 0; index_parentesis < sizeof(parentesis) / sizeof(parentesis[0]); ++index_parentesis) {
         if(currChar == parentesis[index_parentesis]) {
             found = true;
             break;
@@ -1765,6 +2395,37 @@ long VimCommand::goToMatchingParentesis(long start_pos)
     return (indenting_level == 0) ? pos : -1;
 }
 
+bool VimCommand::findMatchingParentesis(wxChar lch, wxChar rch,long minPos, long maxPos, long& leftPos, long& rightPos)
+{
+    long curPos = m_ctrl->GetCurrentPos();
+    int level = 1;
+    leftPos = -1;
+    rightPos = -1;
+    for(long i = curPos; i >= minPos; --i) {
+        if(m_ctrl->GetCharAt(i) == lch) {
+            level--;
+        } else if (m_ctrl->GetCharAt(i) == rch) {
+            level++;
+        }
+        if (level == 0) {
+            leftPos = i;
+            break;
+        }
+    }
+    level = 1;
+    for (long i = std::max(curPos, leftPos + 1); i < maxPos; ++i) {
+        if(m_ctrl->GetCharAt(i) == rch) {
+            level--;
+        } else if (m_ctrl->GetCharAt(i) == lch) {
+            level++;
+        }
+        if (level == 0) {
+            rightPos = i;
+            break;
+        }
+    }
+    return leftPos < rightPos && leftPos != -1;
+}
 /* ###############################################################
  #                      VIM BASE COMMAND                         #
  ################################################################# */
@@ -1778,6 +2439,7 @@ VimBaseCommand::VimBaseCommand(wxString fullpath_name)
     , m_repeat(0)
     , m_baseCommand('\0')
     , m_actionCommand('\0')
+    , m_externalCommand('\0')
     , m_actions(0)
     , m_repeatCommand(0)
     , m_modifierKey(0)
@@ -1794,6 +2456,7 @@ VimBaseCommand::VimBaseCommand(const VimBaseCommand& command)
     , m_repeat(command.m_repeat)
     , m_baseCommand(command.m_baseCommand)
     , m_actionCommand(command.m_actionCommand)
+    , m_externalCommand(command.m_externalCommand)
     , m_actions(command.m_actions)
     , m_repeatCommand(command.m_repeatCommand)
     , m_modifierKey(command.m_modifierKey)
@@ -1811,6 +2474,7 @@ void VimBaseCommand::saveCurrentStatus(const VimCommand& command)
     m_repeat = command.m_repeat;
     m_baseCommand = command.m_baseCommand;
     m_actionCommand = command.m_actionCommand;
+    m_externalCommand = command.m_externalCommand;
     m_actions = command.m_actions;
     m_repeatCommand = command.m_repeatCommand;
     m_modifierKey = command.m_modifierKey;
@@ -1825,6 +2489,7 @@ void VimBaseCommand::setSavedStatus(VimCommand& command)
     command.m_repeat = m_repeat;
     command.m_baseCommand = m_baseCommand;
     command.m_actionCommand = m_actionCommand;
+    m_externalCommand = command.m_externalCommand;
     command.m_actions = m_actions;
     command.m_repeatCommand = m_repeatCommand;
     command.m_modifierKey = m_modifierKey;

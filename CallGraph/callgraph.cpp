@@ -141,12 +141,7 @@ void CallGraph::LogFn(wxString s)
 
 //-----------------------------------------------------------------------------
 
-clToolBar* CallGraph::CreateToolBar(wxWindow* parent)
-{
-    // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
-}
+void CallGraph::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 //-----------------------------------------------------------------------------
 void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)

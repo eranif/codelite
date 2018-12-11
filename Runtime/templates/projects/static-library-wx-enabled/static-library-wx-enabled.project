@@ -10,7 +10,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
   </VirtualDirectory>
   <Dependencies/>
   <Settings Type="Static Library">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g;-O0;-Wall;$(shell wx-config --cxxflags   --unicode=yes)">
         <IncludePath Value="."/>
@@ -24,13 +24,13 @@ Note that this project is set to work with the GNU toolchain (gdb, g++)
         <BuildCommand></BuildCommand>
       </CustomBuild>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-O2;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Required="yes" Options="-s;$(shell wx-config --libs --debug=no --unicode=yes)"/>
+      <Linker Required="yes" Options=";$(shell wx-config --libs --debug=no --unicode=yes)"/>
       <ResourceCompiler Required="no" Options=""/>
       <PreBuild/>
       <PostBuild/>

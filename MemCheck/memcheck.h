@@ -54,7 +54,7 @@ public:
     // Abstract methods
     //--------------------------------------------
 
-    virtual clToolBar* CreateToolBar(wxWindow* parent);
+    virtual void CreateToolBar(clToolBar* toolbar);
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
@@ -104,7 +104,9 @@ protected:
 protected:
     void OnWorkspaceLoaded(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
-
+    
+    wxString PrepareCommand(const wxString& projectName, wxString& wd);
+    
     /**
      * @brief After settings dialogue is closed, settings are reapplied in plugin.
      */

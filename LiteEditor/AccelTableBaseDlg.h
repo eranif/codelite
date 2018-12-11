@@ -7,20 +7,21 @@
 #ifndef _CODELITE_LITEEDITOR_ACCELTABLEBASEDLG_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_ACCELTABLEBASEDLG_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include "clThemedListCtrl.h"
+#include <wx/artprov.h>
+#include <wx/button.h>
+#include <wx/dataview.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/srchctrl.h>
-#include <wx/dataview.h>
-#include <wx/button.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -33,12 +34,11 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class AccelTableBaseDlg : public wxDialog
 {
 protected:
     wxSearchCtrl* m_textCtrlFilter;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
     wxButton* m_buttonEdit;
     wxButton* m_buttonDefault;
     wxStdDialogButtonSizer* m_stdBtnSizer6;
@@ -55,10 +55,12 @@ protected:
 
 public:
     wxSearchCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDefault() { return m_buttonDefault; }
-    AccelTableBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AccelTableBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Keyboard Shortcuts"),
+                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                      long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AccelTableBaseDlg();
 };
 

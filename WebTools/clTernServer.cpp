@@ -1,24 +1,24 @@
-#include "clTernServer.h"
-#include "processreaderthread.h"
-#include "cl_standard_paths.h"
-#include "globals.h"
-#include "imanager.h"
-#include "asyncprocess.h"
-#include "SocketAPI/clSocketClient.h"
-#include "file_logger.h"
-#include "wxCodeCompletionBoxEntry.h"
-#include "clTernWorkerThread.h"
 #include "JSCodeCompletion.h"
-#include "WebToolsConfig.h"
-#include "entry.h"
-#include <wx/regex.h>
-#include <wx/log.h>
-#include "fileutils.h"
-#include "ieditor.h"
-#include <wx/stc/stc.h>
-#include <wx/msgdlg.h>
-#include "NoteJSWorkspace.h"
 #include "NodeJSLocator.h"
+#include "NoteJSWorkspace.h"
+#include "SocketAPI/clSocketClient.h"
+#include "WebToolsConfig.h"
+#include "asyncprocess.h"
+#include "clTernServer.h"
+#include "clTernWorkerThread.h"
+#include "cl_standard_paths.h"
+#include "entry.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "processreaderthread.h"
+#include "wxCodeCompletionBoxEntry.h"
+#include <wx/log.h>
+#include <wx/msgdlg.h>
+#include <wx/regex.h>
+#include <wx/stc/stc.h>
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -45,21 +45,25 @@ void clTernServer::OnTernOutput(clProcessEvent& event)
     PrintMessage(event.GetOutput());
 }
 
+static size_t crash_count = 0;
 void clTernServer::OnTernTerminated(clProcessEvent& event)
 {
     wxDELETE(m_tern);
-    if(m_goingDown || !m_jsCCManager->IsEnabled()) {
-        return;
-    }
+    if(m_goingDown || !m_jsCCManager->IsEnabled()) { return; }
 #if defined(__WXMSW__) && !defined(NDEBUG)
     HANDLE hProcess = ::GetCurrentProcess();
     DWORD handleCount;
     ::GetProcessHandleCount(hProcess, &handleCount);
-    CL_DEBUG("Tern process termianted. Number of handles %d", (int)handleCount);
+    clDEBUG1() << "Tern process termianted. Number of handles:" << (int)handleCount;
     ::CloseHandle(hProcess);
 #endif
 
     PrintMessage("Tern server terminated, will restart it\n");
+    ++crash_count;
+    //if(crash_count >= 1000) {
+    //    clWARNING() << "JS code completion terminated too many times, will not restart it again!";
+    //    return;
+    //}
     Start(m_workingDirectory);
 }
 
@@ -85,7 +89,7 @@ bool clTernServer::Start(const wxString& workingDirectory)
 #ifdef __WXMAC__
     // set permissions to 755
     nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
-        wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
+                          wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
 
     wxString nodeExe = nodeJS.GetFullPath();
@@ -100,20 +104,16 @@ bool clTernServer::Start(const wxString& workingDirectory)
     wxString command;
     command << nodeExe << " " << ternScriptString << " --persistent ";
 
-    if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
-        command << " --verbose";
-    }
+    if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) { command << " --verbose"; }
 
     // Create a .tern-project file
-    if(m_workingDirectory.IsEmpty()) {
-        m_workingDirectory = clStandardPaths::Get().GetUserDataDir();
-    }
+    if(m_workingDirectory.IsEmpty()) { m_workingDirectory = clStandardPaths::Get().GetUserDataDir(); }
 
     wxFileName ternConfig(m_workingDirectory, ".tern-project");
     wxString content = conf.GetTernProjectFile();
     if(!FileUtils::WriteFileContent(ternConfig, content)) {
         ::wxMessageBox(_("Could not write tern project file: ") + ternConfig.GetFullPath(), "CodeLite",
-            wxICON_ERROR | wxOK | wxCENTER);
+                       wxICON_ERROR | wxOK | wxCENTER);
         PrintMessage("Could not write tern project file: " + ternConfig.GetFullPath());
         m_fatalError = true;
         return false;
@@ -131,15 +131,11 @@ bool clTernServer::Start(const wxString& workingDirectory)
 void clTernServer::Terminate()
 {
     m_goingDown = true;
-    if(m_tern) {
-        m_tern->Terminate();
-    }
+    if(m_tern) { m_tern->Terminate(); }
     wxDELETE(m_tern);
 
     // Stop the worker thread
-    if(m_workerThread) {
-        m_workerThread->Stop();
-    }
+    if(m_workerThread) { m_workerThread->Stop(); }
     wxDELETE(m_workerThread);
 }
 
@@ -215,12 +211,8 @@ wxString clTernServer::PrepareDoc(const wxString& doc, const wxString& url)
         }
     }
 
-    if(!curline.IsEmpty()) {
-        content << curline << "\n";
-    }
-    if(!url.IsEmpty()) {
-        content << "@link " << url;
-    }
+    if(!curline.IsEmpty()) { content << curline << "\n"; }
+    if(!url.IsEmpty()) { content << "@link " << url; }
     return content;
 }
 
@@ -353,9 +345,7 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
         break;
     case clTernWorkerThread::kFindDefinition: {
         clTernDefinition loc;
-        if(ProcessDefinitionOutput(reply.json, loc)) {
-            m_jsCCManager->OnDefinitionFound(loc);
-        }
+        if(ProcessDefinitionOutput(reply.json, loc)) { m_jsCCManager->OnDefinitionFound(loc); }
     } break;
     case clTernWorkerThread::kReparse: {
         // TODO ??
@@ -385,9 +375,7 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     int imgID;
     wxString sig, retValue;
     ProcessType(type, sig, retValue, imgID);
-    if(sig.IsEmpty()) {
-        return NULL;
-    }
+    if(sig.IsEmpty()) { return NULL; }
     t->SetSignature(sig);
     t->SetReturnValue(retValue);
     t->SetKind("function");
@@ -398,9 +386,7 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
 
 JSONElement clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
 {
-    if(pos == wxNOT_FOUND) {
-        pos = ctrl->GetCurrentPos();
-    }
+    if(pos == wxNOT_FOUND) { pos = ctrl->GetCurrentPos(); }
     int lineNo = ctrl->LineFromPosition(pos);
     JSONElement loc = JSONElement::createObject("end");
     loc.addProperty("line", lineNo);
@@ -542,9 +528,7 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
 
     if(json.hasNamedObject("file")) {
         wxFileName fn(json.namedObject("file").toString());
-        if(!m_workingDirectory.IsEmpty()) {
-            fn.MakeAbsolute(m_workingDirectory);
-        }
+        if(!m_workingDirectory.IsEmpty()) { fn.MakeAbsolute(m_workingDirectory); }
         loc.file = fn.GetFullPath();
         loc.start = json.namedObject("start").toInt();
         loc.end = json.namedObject("end").toInt();
@@ -569,9 +553,7 @@ bool clTernServer::PostResetCommand(bool forgetFiles)
     JSONElement query = JSONElement::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("reset"));
-    if(forgetFiles) {
-        query.addProperty("forgetFiles", true);
-    }
+    if(forgetFiles) { query.addProperty("forgetFiles", true); }
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();

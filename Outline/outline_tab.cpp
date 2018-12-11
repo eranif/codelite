@@ -23,19 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "outline_tab.h"
-#include "outline_symbol_tree.h"
+#include "ColoursAndFontsManager.h"
+#include "bitmap_loader.h"
+#include "clToolBar.h"
+#include "cl_config.h"
 #include "event_notifier.h"
-#include "plugin.h"
-#include <wx/stc/stc.h>
-#include <wx/menu.h>
-#include <wx/wupdlock.h>
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "lexer_configuration.h"
-#include "ColoursAndFontsManager.h"
-#include "cl_config.h"
-#include "file_logger.h"
+#include "outline_symbol_tree.h"
+#include "outline_tab.h"
+#include "plugin.h"
+#include <imanager.h>
+#include <wx/menu.h>
+#include <wx/stc/stc.h>
+#include <wx/wupdlock.h>
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION = wxNewEventType();
 const wxEventType wxEVT_SV_GOTO_DECLARATION = wxNewEventType();
@@ -52,7 +56,7 @@ const wxEventType wxEVT_SV_OPEN_FILE = wxNewEventType();
         clDEBUG1() << "Outline: view is disabled" << clEndl; \
         return;                                              \
     }
-    
+
 OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     : OutlineTabBaseClass(parent)
     , m_mgr(mgr)
@@ -66,7 +70,8 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
 
     m_panelCxx->GetSizer()->Add(m_tree, 1, wxEXPAND);
     m_tree->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
-    m_tree->AssignImageList(svSymbolTree::CreateSymbolTreeImages());
+
+    m_tree->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_treeCtrlPhp->SetManager(m_mgr);
 
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(OutlineTab::OnActiveEditorChanged),
@@ -88,11 +93,20 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
             this);
     Connect(wxEVT_SV_RENAME_SYMBOL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
     m_themeHelper = new ThemeHandlerHelper(this);
+    m_toolbar = new clToolBar(m_panelCxx);
+    m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
+                       wxITEM_CHECK);
+    m_toolbar->Realize();
+    m_toolbar->Bind(wxEVT_TOOL, &OutlineTab::OnSortAlpha, this, wxID_SORT_ASCENDING);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &OutlineTab::OnSortAlphaUI, this, wxID_SORT_ASCENDING);
+    m_panelCxx->GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 }
 
 OutlineTab::~OutlineTab()
 {
     wxDELETE(m_themeHelper);
+    m_toolbar->Unbind(wxEVT_TOOL, &OutlineTab::OnSortAlpha, this, wxID_SORT_ASCENDING);
+    m_toolbar->Unbind(wxEVT_UPDATE_UI, &OutlineTab::OnSortAlphaUI, this, wxID_SORT_ASCENDING);
     m_tree->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
 
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
@@ -137,16 +151,12 @@ void OutlineTab::OnSearchEnter(wxCommandEvent& event)
     event.Skip();
     if(m_simpleBook->GetSelection() == OUTLINE_TAB_PHP) {
         wxTreeItemId selection = m_treeCtrlPhp->GetSelection();
-        if(selection.IsOk()) {
-            m_treeCtrlPhp->ItemSelected(selection, true);
-        }
+        if(selection.IsOk()) { m_treeCtrlPhp->ItemSelected(selection, true); }
 
     } else {
         wxString name = m_textCtrlSearch->GetValue();
         name.Trim().Trim(false);
-        if(name.IsEmpty() == false) {
-            m_tree->ActivateSelectedItem();
-        }
+        if(name.IsEmpty() == false) { m_tree->ActivateSelectedItem(); }
     }
 }
 
@@ -326,9 +336,9 @@ void OutlineTab::EditorChanged()
     IEditor* editor = m_mgr->GetActiveEditor();
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
     LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    
+
     clDEBUG() << "Outline: editor changed event";
-    
+
     // Use the lexer to determine if we can show outline
     if(editor && cxxLexer && FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName(), true);

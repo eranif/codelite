@@ -38,34 +38,34 @@ class ContinuousBuild;
 /** Implementing ContinousBuildBasePane */
 class ContinousBuildPane : public ContinousBuildBasePane
 {
-	IManager *       m_mgr;
-	ContinuousBuild *m_plugin;
+    IManager* m_mgr;
+    ContinuousBuild* m_plugin;
 
 protected:
-	// Handlers for ContinousBuildBasePane events.
-	void OnStopAll( wxCommandEvent& event );
-	void OnStopUI( wxUpdateUIEvent& event );
-	/**
-	 * @brief
-	 * @param event
-	 */
-	virtual void OnEnableCB( wxCommandEvent& event );
+    // Handlers for ContinousBuildBasePane events.
+    void OnStopAll(wxCommandEvent& event);
+    void OnStopUI(wxUpdateUIEvent& event);
+    /**
+     * @brief
+     * @param event
+     */
+    virtual void OnEnableCB(wxCommandEvent& event);
 
-	void DoUpdateConf();
+    void DoUpdateConf();
 
-	/**
-	 * @brief
-	 * @param event
-	 */
-	virtual void OnEnableContBuildUI( wxUpdateUIEvent& event );
+    /**
+     * @brief
+     * @param event
+     */
+    virtual void OnEnableContBuildUI(wxUpdateUIEvent& event);
 
 public:
-	/** Constructor */
-	ContinousBuildPane( wxWindow* parent, IManager *manager, ContinuousBuild *plugin );
-	void RemoveFile(const wxString &file);
-	void AddFile(const wxString &file);
-	void AddFailedFile(const wxString &file);
-	void ClearAll();
+    /** Constructor */
+    ContinousBuildPane(wxWindow* parent, IManager* manager, ContinuousBuild* plugin);
+    void RemoveFile(const wxString& file);
+    void AddFile(const wxString& file);
+    void AddFailedFile(const wxString& file);
+    void ClearAll();
 };
 
 #endif // __continousbuildpane__

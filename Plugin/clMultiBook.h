@@ -1,21 +1,23 @@
 #ifndef CLMULTIBOOK_H
 #define CLMULTIBOOK_H
 
+#include "clTabHistory.h"
 #include <Notebook.h>
 #include <codelite_exports.h>
 #include <vector>
 #include <wx/bitmap.h>
-#include "clTabHistory.h"
 #include <wx/splitter.h>
 
 class WXDLLIMPEXP_SDK clMultiBook : public wxPanel
 {
     Notebook* m_leftBook;
     Notebook* m_rightBook;
+
     wxSplitterWindow* m_splitter;
     size_t m_style;
     int m_selection;
     clTabHistory::Ptr_t m_history;
+    wxWindow* m_defaultPage;
 
 protected:
     bool GetActiveBook(Notebook** book, size_t& bookIndex) const;
@@ -25,9 +27,13 @@ protected:
     void UpdateView();
     int BookIndexToGlobalIndex(size_t bookIndex, size_t pageIndex) const;
     int BookIndexToGlobalIndex(Notebook* book, size_t pageIndex) const;
-    //Notebook* AddNotebook();
+
+    // Notebook* AddNotebook();
     Notebook* CreateNotebook(wxWindow* parent);
+
     bool IsOurNotebook(Notebook* book) const;
+    void DoShowWindow(wxWindow* win, bool show);
+    void ShowNotebook();
 
 protected:
     void OnEventProxy(wxBookCtrlEvent& event);
@@ -38,8 +44,18 @@ public:
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
     virtual ~clMultiBook();
     
-    clTabHistory::Ptr_t GetHistory() { return m_history; }
+    /**
+     * @brief display the welcome pahe
+     */
+    void ShowDefaultPage(bool show = true);
     
+    /**
+     * @brief register a default page to be displayed when there are no
+     * more open tabs
+     */
+    void SetDefaultPage(wxWindow* page);
+    clTabHistory::Ptr_t GetHistory() { return m_history; }
+
     /**
      * @brief move page one notebook right
      */
@@ -127,10 +143,10 @@ public:
     /**
      * @brief return the page bitmap
      * @param page
-     * @return 
+     * @return
      */
     wxBitmap GetPageBitmap(size_t page) const;
-    
+
     /**
      * @brief Deletes all pages
      */

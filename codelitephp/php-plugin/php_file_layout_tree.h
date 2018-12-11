@@ -28,7 +28,6 @@
 
 #include "precompiled_header.h"
 #include "PHPEntityBase.h"
-#include "clTreeKeyboardInput.h"
 
 class IEditor;
 class IManager;
@@ -51,7 +50,6 @@ class PHPFileLayoutTree : public wxTreeCtrl
 protected:
     IEditor* m_editor;
     IManager* m_manager;
-    clTreeKeyboardInput::Ptr_t m_keyboard;
 
 protected:
     void BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Ptr_t entity);

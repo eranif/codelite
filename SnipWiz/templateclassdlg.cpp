@@ -23,20 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/textbuf.h>
-#include <wx/dirdlg.h>
-#include <wx/textfile.h>
+#include "ColoursAndFontsManager.h"
 #include "VirtualDirectorySelectorDlg.h"
-#include <wx/filefn.h>
 #include "editor_config.h"
+#include "imanager.h"
 #include "project.h"
-#include "templateclassdlg.h"
-#include <wx/msgdlg.h>
-#include "swStringDb.h"
 #include "snipwiz.h"
 #include "swGlobals.h"
-#include "imanager.h"
-#include "ColoursAndFontsManager.h"
+#include "swStringDb.h"
+#include "templateclassdlg.h"
+#include <wx/dirdlg.h>
+#include <wx/filefn.h>
+#include <wx/msgdlg.h>
+#include <wx/textbuf.h>
+#include <wx/textfile.h>
+#include "workspace.h"
 
 static const wxString swHeader = wxT("header");
 static const wxString swSource = wxT("source");
@@ -48,6 +49,7 @@ TemplateClassDlg::TemplateClassDlg(wxWindow* parent, SnipWiz* plugin, IManager* 
     , m_pManager(manager)
 {
     Initialize();
+    GetSizer()->Fit(this);
 }
 
 void TemplateClassDlg::Initialize()
@@ -57,7 +59,7 @@ void TemplateClassDlg::Initialize()
         cppLexer->Apply(m_textCtrlHeader, true);
         cppLexer->Apply(m_textCtrlImpl, true);
     }
-    
+
     GetStringDb()->Load(m_pluginPath + defaultTmplFile);
 
     wxArrayString templates;
@@ -75,13 +77,21 @@ void TemplateClassDlg::Initialize()
     }
     TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
-        m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath(m_pManager->GetTree(TreeFileView), item.m_item, false);
+        m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath(m_pManager->GetWorkspaceTree(), item.m_item, false);
         m_projectPath = item.m_fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
     }
     m_textCtrlVD->SetValue(m_virtualFolder);
-    if(m_virtualFolder.IsEmpty() == false) {
-        m_staticProjectTreeFolder->SetForegroundColour(wxColour(0, 128, 0));
+
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        wxString project, vd;
+        project = m_virtualFolder.BeforeFirst(wxT(':'));
+        vd = m_virtualFolder.AfterFirst(wxT(':'));
+
+        ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(project);
+        if(proj) { m_projectPath = proj->GetBestPathForVD(vd); }
     }
+
+    if(m_virtualFolder.IsEmpty() == false) { m_staticProjectTreeFolder->SetForegroundColour(wxColour(0, 128, 0)); }
     m_textCtrlFilePath->SetValue(m_projectPath);
     m_textCtrlClassName->SetFocus();
 }
@@ -115,9 +125,7 @@ void TemplateClassDlg::OnBrowseFilePath(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString dir = wxT("");
-    if(wxFileName::DirExists(m_projectPath)) {
-        dir = m_projectPath;
-    }
+    if(wxFileName::DirExists(m_projectPath)) { dir = m_projectPath; }
 
     dir = wxDirSelector(_("Select output folder"), dir, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
     if(!dir.IsEmpty()) {
@@ -142,10 +150,8 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
     files.Add(m_projectPath + m_textCtrlHeaderFile->GetValue());
     SaveBufferToFile(files.Item(0), buffer);
 
-    buffer = wxString::Format(wxT("#include \"%s\"%s%s"),
-                              m_textCtrlHeaderFile->GetValue().c_str(),
-                              eol[m_curEol].c_str(),
-                              eol[m_curEol].c_str());
+    buffer = wxString::Format(wxT("#include \"%s\"%s%s"), m_textCtrlHeaderFile->GetValue().c_str(),
+                              eol[m_curEol].c_str(), eol[m_curEol].c_str());
     buffer += GetStringDb()->GetString(baseClass, swSource);
     buffer.Replace(swPhClass, newClassName);
     buffer.Replace(wxT("\v"), eol[m_curEol].c_str());
@@ -215,9 +221,7 @@ void TemplateClassDlg::OnButtonAdd(wxCommandEvent& event)
     }
     GetStringDb()->SetString(set, swHeader, m_textCtrlHeader->GetValue());
     GetStringDb()->SetString(set, swSource, m_textCtrlImpl->GetValue());
-    if(!isSet) {
-        m_comboxTemplates->AppendString(set);
-    }
+    if(!isSet) { m_comboxTemplates->AppendString(set); }
 
     RefreshTemplateList();
     m_modified = true;
@@ -322,9 +326,7 @@ void TemplateClassDlg::RefreshTemplateList()
         m_comboxCurrentTemplate->AppendString(templates[i]);
     }
 
-    if(templates.GetCount()) {
-        m_comboxCurrentTemplate->Select(0);
-    }
+    if(templates.GetCount()) { m_comboxCurrentTemplate->Select(0); }
 }
 
 bool TemplateClassDlg::SaveBufferToFile(const wxString filename, const wxString buffer, int eolType)
@@ -332,8 +334,7 @@ bool TemplateClassDlg::SaveBufferToFile(const wxString filename, const wxString 
     wxTextFile file(filename);
     wxTextFileType tft = wxTextFileType_Dos;
     if(file.Exists()) {
-        int ret = wxMessageBox(_("File already exists!\n\n Overwrite?"),
-                               _("Generate class files"),
+        int ret = wxMessageBox(_("File already exists!\n\n Overwrite?"), _("Generate class files"),
                                wxYES_NO | wxYES_DEFAULT | wxICON_EXCLAMATION);
         if(ret == wxID_NO) return false;
     }

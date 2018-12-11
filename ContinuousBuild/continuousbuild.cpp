@@ -91,11 +91,10 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
 ContinuousBuild::~ContinuousBuild() {}
 
-clToolBar* ContinuousBuild::CreateToolBar(wxWindow* parent)
+void ContinuousBuild::CreateToolBar(clToolBar* toolbar)
 {
     // Create the toolbar to be used by the plugin
-    clToolBar* tb(NULL);
-    return tb;
+    wxUnusedVar(toolbar);
 }
 
 void ContinuousBuild::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }

@@ -33,6 +33,7 @@
 #include "dirsaver.h"
 #include "event_notifier.h"
 #include "exelocator.h"
+#include "file_logger.h"
 #include "procutils.h"
 #include "workspace.h"
 #include "wx/ffile.h"
@@ -45,7 +46,6 @@
 #include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
-#include "file_logger.h"
 
 static Cscope* thePlugin = NULL;
 
@@ -107,29 +107,24 @@ Cscope::Cscope(IManager* manager)
 
 Cscope::~Cscope() {}
 
-clToolBar* Cscope::CreateToolBar(wxWindow* parent)
+void Cscope::CreateToolBar(clToolBar* toolbar)
 {
     // support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();
 
-    clToolBar* tb = NULL;
-    if(m_mgr->AllowToolbar()) {
-        tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-        tb->SetToolBitmapSize(wxSize(size, size));
-
-        // Sample code that adds single button to the toolbar
-        // and associates an image to it
-        BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
-        // use the large icons set
-        tb->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
-                    _("Find this C symbol"));
-        tb->AddTool(XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"),
-                    bitmapLoader->LoadBitmap("step_in", size), _("Find functions calling this function"));
-        tb->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"),
-                    bitmapLoader->LoadBitmap("step_out", size), _("Find functions called by this function"));
-        tb->Realize();
-    }
-
+    // Sample code that adds single button to the toolbar
+    // and associates an image to it
+    BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
+    
+    // use the large icons set
+    toolbar->AddSpacer();
+    toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
+                     _("Find this C symbol"));
+    toolbar->AddTool(XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"),
+                     bitmapLoader->LoadBitmap("step_in", size), _("Find functions calling this function"));
+    toolbar->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"),
+                     bitmapLoader->LoadBitmap("step_out", size), _("Find functions called by this function"));
+                     
     // Command events
     m_topWindow->Connect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
@@ -163,7 +158,6 @@ clToolBar* Cscope::CreateToolBar(wxWindow* parent)
                          (wxEvtHandler*)this);
     m_topWindow->Connect(XRCID("cscope_find_user_symbol"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(Cscope::OnWorkspaceOpenUI), NULL, (wxEvtHandler*)this);
-    return tb;
 }
 
 void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)

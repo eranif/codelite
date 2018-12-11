@@ -24,29 +24,39 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "WelcomePage.h"
-#include "manager.h"
-#include "frame.h"
-#include <wx/arrstr.h>
 #include "bitmap_loader.h"
-#include "fileextmanager.h"
-#include "window_locker.h"
-#include <wx/clntdata.h>
-#include "event_notifier.h"
-#include "plugin.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "fileextmanager.h"
+#include "frame.h"
+#include "globals.h"
+#include "manager.h"
+#include "plugin.h"
 #include "pluginmanager.h"
+#include "window_locker.h"
+#include <wx/arrstr.h>
+#include <wx/clntdata.h>
 
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
+                                  this);
+    m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
+    m_staticBitmap->Hide();
+    m_cmdLnkBtnFilesMenu->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    m_cmdLnkBtnForum->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    m_cmdLnkBtnNewProject->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    m_cmdLnkBtnNewWorkspace->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    m_cmdLnkBtnWiki->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    m_cmdLnkBtnWorkspaces->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
+    GetSizer()->Fit(this);
 }
 
 WelcomePage::~WelcomePage()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
+                                     this);
 }
 
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
@@ -105,10 +115,10 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
     }
 }
 
-int
-WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayString& strings, const wxString& menuTitle)
+int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayString& strings,
+                                         const wxString& menuTitle)
 {
-    BitmapLoader::BitmapMap_t bmps = PluginManager::Get()->GetStdIcons()->MakeStandardMimeMap();
+    BitmapLoader* loader = PluginManager::Get()->GetStdIcons();
 
     m_idToName.clear();
     wxUnusedVar(menuTitle);
@@ -116,24 +126,17 @@ WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayStri
 
     for(size_t i = 0; i < strings.GetCount(); ++i) {
 
-        wxBitmap bmp = bmps[FileExtManager::TypeText];
+        wxBitmap bmp = loader->GetBitmapForFile("a.txt");
         wxString filename = strings.Item(i);
-        if(filename.Find("@") != wxNOT_FOUND) {
-            filename = filename.AfterFirst('@');
-        }
+        if(filename.Find("@") != wxNOT_FOUND) { filename = filename.AfterFirst('@'); }
         filename.Trim().Trim(false);
-        
+
         // Ensure that the file exists...
         if(!wxFileName(filename).Exists()) {
             // Don't show non existing files in the menu
             continue;
         }
-        
-        FileExtManager::FileType type = FileExtManager::GetType(filename);
-        if(bmps.count(type)) {
-            bmp = bmps[type];
-        }
-
+        bmp = loader->GetBitmapForFile(filename);
         wxMenuItem* item = new wxMenuItem(&menu, wxID_ANY, strings.Item(i));
         item->SetBitmap(bmp);
         m_idToName.insert(std::make_pair(item->GetId(), strings.Item(i)));

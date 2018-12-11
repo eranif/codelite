@@ -9,7 +9,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++, ar)
   <VirtualDirectory Name="include"/>
   <Dependencies/>
   <Settings Type="Static Library">
-	<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+	<Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="-g">
         <IncludePath Value="."/>
@@ -23,7 +23,7 @@ Note that this project is set to work with the GNU toolchain (gdb, g++, ar)
         <BuildCommand></BuildCommand>
       </CustomBuild>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
       <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" WorkingDirectory="$(IntermediateDirectory)"/>
       <Compiler Required="yes" Options="">
         <IncludePath Value="."/>

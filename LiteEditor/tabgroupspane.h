@@ -32,6 +32,7 @@
 #include <utility>
 #include "theme_handler_helper.h"
 
+class clThemedTreeCtrl;
 enum tabgrouptype { TGT_group, TGT_item };
 
 class TabGrpTreeItemData : public wxTreeItemData
@@ -108,7 +109,7 @@ protected:
     void OnEndDrag(wxTreeEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
-    wxTreeCtrl* m_tree;
+    clThemedTreeCtrl* m_tree;
     /*!
      * \brief Stores the dragged item during DnD
      */

@@ -48,6 +48,9 @@ fold_all|View|Toggle All Folds|
 fold_topmost_in_selection|View|Toggle All Topmost Folds in Selection|
 fold_all_in_selection|View|Toggle Every Fold in Selection|
 display_eol|View|Display EOL|
+wxID_ZOOM_IN|View::Zoom|Zoom In|
+wxID_ZOOM_OUT|View::Zoom|Zoom Out|
+wxID_ZOOM_FIT|View::Zoom|Reset Zoom|Ctrl-0
 whitepsace_invisible|View::Show Whitespace|Invisible|Alt-F1
 whitepsace_always|View::Show Whitespace|Show Always|Alt-F2
 whitespace_visiable_after_indent|View::Show Whitespace|Visible After First Indent|Alt-F3

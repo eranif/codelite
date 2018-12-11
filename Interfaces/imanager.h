@@ -40,6 +40,7 @@
 #include "clStatusBar.h"
 #include "clTab.h"
 
+class clTreeCtrl;
 class clEditorBar;
 class clWorkspaceView;
 class TagsManager;
@@ -53,6 +54,7 @@ class BuildSettingsConfig;
 class NavMgr;
 class IMacroManager;
 class wxAuiManager;
+class clToolBar;
 
 //--------------------------
 // Auxulary class
@@ -124,7 +126,9 @@ public:
             m_outputTabs.Add(tabLabel);
         }
     }
-
+    
+    virtual clToolBar* GetToolBar() = 0;
+    
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'
      * @param selectWindow tab within the 'Output Pane' to select, if empty don't change
@@ -151,7 +155,7 @@ public:
     // return the current editor
     /**
      * @brief return the active editor
-     * @return pointer to the current editor, or NULL incase the active editor is not of type LEditor or no active
+     * @return pointer to the current editor, or NULL incase the active editor is not of type clEditor or no active
      * editor open
      */
     virtual IEditor* GetActiveEditor() = 0;
@@ -208,7 +212,8 @@ public:
      * @param type the type of tree
      * @sa TreeType
      */
-    virtual wxTreeCtrl* GetTree(TreeType type) = 0;
+    virtual clTreeCtrl* GetFileExplorerTree() = 0;
+    virtual clTreeCtrl* GetWorkspaceTree() = 0;
 
     /**
      * @brief return a pointer to the workspace pane notebook (the one with the 'workspace' title)
@@ -448,6 +453,7 @@ public:
      * @return project name or wxEmptyString if the search failed
      */
     virtual wxString GetProjectNameByFile(const wxString& fullPathFileName) = 0;
+    virtual wxString GetProjectNameByFile(wxString& fullPathFileName) = 0;
 
     /**
      * @brief accessor to singleton object in the application

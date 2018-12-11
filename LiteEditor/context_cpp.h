@@ -25,13 +25,13 @@
 #ifndef CONTEXT_CPP_H
 #define CONTEXT_CPP_H
 
+#include "cl_command_event.h"
 #include "context_base.h"
 #include "cpptoken.h"
 #include "ctags_manager.h"
-#include <map>
 #include "entry.h"
-#include "cl_command_event.h"
 #include "macros.h"
+#include <map>
 
 class RefactorSource;
 
@@ -71,12 +71,12 @@ public:
      * @return
      */
     virtual bool IsAtLineComment() const;
-    ContextCpp(LEditor* container);
+    ContextCpp(clEditor* container);
     virtual bool IsDefaultContext() const;
 
     virtual ~ContextCpp();
     ContextCpp();
-    virtual ContextBase* NewInstance(LEditor* container);
+    virtual ContextBase* NewInstance(clEditor* container);
     virtual void CompleteWord();
     virtual void CodeComplete(long pos = wxNOT_FOUND);
     virtual void GotoDefinition();
@@ -144,7 +144,7 @@ private:
     wxString GetWordUnderCaret();
     wxString GetFileImageString(const wxString& ext);
     wxString GetImageString(const TagEntry& entry);
-    wxString GetExpression(long pos, bool onlyWord, LEditor* editor = NULL, bool forCC = true);
+    wxString GetExpression(long pos, bool onlyWord, clEditor* editor = NULL, bool forCC = true);
     void DoGotoSymbol(TagEntryPtr tag);
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
     void RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
@@ -152,10 +152,10 @@ private:
     void MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags);
     void DoOpenWorkspaceFile();
     void DoSetProjectPaths();
-    bool DoGetSingatureRange(int line, int& start, int& end, LEditor* ctrl);
+    bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
 
 public:
-    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix);
+    void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix);
 
 private:
     /**
@@ -179,7 +179,7 @@ private:
      * @brief format editor
      * @param editor
      */
-    void DoFormatEditor(LEditor* editor);
+    void DoFormatEditor(clEditor* editor);
 };
 
 #endif // CONTEXT_CPP_H

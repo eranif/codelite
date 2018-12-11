@@ -86,8 +86,6 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
     , m_projname(projname)
     , m_projectModified(false)
 {
-    m_bitmaps = clGetManager()->GetStdIcons()->MakeStandardMimeMap();
-
     m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                   wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
 
@@ -204,6 +202,9 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 
                 if(attemptAllocation) {
                     wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+                    if (virtualFolder.empty() && fn.GetPath().empty()) {
+                        virtualFolder = m_projname; // This must be a top-level file
+                    }
                     if(!virtualFolder.empty()) {
                         wxVector<wxVariant> cols;
                         cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
@@ -319,9 +320,7 @@ void ReconcileProjectDlg::DoFindFiles()
 
 wxBitmap ReconcileProjectDlg::GetBitmap(const wxString& filename) const
 {
-    FileExtManager::FileType type = FileExtManager::GetType(filename);
-    if(!m_bitmaps.count(type)) return m_bitmaps.find(FileExtManager::TypeText)->second;
-    return m_bitmaps.find(type)->second;
+    return clGetManager()->GetStdIcons()->GetBitmapForFile(filename);
 }
 
 void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
@@ -329,7 +328,13 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
     wxString suggestedPath, suggestedName;
     bool guessed = GuessNewVirtualDirName(suggestedPath, suggestedName);
     VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), suggestedPath, m_projname);
-    if(guessed) { selector.SetSuggestedName(suggestedName); }
+    if(guessed && !suggestedPath.empty()) {
+        selector.SelectPath(m_projname + ':' + suggestedPath);
+    } else {
+        selector.SelectPath(m_projname);  // Either a top-level file, or a top-level dir that's not yet in the VDir tree
+    }
+    selector.SetSuggestedName(suggestedName);
+
     if(selector.ShowModal() == wxID_OK) {
         wxString vd = selector.GetVirtualDirectoryPath();
         wxDataViewItemArray items;
@@ -377,31 +382,26 @@ bool ReconcileProjectDlg::GuessNewVirtualDirName(wxString& suggestedPath, wxStri
     }
 
     wxFileName fn(path);
-    fn.MakeAbsolute(m_toplevelDir);
+    wxString pathSegments(fn.GetPath());
+    pathSegments.Replace(wxFILE_SEP_PATH, ":");
+
+    if (pathSegments.empty()) { return true; } // This must be a top-level file
 
     VirtualDirectoryTree vdTree;
     vdTree.BuildTree(m_projname);
-    wxString residue;
     do {
-        wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
+        wxString virtualFolder = vdTree.FindBestMatchVDir(path, fn.GetExt());
         if(!virtualFolder.empty()) {
-            suggestedPath = fn.GetPath();
-            suggestedName = residue;
+            suggestedPath = path;
+            suggestedPath.Replace(wxFILE_SEP_PATH, ":");
+            suggestedName = pathSegments.Mid(suggestedPath.Len()+1);
             return true;
         }
 
-        wxString pathend = fn.GetPath().AfterLast(wxFILE_SEP_PATH);
-        if(pathend == m_projname) {
-            suggestedPath = pathend;
-            suggestedName = residue;
-            return true;
-        }
+        path=path.BeforeLast(wxFILE_SEP_PATH);
+    } while(!path.empty());
 
-        if(!residue.empty()) { residue = ':' + residue; }
-        residue = pathend + residue; // Save the name(s) of missing VDs
-        fn.RemoveLastDir();
-    } while(fn.GetDirCount());
-
+    suggestedName = pathSegments; // This may be a top-level dir not in the VDir tree. pathSegments holds the likely name
     return false;
 }
 
@@ -656,7 +656,7 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
     toplevelDir = m_dirPickerToplevel->GetPath();
     types = m_textExtensions->GetValue();
     wxArrayString ignoreFilesArr = m_listIgnoreFiles->GetStrings();
-    excludePaths = m_listExclude->GetStrings();
+    wxArrayString rawExcludePaths = m_listExclude->GetStrings();
     regexes = GetRegexes();
 
     // Fix the types to fit a standard mask string
@@ -669,6 +669,16 @@ void ReconcileProjectFiletypesDlg::GetData(wxString& toplevelDir, wxString& type
 
     // Fix the the ignore files
     ignoreFiles = wxJoin(ignoreFilesArr, ';');
+
+    // Fix the exclude paths. First make absolute
+    wxString tld(toplevelDir);
+    if(tld.Last() != wxFILE_SEP_PATH) { tld << wxFILE_SEP_PATH; }
+    for(size_t i = 0; i < rawExcludePaths.size(); ++i) {
+        wxString& path = rawExcludePaths.Item(i);
+        if(!path.StartsWith(wxFILE_SEP_PATH)) { path.Prepend(tld); }
+        // Now fix any symlinks in the path and add to the array
+        excludePaths.Add(CLRealPath(path));
+    }
 
     // While we're here, save the current data
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);

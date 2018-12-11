@@ -2,7 +2,7 @@
 <CodeLite_Project Name="Executable (Qt with qmake enabled)" InternalType="GUI" IconIndex="qt16">
   <Description>Minimal GUI application based on Qt toolkit. This project uses GNU toolchain for build and QMake as a makefile generator.</Description>
   <Settings Type="Executable">
-    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-g;-W">
         <IncludePath Value="."/>
@@ -31,12 +31,12 @@
         <CustomPreBuild/>
       </AdditionalRules>
     </Configuration>
-    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable">
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable">
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" WorkingDirectory="$(ProjectPath)" PauseExecWhenProcTerminates="yes"/>
       <Compiler Required="yes" Options="-O2;-W">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Required="yes" Options="-s"/>
+      <Linker Required="yes" Options=""/>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <PostConnectCommands/>
         <StartupCommands/>

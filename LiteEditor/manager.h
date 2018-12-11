@@ -43,7 +43,8 @@
 #include "cl_command_event.h"
 #include "clKeyboardManager.h"
 
-class LEditor;
+class clEditor;
+class IProcess;
 
 // ====================================================================
 // The Manager class
@@ -95,7 +96,7 @@ protected:
     wxString m_originalCwd;
     FileHistory m_recentWorkspaces;
     ShellCommand* m_shellProcess;
-    AsyncExeCmd* m_asyncExeCmd;
+    IProcess* m_programProcess;
     BreakptMgr* m_breakptsmgr;
     bool m_isShutdown;
     bool m_workspceClosing;
@@ -117,7 +118,8 @@ protected:
 protected:
     Manager(void);
     virtual ~Manager(void);
-
+    void OnHideGdbTooltip(clCommandEvent &event);
+    
     //--------------------------- Global State -----------------------------
 public:
     DisplayVariableDlg* GetDebuggerTip();
@@ -354,7 +356,7 @@ public:
      * \brief Launch the ParseThread to update the preprocessor vizualisation
      * \param filename
      */
-    void UpdatePreprocessorFile(LEditor* editor);
+    void UpdatePreprocessorFile(clEditor* editor);
 
 protected:
     wxFileName FindFile(const wxArrayString& files, const wxFileName& fn);
@@ -448,6 +450,13 @@ public:
      * \param caseSensitive do a case-sensitive search
      */
     wxString GetProjectNameByFile(const wxString& fullPathFileName, bool caseSensitive = false);
+    /**
+     * @brief return the project name that 'fullPathFileName' belongs to. if 2 matches are found, return
+     * the first one, or empty string if no match is found
+     * \param fullPathFileName the filepath to search with
+     * \param caseSensitive do a case-sensitive search
+     */
+    wxString GetProjectNameByFile(wxString& fullPathFileName, bool caseSensitive = false);
 
     //--------------------------- Project Settings Mgmt -----------------------------
 public:
@@ -564,7 +573,8 @@ public:
     void KillProgram();
 
 protected:
-    void OnProcessEnd(wxProcessEvent& event);
+    void OnProcessEnd(clProcessEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
     void OnBuildEnded(clBuildEvent& event);
 
     /**

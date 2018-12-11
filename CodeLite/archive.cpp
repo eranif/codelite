@@ -242,6 +242,7 @@ bool Archive::Write(const wxString& name, const StringMap& str_map)
     return true;
 }
 
+#if wxUSE_GUI
 bool Archive::Write(const wxString& name, wxSize size)
 {
     if(!m_root) {
@@ -260,7 +261,6 @@ bool Archive::Write(const wxString& name, wxSize size)
     node->AddProperty(wxT("y"), ystr);
     return true;
 }
-
 bool Archive::Write(const wxString& name, wxPoint pt)
 {
     if(!m_root) {
@@ -279,6 +279,7 @@ bool Archive::Write(const wxString& name, wxPoint pt)
     node->AddProperty(wxT("y"), ystr);
     return true;
 }
+#endif
 
 bool Archive::Read(const wxString& name, wxArrayString& arr)
 {
@@ -381,7 +382,7 @@ bool Archive::Read(const wxString& name, StringMap& str_map)
     }
     return false;
 }
-
+#if wxUSE_GUI
 bool Archive::Read(const wxString& name, wxSize& size)
 {
     if(!m_root) {
@@ -425,6 +426,7 @@ bool Archive::Read(const wxString& name, wxPoint& pt)
     }
     return false;
 }
+#endif
 
 bool Archive::Write(const wxString& name, int value) { return WriteSimple(value, wxT("int"), name); }
 
@@ -567,6 +569,7 @@ bool Archive::ReadSimple(long& value, const wxString& typeName, const wxString& 
     return false;
 }
 
+#if wxUSE_GUI
 bool Archive::Read(const wxString& name, wxColour& colour)
 {
     if(!m_root) {
@@ -586,7 +589,6 @@ bool Archive::Read(const wxString& name, wxColour& colour)
     colour = wxColour(value);
     return true;
 }
-
 bool Archive::Write(const wxString& name, const wxColour& colour)
 {
     if(!m_root) {
@@ -598,6 +600,7 @@ bool Archive::Write(const wxString& name, const wxColour& colour)
     node->AddProperty(wxT("Name"), name);
     return true;
 }
+#endif
 
 bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
 {
@@ -689,7 +692,7 @@ bool Archive::Write(const wxString& name, const wxStringSet_t& s)
     }
     return true;
 }
-
+#if wxUSE_GUI
 bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont)
 {
     wxString strFont;
@@ -703,3 +706,4 @@ bool Archive::Read(const wxString& name, wxFont& font, const wxFont& defaultFont
 }
 
 bool Archive::Write(const wxString& name, const wxFont& font) { return Write(name, clFontHelper::ToString(font)); }
+#endif

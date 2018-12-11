@@ -22,22 +22,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include "context_base.h"
-#include "drawingutils.h"
-#include <vector>
-#include "editor_config.h"
-#include "cl_editor.h"
-#include "frame.h"
-#include "ctags_manager.h"
 #include "cl_command_event.h"
-#include "event_notifier.h"
-#include "plugin.h"
-#include "macros.h"
+#include "cl_editor.h"
 #include "commentconfigdata.h"
+#include "context_base.h"
+#include "ctags_manager.h"
+#include "drawingutils.h"
 #include "editor_config.h"
-#include <wx/tokenzr.h>
+#include "event_notifier.h"
+#include "frame.h"
+#include "macros.h"
+#include "plugin.h"
+#include <vector>
 #include <wx/regex.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 // static wxColor GetInactiveColor(const wxColor& col)
 //{
@@ -49,7 +48,7 @@
 //#endif
 //}
 
-ContextBase::ContextBase(LEditor* container)
+ContextBase::ContextBase(clEditor* container)
     : m_container(container)
     , m_name(wxEmptyString)
 {
@@ -65,7 +64,7 @@ ContextBase::~ContextBase() {}
 // provide basic indentation
 void ContextBase::AutoIndent(const wxChar& ch)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     int prevpos(wxNOT_FOUND);
     int curpos = rCtrl.GetCurrentPos();
     int line = rCtrl.LineFromPosition(curpos);
@@ -99,7 +98,7 @@ void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetC
 
 int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
     if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
         // get tag as hyperlink
         start = rCtrl.WordStartPos(pos, true);
@@ -151,7 +150,7 @@ void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
 int ContextBase::DoGetCalltipParamterIndex()
 {
     int index(0);
-    LEditor& ctrl = GetCtrl();
+    clEditor& ctrl = GetCtrl();
     int pos = ctrl.DoGetOpenBracePos();
     if(pos != wxNOT_FOUND) {
 
@@ -192,9 +191,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
     // user typed more than X chars
     // trigger code complete event (as if the user typed ctrl-space)
     // if no one handles this event, fire a word completion event
-    if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
-        return;
-    }
+    if(IsCommentOrString(GetCtrl().GetCurrentPos())) { return; }
 
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
     if(options.GetFlags() & CC_WORD_ASSIST) {
@@ -216,7 +213,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
 
 void ContextBase::AutoAddComment()
 {
-    LEditor& rCtrl = GetCtrl();
+    clEditor& rCtrl = GetCtrl();
 
     CommentConfigData data;
     EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
@@ -243,16 +240,14 @@ void ContextBase::AutoAddComment()
 
     wxString toInsert;
     if(IsAtLineComment()) {
-        if(text.StartsWith(wxT("//"))) {
-            toInsert = wxT("// ");
-        }
+        if(text.StartsWith(wxT("//"))) { toInsert = wxT("// "); }
     } else if(IsAtBlockComment()) {
         // Check the text typed before this char
         int startPos = rCtrl.PositionBefore(curpos);
         startPos -= 3; // for "/**"
         if(startPos >= 0) {
             wxString textTyped = rCtrl.GetTextRange(startPos, rCtrl.PositionBefore(curpos));
-            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsertAfterSlash2Stars()) {
+            if(((textTyped == "/**") || (textTyped == "/*!")) && data.IsAutoInsert()) {
                 // Let the plugins/codelite check if they can provide a doxy comment
                 // for the current entry
                 clCodeCompletionEvent event(wxEVT_CC_GENERATE_DOXY_BLOCK);
@@ -341,9 +336,7 @@ int ContextBase::FindNext(const wxString& what, int& pos, bool wholePage)
     }
     if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
     int where = ctrl->FindText(pos, endpos, what);
-    if(where != wxNOT_FOUND) {
-        pos = where + what.length();
-    }
+    if(where != wxNOT_FOUND) { pos = where + what.length(); }
     return where;
 }
 
@@ -363,8 +356,6 @@ int ContextBase::FindPrev(const wxString& what, int& pos, bool wholePage)
     }
     if((pos < startpos) || (pos > endpos)) return wxNOT_FOUND;
     int where = ctrl->FindText(pos, startpos, what);
-    if(where != wxNOT_FOUND) {
-        pos = where;
-    }
+    if(where != wxNOT_FOUND) { pos = where; }
     return where;
 }

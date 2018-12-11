@@ -25,10 +25,11 @@
 #ifndef LITEEDITOR_CPP_SYMBOL_TREE_H
 #define LITEEDITOR_CPP_SYMBOL_TREE_H
 
-#include "symbol_tree.h"
-#include "stack"
-#include "imanager.h"
+#include "bitmap_loader.h"
 #include "fc_fileopener.h"
+#include "imanager.h"
+#include "stack"
+#include "symbol_tree.h"
 
 extern const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED;
 
@@ -43,7 +44,7 @@ public:
 
     /// Nothing special here, just call our parent constructor
     svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+                 const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT);
 
     /// destructor
     virtual ~svSymbolTree(){};
@@ -63,13 +64,12 @@ public:
     bool IsSelectedItemIncludeFile();
     wxString GetSelectedIncludeFile() const;
 
-    static wxImageList* CreateSymbolTreeImages();
     virtual void Clear();
     void ClearCache();
 
 protected:
     void DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& filename);
-    
+
     wxString GetActiveEditorFile() const;
     void OnIncludeStatements(wxCommandEvent& e);
     void OnCacheUpdated(clCommandEvent& e);
@@ -81,9 +81,6 @@ protected:
     void FindAndSelect(IEditor* editor, wxString& pattern, const wxString& name);
     void CenterEditorLine();
     wxTreeItemId DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::Set_t& includes);
-
-    wxTreeItemId TryGetPrevItem(wxTreeItemId item);
-
     DECLARE_DYNAMIC_CLASS(svSymbolTree)
 };
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="codelite_terminal" InternalType="GUI">
+<CodeLite_Project Name="codelite_terminal" InternalType="GUI" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -47,6 +47,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="clTerminalSTC.h"/>
+    <File Name="clTerminalSTC.cpp"/>
     <File Name="main.cpp"/>
     <File Name="MainFrame.cpp"/>
     <File Name="wxcrafter.cpp"/>
@@ -98,13 +100,14 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cflags)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc --debug);-mwindows" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="--exit  --wait  --working-directory C:\\Users\\PC\\Documents\\CodeLite\\DOCKER\\DockerTest --cmd &quot;D:\\software\\Docker Toolbox\\docker-compose.EXE&quot; up&quot;" UseSeparateDebugArgs="yes" DebugArguments="--exit  --wait  --working-directory C:\\Users\\PC\\Documents\\CodeLite\\DOCKER\\DockerTest --cmd &quot;D:\\software\\Docker Toolbox\\docker-compose.EXE&quot; up&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -136,7 +139,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Debug_Linux" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Debug_Linux" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
@@ -145,6 +148,7 @@
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite_terminal/Debug/codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/TestArea/TestWXC_Grid/Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -184,6 +188,7 @@
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="../Runtime/codelite-terminal" IntermediateDirectory="./Release" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -223,6 +228,7 @@
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes"/>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="$(ConfigurationName)" Command="./codelite-terminal" CommandArguments="--exit --wait --cmd &quot;ls -l&quot;" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

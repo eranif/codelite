@@ -1,7 +1,7 @@
 #include "VisualCppImporter.h"
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
 #include <wx/tokenzr.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -82,6 +82,10 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
             genericProjectData[wxT("projectFullPath")] =
                 wsInfo.GetPath() + wxFileName::GetPathSeparator() + genericProjectData[wxT("projectFile")];
 
+            // Fix the paths to match linux style
+            ConvertToLinuxStyle(genericProjectData["projectFile"]);
+            ConvertToLinuxStyle(genericProjectData["projectFullPath"]);
+            
             wxString deps = wxT("");
             while(!fis.Eof()) {
                 line = tis.ReadLine();
@@ -106,8 +110,8 @@ void VisualCppImporter::GenerateFromVC6(GenericWorkspacePtr genericWorkspace)
     }
 }
 
-void VisualCppImporter::GenerateFromProjectVC6(
-    GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData)
+void VisualCppImporter::GenerateFromProjectVC6(GenericWorkspacePtr genericWorkspace,
+                                               GenericProjectDataType& genericProjectData)
 {
     wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
     wxFileInputStream projectFIS(projectInfo.GetFullPath());
@@ -359,9 +363,7 @@ void VisualCppImporter::GenerateFromProjectVC6(
                                     wxString command = line;
                                     command.Replace(wxT("\t"), wxT(""));
 
-                                    if(!command.IsEmpty()) {
-                                        genericProjectCfg->preBuildCommands.push_back(command);
-                                    }
+                                    if(!command.IsEmpty()) { genericProjectCfg->preBuildCommands.push_back(command); }
                                 }
 
                                 index = line.Find(wxT("End Custom Build"));
@@ -377,9 +379,7 @@ void VisualCppImporter::GenerateFromProjectVC6(
         }
 
         for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : genericProjectCfgMap) {
-            if(genericProjectCfg.second) {
-                genericProject->cfgs.push_back(genericProjectCfg.second);
-            }
+            if(genericProjectCfg.second) { genericProject->cfgs.push_back(genericProjectCfg.second); }
         }
 
         genericWorkspace->projects.push_back(genericProject);
@@ -455,8 +455,8 @@ void VisualCppImporter::GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace)
     for(GenericProjectDataType& genericProjectData : genericProjectDataList) {
         for(GenericProjectDataType& genericProjectDataSub : genericProjectDataList) {
             if(genericProjectData[wxT("projectDeps")].Contains(genericProjectDataSub[wxT("projectId")])) {
-                genericProjectData[wxT("projectDeps")].Replace(
-                    genericProjectDataSub[wxT("projectId")], genericProjectDataSub[wxT("projectName")]);
+                genericProjectData[wxT("projectDeps")].Replace(genericProjectDataSub[wxT("projectId")],
+                                                               genericProjectDataSub[wxT("projectName")]);
             }
         }
     }
@@ -469,8 +469,8 @@ void VisualCppImporter::GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace)
     }
 }
 
-void VisualCppImporter::GenerateFromProjectVC7(
-    GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData)
+void VisualCppImporter::GenerateFromProjectVC7(GenericWorkspacePtr genericWorkspace,
+                                               GenericProjectDataType& genericProjectData)
 {
     wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
 
@@ -690,8 +690,8 @@ void VisualCppImporter::GenerateFromProjectVC7(
     }
 }
 
-void VisualCppImporter::GenerateFromProjectVC11(
-    GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData)
+void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace,
+                                                GenericProjectDataType& genericProjectData)
 {
     wxFileName projectInfo(genericProjectData[wxT("projectFullPath")]);
     wxFileName filterInfo(projectInfo.GetFullPath() + wxT(".filters"));
@@ -716,7 +716,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
 
         while(projectChild) {
             if(projectChild->GetName() == wxT("ItemGroup") && projectChild->HasAttribute(wxT("Label")) &&
-                projectChild->GetAttribute(wxT("Label")) == wxT("ProjectConfigurations")) {
+               projectChild->GetAttribute(wxT("Label")) == wxT("ProjectConfigurations")) {
                 wxXmlNode* projectConfiguration = projectChild->GetChildren();
 
                 while(projectConfiguration && projectConfiguration->HasAttribute(wxT("Include"))) {
@@ -761,7 +761,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
 
                         while(customBuildChild) {
                             if(customBuildChild->GetName() == wxT("Command") &&
-                                customBuildChild->HasAttribute(wxT("Condition"))) {
+                               customBuildChild->HasAttribute(wxT("Condition"))) {
                                 wxString elemCondition = customBuildChild->GetAttribute(wxT("Condition"));
                                 wxString commandLine = customBuildChild->GetNodeContent();
                                 wxString projectCfgKey = ExtractProjectCfgName(wxT(""), elemCondition);
@@ -778,9 +778,9 @@ void VisualCppImporter::GenerateFromProjectVC11(
                     }
 
                     if(itemGroupChild->GetName() == wxT("ClInclude") || itemGroupChild->GetName() == wxT("ClCompile") ||
-                        itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
-                        itemGroupChild->GetName() == wxT("ResourceCompile") ||
-                        itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
+                       itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
+                       itemGroupChild->GetName() == wxT("ResourceCompile") ||
+                       itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
                         AddFilesVC11(itemGroupChild, genericProject, genericProjectCfgMap);
                     }
 
@@ -843,9 +843,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                         outDir = ReplaceDefaultEnvVars(outDir);
 
                         GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                        if(genericProjectCfg) {
-                            genericProjectCfg->envVars[wxT("VS_OutDir")] = outDir;
-                        }
+                        if(genericProjectCfg) { genericProjectCfg->envVars[wxT("VS_OutDir")] = outDir; }
                     }
 
                     if(propertyGroupChild->GetName() == wxT("NMakeBuildCommandLine")) {
@@ -916,9 +914,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 preprocessorDefinitions = ReplaceDefaultEnvVars(preprocessorDefinitions);
 
                                 GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                if(genericProjectCfg) {
-                                    genericProjectCfg->preprocessor = preprocessorDefinitions;
-                                }
+                                if(genericProjectCfg) { genericProjectCfg->preprocessor = preprocessorDefinitions; }
                             }
 
                             if(clcompileChild->GetName() == wxT("PrecompiledHeaderFile")) {
@@ -928,9 +924,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 wxString precompiledHeaderFile = clcompileChild->GetNodeContent();
 
                                 GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                if(genericProjectCfg) {
-                                    genericProjectCfg->preCompiledHeader = precompiledHeaderFile;
-                                }
+                                if(genericProjectCfg) { genericProjectCfg->preCompiledHeader = precompiledHeaderFile; }
                             }
 
                             if(clcompileChild->GetName() == wxT("AdditionalIncludeDirectories")) {
@@ -943,9 +937,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 additionalIncludeDirectories = ReplaceDefaultEnvVars(additionalIncludeDirectories);
 
                                 GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                if(genericProjectCfg) {
-                                    genericProjectCfg->includePath = additionalIncludeDirectories;
-                                }
+                                if(genericProjectCfg) { genericProjectCfg->includePath = additionalIncludeDirectories; }
                             }
 
                             clcompileChild = clcompileChild->GetNext();
@@ -965,9 +957,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 additionalDependencies = ReplaceDefaultEnvVars(additionalDependencies);
 
                                 GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                if(genericProjectCfg) {
-                                    genericProjectCfg->libraries = additionalDependencies;
-                                }
+                                if(genericProjectCfg) { genericProjectCfg->libraries = additionalDependencies; }
                             }
 
                             if(linkChild->GetName() == wxT("AdditionalLibraryDirectories")) {
@@ -979,9 +969,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 additionalLibraryDirectories = ReplaceDefaultEnvVars(additionalLibraryDirectories);
 
                                 GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                if(genericProjectCfg) {
-                                    genericProjectCfg->libPath = additionalLibraryDirectories;
-                                }
+                                if(genericProjectCfg) { genericProjectCfg->libPath = additionalLibraryDirectories; }
                             }
 
                             if(linkChild->GetName() == wxT("OutputFile")) {
@@ -1043,9 +1031,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 wxString command = preBuildEventChild->GetNodeContent();
                                 if(!command.IsEmpty()) {
                                     GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                    if(genericProjectCfg) {
-                                        genericProjectCfg->preBuildCommands.push_back(command);
-                                    }
+                                    if(genericProjectCfg) { genericProjectCfg->preBuildCommands.push_back(command); }
                                 }
                             }
 
@@ -1064,9 +1050,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
                                 wxString command = postBuildEventChild->GetNodeContent();
                                 if(!command.IsEmpty()) {
                                     GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
-                                    if(genericProjectCfg) {
-                                        genericProjectCfg->postBuildCommands.push_back(command);
-                                    }
+                                    if(genericProjectCfg) { genericProjectCfg->postBuildCommands.push_back(command); }
                                 }
                             }
 
@@ -1082,9 +1066,7 @@ void VisualCppImporter::GenerateFromProjectVC11(
         }
 
         for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfg : genericProjectCfgMap) {
-            if(genericProjectCfg.second) {
-                genericProject->cfgs.push_back(genericProjectCfg.second);
-            }
+            if(genericProjectCfg.second) { genericProject->cfgs.push_back(genericProjectCfg.second); }
         }
     }
 
@@ -1099,9 +1081,9 @@ void VisualCppImporter::GenerateFromProjectVC11(
 
                 while(itemGroupChild) {
                     if(itemGroupChild->GetName() == wxT("ClInclude") || itemGroupChild->GetName() == wxT("ClCompile") ||
-                        itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
-                        itemGroupChild->GetName() == wxT("ResourceCompile") ||
-                        itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
+                       itemGroupChild->GetName() == wxT("None") || itemGroupChild->GetName() == wxT("Text") ||
+                       itemGroupChild->GetName() == wxT("ResourceCompile") ||
+                       itemGroupChild->GetName() == wxT("Image") || itemGroupChild->GetName() == wxT("CustomBuild")) {
                         AddFilesVC11(itemGroupChild, genericProject, genericProjectCfgMap);
                     }
 
@@ -1141,16 +1123,15 @@ wxString VisualCppImporter::ReplaceDefaultEnvVars(const wxString& str)
 }
 
 void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild, GenericProjectPtr genericProject,
-    std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap, wxString preVirtualPath)
+                                    std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
+                                    wxString preVirtualPath)
 {
     while(filterChild) {
         if(filterChild->GetName() == wxT("Filter")) {
             wxString virtualPath = filterChild->GetAttribute(wxT("Name"));
             wxXmlNode* fileChild = filterChild->GetChildren();
 
-            if(!preVirtualPath.IsEmpty()) {
-                virtualPath = preVirtualPath + wxT("/") + virtualPath;
-            }
+            if(!preVirtualPath.IsEmpty()) { virtualPath = preVirtualPath + wxT("/") + virtualPath; }
 
             AddFilesVC7(fileChild, genericProject, genericProjectCfgMap, virtualPath);
         } else if(filterChild->GetName() == wxT("File")) {
@@ -1174,9 +1155,7 @@ void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild, GenericProjectPtr ge
 
                     if(excludedFromBuild == wxT("true")) {
                         GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgName];
-                        if(genericProjectCfg) {
-                            genericProjectCfg->excludeFiles.push_back(genericProjectFile);
-                        }
+                        if(genericProjectCfg) { genericProjectCfg->excludeFiles.push_back(genericProjectFile); }
                     }
 
                     wxXmlNode* toolChild = fileConfChild->GetChildren();
@@ -1206,7 +1185,7 @@ void VisualCppImporter::AddFilesVC7(wxXmlNode* filterChild, GenericProjectPtr ge
 }
 
 void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild, GenericProjectPtr genericProject,
-    std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap)
+                                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap)
 {
     wxString filename = itemGroupChild->GetAttribute(wxT("Include"));
     filename.Replace(wxT("\\"), wxT("/"));
@@ -1226,9 +1205,7 @@ void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild, GenericProjectPt
     while(otherChild) {
         if(otherChild->GetName() == wxT("Filter")) {
             wxString content = otherChild->GetNodeContent();
-            if(!content.IsEmpty()) {
-                genericProjectFile->vpath = content;
-            }
+            if(!content.IsEmpty()) { genericProjectFile->vpath = content; }
         }
 
         if(otherChild->GetName() == wxT("ExcludedFromBuild")) {
@@ -1240,9 +1217,7 @@ void VisualCppImporter::AddFilesVC11(wxXmlNode* itemGroupChild, GenericProjectPt
                 if(!projectCfgKey.IsEmpty()) {
                     GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
 
-                    if(genericProjectCfg) {
-                        genericProjectCfg->excludeFiles.push_back(genericProjectFile);
-                    }
+                    if(genericProjectCfg) { genericProjectCfg->excludeFiles.push_back(genericProjectFile); }
                 } else {
                     for(std::pair<wxString, GenericProjectCfgPtr> genericProjectCfgPair : genericProjectCfgMap) {
                         if(genericProjectCfgPair.second) {
@@ -1264,4 +1239,12 @@ GenericProjectFilePtr VisualCppImporter::FindProjectFileByName(GenericProjectPtr
     }
 
     return nullptr;
+}
+
+void VisualCppImporter::ConvertToLinuxStyle(wxString& filepath)
+{
+    filepath.Replace("\\", "/");
+    wxFileName fn(filepath);
+    fn.Normalize(wxPATH_NORM_DOTS); // Remove . and ..
+    filepath = fn.GetFullPath(wxPATH_UNIX);
 }

@@ -54,8 +54,6 @@ protected:
     bool m_initialized;
     ColoursAndFontsManager::Map_t m_lexersMap;
     ColoursAndFontsManager::Vec_t m_allLexers;
-    wxColour m_globalBgColour;
-    wxColour m_globalFgColour;
     wxString m_globalTheme;
     LexerConf::Ptr_t m_defaultLexer;
     int m_lexersVersion;
@@ -93,9 +91,6 @@ public:
      */
     void UpdateLexerColours(LexerConf::Ptr_t lexer, bool force);
 
-    const wxColour& GetGlobalBgColour() const { return m_globalBgColour; }
-    const wxColour& GetGlobalFgColour() const { return m_globalFgColour; }
-
     /**
      * @brief create new theme for a lexer by copying an existing theme 'sourceTheme'
      * @param lexerName the lexer name
@@ -104,20 +99,9 @@ public:
      */
     LexerConf::Ptr_t CopyTheme(const wxString& lexerName, const wxString& themeName, const wxString& sourceTheme);
 
-    void SetGlobalBgColour(const wxColour& globalBgColour)
-    {
-        this->m_globalBgColour = globalBgColour;
-        SaveGlobalSettings();
-    }
-
     void SetGlobalFont(const wxFont& font);
     const wxFont& GetGlobalFont() const;
 
-    void SetGlobalFgColour(const wxColour& globalFgColour)
-    {
-        this->m_globalFgColour = globalFgColour;
-        SaveGlobalSettings();
-    }
     void SetGlobalTheme(const wxString& globalTheme) { this->m_globalTheme = globalTheme; }
     const wxString& GetGlobalTheme() const { return m_globalTheme; }
     /**
@@ -133,7 +117,7 @@ public:
     /**
      * @brief save the lexers into their proper file name
      */
-    void Save();
+    void Save(bool forExport = false);
 
     /**
      * @brief set the active theme for a lexer by name

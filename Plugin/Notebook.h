@@ -27,12 +27,11 @@
 #define NOTEBOOK_H
 
 #include "cl_defs.h"
+#include <wx/notebook.h>
 
-#if USE_AUI_NOTEBOOK
-#include "clAuiNotebook.h"
-#else
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
+#include "cl_command_event.h"
 #include "windowstack.h"
 #include <list>
 #include <vector>
@@ -60,9 +59,11 @@ enum class eDirection {
 class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
 {
     clTabCtrl* m_tabCtrl;
+    Notebook* m_notebook;
 
 public:
     clTabCtrlDropTarget(clTabCtrl* tabCtrl);
+    clTabCtrlDropTarget(Notebook* notebook);
     virtual ~clTabCtrlDropTarget();
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
 };
@@ -74,8 +75,9 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 {
-    int m_height;
-    int m_vTabsWidth;
+    int m_nHeight;
+    int m_nWidth;
+
     clTabInfo::Vec_t m_tabs;
     friend class Notebook;
     friend class clTabCtrlDropTarget;
@@ -88,17 +90,18 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxRect m_chevronRect;
     clTabHistory::Ptr_t m_history;
     clTabRenderer::Ptr_t m_art;
-    
+
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
+    eButtonState m_xButtonState = eButtonState::kNormal;
 
+protected:
     void DoChangeSelection(size_t index);
 
 protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);
-    void OnWindowKeyDown(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnRightUp(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
@@ -124,7 +127,7 @@ protected:
      * It also ensures that we draw as much tabs as we can.
      * @param offset reset the 0 based index from m_tabs
      */
-    void UpdateVisibleTabs();
+    void UpdateVisibleTabs(bool forceReshuffle = false);
 
     /**
      * @brief calculate and set the tab ctrl size
@@ -141,7 +144,7 @@ protected:
     void DoDeletePage(size_t page) { RemovePage(page, true, true); }
     void DoShowTabList();
     void DoUpdateXCoordFromPage(wxWindow* page, int diff);
-    
+
     void OnBeginDrag();
 
 public:
@@ -240,6 +243,8 @@ class WXDLLIMPEXP_SDK Notebook : public wxPanel
 protected:
     void DoChangeSelection(wxWindow* page);
     bool IsVerticalTabs() const { return m_tabCtrl->IsVerticalTabs(); }
+    void OnSize(wxSizeEvent& event);
+    void PositionControls();
 
 public:
     /**
@@ -412,7 +417,7 @@ public:
      * @return
      */
     clTabHistory::Ptr_t GetHistory() const { return m_tabCtrl->GetHistory(); }
-    
+
     /**
      * @brief move the active page and place it in the new nexIndex
      */
@@ -427,5 +432,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtr
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
-#endif // USE_AUI_NOTEBOOK
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 #endif // NOTEBOOK_H

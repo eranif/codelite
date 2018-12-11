@@ -23,31 +23,31 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "environmentconfig.h"
-#include <wx/aui/framemanager.h>
-#include "macromanager.h"
-#include "async_executable_cmd.h"
-#include <wx/bitmap.h>
-#include "dirsaver.h"
-#include "cl_aui_tb_are.h"
-#include <wx/app.h>
-#include "workspace.h"
-#include "globals.h"
-#include "externaltooldlg.h"
-#include <wx/menu.h>
-#include "externaltools.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/log.h>
-#include <algorithm>
-#include "plugin_version.h"
-#include "clKeyboardManager.h"
-#include "event_notifier.h"
-#include "workspace.h"
-#include "processreaderthread.h"
-#include <wx/msgdlg.h>
-#include "ExternalToolsProcessManager.h"
 #include "ExternalToolsManager.h"
+#include "ExternalToolsProcessManager.h"
+#include "async_executable_cmd.h"
+#include "clKeyboardManager.h"
+#include "clToolBarButton.h"
+#include "cl_aui_tb_are.h"
 #include "codelite_events.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "externaltooldlg.h"
+#include "externaltools.h"
+#include "globals.h"
+#include "macromanager.h"
+#include "plugin_version.h"
+#include "processreaderthread.h"
+#include "workspace.h"
+#include <algorithm>
+#include <wx/app.h>
+#include <wx/aui/framemanager.h>
+#include <wx/bitmap.h>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 static ExternalToolsPlugin* thePlugin = NULL;
 
@@ -58,9 +58,7 @@ struct DecSort {
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) {
-        thePlugin = new ExternalToolsPlugin(manager);
-    }
+    if(thePlugin == 0) { thePlugin = new ExternalToolsPlugin(manager); }
     return thePlugin;
 }
 
@@ -92,13 +90,14 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     for(int i = 0; i < MAX_TOOLS; i++) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
         topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+                        wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
 
     // Register keyboard shortcuts
     for(int i = 0; i < MAX_TOOLS; i++) {
-        clKeyboardManager::Get()->AddGlobalAccelerator(wxString::Format("external_tool_%d", i),
-            wxString::Format("Ctrl-Shift-%d", i), wxString::Format("Plugins::External Tools::External Tool %d", i));
+        clKeyboardManager::Get()->AddGlobalAccelerator(
+            wxString::Format("external_tool_%d", i), wxString::Format("Ctrl-Shift-%d", i),
+            wxString::Format("Plugins::External Tools::External Tool %d", i));
     }
 
     // Bind the "OnFileSave" event
@@ -107,60 +106,18 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
 ExternalToolsPlugin::~ExternalToolsPlugin() {}
 
-clToolBar* ExternalToolsPlugin::CreateToolBar(wxWindow* parent)
+void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
 {
     // support both toolbars icon size
-    m_tb = NULL;
     ExternalToolsData inData;
     m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
     int size = m_mgr->GetToolbarIconSize();
-
-    if(m_mgr->AllowToolbar()) {
-
-        m_tb = new clToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, clTB_DEFAULT_STYLE_PLUGIN);
-        m_tb->SetToolBitmapSize(wxSize(size, size));
-        m_tb->AddTool(XRCID("external_tools_settings"), _("Configure external tools..."),
-            m_mgr->GetStdIcons()->LoadBitmap("tools", size), _("Configure external tools..."));
-
-        m_tb->AddTool(XRCID("external_tools_monitor"), _("Show Running Tools..."),
-            m_mgr->GetStdIcons()->LoadBitmap("monitor", size), _("Show Running Tools..."));
-
-        m_tb->SetArtProvider(new CLMainAuiTBArt());
-        std::vector<ToolInfo> tools = inData.GetTools();
-        std::sort(tools.begin(), tools.end(), DecSort());
-
-        for(size_t i = 0; i < tools.size(); i++) {
-            ToolInfo ti = tools.at(i);
-
-            wxFileName icon24(ti.GetIcon24());
-            wxFileName icon16(ti.GetIcon16());
-
-            wxBitmap bmp(m_mgr->GetStdIcons()->LoadBitmap("cog", size));
-            wxBitmap defaultBitmap(m_mgr->GetStdIcons()->LoadBitmap("cog", size));
-            if(size == 24) {
-                if(icon24.FileExists()) {
-                    bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
-                    if(!bmp.IsOk()) {
-                        bmp = defaultBitmap;
-                    }
-                }
-                m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId()), ti.GetName(), bmp, ti.GetName());
-
-            } else if(size == 16) {
-                if(icon16.FileExists()) {
-                    bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
-                    if(!bmp.IsOk()) {
-                        bmp = defaultBitmap;
-                    }
-                }
-
-                m_tb->AddTool(wxXmlResource::GetXRCID(ti.GetId()), ti.GetName(), bmp, ti.GetName());
-            }
-        }
-
-        m_tb->Realize();
-    }
-    return m_tb;
+    toolbar->AddSpacer();
+    toolbar->AddButton(XRCID("external_tools_settings"), m_mgr->GetStdIcons()->LoadBitmap("tools", size),
+                       _("Configure external tools..."));
+    toolbar->AddButton(XRCID("external_tools_monitor"), m_mgr->GetStdIcons()->LoadBitmap("monitor", size),
+                       _("Show Running Tools..."));
+    DoRecreateToolbar();
 }
 
 void ExternalToolsPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
@@ -184,7 +141,7 @@ void ExternalToolsPlugin::UnPlug()
     for(int i = 0; i < MAX_TOOLS; ++i) {
         wxString winid = wxString::Format(wxT("external_tool_%d"), i);
         topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
+                           wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
     // now that all the event handlers have been disconneted, kill all the running tools
     ToolsTaskManager::Release();
@@ -220,44 +177,55 @@ void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 
     for(size_t i = 0; i < inData.GetTools().size(); i++) {
         ToolInfo ti = inData.GetTools().at(i);
-        if(wxXmlResource::GetXRCID(ti.GetId().c_str()) == e.GetId()) {
-            ToolsTaskManager::Instance()->StartTool(ti);
-        }
+        if(wxXmlResource::GetXRCID(ti.GetId().c_str()) == e.GetId()) { ToolsTaskManager::Instance()->StartTool(ti); }
     }
 }
 
 void ExternalToolsPlugin::DoRecreateToolbar()
 {
-    if(m_mgr->AllowToolbar()) {
-        wxAuiPaneInfo pi;
-        wxWindow* parent(NULL);
-        if(m_tb) {
-            // we have a toolbar, remove it from the docking manager
-            pi = m_mgr->GetDockingManager()->GetPane(m_tb);
-            m_mgr->GetDockingManager()->DetachPane(m_tb);
-            parent = m_tb->GetParent();
-            m_tb->Destroy();
-        } else {
-            parent = m_mgr->GetTheApp()->GetTopWindow();
-        }
+    ExternalToolsData inData;
+    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
+    int size = m_mgr->GetToolbarIconSize();
 
-        m_tb = CreateToolBar(parent);
-        if(m_tb) {
-            wxAuiPaneInfo newPi;
-            // Default
-            newPi.ToolbarPane().LeftDockable().RightDockable().Caption(GetShortName()).Name(GetShortName());
-            // If we got an old toolbar, reuse its docking attributes
-            if(pi.IsOk()) {
-                newPi.Direction(pi.dock_direction).Position(pi.dock_pos).Row(pi.dock_row);
-            } else {
-                newPi.Top().Position(999).Row(0);
-            }
-            m_mgr->GetDockingManager()->AddPane(m_tb, newPi);
+    std::vector<ToolInfo> tools = inData.GetTools();
+    std::sort(tools.begin(), tools.end(), DecSort());
 
-            // Apply changes
-            m_mgr->GetDockingManager()->Update();
-        }
+    clToolBar* toolbar = clGetManager()->GetToolBar();
+
+    // Remove the old tools
+    for(size_t i = 0; i < 10; ++i) {
+        wxString xrcid;
+        xrcid << "external_tool_" << i;
+        toolbar->DeleteById(wxXmlResource::GetXRCID(xrcid));
     }
+
+    // Add the tools
+    int where = XRCID("external_tools_monitor");
+    for(size_t i = 0; i < tools.size(); i++) {
+        const ToolInfo& ti = tools[i];
+
+        wxFileName icon24(ti.GetIcon24());
+        wxFileName icon16(ti.GetIcon16());
+
+        wxBitmap bmp(m_mgr->GetStdIcons()->LoadBitmap("cog", size));
+        wxBitmap defaultBitmap(m_mgr->GetStdIcons()->LoadBitmap("cog", size));
+        if(size == 24) {
+            if(icon24.FileExists()) {
+                bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
+                if(!bmp.IsOk()) { bmp = defaultBitmap; }
+            }
+
+        } else {
+            if(icon16.FileExists()) {
+                bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
+                if(!bmp.IsOk()) { bmp = defaultBitmap; }
+            }
+        }
+        clToolBarButton* button = new clToolBarButton(toolbar, wxXmlResource::GetXRCID(ti.GetId()), bmp, ti.GetName());
+        toolbar->InsertAfter(where, button);
+        where = button->GetId();
+    }
+    toolbar->Realize();
 }
 
 void ExternalToolsPlugin::DoCreatePluginMenu()
@@ -265,17 +233,15 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
     const int MENU_ID = 28374;
     if(m_parentMenu) {
         // destroy the old menu entries
-        if(m_parentMenu->FindItem(MENU_ID)) {
-            m_parentMenu->Destroy(MENU_ID);
-        }
+        if(m_parentMenu->FindItem(MENU_ID)) { m_parentMenu->Destroy(MENU_ID); }
 
         wxMenu* menu = new wxMenu();
         wxMenuItem* item(NULL);
-        item = new wxMenuItem(
-            menu, XRCID("external_tools_settings"), _("Configure external tools..."), wxEmptyString, wxITEM_NORMAL);
+        item = new wxMenuItem(menu, XRCID("external_tools_settings"), _("Configure external tools..."), wxEmptyString,
+                              wxITEM_NORMAL);
         menu->Append(item);
-        item = new wxMenuItem(
-            menu, XRCID("external_tools_monitor"), _("Show Running Tools..."), wxEmptyString, wxITEM_NORMAL);
+        item = new wxMenuItem(menu, XRCID("external_tools_monitor"), _("Show Running Tools..."), wxEmptyString,
+                              wxITEM_NORMAL);
         menu->Append(item);
         menu->AppendSeparator();
 
@@ -287,8 +253,8 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
 
         for(size_t i = 0; i < tools.size(); i++) {
             ToolInfo ti = tools.at(i);
-            item = new wxMenuItem(
-                menu, wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), wxEmptyString, wxITEM_NORMAL);
+            item = new wxMenuItem(menu, wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), wxEmptyString,
+                                  wxITEM_NORMAL);
             menu->Append(item);
         }
         m_parentMenu->Append(MENU_ID, _("External Tools"), menu);
@@ -316,9 +282,7 @@ void ExternalToolsPlugin::OnFileSave(clCommandEvent& event)
             ToolInfo ti = tool;
             wxString filename = event.GetFileName();
             ::WrapWithQuotes(filename);
-            filename += " ";
-            ti.SetArguments(filename + ti.GetArguments());
-            ToolsTaskManager::Instance()->StartTool(ti);
+            ToolsTaskManager::Instance()->StartTool(ti, filename);
         }
     });
 }

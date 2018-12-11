@@ -29,13 +29,15 @@
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <wx/filename.h>
-#include <wx/arrstr.h>
 #include <wx/gdicmn.h>
 #include "codelite_exports.h"
 #include <map>
 #include "cJSON.h"
+#if wxUSE_GUI
+#include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/font.h>
+#endif
 #include "macros.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -87,7 +89,7 @@ public:
     bool isNumber() const;
     bool isArray() const;
 
-    wxString format() const;
+    wxString format(bool formatted = true) const;
     /**
      * @brief format the JSON into a raw c string
      * The caller should free the pointer (using free())
@@ -97,10 +99,13 @@ public:
     int toInt(int defaultVal = -1) const;
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
-    wxSize toSize() const;
-    wxPoint toPoint() const;
+    
+#if wxUSE_GUI
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
+    wxSize toSize() const;
+    wxPoint toPoint() const;
+#endif
 
     wxStringMap_t toStringMap() const;
 
@@ -128,14 +133,16 @@ public:
     JSONElement& addProperty(const wxString& name, long value);
     JSONElement& addProperty(const wxString& name, size_t value);
     JSONElement& addProperty(const wxString& name, bool value);
+#if wxUSE_GUI
     JSONElement& addProperty(const wxString& name, const wxSize& sz);
     JSONElement& addProperty(const wxString& name, const wxPoint& pt);
     JSONElement& addProperty(const wxString& name, const wxColour& colour);
+    JSONElement& addProperty(const wxString& name, const wxFont& font);
+#endif
     JSONElement& addProperty(const wxString& name, const wxArrayString& arr);
     JSONElement& addProperty(const wxString& name, const wxStringMap_t& stringMap);
     JSONElement& addProperty(const wxString& name, const JSONElement& element);
     JSONElement& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
-    JSONElement& addProperty(const wxString& name, const wxFont& font);
 
     /**
      * @brief delete property by name

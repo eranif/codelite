@@ -32,7 +32,7 @@ class ContextHtml : public ContextBase
 {
 public:
     ContextHtml();
-    ContextHtml(LEditor *Editor);
+    ContextHtml(clEditor *Editor);
     virtual ~ContextHtml();
 
 public:
@@ -53,7 +53,7 @@ public:
     virtual bool IsComment(long pos);
     virtual bool IsCommentOrString(long pos);
     virtual bool IsDefaultContext() const;
-    virtual ContextBase* NewInstance(LEditor* container);
+    virtual ContextBase* NewInstance(clEditor* container);
     virtual void OnCallTipClick(wxStyledTextEvent& event);
     virtual void OnCalltipCancel();
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event);

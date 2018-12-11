@@ -7,36 +7,34 @@
 #ifndef _CODELITE_LITEEDITOR_SYNTAXHIGHLIGHTBASEDLG_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_SYNTAXHIGHLIGHTBASEDLG_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
+#include "Notebook.h"
+#include "clToolBar.h"
+#include <wx/arrstr.h>
 #include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
-#include <wx/toolbar.h>
+#include <wx/button.h>
+#include <wx/checkbox.h>
+#include <wx/choice.h>
+#include <wx/clrpicker.h>
+#include <wx/dialog.h>
+#include <wx/fontpicker.h>
+#include <wx/iconbndl.h>
+#include <wx/imaglist.h>
+#include <wx/listbox.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/imaglist.h>
-#include <wx/stattext.h>
-#include <wx/fontpicker.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/clrpicker.h>
-#include <wx/stc/stc.h>
-#include <wx/listbox.h>
-#include <wx/textctrl.h>
-#include <wx/checkbox.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/statline.h>
-#include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
+#include <wx/toolbar.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -49,33 +47,24 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class SyntaxHighlightBaseDlg : public wxDialog
 {
 protected:
-    wxAuiToolBar* m_auibar;
-    std::map<int, wxMenu*> m_dropdownMenus;
-    wxMenu* m_menu142;
-    wxMenuItem* m_menuItemExportAll;
-    wxMenuItem* m_menuItemExportSelective;
-    wxMenu* m_menu151;
-    wxMenuItem* m_menuItem153;
-    wxNotebook* m_notebook76;
+    wxPanel* m_panel171;
+    clToolBar* m_toolbar;
+    Notebook* m_notebook;
     wxPanel* m_panelGlobalColours;
     wxStaticText* m_staticText159;
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
-    wxStaticText* m_staticText91;
-    wxColourPickerCtrl* m_colourPickerOutputPanesFgColour;
-    wxStaticText* m_staticText911;
-    wxColourPickerCtrl* m_colourPickerOutputPanesBgColour;
-    wxStaticText* m_staticText165;
+    wxCheckBox* m_cbUseCustomBaseColour;
+    wxColourPickerCtrl* m_colourPickerBaseColour;
     wxStyledTextCtrl* m_stcPreview;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
-    wxNotebook* m_notebook2;
+    Notebook* m_notebook2;
     wxPanel* m_panelGlobalSettings;
     wxStaticText* m_staticText70;
     wxChoice* m_choiceLexerThemes;
@@ -115,17 +104,11 @@ protected:
     wxButton* m_buttonApply;
 
 protected:
-    virtual void OnNewTheme(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnToolExportAll(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnExportAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnExportSelective(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnImport(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRestoreDefaults(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnImportEclipseTheme(wxAuiToolBarEvent& event) { event.Skip(); }
-    virtual void OnLoadEclipseThemeWebsite(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOutputViewColourChanged(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnUseCustomBaseColour(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -150,18 +133,13 @@ protected:
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-
-    virtual void ShowAuiToolMenu(wxAuiToolBarEvent& event);
-    wxAuiToolBar* GetAuibar() { return m_auibar; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxStaticText* GetStaticText159() { return m_staticText159; }
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
-    wxStaticText* GetStaticText91() { return m_staticText91; }
-    wxColourPickerCtrl* GetColourPickerOutputPanesFgColour() { return m_colourPickerOutputPanesFgColour; }
-    wxStaticText* GetStaticText911() { return m_staticText911; }
-    wxColourPickerCtrl* GetColourPickerOutputPanesBgColour() { return m_colourPickerOutputPanesBgColour; }
-    wxStaticText* GetStaticText165() { return m_staticText165; }
+    wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
+    wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
     wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
     wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
     wxListBox* GetListBox() { return m_listBox; }
@@ -198,14 +176,16 @@ public:
     wxStaticText* GetStaticText84() { return m_staticText84; }
     wxColourPickerCtrl* GetColourPickerSelTextFgColour() { return m_colourPickerSelTextFgColour; }
     wxPanel* GetPanelTextSelection() { return m_panelTextSelection; }
-    wxNotebook* GetNotebook2() { return m_notebook2; }
+    Notebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
     wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
-    wxNotebook* GetNotebook76() { return m_notebook76; }
-    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    Notebook* GetNotebook() { return m_notebook; }
+    wxPanel* GetPanel171() { return m_panel171; }
+    SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SyntaxHighlightBaseDlg();
 };
-
 
 class NewThemeDialogBase : public wxDialog
 {
@@ -231,7 +211,9 @@ public:
     wxChoice* GetChoiceLanguage() { return m_choiceLanguage; }
     wxStaticText* GetStaticText135() { return m_staticText135; }
     wxChoice* GetChoiceBaseTheme() { return m_choiceBaseTheme; }
-    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewThemeDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Theme"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewThemeDialogBase();
 };
 

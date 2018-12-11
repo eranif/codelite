@@ -23,27 +23,27 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "unixprocess_impl.h"
 #include "file_logger.h"
+#include "unixprocess_impl.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
-#include <wx/stdpaths.h>
-#include <wx/filename.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/select.h>
-#include <errno.h>
-#include <sys/wait.h>
-#include <string.h>
 #include "procutils.h"
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/select.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #ifdef __WXGTK__
 #ifdef __FreeBSD__
+#include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <libutil.h>
 #else
 #include <pty.h>
 #include <utmp.h>
@@ -64,8 +64,8 @@ static int argc = 0;
 #ifdef __STDC__
 
 #include <stddef.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #else /* !__STDC__ */
 
@@ -263,8 +263,21 @@ static void RemoveTerminalColoring(char* buffer)
             }
             break;
         case BUFF_STATE_IN_ESC:
-            if(*buffer == 'm') { // end of color sequence
+            switch((*buffer)) {
+            case 'm':
+            case 'K':
+            case 'G':
+            case 'J':
+            case 'H':
+            case 'X':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'd':
                 state = BUFF_STATE_NORMAL;
+                break;
+            default:
+                break;
             }
             break;
         }
@@ -339,9 +352,7 @@ bool UnixProcessImpl::Read(wxString& buff)
             RemoveTerminalColoring(buffer);
 
             wxString convBuff = wxString(buffer, wxConvUTF8);
-            if(convBuff.IsEmpty()) {
-                convBuff = wxString::From8BitData(buffer);
-            }
+            if(convBuff.IsEmpty()) { convBuff = wxString::From8BitData(buffer); }
 
             buff = convBuff;
             return true;
@@ -350,9 +361,7 @@ bool UnixProcessImpl::Read(wxString& buff)
 
     } else {
 
-        if(errCode == EINTR || errCode == EAGAIN) {
-            return true;
-        }
+        if(errCode == EINTR || errCode == EAGAIN) { return true; }
 
         // Process terminated
         // the exit code will be set in the sigchld event handler
@@ -368,15 +377,15 @@ bool UnixProcessImpl::Write(const wxString& buff)
     return bytes == (int)tmpbuf.length();
 }
 
-IProcess* UnixProcessImpl::Execute(
-    wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback* cb)
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+                                   const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxString newCmd = cmd;
     if((flags & IProcessCreateAsSuperuser)) {
         if(wxFileName::Exists("/usr/bin/sudo")) {
             newCmd.Prepend("/usr/bin/sudo --askpass ");
             clDEBUG1() << "Executing command:" << newCmd << clEndl;
-            
+
         } else {
             clWARNING() << "Unable to run command: '" << cmd
                         << "' as superuser: /usr/bin/sudo: no such file or directory" << clEndl;
@@ -386,9 +395,7 @@ IProcess* UnixProcessImpl::Execute(
     }
 
     make_argv(newCmd);
-    if(argc == 0) {
-        return NULL;
-    }
+    if(argc == 0) { return NULL; }
 
     // fork the child process
     wxString curdir = wxGetCwd();
@@ -404,15 +411,11 @@ IProcess* UnixProcessImpl::Execute(
 
         // at this point, slave is used as stdin/stdout/stderr
         // Child process
-        if(workingDirectory.IsEmpty() == false) {
-            wxSetWorkingDirectory(workingDirectory);
-        }
+        if(workingDirectory.IsEmpty() == false) { wxSetWorkingDirectory(workingDirectory); }
 
         // execute the process
         errno = 0;
-        if(execvp(argv[0], argv) < 0) {
-            clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl;
-        }
+        if(execvp(argv[0], argv) < 0) { clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl; }
 
         // if we got here, we failed...
         exit(0);
@@ -449,9 +452,7 @@ IProcess* UnixProcessImpl::Execute(
         proc->SetPid(rc);
         proc->m_flags = flags; // Keep the creation flags
 
-        if(!(proc->m_flags & IProcessCreateSync)) {
-            proc->StartReaderThread();
-        }
+        if(!(proc->m_flags & IProcessCreateSync)) { proc->StartReaderThread(); }
         return proc;
     }
 }

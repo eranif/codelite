@@ -107,10 +107,8 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeIt
 {
     if(!item.IsOk()) { return wxEmptyString; }
     if(validateFolder) {
-        int imgId = tree->GetItemImage(item);
-        if(imgId != 1) { // not a virtual folder
-            return wxEmptyString;
-        }
+        MyVdTreeItemData* cd = dynamic_cast<MyVdTreeItemData*>(tree->GetItemData(item));
+        if(!(cd && cd->IsFolder())) { return ""; }
     }
 
     std::deque<wxString> queue;

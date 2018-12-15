@@ -34,6 +34,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrGeneral->GetGrid());
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_pgPropDisplayLineNumbers->SetValue(options->GetDisplayLineNumbers());
+    m_pgPropRelativeLineNumbers->SetValue(options->GetRelativeLineNumbers());
     m_pgPropHighlightMatchedBrace->SetValue(options->GetHighlightMatchedBraces());
     m_pgPropShowIndentGuidelines->SetValue(options->GetShowIndentationGuidelines());
     m_pgPropEnableCaretLine->SetValue(options->GetHighlightCaretLine());
@@ -64,6 +65,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
 void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 {
     options->SetDisplayLineNumbers(m_pgPropDisplayLineNumbers->GetValue().GetBool());
+    options->SetRelativeLineNumbers(m_pgPropRelativeLineNumbers->GetValue().GetBool());
     options->SetHighlightMatchedBraces(m_pgPropHighlightMatchedBrace->GetValue().GetBool());
     options->SetShowIndentationGuidelines(m_pgPropShowIndentGuidelines->GetValue().GetBool());
     options->SetHighlightCaretLine(m_pgPropEnableCaretLine->GetValue().GetBool());

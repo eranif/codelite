@@ -94,7 +94,8 @@ protected:
     bool m_highlightCaretLine;
     bool m_clearHighlitWordsOnFind;
     bool m_displayLineNumbers;
-    bool m_relativeLineNumbers;
+    bool m_relativeLineNumbers = false;
+    bool m_highlightCurLineNumber = true;
     bool m_showIndentationGuidelines;
     wxColour m_caretLineColour;
     bool m_indentUsesTabs;
@@ -351,6 +352,7 @@ public:
     bool GetHighlightCaretLine() const { return m_highlightCaretLine; }
     bool GetDisplayLineNumbers() const { return m_displayLineNumbers; }
     bool GetRelativeLineNumbers() const { return m_relativeLineNumbers; }
+    bool GetHighlightCurrentLineNumber() const { return m_highlightCurLineNumber; }
     bool GetShowIndentationGuidelines() const { return m_showIndentationGuidelines; }
     wxColour GetCaretLineColour() const { return m_caretLineColour; }
 
@@ -372,6 +374,7 @@ public:
     void SetHighlightCaretLine(bool b) { m_highlightCaretLine = b; }
     void SetDisplayLineNumbers(bool b) { m_displayLineNumbers = b; }
     void SetRelativeLineNumbers(bool b) { m_relativeLineNumbers = b; }
+    void SetHighlightCurrentLineNumber(bool b) { m_highlightCurLineNumber = b; }
     void SetShowIndentationGuidelines(bool b) { m_showIndentationGuidelines = b; }
     void SetCaretLineColour(wxColour c) { m_caretLineColour = c; }
 

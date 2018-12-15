@@ -55,6 +55,7 @@
 #define HYPERLINK_INDICATOR 4
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
 #define MARKER_CONTEXT_WORD_HIGHLIGHT 6
+#define CUR_LINE_NUMBER_STYLE (wxSTC_STYLE_MAX - 1)
 
 #if(wxVERSION_NUMBER < 3101)
 // Some wxSTC keycodes names were altered in 311, & the old versions deprecated
@@ -260,11 +261,13 @@ protected:
     wxString m_keywordLocals;
     wxBitmap m_editorBitmap;
     size_t m_statusBarFields;
-    int m_lastBeingLine;
-    int m_lastCurLine;
+    int m_lastBeginLine = wxNOT_FOUND;
+    int m_lastLine = wxNOT_FOUND;
     int m_lastEndLine;
     int m_lastLineCount;
-    
+    wxColour m_selTextColour;
+    wxColour m_selTextBgColour;
+
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -994,10 +997,13 @@ private:
     void DoRestoreMarkers();
 
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
-    
-    
+
     wxFontEncoding DetectEncoding(const wxString& filename);
-    void updateLineNumber();
+    
+    // Line numbers drawings
+    void DoUpdateRelativeLineNumbers();
+    void DoUpdateLineNumbers();
+    void UpdateLineNumbers();
 
     // Event handlers
     void OpenURL(wxCommandEvent& event);

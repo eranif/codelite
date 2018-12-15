@@ -153,6 +153,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
         m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
         m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
+        m_highlightCurLineNumber = XmlUtils::ReadBool(node, wxT("HighlightCurLineNumber"), m_highlightCurLineNumber);
         m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
         m_caretLineColour =
             XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
@@ -199,7 +200,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
         m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
-        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
+        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"),
+                                                                     m_dontOverrideSearchStringWithSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
@@ -269,6 +271,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
     n->AddProperty(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));
     n->AddProperty(wxT("RelativeLineNumber"), BoolToString(m_relativeLineNumbers));
+    n->AddProperty("HighlightCurLineNumber", BoolToString(m_highlightCurLineNumber));
     n->AddProperty(wxT("IndentationGuides"), BoolToString(m_showIndentationGuidelines));
     n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));

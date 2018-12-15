@@ -301,8 +301,6 @@ clEditor::clEditor(wxWindow* parent)
     , m_mgr(PluginManager::Get())
     , m_hasCCAnnotation(false)
     , m_richTooltip(NULL)
-    , m_lastBeingLine(0)
-    , m_lastCurLine(0)
     , m_lastEndLine(0)
     , m_lastLineCount(0)
 {
@@ -594,7 +592,7 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 
     // Line numbers
-    if (options->GetRelativeLineNumbers()) {
+    if(options->GetRelativeLineNumbers()) {
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
     } else {
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
@@ -651,6 +649,15 @@ void clEditor::SetProperties()
     wxColour foldFgColour = wxColor(0xff, 0xff, 0xff);
     wxColour foldBgColour = wxColor(0x80, 0x80, 0x80);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer(GetContext()->GetName());
+    if(lexer) {
+        const StyleProperty& sp = lexer->GetProperty(SEL_TEXT_ATTR_ID);
+        m_selTextBgColour = sp.GetBgColour();
+        m_selTextColour = sp.GetFgColour();
+    } else {
+        m_selTextBgColour = StyleGetBackground(0);
+        m_selTextColour = StyleGetForeground(0);
+    }
+
     if(lexer && lexer->IsDark()) {
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
         if(!defaultProperty.IsNull()) {
@@ -1163,7 +1170,10 @@ void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
-    updateLineNumber();
+
+    // Update the line numbers if needed (only when using custom drawing line numbers)
+    UpdateLineNumbers();
+
     // Get current position
     long pos = GetCurrentPos();
 
@@ -1231,11 +1241,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 
     RecalcHorizontalScrollbar();
 
-    static int lastLine(wxNOT_FOUND);
-
     // get the current position
-    if((curLine != lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
-        lastLine = curLine;
+    if((curLine != m_lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetEditor(this);
         evtUpdateNavBar.SetLineNumber(curLine);
@@ -1244,6 +1251,9 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
+
+    // Keep the last line
+    m_lastLine = curLine;
 }
 
 void clEditor::OnMarginClick(wxStyledTextEvent& event)
@@ -2866,23 +2876,21 @@ void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
     }
 }
 
-
 wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
 {
     wxFontEncoding encoding = GetOptions()->GetFileFontEncoding();
 #if defined(USE_UCHARDET)
     wxFile file(filename);
-    if (!file.IsOpened())
-        return encoding;
-    
+    if(!file.IsOpened()) return encoding;
+
     size_t size = file.Length();
-    if (size == 0) {
+    if(size == 0) {
         file.Close();
         return encoding;
     }
 
-    wxByte* buffer = (wxByte*) malloc(sizeof(wxByte) * (size + 4));
-    if (!buffer) {
+    wxByte* buffer = (wxByte*)malloc(sizeof(wxByte) * (size + 4));
+    if(!buffer) {
         file.Close();
         return encoding;
     }
@@ -2893,29 +2901,29 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
 
     size_t readBytes = file.Read((void*)buffer, size);
     bool result = false;
-    if (readBytes > 0) {
+    if(readBytes > 0) {
         uchardet_t ud = uchardet_new();
-        if (0 == uchardet_handle_data(ud, (const char *)buffer, readBytes)) {
+        if(0 == uchardet_handle_data(ud, (const char*)buffer, readBytes)) {
             uchardet_data_end(ud);
             wxString charset(uchardet_get_charset(ud));
             charset.MakeUpper();
-            if (charset.find("UTF-8") != wxString::npos) {
+            if(charset.find("UTF-8") != wxString::npos) {
                 encoding = wxFONTENCODING_UTF8;
-            } else if (charset.find("GB18030") != wxString::npos) {
+            } else if(charset.find("GB18030") != wxString::npos) {
                 encoding = wxFONTENCODING_GB2312;
-            } else if (charset.find("BIG5") != wxString::npos) {
+            } else if(charset.find("BIG5") != wxString::npos) {
                 encoding = wxFONTENCODING_BIG5;
-            } else if (charset.find("EUC-JP") != wxString::npos) {
+            } else if(charset.find("EUC-JP") != wxString::npos) {
                 encoding = wxFONTENCODING_EUC_JP;
-            } else if (charset.find("EUC-KR") != wxString::npos) {
+            } else if(charset.find("EUC-KR") != wxString::npos) {
                 encoding = wxFONTENCODING_EUC_KR;
-            } else if (charset.find("WINDOWS-1252") != wxString::npos) {
+            } else if(charset.find("WINDOWS-1252") != wxString::npos) {
                 encoding = wxFONTENCODING_CP1252;
-            } else if (charset.find("WINDOWS-1255") != wxString::npos) {
+            } else if(charset.find("WINDOWS-1255") != wxString::npos) {
                 encoding = wxFONTENCODING_CP1255;
-            } else if (charset.find("ISO-8859-8") != wxString::npos) {
+            } else if(charset.find("ISO-8859-8") != wxString::npos) {
                 encoding = wxFONTENCODING_ISO8859_8;
-            } else if (charset.find("SHIFT_JIS") != wxString::npos) {
+            } else if(charset.find("SHIFT_JIS") != wxString::npos) {
                 encoding = wxFONTENCODING_SHIFT_JIS;
             }
         }
@@ -2927,30 +2935,46 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
+void clEditor::DoUpdateLineNumbers() { return; }
 
-void clEditor::updateLineNumber()
+void clEditor::DoUpdateRelativeLineNumbers()
 {
-    if (!GetOptions()->GetDisplayLineNumbers() || !GetOptions()->GetRelativeLineNumbers()) {
-        return;
-    }
     int beginLine = std::max(0, GetFirstVisibleLine() - 10);
     int curLine = GetCurrentLine();
     int lineCount = GetLineCount();
     int endLine = std::min(lineCount, GetFirstVisibleLine() + LinesOnScreen() + 10);
-    if (m_lastBeingLine == beginLine && m_lastCurLine == curLine
-        && m_lastEndLine == endLine && m_lastLineCount == lineCount) {
+    if((m_lastBeginLine == beginLine) && (m_lastLine == curLine) && (m_lastEndLine == endLine) &&
+       (m_lastLineCount == lineCount)) {
         return;
     }
-    m_lastBeingLine = beginLine;
-    m_lastCurLine = curLine;
+    m_lastBeginLine = beginLine;
     m_lastLineCount = lineCount;
     m_lastEndLine = endLine;
     MarginSetText(curLine, (wxString() << " " << (curLine)));
-    for (int i = std::min(endLine, curLine - 1); i >= beginLine; --i) {
+
+    // Use a distinct style to highlight the current line number
+    StyleSetBackground(CUR_LINE_NUMBER_STYLE, m_selTextBgColour);
+    StyleSetForeground(CUR_LINE_NUMBER_STYLE, m_selTextColour);
+    MarginSetStyle(curLine, CUR_LINE_NUMBER_STYLE);
+
+    for(int i = std::min(endLine, curLine - 1); i >= beginLine; --i) {
         MarginSetText(i, (wxString() << " " << (curLine - i)));
+        MarginSetStyle(i, 0);
     }
-    for (int i = std::max(beginLine, curLine + 1); i <= endLine; ++i) {
+    for(int i = std::max(beginLine, curLine + 1); i <= endLine; ++i) {
         MarginSetText(i, (wxString() << " " << (i - curLine)));
+        MarginSetStyle(i, 0);
+    }
+}
+
+void clEditor::UpdateLineNumbers()
+{
+    OptionsConfigPtr c = GetOptions();
+    if(!c->GetDisplayLineNumbers()) { return; }
+    if(c->GetRelativeLineNumbers()) {
+        DoUpdateRelativeLineNumbers();
+    } else if(c->GetHighlightCurrentLineNumber()) {
+        DoUpdateLineNumbers();
     }
 }
 
@@ -3273,7 +3297,7 @@ void clEditor::OnLeftUp(wxMouseEvent& event)
     if(!value) { DoQuickJump(event, false); }
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
-    updateLineNumber();
+    UpdateLineNumbers();
 }
 
 void clEditor::OnLeaveWindow(wxMouseEvent& event)
@@ -3291,7 +3315,7 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
 {
     m_isFocused = false;
     event.Skip();
-    updateLineNumber();
+    UpdateLineNumbers();
     if(HasCapture()) {
         CL_DEBUG("Releasing the mouse...");
         ReleaseMouse();
@@ -4760,7 +4784,7 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
         SetIndicatorCurrent(DEBUGGER_INDICATOR);
         IndicatorClearRange(0, GetLength());
     }
-    updateLineNumber();
+    UpdateLineNumbers();
 }
 
 size_t clEditor::GetCodeNavModifier()
@@ -5084,6 +5108,7 @@ void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
     event.Skip();
     DoUpdateOptions();
     SetProperties();
+    UpdateLineNumbers();
 }
 
 void clEditor::ConvertIndentToSpaces()

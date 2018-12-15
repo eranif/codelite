@@ -40,6 +40,9 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropDisplayLineNumbers = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Show line numbers margin"), wxPG_LABEL, 1) );
     m_pgPropDisplayLineNumbers->SetHelpString(_("Show line numbers margin"));
     
+    m_pgPropRelativeLineNumbers = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Enable Relative line numbers"), wxPG_LABEL, 1) );
+    m_pgPropRelativeLineNumbers->SetHelpString(_("Use Relative line numbers"));
+    
     m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn( m_pgPropCategoryGeneral,  new wxBoolProperty( _("Highlight matched braces"), wxPG_LABEL, 1) );
     m_pgPropHighlightMatchedBrace->SetHelpString(_("Highlight matched braces"));
     

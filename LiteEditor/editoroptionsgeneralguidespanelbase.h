@@ -39,6 +39,7 @@ protected:
     wxPropertyGridManager* m_pgMgrGeneral;
     wxPGProperty* m_pgPropCategoryGeneral;
     wxPGProperty* m_pgPropDisplayLineNumbers;
+    wxPGProperty* m_pgPropRelativeLineNumbers;
     wxPGProperty* m_pgPropHighlightMatchedBrace;
     wxPGProperty* m_pgPropHideEditMargin;
     wxPGProperty* m_pgPropShowIndentGuidelines;

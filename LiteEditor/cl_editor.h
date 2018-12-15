@@ -260,7 +260,11 @@ protected:
     wxString m_keywordLocals;
     wxBitmap m_editorBitmap;
     size_t m_statusBarFields;
-
+    int m_lastBeingLine;
+    int m_lastCurLine;
+    int m_lastEndLine;
+    int m_lastLineCount;
+    
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -993,6 +997,7 @@ private:
     
     
     wxFontEncoding DetectEncoding(const wxString& filename);
+    void updateLineNumber();
 
     // Event handlers
     void OpenURL(wxCommandEvent& event);

@@ -301,6 +301,10 @@ clEditor::clEditor(wxWindow* parent)
     , m_mgr(PluginManager::Get())
     , m_hasCCAnnotation(false)
     , m_richTooltip(NULL)
+    , m_lastBeingLine(0)
+    , m_lastCurLine(0)
+    , m_lastEndLine(0)
+    , m_lastLineCount(0)
 {
     Hide();
 #ifdef __WXGTK3__
@@ -590,7 +594,11 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 
     // Line numbers
-    SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
+    if (options->GetRelativeLineNumbers()) {
+        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    } else {
+        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
+    }
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID,
@@ -1155,6 +1163,7 @@ void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
+    updateLineNumber();
     // Get current position
     long pos = GetCurrentPos();
 
@@ -2918,6 +2927,33 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
+
+void clEditor::updateLineNumber()
+{
+    if (!GetOptions()->GetDisplayLineNumbers() || !GetOptions()->GetRelativeLineNumbers()) {
+        return;
+    }
+    int beginLine = std::max(0, GetFirstVisibleLine() - 10);
+    int curLine = GetCurrentLine();
+    int lineCount = GetLineCount();
+    int endLine = std::min(lineCount, GetFirstVisibleLine() + LinesOnScreen() + 10);
+    if (m_lastBeingLine == beginLine && m_lastCurLine == curLine
+        && m_lastEndLine == endLine && m_lastLineCount == lineCount) {
+        return;
+    }
+    m_lastBeingLine = beginLine;
+    m_lastCurLine = curLine;
+    m_lastLineCount = lineCount;
+    m_lastEndLine = endLine;
+    MarginSetText(curLine, (wxString() << " " << (curLine)));
+    for (int i = std::min(endLine, curLine - 1); i >= beginLine; --i) {
+        MarginSetText(i, (wxString() << " " << (curLine - i)));
+    }
+    for (int i = std::max(beginLine, curLine + 1); i <= endLine; ++i) {
+        MarginSetText(i, (wxString() << " " << (i - curLine)));
+    }
+}
+
 void clEditor::OpenFile()
 {
     wxWindowUpdateLocker locker(this);
@@ -3237,6 +3273,7 @@ void clEditor::OnLeftUp(wxMouseEvent& event)
     if(!value) { DoQuickJump(event, false); }
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
+    updateLineNumber();
 }
 
 void clEditor::OnLeaveWindow(wxMouseEvent& event)
@@ -3254,6 +3291,7 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
 {
     m_isFocused = false;
     event.Skip();
+    updateLineNumber();
     if(HasCapture()) {
         CL_DEBUG("Releasing the mouse...");
         ReleaseMouse();
@@ -4722,6 +4760,7 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
         SetIndicatorCurrent(DEBUGGER_INDICATOR);
         IndicatorClearRange(0, GetLength());
     }
+    updateLineNumber();
 }
 
 size_t clEditor::GetCodeNavModifier()

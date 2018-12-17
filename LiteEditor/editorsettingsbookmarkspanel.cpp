@@ -39,25 +39,19 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent)
 
     // These are localised inside m_bookMarkShape. However serialising the translated strings will break other
     // locales...
-    const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"),
-                                           wxTRANSLATE("Rounded Rectangle"),
-                                           wxTRANSLATE("Circle"),
-                                           wxTRANSLATE("Small Arrow") };
-    m_stringManager.AddStrings(
-        sizeof(UnlocalisedShapes) / sizeof(wxString), UnlocalisedShapes, options->GetBookmarkShape(), m_bookMarkShape);
+    const wxString UnlocalisedShapes[] = { wxTRANSLATE("Small Rectangle"), wxTRANSLATE("Rounded Rectangle"),
+                                           wxTRANSLATE("Circle"), wxTRANSLATE("Small Arrow"), wxTRANSLATE("Bookmark") };
+    m_stringManager.AddStrings(sizeof(UnlocalisedShapes) / sizeof(wxString), UnlocalisedShapes,
+                               options->GetBookmarkShape(), m_bookMarkShape);
 
     for(size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
         BookmarkData arr;
         wxColour col = options->GetBookmarkBgColour(n);
-        if(!col.IsOk()) {
-            col = options->GetBookmarkBgColour(0);
-        }
+        if(!col.IsOk()) { col = options->GetBookmarkBgColour(0); }
         arr.bg = col;
 
         col = options->GetBookmarkFgColour(n);
-        if(!col.IsOk()) {
-            col = options->GetBookmarkFgColour(0);
-        }
+        if(!col.IsOk()) { col = options->GetBookmarkFgColour(0); }
         arr.fg = col;
 
         arr.defaultLabel = m_choiceBMType->GetString(n); // Store the default  value
@@ -72,14 +66,10 @@ EditorSettingsBookmarksPanel::EditorSettingsBookmarksPanel(wxWindow* parent)
     ChangeSelection(0); // Fake a change to display the standard-bookmark values
 
     wxString val1 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
-    if(val1.IsEmpty() == false) {
-        m_highlightColor->SetColour(val1);
-    }
+    if(val1.IsEmpty() == false) { m_highlightColor->SetColour(val1); }
 
     long alpha = EditorConfigST::Get()->GetInteger(wxT("WordHighlightAlpha"));
-    if(alpha != wxNOT_FOUND) {
-        m_spinCtrlHighlightAlpha->SetValue(alpha);
-    }
+    if(alpha != wxNOT_FOUND) { m_spinCtrlHighlightAlpha->SetValue(alpha); }
     m_clearHighlitWords->SetValue(options->GetClearHighlitWordsOnFind());
 }
 
@@ -89,9 +79,7 @@ void EditorSettingsBookmarksPanel::Save(OptionsConfigPtr options)
 
     // Get the bookmark selection, unlocalised
     wxString bmShape = m_stringManager.GetStringSelection();
-    if(bmShape.IsEmpty()) {
-        bmShape = wxT("Small Arrow");
-    }
+    if(bmShape.IsEmpty()) { bmShape = wxT("Bookmark"); }
     options->SetBookmarkShape(bmShape);
 
     ChangeSelection(m_choiceBMType->GetSelection()); // Fake a change to store any altered values

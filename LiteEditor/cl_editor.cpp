@@ -80,6 +80,8 @@
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
 #include <wx/wupdlock.h>
+#include "imanager.h"
+#include "bitmap_loader.h"
 //#include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -358,6 +360,7 @@ clEditor::clEditor(wxWindow* parent)
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")] = wxSTC_MARK_ARROW;
     ms_bookmarkShapes[wxT("Circle")] = wxSTC_MARK_CIRCLE;
+    ms_bookmarkShapes[wxT("Bookmark")] = wxSTC_MARK_BOOKMARK;
 
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else
@@ -599,8 +602,8 @@ void clEditor::SetProperties()
     }
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
-    SetMarginMask(NUMBER_MARGIN_ID,
-                  ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
+    SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler |
+                                      mmt_all_breakpoints | mmt_line_marker));
 
     SetMarginType(EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
     SetMarginWidth(EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
@@ -657,6 +660,7 @@ void clEditor::SetProperties()
         m_selTextBgColour = StyleGetBackground(0);
         m_selTextColour = StyleGetForeground(0);
     }
+    MarkerDefine(smt_line_marker, wxSTC_MARK_LEFTRECT, StyleGetForeground(0));
 
     if(lexer && lexer->IsDark()) {
         const StyleProperty& defaultProperty = lexer->GetProperty(0);
@@ -711,7 +715,7 @@ void clEditor::SetProperties()
     }
 
     // Bookmark
-    int marker = wxSTC_MARK_ARROW;
+    int marker = wxSTC_MARK_BOOKMARK;
     std::map<wxString, int>::iterator iter = ms_bookmarkShapes.find(options->GetBookmarkShape());
     if(iter != ms_bookmarkShapes.end()) { marker = iter->second; }
 
@@ -729,6 +733,7 @@ void clEditor::SetProperties()
 
     MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
     MarkerDefineBitmap(smt_bp_disabled, wxBitmap(wxImage(BreakptDisabled)));
+
     // Give disabled breakpoints a "grey" look
     MarkerSetBackground(smt_bp_disabled, "GREY");
     MarkerSetAlpha(smt_bp_disabled, 30);
@@ -1252,6 +1257,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     // let the context handle this as well
     m_context->OnSciUpdateUI(event);
 
+    // TODO:: mark the current line
+    
     // Keep the last line
     m_lastLine = curLine;
 }
@@ -2970,8 +2977,9 @@ void clEditor::DoUpdateRelativeLineNumbers()
 void clEditor::UpdateLineNumbers()
 {
     OptionsConfigPtr c = GetOptions();
-    if(!c->GetDisplayLineNumbers()) { return; }
-    if(c->GetRelativeLineNumbers()) {
+    if(!c->GetDisplayLineNumbers()) {
+        return;
+    } else if(c->GetRelativeLineNumbers()) {
         DoUpdateRelativeLineNumbers();
     } else if(c->GetHighlightCurrentLineNumber()) {
         DoUpdateLineNumbers();

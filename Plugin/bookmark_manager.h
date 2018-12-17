@@ -49,23 +49,24 @@
 enum sci_marker_types { /* markers 0-2 are unused atm */
                         smt_FIRST_BMK_TYPE = 3,
                         smt_LAST_BMK_TYPE = smt_FIRST_BMK_TYPE + CL_N0_OF_BOOKMARK_TYPES - 1,
-                        smt_bookmark1 = smt_FIRST_BMK_TYPE,
-                        smt_bookmark2,
-                        smt_bookmark3,
-                        smt_bookmark4,
-                        smt_find_bookmark = smt_LAST_BMK_TYPE,
-                        smt_FIRST_BP_TYPE = 8,
-                        smt_cond_bp_disabled = smt_FIRST_BP_TYPE,
-                        smt_bp_cmdlist_disabled,
-                        smt_bp_disabled,
-                        smt_bp_ignored,
-                        smt_cond_bp,
-                        smt_bp_cmdlist,
-                        smt_breakpoint,
-                        smt_LAST_BP_TYPE = smt_breakpoint,
-                        smt_indicator,
-                        smt_warning,
-                        smt_error
+                        smt_bookmark1 = smt_FIRST_BMK_TYPE,       // 3
+                        smt_bookmark2,                            // 4
+                        smt_bookmark3,                            // 5
+                        smt_bookmark4,                            // 6
+                        smt_find_bookmark = smt_LAST_BMK_TYPE,    // 7
+                        smt_FIRST_BP_TYPE = 8,                    // 8
+                        smt_cond_bp_disabled = smt_FIRST_BP_TYPE, // 8
+                        smt_bp_cmdlist_disabled,                  // 9
+                        smt_bp_disabled,                          // 10
+                        smt_bp_ignored,                           // 11
+                        smt_cond_bp,                              // 12
+                        smt_bp_cmdlist,                           // 13
+                        smt_breakpoint,                           // 14
+                        smt_LAST_BP_TYPE = smt_breakpoint,        // 14
+                        smt_indicator,                            // 15
+                        smt_warning,                              // 16
+                        smt_error,                                // 17
+                        smt_line_marker,                          // 18
 };
 
 // These are bitmap masks of the various margin markers.
@@ -86,9 +87,12 @@ enum marker_mask_type {
     mmt_breakpoint = 0x4000,
     mmt_LAST_BP_TYPE = mmt_breakpoint,
     mmt_all_breakpoints = 0x7f00,
-    mmt_indicator = 0x8000,
-    mmt_compiler = 0x30000 /* masks compiler errors/warnings */,
-    mmt_folds = wxSTC_MASK_FOLDERS /* 0xFE000000 */
+    mmt_indicator = 1 << 15,
+    mmt_warning = 1 << 16,
+    mmt_error = 1 << 17,
+    mmt_compiler = mmt_warning | mmt_error, // Compiler errors and warnings
+    mmt_line_marker = 1 << 18,              // Mask for the 18th bit (smt_line_marker)
+    mmt_folds = wxSTC_MASK_FOLDERS          /* 0xFE000000 */
 };
 
 class WXDLLIMPEXP_SDK BookmarkManager : public wxEvtHandler

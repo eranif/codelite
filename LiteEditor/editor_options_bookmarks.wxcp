@@ -9,6 +9,8 @@
   "m_outputFileName": "editorsettingsbookmarksbasepanel",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{

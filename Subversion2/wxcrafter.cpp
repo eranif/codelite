@@ -25,11 +25,6 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
 
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer1->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
-
     m_splitterV = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME);
     m_splitterV->SetSashGravity(0.5);
@@ -125,6 +120,12 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
 
     wxBoxSizer* boxSizer60 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage56->SetSizer(boxSizer60);
+
+    m_toolbar = new clToolBar(m_splitterPage56, wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPage56, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer60->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcMessage = new wxStyledTextCtrl(m_splitterPage56, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_splitterPage56, wxSize(-1, -1)), wxBORDER_THEME);

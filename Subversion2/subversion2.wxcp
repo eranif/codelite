@@ -6223,7 +6223,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "rgb(240, 240, 240)"
+             "colour": "<Default>"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
@@ -6385,7 +6385,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "rgb(240, 240, 240)"
+             "colour": "<Default>"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
@@ -6547,7 +6547,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "rgb(240, 240, 240)"
+             "colour": "<Default>"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
@@ -6709,7 +6709,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "rgb(240, 240, 240)"
+             "colour": "<Default>"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",
@@ -6871,7 +6871,7 @@
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",
-             "colour": "rgb(240, 240, 240)"
+             "colour": "<Default>"
             }, {
              "type": "colour",
              "m_label": "Fg Colour:",

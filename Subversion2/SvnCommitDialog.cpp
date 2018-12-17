@@ -37,6 +37,7 @@
 #include "svnsettingsdata.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
+#include <wx/msgdlg.h>
 
 class CommitMessageStringData : public wxClientData
 {
@@ -84,7 +85,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     // These two classes will allow copy / paste etc using the keyboard on the STC classes
     m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
     m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
-    
+
     DoCreateToolbar();
     SetName("SvnCommitDialog");
     GetSizer()->Fit(this);
@@ -119,7 +120,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
 
     SetName("SvnCommitDialog");
     DoCreateToolbar();
-    
+
     WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
     if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
@@ -287,7 +288,14 @@ void SvnCommitDialog::OnShowCommitHistoryUI(wxUpdateUIEvent& event)
     m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
     event.Enable(!lastMessages.IsEmpty());
 }
-void SvnCommitDialog::OnClearHistory(wxCommandEvent& event) { m_plugin->GetCommitMessagesCache().Clear(); }
+void SvnCommitDialog::OnClearHistory(wxCommandEvent& event)
+{
+    if(::wxMessageBox(_("This will clear the message history\nContinue?"), "CodeLite",
+                      wxICON_WARNING | wxCENTER | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) == wxYES) {
+        m_plugin->GetCommitMessagesCache().Clear();
+    }
+}
+
 void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_plugin->GetCommitMessagesCache().IsEmpty());
@@ -296,12 +304,27 @@ void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
 void SvnCommitDialog::DoCreateToolbar()
 {
     m_toolbar->AddTool(XRCID("commit-history"), _("Commit History"),
-                       clGetManager()->GetStdIcons()->LoadBitmap("history"));
+                       clGetManager()->GetStdIcons()->LoadBitmap("history"), "", wxITEM_DROPDOWN);
     m_toolbar->AddTool(wxID_CLEAR, _("Clear History"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnShowCommitHistory, this, XRCID("commit-history"));
+    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &SvnCommitDialog::OnShowCommitHistoryDropDown, this, XRCID("commit-history"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnShowCommitHistoryUI, this, XRCID("commit-history"));
     m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnClearHistory, this, wxID_CLEAR);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SvnCommitDialog::OnClearHistoryUI, this, wxID_CLEAR);
+}
+
+void SvnCommitDialog::OnShowCommitHistoryDropDown(wxCommandEvent& event)
+{
+    wxMenu menu;
+    menu.Append(XRCID("commit-history-last-message"), _("Insert Last Message"));
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  wxArrayString lastMessages, previews;
+                  m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
+                  if(!lastMessages.empty()) { m_stcMessage->SetText(lastMessages.Item(0)); }
+              },
+              XRCID("commit-history-last-message"));
+    m_toolbar->ShowMenuForButton(event.GetId(), &menu);
 }

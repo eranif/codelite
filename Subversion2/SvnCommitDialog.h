@@ -61,6 +61,7 @@ protected:
     virtual void OnClearHistory(wxCommandEvent& event);
     virtual void OnClearHistoryUI(wxUpdateUIEvent& event);
     virtual void OnShowCommitHistory(wxCommandEvent& event);
+    virtual void OnShowCommitHistoryDropDown(wxCommandEvent& event);
     virtual void OnShowCommitHistoryUI(wxUpdateUIEvent& event);
     void DoShowDiff(int selection);
     void DoCreateToolbar();

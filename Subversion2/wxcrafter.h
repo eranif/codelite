@@ -7,28 +7,28 @@
 #ifndef _CODELITE_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_SUBVERSION2_WXCRAFTER_BASE_CLASSES_H
 
-#include "clToolBar.h"
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/checklst.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/iconbndl.h>
-#include <wx/panel.h>
 #include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/checklst.h>
 #include <wx/stc/stc.h>
-#include <wx/textctrl.h>
 #include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clToolBar.h"
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/filepicker.h>
+#include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -44,7 +44,6 @@
 class SvnCommitDialogBaseClass : public wxDialog
 {
 protected:
-    clToolBar* m_toolbar;
     wxSplitterWindow* m_splitterV;
     wxPanel* m_splitterPage52;
     wxSplitterWindow* m_splitterH;
@@ -55,6 +54,7 @@ protected:
     wxStaticText* m_staticText19;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_splitterPage56;
+    clToolBar* m_toolbar;
     wxStyledTextCtrl* m_stcMessage;
     wxStaticText* m_staticText32;
     wxTextCtrl* m_textCtrlFrID;
@@ -67,7 +67,6 @@ protected:
     virtual void OnFileSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
     wxStaticText* GetStaticText17() { return m_staticText17; }
     wxCheckListBox* GetCheckListFiles() { return m_checkListFiles; }
     wxPanel* GetPanel1() { return m_panel1; }
@@ -76,6 +75,7 @@ public:
     wxPanel* GetSplitterPage14() { return m_splitterPage14; }
     wxSplitterWindow* GetSplitterH() { return m_splitterH; }
     wxPanel* GetSplitterPage52() { return m_splitterPage52; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxStyledTextCtrl* GetStcMessage() { return m_stcMessage; }
     wxPanel* GetSplitterPage56() { return m_splitterPage56; }
     wxSplitterWindow* GetSplitterV() { return m_splitterV; }

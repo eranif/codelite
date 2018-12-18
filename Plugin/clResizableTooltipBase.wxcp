@@ -64,15 +64,15 @@
     }, {
      "type": "string",
      "m_label": "Class Name:",
-     "m_value": ""
+     "m_value": "wxMiniFrame"
     }, {
      "type": "string",
      "m_label": "Include File:",
-     "m_value": ""
+     "m_value": "wx/frame.h"
     }, {
      "type": "string",
      "m_label": "Style:",
-     "m_value": ""
+     "m_value": "wxRESIZE_BORDER|wxFRAME_NO_TASKBAR"
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",

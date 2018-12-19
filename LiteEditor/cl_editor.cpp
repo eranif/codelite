@@ -126,6 +126,11 @@ wxPrintData* g_printData = NULL;
 wxPageSetupDialogData* g_pageSetupData = NULL;
 static int ID_OPEN_URL = wxNOT_FOUND;
 
+// This is needed for wxWidgets < 3.1
+#ifndef wxSTC_MARK_BOOKMARK
+#define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
+#endif
+
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
@@ -360,12 +365,7 @@ clEditor::clEditor(wxWindow* parent)
     ms_bookmarkShapes[wxT("Rounded Rectangle")] = wxSTC_MARK_ROUNDRECT;
     ms_bookmarkShapes[wxT("Small Arrow")] = wxSTC_MARK_ARROW;
     ms_bookmarkShapes[wxT("Circle")] = wxSTC_MARK_CIRCLE;
-
-#if wxCHECK_VERSION(3,1,0)
     ms_bookmarkShapes[wxT("Bookmark")] = wxSTC_MARK_BOOKMARK;
-#else
-    ms_bookmarkShapes[wxT("Bookmark")] = wxSTC_MARK_LEFTRECT;
-#endif
 
     SetSyntaxHighlight();
     CmdKeyClear(wxT('D'), wxSTC_KEYMOD_CTRL); // clear Ctrl+D because we use it for something else

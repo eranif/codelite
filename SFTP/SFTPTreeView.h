@@ -89,7 +89,7 @@ protected:
     virtual void OnExecuteCommand(wxCommandEvent& event);
     void OnFileDropped(clCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& evt);
-
+    void OnRemoteFind(wxCommandEvent& event);
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);
@@ -119,7 +119,7 @@ protected:
     bool GetAccountFromUser(SSHAccountInfo& account);
     SFTPSessionInfo& GetSession(bool createIfMissing);
     void DoLoadSession();
-    
+
 protected:
     virtual void OnItemActivated(wxTreeEvent& event);
     virtual void OnItemExpanding(wxTreeEvent& event);

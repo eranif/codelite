@@ -51,6 +51,7 @@
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/textdlg.h>
+#include <wx/fdrepdlg.h>
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -332,11 +333,11 @@ void SFTPTreeView::OnContextMenu(wxContextMenuEvent& event)
             menu.AppendSeparator();
             menu.Append(ID_REFRESH_FOLDER, _("Refresh"));
             menu.AppendSeparator();
-            menu.Append(ID_EXECUTE_COMMAND, _("Execute command..."));
+            menu.Append(XRCID("sftp-find"), _("grep this folder..."));
             menu.AppendSeparator();
         }
         menu.Append(ID_DELETE, _("Delete"));
-
+        menu.Bind(wxEVT_MENU, &SFTPTreeView::OnRemoteFind, this, XRCID("sftp-find"));
 #ifdef __WXMAC__
         menu.Enable(ID_DELETE, false);
 #endif
@@ -977,4 +978,20 @@ void SFTPTreeView::OnExecuteCommand(wxCommandEvent& event)
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
     }
+}
+
+void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
+{
+    if(!m_sftp || !m_sftp->GetSsh()) { return; }
+    
+    wxArrayTreeItemIds items;
+    m_treeCtrl->GetSelections(items);
+    if(items.GetCount() != 1) { return; }
+    MyClientData* cd = GetItemData(items.Item(0));
+    if(!cd || !cd->IsFolder()) { return; }
+    
+    wxString remoteFolder = cd->GetFullPath();
+    
+    // TODO :: show here a slim find-in-files dialog
+    
 }

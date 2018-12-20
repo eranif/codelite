@@ -52,6 +52,8 @@
 #include <wx/progdlg.h>
 #include <wx/textdlg.h>
 #include <wx/fdrepdlg.h>
+#include <wx/textdlg.h>
+#include "file_logger.h"
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -115,10 +117,17 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     m_toolbar->Bind(wxEVT_TOOL, &SFTPTreeView::OnOpenTerminal, this, XRCID("ID_SSH_OPEN_TERMINAL"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &SFTPTreeView::OnOpenTerminalMenu, this, XRCID("ID_SSH_OPEN_TERMINAL"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPTreeView::OnOpenTerminalUI, this, XRCID("ID_SSH_OPEN_TERMINAL"));
+
+    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPTreeView::OnFindError, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPTreeView::OnFindOutput, this);
+    Bind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPTreeView::OnFindFinished, this);
 }
 
 SFTPTreeView::~SFTPTreeView()
 {
+    if(m_channel && m_channel->IsOpen()) { m_channel->Close(); }
+    m_channel.reset(NULL);
+    
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &SFTPTreeView::OnEditorClosing, this);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCopy, this, wxID_COPY);
     wxTheApp->GetTopWindow()->Unbind(wxEVT_MENU, &SFTPTreeView::OnCut, this, wxID_CUT);
@@ -140,6 +149,9 @@ SFTPTreeView::~SFTPTreeView()
     m_treeCtrl->Disconnect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
                            NULL, this);
     Unbind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPTreeView::OnFindError, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPTreeView::OnFindOutput, this);
+    Unbind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPTreeView::OnFindFinished, this);
 }
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }
@@ -983,15 +995,36 @@ void SFTPTreeView::OnExecuteCommand(wxCommandEvent& event)
 void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
 {
     if(!m_sftp || !m_sftp->GetSsh()) { return; }
-    
+
     wxArrayTreeItemIds items;
     m_treeCtrl->GetSelections(items);
     if(items.GetCount() != 1) { return; }
     MyClientData* cd = GetItemData(items.Item(0));
     if(!cd || !cd->IsFolder()) { return; }
-    
+
     wxString remoteFolder = cd->GetFullPath();
-    
-    // TODO :: show here a slim find-in-files dialog
-    
+
+    // TODO :: change this simple text entry dialog to something more fency
+    wxString findWhat = ::wxGetTextFromUser(_("Find What:"), _("Remote Find"));
+    if(findWhat.IsEmpty()) { return; }
+
+    try {
+        if(m_channel && m_channel->IsOpen()) { m_channel->Close(); }
+        m_channel.reset(new clSSHChannel(m_sftp->GetSsh()));
+        m_channel->Open();
+        
+        // FIXME :: this is for POC concept, remove this code later
+        wxString command;
+        command << "cd /var/www/html && grep -R \"" << findWhat << "\" *.php";
+        m_channel->Execute(command, this);
+
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
+    }
 }
+
+void SFTPTreeView::OnFindOutput(clCommandEvent& event) { clDEBUG() << event.GetString(); }
+
+void SFTPTreeView::OnFindFinished(clCommandEvent& event) { clDEBUG() << "Find done"; }
+
+void SFTPTreeView::OnFindError(clCommandEvent& event) { clDEBUG() << event.GetString(); }

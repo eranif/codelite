@@ -33,6 +33,7 @@
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
+#include "clSSHChannel.h"
 
 class MyClientData;
 class SFTP;
@@ -42,6 +43,7 @@ typedef std::vector<MyClientData*> MyClientDataVect_t;
 class SFTPTreeView : public SFTPTreeViewBase
 {
     clSFTP::Ptr_t m_sftp;
+    clSSHChannel::Ptr_t m_channel;
     BitmapLoader* m_bmpLoader;
     SSHAccountInfo m_account;
     SFTP* m_plugin;
@@ -97,7 +99,12 @@ protected:
     void OnSelectAll(wxCommandEvent& event);
     void OnUndo(wxCommandEvent& event);
     void OnRedo(wxCommandEvent& event);
-
+    
+    // Find events
+    void OnFindOutput(clCommandEvent& event);
+    void OnFindFinished(clCommandEvent& event);
+    void OnFindError(clCommandEvent& event);
+    
     void DoCloseSession();
     void DoOpenSession();
     bool DoExpandItem(const wxTreeItemId& item);

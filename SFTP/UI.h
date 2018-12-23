@@ -7,36 +7,38 @@
 #ifndef _CODELITE_SFTP_UI_BASE_CLASSES_H
 #define _CODELITE_SFTP_UI_BASE_CLASSES_H
 
-#include "clThemedTreeCtrl.h"
-#include "clToolBar.h"
-#include <map>
-#include <wx/arrstr.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/notebook.h>
+#include "Notebook.h"
+#include <wx/imaglist.h>
+#include <wx/stc/stc.h>
 #include <wx/bitmap.h>
+#include <map>
+#include <wx/icon.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/treectrl.h>
+#include "clThemedTreeCtrl.h"
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/listbox.h>
 #include <wx/button.h>
+#include <wx/filepicker.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/icon.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/listbox.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
+#include <wx/arrstr.h>
 #include <wx/statline.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/treectrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -52,13 +54,21 @@
 class SFTPStatusPageBase : public wxPanel
 {
 protected:
+    Notebook* m_notebook;
+    wxPanel* m_panelSearch;
+    wxStyledTextCtrl* m_stcSearch;
+    wxPanel* m_panelLog;
     wxStyledTextCtrl* m_stcOutput;
 
 protected:
     virtual void OnContentMenu(wxContextMenuEvent& event) { event.Skip(); }
 
 public:
+    wxStyledTextCtrl* GetStcSearch() { return m_stcSearch; }
+    wxPanel* GetPanelSearch() { return m_panelSearch; }
     wxStyledTextCtrl* GetStcOutput() { return m_stcOutput; }
+    wxPanel* GetPanelLog() { return m_panelLog; }
+    Notebook* GetNotebook() { return m_notebook; }
     SFTPStatusPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~SFTPStatusPageBase();
@@ -220,6 +230,35 @@ public:
                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SFTPQuickConnectBaseDlg();
+};
+
+class SFTPGrepBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText175;
+    wxTextCtrl* m_textCtrlFindWhat;
+    wxStaticText* m_staticText179;
+    wxTextCtrl* m_textCtrlSeachIn;
+    wxCheckBox* m_checkBoxWholeWord;
+    wxCheckBox* m_checkBoxIgnoreCase;
+    wxStdDialogButtonSizer* m_stdBtnSizer167;
+    wxButton* m_buttonOK;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText175() { return m_staticText175; }
+    wxTextCtrl* GetTextCtrlFindWhat() { return m_textCtrlFindWhat; }
+    wxStaticText* GetStaticText179() { return m_staticText179; }
+    wxTextCtrl* GetTextCtrlSeachIn() { return m_textCtrlSeachIn; }
+    wxCheckBox* GetCheckBoxWholeWord() { return m_checkBoxWholeWord; }
+    wxCheckBox* GetCheckBoxIgnoreCase() { return m_checkBoxIgnoreCase; }
+    SFTPGrepBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Remote Grep"),
+                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~SFTPGrepBase();
 };
 
 #endif

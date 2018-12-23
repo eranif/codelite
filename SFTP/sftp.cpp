@@ -44,6 +44,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
+#include <algorithm>
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
@@ -349,6 +350,8 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
         // Tag this editor as a remote file
         SFTPClientData* pcd = new SFTPClientData(cd);
         editor->SetClientData("sftp", pcd);
+        // set the line number
+        if(cd.GetLineNumber() != wxNOT_FOUND) { editor->GetCtrl()->GotoLine(cd.GetLineNumber()); }
     }
 
     // Now that the file was downloaded, update the file permissions
@@ -569,4 +572,24 @@ wxString SFTP::GetRemotePath(const wxString& localpath) const
     file.MakeRelativeTo(m_workspaceFile.GetPath());
     file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
     return file.GetFullPath(wxPATH_UNIX);
+}
+
+void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
+{
+    RemoteFileInfo::Map_t::iterator iter =
+        std::find_if(m_remoteFiles.begin(), m_remoteFiles.end(), [&](const RemoteFileInfo::Map_t::value_type& vt) {
+            return vt.second.GetRemoteFile() == remotePath;
+        });
+    if(iter != m_remoteFiles.end()) {
+        m_mgr->OpenFile(iter->second.GetLocalFile(), "", lineNumber);
+    } else {
+        RemoteFileInfo remoteFile;
+        remoteFile.SetAccount(GetTreeView()->GetAccount());
+        remoteFile.SetRemoteFile(remotePath);
+        remoteFile.SetLineNumber(lineNumber);
+
+        SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+        SFTPWorkerThread::Instance()->Add(req);
+        AddRemoteFile(remoteFile);
+    }
 }

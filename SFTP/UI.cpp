@@ -25,7 +25,66 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
 
-    m_stcOutput = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+
+    boxSizer2->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelSearch =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelSearch, _("Search"), false);
+
+    wxBoxSizer* boxSizer197 = new wxBoxSizer(wxVERTICAL);
+    m_panelSearch->SetSizer(boxSizer197);
+
+    m_stcSearch =
+        new wxStyledTextCtrl(m_panelSearch, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSearch, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stcSearch->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcSearch->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcSearch->SetMarginSensitive(4, true);
+    m_stcSearch->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcSearch->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcSearch->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcSearch->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcSearch->SetMarginWidth(2, 0);
+    m_stcSearch->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcSearch->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcSearch->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcSearch->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcSearch->SetMarginMask(3, 0);
+    m_stcSearch->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcSearch->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcSearch->StyleClearAll();
+    m_stcSearch->SetWrapMode(0);
+    m_stcSearch->SetIndentationGuides(0);
+    m_stcSearch->SetKeyWords(0, wxT(""));
+    m_stcSearch->SetKeyWords(1, wxT(""));
+    m_stcSearch->SetKeyWords(2, wxT(""));
+    m_stcSearch->SetKeyWords(3, wxT(""));
+    m_stcSearch->SetKeyWords(4, wxT(""));
+
+    boxSizer197->Add(m_stcSearch, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelLog =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelLog, _("Log"), true);
+
+    wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
+    m_panelLog->SetSizer(boxSizer195);
+
+    m_stcOutput =
+        new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -61,7 +120,7 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     m_stcOutput->SetKeyWords(3, wxT(""));
     m_stcOutput->SetKeyWords(4, wxT(""));
 
-    boxSizer2->Add(m_stcOutput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer195->Add(m_stcOutput, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
     SetName(wxT("SFTPStatusPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -86,156 +145,6 @@ SFTPImages::SFTPImages()
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC32BEInitBitmapResources();
         bBitmapLoaded = true;
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_ok"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_ok@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_ok@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_error"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_error@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_error@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_info"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_info@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_info@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_tab"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_tab@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_tab@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_connected"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_connected"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_connected@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_connected@2x"), bmp));
-        }
-    }
-
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_disconnected"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_disconnected"), bmp));
-        }
-    }
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("sftp_disconnected@2x"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("sftp_disconnected@2x"), bmp));
-        }
     }
 }
 
@@ -709,4 +618,105 @@ SFTPQuickConnectBaseDlg::~SFTPQuickConnectBaseDlg()
     m_textCtrlPassword->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
                                    NULL, this);
     m_button125->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnOKUI), NULL, this);
+}
+
+SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                           const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC32BEInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer165 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer165);
+
+    wxFlexGridSizer* flexGridSizer173 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer173->SetFlexibleDirection(wxBOTH);
+    flexGridSizer173->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer173->AddGrowableCol(1);
+
+    boxSizer165->Add(flexGridSizer173, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText175 =
+        new wxStaticText(this, wxID_ANY, _("Find What:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer173->Add(m_staticText175, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFindWhat =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlFindWhat->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFindWhat->SetHint(wxT(""));
+#endif
+
+    flexGridSizer173->Add(m_textCtrlFindWhat, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText179 =
+        new wxStaticText(this, wxID_ANY, _("Search In:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer173->Add(m_staticText179, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSeachIn = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlSeachIn->SetHint(wxT(""));
+#endif
+
+    flexGridSizer173->Add(m_textCtrlSeachIn, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer183 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer183->SetFlexibleDirection(wxBOTH);
+    flexGridSizer183->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+
+    boxSizer165->Add(flexGridSizer183, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxWholeWord =
+        new wxCheckBox(this, wxID_ANY, _("Whole word"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxWholeWord->SetValue(false);
+
+    flexGridSizer183->Add(m_checkBoxWholeWord, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxIgnoreCase =
+        new wxCheckBox(this, wxID_ANY, _("Ignore case"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxIgnoreCase->SetValue(false);
+
+    flexGridSizer183->Add(m_checkBoxIgnoreCase, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer167 = new wxStdDialogButtonSizer();
+
+    boxSizer165->Add(m_stdBtnSizer167, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer167->AddButton(m_buttonOK);
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer167->AddButton(m_buttonCancel);
+    m_stdBtnSizer167->Realize();
+
+    SetName(wxT("SFTPGrepBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPGrepBase::OnOkUI), NULL, this);
+}
+
+SFTPGrepBase::~SFTPGrepBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPGrepBase::OnOkUI), NULL, this);
 }

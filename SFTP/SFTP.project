@@ -27,6 +27,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="SFTPGrepStyler.cpp"/>
+    <File Name="SFTPGrepStyler.h"/>
     <File Name="sftp.cpp"/>
     <File Name="sftp_workspace_settings.h"/>
     <File Name="sftp_workspace_settings.cpp"/>
@@ -45,6 +47,8 @@
   </VirtualDirectory>
   <Dependencies/>
   <VirtualDirectory Name="UI">
+    <File Name="SFTPGrep.cpp"/>
+    <File Name="SFTPGrep.h"/>
     <File Name="SFTPQuickConnectDlg.cpp"/>
     <File Name="SFTPQuickConnectDlg.h"/>
     <File Name="SFTPStatusPage.h"/>

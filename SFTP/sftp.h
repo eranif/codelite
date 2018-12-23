@@ -43,6 +43,7 @@ class SFTPClientData : public wxClientData
     wxString localPath;
     wxString remotePath;
     size_t permissions;
+    int lineNumber = wxNOT_FOUND;
 
 public:
     SFTPClientData()
@@ -57,6 +58,8 @@ public:
     const wxString& GetRemotePath() const { return remotePath; }
     void SetPermissions(size_t permissions) { this->permissions = permissions; }
     size_t GetPermissions() const { return permissions; }
+    void SetLineNumber(int lineNumber) { this->lineNumber = lineNumber; }
+    int GetLineNumber() const { return lineNumber; }
 };
 
 class SFTP : public IPlugin
@@ -76,6 +79,10 @@ public:
     void OpenWithDefaultApp(const wxString& localFileName);
     void OpenContainingFolder(const wxString& localFileName);
     void AddRemoteFile(const RemoteFileInfo& remoteFile);
+    SFTPStatusPage* GetOutputPane() { return m_outputPane; }
+    SFTPTreeView* GetTreeView() { return m_treeView; }
+
+    void OpenFile(const wxString& remotePath, int lineNumber = wxNOT_FOUND);
 
 protected:
     void OnReplaceInFiles(clFileSystemEvent& e);

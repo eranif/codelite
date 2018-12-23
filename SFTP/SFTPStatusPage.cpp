@@ -32,6 +32,10 @@
 #include "sftp_worker_thread.h"
 #include <wx/log.h>
 #include <wx/menu.h>
+#include "clSSHChannel.h"
+#include "remote_file_info.h"
+#include "sftp_worker_thread.h"
+#include "SFTPTreeView.h"
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
@@ -42,10 +46,22 @@ SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     m_stcOutput->Bind(wxEVT_MENU, &SFTPStatusPage::OnSelectAll, this, wxID_SELECTALL);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &SFTPStatusPage::OnThemeChanged, this);
     m_stcOutput->SetReadOnly(true);
+    m_stcSearch->SetReadOnly(true);
+
+    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPStatusPage::OnFindError, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPStatusPage::OnFindOutput, this);
+    Bind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
+    m_styler.Reset(new SFTPGrepStyler(m_stcSearch));
+    m_stcSearch->Bind(wxEVT_STC_HOTSPOT_CLICK, &SFTPStatusPage::OnHotspotClicked, this);
 }
 
 SFTPStatusPage::~SFTPStatusPage()
 {
+    m_stcSearch->Unbind(wxEVT_STC_HOTSPOT_CLICK, &SFTPStatusPage::OnHotspotClicked, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPStatusPage::OnFindError, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPStatusPage::OnFindOutput, this);
+    Unbind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
+
     m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnClearLog, this, wxID_CLEAR);
     m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnCopy, this, wxID_COPY);
     m_stcOutput->Unbind(wxEVT_MENU, &SFTPStatusPage::OnSelectAll, this, wxID_SELECTALL);
@@ -108,7 +124,11 @@ void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_stcOutput); }
+    if(lexer) {
+        lexer->Apply(m_stcOutput);
+        lexer->Apply(m_stcSearch);
+    }
+    m_styler.Reset(new SFTPGrepStyler(m_stcSearch));
 }
 
 void SFTPStatusPage::OnCopy(wxCommandEvent& event)
@@ -121,4 +141,60 @@ void SFTPStatusPage::OnSelectAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_stcOutput->SelectAll();
+}
+
+void SFTPStatusPage::OnFindOutput(clCommandEvent& event)
+{
+    m_stcSearch->SetReadOnly(false);
+    m_stcSearch->AddText(event.GetString());
+    m_stcSearch->SetReadOnly(true);
+    m_stcSearch->ScrollToEnd();
+}
+
+void SFTPStatusPage::OnFindFinished(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    AddSearchText("Search completed");
+}
+
+void SFTPStatusPage::OnFindError(clCommandEvent& event)
+{
+    m_stcSearch->SetReadOnly(false);
+    m_stcSearch->AddText("== " + event.GetString() + "\n");
+    m_stcSearch->SetReadOnly(true);
+    m_stcSearch->ScrollToEnd();
+}
+
+void SFTPStatusPage::ClearSearchOutput()
+{
+    m_stcSearch->SetReadOnly(false);
+    m_stcSearch->ClearAll();
+    m_stcSearch->SetReadOnly(true);
+}
+
+void SFTPStatusPage::OnHotspotClicked(wxStyledTextEvent& event)
+{
+    long pos = event.GetPosition();
+    int line = m_stcSearch->LineFromPosition(pos);
+    wxString strLine = m_stcSearch->GetLine(line);
+    wxString filename = strLine.BeforeFirst(':');
+    strLine = strLine.AfterFirst(':');
+    wxString sLineNumber = strLine.BeforeFirst(':');
+    long nLineNumber(0);
+    sLineNumber.ToCLong(&nLineNumber);
+
+    // Open the file
+    m_plugin->OpenFile(filename, nLineNumber - 1);
+}
+
+void SFTPStatusPage::ShowSearchTab() { m_notebook->SetSelection(0); }
+
+void SFTPStatusPage::ShowLogTab() { m_notebook->SetSelection(1); }
+
+void SFTPStatusPage::AddSearchText(const wxString& text)
+{
+    m_stcSearch->SetReadOnly(false);
+    m_stcSearch->AddText("== " + text + "\n");
+    m_stcSearch->SetReadOnly(true);
+    m_stcSearch->ScrollToEnd();
 }

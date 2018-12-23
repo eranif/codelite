@@ -53,6 +53,7 @@ class SFTPThreadRequet : public ThreadRequest
     eSFTPActions m_action;
     size_t m_permissions = 0;
     wxString m_newRemoteFile;
+    int m_lineNumber = wxNOT_FOUND;
 
 public:
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
@@ -82,6 +83,8 @@ public:
     ThreadRequest* Clone() const;
     void SetNewRemoteFile(const wxString& newRemoteFile) { this->m_newRemoteFile = newRemoteFile; }
     const wxString& GetNewRemoteFile() const { return m_newRemoteFile; }
+    void SetLineNumber(int lineNumber) { this->m_lineNumber = lineNumber; }
+    int GetLineNumber() const { return m_lineNumber; }
 };
 
 class SFTPThreadMessage

@@ -61,6 +61,7 @@ public:
     SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
     bool IsConnected() const { return m_sftp && m_sftp->IsConnected(); }
+    const SSHAccountInfo& GetAccount() const { return m_account; }
 
 protected:
     virtual void OnSftpSettings(wxCommandEvent& event);
@@ -99,12 +100,12 @@ protected:
     void OnSelectAll(wxCommandEvent& event);
     void OnUndo(wxCommandEvent& event);
     void OnRedo(wxCommandEvent& event);
-    
+
     // Find events
     void OnFindOutput(clCommandEvent& event);
     void OnFindFinished(clCommandEvent& event);
     void OnFindError(clCommandEvent& event);
-    
+
     void DoCloseSession();
     void DoOpenSession();
     bool DoExpandItem(const wxTreeItemId& item);

@@ -115,6 +115,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                     cd.SetLocalPath(req->GetLocalFile());
                     cd.SetRemotePath(req->GetRemoteFile());
                     cd.SetPermissions(fileAttr ? fileAttr->GetPermissions() : 0);
+                    cd.SetLineNumber(req->GetLineNumber());
                     m_plugin->CallAfter(&SFTP::FileDownloadedSuccessfully, cd);
 
                 } else if(req->GetAction() == eSFTPActions::kDownloadAndOpenContainingFolder) {
@@ -232,6 +233,7 @@ SFTPThreadRequet::SFTPThreadRequet(const RemoteFileInfo& remoteFile)
     , m_remoteFile(remoteFile.GetRemoteFile())
     , m_localFile(remoteFile.GetLocalFile())
     , m_action(eSFTPActions::kDownload)
+    , m_lineNumber(remoteFile.GetLineNumber())
 {
 }
 

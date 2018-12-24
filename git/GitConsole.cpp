@@ -285,8 +285,7 @@ void GitConsole::AddText(const wxString& text)
     wxString curtext = m_stcLog->GetText();
     curtext << tmp;
     m_stcLog->SetText(curtext);
-    m_stcLog->SetSelectionEnd(m_stcLog->GetLength());
-    m_stcLog->SetSelectionStart(m_stcLog->GetLength());
+    m_stcLog->ClearSelections();
     m_stcLog->SetCurrentPos(m_stcLog->GetLength());
     m_stcLog->EnsureCaretVisible();
 }

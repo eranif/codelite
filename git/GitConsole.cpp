@@ -45,6 +45,7 @@
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
+#include <wx/tokenzr.h>
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...) \
@@ -282,7 +283,36 @@ void GitConsole::AddText(const wxString& text)
     wxString tmp = text;
     tmp.Replace("\r\n", "\n");
     if(!tmp.EndsWith("\n")) { tmp.Append("\n"); }
+    // With very long strings wxSTC may freeze, or take many minutes to display them
+    if (tmp.Len() > 1000) {
+        wxArrayString lines = wxStringTokenize(tmp, "\n", wxTOKEN_STRTOK);
+        wxString trunc;
+        size_t count = lines.GetCount();
+        if (count > 30) { // OK, this will fail for 30 very very long lines, but...
+            for (size_t n=0; n < 15; ++n) {
+                trunc << lines[n] << '\n';
+            }
+            trunc << "...";
+            for (size_t n=count-15; n < count; ++n) {
+                trunc << lines[n] << '\n';
+            }
+            tmp = trunc;
+        }
+    }
+
     wxString curtext = m_stcLog->GetText();
+    if (curtext.Len() > 3000) { // Same reasoning
+    wxArrayString lines = wxStringTokenize(curtext, "\n", wxTOKEN_STRTOK);
+        wxString trunc;
+        size_t count = lines.GetCount();
+        if (count > 30) {
+            for (size_t n=count-30; n < count; ++n) {
+                trunc << lines[n] << '\n';
+            }
+            curtext = trunc;
+        }
+    }
+
     curtext << tmp;
     m_stcLog->SetText(curtext);
     m_stcLog->ClearSelections();

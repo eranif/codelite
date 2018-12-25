@@ -175,11 +175,11 @@ void MemCheckOutputView::ShowPageView(size_t page)
     MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, m_workspacePath, flags);
     for(; i < iStart && it != errorList.end(); ++i, ++it)
         ; // skipping item before start
-    // CL_DEBUG1(PLUGIN_PREFIX("items skiped"));
+    // CL_DEBUG1(PLUGIN_PREFIX("items skipped"));
     m_mgr->GetTheApp()->Yield();
     for(; i <= iStop; ++i, ++it) {
         if(it == errorList.end()) {
-            CL_WARNING(PLUGIN_PREFIX("Some items skiped. Total errors count mismatches the iterator."));
+            CL_WARNING(PLUGIN_PREFIX("Some items skipped. Total errors count mismatches the iterator."));
             break;
         }
         AddTree(wxDataViewItem(0), *it); // CL_DEBUG1(PLUGIN_PREFIX("adding %lu", i));

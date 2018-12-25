@@ -861,7 +861,7 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
 
     if(choices.GetCount() == 0) return;
 
-    wxString choice = wxGetSingleChoice(_("Jump to modifed file"), _("Modifed files"), choices, m_topWindow);
+    wxString choice = wxGetSingleChoice(_("Jump to modified file"), _("Modified files"), choices, m_topWindow);
     if(!choice.IsEmpty()) {
         wxTreeItemId id = modifiedIDs[choice];
         if(id.IsOk()) {
@@ -1329,7 +1329,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
         m_trackedFiles.swap(gitFileSet);
 
     } else if(ga.action == gitListModified) {
-        m_mgr->SetStatusMessage(_("Colouring modifed git files..."), 0);
+        m_mgr->SetStatusMessage(_("Colouring modified git files..."), 0);
         // Reset modified files
         ColourFileTree(m_mgr->GetWorkspaceTree(), m_modifiedFiles, OverlayTool::Bmp_OK);
         // First get an up to date map of the filepaths/treeitemids

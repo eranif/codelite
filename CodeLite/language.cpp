@@ -543,7 +543,7 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     scopeName = GetScopeName(visibleScope, &additionalScopes);
     CL_DEBUG(wxT("Obtaining the scope name...done"));
 
-    // Allways use the global namespace as an addition scope
+    // Always use the global namespace as an addition scope
     // but make sure we add it last
     additionalScopes.push_back(wxT("<global>"));
 

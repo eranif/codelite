@@ -538,7 +538,7 @@ void ASBeautifier::setMaxContinuationIndentLength(int max)
 	maxContinuationIndent = max;
 }
 
-// retained for compatability with release 2.06
+// retained for compatibility with release 2.06
 // "MaxInStatementIndent" has been changed to "MaxContinuationIndent" in 3.0
 // it is referenced only by the old "MaxInStatementIndent" options
 void ASBeautifier::setMaxInStatementIndentLength(int max)

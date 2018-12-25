@@ -703,7 +703,7 @@ public:	// functions
 	size_t getChecksumOut() const;
 	int  getChecksumDiff() const;
 	int  getFormatterFileType() const;
-	// retained for compatability with release 2.06
+	// retained for compatibility with release 2.06
 	// "Brackets" have been changed to "Braces" in 3.0
 	// they are referenced only by the old "bracket" options
 	void setAddBracketsMode(bool state);

@@ -5152,7 +5152,7 @@
                               }, {
                                "type": "multi-string",
                                "m_label": "Tooltip:",
-                               "m_value": "Spacing around concatination dots."
+                               "m_value": "Spacing around concatenation dots."
                               }, {
                                "type": "colour",
                                "m_label": "Bg Colour:",

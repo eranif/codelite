@@ -125,7 +125,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     m_checkBoxDeepUsingNamespaceResolving = new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Crawl all files to locate 'using namespace' calls"), wxDefaultPosition, wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkBoxDeepUsingNamespaceResolving->SetValue(false);
-    m_checkBoxDeepUsingNamespaceResolving->SetToolTip(_("Allways search for 'using namespace' statements in all included files"));
+    m_checkBoxDeepUsingNamespaceResolving->SetToolTip(_("Always search for 'using namespace' statements in all included files"));
     
     flexGridSizer127->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, WXC_FROM_DIP(5));
     
@@ -174,8 +174,8 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     
     fgSizer4->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticTextMinWordLen = new wxStaticText(m_paneTriggering, wxID_ANY, _("Minimun chars to type:"), wxDefaultPosition, wxDLG_UNIT(m_paneTriggering, wxSize(-1, -1)), 0);
-    m_staticTextMinWordLen->SetToolTip(_("Minimun chars to type:"));
+    m_staticTextMinWordLen = new wxStaticText(m_paneTriggering, wxID_ANY, _("Minimum chars to type:"), wxDefaultPosition, wxDLG_UNIT(m_paneTriggering, wxSize(-1, -1)), 0);
+    m_staticTextMinWordLen->SetToolTip(_("Minimum chars to type:"));
     
     fgSizer4->Add(m_staticTextMinWordLen, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     

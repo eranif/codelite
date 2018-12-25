@@ -775,7 +775,7 @@ void wxFNBRenderer::DrawTabs(wxWindow *pageContainer, wxDC &dc, wxEvent &event)
 			x2 = posx + tabWidth + 2;
 		}
 
-		// Restore the text forground
+		// Restore the text foreground
 		dc.SetTextForeground(pc->m_activeTextColor);
 
 		// Update the tab position & size
@@ -1230,7 +1230,7 @@ void wxFNBRendererVC8::DrawTabs(wxWindow *pageContainer, wxDC &dc, wxEvent &even
 			DrawTab(pc, dc, posx, i, tabWidth, tabHeight, pc->m_nTabXButtonStatus);
 		}
 
-		// Restore the text forground
+		// Restore the text foreground
 		dc.SetTextForeground(pc->m_activeTextColor);
 
 		// Update the tab position & size

@@ -564,7 +564,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName, int linen
             GetKeywordsTagsForLanguage(word, kCxx, keywords);
         }
 
-        // Allways collect the local and the function argument tags
+        // Always collect the local and the function argument tags
         GetLocalTags(word, scope, locals, PartialMatch | IgnoreCaseSensitive | ReplaceTokens);
         GetLocalTags(word, funcSig, locals, PartialMatch | IgnoreCaseSensitive);
 

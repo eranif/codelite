@@ -391,7 +391,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText94 = new wxStaticText(m_panelTextSelection, wxID_ANY, _("Use Custom Selection Forground Colour:"),
+    m_staticText94 = new wxStaticText(m_panelTextSelection, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
                                       wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)), 0);
 
     fgSizer3->Add(m_staticText94, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));

@@ -289,7 +289,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
 
     wxString patch, tmpfile;
     process->WaitForTerminate(patch);
-    clDEBUG() << "PHPRefactoring ouput:" << patch << clEndl;
+    clDEBUG() << "PHPRefactoring output:" << patch << clEndl;
 
     if(!patch.StartsWith("--- a/")) { // not a patch
         wxString errorMessage = "Refactoring failed!";

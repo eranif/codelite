@@ -179,7 +179,7 @@ void clDataViewListCtrl::DeleteAllItems(const std::function<void(wxUIntPtr)>& de
         }
     }
     clTreeCtrl::DeleteAllItems();
-    // DVC must allways have the hidden root
+    // DVC must always have the hidden root
     AddRoot("Hidden Root", -1, -1, nullptr);
 }
 

@@ -394,7 +394,7 @@ extern void openTagFile (void)
 		setDefaultTagFileName ();
 		TagFile.name = eStrdup (Option.tagFileName);
 		fileExists = doesFileExist (TagFile.name);
-		if (fileExists  &&  /*! isTagFile (TagFile.name)*/ 0) /* allways override old files */
+		if (fileExists  &&  /*! isTagFile (TagFile.name)*/ 0) /* always override old files */
 			error (FATAL,
 			  "\"%s\" doesn't look like a tag file; I refuse to overwrite it.",
 				  TagFile.name);

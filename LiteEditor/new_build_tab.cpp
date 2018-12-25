@@ -286,7 +286,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
 
 void NewBuildTab::OnBuildAddLine(clCommandEvent& e)
 {
-    e.Skip(); // Allways call skip..
+    e.Skip(); // Always call skip..
     m_output << e.GetString();
     DoProcessOutput(false, false);
 }

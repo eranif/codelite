@@ -4259,7 +4259,7 @@
                               }, {
                                "type": "multi-string",
                                "m_label": "Label:",
-                               "m_value": "Use Custom Selection Forground Colour:"
+                               "m_value": "Use Custom Selection Foreground Colour:"
                               }, {
                                "type": "string",
                                "m_label": "Wrap:",

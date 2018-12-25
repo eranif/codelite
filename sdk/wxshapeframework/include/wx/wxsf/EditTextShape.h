@@ -170,7 +170,7 @@ public:
 	/*! \brief Switch the shape to a label editation mode. */
 	void EditLabel();
 	/*! \brief Force the edit text control to be multiline
-	 *  \param multiline If TRUE then the associated text control will be allways multiline
+	 *  \param multiline If TRUE then the associated text control will be always multiline
 	 */
 	void ForceMultiline(bool multiline){m_fForceMultiline = multiline;}
 

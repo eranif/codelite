@@ -1389,7 +1389,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "Allways search for 'using namespace' statements in all included files"
+                   "m_value": "Always search for 'using namespace' statements in all included files"
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -2070,7 +2070,7 @@
                     }, {
                      "type": "multi-string",
                      "m_label": "Tooltip:",
-                     "m_value": "Minimun chars to type:"
+                     "m_value": "Minimum chars to type:"
                     }, {
                      "type": "colour",
                      "m_label": "Bg Colour:",
@@ -2110,7 +2110,7 @@
                     }, {
                      "type": "multi-string",
                      "m_label": "Label:",
-                     "m_value": "Minimun chars to type:"
+                     "m_value": "Minimum chars to type:"
                     }, {
                      "type": "string",
                      "m_label": "Wrap:",

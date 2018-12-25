@@ -345,7 +345,7 @@ bool UnixProcessImpl::Read(wxString& buff)
         memset(buffer, 0, sizeof(buffer));
         int bytesRead = read(GetReadHandle(), buffer, sizeof(buffer));
         if(bytesRead > 0) {
-            buffer[BUFF_SIZE] = 0; // allways place a terminator
+            buffer[BUFF_SIZE] = 0; // always place a terminator
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'

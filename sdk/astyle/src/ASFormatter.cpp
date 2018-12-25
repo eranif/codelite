@@ -1861,7 +1861,7 @@ void ASFormatter::setRemoveBracesMode(bool state)
 	shouldRemoveBraces = state;
 }
 
-// retained for compatability with release 2.06
+// retained for compatibility with release 2.06
 // "Brackets" have been changed to "Braces" in 3.0
 // it is referenced only by the old "bracket" options
 void ASFormatter::setAddBracketsMode(bool state)
@@ -1869,7 +1869,7 @@ void ASFormatter::setAddBracketsMode(bool state)
 	setAddBracesMode(state);
 }
 
-// retained for compatability with release 2.06
+// retained for compatibility with release 2.06
 // "Brackets" have been changed to "Braces" in 3.0
 // it is referenced only by the old "bracket" options
 void ASFormatter::setAddOneLineBracketsMode(bool state)
@@ -1877,7 +1877,7 @@ void ASFormatter::setAddOneLineBracketsMode(bool state)
 	setAddOneLineBracesMode(state);
 }
 
-// retained for compatability with release 2.06
+// retained for compatibility with release 2.06
 // "Brackets" have been changed to "Braces" in 3.0
 // it is referenced only by the old "bracket" options
 void ASFormatter::setRemoveBracketsMode(bool state)
@@ -1885,7 +1885,7 @@ void ASFormatter::setRemoveBracketsMode(bool state)
 	setRemoveBracesMode(state);
 }
 
-// retained for compatability with release 2.06
+// retained for compatibility with release 2.06
 // "Brackets" have been changed to "Braces" in 3.0
 // it is referenced only by the old "bracket" options
 void ASFormatter::setBreakClosingHeaderBracketsMode(bool state)

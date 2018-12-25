@@ -197,8 +197,8 @@ void CompilerLocatorMSVC::AddCompilerOptions(CompilerPtr compiler)
     compiler->AddCompilerOption("/Gm", "Enables minimal rebuild.");
     compiler->AddCompilerOption("/Gy", "Enables function-level linking.");
     compiler->AddCompilerOption("/EHa", "Enable C++ Exceptions with SEH exceptions");
-    compiler->AddCompilerOption("/EHs", "Enable C++ Exceptions with Extern C funtions.");
-    compiler->AddCompilerOption("/EHsc", "Enable C++ Exceptions with SEH and Extern C funtions.");
+    compiler->AddCompilerOption("/EHs", "Enable C++ Exceptions with Extern C functions.");
+    compiler->AddCompilerOption("/EHsc", "Enable C++ Exceptions with SEH and Extern C functions.");
 
     compiler->AddCompilerOption("/Z7", "Produces an .obj file containing full symbolic debugging information for use with the debugger.");
     compiler->AddCompilerOption("/Zi", "Produces a program database (PDB) that contains type information and symbolic debugging information for use with the debugger.");
@@ -233,8 +233,8 @@ void CompilerLocatorMSVC::AddLinkerOptions(CompilerPtr compiler)
     compiler->AddLinkerOption("/MACHINE:X64", "Specifies the target platform.");
     compiler->AddLinkerOption("/MACHINE:X86", "Specifies the target platform.");
     compiler->AddLinkerOption("/NOENTRY", "Creates a resource-only DLL.");
-    compiler->AddLinkerOption("/NXCOMPAT", "Specify Compatability with Data Execution Prevention.");
-    compiler->AddLinkerOption("/NXCOMPAT:NO", "Specify Compatability with Data Execution Prevention.");
+    compiler->AddLinkerOption("/NXCOMPAT", "Specify Compatibility with Data Execution Prevention.");
+    compiler->AddLinkerOption("/NXCOMPAT:NO", "Specify Compatibility with Data Execution Prevention.");
 
     compiler->AddLinkerOption("/OPT:REF", "Controls LINK optimizations.");
     compiler->AddLinkerOption("/OPT:NOREF", "Controls LINK optimizations.");

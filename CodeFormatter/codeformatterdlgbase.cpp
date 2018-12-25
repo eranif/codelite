@@ -645,7 +645,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceNone);
     m_pgMgrPHPCsFixerIntArr.Add(kPcfConcatSpaceOne);
     m_pgPropPHPCsFixerConcatSpace = m_pgMgrPHPCsFixer->AppendIn( m_pgPropPhpCSFixer,  new wxEnumProperty( _("Concat space"), wxPG_LABEL, m_pgMgrPHPCsFixerArr, m_pgMgrPHPCsFixerIntArr, 0) );
-    m_pgPropPHPCsFixerConcatSpace->SetHelpString(_("Spacing around concatination dots."));
+    m_pgPropPHPCsFixerConcatSpace->SetHelpString(_("Spacing around concatenation dots."));
 
     m_pgMgrPHPCsFixerArr.Clear();
     m_pgMgrPHPCsFixerIntArr.Clear();

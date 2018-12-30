@@ -74,8 +74,7 @@
 
 static GitPlugin* thePlugin = NULL;
 #define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
-#define GIT_MESSAGE1(...) \
-    if(m_console->IsVerbose()) { m_console->AddText(wxString::Format(__VA_ARGS__)); }
+#define GIT_MESSAGE1(...)
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
@@ -1676,7 +1675,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     gitAction ga;
     if(!m_gitActionQueue.empty()) { ga = m_gitActionQueue.front(); }
 
-    if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
+    //if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
     m_commandOutput.Append(output);
 
     // Handle password required

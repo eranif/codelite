@@ -43,6 +43,7 @@ class GitConsole : public GitConsoleBase
     wxBitmap m_newBmp;
     wxBitmap m_deleteBmp;
     clGenericSTCStyler::Ptr_t m_styler;
+    size_t m_indent = 0;
 
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
@@ -67,8 +68,10 @@ public:
     bool IsProgressShown() const;
     void PulseProgress();
     void ShowLog();
+    void SetIndent(size_t depth = 1) { m_indent = depth; }
 
 protected:
+    wxString GetIndent() const { return wxString(' ', (m_indent * 4)); }
     virtual void OnUnversionedFileActivated(wxDataViewEvent& event);
     virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event);
     virtual void OnUpdateUI(wxUpdateUIEvent& event);

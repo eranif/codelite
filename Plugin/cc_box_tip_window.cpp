@@ -40,6 +40,7 @@
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
+#include <wx/display.h>
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -200,8 +201,11 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     bool vPositioned = false;
-    wxSize displaySize = ::clGetDisplaySize();
-    if((pt.x + tipSize.x) > displaySize.x) {
+    wxRect displaySize = ::clGetDisplaySize();
+    int displayIndex = wxDisplay::GetFromPoint(pt);
+    if(displayIndex != wxNOT_FOUND) { displaySize = wxDisplay(displayIndex).GetGeometry(); }
+    
+    if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left
         pt = windowPos;
         pt.x -= tipSize.x;

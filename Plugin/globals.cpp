@@ -2087,13 +2087,14 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 
 wxSize clGetDisplaySize()
 {
-    int width = 0;
-    int height = ::wxGetDisplaySize().GetHeight();
+    int displayWidth = ::wxGetDisplaySize().GetWidth();
+    int displayHeight = ::wxGetDisplaySize().GetHeight();
     for(size_t i = 0; i < wxDisplay::GetCount(); ++i) {
         wxDisplay display(i);
-        width += display.GetClientArea().GetWidth();
+        displayWidth = wxMax(display.GetClientArea().GetWidth(), displayWidth);
+        displayHeight = wxMax(display.GetClientArea().GetHeight(), displayHeight);
     }
-    return wxSize(width, height);
+    return wxSize(displayWidth, displayHeight);
 }
 
 void clFitColumnWidth(wxDataViewCtrl* ctrl)

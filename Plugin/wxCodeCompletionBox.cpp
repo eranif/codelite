@@ -20,6 +20,7 @@
 #include <wx/dcgraph.h>
 #include "ieditor.h"
 #include "imanager.h"
+#include <wx/display.h>
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -72,7 +73,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
 
     InitializeDefaultBitmaps();
-    
+
     // Set the control width
     {
         wxMemoryDC memDC;
@@ -84,7 +85,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
         wxSize sz = gcdc.GetTextExtent(sampleString);
         BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
     }
-    
+
     m_lineHeight = GetSingleLineHeight();
     int bitmapHeight = m_bitmaps[0].GetScaledHeight();
     if(bitmapHeight > m_lineHeight) { m_lineHeight = bitmapHeight; }
@@ -703,13 +704,16 @@ void wxCodeCompletionBox::DoShowCompletionBox()
 
     int lineHeight = textSize.y + 3; // 3 pixels margins
     wxRect rect = GetRect();
-    wxSize screenSize = ::clGetDisplaySize();
 
     // determine the box x position
     int wordStart = m_startPos;
     wxPoint pt = m_stc->PointFromPosition(wordStart);
     pt = m_stc->ClientToScreen(pt);
     pt.y += lineHeight;
+
+    wxRect screenSize = clGetDisplaySize();
+    int displayIndex = wxDisplay::GetFromPoint(pt);
+    if(displayIndex != wxNOT_FOUND) { screenSize = wxDisplay(displayIndex).GetGeometry(); }
 
     // Check Y axis
     if((pt.y + rect.GetHeight()) > screenSize.GetHeight()) {
@@ -719,7 +723,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     }
 
     // Check X axis
-    if((pt.x + rect.GetWidth()) > screenSize.GetWidth()) {
+    if((pt.x + rect.GetWidth()) > (screenSize.GetX() + screenSize.GetWidth())) {
         // the completion box goes out of the X axis. Move it to the left
         pt.x -= ((pt.x + rect.GetWidth()) - screenSize.GetWidth());
     }

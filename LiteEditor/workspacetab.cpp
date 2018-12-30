@@ -123,7 +123,7 @@ void WorkspaceTab::CreateGUIControls()
     m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), bmps->LoadBitmap("home"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
                           _("Open selected project settings. If there is no project selected, open the parent project "
-                            "of the seleced item in the tree"),
+                            "of the selected item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSeparator();
     m_toolbar580->AddTool(XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build"),

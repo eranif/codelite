@@ -4339,7 +4339,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": ""
+           "m_value": "String to search"
           }, {
            "type": "colour",
            "m_label": "Bg Colour:",
@@ -4501,7 +4501,7 @@
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
-           "m_value": ""
+           "m_value": "File types to search\\ne.g: *.txt"
           }, {
            "type": "colour",
            "m_label": "Bg Colour:",

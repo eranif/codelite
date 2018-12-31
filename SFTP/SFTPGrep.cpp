@@ -38,7 +38,7 @@ GrepData SFTPGrep::GetData() const
 wxString GrepData::GetGrepCommand(const wxString& path) const
 {
     wxString command;
-    command << "find " << path << " -name " << GetSearchIn() << " | xargs grep -n ";
+    command << "find " << path << " -name \"" << GetSearchIn() << "\" | xargs grep -n ";
     if(IsIgnoreCase()) { command << " -i "; }
     if(IsWholeWord()) { command << " -w "; }
     command << " \"" << GetFindWhat() << "\"";

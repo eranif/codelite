@@ -648,6 +648,7 @@ SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& titl
 
     m_textCtrlFindWhat =
         new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlFindWhat->SetToolTip(_("String to search"));
     m_textCtrlFindWhat->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlFindWhat->SetHint(wxT(""));
@@ -661,6 +662,7 @@ SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& titl
     flexGridSizer173->Add(m_staticText179, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlSeachIn = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlSeachIn->SetToolTip(_("File types to search\ne.g: *.txt"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlSeachIn->SetHint(wxT(""));
 #endif

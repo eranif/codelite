@@ -3,6 +3,7 @@
 #include "clConsoleGnomeTerminal.h"
 #include "clConsoleKonsole.h"
 #include "clConsoleLXTerminal.h"
+#include "clConsoleQTerminal.h"
 #include "clConsoleMateTerminal.h"
 #include "clConsoleOSXTerminal.h"
 #include "clConsoleXfce4Terminal.h"
@@ -31,6 +32,8 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleMateTerminal());
     } else if(terminalName.CmpNoCase("xfce4-terminal") == 0) {
         terminal.reset(new clConsoleXfce4Terminal());
+    } else if(terminalName.CmpNoCase("qterminal") == 0) {
+        terminal.reset(new clConsoleQTerminal());
     } else {
         // the default terminal is "gnome-terminal"
         terminal.reset(new clConsoleGnomeTerminal());
@@ -53,6 +56,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("gnome-terminal");
     terminals.Add("lxterminal");
     terminals.Add("mate-terminal");
+    terminals.Add("qterminal");
     terminals.Add("xfce4-terminal");
 #else
     terminals.Add("Terminal");

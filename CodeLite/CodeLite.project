@@ -51,6 +51,8 @@
     <File Name="clConsoleMateTerminal.h"/>
     <File Name="clConsoleLXTerminal.cpp"/>
     <File Name="clConsoleLXTerminal.h"/>
+    <File Name="clConsoleQTerminal.cpp"/>
+    <File Name="clConsoleQTerminal.h"/>
     <File Name="clConsoleBash.cpp"/>
     <File Name="clConsoleBash.h"/>
     <File Name="clConsoleOSXTerminal.cpp"/>

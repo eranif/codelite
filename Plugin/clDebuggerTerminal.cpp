@@ -66,17 +66,20 @@ void clDebuggerTerminalPOSIX::Clear()
 {
 #ifndef __WXMSW__
     if ( m_pid != wxNOT_FOUND ) {
-        // konsole hangs on exit with the message  "Warning: Program '/bin/sleep' crashed."
-        // I can't find any way to prevent this, so grab the terminal's pid so we can kill it too if it's konsole
-        bool killParent(false); // There's no need to kill non-konsole terminals
+        // konsole and and its descendent qterminal hang on exit
+        // That's because we made them call /bin/sleep, which becomes the process stored in m_pid
+        // Killing 'sleep' makes other terminals self-close, but not these two
+        // (At least for konsole, it displays "Warning: Program '/bin/sleep' crashed" instead)
+        // I can't find any way to prevent this, so grab the real terminal pid so in this situation we can kill it too
+        bool killParent(false); // There's no need to kill most terminals
         wxString command(wxString::Format("ps -o ppid= -p %i", (int)m_pid));
         wxString result = ProcUtils::SafeExecuteCommand(command);
         long parentID;
         if (result.Trim().ToLong(&parentID)) {
             wxString command(wxString::Format("ps -o command= -p %i", (int)parentID));
             wxString name = ProcUtils::SafeExecuteCommand(command);
-            if (name.Contains("--separate")) {
-                killParent = true; //It _is_ konsole, which will have been launched with --separate as an option
+            if (name.Contains("--separate") || name.Contains("qterminal")) {
+                killParent = true; // as it _is_ konsole, which will have been launched with --separate as an option, or qterminal
             }
         }
 

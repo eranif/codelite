@@ -1675,7 +1675,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     gitAction ga;
     if(!m_gitActionQueue.empty()) { ga = m_gitActionQueue.front(); }
 
-    //if(m_console->IsVerbose() || ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
+    if(ga.action == gitPush || ga.action == gitPull) { m_console->AddRawText(output); }
     m_commandOutput.Append(output);
 
     // Handle password required

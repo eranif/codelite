@@ -434,8 +434,9 @@ void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
     m_stcDiff->ClearAll();
     m_commandOutput.Replace(wxT("\r"), wxT(""));
 
+    wxArrayString commitMessage;
     GitDiffOutputParser diff_parser;
-    diff_parser.GetDiffMap(m_commandOutput, m_diffMap);
+    diff_parser.GetDiffMap(m_commandOutput, m_diffMap, &commitMessage);
 
     for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
@@ -445,6 +446,10 @@ void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
         wxString file = m_plugin->GetEditorRelativeFilepath();
         m_stcDiff->SetText(m_diffMap[file]);
         m_fileListBox->SetStringSelection(file);
+    }
+
+    for (size_t i = 0; i < commitMessage.GetCount(); ++i) {
+        m_stcCommitMessage->AppendText(commitMessage.Item(i));
     }
 
     m_stcDiff->SetEditable(false);

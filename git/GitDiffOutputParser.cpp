@@ -5,16 +5,28 @@ GitDiffOutputParser::GitDiffOutputParser() {}
 
 GitDiffOutputParser::~GitDiffOutputParser() {}
 
-void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M) const
+void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage) const
 {
     wxArrayString diffList = wxStringTokenize(rawDiff, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
     unsigned index = 0;
     wxString currentFile;
     wxString currentDiff;
     const wxString diffPrefix = "diff --git a/";
+    bool foundFirstDiff = false;
     eGitDiffStates state = kLookingForFileName; // Searching for file name
     for(size_t i = 0; i < diffList.size(); ++i) {
         wxString& line = diffList.Item(i);
+        if (commitMessage && !foundFirstDiff) {
+            // The git blame and git CommitList need to display the commit message
+            // This can be found at the top of the output, before the first "diff "
+            if (!line.StartsWith("diff ")) {
+                commitMessage->Add(line + "\n");
+                continue;
+            } else {
+                foundFirstDiff = true;
+            }
+        }
+
         switch(state) {
         case kLookingForFileName: {
             if(line.StartsWith(diffPrefix)) {

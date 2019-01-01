@@ -108,8 +108,9 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
     m_stcCommitMessage->SetEditable(true);
     m_stcDiff->SetEditable(true);
 
+    wxArrayString commitMessage;
     GitDiffOutputParser diff_parser;
-    diff_parser.GetDiffMap(m_commandOutput, m_diffMap);
+    diff_parser.GetDiffMap(m_commandOutput, m_diffMap, &commitMessage);
 
     for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
         m_fileListBox->Append((*it).first);
@@ -118,6 +119,10 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
         m_fileListBox->Select(0);
+    }
+
+    for (size_t i = 0; i < commitMessage.GetCount(); ++i) {
+        m_stcCommitMessage->AppendText(commitMessage.Item(i));
     }
 
     m_stcDiff->SetEditable(false);

@@ -19,8 +19,9 @@ public:
      * of file->diff
      * @param rawDiff the output of the command 'git diff ...'
      * @param M [output]
+     * @param commitMessage optional store for the commit message in Blame and CommitList dialogs
      */
-    void GetDiffMap(const wxString& rawDiff, wxStringMap_t& M) const;
+    void GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage = NULL) const;
 };
 
 #endif // GITDIFFOUTPUTPARSER_H

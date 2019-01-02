@@ -178,8 +178,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     }
     m_styler->ApplyStyles();
 
-    GitImages m_images;
-    m_images.SetBitmapResolution(clBitmap::ShouldLoadHiResImages() ? "@2x" : "");
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("modified");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
     m_folderBmp = m_bitmapLoader->LoadBitmap("folder-yellow");

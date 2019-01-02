@@ -1066,19 +1066,11 @@ void clTabCtrl::DoShowTabList()
     menuEvent.SetEventObject(GetParent()); // The Notebook
     GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
 
+#ifdef __WXGTK__
+    PopupMenu(&menu);
+#else
     PopupMenu(&menu, m_chevronRect.GetBottomLeft());
-    /*    int selection = GetPopupMenuSelectionFromUser(menu, m_chevronRect.GetBottomLeft());
-        if(selection != wxID_NONE) {
-            selection -= firstTabPageID;
-            if(selection < (int)sortedIndexes.size()) {
-                const int newSelection = sortedIndexes[selection];
-
-                // don't change the selection unless the selection is really changing
-                if(curselection != newSelection) {
-                    SetSelection(newSelection);
-                }
-            }
-        }*/
+#endif
 }
 
 bool clTabCtrl::SetPageToolTip(size_t page, const wxString& tooltip)

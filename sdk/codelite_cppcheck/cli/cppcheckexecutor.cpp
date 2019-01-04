@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,30 +17,40 @@
  */
 
 #include "cppcheckexecutor.h"
+
 #include "analyzerinfo.h"
 #include "cmdlineparser.h"
+#include "config.h"
 #include "cppcheck.h"
 #include "filelister.h"
+#include "importproject.h"
+#include "library.h"
 #include "path.h"
 #include "pathmatch.h"
 #include "preprocessor.h"
+#include "settings.h"
+#include "standards.h"
+#include "suppressions.h"
 #include "threadexecutor.h"
 #include "utils.h"
+#include "checkunusedfunctions.h"
 
+#include <csignal>
+#include <cstdio>
 #include <cstdlib> // EXIT_SUCCESS and EXIT_FAILURE
 #include <cstring>
-#include <algorithm>
 #include <iostream>
-#include <sstream>
+#include <list>
+#include <utility>
+#include <vector>
 
-#if !defined(NO_UNIX_SIGNAL_HANDLING) && defined(__GNUC__) && !defined(__CYGWIN__) && !defined(__MINGW32__) && !defined(__OS2__)
+#if !defined(NO_UNIX_SIGNAL_HANDLING) && defined(__GNUC__) && !defined(__MINGW32__) && !defined(__OS2__)
 #define USE_UNIX_SIGNAL_HANDLING
-#include <cstdio>
-#include <signal.h>
 #include <unistd.h>
 #if defined(__APPLE__)
 #   define _XOPEN_SOURCE // ucontext.h APIs can only be used on Mac OSX >= 10.7 if _XOPEN_SOURCE is defined
 #   include <ucontext.h>
+
 #   undef _XOPEN_SOURCE
 #elif !defined(__OpenBSD__)
 #   include <ucontext.h>
@@ -59,32 +69,33 @@
 
 #if defined(_MSC_VER)
 #define USE_WINDOWS_SEH
-#include <Windows.h>
 #include <DbgHelp.h>
-#include <excpt.h>
 #include <TCHAR.H>
+#include <Windows.h>
+#include <excpt.h>
 #endif
 
 
 /*static*/ FILE* CppCheckExecutor::exceptionOutput = stdout;
 
 CppCheckExecutor::CppCheckExecutor()
-    : _settings(0), time1(0), errorlist(false)
+    : _settings(nullptr), latestProgressOutputTime(0), errorOutput(nullptr), errorlist(false)
 {
 }
 
 CppCheckExecutor::~CppCheckExecutor()
 {
+    delete errorOutput;
 }
 
 bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* const argv[])
 {
     Settings& settings = cppcheck->settings();
     CmdLineParser parser(&settings);
-    const bool success = parser.ParseFromArgs(argc, argv);
+    const bool success = parser.parseFromArgs(argc, argv);
 
     if (success) {
-        if (parser.GetShowVersion() && !parser.GetShowErrorMessages()) {
+        if (parser.getShowVersion() && !parser.getShowErrorMessages()) {
             const char * const extraVersion = cppcheck->extraVersion();
             if (*extraVersion != 0)
                 std::cout << "Cppcheck " << cppcheck->version() << " ("
@@ -93,14 +104,14 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
                 std::cout << "Cppcheck " << cppcheck->version() << std::endl;
         }
 
-        if (parser.GetShowErrorMessages()) {
+        if (parser.getShowErrorMessages()) {
             errorlist = true;
-            std::cout << ErrorLogger::ErrorMessage::getXMLHeader(settings.xml_version);
+            std::cout << ErrorLogger::ErrorMessage::getXMLHeader();
             cppcheck->getErrorMessages();
-            std::cout << ErrorLogger::ErrorMessage::getXMLFooter(settings.xml_version) << std::endl;
+            std::cout << ErrorLogger::ErrorMessage::getXMLFooter() << std::endl;
         }
 
-        if (parser.ExitAfterPrinting()) {
+        if (parser.exitAfterPrinting()) {
             settings.terminate();
             return true;
         }
@@ -110,8 +121,7 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
 
     // Check that all include paths exist
     {
-        std::list<std::string>::iterator iter;
-        for (iter = settings.includePaths.begin();
+        for (std::list<std::string>::iterator iter = settings.includePaths.begin();
              iter != settings.includePaths.end();
             ) {
             const std::string path(Path::toNativeSeparators(*iter));
@@ -128,9 +138,9 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
 
     // Output a warning for the user if he tries to exclude headers
     bool warn = false;
-    const std::vector<std::string>& ignored = parser.GetIgnoredPaths();
-    for (std::vector<std::string>::const_iterator i = ignored.cbegin(); i != ignored.cend(); ++i) {
-        if (Path::isHeader(*i)) {
+    const std::vector<std::string>& ignored = parser.getIgnoredPaths();
+    for (const std::string &i : ignored) {
+        if (Path::isHeader(i)) {
             warn = true;
             break;
         }
@@ -140,7 +150,7 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
         std::cout << "cppcheck: Please use --suppress for ignoring results from the header files." << std::endl;
     }
 
-    const std::vector<std::string>& pathnames = parser.GetPathNames();
+    const std::vector<std::string>& pathnames = parser.getPathNames();
 
 #if defined(_WIN32)
     // For Windows we want case-insensitive path matching
@@ -150,7 +160,7 @@ bool CppCheckExecutor::parseFromArgs(CppCheck *cppcheck, int argc, const char* c
 #endif
     if (!pathnames.empty()) {
         // Execute recursiveAddFiles() to each given file parameter
-        PathMatch matcher(ignored, caseSensitive);
+        const PathMatch matcher(ignored, caseSensitive);
         for (std::vector<std::string>::const_iterator iter = pathnames.begin(); iter != pathnames.end(); ++iter)
             FileLister::recursiveAddFiles(_files, Path::toNativeSeparators(*iter), _settings->library.markupExtensions(), matcher);
     }
@@ -169,6 +179,8 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
     Preprocessor::missingIncludeFlag = false;
     Preprocessor::missingSystemIncludeFlag = false;
 
+    CheckUnusedFunctions::clear();
+
     CppCheck cppCheck(*this, true);
 
     const Settings& settings = cppCheck.settings();
@@ -182,9 +194,13 @@ int CppCheckExecutor::check(int argc, const char* const argv[])
     }
     if (cppCheck.settings().exceptionHandling) {
         return check_wrapper(cppCheck, argc, argv);
-    } else {
-        return check_internal(cppCheck, argc, argv);
     }
+    return check_internal(cppCheck, argc, argv);
+}
+
+void CppCheckExecutor::setSettings(const Settings &settings)
+{
+    _settings = &settings;
 }
 
 /**
@@ -201,8 +217,9 @@ std::size_t GetArrayLength(const T(&)[size])
 #if defined(USE_UNIX_SIGNAL_HANDLING)
 /*
  * Try to print the callstack.
- * That is very sensitive to the operating system, hardware, compiler and runtime!
- * The code is not meant for production environment, it's using functions not whitelisted for usage in a signal handler function.
+ * That is very sensitive to the operating system, hardware, compiler and runtime.
+ * The code is not meant for production environment!
+ * One reason is named first: it's using functions not whitelisted for usage in a signal handler function.
  */
 static void print_stacktrace(FILE* output, bool demangling, int maxdepth, bool lowMem)
 {
@@ -210,8 +227,8 @@ static void print_stacktrace(FILE* output, bool demangling, int maxdepth, bool l
 // 32 vs. 64bit
 #define ADDRESSDISPLAYLENGTH ((sizeof(long)==8)?12:8)
     const int fd = fileno(output);
-    void *array[32]= {0}; // the less resources the better...
-    const int currentdepth = backtrace(array, (int)GetArrayLength(array));
+    void *callstackArray[32]= {0}; // the less resources the better...
+    const int currentdepth = backtrace(callstackArray, (int)GetArrayLength(callstackArray));
     const int offset=2; // some entries on top are within our own exception handling code or libc
     if (maxdepth<0)
         maxdepth=currentdepth-offset;
@@ -219,17 +236,16 @@ static void print_stacktrace(FILE* output, bool demangling, int maxdepth, bool l
         maxdepth = std::min(maxdepth, currentdepth);
     if (lowMem) {
         fputs("Callstack (symbols only):\n", output);
-        backtrace_symbols_fd(array+offset, maxdepth, fd);
-        fflush(output);
+        backtrace_symbols_fd(callstackArray+offset, maxdepth, fd);
     } else {
-        char **symbolstrings = backtrace_symbols(array, currentdepth);
-        if (symbolstrings) {
+        char **symbolStringList = backtrace_symbols(callstackArray, currentdepth);
+        if (symbolStringList) {
             fputs("Callstack:\n", output);
             for (int i = offset; i < maxdepth; ++i) {
-                const char * const symbol = symbolstrings[i];
-                char * realname = nullptr;
-                const char * const firstBracketName     = strchr(symbol, '(');
-                const char * const firstBracketAddress  = strchr(symbol, '[');
+                const char * const symbolString = symbolStringList[i];
+                char * realnameString = nullptr;
+                const char * const firstBracketName     = strchr(symbolString, '(');
+                const char * const firstBracketAddress  = strchr(symbolString, '[');
                 const char * const secondBracketAddress = strchr(firstBracketAddress, ']');
                 const char * const beginAddress         = firstBracketAddress+3;
                 const int addressLen = int(secondBracketAddress-beginAddress);
@@ -237,12 +253,14 @@ static void print_stacktrace(FILE* output, bool demangling, int maxdepth, bool l
                 if (demangling && firstBracketName) {
                     const char * const plus = strchr(firstBracketName, '+');
                     if (plus && (plus>(firstBracketName+1))) {
-                        char input_buffer[512]= {0};
+                        char input_buffer[1024]= {0};
                         strncpy(input_buffer, firstBracketName+1, plus-firstBracketName-1);
-                        char output_buffer[1024]= {0};
+                        char output_buffer[2048]= {0};
                         size_t length = GetArrayLength(output_buffer);
                         int status=0;
-                        realname = abi::__cxa_demangle(input_buffer, output_buffer, &length, &status); // non-NULL on success
+                        // We're violating the specification - passing stack address instead of malloc'ed heap.
+                        // Benefit is that no further heap is required, while there is sufficient stack...
+                        realnameString = abi::__cxa_demangle(input_buffer, output_buffer, &length, &status); // non-NULL on success
                     }
                 }
                 const int ordinal=i-offset;
@@ -251,22 +269,27 @@ static void print_stacktrace(FILE* output, bool demangling, int maxdepth, bool l
                 if (padLen>0)
                     fprintf(output, "%0*d",
                             padLen, 0);
-                if (realname) {
+                if (realnameString) {
                     fprintf(output, "%.*s in %s\n",
                             (int)(secondBracketAddress-firstBracketAddress-3), firstBracketAddress+3,
-                            realname);
+                            realnameString);
                 } else {
                     fprintf(output, "%.*s in %.*s\n",
                             (int)(secondBracketAddress-firstBracketAddress-3), firstBracketAddress+3,
-                            (int)(firstBracketAddress-symbol), symbol);
+                            (int)(firstBracketAddress-symbolString), symbolString);
                 }
             }
-            free(symbolstrings);
+            free(symbolStringList);
         } else {
             fputs("Callstack could not be obtained\n", output);
         }
     }
 #undef ADDRESSDISPLAYLENGTH
+#else
+    UNUSED(output);
+    UNUSED(demangling);
+    UNUSED(maxdepth);
+    UNUSED(lowMem);
 #endif
 }
 
@@ -296,21 +319,21 @@ static bool IsAddressOnStack(const void* ptr)
  * For now we only want to detect abnormal behaviour for a few selected signals:
  */
 
-#define DECLARE_SIGNAL(x) << std::make_pair(x, #x)
+#define DECLARE_SIGNAL(x) std::make_pair(x, #x)
 typedef std::map<int, std::string> Signalmap_t;
-static const Signalmap_t listofsignals = make_container< Signalmap_t > ()
-        DECLARE_SIGNAL(SIGABRT)
-        DECLARE_SIGNAL(SIGBUS)
-        DECLARE_SIGNAL(SIGFPE)
-        DECLARE_SIGNAL(SIGILL)
-        DECLARE_SIGNAL(SIGINT)
-        DECLARE_SIGNAL(SIGQUIT)
-        DECLARE_SIGNAL(SIGSEGV)
-        DECLARE_SIGNAL(SIGSYS)
-        // don't care: SIGTERM
-        DECLARE_SIGNAL(SIGUSR1)
-        DECLARE_SIGNAL(SIGUSR2)
-        ;
+static const Signalmap_t listofsignals = {
+    DECLARE_SIGNAL(SIGABRT),
+    DECLARE_SIGNAL(SIGBUS),
+    DECLARE_SIGNAL(SIGFPE),
+    DECLARE_SIGNAL(SIGILL),
+    DECLARE_SIGNAL(SIGINT),
+    DECLARE_SIGNAL(SIGQUIT),
+    DECLARE_SIGNAL(SIGSEGV),
+    DECLARE_SIGNAL(SIGSYS),
+    // don't care: SIGTERM
+    DECLARE_SIGNAL(SIGUSR1),
+    //DECLARE_SIGNAL(SIGUSR2) no usage currently
+};
 #undef DECLARE_SIGNAL
 /*
  * Entry pointer for signal handlers
@@ -322,26 +345,37 @@ static const Signalmap_t listofsignals = make_container< Signalmap_t > ()
 static void CppcheckSignalHandler(int signo, siginfo_t * info, void * context)
 {
     int type = -1;
-    pid_t killid = getpid();
+    pid_t killid;
 #if defined(__linux__) && defined(REG_ERR)
     const ucontext_t* const uc = reinterpret_cast<const ucontext_t*>(context);
     killid = (pid_t) syscall(SYS_gettid);
     if (uc) {
         type = (int)uc->uc_mcontext.gregs[REG_ERR] & 2;
     }
+#else
+    UNUSED(context);
+    killid = getpid();
 #endif
+
     const Signalmap_t::const_iterator it=listofsignals.find(signo);
     const char * const signame = (it==listofsignals.end()) ? "unknown" : it->second.c_str();
-    bool printCallstack=true;
-    bool lowMem=false;
-    bool unexpectedSignal=true;
-    const bool isaddressonstack = IsAddressOnStack(info->si_addr);
+    bool printCallstack=true; // try to print a callstack?
+    bool lowMem=false; // was low-memory condition detected? Be careful then! Avoid allocating much more memory then.
+    bool unexpectedSignal=true; // unexpected indicates program failure
+    bool terminate=true; // exit process/thread
+    const bool isAddressOnStack = IsAddressOnStack(info->si_addr);
     FILE* output = CppCheckExecutor::getExceptionOutput();
     switch (signo) {
     case SIGABRT:
         fputs("Internal error: cppcheck received signal ", output);
         fputs(signame, output);
-        fputs(" - out of memory?\n", output);
+        fputs(
+#ifdef NDEBUG
+            " - out of memory?\n",
+#else
+            " - out of memory or assertion?\n",
+#endif
+            output);
         lowMem=true; // educated guess
         break;
     case SIGBUS:
@@ -440,7 +474,7 @@ static void CppcheckSignalHandler(int signo, siginfo_t * info, void * context)
         }
         fprintf(output, " (at 0x%lx).%s\n",
                 (unsigned long)info->si_addr,
-                (isaddressonstack)?" Stackoverflow?":"");
+                (isAddressOnStack)?" Stackoverflow?":"");
         break;
     case SIGINT:
         unexpectedSignal=false; // legal usage: interrupt application via CTRL-C
@@ -466,14 +500,14 @@ static void CppcheckSignalHandler(int signo, siginfo_t * info, void * context)
                 (type==-1)? "" :
                 (type==0) ? "reading " : "writing ",
                 (unsigned long)info->si_addr,
-                (isaddressonstack)?" Stackoverflow?":""
+                (isAddressOnStack)?" Stackoverflow?":""
                );
         break;
     case SIGUSR1:
-    case SIGUSR2:
         fputs("cppcheck received signal ", output);
         fputs(signame, output);
         fputs(".\n", output);
+        terminate=false;
         break;
     default:
         fputs("Internal error: cppcheck received signal ", output);
@@ -489,9 +523,14 @@ static void CppcheckSignalHandler(int signo, siginfo_t * info, void * context)
     }
     fflush(output);
 
-    // now let things proceed, shutdown and hopefully dump core for post-mortem analysis
-    signal(signo, SIG_DFL);
-    kill(killid, signo);
+    if (terminate) {
+        // now let things proceed, shutdown and hopefully dump core for post-mortem analysis
+        struct sigaction act;
+        memset(&act, 0, sizeof(act));
+        act.sa_handler=SIG_DFL;
+        sigaction(signo, &act, nullptr);
+        kill(killid, signo);
+    }
 }
 #endif
 
@@ -542,7 +581,7 @@ namespace {
         const HANDLE hThread    = GetCurrentThread();
         BOOL result = pSymInitialize(
                           hProcess,
-                          0,
+                          nullptr,
                           TRUE
                       );
         CONTEXT             context = *(ex->ContextRecord);
@@ -603,7 +642,7 @@ namespace {
         }
 
         FreeLibrary(hLibDbgHelp);
-        hLibDbgHelp=0;
+        hLibDbgHelp=nullptr;
     }
 
     void writeMemoryErrorDetails(FILE* outputFile, PEXCEPTION_POINTERS ex, const char* description)
@@ -770,7 +809,7 @@ int CppCheckExecutor::check_internal(CppCheck& cppcheck, int /*argc*/, const cha
 {
     Settings& settings = cppcheck.settings();
     _settings = &settings;
-    bool std = tryLoadLibrary(settings.library, argv[0], "std.cfg");
+    const bool std = tryLoadLibrary(settings.library, argv[0], "std.cfg");
     bool posix = true;
     if (settings.standards.posix)
         posix = tryLoadLibrary(settings.library, argv[0], "posix.cfg");
@@ -797,10 +836,14 @@ int CppCheckExecutor::check_internal(CppCheck& cppcheck, int /*argc*/, const cha
     }
 
     if (settings.reportProgress)
-        time1 = std::time(0);
+        latestProgressOutputTime = std::time(nullptr);
+
+    if (!settings.outputFile.empty()) {
+        errorOutput = new std::ofstream(settings.outputFile);
+    }
 
     if (settings.xml) {
-        reportErr(ErrorLogger::ErrorMessage::getXMLHeader(settings.xml_version));
+        reportErr(ErrorLogger::ErrorMessage::getXMLHeader());
     }
 
     if (!settings.buildDir.empty()) {
@@ -853,7 +896,8 @@ int CppCheckExecutor::check_internal(CppCheck& cppcheck, int /*argc*/, const cha
                 c++;
             }
         }
-        cppcheck.analyseWholeProgram();
+        if (cppcheck.analyseWholeProgram())
+            returnValue++;
     } else if (!ThreadExecutor::isEnabled()) {
         std::cout << "No thread support yet implemented for this platform." << std::endl;
     } else {
@@ -897,15 +941,38 @@ int CppCheckExecutor::check_internal(CppCheck& cppcheck, int /*argc*/, const cha
     }
 
     if (settings.xml) {
-        reportErr(ErrorLogger::ErrorMessage::getXMLFooter(settings.xml_version));
+        reportErr(ErrorLogger::ErrorMessage::getXMLFooter());
     }
 
-    _settings = 0;
+    _settings = nullptr;
     if (returnValue)
         return settings.exitCode;
-    else
-        return 0;
+    return 0;
 }
+
+#ifdef _WIN32
+// fix trac ticket #439 'Cppcheck reports wrong filename for filenames containing 8-bit ASCII'
+static inline std::string ansiToOEM(const std::string &msg, bool doConvert)
+{
+    if (doConvert) {
+        const unsigned msglength = msg.length();
+        // convert ANSI strings to OEM strings in two steps
+        std::vector<WCHAR> wcContainer(msglength);
+        std::string result(msglength, '\0');
+
+        // ansi code page characters to wide characters
+        MultiByteToWideChar(CP_ACP, 0, msg.data(), msglength, wcContainer.data(), msglength);
+        // wide characters to oem codepage characters
+        WideCharToMultiByte(CP_OEMCP, 0, wcContainer.data(), msglength, const_cast<char *>(result.data()), msglength, nullptr, nullptr);
+
+        return result; // hope for return value optimization
+    }
+    return msg;
+}
+#else
+// no performance regression on non-windows systems
+#define ansiToOEM(msg, doConvert) (msg)
+#endif
 
 void CppCheckExecutor::reportErr(const std::string &errmsg)
 {
@@ -914,25 +981,29 @@ void CppCheckExecutor::reportErr(const std::string &errmsg)
         return;
 
     _errorList.insert(errmsg);
-    std::cerr << errmsg << std::endl;
+    if (errorOutput)
+        *errorOutput << errmsg << std::endl;
+    else {
+        std::cerr << ansiToOEM(errmsg, (_settings == nullptr) ? true : !_settings->xml) << std::endl;
+    }
 }
 
 void CppCheckExecutor::reportOut(const std::string &outmsg)
 {
-    std::cout << outmsg << std::endl;
+    std::cout << ansiToOEM(outmsg, true) << std::endl;
 }
 
 void CppCheckExecutor::reportProgress(const std::string &filename, const char stage[], const std::size_t value)
 {
     (void)filename;
 
-    if (!time1)
+    if (!latestProgressOutputTime)
         return;
 
     // Report progress messages every 10 seconds
-    const std::time_t time2 = std::time(nullptr);
-    if (time2 >= (time1 + 10)) {
-        time1 = time2;
+    const std::time_t currentTime = std::time(nullptr);
+    if (currentTime >= (latestProgressOutputTime + 10)) {
+        latestProgressOutputTime = currentTime;
 
         // format a progress message
         std::ostringstream ostr;
@@ -954,9 +1025,9 @@ void CppCheckExecutor::reportStatus(std::size_t fileindex, std::size_t filecount
 {
     if (filecount > 1) {
         std::ostringstream oss;
+        const long percentDone = (sizetotal > 0) ? static_cast<long>(static_cast<long double>(sizedone) / sizetotal * 100) : 0;
         oss << fileindex << '/' << filecount
-            << " files checked " <<
-            (sizetotal > 0 ? static_cast<long>(static_cast<long double>(sizedone) / sizetotal*100) : 0)
+            << " files checked " << percentDone
             << "% done";
         std::cout << oss.str() << std::endl;
     }
@@ -965,11 +1036,11 @@ void CppCheckExecutor::reportStatus(std::size_t fileindex, std::size_t filecount
 void CppCheckExecutor::reportErr(const ErrorLogger::ErrorMessage &msg)
 {
     if (errorlist) {
-        reportOut(msg.toXML(false, _settings->xml_version));
+        reportOut(msg.toXML());
     } else if (_settings->xml) {
-        reportErr(msg.toXML(_settings->verbose, _settings->xml_version));
+        reportErr(msg.toXML());
     } else {
-        reportErr(msg.toString(_settings->verbose, _settings->outputFormat));
+        reportErr(msg.toString(_settings->verbose, _settings->templateFormat, _settings->templateLocation));
     }
 }
 

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,13 @@
 #ifndef THREADEXECUTOR_H
 #define THREADEXECUTOR_H
 
-#include <map>
-#include <string>
-#include <list>
 #include "errorlogger.h"
 #include "importproject.h"
+
+#include <cstddef>
+#include <list>
+#include <map>
+#include <string>
 
 #if (defined(__GNUC__) || defined(__sun)) && !defined(__MINGW32__)
 #define THREADING_MODEL_FORK
@@ -47,9 +49,9 @@ public:
     virtual ~ThreadExecutor();
     unsigned int check();
 
-    virtual void reportOut(const std::string &outmsg);
-    virtual void reportErr(const ErrorLogger::ErrorMessage &msg);
-    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg);
+    virtual void reportOut(const std::string &outmsg) override;
+    virtual void reportErr(const ErrorLogger::ErrorMessage &msg) override;
+    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg) override;
 
     /**
      * @brief Add content to a file, to be used in unit testing.
@@ -90,7 +92,7 @@ private:
 
     /**
      * @brief Check load average condition
-     * @param nchildren - count of currently runned children
+     * @param nchildren - count of currently ran children
      * @return true - if new process can be started
      */
     bool checkLoadAverage(size_t nchildren);

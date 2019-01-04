@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,25 @@
 #define tokenizeH
 //---------------------------------------------------------------------------
 
+#include "config.h"
 #include "errorlogger.h"
 #include "tokenlist.h"
-#include "config.h"
 
-#include <string>
-#include <map>
-#include <set>
-#include <list>
 #include <ctime>
+#include <list>
+#include <map>
+#include <string>
+#include <stack>
 
 class Settings;
 class SymbolDatabase;
 class TimerResults;
+class Token;
+class TemplateSimplifier;
+
+namespace simplecpp {
+    class TokenList;
+}
 
 /// @addtogroup Core
 /// @{
@@ -45,13 +51,41 @@ class CPPCHECKLIB Tokenizer {
     friend class TestSimplifyTypedef;
     friend class TestTokenizer;
     friend class SymbolDatabase;
+
+    /** Class used in Tokenizer::setVarIdPass1 */
+    class VariableMap {
+    private:
+        std::map<std::string, unsigned int> mVariableId;
+        std::stack<std::list<std::pair<std::string, unsigned int> > > mScopeInfo;
+        mutable unsigned int mVarId;
+    public:
+        VariableMap();
+        void enterScope();
+        bool leaveScope();
+        void addVariable(const std::string &varname);
+        bool hasVariable(const std::string &varname) const;
+        std::map<std::string, unsigned int>::const_iterator find(const std::string &varname) const {
+            return mVariableId.find(varname);
+        }
+        std::map<std::string, unsigned int>::const_iterator end() const {
+            return mVariableId.end();
+        }
+        const std::map<std::string, unsigned int> &map() const {
+            return mVariableId;
+        }
+        unsigned int *getVarId() const {
+            return &mVarId;
+        }
+    };
+
+
 public:
     Tokenizer();
     Tokenizer(const Settings * settings, ErrorLogger *errorLogger);
     ~Tokenizer();
 
     void setTimerResults(TimerResults *tr) {
-        m_timerResults = tr;
+        mTimerResults = tr;
     }
 
     /** Is the code C. Used for bailouts */
@@ -72,8 +106,8 @@ public:
      */
     bool IsScopeNoReturn(const Token *endScopeToken, bool *unknown = nullptr) const;
 
-    bool createTokens(std::istream &code,
-                      const std::string& FileName);
+    bool createTokens(std::istream &code, const std::string& FileName);
+    void createTokens(const simplecpp::TokenList *tokenList);
 
     bool simplifyTokens1(const std::string &configuration);
     /**
@@ -254,12 +288,6 @@ public:
      * 64 bits: size_t -> unsigned long long
      */
     void simplifyPlatformTypes();
-
-    /**
-     * Collapse compound standard types into a single token.
-     * unsigned long long int => long _isUnsigned=true,_isLong=true
-     */
-    void simplifyStdType();
 
     /**
      * Simplify easy constant '?:' operation
@@ -506,8 +534,6 @@ public:
      */
     const Token * isFunctionHead(const Token *tok, const std::string &endsWith) const;
 
-private:
-
     /**
      * is token pointing at function head?
      * @param tok         A '(' or ')' token in a possible function head
@@ -516,6 +542,8 @@ private:
      * @return token matching with endsWith if syntax seems to be a function head else nullptr
      */
     static const Token * isFunctionHead(const Token *tok, const std::string &endsWith, bool cpp);
+
+private:
 
     /**
      * simplify "while (0)"
@@ -590,8 +618,8 @@ private:
      */
     void validate() const;
 
-    /** Detect garbage code */
-    const Token * findGarbageCode() const;
+    /** Detect garbage code and call syntaxError() if found. */
+    void findGarbageCode() const;
 
     /** Detect garbage expression */
     static bool isGarbageExpr(const Token *start, const Token *end);
@@ -673,15 +701,25 @@ private:
     void simplifyOperatorName();
 
     /**
-    * Remove [[deprecated]] (C++14) from TokenList
+    * Remove [[attribute]] (C++11 and later) from TokenList
     */
-    void simplifyDeprecated();
+    void simplifyCPPAttribute();
 
     /**
      * Replace strlen(str)
      * @return true if any replacement took place, false else
      * */
     bool simplifyStrlen();
+
+    /**
+     * Convert namespace aliases
+     */
+    void simplifyNamespaceAliases();
+
+    /**
+     * Convert C++17 style nested namespace to older style
+     */
+    void simplifyNestedNamespace();
 
     /**
     * Prepare ternary operators with parentheses so that the AST can be created
@@ -704,7 +742,7 @@ private:
     void unsupportedTypedef(const Token *tok) const;
 
     void setVarIdClassDeclaration(const Token * const startToken,
-                                  const std::map<std::string, unsigned int> &variableId,
+                                  const VariableMap &variableMap,
                                   const unsigned int scopeStartVarId,
                                   std::map<unsigned int, std::map<std::string,unsigned int> >& structMembers);
 
@@ -720,21 +758,24 @@ private:
      */
     void printUnknownTypes() const;
 
+    /** Find end of SQL (or PL/SQL) block */
+    static const Token *findSQLBlockEnd(const Token *tokSQLStart);
+
 public:
 
     /** Was there templates in the code? */
     bool codeWithTemplates() const {
-        return _codeWithTemplates;
+        return mCodeWithTemplates;
     }
 
 
     void setSettings(const Settings *settings) {
-        _settings = settings;
+        mSettings = settings;
         list.setSettings(settings);
     }
 
     const SymbolDatabase *getSymbolDatabase() const {
-        return _symbolDatabase;
+        return mSymbolDatabase;
     }
     void createSymbolDatabase();
     void deleteSymbolDatabase();
@@ -755,7 +796,7 @@ public:
      * @return number of variables
      */
     unsigned int varIdCount() const {
-        return _varId;
+        return mVarId;
     }
 
     /**
@@ -766,16 +807,6 @@ public:
     const Token* tokens() const {
         return list.front();
     }
-
-    /**
-     * Copy tokens.
-     * @param dest destination token where copied tokens will be inserted after
-     * @param first first token to copy
-     * @param last last token to copy
-     * @param one_line true=>copy all tokens to the same line as dest. false=>copy all tokens to dest while keeping the 'line breaks'
-     * @return new location of last token copied
-     */
-    static Token *copyTokens(Token *dest, const Token *first, const Token *last, bool one_line = true);
 
     /**
     * Helper function to check whether number is zero (0 or 0.0 or 0E+0) or not?
@@ -808,7 +839,7 @@ public:
 
 #ifdef MAXTIME
     bool isMaxTime() const {
-        return (std::time(0) > maxtime);
+        return (std::time(0) > mMaxTime);
 #else
     static bool isMaxTime() {
         return false;
@@ -816,11 +847,11 @@ public:
     }
 
 private:
-    /** Disable copy constructor, no implementation */
-    Tokenizer(const Tokenizer &);
+    /** Disable copy constructor */
+    Tokenizer(const Tokenizer &) = delete;
 
-    /** Disable assignment operator, no implementation */
-    Tokenizer &operator=(const Tokenizer &);
+    /** Disable assignment operator */
+    Tokenizer &operator=(const Tokenizer &) = delete;
 
     Token *processFunc(Token *tok2, bool inOperator) const;
 
@@ -829,45 +860,50 @@ private:
     * @return new variable id
     */
     unsigned int newVarId() {
-        return ++_varId;
+        return ++mVarId;
     }
 
     /** Set pod types */
     void setPodTypes();
 
     /** settings */
-    const Settings * _settings;
+    const Settings * mSettings;
 
     /** errorlogger */
-    ErrorLogger* const _errorLogger;
+    ErrorLogger* const mErrorLogger;
 
     /** Symbol database that all checks etc can use */
-    SymbolDatabase *_symbolDatabase;
+    SymbolDatabase *mSymbolDatabase;
+
+    TemplateSimplifier *mTemplateSimplifier;
 
     /** E.g. "A" for code where "#ifdef A" is true. This is used to
         print additional information in error situations. */
-    std::string _configuration;
+    std::string mConfiguration;
 
     /** sizeof information for known types */
-    std::map<std::string, unsigned int> _typeSize;
+    std::map<std::string, unsigned int> mTypeSize;
 
     /** variable count */
-    unsigned int _varId;
+    unsigned int mVarId;
+
+    /** unnamed count "Unnamed0", "Unnamed1", "Unnamed2", ... */
+    unsigned int mUnnamedCount;
 
     /**
      * was there any templates? templates that are "unused" are
      * removed from the token list
      */
-    bool _codeWithTemplates;
+    bool mCodeWithTemplates;
 
     /**
      * TimerResults
      */
-    TimerResults *m_timerResults;
+    TimerResults *mTimerResults;
 
 #ifdef MAXTIME
     /** Tokenizer maxtime */
-    std::time_t maxtime;
+    const std::time_t mMaxTime;
 #endif
 };
 

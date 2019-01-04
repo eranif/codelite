@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,15 @@
 #define checkpostfixoperatorH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "tokenize.h"
+
+#include <string>
+
+class ErrorLogger;
+class Settings;
+class Token;
 
 /// @addtogroup Checks
 /// @{
@@ -43,12 +50,14 @@ public:
         : Check(myName(), tokenizer, settings, errorLogger) {
     }
 
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         if (tokenizer->isC())
             return;
 
         CheckPostfixOperator checkPostfixOperator(tokenizer, settings, errorLogger);
         checkPostfixOperator.postfixOperator();
+    }
+    void runSimplifiedChecks(const Tokenizer * /*tokenizer*/, const Settings * /*settings*/, ErrorLogger * /*errorLogger*/) override {
     }
 
     /** Check postfix operators */
@@ -58,7 +67,7 @@ private:
     /** Report Error */
     void postfixOperatorError(const Token *tok);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckPostfixOperator c(nullptr, settings, errorLogger);
         c.postfixOperatorError(nullptr);
     }
@@ -67,7 +76,7 @@ private:
         return "Using postfix operators";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Warn if using postfix operators ++ or -- rather than prefix operator\n";
     }
 };

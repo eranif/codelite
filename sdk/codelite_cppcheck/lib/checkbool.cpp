@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,17 @@
 
 //---------------------------------------------------------------------------
 #include "checkbool.h"
-#include "mathlib.h"
-#include "symboldatabase.h"
+
 #include "astutils.h"
+#include "errorlogger.h"
+#include "mathlib.h"
+#include "settings.h"
+#include "symboldatabase.h"
+#include "token.h"
+#include "tokenize.h"
+
+#include <cstddef>
+#include <list>
 //---------------------------------------------------------------------------
 
 // Register this check class (by creating a static instance of it)
@@ -46,14 +54,12 @@ static bool isNonBoolStdType(const Variable* var)
 //---------------------------------------------------------------------------
 void CheckBool::checkIncrementBoolean()
 {
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (Token::Match(tok, "%var% ++")) {
                 const Variable *var = tok->variable();
                 if (isBool(var))
@@ -81,19 +87,17 @@ void CheckBool::incrementBooleanError(const Token *tok)
 //---------------------------------------------------------------------------
 void CheckBool::checkBitwiseOnBoolean()
 {
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
     // danmar: this is inconclusive because I don't like that there are
     //         warnings for calculations. Example: set_flag(a & b);
-    if (!_settings->inconclusive)
+    if (!mSettings->inconclusive)
         return;
 
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (Token::Match(tok, "(|.|return|&&|%oror%|throw|, %var% [&|]")) {
                 const Variable *var = tok->next()->variable();
                 if (isBool(var)) {
@@ -125,25 +129,23 @@ void CheckBool::bitwiseOnBooleanError(const Token *tok, const std::string &varna
 
 void CheckBool::checkComparisonOfBoolWithInt()
 {
-    if (!_settings->isEnabled(Settings::WARNING) || !_tokenizer->isCPP())
+    if (!mSettings->isEnabled(Settings::WARNING) || !mTokenizer->isCPP())
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+            if (!tok->isComparisonOp() || !tok->isBinaryOp())
+                continue;
             const Token* const left = tok->astOperand1();
             const Token* const right = tok->astOperand2();
-            if (left && right && tok->isComparisonOp()) {
-                if (left->isBoolean() && right->varId()) { // Comparing boolean constant with variable
-                    if (tok->str() != "==" && tok->str() != "!=") {
-                        comparisonOfBoolWithInvalidComparator(right, left->str());
-                    }
-                } else if (left->varId() && right->isBoolean()) { // Comparing variable with boolean constant
-                    if (tok->str() != "==" && tok->str() != "!=") {
-                        comparisonOfBoolWithInvalidComparator(right, left->str());
-                    }
+            if (left->isBoolean() && right->varId()) { // Comparing boolean constant with variable
+                if (tok->str() != "==" && tok->str() != "!=") {
+                    comparisonOfBoolWithInvalidComparator(right, left->str());
+                }
+            } else if (left->varId() && right->isBoolean()) { // Comparing variable with boolean constant
+                if (tok->str() != "==" && tok->str() != "!=") {
+                    comparisonOfBoolWithInvalidComparator(right, left->str());
                 }
             }
         }
@@ -176,18 +178,16 @@ static bool tokenIsFunctionReturningBool(const Token* tok)
 
 void CheckBool::checkComparisonOfFuncReturningBool()
 {
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
-    if (!_tokenizer->isCPP())
+    if (!mTokenizer->isCPP())
         return;
 
-    const SymbolDatabase * const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase * const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functionsCount = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functionsCount; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->tokType() != Token::eComparisonOp || tok->str() == "==" || tok->str() == "!=")
                 continue;
             const Token *firstToken = tok->previous();
@@ -237,21 +237,19 @@ void CheckBool::checkComparisonOfBoolWithBool()
 {
     // FIXME: This checking is "experimental" because of the false positives
     //        when self checking lib/tokenize.cpp (#2617)
-    if (!_settings->experimental)
+    if (!mSettings->experimental)
         return;
 
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
-    if (!_tokenizer->isCPP())
+    if (!mTokenizer->isCPP())
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->tokType() != Token::eComparisonOp || tok->str() == "==" || tok->str() == "!=")
                 continue;
             bool firstTokenBool = false;
@@ -291,11 +289,9 @@ void CheckBool::comparisonOfBoolWithBoolError(const Token *tok, const std::strin
 //-----------------------------------------------------------------------------
 void CheckBool::checkAssignBoolToPointer()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart; tok != scope->classEnd; tok = tok->next()) {
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->str() == "=" && astIsBool(tok->astOperand2())) {
                 const Token *lhs = tok->astOperand1();
                 while (lhs && (lhs->str() == "." || lhs->str() == "::"))
@@ -319,20 +315,18 @@ void CheckBool::assignBoolToPointerError(const Token *tok)
 //-----------------------------------------------------------------------------
 void CheckBool::checkComparisonOfBoolExpressionWithInt()
 {
-    if (!_settings->isEnabled(Settings::WARNING))
+    if (!mSettings->isEnabled(Settings::WARNING))
         return;
 
-    const SymbolDatabase* symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!tok->isComparisonOp())
                 continue;
 
-            const Token* numTok = 0;
-            const Token* boolExpr = 0;
+            const Token* numTok = nullptr;
+            const Token* boolExpr = nullptr;
             bool numInRhs;
             if (astIsBool(tok->astOperand1())) {
                 boolExpr = tok->astOperand1();
@@ -365,7 +359,7 @@ void CheckBool::checkComparisonOfBoolExpressionWithInt()
                      : Token::Match(tok, ">|==|!=")))
                     continue;
                 comparisonOfBoolExpressionWithIntError(tok, true);
-            } else if (isNonBoolStdType(numTok->variable()) && _tokenizer->isCPP())
+            } else if (isNonBoolStdType(numTok->variable()) && mTokenizer->isCPP())
                 comparisonOfBoolExpressionWithIntError(tok, false);
         }
     }
@@ -384,20 +378,20 @@ void CheckBool::comparisonOfBoolExpressionWithIntError(const Token *tok, bool n0
 
 void CheckBool::pointerArithBool()
 {
-    const SymbolDatabase* symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    for (std::list<Scope>::const_iterator scope = symbolDatabase->scopeList.begin(); scope != symbolDatabase->scopeList.end(); ++scope) {
-        if (scope->type != Scope::eIf && scope->type != Scope::eWhile && scope->type != Scope::eDo && scope->type != Scope::eFor)
+    for (const Scope &scope : symbolDatabase->scopeList) {
+        if (scope.type != Scope::eIf && scope.type != Scope::eWhile && scope.type != Scope::eDo && scope.type != Scope::eFor)
             continue;
-        const Token* tok = scope->classDef->next()->astOperand2();
-        if (scope->type == Scope::eFor) {
-            tok = Token::findsimplematch(scope->classDef->tokAt(2), ";");
+        const Token* tok = scope.classDef->next()->astOperand2();
+        if (scope.type == Scope::eFor) {
+            tok = Token::findsimplematch(scope.classDef->tokAt(2), ";");
             if (tok)
                 tok = tok->astOperand2();
             if (tok)
                 tok = tok->astOperand1();
-        } else if (scope->type == Scope::eDo)
-            tok = (scope->classEnd->tokAt(2)) ? scope->classEnd->tokAt(2)->astOperand2() : nullptr;
+        } else if (scope.type == Scope::eDo)
+            tok = (scope.bodyEnd->tokAt(2)) ? scope.bodyEnd->tokAt(2)->astOperand2() : nullptr;
 
         pointerArithBoolCond(tok);
     }
@@ -415,8 +409,7 @@ void CheckBool::pointerArithBoolCond(const Token *tok)
     if (tok->str() != "+" && tok->str() != "-")
         return;
 
-    if (tok->astOperand1() &&
-        tok->astOperand2() &&
+    if (tok->isBinaryOp() &&
         tok->astOperand1()->isName() &&
         tok->astOperand1()->variable() &&
         tok->astOperand1()->variable()->isPointer() &&
@@ -435,15 +428,13 @@ void CheckBool::pointerArithBoolError(const Token *tok)
 
 void CheckBool::checkAssignBoolToFloat()
 {
-    if (!_tokenizer->isCPP())
+    if (!mTokenizer->isCPP())
         return;
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart; tok != scope->classEnd; tok = tok->next()) {
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart; tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->str() == "=" && astIsBool(tok->astOperand2())) {
                 const Token *lhs = tok->astOperand1();
                 while (lhs && (lhs->str() == "." || lhs->str() == "::"))

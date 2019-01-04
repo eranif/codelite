@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,14 @@
 #define checktypeH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "valueflow.h"
+
+class ErrorLogger;
+class Settings;
+class Token;
+class Tokenizer;
 
 /// @addtogroup Checks
 /// @{
@@ -43,7 +49,7 @@ public:
     }
 
     /** @brief Run checks against the normal token list */
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         // These are not "simplified" because casts can't be ignored
         CheckType checkType(tokenizer, settings, errorLogger);
         checkType.checkTooBigBitwiseShift();
@@ -54,7 +60,7 @@ public:
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         (void)tokenizer;
         (void)settings;
         (void)errorLogger;
@@ -78,15 +84,17 @@ private:
 
     // Error messages..
     void tooBigBitwiseShiftError(const Token *tok, int lhsbits, const ValueFlow::Value &rhsbits);
+    void tooBigSignedBitwiseShiftError(const Token *tok, int lhsbits, const ValueFlow::Value &rhsbits);
     void integerOverflowError(const Token *tok, const ValueFlow::Value &value);
     void signConversionError(const Token *tok, const bool constvalue);
     void longCastAssignError(const Token *tok);
     void longCastReturnError(const Token *tok);
     void floatToIntegerOverflowError(const Token *tok, const ValueFlow::Value &value);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckType c(nullptr, settings, errorLogger);
         c.tooBigBitwiseShiftError(nullptr, 32, ValueFlow::Value(64));
+        c.tooBigSignedBitwiseShiftError(nullptr, 31, ValueFlow::Value(31));
         c.integerOverflowError(nullptr, ValueFlow::Value(1LL<<32));
         c.signConversionError(nullptr, false);
         c.longCastAssignError(nullptr);
@@ -101,7 +109,7 @@ private:
         return "Type";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Type checks\n"
                "- bitwise shift by too many bits (only enabled when --platform is used)\n"
                "- signed integer overflow (only enabled when --platform is used)\n"

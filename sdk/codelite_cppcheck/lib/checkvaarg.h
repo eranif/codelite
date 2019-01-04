@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,15 @@
 #define checkvaargtH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+
+#include <string>
+
+class ErrorLogger;
+class Settings;
+class Token;
+class Tokenizer;
 
 /// @addtogroup Checks
 /// @{
@@ -41,7 +48,7 @@ public:
         : Check(myName(), tokenizer, settings, errorLogger) {
     }
 
-    virtual void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    virtual void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckVaarg check(tokenizer, settings, errorLogger);
         check.va_start_argument();
         check.va_list_usage();
@@ -57,7 +64,7 @@ private:
     void va_list_usedBeforeStartedError(const Token *tok, const std::string& varname);
     void va_start_subsequentCallsError(const Token *tok, const std::string& varname);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckVaarg c(nullptr, settings, errorLogger);
         c.wrongParameterTo_va_start_error(nullptr, "arg1", "arg2");
         c.referenceAs_va_start_error(nullptr, "arg1");
@@ -70,7 +77,7 @@ private:
         return "Vaarg";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Check for misusage of variable argument lists:\n"
                "- Wrong parameter passed to va_start()\n"
                "- Reference passed to va_start()\n"

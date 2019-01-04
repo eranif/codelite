@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +22,18 @@
 //---------------------------------------------------------------------------
 
 #include "config.h"
+#include "errorlogger.h"
 #include "mathlib.h"
 #include "standards.h"
-#include "errorlogger.h"
 
+#include <cstddef>
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
+
+class Token;
 
 namespace tinyxml2 {
     class XMLDocument;
@@ -85,55 +89,55 @@ public:
 
     /** get allocation info for function by name (deprecated, use other alloc) */
     const AllocFunc* alloc(const char name[]) const {
-        return getAllocDealloc(_alloc, name);
+        return getAllocDealloc(mAlloc, name);
     }
 
     /** get deallocation info for function by name (deprecated, use other alloc) */
     const AllocFunc* dealloc(const char name[]) const {
-        return getAllocDealloc(_dealloc, name);
+        return getAllocDealloc(mDealloc, name);
     }
 
     /** get allocation id for function by name (deprecated, use other alloc) */
     int allocId(const char name[]) const {
-        const AllocFunc* af = getAllocDealloc(_alloc, name);
+        const AllocFunc* af = getAllocDealloc(mAlloc, name);
         return af ? af->groupId : 0;
     }
 
     /** get deallocation id for function by name (deprecated, use other alloc) */
     int deallocId(const char name[]) const {
-        const AllocFunc* af = getAllocDealloc(_dealloc, name);
+        const AllocFunc* af = getAllocDealloc(mDealloc, name);
         return af ? af->groupId : 0;
     }
 
     /** set allocation id for function */
     void setalloc(const std::string &functionname, int id, int arg) {
-        _alloc[functionname].groupId = id;
-        _alloc[functionname].arg = arg;
+        mAlloc[functionname].groupId = id;
+        mAlloc[functionname].arg = arg;
     }
 
     void setdealloc(const std::string &functionname, int id, int arg) {
-        _dealloc[functionname].groupId = id;
-        _dealloc[functionname].arg = arg;
+        mDealloc[functionname].groupId = id;
+        mDealloc[functionname].arg = arg;
     }
 
     /** add noreturn function setting */
     void setnoreturn(const std::string& funcname, bool noreturn) {
-        _noreturn[funcname] = noreturn;
+        mNoReturn[funcname] = noreturn;
     }
 
     /** is allocation type memory? */
-    static bool ismemory(int id) {
+    static bool ismemory(const int id) {
         return ((id > 0) && ((id & 1) == 0));
     }
-    static bool ismemory(const AllocFunc* func) {
+    static bool ismemory(const AllocFunc* const func) {
         return ((func->groupId > 0) && ((func->groupId & 1) == 0));
     }
 
     /** is allocation type resource? */
-    static bool isresource(int id) {
+    static bool isresource(const int id) {
         return ((id > 0) && ((id & 1) == 1));
     }
-    static bool isresource(const AllocFunc* func) {
+    static bool isresource(const AllocFunc* const func) {
         return ((func->groupId > 0) && ((func->groupId & 1) == 1));
     }
 
@@ -197,14 +201,14 @@ public:
         bool opLessAllowed;
 
         Action getAction(const std::string& function) const {
-            std::map<std::string, Function>::const_iterator i = functions.find(function);
+            const std::map<std::string, Function>::const_iterator i = functions.find(function);
             if (i != functions.end())
                 return i->second.action;
             return NO_ACTION;
         }
 
         Yield getYield(const std::string& function) const {
-            std::map<std::string, Function>::const_iterator i = functions.find(function);
+            const std::map<std::string, Function>::const_iterator i = functions.find(function);
             if (i != functions.end())
                 return i->second.yield;
             return NO_YIELD;
@@ -276,6 +280,7 @@ public:
     bool isUse(const std::string& functionName) const;
     bool isLeakIgnore(const std::string& functionName) const;
     bool isFunctionConst(const std::string& functionName, bool pure) const;
+    bool isFunctionConst(const Token *ftok) const;
 
     bool isboolargbad(const Token *ftok, int argnr) const {
         const ArgumentChecks *arg = getarg(ftok, argnr);
@@ -295,7 +300,8 @@ public:
         return arg && arg->strz;
     }
 
-    bool isargvalid(const Token *ftok, int argnr, const MathLib::bigint argvalue) const;
+    bool isIntArgValid(const Token *ftok, int argnr, const MathLib::bigint argvalue) const;
+    bool isFloatArgValid(const Token *ftok, int argnr, double argvalue) const;
 
     const std::string& validarg(const Token *ftok, int argnr) const {
         const ArgumentChecks *arg = getarg(ftok, argnr);
@@ -319,7 +325,7 @@ public:
     bool processMarkupAfterCode(const std::string &path) const;
 
     const std::set<std::string> &markupExtensions() const {
-        return _markupExtensions;
+        return mMarkupExtensions;
     }
 
     bool reportErrors(const std::string &path) const;
@@ -336,28 +342,28 @@ public:
     bool iskeyword(const std::string &file, const std::string &keyword) const;
 
     bool isexporter(const std::string &prefix) const {
-        return _exporters.find(prefix) != _exporters.end();
+        return mExporters.find(prefix) != mExporters.end();
     }
 
     bool isexportedprefix(const std::string &prefix, const std::string &token) const {
-        const std::map<std::string, ExportedFunctions>::const_iterator it = _exporters.find(prefix);
-        return (it != _exporters.end() && it->second.isPrefix(token));
+        const std::map<std::string, ExportedFunctions>::const_iterator it = mExporters.find(prefix);
+        return (it != mExporters.end() && it->second.isPrefix(token));
     }
 
     bool isexportedsuffix(const std::string &prefix, const std::string &token) const {
-        const std::map<std::string, ExportedFunctions>::const_iterator it = _exporters.find(prefix);
-        return (it != _exporters.end() && it->second.isSuffix(token));
+        const std::map<std::string, ExportedFunctions>::const_iterator it = mExporters.find(prefix);
+        return (it != mExporters.end() && it->second.isSuffix(token));
     }
 
     bool isimporter(const std::string& file, const std::string &importer) const;
 
     bool isreflection(const std::string &token) const {
-        return _reflection.find(token) != _reflection.end();
+        return mReflection.find(token) != mReflection.end();
     }
 
     int reflectionArgument(const std::string &token) const {
-        const std::map<std::string, int>::const_iterator it = _reflection.find(token);
-        if (it != _reflection.end())
+        const std::map<std::string, int>::const_iterator it = mReflection.find(token);
+        if (it != mReflection.end())
             return it->second;
         return -1;
     }
@@ -370,8 +376,8 @@ public:
         char           sign;
     };
     const struct PodType *podtype(const std::string &name) const {
-        const std::map<std::string, struct PodType>::const_iterator it = podtypes.find(name);
-        return (it != podtypes.end()) ? &(it->second) : nullptr;
+        const std::map<std::string, struct PodType>::const_iterator it = mPodTypes.find(name);
+        return (it != mPodTypes.end()) ? &(it->second) : nullptr;
     }
 
     struct PlatformType {
@@ -390,12 +396,12 @@ public:
                     _pointer == type._pointer &&
                     _ptr_ptr == type._ptr_ptr &&
                     _const_ptr == type._const_ptr &&
-                    _type == type._type);
+                    mType == type.mType);
         }
         bool operator != (const PlatformType & type) const {
             return !(*this == type);
         }
-        std::string _type;
+        std::string mType;
         bool _signed;
         bool _unsigned;
         bool _long;
@@ -406,23 +412,30 @@ public:
 
     struct Platform {
         const PlatformType *platform_type(const std::string &name) const {
-            const std::map<std::string, struct PlatformType>::const_iterator it = _platform_types.find(name);
-            return (it != _platform_types.end()) ? &(it->second) : nullptr;
+            const std::map<std::string, struct PlatformType>::const_iterator it = mPlatformTypes.find(name);
+            return (it != mPlatformTypes.end()) ? &(it->second) : nullptr;
         }
-        std::map<std::string, PlatformType> _platform_types;
+        std::map<std::string, PlatformType> mPlatformTypes;
     };
 
     const PlatformType *platform_type(const std::string &name, const std::string & platform) const {
-        const std::map<std::string, Platform>::const_iterator it = platforms.find(platform);
-        if (it != platforms.end()) {
+        const std::map<std::string, Platform>::const_iterator it = mPlatforms.find(platform);
+        if (it != mPlatforms.end()) {
             const PlatformType * const type = it->second.platform_type(name);
             if (type)
                 return type;
         }
 
-        const std::map<std::string, PlatformType>::const_iterator it2 = platform_types.find(name);
-        return (it2 != platform_types.end()) ? &(it2->second) : nullptr;
+        const std::map<std::string, PlatformType>::const_iterator it2 = mPlatformTypes.find(name);
+        return (it2 != mPlatformTypes.end()) ? &(it2->second) : nullptr;
     }
+
+    /**
+     * Get function name for function call
+     */
+    std::string getFunctionName(const Token *ftok) const;
+
+    static bool isContainerYield(const Token * const cond, Library::Container::Yield y, const std::string& fallback="");
 
 private:
     // load a <function> xml node
@@ -431,81 +444,80 @@ private:
     class ExportedFunctions {
     public:
         void addPrefix(const std::string& prefix) {
-            _prefixes.insert(prefix);
+            mPrefixes.insert(prefix);
         }
         void addSuffix(const std::string& suffix) {
-            _suffixes.insert(suffix);
+            mSuffixes.insert(suffix);
         }
         bool isPrefix(const std::string& prefix) const {
-            return (_prefixes.find(prefix) != _prefixes.end());
+            return (mPrefixes.find(prefix) != mPrefixes.end());
         }
         bool isSuffix(const std::string& suffix) const {
-            return (_suffixes.find(suffix) != _suffixes.end());
+            return (mSuffixes.find(suffix) != mSuffixes.end());
         }
 
     private:
-        std::set<std::string> _prefixes;
-        std::set<std::string> _suffixes;
+        std::set<std::string> mPrefixes;
+        std::set<std::string> mSuffixes;
     };
     class CodeBlock {
     public:
-        CodeBlock() : _offset(0) {}
+        CodeBlock() : mOffset(0) {}
 
         void setStart(const char* s) {
-            _start = s;
+            mStart = s;
         }
         void setEnd(const char* e) {
-            _end = e;
+            mEnd = e;
         }
         void setOffset(const int o) {
-            _offset = o;
+            mOffset = o;
         }
         void addBlock(const char* blockName) {
-            _blocks.insert(blockName);
+            mBlocks.insert(blockName);
         }
         const std::string& start() const {
-            return _start;
+            return mStart;
         }
         const std::string& end() const {
-            return _end;
+            return mEnd;
         }
         int offset() const {
-            return _offset;
+            return mOffset;
         }
         bool isBlock(const std::string& blockName) const {
-            return _blocks.find(blockName) != _blocks.end();
+            return mBlocks.find(blockName) != mBlocks.end();
         }
 
     private:
-        std::string _start;
-        std::string _end;
-        int _offset;
-        std::set<std::string> _blocks;
+        std::string mStart;
+        std::string mEnd;
+        int mOffset;
+        std::set<std::string> mBlocks;
     };
-    int allocid;
-    std::set<std::string> _files;
-    std::map<std::string, AllocFunc> _alloc; // allocation functions
-    std::map<std::string, AllocFunc> _dealloc; // deallocation functions
-    std::map<std::string, bool> _noreturn; // is function noreturn?
-    std::map<std::string, std::string> _returnValue;
-    std::map<std::string, std::string> _returnValueType;
-    std::map<std::string, int> _returnValueContainer;
-    std::map<std::string, bool> _reporterrors;
-    std::map<std::string, bool> _processAfterCode;
-    std::set<std::string> _markupExtensions; // file extensions of markup files
-    std::map<std::string, std::set<std::string> > _keywords; // keywords for code in the library
-    std::map<std::string, CodeBlock> _executableblocks; // keywords for blocks of executable code
-    std::map<std::string, ExportedFunctions> _exporters; // keywords that export variables/functions to libraries (meta-code/macros)
-    std::map<std::string, std::set<std::string> > _importers; // keywords that import variables/functions
-    std::map<std::string, int> _reflection; // invocation of reflection
-    std::map<std::string, struct PodType> podtypes; // pod types
-    std::map<std::string, PlatformType> platform_types; // platform independent typedefs
-    std::map<std::string, Platform> platforms; // platform dependent typedefs
+    int mAllocId;
+    std::set<std::string> mFiles;
+    std::map<std::string, AllocFunc> mAlloc; // allocation functions
+    std::map<std::string, AllocFunc> mDealloc; // deallocation functions
+    std::map<std::string, bool> mNoReturn; // is function noreturn?
+    std::map<std::string, std::string> mReturnValue;
+    std::map<std::string, std::string> mReturnValueType;
+    std::map<std::string, int> mReturnValueContainer;
+    std::map<std::string, bool> mReportErrors;
+    std::map<std::string, bool> mProcessAfterCode;
+    std::set<std::string> mMarkupExtensions; // file extensions of markup files
+    std::map<std::string, std::set<std::string> > mKeywords; // keywords for code in the library
+    std::map<std::string, CodeBlock> mExecutableBlocks; // keywords for blocks of executable code
+    std::map<std::string, ExportedFunctions> mExporters; // keywords that export variables/functions to libraries (meta-code/macros)
+    std::map<std::string, std::set<std::string> > mImporters; // keywords that import variables/functions
+    std::map<std::string, int> mReflection; // invocation of reflection
+    std::map<std::string, struct PodType> mPodTypes; // pod types
+    std::map<std::string, PlatformType> mPlatformTypes; // platform independent typedefs
+    std::map<std::string, Platform> mPlatforms; // platform dependent typedefs
 
     const ArgumentChecks * getarg(const Token *ftok, int argnr) const;
 
     std::string getFunctionName(const Token *ftok, bool *error) const;
-    std::string getFunctionName(const Token *ftok) const;
 
     static const AllocFunc* getAllocDealloc(const std::map<std::string, AllocFunc> &data, const std::string &name) {
         const std::map<std::string, AllocFunc>::const_iterator it = data.find(name);

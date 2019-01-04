@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------
 
 Check::Check(const std::string &aname)
-    : _tokenizer(0), _settings(0), _errorLogger(0), _name(aname)
+    : mTokenizer(nullptr), mSettings(nullptr), mErrorLogger(nullptr), mName(aname)
 {
     for (std::list<Check*>::iterator i = instances().begin(); i != instances().end(); ++i) {
         if ((*i)->name() > aname) {
@@ -38,7 +38,20 @@ Check::Check(const std::string &aname)
 
 void Check::reportError(const ErrorLogger::ErrorMessage &errmsg)
 {
-    std::cout << errmsg.toXML(true, 1) << std::endl;
+    std::cout << errmsg.toXML() << std::endl;
+}
+
+bool Check::wrongData(const Token *tok, bool condition, const char *str)
+{
+#if defined(DACA2) || defined(UNSTABLE)
+    if (condition) {
+        reportError(tok, Severity::debug, "DacaWrongData", "Wrong data detected by condition " + std::string(str));
+    }
+#else
+    (void)tok;
+    (void)str;
+#endif
+    return condition;
 }
 
 std::list<Check *> &Check::instances()

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,62 +22,44 @@
 //---------------------------------------------------------------------------
 
 #include <algorithm>
-
-#define CURRENT_GCC_VERSION ((__GNUC__*1000)+(__GNUC_MINOR__*100))
-#define GCC_VERSION(major, minor) ((major*1000)+(minor*100))
-
-#if CURRENT_GCC_VERSION < GCC_VERSION(4,9)
-#include <sstream>
-namespace std {
-    template<typename T>
-    std::string to_string(T x) {
-        std::stringstream ss;
-        ss << x;
-        return ss.str();
-    }
-}
-#endif
-
-/*! Helper class to aid in the initializing global const data */
-template < typename Cont >
-class make_container {
-public:
-    typedef make_container< Cont > my_type;
-    typedef typename Cont::value_type T;
-
-    my_type& operator<< (const T& val) {
-        data_.insert(data_.end(), val);
-        return *this;
-    }
-    my_type& operator<< (const Cont& other_container) {
-        for (typename Cont::const_iterator it=other_container.begin(); it!=other_container.end(); ++it) {
-            data_.insert(data_.end(), *it);
-        }
-        return *this;
-    }
-    my_type& operator<< (T&& val) {
-        data_.insert(data_.end(), val);
-        return *this;
-    }
-    my_type& operator<< (const char* val) {
-        data_.insert(data_.end(), val);
-        return *this;
-    }
-    operator Cont() const {
-        return data_;
-    }
-private:
-    Cont data_;
-};
+#include <cctype>
+#include <cstddef>
+#include <string>
 
 inline bool endsWith(const std::string &str, char c)
 {
-    return str.back() == c;
+    return str[str.size()-1U] == c;
 }
 
 inline bool endsWith(const std::string &str, const char end[], std::size_t endlen)
 {
     return (str.size() >= endlen) && (str.compare(str.size()-endlen, endlen, end)==0);
 }
+
+inline static const char *getOrdinalText(int i)
+{
+    if (i == 1)
+        return "st";
+    if (i == 2)
+        return "nd";
+    if (i == 3)
+        return "rd";
+    return "th";
+}
+
+inline static int caseInsensitiveStringCompare(const std::string &lhs, const std::string &rhs)
+{
+    if (lhs.size() != rhs.size())
+        return (lhs.size() < rhs.size()) ? -1 : 1;
+    for (unsigned int i = 0; i < lhs.size(); ++i) {
+        const int c1 = std::toupper(lhs[i]);
+        const int c2 = std::toupper(rhs[i]);
+        if (c1 != c2)
+            return (c1 < c2) ? -1 : 1;
+    }
+    return 0;
+}
+
+#define UNUSED(x) (void)(x)
 
 #endif

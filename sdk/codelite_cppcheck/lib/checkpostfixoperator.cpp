@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,13 @@
 //---------------------------------------------------------------------------
 
 #include "checkpostfixoperator.h"
+
+#include "errorlogger.h"
+#include "settings.h"
 #include "symboldatabase.h"
+#include "token.h"
+
+#include <cstddef>
 
 //---------------------------------------------------------------------------
 
@@ -39,15 +45,13 @@ static const struct CWE CWE398(398U);   // Indicator of Poor Code Quality
 
 void CheckPostfixOperator::postfixOperator()
 {
-    if (!_settings->isEnabled(Settings::PERFORMANCE))
+    if (!mSettings->isEnabled(Settings::PERFORMANCE))
         return;
 
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             const Variable *var = tok->variable();
             if (!var || !Token::Match(tok, "%var% ++|--"))
                 continue;

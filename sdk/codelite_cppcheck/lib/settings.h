@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,23 @@
 #define settingsH
 //---------------------------------------------------------------------------
 
-#include <list>
-#include <vector>
-#include <string>
-#include <set>
 #include "config.h"
+#include "errorlogger.h"
+#include "importproject.h"
 #include "library.h"
 #include "platform.h"
-#include "importproject.h"
-#include "suppressions.h"
 #include "standards.h"
-#include "errorlogger.h"
+#include "suppressions.h"
 #include "timer.h"
+
+#include <list>
+#include <set>
+#include <string>
+#include <vector>
+
+namespace ValueFlow {
+    class Value;
+}
 
 /// @addtogroup Core
 /// @{
@@ -56,14 +61,11 @@ public:
     };
 
 private:
-    /** @brief Code to append in the checks */
-    std::string _append;
-
     /** @brief enable extra checks by id */
-    int _enabled;
+    int mEnabled;
 
     /** @brief terminate checking */
-    static bool _terminated;
+    static bool mTerminated;
 
 public:
     Settings();
@@ -71,8 +73,8 @@ public:
     /** @brief --cppcheck-build-dir */
     std::string buildDir;
 
-    /** @brief Is --debug given? */
-    bool debug;
+    /** @brief Is --debug-simplified given? */
+    bool debugSimplified;
 
     /** @brief Is --debug-normal given? */
     bool debugnormal;
@@ -82,6 +84,7 @@ public:
 
     /** @brief Is --dump given? */
     bool dump;
+    std::string dumpFile;
 
     /** @brief Is --exception-handling given */
     bool exceptionHandling;
@@ -113,12 +116,12 @@ public:
 
     /** @brief Request termination of checking */
     static void terminate(bool t = true) {
-        Settings::_terminated = t;
+        Settings::mTerminated = t;
     }
 
     /** @brief termination requested? */
     static bool terminated() {
-        return Settings::_terminated;
+        return Settings::mTerminated;
     }
 
     /** @brief Force checking the files with "too many" configurations (--force). */
@@ -130,10 +133,16 @@ public:
     /** @brief Paths used as base for conversion to relative paths. */
     std::vector<std::string> basePaths;
 
+    /** @brief write results (--output-file=&lt;file&gt;) */
+    std::string outputFile;
+
+    /** @brief plist output (--plist-output=&lt;dir&gt;) */
+    std::string plistOutput;
+
     /** @brief write XML results (--xml) */
     bool xml;
 
-    /** @brief XML version (--xmlver=..) */
+    /** @brief XML version (--xml-version=..) */
     int xml_version;
 
     /** @brief How many processes/threads should do checking at the same
@@ -149,7 +158,11 @@ public:
 
     /** @brief The output format in which the errors are printed in text mode,
         e.g. "{severity} {file}:{line} {message} {id}" */
-    std::string outputFormat;
+    std::string templateFormat;
+
+    /** @brief The output format in which the error locations are printed in
+     *  text mode, e.g. "{file}:{line} {info}" */
+    std::string templateLocation;
 
     /** @brief show timing information (--showtime=file|summary|top5) */
     SHOWTIME_MODES showtime;
@@ -160,12 +173,6 @@ public:
     /** @brief List of include paths, e.g. "my/includes/" which should be used
         for finding include files inside source files. (-I) */
     std::list<std::string> includePaths;
-
-    /** @brief assign append code (--append) */
-    bool append(const std::string &filename);
-
-    /** @brief get append code (--append) */
-    const std::string &append() const;
 
     /** @brief Maximum number of configurations to check before bailing.
         Default is 12. (--max-configs=N) */
@@ -178,7 +185,7 @@ public:
      * @return true if the check is enabled.
      */
     bool isEnabled(EnabledGroup group) const {
-        return (_enabled & group) == group;
+        return (mEnabled & group) == group;
     }
 
     /**
@@ -186,6 +193,12 @@ public:
     * @return true if the check is enabled.
     */
     bool isEnabled(Severity::SeverityType severity) const;
+
+    /**
+    * @brief Returns true if given value can be shown
+    * @return true if the value can be shown
+    */
+    bool isEnabled(const ValueFlow::Value *value, bool inconclusiveCheck=false) const;
 
     /**
      * @brief Enable extra checks by id. See isEnabled()
@@ -199,7 +212,7 @@ public:
      * @brief Disables all severities, except from error.
      */
     void clearEnabled() {
-        _enabled = 0;
+        mEnabled = 0;
     }
 
     enum Language {

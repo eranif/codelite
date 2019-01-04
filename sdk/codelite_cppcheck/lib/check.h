@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +22,24 @@
 //---------------------------------------------------------------------------
 
 #include "config.h"
+#include "errorlogger.h"
+#include "settings.h"
 #include "token.h"
 #include "tokenize.h"
-#include "settings.h"
-#include "errorlogger.h"
+#include "valueflow.h"
 
 #include <list>
-#include <set>
-
-/**
- * Use this macro Cppcheck data can be wrong and you need a to check if that happens to avoid crash/hang
- * Using this macro we can make sure that released binaries don't crash/hang but the problem is not hidden
- * in debug builds.
- */
-#define CHECK_WRONG_DATA(X)   (X)  // Release (don't crash/hang)
-//#define CHECK_WRONG_DATA(X)   (1)  // Debug (crash/hang)
+#include <string>
 
 namespace tinyxml2 {
     class XMLElement;
 }
 
+/** Use WRONG_DATA in checkers to mark conditions that check that data is correct */
+#define WRONG_DATA(COND, TOK)  (wrongData((TOK), (COND), #COND))
+
 /// @addtogroup Core
 /// @{
-
 
 /**
  * @brief Interface class that cppcheck uses to communicate with the checks.
@@ -57,11 +52,11 @@ public:
 
     /** This constructor is used when running checks. */
     Check(const std::string &aname, const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : _tokenizer(tokenizer), _settings(settings), _errorLogger(errorLogger), _name(aname) {
+        : mTokenizer(tokenizer), mSettings(settings), mErrorLogger(errorLogger), mName(aname) {
     }
 
     virtual ~Check() {
-        if (!_tokenizer)
+        if (!mTokenizer)
             instances().remove(this);
     }
 
@@ -80,7 +75,7 @@ public:
 
     /** class name, used to generate documentation */
     const std::string& name() const {
-        return _name;
+        return mName;
     }
 
     /** get information about this class, used to generate documentation */
@@ -92,10 +87,6 @@ public:
      * @param errmsg Error message to write
      */
     static void reportError(const ErrorLogger::ErrorMessage &errmsg);
-
-    bool inconclusiveFlag() const {
-        return _settings && _settings->inconclusive;
-    }
 
     /** Base class used for whole-program analysis */
     class FileInfo {
@@ -118,16 +109,18 @@ public:
         return nullptr;
     }
 
-    virtual void analyseWholeProgram(const std::list<FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger) {
+    // Return true if an error is reported.
+    virtual bool analyseWholeProgram(const std::list<FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger) {
         (void)fileInfo;
         (void)settings;
         (void)errorLogger;
+        return false;
     }
 
 protected:
-    const Tokenizer * const _tokenizer;
-    const Settings * const _settings;
-    ErrorLogger * const _errorLogger;
+    const Tokenizer * const mTokenizer;
+    const Settings * const mSettings;
+    ErrorLogger * const mErrorLogger;
 
     /** report an error */
     template<typename T, typename U>
@@ -151,19 +144,49 @@ protected:
     /** report an error */
     template<typename T, typename U>
     void reportError(const std::list<const Token *> &callstack, Severity::SeverityType severity, const T id, const U msg, const CWE &cwe, bool inconclusive) {
-        const ErrorLogger::ErrorMessage errmsg(callstack, _tokenizer?&_tokenizer->list:0, severity, id, msg, cwe, inconclusive);
-        if (_errorLogger)
-            _errorLogger->reportErr(errmsg);
+        const ErrorLogger::ErrorMessage errmsg(callstack, mTokenizer ? &mTokenizer->list : nullptr, severity, id, msg, cwe, inconclusive);
+        if (mErrorLogger)
+            mErrorLogger->reportErr(errmsg);
         else
             reportError(errmsg);
     }
 
+    void reportError(const ErrorPath &errorPath, Severity::SeverityType severity, const char id[], const std::string &msg, const CWE &cwe, bool inconclusive) {
+        const ErrorLogger::ErrorMessage errmsg(errorPath, mTokenizer ? &mTokenizer->list : nullptr, severity, id, msg, cwe, inconclusive);
+        if (mErrorLogger)
+            mErrorLogger->reportErr(errmsg);
+        else
+            reportError(errmsg);
+    }
+
+    ErrorPath getErrorPath(const Token *errtok, const ValueFlow::Value *value, const std::string &bug) const {
+        ErrorPath errorPath;
+        if (!value) {
+            errorPath.emplace_back(errtok,bug);
+        } else if (mSettings->verbose || mSettings->xml || !mSettings->templateLocation.empty()) {
+            errorPath = value->errorPath;
+            errorPath.emplace_back(errtok,bug);
+        } else {
+            if (value->condition)
+                errorPath.emplace_back(value->condition, "condition '" + value->condition->expressionString() + "'");
+            //else if (!value->isKnown() || value->defaultArg)
+            //    errorPath = value->callstack;
+            errorPath.emplace_back(errtok,bug);
+        }
+        return errorPath;
+    }
+
+    /**
+     * Use WRONG_DATA in checkers when you check for wrong data. That
+     * will call this method
+     */
+    bool wrongData(const Token *tok, bool condition, const char *str);
 private:
-    const std::string _name;
+    const std::string mName;
 
     /** disabled assignment operator and copy constructor */
-    void operator=(const Check &);
-    explicit Check(const Check &);
+    void operator=(const Check &) = delete;
+    Check(const Check &) = delete;
 };
 
 /// @}

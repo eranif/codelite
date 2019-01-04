@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,13 @@
 
 //---------------------------------------------------------------------------
 #include "checkexceptionsafety.h"
+
+#include "settings.h"
 #include "symboldatabase.h"
+
+#include <cstddef>
+#include <set>
+#include <utility>
 
 //---------------------------------------------------------------------------
 
@@ -32,37 +38,35 @@ namespace {
 
 void CheckExceptionSafety::destructors()
 {
-    if (!_settings->isEnabled(Settings::WARNING))
+    if (!mSettings->isEnabled(Settings::WARNING))
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
     // Perform check..
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
+    for (const Scope * scope : symbolDatabase->functionScopes) {
         const Function * function = scope->function;
-        if (function) {
-            // only looking for destructors
-            if (function->type == Function::eDestructor) {
-                // Inspect this destructor.
-                for (const Token *tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
-                    // Skip try blocks
-                    if (Token::simpleMatch(tok, "try {")) {
-                        tok = tok->next()->link();
-                    }
+        if (!function)
+            continue;
+        // only looking for destructors
+        if (function->type == Function::eDestructor) {
+            // Inspect this destructor.
+            for (const Token *tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+                // Skip try blocks
+                if (Token::simpleMatch(tok, "try {")) {
+                    tok = tok->next()->link();
+                }
 
-                    // Skip uncaught exceptions
-                    else if (Token::simpleMatch(tok, "if ( ! std :: uncaught_exception ( ) ) {")) {
-                        tok = tok->next()->link(); // end of if ( ... )
-                        tok = tok->next()->link(); // end of { ... }
-                    }
+                // Skip uncaught exceptions
+                else if (Token::simpleMatch(tok, "if ( ! std :: uncaught_exception ( ) ) {")) {
+                    tok = tok->next()->link(); // end of if ( ... )
+                    tok = tok->next()->link(); // end of { ... }
+                }
 
-                    // throw found within a destructor
-                    else if (tok->str() == "throw") {
-                        destructorsError(tok, scope->className);
-                        break;
-                    }
+                // throw found within a destructor
+                else if (tok->str() == "throw") {
+                    destructorsError(tok, scope->className);
+                    break;
                 }
             }
         }
@@ -74,18 +78,16 @@ void CheckExceptionSafety::destructors()
 
 void CheckExceptionSafety::deallocThrow()
 {
-    if (!_settings->isEnabled(Settings::WARNING))
+    if (!mSettings->isEnabled(Settings::WARNING))
         return;
 
-    const bool printInconclusive = _settings->inconclusive;
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const bool printInconclusive = mSettings->inconclusive;
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
     // Deallocate a global/member pointer and then throw exception
     // the pointer will be a dead pointer
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token *tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token *tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             // only looking for delete now
             if (tok->str() != "delete")
                 continue;
@@ -94,7 +96,7 @@ void CheckExceptionSafety::deallocThrow()
             tok = tok->next();
             if (Token::simpleMatch(tok, "[ ]"))
                 tok = tok->tokAt(2);
-            if (!tok || tok == scope->classEnd)
+            if (!tok || tok == scope->bodyEnd)
                 break;
             if (!Token::Match(tok, "%var% ;"))
                 continue;
@@ -110,7 +112,7 @@ void CheckExceptionSafety::deallocThrow()
             const Token *throwToken = nullptr;
 
             // is there a throw after the deallocation?
-            const Token* const end2 = tok->scope()->classEnd;
+            const Token* const end2 = tok->scope()->bodyEnd;
             for (const Token *tok2 = tok; tok2 != end2; tok2 = tok2->next()) {
                 // Throw after delete -> Dead pointer
                 if (tok2->str() == "throw") {
@@ -143,18 +145,18 @@ void CheckExceptionSafety::deallocThrow()
 //---------------------------------------------------------------------------
 void CheckExceptionSafety::checkRethrowCopy()
 {
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    for (std::list<Scope>::const_iterator i = symbolDatabase->scopeList.begin(); i != symbolDatabase->scopeList.end(); ++i) {
-        if (i->type != Scope::eCatch)
+    for (const Scope &scope : symbolDatabase->scopeList) {
+        if (scope.type != Scope::eCatch)
             continue;
 
-        const unsigned int varid = i->classStart->tokAt(-2)->varId();
+        const unsigned int varid = scope.bodyStart->tokAt(-2)->varId();
         if (varid) {
-            for (const Token* tok = i->classStart->next(); tok && tok != i->classEnd; tok = tok->next()) {
+            for (const Token* tok = scope.bodyStart->next(); tok && tok != scope.bodyEnd; tok = tok->next()) {
                 if (Token::simpleMatch(tok, "catch (") && tok->next()->link() && tok->next()->link()->next()) { // Don't check inner catch - it is handled in another iteration of outer loop.
                     tok = tok->next()->link()->next()->link();
                     if (!tok)
@@ -171,20 +173,20 @@ void CheckExceptionSafety::checkRethrowCopy()
 //---------------------------------------------------------------------------
 void CheckExceptionSafety::checkCatchExceptionByValue()
 {
-    if (!_settings->isEnabled(Settings::STYLE))
+    if (!mSettings->isEnabled(Settings::STYLE))
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    for (std::list<Scope>::const_iterator i = symbolDatabase->scopeList.begin(); i != symbolDatabase->scopeList.end(); ++i) {
-        if (i->type != Scope::eCatch)
+    for (const Scope &scope : symbolDatabase->scopeList) {
+        if (scope.type != Scope::eCatch)
             continue;
 
         // Find a pass-by-value declaration in the catch(), excluding basic types
         // e.g. catch (std::exception err)
-        const Variable *var = i->classStart->tokAt(-2)->variable();
+        const Variable *var = scope.bodyStart->tokAt(-2)->variable();
         if (var && var->isClass() && !var->isPointer() && !var->isReference())
-            catchExceptionByValueError(i->classDef);
+            catchExceptionByValueError(scope.classDef);
     }
 }
 
@@ -198,8 +200,8 @@ static const Token * functionThrowsRecursive(const Function * function, std::set
     if (!function->functionScope)
         return nullptr;
 
-    for (const Token *tok = function->functionScope->classStart->next();
-         tok != function->functionScope->classEnd; tok = tok->next()) {
+    for (const Token *tok = function->functionScope->bodyStart->next();
+         tok != function->functionScope->bodyEnd; tok = tok->next()) {
         if (tok->str() == "try") {
             // just bail for now
             break;
@@ -237,11 +239,9 @@ static const Token * functionThrows(const Function * function)
 //--------------------------------------------------------------------------
 void CheckExceptionSafety::nothrowThrows()
 {
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
+    for (const Scope * scope : symbolDatabase->functionScopes) {
         const Function* function = scope->function;
         if (!function)
             continue;
@@ -275,20 +275,18 @@ void CheckExceptionSafety::nothrowThrows()
 //--------------------------------------------------------------------------
 void CheckExceptionSafety::unhandledExceptionSpecification()
 {
-    if (!_settings->isEnabled(Settings::STYLE) || !_settings->inconclusive)
+    if (!mSettings->isEnabled(Settings::STYLE) || !mSettings->inconclusive)
         return;
 
-    const SymbolDatabase* const symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase* const symbolDatabase = mTokenizer->getSymbolDatabase();
 
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
+    for (const Scope * scope : symbolDatabase->functionScopes) {
         // only check functions without exception epecification
         if (scope->function && !scope->function->isThrow() &&
             scope->className != "main" && scope->className != "wmain" &&
             scope->className != "_tmain" && scope->className != "WinMain") {
-            for (const Token *tok = scope->function->functionScope->classStart->next();
-                 tok != scope->function->functionScope->classEnd; tok = tok->next()) {
+            for (const Token *tok = scope->function->functionScope->bodyStart->next();
+                 tok != scope->function->functionScope->bodyEnd; tok = tok->next()) {
                 if (tok->str() == "try") {
                     break;
                 } else if (tok->function()) {

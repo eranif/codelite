@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,12 @@
 #include "config.h"
 #include "suppressions.h"
 
+#include <cstddef>
+#include <fstream>
 #include <list>
 #include <string>
+#include <utility>
+#include <vector>
 
 /**
  * CWE id (Common Weakness Enumeration)
@@ -40,6 +44,7 @@ struct CWE {
 
 class Token;
 class TokenList;
+
 namespace tinyxml2 {
     class XMLElement;
 }
@@ -49,7 +54,7 @@ namespace tinyxml2 {
 
 /** @brief Simple container to be thrown when internal error is detected. */
 struct InternalError {
-    enum Type {SYNTAX, INTERNAL};
+    enum Type {AST, SYNTAX, INTERNAL};
     InternalError(const Token *tok, const std::string &errorMsg, Type type = INTERNAL);
     const Token *token;
     std::string errorMessage;
@@ -158,11 +163,17 @@ public:
     }
 };
 
+
+typedef std::pair<const Token *, std::string> ErrorPathItem;
+typedef std::list<ErrorPathItem> ErrorPath;
+
 /**
  * @brief This is an interface, which the class responsible of error logging
  * should implement.
  */
 class CPPCHECKLIB ErrorLogger {
+protected:
+    std::ofstream plistFile;
 public:
 
     /**
@@ -178,14 +189,19 @@ public:
         class CPPCHECKLIB FileLocation {
         public:
             FileLocation()
-                : line(0) {
+                : fileIndex(0), line(0), col(0) {
             }
 
             FileLocation(const std::string &file, unsigned int aline)
-                : line(aline), _file(file) {
+                : fileIndex(0), line(aline), col(0), mFileName(file) {
             }
 
-            FileLocation(const Token* tok, const TokenList* list);
+            FileLocation(const std::string &file, const std::string &info, unsigned int aline)
+                : fileIndex(0), line(aline), col(0), mFileName(file), mInfo(info) {
+            }
+
+            FileLocation(const Token* tok, const TokenList* tokenList);
+            FileLocation(const Token* tok, const std::string &info, const TokenList* tokenList);
 
             /**
              * Return the filename.
@@ -205,37 +221,48 @@ public:
              */
             std::string stringify() const;
 
-            unsigned int line;
+            unsigned int fileIndex;
+            int line; // negative value means "no line"
+            unsigned int col;
+
+            std::string getinfo() const {
+                return mInfo;
+            }
+            void setinfo(const std::string &i) {
+                mInfo = i;
+            }
 
         private:
-            std::string _file;
+            std::string mFileName;
+            std::string mInfo;
         };
 
         ErrorMessage(const std::list<FileLocation> &callStack, const std::string& file1, Severity::SeverityType severity, const std::string &msg, const std::string &id, bool inconclusive);
         ErrorMessage(const std::list<FileLocation> &callStack, const std::string& file1, Severity::SeverityType severity, const std::string &msg, const std::string &id, const CWE &cwe, bool inconclusive);
         ErrorMessage(const std::list<const Token*>& callstack, const TokenList* list, Severity::SeverityType severity, const std::string& id, const std::string& msg, bool inconclusive);
         ErrorMessage(const std::list<const Token*>& callstack, const TokenList* list, Severity::SeverityType severity, const std::string& id, const std::string& msg, const CWE &cwe, bool inconclusive);
+        ErrorMessage(const ErrorPath &errorPath, const TokenList *tokenList, Severity::SeverityType severity, const char id[], const std::string &msg, const CWE &cwe, bool inconclusive);
         ErrorMessage();
         explicit ErrorMessage(const tinyxml2::XMLElement * const errmsg);
 
         /**
          * Format the error message in XML format
-         * @param verbose use verbose message
-         * @param version XML version
          */
-        std::string toXML(bool verbose, int version) const;
+        std::string toXML() const;
 
-        static std::string getXMLHeader(int xml_version);
-        static std::string getXMLFooter(int xml_version);
+        static std::string getXMLHeader();
+        static std::string getXMLFooter();
 
         /**
          * Format the error message into a string.
          * @param verbose use verbose message
-         * @param outputFormat Empty string to use default output format
+         * @param templateFormat Empty string to use default output format
          * or template to be used. E.g. "{file}:{line},{severity},{id},{message}"
+         * @param templateLocation Format Empty string to use default output format
+         * or template to be used. E.g. "{file}:{line},{info}"
         * @return formatted string
          */
-        std::string toString(bool verbose, const std::string &outputFormat = emptyString) const;
+        std::string toString(bool verbose, const std::string &templateFormat = emptyString, const std::string &templateLocation = emptyString) const;
 
         std::string serialize() const;
         bool deserialize(const std::string &data);
@@ -255,13 +282,20 @@ public:
 
         /** Short message (single line short message) */
         const std::string &shortMessage() const {
-            return _shortMessage;
+            return mShortMessage;
         }
 
         /** Verbose message (may be the same as the short message) */
         const std::string &verboseMessage() const {
-            return _verboseMessage;
+            return mVerboseMessage;
         }
+
+        /** Symbol names */
+        const std::string &symbolNames() const {
+            return mSymbolNames;
+        }
+
+        Suppressions::ErrorMessage toSuppressionsErrorMessage() const;
 
     private:
         /**
@@ -276,14 +310,22 @@ public:
         static std::string fixInvalidChars(const std::string& raw);
 
         /** Short message */
-        std::string _shortMessage;
+        std::string mShortMessage;
 
         /** Verbose message */
-        std::string _verboseMessage;
+        std::string mVerboseMessage;
+
+        /** symbol names */
+        std::string mSymbolNames;
     };
 
     ErrorLogger() { }
-    virtual ~ErrorLogger() { }
+    virtual ~ErrorLogger() {
+        if (plistFile.is_open()) {
+            plistFile << ErrorLogger::plistFooter();
+            plistFile.close();
+        }
+    }
 
     /**
      * Information about progress is directed here.
@@ -325,7 +367,7 @@ public:
      * Report list of unmatched suppressions
      * @param unmatched list of unmatched suppressions (from Settings::Suppressions::getUnmatched(Local|Global)Suppressions)
      */
-    void reportUnmatchedSuppressions(const std::list<Suppressions::SuppressionEntry> &unmatched);
+    void reportUnmatchedSuppressions(const std::list<Suppressions::Suppression> &unmatched);
 
     static std::string callStackToString(const std::list<ErrorLogger::ErrorMessage::FileLocation> &callStack);
 
@@ -335,6 +377,14 @@ public:
      * @return The output string containing XML entities
      */
     static std::string toxml(const std::string &str);
+
+    static std::string plistHeader(const std::string &version, const std::vector<std::string> &files);
+    static std::string plistData(const ErrorLogger::ErrorMessage &msg);
+    static const char *plistFooter() {
+        return " </array>\r\n"
+               "</dict>\r\n"
+               "</plist>";
+    }
 };
 
 /// @}

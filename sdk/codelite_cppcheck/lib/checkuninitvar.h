@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,25 @@
 #define checkuninitvarH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
 
+#include <set>
+#include <string>
+
+class ErrorLogger;
 class Scope;
+class Settings;
+class Token;
+class Tokenizer;
 class Variable;
+
+
+struct VariableValue {
+    explicit VariableValue(MathLib::bigint val = 0) : value(val), notEqual(false) {}
+    MathLib::bigint value;
+    bool notEqual;
+};
 
 /// @addtogroup Checks
 /// @{
@@ -46,7 +60,7 @@ public:
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckUninitVar checkUninitVar(tokenizer, settings, errorLogger);
         checkUninitVar.check();
         checkUninitVar.deadPointer();
@@ -58,7 +72,7 @@ public:
     void checkScope(const Scope* scope, const std::set<std::string> &arrayTypeDefs);
     void checkStruct(const Token *tok, const Variable &structvar);
     enum Alloc { NO_ALLOC, NO_CTOR_CALL, CTOR_CALL, ARRAY };
-    bool checkScopeForVariable(const Token *tok, const Variable& var, bool* const possibleInit, bool* const noreturn, Alloc* const alloc, const std::string &membervar);
+    bool checkScopeForVariable(const Token *tok, const Variable& var, bool* const possibleInit, bool* const noreturn, Alloc* const alloc, const std::string &membervar, std::map<unsigned int, VariableValue> variableValue);
     bool checkIfForWhileHead(const Token *startparentheses, const Variable& var, bool suppressErrors, bool isuninit, Alloc alloc, const std::string &membervar);
     bool checkLoopBody(const Token *tok, const Variable& var, const Alloc alloc, const std::string &membervar, const bool suppressErrors);
     void checkRhs(const Token *tok, const Variable &var, Alloc alloc, unsigned int number_of_if, const std::string &membervar);
@@ -74,16 +88,6 @@ public:
     /** ValueFlow-based checking for uninitialized variables */
     void valueFlowUninit();
 
-    /* data for multifile checking */
-    class MyFileInfo : public Check::FileInfo {
-    public:
-        /* functions that must have initialized data */
-        std::set<std::string>  uvarFunctions;
-
-        /* functions calls with uninitialized data */
-        std::set<std::string>  functionCalls;
-    };
-
     void uninitstringError(const Token *tok, const std::string &varname, bool strncpy_);
     void uninitdataError(const Token *tok, const std::string &varname);
     void uninitvarError(const Token *tok, const std::string &varname);
@@ -96,7 +100,7 @@ public:
     void uninitStructMemberError(const Token *tok, const std::string &membername);
 
 private:
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckUninitVar c(nullptr, settings, errorLogger);
 
         // error
@@ -111,7 +115,7 @@ private:
         return "Uninitialized variables";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Uninitialized variables\n"
                "- using uninitialized local variables\n"
                "- using allocated data before it has been initialized\n"

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,18 @@
 #define checkunusedvarH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
 
 #include <map>
+#include <string>
 
-class Type;
+class ErrorLogger;
 class Scope;
+class Settings;
+class Token;
+class Tokenizer;
+class Type;
 class Variables;
 
 /// @addtogroup Checks
@@ -48,7 +53,7 @@ public:
     }
 
     /** @brief Run checks against the normal token list */
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckUnusedVar checkUnusedVar(tokenizer, settings, errorLogger);
 
         // Coding style checks
@@ -57,7 +62,7 @@ public:
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         (void)tokenizer;
         (void)settings;
         (void)errorLogger;
@@ -81,7 +86,7 @@ private:
     void unreadVariableError(const Token *tok, const std::string &varname, bool modified);
     void unassignedVariableError(const Token *tok, const std::string &varname);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckUnusedVar c(nullptr, settings, errorLogger);
 
         // style/warning
@@ -96,7 +101,7 @@ private:
         return "UnusedVar";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "UnusedVar checks\n"
 
                // style
@@ -107,9 +112,9 @@ private:
                "- unused struct member\n";
     }
 
-    std::map<const Type *,bool> isRecordTypeWithoutSideEffectsMap;
+    std::map<const Type *,bool> mIsRecordTypeWithoutSideEffectsMap;
 
-    std::map<const Type *,bool> isEmptyTypeMap;
+    std::map<const Type *,bool> mIsEmptyTypeMap;
 
 };
 /// @}

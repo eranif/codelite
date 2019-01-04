@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,14 @@
  */
 
 #include "settings.h"
-#include "preprocessor.h"       // Preprocessor
-#include "utils.h"
 
-#include <fstream>
-#include <set>
+#include "valueflow.h"
 
-bool Settings::_terminated;
+bool Settings::mTerminated;
 
 Settings::Settings()
-    : _enabled(0),
-      debug(false),
+    : mEnabled(0),
+      debugSimplified(false),
       debugnormal(false),
       debugwarnings(false),
       dump(false),
@@ -40,7 +37,7 @@ Settings::Settings()
       verbose(false),
       force(false),
       relativePaths(false),
-      xml(false), xml_version(1),
+      xml(false), xml_version(2),
       jobs(1),
       loadAverage(0),
       exitCode(0),
@@ -75,25 +72,25 @@ std::string Settings::addEnabled(const std::string &str)
     }
 
     if (str == "all") {
-        _enabled |= WARNING | STYLE | PERFORMANCE | PORTABILITY | INFORMATION | UNUSED_FUNCTION | MISSING_INCLUDE;
+        mEnabled |= WARNING | STYLE | PERFORMANCE | PORTABILITY | INFORMATION | UNUSED_FUNCTION | MISSING_INCLUDE;
     } else if (str == "warning") {
-        _enabled |= WARNING;
+        mEnabled |= WARNING;
     } else if (str == "style") {
-        _enabled |= STYLE;
+        mEnabled |= STYLE;
     } else if (str == "performance") {
-        _enabled |= PERFORMANCE;
+        mEnabled |= PERFORMANCE;
     } else if (str == "portability") {
-        _enabled |= PORTABILITY;
+        mEnabled |= PORTABILITY;
     } else if (str == "information") {
-        _enabled |= INFORMATION | MISSING_INCLUDE;
+        mEnabled |= INFORMATION | MISSING_INCLUDE;
     } else if (str == "unusedFunction") {
-        _enabled |= UNUSED_FUNCTION;
+        mEnabled |= UNUSED_FUNCTION;
     } else if (str == "missingInclude") {
-        _enabled |= MISSING_INCLUDE;
+        mEnabled |= MISSING_INCLUDE;
     }
 #ifdef CHECK_INTERNAL
     else if (str == "internal") {
-        _enabled |= INTERNAL;
+        mEnabled |= INTERNAL;
     }
 #endif
     else {
@@ -130,21 +127,11 @@ bool Settings::isEnabled(Severity::SeverityType severity) const
     }
 }
 
-bool Settings::append(const std::string &filename)
+bool Settings::isEnabled(const ValueFlow::Value *value, bool inconclusiveCheck) const
 {
-    std::ifstream fin(filename.c_str());
-    if (!fin.is_open()) {
+    if (!isEnabled(Settings::WARNING) && (value->condition || value->defaultArg))
         return false;
-    }
-    std::string line;
-    while (std::getline(fin, line)) {
-        _append += line + "\n";
-    }
-    Preprocessor::preprocessWhitespaces(_append);
+    if (!inconclusive && (inconclusiveCheck || value->isInconclusive()))
+        return false;
     return true;
-}
-
-const std::string &Settings::append() const
-{
-    return _append;
 }

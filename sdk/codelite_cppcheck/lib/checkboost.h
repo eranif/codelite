@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,14 @@
 #define checkboostH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "tokenize.h"
 
+#include <string>
+
+class ErrorLogger;
+class Settings;
 class Token;
 
 /// @addtogroup Checks
@@ -44,7 +49,7 @@ public:
     }
 
     /** Simplified checks. The token list is simplified. */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         if (!tokenizer->isCPP())
             return;
 
@@ -59,16 +64,16 @@ public:
 private:
     void boostForeachError(const Token *tok);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
-        CheckBoost c(0, settings, errorLogger);
-        c.boostForeachError(0);
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
+        CheckBoost c(nullptr, settings, errorLogger);
+        c.boostForeachError(nullptr);
     }
 
     static std::string myName() {
         return "Boost usage";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Check for invalid usage of Boost:\n"
                "- container modification during BOOST_FOREACH\n";
     }

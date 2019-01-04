@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
 #ifdef CHECK_INTERNAL
 
 #include "checkinternal.h"
+
+#include "astutils.h"
 #include "symboldatabase.h"
 #include "utils.h"
-#include <string>
+
 #include <set>
 #include <cstring>
 
@@ -33,10 +35,10 @@ namespace {
 
 void CheckInternal::checkTokenMatchPatterns()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!Token::simpleMatch(tok, "Token :: Match (") && !Token::simpleMatch(tok, "Token :: findmatch ("))
                 continue;
 
@@ -83,12 +85,48 @@ void CheckInternal::checkTokenMatchPatterns()
     }
 }
 
+void CheckInternal::checkRedundantTokCheck()
+{
+    for (const Token *tok = mTokenizer->tokens(); tok; tok = tok->next()) {
+        if (Token::Match(tok, "&& Token :: simpleMatch|Match|findsimplematch|findmatch (")) {
+            // in code like
+            // if (tok->previous() && Token::match(tok->previous(), "bla")) {}
+            // the first tok->previous() check is redundant
+            const Token *astOp1 = tok->astOperand1();
+            const Token *astOp2 = getArguments(tok->tokAt(3))[0];
+
+            if (astOp1->expressionString() == astOp2->expressionString()) {
+                checkRedundantTokCheckError(astOp2);
+            }
+            // if (!tok || !Token::match(tok, "foo"))
+        } else if (Token::Match(tok, "%oror% ! Token :: simpleMatch|Match|findsimplematch|findmatch (")) {
+            const Token *negTok = tok->next()->astParent()->astOperand1();
+            // the first tok condition is negated
+            if (Token::simpleMatch(negTok, "!")) {
+                const Token *astOp1 = negTok->astOperand1();
+                const Token *astOp2 = getArguments(tok->tokAt(4))[0];
+
+                if (astOp1->expressionString() == astOp2->expressionString()) {
+                    checkRedundantTokCheckError(astOp2);
+                }
+            }
+        }
+    }
+}
+
+
+void CheckInternal::checkRedundantTokCheckError(const Token* tok)
+{
+    reportError(tok, Severity::style, "redundantTokCheck",
+                "Unnecessary check of \"" + (tok? tok->expressionString(): emptyString) + "\", match-function already checks if it is null.");
+}
+
 void CheckInternal::checkTokenSimpleMatchPatterns()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!Token::simpleMatch(tok, "Token :: simpleMatch (") && !Token::simpleMatch(tok, "Token :: findsimplematch ("))
                 continue;
 
@@ -153,30 +191,31 @@ void CheckInternal::checkTokenSimpleMatchPatterns()
 }
 
 namespace {
-    const std::set<std::string> knownPatterns = make_container< std::set<std::string> > ()
-            << "%any%"
-            << "%assign%"
-            << "%bool%"
-            << "%char%"
-            << "%comp%"
-            << "%num%"
-            << "%op%"
-            << "%cop%"
-            << "%or%"
-            << "%oror%"
-            << "%str%"
-            << "%type%"
-            << "%name%"
-            << "%var%"
-            << "%varid%";
+    const std::set<std::string> knownPatterns = {
+        "%any%"
+        , "%assign%"
+        , "%bool%"
+        , "%char%"
+        , "%comp%"
+        , "%num%"
+        , "%op%"
+        , "%cop%"
+        , "%or%"
+        , "%oror%"
+        , "%str%"
+        , "%type%"
+        , "%name%"
+        , "%var%"
+        , "%varid%"
+    };
 }
 
 void CheckInternal::checkMissingPercentCharacter()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!Token::simpleMatch(tok, "Token :: Match (") && !Token::simpleMatch(tok, "Token :: findmatch ("))
                 continue;
 
@@ -216,10 +255,10 @@ void CheckInternal::checkMissingPercentCharacter()
 
 void CheckInternal::checkUnknownPattern()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!Token::simpleMatch(tok, "Token :: Match (") && !Token::simpleMatch(tok, "Token :: findmatch ("))
                 continue;
 
@@ -251,10 +290,10 @@ void CheckInternal::checkUnknownPattern()
 
 void CheckInternal::checkRedundantNextPrevious()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->str() != ".")
                 continue;
             tok = tok->next();
@@ -283,10 +322,10 @@ void CheckInternal::checkRedundantNextPrevious()
 
 void CheckInternal::checkExtraWhitespace()
 {
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
     for (std::size_t i = 0; i < symbolDatabase->functionScopes.size(); ++i) {
         const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             if (!Token::Match(tok, "Token :: simpleMatch|findsimplematch|Match|findmatch ("))
                 continue;
 
@@ -304,6 +343,19 @@ void CheckInternal::checkExtraWhitespace()
             // two whitespaces or more
             if (pattern.find("  ") != std::string::npos)
                 extraWhitespaceError(tok, pattern, funcname);
+        }
+    }
+}
+
+void CheckInternal::checkStlUsage()
+{
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
+    for (const Scope *scope : symbolDatabase->functionScopes) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
+            if (Token::simpleMatch(tok, ". emplace ("))
+                reportError(tok, Severity::error, "internalStlUsage", "The 'emplace' function shall be avoided for now. 'emplace_back' is fine");
+            //if (Token::simpleMatch(tok, ". back ( )") && tok->astOperand1() && tok->astOperand1()->valueType() && tok->astOperand1()->valueType()->container && Token::simpleMatch(tok->astOperand1()->valueType()->container, "std :: string"))
+            //  reportError(tok, Severity::error, "internalStlUsage", "The 'std::string::back()' function shall be avoided for now.");
         }
     }
 }

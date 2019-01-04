@@ -20,13 +20,13 @@
 #define simplecppH
 
 #include <cctype>
+#include <cstddef>
 #include <istream>
 #include <list>
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
-
 
 #ifdef _WIN32
 #  ifdef SIMPLECPP_EXPORT
@@ -51,6 +51,8 @@ namespace simplecpp {
     class SIMPLECPP_LIB Location {
     public:
         explicit Location(const std::vector<std::string> &f) : files(f), fileIndex(0), line(1U), col(0U) {}
+
+        Location(const Location &loc) : files(loc.files), fileIndex(loc.fileIndex), line(loc.line), col(loc.col) {}
 
         Location &operator=(const Location &other) {
             if (this != &other) {
@@ -77,14 +79,15 @@ namespace simplecpp {
         }
 
         const std::string& file() const {
-            static const std::string temp;
-            return fileIndex < files.size() ? files[fileIndex] : temp;
+            return fileIndex < files.size() ? files[fileIndex] : emptyFileName;
         }
 
         const std::vector<std::string> &files;
         unsigned int fileIndex;
         unsigned int line;
         unsigned int col;
+    private:
+        static const std::string emptyFileName;
     };
 
     /**
@@ -94,22 +97,25 @@ namespace simplecpp {
     class SIMPLECPP_LIB Token {
     public:
         Token(const TokenString &s, const Location &loc) :
-            str(string), location(loc), previous(NULL), next(NULL), string(s) {
+            location(loc), previous(NULL), next(NULL), string(s) {
             flags();
         }
 
         Token(const Token &tok) :
-            str(string), macro(tok.macro), location(tok.location), previous(NULL), next(NULL), string(tok.str) {
+            macro(tok.macro), location(tok.location), previous(NULL), next(NULL), string(tok.string) {
             flags();
         }
 
         void flags() {
-            name = (std::isalpha((unsigned char)str[0]) || str[0] == '_' || str[0] == '$');
-            comment = (str.compare(0, 2, "//") == 0 || str.compare(0, 2, "/*") == 0);
-            number = std::isdigit((unsigned char)str[0]) || (str.size() > 1U && str[0] == '-' && std::isdigit((unsigned char)str[1]));
-            op = (str.size() == 1U) ? str[0] : '\0';
+            name = (std::isalpha((unsigned char)string[0]) || string[0] == '_' || string[0] == '$');
+            comment = (string.compare(0, 2, "//") == 0 || string.compare(0, 2, "/*") == 0);
+            number = std::isdigit((unsigned char)string[0]) || (string.size() > 1U && string[0] == '-' && std::isdigit((unsigned char)string[1]));
+            op = (string.size() == 1U) ? string[0] : '\0';
         }
 
+        const TokenString& str() const {
+            return string;
+        }
         void setstr(const std::string &s) {
             string = s;
             flags();
@@ -119,7 +125,6 @@ namespace simplecpp {
         bool startsWithOneOf(const char c[]) const;
         bool endsWithOneOf(const char c[]) const;
 
-        const TokenString &str;
         TokenString macro;
         char op;
         bool comment;
@@ -147,6 +152,9 @@ namespace simplecpp {
         void printOut() const;
     private:
         TokenString string;
+
+        // Not implemented - prevent assignment
+        Token &operator=(const Token &tok);
     };
 
     /** Output from preprocessor */
@@ -158,7 +166,8 @@ namespace simplecpp {
             MISSING_HEADER,
             INCLUDE_NESTED_TOO_DEEPLY,
             SYNTAX_ERROR,
-            PORTABILITY_BACKSLASH
+            PORTABILITY_BACKSLASH,
+            UNHANDLED_CHAR_ERROR
         } type;
         Location location;
         std::string msg;
@@ -173,13 +182,13 @@ namespace simplecpp {
         TokenList(std::istream &istr, std::vector<std::string> &filenames, const std::string &filename=std::string(), OutputList *outputList = 0);
         TokenList(const TokenList &other);
         ~TokenList();
-        void operator=(const TokenList &other);
+        TokenList &operator=(const TokenList &other);
 
         void clear();
         bool empty() const {
             return !frontToken;
         }
-        void push_back(Token *token);
+        void push_back(Token *tok);
 
         void dump() const;
         std::string stringify() const;
@@ -243,14 +252,15 @@ namespace simplecpp {
         void constFoldUnaryNotPosNeg(Token *tok);
         void constFoldMulDivRem(Token *tok);
         void constFoldAddSub(Token *tok);
+        void constFoldShift(Token *tok);
         void constFoldComparison(Token *tok);
         void constFoldBitwise(Token *tok);
         void constFoldLogicalOp(Token *tok);
-        void constFoldQuestionOp(Token **tok);
+        void constFoldQuestionOp(Token **tok1);
 
         std::string readUntil(std::istream &istr, const Location &location, const char start, const char end, OutputList *outputList);
 
-        std::string lastLine(int maxsize=10) const;
+        std::string lastLine(int maxsize=100000) const;
 
         unsigned int fileIndex(const std::string &filename);
 
@@ -261,13 +271,19 @@ namespace simplecpp {
 
     /** Tracking how macros are used */
     struct SIMPLECPP_LIB MacroUsage {
-        explicit MacroUsage(const std::vector<std::string> &f) : macroLocation(f), useLocation(f) {}
+        explicit MacroUsage(const std::vector<std::string> &f, bool macroValueKnown_) : macroLocation(f), useLocation(f), macroValueKnown(macroValueKnown_) {}
         std::string macroName;
         Location    macroLocation;
         Location    useLocation;
+        bool        macroValueKnown;
     };
 
+    /**
+     * Command line preprocessor settings.
+     * On the command line these are configured by -D, -U, -I, --include
+     */
     struct SIMPLECPP_LIB DUI {
+        DUI() {}
         std::list<std::string> defines;
         std::set<std::string> undefined;
         std::list<std::string> includePaths;
@@ -293,6 +309,9 @@ namespace simplecpp {
      * Deallocate data
      */
     SIMPLECPP_LIB void cleanup(std::map<std::string, TokenList*> &filedata);
+
+    /** Simplify path */
+    SIMPLECPP_LIB std::string simplifyPath(std::string path);
 }
 
 #endif

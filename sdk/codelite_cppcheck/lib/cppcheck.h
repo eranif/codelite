@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,18 @@
 #define cppcheckH
 //---------------------------------------------------------------------------
 
-#include "config.h"
-#include "settings.h"
-#include "errorlogger.h"
-#include "check.h"
 #include "analyzerinfo.h"
+#include "check.h"
+#include "config.h"
+#include "errorlogger.h"
+#include "importproject.h"
+#include "settings.h"
 
-#include <string>
-#include <list>
+#include <cstddef>
 #include <istream>
+#include <list>
+#include <map>
+#include <string>
 
 class Tokenizer;
 
@@ -110,7 +113,7 @@ public:
      * @brief Terminate checking. The checking will be terminated as soon as possible.
      */
     void terminate() {
-        _settings.terminate();
+        mSettings.terminate();
     }
 
     /**
@@ -123,14 +126,15 @@ public:
     void purgedConfigurationMessage(const std::string &file, const std::string& configuration);
 
     void dontSimplify() {
-        _simplify = false;
+        mSimplify = false;
     }
 
     /** Analyse whole program, run this after all TUs has been scanned.
      * This is deprecated and the plan is to remove this when
-     * .analyzeinfo is good enough
+     * .analyzeinfo is good enough.
+     * Return true if an error is reported.
      */
-    void analyseWholeProgram();
+    bool analyseWholeProgram();
 
     /** analyse whole program use .analyzeinfo files */
     void analyseWholeProgram(const std::string &buildDir, const std::map<std::string, std::size_t> &files);
@@ -145,29 +149,29 @@ private:
     void internalError(const std::string &filename, const std::string &msg);
 
     /**
-     * @brief Process one file.
+     * @brief Check a file using stream
      * @param filename file name
      * @param cfgname  cfg name
      * @param fileStream stream the file content can be read from
-     * @return amount of errors found
+     * @return number of errors found
      */
-    unsigned int processFile(const std::string& filename, const std::string &cfgname, std::istream& fileStream);
+    unsigned int checkFile(const std::string& filename, const std::string &cfgname, std::istream& fileStream);
 
     /**
      * @brief Check raw tokens
-     * @param tokenizer
+     * @param tokenizer tokenizer instance
      */
     void checkRawTokens(const Tokenizer &tokenizer);
 
     /**
      * @brief Check normal tokens
-     * @param tokenizer
+     * @param tokenizer tokenizer instance
      */
     void checkNormalTokens(const Tokenizer &tokenizer);
 
     /**
      * @brief Check simplified tokens
-     * @param tokenizer
+     * @param tokenizer tokenizer instance
      */
     void checkSimplifiedTokens(const Tokenizer &tokenizer);
 
@@ -185,44 +189,46 @@ private:
      * "[filepath:line number] Message", e.g.
      * "[main.cpp:4] Uninitialized member variable"
      */
-    virtual void reportErr(const ErrorLogger::ErrorMessage &msg);
+    virtual void reportErr(const ErrorLogger::ErrorMessage &msg) override;
 
     /**
      * @brief Information about progress is directed here.
      *
      * @param outmsg Message to show, e.g. "Checking main.cpp..."
      */
-    virtual void reportOut(const std::string &outmsg);
+    virtual void reportOut(const std::string &outmsg) override;
 
-    std::list<std::string> _errorList;
-    Settings _settings;
+    std::list<std::string> mErrorList;
+    Settings mSettings;
 
-    void reportProgress(const std::string &filename, const char stage[], const std::size_t value);
+    void reportProgress(const std::string &filename, const char stage[], const std::size_t value) override;
 
     /**
      * Output information messages.
      */
-    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg);
+    virtual void reportInfo(const ErrorLogger::ErrorMessage &msg) override;
 
-    ErrorLogger &_errorLogger;
+    ErrorLogger &mErrorLogger;
 
     /** @brief Current preprocessor configuration */
-    std::string cfg;
+    std::string mCurrentConfig;
 
-    unsigned int exitcode;
+    unsigned int mExitCode;
 
-    bool _useGlobalSuppressions;
+    bool mSuppressInternalErrorFound;
+
+    bool mUseGlobalSuppressions;
 
     /** Are there too many configs? */
-    bool tooManyConfigs;
+    bool mTooManyConfigs;
 
     /** Simplify code? true by default */
-    bool _simplify;
+    bool mSimplify;
 
     /** File info used for whole program analysis */
-    std::list<Check::FileInfo*> fileInfo;
+    std::list<Check::FileInfo*> mFileInfo;
 
-    AnalyzerInformation analyzerInformation;
+    AnalyzerInformation mAnalyzerInformation;
 };
 
 /// @}

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,18 @@
 #define checkotherH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "valueflow.h"
 
-class Function;
+#include <cstddef>
+#include <string>
+#include <vector>
+
+class ErrorLogger;
+class Settings;
+class Token;
+class Tokenizer;
 class Variable;
 
 /// @addtogroup Checks
@@ -46,7 +54,7 @@ public:
     }
 
     /** @brief Run checks against the normal token list */
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckOther checkOther(tokenizer, settings, errorLogger);
 
         // Checks
@@ -76,7 +84,7 @@ public:
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckOther checkOther(tokenizer, settings, errorLogger);
 
         // Checks
@@ -218,8 +226,7 @@ private:
     void unknownSignCharArrayIndexError(const Token *tok);
     void charBitOpError(const Token *tok);
     void variableScopeError(const Token *tok, const std::string &varname);
-    void zerodivError(const Token *tok, bool inconclusive);
-    void zerodivcondError(const Token *tokcond, const Token *tokdiv, bool inconclusive);
+    void zerodivError(const Token *tok, const ValueFlow::Value *value);
     void nanInArithmeticExpressionError(const Token *tok);
     void redundantAssignmentError(const Token *tok1, const Token* tok2, const std::string& var, bool inconclusive);
     void redundantAssignmentInSwitchError(const Token *tok1, const Token *tok2, const std::string &var);
@@ -231,8 +238,11 @@ private:
     void selfAssignmentError(const Token *tok, const std::string &varname);
     void misusedScopeObjectError(const Token *tok, const std::string &varname);
     void duplicateBranchError(const Token *tok1, const Token *tok2);
-    void duplicateExpressionError(const Token *tok1, const Token *tok2, const std::string &op);
-    void duplicateExpressionTernaryError(const Token *tok);
+    void duplicateAssignExpressionError(const Token *tok1, const Token *tok2);
+    void oppositeExpressionError(const Token *opTok, ErrorPath errors);
+    void duplicateExpressionError(const Token *tok1, const Token *tok2, const Token *opTok, ErrorPath errors);
+    void duplicateValueTernaryError(const Token *tok);
+    void duplicateExpressionTernaryError(const Token *tok, ErrorPath errors);
     void duplicateBreakError(const Token *tok, bool inconclusive);
     void unreachableCodeError(const Token* tok, bool inconclusive);
     void unsignedLessThanZeroError(const Token *tok, const std::string &varname, bool inconclusive);
@@ -250,48 +260,52 @@ private:
     void unusedLabelError(const Token* tok, bool inSwitch);
     void unknownEvaluationOrder(const Token* tok);
     static bool isMovedParameterAllowedForInconclusiveFunction(const Token * tok);
-    void accessMovedError(const Token *tok, const std::string &varname, ValueFlow::Value::MoveKind moveKind, bool inconclusive);
+    void accessMovedError(const Token *tok, const std::string &varname, const ValueFlow::Value *value, bool inconclusive);
     void funcArgNamesDifferent(const std::string & functionName, size_t index, const Token* declaration, const Token* definition);
     void funcArgOrderDifferent(const std::string & functionName, const Token * declaration, const Token * definition, const std::vector<const Token*> & declarations, const std::vector<const Token*> & definitions);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckOther c(nullptr, settings, errorLogger);
 
+        ErrorPath errorPath;
+
         // error
-        c.zerodivError(nullptr,  false);
-        c.zerodivcondError(nullptr, 0,false);
+        c.zerodivError(nullptr, nullptr);
         c.misusedScopeObjectError(nullptr, "varname");
         c.invalidPointerCastError(nullptr,  "float", "double", false);
         c.negativeBitwiseShiftError(nullptr, 1);
         c.negativeBitwiseShiftError(nullptr, 2);
         c.checkPipeParameterSizeError(nullptr,  "varname", "dimension");
         c.raceAfterInterlockedDecrementError(nullptr);
+        c.invalidFreeError(nullptr, false);
 
         //performance
         c.redundantCopyError(nullptr,  "varname");
-        c.redundantCopyError(nullptr,  0, "var");
-        c.redundantAssignmentError(nullptr,  0, "var", false);
+        c.redundantCopyError(nullptr, nullptr, "var");
+        c.redundantAssignmentError(nullptr, nullptr, "var", false);
 
         // style/warning
         c.checkComparisonFunctionIsAlwaysTrueOrFalseError(nullptr, "isless","varName",false);
         c.checkCastIntToCharAndBackError(nullptr, "func_name");
         c.cstyleCastError(nullptr);
-        c.passedByValueError(nullptr,  "parametername", false);
+        c.passedByValueError(nullptr, "parametername", false);
         c.constStatementError(nullptr,  "type");
         c.signedCharArrayIndexError(nullptr);
         c.unknownSignCharArrayIndexError(nullptr);
         c.charBitOpError(nullptr);
         c.variableScopeError(nullptr,  "varname");
-        c.redundantAssignmentInSwitchError(nullptr,  0, "var");
-        c.redundantCopyInSwitchError(nullptr,  0, "var");
+        c.redundantAssignmentInSwitchError(nullptr, nullptr, "var");
+        c.redundantCopyInSwitchError(nullptr, nullptr, "var");
         c.suspiciousCaseInSwitchError(nullptr,  "||");
         c.suspiciousEqualityComparisonError(nullptr);
         c.selfAssignmentError(nullptr,  "varname");
         c.clarifyCalculationError(nullptr,  "+");
         c.clarifyStatementError(nullptr);
-        c.duplicateBranchError(nullptr,  0);
-        c.duplicateExpressionError(nullptr,  0, "&&");
-        c.duplicateExpressionTernaryError(nullptr);
+        c.duplicateBranchError(nullptr, nullptr);
+        c.oppositeExpressionError(nullptr, errorPath);
+        c.duplicateExpressionError(nullptr, nullptr, nullptr, errorPath);
+        c.duplicateValueTernaryError(nullptr);
+        c.duplicateExpressionTernaryError(nullptr, errorPath);
         c.duplicateBreakError(nullptr,  false);
         c.unreachableCodeError(nullptr,  false);
         c.unsignedLessThanZeroError(nullptr,  "varname", false);
@@ -307,11 +321,11 @@ private:
         c.unusedLabelError(nullptr,  true);
         c.unusedLabelError(nullptr,  false);
         c.unknownEvaluationOrder(nullptr);
-        c.accessMovedError(nullptr, "v", ValueFlow::Value::MovedVariable, false);
-        c.accessMovedError(nullptr, "v", ValueFlow::Value::ForwardedVariable, false);
+        c.accessMovedError(nullptr, "v", nullptr, false);
         c.funcArgNamesDifferent("function", 1, nullptr, nullptr);
+        c.redundantBitwiseOperationInSwitchError(nullptr, "varname");
 
-        std::vector<const Token *> nullvec;
+        const std::vector<const Token *> nullvec;
         c.funcArgOrderDifferent("function", nullptr, nullptr, nullvec, nullvec);
     }
 
@@ -319,7 +333,7 @@ private:
         return "Other";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Other checks\n"
 
                // error
@@ -358,7 +372,7 @@ private:
                "- assignment of a variable to itself\n"
                "- Comparison of values leading always to true or false\n"
                "- Clarify calculation with parentheses\n"
-               "- suspicious comparison of '\\0' with a char* variable\n"
+               "- suspicious comparison of '\\0' with a char\\* variable\n"
                "- duplicate break statement\n"
                "- unreachable code\n"
                "- testing if unsigned variable is negative/positive\n"
@@ -368,7 +382,7 @@ private:
                "- comma in return statement (the comma can easily be misread as a semicolon).\n"
                "- prefer erfc, expm1 or log1p to avoid loss of precision.\n"
                "- identical code in both branches of if/else or ternary operator.\n"
-               "- redundant pointer operation on pointer like &*some_ptr.\n"
+               "- redundant pointer operation on pointer like &\\*some_ptr.\n"
                "- find unused 'goto' labels.\n"
                "- function declaration and definition argument names different.\n"
                "- function declaration and definition argument order different.\n";

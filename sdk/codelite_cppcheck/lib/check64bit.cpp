@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,14 @@
 //---------------------------------------------------------------------------
 
 #include "check64bit.h"
+
+#include "errorlogger.h"
+#include "settings.h"
 #include "symboldatabase.h"
+#include "token.h"
+#include "tokenize.h"
+
+#include <cstddef>
 
 //---------------------------------------------------------------------------
 
@@ -36,16 +43,14 @@ namespace {
 
 void Check64BitPortability::pointerassignment()
 {
-    if (!_settings->isEnabled(Settings::PORTABILITY))
+    if (!mSettings->isEnabled(Settings::PORTABILITY))
         return;
 
-    const SymbolDatabase *symbolDatabase = _tokenizer->getSymbolDatabase();
+    const SymbolDatabase *symbolDatabase = mTokenizer->getSymbolDatabase();
 
     // Check return values
-    const std::size_t functions = symbolDatabase->functionScopes.size();
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        if (scope->function == 0 || !scope->function->hasBody()) // We only look for functions with a body
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        if (scope->function == nullptr || !scope->function->hasBody()) // We only look for functions with a body
             continue;
 
         bool retPointer = false;
@@ -56,7 +61,7 @@ void Check64BitPortability::pointerassignment()
         else
             continue;
 
-        for (const Token* tok = scope->classStart->next(); tok != scope->classEnd; tok = tok->next()) {
+        for (const Token* tok = scope->bodyStart->next(); tok != scope->bodyEnd; tok = tok->next()) {
             // skip nested functions
             if (tok->str() == "{") {
                 if (tok->scope()->type == Scope::ScopeType::eFunction || tok->scope()->type == Scope::ScopeType::eLambda)
@@ -82,9 +87,8 @@ void Check64BitPortability::pointerassignment()
     }
 
     // Check assignments
-    for (std::size_t i = 0; i < functions; ++i) {
-        const Scope * scope = symbolDatabase->functionScopes[i];
-        for (const Token *tok = scope->classStart; tok && tok != scope->classEnd; tok = tok->next()) {
+    for (const Scope * scope : symbolDatabase->functionScopes) {
+        for (const Token *tok = scope->bodyStart; tok && tok != scope->bodyEnd; tok = tok->next()) {
             if (tok->str() != "=")
                 continue;
 

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define PATHMATCH_H
 
 #include "config.h"
+
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ public:
      * @param path Path to match.
      * @return true if any of the masks match the path, false otherwise.
      */
-    bool Match(const std::string &path) const;
+    bool match(const std::string &path) const;
 
 protected:
 
@@ -54,12 +55,12 @@ protected:
      * @param path Path to edit.
      * @return path without filename part.
      */
-    static std::string RemoveFilename(const std::string &path);
+    static std::string removeFilename(const std::string &path);
 
 private:
-    std::vector<std::string> _excludedPaths;
-    bool _caseSensitive;
-    std::vector<std::string> _workingDirectory;
+    std::vector<std::string> mExcludedPaths;
+    bool mCaseSensitive;
+    std::vector<std::string> mWorkingDirectory;
 };
 
 /// @}

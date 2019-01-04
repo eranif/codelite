@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include "check.h"
 #include "config.h"
 
+#include <string>
+
 /// @addtogroup Checks
 /// @{
 
@@ -42,7 +44,7 @@ public:
     }
 
     /** Simplified checks. The token list is simplified. */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         if (!settings->isEnabled(Settings::INTERNAL))
             return;
 
@@ -54,6 +56,8 @@ public:
         checkInternal.checkUnknownPattern();
         checkInternal.checkRedundantNextPrevious();
         checkInternal.checkExtraWhitespace();
+        checkInternal.checkRedundantTokCheck();
+        checkInternal.checkStlUsage();
     }
 
     /** @brief %Check if a simple pattern is used inside Token::Match or Token::findmatch */
@@ -74,6 +78,11 @@ public:
     /** @brief %Check if there is whitespace at the beginning or at the end of a pattern */
     void checkExtraWhitespace();
 
+    /** @brief %Check if there is a redundant check for none-nullness of parameter before Match functions, such as (tok && Token::Match(tok, "foo")) */
+    void checkRedundantTokCheck();
+
+    /** @brief Try to avoid some new functions that are not fully supported in Linux */
+    void checkStlUsage();
 private:
     void multiComparePatternError(const Token *tok, const std::string &pattern, const std::string &funcname);
     void simplePatternError(const Token *tok, const std::string &pattern, const std::string &funcname);
@@ -83,8 +92,9 @@ private:
     void redundantNextPreviousError(const Token* tok, const std::string& func1, const std::string& func2);
     void orInComplexPattern(const Token *tok, const std::string &pattern, const std::string &funcname);
     void extraWhitespaceError(const Token *tok, const std::string &pattern, const std::string &funcname);
+    void checkRedundantTokCheckError(const Token *tok);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckInternal c(nullptr, settings, errorLogger);
         c.multiComparePatternError(nullptr, ";|%type%", "Match");
         c.simplePatternError(nullptr, "class {", "Match");
@@ -94,13 +104,14 @@ private:
         c.redundantNextPreviousError(nullptr, "previous", "next");
         c.orInComplexPattern(nullptr, "||", "Match");
         c.extraWhitespaceError(nullptr, "%str% ", "Match");
+        c.checkRedundantTokCheckError(nullptr);
     }
 
     static std::string myName() {
         return "cppcheck internal API usage";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         // Don't include these checks on the WIKI where people can read what
         // checks there are. These checks are not intended for users.
         return "";

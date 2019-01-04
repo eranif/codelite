@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,16 @@
 #define checkconditionH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
 #include "mathlib.h"
+
+#include <string>
+
+class ErrorLogger;
+class Settings;
+class Token;
+class Tokenizer;
 
 /// @addtogroup Checks
 /// @{
@@ -44,18 +51,19 @@ public:
         : Check(myName(), tokenizer, settings, errorLogger) {
     }
 
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckCondition checkCondition(tokenizer, settings, errorLogger);
         checkCondition.multiCondition();
         checkCondition.clarifyCondition();   // not simplified because ifAssign
-        checkCondition.oppositeInnerCondition();
+        checkCondition.multiCondition2();
         checkCondition.checkIncorrectLogicOperator();
         checkCondition.checkInvalidTestForOverflow();
         checkCondition.alwaysTrueFalse();
+        checkCondition.checkPointerAdditionResultNotNull();
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckCondition checkCondition(tokenizer, settings, errorLogger);
         checkCondition.assignIf();
         checkCondition.checkBadBitmaskCheck();
@@ -83,8 +91,13 @@ public:
     /** match 'if' and 'else if' conditions */
     void multiCondition();
 
-    /** To check the dead code in a program, which is inaccessible due to the counter-conditions check in nested-if statements **/
-    void oppositeInnerCondition();
+    /**
+     * multiconditions #2
+     * - Opposite inner conditions => always false
+     * - (TODO) Same/Overlapping inner condition => always true
+     * - same condition after early exit => always false
+     **/
+    void multiCondition2();
 
     /** @brief %Check for testing for mutual exclusion over ||*/
     void checkIncorrectLogicOperator();
@@ -101,8 +114,11 @@ public:
     /** @brief %Check for invalid test for overflow 'x+100 < x' */
     void checkInvalidTestForOverflow();
 
-private:
+    /** @brief Check if pointer addition result is NULL '(ptr + 1) == NULL' */
+    void checkPointerAdditionResultNotNull();
 
+private:
+    bool isAliased(const std::set<unsigned int> &vars) const;
     bool isOverlappingCond(const Token * const cond1, const Token * const cond2, bool pure) const;
     void assignIfError(const Token *tok1, const Token *tok2, const std::string &condition, bool result);
     void mismatchingBitAndError(const Token *tok1, const MathLib::bigint num1, const Token *tok2, const MathLib::bigint num2);
@@ -115,53 +131,64 @@ private:
                          bool result);
     void multiConditionError(const Token *tok, unsigned int line1);
 
-    void oppositeInnerConditionError(const Token *tok1, const Token* tok2);
+    void oppositeInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath);
 
-    void incorrectLogicOperatorError(const Token *tok, const std::string &condition, bool always, bool inconclusive);
+    void identicalInnerConditionError(const Token *tok1, const Token* tok2, ErrorPath errorPath);
+
+    void identicalConditionAfterEarlyExitError(const Token *cond1, const Token *cond2, ErrorPath errorPath);
+
+    void incorrectLogicOperatorError(const Token *tok, const std::string &condition, bool always, bool inconclusive, ErrorPath errors);
     void redundantConditionError(const Token *tok, const std::string &text, bool inconclusive);
 
     void moduloAlwaysTrueFalseError(const Token* tok, const std::string& maxVal);
 
     void clarifyConditionError(const Token *tok, bool assign, bool boolop);
 
-    void alwaysTrueFalseError(const Token *tok, bool knownResult);
+    void alwaysTrueFalseError(const Token *tok, const ValueFlow::Value *value);
 
     void invalidTestForOverflow(const Token* tok, bool result);
+    void pointerAdditionResultNotNullError(const Token *tok, const Token *calc);
 
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckCondition c(nullptr, settings, errorLogger);
 
-        c.assignIfError(nullptr, 0, emptyString, false);
+        ErrorPath errorPath;
+
+        c.assignIfError(nullptr, nullptr, emptyString, false);
         c.badBitmaskCheckError(nullptr);
         c.comparisonError(nullptr, "&", 6, "==", 1, false);
         c.multiConditionError(nullptr,1);
-        c.mismatchingBitAndError(nullptr, 0xf0, 0, 1);
-        c.oppositeInnerConditionError(nullptr, 0);
-        c.incorrectLogicOperatorError(nullptr, "foo > 3 && foo < 4", true, false);
+        c.mismatchingBitAndError(nullptr, 0xf0, nullptr, 1);
+        c.oppositeInnerConditionError(nullptr, nullptr, errorPath);
+        c.identicalInnerConditionError(nullptr, nullptr, errorPath);
+        c.identicalConditionAfterEarlyExitError(nullptr, nullptr, errorPath);
+        c.incorrectLogicOperatorError(nullptr, "foo > 3 && foo < 4", true, false, errorPath);
         c.redundantConditionError(nullptr, "If x > 11 the condition x > 10 is always true.", false);
         c.moduloAlwaysTrueFalseError(nullptr, "1");
         c.clarifyConditionError(nullptr, true, false);
-        c.alwaysTrueFalseError(nullptr, true);
+        c.alwaysTrueFalseError(nullptr, nullptr);
         c.invalidTestForOverflow(nullptr, false);
+        c.pointerAdditionResultNotNullError(nullptr, nullptr);
     }
 
     static std::string myName() {
         return "Condition";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Match conditions with assignments and other conditions:\n"
                "- Mismatching assignment and comparison => comparison is always true/false\n"
                "- Mismatching lhs and rhs in comparison => comparison is always true/false\n"
                "- Detect usage of | where & should be used\n"
                "- Detect matching 'if' and 'else if' conditions\n"
                "- Mismatching bitand (a &= 0xf0; a &= 1; => a = 0)\n"
-               "- Find dead code which is inaccessible due to the counter-conditions check in nested if statements\n"
+               "- Opposite inner condition is always false\n"
+               "- Identical condition after early exit is always false\n"
                "- Condition that is always true/false\n"
                "- Mutual exclusion over || always evaluating to true\n"
                "- Comparisons of modulo results that are always true/false.\n"
                "- Known variable values => condition is always true/false\n"
-               "- Invalid test for overflow (for example 'ptr+u < ptr'). Condition is always false unless there is overflow, and overflow is UB.\n";
+               "- Invalid test for overflow (for example 'ptr+u < ptr'). Condition is always false unless there is overflow, and overflow is undefined behaviour.\n";
     }
 };
 /// @}

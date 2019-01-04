@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,27 @@
 #define checkbufferoverrunH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "errorlogger.h"
 #include "mathlib.h"
+#include "tokenize.h"
 
+#include <cstddef>
 #include <list>
-#include <vector>
+#include <map>
 #include <string>
+#include <vector>
+
+class Settings;
+class SymbolDatabase;
+class Token;
+namespace ValueFlow {
+    class Value;
+}  // namespace ValueFlow
+namespace tinyxml2 {
+    class XMLElement;
+}  // namespace tinyxml2
 
 // CWE ids used
 static const struct CWE CWE119(119U); // Improper Restriction of Operations within the Bounds of a Memory Buffer
@@ -51,16 +65,15 @@ class CPPCHECKLIB CheckBufferOverrun : public Check {
 public:
 
     /** This constructor is used when registering the CheckClass */
-    CheckBufferOverrun() : Check(myName()), symbolDatabase(nullptr) {
+    CheckBufferOverrun() : Check(myName()) {
     }
 
     /** This constructor is used when running checks. */
     CheckBufferOverrun(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger)
-        : Check(myName(), tokenizer, settings, errorLogger)
-        , symbolDatabase(tokenizer?tokenizer->getSymbolDatabase():nullptr) {
+        : Check(myName(), tokenizer, settings, errorLogger) {
     }
 
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckBufferOverrun checkBufferOverrun(tokenizer, settings, errorLogger);
         checkBufferOverrun.checkGlobalAndLocalVariable();
         if (tokenizer && tokenizer->isMaxTime())
@@ -72,7 +85,7 @@ public:
         checkBufferOverrun.negativeArraySize();
     }
 
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckBufferOverrun checkBufferOverrun(tokenizer, settings, errorLogger);
         checkBufferOverrun.bufferOverrun();
         checkBufferOverrun.checkStringArgument();
@@ -114,16 +127,16 @@ public:
     class CPPCHECKLIB ArrayInfo {
     private:
         /** number of elements of array */
-        std::vector<MathLib::bigint> _num;
+        std::vector<MathLib::bigint> mNum;
 
         /** full name of variable as pattern */
-        std::string _varname;
+        std::string mVarName;
 
         /** size of each element in array */
-        MathLib::bigint _element_size;
+        MathLib::bigint mElementSize;
 
         /** declaration id */
-        unsigned int _declarationId;
+        unsigned int mDeclarationId;
 
     public:
         ArrayInfo();
@@ -142,36 +155,36 @@ public:
 
         /** array sizes */
         const std::vector<MathLib::bigint> &num() const {
-            return _num;
+            return mNum;
         }
 
         /** array size */
         MathLib::bigint num(std::size_t index) const {
-            return _num[index];
+            return mNum[index];
         }
         void num(std::size_t index, MathLib::bigint number) {
-            _num[index] = number;
+            mNum[index] = number;
         }
 
         /** size of each element */
         MathLib::bigint element_size() const {
-            return _element_size;
+            return mElementSize;
         }
 
         /** Variable name */
         unsigned int declarationId() const {
-            return _declarationId;
+            return mDeclarationId;
         }
         void declarationId(unsigned int id) {
-            _declarationId = id;
+            mDeclarationId = id;
         }
 
         /** Variable name */
         const std::string &varname() const {
-            return _varname;
+            return mVarName;
         }
         void varname(const std::string &name) {
-            _varname = name;
+            mVarName = name;
         }
 
         MathLib::bigint numberOfElements() const;
@@ -209,7 +222,7 @@ public:
     /* data for multifile checking */
     class MyFileInfo : public Check::FileInfo {
     public:
-        std::string toString() const;
+        std::string toString() const override;
 
         struct ArrayUsage {
             MathLib::bigint   index;
@@ -225,12 +238,12 @@ public:
     };
 
     /** @brief Parse current TU and extract file info */
-    Check::FileInfo *getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const;
+    Check::FileInfo *getFileInfo(const Tokenizer *tokenizer, const Settings *settings) const override;
 
-    Check::FileInfo * loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const;
+    Check::FileInfo * loadFileInfoFromXml(const tinyxml2::XMLElement *xmlElement) const override;
 
     /** @brief Analyse all file infos for all TU */
-    void analyseWholeProgram(const std::list<Check::FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger);
+    bool analyseWholeProgram(const std::list<Check::FileInfo*> &fileInfo, const Settings& settings, ErrorLogger &errorLogger) override;
 
     /**
      * Calculates sizeof value for given type.
@@ -240,8 +253,6 @@ public:
     unsigned int sizeOfType(const Token *type) const;
 
 private:
-    const SymbolDatabase *symbolDatabase;
-
     static bool isArrayOfStruct(const Token* tok, int &position);
     void arrayIndexOutOfBoundsError(const std::list<const Token *> &callstack, const ArrayInfo &arrayInfo, const std::vector<MathLib::bigint> &index);
     void bufferOverrunError(const Token *tok, const std::string &varnames = emptyString);
@@ -264,7 +275,7 @@ private:
     void valueFlowCheckArrayIndex(const Token * const tok, const ArrayInfo &arrayInfo);
 
 public:
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckBufferOverrun c(nullptr, settings, errorLogger);
         const std::vector<MathLib::bigint> indexes(2, 1);
         c.arrayIndexOutOfBoundsError(nullptr, ArrayInfo(0, "array", 1, 2), indexes);
@@ -290,7 +301,7 @@ private:
         return "Bounds checking";
     }
 
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Out of bounds checking:\n"
                "- Array index out of bounds detection by value flow analysis\n"
                "- Dangerous usage of strncat()\n"

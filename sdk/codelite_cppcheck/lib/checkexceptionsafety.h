@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,17 @@
 #define checkexceptionsafetyH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "errorlogger.h"
+#include "token.h"
+#include "tokenize.h"
 #include "utils.h"
+
+#include <list>
+#include <string>
+
+class Settings;
 
 // CWE ID used:
 static const struct CWE CWE398(398U);   // Indicator of Poor Code Quality
@@ -54,7 +62,7 @@ public:
     }
 
     /** Checks that uses the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         if (tokenizer->isC())
             return;
 
@@ -120,8 +128,8 @@ private:
 
     /** Missing exception specification */
     void unhandledExceptionSpecificationError(const Token * const tok1, const Token * const tok2, const std::string & funcname) {
-        std::string str1(tok1 ? tok1->str() : "foo");
-        const std::list<const Token*> locationList = make_container< std::list<const Token*> > () << tok1 << tok2;
+        const std::string str1(tok1 ? tok1->str() : "foo");
+        const std::list<const Token*> locationList = { tok1, tok2 };
         reportError(locationList, Severity::style, "unhandledExceptionSpecification",
                     "Unhandled exception specification when calling function " + str1 + "().\n"
                     "Unhandled exception specification when calling function " + str1 + "(). "
@@ -129,14 +137,14 @@ private:
     }
 
     /** Generate all possible errors (for --errorlist) */
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckExceptionSafety c(nullptr, settings, errorLogger);
         c.destructorsError(nullptr, "Class");
         c.deallocThrowError(nullptr, "p");
         c.rethrowCopyError(nullptr, "varname");
         c.catchExceptionByValueError(nullptr);
         c.noexceptThrowError(nullptr);
-        c.unhandledExceptionSpecificationError(nullptr, 0, "funcname");
+        c.unhandledExceptionSpecificationError(nullptr, nullptr, "funcname");
     }
 
     /** Short description of class (for --doc) */
@@ -145,7 +153,7 @@ private:
     }
 
     /** wiki formatted description of the class (for --doc) */
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Checking exception safety\n"
                "- Throwing exceptions in destructors\n"
                "- Throwing exception during invalid state\n"

@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,18 @@
 #define checknullpointerH
 //---------------------------------------------------------------------------
 
-#include "config.h"
 #include "check.h"
+#include "config.h"
+#include "valueflow.h"
+
+#include <list>
+#include <string>
+
+class ErrorLogger;
+class Library;
+class Settings;
+class Token;
+class Tokenizer;
 
 
 /// @addtogroup Checks
@@ -44,14 +54,14 @@ public:
     }
 
     /** @brief Run checks against the normal token list */
-    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckNullPointer checkNullPointer(tokenizer, settings, errorLogger);
         checkNullPointer.nullPointer();
         checkNullPointer.arithmetic();
     }
 
     /** @brief Run checks against the simplified token list */
-    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) {
+    void runSimplifiedChecks(const Tokenizer *tokenizer, const Settings *settings, ErrorLogger *errorLogger) override {
         CheckNullPointer checkNullPointer(tokenizer, settings, errorLogger);
         checkNullPointer.nullConstantDereference();
     }
@@ -83,16 +93,17 @@ public:
     /** @brief dereferencing null constant (after Tokenizer::simplifyKnownVariables) */
     void nullConstantDereference();
 
-    void nullPointerError(const Token *tok);  // variable name unknown / doesn't exist
-    void nullPointerError(const Token *tok, const std::string &varname, bool inconclusive, bool defaultArg, bool possible);
-    void nullPointerError(const Token *tok, const std::string &varname, const Token* nullCheck, bool inconclusive);
+    void nullPointerError(const Token *tok) {
+        ValueFlow::Value v(0);
+        v.setKnown();
+        nullPointerError(tok, "", &v, false);
+    }
+    void nullPointerError(const Token *tok, const std::string &varname, const ValueFlow::Value* value, bool inconclusive);
 private:
 
     /** Get error messages. Used by --errorlist */
-    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const {
+    void getErrorMessages(ErrorLogger *errorLogger, const Settings *settings) const override {
         CheckNullPointer c(nullptr, settings, errorLogger);
-        c.nullPointerError(nullptr);
-        c.nullPointerError(nullptr, "pointer", false, true, true);
         c.nullPointerError(nullptr, "pointer", nullptr, false);
         c.arithmeticError(nullptr, nullptr);
     }
@@ -103,7 +114,7 @@ private:
     }
 
     /** class info in WIKI format. Used by --doc */
-    std::string classInfo() const {
+    std::string classInfo() const override {
         return "Null pointers\n"
                "- null pointer dereferencing\n"
                "- undefined null pointer arithmetic\n";

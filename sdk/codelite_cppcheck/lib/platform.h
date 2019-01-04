@@ -1,6 +1,6 @@
 /*
 * Cppcheck - A tool for static C/C++ code analysis
-* Copyright (C) 2007-2016 Cppcheck team.
+* Copyright (C) 2007-2018 Cppcheck team.
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,15 @@
 //---------------------------------------------------------------------------
 
 #include "config.h"
+
 #include <string>
 
 /// @addtogroup Core
 /// @{
+
+namespace tinyxml2 {
+    class XMLDocument;
+}
 
 namespace cppcheck {
 
@@ -85,7 +90,8 @@ namespace cppcheck {
             Win32W,
             Win64,
             Unix32,
-            Unix64
+            Unix64,
+            PlatformFile
         };
 
         /** platform type */
@@ -94,8 +100,16 @@ namespace cppcheck {
         /** set the platform type for predefined platforms */
         bool platform(PlatformType type);
 
-        /** set the platform type for user specified platforms */
-        bool platformFile(const std::string &filename);
+        /**
+         * load platform file
+         * @param exename application path
+         * @param filename platform filename
+         * @return returns true if file was loaded successfully
+         */
+        bool loadPlatformFile(const char exename[], const std::string &filename);
+
+        /** load platform from xml document, primarily for testing */
+        bool loadFromXmlDocument(const tinyxml2::XMLDocument *doc);
 
         /**
         * @brief Returns true if platform type is Windows
@@ -108,20 +122,42 @@ namespace cppcheck {
         }
 
         const char *platformString() const {
-            switch (platformType) {
-            case Unix32:
-                return "unix32";
-            case Unix64:
-                return "unix64";
+            return platformString(platformType);
+        }
+
+        static const char *platformString(PlatformType pt) {
+            switch (pt) {
+            case Unspecified:
+                return "Unspecified";
+            case Native:
+                return "Native";
             case Win32A:
                 return "win32A";
             case Win32W:
                 return "win32W";
             case Win64:
                 return "win64";
+            case Unix32:
+                return "unix32";
+            case Unix64:
+                return "unix64";
+            case PlatformFile:
+                return "platformFile";
             default:
                 return "unknown";
             }
+        }
+
+        long long unsignedCharMax() const {
+            return max_value(char_bit + 1);
+        }
+
+        long long signedCharMax() const {
+            return max_value(char_bit);
+        }
+
+        long long signedCharMin() const {
+            return min_value(char_bit);
         }
     };
 

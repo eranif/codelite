@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@
 #define mathlibH
 //---------------------------------------------------------------------------
 
-#include <string>
-#include <sstream>
 #include "config.h"
+
+#include <sstream>
+#include <string>
 
 /// @addtogroup Core
 /// @{
@@ -37,10 +38,10 @@ public:
     /** @brief value class */
     class value {
     private:
-        long long intValue;
-        double doubleValue;
-        enum { INT, LONG, LONGLONG, FLOAT } type;
-        bool isUnsigned;
+        long long mIntValue;
+        double mDoubleValue;
+        enum { INT, LONG, LONGLONG, FLOAT } mType;
+        bool mIsUnsigned;
 
         void promote(const value &v);
 
@@ -48,14 +49,14 @@ public:
         explicit value(const std::string &s);
         std::string str() const;
         bool isInt() const {
-            return type != FLOAT;
+            return mType != FLOAT;
         }
         bool isFloat() const {
-            return type == FLOAT;
+            return mType == FLOAT;
         }
 
         double getDoubleValue() const {
-            return isFloat() ? doubleValue : (double)intValue;
+            return isFloat() ? mDoubleValue : (double)mIntValue;
         }
 
         static value calc(char op, const value &v1, const value &v2);
@@ -67,6 +68,7 @@ public:
 
     typedef long long bigint;
     typedef unsigned long long biguint;
+    static const int bigint_bits;
 
     static bigint toLongNumber(const std::string & str);
     static biguint toULongNumber(const std::string & str);

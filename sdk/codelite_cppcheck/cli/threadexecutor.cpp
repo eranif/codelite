@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2016 Cppcheck team.
+ * Copyright (C) 2007-2018 Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,33 @@
  */
 
 #include "threadexecutor.h"
+
+#include "config.h"
 #include "cppcheck.h"
 #include "cppcheckexecutor.h"
+#include "importproject.h"
+#include "settings.h"
+#include "suppressions.h"
+
+#include <algorithm>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
+#include <utility>
+
 #ifdef __SVR4  // Solaris
 #include <sys/loadavg.h>
 #endif
 #ifdef THREADING_MODEL_FORK
-#include <algorithm>
 #include <sys/select.h>
 #include <sys/wait.h>
-#include <unistd.h>
 #include <fcntl.h>
-#include <cstdlib>
-#include <cstdio>
-#include <errno.h>
-#include <time.h>
-#include <cstring>
-#include <sstream>
+#include <unistd.h>
 #endif
 #ifdef THREADING_MODEL_WIN
 #include <process.h>
 #include <windows.h>
-#include <algorithm>
-#include <cstring>
-#include <errno.h>
 #endif
 
 // required for FD_ZERO
@@ -49,6 +51,7 @@ using std::memset;
 
 ThreadExecutor::ThreadExecutor(const std::map<std::string, std::size_t> &files, Settings &settings, ErrorLogger &errorLogger)
     : _files(files), _settings(settings), _errorLogger(errorLogger), _fileCount(0)
+      // Not initialized _fileSync, _errorSync, _reportSync
 {
 #if defined(THREADING_MODEL_FORK)
     _wpipe = 0;
@@ -98,11 +101,15 @@ int ThreadExecutor::handleRead(int rpipe, unsigned int &result)
         std::exit(0);
     }
 
-    char *buf = new char[len];
-    if (read(rpipe, buf, len) <= 0) {
+    // Don't rely on incoming data being null-terminated.
+    // Allocate +1 element and null-terminate the buffer.
+    char *buf = new char[len + 1];
+    const ssize_t readIntoBuf = read(rpipe, buf, len);
+    if (readIntoBuf <= 0) {
         std::cerr << "#### You found a bug from cppcheck.\nThreadExecutor::handleRead error, type was:" << type << std::endl;
         std::exit(0);
     }
+    buf[readIntoBuf] = 0;
 
     if (type == REPORT_OUT) {
         _errorLogger.reportOut(buf);
@@ -110,14 +117,7 @@ int ThreadExecutor::handleRead(int rpipe, unsigned int &result)
         ErrorLogger::ErrorMessage msg;
         msg.deserialize(buf);
 
-        std::string file;
-        unsigned int line(0);
-        if (!msg._callStack.empty()) {
-            file = msg._callStack.back().getfile(false);
-            line = msg._callStack.back().line;
-        }
-
-        if (!_settings.nomsg.isSuppressed(msg._id, file, line)) {
+        if (!_settings.nomsg.isSuppressed(msg.toSuppressionsErrorMessage())) {
             // Alert only about unique errors
             std::string errmsg = msg.toString(_settings.verbose);
             if (std::find(_errorList.begin(), _errorList.end(), errmsg) == _errorList.end()) {
@@ -294,7 +294,7 @@ unsigned int ThreadExecutor::check()
                     oss << "Internal error: Child process crashed with signal " << WTERMSIG(stat);
 
                     std::list<ErrorLogger::ErrorMessage::FileLocation> locations;
-                    locations.push_back(ErrorLogger::ErrorMessage::FileLocation(childname, 0));
+                    locations.emplace_back(childname, 0);
                     const ErrorLogger::ErrorMessage errmsg(locations,
                                                            emptyString,
                                                            Severity::error,
@@ -302,7 +302,7 @@ unsigned int ThreadExecutor::check()
                                                            "cppcheckError",
                                                            false);
 
-                    if (!_settings.nomsg.isSuppressed(errmsg._id, childname, 0))
+                    if (!_settings.nomsg.isSuppressed(errmsg.toSuppressionsErrorMessage()))
                         _errorLogger.reportErr(errmsg);
                 }
             }
@@ -325,7 +325,7 @@ void ThreadExecutor::writeToPipe(PipeSignal type, const std::string &data)
     std::memcpy(&(out[1+sizeof(len)]), data.c_str(), len);
     if (write(_wpipe, out, len + 1 + sizeof(len)) <= 0) {
         delete [] out;
-        out = 0;
+        out = nullptr;
         std::cerr << "#### ThreadExecutor::writeToPipe, Failed to write to pipe" << std::endl;
         std::exit(0);
     }
@@ -382,7 +382,7 @@ unsigned int ThreadExecutor::check()
         }
     }
 
-    DWORD waitResult = WaitForMultipleObjects(_settings.jobs, threadHandles, TRUE, INFINITE);
+    const DWORD waitResult = WaitForMultipleObjects(_settings.jobs, threadHandles, TRUE, INFINITE);
     if (waitResult != WAIT_OBJECT_0) {
         if (waitResult == WAIT_FAILED) {
             std::cerr << "#### .\nThreadExecutor::check wait failed, result: " << waitResult << " error: " << GetLastError() << std::endl;
@@ -447,7 +447,7 @@ unsigned int __stdcall ThreadExecutor::threadProc(void *args)
 
             LeaveCriticalSection(&threadExecutor->_fileSync);
 
-            std::map<std::string, std::string>::const_iterator fileContent = threadExecutor->_fileContents.find(file);
+            const std::map<std::string, std::string>::const_iterator fileContent = threadExecutor->_fileContents.find(file);
             if (fileContent != threadExecutor->_fileContents.end()) {
                 // File content was given as a string
                 result += fileChecker.check(file, fileContent->second);
@@ -495,19 +495,12 @@ void ThreadExecutor::reportInfo(const ErrorLogger::ErrorMessage &msg)
 
 void ThreadExecutor::report(const ErrorLogger::ErrorMessage &msg, MessageType msgType)
 {
-    std::string file;
-    unsigned int line(0);
-    if (!msg._callStack.empty()) {
-        file = msg._callStack.back().getfile(false);
-        line = msg._callStack.back().line;
-    }
-
-    if (_settings.nomsg.isSuppressed(msg._id, file, line))
+    if (_settings.nomsg.isSuppressed(msg.toSuppressionsErrorMessage()))
         return;
 
     // Alert only about unique errors
     bool reportError = false;
-    std::string errmsg = msg.toString(_settings.verbose);
+    const std::string errmsg = msg.toString(_settings.verbose);
 
     EnterCriticalSection(&_errorSync);
     if (std::find(_errorList.begin(), _errorList.end(), errmsg) == _errorList.end()) {

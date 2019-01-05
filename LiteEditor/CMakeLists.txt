@@ -70,7 +70,10 @@ endif()
 ## Copy binaries / scripts
 set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
-install(FILES ${CL_SRC_ROOT}/codelite_open_helper.py DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+if(NOT APPLE)
+    install(FILES ${CL_SRC_ROOT}/codelite_open_helper.py DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+endif()
+
 if(NOT APPLE)
     install(TARGETS codelite DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
     if (UNIX)

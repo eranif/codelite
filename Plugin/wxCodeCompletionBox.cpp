@@ -725,7 +725,7 @@ void wxCodeCompletionBox::DoShowCompletionBox()
     // Check X axis
     if((pt.x + rect.GetWidth()) > (screenSize.GetX() + screenSize.GetWidth())) {
         // the completion box goes out of the X axis. Move it to the left
-        pt.x -= ((pt.x + rect.GetWidth()) - screenSize.GetWidth());
+        pt.x = (screenSize.GetX() + screenSize.GetWidth()) - rect.GetWidth();
     }
     Move(pt);
     Show();

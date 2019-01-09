@@ -562,6 +562,7 @@ void clEditor::SetProperties()
 
     // Fold and comments as well
     SetProperty(wxT("fold.comment"), wxT("1"));
+    SetProperty("fold.hypertext.comment", "1");
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT | wxSTC_PERFORMED_UNDO | wxSTC_PERFORMED_REDO |
                     wxSTC_MOD_BEFOREDELETE | wxSTC_MOD_CHANGESTYLE);
 

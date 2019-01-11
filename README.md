@@ -125,7 +125,7 @@ Git clone the sources:
   [2]: https://codelite.org/support.php
   [3]: https://codelite.org
   [4]: https://codelite.org/support.php
-  [5]: http://codelite.org/LiteEditor/Documentation
-  [6]: http://codelite.org/LiteEditor/WxWidgets30Binaries
+  [5]: https://wiki.codelite.org/pmwiki.php
+  [6]: https://wiki.codelite.org/pmwiki.php/Main/WxWidgets31Binaries
   [7]: https://codelite.org/support.php
   [8]: https://codelite.org/support.php

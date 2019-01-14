@@ -927,7 +927,8 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
 
     // reset the flag
     m_prevSelectionInfo.Clear();
-
+    bool addClosingBrace = m_autoAddNormalBraces && (GetSelections() == 1);
+    bool addClosingDoubleQuotes = options->GetAutoCompleteDoubleQuotes() && (GetSelections() == 1);
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
     // make sure line is visible
@@ -940,11 +941,11 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     //-------------------------------------
     // Smart quotes management
     //-------------------------------------
-    if(options->GetAutoCompleteDoubleQuotes() && (event.GetKey() == '"' || event.GetKey() == '\'') &&
+    if(addClosingDoubleQuotes && (event.GetKey() == '"' || event.GetKey() == '\'') &&
        event.GetKey() == GetCharAt(pos)) {
         CharRight();
         DeleteBack();
-    } else if(options->GetAutoCompleteDoubleQuotes() && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
+    } else if(addClosingDoubleQuotes && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
         // add complete quotes; but don't if the next char is alnum,
         // which is annoying if you're trying to retrofit quotes around a string!
         // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
@@ -970,7 +971,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         CharRight();
         DeleteBack();
 
-    } else if(m_autoAddNormalBraces && (event.GetKey() == ')' || event.GetKey() == ']') &&
+    } else if(addClosingBrace && (event.GetKey() == ')' || event.GetKey() == ']') &&
               event.GetKey() == GetCharAt(pos)) {
         // disable the auto brace adding when inside comment or string
         if(!m_context->IsCommentOrString(pos)) {
@@ -1084,7 +1085,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     }
 
     if(matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {
-        if(matchChar == ')' && m_autoAddNormalBraces) {
+        if(matchChar == ')' && addClosingBrace) {
             // Only add a close brace if the next char is whitespace
             // or if it's an already-matched ')' (which keeps things syntactically correct)
             long matchedPos(wxNOT_FOUND);
@@ -1103,7 +1104,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
                 IndicatorFillRange(pos, 1);
                 break;
             }
-        } else if(matchChar != '}' && m_autoAddNormalBraces) {
+        } else if(matchChar != '}' && addClosingBrace) {
             InsertText(pos, matchChar);
             SetIndicatorCurrent(MATCH_INDICATOR);
             // use grey colour rather than black, otherwise this indicator is invisible when using the

@@ -80,28 +80,26 @@ class IManager;
 /** Implementing ExternalToolBaseDlg */
 class ExternalToolDlg : public ExternalToolBaseDlg
 {
-    long m_item;
     IManager* m_mgr;
 
 private:
-    void DoUpdateEntry(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory,
-                       const wxString& icon16, const wxString& icon24, bool captureOutput, bool saveAllFiles,
-                       bool callOnFileSave);
-    void DoEditEntry(long item);
+    void DoUpdateEntry(const wxDataViewItem& item, const wxString& id, const wxString& name, const wxString& path,
+                       const wxString& workingDirectory, const wxString& icon16, const wxString& icon24,
+                       bool captureOutput, bool saveAllFiles, bool callOnFileSave);
+    void DoEditEntry(const wxDataViewItem& item);
+    ExternalToolData* GetToolData(const wxDataViewItem& item);
+    void DoClear();
+    void DoDeleteItem(const wxDataViewItem& item);
 
 protected:
     // Handlers for ExternalToolBaseDlg events.
-    void OnItemActivated(wxListEvent& event);
-    void OnItemDeSelected(wxListEvent& event);
-    void OnItemSelected(wxListEvent& event);
+    void OnItemActivated(wxDataViewEvent& event);
     void OnButtonNew(wxCommandEvent& event);
     void OnButtonNewUI(wxUpdateUIEvent& event);
     void OnButtonEdit(wxCommandEvent& event);
     void OnButtonEditUI(wxUpdateUIEvent& event);
     void OnButtonDelete(wxCommandEvent& event);
     void OnButtonDeleteUI(wxUpdateUIEvent& event);
-
-    void Initialize();
 
 public:
     /** Constructor */

@@ -67,7 +67,7 @@ public:
 class ExternalToolsManagerBase : public wxDialog
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrlTasks;
+    clThemedListCtrl* m_dvListCtrlTasks;
     wxButton* m_buttonKill;
     wxButton* m_buttonKillAll;
     wxButton* m_buttonRefresh;
@@ -81,7 +81,7 @@ protected:
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlTasks() { return m_dvListCtrlTasks; }
+    clThemedListCtrl* GetDvListCtrlTasks() { return m_dvListCtrlTasks; }
     wxButton* GetButtonKill() { return m_buttonKill; }
     wxButton* GetButtonKillAll() { return m_buttonKillAll; }
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }

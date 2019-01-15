@@ -133,13 +133,13 @@ ExternalToolsManagerBase::ExternalToolsManagerBase(wxWindow* parent, wxWindowID 
 
     boxSizer10->Add(boxSizer19, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlTasks = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                               wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+    m_dvListCtrlTasks = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
     m_dvListCtrlTasks->SetFocus();
 
     boxSizer19->Add(m_dvListCtrlTasks, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlTasks->AppendIconTextColumn(_("PID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(100), wxALIGN_LEFT,
+    m_dvListCtrlTasks->AppendIconTextColumn(_("PID"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlTasks->AppendTextColumn(_("Command"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                         wxDATAVIEW_COL_RESIZABLE);
@@ -149,23 +149,23 @@ ExternalToolsManagerBase::ExternalToolsManagerBase(wxWindow* parent, wxWindowID 
 
     m_buttonKill = new wxButton(this, wxID_STOP, _("Stop"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer21->Add(m_buttonKill, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer21->Add(m_buttonKill, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_buttonKillAll =
         new wxButton(this, wxID_ANY, _("Stop All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer21->Add(m_buttonKillAll, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer21->Add(m_buttonKillAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_buttonRefresh =
         new wxButton(this, wxID_REFRESH, _("Refresh"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer21->Add(m_buttonRefresh, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer21->Add(m_buttonRefresh, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     boxSizer21->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_button33 = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer21->Add(m_button33, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer21->Add(m_button33, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("ExternalToolsManagerBase"));
     SetMinClientSize(wxSize(500, 300));

@@ -667,6 +667,8 @@
     <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
+    <File Name="CompilerLocatorEosCDT.cpp"/>
+    <File Name="CompilerLocatorEosCDT.h"/>
     <File Name="ICompilerLocator.h"/>
     <File Name="ICompilerLocator.cpp"/>
     <File Name="CompilerLocatorMinGW.h"/>

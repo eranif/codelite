@@ -31,12 +31,16 @@
 #include <wx/filename.h>
 #include <wx/wxsqlite3.h>
 #include "project.h"
+#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK CompilationDatabase
 {
     wxSQLite3Database* m_db;
-    wxFileName         m_filename;
-    
+    wxFileName m_filename;
+
+public:
+    typedef wxSharedPtr<CompilationDatabase> Ptr_t;
+
 protected:
     void DropTables();
     void CreateDatabase();
@@ -44,25 +48,30 @@ protected:
     /**
      * @brief create our compilation database out of CMake's compile_commands.json file
      */
-    void ProcessCMakeCompilationDatabase( const wxFileName &compile_commands );
-    
-    wxFileName ConvertCodeLiteCompilationDatabaseToCMake( const wxFileName &compile_file );
-    
+    void ProcessCMakeCompilationDatabase(const wxFileName& compile_commands);
+
+    wxFileName ConvertCodeLiteCompilationDatabaseToCMake(const wxFileName& compile_file);
+
 public:
     CompilationDatabase();
-    CompilationDatabase(const wxString &filename);
+    CompilationDatabase(const wxString& filename);
+    /**
+     * @brief an "whole in one" method which attempts to find compile_commands.json file
+     * create a .db out of it and return a CompilationDatabase object
+     */
+    static wxArrayString FindIncludePaths(const wxString& rootFolder);
+
     virtual ~CompilationDatabase();
-    
-    static bool IsDbVersionUpToDate(const wxFileName &fn);
+
+    static bool IsDbVersionUpToDate(const wxFileName& fn);
     void Open();
     void Close();
-    
-    bool IsOpened() const {
-        return m_db && m_db->IsOpen();
-    }
-    
+
+    bool IsOpened() const { return m_db && m_db->IsOpen(); }
+
     /**
-     * @brief return the database file name (compilation.db), usually under the workspace private folder WORKSPACE_PATH/.codelite/compilation.db
+     * @brief return the database file name (compilation.db), usually under the workspace private folder
+     * WORKSPACE_PATH/.codelite/compilation.db
      */
     wxFileName GetFileName() const;
     /**
@@ -70,7 +79,8 @@ public:
      * Note that this function does not check for the existance of the file
      */
     FileNameVector_t GetCompileCommandsFiles() const;
-    void CompilationLine(const wxString &filename, wxString &compliationLine, wxString &cwd);
+    static FileNameVector_t GetCompileCommandsFiles(const wxString& rootFolder);
+    void CompilationLine(const wxString& filename, wxString& compliationLine, wxString& cwd);
     void Initialize();
     bool IsOk() const;
 };

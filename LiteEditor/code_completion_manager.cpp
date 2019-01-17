@@ -41,6 +41,7 @@
 #include "compiler_command_line_parser.h"
 #include "language.h"
 #include "code_completion_api.h"
+#include "parse_thread.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -66,27 +67,27 @@ CodeCompletionManager::CodeCompletionManager()
     , m_wordCompletionRefreshNeeded(false)
     , m_buildInProgress(false)
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Bind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL,
+                                  this);
+    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
+                               &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL,
+                                  this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CONFIG_CHANGED,
+                                  wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
+                                  wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
-    EventNotifier::Get()->Bind(
-        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED,
+                                  wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
+                               &CodeCompletionManager::OnEnvironmentVariablesModified, this);
     // Start the worker threads
     m_preProcessorThread.Start();
     m_usingNamespaceThread.Start();
@@ -96,25 +97,29 @@ CodeCompletionManager::~CodeCompletionManager()
 {
     m_preProcessorThread.Stop();
     m_usingNamespaceThread.Stop();
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CMD_PROJ_SETTINGS_SAVED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted),
+                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
+                                 &CodeCompletionManager::OnCompileCommandsFileGenerated, this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(CodeCompletionManager::OnFileSaved), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_FILE_LOADED, clCommandEventHandler(CodeCompletionManager::OnFileLoaded),
+                                     NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED,
+                                     wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
+                                     wxCommandEventHandler(CodeCompletionManager::OnWorkspaceConfig), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED,
+                                     wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &CodeCompletionManager::OnAppActivated, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
+                                 &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    if(m_compileCommandsThread) {
+        m_compileCommandsThread->join();
+        wxDELETE(m_compileCommandsThread);
+    }
 }
 
 void CodeCompletionManager::WordCompletion(clEditor* editor, const wxString& expr, const wxString& word)
@@ -130,9 +135,7 @@ void CodeCompletionManager::WordCompletion(clEditor* editor, const wxString& exp
     expression = expression.erase(0, expression.find_first_not_of(trimString));
     expression = expression.erase(expression.find_last_not_of(trimString) + 1);
 
-    if(expression.EndsWith(word, &tmp)) {
-        expression = tmp;
-    }
+    if(expression.EndsWith(word, &tmp)) { expression = tmp; }
 
     if((GetOptions() & CC_CLANG_ENABLED) && (GetOptions() & CC_CLANG_FIRST)) {
         DoClangWordCompletion(editor);
@@ -146,9 +149,7 @@ void CodeCompletionManager::WordCompletion(clEditor* editor, const wxString& exp
 
 CodeCompletionManager& CodeCompletionManager::Get()
 {
-    if(!ms_CodeCompletionManager) {
-        ms_CodeCompletionManager = new CodeCompletionManager;
-    }
+    if(!ms_CodeCompletionManager) { ms_CodeCompletionManager = new CodeCompletionManager; }
     return *ms_CodeCompletionManager;
 }
 
@@ -160,7 +161,7 @@ bool CodeCompletionManager::DoCtagsWordCompletion(clEditor* editor, const wxStri
     int lineNum = editor->LineFromPosition(editor->GetCurrentPosition()) + 1;
 
     if(TagsManagerST::Get()->WordCompletionCandidates(editor->GetFileName(), lineNum, expr, text, word, candidates) &&
-        !candidates.empty()) {
+       !candidates.empty()) {
         editor->ShowCompletionBox(candidates, word);
         return true;
     }
@@ -177,8 +178,8 @@ void CodeCompletionManager::DoClangWordCompletion(clEditor* editor)
 #endif
 }
 
-bool CodeCompletionManager::DoCtagsCalltip(
-    clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
+bool CodeCompletionManager::DoCtagsCalltip(clEditor* editor, int line, const wxString& expr, const wxString& text,
+                                           const wxString& word)
 {
     // Get the calltip
     clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(editor->GetFileName(), line, expr, text, word);
@@ -200,34 +201,26 @@ void CodeCompletionManager::DoClangCalltip(clEditor* editor)
 #endif
 }
 
-void CodeCompletionManager::Calltip(
-    clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word)
+void CodeCompletionManager::Calltip(clEditor* editor, int line, const wxString& expr, const wxString& text,
+                                    const wxString& word)
 {
     bool res(false);
     DoUpdateOptions();
 
     if(::IsCppKeyword(word)) return;
 
-    if(GetOptions() & CC_CTAGS_ENABLED) {
-        res = DoCtagsCalltip(editor, line, expr, text, word);
-    }
+    if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsCalltip(editor, line, expr, text, word); }
 
-    if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
-        DoClangCalltip(editor);
-    }
+    if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangCalltip(editor); }
 }
 
 void CodeCompletionManager::CodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text)
 {
     bool res(false);
     DoUpdateOptions();
-    if(GetOptions() & CC_CTAGS_ENABLED) {
-        res = DoCtagsCodeComplete(editor, line, expr, text);
-    }
+    if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsCodeComplete(editor, line, expr, text); }
 
-    if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
-        DoClangCodeComplete(editor);
-    }
+    if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangCodeComplete(editor); }
 }
 
 void CodeCompletionManager::DoClangCodeComplete(clEditor* editor)
@@ -243,7 +236,7 @@ bool CodeCompletionManager::DoCtagsCodeComplete(clEditor* editor, int line, cons
 {
     std::vector<TagEntryPtr> candidates;
     if(TagsManagerST::Get()->AutoCompleteCandidates(editor->GetFileName(), line, expr, text, candidates) &&
-        !candidates.empty()) {
+       !candidates.empty()) {
         editor->ShowCompletionBox(candidates, wxEmptyString);
         return true;
     }
@@ -259,9 +252,7 @@ void CodeCompletionManager::DoUpdateOptions()
 
     // Incase CLANG is set as the main CC engine, remove the CTAGS options BUT
     // only if CLANG is enabled...
-    if((m_options & CC_CLANG_FIRST) && (m_options & CC_CLANG_ENABLED)) {
-        m_options &= ~CC_CTAGS_ENABLED;
-    }
+    if((m_options & CC_CLANG_FIRST) && (m_options & CC_CLANG_ENABLED)) { m_options &= ~CC_CTAGS_ENABLED; }
 }
 
 void CodeCompletionManager::ProcessMacros(clEditor* editor)
@@ -284,12 +275,8 @@ void CodeCompletionManager::GotoImpl(clEditor* editor)
 {
     DoUpdateOptions();
     bool res = false;
-    if(GetOptions() & CC_CTAGS_ENABLED) {
-        res = DoCtagsGotoImpl(editor);
-    }
-    if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
-        DoClangGotoImpl(editor);
-    }
+    if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsGotoImpl(editor); }
+    if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangGotoImpl(editor); }
 }
 
 void CodeCompletionManager::DoClangGotoImpl(clEditor* editor)
@@ -306,9 +293,7 @@ bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
     if(tag) {
         clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
-        if(!editor) {
-            return false;
-        }
+        if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
         editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
@@ -331,9 +316,7 @@ bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
     if(tag) {
         clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
-        if(!editor) {
-            return false;
-        }
+        if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
         if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName())) {
@@ -350,19 +333,16 @@ void CodeCompletionManager::GotoDecl(clEditor* editor)
     DoUpdateOptions();
     bool res = false;
 
-    if(GetOptions() & CC_CTAGS_ENABLED) {
-        res = DoCtagsGotoDecl(editor);
-    }
+    if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsGotoDecl(editor); }
 
-    if(!res && (GetOptions() & CC_CLANG_ENABLED)) {
-        DoClangGotoDecl(editor);
-    }
+    if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangGotoDecl(editor); }
 }
 
 void CodeCompletionManager::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     DoUpdateCompilationDatabase();
+    DoProcessCompileCommands();
     m_buildInProgress = false;
 }
 
@@ -442,9 +422,7 @@ void CodeCompletionManager::OnFileLoaded(clCommandEvent& event)
         ProcessMacros(editor);
     }
 
-    if(editor && (ccFlags & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING)) {
-        ProcessUsingNamespace(editor);
-    }
+    if(editor && (ccFlags & CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING)) { ProcessUsingNamespace(editor); }
 }
 
 void CodeCompletionManager::RefreshPreProcessorColouring()
@@ -508,8 +486,8 @@ void CodeCompletionManager::ProcessUsingNamespace(clEditor* editor)
     m_usingNamespaceThread.QueueFile(editor->GetFileName().GetFullPath(), includePaths);
 }
 
-bool CodeCompletionManager::GetDefinitionsAndSearchPaths(
-    clEditor* editor, wxArrayString& searchPaths, wxArrayString& definitions)
+bool CodeCompletionManager::GetDefinitionsAndSearchPaths(clEditor* editor, wxArrayString& searchPaths,
+                                                         wxArrayString& definitions)
 {
     // Sanity
     CHECK_PTR_RET_FALSE(editor);
@@ -592,4 +570,41 @@ void CodeCompletionManager::OnEnvironmentVariablesModified(clCommandEvent& event
     event.Skip();
     Project::ClearBacktickCache();
     RefreshPreProcessorColouring();
+}
+
+void CodeCompletionManager::DoProcessCompileCommands()
+{
+    // return; // for now, dont use it
+    if(m_compileCommandsThread) { return; }
+
+    // Create a thread that will process the current workspace folder and search for any compile_commands.json file
+    m_compileCommandsThread = new std::thread(&CodeCompletionManager::ThreadProcessCompileCommandsEntry, this,
+                                              clCxxWorkspaceST::Get()->GetFileName().GetPath());
+}
+
+void CodeCompletionManager::ThreadProcessCompileCommandsEntry(wxEvtHandler* owner, const wxString& rootFolder)
+{
+    // Search for compile_commands file, process it and send back the results to the main thread
+    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder);
+    owner->CallAfter(&CodeCompletionManager::CompileCommandsFileProcessed, includePaths);
+}
+
+void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& includePaths)
+{
+    if(m_compileCommandsThread) {
+        m_compileCommandsThread->join();
+        wxDELETE(m_compileCommandsThread);
+    }
+    // Update the parser search paths
+    wxArrayString inc, exc;
+    ParseThreadST::Get()->GetSearchPaths(inc, exc);
+    for(size_t i = 0; i < includePaths.size(); ++i) {
+        if(inc.Index(includePaths.Item(i)) == wxNOT_FOUND) { inc.Add(includePaths.Item(i)); }
+    }
+    ParseThreadST::Get()->SetSearchPaths(inc, exc);
+    clDEBUG() << "Parser thread search paths are now updated to:" << inc;
+
+    // Trigger a quick parse
+    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
 }

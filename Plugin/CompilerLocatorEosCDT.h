@@ -9,7 +9,7 @@ class WXDLLIMPEXP_SDK CompilerLocatorEosCDT : public ICompilerLocator
 public:
     CompilerLocatorEosCDT();
     virtual ~CompilerLocatorEosCDT();
-    void AddTool(const wxString& toolname, const wxString& path, const wxString& args = "");
+    void AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& path, const wxString& args = "");
 
 public:
     virtual bool Locate();

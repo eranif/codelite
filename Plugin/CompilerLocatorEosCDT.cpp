@@ -34,12 +34,12 @@ CompilerPtr CompilerLocatorEosCDT::Locate(const wxString& folder)
         m_compilers.push_back(compiler);
 
         // Add the tools
-        AddTool("CC", eosio_cc.GetFullPath());
+        AddTool(compiler, "CC", eosio_cc.GetFullPath());
         return compiler;
     }
     return NULL;
 }
 
-void CompilerLocatorEosCDT::AddTool(const wxString& toolname, const wxString& path, const wxString& args)
+void CompilerLocatorEosCDT::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& path, const wxString& args)
 {
 }

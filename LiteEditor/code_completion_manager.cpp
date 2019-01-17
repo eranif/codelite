@@ -582,10 +582,10 @@ void CodeCompletionManager::DoProcessCompileCommands()
                                               clCxxWorkspaceST::Get()->GetFileName().GetPath());
 }
 
-void CodeCompletionManager::ThreadProcessCompileCommandsEntry(wxEvtHandler* owner, const wxString& rootFolder)
+void CodeCompletionManager::ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder)
 {
     // Search for compile_commands file, process it and send back the results to the main thread
-    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder);
+    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder, owner->m_compileCommands);
     owner->CallAfter(&CodeCompletionManager::CompileCommandsFileProcessed, includePaths);
 }
 
@@ -595,6 +595,8 @@ void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& in
         m_compileCommandsThread->join();
         wxDELETE(m_compileCommandsThread);
     }
+    if(includePaths.IsEmpty()) { return; }
+
     // Update the parser search paths
     wxArrayString inc, exc;
     ParseThreadST::Get()->GetSearchPaths(inc, exc);

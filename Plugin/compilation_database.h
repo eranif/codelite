@@ -59,7 +59,7 @@ public:
      * @brief an "whole in one" method which attempts to find compile_commands.json file
      * create a .db out of it and return a CompilationDatabase object
      */
-    static wxArrayString FindIncludePaths(const wxString& rootFolder);
+    static wxArrayString FindIncludePaths(const wxString& rootFolder, wxFileName& compileCommands);
 
     virtual ~CompilationDatabase();
 

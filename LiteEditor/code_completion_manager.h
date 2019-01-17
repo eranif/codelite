@@ -46,6 +46,7 @@ protected:
     CxxPreProcessorThread m_preProcessorThread;
     CxxUsingNamespaceCollectorThread m_usingNamespaceThread;
     std::thread* m_compileCommandsThread = nullptr;
+    wxFileName m_compileCommands;
 
 protected:
     /// ctags implementions
@@ -65,7 +66,7 @@ protected:
     void DoUpdateOptions();
     void DoUpdateCompilationDatabase();
     void DoProcessCompileCommands();
-    static void ThreadProcessCompileCommandsEntry(wxEvtHandler* owner, const wxString& rootFolder);
+    static void ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder);
     void CompileCommandsFileProcessed(const wxArrayString& includePaths);
 
 protected:

@@ -47,6 +47,7 @@ protected:
     CxxUsingNamespaceCollectorThread m_usingNamespaceThread;
     std::thread* m_compileCommandsThread = nullptr;
     wxFileName m_compileCommands;
+    time_t m_compileCommandsLastModified = 0;
 
 protected:
     /// ctags implementions

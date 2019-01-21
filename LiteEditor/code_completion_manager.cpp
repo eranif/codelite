@@ -585,7 +585,8 @@ void CodeCompletionManager::DoProcessCompileCommands()
 void CodeCompletionManager::ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder)
 {
     // Search for compile_commands file, process it and send back the results to the main thread
-    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder, owner->m_compileCommands);
+    wxArrayString includePaths = CompilationDatabase::FindIncludePaths(rootFolder, owner->m_compileCommands,
+                                                                       owner->m_compileCommandsLastModified);
     owner->CallAfter(&CodeCompletionManager::CompileCommandsFileProcessed, includePaths);
 }
 

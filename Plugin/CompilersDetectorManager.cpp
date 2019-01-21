@@ -42,6 +42,7 @@
 #include <wx/stream.h>
 #include <wx/url.h>
 #include "environmentconfig.h"
+#include "CompilerLocatorEosCDT.h"
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -54,10 +55,12 @@ CompilersDetectorManager::CompilersDetectorManager()
 #elif defined(__WXGTK__)
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorGCC()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorEosCDT()));
 
 #elif defined(__WXMAC__)
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorGCC()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorEosCDT()));
 
 #endif
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCrossGCC()));

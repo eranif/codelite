@@ -393,7 +393,8 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
     return wxFileName();
 }
 
-wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, wxFileName& lastCompileCommands)
+wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, wxFileName& lastCompileCommands,
+                                                    time_t& lastCompileCommandsModified)
 {
     FileNameVector_t files = GetCompileCommandsFiles(rootFolder);
     if(files.empty()) { return wxArrayString(); }
@@ -401,11 +402,13 @@ wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, 
 
     // If the last compile_commands.json file was already processed, return an empty array
     if((lastCompileCommands == compile_commands) &&
-       (compile_commands.GetModificationTime() == lastCompileCommands.GetModificationTime())) {
+       (compile_commands.GetModificationTime().GetTicks() == lastCompileCommandsModified)) {
         clDEBUG() << "File" << compile_commands << "already processed. Nothing more to be done here";
         return wxArrayString();
     }
+
     lastCompileCommands = compile_commands;
+    lastCompileCommandsModified = compile_commands.GetModificationTime().GetTicks();
 
     wxStringSet_t paths;
     JSONRoot root(compile_commands);

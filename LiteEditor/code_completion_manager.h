@@ -81,6 +81,7 @@ protected:
     void OnWorkspaceConfig(wxCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEnvironmentVariablesModified(clCommandEvent& event);
+    void OnBlockCommentCodeComplete(clCodeCompletionEvent& event);
 
 public:
     CodeCompletionManager();

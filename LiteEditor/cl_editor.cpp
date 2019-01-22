@@ -971,8 +971,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         CharRight();
         DeleteBack();
 
-    } else if(addClosingBrace && (event.GetKey() == ')' || event.GetKey() == ']') &&
-              event.GetKey() == GetCharAt(pos)) {
+    } else if(addClosingBrace && (event.GetKey() == ')' || event.GetKey() == ']') && event.GetKey() == GetCharAt(pos)) {
         // disable the auto brace adding when inside comment or string
         if(!m_context->IsCommentOrString(pos)) {
             CharRight();
@@ -985,7 +984,9 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     case ';':
         if(!m_disableSemicolonShift && !m_context->IsCommentOrString(pos)) m_context->SemicolonShift();
         break;
-
+    case '@':
+        if(m_context->IsAtBlockComment()) { m_context->BlockCommentComplete(); }
+        break;
     case '(':
         if(m_context->IsCommentOrString(GetCurrentPos()) == false) { CodeComplete(); }
         matchChar = ')';
@@ -1158,9 +1159,6 @@ void clEditor::OnScnPainted(wxStyledTextEvent& event)
 {
     event.Skip();
     if(m_positionToEnsureVisible == wxNOT_FOUND) { return; }
-    // CL_DEBUG1(wxString::Format(wxT("OnScnPainted: position = %i, preserveSelection = %s"),
-    //                           m_positionToEnsureVisible,
-    //                           m_preserveSelection ? wxT("true") : wxT("false")));
     DoEnsureCaretIsVisible(m_positionToEnsureVisible, m_preserveSelection);
     m_positionToEnsureVisible = wxNOT_FOUND;
 }
@@ -1265,7 +1263,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     m_context->OnSciUpdateUI(event);
 
     // TODO:: mark the current line
-    
+
     // Keep the last line
     m_lastLine = curLine;
 }

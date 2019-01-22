@@ -379,7 +379,7 @@ public:
      * i.e. the event wxEVT_CC_CODE_COMPLETE is fired only when refreshingList == false
      */
     void CodeComplete(bool refreshingList = false);
-
+    
     /**
      * @brief toggle line comment
      * @param commentSymbol the comment symbol to insert (e.g. "//")

@@ -359,3 +359,18 @@ int ContextBase::FindPrev(const wxString& what, int& pos, bool wholePage)
     if(where != wxNOT_FOUND) { pos = where; }
     return where;
 }
+
+void ContextBase::BlockCommentComplete()
+{
+    wxStyledTextCtrl* stc = GetCtrl().GetCtrl();
+    int curPos = stc->GetCurrentPos();
+    int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
+    if(curPos < start) return;
+    
+    // Fire an event indicating user typed '@' in a block comment
+    clCodeCompletionEvent ccEvent(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE);
+    ccEvent.SetEditor(&GetCtrl());
+    ccEvent.SetEventObject(&GetCtrl());
+    ccEvent.SetWord(stc->GetTextRange(start, curPos));
+    EventNotifier::Get()->ProcessEvent(ccEvent);
+}

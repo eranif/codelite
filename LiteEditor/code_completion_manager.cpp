@@ -42,6 +42,11 @@
 #include "language.h"
 #include "code_completion_api.h"
 #include "parse_thread.h"
+#include "wxCodeCompletionBox.h"
+#include "imanager.h"
+#include "globals.h"
+#include "bitmap_loader.h"
+#include "wxCodeCompletionBoxManager.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -88,6 +93,8 @@ CodeCompletionManager::CodeCompletionManager()
                                   wxCommandEventHandler(CodeCompletionManager::OnWorkspaceClosed), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED,
                                &CodeCompletionManager::OnEnvironmentVariablesModified, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, &CodeCompletionManager::OnBlockCommentCodeComplete,
+                               this);
     // Start the worker threads
     m_preProcessorThread.Start();
     m_usingNamespaceThread.Start();
@@ -97,6 +104,9 @@ CodeCompletionManager::~CodeCompletionManager()
 {
     m_preProcessorThread.Stop();
     m_usingNamespaceThread.Stop();
+    EventNotifier::Get()->Unbind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE,
+                                 &CodeCompletionManager::OnBlockCommentCodeComplete, this);
+
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted),
@@ -610,4 +620,22 @@ void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& in
     // Trigger a quick parse
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
+}
+
+void CodeCompletionManager::OnBlockCommentCodeComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    wxCodeCompletionBoxEntry::Vec_t entries;
+    wxCodeCompletionBox::BmpVec_t bitmaps;
+    bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
+
+    // Prepare a list of keywords
+    wxStyledTextCtrl* ctrl = clGetManager()->GetActiveEditor()->GetCtrl();
+    CHECK_PTR_RET(ctrl);
+
+    int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), false);
+    entries.push_back(wxCodeCompletionBoxEntry::New("@api", 0));
+    entries.push_back(wxCodeCompletionBoxEntry::New("@author", 0));
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType,
+                                                        startPos);
 }

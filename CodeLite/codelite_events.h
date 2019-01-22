@@ -344,6 +344,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_GENERATE_DOXY_BLOCK, clCodeCom
 // An update to the navigation bar is required
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_UPDATE_NAVBAR, clCodeCompletionEvent);
 
+// User typed '@' in a block comment section
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, clCodeCompletionEvent);
+
+// User typed Ctrl-Space in a block comment section
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE, clCodeCompletionEvent);
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events - END

@@ -220,7 +220,7 @@ Manager::Manager(void)
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
-
+    
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -246,7 +246,7 @@ Manager::~Manager(void)
                                      clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
-
+    
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
 

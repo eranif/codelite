@@ -78,8 +78,14 @@ public:
     // ctor-dtor
     ContextBase(clEditor* container);
     ContextBase(const wxString& name);
+    
     virtual ~ContextBase();
-
+    
+    /**
+     * @brief user typed '@' inside a block comment. Code complete possible keywords
+     */
+    virtual void BlockCommentComplete();
+    
     /**
      * @brief return true if str is a string that should trigger a code completion
      */

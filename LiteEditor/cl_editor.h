@@ -995,7 +995,7 @@ private:
     bool DoFindAndSelect(const wxString& pattern, const wxString& what, int start_pos, NavMgr* navmgr);
     void DoSaveMarkers();
     void DoRestoreMarkers();
-
+    int GetFirstNonWhitespacePos(bool backward = false);
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
     wxFontEncoding DetectEncoding(const wxString& filename);

@@ -69,6 +69,7 @@ protected:
     void DoProcessCompileCommands();
     static void ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder);
     void CompileCommandsFileProcessed(const wxArrayString& includePaths);
+    size_t CreateBlockCommentKeywordsList(wxCodeCompletionBoxEntry::Vec_t& entries) const;
 
 protected:
     // Event handlers
@@ -82,6 +83,7 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEnvironmentVariablesModified(clCommandEvent& event);
     void OnBlockCommentCodeComplete(clCodeCompletionEvent& event);
+    void OnBlockCommentWordComplete(clCodeCompletionEvent& event);
 
 public:
     CodeCompletionManager();

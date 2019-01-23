@@ -984,7 +984,8 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     case ';':
         if(!m_disableSemicolonShift && !m_context->IsCommentOrString(pos)) m_context->SemicolonShift();
         break;
-    case '@':
+    case '@':  // PHP / Java document style
+    case '\\': // Qt Style
         if(m_context->IsAtBlockComment()) { m_context->BlockCommentComplete(); }
         break;
     case '(':
@@ -1638,6 +1639,24 @@ void clEditor::CompleteWord(bool onlyRefresh)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes
+
+    if(GetContext()->IsAtBlockComment()) {
+        // Check if the current word starts with \ or @
+        int wordStartPos = GetFirstNonWhitespacePos(true);
+        if(wordStartPos != wxNOT_FOUND) {
+            wxChar firstChar = GetCtrl()->GetCharAt(wordStartPos);
+            if((firstChar == '@') || (firstChar == '\\')) {
+                // Change the event to wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE
+                clCodeCompletionEvent evt(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE);
+                evt.SetPosition(GetCurrentPosition());
+                evt.SetEditor(this);
+                evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+                evt.SetEventObject(this);
+                EventNotifier::Get()->ProcessEvent(evt);
+                return;
+            }
+        }
+    }
 
     // Let the plugins a chance to override the default behavior
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
@@ -5510,6 +5529,40 @@ void clEditor::NotifyMarkerChanged(int lineNumber)
     eventMarker.SetFileName(GetFileName().GetFullPath());
     if(lineNumber != wxNOT_FOUND) { eventMarker.SetLineNumber(lineNumber); }
     EventNotifier::Get()->AddPendingEvent(eventMarker);
+}
+
+int clEditor::GetFirstNonWhitespacePos(bool backward)
+{
+    int from = GetCurrentPos();
+    if(from == wxNOT_FOUND) { return wxNOT_FOUND; }
+    int pos = from;
+    if(backward) {
+        from = PositionBefore(from);
+    } else {
+        from = PositionAfter(from);
+    }
+    while(from != wxNOT_FOUND) {
+        wxChar ch = GetCharAt(from);
+        switch(ch) {
+        case ' ':
+        case '\t':
+        case '\n':
+            return pos;
+        default:
+            break;
+        }
+
+        // Keep the previous location
+        pos = from;
+
+        // Move the position
+        if(backward) {
+            from = PositionBefore(from);
+        } else {
+            from = PositionAfter(from);
+        }
+    }
+    return pos;
 }
 
 // ----------------------------------

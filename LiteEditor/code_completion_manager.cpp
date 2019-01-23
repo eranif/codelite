@@ -47,6 +47,7 @@
 #include "globals.h"
 #include "bitmap_loader.h"
 #include "wxCodeCompletionBoxManager.h"
+#include <algorithm>
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -95,6 +96,8 @@ CodeCompletionManager::CodeCompletionManager()
                                &CodeCompletionManager::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Bind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE, &CodeCompletionManager::OnBlockCommentCodeComplete,
                                this);
+    EventNotifier::Get()->Bind(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE, &CodeCompletionManager::OnBlockCommentWordComplete,
+                               this);
     // Start the worker threads
     m_preProcessorThread.Start();
     m_usingNamespaceThread.Start();
@@ -106,6 +109,8 @@ CodeCompletionManager::~CodeCompletionManager()
     m_usingNamespaceThread.Stop();
     EventNotifier::Get()->Unbind(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE,
                                  &CodeCompletionManager::OnBlockCommentCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE,
+                                 &CodeCompletionManager::OnBlockCommentWordComplete, this);
 
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(CodeCompletionManager::OnBuildEnded), NULL,
                                      this);
@@ -625,17 +630,45 @@ void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& in
 void CodeCompletionManager::OnBlockCommentCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
-    wxCodeCompletionBoxEntry::Vec_t entries;
-    wxCodeCompletionBox::BmpVec_t bitmaps;
-    bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
-
-    // Prepare a list of keywords
     wxStyledTextCtrl* ctrl = clGetManager()->GetActiveEditor()->GetCtrl();
     CHECK_PTR_RET(ctrl);
 
-    int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), false);
-    entries.push_back(wxCodeCompletionBoxEntry::New("@api", 0));
-    entries.push_back(wxCodeCompletionBoxEntry::New("@author", 0));
+    wxCodeCompletionBoxEntry::Vec_t entries;
+    if(CreateBlockCommentKeywordsList(entries) == 0) { return; }
+    wxCodeCompletionBox::BmpVec_t bitmaps;
+    bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
+
+    int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType,
                                                         startPos);
+}
+
+void CodeCompletionManager::OnBlockCommentWordComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    wxStyledTextCtrl* ctrl = clGetManager()->GetActiveEditor()->GetCtrl();
+    CHECK_PTR_RET(ctrl);
+
+    wxCodeCompletionBoxEntry::Vec_t entries;
+    if(CreateBlockCommentKeywordsList(entries) == 0) { return; }
+    wxCodeCompletionBox::BmpVec_t bitmaps;
+    bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("cpp_keyword"));
+
+    int startPos = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, entries, bitmaps, wxCodeCompletionBox::kRefreshOnKeyType,
+                                                        startPos);
+}
+
+size_t CodeCompletionManager::CreateBlockCommentKeywordsList(wxCodeCompletionBoxEntry::Vec_t& entries) const
+{
+    entries.clear();
+    std::vector<wxString> keywords = { "api",        "author",   "brief",         "category",       "copyright",
+                                       "deprecated", "example",  "filesource",    "global",         "ignore",
+                                       "internal",   "license",  "link",          "method",         "package",
+                                       "param",      "property", "property-read", "property-write", "return",
+                                       "see",        "since",    "source",        "subpackage",     "throws",
+                                       "todo",       "uses",     "var",           "version" };
+    std::for_each(keywords.begin(), keywords.end(),
+                  [&](const wxString& keyword) { entries.push_back(wxCodeCompletionBoxEntry::New(keyword, 0)); });
+    return entries.size();
 }

@@ -145,7 +145,7 @@ void NodeDebuggerPane::OnDebuggerStopped(clDebugEvent& event)
     // Clear the locals view
     m_treeCtrlLocals->DeleteAllItems();
     m_localsPendingItems.clear();
-    
+
     // Clear the frames
     m_frames.clear();
 }
@@ -399,4 +399,24 @@ CallFrame* NodeDebuggerPane::GetFrameById(const wxString& frameId) const
         if(frame->GetCallFrameId() == frameId) { return frame; }
     }
     return nullptr;
+}
+void NodeDebuggerPane::OnStackContextMenu(wxDataViewEvent& event)
+{
+    wxMenu m;
+    m.Append(XRCID("node-copy-backtrace"), _("Copy Backtrace"));
+    m.Bind(wxEVT_MENU,
+           [&](wxCommandEvent& event) {
+               wxString backtrace;
+               for(size_t i = 0; i < m_dvListCtrlCallstack->GetItemCount(); ++i) {
+                   wxString line;
+                   wxDataViewItem item = m_dvListCtrlCallstack->RowToItem(i);
+                   for(size_t col = 0; col < 4; ++col) {
+                       line << m_dvListCtrlCallstack->GetItemText(item, col) << " ";
+                   }
+                   backtrace << line << "\n";
+               }
+               ::CopyToClipboard(backtrace);
+           },
+           XRCID("node-copy-backtrace"));
+    m_dvListCtrlCallstack->PopupMenu(&m);
 }

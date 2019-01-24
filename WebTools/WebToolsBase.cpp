@@ -676,6 +676,8 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                    wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackEntryActivated), NULL,
                                    this);
+    m_dvListCtrlCallstack->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                   wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackContextMenu), NULL, this);
 }
 
 NodeJSCliDebuggerPaneBase::~NodeJSCliDebuggerPaneBase()
@@ -684,5 +686,8 @@ NodeJSCliDebuggerPaneBase::~NodeJSCliDebuggerPaneBase()
                                  wxTreeEventHandler(NodeJSCliDebuggerPaneBase::OnLocalExpanding), NULL, this);
     m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                       wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackEntryActivated), NULL,
+                                      this);
+    m_dvListCtrlCallstack->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                      wxDataViewEventHandler(NodeJSCliDebuggerPaneBase::OnStackContextMenu), NULL,
                                       this);
 }

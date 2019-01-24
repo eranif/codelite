@@ -18,6 +18,7 @@ class NodeDebuggerPane : public NodeJSCliDebuggerPaneBase
     nSerializableObject::Vec_t m_frames;
 
 protected:
+    virtual void OnStackContextMenu(wxDataViewEvent& event);
     virtual void OnStackEntryActivated(wxDataViewEvent& event);
     virtual void OnLocalExpanding(wxTreeEvent& event);
     void DoDestroyTip();

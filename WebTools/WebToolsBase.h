@@ -234,6 +234,7 @@ protected:
 protected:
     virtual void OnLocalExpanding(wxTreeEvent& event) { event.Skip(); }
     virtual void OnStackEntryActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnStackContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
     clThemedTreeCtrl* GetTreeCtrlLocals() { return m_treeCtrlLocals; }

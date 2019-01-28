@@ -1,5 +1,5 @@
 #include "../include/MysqlResultSetMetaData.h"
-#include "mysql_com.h"
+#include "mysql.h"
 
 // ctor
 MysqlResultSetMetaData::MysqlResultSetMetaData(MysqlInterface* pInterface, MYSQL_RES* pMetaData)

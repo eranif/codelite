@@ -1,3 +1,9 @@
+#if defined(MARIADBSERVER_INCLUDE)
+// See https://github.com/eranif/codelite/issues/2215
+// (For some reason this needs to come before the other #includes)
+    #include "server/mysql.h"
+#endif
+
 #include "../include/MysqlPreparedStatementWrapper.h"
 #include "../include/MysqlPreparedStatementResultSet.h"
 #include "../include/MysqlDatabaseLayer.h"

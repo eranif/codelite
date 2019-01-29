@@ -61,7 +61,7 @@ if(UNIX AND NOT APPLE)
 # Recent (2019) versions of debian and Arch have mariadb 10.3 which, it seems, isn't directly compatable with the included dblayer source
 # It has a necessary header file in /usr/include/mariadb/server/ so flag to #include it if it exists
 # See https://github.com/eranif/codelite/issues/2215
-    find_path(MARIADBSERVER_INCLUDE NAMES mysql.h PATH_SUFFIXES mariadb/server)
+    find_path(MARIADBSERVER_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql/server mariadb/server)
     if ( NOT ${MARIADBSERVER_INCLUDE} STREQUAL "MARIADBSERVER_INCLUDE-NOTFOUND" )
         add_definitions( -DMARIADBSERVER_INCLUDE=1 )
         message( "-- Adding MySQL server include" )

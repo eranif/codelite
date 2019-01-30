@@ -241,6 +241,22 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
 
+    if(lexer->GetName() == "javascript") {
+        wxString jsWords = lexer->GetKeyWords(0);
+        wxArrayString arrWords = ::wxStringTokenize(jsWords, " ", wxTOKEN_STRTOK);
+        // use std::set to make sure that the elements are sorted
+        std::set<wxString> uniqueSet;
+        for(size_t i = 0; i < arrWords.size(); ++i) {
+            uniqueSet.insert(arrWords.Item(i));
+        }
+        uniqueSet.insert("class");
+        uniqueSet.insert("await");
+        uniqueSet.insert("async");
+        jsWords.clear();
+        std::for_each(uniqueSet.begin(), uniqueSet.end(), [&](const wxString& word) { jsWords << word << " "; });
+        lexer->SetKeyWords(jsWords, 0);
+    }
+
     // Add *.scss file extension to the css lexer
     if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.scss");
@@ -788,6 +804,23 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
     if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
     }
+    
+    if(lexer->GetName() == "javascript") {
+        wxString jsWords = lexer->GetKeyWords(0);
+        wxArrayString arrWords = ::wxStringTokenize(jsWords, " ", wxTOKEN_STRTOK);
+        // use std::set to make sure that the elements are sorted
+        std::set<wxString> uniqueSet;
+        for(size_t i = 0; i < arrWords.size(); ++i) {
+            uniqueSet.insert(arrWords.Item(i));
+        }
+        uniqueSet.insert("class");
+        uniqueSet.insert("await");
+        uniqueSet.insert("async");
+        jsWords.clear();
+        std::for_each(uniqueSet.begin(), uniqueSet.end(), [&](const wxString& word) { jsWords << word << " "; });
+        lexer->SetKeyWords(jsWords, 0);
+    }
+    
     if(lexer->GetName() == "text") { lexer->SetFileSpec(wxEmptyString); }
 
     // Set the JavaScript keywords

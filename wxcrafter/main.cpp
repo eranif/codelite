@@ -766,9 +766,11 @@ void MainFrame::DoUpdateTitle()
 {
     m_titlePrefix.Clear();
     m_titlePrefix << "wxCrafter ";
+#if STANDALONE_BUILD
     if(!wxcSettings::Get().IsRegistered()) {
         m_titlePrefix << "[ Unregistered ] ";
     }
+#endif
     SetTitle(m_titlePrefix);
 }
 

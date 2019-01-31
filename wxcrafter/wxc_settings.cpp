@@ -155,6 +155,7 @@ bool wxcSettings::IsRegistered() const
 
 void wxcSettings::ShowNagDialogIfNeeded()
 {
+#if STANDALONE_BUILD
     if(!IsRegistered()) {
         // Free trial version
         static time_t lastCheck = 0;
@@ -172,6 +173,10 @@ void wxcSettings::ShowNagDialogIfNeeded()
             }
         }
     }
+#else
+    // CodeLite's plugin, nothing to be done here
+    return;
+#endif
 }
 
 // ----------------------------------------------------------------------

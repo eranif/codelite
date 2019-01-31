@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+    <dict>
+        <key>CFBundleDevelopmentRegion</key>
+        <string>English</string>
+        <key>CFBundleExecutable</key>
+        <string>wxcrafter</string>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>CFBundleName</key>
+        <string>wxCrafter</string>
+        <key>CFBundleIconFile</key>
+        <string>wxc-logo-64.icns</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+        <key>CFBundleVersion</key>
+        <string>wxCrafter version 2.6</string>
+        <key>CFBundleShortVersionString</key>
+        <string>wxCrafter version 2.6</string>
+        <key>CSResourcesFileMapped</key>
+        <true/>
+        <key>CFBundleDocumentTypes</key>
+        <array>
+            <dict>
+                <key>CFBundleTypeExtensions</key>
+                <array>
+                    <string>project</string>
+                </array>
+                <key>CFBundleTypeIconFile</key>
+                <string>wxc-logo-64.icns</string>
+                <key>CFBundleTypeName</key>
+                <string>wxCrafter project</string>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+                <key>LSIsAppleDefaultForType</key>
+                <true/>
+                <key>LSTypeIsPackage</key>
+                <false/>
+            </dict>
+        </array>
+        <key>NSHighResolutionCapable</key>
+        <true/>
+    </dict>
+</plist>

@@ -1,0 +1,6 @@
+Usability:
+==========
+
+* The wxCrafter tab should hold the current active top-level window
+* Go to class (right click on a top level and 'goto class')
+

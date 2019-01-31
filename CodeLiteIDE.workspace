@@ -53,6 +53,8 @@
     <Project Name="PHPRefactoring" Path="PHPRefactoring/PHPRefactoring.project" Active="No"/>
     <Project Name="SmartCompletion" Path="SmartCompletion/SmartCompletion.project" Active="No"/>
     <Project Name="Docker" Path="Docker/Docker.project" Active="No"/>
+    <Project Name="wxcrafter" Path="wxcrafter/wxcrafter.project"/>
+    <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
@@ -138,6 +140,8 @@
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="Win_x86_Release"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -198,6 +202,8 @@
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -257,6 +263,8 @@
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -317,6 +325,8 @@
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -377,8 +387,10 @@
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -436,8 +448,10 @@
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Release"/>
+      <Project Name="wxcrafter" ConfigName="Win_x64_Release"/>
+      <Project Name="wxcLib" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -495,6 +509,8 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcLib" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
       <Environment/>
@@ -554,8 +570,10 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -613,8 +631,10 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -672,8 +692,10 @@
       <Project Name="wxshapeframework" ConfigName="Win_x64_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Release"/>
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -731,6 +753,8 @@
       <Project Name="wxFormBuilder" ConfigName="Win_x64_Debug"/>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
+      <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
+      <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

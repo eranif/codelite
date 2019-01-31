@@ -54,7 +54,6 @@
     <Project Name="SmartCompletion" Path="SmartCompletion/SmartCompletion.project" Active="No"/>
     <Project Name="Docker" Path="Docker/Docker.project" Active="No"/>
     <Project Name="wxcrafter" Path="wxcrafter/wxcrafter.project"/>
-    <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
@@ -390,7 +389,7 @@
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -451,7 +450,7 @@
       <Project Name="wxcrafter" ConfigName="Win_x64_Release"/>
       <Project Name="wxcLib" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -512,7 +511,7 @@
       <Project Name="wxcrafter" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcLib" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>

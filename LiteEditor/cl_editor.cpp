@@ -131,7 +131,17 @@ static int ID_OPEN_URL = wxNOT_FOUND;
 #define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
 #endif
 
-static bool IsWhitespace(const wxChar& ch) { return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'); }
+static bool IsWordChar(const wxChar& ch)
+{
+    static wxStringSet_t wordsChar;
+    if(wordsChar.empty()) {
+        wxString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.>";
+        for(size_t i = 0; i < chars.size(); ++i) {
+            wordsChar.insert(chars[i]);
+        }
+    }
+    return (wordsChar.count(ch) != 0);
+}
 
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
@@ -5538,25 +5548,16 @@ wxString clEditor::GetWordAtPosition(int pos, bool wordCharsOnly)
         int where = pos;
         // find the start pos
         while(true) {
-            where = PositionBefore(where);
-            if((where != wxNOT_FOUND) && !IsWhitespace(GetCharAt(where))) {
+            int p = PositionBefore(where);
+            if((p != wxNOT_FOUND) && IsWordChar(GetCharAt(p))) {
+                where = p;
                 continue;
             } else {
                 break;
             }
         }
         wxSwap(start, where);
-        where = pos;
-        // find the end pos
-        while(true) {
-            where = PositionAfter(where);
-            if((where != wxNOT_FOUND) && !IsWhitespace(GetCharAt(where))) {
-                continue;
-            } else {
-                break;
-            }
-        }
-        wxSwap(end, where);
+        end = WordEndPosition(pos, true);
         return GetTextRange(start, end);
     }
 }

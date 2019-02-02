@@ -7,24 +7,24 @@
 #ifndef _CODELITE_PLUGIN_CLABOUTDIALOGBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_CLABOUTDIALOGBASE_BASE_CLASSES_H
 
-#include <wx/artprov.h>
-#include <wx/button.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
-#include <wx/hyperlink.h>
 #include <wx/iconbndl.h>
-#include <wx/imaglist.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
+#include <wx/imaglist.h>
 #include <wx/stattext.h>
+#include <wx/hyperlink.h>
 #include <wx/stc/stc.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -73,7 +73,7 @@ public:
     wxStyledTextCtrl* GetStcCredits() { return m_stcCredits; }
     wxPanel* GetPanelCredits() { return m_panelCredits; }
     wxNotebook* GetNotebook8() { return m_notebook8; }
-    clAboutDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("clAboutDialog"),
+    clAboutDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About"),
                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clAboutDialogBase();

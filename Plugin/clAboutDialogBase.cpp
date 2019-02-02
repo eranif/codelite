@@ -69,7 +69,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText34, 0, wxRIGHT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2018, by Eran Ifrah."), wxDefaultPosition,
+    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2019, by Eran Ifrah."), wxDefaultPosition,
                                             wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
 
     flexGridSizer32->Add(m_staticTextSubtitle, 0, wxLEFT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -97,7 +97,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText40, 0, wxRIGHT | wxALIGN_RIGHT, WXC_FROM_DIP(5));
 
-    m_hyperLink44 = new wxHyperlinkCtrl(m_panel22, wxID_ANY, _("CodeLite IDE"), wxT("https://www.codelite.org"),
+    m_hyperLink44 = new wxHyperlinkCtrl(m_panel22, wxID_ANY, _("CodeLite IDE"), wxT("https://codelite.org"),
                                         wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
     m_hyperLink44->SetNormalColour(wxColour(wxT("#0000FF")));
     m_hyperLink44->SetHoverColour(wxColour(wxT("#0000FF")));

@@ -80,7 +80,7 @@
     }, {
      "type": "string",
      "m_label": "Title:",
-     "m_value": "clAboutDialog"
+     "m_value": "About"
     }, {
      "type": "virtualFolderPicker",
      "m_label": "Virtual Folder:",
@@ -682,7 +682,7 @@
                     }, {
                      "type": "multi-string",
                      "m_label": "Label:",
-                     "m_value": "2007 - 2018, by Eran Ifrah."
+                     "m_value": "2007 - 2019, by Eran Ifrah."
                     }, {
                      "type": "string",
                      "m_label": "Wrap:",
@@ -986,7 +986,7 @@
                     }, {
                      "type": "string",
                      "m_label": "URL:",
-                     "m_value": "https://www.codelite.org"
+                     "m_value": "https://codelite.org"
                     }, {
                      "type": "colour",
                      "m_label": "Normal Colour:",

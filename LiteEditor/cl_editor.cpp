@@ -131,6 +131,8 @@ static int ID_OPEN_URL = wxNOT_FOUND;
 #define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
 #endif
 
+static bool IsWhitespace(const wxChar& ch) { return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'); }
+
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
@@ -1619,14 +1621,7 @@ void clEditor::UpdateBreakpoints()
     }
 }
 
-wxString clEditor::GetWordAtCaret()
-{
-    // Get the partial word that we have
-    long pos = GetCurrentPos();
-    long start = WordStartPosition(pos, true);
-    long end = WordEndPosition(pos, true);
-    return GetTextRange(start, end);
-}
+wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition(GetCurrentPos(), wordCharsOnly); }
 
 //---------------------------------------------------------------------------
 // Most of the functionality for this functionality
@@ -3263,9 +3258,7 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         wxPoint pt = ScreenToClient(wxGetMousePosition());
         int pos = PositionFromPointClose(pt.x, pt.y);
         if(pos != wxNOT_FOUND) {
-            int wordStart = WordStartPos(pos, true);
-            int wordEnd = WordEndPos(pos, true);
-            wxString wordAtMouse = GetTextRange(wordStart, wordEnd);
+            wxString wordAtMouse = GetWordAtPosition(pos, false);
             if(!wordAtMouse.IsEmpty()) {
                 // clLogMessage("Event wxEVT_DBG_EXPR_TOOLTIP is fired for string: %s", wordAtMouse);
                 clDebugEvent tipEvent(wxEVT_DBG_EXPR_TOOLTIP);
@@ -5531,10 +5524,48 @@ void clEditor::NotifyMarkerChanged(int lineNumber)
     EventNotifier::Get()->AddPendingEvent(eventMarker);
 }
 
+wxString clEditor::GetWordAtPosition(int pos, bool wordCharsOnly)
+{
+    // Get the partial word that we have
+    if(wordCharsOnly) {
+        long start = WordStartPosition(pos, true);
+        long end = WordEndPosition(pos, true);
+        return GetTextRange(start, end);
+
+    } else {
+        int start = pos;
+        int end = pos;
+        int where = pos;
+        // find the start pos
+        while(true) {
+            where = PositionBefore(where);
+            if((where != wxNOT_FOUND) && !IsWhitespace(GetCharAt(where))) {
+                continue;
+            } else {
+                break;
+            }
+        }
+        wxSwap(start, where);
+        where = pos;
+        // find the end pos
+        while(true) {
+            where = PositionAfter(where);
+            if((where != wxNOT_FOUND) && !IsWhitespace(GetCharAt(where))) {
+                continue;
+            } else {
+                break;
+            }
+        }
+        wxSwap(end, where);
+        return GetTextRange(start, end);
+    }
+}
+
 int clEditor::GetFirstNonWhitespacePos(bool backward)
 {
     int from = GetCurrentPos();
     if(from == wxNOT_FOUND) { return wxNOT_FOUND; }
+
     int pos = from;
     if(backward) {
         from = PositionBefore(from);

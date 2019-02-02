@@ -379,7 +379,7 @@ public:
      * i.e. the event wxEVT_CC_CODE_COMPLETE is fired only when refreshingList == false
      */
     void CodeComplete(bool refreshingList = false);
-    
+
     /**
      * @brief toggle line comment
      * @param commentSymbol the comment symbol to insert (e.g. "//")
@@ -820,12 +820,18 @@ public:
      * @brief
      * @return
      */
-    virtual wxString GetWordAtCaret();
+    virtual wxString GetWordAtCaret(bool wordCharsOnly = true);
     /**
      * @brief
      * @return
      */
     virtual void GetWordAtMousePointer(wxString& word, wxRect& wordRect);
+    /**
+     * @brief get word at a given position
+     * @param pos word's position
+     * @param wordCharsOnly when set to false, return the string between the nearest whitespaces
+     */
+    virtual wxString GetWordAtPosition(int pos, bool wordCharsOnly = true);
     /**
      * @brief
      * @param text
@@ -999,7 +1005,7 @@ private:
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
     wxFontEncoding DetectEncoding(const wxString& filename);
-    
+
     // Line numbers drawings
     void DoUpdateRelativeLineNumbers();
     void DoUpdateLineNumbers();

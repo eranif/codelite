@@ -46,7 +46,7 @@ void CollapsiblePaneWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << "<style>wxCP_NO_TLW_RESIZE</style>";
 
     } else {
-        text << "<collapsed>" << PropertyString(PROP_COLLAPSED) << "</collapsed>";
+        text << XRCStyle()  << "<collapsed>" << PropertyString(PROP_COLLAPSED) << "</collapsed>";
     }
 
     ChildrenXRC(text, type);

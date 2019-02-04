@@ -6,6 +6,13 @@
 SimpleBookWrapper::SimpleBookWrapper()
     : NotebookBaseWrapper(ID_WXSIMPLEBOOK)
 {
+    // Remove styles added by NotebookBaseWrapper
+    REMOVE_STYLE(wxBK_DEFAULT);
+    REMOVE_STYLE(wxBK_LEFT);
+    REMOVE_STYLE(wxBK_RIGHT);
+    REMOVE_STYLE(wxBK_TOP);
+    REMOVE_STYLE(wxBK_BOTTOM);
+
     RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED"), wxT("wxNotebookEvent"),
                   _("The page selection was changed"));
     RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING"), wxT("wxNotebookEvent"),

@@ -403,9 +403,10 @@ void wxCrafterPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->AppendSeparator();
     menu->Append(XRCID("ID_SHOW_DESIGNER"), _("Show the designer"), _("Show the designer"));
     menu->AppendSeparator();
+#if STANDALONE_BUILD
     menu->Append(XRCID("wxcp_about"), _("About..."));
+#endif
     menu->Append(XRCID("wxc_settings"), _("Settings..."));
-
     pluginsMenu->Append(wxID_ANY, _("wxCrafter"), menu);
 }
 

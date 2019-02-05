@@ -403,7 +403,9 @@ void clTreeCtrl::EnsureVisible(const wxTreeItemId& item)
     if(!item.IsOk()) { return; }
     // Make sure that all parents of ítem are expanded
     if(!m_model.ExpandToItem(item)) { return; }
-    Refresh();
+    
+    // We need to paint to take place now so all the items will be assigned with the updated geometry
+    Update();
     DoEnsureVisible(item);
 }
 

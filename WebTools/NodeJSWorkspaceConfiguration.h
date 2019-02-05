@@ -34,21 +34,22 @@ class NodeJSWorkspaceConfiguration : public clConfigItem
     wxArrayString m_folders;
     bool m_isOk;
     bool m_showHiddenFiles;
+    wxFileName m_filename;
+
+protected:
+    void ConvertToRelative(wxString& folder) const;
+    void ConvertToRelative(wxArrayString& folders) const;
 
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
 
-    NodeJSWorkspaceConfiguration();
+    NodeJSWorkspaceConfiguration(const wxFileName& filename);
     virtual ~NodeJSWorkspaceConfiguration();
 
-    NodeJSWorkspaceConfiguration& Load(const wxFileName& filename);
-    NodeJSWorkspaceConfiguration& Save(const wxFileName& filename);
-    NodeJSWorkspaceConfiguration& SetFolders(const wxArrayString& folders)
-    {
-        this->m_folders = folders;
-        return *this;
-    }
+    NodeJSWorkspaceConfiguration& Load();
+    NodeJSWorkspaceConfiguration& Save();
+    NodeJSWorkspaceConfiguration& SetFolders(const wxArrayString& folders);
 
     NodeJSWorkspaceConfiguration& SetIsOk(bool isOk)
     {
@@ -61,7 +62,7 @@ public:
         return *this;
     }
     bool IsShowHiddenFiles() const { return m_showHiddenFiles; }
-    const wxArrayString& GetFolders() const { return m_folders; }
+    wxArrayString GetFolders() const;
     bool IsOk() const { return m_isOk; }
 };
 

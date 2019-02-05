@@ -147,9 +147,9 @@ void NodeJSWorkspace::DoClear()
 
 void NodeJSWorkspace::Save()
 {
-    NodeJSWorkspaceConfiguration conf;
+    NodeJSWorkspaceConfiguration conf(GetFileName());
     conf.SetFolders(m_folders);
-    conf.Save(m_filename);
+    conf.Save();
 }
 
 void NodeJSWorkspace::OnCloseWorkspace(clCommandEvent& e)
@@ -191,8 +191,8 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
 
 bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 {
-    NodeJSWorkspaceConfiguration conf;
-    conf.Load(m_filename);
+    NodeJSWorkspaceConfiguration conf(filename);
+    conf.Load();
     if(!conf.IsOk()) {
         DoClear();
         return false;
@@ -239,8 +239,8 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
     wxFileName workspaceFile(event.GetFileName());
 
     // Test that this is our workspace
-    NodeJSWorkspaceConfiguration conf;
-    conf.Load(workspaceFile);
+    NodeJSWorkspaceConfiguration conf(workspaceFile);
+    conf.Load();
     if(!conf.IsOk()) { return; }
     // This is a NodeJS workspace, stop event processing by calling
     // event.Skip(false)

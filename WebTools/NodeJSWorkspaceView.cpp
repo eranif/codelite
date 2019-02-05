@@ -64,8 +64,8 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
         if((pos != wxNOT_FOUND) && closeItem) {
             wxMenuItem* showHiddenItem =
                 menu->Insert(pos, XRCID("nodejs_show_hidden_files"), _("Show hidden files"), "", wxITEM_CHECK);
-            NodeJSWorkspaceConfiguration conf;
-            showHiddenItem->Check(conf.Load(NodeJSWorkspace::Get()->GetFilename()).IsShowHiddenFiles());
+            NodeJSWorkspaceConfiguration conf(NodeJSWorkspace::Get()->GetFilename());
+            showHiddenItem->Check(conf.Load().IsShowHiddenFiles());
             menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnShowHiddenFiles, this, XRCID("nodejs_show_hidden_files"));
 
             menu->InsertSeparator(pos);
@@ -179,9 +179,9 @@ void NodeJSWorkspaceView::ShowHiddenFiles(bool show)
 
 void NodeJSWorkspaceView::OnShowHiddenFiles(wxCommandEvent& event)
 {
-    NodeJSWorkspaceConfiguration conf;
     const wxFileName& filename = NodeJSWorkspace::Get()->GetFilename();
-    conf.Load(filename).SetShowHiddenFiles(event.IsChecked()).Save(filename);
+    NodeJSWorkspaceConfiguration conf(filename);
+    conf.Load().SetShowHiddenFiles(event.IsChecked()).Save();
     ShowHiddenFiles(event.IsChecked());
     RebuildTree();
 }

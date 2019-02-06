@@ -240,6 +240,17 @@ void BreakptPropertiesDlg::OnPageChanging(wxChoicebookEvent& event)
 void BreakptPropertiesDlg::OnPageChanged(wxChoicebookEvent& event)
 {
     its_a_breakpt = m_choicebook->GetPageText(m_choicebook->GetSelection()) == _("Breakpoint");
+    // Watchpoints can't have conditions set direct in MI; they need to be created without, then edited to add
+    m_textCond->Enable(its_a_breakpt || GetTitle().StartsWith("Properties")); // The dlg title starts with Properties when editing
+    if (!GetTitle().StartsWith("Properties")) {
+        wxString tip =  (its_a_breakpt ?
+                            "You can add a condition to any breakpoint. The debugger will then stop only if the condition is met.\n \
+The condition can be any simple or complex expression in your programming language,providing it returns a bool. However any variables that you use must be in scope.\n \
+If you've previously set a condition and no longer want it, just clear this textctrl." :
+                        "It is not possible to Add a conditional watchpoint. Create a normal watchpoint first, then Edit it to add the conditon"
+                        );
+        m_textCond->SetToolTip(tip);
+    }
     m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary
     m_checkTemp->GetContainingSizer()->Layout();
 }

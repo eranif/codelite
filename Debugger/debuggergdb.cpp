@@ -477,7 +477,8 @@ bool DbgGdb::Break(const BreakpointInfo& bp)
     //------------------------------------------------------------------------
     // prepare the conditions
     //------------------------------------------------------------------------
-    if(bp.conditions.IsEmpty() == false) {
+    if(bp.conditions.IsEmpty() == false
+            && bp.bp_type != BP_type_watchpt) { // It isn't possible to set conditions to a watchpoint as it's created
         condition << wxT("-c ") << wxT("\"") << bp.conditions << wxT("\" ");
     }
 

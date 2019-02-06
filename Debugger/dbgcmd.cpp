@@ -927,10 +927,10 @@ bool DbgCmdSetConditionHandler::ProcessOutput(const wxString& line)
     // If successful, the only output is ^done, so assume that means it worked
     if(dbg_output.Find(wxT("^done")) != wxNOT_FOUND) {
         if(m_bp.conditions.IsEmpty()) {
-            m_observer->UpdateAddLine(wxString::Format(_("Breakpoint %d condition cleared"), m_bp.debugger_id));
+            m_observer->UpdateAddLine(wxString::Format(_("Breakpoint %i condition cleared"), (int)m_bp.debugger_id));
         } else {
             m_observer->UpdateAddLine(
-                wxString::Format(_("Condition %s set for breakpoint %d"), m_bp.conditions.c_str(), m_bp.debugger_id));
+                wxString::Format(_("Condition %s set for breakpoint %i"), m_bp.conditions.c_str(), (int)m_bp.debugger_id));
         }
         return true;
     }

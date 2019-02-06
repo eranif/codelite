@@ -189,7 +189,7 @@ private:
     void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
     void DoRefreshView(bool ensureVisible);
-    
+
     /// Workspace management
     bool IsWorkspaceOpened() const;
     wxString GetWorkspaceName() const;
@@ -220,6 +220,7 @@ private:
     void OnFileMenu(clContextMenuEvent& event);
     void OnFolderMenu(clContextMenuEvent& event);
 
+    void OnFileCreated(clFileSystemEvent& event);
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
@@ -254,7 +255,7 @@ private:
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
     void OnFileGitBlame(wxCommandEvent& event);
     void OnAppActivated(wxCommandEvent& event);
-    
+
 #if 0
     void OnBisectStart(wxCommandEvent& e);
     void OnBisectGood(wxCommandEvent& e);
@@ -278,12 +279,12 @@ public:
 
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();
-    
+
     /**
      * @brief is git enabled for the current workspace?
      */
     bool IsGitEnabled() const;
-    
+
     /**
      * @brief fetch the next 100 commits (skip 'skip' first commits)
      * and show them in the commit list dialog
@@ -319,8 +320,8 @@ public:
 
     void DoGitBlame(const wxString& args);      // Called by OnGitBlame or the git blame dialog
     wxString GetEditorRelativeFilepath() const; // Called by OnGitBlame or the git blame dialog
-    void OnGitBlameRevList(
-        const wxString& arg, const wxString& filepath, const wxString& commit = ""); // Called by the git blame dialog
+    void OnGitBlameRevList(const wxString& arg, const wxString& filepath,
+                           const wxString& commit = ""); // Called by the git blame dialog
 
     /**
      * @brief simple git command executioin completed. Display its output etc

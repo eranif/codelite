@@ -5551,6 +5551,7 @@ wxString clEditor::GetWordAtPosition(int pos, bool wordCharsOnly)
             int p = PositionBefore(where);
             if((p != wxNOT_FOUND) && IsWordChar(GetCharAt(p))) {
                 where = p;
+                if(where == 0) { break; }
                 continue;
             } else {
                 break;

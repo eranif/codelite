@@ -404,6 +404,12 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     // Open the file in the editor
     clGetManager()->OpenFile(file.GetFullPath());
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
+    
+    // Notify about file creation
+    clFileSystemEvent fsEvent(wxEVT_FILE_CREATED);
+    fsEvent.SetPath(file.GetFullPath());
+    fsEvent.SetFileName(file.GetFullName());
+    EventNotifier::Get()->AddPendingEvent(fsEvent);
 }
 
 void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
@@ -426,6 +432,11 @@ void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
     wxTreeItemId newFile = DoAddFolder(item, file.GetPath());
     GetTreeCtrl()->SortChildren(item);
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
+    
+    // Notify about folder creation
+    clFileSystemEvent fsEvent(wxEVT_FOLDER_CREATED);
+    fsEvent.SetPath(file.GetPath());
+    EventNotifier::Get()->AddPendingEvent(fsEvent);
 }
 
 void clTreeCtrlPanel::GetSelections(wxArrayString& folders, wxArrayTreeItemIds& folderItems, wxArrayString& files,

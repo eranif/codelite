@@ -3,6 +3,7 @@
 #include "NodeJSEvents.h"
 #include "event_notifier.h"
 #include <vector>
+#include "file_logger.h"
 
 DebuggerPaused::DebuggerPaused()
     : NodeMessageBase("Debugger.paused")
@@ -23,10 +24,18 @@ void DebuggerPaused::Process(clWebSocketClient& socket, const JSONElement& json)
         f->FromJSON(frame);
         V.push_back(f);
     }
-
+    
+    wxString extraMessage;
+    if(json.hasNamedObject("data")) {
+        JSONElement data = json.namedObject("data");
+        if(data.hasNamedObject("description")) {
+            extraMessage = data.namedObject("description").toString();
+        }
+    }
     // Notify the UI that the debugger paused
     clDebugEvent pauseEvent(wxEVT_NODEJS_DEBUGGER_INTERACT);
     pauseEvent.SetString(m_stopReason);
+    pauseEvent.SetArguments(extraMessage);
     pauseEvent.SetAnswer(true);
     EventNotifier::Get()->ProcessEvent(pauseEvent);
 

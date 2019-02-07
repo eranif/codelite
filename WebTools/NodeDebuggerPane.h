@@ -26,6 +26,7 @@ protected:
     void DoUpdateLocalsView(CallFrame* callFrame);
     wxString GetLocalObjectItem(const wxTreeItemId& item) const;
     CallFrame* GetFrameById(const wxString& frameId) const;
+    void SelectTab(const wxString& label);
 
 protected:
     void OnUpdateBacktrace(clDebugCallFramesEvent& event);

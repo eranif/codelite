@@ -185,6 +185,10 @@ void NodeDebuggerPane::OnInteract(clDebugEvent& event)
         // The debugger paused of an uncaught exception
         ::wxMessageBox(_("Node.js: uncaught exception!"), "Node.js", wxICON_ERROR | wxCENTRE,
                        EventNotifier::Get()->TopFrame());
+        if(!event.GetArguments().IsEmpty()) {
+            m_terminal->AddTextWithEOL(event.GetArguments());
+            SelectTab(_("Stdin / Stdout"));
+        }
     }
 }
 
@@ -419,4 +423,11 @@ void NodeDebuggerPane::OnStackContextMenu(wxDataViewEvent& event)
            },
            XRCID("node-copy-backtrace"));
     m_dvListCtrlCallstack->PopupMenu(&m);
+}
+
+void NodeDebuggerPane::SelectTab(const wxString& label)
+{
+    // Select the terminal tab
+    int tabIndex = m_notebook->GetPageIndex(label);
+    if(tabIndex != wxNOT_FOUND) { m_notebook->SetSelection(tabIndex); }
 }

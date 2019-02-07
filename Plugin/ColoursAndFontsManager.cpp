@@ -816,6 +816,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
         uniqueSet.insert("class");
         uniqueSet.insert("await");
         uniqueSet.insert("async");
+        uniqueSet.insert("extends");
+        uniqueSet.insert("constructor");
+        uniqueSet.insert("super");
         jsWords.clear();
         std::for_each(uniqueSet.begin(), uniqueSet.end(), [&](const wxString& word) { jsWords << word << " "; });
         lexer->SetKeyWords(jsWords, 0);

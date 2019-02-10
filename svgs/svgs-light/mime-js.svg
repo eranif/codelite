@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="mime-js.svg">
   <defs
      id="defs4" />
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-98.992488"
-     inkscape:cy="23.236469"
+     inkscape:cx="-132.39249"
+     inkscape:cy="24.236469"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -81,15 +81,15 @@
          id="flowPara6549"
          style="font-size:12.49999809px;line-height:1.25"> </flowPara></flowRoot>    <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.99048519px;line-height:0%;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#dd4814;fill-opacity:1;stroke:none;stroke-width:1.16587389px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="2.4680409"
-       y="1146.702"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.65873718px;line-height:0%;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0088aa;fill-opacity:1;stroke:none;stroke-width:1.16587389px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="3.2751057"
+       y="1146.064"
        id="text6539"
-       transform="scale(1.0943269,0.91380373)"><tspan
+       transform="scale(1.0943269,0.91380372)"><tspan
          sodipodi:role="line"
          id="tspan6541"
-         x="2.4680409"
-         y="1146.702"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.57342052px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#dd4814;fill-opacity:1;stroke-width:1.16587389px">js</tspan></text>
+         x="3.2751057"
+         y="1146.064"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.14451694px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#0088aa;fill-opacity:1;stroke-width:1.16587389px;">js</tspan></text>
   </g>
 </svg>

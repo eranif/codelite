@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="mime-css.svg">
   <defs
      id="defs4" />
@@ -25,21 +25,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4"
-     inkscape:cx="-3.0093813"
-     inkscape:cy="9.7246571"
+     inkscape:zoom="5"
+     inkscape:cx="-177.72187"
+     inkscape:cy="11.930795"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="1853"
-     inkscape:window-height="1016"
-     inkscape:window-x="67"
-     inkscape:window-y="27"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     showborder="true"
-     inkscape:pagecheckerboard="false" />
+     showborder="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -48,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -96,18 +95,6 @@
          y="1066.4946"
          id="tspan6432"
          style="font-size:35px;line-height:1.25"> </tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.29028893px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4e9a06;fill-opacity:1;stroke:none;stroke-width:1.27419078;"
-       x="-0.66177458"
-       y="938.76404"
-       id="text7103"
-       transform="scale(0.89575275,1.1163795)"><tspan
-         sodipodi:role="line"
-         id="tspan7105"
-         x="-0.66177458"
-         y="938.76404"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.99394131px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#4e9a06;fill-opacity:1;stroke-width:1.27419078;">css</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot9311"
@@ -119,5 +106,17 @@
            x="-33"
            y="-22" /></flowRegion><flowPara
          id="flowPara9317"
-         style="font-size:10px;line-height:1.25"> </flowPara></flowRoot>  </g>
+         style="font-size:10px;line-height:1.25"> </flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:9.53573895px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c29bbe;fill-opacity:1;stroke:none;stroke-width:1;"
+       x="0.47982958"
+       y="1044.4656"
+       id="text830"
+       transform="scale(0.99760905,1.0023967)"><tspan
+         sodipodi:role="line"
+         id="tspan828"
+         x="0.47982958"
+         y="1044.4656"
+         style="fill:#c29bbe;stroke-width:1;">css</tspan></text>
+  </g>
 </svg>

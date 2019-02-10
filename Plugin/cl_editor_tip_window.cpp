@@ -38,6 +38,7 @@
 #include <wx/stc/stc.h>
 #include "ieditor.h"
 #include "imanager.h"
+#include <wx/dcgraph.h>
 
 BEGIN_EVENT_TABLE(clEditorTipWindow, wxPanel)
 EVT_PAINT(clEditorTipWindow::OnPaint)
@@ -73,7 +74,8 @@ void clEditorTipWindow::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
 void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
-    wxAutoBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC bdc(this);
+    wxGCDC dc(bdc);
     PrepareDC(dc);
 
     if(m_args.IsEmpty()) return;

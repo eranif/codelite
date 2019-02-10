@@ -14,7 +14,7 @@
    viewBox="0 0 16.933333 16.933334"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="function_private.svg">
   <defs
      id="defs2">
@@ -34,7 +34,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-66.9"
+     inkscape:cx="-101.69439"
      inkscape:cy="21.090291"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -46,9 +46,9 @@
      showguides="true"
      inkscape:lockguides="false"
      inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-height="1311"
+     inkscape:window-x="1920"
+     inkscape:window-y="41"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -79,11 +79,11 @@
      id="layer1"
      transform="translate(0,-280.06665)">
     <circle
-       style="opacity:1;fill:#dfd4dc;fill-opacity:1;fill-rule:evenodd;stroke:#7e5273;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#dfd4dc;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.58796299;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path819-0"
        cx="8.4666672"
        cy="288.53333"
-       r="7.1437502" />
+       r="7.9375" />
     <rect
        style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#5e2750;stroke-width:1.0583334;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect825"

@@ -41,6 +41,7 @@
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
 #include <wx/display.h>
+#include <wx/dcgraph.h>
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -260,7 +261,8 @@ void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     m_links.clear();
-    wxAutoBufferedPaintDC dc(this);
+    wxAutoBufferedPaintDC bdc(this);
+    wxGCDC dc(bdc);
     PrepareDC(dc);
     size_t maxWidth(0);
     DoDrawTip(dc, maxWidth);

@@ -84,43 +84,44 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
             // and with the bar itself
             if((m_rect.GetHeight() > 0) && (m_rect.GetWidth() > 0)) {
                 wxBitmap bmp(m_rect.GetSize());
-                wxMemoryDC memDc;
-                m_parent->PrepareDC(memDc);
+                wxMemoryDC memoryDC;
+                memoryDC.SelectObject(bmp);
+                wxGCDC dc(memoryDC);
+                m_parent->PrepareDC(dc);
 
-                memDc.SelectObject(bmp);
                 wxFont font = DrawingUtils::GetDefaultGuiFont();
-                memDc.SetFont(font);
+                dc.SetFont(font);
                 wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
 
                 // Draw the field background
-                memDc.SetBrush(art->GetBgColour());
-                memDc.SetPen(art->GetBgColour());
-                memDc.DrawRectangle(rect);
+                dc.SetBrush(art->GetBgColour());
+                dc.SetPen(art->GetBgColour());
+                dc.DrawRectangle(rect);
 
                 // Draw top separator line
                 wxPoint topLeft = rect.GetTopLeft();
                 wxPoint topRight = rect.GetTopRight();
                 topRight.x += 1;
-                memDc.SetPen(art->GetSeparatorColour());
-                memDc.DrawLine(topLeft, topRight);
+                dc.SetPen(art->GetSeparatorColour());
+                dc.DrawLine(topLeft, topRight);
 
                 // Draw the bottom separator using the pen colour
                 // this will give a "sink" look to the status bar
                 topLeft.y += 1;
                 topRight.y += 1;
-                memDc.SetPen(art->GetPenColour());
-                memDc.DrawLine(topLeft, topRight);
+                dc.SetPen(art->GetPenColour());
+                dc.DrawLine(topLeft, topRight);
 
                 // Render will override m_rect, we so keep a copy
                 wxRect origRect = m_rect;
-                Render(memDc, rect, art);
+                Render(dc, rect, art);
                 m_rect = origRect;
-                memDc.SelectObject(wxNullBitmap);
+                memoryDC.SelectObject(wxNullBitmap);
 
                 // bmp contains the field content, draw it
-                wxClientDC dc(m_parent);
-                m_parent->PrepareDC(dc);
-                dc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
+                wxClientDC cdc(m_parent);
+                m_parent->PrepareDC(cdc);
+                cdc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
             }
         }
     }

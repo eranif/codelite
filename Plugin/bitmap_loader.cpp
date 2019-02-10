@@ -55,6 +55,13 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     // try to load a new bitmap first
     wxString newName;
     newName << requestedSize << "-" << name.AfterLast('/');
+
+#ifdef __WXGTK__
+    if(clBitmap::ShouldLoadHiResImages()) {
+        newName << "@2x";
+    }
+#endif
+
     std::unordered_map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
     if(iter != m_toolbarsBitmaps.end()) {
         const wxBitmap& b = iter->second;
@@ -206,13 +213,16 @@ void BitmapLoader::initialize()
 
         for(size_t i = 0; i < files.size(); ++i) {
             wxFileName pngFile(files.Item(i));
+            wxString fullpath = pngFile.GetFullPath();
+#ifndef __WXGTK__
             if(pngFile.GetFullName().Contains("@2x")) {
                 // No need to load the hi-res images manually,
                 // this is done by wxWidgets
                 continue;
             }
+#endif
             clBitmap bmp;
-            if(bmp.LoadFile(pngFile.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+            if(bmp.LoadFile(fullpath, wxBITMAP_TYPE_PNG)) {
                 clDEBUG1() << "Adding new image:" << pngFile.GetName() << clEndl;
                 m_toolbarsBitmaps.erase(pngFile.GetName());
                 m_toolbarsBitmaps.insert({ pngFile.GetName(), bmp });

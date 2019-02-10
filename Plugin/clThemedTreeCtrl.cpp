@@ -7,7 +7,7 @@
 #include "cl_config.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_SIMPLE
+#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #else
 #define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #endif

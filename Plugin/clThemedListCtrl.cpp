@@ -7,7 +7,7 @@
 #include "cl_config.h"
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_SIMPLE
+#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_NONE
 #else
 #define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_NONE
 #endif

@@ -115,7 +115,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC dc(bmp);
 
     wxSize size;
-    
+
     if(editor) {
         // Use the active editor's font
         m_codeFont = editor->GetCtrl()->StyleGetFont(0);
@@ -204,7 +204,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     wxRect displaySize = ::clGetDisplaySize();
     int displayIndex = wxDisplay::GetFromPoint(pt);
     if(displayIndex != wxNOT_FOUND) { displaySize = wxDisplay(displayIndex).GetGeometry(); }
-    
+
     if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left
         pt = windowPos;
@@ -349,14 +349,21 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 
 void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
 {
-    clColours colors = DrawingUtils::GetColours();
-    
+    clColours colours = DrawingUtils::GetColours();
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) { colors.InitFromColour(editor->GetCtrl()->StyleGetBackground(0)); }
-    
-    wxColour penColour = colors.GetBorderColour();
-    wxColour brushColour = colors.GetBgColour();
-    wxColour textColour = colors.GetItemTextColour();
+    if(editor) {
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+        if(DrawingUtils::IsDark(bgColour)) {
+            colours.InitFromColour(bgColour);
+            m_useLightColours = !DrawingUtils::IsDark(bgColour);
+        } else {
+            colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        }
+    }
+
+    wxColour penColour = colours.GetBorderColour();
+    wxColour brushColour = colours.GetBgColour();
+    wxColour textColour = colours.GetItemTextColour();
     wxColour linkColour("rgb(204, 153, 255)");
 
     if(m_useLightColours) {

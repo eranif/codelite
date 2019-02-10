@@ -52,25 +52,25 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/class"));              // 0
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/struct"));             // 1
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/namespace"));          // 2
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_public"));      // 3
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/typedef"));            // 4
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_private"));     // 5
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_public"));      // 6
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/member_protected"));   // 7
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_private"));   // 8
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_public"));    // 9
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/function_protected")); // 10
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/typedef"));            // 11
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 12
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enumerator"));         // 13
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/cpp"));              // 14
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/h"));                // 15
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime/16/text"));             // 16
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/cpp_keyword"));        // 17
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cc/16/enum"));               // 18
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("class"));              // 0
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("struct"));             // 1
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("namespace"));          // 2
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public"));      // 3
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("typedef"));            // 4
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_private"));     // 5
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public"));      // 6
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_protected"));   // 7
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_private"));   // 8
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_public"));    // 9
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_protected")); // 10
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("macro"));            // 11
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 12
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enumerator"));         // 13
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));              // 14
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));                // 15
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));             // 16
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("cpp_keyword"));        // 17
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 18
 
     InitializeDefaultBitmaps();
 
@@ -106,12 +106,18 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Default colorus
     clColours colours = DrawingUtils::GetColours();
+
     m_useLightColours = true;
     if(editor) {
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-        colours.InitFromColour(bgColour);
-        m_useLightColours = !DrawingUtils::IsDark(bgColour);
+        if(DrawingUtils::IsDark(bgColour)) {
+            colours.InitFromColour(bgColour);
+            m_useLightColours = !DrawingUtils::IsDark(bgColour);
+        } else {
+            colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        }
     }
+
     // Default colours
     m_bgColour = colours.GetBgColour();
     m_penColour = colours.GetBorderColour();

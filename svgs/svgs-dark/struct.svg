@@ -34,8 +34,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="39"
-     inkscape:cy="25.2"
+     inkscape:cx="5.6"
+     inkscape:cy="23.5"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -78,37 +78,22 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-280.06665)">
-    <rect
-       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect822"
-       width="15.35488"
-       height="6.0854163"
-       x="0.78922659"
-       y="281.53879"
-       ry="0.42333332"
-       rx="0.42333341" />
-    <g
-       style="fill:#b3b3b3;stroke:#b3b3b3;stroke-width:0.6401729"
-       id="g860"
-       transform="matrix(1.0132487,0,0,2.1453091,-0.19259909,-334.18509)">
-      <rect
-         ry="0.19732979"
-         rx="0.4177981"
-         y="290.68344"
-         x="0.92604214"
-         height="2.7906053"
-         width="6.5087495"
-         id="rect826-3"
-         style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.35891336;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         ry="0.19732979"
-         rx="0.4177981"
-         y="290.68344"
-         x="9.6572924"
-         height="2.7906053"
-         width="6.5087495"
-         id="rect826-3-4"
-         style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.35891336;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
+    <circle
+       style="opacity:1;fill:#f7d1c4;fill-opacity:1;fill-rule:evenodd;stroke:#dd4814;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path823"
+       cx="8.4666672"
+       cy="288.53333"
+       r="7.6729164" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dd4814;fill-opacity:1;stroke:none;stroke-width:0.26458335;"
+       x="4.6090198"
+       y="292.38062"
+       id="text819"><tspan
+         sodipodi:role="line"
+         id="tspan817"
+         x="4.6090198"
+         y="292.38062"
+         style="font-weight:bold;fill:#dd4814;fill-opacity:1;stroke-width:0.26458335;">S</tspan></text>
   </g>
 </svg>

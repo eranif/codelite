@@ -33,9 +33,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.0710678"
-     inkscape:cx="30.740411"
-     inkscape:cy="16.061732"
+     inkscape:zoom="5"
+     inkscape:cx="-66.9"
+     inkscape:cy="21.090291"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -78,20 +78,20 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-280.06665)">
-    <path
-       inkscape:connector-curvature="0"
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.52916667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       d="m 8.4666669,281.52238 -6.0642295,3.50521 6.0642295,3.50573 6.0642291,-3.50573 z"
-       id="path819" />
-    <path
-       inkscape:connector-curvature="0"
-       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.52916667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       d="m 14.531521,285.02767 -6.0649301,3.50573 v 7.01147 l 6.0649301,-3.50573 z"
-       id="path832" />
-    <path
-       id="path858"
-       d="m 2.4024374,285.02759 6.0649301,3.50573 v 7.01147 l -6.0649301,-3.50573 z"
-       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:evenodd;stroke:#b3b3b3;stroke-width:0.52916667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       inkscape:connector-curvature="0" />
+    <circle
+       style="opacity:1;fill:#dfd4dc;fill-opacity:1;fill-rule:evenodd;stroke:#7e5273;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path819-0"
+       cx="8.4666672"
+       cy="288.53333"
+       r="7.1437502" />
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#5e2750;stroke-width:1.0583334;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect825"
+       width="7.9375"
+       height="1.9542211"
+       x="4.4979167"
+       y="287.55621"
+       ry="0.42333338"
+       rx="0.42333335" />
   </g>
 </svg>

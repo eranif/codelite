@@ -26,9 +26,14 @@
 #ifndef CLTREECTRLPANELDEFAULTPAGE_H
 #define CLTREECTRLPANELDEFAULTPAGE_H
 #include "wxcrafter_plugin.h"
+#include "cl_command_event.h"
+#include "clColours.h"
+#include <wx/event.h>
 
 class clTreeCtrlPanelDefaultPage : public clTreeCtrlPanelDefaultPageBase
 {
+    clColours m_colours;
+
 public:
     clTreeCtrlPanelDefaultPage(wxWindow* parent);
     virtual ~clTreeCtrlPanelDefaultPage();
@@ -36,5 +41,7 @@ public:
 protected:
     virtual void OnDefaultPageContextMenu(wxContextMenuEvent& event);
     void OnOpenFolder(wxCommandEvent& event);
+    void OnPaint(wxPaintEvent& event);
+    void OnColoursChanged(clCommandEvent& event);
 };
 #endif // CLTREECTRLPANELDEFAULTPAGE_H

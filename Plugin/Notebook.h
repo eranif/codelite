@@ -42,6 +42,7 @@
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sharedptr.h>
+#include "cl_command_event.h"
 
 class Notebook;
 class wxMenu;
@@ -99,6 +100,7 @@ protected:
     void DoChangeSelection(size_t index);
 
 protected:
+    void OnColoursChanged(clCommandEvent& event);
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);

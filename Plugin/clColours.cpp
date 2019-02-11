@@ -50,6 +50,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
         selItemBgColour = bgColour.ChangeLightness(80);
         selbuttonColour = selItemTextColour;
         selItemBgColourNoFocus = selItemBgColour.ChangeLightness(FACTOR_SEL_BG_COLOUR_NOFOCUS);
+        grayText = itemTextColour.ChangeLightness(150);
     } else {
         alternateColour = bgColour.ChangeLightness(FACTOR_ALTROW_DARK);
         hoverBgColour = bgColour.ChangeLightness(90);
@@ -60,6 +61,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
         selItemBgColour = bgColour.ChangeLightness(130);
         selbuttonColour = selItemTextColour;
         selItemBgColourNoFocus = bgColour.ChangeLightness(115);
+        grayText = itemTextColour.ChangeLightness(50);
     }
     itemBgColour = bgColour;
 

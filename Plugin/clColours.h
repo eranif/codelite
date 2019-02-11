@@ -24,6 +24,7 @@ class WXDLLIMPEXP_SDK clColours
     wxColour borderColour;           // Basic border colour
     wxColour darkBorderColour;       // Darker border colour
     wxColour fillColour;             // fill colour
+    wxColour grayText;               // Gray text
 
 public:
     clColours& SetDarkBorderColour(const wxColour& darkBorderColour)
@@ -81,6 +82,8 @@ public:
     void SetFillColour(const wxColour& fillColour) { this->fillColour = fillColour; }
     const wxColour& GetBorderColour() const { return borderColour; }
     const wxColour& GetFillColour() const { return fillColour; }
+    void SetGrayText(const wxColour& grayText) { this->grayText = grayText; }
+    const wxColour& GetGrayText() const { return grayText; }
 };
 
 #endif // CLCOLOURS_H

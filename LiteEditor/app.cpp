@@ -59,6 +59,7 @@
 #include <wx/regex.h>
 #include "fileexplorer.h"
 #include "workspace_pane.h"
+#include "clSystemSettings.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -292,7 +293,7 @@ bool CodeLiteApp::OnInit()
 
 #endif
     wxSocketBase::Initialize();
-
+    
     // Redirect all error messages to stderr
     wxLog::SetActiveTarget(new wxLogStderr());
 
@@ -532,7 +533,9 @@ bool CodeLiteApp::OnInit()
         wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
 #endif
-
+    
+    clSystemSettings::Get(); // Initialise the custom settings _before_ we start constructing the main frame
+    
     Manager* mgr = ManagerST::Get();
     EditorConfig* cfg = EditorConfigST::Get();
     cfg->SetInstallDir(mgr->GetInstallDir());

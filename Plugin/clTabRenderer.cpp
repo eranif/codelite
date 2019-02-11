@@ -15,6 +15,7 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+#include "clSystemSettings.h"
 
 #if CL_BUILD
 #include "drawingutils.h"
@@ -75,7 +76,7 @@ void clTabColours::InitLightColours()
 #endif
     wxColour textColour = DrawingUtils::GetPanelTextColour();
     activeTabTextColour = textColour;
-    inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+    inactiveTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     if(DrawingUtils::IsDark(faceColour)) {
         // Make the active tab draker
         activeTabBgColour = faceColour.ChangeLightness(60);

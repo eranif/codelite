@@ -28,12 +28,17 @@
 
 #include "wxcrafter.h"
 #include "cl_command_event.h"
+#include "clColours.h"
 
 class DefaultWorkspacePage : public DefaultWorkspacePageBase
 {
+    clColours m_colours;
+
 protected:
     void OnFolderDropped(clCommandEvent& event);
     void DoDropFolders(const wxArrayString& folders);
+    void OnPaint(wxPaintEvent& event);
+    void OnColoursChanged(clCommandEvent& event);
 
 public:
     DefaultWorkspacePage(wxWindow* parent);

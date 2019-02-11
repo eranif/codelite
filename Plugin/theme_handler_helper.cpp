@@ -43,6 +43,7 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
+#include "clSystemSettings.h"
 #if USE_AUI_NOTEBOOK
 #include "clAuiMainNotebookTabArt.h"
 #include <wx/aui/tabart.h>
@@ -54,11 +55,13 @@ ThemeHandlerHelper::ThemeHandlerHelper(wxWindow* win)
     : m_window(win)
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ThemeHandlerHelper::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandlerHelper::OnColoursUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &ThemeHandlerHelper::OnPreferencesUpdated, this);
 }
 
 ThemeHandlerHelper::~ThemeHandlerHelper()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandlerHelper::OnColoursUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ThemeHandlerHelper::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &ThemeHandlerHelper::OnPreferencesUpdated, this);
 }
@@ -66,11 +69,6 @@ ThemeHandlerHelper::~ThemeHandlerHelper()
 void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
-
-    if(!bgColour.IsOk() || !fgColour.IsOk()) { return; }
-
     UpdateColours(m_window);
 }
 
@@ -82,8 +80,8 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     std::vector<wxWindow*> candidateWindows;
     q.push(topWindow);
 
-    wxColour bgColour = EditorConfigST::Get()->GetCurrentOutputviewBgColour();
-    wxColour fgColour = EditorConfigST::Get()->GetCurrentOutputviewFgColour();
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour fgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     while(!q.empty()) {
@@ -93,7 +91,8 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
             toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
         } else {
             if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
-               IS_TYPEOF(wxListCtrl, w)) {
+               IS_TYPEOF(wxListCtrl, w) || IS_TYPEOF(wxPanel, w)) {
+                w->SetBackgroundStyle(wxBG_STYLE_PAINT);
                 w->SetBackgroundColour(bgColour);
                 w->SetForegroundColour(fgColour);
                 w->Refresh();
@@ -233,4 +232,9 @@ void ThemeHandlerHelper::OnPreferencesUpdated(wxCommandEvent& e)
 {
     e.Skip();
     DoUpdateNotebookStyle(m_window);
+}
+
+void ThemeHandlerHelper::OnColoursUpdated(clCommandEvent& e)
+{
+    e.Skip();
 }

@@ -15,6 +15,9 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include "event_notifier.h"
+#include "codelite_events.h"
+#include "clSystemSettings.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -216,8 +219,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
     , m_dragStartTime((time_t)-1)
 {
-    SetBackgroundColour(DrawingUtils::GetPanelBgColour());
     SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     m_art = clTabRenderer::CreateRenderer(m_style);
     DoSetBestSize();
 
@@ -242,6 +245,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     SetStyle(m_style);
     // The history object
     m_history.reset(new clTabHistory());
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTabCtrl::OnColoursChanged, this);
 }
 
 void clTabCtrl::DoSetBestSize()
@@ -321,6 +325,7 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
 clTabCtrl::~clTabCtrl()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTabCtrl::OnColoursChanged, this);
     wxDELETE(m_contextMenu);
     Unbind(wxEVT_PAINT, &clTabCtrl::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
@@ -1300,6 +1305,13 @@ void clTabCtrl::OnBeginDrag()
     dragSource.SetData(dragContent);
     wxDragResult result = dragSource.DoDragDrop(true);
     wxUnusedVar(result);
+}
+
+void clTabCtrl::OnColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    Refresh();
 }
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)

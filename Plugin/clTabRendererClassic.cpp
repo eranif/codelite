@@ -4,6 +4,7 @@
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
+#include "clSystemSettings.h"
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -49,7 +50,7 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
 
     // Inactive tab
     colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(85); // darker
-    colours.inactiveTabTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+    colours.inactiveTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
     colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(130);
     colours.tabAreaColour = colours.inactiveTabBgColour;

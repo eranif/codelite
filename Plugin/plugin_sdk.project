@@ -113,6 +113,8 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="clSystemSettings.cpp"/>
+    <File Name="clSystemSettings.h"/>
     <File Name="async_executable_cmd.cpp"/>
     <File Name="build_config.cpp"/>
     <File Name="buildmanager.cpp"/>

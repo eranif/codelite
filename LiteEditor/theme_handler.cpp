@@ -37,6 +37,8 @@
 #include <wx/image.h>
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
+#include "clSystemSettings.h"
+#include <queue>
 
 #ifdef __WXMAC__
 #include <wx/srchctrl.h>
@@ -49,18 +51,17 @@ ThemeHandler::ThemeHandler()
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandler::OnColoursChanged, this);
 }
 
 ThemeHandler::~ThemeHandler()
 {
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandler::OnColoursChanged, this);
 }
 
-void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e) { e.Skip(); }
 
 void ThemeHandler::OnInitDone(wxCommandEvent& e)
 {
@@ -69,4 +70,40 @@ void ThemeHandler::OnInitDone(wxCommandEvent& e)
     m_helper->UpdateColours(clMainFrame::Get());
     // Fire "wxEVT_EDITOR_SETTINGS_CHANGED" to ensure that the notebook appearance is in sync with the settings
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
+}
+
+void ThemeHandler::OnColoursChanged(clCommandEvent& e)
+{
+    e.Skip();
+    // We do the actual update in the next iteration to ensure that the all new colours are updated
+    // in the clSystemSettings class
+    CallAfter(&ThemeHandler::UpdateColours);
+}
+
+#define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
+
+void ThemeHandler::UpdateColours()
+{
+    // Collect all toolbars
+    std::queue<wxWindow*> q;
+    q.push(clMainFrame::Get());
+
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour fgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+
+    while(!q.empty()) {
+        wxWindow* w = q.front();
+        q.pop();
+        if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxStaticText, w) || IS_TYPEOF(wxCheckBox, w)) {
+            w->SetBackgroundStyle(wxBG_STYLE_PAINT);
+            w->SetBackgroundColour(bgColour);
+            w->SetForegroundColour(fgColour);
+            w->Refresh();
+        }
+        wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
+        while(iter) {
+            q.push(iter->GetData());
+            iter = iter->GetNext();
+        }
+    }
 }

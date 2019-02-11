@@ -52,6 +52,7 @@
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clThemeUpdater.h"
 
 MainBook::MainBook(wxWindow* parent)
     : wxPanel(parent)
@@ -64,6 +65,7 @@ MainBook::MainBook(wxWindow* parent)
     , m_welcomePage(NULL)
     , m_findBar(NULL)
 {
+    clThemeUpdater::Get().RegisterWindow(this);
     CreateGuiControls();
     ConnectEvents();
 }

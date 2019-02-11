@@ -5,6 +5,7 @@
 #include "lexer_configuration.h"
 #include <wx/settings.h>
 #include "cl_config.h"
+#include "clSystemSettings.h"
 
 #ifdef __WXMSW__
 #define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_NONE
@@ -40,7 +41,7 @@ void clThemedListCtrl::ApplyTheme()
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
     if(lexer->IsDark()) {
-        colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     } else {
         colours.InitDefaults();
     }
@@ -53,16 +54,16 @@ void clThemedListCtrl::ApplyTheme()
     }
     
     // Set the built-in search colours
-    wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    wxColour highlightColur = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
     
     // When not using custom colours, use system defaults
     if(!useCustomColour) {
-        colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #ifdef __WXOSX__
-        colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        colours.SetSelItemBgColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #else
         colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif

@@ -66,7 +66,7 @@ SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos
     : m_sortByLineNumber(true)
 {
     InitialiseSymbolMap();
-    Create(parent, id, pos, size, style | wxTR_HIDE_ROOT | wxTR_ROW_LINES);
+    Create(parent, id, pos, size, style | wxTR_HIDE_ROOT);
     clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
         // Line number compare
         MyTreeItemData* cd1 = dynamic_cast<MyTreeItemData*>(a->GetClientObject());

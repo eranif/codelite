@@ -84,6 +84,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     , m_globalThemeChanged(false)
     , m_globalBgColourChanged(false)
 {
+    m_stcPreview->SetSize(wxSize(500, 300));
+    
     // Get list of available lexers
     wxString lexerName;
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
@@ -158,6 +160,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_colourPickerBaseColour->SetColour(
         clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
     m_cbUseCustomBaseColour->SetValue(clConfig::Get().Read("UseCustomBaseColour", false));
+    GetSizer()->Fit(this);
     CentreOnParent();
 }
 

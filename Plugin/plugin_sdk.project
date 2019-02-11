@@ -248,6 +248,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="clThemeUpdater.cpp"/>
+    <File Name="clThemeUpdater.h"/>
     <File Name="clGenericSTCStyler.cpp"/>
     <File Name="clGenericSTCStyler.h"/>
     <File Name="xmlutils.cpp"/>

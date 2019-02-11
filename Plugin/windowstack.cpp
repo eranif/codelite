@@ -27,11 +27,14 @@
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/wupdlock.h>
+#include "clThemeUpdater.h"
 
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     : wxWindow(parent, id)
 {
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
+    clThemeUpdater::Get().RegisterWindow(this);
+    
     // Disable the events by capturing them and not calling 'Skip()'
     //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
     //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });

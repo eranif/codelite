@@ -38,6 +38,7 @@
 #include <wx/ffile.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
+#include "clSystemSettings.h"
 
 std::unordered_map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::unordered_map<wxString, wxString> BitmapLoader::m_manifest;
@@ -192,7 +193,7 @@ void BitmapLoader::initialize()
         if(iconSet == DARK_ICONS) { fnNewZip.SetFullName("codelite-bitmaps-dark.zip"); }
     } else {
         // Determine the icons set based on the desktop theme
-        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+        if(DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
             fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
         }
     }

@@ -5,11 +5,12 @@
 #include <clColours.h>
 #include <wx/settings.h>
 #include "cl_config.h"
+#include "clSystemSettings.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #else
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -17,7 +18,6 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
-    SetNativeTheme(true);
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
@@ -26,7 +26,6 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) { return false; }
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
-    SetNativeTheme(true);
     m_keyboard.reset(new clTreeKeyboardInput(this));
     return true;
 }
@@ -50,7 +49,7 @@ void clThemedTreeCtrl::ApplyTheme()
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
     if(lexer->IsDark()) {
-        colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     } else {
         colours.InitDefaults();
     }

@@ -1,5 +1,7 @@
 #include "clSystemSettings.h"
 #include "cl_config.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 bool clSystemSettings::m_useCustomColours = false;
 clColours clSystemSettings::m_customColours;
@@ -11,9 +13,13 @@ clSystemSettings::clSystemSettings()
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         m_customColours.InitFromColour(baseColour);
     }
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clSystemSettings::OnColoursChanged, this);
 }
 
-clSystemSettings::~clSystemSettings() {}
+clSystemSettings::~clSystemSettings()
+{
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clSystemSettings::OnColoursChanged, this);
+}
 
 wxColour clSystemSettings::GetColour(wxSystemColour index)
 {

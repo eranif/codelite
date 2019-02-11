@@ -107,7 +107,6 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
                    const wxString& name)
     : wxPanel(parent, id, pos, size, wxWANTS_CHARS | wxTAB_TRAVERSAL | (style & wxWINDOW_STYLE_MASK), name)
 {
-    SetBackgroundColour(wxBG_STYLE_PAINT);
     static bool once = false;
     if(!once) {
         // Add PNG and Bitmap handler

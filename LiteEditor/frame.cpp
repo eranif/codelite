@@ -78,6 +78,7 @@
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 #include "DebuggerToolBar.h"
+#include "clThemeUpdater.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash

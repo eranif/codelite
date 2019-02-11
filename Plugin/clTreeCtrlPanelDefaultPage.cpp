@@ -13,7 +13,14 @@ clTreeCtrlPanelDefaultPage::clTreeCtrlPanelDefaultPage(wxWindow* parent)
     : clTreeCtrlPanelDefaultPageBase(parent)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    m_colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    
+    wxColour bg = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    m_colours.InitFromColour(bg);
+    if(clConfig::Get().Read("UseCustomBaseColour", false)) {
+        bg = clConfig::Get().Read("BaseColour", bg);
+        m_colours.InitFromColour(bg);
+    }
+    
     SetDropTarget(new clFileOrFolderDropTarget(parent));
     m_staticText177->SetBackgroundColour(m_colours.GetBgColour());
     m_staticText177->SetForegroundColour(m_colours.GetItemTextColour());
@@ -54,7 +61,7 @@ void clTreeCtrlPanelDefaultPage::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
     wxColour bg = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    m_colours.InitFromColour();
+    m_colours.InitFromColour(bg);
     bool useCustom = clConfig::Get().Read("UseCustomBaseColour", false);
     if(useCustom) {
         bg = clConfig::Get().Read("BaseColour", bg);

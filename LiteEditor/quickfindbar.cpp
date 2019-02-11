@@ -46,6 +46,7 @@
 #include <wx/textctrl.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clSystemSettings.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -86,6 +87,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_highlightMatches(false)
     , m_replaceInSelection(false)
 {
+    //SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Add the 'close' button
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
 
@@ -172,6 +174,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
+    //Bind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
+    Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
 }
@@ -180,7 +184,8 @@ QuickFindBar::~QuickFindBar()
 {
     // m_findEventsHandler.Reset(nullptr);
     // m_replaceEventsHandler.Reset(nullptr);
-
+    //Unbind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
+    
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
     clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightMatches);
@@ -1169,4 +1174,12 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
     int selStart, selEnd;
     ctrl->GetSelection(&selStart, &selEnd);
     return (selEnd > selStart);
+}
+
+void QuickFindBar::OnPaint(wxPaintEvent& e)
+{
+    wxAutoBufferedPaintDC dc(this);
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.DrawRectangle(GetClientRect());
 }

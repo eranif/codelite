@@ -376,8 +376,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     if(m_tabs.empty()) {
         // Draw the default bg colour
-        gcdc.SetPen(DrawingUtils::GetPanelBgColour());
-        gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
+        gcdc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        gcdc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         gcdc.DrawRectangle(GetClientRect());
         return;
     }

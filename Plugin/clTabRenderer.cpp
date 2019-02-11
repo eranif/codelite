@@ -69,11 +69,7 @@ void clTabColours::InitDarkColours()
 void clTabColours::InitLightColours()
 {
     wxColour faceColour;
-#ifdef __WXMSW__
-    faceColour = DrawingUtils::GetMenuBarBgColour();
-#else
     faceColour = DrawingUtils::GetPanelBgColour();
-#endif
     wxColour textColour = DrawingUtils::GetPanelTextColour();
     activeTabTextColour = textColour;
     inactiveTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);

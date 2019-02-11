@@ -132,7 +132,7 @@ protected:
     void OnQuickFindCommandEvent(wxCommandEvent& event);
     void OnReceivingFocus(wxFocusEvent& event);
     void OnReleaseEditor(clFindEvent& e);
-
+    void OnPaint(wxPaintEvent& e);
     void OnFindNextCaret(wxCommandEvent& e);
     void OnFindPreviousCaret(wxCommandEvent& e);
 

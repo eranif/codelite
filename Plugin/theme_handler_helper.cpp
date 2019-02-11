@@ -91,17 +91,9 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
             toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
         } else {
             if(IS_TYPEOF(wxTreeCtrl, w) || IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) ||
-               IS_TYPEOF(wxListCtrl, w) || IS_TYPEOF(wxPanel, w)) {
-                w->SetBackgroundStyle(wxBG_STYLE_PAINT);
+               IS_TYPEOF(wxListCtrl, w)) {
                 w->SetBackgroundColour(bgColour);
                 w->SetForegroundColour(fgColour);
-                w->Refresh();
-            } else if(IS_TYPEOF(wxTextCtrl, w)) {
-                w->SetBackgroundColour(bgColour);
-                wxTextCtrl* txt = static_cast<wxTextCtrl*>(w);
-                wxTextAttr attr = txt->GetDefaultStyle();
-                attr.SetTextColour(fgColour);
-                txt->SetDefaultStyle(attr);
                 w->Refresh();
             } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
                 // wxSTC requires different method

@@ -302,8 +302,7 @@ wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
 #ifdef __WXMSW__
-    // return miniToolbar ? clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR) : wxColour("rgb(245,246,247)");
-    return wxColour("rgb(245,246,247)");
+    return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #elif defined(__WXOSX__)
     wxUnusedVar(miniToolbar);
     return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);

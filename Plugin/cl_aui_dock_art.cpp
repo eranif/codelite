@@ -245,16 +245,14 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 {
     wxUnusedVar(window);
     wxUnusedVar(orientation);
-    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetPen(m_bgColour);
     dc.SetBrush(m_bgColour);
     dc.DrawRectangle(rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    wxColour penColour = m_bgColour;
-    penColour = penColour;
-    dc.SetPen(penColour);
+    dc.SetPen(m_bgColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
 }

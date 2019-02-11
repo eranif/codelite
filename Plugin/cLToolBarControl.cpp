@@ -23,5 +23,6 @@ void clToolBarControl::Render(wxDC& dc, const wxRect& rect)
     controlRect.SetX(rect.GetX());
     m_ctrl->Move(controlRect.GetTopLeft());
     m_ctrl->SetBackgroundColour(DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBar::kMiniToolBar)));
+    m_ctrl->SetForegroundColour(DrawingUtils::GetTextCtrlTextColour());
     if(!m_ctrl->IsShown()) { m_ctrl->Show(); }
 }

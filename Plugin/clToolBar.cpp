@@ -26,6 +26,10 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     , m_popupShown(false)
     , m_flags(0)
 {
+    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
+    if(m_useCustomBgColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
+    
     SetGroupSpacing(30);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetMiniToolBar(true);

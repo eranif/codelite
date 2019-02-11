@@ -751,6 +751,7 @@ void SyntaxHighlightDlg::OnCustomBaseColourPIcked(wxColourPickerEvent& event)
 void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
 {
     m_isModified = true;
+    m_restartRequired = true;
     event.Skip();
 }
 

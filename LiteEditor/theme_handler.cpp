@@ -95,10 +95,10 @@ void ThemeHandler::UpdateColours()
         wxWindow* w = q.front();
         q.pop();
         if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxStaticText, w) || IS_TYPEOF(wxCheckBox, w)) {
-            w->SetBackgroundStyle(wxBG_STYLE_PAINT);
-            w->SetBackgroundColour(bgColour);
-            w->SetForegroundColour(fgColour);
-            w->Refresh();
+            //w->SetBackgroundStyle(wxBG_STYLE_PAINT);
+            //w->SetBackgroundColour(bgColour);
+            //w->SetForegroundColour(fgColour);
+            //w->Refresh();
         }
         wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
         while(iter) {

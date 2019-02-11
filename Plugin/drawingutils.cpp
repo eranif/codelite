@@ -756,6 +756,56 @@ wxColour DrawingUtils::GetCaptionTextColour() { return wxSystemSettings::GetColo
 #define X_MARGIN 4
 #endif
 
+void DrawingUtils::DrawCustomChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
+                                    const wxColour& baseColour, const wxBitmap& bmp, int align)
+{
+    wxRect choiceRect = rect;
+    // Fill the drop down button with the custom base colour
+    dc.SetPen(baseColour);
+    dc.SetBrush(baseColour);
+    dc.DrawRectangle(rect);
+    
+    // Create colour pallete
+    clColours c;
+    c.InitFromColour(baseColour);
+    wxColour borderColour = c.GetBorderColour();
+    wxColour arrowColour = c.GetDarkBorderColour();
+    wxColour textColour = c.GetItemTextColour();
+
+    int width = choiceRect.GetHeight();
+    wxRect dropDownRect = wxRect(0, 0, width, width);
+    int x = choiceRect.GetX() + choiceRect.GetWidth() - dropDownRect.GetWidth();
+    dropDownRect.SetX(x);
+    dropDownRect = dropDownRect.CenterIn(choiceRect, wxVERTICAL);
+    dc.SetBrush(baseColour);
+    dc.SetPen(borderColour);
+    dc.DrawRoundedRectangle(choiceRect, 3.0);
+    DrawDropDownArrow(win, dc, dropDownRect, arrowColour);
+
+    // Common to all platforms: draw the text + bitmap
+    wxRect textRect = choiceRect;
+    textRect.SetWidth(textRect.GetWidth() - textRect.GetHeight());
+    dc.SetClippingRegion(textRect);
+
+    int xx = textRect.GetX() + X_MARGIN;
+    if(bmp.IsOk()) {
+        // Draw bitmap first
+        wxRect bmpRect(xx, textRect.GetY(), bmp.GetScaledWidth(), bmp.GetScaledHeight());
+        bmpRect = bmpRect.CenterIn(choiceRect, wxVERTICAL);
+        dc.DrawBitmap(bmp, bmpRect.GetTopLeft());
+        xx += bmpRect.GetWidth() + X_MARGIN;
+    }
+    dc.SetFont(GetDefaultGuiFont());
+    wxSize textSize = dc.GetTextExtent(label);
+    textRect.SetHeight(textSize.GetHeight());
+    textRect = textRect.CenterIn(choiceRect, wxVERTICAL);
+    wxString truncatedText;
+    TruncateText(label, textRect.GetWidth(), dc, truncatedText);
+    dc.SetTextForeground(textColour);
+    dc.DrawText(truncatedText, xx, textRect.GetY());
+    dc.DestroyClippingRegion();
+}
+
 void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                     const wxBitmap& bmp, int align)
 {

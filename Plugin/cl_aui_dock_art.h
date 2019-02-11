@@ -38,17 +38,11 @@
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDockArt
 {
     IManager* m_manager;
-    wxBitmap m_dockCloseBmp;
-    wxBitmap m_dockMoreBmp;
-    wxBitmap m_dockExpandeBmp;
-    wxBitmap m_dockMinimizeBmp;
-
-    bool m_useDarkColours;
-    wxColour m_darkBgColour;
-    wxColour m_notebookTabAreaDarkBgColour;
     wxColour m_captionColour;
     wxColour m_captionTextColour;
     bool m_useCustomCaptionColour;
+    bool m_useCustomBgColour = false;
+    wxColour m_bgColour;
 
 public:
     void OnSettingsChanged(wxCommandEvent& event);

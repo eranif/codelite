@@ -41,6 +41,7 @@ class WorkspaceTab : public WorkspaceTabBase
     ThemeHandlerHelper* m_themeHelper;
     ProjectSettingsDlg* m_dlg;
     clWorkspaceView* m_view;
+    wxColour m_bgColour;
 
 protected:
     void ProjectSettingsDlgClosed();
@@ -52,7 +53,7 @@ protected:
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
 
     void OnFolderDropped(clCommandEvent& event);
-
+    void OnPaint(wxPaintEvent& event);
     void CreateGUIControls();
     void ConnectEvents();
     void DoWorkspaceConfig();
@@ -77,7 +78,7 @@ protected:
     void OnWorkspaceConfig(wxCommandEvent& e);
     void OnConfigurationManagerChoice(wxCommandEvent& e);
     void OnConfigurationManager(wxCommandEvent& e);
-    void OnConfigChanged(clCommandEvent &e);
+    void OnConfigChanged(clCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
 public:

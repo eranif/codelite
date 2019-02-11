@@ -10,6 +10,7 @@
 #include <wx/dcgraph.h>
 #include <wx/menu.h>
 #include <wx/renderer.h>
+#include "cl_config.h"
 
 #ifdef __WXMSW__
 #define MARGIN_SPACER 5
@@ -34,6 +35,17 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
         Refresh();
     });
     SetSizeHints(DrawingUtils::GetBestSize("ABCDEFGHIJKLp", MARGIN_SPACER, MARGIN_SPACER));
+
+    // Add handler for the custom bg drawing colour
+    m_bgColour = DrawingUtils::GetPanelBgColour();
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [&](clCommandEvent& event) {
+        event.Skip();
+        bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+        m_bgColour = DrawingUtils::GetPanelBgColour();
+        if(useCustomColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
+        m_drawingCustomChoice = useCustomColour;
+        Refresh();
+    });
 }
 
 clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
@@ -48,12 +60,13 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     wxAutoBufferedPaintDC bdc(this);
     PrepareDC(bdc);
     wxGCDC gcdc(bdc);
+    wxColour baseColour = m_bgColour;
 
     wxRect rect = GetClientRect();
-    gcdc.SetPen(DrawingUtils::GetPanelBgColour());
-    gcdc.SetBrush(DrawingUtils::GetPanelBgColour());
+    gcdc.SetPen(baseColour);
+    gcdc.SetBrush(baseColour);
     gcdc.DrawRectangle(rect);
-    
+
 #ifdef __WXGTK__
     rect.Deflate(1);
 #endif
@@ -61,7 +74,11 @@ void clConfigurationSelectionCtrl::OnPaint(wxPaintEvent& e)
     // Build the text to draw
     wxString label;
     label << m_activeProject << " :: " << m_activeConfiguration;
-    DrawingUtils::DrawNativeChoice(this, gcdc, rect, label);
+    if(m_drawingCustomChoice) {
+        DrawingUtils::DrawCustomChoice(this, gcdc, rect, label, m_bgColour);
+    } else {
+        DrawingUtils::DrawNativeChoice(this, gcdc, rect, label);
+    }
 }
 
 void clConfigurationSelectionCtrl::OnEraseBG(wxEraseEvent& e) {}

@@ -54,25 +54,30 @@ void clThemedTreeCtrl::ApplyTheme()
     } else {
         colours.InitDefaults();
     }
+
     wxColour baseColour = colours.GetBgColour();
     bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
     if(useCustomColour) {
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
         colours.InitFromColour(baseColour);
     }
+
+    // Set the built-in search colours
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
-    colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#ifdef __WXOSX__
-    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#else
-    colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
-#endif
 
-#ifdef __WXGTK__
-    if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
+    // When not using custom colours, use system defaults
+    if(!useCustomColour) {
+        colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+#ifdef __WXOSX__
+        colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+#else
+        colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif
-    SetColours(colours);
+    }
+    // When using custom bg colour, don't use native drawings
+    this->SetNativeTheme(!useCustomColour);
+    this->SetColours(colours);
 }

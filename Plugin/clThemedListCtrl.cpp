@@ -51,19 +51,23 @@ void clThemedListCtrl::ApplyTheme()
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
         colours.InitFromColour(baseColour);
     }
-
+    
+    // Set the built-in search colours
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
-    colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    
+    // When not using custom colours, use system defaults
+    if(!useCustomColour) {
+        colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #ifdef __WXOSX__
-    colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #else
-    colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
+        colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif
-#if 0
-    if(!colours.IsLightTheme()) { colours.SetAlternateColour(colours.GetBgColour()); }
-#endif
+    }
+    // When using custom bg colour, don't use native drawings
+    this->SetNativeTheme(!useCustomColour);
     this->SetColours(colours);
 }

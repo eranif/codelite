@@ -96,6 +96,9 @@ public:
                                  const wxBitmap& bmp = wxNullBitmap,
                                  int align = wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
 
+    static void DrawCustomChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
+                                 const wxColour& baseColour = wxNullColour, const wxBitmap& bmp = wxNullBitmap,
+                                 int align = wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT);
     /// -------------------------------------------------------------
     /// New theme related API
     /// -------------------------------------------------------------

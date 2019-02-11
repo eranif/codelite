@@ -14,6 +14,8 @@ class clConfigurationSelectionCtrl : public wxPanel
     wxString m_activeProject;
     wxString m_activeConfiguration;
     eButtonState m_state;
+    wxColour m_bgColour;
+    bool m_drawingCustomChoice = false;
 
 public:
     clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

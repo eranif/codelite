@@ -34,16 +34,12 @@
 #include "cl_command_event.h"
 #include "wxPNGAnimation.h"
 #include <wx/timer.h>
+#include "clSystemSettings.h"
 
 class wxCustomStatusBar;
 class WXDLLIMPEXP_SDK wxCustomStatusBarArt
 {
 protected:
-    wxColour m_penColour;
-    wxColour m_bgColour;
-    wxColour m_textColour;
-    wxColour m_textShadowColour;
-    wxColour m_separatorColour;
     wxString m_name;
 
 public:
@@ -56,16 +52,10 @@ public:
     void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
 
-    void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
-    void SetPenColour(const wxColour& penColour) { this->m_penColour = penColour; }
-    void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
-    const wxColour& GetBgColour() const { return m_bgColour; }
-    const wxColour& GetPenColour() const { return m_penColour; }
-    const wxColour& GetTextColour() const { return m_textColour; }
-    void SetTextShadowColour(const wxColour& textShadowColour) { this->m_textShadowColour = textShadowColour; }
-    const wxColour& GetTextShadowColour() const { return m_textShadowColour; }
-    void SetSeparatorColour(const wxColour& separatorColour) { this->m_separatorColour = separatorColour; }
-    const wxColour& GetSeparatorColour() const { return m_separatorColour; }
+    wxColour GetBgColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); }
+    wxColour GetPenColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
+    wxColour GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
+    wxColour GetSeparatorColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
 };

@@ -15,12 +15,6 @@ wxDEFINE_EVENT(wxEVT_STATUSBAR_CLICKED, clCommandEvent);
 wxCustomStatusBarArt::wxCustomStatusBarArt(const wxString& name)
     : m_name(name)
 {
-    const clColours& colours = DrawingUtils::GetColours();
-    m_textColour = colours.GetItemTextColour();
-    m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    m_textShadowColour = m_bgColour;
-    m_penColour = m_bgColour;
-    m_separatorColour = m_bgColour;
 }
 
 void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text)

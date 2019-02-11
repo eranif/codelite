@@ -3869,7 +3869,10 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 {
     SyntaxHighlightDlg dlg(this);
-    dlg.ShowModal();
+    if(dlg.ShowModal() == wxID_OK && dlg.IsRestartRequired()) {
+        // A restart required
+        DoSuggestRestart();
+    }
 }
 
 void clMainFrame::OnQuickDebug(wxCommandEvent& e)

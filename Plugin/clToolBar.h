@@ -6,6 +6,7 @@
 #include <vector>
 #include <wx/menu.h>
 #include <wx/panel.h>
+#include "cl_command_event.h"
 
 class clToolBarButtonBase;
 class WXDLLIMPEXP_SDK clToolBar : public wxPanel
@@ -21,6 +22,8 @@ private:
     size_t m_flags = 0;
     wxRect m_chevronRect;
     int m_groupSpacing = 30;
+    wxColour m_bgColour;
+    bool m_useCustomBgColour = false;
 
 public:
     enum eFlags {
@@ -46,6 +49,7 @@ protected:
     void DoShowOverflowMenu();
     void PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const wxRect& rect);
     void RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup);
+    void OnColoursChanged(clCommandEvent& event);
 
 public:
     clToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -62,10 +66,10 @@ public:
         }
     }
     bool HasFlag(eFlags flag) const { return m_flags & flag; }
-    
+
     int GetXSpacer() const;
     int GetYSpacer() const;
-    
+
     /**
      * @brief set a drop down menu for a button
      */

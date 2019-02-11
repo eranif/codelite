@@ -7,34 +7,35 @@
 #ifndef _CODELITE_LITEEDITOR_SYNTAXHIGHLIGHTBASEDLG_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_SYNTAXHIGHLIGHTBASEDLG_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include "clToolBar.h"
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/clrpicker.h>
-#include <wx/dialog.h>
-#include <wx/fontpicker.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/listbox.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/statline.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/notebook.h>
+#include "Notebook.h"
+#include <wx/imaglist.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
+#include <wx/clrpicker.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/fontpicker.h>
+#include <wx/stc/stc.h>
+#include <wx/listbox.h>
+#include <wx/textctrl.h>
+#include <wx/statline.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -54,12 +55,14 @@ protected:
     clToolBar* m_toolbar;
     Notebook* m_notebook;
     wxPanel* m_panelGlobalColours;
+    wxCheckBox* m_cbUseCustomBaseColour;
+    wxColourPickerCtrl* m_colourPickerBaseColour;
+    wxStaticText* m_staticText184;
+    wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText159;
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
-    wxCheckBox* m_cbUseCustomBaseColour;
-    wxColourPickerCtrl* m_colourPickerBaseColour;
     wxStyledTextCtrl* m_stcPreview;
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
@@ -104,11 +107,12 @@ protected:
     wxButton* m_buttonApply;
 
 protected:
-    virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
-    virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseCustomBaseColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnIconSetChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
+    virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFontChanged(wxFontPickerEvent& event) { event.Skip(); }
@@ -134,12 +138,14 @@ protected:
 
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
+    wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
+    wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
+    wxStaticText* GetStaticText184() { return m_staticText184; }
+    wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
     wxStaticText* GetStaticText159() { return m_staticText159; }
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }
     wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
-    wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
-    wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
     wxStyledTextCtrl* GetStcPreview() { return m_stcPreview; }
     wxPanel* GetPanelGlobalColours() { return m_panelGlobalColours; }
     wxListBox* GetListBox() { return m_listBox; }

@@ -57,9 +57,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     newName << requestedSize << "-" << name.AfterLast('/');
 
 #ifdef __WXGTK__
-    if(clBitmap::ShouldLoadHiResImages()) {
-        newName << "@2x";
-    }
+    if(clBitmap::ShouldLoadHiResImages()) { newName << "@2x"; }
 #endif
 
     std::unordered_map<wxString, wxBitmap>::const_iterator iter = m_toolbarsBitmaps.find(newName);
@@ -161,6 +159,9 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
     return icn;
 }
 
+#define DARK_ICONS _("Dark Theme Icons Set")
+#define LIGHT_ICONS _("Light Theme Icons Set")
+
 void BitmapLoader::initialize()
 {
     wxString zipname;
@@ -184,9 +185,16 @@ void BitmapLoader::initialize()
     }
 
     // Load the bitmaps based on the current theme
+    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
-    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
-        fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
+    if(useCustomColour) {
+        wxString iconSet = clConfig::Get().Read("IconSet", LIGHT_ICONS);
+        if(iconSet == DARK_ICONS) { fnNewZip.SetFullName("codelite-bitmaps-dark.zip"); }
+    } else {
+        // Determine the icons set based on the desktop theme
+        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+            fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
+        }
     }
 
     if(fnNewZip.FileExists()) {

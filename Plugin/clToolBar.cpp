@@ -15,6 +15,9 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+#include "event_notifier.h"
+#include "codelite_events.h"
+#include "cl_config.h"
 
 wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
@@ -36,17 +39,21 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     Bind(wxEVT_ENTER_WINDOW, &clToolBar::OnEnterWindow, this);
     Bind(wxEVT_LEAVE_WINDOW, &clToolBar::OnLeaveWindow, this);
     Bind(wxEVT_SIZE, &clToolBar::OnSize, this);
-    
+
     // to make sure that the toolbar does not get the focus, we restore the focus back to the previous window
     Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& event) {
         event.Skip();
         wxWindow* oldFocus = event.GetWindow();
         if(oldFocus) { oldFocus->CallAfter(&wxWindow::SetFocus); }
     });
+
+    m_bgColour = DrawingUtils::GetPanelBgColour();
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clToolBar::OnColoursChanged, this);
 }
 
 clToolBar::~clToolBar()
 {
+    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clToolBar::OnColoursChanged, this);
     Unbind(wxEVT_PAINT, &clToolBar::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &clToolBar::OnEraseBackground, this);
     Unbind(wxEVT_LEFT_UP, &clToolBar::OnLeftUp, this);
@@ -79,9 +86,17 @@ void clToolBar::OnPaint(wxPaintEvent& event)
     clientRect.Inflate(1);
 #endif
 
-    DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
-    clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
-    DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+    if(m_useCustomBgColour) {
+        dc.SetBrush(m_bgColour);
+        dc.SetPen(m_bgColour);
+        dc.DrawRectangle(clientRect);
+        clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
+        dc.DrawRectangle(clientRect);
+    } else {
+        DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+        clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
+        DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+    }
 
     // Prepare for drawings
     std::vector<ToolVect_t> groups;
@@ -584,3 +599,12 @@ void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const w
 int clToolBar::GetXSpacer() const { return HasFlag(kMiniToolBar) ? 5 : 10; }
 
 int clToolBar::GetYSpacer() const { return HasFlag(kMiniToolBar) ? 5 : 10; }
+
+void clToolBar::OnColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
+    if(m_useCustomBgColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
+    Refresh();
+}

@@ -84,7 +84,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     , m_globalThemeChanged(false)
     , m_globalBgColourChanged(false)
 {
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(250, 250)));
     
     // Get list of available lexers
     wxString lexerName;

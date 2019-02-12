@@ -35,4 +35,9 @@ void clThemeUpdater::UpdateGlobalColours()
     });
 }
 
-void clThemeUpdater::RegisterWindow(wxWindow* win) { m_windows.push_back(win); }
+void clThemeUpdater::RegisterWindow(wxWindow* win) { m_windows.insert(win); }
+
+void clThemeUpdater::UnRegisterWindow(wxWindow* win)
+{
+    if(m_windows.count(win)) { m_windows.erase(win); }
+}

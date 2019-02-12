@@ -34,13 +34,13 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
 {
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
     clThemeUpdater::Get().RegisterWindow(this);
-    
-    // Disable the events by capturing them and not calling 'Skip()'
-    //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
-    //    Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, [](wxBookCtrlEvent& event) { wxUnusedVar(event); });
 }
 
-WindowStack::~WindowStack() { Unbind(wxEVT_SIZE, &WindowStack::OnSize, this); }
+WindowStack::~WindowStack()
+{
+    Unbind(wxEVT_SIZE, &WindowStack::OnSize, this);
+    clThemeUpdater::Get().UnRegisterWindow(this);
+}
 
 void WindowStack::Select(wxWindow* win)
 {
@@ -125,10 +125,8 @@ void WindowStack::DoHideNoActiveWindows()
     std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
         if(w != m_activeWin) { w->Hide(); }
     });
-    
+
 #ifdef __WXOSX__
-    if(m_activeWin) {
-        m_activeWin->Refresh();
-    }
+    if(m_activeWin) { m_activeWin->Refresh(); }
 #endif
 }

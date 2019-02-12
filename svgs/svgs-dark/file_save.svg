@@ -9,10 +9,12 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    data-name="Livello 1"
    id="Livello_1"
-   viewBox="0 0 128 128"
+   viewBox="0 0 64 64"
    version="1.1"
    sodipodi:docname="file_save.svg"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="0.92.1 r15371"
+   width="64"
+   height="64">
   <metadata
      id="metadata13">
     <rdf:RDF>
@@ -21,7 +23,19 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
     </rdf:RDF>
   </metadata>
   <defs
@@ -35,27 +49,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1042"
+     inkscape:window-width="2328"
+     inkscape:window-height="1103"
      id="namedview9"
      showgrid="false"
-     inkscape:zoom="1.84375"
-     inkscape:cx="-231.05085"
-     inkscape:cy="64"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="18.980832"
+     inkscape:cy="-2.1559255"
+     inkscape:window-x="2018"
+     inkscape:window-y="115"
      inkscape:window-maximized="0"
      inkscape:current-layer="Livello_1" />
-  <title
-     id="title2" />
   <path
-     inkscape:connector-curvature="0"
-     style="fill:#cccccc;stroke:#cccccc;stroke-width:3.94085312;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
-     d="m 123.12194,85.970423 a 2.9076363,3.004436 0 0 0 -2.90764,3.00444 v 22.032527 a 8.7229088,9.013308 0 0 1 -8.72291,9.01331 H 16.508609 A 8.7229088,9.013308 0 0 1 7.7857002,111.00739 V 88.974863 a 2.9076363,3.004436 0 0 0 -5.8152725,0 v 22.032527 a 14.538181,15.02218 0 0 0 14.5381813,15.02218 h 94.982781 a 14.538181,15.02218 0 0 0 14.53818,-15.02218 V 88.974863 a 2.9076363,3.004436 0 0 0 -2.90763,-3.00444 z"
-     id="path6" />
-  <path
-     inkscape:connector-curvature="0"
-     style="fill:#cccccc;stroke:#cccccc;stroke-width:4.08682013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
-     d="m 61.82327,98.99376 v 0 a 3,3.1316436 0 0 0 0.44,0.375798 l 0.24,0.135707 a 1.74,1.8163532 0 0 0 0.59,0.250531 l 0.25,0.07305 v 0 a 3,3.1316436 0 0 0 1.16,0 l 0.26,-0.0835 0.3,-0.09396 a 3,3.1316436 0 0 0 0.3,-0.167016 l 0.21,-0.125319 a 3,3.1316436 0 0 0 0.46,-0.396679 L 92.943265,70.902921 a 3,3.1316436 0 1 0 -4.21,-4.394731 L 66.94327,89.22304 V 4.9191916 a 3,3.1316436 0 0 0 -6,0 V 89.22304 l -21.79,-22.71485 a 3,3.1316436 0 0 0 -4.21,4.394731 z"
-     id="path4-1" />
+     id="rect4601"
+     style="fill:none;fill-opacity:1;stroke:#cccccc;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 18.968119,2.0000002 H 45.031883 V 15.031883 H 18.968119 Z M 12.91855,35.872284 h 38.516452 v 25.77416 H 12.91855 Z M 3.5361348,2.0000001 V 62 H 60.463865 V 9.254145 c -0.01726,-0.013402 -0.03487,-0.026281 -0.05214,-0.039629 v 0.00416 L 51.196997,2.0000001 Z" />
 </svg>

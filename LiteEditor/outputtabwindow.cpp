@@ -172,12 +172,8 @@ void OutputTabWindow::CreateGUIControls()
 
     m_vSizer = new wxBoxSizer(wxVERTICAL);
 
-// Create the default scintilla control
-#ifdef __WXGTK__
-    m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRAISED_BORDER);
-#else
+    // Create the default scintilla control
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
-#endif
 
     // We dont really want to collect undo in the output tabs...
     m_sci->SetUndoCollection(false);

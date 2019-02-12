@@ -1264,6 +1264,9 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
     if(labelCurrentState) { // Here seems to be the only reliable place to do 'updateui' for this; a real UpdateUI
                             // handler is only hit when there's no editor :/
         labelCurrentState->Enable(editor != NULL);
+    } else {
+        // In wx3.1 Bind()ing wxEVT_MENU_OPEN for the Edit menu catches its submenu opens too, so we arrive here multiple times
+        return; 
     }
 
     if(editor) {

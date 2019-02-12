@@ -51,12 +51,6 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-echo "Pulling wxCrafter changes..."
-cd $curdir/wxcrafter
-git pull --rebase
-if [ $? -ne 0 ]; then
-    exit $?
-fi
 cd $curdir
 
 linux_build() {

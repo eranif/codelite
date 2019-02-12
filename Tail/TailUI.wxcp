@@ -130,10 +130,10 @@
      "m_children": [{
        "m_type": 4466,
        "proportion": 1,
-       "border": 5,
+       "border": 0,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
-       "m_styles": [],
+       "m_styles": ["wxBORDER_NONE"],
        "m_sizerFlags": ["wxEXPAND"],
        "m_properties": [{
          "type": "winid",

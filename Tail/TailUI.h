@@ -7,20 +7,20 @@
 #ifndef _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 #define _CODELITE_TAIL_TAILUI_BASE_CLASSES_H
 
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/stc/stc.h>
+#include <wx/stattext.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 

@@ -6,50 +6,48 @@
 
 #include "TailUI.h"
 
-
 // Declare the bitmap loading function
 extern void wxCB60EInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
 TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB60EInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
-    
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 0);
-    
+    m_stc->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stc->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stc->SetMarginWidth(2, 0);
     m_stc->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,0);
-    
+    m_stc->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_stc->SetMarginWidth(3, 0);
     // Select the lexer
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -61,28 +59,26 @@ TailPanelBase::TailPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_stc->SetKeyWords(2, wxT(""));
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
-    
-    boxSizer2->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_staticTextFileName = new wxStaticText(this, wxID_ANY, _("<No opened file>"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    
+
+    boxSizer2->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(0));
+
+    m_staticTextFileName =
+        new wxStaticText(this, wxID_ANY, _("<No opened file>"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
     boxSizer2->Add(m_staticTextFileName, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     SetName(wxT("TailPanelBase"));
-    SetSize(500,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
-TailPanelBase::~TailPanelBase()
-{
-}
+TailPanelBase::~TailPanelBase() {}
 
-TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                             const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB60EInitBitmapResources();
@@ -94,25 +90,22 @@ TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon( icn );
+        app_icons.AddIcon(icn);
     }
     {
         wxBitmap iconBmp = wxXmlResource::Get()->LoadBitmap(wxT("16-find@2x"));
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon( icn );
+        app_icons.AddIcon(icn);
     }
-    SetIcons( app_icons );
+    SetIcons(app_icons);
 
-    
     wxBoxSizer* boxSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer37);
-    
+
     SetName(wxT("TailFrameBase"));
-    SetSize(500,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -127,11 +120,9 @@ TailFrameBase::TailFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 #endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
-    
 }
 
 TailFrameBase::~TailFrameBase()
 {
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TailFrameBase::OnClose), NULL, this);
-    
 }

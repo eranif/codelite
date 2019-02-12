@@ -37,8 +37,8 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer197 = new wxBoxSizer(wxVERTICAL);
     m_panelSearch->SetSizer(boxSizer197);
 
-    m_stcSearch =
-        new wxStyledTextCtrl(m_panelSearch, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSearch, wxSize(-1, -1)), 0);
+    m_stcSearch = new wxStyledTextCtrl(m_panelSearch, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelSearch, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcSearch->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcSearch->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -83,8 +83,8 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panelLog->SetSizer(boxSizer195);
 
-    m_stcOutput =
-        new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)), 0);
+    m_stcOutput = new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)),
+                                       wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);

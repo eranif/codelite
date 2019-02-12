@@ -308,7 +308,7 @@
              "border": 5,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": [],
+             "m_styles": ["wxBORDER_NONE"],
              "m_sizerFlags": ["wxEXPAND"],
              "m_properties": [{
                "type": "winid",
@@ -538,7 +538,7 @@
              "border": 0,
              "gbSpan": "1,1",
              "gbPosition": "0,0",
-             "m_styles": [],
+             "m_styles": ["wxBORDER_NONE"],
              "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
              "m_properties": [{
                "type": "winid",

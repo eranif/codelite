@@ -33,6 +33,11 @@ clCustomScrollBar::~clCustomScrollBar()
 
 void clCustomScrollBar::SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh)
 {
+    if(m_thumbSize != thumbSize || m_pageSize != pageSize || m_range != range) {
+        m_thumbRect = wxRect();
+    } else if(m_thumbPosition != position) {
+        UpdateThumbToPositon(position);
+    }
     m_thumbPosition = position;
     m_thumbSize = thumbSize;
     m_range = range;
@@ -52,27 +57,33 @@ void clCustomScrollBar::OnPaint(wxPaintEvent& e)
     dc.SetPen(m_colours.GetBgColour());
     dc.DrawRectangle(rect);
 
-    m_thumbRect = wxRect();
-    if(m_range <= 0) { return; }
-
-    // Draw the thumb but only if the number of items in the thumb is smaller than the total range
-    if(m_thumbSize < m_range) {
-        double ratio = m_thumbSize / m_range;
-        int thumbMajor = major * ratio;
-        int thumbPos = major * (m_thumbPosition / m_range);
-        if(thumbMajor < 10) { thumbMajor = 10; }
-        wxRect thumbRect(rect);
-        if(IsHorizontal()) {
-            thumbRect.SetX(thumbPos);
-            thumbRect.SetWidth(thumbMajor);
-        } else {
-            thumbRect.SetY(thumbPos);
-            thumbRect.SetHeight(thumbMajor);
-        }
-        m_thumbRect = thumbRect;
+    if(!m_thumbRect.IsEmpty()) {
         dc.SetPen(m_colours.GetBorderColour());
         dc.SetBrush(m_colours.GetBorderColour());
-        dc.DrawRoundedRectangle(m_thumbRect, 3.0);
+        dc.DrawRoundedRectangle(m_thumbRect, 0.0);
+    } else {
+        // Recalcualte the thumb size
+        if(m_range <= 0) { return; }
+
+        // Draw the thumb but only if the number of items in the thumb is smaller than the total range
+        if(m_thumbSize < m_range) {
+            double ratio = m_thumbSize / m_range;
+            int thumbMajor = major * ratio;
+            int thumbPos = major * (m_thumbPosition / m_range);
+            if(thumbMajor < 10) { thumbMajor = 10; }
+            wxRect thumbRect(rect);
+            if(IsHorizontal()) {
+                thumbRect.SetX(thumbPos);
+                thumbRect.SetWidth(thumbMajor);
+            } else {
+                thumbRect.SetY(thumbPos);
+                thumbRect.SetHeight(thumbMajor);
+            }
+            m_thumbRect = thumbRect;
+            dc.SetPen(m_colours.GetBorderColour());
+            dc.SetBrush(m_colours.GetBorderColour());
+            dc.DrawRoundedRectangle(m_thumbRect, 0.0);
+        }
     }
 }
 
@@ -99,7 +110,7 @@ void clCustomScrollBar::UpdateDrag(const wxPoint& pt)
         m_thumbCapturePoint.y += diff;
         // Based on the new thumb position (we don't move it just yet)
         // calculate the new starting position
-        pos = (m_thumbCapturePoint.y * m_range) / rect.GetHeight();
+        pos = std::ceil((double)((m_thumbCapturePoint.y * m_range) / rect.GetHeight()));
 
     } else {
         int diff = pt.x - m_mouseCapturePoint.x;
@@ -107,22 +118,41 @@ void clCustomScrollBar::UpdateDrag(const wxPoint& pt)
         m_thumbCapturePoint.x += diff;
         // Based on the new thumb position (we don't move it just yet)
         // calculate the new starting position
-        pos = (m_thumbCapturePoint.x * m_range) / rect.GetWidth();
+        pos = std::ceil((double)((m_thumbCapturePoint.x * m_range) / rect.GetWidth()));
     }
-
-    m_mouseCapturePoint = pt;
     if(pos < 0) { pos = 0; }
     if((pos + m_thumbSize) > m_range) {
         pos = (m_range - m_thumbSize);
         if(IsVertical()) { pos += 1; }
     }
 
+    if(IsVertical()) {
+        int offset = pt.y - m_mouseCapturePoint.y;
+        m_thumbRect.Offset(0, offset);
+        if(m_thumbRect.GetBottom() >= rect.GetHeight()) {
+            m_thumbRect.SetY(rect.GetHeight() - m_thumbRect.GetHeight());
+        } else if(m_thumbRect.GetY() < 0) {
+            m_thumbRect.SetY(0);
+        }
+    } else {
+        int offset = pt.x - m_mouseCapturePoint.x;
+        m_thumbRect.Offset(offset, 0);
+        if(m_thumbRect.GetRight() >= rect.GetWidth()) {
+            m_thumbRect.SetX(rect.GetWidth() - m_thumbRect.GetWidth());
+        } else if(m_thumbRect.GetX() < 0) {
+            m_thumbRect.SetX(0);
+        }
+    }
+    Refresh();
+    
     if(m_thumbPosition != pos) {
         wxScrollEvent e(wxEVT_SCROLL_THUMBTRACK);
         e.SetEventObject(this);
         e.SetPosition(pos);
         GetEventHandler()->ProcessEvent(e);
     }
+    
+    m_mouseCapturePoint = pt;
 }
 
 void clCustomScrollBar::OnMouseLeftUp(wxMouseEvent& e)
@@ -152,4 +182,22 @@ void clCustomScrollBar::SetColours(const clColours& colours)
 {
     m_colours = colours;
     Refresh();
+}
+
+void clCustomScrollBar::UpdateThumbToPositon(int pos)
+{
+    if(pos >= m_range || pos < 0) { return; }
+    
+    // assuming we have 100 pixels and 1000 items to display
+    // in that case, a movement of 1 pixel should move 10 positions (1000/100)
+    // pixel = ratio * pos
+    double majorDim = IsVertical() ? GetClientRect().GetHeight() : GetClientRect().GetWidth();
+    if(majorDim == 0.0) { return; }
+    double percent = (double)pos / m_range;
+    double thumbMajorDim = percent * majorDim;
+    if(IsVertical()) {
+        m_thumbRect.SetY(thumbMajorDim);
+    } else {
+        m_thumbRect.SetX(thumbMajorDim);
+    }
 }

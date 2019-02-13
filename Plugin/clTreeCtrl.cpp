@@ -924,7 +924,7 @@ void clTreeCtrl::ScrollToRow(int firstLine)
             size_t maxItems = GetNumLineCanFitOnScreen();
             m_model.GetNextItems(newTopLine, maxItems, items);
             AssignRects(items);
-            if(!items.empty() && !IsItemFullyVisible(items.back())) {
+            if(!items.empty() && !IsItemFullyVisible(items.back()) && (firstLine != 0)) {
                 newTopLine = m_model.GetRowAfter(newTopLine, true);
                 if(newTopLine) { SetFirstItemOnScreen(newTopLine); }
             }

@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clCustomScrollBar.cpp"/>
+    <File Name="clCustomScrollBar.h"/>
     <File Name="clThemedListCtrl.cpp"/>
     <File Name="clThemedListCtrl.h"/>
     <File Name="clControlWithItems.cpp"/>

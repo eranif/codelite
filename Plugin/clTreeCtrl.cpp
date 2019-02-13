@@ -235,6 +235,9 @@ void clTreeCtrl::Expand(const wxTreeItemId& item)
     DoUpdateHeader(item);
     UpdateScrollBar();
     Refresh();
+    if(GetVScrollBar() && GetVScrollBar()->IsShown()) {
+        GetVScrollBar()->CallAfter(&clScrollBar::Update);
+    }
 }
 
 void clTreeCtrl::Collapse(const wxTreeItemId& item)

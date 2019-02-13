@@ -155,6 +155,8 @@ public:
     void SetColours(const clColours& colours)
     {
         this->m_colours = colours;
+        GetVScrollBar()->SetColours(m_colours);
+        GetHScrollBar()->SetColours(m_colours);
         Refresh();
     }
 

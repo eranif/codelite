@@ -44,6 +44,10 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
         targetDir.AppendDir("webtools");
         targetDir.AppendDir("js");
 
+        // Clear the old installation files
+        if(targetDir.DirExists()) { targetDir.Rmdir(wxPATH_RMDIR_RECURSIVE); }
+        
+        // Create the path again and deploy the files
         targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         zipReader.Extract("*", targetDir.GetPath());
 

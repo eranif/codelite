@@ -2029,11 +2029,18 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
             return true;
         }
 #ifdef __WXMSW__
+        wxFileName fullname("", name);
         // on Windows, an executable can have a list of known extensions defined in the
-        // environment variable PATHEXT
-        wxString pathext;
-        ::wxGetEnv("PATHEXT", &pathext);
-        wxArrayString exts = ::wxStringTokenize(pathext, ";", wxTOKEN_STRTOK);
+        // environment variable PATHEXT. Use this environment variable only if the user did not
+        // provide a fullname (name + ext)
+        wxArrayString exts;
+        if(fullname.GetExt().IsEmpty()) {
+            wxString pathext;
+            ::wxGetEnv("PATHEXT", &pathext);
+            exts = ::wxStringTokenize(pathext, ";", wxTOKEN_STRTOK);
+        } else {
+            exts.Add(fullname.GetExt());
+        }
 
         for(size_t j = 0; j < exts.size(); ++j) {
             wxString ext = exts.Item(j).AfterFirst('.'); // remove the . from the extension

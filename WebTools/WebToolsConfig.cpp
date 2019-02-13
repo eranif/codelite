@@ -38,8 +38,13 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     m_jsFlags = json.namedObject("m_jsFlags").toSize_t(m_jsFlags);
     m_xmlFlags = json.namedObject("m_xmlFlags").toSize_t(m_xmlFlags);
     m_htmlFlags = json.namedObject("m_htmlFlags").toSize_t(m_htmlFlags);
-    m_nodejs = json.namedObject("m_nodejs").toString(m_nodejs);
-    m_npm = json.namedObject("m_npm").toString(m_npm);
+
+    wxString v;
+    v = json.namedObject("m_nodejs").toString(v);
+    if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_nodejs = v; }
+    v.clear();
+    v = json.namedObject("m_npm").toString(v);
+    if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_npm = v; }
 }
 
 JSONElement WebToolsConfig::ToJSON() const
@@ -81,21 +86,13 @@ wxString WebToolsConfig::GetTernProjectFile() const
         pluginsToLoad.push_back("node");
     }
 
-    if(m_jsFlags & kJSPluginRequireJS) {
-        pluginsToLoad.push_back("requirejs");
-    }
+    if(m_jsFlags & kJSPluginRequireJS) { pluginsToLoad.push_back("requirejs"); }
 
-    if(m_jsFlags & kJSPluginStrings) {
-        pluginsToLoad.push_back("complete_strings");
-    }
+    if(m_jsFlags & kJSPluginStrings) { pluginsToLoad.push_back("complete_strings"); }
 
-    if(m_jsFlags & kJSPluginAngular) {
-        pluginsToLoad.push_back("angular");
-    }
+    if(m_jsFlags & kJSPluginAngular) { pluginsToLoad.push_back("angular"); }
 
-    if(m_jsFlags & kJSWebPack) {
-        pluginsToLoad.push_back("webpack");
-    }
+    if(m_jsFlags & kJSWebPack) { pluginsToLoad.push_back("webpack"); }
 
     if(m_jsFlags & kJSNodeExpress) {
         pluginsToLoad.push_back("node_resolve");

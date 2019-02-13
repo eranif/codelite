@@ -52,12 +52,10 @@ WebTools::WebTools(IManager* manager)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
-
+    
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
-
-    WebToolsImages images;
 
     // Create the syntax highligher worker thread
     m_jsColourThread = new JavaScriptSyntaxColourThread(this);

@@ -60,7 +60,13 @@ void NodeJSLocator::Locate()
     }
     
     wxFileName fn_npm;
-    if(::clFindExecutable("npm", fn_npm, paths)) {
+    // On Windows, first try to locate npm.cmd
+    if(m_npm.IsEmpty() && ::clFindExecutable("npm.cmd", fn_npm, paths)) {
+        m_npm = fn_npm.GetFullPath();
+    }
+    
+    // No luck? locate npm (with any given extension...)
+    if(m_npm.IsEmpty() && ::clFindExecutable("npm", fn_npm, paths)) {
         m_npm = fn_npm.GetFullPath();
     }
 #endif

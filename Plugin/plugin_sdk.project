@@ -712,6 +712,8 @@
     <File Name="newkeyshortcutdlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="NodeJS">
+    <File Name="clNodeJS.cpp"/>
+    <File Name="clNodeJS.h"/>
     <File Name="NodeJSLocator.h"/>
     <File Name="NodeJSLocator.cpp"/>
     <File Name="clJSCTags.cpp"/>

@@ -185,19 +185,12 @@ void BitmapLoader::initialize()
         }
     }
 
-    // Load the bitmaps based on the current theme
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+    // Load the bitmaps based on the current theme background colour
     wxFileName fnNewZip(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
-    if(useCustomColour) {
-        wxString iconSet = clConfig::Get().Read("IconSet", LIGHT_ICONS);
-        if(iconSet == DARK_ICONS) { fnNewZip.SetFullName("codelite-bitmaps-dark.zip"); }
-    } else {
-        // Determine the icons set based on the desktop theme
-        if(DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
-            fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
-        }
+    if(DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+        fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
     }
-
+    
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");

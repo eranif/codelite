@@ -24,9 +24,9 @@
 #include <wx/checkbox.h>
 #include <wx/clrpicker.h>
 #include <wx/stattext.h>
+#include <wx/fontpicker.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/fontpicker.h>
 #include <wx/stc/stc.h>
 #include <wx/listbox.h>
 #include <wx/textctrl.h>
@@ -57,8 +57,6 @@ protected:
     wxPanel* m_panelGlobalColours;
     wxCheckBox* m_cbUseCustomBaseColour;
     wxColourPickerCtrl* m_colourPickerBaseColour;
-    wxStaticText* m_staticText184;
-    wxChoice* m_choiceIconSet;
     wxStaticText* m_staticText159;
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
@@ -110,7 +108,6 @@ protected:
     virtual void OnUseCustomBaseColour(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseCustomColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnIconSetChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnGlobalFontSelected(wxFontPickerEvent& event) { event.Skip(); }
     virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnLexerSelected(wxCommandEvent& event) { event.Skip(); }
@@ -140,8 +137,6 @@ public:
     clToolBar* GetToolbar() { return m_toolbar; }
     wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
     wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
-    wxStaticText* GetStaticText184() { return m_staticText184; }
-    wxChoice* GetChoiceIconSet() { return m_choiceIconSet; }
     wxStaticText* GetStaticText159() { return m_staticText159; }
     wxFontPickerCtrl* GetFontPickerGlobal() { return m_fontPickerGlobal; }
     wxStaticText* GetStaticText155() { return m_staticText155; }

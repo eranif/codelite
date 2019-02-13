@@ -109,14 +109,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         LoadLexer(""); // Load the default active theme
     }
 
-    // Set the icons set
-    m_choiceIconSet->Append(LIGHT_ICONS);
-    m_choiceIconSet->Append(DARK_ICONS);
-
-    wxString iconSet = clConfig::Get().Read("IconSet", LIGHT_ICONS);
-    int where = m_choiceIconSet->FindString(iconSet);
-    if(where != wxNOT_FOUND) { m_choiceIconSet->SetSelection(where); }
-
     // Load the global colours
     m_choiceGlobalTheme->Append(ColoursAndFontsManager::Get().GetAvailableThemesForLexer("c++"));
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
@@ -274,7 +266,6 @@ void SyntaxHighlightDlg::SaveChanges()
     // Save the base colour changes
     clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
     clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
-    clConfig::Get().Write("IconSet", m_choiceIconSet->GetStringSelection());
 
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
@@ -758,9 +749,3 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
     event.Skip();
 }
 
-void SyntaxHighlightDlg::OnIconSetChanged(wxCommandEvent& event)
-{
-    m_isModified = true;
-    m_restartRequired = true;
-    event.Skip();
-}

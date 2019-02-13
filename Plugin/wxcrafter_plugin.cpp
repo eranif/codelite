@@ -488,7 +488,7 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
                                             wxTAB_TRAVERSAL | wxBORDER_STATIC);
     m_dvListCtrl->SetFocus();
 
-    boxSizer163->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer163->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     m_dvListCtrl->AppendTextColumn(_("Modified"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(30), wxALIGN_CENTER,
                                    wxDATAVIEW_COL_RESIZABLE);

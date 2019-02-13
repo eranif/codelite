@@ -88,17 +88,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer181->Add(m_colourPickerBaseColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText184 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Icon Set:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
-
-    flexGridSizer181->Add(m_staticText184, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceIconSetArr;
-    m_choiceIconSet = new wxChoice(m_panelGlobalColours, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), m_choiceIconSetArr, 0);
-
-    flexGridSizer181->Add(m_choiceIconSet, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
     wxStaticBoxSizer* staticBoxSizer182 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
 
@@ -482,12 +471,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_colourPickerBaseColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
                                       wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
                                       NULL, this);
-    m_staticText184->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL,
-                             this);
-    m_choiceIconSet->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                             wxCommandEventHandler(SyntaxHighlightBaseDlg::OnIconSetChanged), NULL, this);
-    m_choiceIconSet->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI), NULL,
-                             this);
     m_fontPickerGlobal->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
                                 wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
@@ -558,12 +541,6 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_colourPickerBaseColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
                                          wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
                                          NULL, this);
-    m_staticText184->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI),
-                                NULL, this);
-    m_choiceIconSet->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                wxCommandEventHandler(SyntaxHighlightBaseDlg::OnIconSetChanged), NULL, this);
-    m_choiceIconSet->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnUseCustomColourUI),
-                                NULL, this);
     m_fontPickerGlobal->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
                                    wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,

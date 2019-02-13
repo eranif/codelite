@@ -48,7 +48,6 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     bool m_restartRequired = false;
 
 protected:
-    virtual void OnIconSetChanged(wxCommandEvent& event);
     virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event);
     virtual void OnUseCustomBaseColour(wxCommandEvent& event);
     virtual void OnUseCustomColourUI(wxUpdateUIEvent& event);

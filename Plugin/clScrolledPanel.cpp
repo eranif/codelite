@@ -200,7 +200,11 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
     }
 
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
+#if CL_USE_NATIVE_SCROLLBAR
     m_vsb->Refresh();
+#else
+    m_vsb->Update();
+#endif
     CallAfter(&clScrolledPanel::DoPositionHScrollbar);
 }
 
@@ -341,7 +345,7 @@ wxFont clScrolledPanel::GetDefaultFont()
         }
         once = true;
     }
-#if wxCHECK_VERSION(3,1,2)
+#if wxCHECK_VERSION(3, 1, 2)
     float pointSize = f.GetFractionalPointSize() * ratio;
     f.SetFractionalPointSize(pointSize);
 #else
@@ -403,7 +407,11 @@ void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSiz
         m_hsb->Hide();
     }
     m_hsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
+#if CL_USE_NATIVE_SCROLLBAR
     m_hsb->Refresh();
+#else
+    m_hsb->Update();
+#endif
     CallAfter(&clScrolledPanel::DoPositionVScrollbar);
 }
 

@@ -286,8 +286,8 @@ void clControlWithItems::UpdateScrollBar()
 void clControlWithItems::Render(wxDC& dc)
 {
     // draw the background on the entire client area
-    dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(GetColours().GetBgColour());
+    dc.SetBrush(GetColours().GetBgColour());
     dc.DrawRectangle(GetClientRect());
 
     // draw the background on the entire client area

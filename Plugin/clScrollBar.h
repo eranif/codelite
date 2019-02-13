@@ -8,8 +8,10 @@
 
 #if defined(__WXMSW__) || defined(__WXGTK__)
 #define ScrollBarBase clCustomScrollBar
+#define CL_USE_NATIVE_SCROLLBAR 0
 #else
 #define ScrollBarBase wxScrollBar
+#define CL_USE_NATIVE_SCROLLBAR 1
 #endif
 
 class WXDLLIMPEXP_SDK clScrollBar : public ScrollBarBase

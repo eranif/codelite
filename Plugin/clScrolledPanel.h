@@ -48,7 +48,7 @@ protected:
 
     virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnIdle(wxIdleEvent& event);
-    void OnScrolledPanelSize(wxSizeEvent& event);
+    virtual void OnSize(wxSizeEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnMotion(wxMouseEvent& event);

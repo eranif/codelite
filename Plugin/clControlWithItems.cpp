@@ -193,7 +193,6 @@ void clControlWithItems::DoInitialize()
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_viewHeader = new clHeaderBar(this, m_colours);
-    Bind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
     Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& e) {
         if(m_searchControl && m_searchControl->IsShown()) { m_searchControl->Dismiss(); }
@@ -206,7 +205,6 @@ void clControlWithItems::DoInitialize()
 clControlWithItems::~clControlWithItems()
 {
     m_searchControl = nullptr;
-    Unbind(wxEVT_SIZE, &clControlWithItems::OnSize, this);
     Unbind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
 }
 
@@ -302,6 +300,7 @@ void clControlWithItems::Render(wxDC& dc)
 void clControlWithItems::OnSize(wxSizeEvent& event)
 {
     event.Skip();
+    clScrolledPanel::OnSize(event);
     m_firstColumn = 0;
     // since the control size was resized, we turn the "m_maxList" flag to ON
     // and in turn, in the OnPaint() we will try to maximize the list displayed

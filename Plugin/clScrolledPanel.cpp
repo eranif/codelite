@@ -57,7 +57,7 @@ void clScrolledPanel::DoInitialize()
     Bind(wxEVT_LEFT_UP, &clScrolledPanel::OnLeftUp, this);
     Bind(wxEVT_MOTION, &clScrolledPanel::OnMotion, this);
     Bind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
-    Bind(wxEVT_SIZE, &clScrolledPanel::OnScrolledPanelSize, this);
+    Bind(wxEVT_SIZE, &clScrolledPanel::OnSize, this);
 
     Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& event) {
         event.Skip();
@@ -110,7 +110,7 @@ clScrolledPanel::~clScrolledPanel()
     m_hsb->Unbind(wxEVT_CUSTOM_SCROLL, &clScrolledPanel::OnHCustomScroll, this);
 #endif
 
-    Unbind(wxEVT_SIZE, &clScrolledPanel::OnScrolledPanelSize, this);
+    Unbind(wxEVT_SIZE, &clScrolledPanel::OnSize, this);
     Unbind(wxEVT_CHAR_HOOK, &clScrolledPanel::OnCharHook, this);
     Unbind(wxEVT_IDLE, &clScrolledPanel::OnIdle, this);
     Unbind(wxEVT_LEFT_DOWN, &clScrolledPanel::OnLeftDown, this);
@@ -401,7 +401,7 @@ void clScrolledPanel::DoPositionHScrollbar()
     m_hsb->Move(x, y);
 }
 
-void clScrolledPanel::OnScrolledPanelSize(wxSizeEvent& event)
+void clScrolledPanel::OnSize(wxSizeEvent& event)
 {
     event.Skip();
     DoPositionVScrollbar();

@@ -1,7 +1,7 @@
 #ifndef CLSCROLLEDPANEL_H
 #define CLSCROLLEDPANEL_H
 
-#include "clScrollBar.h"
+#include "clCustomScrollBar.h"
 #include "codelite_exports.h"
 #include <wx/bitmap.h>
 #include <wx/dcgraph.h>
@@ -9,12 +9,20 @@
 #include <wx/panel.h>
 #include <wx/scrolbar.h>
 #include <wx/treebase.h>
+#include "clScrollBar.h"
+
+#if CL_USE_NATIVE_SCROLLBAR
+typedef clScrollBar ScrollBar_t;
+#else
+typedef clCustomScrollBar ScrollBar_t;
+#endif
 
 class WXDLLIMPEXP_SDK clScrolledPanel : public wxWindow
 {
 private:
-    clScrollBar* m_vsb = nullptr;
-    clScrollBar* m_hsb = nullptr;
+    ScrollBar_t* m_vsb = nullptr;
+    ScrollBar_t* m_hsb = nullptr;
+    
     int m_pageSize = 0;
     int m_position = 0;
     int m_thumbSize = 0;
@@ -29,8 +37,15 @@ private:
     bool m_dragging = false;
 
 protected:
+#if CL_USE_NATIVE_SCROLLBAR
     virtual void OnVScroll(wxScrollEvent& event);
     virtual void OnHScroll(wxScrollEvent& event);
+#else
+    // custom scrollbar events
+    void OnVCustomScroll(clScrollEvent& event);
+    void OnHCustomScroll(clScrollEvent& event);
+#endif
+
     virtual void OnCharHook(wxKeyEvent& event);
     virtual void OnIdle(wxIdleEvent& event);
     void OnScrolledPanelSize(wxSizeEvent& event);
@@ -59,8 +74,8 @@ public:
     clScrolledPanel() {}
     virtual ~clScrolledPanel();
 
-    clScrollBar* GetHScrollBar() { return m_hsb; }
-    clScrollBar* GetVScrollBar() { return m_vsb; }
+    ScrollBar_t* GetHScrollBar() { return m_hsb; }
+    ScrollBar_t* GetVScrollBar() { return m_vsb; }
     
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);

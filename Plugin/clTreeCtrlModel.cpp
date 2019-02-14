@@ -29,6 +29,7 @@ clTreeCtrlModel::~clTreeCtrlModel()
 
 void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
 {
+    items.reserve(count);
     return from->GetNextItems(count, items, selfIncluded);
 }
 

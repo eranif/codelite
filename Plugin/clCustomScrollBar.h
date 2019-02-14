@@ -4,6 +4,26 @@
 #include "codelite_exports.h"
 #include <wx/panel.h>
 #include "clColours.h"
+#include <wx/event.h>
+
+/// a wxCommandEvent that takes ownership of the clientData
+class WXDLLIMPEXP_SDK clScrollEvent : public wxCommandEvent
+{
+protected:
+    int m_position = wxNOT_FOUND;
+
+public:
+    clScrollEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clScrollEvent(const clScrollEvent& event);
+    clScrollEvent& operator=(const clScrollEvent& src);
+    virtual ~clScrollEvent();
+    virtual wxEvent* Clone() const;
+    void SetPosition(int position) { this->m_position = position; }
+    int GetPosition() const { return m_position; }
+};
+
+typedef void (wxEvtHandler::*clScrollEventFunction)(clScrollEvent&);
+#define clScrollEventHandler(func) wxEVENT_HANDLER_CAST(clScrollEventFunction, func)
 
 class WXDLLIMPEXP_SDK clCustomScrollBar : public wxPanel
 {
@@ -17,22 +37,28 @@ class WXDLLIMPEXP_SDK clCustomScrollBar : public wxPanel
     wxPoint m_thumbCapturePoint;
     bool m_dragging = false;
     clColours m_colours;
+    bool m_notifyScroll = false;
 
 protected:
+    void OnIdle(wxIdleEvent& event);
     void OnPaint(wxPaintEvent& e);
     void OnMouseLeftDown(wxMouseEvent& e);
     void OnMouseLeftUp(wxMouseEvent& e);
     void OnMotion(wxMouseEvent& e);
     void OnSize(wxSizeEvent& e);
     void UpdateDrag(const wxPoint& pt);
-    void UpdateThumbToPositon(int pos);
-    
+    int GetPositionFromThumbCoords() const;
+
 public:
     clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize, long style = wxSB_VERTICAL);
     virtual ~clCustomScrollBar();
 
-    void SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh);
+    bool ShouldShow() const;
+    bool CanScollDown() const { return (GetThumbPosition() + GetThumbSize()) < GetRange(); }
+
+    void SetPosition(int pos, bool notify = true);
+    void Update(int thumbSize, int range, int pageSize, int position);
 
     bool IsVertical() const { return m_sbStyle & wxSB_VERTICAL; }
     bool IsHorizontal() const { return m_sbStyle & wxSB_HORIZONTAL; }
@@ -51,4 +77,5 @@ public:
     virtual void SetColours(const clColours& colours);
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CUSTOM_SCROLL, clScrollEvent);
 #endif // CLCUSTOMSCROLLBAR_H

@@ -196,6 +196,7 @@ TagsOptionsData::TagsOptionsData()
     m_tokens.Add("LLDB_API");
     m_tokens.Add("PYTHON_API");
     m_tokens.Add("__cpp_deduction_guides=0");
+    m_tokens.Add("wxMSVC_FWD_MULTIPLE_BASES");
     
     // libcpp macros
     m_tokens.Add("_LIBCPP_TYPE_VIS_ONLY");

@@ -30,11 +30,8 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
     , m_options(kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor)
 {
-    SetConfig(&clConfig::Get());
     ::MSWSetNativeTheme(GetTreeCtrl());
     m_bmpLoader = clGetManager()->GetStdIcons();
-
-    m_options = GetConfig()->Read("FileExplorer/Options", m_options);
     GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
     m_toolbar = new clToolBar(this);
@@ -786,9 +783,9 @@ void clTreeCtrlPanel::OnOpenShellFolder(wxCommandEvent& event)
 void clTreeCtrlPanel::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-
     if(GetConfig()) {
         wxArrayString pinnedFolders;
+        m_options = GetConfig()->Read("FileExplorer/Options", m_options);
         pinnedFolders = GetConfig()->Read("ExplorerFolders", pinnedFolders);
         for(size_t i = 0; i < pinnedFolders.size(); ++i) {
             AddFolder(pinnedFolders.Item(i));
@@ -924,7 +921,7 @@ void clTreeCtrlPanel::OnLinkEditor(wxCommandEvent& event)
     } else {
         m_options &= ~kLinkToEditor;
     }
-    GetConfig()->Write("FileExplorer/Options", m_options);
+    if(GetConfig()) { GetConfig()->Write("FileExplorer/Options", m_options); }
 }
 
 void clTreeCtrlPanel::OnLinkEditorUI(wxUpdateUIEvent& event)

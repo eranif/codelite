@@ -34,6 +34,8 @@
 
 class NodeJSWorkspaceView : public clTreeCtrlPanel
 {
+    clConfig m_config;
+
 protected:
     void OnContextMenu(clContextMenuEvent& event);
     void OnContextMenuFile(clContextMenuEvent& event);

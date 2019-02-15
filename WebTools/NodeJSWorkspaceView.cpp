@@ -22,7 +22,9 @@
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
+    , m_config("nodejs-explorer")
 {
+    SetConfig(&m_config);
     SetNewFileTemplate("Untitled.js", wxStrlen("Untitled"));
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);

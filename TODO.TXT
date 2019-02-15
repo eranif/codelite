@@ -1,4 +1,3 @@
-* Git: add an option to open the commit in GitHub
-* Replace the CMake plugin with a custom build workspace type
-* Auto Save Plugin
-
+* Add node lint (node -c) for a source file
+* Add option to install npm packages
+* Startup Wizard: offer the user to set the global theme

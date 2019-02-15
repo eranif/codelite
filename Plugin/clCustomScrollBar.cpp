@@ -115,8 +115,8 @@ void clCustomScrollBar::UpdateDrag(const wxPoint& pt)
         }
     }
     wxPanel::Refresh();
-    
-    int pos = GetPositionFromThumbCoords();
+
+    int pos = GetPositionFromPoint(m_thumbRect.GetTopLeft());
     if(m_thumbPosition != pos) {
         m_thumbPosition = pos;
         m_notifyScroll = true;
@@ -129,7 +129,14 @@ void clCustomScrollBar::OnMouseLeftUp(wxMouseEvent& e)
     e.Skip();
     // Calculate the new starting position
     if(HasCapture()) { ReleaseMouse(); }
-    UpdateDrag(e.GetPosition());
+
+    if(m_dragging) {
+        UpdateDrag(e.GetPosition());
+
+    } else {
+        int pos = GetPositionFromPoint(e.GetPosition());
+        if(m_thumbPosition != pos) { SetPosition(pos, true); }
+    }
     m_mouseCapturePoint = wxPoint();
     m_thumbCapturePoint = wxPoint();
     m_dragging = false;
@@ -156,11 +163,11 @@ void clCustomScrollBar::SetColours(const clColours& colours)
 void clCustomScrollBar::SetPosition(int pos, bool notify)
 {
     if(pos >= m_range || pos < 0) { pos = 0; }
-
-    // assuming we have 100 pixels and 1000 items to display
-    // in that case, a movement of 1 pixel should move 10 positions (1000/100)
-    // pixel = ratio * pos
     m_thumbPosition = pos;
+
+    // Normalise position
+    if((m_thumbPosition + m_thumbSize) > m_range) { m_thumbPosition = m_range - m_thumbSize; }
+
     wxRect clientRect = GetClientRect();
     double majorDim = IsVertical() ? clientRect.GetHeight() : clientRect.GetWidth();
     if(majorDim == 0.0) {
@@ -170,7 +177,10 @@ void clCustomScrollBar::SetPosition(int pos, bool notify)
     }
     double percent = (double)m_thumbSize / m_range;
     double thumbMajorDim = percent * majorDim;
-    double thumbCoord = (double)(pos / m_range) * majorDim;
+    double thumbCoord = (double)(m_thumbPosition / m_range) * majorDim;
+
+    // Make sure that the thumb is always visible
+    if(thumbMajorDim < 10) { thumbMajorDim = 10; }
     if(IsVertical()) {
         m_thumbRect.SetY(thumbCoord);
         m_thumbRect.SetX(0);
@@ -187,19 +197,19 @@ void clCustomScrollBar::SetPosition(int pos, bool notify)
         // fire scroll event
         clScrollEvent event(wxEVT_CUSTOM_SCROLL);
         event.SetEventObject(this);
-        event.SetPosition(pos);
+        event.SetPosition(m_thumbPosition);
         GetEventHandler()->ProcessEvent(event);
     }
     return;
 }
 
-int clCustomScrollBar::GetPositionFromThumbCoords() const
+int clCustomScrollBar::GetPositionFromPoint(const wxPoint& pt) const
 {
     wxRect clientRect = GetClientRect();
     double majorDim = IsVertical() ? clientRect.GetHeight() : clientRect.GetWidth();
     if(majorDim == 0.0) { return wxNOT_FOUND; }
-    double thumbCoord = IsVertical() ? m_thumbRect.GetY() : m_thumbRect.GetX();
-    return ((thumbCoord / majorDim) * m_range);
+    double thumbCoord = IsVertical() ? pt.y : pt.x;
+    return std::ceil((double)((thumbCoord / majorDim) * m_range));
 }
 
 void clCustomScrollBar::OnIdle(wxIdleEvent& event)

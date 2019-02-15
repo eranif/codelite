@@ -47,7 +47,7 @@ protected:
     void OnMotion(wxMouseEvent& e);
     void OnSize(wxSizeEvent& e);
     void UpdateDrag(const wxPoint& pt);
-    int GetPositionFromThumbCoords() const;
+    int GetPositionFromPoint(const wxPoint& pt) const;
 
 public:
     clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,

@@ -31,7 +31,7 @@ public:
     /**
      * @brief initialise this class by finding all the binaries required
      */
-    bool Initialise();
+    bool Initialise(const wxArrayString& hints = {});
 
     /**
      * @brief terminate this instance
@@ -44,6 +44,12 @@ public:
      * @brief install an npm package
      */
     bool NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args);
+
+    /**
+     * @brief run npm init in a directory
+     */
+    bool NpmInit(const wxString& workingDirectory);
+
     bool IsInitialised() const { return m_initialised; }
     const wxFileName& GetNode() const { return m_node; }
     const wxFileName& GetNpm() const { return m_npm; }

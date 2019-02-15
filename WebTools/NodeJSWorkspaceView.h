@@ -30,19 +30,17 @@
 #include "cl_command_event.h"
 #include "NodeJSDebuggerDlg.h"
 #include "TerminalEmulator.h"
+#include "clFileSystemEvent.h"
 
 class NodeJSWorkspaceView : public clTreeCtrlPanel
 {
-protected:
-    TerminalEmulator m_terminal;
-    
 protected:
     void OnContextMenu(clContextMenuEvent& event);
     void OnContextMenuFile(clContextMenuEvent& event);
     void OnFolderDropped(clCommandEvent& event);
     void OnShowHiddenFiles(wxCommandEvent& event);
     void OnCloseWorkspace(wxCommandEvent& event);
-
+    void OnFileSystemUpdated(clFileSystemEvent& event);
     void OnOpenPackageJsonFile(wxCommandEvent& event);
     void OnProjectDebug(wxCommandEvent& event);
     void OnProjectRun(wxCommandEvent& event);

@@ -46,7 +46,7 @@ public:
     /**
      * @brief attempt to auto locate nodejs installation
      */
-    void Locate();
+    void Locate(const wxArrayString& hints = {});
 
     const wxString& GetNodejs() const { return m_nodejs; }
     const wxString& GetNpm() const { return m_npm; }

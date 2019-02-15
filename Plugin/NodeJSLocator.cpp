@@ -11,11 +11,13 @@ NodeJSLocator::NodeJSLocator() {}
 
 NodeJSLocator::~NodeJSLocator() {}
 
-void NodeJSLocator::Locate()
+void NodeJSLocator::Locate(const wxArrayString& hints)
 {
+    wxArrayString paths = hints;
 #if defined(__WXGTK__) || defined(__WXOSX__)
     // Linux
-    wxArrayString paths;
+    
+    // add the standard paths
     paths.Add("/usr/local/bin");
     paths.Add("/usr/bin");
 
@@ -31,8 +33,6 @@ void NodeJSLocator::Locate()
 
 #elif defined(__WXMSW__)
     // Registry paths are searched first
-    wxArrayString paths;
-
     {
         // HKEY_LOCAL_MACHINE\SOFTWARE\Node.js
         wxRegKey regKeyNodeJS(wxRegKey::HKLM, "SOFTWARE\\Node.js");

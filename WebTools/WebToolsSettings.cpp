@@ -3,6 +3,7 @@
 #include "WebToolsConfig.h"
 #include "globals.h"
 #include "NodeJSLocator.h"
+#include "clNodeJS.h"
 
 WebToolsSettings::WebToolsSettings(wxWindow* parent)
     : WebToolsSettingsBase(parent)
@@ -115,5 +116,11 @@ void WebToolsSettings::DoSave()
     config.SetNodejs(m_filePickerNodeJS->GetPath());
     config.SetNpm(m_filePickerNpm->GetPath());
     config.Save();
+    
+    wxFileName fnNodeJS(config.GetNodejs());
+    wxArrayString hints;
+    if(fnNodeJS.FileExists()) { hints.Add(fnNodeJS.GetPath()); }
+    clNodeJS::Get().Initialise(hints);
+    
     m_modified = false;
 }

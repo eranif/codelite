@@ -23,6 +23,7 @@
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+#include "clNodeJS.h"
 
 static WebTools* thePlugin = NULL;
 
@@ -52,6 +53,14 @@ WebTools::WebTools(IManager* manager)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
+    
+    // Initialise NodeJS
+    WebToolsConfig conf;
+    conf.Load();
+    wxFileName fnNodeJS(conf.GetNodejs());
+    wxArrayString hints;
+    if(fnNodeJS.FileExists()) { hints.Add(fnNodeJS.GetPath()); }
+    clNodeJS::Get().Initialise(hints);
     
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call

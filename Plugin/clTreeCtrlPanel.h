@@ -123,7 +123,12 @@ public:
      * @brief return true if a folder is opened in this view
      */
     bool IsFolderOpened() const;
-
+    
+    /**
+     * @brief refresh the entire tree, unconditionally 
+     */
+    void RefreshTree();
+    
 protected:
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;

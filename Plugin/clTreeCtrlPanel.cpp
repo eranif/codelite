@@ -404,7 +404,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     // Open the file in the editor
     clGetManager()->OpenFile(file.GetFullPath());
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
-    
+
     // Notify about file creation
     clFileSystemEvent fsEvent(wxEVT_FILE_CREATED);
     fsEvent.SetPath(file.GetFullPath());
@@ -432,7 +432,7 @@ void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
     wxTreeItemId newFile = DoAddFolder(item, file.GetPath());
     GetTreeCtrl()->SortChildren(item);
     CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
-    
+
     // Notify about folder creation
     clFileSystemEvent fsEvent(wxEVT_FOLDER_CREATED);
     fsEvent.SetPath(file.GetPath());
@@ -1001,4 +1001,22 @@ void clTreeCtrlPanel::OnRenameFolder(wxCommandEvent& event)
     } else {
         clWARNING() << "Failed to rename folder:" << oldFullPath << "->" << newFullPath;
     }
+}
+
+void clTreeCtrlPanel::RefreshTree()
+{
+    // Close the selected folders
+    wxArrayString paths;
+    wxArrayTreeItemIds items;
+    GetTopLevelFolders(paths, items);
+
+    for(size_t i = 0; i < items.size(); ++i) {
+        bool isExpanded = GetTreeCtrl()->IsExpanded(items.Item(i));
+        DoCloseFolder(items.Item(i));
+        wxTreeItemId itemFolder = DoAddFolder(GetTreeCtrl()->GetRootItem(), paths.Item(i));
+        DoExpandItem(itemFolder, isExpanded);
+    }
+
+    GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
+    ToggleView();
 }

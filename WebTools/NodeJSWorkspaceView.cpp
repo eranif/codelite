@@ -18,6 +18,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
+#include "clNodeJS.h"
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -26,19 +27,19 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     SetViewName(viewName);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
 }
 
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    WebToolsConfig webToolsConf;
-    webToolsConf.Load();
     if((event.GetEventObject() == this)) {
         wxMenu* menu = event.GetMenu();
 
@@ -98,15 +99,12 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectDebug, this, XRCID("nodejs_project_debug"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectRun, this, XRCID("nodejs_project_run"));
             } else {
-                // Check to see if we got 'npm' detected on this machine
-                bool hasNpm = !webToolsConf.GetNpm().IsEmpty();
-
                 // Offer a "npm init" menu entry
                 menu->InsertSeparator(openShellPos);
                 wxMenuItem* menuItem = new wxMenuItem(NULL, XRCID("nodejs_npm_init"), _("Run 'npm init' here"));
                 menu->Insert(openShellPos, menuItem);
                 menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
-                menu->Enable(XRCID("nodejs_npm_init"), hasNpm && !m_terminal.IsRunning());
+                menu->Enable(XRCID("nodejs_npm_init"), clNodeJS::Get().IsInitialised());
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInit, this, XRCID("nodejs_npm_init"));
             }
         }
@@ -309,13 +307,15 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
 void NodeJSWorkspaceView::OnNpmInit(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_terminal.IsRunning()) return;
 
     wxString path;
     wxTreeItemId item;
     if(!GetSelectProjectPath(path, item)) return;
+    clNodeJS::Get().NpmInit(path);
+}
 
-    WebToolsConfig conf;
-    conf.Load();
-    m_terminal.ExecuteConsole(conf.GetNpm(), true, "init", path, "npm init");
+void NodeJSWorkspaceView::OnFileSystemUpdated(clFileSystemEvent& event)
+{
+    event.Skip();
+    RefreshTree();
 }

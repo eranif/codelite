@@ -265,14 +265,15 @@ void clControlWithItems::UpdateScrollBar()
     {
         // H-scrollbar
         int thumbSize = GetClientArea().GetWidth();
-        int pageSize = (thumbSize - 1);
         int rangeSize = IsEmpty() ? 0 : m_viewHeader->GetWidth();
+        if((m_firstColumn + thumbSize) > rangeSize) { m_firstColumn = (rangeSize - thumbSize); }
+        int pageSize = (thumbSize - 1);
         int position = m_firstColumn;
-        
+
         int pixels_after = rangeSize - m_firstColumn - thumbSize;
         if((pixels_after < 0) && (rangeSize > thumbSize)) {
-           // m_firstColumn += pixels_after; // reduce it from the left side
-            clHeaderItem& column = GetHeader()->Item(GetHeader()->size()-1);
+            // m_firstColumn += pixels_after; // reduce it from the left side
+            clHeaderItem& column = GetHeader()->Item(GetHeader()->size() - 1);
             column.UpdateWidth(column.GetWidth() - pixels_after);
         }
         if(m_firstColumn < 0) { m_firstColumn = 0; }

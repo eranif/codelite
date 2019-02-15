@@ -1087,6 +1087,9 @@ void clTreeCtrl::DeleteAllItems()
     m_model.EnableEvents(true);
     DoUpdateHeader(nullptr);
     m_scrollLines = 0;
+    SetFirstColumn(0);
+    UpdateScrollBar();
+    Refresh();
 }
 
 wxTreeItemId clTreeCtrl::GetNextItem(const wxTreeItemId& item) const { return m_model.GetItemAfter(item, true); }

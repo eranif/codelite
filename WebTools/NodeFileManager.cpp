@@ -5,6 +5,7 @@
 #include <wx/filename.h>
 #include <wx/uri.h>
 #include <wx/regex.h>
+#include <wx/filesys.h>
 
 NodeFileManager::NodeFileManager() {}
 
@@ -77,28 +78,6 @@ wxString NodeFileManager::DoGetFilePath(const wxString& id) const
     return iter->second;
 }
 
-wxString NodeFileManager::URIToFileName(const wxString& uri)
-{
-    wxString filename = wxURI::Unescape(uri);
-    filename.StartsWith(FILE_SCHEME, &filename);
-    // On Windows, the file is returned like (after removing the file://)
-    // /C:/Http/htdocs/file.php - remote the leading "/"
-    wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
-    if(reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
-        // Windows file
-        filename.Remove(0, 1);
-    }
-    return wxFileName(filename).GetFullPath();
-}
+wxString NodeFileManager::URIToFileName(const wxString& uri) { return wxFileSystem::URLToFileName(uri).GetFullPath(); }
 
-wxString NodeFileManager::FileNameToURI(const wxString& uri)
-{
-    if(uri.StartsWith("file:///")) { return uri; }
-    wxString filename;
-    filename << "file://";
-#ifdef __WXMSW__
-    filename << "/";
-#endif
-    filename << uri;
-    return filename;
-}
+wxString NodeFileManager::FileNameToURI(const wxString& uri) { return wxFileSystem::FileNameToURL(wxFileName(uri)); }

@@ -93,11 +93,11 @@ wxString NodeFileManager::URIToFileName(const wxString& uri)
 
 wxString NodeFileManager::FileNameToURI(const wxString& uri)
 {
-#ifdef __WXOSX__
     wxString filename;
-    filename << "file://" << uri;
-    return filename;
-#else
-    return uri;
+    filename << "file://";
+#ifdef __WXMSW__
+    filename << "/";
 #endif
+    filename << uri;
+    return filename;
 }

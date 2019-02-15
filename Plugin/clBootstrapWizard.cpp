@@ -110,7 +110,7 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
 
     m_developmentProfile = clConfig::Get().Read("DevelopmentProfile", m_developmentProfile);
     m_radioBoxProfile->SetSelection(m_developmentProfile);
-    
+
 #if PHP_BUILD
     m_radioBoxProfile->SetSelection(3); // PHP
     m_radioBoxProfile->Enable(false);
@@ -262,7 +262,10 @@ bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
     }
 }
 
-bool clBootstrapWizard::IsRestartRequired() { return m_developmentProfile != m_radioBoxProfile->GetSelection(); }
+bool clBootstrapWizard::IsRestartRequired()
+{
+    return (m_developmentProfile != m_radioBoxProfile->GetSelection()) || m_globalThemeChanged;
+}
 
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
@@ -284,4 +287,17 @@ void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
     ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
                    wxOK | wxCENTER | wxICON_INFORMATION, this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
+}
+
+void clBootstrapWizard::OnGlobalThemeSelected(wxCommandEvent& event)
+{
+    m_globalThemeChanged = true;
+    int sel = m_choiceGlobalTheme->GetSelection();
+    if(sel == 0) {
+        // Default
+        clConfig::Get().Write("UseCustomBaseColour", false);
+    } else {
+        clConfig::Get().Write("UseCustomBaseColour", true);
+        clConfig::Get().Write("BaseColour", sel == 1 ? wxString("rgb(48,48,48)") : wxString("rgb(224,224,224)"));
+    }
 }

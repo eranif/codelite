@@ -20,6 +20,7 @@
 #include <wx/commandlinkbutton.h>
 #include <wx/radiobox.h>
 #include <wx/dataview.h>
+#include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/stc/stc.h>
@@ -39,7 +40,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class clBoostrapWizardBase : public wxWizard
 {
 protected:
@@ -58,6 +58,9 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlCompilers;
     clBoostrapWizardPageColours* m_wizardPageColoursAndFonts;
     wxBannerWindow* m_banner71;
+    wxStaticText* m_staticText122;
+    wxChoice* m_choiceGlobalTheme;
+    wxStaticText* m_staticText120;
     wxChoice* m_choiceTheme;
     wxStyledTextCtrl* m_stc24;
     clBoostrapWizardPageWhitespace* m_wizardPageWhitespace;
@@ -71,6 +74,7 @@ protected:
     virtual void OnScanForCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnInstallCompiler(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -86,6 +90,9 @@ public:
     wxDataViewListCtrl* GetDvListCtrlCompilers() { return m_dvListCtrlCompilers; }
     clBoostrapWizardPageCompilers* GetWizardPageCompilers() { return m_wizardPageCompilers; }
     wxBannerWindow* GetBanner71() { return m_banner71; }
+    wxStaticText* GetStaticText122() { return m_staticText122; }
+    wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
+    wxStaticText* GetStaticText120() { return m_staticText120; }
     wxChoice* GetChoiceTheme() { return m_choiceTheme; }
     wxStyledTextCtrl* GetStc24() { return m_stc24; }
     clBoostrapWizardPageColours* GetWizardPageColoursAndFonts() { return m_wizardPageColoursAndFonts; }
@@ -93,8 +100,14 @@ public:
     wxRadioBox* GetRadioBoxSpacesVsTabs() { return m_radioBoxSpacesVsTabs; }
     wxRadioBox* GetRadioBoxWhitespaceVisibility() { return m_radioBoxWhitespaceVisibility; }
     clBoostrapWizardPageWhitespace* GetWizardPageWhitespace() { return m_wizardPageWhitespace; }
-    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Welcome!"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxCAPTION|wxRESIZE_BORDER);
-    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    clBoostrapWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Welcome!"),
+                         const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
+                         long style = wxCAPTION | wxRESIZE_BORDER);
+    wxWizardPageSimple* GetFirstPage() const
+    {
+        if(!m_pages.empty()) return m_pages.at(0);
+        return NULL;
+    }
     virtual ~clBoostrapWizardBase();
 };
 

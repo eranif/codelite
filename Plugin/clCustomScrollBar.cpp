@@ -10,6 +10,7 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxBORDER_NONE | wxWANTS_CHARS)
     , m_sbStyle(style)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_PAINT, &clCustomScrollBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
     Bind(wxEVT_LEFT_DOWN, &clCustomScrollBar::OnMouseLeftDown, this);

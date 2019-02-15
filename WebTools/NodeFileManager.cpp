@@ -93,6 +93,7 @@ wxString NodeFileManager::URIToFileName(const wxString& uri)
 
 wxString NodeFileManager::FileNameToURI(const wxString& uri)
 {
+    if(uri.StartsWith("file:///")) { return uri; }
     wxString filename;
     filename << "file://";
 #ifdef __WXMSW__

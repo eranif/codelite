@@ -23,7 +23,7 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
 
     wxFileName nodejs;
     wxFileName npm;
-    if(TryPaths(paths, "nodejs", nodejs) || TryPaths(paths, "node", nodejs) || TryPaths(paths, "node.osx", nodejs)) {
+    if(TryPaths(paths, "node", nodejs) || TryPaths(paths, "nodejs", nodejs) || TryPaths(paths, "node.osx", nodejs)) {
         m_nodejs = nodejs.GetFullPath();
     }
 

@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include <wx/filename.h>
+#include "clNodeJS.h"
 
 NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
     : NodeJSDebuggerDlgBase(parent)
@@ -24,10 +25,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type)
 
     m_stcCommandLineArguments->SetEOLMode(wxSTC_EOL_LF);
     wxFileName fnNodejs;
-    wxString nodejs = clConfig::Get().Read("webtools/nodejs/debugger/executable", wxString());
-    if(nodejs.IsEmpty()) {
-        if(clTernServer::LocateNodeJS(fnNodejs)) { nodejs = fnNodejs.GetFullPath(); }
-    }
+    wxString nodejs = clNodeJS::Get().GetNode().GetFullPath();
 
     NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
     userConf.Load();
@@ -68,10 +66,7 @@ NodeJSDebuggerDlg::NodeJSDebuggerDlg(wxWindow* parent, eDialogType type, const w
 
     m_stcCommandLineArguments->SetEOLMode(wxSTC_EOL_LF);
     wxFileName fnNodejs;
-    wxString nodejs = clConfig::Get().Read("webtools/nodejs/debugger/executable", wxString());
-    if(nodejs.IsEmpty()) {
-        if(clTernServer::LocateNodeJS(fnNodejs)) { nodejs = fnNodejs.GetFullPath(); }
-    }
+    wxString nodejs = clNodeJS::Get().GetNode().GetFullPath();
 
     NodeJSWorkspaceUser userConf(NodeJSWorkspace::Get()->GetFilename().GetFullPath());
     userConf.Load();

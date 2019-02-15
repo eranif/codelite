@@ -8,6 +8,7 @@ NodeJSBreakpoint::~NodeJSBreakpoint() {}
 void NodeJSBreakpoint::FromJSON(const JSONElement& json)
 {
     m_filename = json.namedObject("url").toString();
+    m_filename = NodeFileManager::URIToFileName(m_filename);
     m_line = json.namedObject("lineNumber").toInt();
 }
 

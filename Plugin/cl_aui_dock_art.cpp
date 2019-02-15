@@ -37,6 +37,7 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+#include "clSystemSettings.h"
 
 // --------------------------------------------
 
@@ -67,9 +68,9 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour)
 {
-    bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
     bgColour = bgColour.ChangeLightness(80);
-    penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    penColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 }
 
 // ------------------------------------------------------------

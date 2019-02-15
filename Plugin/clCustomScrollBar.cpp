@@ -47,6 +47,12 @@ void clCustomScrollBar::Update(int thumbSize, int range, int pageSize, int posit
     SetPosition(position, false);
 }
 
+#ifdef __WXGTK__
+#define SB_RADIUS 3.0
+#else
+#define SB_RADIUS 0.0
+#endif
+
 void clCustomScrollBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bdc(this);
@@ -61,7 +67,7 @@ void clCustomScrollBar::OnPaint(wxPaintEvent& e)
     if(!m_thumbRect.IsEmpty()) {
         dc.SetPen(m_colours.GetBorderColour());
         dc.SetBrush(m_colours.GetBorderColour());
-        dc.DrawRoundedRectangle(m_thumbRect, 0.0);
+        dc.DrawRoundedRectangle(m_thumbRect, SB_RADIUS);
     }
 }
 

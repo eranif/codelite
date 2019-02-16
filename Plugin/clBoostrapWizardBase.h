@@ -59,9 +59,7 @@ protected:
     clBoostrapWizardPageColours* m_wizardPageColoursAndFonts;
     wxBannerWindow* m_banner71;
     wxStaticText* m_staticText122;
-    wxChoice* m_choiceGlobalTheme;
-    wxStaticText* m_staticText120;
-    wxChoice* m_choiceTheme;
+    wxChoice* m_themePicker;
     wxStyledTextCtrl* m_stc24;
     clBoostrapWizardPageWhitespace* m_wizardPageWhitespace;
     wxBannerWindow* m_banner73;
@@ -74,7 +72,6 @@ protected:
     virtual void OnScanForCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnInstallCompiler(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnGlobalThemeSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnThemeSelected(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -91,9 +88,7 @@ public:
     clBoostrapWizardPageCompilers* GetWizardPageCompilers() { return m_wizardPageCompilers; }
     wxBannerWindow* GetBanner71() { return m_banner71; }
     wxStaticText* GetStaticText122() { return m_staticText122; }
-    wxChoice* GetChoiceGlobalTheme() { return m_choiceGlobalTheme; }
-    wxStaticText* GetStaticText120() { return m_staticText120; }
-    wxChoice* GetChoiceTheme() { return m_choiceTheme; }
+    wxChoice* GetThemePicker() { return m_themePicker; }
     wxStyledTextCtrl* GetStc24() { return m_stc24; }
     clBoostrapWizardPageColours* GetWizardPageColoursAndFonts() { return m_wizardPageColoursAndFonts; }
     wxBannerWindow* GetBanner73() { return m_banner73; }

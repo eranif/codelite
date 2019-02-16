@@ -11,6 +11,7 @@
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
+#include "drawingutils.h"
 
 static std::vector<wxString> GetCxxPlugins()
 {
@@ -74,6 +75,9 @@ public:
     }
 };
 
+#define DARK_THEME "Tomorrow Night"
+#define LIGHT_THEME "Atom One Light"
+
 const wxString sampleText = "class Demo {\n"
                             "private:\n"
                             "    std::string m_str;\n"
@@ -94,13 +98,13 @@ const wxString sampleText = "class Demo {\n"
 
 clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
     : clBoostrapWizardBase(parent)
+    , m_selectedTheme(LIGHT_THEME)
     , m_developmentProfile(0)
 {
-    wxArrayString themes = ColoursAndFontsManager::Get().GetAllThemes();
-    m_choiceTheme->Append(themes);
-    m_choiceTheme->SetSelection(m_choiceTheme->FindString("One Dark Like"));
+    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) { m_selectedTheme = DARK_THEME; }
+
     m_stc24->SetText(sampleText);
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", "One Dark Like");
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
     if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
     m_stc24->SetKeyWords(3, "other number");
@@ -121,9 +125,26 @@ clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProf
 
 void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
 {
+    m_globalThemeChanged = true;
     m_stc24->SetEditable(true);
-    wxString selection = m_choiceTheme->GetStringSelection();
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", selection);
+    int themeID = m_themePicker->GetSelection();
+    if(themeID == 0) {
+        // OS default
+        m_selectedTheme = LIGHT_THEME;
+        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) { m_selectedTheme = DARK_THEME; }
+        clConfig::Get().Write("UseCustomBaseColour", false);
+    } else if(themeID == 1) {
+        // Dark
+        m_selectedTheme = DARK_THEME;
+        clConfig::Get().Write("UseCustomBaseColour", true);
+        clConfig::Get().Write("BaseColour", wxString("rgb(48,48,48)"));
+    } else {
+        m_selectedTheme = LIGHT_THEME;
+        clConfig::Get().Write("UseCustomBaseColour", true);
+        clConfig::Get().Write("BaseColour", wxString("rgb(242, 243, 244)"));
+    }
+
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
     if(lexer) { lexer->Apply(m_stc24, true); }
     m_stc24->SetKeyWords(1, "Demo std string");
     m_stc24->SetKeyWords(3, "other");
@@ -163,62 +184,16 @@ void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
     m_wizardPageCompilers->GetSizer()->Layout();
 }
 
-wxBitmap clBootstrapWizard::GenerateBitmap(size_t labelIndex)
-{
-    wxArrayString labels;
-    labels.Add("Welcome");
-    labels.Add("Plugins");
-    labels.Add("Compilers");
-    labels.Add("Colours");
-    labels.Add("Whitespace");
-
-    wxBitmap bmp(150, 500);
-    wxMemoryDC memDC(bmp);
-    memDC.SetPen(wxColour("rgb(64, 64, 64)"));
-    memDC.SetBrush(wxColour("rgb(64, 64, 64)"));
-    memDC.DrawRectangle(wxRect(bmp.GetSize()));
-    memDC.SetPen(*wxBLACK_PEN);
-    memDC.DrawLine(149, 0, 149, 500);
-
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont boldFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    boldFont.SetWeight(wxFONTWEIGHT_BOLD);
-
-    wxBitmap arrowRight = wxXmlResource::Get()->LoadBitmap("arrow-right-24");
-    for(size_t i = 0; i < labels.size(); ++i) {
-        wxSize textSize = memDC.GetTextExtent("Tp");
-        int rectHeight = textSize.y + 20; // 10 pixels margin x 2
-        wxRect rect(0, i * rectHeight, bmp.GetWidth(), rectHeight);
-
-        // Draw the text (align to the right)
-        wxCoord textX, textY, bmpX, bmpY;
-        memDC.SetFont(font);
-        memDC.SetTextForeground(i == labelIndex ? *wxWHITE : wxColour("rgb(200, 200, 200)"));
-        memDC.SetFont(i == labelIndex ? boldFont : font);
-        textSize = memDC.GetTextExtent(labels.Item(i));
-        textX = /*bmp.GetWidth() - textSize.GetWidth() - 16*/ 16;
-        textY = ((rect.GetHeight() - textSize.GetHeight()) / 2) + rect.GetY();
-        memDC.DrawText(labels.Item(i), textX, textY);
-
-        if(i == labelIndex) {
-            bmpX = rect.GetWidth() - arrowRight.GetWidth();
-            bmpY = ((rect.GetHeight() - arrowRight.GetHeight()) / 2) + rect.GetY();
-            memDC.DrawBitmap(arrowRight, bmpX, bmpY);
-        }
-    }
-    memDC.SelectObject(wxNullBitmap);
-    return bmp;
-}
-
 clBootstrapData clBootstrapWizard::GetData()
 {
     clBootstrapData data;
     data.compilers = m_compilers;
-    data.selectedTheme = m_choiceTheme->GetStringSelection();
+    data.selectedTheme = m_selectedTheme;
     data.useTabs = (m_radioBoxSpacesVsTabs->GetSelection() == 1);
     data.whitespaceVisibility = m_radioBoxWhitespaceVisibility->GetSelection();
     return data;
 }
+
 void clBootstrapWizard::OnInstallCompiler(wxCommandEvent& event)
 {
     CompilersDetectorManager::MSWSuggestToDownloadMinGW(false);
@@ -287,17 +262,4 @@ void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
     ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
                    wxOK | wxCENTER | wxICON_INFORMATION, this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
-}
-
-void clBootstrapWizard::OnGlobalThemeSelected(wxCommandEvent& event)
-{
-    m_globalThemeChanged = true;
-    int sel = m_choiceGlobalTheme->GetSelection();
-    if(sel == 0) {
-        // Default
-        clConfig::Get().Write("UseCustomBaseColour", false);
-    } else {
-        clConfig::Get().Write("UseCustomBaseColour", true);
-        clConfig::Get().Write("BaseColour", sel == 1 ? wxString("rgb(48,48,48)") : wxString("rgb(224,224,224)"));
-    }
 }

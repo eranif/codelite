@@ -6,11 +6,12 @@
 #include <wx/settings.h>
 #include "cl_config.h"
 #include "clSystemSettings.h"
+#include "drawingutils.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #else
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -53,14 +54,17 @@ void clThemedTreeCtrl::ApplyTheme()
     } else {
         colours.InitDefaults();
     }
-
+    
     wxColour baseColour = colours.GetBgColour();
     bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
     if(useCustomColour) {
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
         colours.InitFromColour(baseColour);
     }
-
+    
+    // Use alternate line colours for light trees only
+    //EnableStyle(wxTR_ROW_LINES, !DrawingUtils::IsDark(baseColour));
+    
     // Set the built-in search colours
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);

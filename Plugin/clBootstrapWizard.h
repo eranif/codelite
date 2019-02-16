@@ -43,10 +43,10 @@ class WXDLLIMPEXP_SDK clBootstrapWizard : public clBoostrapWizardBase
 {
     ICompilerLocator::CompilerVec_t m_compilers;
     bool m_globalThemeChanged = false;
+    wxString m_selectedTheme;
 
 public:
-    static wxBitmap GenerateBitmap(size_t labelIndex);
-    int m_developmentProfile;
+    int m_developmentProfile = 0;
 
 public:
     clBootstrapWizard(wxWindow* parent);
@@ -58,7 +58,6 @@ public:
     bool IsRestartRequired();
 
 protected:
-    virtual void OnGlobalThemeSelected(wxCommandEvent& event);
     virtual void OnCancelWizard(wxCommandEvent& event);
     virtual void OnFinish(wxWizardEvent& event);
     virtual void OnInstallCompiler(wxCommandEvent& event);

@@ -136,7 +136,8 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_banner71 = new wxBannerWindow(m_wizardPageColoursAndFonts, wxID_ANY, wxTOP, wxDefaultPosition,
                                     wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), 0);
     m_banner71->SetBitmap(wxNullBitmap);
-    m_banner71->SetText(_("Customise colours"), _("Select the editor theme from the list below"));
+    m_banner71->SetText(_("Customise colours"), _("Select the editor theme from the list below.\nYou can always change "
+                                                  "this from the menu: Settings -> Colours and fonts..."));
     m_banner71->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE),
                             wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
@@ -149,37 +150,21 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer12->Add(flexGridSizer118, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText122 = new wxStaticText(m_wizardPageColoursAndFonts, wxID_ANY, _("Global theme:"), wxDefaultPosition,
+    m_staticText122 = new wxStaticText(m_wizardPageColoursAndFonts, wxID_ANY, _("Theme:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), 0);
 
     flexGridSizer118->Add(m_staticText122, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    wxArrayString m_choiceGlobalThemeArr;
-    m_choiceGlobalThemeArr.Add(wxT("Default (OS settings)"));
-    m_choiceGlobalThemeArr.Add(wxT("Dark"));
-    m_choiceGlobalThemeArr.Add(wxT("Comfort"));
-    m_choiceGlobalTheme =
-        new wxChoice(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition,
-                     wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), m_choiceGlobalThemeArr, 0);
-    m_choiceGlobalTheme->SetToolTip(_("Set the IDE global colour\nThis colour affects various controls"));
-    m_choiceGlobalTheme->SetSelection(0);
+    wxArrayString m_themePickerArr;
+    m_themePickerArr.Add(wxT("Default (OS settings)"));
+    m_themePickerArr.Add(wxT("Dark"));
+    m_themePickerArr.Add(wxT("Light"));
+    m_themePicker = new wxChoice(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition,
+                                 wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), m_themePickerArr, 0);
+    m_themePicker->SetToolTip(_("Set the IDE global colour\nThis colour affects various controls"));
+    m_themePicker->SetSelection(0);
 
-    flexGridSizer118->Add(m_choiceGlobalTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText120 = new wxStaticText(m_wizardPageColoursAndFonts, wxID_ANY, _("Syntax highlight:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), 0);
-
-    flexGridSizer118->Add(m_staticText120, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceThemeArr;
-    m_choiceTheme =
-        new wxChoice(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition,
-                     wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), m_choiceThemeArr, wxBORDER_NONE);
-    m_choiceTheme->SetToolTip(_("Select the theme from a list.\nIf the selected theme does not exist for a given "
-                                "language, CodeLite will select the closest one available"));
-    m_choiceTheme->SetFocus();
-
-    flexGridSizer118->Add(m_choiceTheme, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer118->Add(m_themePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stc24 = new wxStyledTextCtrl(m_wizardPageColoursAndFonts, wxID_ANY, wxDefaultPosition,
                                    wxDLG_UNIT(m_wizardPageColoursAndFonts, wxSize(-1, -1)), 0);
@@ -293,9 +278,7 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
                                          wxUpdateUIEventHandler(clBoostrapWizardBase::OnInstallCompilerUI), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                                          wxCommandEventHandler(clBoostrapWizardBase::OnInstallCompiler), NULL, this);
-    m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                 wxCommandEventHandler(clBoostrapWizardBase::OnGlobalThemeSelected), NULL, this);
-    m_choiceTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(clBoostrapWizardBase::OnThemeSelected),
+    m_themePicker->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(clBoostrapWizardBase::OnThemeSelected),
                            NULL, this);
 }
 
@@ -310,8 +293,6 @@ clBoostrapWizardBase::~clBoostrapWizardBase()
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clBoostrapWizardBase::OnInstallCompilerUI), NULL, this);
     m_cmdLnkBtnDownloadCompiler->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                                             wxCommandEventHandler(clBoostrapWizardBase::OnInstallCompiler), NULL, this);
-    m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
-                                    wxCommandEventHandler(clBoostrapWizardBase::OnGlobalThemeSelected), NULL, this);
-    m_choiceTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+    m_themePicker->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                               wxCommandEventHandler(clBoostrapWizardBase::OnThemeSelected), NULL, this);
 }

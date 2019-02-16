@@ -73,9 +73,8 @@ bool JSCodeCompletion::SanityCheck()
         wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
 
         // Disable CC
-        WebToolsConfig conf;
-        conf.Load().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
-        conf.Save();
+        WebToolsConfig& conf = WebToolsConfig::Get();
+        conf.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
         return false;
     }
     return true;
@@ -149,8 +148,8 @@ void JSCodeCompletion::Reload() { m_ternServer.RecycleIfNeeded(true); }
 
 bool JSCodeCompletion::IsEnabled() const
 {
-    WebToolsConfig conf;
-    return conf.Load().HasJavaScriptFlag(WebToolsConfig::kJSEnableCC);
+    WebToolsConfig& conf = WebToolsConfig::Get();
+    return conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableCC);
 }
 
 void JSCodeCompletion::TriggerWordCompletion()

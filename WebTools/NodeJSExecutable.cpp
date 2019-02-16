@@ -1,7 +1,7 @@
 #include "NodeJSExecutable.h"
 #include "asyncprocess.h"
 #include "globals.h"
-#include "WebToolsConfig.h"
+#include "clNodeJS.h"
 
 #define DEFAULT_VERSION 4
 
@@ -12,9 +12,7 @@ NodeJSExecutable::NodeJSExecutable(const wxFileName& exePath)
 
 NodeJSExecutable::NodeJSExecutable()
 {
-    WebToolsConfig conf;
-    conf.Load();
-    m_exePath = conf.GetNodejs();
+    m_exePath = clNodeJS::Get().GetNode();
 }
 
 NodeJSExecutable::~NodeJSExecutable() {}

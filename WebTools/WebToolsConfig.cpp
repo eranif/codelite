@@ -10,11 +10,8 @@ WebToolsConfig::WebToolsConfig()
     , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryEcma6 | kJSPluginNode | kJSNodeExpress)
     , m_xmlFlags(kXmlEnableCC)
     , m_htmlFlags(kHtmlEnableCC)
+    , m_nodeOptions(kLintOnSave)
 {
-    NodeJSLocator locator;
-    locator.Locate();
-    m_nodejs = locator.GetNodejs();
-    m_npm = locator.GetNpm();
 }
 
 WebToolsConfig::~WebToolsConfig() {}
@@ -26,7 +23,7 @@ WebToolsConfig& WebToolsConfig::Load()
     return *this;
 }
 
-WebToolsConfig& WebToolsConfig::Save()
+WebToolsConfig& WebToolsConfig::SaveConfig()
 {
     clConfig conf("WebTools.conf");
     conf.WriteItem(this);
@@ -38,7 +35,7 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     m_jsFlags = json.namedObject("m_jsFlags").toSize_t(m_jsFlags);
     m_xmlFlags = json.namedObject("m_xmlFlags").toSize_t(m_xmlFlags);
     m_htmlFlags = json.namedObject("m_htmlFlags").toSize_t(m_htmlFlags);
-
+    m_nodeOptions = json.namedObject("m_nodeOptions").toSize_t(m_nodeOptions);
     wxString v;
     v = json.namedObject("m_nodejs").toString(v);
     if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_nodejs = v; }
@@ -109,4 +106,10 @@ wxString WebToolsConfig::GetTernProjectFile() const
         }
     });
     return root.toElement().format();
+}
+
+WebToolsConfig& WebToolsConfig::Get()
+{
+    static WebToolsConfig webtoolsConfig;
+    return webtoolsConfig;
 }

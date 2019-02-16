@@ -35,6 +35,7 @@ class WebToolsConfig : public clConfigItem
     size_t m_htmlFlags;
     wxString m_nodejs;
     wxString m_npm;
+    size_t m_nodeOptions;
 
 public:
     virtual void FromJSON(const JSONElement& json);
@@ -58,6 +59,10 @@ public:
         kJSNodeExpress = (1 << 14),
     };
 
+    enum eNodeJSFlags {
+        kLintOnSave = (1 << 0),
+    };
+
     enum eHtmlFlags {
         kHtmlEnableCC = (1 << 0),
     };
@@ -76,10 +81,12 @@ protected:
         }
     }
     bool HasFlag(const size_t& flags, int flag) const { return flags & flag; }
+    WebToolsConfig();
 
 public:
-    WebToolsConfig();
     virtual ~WebToolsConfig();
+    
+    static WebToolsConfig& Get();
     bool HasJavaScriptFlag(eJSFlags flag) const { return HasFlag(m_jsFlags, flag); }
     void EnableJavaScriptFlag(eJSFlags flag, bool b) { EnableFlag(m_jsFlags, flag, b); }
 
@@ -93,13 +100,16 @@ public:
     void SetNpm(const wxString& npm) { this->m_npm = npm; }
     const wxString& GetNodejs() const { return m_nodejs; }
     const wxString& GetNpm() const { return m_npm; }
+
+    bool IsLintOnSave() const { return HasFlag(m_nodeOptions, kLintOnSave); }
+    void SetLintOnSave(bool b) { EnableFlag(m_nodeOptions, kLintOnSave, b); }
     
     /**
      * @brief create tern project file content based on the settings
      */
     wxString GetTernProjectFile() const;
     WebToolsConfig& Load();
-    WebToolsConfig& Save();
+    WebToolsConfig& SaveConfig();
 };
 
 #endif // WEBTOOLSCONFIG_H

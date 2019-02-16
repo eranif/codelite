@@ -19,6 +19,7 @@
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/stc/stc.h>
+#include "clNodeJS.h"
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -73,8 +74,7 @@ bool clTernServer::Start(const wxString& workingDirectory)
     if(!m_jsCCManager->IsEnabled()) return true;
 
     m_workingDirectory = workingDirectory;
-    WebToolsConfig conf;
-    conf.Load();
+    WebToolsConfig& conf = WebToolsConfig::Get();
 
     wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
     ternFolder.AppendDir("webtools");
@@ -466,24 +466,8 @@ JSONElement clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
 
 bool clTernServer::LocateNodeJS(wxFileName& nodeJS)
 {
-    WebToolsConfig config;
-    config.Load();
-
-    // If we got it in the settings, use it
-    if(wxFileName::FileExists(config.GetNodejs())) {
-        nodeJS = config.GetNodejs();
-        config.Save();
-        return true;
-    }
-
-    // Auto detect
-    NodeJSLocator locator;
-    locator.Locate();
-    if(!locator.GetNodejs().IsEmpty()) {
-        nodeJS = locator.GetNodejs();
-        return true;
-    }
-    return false;
+    nodeJS = clNodeJS::Get().GetNode();
+    return nodeJS.IsOk() && nodeJS.FileExists();
 }
 
 void clTernServer::ClearFatalErrorFlag() { m_fatalError = false; }

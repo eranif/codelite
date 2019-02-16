@@ -119,6 +119,6 @@ void wxCD9C6InitBitmapResources()
 
     XRC_ADD_FILE(wxT("XRC_resource/WebToolsBase_webtools_bitmaps.cpp$nodejs.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/WebToolsBase_webtools_bitmaps.cpp$nodejs-32.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/WebToolsBase_webtools_bitmaps.cpp$_home_eran_devl_codelite_WebTools_WebToolsBase_webtools_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/WebToolsBase_webtools_bitmaps.cpp$_home_eran_devl_codelite_WebTools_WebToolsBase_webtools_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/WebToolsBase_webtools_bitmaps.cpp$C__src_codelite_WebTools_WebToolsBase_webtools_bitmaps.xrc"), xml_res_file_2, xml_res_size_2, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/WebToolsBase_webtools_bitmaps.cpp$C__src_codelite_WebTools_WebToolsBase_webtools_bitmaps.xrc"));
 }

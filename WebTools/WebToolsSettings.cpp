@@ -11,8 +11,8 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
 {
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     {
-        WebToolsConfig config;
-        config.Load();
+        WebToolsConfig& config = WebToolsConfig::Get();
+        
         // JS
         m_checkBoxEnableJsCC->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSEnableCC));
         m_pgPropLogging->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging));
@@ -37,6 +37,7 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         // NodeJS
         m_filePickerNodeJS->SetPath(config.GetNodejs());
         m_filePickerNpm->SetPath(config.GetNpm());
+        m_checkBoxJSLint->SetValue(config.IsLintOnSave());
     }
 
     SetName("WebToolsSettings");
@@ -86,8 +87,7 @@ void WebToolsSettings::OnApply(wxCommandEvent& event) { DoSave(); }
 
 void WebToolsSettings::DoSave()
 {
-    WebToolsConfig config;
-    config.Load();
+    WebToolsConfig& config = WebToolsConfig::Get();
     
     // JS
     config.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, m_checkBoxEnableJsCC->IsChecked());
@@ -115,7 +115,7 @@ void WebToolsSettings::DoSave()
     // NodeJS
     config.SetNodejs(m_filePickerNodeJS->GetPath());
     config.SetNpm(m_filePickerNpm->GetPath());
-    config.Save();
+    config.SetLintOnSave(m_checkBoxJSLint->IsChecked());
     
     wxFileName fnNodeJS(config.GetNodejs());
     wxArrayString hints;

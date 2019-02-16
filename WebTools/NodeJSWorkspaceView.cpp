@@ -3,7 +3,6 @@
 #include "NodeJSWorkspaceConfiguration.h"
 #include "NodeJSWorkspaceView.h"
 #include "NoteJSWorkspace.h"
-#include "WebToolsConfig.h"
 #include "bitmap_loader.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"

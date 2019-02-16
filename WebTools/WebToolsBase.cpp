@@ -144,7 +144,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer239 = new wxBoxSizer(wxVERTICAL);
     m_panel237->SetSizer(boxSizer239);
 
-    wxFlexGridSizer* flexGridSizer241 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer241 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer241->SetFlexibleDirection(wxBOTH);
     flexGridSizer241->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer241->AddGrowableCol(1);
@@ -164,6 +164,11 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer241->Add(m_filePickerNodeJS, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_button361 = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer241->Add(m_button361, 0, wxRIGHT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+
     m_staticText247 = new wxStaticText(m_panel237, wxID_ANY, _("npm path:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
 
@@ -176,13 +181,18 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer241->Add(m_filePickerNpm, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_button363 = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer241->Add(m_button363, 0, wxRIGHT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+
     flexGridSizer241->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_buttonSuugest = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition,
-                                   wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
-    m_buttonSuugest->SetToolTip(_("Auto detect Node.js & npm binaries"));
+    m_checkBoxJSLint = new wxCheckBox(m_panel237, wxID_ANY, _("Lint on file save"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
+    m_checkBoxJSLint->SetValue(false);
 
-    flexGridSizer241->Add(m_buttonSuugest, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer241->Add(m_checkBoxJSLint, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
 
@@ -208,7 +218,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 #endif
 
     SetName(wxT("WebToolsSettingsBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -232,10 +242,12 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_filePickerNodeJS->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                                 wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
+    m_button361->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                         wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_filePickerNpm->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                              wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
-    m_buttonSuugest->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
+    m_button363->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                         wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL,
@@ -255,10 +267,12 @@ WebToolsSettingsBase::~WebToolsSettingsBase()
                         this);
     m_filePickerNodeJS->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                                    wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
+    m_button361->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_filePickerNpm->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                                 wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
-    m_buttonSuugest->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
+    m_button363->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
     m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL,

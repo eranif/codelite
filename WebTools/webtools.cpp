@@ -53,15 +53,18 @@ WebTools::WebTools(IManager* manager)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
     m_shortName = wxT("WebTools");
-    
+
     // Initialise NodeJS
-    WebToolsConfig conf;
-    conf.Load();
+    WebToolsConfig& conf = WebToolsConfig::Get().Load();
     wxFileName fnNodeJS(conf.GetNodejs());
     wxArrayString hints;
     if(fnNodeJS.FileExists()) { hints.Add(fnNodeJS.GetPath()); }
     clNodeJS::Get().Initialise(hints);
-    
+
+    // Update the configuration with the findings
+    conf.SetNodejs(clNodeJS::Get().GetNode().GetFullPath());
+    conf.SetNpm(clNodeJS::Get().GetNpm().GetFullPath());
+
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
@@ -125,6 +128,9 @@ void WebTools::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void WebTools::UnPlug()
 {
+    // Store the configuration changes
+    WebToolsConfig::Get().SaveConfig();
+
     // Stop the debugger
     if(NodeJSWorkspace::Get()->IsOpen() && NodeJSWorkspace::Get()->GetDebugger() &&
        NodeJSWorkspace::Get()->GetDebugger()->IsRunning()) {
@@ -437,9 +443,12 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     event.Skip();
     DoRefreshColours(event.GetFileName());
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        // m_jsCodeComplete->ReparseFile(editor);
-        m_jsCodeComplete->ResetTern();
+    if(editor && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
+        if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(); }
+        
+        if(WebToolsConfig::Get().IsLintOnSave()) {
+            // TODO :: Trigger lint
+        }
     }
 }
 

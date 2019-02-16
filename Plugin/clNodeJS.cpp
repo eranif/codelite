@@ -25,7 +25,8 @@ bool clNodeJS::Initialise(const wxArrayString& hints)
     return m_initialised;
 }
 
-bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args)
+bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
+                          wxEvtHandler* sink)
 {
     if(!IsInitialised()) { return false; }
 
@@ -39,12 +40,13 @@ bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirect
     if(!args.IsEmpty()) {
         _args << " " << args; // --save
     }
-    
+
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
     console->SetWorkingDirectory(wd.GetPath());
     console->SetCommand(GetNpm().GetFullPath(), _args);
     console->SetWaitWhenDone(true);
     console->SetTerminalNeeded(true);
+    console->SetSink(sink);
     return console->Start();
 }
 
@@ -87,7 +89,7 @@ void clNodeJS::UnBindEvents()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clNodeJS::OnProcessOutput, this);
 }
 
-bool clNodeJS::NpmInit(const wxString& workingDirectory)
+bool clNodeJS::NpmInit(const wxString& workingDirectory, wxEvtHandler* sink)
 {
     if(!IsInitialised()) { return false; }
 
@@ -100,5 +102,6 @@ bool clNodeJS::NpmInit(const wxString& workingDirectory)
     console->SetCommand(GetNpm().GetFullPath(), "init");
     console->SetWaitWhenDone(true);
     console->SetTerminalNeeded(true);
+    console->SetSink(sink);
     return console->Start();
 }

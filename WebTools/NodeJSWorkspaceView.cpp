@@ -20,6 +20,7 @@
 #include <wx/wupdlock.h>
 #include "clNodeJS.h"
 #include <wx/textdlg.h>
+#include "clConsoleBase.h"
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -31,6 +32,7 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
+    Bind(wxEVT_TERMINAL_EXIT, &NodeJSWorkspaceView::OnTerminalClosed, this);
 }
 
 NodeJSWorkspaceView::~NodeJSWorkspaceView()
@@ -38,6 +40,7 @@ NodeJSWorkspaceView::~NodeJSWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
+    Unbind(wxEVT_TERMINAL_EXIT, &NodeJSWorkspaceView::OnTerminalClosed, this);
 }
 
 void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
@@ -316,7 +319,7 @@ void NodeJSWorkspaceView::OnNpmInit(wxCommandEvent& event)
     wxString path;
     wxTreeItemId item;
     if(!GetSelectProjectPath(path, item)) return;
-    clNodeJS::Get().NpmInit(path);
+    clNodeJS::Get().NpmInit(path, this);
 }
 
 void NodeJSWorkspaceView::OnFileSystemUpdated(clFileSystemEvent& event)
@@ -334,5 +337,11 @@ void NodeJSWorkspaceView::OnNpmInstall(wxCommandEvent& event)
 
     wxString packageName = ::wxGetTextFromUser(_("Package name:"), "npm install");
     if(packageName.IsEmpty()) { return; }
-    clNodeJS::Get().NpmInstall(packageName, path, "--save");
+    clNodeJS::Get().NpmInstall(packageName, path, "--save", this);
+}
+
+void NodeJSWorkspaceView::OnTerminalClosed(clProcessEvent& event)
+{
+    // Refresh the tree after npm commands
+    RefreshTree();
 }

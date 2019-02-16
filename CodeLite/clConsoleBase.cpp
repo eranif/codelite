@@ -12,6 +12,32 @@
 #include <algorithm>
 #include <wx/utils.h>
 
+wxDEFINE_EVENT(wxEVT_TERMINAL_EXIT, clProcessEvent);
+
+class ConsoleProcess : public wxProcess
+{
+public:
+    wxEvtHandler* m_sink = nullptr;
+    wxString m_uid;
+
+public:
+    ConsoleProcess(wxEvtHandler* sink, const wxString& uid)
+        : m_sink(sink)
+        , m_uid(uid)
+    {
+    }
+
+    virtual ~ConsoleProcess() { m_sink = NULL; }
+    void OnTerminate(int pid, int status)
+    {
+        clProcessEvent terminateEvent(wxEVT_TERMINAL_EXIT);
+        terminateEvent.SetString(m_uid);
+        terminateEvent.SetInt(status); // pass the exit code
+        m_sink->AddPendingEvent(terminateEvent);
+        delete this;
+    }
+};
+
 clConsoleBase::clConsoleBase() {}
 
 clConsoleBase::~clConsoleBase() {}
@@ -96,9 +122,20 @@ wxString clConsoleBase::EscapeString(const wxString& str, const wxString& c) con
 
 bool clConsoleBase::StartProcess(const wxString& command)
 {
-    SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags(), m_callback));
+    wxProcess* callback = nullptr;
+    if(m_callback) {
+        // user provided callback
+        callback = m_callback;
+    } else if(m_sink) {
+        // using events. This object will get deleted when the process exits
+        callback = new ConsoleProcess(m_sink, m_callbackUID);
+    }
+
+    SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags(), callback));
     // reset the m_callback (it will auto-delete itself)
     m_callback = nullptr;
+    m_sink = nullptr;
+    m_callbackUID.clear();
     return (GetPid() > 0);
 }
 

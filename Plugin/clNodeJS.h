@@ -43,12 +43,13 @@ public:
     /**
      * @brief install an npm package
      */
-    bool NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args);
+    bool NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
+                    wxEvtHandler* sink = nullptr);
 
     /**
      * @brief run npm init in a directory
      */
-    bool NpmInit(const wxString& workingDirectory);
+    bool NpmInit(const wxString& workingDirectory, wxEvtHandler* sink = nullptr);
 
     bool IsInitialised() const { return m_initialised; }
     const wxFileName& GetNode() const { return m_node; }

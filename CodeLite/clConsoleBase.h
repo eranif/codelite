@@ -7,6 +7,9 @@
 #include <wx/process.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
+#include "cl_command_event.h"
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_EXIT, clProcessEvent);
 
 class WXDLLIMPEXP_CL clConsoleEnvironment
 {
@@ -41,7 +44,10 @@ protected:
     int m_execExtraFlags = 0;
     bool m_terminalNeeded = true;
     wxProcess* m_callback = nullptr;
+    wxEvtHandler* m_sink = nullptr;
+    wxString m_callbackUID;
 
+protected:
     /**
      * @brief create an environment list to be used before we execute our terminal
      */
@@ -54,11 +60,24 @@ protected:
 public:
     clConsoleBase();
     virtual ~clConsoleBase();
+
+    /**
+     * @brief when sink is provided, the terminal will send event when its done
+     * The event sent is wxEVT_TERMINAL_EXIT of type clProcessEvent
+     * @param sink
+     * @param if provided the uid is sent back along with the termination event
+     */
+    void SetSink(wxEvtHandler* sink, const wxString& uid = "")
+    {
+        this->m_sink = sink;
+        this->m_callbackUID = uid;
+    }
+
     /**
      * @brief split command line arguments taking double quotes and escaping into account
      */
     static wxArrayString SplitArguments(const wxString& args);
-    
+
     /**
      * @brief add an environment variable to be applied before we start the terminal
      */

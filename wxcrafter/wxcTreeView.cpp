@@ -26,7 +26,7 @@ wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
     ::MSWSetNativeTheme(m_treeControls);
     GetTree()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
-    m_treeControls->SetImageList(Allocator::Instance()->GetImageList());
+    m_treeControls->SetBitmaps(Allocator::Instance()->GetBitmaps());
     m_treeControls->AddRoot(wxT("wxGUI Project"), 0, 0);
 
     m_eventsPane = new EventsEditorPane(m_splitterPageEvents, NULL, plugin);

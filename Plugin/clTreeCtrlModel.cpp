@@ -170,7 +170,7 @@ wxTreeItemId clTreeCtrlModel::InsertItem(const wxTreeItemId& parent, const wxTre
                                          int image, int selImage, wxTreeItemData* data)
 {
     if(!parent.IsOk()) { return wxTreeItemId(); }
-    if(!previous.IsOk()) { return wxTreeItemId(); }
+    //if(!previous.IsOk()) { return wxTreeItemId(); }
 
     clRowEntry* pPrev = ToPtr(previous);
     clRowEntry* parentNode = ToPtr(parent);

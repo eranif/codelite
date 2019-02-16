@@ -177,7 +177,8 @@ Allocator::Allocator()
 {
     // Add the tree control images
     m_imageList->Add(m_bmpLoader.Bitmap(wxT("wxgui"))); // 0
-
+    m_bitmaps.push_back(m_bmpLoader.Bitmap(wxT("wxgui")));
+    
     Register(new BoxSizerWrapper(), "wxboxsizer_v");
     Register(new FlexGridSizerWrapper(), "wxflexgridsizer");
     Register(new FrameWrapper(), "wxframe");
@@ -414,7 +415,9 @@ void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
     int objId = id;
     if(objId == -1) { objId = obj->GetType(); }
     m_objs[objId] = obj;
-    m_imageIds[objId] = m_imageList->Add(m_bmpLoader.Bitmap(bmpname));
+    const wxBitmap& bmp = m_bmpLoader.Bitmap(bmpname);
+    m_imageIds[objId] = m_imageList->Add(bmp);
+    m_bitmaps.push_back(bmp);
 }
 
 int Allocator::GetImageId(int controlId) const

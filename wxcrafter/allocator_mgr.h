@@ -9,6 +9,8 @@
 #include <map>
 #include <set>
 #include <wx/imaglist.h>
+#include "clControlWithItems.h"
+#include "clTreeCtrl.h"
 
 // Widgets IDS
 enum {
@@ -250,6 +252,7 @@ protected:
 protected:
     Map_t m_objs;
     wxImageList* m_imageList;
+    clControlWithItems::BitmapVec_t m_bitmaps;
     ImageMap_t m_imageIds;
     InsertMap_t m_relations;
     wxCrafter::ResourceLoader m_bmpLoader;
@@ -285,7 +288,9 @@ public:
 
     void Register(wxcWidget* obj, const wxString& bmpname, int id = -1);
     wxImageList* GetImageList() { return m_imageList; }
-
+    const clControlWithItems::BitmapVec_t* GetBitmaps() const { return &m_bitmaps; }
+    clControlWithItems::BitmapVec_t* GetBitmaps() { return &m_bitmaps; }
+    
     static EventsDatabase& GetCommonEvents() { return m_commonEvents; }
 
     static int StringToId(const wxString& classname); // Translates e.g. "wxTextCtrl" to ID_WXTEXTCTRL

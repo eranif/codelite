@@ -4,6 +4,7 @@
 #include "NewFormWizard.h"
 #include "wxcrafter.h"
 
+class clThemedTreeCtrl;
 class EventsEditorPane;
 extern const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER;
 
@@ -29,7 +30,7 @@ public:
     wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin);
     virtual ~wxcTreeView();
 
-    wxTreeCtrl* GetTree() { return m_treeControls; }
+    clThemedTreeCtrl* GetTree() { return m_treeControls; }
     virtual void OnItemSelected(wxTreeEvent& event);
     void LoadProject(const wxFileName& filname);
     void SaveProject();

@@ -7,17 +7,27 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include <unordered_map>
 
 class WXDLLIMPEXP_SDK clNodeJS : public wxEvtHandler
 {
+protected:
+    struct LintInfo {
+        wxFileName filename;
+        wxString m_output;
+    };
+
+protected:
     bool m_initialised = false;
     wxFileName m_npm;
     wxFileName m_node;
-    IProcess* m_process = nullptr;
+
+    std::unordered_map<IProcess*, LintInfo> m_processes;
 
 protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
+    void ProcessLintOuput(const wxFileName& fn, const wxString& output);
 
 private:
     clNodeJS();
@@ -38,8 +48,6 @@ public:
      */
     void Shutdown();
 
-    bool IsRunning() const { return m_process != nullptr; }
-
     /**
      * @brief install an npm package
      */
@@ -50,6 +58,11 @@ public:
      * @brief run npm init in a directory
      */
     bool NpmInit(const wxString& workingDirectory, wxEvtHandler* sink = nullptr);
+
+    /**
+     * @brief lint file. The error are reported in the output view
+     */
+    void LintFile(const wxFileName& filename);
 
     bool IsInitialised() const { return m_initialised; }
     const wxFileName& GetNode() const { return m_node; }

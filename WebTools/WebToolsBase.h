@@ -99,6 +99,7 @@ protected:
     virtual void OnNodejsPath(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnSuggestNodeJSPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNpmPath(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnLintOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }

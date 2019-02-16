@@ -248,6 +248,8 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
                              wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
     m_button363->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                          wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
+    m_checkBoxJSLint->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnLintOnSave),
+                              NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL,
@@ -273,6 +275,8 @@ WebToolsSettingsBase::~WebToolsSettingsBase()
                                 wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNpmPath), NULL, this);
     m_button363->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                             wxCommandEventHandler(WebToolsSettingsBase::OnSuggestNodeJSPaths), NULL, this);
+    m_checkBoxJSLint->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                 wxCommandEventHandler(WebToolsSettingsBase::OnLintOnSave), NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WebToolsSettingsBase::OnOKUI), NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnOK), NULL, this);
     m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WebToolsSettingsBase::OnApply), NULL,

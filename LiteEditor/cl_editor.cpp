@@ -1774,18 +1774,18 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
             GetBookmarkTooltip(line, tooltip, title);
         }
 
+        bool compilerMarker = false;
         // Compiler marker takes precedence over any other tooltip on that margin
         if((MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line)) {
+            compilerMarker = true;
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
-            if(MarkerGet(line) & (1 << smt_warning)) {
-                title = "<color=\"yellow\">WARNING</color>";
-            } else {
-                title = "<color=\"pink\">ERROR</color>";
-            }
         }
 
-        if(!title.IsEmpty() && !tooltip.IsEmpty()) { DoShowCalltip(-1, title, tooltip); }
+        if(!tooltip.IsEmpty()) {
+            // if the marker is a compiler marker, dont manipulate the text
+            DoShowCalltip(-1, title, tooltip, !compilerMarker);
+        }
 
     } else if(ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
         m_context->OnDbgDwellStart(event);
@@ -1802,7 +1802,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
 
         if(EventNotifier::Get()->ProcessEvent(evtTypeinfo)) {
             // Did the user provide a tooltip?
-            if(!evtTypeinfo.GetTooltip().IsEmpty()) { DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip()); }
+            if(!evtTypeinfo.GetTooltip().IsEmpty()) { DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip(), true); }
         } else {
             m_context->OnDwellStart(event);
         }
@@ -4251,7 +4251,7 @@ wxString clEditor::GetEolString()
     return eol;
 }
 
-void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip)
+void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool manipulateText)
 {
     DoCancelCalltip();
     wxPoint pt;
@@ -4260,7 +4260,7 @@ void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip
     tooltip.Trim().Trim(false);
     if(!tooltip.IsEmpty()) { tooltip << "\n<hr>"; }
     tooltip << tip;
-    m_calltip = new CCBoxTipWindow(this, tooltip);
+    m_calltip = new CCBoxTipWindow(this, manipulateText, tooltip);
     if(pos == wxNOT_FOUND) {
         pt = ::wxGetMousePosition();
     } else {

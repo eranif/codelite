@@ -39,6 +39,7 @@ private:
     void DoSave();
 
 protected:
+    virtual void OnLintOnSave(wxCommandEvent& event);
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnNodejsPath(wxFileDirPickerEvent& event);
     virtual void OnNpmPath(wxFileDirPickerEvent& event);

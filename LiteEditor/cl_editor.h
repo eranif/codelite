@@ -737,7 +737,7 @@ public:
     virtual void SetErrorMarker(int lineno, const wxString& annotationText);
     virtual void DelAllCompilerMarkers();
 
-    void DoShowCalltip(int pos, const wxString& title, const wxString& tip);
+    void DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool manipulateText);
     void DoCancelCalltip();
     void DoCancelCodeCompletionBox();
     int DoGetOpenBracePos();

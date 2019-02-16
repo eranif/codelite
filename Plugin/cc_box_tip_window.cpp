@@ -72,21 +72,22 @@ static void CCBoxTipWindow_ShrinkTip(wxString& str)
     while(str.Replace("\n\n", "\n")) {}
 }
 
-CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip)
     : wxPopupWindow(parent)
     , m_tip(tip)
     , m_useLightColours(false)
 {
-    CCBoxTipWindow_ShrinkTip(m_tip);
+    if(manipulateText) { CCBoxTipWindow_ShrinkTip(m_tip); }
     DoInitialize(m_tip, 1, true);
 }
 
-CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, size_t numOfTips, bool simpleTip)
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip, size_t numOfTips,
+                               bool simpleTip)
     : wxPopupWindow(parent)
     , m_tip(tip)
     , m_useLightColours(false)
 {
-    CCBoxTipWindow_ShrinkTip(m_tip);
+    if(manipulateText) { CCBoxTipWindow_ShrinkTip(m_tip); }
     DoInitialize(m_tip, numOfTips, simpleTip);
 }
 

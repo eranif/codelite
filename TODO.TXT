@@ -1,3 +1,2 @@
-* Add node lint (node -c) for a source file
 * wxCrafter: use clThemedTreeCtrl for the tree view
 * wxCrafter: replace the code toolbar

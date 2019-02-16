@@ -445,10 +445,9 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
         if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(); }
-        
-        if(WebToolsConfig::Get().IsLintOnSave()) {
-            // TODO :: Trigger lint
-        }
+        // Remove all compiler markers
+        editor->DelAllCompilerMarkers();
+        if(WebToolsConfig::Get().IsLintOnSave()) { clNodeJS::Get().LintFile(event.GetFileName()); }
     }
 }
 

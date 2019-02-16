@@ -56,19 +56,20 @@ protected:
     wxRect m_rightTipRect;
     std::vector<Links> m_links;
     bool m_useLightColours;
-    
+
 protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnMouseLeft(wxMouseEvent& e);
-    wxRect DoPrintText(wxDC& dc, wxString& text, wxPoint& pt, size_t &maxWidth);
+    wxRect DoPrintText(wxDC& dc, wxString& text, wxPoint& pt, size_t& maxWidth);
     wxString DoStripMarkups();
     void DoInitialize(const wxString& tip, size_t numOfTips, bool simpleTip);
-    void DoDrawTip(wxDC& dc, size_t &max_width);
-    
+    void DoDrawTip(wxDC& dc, size_t& max_width);
+
 public:
-    CCBoxTipWindow(wxWindow* parent, const wxString& tip, size_t numOfTips, bool simpleTip = false);
-    CCBoxTipWindow(wxWindow* parent, const wxString& tip);
+    CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip, size_t numOfTips,
+                   bool simpleTip = false);
+    CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip);
     virtual ~CCBoxTipWindow();
 
     /**

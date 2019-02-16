@@ -32,10 +32,12 @@ bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirect
     // Create the working directory if not exists
     wxFileName wd(workingDirectory, "");
     wd.Mkdir(wxS_DEFAULT, wxPATH_MKDIR_FULL);
-
+    
+    wxString _args = args;
+    _args.Prepend("install ");
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
     console->SetWorkingDirectory(wd.GetPath());
-    console->SetCommand(GetNpm().GetFullPath(), args);
+    console->SetCommand(GetNpm().GetFullPath(), _args);
     console->SetWaitWhenDone(true);
     console->SetTerminalNeeded(true);
     return console->Start();

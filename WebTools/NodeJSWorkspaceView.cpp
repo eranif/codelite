@@ -46,22 +46,15 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
         wxMenu* menu = event.GetMenu();
 
         // Locate the "Close" menu entry
-        int pos = wxNOT_FOUND;
         int openShellPos = wxNOT_FOUND;
         wxMenuItem* closeItem = NULL;
 
-        for(size_t i = 0; i < menu->GetMenuItemCount(); ++i) {
-            wxMenuItem* mi = menu->FindItemByPosition(i);
-            if((pos == wxNOT_FOUND) && mi && (mi->GetId() == XRCID("tree_ctrl_close_folder"))) {
-                pos = i;
-                closeItem = mi;
-            }
-
-            if((openShellPos == wxNOT_FOUND) && mi && (mi->GetId() == XRCID("tree_ctrl_open_shell_folder"))) {
-                openShellPos = i;
-                ++openShellPos; // insert after
-                ++openShellPos; // skip the separator
-            }
+        int pos = ::clFindMenuItemPosition(menu, XRCID("tree_ctrl_close_folder"));
+        if(pos != wxNOT_FOUND) { closeItem = menu->FindItem(XRCID("tree_ctrl_close_folder"), NULL); }
+        openShellPos = ::clFindMenuItemPosition(menu, XRCID("tree_ctrl_open_shell_folder"));
+        if(openShellPos != wxNOT_FOUND) {
+            ++openShellPos; // insert after
+            ++openShellPos; // skip the separator
         }
 
         if((pos != wxNOT_FOUND) && closeItem) {
@@ -88,6 +81,7 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
             // only a folder is selected, check to see if this is a project folder
             // we do this by testing for the existence of the file package.json
             // under the folder path
+            int npmInstallPosAfter = wxNOT_FOUND;
             wxFileName packageJSON(folders.Item(0), "package.json");
             if(packageJSON.FileExists()) {
                 // A project folder
@@ -95,7 +89,7 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                 menu->Insert(openShellPos, XRCID("nodejs_project_settings"), _("Open package.json"));
                 menu->Insert(openShellPos, XRCID("nodejs_project_debug"), _("Debug..."));
                 menu->Insert(openShellPos, XRCID("nodejs_project_run"), _("Run..."));
-
+                npmInstallPosAfter = XRCID("nodejs_project_run");
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnOpenPackageJsonFile, this,
                            XRCID("nodejs_project_settings"));
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnProjectDebug, this, XRCID("nodejs_project_debug"));
@@ -103,11 +97,19 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
             } else {
                 // Offer a "npm init" menu entry
                 menu->InsertSeparator(openShellPos);
-                wxMenuItem* menuItem = new wxMenuItem(NULL, XRCID("nodejs_npm_init"), _("Run 'npm init' here"));
+                wxMenuItem* menuItem = new wxMenuItem(NULL, XRCID("nodejs_npm_init"), _("npm init"));
                 menu->Insert(openShellPos, menuItem);
+                npmInstallPosAfter = XRCID("nodejs_npm_init");
                 menuItem->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("console"));
                 menu->Enable(XRCID("nodejs_npm_init"), clNodeJS::Get().IsInitialised());
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInit, this, XRCID("nodejs_npm_init"));
+            }
+            
+            int npmInstallPos = ::clFindMenuItemPosition(menu, npmInstallPosAfter);
+            if(npmInstallPos != wxNOT_FOUND) {
+                npmInstallPos++; // install after it
+                menu->Insert(npmInstallPos, XRCID("nodejs_npm_install"), _("npm install"));
+                menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInstall, this, XRCID("nodejs_npm_install"));
             }
         }
     }
@@ -320,4 +322,16 @@ void NodeJSWorkspaceView::OnFileSystemUpdated(clFileSystemEvent& event)
 {
     event.Skip();
     RefreshTree();
+}
+
+void NodeJSWorkspaceView::OnNpmInstall(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxTreeItemId item;
+    wxString path;
+    if(!GetSelectProjectPath(path, item)) return;
+
+    wxString packageName = ::wxGetTextFromUser(_("Package name:"), "npm install");
+    if(packageName.IsEmpty()) { return; }
+    clNodeJS::Get().NpmInstall(packageName, path, "--save");
 }

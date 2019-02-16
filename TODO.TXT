@@ -1,3 +1,1 @@
 * Add node lint (node -c) for a source file
-* Add option to install npm packages
-* Startup Wizard: offer the user to set the global theme

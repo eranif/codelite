@@ -19,6 +19,7 @@
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 #include "clNodeJS.h"
+#include <wx/textdlg.h>
 
 NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)

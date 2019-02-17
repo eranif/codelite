@@ -70,6 +70,7 @@ class BuildSettingsDialog : public AdvancedDlgBase
 protected:
     virtual void OnApply(wxCommandEvent& event);
     virtual void OnApplyUI(wxUpdateUIEvent& event);
+    
     wxPanel* m_compilersMainPanel;
     CompilerMainPage* m_compilersPage;
 

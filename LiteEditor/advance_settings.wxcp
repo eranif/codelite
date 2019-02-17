@@ -9,6 +9,8 @@
   "m_outputFileName": "advance_settings_base",
   "m_firstWindowId": 1000,
   "m_useEnum": false,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -91,7 +93,7 @@
     }, {
      "type": "string",
      "m_label": "Inherited Class",
-     "m_value": "AdvancedDlg"
+     "m_value": "BuildSettingsDialog"
     }, {
      "type": "string",
      "m_label": "File:",
@@ -204,11 +206,11 @@
         }, {
          "type": "string",
          "m_label": "Class Name:",
-         "m_value": "Notebook"
+         "m_value": ""
         }, {
          "type": "string",
          "m_label": "Include File:",
-         "m_value": "Notebook.h"
+         "m_value": ""
         }, {
          "type": "string",
          "m_label": "Style:",

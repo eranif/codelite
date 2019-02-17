@@ -32,10 +32,10 @@ TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const 
     m_textCtrl->SetHint(wxT(""));
 #endif
 
-    boxSizer4->Add(m_textCtrl, 0, wxALL, WXC_FROM_DIP(1));
+    boxSizer4->Add(m_textCtrl, 0, wxEXPAND | wxALL, WXC_FROM_DIP(1));
 
     SetName(wxT("TextEditorBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TextEditorBaseClass::OnTextEnter), NULL, this);
@@ -150,7 +150,7 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer35->Add(m_button33, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("FontPickerDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -285,7 +285,7 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
     m_stdBtnSizer335->Realize();
 
     SetName(wxT("MessageDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -553,7 +553,7 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     boxSizer285->Add(m_button289, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("DefineCustomControlWizardBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(500, 300);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -749,7 +749,7 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 #endif
 
     SetName(wxT("EditCustomControlDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(400, 400)));
+    SetSize(400, 400);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -918,7 +918,7 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_stdBtnSizer341->Realize();
 
     SetName(wxT("ImportDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1024,9 +1024,8 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer357 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTree->SetSizer(boxSizer357);
 
-    m_treeControls =
-        new clThemedTreeCtrl(m_splitterPageTree, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)), wxTR_DEFAULT_STYLE | wxTR_SINGLE);
+    m_treeControls = new wxTreeCtrl(m_splitterPageTree, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)), wxTR_DEFAULT_STYLE | wxTR_SINGLE);
 
     boxSizer357->Add(m_treeControls, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
@@ -1038,7 +1037,7 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
     m_splitterPageEvents->SetSizer(boxSizer359);
 
     SetName(wxT("wxcTreeViewBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(500, 300);
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_comboBoxFiles->Connect(wxEVT_COMMAND_COMBOBOX_SELECTED,
@@ -1131,7 +1130,7 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
     boxSizer162->Add(m_button164, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("DeleteCustomControlDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
+    SetSize(400, 300);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1361,7 +1360,7 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 #endif
 
     SetName(wxT("wxcAboutDlgBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1463,7 +1462,7 @@ NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, co
     boxSizer249->Add(m_button253, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("NewCustomEventBaseDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1624,7 +1623,7 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer295->Add(m_button299, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("BitmapSelectorDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1745,7 +1744,7 @@ EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, cons
     boxSizer19->Add(m_inheritedEventsTable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
     SetName(wxT("EventsEditorPaneBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(500, 300);
     if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
@@ -1845,7 +1844,7 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
     boxSizer2497->Add(m_button2539, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("DuplicateTLWBaseDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -1928,7 +1927,7 @@ BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer381->Realize();
 
     SetName(wxT("BmpTextSelectorDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -2033,7 +2032,7 @@ SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindo
     m_stdBtnSizer402->Realize();
 
     SetName(wxT("SingleBitmapAndTextDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(-1, -1);
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

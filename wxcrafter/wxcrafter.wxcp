@@ -7998,11 +7998,11 @@
               }, {
                "type": "string",
                "m_label": "Class Name:",
-               "m_value": "clThemedTreeCtrl"
+               "m_value": ""
               }, {
                "type": "string",
                "m_label": "Include File:",
-               "m_value": "clThemedTreeCtrl.h"
+               "m_value": ""
               }, {
                "type": "string",
                "m_label": "Style:",

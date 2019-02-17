@@ -13,7 +13,6 @@
 #include <cl_command_event.h>
 #include <wx/aui/auibar.h>
 #include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
 
 class EventsEditorPane;
 class EventsEditorDlg;
@@ -75,7 +74,7 @@ class GUICraftMainPanel : public GUICraftMainPanelBase
     wxcWidget* m_clipboardItem;
     wxTreeItemId m_draggedItem;
     bool m_previewAlive;
-    clThemedTreeCtrl* m_treeControls;
+    wxTreeCtrl* m_treeControls;
     wxCrafterPlugin* m_plugin;
     StylesSheetListView m_styles;
     SizerFlagsListView m_sizerFlags;
@@ -154,7 +153,7 @@ protected:
     void DoGenerateCode(bool silent);
 
 public:
-    GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clThemedTreeCtrl* treeView);
+    GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, wxTreeCtrl* treeView);
     virtual ~GUICraftMainPanel();
     /**
      * @brief batch generate the code for a list of wxC files

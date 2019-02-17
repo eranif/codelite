@@ -7,40 +7,39 @@
 #ifndef _CODELITE_WXCRAFTER_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_WXCRAFTER_WXCRAFTER_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
+#include "events_table_list_view.h"
+#include <vector>
+#include <wx/arrstr.h>
 #include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/textctrl.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
-#include <wx/statbox.h>
+#include <wx/bannerwindow.h>
+#include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/fontpicker.h>
-#include <wx/stattext.h>
-#include <wx/button.h>
-#include <wx/statbmp.h>
-#include <wx/wizard.h>
-#include <vector>
-#include <wx/statline.h>
-#include <wx/dataview.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
 #include <wx/combobox.h>
-#include <wx/splitter.h>
-#include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
+#include <wx/dataview.h>
+#include <wx/dialog.h>
+#include <wx/fontpicker.h>
+#include <wx/iconbndl.h>
+#include <wx/imaglist.h>
 #include <wx/infobar.h>
-#include <wx/bannerwindow.h>
-#include "events_table_list_view.h"
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/splitter.h>
+#include <wx/statbmp.h>
+#include <wx/statbox.h>
+#include <wx/statline.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/treectrl.h>
+#include <wx/wizard.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -312,7 +311,7 @@ protected:
     wxButton* m_button426;
     wxSplitterWindow* m_splitter347;
     wxPanel* m_splitterPageTree;
-    clThemedTreeCtrl* m_treeControls;
+    wxTreeCtrl* m_treeControls;
     wxPanel* m_splitterPageEvents;
 
 protected:
@@ -328,7 +327,7 @@ protected:
 public:
     wxComboBox* GetComboBoxFiles() { return m_comboBoxFiles; }
     wxButton* GetButton426() { return m_button426; }
-    clThemedTreeCtrl* GetTreeControls() { return m_treeControls; }
+    wxTreeCtrl* GetTreeControls() { return m_treeControls; }
     wxPanel* GetSplitterPageTree() { return m_splitterPageTree; }
     wxPanel* GetSplitterPageEvents() { return m_splitterPageEvents; }
     wxSplitterWindow* GetSplitter347() { return m_splitter347; }

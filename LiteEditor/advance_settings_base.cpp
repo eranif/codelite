@@ -6,67 +6,65 @@
 
 #include "advance_settings_base.h"
 
-
 // Declare the bitmap loading function
 extern void wxCrafterMQKEsvInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                 const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterMQKEsvInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
-    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(500,300), wxBK_DEFAULT);
+
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
-    
-    mainSizer->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
-    
+
+    mainSizer->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
-    
-    mainSizer->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    mainSizer->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_buttonCancel);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
-    
-    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonApply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_buttonApply);
     m_stdBtnSizer2->Realize();
-    
+
     SetName(wxT("AdvancedDlgBase"));
-    SetSizeHints(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
         CentreOnScreen();
     }
     // Connect events
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL,
+                        this);
     m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
     m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);
-    
 }
 
 AdvancedDlgBase::~AdvancedDlgBase()
 {
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnButtonOKClicked),
+                           NULL, this);
+    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AdvancedDlgBase::OnApply), NULL,
+                              this);
     m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AdvancedDlgBase::OnApplyUI), NULL, this);
-    
 }

@@ -47,8 +47,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     boxSizer173->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_notebook = new Notebook(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
-                              kNotebook_UnderlineActiveTab);
+    m_notebook =
+        new wxNotebook(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     boxSizer173->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -187,8 +187,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     m_panel25->SetSizer(bSizer3);
 
-    m_notebook2 = new Notebook(m_panel25, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel25, wxSize(-1, -1)),
-                               kNotebook_UnderlineActiveTab);
+    m_notebook2 =
+        new wxNotebook(m_panel25, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel25, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook2->SetName(wxT("m_notebook2"));
 
     bSizer3->Add(m_notebook2, 1, wxEXPAND, WXC_FROM_DIP(5));

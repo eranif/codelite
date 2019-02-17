@@ -152,7 +152,7 @@ const wxEventType wxEVT_WXC_PROJECT_LOADED = wxNewEventType();
 const wxEventType wxEVT_WXC_SELECT_TREE_TLW = wxNewEventType();
 const wxEventType wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED = wxNewEventType();
 
-GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clThemedTreeCtrl* treeView)
+GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, wxTreeCtrl* treeView)
     : GUICraftMainPanelBase(parent)
     , m_clipboardItem(NULL)
     , m_previewAlive(false)
@@ -1169,9 +1169,10 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
         wxTreeItemId insertionItem = beforeItem;
         if(insertBefore) {
             insertionItem = m_treeControls->GetPrevSibling(beforeItem);
+
             if(insertionItem.IsOk() == false) {
-                item = m_treeControls->InsertItem(parent, wxTreeItemId(), wrapper->GetName(), imgId, imgId,
-                                                  new GUICraftItemData(wrapper));
+                item = m_treeControls->PrependItem(parent, wrapper->GetName(), imgId, imgId,
+                                                   new GUICraftItemData(wrapper));
                 if(itemToSelect.IsOk() == false) itemToSelect = item;
 
             } else {
@@ -1258,7 +1259,7 @@ void GUICraftMainPanel::DoMoveToplevelWindow(wxcWidget* tlw, int direction)
     if(!doPrepend) {
         insertedItem = m_treeControls->InsertItem(root, target, text, image, image, new GUICraftItemData(tlw));
     } else {
-        insertedItem = m_treeControls->InsertItem(root, wxTreeItemId(), text, image, image, new GUICraftItemData(tlw));
+        insertedItem = m_treeControls->PrependItem(root, text, image, image, new GUICraftItemData(tlw));
     }
 
     CHECK_TREEITEM(insertedItem);

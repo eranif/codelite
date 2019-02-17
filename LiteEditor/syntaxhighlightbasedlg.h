@@ -18,7 +18,6 @@
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include <wx/notebook.h>
-#include "Notebook.h"
 #include <wx/imaglist.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
@@ -53,7 +52,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 protected:
     wxPanel* m_panel171;
     clToolBar* m_toolbar;
-    Notebook* m_notebook;
+    wxNotebook* m_notebook;
     wxPanel* m_panelGlobalColours;
     wxCheckBox* m_cbUseCustomBaseColour;
     wxColourPickerCtrl* m_colourPickerBaseColour;
@@ -65,7 +64,7 @@ protected:
     wxPanel* m_panelSyntaxHighlight;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
-    Notebook* m_notebook2;
+    wxNotebook* m_notebook2;
     wxPanel* m_panelGlobalSettings;
     wxStaticText* m_staticText70;
     wxChoice* m_choiceLexerThemes;
@@ -177,10 +176,10 @@ public:
     wxStaticText* GetStaticText84() { return m_staticText84; }
     wxColourPickerCtrl* GetColourPickerSelTextFgColour() { return m_colourPickerSelTextFgColour; }
     wxPanel* GetPanelTextSelection() { return m_panelTextSelection; }
-    Notebook* GetNotebook2() { return m_notebook2; }
+    wxNotebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
     wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
-    Notebook* GetNotebook() { return m_notebook; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     wxPanel* GetPanel171() { return m_panel171; }
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),

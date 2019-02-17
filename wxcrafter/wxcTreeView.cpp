@@ -10,6 +10,7 @@
 #include <plugin.h>
 #include <workspace.h>
 #include <wx/aui/auibar.h>
+#include "drawingutils.h"
 
 const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER = wxNewEventType();
 
@@ -23,10 +24,10 @@ wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
     , m_plugin(plugin)
     , m_loadingProject(false)
 {
-    ::MSWSetNativeTheme(m_treeControls);
-    GetTree()->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    //::MSWSetNativeTheme(m_treeControls);
+    GetTree()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
-    m_treeControls->SetBitmaps(Allocator::Instance()->GetBitmaps());
+    m_treeControls->SetImageList(Allocator::Instance()->GetImageList());
     m_treeControls->AddRoot(wxT("wxGUI Project"), 0, 0);
 
     m_eventsPane = new EventsEditorPane(m_splitterPageEvents, NULL, plugin);

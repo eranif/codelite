@@ -226,7 +226,8 @@ protected:
     wxPanel* m_splitterPageWatches;
     clThemedTreeCtrl* m_treeCtrlLocals;
     wxPanel* m_splitterPageCallstack;
-    wxPanel* m_panel353;
+    wxSplitterWindow* m_splitter365;
+    wxPanel* m_splitterPage369;
     Notebook* m_notebook;
     wxPanel* m_panelCallstack;
     clThemedListCtrl* m_dvListCtrlCallstack;
@@ -234,6 +235,7 @@ protected:
     clToolBar* m_tbBreakpoints;
     clThemedListCtrl* m_dvListCtrlBreakpoints;
     wxPanel* m_panelConsole;
+    wxPanel* m_splitterPage373;
     wxPanel* m_panelOutput;
 
 protected:
@@ -250,9 +252,11 @@ public:
     clThemedListCtrl* GetDvListCtrlBreakpoints() { return m_dvListCtrlBreakpoints; }
     wxPanel* GetPanelBreakpoints() { return m_panelBreakpoints; }
     wxPanel* GetPanelConsole() { return m_panelConsole; }
-    wxPanel* GetPanelOutput() { return m_panelOutput; }
     Notebook* GetNotebook() { return m_notebook; }
-    wxPanel* GetPanel353() { return m_panel353; }
+    wxPanel* GetSplitterPage369() { return m_splitterPage369; }
+    wxPanel* GetPanelOutput() { return m_panelOutput; }
+    wxPanel* GetSplitterPage373() { return m_splitterPage373; }
+    wxSplitterWindow* GetSplitter365() { return m_splitter365; }
     wxPanel* GetSplitterPageCallstack() { return m_splitterPageCallstack; }
     wxSplitterWindow* GetSplitter271() { return m_splitter271; }
     NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

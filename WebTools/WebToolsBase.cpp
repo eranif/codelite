@@ -69,7 +69,7 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)),
+    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(400, 200)),
                                         wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
 
     boxSizer22->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -209,14 +209,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_stdBtnSizer4->AddButton(m_buttonApply);
     m_stdBtnSizer4->Realize();
 
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook10)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook10);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook10);
-    }
-#endif
-
     SetName(wxT("WebToolsSettingsBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
@@ -225,13 +217,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_checkBoxEnableJsCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                   wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
@@ -375,7 +360,7 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     boxSizer68->Add(m_staticText132, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stcCommandLineArguments =
-        new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+        new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), 0);
     m_stcCommandLineArguments->SetToolTip(
         _("Pass command line arguments to Node.js\nPlace each argument on its own line"));
     // Configure the fold margin
@@ -435,13 +420,6 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NodeJSDebuggerDlgBase::OnOKUI), NULL, this);
 }
@@ -530,13 +508,6 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_textCtrllName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NodeJSNewWorkspaceDlgBase::OnTextUpdate),
                              NULL, this);
@@ -589,7 +560,7 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
 
     m_splitter271 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
-    m_splitter271->SetSashGravity(0.5);
+    m_splitter271->SetSashGravity(0.3);
     m_splitter271->SetMinimumPaneSize(10);
 
     boxSizer269->Add(m_splitter271, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -613,19 +584,25 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer281 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageCallstack->SetSizer(boxSizer281);
 
-    m_panel353 = new wxPanel(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter365 = new wxSplitterWindow(m_splitterPageCallstack, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_splitterPageCallstack, wxSize(-1, -1)),
+                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter365->SetSashGravity(0.5);
+    m_splitter365->SetMinimumPaneSize(1);
 
-    boxSizer281->Add(m_panel353, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer281->Add(m_splitter365, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer355 = new wxBoxSizer(wxVERTICAL);
-    m_panel353->SetSizer(boxSizer355);
+    m_splitterPage369 = new wxPanel(m_splitter365, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter365, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    m_notebook =
-        new Notebook(m_panel353, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel353, wxSize(-1, -1)), wxBK_DEFAULT);
+    wxBoxSizer* boxSizer375 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage369->SetSizer(boxSizer375);
+
+    m_notebook = new Notebook(m_splitterPage369, wxID_ANY, wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPage369, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer355->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer375->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelCallstack =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -678,12 +655,20 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer321 = new wxBoxSizer(wxVERTICAL);
     m_panelConsole->SetSizer(boxSizer321);
 
-    m_panelOutput =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelOutput, _("Stdin / Stdout"), false);
+    m_splitterPage373 = new wxPanel(m_splitter365, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter365, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter365->SplitVertically(m_splitterPage369, m_splitterPage373, 0);
 
-    wxBoxSizer* boxSizer323 = new wxBoxSizer(wxVERTICAL);
-    m_panelOutput->SetSizer(boxSizer323);
+    wxBoxSizer* boxSizer377 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage373->SetSizer(boxSizer377);
+
+    m_panelOutput = new wxPanel(m_splitterPage373, wxID_ANY, wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPage373, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer377->Add(m_panelOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer381 = new wxBoxSizer(wxVERTICAL);
+    m_panelOutput->SetSizer(boxSizer381);
 
     SetName(wxT("NodeJSCliDebuggerPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

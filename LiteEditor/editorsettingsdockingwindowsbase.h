@@ -7,27 +7,26 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_DOCKING_WINDOWS_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/clrpicker.h>
-#include <wx/imaglist.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/radiobox.h>
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/statbox.h>
-#include <wx/statline.h>
-#include <wx/stattext.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/clrpicker.h>
+#include <wx/statline.h>
+#include <wx/checkbox.h>
+#include <wx/radiobox.h>
+#include <wx/statbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -43,7 +42,7 @@
 class EditorSettingsDockingWindowsBase : public wxPanel
 {
 protected:
-    Notebook* m_notebook10;
+    wxNotebook* m_notebook10;
     wxPanel* m_panelTabs;
     wxStaticText* m_staticText46;
     wxChoice* m_choiceTabStyle;
@@ -142,7 +141,7 @@ public:
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfMemCheck() { return m_checkBoxHideOutputPaneNotIfMemCheck; }
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
     wxPanel* GetPanel16() { return m_panel16; }
-    Notebook* GetNotebook10() { return m_notebook10; }
+    wxNotebook* GetNotebook10() { return m_notebook10; }
     EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();

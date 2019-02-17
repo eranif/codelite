@@ -1113,6 +1113,8 @@ void clMainFrame::CreateGUIControls()
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
+    clThemeUpdater::Get().RegisterWindow(container);
+    
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();

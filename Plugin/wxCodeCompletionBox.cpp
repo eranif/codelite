@@ -449,7 +449,7 @@ int wxCodeCompletionBox::GetSingleLineHeight() const
     gcdc.SetFont(m_ccFont);
     m_canvas->PrepareDC(gcdc);
     wxSize size = gcdc.GetTextExtent("Tp");
-    int singleLineHeight = size.y + (2 * Y_SPACER) + clGetScaledSize(2); // the extra pixel is for the border line
+    int singleLineHeight = size.y + (2 * Y_SPACER) + 2; // the extra pixel is for the border line
     return singleLineHeight;
 }
 

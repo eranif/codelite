@@ -27,6 +27,7 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include "clThemeUpdater.h"
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -35,11 +36,12 @@ clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
     , m_bookmarksButtonState(eButtonState::kNormal)
 {
+    clThemeUpdater::Get().RegisterWindow(this);
     m_defaultColour = DrawingUtils::GetPanelTextColour();
     m_functionColour = DrawingUtils::GetPanelTextColour();
     m_classColour = DrawingUtils::GetPanelTextColour();
     m_bgColour = DrawingUtils::GetPanelBgColour();
-    m_textFont = m_textFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_textFont = m_textFont = clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     LexerConf::Ptr_t defaultLexer = ColoursAndFontsManager::Get().GetLexer("default");
     if(defaultLexer) { m_textFont = defaultLexer->GetFontForSyle(0); }
 
@@ -60,6 +62,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
 
 clEditorBar::~clEditorBar()
 {
+    clThemeUpdater::Get().UnRegisterWindow(this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
@@ -101,7 +104,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
         int scopeButtonWidth =
             /*m_functionBmp.GetScaledWidth() + */ gcdc.GetTextExtent("W" + fulltext + "W").GetWidth();
         m_scopeRect = wxRect(textX, 0, scopeButtonWidth + 20, rect.GetHeight() - 2);
-        DrawingUtils::DrawNativeChoice(this, gcdc, m_scopeRect, fulltext);
+        DrawingUtils::DrawCustomChoice(this, gcdc, m_scopeRect, fulltext,
+                                       clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         textX += m_scopeRect.GetWidth();
         textX += X_SPACER;
     }
@@ -121,7 +125,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
 
         // We add 20 since its the drop down button size
         m_filenameRect = wxRect(textX, 0, filenameButtonWidth + 20, rect.GetHeight() - 2);
-        DrawingUtils::DrawNativeChoice(this, gcdc, m_filenameRect, breadcumbsText);
+        DrawingUtils::DrawCustomChoice(this, gcdc, m_filenameRect, breadcumbsText,
+                                       clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         textX += m_filenameRect.GetWidth();
         textX += X_SPACER;
 
@@ -131,7 +136,8 @@ void clEditorBar::OnPaint(wxPaintEvent& e)
             // Draw the bookmarks button
             // Add 60 (about 40 for the image and 20 needed for the drop down button
             m_bookmarksRect = wxRect(textX, 0, bookmarksTextSize.GetWidth() + 60, rect.GetHeight() - 2);
-            DrawingUtils::DrawNativeChoice(this, gcdc, m_bookmarksRect, bookmarksLabel, m_bookmarksBmp);
+            DrawingUtils::DrawCustomChoice(this, gcdc, m_bookmarksRect, bookmarksLabel,
+                                           clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE), m_bookmarksBmp);
             textX += m_bookmarksRect.GetWidth();
             textX += X_SPACER;
         }

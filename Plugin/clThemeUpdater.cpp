@@ -35,7 +35,11 @@ void clThemeUpdater::UpdateGlobalColours()
     });
 }
 
-void clThemeUpdater::RegisterWindow(wxWindow* win) { m_windows.insert(win); }
+void clThemeUpdater::RegisterWindow(wxWindow* win)
+{
+    win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_windows.insert(win);
+}
 
 void clThemeUpdater::UnRegisterWindow(wxWindow* win)
 {

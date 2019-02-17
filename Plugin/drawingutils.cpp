@@ -463,7 +463,7 @@ wxFont DrawingUtils::GetDefaultFixedFont()
     wxFont f(GetDefaultGuiFont());
     f.SetFamily(wxFONTFAMILY_TELETYPE);
     f.SetFaceName(DEFAULT_FACE_NAME);
-    f.SetPointSize(DEFAULT_FONT_SIZE);
+    //f.SetPointSize(DEFAULT_FONT_SIZE);
     return f;
 }
 
@@ -714,11 +714,11 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
-#ifdef __WXGTK__
+#if 0
     wxRendererNative::Get().DrawDropArrow(win, dc, rect, 0);
 #else
     int size = wxMin(rect.GetHeight(), rect.GetWidth());
-    size = wxMin(8, size);
+    size = wxMin(10, size);
     wxRect arrowRect = wxRect(0, 0, size, size);
     int xx = rect.GetX() + ((rect.GetWidth() - arrowRect.GetWidth()) / 2);
     int yy = rect.GetY() + ((rect.GetHeight() - arrowRect.GetHeight()) / 2);
@@ -728,7 +728,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     points[0] = arrowRect.GetTopLeft();
     points[1] = arrowRect.GetTopRight();
     points[2].x = arrowRect.GetBottomLeft().x + (arrowRect.GetWidth() / 2);
-    points[2].y = arrowRect.GetBottomLeft().y;
+    points[2].y = arrowRect.GetBottomLeft().y - 2;
 
     // if a user provided a colour for the button, use it
     wxColour buttonColour = colour;

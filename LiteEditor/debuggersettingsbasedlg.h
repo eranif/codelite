@@ -15,7 +15,6 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/notebook.h>
-#include "Notebook.h"
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
@@ -55,7 +54,7 @@
 class DebuggerSettingsBaseDlg : public wxDialog
 {
 protected:
-    Notebook* m_notebook;
+    wxNotebook* m_notebook;
     wxStdDialogButtonSizer* m_stdBtnSizer92;
     wxButton* m_buttonOK;
     wxButton* m_button96;
@@ -65,7 +64,7 @@ protected:
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    Notebook* GetNotebook() { return m_notebook; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"),
                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -144,7 +143,7 @@ class DbgPageGeneralBase : public wxPanel
 {
 protected:
     wxPanel* m_panel6;
-    Notebook* m_notebook73;
+    wxNotebook* m_notebook73;
     wxPanel* m_panelGeneral;
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textCtrDbgPath;
@@ -193,7 +192,7 @@ public:
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
     wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
     wxPanel* GetPanelDisplay() { return m_panelDisplay; }
-    Notebook* GetNotebook73() { return m_notebook73; }
+    wxNotebook* GetNotebook73() { return m_notebook73; }
     wxPanel* GetPanel6() { return m_panel6; }
     DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);

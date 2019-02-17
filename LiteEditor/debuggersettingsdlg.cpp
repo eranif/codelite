@@ -273,7 +273,7 @@ void DebuggerSettingsDlg::Initialize()
     m_notebook->AddPage(p, wxT("GNU gdb debugger"), true);
     m_pages.push_back(p);
 
-    Notebook* innerBook = p->GetNotebook73();
+    wxNotebook* innerBook = p->GetNotebook73();
     DebuggerPageMisc* misc = new DebuggerPageMisc(innerBook, "GNU gdb debugger");
     innerBook->AddPage(misc, wxT("Misc"), false);
     m_pages.push_back(misc);

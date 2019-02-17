@@ -25,8 +25,7 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    m_notebook = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)),
-                              kNotebook_Default | wxBORDER_STATIC);
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     bSizer1->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -320,7 +319,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_panel6->SetSizer(bSizer16);
 
     m_notebook73 =
-        new Notebook(m_panel6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), wxBK_DEFAULT);
+        new wxNotebook(m_panel6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook73->SetName(wxT("m_notebook73"));
 
     bSizer16->Add(m_notebook73, 1, wxEXPAND, WXC_FROM_DIP(5));

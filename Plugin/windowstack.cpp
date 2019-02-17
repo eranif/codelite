@@ -33,7 +33,7 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id)
     : wxWindow(parent, id)
 {
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
-    clThemeUpdater::Get().RegisterWindow(this);
+    //clThemeUpdater::Get().RegisterWindow(this);
 }
 
 WindowStack::~WindowStack()

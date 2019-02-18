@@ -10,7 +10,7 @@ WebToolsConfig::WebToolsConfig()
     , m_jsFlags(kJSEnableCC | kJSLibraryBrowser | kJSLibraryEcma5 | kJSLibraryEcma6 | kJSPluginNode | kJSNodeExpress)
     , m_xmlFlags(kXmlEnableCC)
     , m_htmlFlags(kHtmlEnableCC)
-    , m_nodeOptions(kLintOnSave)
+    , m_nodeOptions(0)
 {
 }
 

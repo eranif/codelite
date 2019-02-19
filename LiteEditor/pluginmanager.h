@@ -169,6 +169,7 @@ public:
     clWorkspaceView* GetWorkspaceView();
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
+    virtual wxInfoBar* GetInfoBar();
     //------------------------------------
     // End of IManager interface
     //------------------------------------

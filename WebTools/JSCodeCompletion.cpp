@@ -23,6 +23,7 @@
 #include <wx/xrc/xmlres.h>
 #include "clNodeJS.h"
 #include "webtools.h"
+#include "codelite_events.h"
 
 JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin)
     : m_ternServer(this)
@@ -34,24 +35,21 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* p
     if(WebToolsConfig::Get().IsTernInstalled() && WebToolsConfig::Get().IsNodeInstalled()) {
         m_ternServer.Start(m_workingDirectory);
     }
+    EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &JSCodeCompletion::OnInfoBarClicked, this);
 }
 
 JSCodeCompletion::~JSCodeCompletion()
 {
     m_ternServer.Terminate();
     wxTheApp->Unbind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
+    EventNotifier::Get()->Unbind(wxEVT_INFO_BAR_BUTTON, &JSCodeCompletion::OnInfoBarClicked, this);
 }
 
 bool JSCodeCompletion::SanityCheck()
 {
     WebToolsConfig& conf = WebToolsConfig::Get();
     if(!conf.IsNodeInstalled() || !conf.IsNpmInstalled()) {
-        wxString msg;
-        msg << _("It seems that NodeJS and/or Npm are not installed on your machine\nI have temporarily disabled Code "
-                 "Completion for "
-                 "JavaScript\nPlease install "
-                 "NodeJS and npm and try again");
-        wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        CallAfter(&JSCodeCompletion::DoPromptForInstallNodeJS);
 
         // Disable CC
         conf.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
@@ -60,12 +58,7 @@ bool JSCodeCompletion::SanityCheck()
 
     // Locate tern
     if(!conf.IsTernInstalled()) {
-        wxString msg;
-        msg << _("CodeLite uses tern for providing JavaScript code completion\nWould you like to install it now?");
-        if(::wxMessageBox(msg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER) == wxYES) {
-            clNodeJS::Get().NpmSilentInstall("tern", conf.GetTempFolder(true), "", m_plugin, "npm-install-tern");
-        }
-
+        CallAfter(&JSCodeCompletion::DoPromptForInstallTern);
         // Disable CC
         conf.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
         return false;
@@ -226,4 +219,38 @@ void JSCodeCompletion::ReparseFile(IEditor* editor)
     // Sanity
     m_ccPos = wxNOT_FOUND;
     m_ternServer.PostReparseCommand(editor);
+}
+
+void JSCodeCompletion::DoPromptForInstallNodeJS()
+{
+    wxString msg;
+    wxInfoBar* bar = clGetManager()->GetInfoBar();
+    ::clInfoBarRemoveAllButtons(bar);
+    msg << _("NodeJS and/or Npm are not installed on your machine. JavaScript code completion is disabled");
+    bar->AddButton(wxID_OK);
+    bar->ShowMessage(msg, wxICON_INFORMATION);
+}
+
+void JSCodeCompletion::DoPromptForInstallTern()
+{
+    // Show the info message
+    wxInfoBar* bar = clGetManager()->GetInfoBar();
+    ::clInfoBarRemoveAllButtons(bar);
+    bar->AddButton(XRCID("npm-install-tern"), _("Yes"));
+    bar->AddButton(wxID_NO);
+    bar->ShowMessage(_("CodeLite uses 'tern' for JavaScript code completion. Would you like to install tern now?"),
+                     wxICON_QUESTION);
+}
+
+void JSCodeCompletion::OnInfoBarClicked(clCommandEvent& event)
+{
+    event.Skip(false);
+    WebToolsConfig& conf = WebToolsConfig::Get();
+    if(event.GetInt() == XRCID("npm-install-tern")) {
+        clGetManager()->SetStatusMessage("npm install tern...", 5);
+        clNodeJS::Get().NpmSilentInstall("tern", conf.GetTempFolder(true), "", m_plugin, "npm-install-tern");
+
+    } else {
+        event.Skip();
+    }
 }

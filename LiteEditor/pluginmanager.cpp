@@ -887,3 +887,8 @@ bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
 clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetMainBook()->GetEditorBar(); }
 
 clToolBar* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
+
+wxInfoBar* PluginManager::GetInfoBar()
+{
+    return clMainFrame::Get()->GetInfoBar();
+}

@@ -48,7 +48,7 @@ public:
     void OnFunctionTipReady(clCallTipPtr calltip, const wxString& filename);
     void OnDefinitionFound(const clTernDefinition& loc);
     void OnGotoDefinition(wxCommandEvent& event);
-
+    void OnInfoBarClicked(clCommandEvent& event);
     /**
      * @brief start code completion based on the word completion plugin
      */
@@ -56,6 +56,8 @@ public:
 
 protected:
     bool SanityCheck();
+    void DoPromptForInstallNodeJS();
+    void DoPromptForInstallTern();
 
 public:
     JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin);

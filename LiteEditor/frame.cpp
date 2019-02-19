@@ -816,7 +816,8 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
 
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
-
+    m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
+    
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -861,6 +862,7 @@ clMainFrame::~clMainFrame(void)
 #if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
     delete m_myMenuBar;
 #endif
+    m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
     wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
@@ -1126,8 +1128,10 @@ void clMainFrame::CreateGUIControls()
     container->GetSizer()->Add(m_debuggerToolbar, 0, wxALIGN_LEFT);
 
     m_mainBook = new MainBook(container);
-
+    
+    m_infoBar = new wxInfoBar(container);
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
+    container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
     QuickFindBar* findbar = new QuickFindBar(container);
     findbar->Hide();
     container->GetSizer()->Add(findbar, 0, wxEXPAND);
@@ -5730,4 +5734,14 @@ void clMainFrame::OnCustomiseToolbar(wxCommandEvent& event)
         if(buttons[i]->IsHidden() && !buttons[i]->IsSeparator()) { hiddenItems.Add(buttons[i]->GetLabel()); }
     }
     clConfig::Get().Write("ToolBarHiddenItems", hiddenItems);
+}
+
+void clMainFrame::OnInfobarButton(wxCommandEvent& event)
+{
+    event.Skip(); // needed to make sure that the bar is hidden
+    int buttonID = event.GetId();
+    clCommandEvent buttonEvent(wxEVT_INFO_BAR_BUTTON);
+    buttonEvent.SetInt(buttonID);
+    buttonEvent.SetEventObject(m_infoBar);
+    EventNotifier::Get()->AddPendingEvent(buttonEvent);
 }

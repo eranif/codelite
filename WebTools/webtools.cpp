@@ -503,6 +503,7 @@ void WebTools::OnNodeCommandCompleted(clProcessEvent& event)
     event.Skip();
     if(event.GetString() == "npm-install-tern") {
         // tern installation completed, enable the code completion again
+        clGetManager()->SetStatusMessage("tern installed", 5);
         WebToolsConfig::Get().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, true);
         if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(true); }
     }

@@ -39,7 +39,9 @@
 #include "debugger.h"
 #include "clStatusBar.h"
 #include "clTab.h"
+#include <wx/infobar.h>
 
+class wxInfoBar;
 class clTreeCtrl;
 class clEditorBar;
 class clWorkspaceView;
@@ -164,7 +166,12 @@ public:
      * @brief return the main frame's status bar
      */
     virtual clStatusBar* GetStatusBar() = 0;
-
+    
+    /**
+     * @brief return the info bar
+     */
+    virtual wxInfoBar* GetInfoBar() = 0;
+    
     /**
      * @brief return the navigation bar (the one that contains the "File Name" + class::func location at the bottom of
      * the editor)

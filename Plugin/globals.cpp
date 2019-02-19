@@ -2128,3 +2128,11 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
     vr << cb;
     return vr;
 }
+
+void clInfoBarRemoveAllButtons(wxInfoBar* bar)
+{
+    while(bar->GetButtonCount()) {
+        wxWindowID btnid = bar->GetButtonId(0);
+        if(btnid != wxID_NONE) { bar->RemoveButton(btnid); }
+    }
+}

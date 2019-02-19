@@ -39,6 +39,7 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
+#include <wx/infobar.h>
 
 class wxDataViewCtrl;
 class IManager;
@@ -614,5 +615,10 @@ WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
  * @brief return the screen size, taking dual or more screens into account
  */
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
+
+/**
+ * @brief remove all buttons from infobar class
+ */
+WXDLLIMPEXP_SDK void clInfoBarRemoveAllButtons(wxInfoBar* bar);
 
 #endif // GLOBALS_H

@@ -194,4 +194,5 @@ bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& working
         d.SetSink(sink);
         m_processes.insert({ process, d });
     }
+    return (process != nullptr);
 }

@@ -817,7 +817,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
-    
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -1116,19 +1116,19 @@ void clMainFrame::CreateGUIControls()
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
     clThemeUpdater::Get().RegisterWindow(container);
-    
+
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();
 
     container->GetSizer()->Add(navbar, 0, wxEXPAND | wxALL, 5);
-    
+
     // Add the debugger toolbar
     m_debuggerToolbar = new DebuggerToolBar(container);
     container->GetSizer()->Add(m_debuggerToolbar, 0, wxALIGN_LEFT);
 
     m_mainBook = new MainBook(container);
-    
+
     m_infoBar = new wxInfoBar(container);
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
     container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
@@ -1271,8 +1271,9 @@ void clMainFrame::OnEditMenuOpened(wxMenuEvent& event)
                             // handler is only hit when there's no editor :/
         labelCurrentState->Enable(editor != NULL);
     } else {
-        // In wx3.1 Bind()ing wxEVT_MENU_OPEN for the Edit menu catches its submenu opens too, so we arrive here multiple times
-        return; 
+        // In wx3.1 Bind()ing wxEVT_MENU_OPEN for the Edit menu catches its submenu opens too, so we arrive here
+        // multiple times
+        return;
     }
 
     if(editor) {
@@ -2593,8 +2594,8 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
         m_workspaceRetagIsRequired = false;
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
         this->AddPendingEvent(evt);
-        GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite. "
-                                     "CodeLite will perform a full retag of the workspace"));
+        ::clInfoBarRemoveAllButtons(GetInfoBar());
+        GetInfoBar()->ShowMessage(_("A workspace reparse is needed"), wxICON_INFORMATION);
     }
 
     // For some reason, under Linux we need to force the menu accelerator again
@@ -4431,8 +4432,6 @@ void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent& e)
 {
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
     this->AddPendingEvent(evt);
-    // GetMainBook()->ShowMessage(_("Your workspace symbols file does not match the current version of CodeLite.
-    // CodeLite will perform a full retag of the workspace"));
 }
 
 // Due to differnet schema versions, the database was truncated by the
@@ -4603,22 +4602,14 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 void clMainFrame::DoSuggestRestart()
 {
 #ifdef __WXMAC__
-    GetMainBook()->ShowMessage(_("Some of the changes made requires restart of CodeLite"));
+    ::clInfoBarRemoveAllButtons(GetInfoBar());
+    GetInfoBar()->ShowMessage(_("Some of the changes made require a restart of CodeLite"), wxICON_QUESTION);
 #else
-    // On Winodws & GTK we offer auto-restart
-    ButtonDetails btn1, btn2;
-    btn1.buttonLabel = _("Restart Now!");
-    btn1.commandId = wxEVT_CMD_RESTART_CODELITE;
-    btn1.menuCommand = false;
-    btn1.isDefault = true;
-    btn1.window = ManagerST::Get();
-
-    // set button window to NULL
-    btn2.buttonLabel = _("Not now");
-    btn2.window = NULL;
-
-    GetMainBook()->ShowMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"), false,
-                               PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("messages/48/restart")), btn1, btn2);
+    ::clInfoBarRemoveAllButtons(GetInfoBar());
+    GetInfoBar()->AddButton(XRCID("restart-codelite"), _("Yes"));
+    GetInfoBar()->AddButton(wxID_NO);
+    GetInfoBar()->ShowMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"),
+                              wxICON_QUESTION);
 #endif
 }
 
@@ -5740,8 +5731,12 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
 {
     event.Skip(); // needed to make sure that the bar is hidden
     int buttonID = event.GetId();
-    clCommandEvent buttonEvent(wxEVT_INFO_BAR_BUTTON);
-    buttonEvent.SetInt(buttonID);
-    buttonEvent.SetEventObject(m_infoBar);
-    EventNotifier::Get()->AddPendingEvent(buttonEvent);
+    if(buttonID == XRCID("restart-codelite")) {
+        ManagerST::Get()->OnCmdRestart(event);
+    } else {
+        clCommandEvent buttonEvent(wxEVT_INFO_BAR_BUTTON);
+        buttonEvent.SetInt(buttonID);
+        buttonEvent.SetEventObject(m_infoBar);
+        EventNotifier::Get()->AddPendingEvent(buttonEvent);
+    }
 }

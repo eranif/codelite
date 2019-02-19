@@ -31,7 +31,6 @@
 #include "cl_command_event.h"
 #include "editorframe.h"
 #include "filehistory.h"
-#include "message_pane.h"
 #include "quickfindbar.h"
 #include "sessionmanager.h"
 #include "wxStringHash.h"
@@ -49,7 +48,6 @@ private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
     Notebook* m_book;
-    MessagePane* m_messagePane;
     bool m_useBuffereLimit;
     EditorFrame::List_t m_detachedEditors;
     bool m_isWorkspaceReloading;
@@ -157,10 +155,6 @@ public:
     void ShowQuickBarForPlugins();
     void ShowQuickBar(bool s);
     void ShowQuickBar(const wxString& findWhat, bool showReplace);
-    void ShowMessage(const wxString& message, bool showHideButton = true, const wxBitmap& bmp = wxNullBitmap,
-                     const ButtonDetails& btn1 = ButtonDetails(), const ButtonDetails& btn2 = ButtonDetails(),
-                     const ButtonDetails& btn3 = ButtonDetails(), const CheckboxDetails& cb = CheckboxDetails());
-
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
     bool IsNavBarShown() { return m_navBar && m_navBar->IsShown(); }

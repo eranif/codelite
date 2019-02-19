@@ -507,13 +507,8 @@
     <File Name="filechecklistbase.h"/>
     <File Name="quickfindbarbase.h"/>
     <File Name="quickfindbarbase.cpp"/>
-    <File Name="messagepane_base.h"/>
-    <File Name="messagepane_base.cpp"/>
-    <File Name="message_pane.h"/>
-    <File Name="message_pane.cpp"/>
     <File Name="save_perspective_as_dlg.cpp"/>
     <File Name="save_perspective_as_dlg.h"/>
-    <File Name="messagepane.wxcp"/>
     <File Name="quickfindbarbase_liteeditor_bitmaps.cpp"/>
     <File Name="DefaultWorkspacePage.h"/>
     <File Name="DefaultWorkspacePage.cpp"/>

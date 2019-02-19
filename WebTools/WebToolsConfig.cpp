@@ -37,7 +37,7 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     m_htmlFlags = json.namedObject("m_htmlFlags").toSize_t(m_htmlFlags);
     m_nodeOptions = json.namedObject("m_nodeOptions").toSize_t(m_nodeOptions);
     m_portNumber = json.namedObject("m_portNumber").toInt(m_portNumber);
-    
+
     wxString v;
     v = json.namedObject("m_nodejs").toString(v);
     if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_nodejs = v; }
@@ -115,4 +115,35 @@ WebToolsConfig& WebToolsConfig::Get()
 {
     static WebToolsConfig webtoolsConfig;
     return webtoolsConfig;
+}
+
+bool WebToolsConfig::IsNodeInstalled() const
+{
+    wxFileName fn(GetNodejs());
+    return fn.IsOk() && fn.FileExists();
+}
+
+bool WebToolsConfig::IsNpmInstalled() const
+{
+    wxFileName fn(GetNpm());
+    return fn.IsOk() && fn.FileExists();
+}
+
+wxFileName WebToolsConfig::GetTernScript() const
+{
+    wxFileName fn(GetTempFolder(false), "tern");
+    fn.AppendDir("node_modules");
+    fn.AppendDir("tern");
+    fn.AppendDir("bin");
+    return fn;
+}
+
+bool WebToolsConfig::IsTernInstalled() const { return GetTernScript().FileExists(); }
+
+wxString WebToolsConfig::GetTempFolder(bool create) const
+{
+    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "");
+    fn.AppendDir("webtools");
+    if(create) { fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL); }
+    return fn.GetPath();
 }

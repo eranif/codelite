@@ -76,6 +76,7 @@ protected:
     void OnNodeJSCliDebuggerStarted(clDebugEvent& event);
     void OnNodeJSDebuggerStopped(clDebugEvent& event);
     void OnIsDebugger(clDebugEvent& event);
+    void OnNodeCommandCompleted(clProcessEvent& event);
 
 private:
     bool IsJavaScriptFile(const wxString& filename);

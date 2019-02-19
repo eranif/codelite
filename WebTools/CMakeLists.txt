@@ -55,9 +55,3 @@ target_link_libraries(${PLUGIN_NAME}
                       )
 
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
-if(APPLE)
-    CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/WebTools/javascript-osx.zip)
-else()
-    CL_INSTALL_FILE_SHARED(${CL_SRC_ROOT}/WebTools/javascript.zip)
-endif()
-

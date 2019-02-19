@@ -10,6 +10,8 @@
 #include "globals.h"
 #include "imanager.h"
 
+wxDEFINE_EVENT(wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
+
 clNodeJS::clNodeJS() {}
 
 clNodeJS::~clNodeJS() {}
@@ -30,7 +32,7 @@ bool clNodeJS::Initialise(const wxArrayString& hints)
 }
 
 bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
-                          wxEvtHandler* sink)
+                          wxEvtHandler* sink, const wxString& uid)
 {
     if(!IsInitialised()) { return false; }
 
@@ -50,7 +52,7 @@ bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirect
     console->SetCommand(GetNpm().GetFullPath(), _args);
     console->SetWaitWhenDone(true);
     console->SetTerminalNeeded(true);
-    console->SetSink(sink);
+    console->SetSink(sink, uid);
     return console->Start();
 }
 
@@ -58,8 +60,8 @@ void clNodeJS::OnProcessOutput(clProcessEvent& event)
 {
     IProcess* process = event.GetProcess();
     if(m_processes.count(process)) {
-        LintInfo& d = m_processes[process];
-        d.m_output << event.GetOutput();
+        ProcessData& d = m_processes[process];
+        d.GetOutput() << event.GetOutput();
     }
 }
 
@@ -67,8 +69,15 @@ void clNodeJS::OnProcessTerminated(clProcessEvent& event)
 {
     IProcess* process = event.GetProcess();
     if(m_processes.count(process)) {
-        const LintInfo& d = m_processes[process];
-        if(!d.m_output.IsEmpty()) { ProcessLintOuput(d.filename, d.m_output); }
+        const ProcessData& d = m_processes[process];
+        // Handle lint
+        if(!d.GetOutput().IsEmpty() && d.GetUid() == "lint") { ProcessLintOuput(d.GetFilename(), d.GetOutput()); }
+        if(d.GetSink()) {
+            clProcessEvent evt(wxEVT_NODE_COMMAND_TERMINATED);
+            evt.SetOutput(d.GetOutput());
+            evt.SetString(d.GetUid()); // pass the unique ID
+            d.GetSink()->AddPendingEvent(evt);
+        }
         m_processes.erase(process);
     }
     wxDELETE(process);
@@ -90,8 +99,9 @@ void clNodeJS::Shutdown()
     UnBindEvents();
 
     std::for_each(m_processes.begin(), m_processes.end(),
-                  [&](const std::unordered_map<IProcess*, LintInfo>::value_type& vt) {
+                  [&](const std::unordered_map<IProcess*, ProcessData>::value_type& vt) {
                       IProcess* p = vt.first;
+                      // Terminate the process
                       p->Terminate();
                       wxDELETE(p);
                   });
@@ -138,9 +148,12 @@ void clNodeJS::LintFile(const wxFileName& filename)
 
     command << " -c " << filename.GetFullName();
     IProcess* process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, wd);
-    LintInfo d;
-    d.filename = filename;
-    if(process) { m_processes.insert({ process, d }); }
+    if(process) {
+        ProcessData d;
+        d.SetFilename(filename);
+        d.SetUid("lint");
+        m_processes.insert({ process, d });
+    }
 }
 
 void clNodeJS::ProcessLintOuput(const wxFileName& fn, const wxString& output)
@@ -150,17 +163,35 @@ void clNodeJS::ProcessLintOuput(const wxFileName& fn, const wxString& output)
     wxString line = where.AfterLast(':');
     wxString file = where.BeforeLast(':');
     wxString errorMessage = output.AfterFirst('\n');
-    
+
     line.Trim().Trim(false);
     file.Trim().Trim(false);
-    
+
     // Use the code font for this error message
     errorMessage.Prepend("<code>").Append("</code>");
-    
+
     long nLineNumber = -1;
     line.ToCLong(&nLineNumber);
-    
+
     // Mark the editor with error marker
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
     if(editor && (nLineNumber != wxNOT_FOUND)) { editor->SetErrorMarker(nLineNumber - 1, errorMessage); }
+}
+
+bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
+                                wxEvtHandler* sink, const wxString& uid)
+{
+    if(!IsInitialised()) { return false; }
+    wxString command;
+    command << GetNpm().GetFullPath();
+    ::WrapWithQuotes(command);
+
+    command << " install " << package << " --silent --quiet " << args;
+    IProcess* process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
+    if(process) {
+        ProcessData d;
+        d.SetUid(uid);
+        d.SetSink(sink);
+        m_processes.insert({ process, d });
+    }
 }

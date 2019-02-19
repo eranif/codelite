@@ -100,7 +100,9 @@ WebTools::WebTools(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &WebTools::OnIsDebugger, this);
 
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
-    m_jsCodeComplete.Reset(new JSCodeCompletion(""));
+    Bind(wxEVT_NODE_COMMAND_TERMINATED, &WebTools::OnNodeCommandCompleted, this);
+
+    m_jsCodeComplete.Reset(new JSCodeCompletion("", this));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion());
     m_cssCodeComplete.Reset(new CSSCodeCompletion());
     m_jsctags.Reset(new clJSCTags());
@@ -130,6 +132,7 @@ void WebTools::UnPlug()
 {
     // Store the configuration changes
     WebToolsConfig::Get().SaveConfig();
+    Unbind(wxEVT_NODE_COMMAND_TERMINATED, &WebTools::OnNodeCommandCompleted, this);
 
     // Stop the debugger
     if(NodeJSWorkspace::Get()->IsOpen() && NodeJSWorkspace::Get()->GetDebugger() &&
@@ -408,12 +411,12 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
     event.Skip();
     wxFileName workspaceFile = event.GetString();
     if(FileExtManager::GetType(workspaceFile.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
-        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath()));
+        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
     } else {
         // For non NodeJS workspaces, create the .tern files under
         // the .codelite folder
         workspaceFile.AppendDir(".codelite");
-        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath()));
+        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
     }
 }
 
@@ -444,7 +447,7 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     DoRefreshColours(event.GetFileName());
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(); }
+        if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(false); }
         // Remove all compiler markers
         editor->DelAllCompilerMarkers();
         if(WebToolsConfig::Get().IsLintOnSave()) { clNodeJS::Get().LintFile(event.GetFileName()); }
@@ -493,4 +496,14 @@ void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
     fnNodeJSLayout.AppendDir("config");
     if(FileUtils::ReadFileContent(fnNodeJSLayout, layout)) { m_mgr->GetDockingManager()->LoadPerspective(layout); }
     EnsureAuiPaneIsVisible("nodejs_cli_debugger", true);
+}
+
+void WebTools::OnNodeCommandCompleted(clProcessEvent& event)
+{
+    event.Skip();
+    if(event.GetString() == "npm-install-tern") {
+        // tern installation completed, enable the code completion again
+        WebToolsConfig::Get().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, true);
+        if(m_jsCodeComplete) { m_jsCodeComplete->ResetTern(true); }
+    }
 }

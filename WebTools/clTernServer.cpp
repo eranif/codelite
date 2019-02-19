@@ -64,19 +64,11 @@ bool clTernServer::Start(const wxString& workingDirectory)
 {
     if(m_fatalError) return false;
     if(!m_jsCCManager->IsEnabled()) return true;
-
+    if(!WebToolsConfig::Get().IsNodeInstalled()) { return true; }
+    if(!WebToolsConfig::Get().IsTernInstalled()) { return true; }
+    
     m_workingDirectory = workingDirectory;
     WebToolsConfig& conf = WebToolsConfig::Get();
-
-    wxFileName ternFolder(clStandardPaths::Get().GetUserDataDir(), "");
-    ternFolder.AppendDir("webtools");
-    ternFolder.AppendDir("js");
-
-    wxFileName nodeJS;
-    if(!LocateNodeJS(nodeJS)) {
-        m_fatalError = true;
-        return false;
-    }
 
 #ifdef __WXMAC__
     // set permissions to 755
@@ -84,13 +76,10 @@ bool clTernServer::Start(const wxString& workingDirectory)
                           wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
 #endif
 
-    wxString nodeExe = nodeJS.GetFullPath();
+    wxString nodeExe = conf.GetNodejs();
     ::WrapWithQuotes(nodeExe);
-
-    wxFileName ternScript = ternFolder;
-    ternScript.AppendDir("bin");
-    ternScript.SetFullName("tern");
-    wxString ternScriptString = ternScript.GetFullPath();
+    
+    wxString ternScriptString = conf.GetTernScript().GetFullPath();
     ::WrapWithQuotes(ternScriptString);
 
     wxString command;

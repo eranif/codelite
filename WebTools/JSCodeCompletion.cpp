@@ -21,36 +21,17 @@
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+#include "clNodeJS.h"
+#include "webtools.h"
 
-#ifdef __WXMSW__
-#define ZIP_NAME "javascript-win.zip"
-#elif defined(__WXGTK__)
-#define ZIP_NAME "javascript.zip"
-#else
-#define ZIP_NAME "javascript-osx.zip"
-#endif
-
-JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory)
+JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin)
     : m_ternServer(this)
     , m_ccPos(wxNOT_FOUND)
     , m_workingDirectory(workingDirectory)
+    , m_plugin(plugin)
 {
     wxTheApp->Bind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
-    wxFileName jsResources(clStandardPaths::Get().GetDataDir(), ZIP_NAME);
-    if(jsResources.Exists()) {
-
-        clZipReader zipReader(jsResources);
-        wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
-        targetDir.AppendDir("webtools");
-        targetDir.AppendDir("js");
-
-        // Clear the old installation files
-        if(targetDir.DirExists()) { targetDir.Rmdir(wxPATH_RMDIR_RECURSIVE); }
-        
-        // Create the path again and deploy the files
-        targetDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        zipReader.Extract("*", targetDir.GetPath());
-
+    if(WebToolsConfig::Get().IsTernInstalled() && WebToolsConfig::Get().IsNodeInstalled()) {
         m_ternServer.Start(m_workingDirectory);
     }
 }
@@ -63,17 +44,29 @@ JSCodeCompletion::~JSCodeCompletion()
 
 bool JSCodeCompletion::SanityCheck()
 {
-    wxFileName nodeJS;
-    if(!clTernServer::LocateNodeJS(nodeJS)) {
+    WebToolsConfig& conf = WebToolsConfig::Get();
+    if(!conf.IsNodeInstalled() || !conf.IsNpmInstalled()) {
         wxString msg;
-        msg << _(
-            "It seems that NodeJS is not installed on your machine\nI have temporarily disabled Code Completion for "
-            "JavaScript\nPlease install "
-            "NodeJS and try again");
+        msg << _("It seems that NodeJS and/or Npm are not installed on your machine\nI have temporarily disabled Code "
+                 "Completion for "
+                 "JavaScript\nPlease install "
+                 "NodeJS and npm and try again");
         wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
 
         // Disable CC
-        WebToolsConfig& conf = WebToolsConfig::Get();
+        conf.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
+        return false;
+    }
+
+    // Locate tern
+    if(!conf.IsTernInstalled()) {
+        wxString msg;
+        msg << _("CodeLite uses tern for providing JavaScript code completion\nWould you like to install it now?");
+        if(::wxMessageBox(msg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER) == wxYES) {
+            clNodeJS::Get().NpmSilentInstall("tern", conf.GetTempFolder(true), "", m_plugin, "npm-install-tern");
+        }
+
+        // Disable CC
         conf.EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, false);
         return false;
     }
@@ -196,7 +189,7 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
     }
 }
 
-void JSCodeCompletion::ResetTern()
+void JSCodeCompletion::ResetTern(bool force)
 {
     if(!IsEnabled()) { return; }
 
@@ -207,7 +200,7 @@ void JSCodeCompletion::ResetTern()
 
     // recycle tern
     // m_ternServer.PostResetCommand(true);
-    m_ternServer.RecycleIfNeeded();
+    m_ternServer.RecycleIfNeeded(force);
 }
 
 void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor)

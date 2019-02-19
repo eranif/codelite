@@ -9,12 +9,32 @@
 #include "codelite_exports.h"
 #include <unordered_map>
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
+
 class WXDLLIMPEXP_SDK clNodeJS : public wxEvtHandler
 {
 protected:
-    struct LintInfo {
+    class ProcessData
+    {
+    protected:
         wxFileName filename;
-        wxString m_output;
+        wxString output;
+        wxString uid;
+        wxEvtHandler* sink = nullptr;
+
+    public:
+        ProcessData() {}
+        virtual ~ProcessData() {}
+        void SetFilename(const wxFileName& filename) { this->filename = filename; }
+        void SetOutput(const wxString& output) { this->output = output; }
+        const wxFileName& GetFilename() const { return filename; }
+        const wxString& GetOutput() const { return output; }
+        wxString& GetOutput() { return output; }
+        void SetUid(const wxString& uid) { this->uid = uid; }
+        const wxString& GetUid() const { return this->uid; }
+        wxString& GetUid() { return this->uid; }
+        void SetSink(wxEvtHandler* sink) { this->sink = sink; }
+        wxEvtHandler* GetSink() const { return sink; }
     };
 
 protected:
@@ -22,7 +42,7 @@ protected:
     wxFileName m_npm;
     wxFileName m_node;
 
-    std::unordered_map<IProcess*, LintInfo> m_processes;
+    std::unordered_map<IProcess*, ProcessData> m_processes;
 
 protected:
     void OnProcessOutput(clProcessEvent& event);
@@ -52,7 +72,13 @@ public:
      * @brief install an npm package
      */
     bool NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
-                    wxEvtHandler* sink = nullptr);
+                    wxEvtHandler* sink = nullptr, const wxString& uid = "");
+
+    /**
+     * @brief install package without user interference
+     */
+    bool NpmSilentInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
+                          wxEvtHandler* sink = nullptr, const wxString& uid = "");
 
     /**
      * @brief run npm init in a directory

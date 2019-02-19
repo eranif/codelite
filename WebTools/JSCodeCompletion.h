@@ -34,11 +34,13 @@
 #include "cl_calltip.h"
 #include "clJSCTags.h"
 
+class WebTools;
 class JSCodeCompletion : public wxEvtHandler
 {
     clTernServer m_ternServer;
     int m_ccPos;
     wxString m_workingDirectory;
+    WebTools* m_plugin = nullptr;
 
 public:
     typedef SmartPtr<JSCodeCompletion> Ptr_t;
@@ -56,7 +58,7 @@ protected:
     bool SanityCheck();
 
 public:
-    JSCodeCompletion(const wxString& workingDirectory);
+    JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin);
     virtual ~JSCodeCompletion();
 
     /**
@@ -78,7 +80,7 @@ public:
      * @brief notify tern to clear the cache
      * @param editor
      */
-    void ResetTern();
+    void ResetTern(bool force);
 
     /**
      * @brief reparse the file

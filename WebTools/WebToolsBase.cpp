@@ -81,6 +81,11 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropLogging->SetHelpString(
         _("The JavaScript code completion uses the \"tern\" engine.\nCheck this option to start tern in verbose mode"));
 
+    m_pgPropPortNumber =
+        m_pgMgr->AppendIn(m_pgProp26, new wxIntProperty(_("Code completion engine port"), wxPG_LABEL, 12089));
+    m_pgPropPortNumber->SetHelpString(_("The port number on which 'tern' listens to\nTern is the code completion "
+                                        "engine used by CodeLite for JavaScript"));
+
     m_pgProp32 = m_pgMgr->Append(new wxPropertyCategory(_("Libraries")));
     m_pgProp32->SetHelpString(_("Enable Code Completion for the selected libraries"));
 

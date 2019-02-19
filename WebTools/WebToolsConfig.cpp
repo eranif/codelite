@@ -36,6 +36,8 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     m_xmlFlags = json.namedObject("m_xmlFlags").toSize_t(m_xmlFlags);
     m_htmlFlags = json.namedObject("m_htmlFlags").toSize_t(m_htmlFlags);
     m_nodeOptions = json.namedObject("m_nodeOptions").toSize_t(m_nodeOptions);
+    m_portNumber = json.namedObject("m_portNumber").toInt(m_portNumber);
+    
     wxString v;
     v = json.namedObject("m_nodejs").toString(v);
     if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_nodejs = v; }
@@ -52,6 +54,7 @@ JSONElement WebToolsConfig::ToJSON() const
     element.addProperty("m_htmlFlags", m_htmlFlags);
     element.addProperty("m_nodejs", m_nodejs);
     element.addProperty("m_npm", m_npm);
+    element.addProperty("m_portNumber", m_portNumber);
     return element;
 }
 

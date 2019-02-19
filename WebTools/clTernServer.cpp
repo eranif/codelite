@@ -32,17 +32,13 @@ clTernServer::clTernServer(JSCodeCompletion* cc)
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clTernServer::OnTernOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clTernServer::OnTernTerminated, this);
+    m_port = WebToolsConfig::Get().GetPortNumber();
 }
 
 clTernServer::~clTernServer() {}
 
 void clTernServer::OnTernOutput(clProcessEvent& event)
 {
-    static wxRegEx rePort("Listening on port ([0-9]+)");
-    if(rePort.IsValid() && rePort.Matches(event.GetOutput())) {
-        wxString strPort = rePort.GetMatch(event.GetOutput(), 1);
-        strPort.ToCLong(&m_port);
-    }
     PrintMessage(event.GetOutput());
 }
 
@@ -61,10 +57,6 @@ void clTernServer::OnTernTerminated(clProcessEvent& event)
 
     PrintMessage("Tern server terminated, will restart it\n");
     ++crash_count;
-    //if(crash_count >= 1000) {
-    //    clWARNING() << "JS code completion terminated too many times, will not restart it again!";
-    //    return;
-    //}
     Start(m_workingDirectory);
 }
 
@@ -102,7 +94,7 @@ bool clTernServer::Start(const wxString& workingDirectory)
     ::WrapWithQuotes(ternScriptString);
 
     wxString command;
-    command << nodeExe << " " << ternScriptString << " --persistent ";
+    command << nodeExe << " " << ternScriptString << " --persistent --port " << m_port;
 
     if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) { command << " --verbose"; }
 
@@ -119,7 +111,7 @@ bool clTernServer::Start(const wxString& workingDirectory)
         return false;
     }
 
-    PrintMessage(wxString() << "Starting " << command << "\n");
+    PrintMessage(wxString() << "Starting: " << command << "\n");
     m_tern = ::CreateAsyncProcess(this, command, IProcessCreateDefault, m_workingDirectory);
     if(!m_tern) {
         PrintMessage("Failed to start Tern server!");
@@ -180,7 +172,7 @@ void clTernServer::PrintMessage(const wxString& message)
     wxString msg;
     msg << message;
     msg.Trim().Trim(false);
-    CL_DEBUGS(msg);
+    clDEBUG() << msg;
 }
 
 void clTernServer::RecycleIfNeeded(bool force)

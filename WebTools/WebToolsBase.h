@@ -65,6 +65,7 @@ protected:
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* m_pgProp26;
     wxPGProperty* m_pgPropLogging;
+    wxPGProperty* m_pgPropPortNumber;
     wxPGProperty* m_pgProp32;
     wxPGProperty* m_pgPropEcma5;
     wxPGProperty* m_pgPropEcma6;

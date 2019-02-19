@@ -36,6 +36,7 @@ class WebToolsConfig : public clConfigItem
     wxString m_nodejs;
     wxString m_npm;
     size_t m_nodeOptions;
+    int m_portNumber = 12089;
 
 public:
     virtual void FromJSON(const JSONElement& json);
@@ -85,6 +86,9 @@ protected:
 
 public:
     virtual ~WebToolsConfig();
+
+    void SetPortNumber(int portNumber) { this->m_portNumber = portNumber; }
+    int GetPortNumber() const { return m_portNumber; }
     
     static WebToolsConfig& Get();
     bool HasJavaScriptFlag(eJSFlags flag) const { return HasFlag(m_jsFlags, flag); }
@@ -103,7 +107,7 @@ public:
 
     bool IsLintOnSave() const { return HasFlag(m_nodeOptions, kLintOnSave); }
     void SetLintOnSave(bool b) { EnableFlag(m_nodeOptions, kLintOnSave, b); }
-    
+
     /**
      * @brief create tern project file content based on the settings
      */

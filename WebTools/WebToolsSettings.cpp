@@ -29,7 +29,8 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_pgPropQML->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSPluginQML));
         m_pgPropNodeExpress->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSNodeExpress));
         m_pgPropWebPack->SetValue(config.HasJavaScriptFlag(WebToolsConfig::kJSWebPack));
-
+        m_pgPropPortNumber->SetValue(config.GetPortNumber());
+        
         // XML
         m_checkBoxEnableXmlCC->SetValue(config.HasXmlFlag(WebToolsConfig::kXmlEnableCC));
         // HTML
@@ -105,6 +106,7 @@ void WebToolsSettings::DoSave()
     config.EnableJavaScriptFlag(WebToolsConfig::kJSPluginQML, m_pgPropQML->GetValue().GetBool());
     config.EnableJavaScriptFlag(WebToolsConfig::kJSNodeExpress, m_pgPropNodeExpress->GetValue().GetBool());
     config.EnableJavaScriptFlag(WebToolsConfig::kJSWebPack, m_pgPropWebPack->GetValue().GetBool());
+    config.SetPortNumber(m_pgPropPortNumber->GetValue().GetInteger());
 
     // XML
     config.EnableXmlFlag(WebToolsConfig::kXmlEnableCC, m_checkBoxEnableXmlCC->IsChecked());

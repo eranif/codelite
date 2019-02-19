@@ -207,7 +207,7 @@ void JSCodeCompletion::ResetTern()
 
     // recycle tern
     // m_ternServer.PostResetCommand(true);
-    m_ternServer.RecycleIfNeeded(true);
+    m_ternServer.RecycleIfNeeded();
 }
 
 void JSCodeCompletion::AddContextMenu(wxMenu* menu, IEditor* editor)

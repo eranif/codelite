@@ -17,9 +17,9 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_LEFT_UP, &clCustomScrollBar::OnMouseLeftUp, this);
     Bind(wxEVT_MOTION, &clCustomScrollBar::OnMotion, this);
     if(style == wxSB_HORIZONTAL) {
-        SetSize(-1, 12);
+        SetSize(-1, 10);
     } else {
-        SetSize(12, -1);
+        SetSize(10, -1);
     }
     Bind(wxEVT_SIZE, &clCustomScrollBar::OnSize, this);
     Bind(wxEVT_IDLE, &clCustomScrollBar::OnIdle, this);
@@ -48,9 +48,9 @@ void clCustomScrollBar::Update(int thumbSize, int range, int pageSize, int posit
 }
 
 #ifdef __WXGTK__
-#define SB_RADIUS 3.0
+#define SB_RADIUS 5.0
 #else
-#define SB_RADIUS 0.0
+#define SB_RADIUS 5.0
 #endif
 
 void clCustomScrollBar::OnPaint(wxPaintEvent& e)

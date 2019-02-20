@@ -149,14 +149,15 @@ void WorkspaceTab::CreateGUIControls()
                             "of the selected item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSeparator();
+    m_toolbar580->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+                          _("Run Active Project"));
+    m_toolbar580->AddSeparator();
     m_toolbar580->AddTool(XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build"),
                           _("Build Active Project"), wxITEM_DROPDOWN);
     m_toolbar580->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop"),
                           _("Stop Current Build"));
     m_toolbar580->AddTool(XRCID("clean_active_project"), _("Clean Active Project"), bmps->LoadBitmap("clean"),
                           _("Clean Active Project"));
-    m_toolbar580->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
-                          _("Run Active Project"));
     m_toolbar580->Realize();
 }
 

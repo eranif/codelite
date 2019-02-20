@@ -42,12 +42,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Use the active editor's font (if any)
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        m_ccFont = editor->GetCtrl()->StyleGetFont(0);
-    } else {
-        // Default
-        m_ccFont = DrawingUtils::GetDefaultFixedFont();
-    }
+    m_ccFont = DrawingUtils::GetBestFixedFont(editor);
     SetCursor(wxCURSOR_HAND);
 
     // Set the default bitmap list
@@ -63,17 +58,16 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_bitmaps.push_back(bmpLoader->LoadBitmap("function_private"));   // 8
     m_bitmaps.push_back(bmpLoader->LoadBitmap("function_public"));    // 9
     m_bitmaps.push_back(bmpLoader->LoadBitmap("function_protected")); // 10
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("macro"));            // 11
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("macro"));              // 11
     m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 12
     m_bitmaps.push_back(bmpLoader->LoadBitmap("enumerator"));         // 13
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));              // 14
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));                // 15
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));             // 16
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));           // 14
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));             // 15
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));          // 16
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cpp_keyword"));        // 17
     m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 18
 
     InitializeDefaultBitmaps();
-
     // Set the control width
     {
         wxMemoryDC memDC;

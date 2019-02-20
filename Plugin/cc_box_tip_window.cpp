@@ -110,21 +110,15 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     m_rightTipRect = wxRect();
 
     if(!simpleTip && m_numOfTips > 1) m_tip.Prepend(wxT("\n\n")); // Make room for the arrows
-
     Hide();
 
     wxBitmap bmp(1, 1);
-    wxMemoryDC dc(bmp);
-
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc(memDC);
     wxSize size;
-
-    if(editor) {
-        // Use the active editor's font
-        m_codeFont = editor->GetCtrl()->StyleGetFont(0);
-    } else {
-        m_codeFont = DrawingUtils::GetDefaultFixedFont();
-    }
     m_commentFont = DrawingUtils::GetDefaultGuiFont();
+    m_codeFont = DrawingUtils::GetBestFixedFont(editor);
+    gcdc.SetFont(m_commentFont);
 
     wxString codePart, commentPart;
     wxString strippedTip = DoStripMarkups();
@@ -149,17 +143,11 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
 
     int commentWidth = 0;
     int codeWidth = 0;
-
-    // Use bold font for measurements
-    // m_codeFont.SetWeight(wxFONTWEIGHT_BOLD);
-    // m_commentFont.SetWeight(wxFONTWEIGHT_BOLD);
-
     if(!simpleTip) {
-        dc.GetMultiLineTextExtent(codePart, &codeWidth, NULL, NULL, &m_codeFont);
-        dc.GetMultiLineTextExtent(commentPart, &commentWidth, NULL, NULL, &m_commentFont);
-
+        gcdc.GetMultiLineTextExtent(codePart, &codeWidth, NULL, NULL, &m_codeFont);
+        gcdc.GetMultiLineTextExtent(commentPart, &commentWidth, NULL, NULL, &m_commentFont);
     } else {
-        dc.GetMultiLineTextExtent(strippedTip, &codeWidth, NULL, NULL, &m_commentFont);
+        gcdc.GetMultiLineTextExtent(strippedTip, &codeWidth, NULL, NULL, &m_commentFont);
     }
 
     m_codeFont.SetWeight(wxFONTWEIGHT_NORMAL);
@@ -172,7 +160,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     m_tip.Replace("\r", "");
     while(m_tip.Replace("\n\n", "\n")) {}
 
-    dc.GetTextExtent(wxT("Tp"), NULL, &m_lineHeight, NULL, NULL, &m_codeFont);
+    gcdc.GetTextExtent(wxT("Tp"), NULL, &m_lineHeight, NULL, NULL, &m_codeFont);
     int nLineCount = ::wxStringTokenize(m_tip, wxT("\r\n"), wxTOKEN_RET_EMPTY_ALL).GetCount();
 
     size.y = nLineCount * m_lineHeight;
@@ -182,7 +170,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     size_t maxWidth(0);
 
     // Calc the width
-    DoDrawTip(dc, maxWidth);
+    DoDrawTip(gcdc, maxWidth);
     size.x = maxWidth;
     SetSize(size);
 

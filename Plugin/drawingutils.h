@@ -30,6 +30,7 @@
 #include "wx/colour.h"
 #include "wx/dc.h"
 #include <wx/dcgraph.h>
+#include "ieditor.h"
 
 enum class eButtonState {
     kNormal,
@@ -64,6 +65,7 @@ public:
                                          const wxColour& endColor, bool vertical);
     static bool IsDark(const wxColour& col);
     static wxFont GetDefaultFixedFont();
+    static wxFont GetBestFixedFont(IEditor* editor = nullptr);
     static wxFont GetDefaultGuiFont();
     static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
     static wxSize GetBestSize(const wxString& label, int xspacer = 5, int yspacer = 5);

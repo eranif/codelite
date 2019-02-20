@@ -463,7 +463,7 @@ wxFont DrawingUtils::GetDefaultFixedFont()
     wxFont f(GetDefaultGuiFont());
     f.SetFamily(wxFONTFAMILY_TELETYPE);
     f.SetFaceName(DEFAULT_FACE_NAME);
-    //f.SetPointSize(DEFAULT_FONT_SIZE);
+    // f.SetPointSize(DEFAULT_FONT_SIZE);
     return f;
 }
 
@@ -881,4 +881,17 @@ clColours& DrawingUtils::GetColours(bool darkColours)
     } else {
         return g_normalColours;
     }
+}
+
+wxFont DrawingUtils::GetBestFixedFont(IEditor* editor)
+{
+    wxFont defaultFont = DrawingUtils::GetDefaultFixedFont();
+    wxFont bestFont = defaultFont;
+    if(editor) {
+        bestFont = editor->GetCtrl()->StyleGetFont(0);
+#ifndef __WXGTK3__
+        bestFont.SetPointSize(defaultFont.GetPointSize());
+#endif
+    }
+    return bestFont;
 }

@@ -47,7 +47,7 @@ protected:
     int m_highlighIndex;
     wxString m_tipText;
     wxPoint m_point;
-    int m_lineHeight;
+    int m_lineHeight = 0;
     wxColour m_parentBgColour;
     wxString m_selectedSignature;
     wxFont m_font;

@@ -1618,7 +1618,7 @@ SvnShowRecentChangesBaseDlg::SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWin
     m_stdBtnSizer62->Realize();
 
     SetName(wxT("SvnShowRecentChangesBaseDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(800, 700)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);

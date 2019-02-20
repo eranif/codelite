@@ -12257,7 +12257,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "-1,-1"
+     "m_value": "800,700"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",

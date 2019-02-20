@@ -472,7 +472,7 @@ public:
     wxStyledTextCtrl* GetStcComment() { return m_stcComment; }
     SvnShowRecentChangesBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
                                 const wxString& title = _("Subversion: Show Recent Changes"),
-                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 700),
                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SvnShowRecentChangesBaseDlg();
 };

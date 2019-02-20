@@ -25,7 +25,7 @@ wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
     , m_loadingProject(false)
 {
     //::MSWSetNativeTheme(m_treeControls);
-    GetTree()->SetFont(DrawingUtils::GetDefaultGuiFont());
+//    GetTree()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
     m_treeControls->SetImageList(Allocator::Instance()->GetImageList());
     m_treeControls->AddRoot(wxT("wxGUI Project"), 0, 0);

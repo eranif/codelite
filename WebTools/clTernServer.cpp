@@ -70,12 +70,6 @@ bool clTernServer::Start(const wxString& workingDirectory)
     m_workingDirectory = workingDirectory;
     WebToolsConfig& conf = WebToolsConfig::Get();
 
-#ifdef __WXMAC__
-    // set permissions to 755
-    nodeJS.SetPermissions(wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE | wxPOSIX_OTHERS_READ | wxPOSIX_OTHERS_EXECUTE |
-                          wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE);
-#endif
-
     wxString nodeExe = conf.GetNodejs();
     ::WrapWithQuotes(nodeExe);
     

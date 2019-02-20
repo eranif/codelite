@@ -575,10 +575,10 @@ wxArrayString FindReplaceData::GetReplaceStringArr() const
 
 FindReplaceData::FindReplaceData()
     : clConfigItem("FindReplaceData")
-    , m_flags(wxFRD_SEPARATETAB_DISPLAY | wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD)
+    , m_flags(wxFRD_SEPARATETAB_DISPLAY | wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD | wxFRD_ENABLE_PIPE_SUPPORT)
     , m_selectedMask("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc") // Default file mask
 {
-    m_searchPaths.Add(SEARCH_IN_WORKSPACE_FOLDER);
+    m_searchPaths.Add(SEARCH_IN_WORKSPACE);
     m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.xml;*.json;*.sql");
 }
 

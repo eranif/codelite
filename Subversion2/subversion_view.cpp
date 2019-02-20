@@ -432,7 +432,7 @@ int SubversionView::DoGetIconIndex(const wxString& filename)
 
 void SubversionView::CreateFileMenu(wxMenu* menu)
 {
-    menu->Append(XRCID("svn_open_file"), _("Open File..."));
+    menu->Append(XRCID("svn_open_file"), _("Open File"));
     menu->AppendSeparator();
     menu->Append(XRCID("svn_file_update"), wxT("Update"));
     menu->Append(XRCID("svn_file_commit"), wxT("Commit"));

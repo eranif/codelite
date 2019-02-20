@@ -154,7 +154,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     boxSizer111->Add(boxSizer310, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), 0);
+                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(500, 300)), 0);
     // Configure the fold margin
     m_stcLeft->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask(4, wxSTC_MASK_FOLDERS);

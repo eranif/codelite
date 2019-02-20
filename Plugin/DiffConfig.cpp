@@ -27,7 +27,7 @@
 
 DiffConfig::DiffConfig()
     : clConfigItem("CodeLiteDiff")
-    , m_flags(0)
+    , m_flags(kShowLineNumbers)
     , m_viewFlags(kViewVerticalSplit)
 {
 }

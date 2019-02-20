@@ -119,6 +119,7 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
     CallAfter(&DiffSideBySidePanel::DoLayout);
+    CentreOnParent();
 }
 
 DiffSideBySidePanel::~DiffSideBySidePanel()

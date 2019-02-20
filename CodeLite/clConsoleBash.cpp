@@ -10,7 +10,7 @@ clConsoleBash::~clConsoleBash() {}
 
 wxFileName clConsoleBash::PrepareExecScript() const
 {
-    // Create a script
+// Create a script
 #ifdef __WXOSX__
     wxFileName scriptPath("/tmp", "codelite-exec.sh");
 #else
@@ -24,20 +24,31 @@ wxFileName clConsoleBash::PrepareExecScript() const
         wxString fileContent;
         fileContent << "#!/bin/bash\n";
         fileContent << "command=\"" << GetCommand() << "\"\n";
+        wxString cdCommand;
+#ifdef __WXOSX__
+        // on OSX, we need to set the working directory via the script
+        if(!GetWorkingDirectory().IsEmpty()) {
+            wxString workingDir = GetWorkingDirectory();
+            if(workingDir.Contains(" ")) {
+                workingDir.Prepend("\"").Append("\"");
+            }
+            cdCommand << "cd " << workingDir << " && ";
+        }
+#endif
         if(!GetCommandArgs().IsEmpty()) {
-
             // Split the arguments line
             wxArrayString arr = SplitArguments(GetCommandArgs());
-
             // Create an array in the script
             for(size_t i = 0; i < arr.size(); ++i) {
                 fileContent << "args[" << i << "]=\"" << arr[i] << "\"\n";
             }
-            fileContent << "${command} \"${args[@]}\"\n";
+            fileContent << cdCommand << "${command} \"${args[@]}\"\n";
         } else {
-            fileContent << "${command}\n";
+            fileContent << cdCommand << "${command}\n";
         }
-        if(IsWaitWhenDone()) { fileContent << "echo Hit any key to continue...\nread"; }
+        if(IsWaitWhenDone()) {
+            fileContent << "echo Hit any key to continue...\nread";
+        }
         FileUtils::WriteFileContent(scriptPath, fileContent);
     }
 #ifdef __WXOSX__

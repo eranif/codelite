@@ -7,52 +7,48 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="16"
+   viewBox="0 0 20 20"
    version="1.1"
-   viewBox="0 0 16 16"
-   width="16"
-   xml:space="preserve"
-   id="svg2"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="mime-php.svg"><metadata
-   id="metadata17"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-   id="defs15" /><sodipodi:namedview
-   pagecolor="#ffffff"
-   bordercolor="#666666"
-   borderopacity="1"
-   objecttolerance="10"
-   gridtolerance="10"
-   guidetolerance="10"
-   inkscape:pageopacity="0"
-   inkscape:pageshadow="2"
-   inkscape:window-width="1853"
-   inkscape:window-height="1016"
-   id="namedview13"
-   showgrid="false"
-   inkscape:zoom="5.6568542"
-   inkscape:cx="106.62965"
-   inkscape:cy="-27.60738"
-   inkscape:window-x="67"
-   inkscape:window-y="27"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="svg2"
-   inkscape:showpageshadow="false"
-   showborder="true" />
-
-
-
-<text
-   xml:space="preserve"
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.40586758px;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fcaf3e;fill-opacity:1;stroke:none;stroke-width:1.11715567px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-   x="-0.70367706"
-   y="9.8870602"
-   id="text8728"
-   transform="scale(0.9469453,1.0560272)"><tspan
-     sodipodi:role="line"
-     id="tspan8730"
-     x="-0.70367706"
-     y="9.8870602"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.37866783px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#fcaf3e;fill-opacity:1;stroke-width:1.11715567px;">php</tspan></text>
+   id="svg4"
+   sodipodi:docname="mime-php.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1406"
+     inkscape:window-height="774"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="11.8"
+     inkscape:cx="10"
+     inkscape:cy="10"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg4" />
+  <path
+     d="m 10.002419,11.532464 v 6.401935 A 8.0024194,8.0024194 0 0 0 11.466862,2.0656013 L 10.002419,3.5300441 H 6.0012087 A 4.0012096,4.0012096 0 0 0 1.999999,7.5232513 v 7.2181827 a 3.2009678,3.2009678 0 0 0 3.2009678,3.192965 v -1.600483 a 1.600484,1.600484 0 1 1 0,-3.200968 H 8.4019345 Z M 5.6010878,9.1317376 a 1.2003629,1.2003629 0 1 1 0,-2.4007259 1.200363,1.200363 0 0 1 0,2.4007259 z"
+     id="path2"
+     inkscape:connector-curvature="0"
+     style="fill:#c6afe9;fill-rule:evenodd;stroke-width:0.99999994" />
 </svg>

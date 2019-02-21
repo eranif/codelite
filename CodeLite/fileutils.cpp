@@ -158,8 +158,8 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     FileUtils::WriteFileContent(helperScript, fileContent);
     int rc = system("chmod +x /tmp/codelite-lldb-helper.sh");
     wxUnusedVar(rc);
-    
-    command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh" ;
+
+    command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh";
     clDEBUG() << "Executing: " << command;
     long res = ::wxExecute(command);
     if(res == 0) {
@@ -367,16 +367,17 @@ bool FileUtils::IsHidden(const wxString& filename) { return IsHidden(filename); 
 
 bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
 {
+    if(masks.IsEmpty()) { return false; }
+    
     if(masks.Index("*") != wxNOT_FOUND) {
         // If one of the masks is plain "*" - we match everything
         return true;
     }
 
-    wxString lcFilename = filename.Lower();
     for(size_t i = 0; i < masks.size(); ++i) {
         const wxString& pattern = masks.Item(i);
-        if((!pattern.Contains("*") && lcFilename == pattern) ||
-           (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename))) {
+        if((!pattern.Contains("*") && filename == pattern) ||
+           (pattern.Contains("*") && ::wxMatchWild(pattern, filename))) {
             // use exact match
             return true;
         }
@@ -449,8 +450,8 @@ wxString FileUtils::NormaliseName(const wxString& name)
     static int invalidChars[256];
     if(!initialised) {
         memset(invalidChars, 0, sizeof(invalidChars));
-        std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(',
-                               ')', '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
+        std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(', ')',
+                               '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
         for(size_t i = 0; i < V.size(); ++i) {
             invalidChars[V[i]] = 1;
         }

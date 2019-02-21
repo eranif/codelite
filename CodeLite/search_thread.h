@@ -72,7 +72,7 @@ class WXDLLIMPEXP_CL SearchData : public ThreadRequest
     bool m_newTab;
     wxEvtHandler* m_owner;
     wxString m_encoding;
-
+    wxArrayString m_excludePatterns;
     friend class SearchThread;
 
 private:
@@ -97,31 +97,12 @@ public:
     {
     }
 
-    SearchData(const SearchData& rhs) { *this = rhs; }
-
+    SearchData(const SearchData& rhs) { Copy(rhs); }
+    SearchData& operator=(const SearchData& rhs);
+    
     virtual ~SearchData() {}
-
-    SearchData& operator=(const SearchData& rhs)
-    {
-        if(this == &rhs) { return *this; }
-
-        m_findString = rhs.m_findString.c_str();
-        m_flags = rhs.m_flags;
-        m_validExt = rhs.m_validExt.c_str();
-        m_rootDirs = rhs.m_rootDirs;
-        m_newTab = rhs.m_newTab;
-        m_owner = rhs.m_owner;
-        m_encoding = rhs.m_encoding.c_str();
-        m_replaceWith = rhs.m_replaceWith;
-        m_files.clear();
-
-        for(size_t i = 0; i < rhs.m_files.GetCount(); i++) {
-            m_files.Add(rhs.m_files.Item(i).c_str());
-        }
-
-        return *this;
-    }
-
+    SearchData& Copy(const SearchData& other);
+    
 public:
     //------------------------------------------
     // Setters / Getters
@@ -142,6 +123,8 @@ public:
     void SetFindString(const wxString& findString) { m_findString = findString; }
     void SetFiles(const wxArrayString& files) { m_files = files; }
     const wxArrayString& GetFiles() const { return m_files; }
+    void SetExcludePatterns(const wxArrayString& excludePatterns) { this->m_excludePatterns = excludePatterns; }
+    const wxArrayString& GetExcludePatterns() const { return m_excludePatterns; }
     void UseNewTab(bool useNewTab) { m_newTab = useNewTab; }
     bool UseNewTab() const { return m_newTab; }
     void SetEncoding(const wxString& encoding) { this->m_encoding = encoding.c_str(); }
@@ -208,10 +191,10 @@ public:
         m_scope = rhs.m_scope.c_str();
         return *this;
     }
-    
+
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);
-    
+
     //------------------------------------------------------
     // Setters/getters
 
@@ -280,7 +263,7 @@ public:
     }
 
     virtual ~SearchSummary() {}
-    
+
     SearchSummary(const SearchSummary& rhs) { *this = rhs; }
 
     SearchSummary& operator=(const SearchSummary& rhs)
@@ -295,10 +278,10 @@ public:
         m_replaceWith = rhs.m_replaceWith;
         return *this;
     }
-    
+
     JSONElement ToJSON() const;
     void FromJSON(const JSONElement& json);
-    
+
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
     void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }
     const wxString& GetFindWhat() const { return m_findWhat; }

@@ -48,7 +48,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     wxArrayString m_findStringArr;
     m_findString = new wxComboBox(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
-                                  wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_findStringArr, 0);
+                                  wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_findStringArr, wxTE_PROCESS_ENTER);
     m_findString->SetToolTip(_("Find what"));
     m_findString->SetFocus();
 #if wxVERSION_NUMBER >= 3000
@@ -131,11 +131,44 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     fgSizer41->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    wxArrayString m_listPathsArr;
-    m_listPaths = new wxListBox(m_panelMainPanel, wxID_ANY, wxDefaultPosition,
-                                wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_listPathsArr, wxLB_MULTIPLE);
+    m_stcPaths = new wxStyledTextCtrl(m_panelMainPanel, wxID_ANY, wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), wxBORDER_NONE);
+    // Configure the fold margin
+    m_stcPaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcPaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcPaths->SetMarginSensitive(4, true);
+    m_stcPaths->SetMarginWidth(4, 0);
 
-    fgSizer41->Add(m_listPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    // Configure the tracker margin
+    m_stcPaths->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcPaths->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcPaths->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcPaths->SetMarginWidth(2, 0);
+    m_stcPaths->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcPaths->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcPaths->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcPaths->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcPaths->SetMarginMask(3, 0);
+    m_stcPaths->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcPaths->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcPaths->StyleClearAll();
+    m_stcPaths->SetWrapMode(0);
+    m_stcPaths->SetIndentationGuides(0);
+    m_stcPaths->SetKeyWords(0, wxT(""));
+    m_stcPaths->SetKeyWords(1, wxT(""));
+    m_stcPaths->SetKeyWords(2, wxT(""));
+    m_stcPaths->SetKeyWords(3, wxT(""));
+    m_stcPaths->SetKeyWords(4, wxT(""));
+
+    fgSizer41->Add(m_stcPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -150,12 +183,6 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_btnAddPath->SetToolTip(_("Add new search location"));
 
     boxSizer1->Add(m_btnAddPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_btnClearSelectedPath = new wxButton(m_panelMainPanel, wxID_ANY, _("Clear Path"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), 0);
-    m_btnClearSelectedPath->SetToolTip(_("Clear the selected entry from the\n'Look In' list box"));
-
-    boxSizer1->Add(m_btnClearSelectedPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     fgSizer41->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
@@ -231,13 +258,8 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnButtonClose), NULL,
                       this);
     m_stop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnStop), NULL, this);
-    m_listPaths->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(FindInFilesDialogBase::OnLookInKeyDown), NULL, this);
     m_btnAddPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnAddPath), NULL,
                           this);
-    m_btnClearSelectedPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                    wxCommandEventHandler(FindInFilesDialogBase::OnClearSelectedPath), NULL, this);
-    m_btnClearSelectedPath->Connect(wxEVT_UPDATE_UI,
-                                    wxUpdateUIEventHandler(FindInFilesDialogBase::OnClearSelectedPathUI), NULL, this);
 }
 
 FindInFilesDialogBase::~FindInFilesDialogBase()
@@ -250,13 +272,8 @@ FindInFilesDialogBase::~FindInFilesDialogBase()
     m_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnButtonClose),
                          NULL, this);
     m_stop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnStop), NULL, this);
-    m_listPaths->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(FindInFilesDialogBase::OnLookInKeyDown), NULL, this);
     m_btnAddPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnAddPath),
                              NULL, this);
-    m_btnClearSelectedPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                       wxCommandEventHandler(FindInFilesDialogBase::OnClearSelectedPath), NULL, this);
-    m_btnClearSelectedPath->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnClearSelectedPathUI), NULL, this);
 }
 
 FindInFilesLocationsDlgBase::FindInFilesLocationsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,

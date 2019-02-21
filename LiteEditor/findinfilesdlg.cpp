@@ -40,6 +40,9 @@
 #include "sessionmanager.h"
 #include "workspace.h"
 #include <project.h>
+#include "lexer_configuration.h"
+#include "ColoursAndFontsManager.h"
+#include "globals.h"
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
                                      const wxArrayString& additionalSearchPaths)
@@ -47,6 +50,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
 {
     m_data.SetName(dataName);
     m_customPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) { lexer->Apply(m_stcPaths); }
 
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
@@ -54,11 +59,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
     if(!filemask.IsEmpty()) { m_data.SetSelectedMask(filemask); }
     wxArrayString paths;
     if(m_customPaths.empty()) {
-        paths = m_data.GetSearchPaths();
+        paths = ::wxStringTokenize(m_data.GetSearchPaths(), "\n", wxTOKEN_STRTOK);
     } else {
         std::for_each(m_customPaths.begin(), m_customPaths.end(), [&](const wxString& path) { paths.Add(path); });
     }
-
     DoAddSearchPaths(paths);
 
     // Search for
@@ -122,12 +126,8 @@ FindInFilesDialog::~FindInFilesDialog()
     m_data.SetSelectedMask(value);
     m_data.SetFileMask(masks);
 
-    // If the search paths were provided by the user, dont store them
-    wxArrayString searchPathsArr;
-    if(m_customPaths.empty()) {
-        wxArrayString searchPathsArr = m_listPaths->GetStrings();
-        m_data.SetSearchPaths(searchPathsArr);
-    }
+    // If the search paths were provided by the user, don't store them
+    if(m_customPaths.empty()) { m_data.SetSearchPaths(m_stcPaths->GetText()); }
 
     clConfig::Get().WriteItem(&m_data);
     SessionManager::Get().UpdateFindInFilesMaskForCurrentWorkspace(m_data.GetSelectedMask());
@@ -232,13 +232,17 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.SetSkipStrings(flags & wxFRD_SKIP_STRINGS);
     data.SetColourComments(flags & wxFRD_COLOUR_COMMENTS);
     data.SetEnablePipeSupport(flags & wxFRD_ENABLE_PIPE_SUPPORT);
-    wxArrayString searchWhere = m_listPaths->GetStrings();
+    wxArrayString searchWhere = GetPathsAsArray();
     wxArrayString files;
     wxArrayString rootDirs;
+    wxArrayString excludePattern;
 
     for(size_t i = 0; i < searchWhere.GetCount(); ++i) {
         const wxString& rootDir = searchWhere.Item(i);
-        if(rootDir.StartsWith("F: ")) {
+        if(rootDir.StartsWith("-")) {
+            // An exclude pattern
+            excludePattern.Add(rootDir.Mid(1));
+        } else if(rootDir.StartsWith("F: ")) {
             // a file
             files.Add(rootDir.Mid(3));
         } else if(rootDir.StartsWith("W: ")) {
@@ -337,6 +341,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.SetFiles(files);       // list of files
     data.SetRootDirs(rootDirs); // folders
     data.UseNewTab(false);
+    data.SetExcludePatterns(excludePattern);
     data.SetExtensions(m_fileTypes->GetValue());
     return data;
 }
@@ -348,11 +353,8 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
 #ifdef __WXOSX__
     // There is a bug in OSX that prevents popup menu from being displayed from dialogs
     // so we use an alternative way
-    FindInFilesLocationsDlg dlg(this, m_listPaths->GetStrings());
-    if(dlg.ShowModal() == wxID_OK) {
-        m_listPaths->Clear();
-        m_listPaths->Append(dlg.GetLocations());
-    }
+    FindInFilesLocationsDlg dlg(this, GetPathsAsArray());
+    if(dlg.ShowModal() == wxID_OK) { DoAddSearchPaths(dlg.GetLocations()); }
 #else
     // Show a popup menu
     wxMenu menu;
@@ -365,6 +367,8 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     menu.Append(firstItem + 3, SEARCH_IN_CURR_FILE_PROJECT);
     menu.Append(firstItem + 4, SEARCH_IN_CURRENT_FILE);
     menu.Append(firstItem + 5, SEARCH_IN_OPEN_FILES);
+    menu.AppendSeparator();
+    menu.Append(firstItem + 7, "Add Exclude Pattern");
 
     std::map<int, wxString> options;
     options.insert(std::make_pair(firstItem + 0, SEARCH_IN_WORKSPACE_FOLDER));
@@ -380,7 +384,25 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     int selection = m_btnAddPath->GetPopupMenuSelectionFromUser(menu, menuPos);
 
     if(selection == wxID_NONE) return;
-    if(selection == (firstItem + 6)) {
+    if(selection == (firstItem + 7)) {
+        // Add exclude pattern
+        int lastPos = m_stcPaths->GetLastPosition();
+        wxChar ch = m_stcPaths->GetCharAt(lastPos);
+        if(ch != '\n') {
+            m_stcPaths->SetInsertionPointEnd();
+            m_stcPaths->AddText("\n");
+        }
+        lastPos = m_stcPaths->GetLastPosition();
+        m_stcPaths->SetSelectionStart(lastPos);
+        m_stcPaths->SetSelectionEnd(lastPos);
+        m_stcPaths->SetCurrentPos(lastPos);
+        m_stcPaths->InsertText(lastPos, "-*PATTERN*");
+        int selStart = lastPos + 1;
+        int selEnd = selStart + wxStrlen("*PATTERN*");
+        m_stcPaths->SetSelection(selStart, selEnd);
+        m_stcPaths->CallAfter(&wxStyledTextCtrl::SetFocus);
+
+    } else if(selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
         if(folder.IsEmpty()) return;
         DoAddSearchPath(folder);
@@ -411,11 +433,7 @@ int FindInFilesDialog::ShowDialog()
     return wxDialog::ShowModal();
 }
 
-void FindInFilesDialog::DoSaveSearchPaths()
-{
-    wxArrayString paths = m_listPaths->GetStrings();
-    m_data.SetSearchPaths(paths);
-}
+void FindInFilesDialog::DoSaveSearchPaths() { m_data.SetSearchPaths(m_stcPaths->GetText()); }
 
 void FindInFilesDialog::DoSaveOpenFiles()
 {
@@ -424,7 +442,8 @@ void FindInFilesDialog::DoSaveOpenFiles()
 
 void FindInFilesDialog::OnFindWhatUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty());
+    wxArrayString paths = GetPathsAsArray();
+    event.Enable(!m_findString->GetValue().IsEmpty() && !paths.IsEmpty());
 }
 
 void FindInFilesDialog::OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event)
@@ -461,28 +480,20 @@ size_t FindInFilesDialog::GetSearchFlags()
 
 void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
 {
-    m_listPaths->Clear();
+    m_stcPaths->ClearAll();
     m_customPaths.clear();
     DoAddSearchPaths(paths);
 }
 
-void FindInFilesDialog::OnClearSelectedPath(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoDeletedSelectedPaths();
-}
-
-void FindInFilesDialog::OnClearSelectedPathUI(wxUpdateUIEvent& event)
-{
-    wxArrayInt selections;
-    m_listPaths->GetSelections(selections);
-    event.Enable(!selections.IsEmpty());
-}
-
 void FindInFilesDialog::DoAddSearchPath(const wxString& path)
 {
-    wxArrayString strings = m_listPaths->GetStrings();
-    if(strings.Index(path) == wxNOT_FOUND) { m_listPaths->Append(path); }
+    wxString text = m_stcPaths->GetText();
+    text.Trim().Trim();
+    if(!text.IsEmpty()) { text << "\n"; }
+    text << path;
+    text.Trim().Trim(false);
+    m_stcPaths->SetText(text);
+    ::clRecalculateSTCHScrollBar(m_stcPaths);
 }
 
 void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
@@ -493,30 +504,11 @@ void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
 }
 void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_findString->GetValue().IsEmpty() && !m_listPaths->IsEmpty());
+    wxArrayString paths = GetPathsAsArray();
+    event.Enable(!m_findString->GetValue().IsEmpty() && !paths.IsEmpty());
 }
 
-void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event)
-{
-    event.Skip();
-    if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
-        // Delete the selected entry
-        event.Skip(false);
-        CallAfter(&FindInFilesDialog::DoDeletedSelectedPaths);
-    }
-}
-
-void FindInFilesDialog::DoDeletedSelectedPaths()
-{
-    wxArrayInt selections;
-    m_listPaths->GetSelections(selections);
-    int selectionsCount = selections.GetCount();
-    if(!selections.IsEmpty()) {
-        for(int i = (selectionsCount - 1); i >= 0; --i) {
-            m_listPaths->Delete(selections.Item(i));
-        }
-    }
-}
+void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArrayString& files)
 {
@@ -532,4 +524,10 @@ void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArraySt
             files.insert(files.end(), tmpArr.begin(), tmpArr.end());
         }
     }
+}
+
+wxArrayString FindInFilesDialog::GetPathsAsArray() const
+{
+    wxArrayString arr = ::wxStringTokenize(m_stcPaths->GetText(), "\n", wxTOKEN_STRTOK);
+    return arr;
 }

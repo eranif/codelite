@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="mime-c.svg">
   <defs
      id="defs4">
@@ -34,17 +34,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-95.291291"
+     inkscape:cx="-128.69129"
      inkscape:cy="29.029209"
      inkscape:document-units="px"
      inkscape:current-layer="g8794"
      showgrid="false"
      inkscape:showpageshadow="false"
      units="px"
-     inkscape:window-width="1853"
-     inkscape:window-height="1016"
-     inkscape:window-x="67"
-     inkscape:window-y="27"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -104,13 +104,24 @@
          id="text4692"
          y="1093.8966"
          x="4.021893"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4e9a06;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Arial;-inkscape-font-specification:'Arial, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4e9a06;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#4e9a06;fill-opacity:1;"
-           y="1093.8966"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.99999809px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#4e9a06;fill-opacity:1"
+           y="1097.2057"
            x="4.021893"
            id="tspan4694"
-           sodipodi:role="line">c</tspan></text>
+           sodipodi:role="line" /></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:21.04109573px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffe680;fill-opacity:1;stroke:none;stroke-width:0.99999994"
+         x="2.1306267"
+         y="1054.9351"
+         id="text827"><tspan
+           sodipodi:role="line"
+           id="tspan825"
+           x="2.1306267"
+           y="1054.9351"
+           style="fill:#ffe680;stroke-width:0.99999994">c</tspan></text>
     </g>
   </g>
 </svg>

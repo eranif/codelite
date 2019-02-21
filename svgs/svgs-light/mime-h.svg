@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="mime-h.svg">
   <defs
      id="defs4" />
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-178.6"
-     inkscape:cy="9.003779"
+     inkscape:cx="-123.39367"
+     inkscape:cy="-48.397548"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,20 +58,20 @@
      transform="translate(0,-1036.3622)">
     <g
        id="g8787"
-       transform="matrix(0.32085514,0,0,0.44649981,2.7824141,578.05467)"
-       style="fill:#888a85">
+       transform="matrix(0.25640411,0,0,0.31001128,3.8304839,720.59812)"
+       style="fill:#666666;stroke-width:1.39999998">
       <text
-         transform="scale(1.2891779,0.77568814)"
-         id="text4692"
-         y="1360.8052"
-         x="1.9442111"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Droid Sans Mono';-inkscape-font-specification:'Droid Sans Mono';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#888a85;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:38.00247955px;line-height:1.25;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#888a85;fill-opacity:1"
-           y="1360.8052"
-           x="1.9442111"
-           id="tspan4694"
-           sodipodi:role="line">h</tspan></text>
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:46.68411636px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;stroke-width:3.5468986"
+         x="-0.073476397"
+         y="1166.0929"
+         id="text819"
+         transform="scale(1.0995786,0.90943931)"><tspan
+           sodipodi:role="line"
+           id="tspan817"
+           x="-0.073476397"
+           y="1166.0929"
+           style="fill:#666666;stroke-width:3.5468986">h</tspan></text>
     </g>
   </g>
 </svg>

@@ -45,7 +45,6 @@ protected:
     virtual void OnButtonClose(wxCommandEvent& event);
     virtual void OnFind(wxCommandEvent& event);
     virtual void OnReplace(wxCommandEvent& event);
-    virtual void OnStop(wxCommandEvent& event);
     void DoSearch();
     void DoSearchReplace();
     void DoSaveSearchPaths();

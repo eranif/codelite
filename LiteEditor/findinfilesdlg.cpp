@@ -52,7 +52,8 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
     m_customPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) { lexer->Apply(m_stcPaths); }
-
+    m_stcPaths->SetEOLMode(wxSTC_EOL_LF);
+    
     // Store the find-in-files data
     clConfig::Get().ReadItem(&m_data);
     wxString filemask = SessionManager::Get().GetFindInFilesMaskForCurrentWorkspace();
@@ -463,8 +464,6 @@ void FindInFilesDialog::OnReplace(wxCommandEvent& event)
     DoSearchReplace();
 }
 
-void FindInFilesDialog::OnStop(wxCommandEvent& event) { SearchThreadST::Get()->StopSearch(); }
-
 void FindInFilesDialog::OnButtonClose(wxCommandEvent& event) { EndModal(wxID_CANCEL); }
 
 size_t FindInFilesDialog::GetSearchFlags()
@@ -488,6 +487,7 @@ void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
 void FindInFilesDialog::DoAddSearchPath(const wxString& path)
 {
     wxString text = m_stcPaths->GetText();
+    text.Replace("\r", ""); // No \r
     text.Trim().Trim();
     if(!text.IsEmpty()) { text << "\n"; }
     text << path;
@@ -528,6 +528,8 @@ void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArraySt
 
 wxArrayString FindInFilesDialog::GetPathsAsArray() const
 {
-    wxArrayString arr = ::wxStringTokenize(m_stcPaths->GetText(), "\n", wxTOKEN_STRTOK);
+    wxString str = m_stcPaths->GetText();
+    str.Replace("\r", "");
+    wxArrayString arr = ::wxStringTokenize(str, "\n", wxTOKEN_STRTOK);
     return arr;
 }

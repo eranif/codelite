@@ -660,7 +660,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "File extensions to include in the search\\nUse a semi-colon separated list here. Wildcards is supported"
+                 "m_value": "File extensions to include in the search\\nWildcards are supported"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",
@@ -818,7 +818,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "Search in these folders\\nTo exclude a file from the search, use wildcard that starts with hyphen\\nFor example, to exclude matches from the node_modules folder, use these lines:\\n\\n/home/user/path/to/root/folder\\n-*node_modules*\\n"
+                 "m_value": "Search in these folders\\nTo exclude a file from the search, use wildcard that starts with an hyphen (\"-\")\\nFor example, to exclude all matches from the node_modules folder, use can use something like this:\\n\\n/home/user/path/to/root/folder\\n-*node_modules*"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",

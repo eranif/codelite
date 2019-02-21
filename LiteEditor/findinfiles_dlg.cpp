@@ -77,8 +77,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     m_staticText3 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("Files:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), 0);
-    m_staticText3->SetToolTip(
-        _("File extensions to include in the search\nUse a semi-colon separated list here. Wildcards is supported"));
+    m_staticText3->SetToolTip(_("File extensions to include in the search\nWildcards are supported"));
 
     fgSizer41->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -96,9 +95,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     m_staticText2 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("Search in:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), 0);
-    m_staticText2->SetToolTip(_("Search in these folders\nTo exclude a file from the search, use wildcard that starts "
-                                "with hyphen\nFor example, to exclude matches from the node_modules folder, use these "
-                                "lines:\n\n/home/user/path/to/root/folder\n-*node_modules*\n"));
+    m_staticText2->SetToolTip(
+        _("Search in these folders\nTo exclude a file from the search, use wildcard that starts with an hyphen "
+          "(\"-\")\nFor example, to exclude all matches from the node_modules folder, use can use something like "
+          "this:\n\n/home/user/path/to/root/folder\n-*node_modules*"));
 
     fgSizer41->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 

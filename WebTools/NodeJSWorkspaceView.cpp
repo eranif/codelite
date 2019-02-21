@@ -289,11 +289,13 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
 
     int imageIndex = m_bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
     CHECK_COND_RET(imageIndex != wxNOT_FOUND);
+    
+    int imageIndexExpanded = m_bmpLoader->GetMimeImageId(FileExtManager::TypeProjectExpanded);
 
     {
         // change the icon for the parent folder as well
         wxFileName packageJSON(cd->GetPath(), "package.json");
-        if(packageJSON.FileExists()) { GetTreeCtrl()->SetItemImage(item, imageIndex); }
+        if(packageJSON.FileExists()) { GetTreeCtrl()->SetItemImage(item, imageIndex, imageIndexExpanded); }
     }
 
     wxTreeItemIdValue cookie;

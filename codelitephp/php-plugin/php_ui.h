@@ -7,50 +7,49 @@
 #ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 #define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
-#include "Notebook.h"
-#include "clThemedListCtrl.h"
-#include "clThemedTreeCtrl.h"
-#include "clToolBar.h"
-#include "my_tree_view.h"
-#include "php_file_layout_tree.h"
-#include <vector>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibook.h>
-#include <wx/bannerwindow.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/choicebk.h>
-#include <wx/combobox.h>
-#include <wx/dataview.h>
-#include <wx/dialog.h>
-#include <wx/filepicker.h>
-#include <wx/gauge.h>
-#include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/advprops.h>
-#include <wx/propgrid/property.h>
-#include <wx/radiobox.h>
 #include <wx/settings.h>
-#include <wx/simplebook.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
-#include <wx/toolbar.h>
-#include <wx/treebook.h>
-#include <wx/treectrl.h>
-#include <wx/wizard.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include "php_file_layout_tree.h"
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/filepicker.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/treebook.h>
+#include <wx/panel.h>
+#include <wx/imaglist.h>
+#include <wx/stc/stc.h>
+#include <wx/choicebk.h>
+#include <wx/checkbox.h>
+#include <wx/propgrid/manager.h>
+#include <wx/propgrid/property.h>
+#include <wx/propgrid/advprops.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/gauge.h>
+#include <wx/treectrl.h>
+#include "my_tree_view.h"
+#include <wx/aui/auibook.h>
+#include "Notebook.h"
+#include <wx/notebook.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/simplebook.h>
+#include <wx/combobox.h>
+#include <wx/wizard.h>
+#include <vector>
+#include <wx/bannerwindow.h>
+#include <wx/radiobox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -397,20 +396,17 @@ public:
 class LocalsViewBase : public wxPanel
 {
 protected:
-    clThemedTreeCtrl* m_tree;
-
 protected:
 public:
-    clThemedTreeCtrl* GetTree() { return m_tree; }
     LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsViewBase();
 };
 
 class EvalPaneBase : public wxPanel
 {
 protected:
-    Notebook* m_notebook257;
+    wxNotebook* m_notebook257;
     wxPanel* m_panel259;
     wxStyledTextCtrl* m_stcOutput;
     wxTextCtrl* m_textCtrlExpression;
@@ -436,7 +432,7 @@ public:
     wxTextCtrl* GetTextCtrlExpressionXdebug() { return m_textCtrlExpressionXdebug; }
     wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
     wxPanel* GetPanel261() { return m_panel261; }
-    Notebook* GetNotebook257() { return m_notebook257; }
+    wxNotebook* GetNotebook257() { return m_notebook257; }
     EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();

@@ -1166,7 +1166,7 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
     bSizer5->Add(m_gaugeParseProgress, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_treeCtrlView = new MyTreeView(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxTR_MULTIPLE | wxTR_ROW_LINES | wxBORDER_THEME);
+                                    wxTR_MULTIPLE | wxTR_ROW_LINES);
 
     bSizer5->Add(m_treeCtrlView, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1289,13 +1289,8 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer236 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer236);
 
-    m_tree = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                  wxTR_ROW_LINES | wxTR_HIDE_ROOT);
-
-    boxSizer236->Add(m_tree, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
     SetName(wxT("LocalsViewBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
 }
 
@@ -1314,8 +1309,8 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
 
-    m_notebook257 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                 wxNB_FIXEDWIDTH | wxBK_DEFAULT);
+    m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                   wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook257->SetName(wxT("m_notebook257"));
 
     boxSizer255->Add(m_notebook257, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
@@ -1536,7 +1531,7 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer359->Add(m_choice, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_simpleBook->SetName(wxT("m_simpleBook"));
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
 

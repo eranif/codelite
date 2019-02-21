@@ -37,6 +37,7 @@
 #include "my_tree_view.h"
 #include <wx/aui/auibook.h>
 #include "Notebook.h"
+#include "clThemedTreeCtrl.h"
 #include <wx/notebook.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -396,8 +397,11 @@ public:
 class LocalsViewBase : public wxPanel
 {
 protected:
+    clThemedTreeCtrl* m_tree;
+
 protected:
 public:
+    clThemedTreeCtrl* GetTree() { return m_tree; }
     LocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LocalsViewBase();

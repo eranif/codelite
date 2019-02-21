@@ -7,22 +7,22 @@
 #ifndef _CODELITE_PLUGIN_OPENRESOURCEDIALOGBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_OPENRESOURCEDIALOGBASE_BASE_CLASSES_H
 
-#include "clThemedListCtrl.h"
-#include <wx/artprov.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/dataview.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/checkbox.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 

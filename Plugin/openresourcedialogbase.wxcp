@@ -28,7 +28,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "-1,300"
+     "m_value": "500,300"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -105,11 +105,11 @@
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (16x16)  :",
-     "m_path": "../bitmaps/16-open_resource.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (32x32)  :",
-     "m_path": "../bitmaps/16-open_resource@2x.png"
+     "m_path": ""
     }, {
      "type": "bitmapPicker",
      "m_label": "Bitmap File (64x64)  :",

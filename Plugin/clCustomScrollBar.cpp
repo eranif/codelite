@@ -5,6 +5,16 @@
 
 wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 
+#ifdef __WXOSX__
+#define SB_WIDTH 8
+#define SB_RADIUS 5.0
+#elif defined(__WXGTK__)
+#define SB_WIDTH 10
+#define SB_RADIUS 5.0
+#define SB_WIDTH 10
+#define SB_RADIUS 5.0
+#endif
+
 clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                      long style)
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxBORDER_NONE | wxWANTS_CHARS)
@@ -17,9 +27,9 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_LEFT_UP, &clCustomScrollBar::OnMouseLeftUp, this);
     Bind(wxEVT_MOTION, &clCustomScrollBar::OnMotion, this);
     if(style == wxSB_HORIZONTAL) {
-        SetSize(-1, 10);
+        SetSize(-1, SB_WIDTH);
     } else {
-        SetSize(10, -1);
+        SetSize(SB_WIDTH, -1);
     }
     Bind(wxEVT_SIZE, &clCustomScrollBar::OnSize, this);
     Bind(wxEVT_IDLE, &clCustomScrollBar::OnIdle, this);
@@ -46,12 +56,6 @@ void clCustomScrollBar::Update(int thumbSize, int range, int pageSize, int posit
     // Set position triggers a refresh
     SetPosition(position, false);
 }
-
-#ifdef __WXGTK__
-#define SB_RADIUS 5.0
-#else
-#define SB_RADIUS 5.0
-#endif
 
 void clCustomScrollBar::OnPaint(wxPaintEvent& e)
 {

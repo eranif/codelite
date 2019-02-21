@@ -11,6 +11,7 @@ wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 #elif defined(__WXGTK__)
 #define SB_WIDTH 10
 #define SB_RADIUS 5.0
+#else
 #define SB_WIDTH 10
 #define SB_RADIUS 5.0
 #endif

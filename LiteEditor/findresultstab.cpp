@@ -131,14 +131,14 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
 
     bool sendDismissEvent = true;
     const wxString& mask = eventFifShowing.GetFileMask();
-    
+
     // plugins provided paths
-    const wxString& paths = eventFifShowing.GetPaths(); 
-    
+    const wxString& paths = eventFifShowing.GetPaths();
+
     // transient paths take precedence over the normal paths. However, they are not persistent
     // Usually these paths are given when the a tree view like control has focus and user selected folders in it
     const wxString& transientPaths = eventFifShowing.GetTransientPaths();
-    
+
     wxString fifPaths = paths;
     if(!transientPaths.IsEmpty()) {
         fifPaths = transientPaths;
@@ -158,6 +158,8 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         eventDismiss.SetPaths(frd.GetSearchPaths());
         EventNotifier::Get()->ProcessEvent(eventDismiss);
     }
+    // And we alway store the global find-in-files data (it keeps the 'find-what', 'replace with' fields, etc...)
+    clConfig::Get().WriteItem(&frd);
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

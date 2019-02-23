@@ -214,8 +214,8 @@ Manager::Manager(void)
     EventNotifier::Get()->Connect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
-                                  clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &Manager::OnFindInFilesDismissed, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
 
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
@@ -242,8 +242,8 @@ Manager::~Manager(void)
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_ENDED, clBuildEventHandler(Manager::OnBuildEnded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(Manager::OnBuildStarting), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(Manager::OnProjectRenamed), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
-                                     clCommandEventHandler(Manager::OnFindInFilesDismissed), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &Manager::OnFindInFilesDismissed, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
 
@@ -3525,12 +3525,12 @@ void Manager::OnProjectRenamed(clCommandEvent& event)
     if(clCxxWorkspaceST::Get()->IsOpen()) { ReloadWorkspace(); }
 }
 
-void Manager::OnFindInFilesDismissed(clCommandEvent& event)
+void Manager::OnFindInFilesDismissed(clFindInFilesEvent& event)
 {
     event.Skip();
     if(clCxxWorkspaceST::Get()->IsOpen()) {
-        LocalWorkspaceST::Get()->SetSearchInFilesMask(event.GetString());
-        LocalWorkspaceST::Get()->Flush();
+        clConfig::Get().Write("FindInFiles/CXX/Mask", event.GetFileMask());
+        clConfig::Get().Write("FindInFiles/CXX/LookIn", event.GetPaths());
     }
 }
 
@@ -3604,4 +3604,16 @@ void Manager::OnHideGdbTooltip(clCommandEvent& event)
 {
     event.Skip();
     if(GetDebuggerTip()) { GetDebuggerTip()->HideDialog(); }
+}
+
+void Manager::OnFindInFilesShowing(clFindInFilesEvent& event)
+{
+    event.Skip();
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        // Load the C++ workspace values from the configuration
+        event.SetFileMask(
+            clConfig::Get().Read("FindInFiles/CXX/Mask", wxString("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;"
+                                                                  "*.xml;*.json;*.sql;*.txt;*.plist;CMakeLists.txt")));
+        event.SetPaths(clConfig::Get().Read("FindInFiles/CXX/LookIn", wxString("<Entire Workspace>")));
+    }
 }

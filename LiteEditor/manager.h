@@ -148,7 +148,8 @@ public:
     void OnRestart(clCommandEvent& event);
     void OnCmdRestart(wxCommandEvent& event);
     void GenerateCompileCommands();
-    void OnFindInFilesDismissed(clCommandEvent &event);
+    void OnFindInFilesDismissed(clFindInFilesEvent &event);
+    void OnFindInFilesShowing(clFindInFilesEvent &event);
     void OnUpdateDebuggerActiveView(clDebugEvent &event);
     void OnDebuggerSetMemory(clDebugEvent &event);
     

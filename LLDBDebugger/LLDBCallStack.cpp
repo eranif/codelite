@@ -121,7 +121,7 @@ void LLDBCallStackPane::OnContextMenu(wxDataViewEvent& event)
 void LLDBCallStackPane::DoCopyBacktraceToClipboard()
 {
     wxString callstack;
-    for(int i = 0; i < m_dvListCtrlBacktrace->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrlBacktrace->GetItemCount(); ++i) {
         wxString line;
         for(size_t col = 0; col < m_dvListCtrlBacktrace->GetHeader()->size(); ++col) {
             line << m_dvListCtrlBacktrace->GetItemText(m_dvListCtrlBacktrace->RowToItem(i), col) << " ";

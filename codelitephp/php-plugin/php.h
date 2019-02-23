@@ -117,7 +117,6 @@ public:
     void OnGetActiveProjectFiles(wxCommandEvent& e);
     void OnNewProject(clNewProjectEvent& e);
     void OnNewProjectFinish(clNewProjectEvent& e);
-    void OnFindInFilesDismissed(clCommandEvent& e);
     void OnRunXDebugDiagnostics(wxCommandEvent& e);
     void OnMenuCommand(wxCommandEvent& e);
     void OnXDebugShowBreakpointsWindow(wxCommandEvent& e);

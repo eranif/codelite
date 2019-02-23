@@ -52,7 +52,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
     m_defaultView = new clTreeCtrlPanelDefaultPage(this);
     GetSizer()->Add(m_defaultView, 1, wxEXPAND);
     GetTreeCtrl()->Hide();
@@ -65,7 +65,7 @@ clTreeCtrlPanel::~clTreeCtrlPanel()
     m_toolbar->Unbind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
 }
 
 void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
@@ -900,17 +900,21 @@ void clTreeCtrlPanel::OnOpenWithDefaultApplication(wxCommandEvent& event)
     }
 }
 
-void clTreeCtrlPanel::OnFindInFilesShowing(clCommandEvent& event)
+void clTreeCtrlPanel::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
     event.Skip();
     if(IsShownOnScreen() && GetTreeCtrl()->HasFocus()) {
-
         wxArrayString folders, files;
         GetSelections(folders, files);
 
-        // Append the folders to the Find IN Files dialog search paths
-        wxArrayString& outPaths = event.GetStrings();
-        outPaths.insert(outPaths.end(), folders.begin(), folders.end());
+        wxString paths = event.GetTransientPaths();
+        paths.Trim().Trim(false);
+        if(!paths.IsEmpty()) { paths << "\n"; }
+        for(size_t i = 0; i < folders.size(); ++i) {
+            paths << folders.Item(i) << "\n";
+        }
+        paths.Trim();
+        event.SetTransientPaths(paths);
     }
 }
 

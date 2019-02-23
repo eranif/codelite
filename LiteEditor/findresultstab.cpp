@@ -121,19 +121,43 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     }
 
     // Fire the wxEVT_CMD_FIND_IN_FILES_SHOWING showing event
-    clCommandEvent fifDlgShowing(wxEVT_CMD_FIND_IN_FILES_SHOWING);
-    EventNotifier::Get()->ProcessEvent(fifDlgShowing);
+    clFindInFilesEvent eventFifShowing(wxEVT_FINDINFILES_DLG_SHOWING);
+    EventNotifier::Get()->ProcessEvent(eventFifShowing);
 
     // Display the Find In Files dialog
-    const wxArrayString& additionalPaths = fifDlgShowing.GetStrings();
-    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), "FindInFilesData", additionalPaths);
-    wxArrayString* paths = (wxArrayString*)e.GetClientData();
-    if(paths) {
-        dlg.SetSearchPaths(*paths);
-        e.SetClientData(NULL);
-        wxDELETE(paths);
+    FindReplaceData frd;
+    frd.SetName("FindInFilesData");
+    clConfig::Get().ReadItem(&frd);
+
+    bool sendDismissEvent = true;
+    const wxString& mask = eventFifShowing.GetFileMask();
+    
+    // plugins provided paths
+    const wxString& paths = eventFifShowing.GetPaths(); 
+    
+    // transient paths take precedence over the normal paths. However, they are not persistent
+    // Usually these paths are given when the a tree view like control has focus and user selected folders in it
+    const wxString& transientPaths = eventFifShowing.GetTransientPaths();
+    
+    wxString fifPaths = paths;
+    if(!transientPaths.IsEmpty()) {
+        fifPaths = transientPaths;
+        sendDismissEvent = false;
     }
-    dlg.ShowDialog();
+
+    // Prepare the fif dialog
+    FindInFilesDialog dlg(EventNotifier::Get()->TopFrame(), frd);
+    if(!fifPaths.IsEmpty()) { dlg.SetSearchPaths(fifPaths, !transientPaths.IsEmpty()); }
+    if(!mask.IsEmpty()) { dlg.SetFileMask(mask); }
+
+    // Show it
+    if((dlg.ShowDialog() == wxID_OK) && sendDismissEvent) {
+        // Notify about the dialog dismissal
+        clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
+        eventDismiss.SetFileMask(frd.GetSelectedMask());
+        eventDismiss.SetPaths(frd.GetSearchPaths());
+        EventNotifier::Get()->ProcessEvent(eventDismiss);
+    }
 }
 
 void FindResultsTab::OnSearchStart(wxCommandEvent& e)

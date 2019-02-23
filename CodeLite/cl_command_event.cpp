@@ -367,6 +367,28 @@ clFindEvent::clFindEvent(wxEventType commandType, int winid)
 clFindEvent::~clFindEvent() {}
 
 //------------------------------------------------------------------------
+// clFindInFilesEvent
+//------------------------------------------------------------------------
+clFindInFilesEvent& clFindInFilesEvent::operator=(const clFindInFilesEvent& src)
+{
+    clCommandEvent::operator=(src);
+    m_paths = src.m_paths;
+    m_fileMask = src.m_fileMask;
+    m_options = src.m_options;
+    m_transientPaths = src.m_transientPaths;
+    return *this;
+}
+
+clFindInFilesEvent::clFindInFilesEvent(const clFindInFilesEvent& event) { *this = event; }
+
+clFindInFilesEvent::clFindInFilesEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clFindInFilesEvent::~clFindInFilesEvent() {}
+
+//------------------------------------------------------------------------
 // clParseEvent
 //------------------------------------------------------------------------
 

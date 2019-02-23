@@ -25,7 +25,6 @@
 #include "FindInFilesLocationsDlg.h"
 #include "clWorkspaceManager.h"
 #include "dirpicker.h"
-#include "event_notifier.h"
 #include "findinfilesdlg.h"
 #include "findresultstab.h"
 #include "frame.h"
@@ -44,27 +43,18 @@
 #include "ColoursAndFontsManager.h"
 #include "globals.h"
 
-FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
-                                     const wxArrayString& additionalSearchPaths)
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     : FindInFilesDialogBase(parent, wxID_ANY)
+    , m_data(data)
 {
-    m_data.SetName(dataName);
-    m_customPaths.insert(additionalSearchPaths.begin(), additionalSearchPaths.end());
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) { lexer->Apply(m_stcPaths); }
     m_stcPaths->SetEOLMode(wxSTC_EOL_LF);
-    
+
     // Store the find-in-files data
-    clConfig::Get().ReadItem(&m_data);
     wxString filemask = SessionManager::Get().GetFindInFilesMaskForCurrentWorkspace();
     if(!filemask.IsEmpty()) { m_data.SetSelectedMask(filemask); }
-    wxArrayString paths;
-    if(m_customPaths.empty()) {
-        paths = ::wxStringTokenize(m_data.GetSearchPaths(), "\n", wxTOKEN_STRTOK);
-    } else {
-        std::for_each(m_customPaths.begin(), m_customPaths.end(), [&](const wxString& path) { paths.Add(path); });
-    }
-    DoAddSearchPaths(paths);
+    DoSetSearchPaths(m_data.GetSearchPaths());
 
     // Search for
     m_findString->Clear();
@@ -112,79 +102,32 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, const wxString& dataName,
     CentreOnParent();
 }
 
-FindInFilesDialog::~FindInFilesDialog()
-{
-    m_data.SetFlags(GetSearchFlags());
-    m_data.SetFindString(m_findString->GetValue());
-    m_data.SetReplaceString(m_replaceString->GetValue());
-    m_data.SetEncoding(m_choiceEncoding->GetStringSelection());
-    wxString value = m_fileTypes->GetValue();
-    value.Trim().Trim(false);
-
-    wxArrayString masks = m_fileTypes->GetStrings();
-    if(masks.Index(value) == wxNOT_FOUND) { masks.Insert(value, 0); }
-
-    m_data.SetSelectedMask(value);
-    m_data.SetFileMask(masks);
-
-    // If the search paths were provided by the user, don't store them
-    if(m_customPaths.empty()) { m_data.SetSearchPaths(m_stcPaths->GetText()); }
-
-    clConfig::Get().WriteItem(&m_data);
-    SessionManager::Get().UpdateFindInFilesMaskForCurrentWorkspace(m_data.GetSelectedMask());
-
-    // Notify about the dialog dismissal
-    clCommandEvent event(wxEVT_CMD_FIND_IN_FILES_DISMISSED, GetId());
-    event.SetEventObject(this);
-    event.SetString(m_data.GetSelectedMask());
-    EventNotifier::Get()->AddPendingEvent(event);
-}
+FindInFilesDialog::~FindInFilesDialog() {}
 
 void FindInFilesDialog::DoSetFileMask()
 {
     // Get the output
     wxArrayString fileTypes = m_data.GetFileMask();
-    wxArrayString pluginsMask = clWorkspaceManager::Get().GetUnifiedFilesMask();
-
-    // sort and merge arrays
-    fileTypes.Sort();
-    pluginsMask.Sort();
-    wxArrayString mergedArr;
-    std::merge(fileTypes.begin(), fileTypes.end(), pluginsMask.begin(), pluginsMask.end(),
-               std::back_inserter(mergedArr));
-    wxArrayString::iterator iter = std::unique(mergedArr.begin(), mergedArr.end());
+    wxArrayString::iterator iter = std::unique(fileTypes.begin(), fileTypes.end());
 
     // remove the non unique parts
-    mergedArr.resize(std::distance(mergedArr.begin(), iter));
+    fileTypes.resize(std::distance(fileTypes.begin(), iter));
 
     // Create a single mask array
     m_fileTypes->Clear();
 
     // Remove empty entries
     wxArrayString tempMaskArr;
-    std::for_each(mergedArr.begin(), mergedArr.end(), [&](wxString& item) {
+    std::for_each(fileTypes.begin(), fileTypes.end(), [&](wxString& item) {
         item.Trim().Trim(false);
         if(!item.IsEmpty()) { tempMaskArr.Add(item); }
     });
-    mergedArr.swap(tempMaskArr);
+    fileTypes.swap(tempMaskArr);
 
-    if(!mergedArr.IsEmpty()) {
-        m_fileTypes->Append(mergedArr);
-
+    if(!fileTypes.IsEmpty()) {
+        m_fileTypes->Append(fileTypes);
         wxString selectedMask = m_data.GetSelectedMask();
-        if(selectedMask.IsEmpty() && clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            // Let the active workspace set the find-in-files mask
-            selectedMask = clWorkspaceManager::Get().GetWorkspace()->GetFilesMask();
-        }
-
-        if(!selectedMask.IsEmpty()) {
-            int where = m_fileTypes->FindString(selectedMask);
-            if(where == wxNOT_FOUND) {
-                // Add it
-                where = m_fileTypes->Append(selectedMask);
-            }
-            m_fileTypes->SetSelection(where);
-        }
+        SetFileMask(selectedMask);
     }
 }
 
@@ -194,6 +137,7 @@ void FindInFilesDialog::DoSearchReplace()
     data.SetOwner(clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
+    BuildFindReplaceData();
     EndModal(wxID_OK);
 }
 
@@ -205,6 +149,7 @@ void FindInFilesDialog::DoSearch()
     // check to see if we require to save the files
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
+    BuildFindReplaceData();
     EndModal(wxID_OK);
 }
 
@@ -406,10 +351,10 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     } else if(selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
         if(folder.IsEmpty()) return;
-        DoAddSearchPath(folder);
+        DoSetSearchPaths(folder);
 
     } else if(options.count(selection)) {
-        DoAddSearchPath(options.find(selection)->second);
+        DoSetSearchPaths(options.find(selection)->second);
     }
 #endif
 }
@@ -419,7 +364,6 @@ int FindInFilesDialog::ShowDialog()
     // Update the combobox
     m_findString->Clear();
     m_findString->Append(m_data.GetFindStringArr());
-    DoSetFileMask();
     m_findString->SetValue(m_data.GetFindString());
 
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
@@ -477,18 +421,18 @@ size_t FindInFilesDialog::GetSearchFlags()
     return flags;
 }
 
-void FindInFilesDialog::SetSearchPaths(const wxArrayString& paths)
+void FindInFilesDialog::SetSearchPaths(const wxString& paths, bool transient)
 {
     m_stcPaths->ClearAll();
-    m_customPaths.clear();
-    DoAddSearchPaths(paths);
+    m_transient = transient;
+    DoSetSearchPaths(paths);
 }
 
-void FindInFilesDialog::DoAddSearchPath(const wxString& path)
+void FindInFilesDialog::DoSetSearchPaths(const wxString& path)
 {
     wxString text = m_stcPaths->GetText();
     text.Replace("\r", ""); // No \r
-    text.Trim().Trim();
+    text.Trim().Trim(false);
     if(!text.IsEmpty()) { text << "\n"; }
     text << path;
     text.Trim().Trim(false);
@@ -496,12 +440,6 @@ void FindInFilesDialog::DoAddSearchPath(const wxString& path)
     ::clRecalculateSTCHScrollBar(m_stcPaths);
 }
 
-void FindInFilesDialog::DoAddSearchPaths(const wxArrayString& paths)
-{
-    for(size_t i = 0; i < paths.size(); ++i) {
-        DoAddSearchPath(paths.Item(i));
-    }
-}
 void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
     wxArrayString paths = GetPathsAsArray();
@@ -532,4 +470,35 @@ wxArrayString FindInFilesDialog::GetPathsAsArray() const
     str.Replace("\r", "");
     wxArrayString arr = ::wxStringTokenize(str, "\n", wxTOKEN_STRTOK);
     return arr;
+}
+
+void FindInFilesDialog::BuildFindReplaceData()
+{
+    m_data.SetFlags(GetSearchFlags());
+    m_data.SetFindString(m_findString->GetValue());
+    m_data.SetReplaceString(m_replaceString->GetValue());
+    m_data.SetEncoding(m_choiceEncoding->GetStringSelection());
+    wxString value = m_fileTypes->GetValue();
+    value.Trim().Trim(false);
+
+    wxArrayString masks = m_fileTypes->GetStrings();
+    if(masks.Index(value) == wxNOT_FOUND) { masks.Insert(value, 0); }
+
+    m_data.SetSelectedMask(value);
+    m_data.SetFileMask(masks);
+
+    // If the search paths were provided by the user, don't store them
+    m_data.SetSearchPaths(m_stcPaths->GetText());
+}
+
+void FindInFilesDialog::SetFileMask(const wxString& mask)
+{
+    if(!mask.IsEmpty()) {
+        int where = m_fileTypes->FindString(mask);
+        if(where == wxNOT_FOUND) {
+            // Add it
+            where = m_fileTypes->Append(mask);
+        }
+        m_fileTypes->SetSelection(where);
+    }
 }

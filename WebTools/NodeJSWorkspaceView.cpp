@@ -31,6 +31,7 @@ NodeJSWorkspaceView::NodeJSWorkspaceView(wxWindow* parent, const wxString& viewN
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &NodeJSWorkspaceView::OnFindInFilesDismissed, this);
     Bind(wxEVT_TERMINAL_EXIT, &NodeJSWorkspaceView::OnTerminalClosed, this);
 }
 
@@ -39,6 +40,7 @@ NodeJSWorkspaceView::~NodeJSWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &NodeJSWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &NodeJSWorkspaceView::OnContextMenuFile, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SYSTEM_UPDATED, &NodeJSWorkspaceView::OnFileSystemUpdated, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &NodeJSWorkspaceView::OnFindInFilesDismissed, this);
     Unbind(wxEVT_TERMINAL_EXIT, &NodeJSWorkspaceView::OnTerminalClosed, this);
 }
 
@@ -107,7 +109,7 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
                 menu->Enable(XRCID("nodejs_npm_init"), clNodeJS::Get().IsInitialised());
                 menu->Bind(wxEVT_MENU, &NodeJSWorkspaceView::OnNpmInit, this, XRCID("nodejs_npm_init"));
             }
-            
+
             int npmInstallPos = ::clFindMenuItemPosition(menu, npmInstallPosAfter);
             if(npmInstallPos != wxNOT_FOUND) {
                 npmInstallPos++; // install after it
@@ -289,7 +291,7 @@ void NodeJSWorkspaceView::OnItemExpanding(wxTreeEvent& event)
 
     int imageIndex = m_bmpLoader->GetMimeImageId(FileExtManager::TypeProject);
     CHECK_COND_RET(imageIndex != wxNOT_FOUND);
-    
+
     int imageIndexExpanded = m_bmpLoader->GetMimeImageId(FileExtManager::TypeProjectExpanded);
 
     {
@@ -345,4 +347,33 @@ void NodeJSWorkspaceView::OnTerminalClosed(clProcessEvent& event)
 {
     // Refresh the tree after npm commands
     RefreshTree();
+}
+
+void NodeJSWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& event)
+{
+    event.Skip();
+    // Let the parent process this event first (it will handle any transient paths)
+    if(NodeJSWorkspace::Get()->IsOpen()) {
+        // store the find in files mask
+        clConfig::Get().Write("FindInFiles/NodeJS/LookIn", event.GetPaths());
+        clConfig::Get().Write("FindInFiles/NodeJS/Mask", event.GetFileMask());
+    }
+}
+
+void NodeJSWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
+{
+    event.Skip();
+    clTreeCtrlPanel::OnFindInFilesShowing(event);
+    if(NodeJSWorkspace::Get()->IsOpen()) {
+        // store the find in files mask
+        // Load the NodeJS workspace values from the configuration
+        wxString mask =
+            "*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sql";
+        event.SetFileMask(clConfig::Get().Read("FindInFiles/NodeJS/Mask", mask));
+
+        wxString lookIn;
+        lookIn << "<Entire Workspace>\n"
+               << "-*node_modules*";
+        event.SetPaths(clConfig::Get().Read("FindInFiles/NodeJS/LookIn", lookIn));
+    }
 }

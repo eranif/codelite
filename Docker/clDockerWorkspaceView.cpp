@@ -6,6 +6,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include <wx/menu.h>
+#include <macros.h>
 
 clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     : clTreeCtrlPanel(parent)
@@ -25,6 +26,7 @@ clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clDockerWorkspaceView::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clDockerWorkspaceView::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &clDockerWorkspaceView::OnFileContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &clDockerWorkspaceView::OnFindInFilesDismissed, this);
 }
 
 clDockerWorkspaceView::~clDockerWorkspaceView()
@@ -32,6 +34,7 @@ clDockerWorkspaceView::~clDockerWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clDockerWorkspaceView::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clDockerWorkspaceView::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &clDockerWorkspaceView::OnFileContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clDockerWorkspaceView::OnFindInFilesDismissed, this);
 }
 
 void clDockerWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
@@ -136,4 +139,29 @@ void clDockerWorkspaceView::DoDockerComposeContextMenu(wxMenu* menu, const wxStr
                XRCID("build_dockerfile"));
     menu->Bind(wxEVT_MENU, [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerCompose(docker_compose); },
                XRCID("run_dockerfile"));
+}
+
+void clDockerWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& event)
+{
+    event.Skip();
+    if(clDockerWorkspace::Get()->IsOpen()) {
+        clConfig::Get().Write("FindInFiles/Docker/Mask", event.GetFileMask());
+        clConfig::Get().Write("FindInFiles/Docker/LookIn", event.GetPaths());
+    }
+}
+
+void clDockerWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
+{
+    event.Skip();
+    clTreeCtrlPanel::OnFindInFilesShowing(event);
+    if(clDockerWorkspace::Get()->IsOpen()) {
+        // store the find in files mask
+        // Load the Docker workspace values from the configuration
+        wxString mask = "Dockerfile;docker-compose.yml;*.txt";
+        event.SetFileMask(clConfig::Get().Read("FindInFiles/Docker/Mask", mask));
+
+        wxString lookIn;
+        lookIn << SEARCH_IN_WORKSPACE_FOLDER;
+        event.SetPaths(clConfig::Get().Read("FindInFiles/Docker/LookIn", lookIn));
+    }
 }

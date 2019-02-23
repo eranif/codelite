@@ -52,11 +52,11 @@ public:
 public:
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON() const;
+    PHPConfigurationData();
 
     PHPConfigurationData& Load();
     void Save();
 
-    PHPConfigurationData();
     virtual ~PHPConfigurationData();
 
     PHPConfigurationData& SetWorkspaceType(int workspaceType)

@@ -32,9 +32,9 @@
 
 class FindInFilesDialog : public FindInFilesDialogBase
 {
-    FindReplaceData m_data;
+    FindReplaceData& m_data;
     wxArrayString m_pluginFileMask;
-    wxStringSet_t m_customPaths;
+    bool m_transient = false;
 
 protected:
     wxArrayString GetPathsAsArray() const;
@@ -53,9 +53,8 @@ protected:
     void DoSetFileMask();
     void DoAddProjectFiles(const wxString& projectName, wxArrayString& files);
 
-    // Append new search path, ensure singularity
-    void DoAddSearchPath(const wxString& path);
-    void DoAddSearchPaths(const wxArrayString& paths);
+    // Set new search paths
+    void DoSetSearchPaths(const wxString& paths);
 
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);
@@ -65,14 +64,13 @@ protected:
 
     void OnUseDiffColourForCommentsUI(wxUpdateUIEvent& event);
     size_t GetSearchFlags();
+    void BuildFindReplaceData();
 
 public:
-    FindInFilesDialog(wxWindow* parent, const wxString& dataName, const wxArrayString& additionalSearchPaths);
+    FindInFilesDialog(wxWindow* parent, FindReplaceData& data);
     virtual ~FindInFilesDialog();
-    void SetSearchPaths(const wxArrayString& paths);
-    FindReplaceData& GetData() { return m_data; }
-
-    const FindReplaceData& GetData() const { return m_data; }
+    void SetSearchPaths(const wxString& paths, bool transient = false);
+    void SetFileMask(const wxString& mask);
     int ShowDialog();
 };
 

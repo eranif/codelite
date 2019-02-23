@@ -88,7 +88,8 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &PHPWorkspaceView::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVEAS, &PHPWorkspaceView::OnFileSaveAs, this);
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPWorkspaceView::OnProjectSyncCompleted, this);
 
@@ -156,7 +157,8 @@ PHPWorkspaceView::~PHPWorkspaceView()
     EventNotifier::Get()->Unbind(wxPHP_PARSE_PROGRESS, &PHPWorkspaceView::OnPhpParserProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &PHPWorkspaceView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_RENAMED, &PHPWorkspaceView::OnWorkspaceRenamed, this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &PHPWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &PHPWorkspaceView::OnFindInFilesDismissed, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_START, &PHPWorkspaceView::OnWorkspaceSyncStart, this);
     Unbind(wxEVT_PHP_WORKSPACE_FILES_SYNC_END, &PHPWorkspaceView::OnWorkspaceSyncEnd, this);
@@ -1407,19 +1409,42 @@ void PHPWorkspaceView::OnRenameFolder(wxCommandEvent& e)
     }
 }
 
-void PHPWorkspaceView::OnFindInFilesShowing(clCommandEvent& e)
+void PHPWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& e)
+{
+    e.Skip();
+    if(PHPWorkspace::Get()->IsOpen()) {
+        // store the find in files mask
+        clConfig::Get().Write("FindInFiles/PHP/LookIn", e.GetPaths());
+        clConfig::Get().Write("FindInFiles/PHP/Mask", e.GetFileMask());
+    }
+}
+
+void PHPWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& e)
 {
     e.Skip();
     if(!PHPWorkspace::Get()->IsOpen()) return;
-    if(IsShownOnScreen() && HasFocus()) {
-        // Get list of selected folders
-        wxArrayString paths;
-        DoGetSelectedFolders(paths);
-        CHECK_COND_RET(!paths.IsEmpty());
+    
+    // Mask is always loaded from the configuration
+    wxString mask = "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sql";
+    e.SetFileMask(clConfig::Get().Read("FindInFiles/PHP/Mask", mask));
 
-        // PHP workspace is opened and visible
-        wxArrayString& outPaths = e.GetStrings();
-        outPaths.insert(outPaths.end(), paths.begin(), paths.end());
+    if(m_treeCtrlView->IsShownOnScreen() && m_treeCtrlView->HasFocus()) {
+        // Get list of selected folders
+        wxArrayString folders;
+        DoGetSelectedFolders(folders);
+        if(folders.IsEmpty()) { return; }
+
+        wxString paths;
+        for(size_t i = 0; i < folders.size(); ++i) {
+            paths << folders.Item(i) << "\n";
+        }
+        paths.Trim();
+        e.SetTransientPaths(paths);
+    } else {
+        wxString lookIn;
+        lookIn << "<Entire Workspace>\n"
+               << "-*vendor*";
+        e.SetPaths(clConfig::Get().Read("FindInFiles/PHP/LookIn", lookIn));
     }
 }
 

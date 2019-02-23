@@ -155,7 +155,8 @@ protected:
     void OnEditorChanged(wxCommandEvent& e);
     void OnFileRenamed(PHPEvent& e);
     void OnWorkspaceRenamed(PHPEvent& e);
-    void OnFindInFilesShowing(clCommandEvent& e);
+    void OnFindInFilesShowing(clFindInFilesEvent& e);
+    void OnFindInFilesDismissed(clFindInFilesEvent& e);
     void OnToggleAutoUpload(wxCommandEvent& e);
     void OnStartDebuggerListener(wxCommandEvent& e);
     void OnProjectSyncCompleted(clCommandEvent& event);

@@ -106,7 +106,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
         m_dvListCtrlThreads->AppendItem(cols, (wxUIntPtr) new LLDBThreadViewClientData(thr));
     }
 
-    if((wxNOT_FOUND != m_selectedThread) && (m_dvListCtrlThreads->GetItemCount() > m_selectedThread)) {
+    if((wxNOT_FOUND != m_selectedThread) && ((int)m_dvListCtrlThreads->GetItemCount() > m_selectedThread)) {
         const auto item = m_dvListCtrlThreads->RowToItem(m_selectedThread);
         if(item.IsOk()) { m_dvListCtrlThreads->EnsureVisible(item); }
     }
@@ -114,7 +114,7 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
 
 void LLDBThreadsView::DoCleanup()
 {
-    for(int i = 0; i < m_dvListCtrlThreads->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrlThreads->GetItemCount(); ++i) {
         LLDBThreadViewClientData* cd = reinterpret_cast<LLDBThreadViewClientData*>(
             m_dvListCtrlThreads->GetItemData(m_dvListCtrlThreads->RowToItem(i)));
         wxDELETE(cd);

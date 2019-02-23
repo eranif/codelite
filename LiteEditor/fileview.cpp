@@ -209,7 +209,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     EventNotifier::Get()->Connect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                   wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     Bind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Bind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Bind(wxEVT_TREE_DELETE_ITEM, &FileViewTree::OnItemExpanding, this);
@@ -226,7 +226,7 @@ FileViewTree::~FileViewTree()
     EventNotifier::Get()->Disconnect(wxEVT_CMD_CLEAN_PROJECT_ONLY,
                                      wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_FIND_IN_FILES_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
@@ -2963,11 +2963,11 @@ void FileViewTree::OnTreeKeyDown(wxTreeEvent& event)
     if(event.GetKeyCode() == WXK_NUMPAD_DELETE || event.GetKeyCode() == WXK_DELETE) { DoRemoveItems(); }
 }
 
-void FileViewTree::OnFindInFilesShowing(clCommandEvent& event)
+void FileViewTree::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
     event.Skip();
     if(IsShownOnScreen() && HasFocus()) {
-        wxArrayString selections;
+        wxString selections;
         wxArrayTreeItemIds items;
         if(GetSelections(items) == 0) { return; }
         for(size_t i = 0; i < items.size(); ++i) {
@@ -2976,21 +2976,22 @@ void FileViewTree::OnFindInFilesShowing(clCommandEvent& event)
             if(!cd) { continue; }
             switch(cd->GetData().GetKind()) {
             case ProjectItem::TypeFile:
-                selections.Add(wxString() << "F: " << cd->GetData().GetFile());
+                selections << "F: " << cd->GetData().GetFile() << "\n";
                 break;
             case ProjectItem::TypeVirtualDirectory:
-                selections.Add(wxString() << "V: " << GetItemPath(item, '/'));
+                selections << "V: " << GetItemPath(item, '/') << "\n";
                 break;
             case ProjectItem::TypeProject:
-                selections.Add(wxString() << "P: " << cd->GetData().GetDisplayName());
+                selections << "P: " << cd->GetData().GetDisplayName() << "\n";
                 break;
             case ProjectItem::TypeWorkspace:
-                selections.Add(wxString() << "W: " << cd->GetData().GetDisplayName());
+                selections << "W: " << cd->GetData().GetDisplayName() << "\n";
                 break;
             default:
                 break;
             }
         }
-        event.SetStrings(selections);
+        selections.Trim();
+        event.SetTransientPaths(selections);
     }
 }

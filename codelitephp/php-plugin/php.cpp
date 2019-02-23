@@ -121,8 +121,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
                                   wxCommandEventHandler(PhpPlugin::OnGetCurrentFileProjectFiles), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
                                   wxCommandEventHandler(PhpPlugin::OnGetActiveProjectFiles), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
-                                  clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PHP_LOAD_URL, PHPEventHandler(PhpPlugin::OnLoadURL), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(PhpPlugin::OnAllEditorsClosed), NULL,
                                   this);
@@ -234,8 +232,6 @@ void PhpPlugin::UnPlug()
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_WORKSPACE_FILES,
                                      wxCommandEventHandler(PhpPlugin::OnGetWorkspaceFiles), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_FIND_IN_FILES_DISMISSED,
-                                     clCommandEventHandler(PhpPlugin::OnFindInFilesDismissed), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_CURRENT_FILE_PROJECT_FILES,
                                      wxCommandEventHandler(PhpPlugin::OnGetCurrentFileProjectFiles), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_GET_ACTIVE_PROJECT_FILES,
@@ -728,16 +724,6 @@ void PhpPlugin::FinalizeStartup()
 }
 
 void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
-
-void PhpPlugin::OnFindInFilesDismissed(clCommandEvent& e)
-{
-    e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        // store the find in files mask
-        PHPConfigurationData conf;
-        conf.Load().SetFindInFilesMask(e.GetString()).Save();
-    }
-}
 
 void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
 {

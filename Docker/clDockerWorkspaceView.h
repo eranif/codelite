@@ -22,6 +22,8 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceOpened(wxCommandEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
+    void OnFindInFilesDismissed(clFindInFilesEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event); // override parent's method
 };
 
 #endif // CLDOCKERWORKSPACEVIEW_H

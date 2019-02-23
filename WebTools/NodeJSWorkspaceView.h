@@ -43,6 +43,8 @@ protected:
     void OnShowHiddenFiles(wxCommandEvent& event);
     void OnCloseWorkspace(wxCommandEvent& event);
     void OnFileSystemUpdated(clFileSystemEvent& event);
+    void OnFindInFilesDismissed(clFindInFilesEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenPackageJsonFile(wxCommandEvent& event);
     void OnProjectDebug(wxCommandEvent& event);
     void OnProjectRun(wxCommandEvent& event);

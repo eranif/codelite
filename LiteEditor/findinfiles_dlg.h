@@ -40,7 +40,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class FindInFilesDialogBase : public wxDialog
 {
 protected:
@@ -67,120 +66,40 @@ protected:
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
 
 protected:
-    virtual void OnFind(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnFindWhatUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnReplace(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnReplaceUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnButtonClose(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnAddPath(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFindWhatUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnButtonClose(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnAddPath(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText1()
-    {
-        return m_staticText1;
-    }
-    wxComboBox* GetFindString()
-    {
-        return m_findString;
-    }
-    wxStaticText* GetStaticText102()
-    {
-        return m_staticText102;
-    }
-    wxComboBox* GetReplaceString()
-    {
-        return m_replaceString;
-    }
-    wxStaticText* GetStaticText3()
-    {
-        return m_staticText3;
-    }
-    wxComboBox* GetFileTypes()
-    {
-        return m_fileTypes;
-    }
-    wxStaticText* GetStaticText2()
-    {
-        return m_staticText2;
-    }
-    wxStyledTextCtrl* GetStcPaths()
-    {
-        return m_stcPaths;
-    }
-    wxStaticText* GetStaticText5()
-    {
-        return m_staticText5;
-    }
-    wxChoice* GetChoiceEncoding()
-    {
-        return m_choiceEncoding;
-    }
-    wxButton* GetFind()
-    {
-        return m_find;
-    }
-    wxButton* GetReplaceAll()
-    {
-        return m_replaceAll;
-    }
-    wxButton* GetCancel()
-    {
-        return m_cancel;
-    }
-    wxButton* GetBtnAddPath()
-    {
-        return m_btnAddPath;
-    }
-    wxPanel* GetPanelMainPanel()
-    {
-        return m_panelMainPanel;
-    }
-    wxStaticLine* GetStaticLine139()
-    {
-        return m_staticLine139;
-    }
-    wxCheckBox* GetMatchCase()
-    {
-        return m_matchCase;
-    }
-    wxCheckBox* GetMatchWholeWord()
-    {
-        return m_matchWholeWord;
-    }
-    wxCheckBox* GetRegualrExpression()
-    {
-        return m_regualrExpression;
-    }
-    wxCheckBox* GetCheckBoxPipeForGrep()
-    {
-        return m_checkBoxPipeForGrep;
-    }
-    wxCheckBox* GetCheckBoxSaveFilesBeforeSearching()
-    {
-        return m_checkBoxSaveFilesBeforeSearching;
-    }
-    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxComboBox* GetFindString() { return m_findString; }
+    wxStaticText* GetStaticText102() { return m_staticText102; }
+    wxComboBox* GetReplaceString() { return m_replaceString; }
+    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxComboBox* GetFileTypes() { return m_fileTypes; }
+    wxStaticText* GetStaticText2() { return m_staticText2; }
+    wxStyledTextCtrl* GetStcPaths() { return m_stcPaths; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxChoice* GetChoiceEncoding() { return m_choiceEncoding; }
+    wxButton* GetFind() { return m_find; }
+    wxButton* GetReplaceAll() { return m_replaceAll; }
+    wxButton* GetCancel() { return m_cancel; }
+    wxButton* GetBtnAddPath() { return m_btnAddPath; }
+    wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
+    wxStaticLine* GetStaticLine139() { return m_staticLine139; }
+    wxCheckBox* GetMatchCase() { return m_matchCase; }
+    wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
+    wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
+    wxCheckBox* GetCheckBoxPipeForGrep() { return m_checkBoxPipeForGrep; }
+    wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
+    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FindInFilesDialogBase();
 };
-
 
 class FindInFilesLocationsDlgBase : public wxDialog
 {
@@ -193,33 +112,18 @@ protected:
     wxButton* m_button117;
 
 protected:
-    virtual void OnAddPath(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeletePath(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeletePathUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnAddPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeletePath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeletePathUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxCheckListBox* GetCheckListBoxLocations()
-    {
-        return m_checkListBoxLocations;
-    }
-    wxButton* GetButtonAdd()
-    {
-        return m_buttonAdd;
-    }
-    wxButton* GetButtonDelete()
-    {
-        return m_buttonDelete;
-    }
-    FindInFilesLocationsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Search Locations"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxCheckListBox* GetCheckListBoxLocations() { return m_checkListBoxLocations; }
+    wxButton* GetButtonAdd() { return m_buttonAdd; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    FindInFilesLocationsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                const wxString& title = _("Edit Search Locations"),
+                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FindInFilesLocationsDlgBase();
 };
 

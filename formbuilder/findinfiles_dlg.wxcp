@@ -818,7 +818,7 @@
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",
-                 "m_value": "Search in these folders\\nTo exclude a file from the search, use wildcard that starts with an hyphen (\"-\")\\nFor example, to exclude all matches from the node_modules folder, use can use something like this:\\n\\n/home/user/path/to/root/folder\\n-*node_modules*"
+                 "m_value": "Search in these folders\\nTo exclude a file from the search, use wildcard that starts with an hyphen (\"-\")\\nFor example, to exclude all matches from the node_modules folder, one can use something like:\\n\\n/home/user/path/to/root/folder\\n-*node_modules*"
                 }, {
                  "type": "colour",
                  "m_label": "Bg Colour:",

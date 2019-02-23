@@ -102,7 +102,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     CentreOnParent();
 }
 
-FindInFilesDialog::~FindInFilesDialog() {}
+FindInFilesDialog::~FindInFilesDialog() { BuildFindReplaceData(); }
 
 void FindInFilesDialog::DoSetFileMask()
 {

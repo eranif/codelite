@@ -9,9 +9,9 @@
 #include "drawingutils.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #else
-#define TREE_STYLE wxTR_ROW_LINES | wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

@@ -1,4 +1,4 @@
-@echo off
+@echo OFF
 
 set TARGET_DIR=%ProgramFiles%
 set COPY_WXC_RESOURCES=0
@@ -31,7 +31,6 @@ xcopy ..\lib\gcc_lib\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I 
 xcopy ..\lib\gcc_lib\libwxshapeframework*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 IF EXIST wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
 IF EXIST PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
-IF EXIST ..\WebTools\javascript-win.zip ( copy ..\WebTools\javascript-win.zip "%TARGET_DIR%\CodeLite\" )
 
 if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
@@ -60,8 +59,8 @@ copy rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy astyle.sample "%TARGET_DIR%\CodeLite\" /Y
 copy php.sample "%TARGET_DIR%\CodeLite\" /Y
 copy pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
-copy ..\sdk\wxconfig\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
+copy wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END
 
-echo codelite was updated into %TARGET_DIR%\CodeLite
+echo CodeLite was updated into %TARGET_DIR%\CodeLite

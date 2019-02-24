@@ -106,7 +106,8 @@ protected:
     wxString DoGetCurRepoPath() const;
     wxArrayString GetSelectedUnversionedFiles() const;
     int GetImageIndex(const wxFileName& filepath) const;
-    
+    void UpdateStatusBar(const wxString& path);
+
 protected:
     // Menu management
     void CreateFileMenu(wxMenu* menu);

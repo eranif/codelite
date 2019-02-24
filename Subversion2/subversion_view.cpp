@@ -1144,7 +1144,7 @@ void SubversionView::DoRootDirChanged(const wxString& path)
 {
     if(path == wxEmptyString) {
         DoChangeRootPathUI(path);
-
+        UpdateStatusBar("");
     } else {
 
         // If a workspace is opened, set this new path to the workspace
@@ -1163,10 +1163,16 @@ void SubversionView::DoRootDirChanged(const wxString& path)
         }
         DoChangeRootPathUI(path);
         BuildTree();
+        UpdateStatusBar(path);
+    }
+}
 
-        // Clear the source control image
-        clStatusBar* sb = clGetManager()->GetStatusBar();
-        if(sb) {
+void SubversionView::UpdateStatusBar(const wxString& path)
+{
+    // Clear the source control image
+    clStatusBar* sb = clGetManager()->GetStatusBar();
+    if(sb) {
+        if(m_plugin->IsPathUnderSvn(path)) {
             wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("subversion");
             sb->SetSourceControlBitmap(bmp, "Svn", _("Using Subversion\nClick to open the Subversion view"));
         }
@@ -1231,11 +1237,16 @@ void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 
 void SubversionView::OnCloseView(wxCommandEvent& event)
 {
-    if(::wxMessageBox(_("Close SVN view?"), _("Confirm"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) !=
-       wxYES) {
-        return;
+    if(!m_curpath.IsEmpty()) {
+        if(::wxMessageBox(_("Close SVN view?"), _("Confirm"),
+                          wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+            return;
+        }
+        DoCloseView();
+        
+        // Clear the source control bitmap
+        clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
     }
-    DoCloseView();
 }
 
 void SubversionView::DoCloseView()
@@ -1243,6 +1254,12 @@ void SubversionView::DoCloseView()
     DoChangeRootPathUI("");
     wxCommandEvent dummy;
     OnClearOuptut(dummy);
+
+    if(m_workspaceFile.IsOk() && m_workspaceFile.FileExists()) {
+        WorkspaceSvnSettings conf(m_workspaceFile);
+        conf.SetRepoPath(m_curpath);
+        conf.Save();
+    }
 }
 
 void SubversionView::OnCommitGotoAnything(wxCommandEvent& event)

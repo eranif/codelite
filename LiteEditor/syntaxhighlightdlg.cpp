@@ -739,6 +739,7 @@ void SyntaxHighlightDlg::OnUseCustomColourUI(wxUpdateUIEvent& event)
 void SyntaxHighlightDlg::OnCustomBaseColourPIcked(wxColourPickerEvent& event)
 {
     m_isModified = true;
+    m_restartRequired = true;
     event.Skip();
 }
 

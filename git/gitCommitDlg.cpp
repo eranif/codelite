@@ -47,8 +47,8 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     GitEntry data;
     conf.ReadItem(&data);
     ::MSWSetNativeTheme(m_listBox);
-    m_splitterInner->SetSashPosition(data.GetGitCommitDlgHSashPos());
-    m_splitterMain->SetSashPosition(data.GetGitCommitDlgVSashPos());
+    m_splitterInner->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgHSashPos(), true);
+    m_splitterMain->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgVSashPos(), true);
 
     LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
     if(diffLexer) { diffLexer->Apply(m_stcDiff); }

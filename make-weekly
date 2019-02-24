@@ -7,7 +7,8 @@ curdir=`pwd`
 os_name=`uname -s`
 upload_file="no"
 build_php="no"
-
+build_gtk3="no"
+wx_config_gtk3_path=""
 
 os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
@@ -24,16 +25,21 @@ do
     case $i in
         "--with-php")
             build_php="yes"
-	    shift
+            shift
             ;;
         "--upload")
             upload_file="yes"
-	    shift
+            shift
             ;;
-	--cpu-count=*)
+        --cpu-count=*)
             cpu_count="${i#*=}"
-	    shift
-	    ;;
+            shift
+            ;;
+        --with-gtk3=*)
+            wx_config_gtk3_path="${i#*=}"
+            build_gtk3="yes"
+            shift
+            ;;
     esac
 done
 
@@ -41,6 +47,7 @@ echo "Platform     : ${os_name}"
 echo "CPU count    : ${cpu_count}"
 echo "Upload binary: ${upload_file}"
 echo "PHP Build    : ${build_php}"
+echo "GTK3 build   : ${wx_config_gtk3_path}"
 
 # Update our source tree
 cd $curdir
@@ -52,13 +59,14 @@ if [ $? -ne 0 ]; then
 fi
 
 cd $curdir
-
+ORIG_PATH=$PATH
 linux_build() {
     mkdir -p $curdir/$1
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
-    PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
+    export PATH=$2:${ORIG_PATH}
+    cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} && make package
     if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
@@ -74,7 +82,8 @@ linux_build_php() {
     echo rm -fr *.deb
     rm -fr *.deb
     PATH=.:$PATH cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 .. -DPHP_BUILD=1
-    make -j${cpu_count} && make package
+    PATH=.:$PATH make -j${cpu_count} 
+    PATH=.:$PATH make package
     if [ "${upload_file}" == "yes" ]; then
         deb_file=`ls -lt *.deb|awk '{print $9;}'|head -n 1`
         echo Uploading deb file ${deb_file}
@@ -96,5 +105,9 @@ else
     linux_build build-release
     if [ "${build_php}" == "yes" ]; then
         linux_build_php build-release-php
+    fi
+    
+    if [ "${build_gtk3}" == "yes" ]; then
+        linux_build build-release-gtk3 ${wx_config_gtk3_path}
     fi
 fi

@@ -5452,6 +5452,8 @@ void clMainFrame::OnDuplicateTab(wxCommandEvent& event)
             if(!newEditor->SaveAs(currentFile->GetFileName().GetFullName(), currentFile->GetFileName().GetPath())) {
                 // If the "Save As" failed for any reason, remove the current editor
                 clGetManager()->CloseEditor(newEditor, false);
+                // Set the editor back to the current editor
+                GetMainBook()->GetFindBar()->SetEditor(currentFile->GetCtrl());
             }
         }
     }

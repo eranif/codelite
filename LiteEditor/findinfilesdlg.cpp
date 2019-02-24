@@ -300,7 +300,10 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     // There is a bug in OSX that prevents popup menu from being displayed from dialogs
     // so we use an alternative way
     FindInFilesLocationsDlg dlg(this, GetPathsAsArray());
-    if(dlg.ShowModal() == wxID_OK) { DoAddSearchPaths(dlg.GetLocations()); }
+    if(dlg.ShowModal() == wxID_OK) { 
+        wxString paths = wxJoin(dlg.GetLocations(), '\n');
+        DoSetSearchPaths(paths); 
+    }
 #else
     // Show a popup menu
     wxMenu menu;

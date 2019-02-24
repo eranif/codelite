@@ -85,7 +85,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     , m_globalBgColourChanged(false)
 {
     SetSize(wxDLG_UNIT(this, wxSize(250, 250)));
-    
+
     // Get list of available lexers
     wxString lexerName;
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
@@ -149,9 +149,17 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
                         m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
                     },
                     XRCID("import_eclipse_theme"));
-    m_colourPickerBaseColour->SetColour(
-        clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-    m_cbUseCustomBaseColour->SetValue(clConfig::Get().Read("UseCustomBaseColour", false));
+
+    // Theme handling
+    wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_colourPickerBaseColour->SetColour(baseColour);
+    m_useBaseColourInitial = clConfig::Get().Read("UseCustomBaseColour", false);
+    m_useBaseColourEnding = m_useBaseColourInitial;
+    m_cbUseCustomBaseColour->SetValue(m_useBaseColourInitial);
+    if(m_cbUseCustomBaseColour) {
+        m_initialTheme = DrawingUtils::IsDark(baseColour) ? kTHEME_DARK : kTHEME_LIGHT;
+        m_endingTheme = m_initialTheme;
+    }
     GetSizer()->Fit(this);
     CentreOnParent();
 }
@@ -686,6 +694,19 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
     m_globalThemeChanged = true;
     m_isModified = true;
     DoUpdatePreview();
+
+    LexerConf::Ptr_t previewLexer =
+        ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
+
+    if(previewLexer && previewLexer->IsDark() && m_cbUseCustomBaseColour->IsChecked()) {
+        wxColour bgColour = previewLexer->GetProperty(0).GetBgColour();
+        bgColour = bgColour.ChangeLightness(105);
+        m_colourPickerBaseColour->SetColour(bgColour);
+        m_endingTheme = kTHEME_DARK;
+    } else if(previewLexer && m_cbUseCustomBaseColour->IsChecked()) {
+        // Light colour
+        m_endingTheme = kTHEME_LIGHT;
+    }
 }
 
 void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
@@ -739,14 +760,19 @@ void SyntaxHighlightDlg::OnUseCustomColourUI(wxUpdateUIEvent& event)
 void SyntaxHighlightDlg::OnCustomBaseColourPIcked(wxColourPickerEvent& event)
 {
     m_isModified = true;
-    m_restartRequired = true;
+    m_endingTheme = DrawingUtils::IsDark(event.GetColour()) ? kTHEME_DARK : kTHEME_LIGHT;
     event.Skip();
 }
 
 void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
 {
     m_isModified = true;
-    m_restartRequired = true;
+    m_endingTheme = DrawingUtils::IsDark(m_colourPickerBaseColour->GetColour()) ? kTHEME_DARK : kTHEME_LIGHT;
+    m_useBaseColourEnding = event.IsChecked();
     event.Skip();
 }
 
+bool SyntaxHighlightDlg::IsRestartRequired() const
+{
+    return (m_useBaseColourEnding != m_useBaseColourInitial) || (m_initialTheme != m_endingTheme);
+}

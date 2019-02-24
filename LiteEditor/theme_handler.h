@@ -42,7 +42,8 @@ protected:
 public:
     ThemeHandler();
     virtual ~ThemeHandler();
-
+    
+    void UpdateNotebookColours(wxWindow* parent);
     void OnEditorThemeChanged(wxCommandEvent& e);
     void OnColoursChanged(clCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);

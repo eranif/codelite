@@ -34,13 +34,25 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
                                const clTabColours& colours, size_t style, eButtonState buttonState)
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
+    bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
 
-    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
+    wxColour bgColour;
+    wxColour textColour;
+    if(tabInfo.IsActive()) {
+        bgColour = colours.activeTabBgColour;
+        textColour = colours.activeTabTextColour;
+        if(isDark) { bgColour = bgColour.ChangeLightness(80); }
+    } else {
+        bgColour = colours.inactiveTabBgColour;
+        textColour = colours.inactiveTabTextColour;
+        if(isDark) { textColour = textColour.ChangeLightness(90); }
+    }
+
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
     wxColour separatorColour = penColour.ChangeLightness(110);
 
     wxFont font = GetTabFont(tabInfo.IsActive());
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetTextForeground(textColour);
     fontDC.SetFont(font);
 
     wxRect rr = tabInfo.m_rect;
@@ -95,5 +107,5 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,
                                          wxDC& dc, const clTabColours& colours, size_t style)
 {
-    //ClearActiveTabExtraLine(activeTab, dc, colours, style);
+    // ClearActiveTabExtraLine(activeTab, dc, colours, style);
 }

@@ -3881,10 +3881,13 @@ void clMainFrame::OnOpenShellFromFilePath(wxCommandEvent& e)
 void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
 {
     SyntaxHighlightDlg dlg(this);
-    if(dlg.ShowModal() == wxID_OK && dlg.IsRestartRequired()) {
+    if((dlg.ShowModal() == wxID_OK) && dlg.IsRestartRequired()) {
         // A restart required
         DoSuggestRestart();
     }
+    
+    // Update the notebook colours on the next event iteration so clSystemSettings will get updated first
+    m_themeHandler.CallAfter(&ThemeHandler::UpdateNotebookColours, this);
 }
 
 void clMainFrame::OnQuickDebug(wxCommandEvent& e)

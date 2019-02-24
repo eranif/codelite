@@ -44,7 +44,8 @@ private:
 
 public:
     void UpdateColours(wxWindow* topWindow);
-    
+    void UpdateNotebookColours(wxWindow* topWindow);
+
 public:
     ThemeHandlerHelper(wxWindow* win);
     virtual ~ThemeHandlerHelper();

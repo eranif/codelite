@@ -3611,9 +3611,9 @@ void Manager::OnFindInFilesShowing(clFindInFilesEvent& event)
     event.Skip();
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         // Load the C++ workspace values from the configuration
-        event.SetFileMask(
-            clConfig::Get().Read("FindInFiles/CXX/Mask", wxString("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;"
-                                                                  "*.xml;*.json;*.sql;*.txt;*.plist;CMakeLists.txt")));
+        event.SetFileMask(clConfig::Get().Read("FindInFiles/CXX/Mask",
+                                               wxString("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;"
+                                                        "*.xml;*.json;*.sql;*.txt;*.plist;CMakeLists.txt;*.rc;*.iss")));
         event.SetPaths(clConfig::Get().Read("FindInFiles/CXX/LookIn", wxString("<Entire Workspace>")));
     }
 }

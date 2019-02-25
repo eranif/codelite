@@ -281,6 +281,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
             1);
     }
 
+    if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
+    }
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 
@@ -839,6 +843,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
             "int short null true false",
             1);
     }
+    
+    if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
+    }
+
     // Upgrade the lexer colours
     UpdateLexerColours(lexer, false);
 

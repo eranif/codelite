@@ -40,7 +40,8 @@ protected:
     void OnFocus(wxFocusEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnIdle(wxIdleEvent& event);
-
+    void OnSize(wxSizeEvent& event);
+    
     // Overridable
     virtual void Render(wxDC& dc);
 

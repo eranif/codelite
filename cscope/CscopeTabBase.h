@@ -19,6 +19,7 @@
 #include <wx/arrstr.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include "clThemedButton.h"
 #include <wx/gauge.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
@@ -39,7 +40,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class CscopeTabBase : public wxPanel
 {
 protected:
@@ -48,8 +48,8 @@ protected:
     wxChoice* m_choiceSearchScope;
     wxCheckBox* m_checkBoxUpdateDb;
     wxCheckBox* m_checkBoxRevertedIndex;
-    wxButton* m_buttonUpdateDbNow;
-    wxButton* m_buttonClear;
+    clThemedButton* m_buttonUpdateDbNow;
+    clThemedButton* m_buttonClear;
     wxGauge* m_gauge;
 
 protected:
@@ -66,13 +66,13 @@ public:
     wxChoice* GetChoiceSearchScope() { return m_choiceSearchScope; }
     wxCheckBox* GetCheckBoxUpdateDb() { return m_checkBoxUpdateDb; }
     wxCheckBox* GetCheckBoxRevertedIndex() { return m_checkBoxRevertedIndex; }
-    wxButton* GetButtonUpdateDbNow() { return m_buttonUpdateDbNow; }
-    wxButton* GetButtonClear() { return m_buttonClear; }
+    clThemedButton* GetButtonUpdateDbNow() { return m_buttonUpdateDbNow; }
+    clThemedButton* GetButtonClear() { return m_buttonClear; }
     wxGauge* GetGauge() { return m_gauge; }
-    CscopeTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    CscopeTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~CscopeTabBase();
 };
-
 
 class CScopeSettingsDlgBase : public wxDialog
 {
@@ -84,11 +84,12 @@ protected:
     wxButton* m_button16;
 
 protected:
-
 public:
     wxStaticText* GetStaticText20() { return m_staticText20; }
     wxFilePickerCtrl* GetFilePickerCScopeExe() { return m_filePickerCScopeExe; }
-    CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CScope Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CScopeSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CScope Settings"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CScopeSettingsDlgBase();
 };
 

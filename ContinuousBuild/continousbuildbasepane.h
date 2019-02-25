@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
-#define _CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
+#ifndef _CODELITE_CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
+#define _CODELITE_CONTINUOUSBUILD_CONTINOUSBUILDBASEPANE_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -15,6 +15,7 @@
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include "clThemedButton.h"
 #include <wx/listbox.h>
 #include <wx/stattext.h>
 #if wxVERSION_NUMBER >= 2900
@@ -33,12 +34,11 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class ContinousBuildBasePane : public wxPanel
 {
 protected:
     wxCheckBox* m_checkBox1;
-    wxButton* m_buttonCancel;
+    clThemedButton* m_buttonCancel;
     wxListBox* m_listBoxQueue;
     wxStaticText* m_staticText4;
     wxListBox* m_listBoxFailedFiles;
@@ -51,11 +51,12 @@ protected:
 
 public:
     wxCheckBox* GetCheckBox1() { return m_checkBox1; }
-    wxButton* GetButtonCancel() { return m_buttonCancel; }
+    clThemedButton* GetButtonCancel() { return m_buttonCancel; }
     wxListBox* GetListBoxQueue() { return m_listBoxQueue; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxListBox* GetListBoxFailedFiles() { return m_listBoxFailedFiles; }
-    ContinousBuildBasePane(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    ContinousBuildBasePane(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~ContinousBuildBasePane();
 };
 

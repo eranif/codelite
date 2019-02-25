@@ -17,6 +17,7 @@
 #include "clToolBar.h"
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include "clThemedButton.h"
 #include <wx/popupwin.h>
 #include <wx/checkbox.h>
 #include <wx/imaglist.h>
@@ -49,12 +50,12 @@ public:
 protected:
     clToolBar* m_toolbar;
     wxTextCtrl* m_textCtrlFind;
-    wxButton* m_buttonFind;
-    wxButton* m_buttonFindPrev;
-    wxButton* m_buttonFindAll;
+    clThemedButton* m_buttonFind;
+    clThemedButton* m_buttonFindPrev;
+    clThemedButton* m_buttonFindAll;
     wxTextCtrl* m_textCtrlReplace;
-    wxButton* m_buttonReplace;
-    wxButton* m_buttonReplaceAll;
+    clThemedButton* m_buttonReplace;
+    clThemedButton* m_buttonReplaceAll;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
@@ -78,12 +79,12 @@ protected:
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
     wxTextCtrl* GetTextCtrlFind() { return m_textCtrlFind; }
-    wxButton* GetButtonFind() { return m_buttonFind; }
-    wxButton* GetButtonFindPrev() { return m_buttonFindPrev; }
-    wxButton* GetButtonFindAll() { return m_buttonFindAll; }
+    clThemedButton* GetButtonFind() { return m_buttonFind; }
+    clThemedButton* GetButtonFindPrev() { return m_buttonFindPrev; }
+    clThemedButton* GetButtonFindAll() { return m_buttonFindAll; }
     wxTextCtrl* GetTextCtrlReplace() { return m_textCtrlReplace; }
-    wxButton* GetButtonReplace() { return m_buttonReplace; }
-    wxButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
+    clThemedButton* GetButtonReplace() { return m_buttonReplace; }
+    clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
     QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(-1, -1),
                      long style = wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW | wxBORDER_NONE);

@@ -310,11 +310,11 @@
           }, {
            "type": "string",
            "m_label": "Class Name:",
-           "m_value": ""
+           "m_value": "clThemedButton"
           }, {
            "type": "string",
            "m_label": "Include File:",
-           "m_value": ""
+           "m_value": "clThemedButton.h"
           }, {
            "type": "string",
            "m_label": "Style:",
@@ -418,7 +418,7 @@
            "border": 5,
            "gbSpan": ",",
            "gbPosition": ",",
-           "m_styles": [],
+           "m_styles": ["wxBORDER_NONE"],
            "m_sizerFlags": ["wxEXPAND"],
            "m_properties": [{
              "type": "winid",

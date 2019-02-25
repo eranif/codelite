@@ -3,6 +3,7 @@
 #include <wx/dcgraph.h>
 #include <wx/buffer.h>
 #include <wx/renderer.h>
+#include <wx/settings.h>
 
 clButtonBase::clButtonBase() {}
 

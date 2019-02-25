@@ -158,7 +158,7 @@ void LLDBCommand::UpdatePaths(const LLDBPivot& pivot)
         m_executable       = pivot.ToRemote( m_executable );
 #endif
         for(size_t i = 0; i < m_breakpoints.size(); ++i) {
-            m_breakpoints.at(i)->SetFilename(pivot.ToRemote(m_breakpoints.at(i)->GetFilename()));
+            m_breakpoints.at(i)->SetFilename(pivot.ToRemote(m_breakpoints.at(i)->GetFilename()), false);
         }
     }
 }

@@ -162,7 +162,10 @@ void LLDBConnector::SendCommand(const LLDBCommand& command)
             // Convert local paths to remote paths if needed
             LLDBCommand updatedCommand = command;
             updatedCommand.UpdatePaths(m_pivot);
-            m_socket->WriteMessage(updatedCommand.ToJSON().format());
+            wxString jsonCommand = updatedCommand.ToJSON().format();
+            clDEBUG() << "Sending command to LLDB:";
+            clDEBUG() << jsonCommand;
+            m_socket->WriteMessage(jsonCommand);
         }
 
     } catch(clSocketException& e) {

@@ -47,27 +47,34 @@ public:
     typedef std::vector<LLDBBreakpoint::Ptr_t> Vec_t;
 
 protected:
-    int                   m_id;
-    int                   m_type;
-    wxString              m_name;
-    wxString              m_filename;
-    int                   m_lineNumber;
+    int m_id;
+    int m_type;
+    wxString m_name;
+    wxString m_filename;
+    int m_lineNumber;
     LLDBBreakpoint::Vec_t m_children;
 
 public:
     class Equal
     {
         LLDBBreakpoint::Ptr_t m_src;
+
     public:
-        Equal(LLDBBreakpoint::Ptr_t src) : m_src(src) {}
-        bool operator()(LLDBBreakpoint::Ptr_t other) const {
-            return m_src->SameAs(other);
+        Equal(LLDBBreakpoint::Ptr_t src)
+            : m_src(src)
+        {
         }
+        bool operator()(LLDBBreakpoint::Ptr_t other) const { return m_src->SameAs(other); }
     };
 
 public:
-    LLDBBreakpoint() : m_id(wxNOT_FOUND), m_type(kInvalid), m_lineNumber(wxNOT_FOUND) {}
-    LLDBBreakpoint(const wxString &name);
+    LLDBBreakpoint()
+        : m_id(wxNOT_FOUND)
+        , m_type(kInvalid)
+        , m_lineNumber(wxNOT_FOUND)
+    {
+    }
+    LLDBBreakpoint(const wxString& name);
     LLDBBreakpoint(const wxFileName& filename, int line);
     bool SameAs(LLDBBreakpoint::Ptr_t other) const;
     virtual ~LLDBBreakpoint();
@@ -78,21 +85,13 @@ public:
      */
     void Copy(LLDBBreakpoint::Ptr_t other);
 
-    bool IsLocation() const {
-        return m_type == kLocation;
-    }
+    bool IsLocation() const { return m_type == kLocation; }
 
-    size_t GetNumChildren() const {
-        return m_children.size();
-    }
+    size_t GetNumChildren() const { return m_children.size(); }
 
-    LLDBBreakpoint::Vec_t& GetChildren() {
-        return m_children;
-    }
+    LLDBBreakpoint::Vec_t& GetChildren() { return m_children; }
 
-    const LLDBBreakpoint::Vec_t& GetChildren() const {
-        return m_children;
-    }
+    const LLDBBreakpoint::Vec_t& GetChildren() const { return m_children; }
 
     /**
      * @brief convert list of gdb breakpoints into LLDBBreakpoint vector
@@ -109,54 +108,45 @@ public:
      */
     wxString ToString() const;
 
-    bool IsApplied() const {
-        return m_id != wxNOT_FOUND;
-    }
+    bool IsApplied() const { return m_id != wxNOT_FOUND; }
 
     /**
      * @brief return true if this is a valid breakpoint
      */
     bool IsValid() const;
 
-    void Invalidate() ;
+    void Invalidate();
 
-    void SetFilename(const wxString& filename) {
-        wxFileName normalizedFilename(filename);
-        normalizedFilename.Normalize();
-        this->m_filename = normalizedFilename.GetFullPath();
+    /**
+     * @brief set the breakpoint filename.
+     * @param filename the filename
+     * @param normalise when set to 'true' CodeLite will attempt to remove . and .., and convert the path to fullpath.
+     * This is the default
+     */
+    void SetFilename(const wxString& filename, bool normalise = true)
+    {
+        if(normalise) {
+            wxFileName normalizedFilename(filename);
+            normalizedFilename.Normalize();
+            this->m_filename = normalizedFilename.GetFullPath();
+
+        } else {
+            this->m_filename = filename;
+        }
     }
-    void SetLineNumber(int lineNumber) {
-        this->m_lineNumber = lineNumber;
-    }
-    void SetName(const wxString& name) {
-        this->m_name = name;
-    }
-    void SetType(int type) {
-        this->m_type = type;
-    }
-    const wxString& GetFilename() const {
-        return m_filename;
-    }
-    int GetLineNumber() const {
-        return m_lineNumber;
-    }
-    const wxString& GetName() const {
-        return m_name;
-    }
-    int GetType() const {
-        return m_type;
-    }
-    void SetId(int id) {
-        this->m_id = id;
-    }
-    int GetId() const {
-        return m_id;
-    }
+    void SetLineNumber(int lineNumber) { this->m_lineNumber = lineNumber; }
+    void SetName(const wxString& name) { this->m_name = name; }
+    void SetType(int type) { this->m_type = type; }
+    const wxString& GetFilename() const { return m_filename; }
+    int GetLineNumber() const { return m_lineNumber; }
+    const wxString& GetName() const { return m_name; }
+    int GetType() const { return m_type; }
+    void SetId(int id) { this->m_id = id; }
+    int GetId() const { return m_id; }
 
     // Serialization API
     void FromJSON(const JSONElement& json);
     JSONElement ToJSON() const;
-
 };
 
 #endif // LLDBBREAKPOINT_H

@@ -49,6 +49,8 @@ void clDockerDriver::OnProcessOutput(clProcessEvent& event)
     case kListImages:
         m_output << event.GetOutput();
         break;
+    default:
+        break;
     }
 }
 

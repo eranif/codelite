@@ -235,3 +235,5 @@ void clButtonBase::SetText(const wxString& text)
     tmp.Replace("@@", "&");
     m_text = tmp;
 }
+
+void clButtonBase::SetDefault() {}

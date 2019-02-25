@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 10,
+  "m_objCounter": 12,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCBCB5InitBitmapResources",
   "m_bitmapsFile": "cppcheckreportbasepage_cppchecker_bitmaps.cpp",
@@ -9,6 +9,8 @@
   "m_outputFileName": "",
   "m_firstWindowId": 1000,
   "m_useEnum": true,
+  "m_useUnderscoreMacro": true,
+  "m_addHandlers": true,
   "m_templateClasses": []
  },
  "windows": [{
@@ -22,7 +24,7 @@
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "482,238"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -185,8 +187,8 @@
            "border": 5,
            "gbSpan": "1,1",
            "gbPosition": "0,0",
-           "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+           "m_styles": ["wxBORDER_NONE"],
+           "m_sizerFlags": ["wxEXPAND"],
            "m_properties": [{
              "type": "winid",
              "m_label": "ID:",
@@ -260,7 +262,7 @@
             }, {
              "type": "choice",
              "m_label": "EOL Mode",
-             "m_selection": 3,
+             "m_selection": 2,
              "m_options": ["CRLF", "CR", "LF", "Default"]
             }, {
              "type": "bool",
@@ -395,11 +397,11 @@
             }, {
              "type": "string",
              "m_label": "Class Name:",
-             "m_value": ""
+             "m_value": "clThemedButton"
             }, {
              "type": "string",
              "m_label": "Include File:",
-             "m_value": ""
+             "m_value": "clThemedButton.h"
             }, {
              "type": "string",
              "m_label": "Style:",
@@ -497,11 +499,11 @@
             }, {
              "type": "string",
              "m_label": "Class Name:",
-             "m_value": ""
+             "m_value": "clThemedButton"
             }, {
              "type": "string",
              "m_label": "Include File:",
-             "m_value": ""
+             "m_value": "clThemedButton.h"
             }, {
              "type": "string",
              "m_label": "Style:",
@@ -545,69 +547,21 @@
             }],
            "m_children": []
           }, {
-           "m_type": 4418,
-           "proportion": 0,
+           "m_type": 4454,
+           "proportion": 1,
            "border": 5,
            "gbSpan": "1,1",
            "gbPosition": "0,0",
-           "m_styles": ["wxLI_HORIZONTAL"],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
+           "m_styles": [],
+           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
            "m_properties": [{
-             "type": "winid",
-             "m_label": "ID:",
-             "m_winid": "wxID_ANY"
+             "type": "string",
+             "m_label": "Name:",
+             "m_value": "Spacer12"
             }, {
              "type": "string",
              "m_label": "Size:",
-             "m_value": "-1,-1"
-            }, {
-             "type": "string",
-             "m_label": "Minimum Size:",
-             "m_value": "-1,-1"
-            }, {
-             "type": "string",
-             "m_label": "Name:",
-             "m_value": "m_staticLine10"
-            }, {
-             "type": "multi-string",
-             "m_label": "Tooltip:",
-             "m_value": ""
-            }, {
-             "type": "colour",
-             "m_label": "Bg Colour:",
-             "colour": "<Default>"
-            }, {
-             "type": "colour",
-             "m_label": "Fg Colour:",
-             "colour": "<Default>"
-            }, {
-             "type": "font",
-             "m_label": "Font:",
-             "m_value": ""
-            }, {
-             "type": "bool",
-             "m_label": "Hidden",
-             "m_value": false
-            }, {
-             "type": "bool",
-             "m_label": "Disabled",
-             "m_value": false
-            }, {
-             "type": "bool",
-             "m_label": "Focused",
-             "m_value": false
-            }, {
-             "type": "string",
-             "m_label": "Class Name:",
-             "m_value": ""
-            }, {
-             "type": "string",
-             "m_label": "Include File:",
-             "m_value": ""
-            }, {
-             "type": "string",
-             "m_label": "Style:",
-             "m_value": ""
+             "m_value": "0,0"
             }],
            "m_events": [],
            "m_children": []
@@ -666,11 +620,11 @@
             }, {
              "type": "string",
              "m_label": "Class Name:",
-             "m_value": ""
+             "m_value": "clThemedButton"
             }, {
              "type": "string",
              "m_label": "Include File:",
-             "m_value": ""
+             "m_value": "clThemedButton.h"
             }, {
              "type": "string",
              "m_label": "Style:",
@@ -768,11 +722,11 @@
             }, {
              "type": "string",
              "m_label": "Class Name:",
-             "m_value": ""
+             "m_value": "clThemedButton"
             }, {
              "type": "string",
              "m_label": "Include File:",
-             "m_value": ""
+             "m_value": "clThemedButton.h"
             }, {
              "type": "string",
              "m_label": "Style:",

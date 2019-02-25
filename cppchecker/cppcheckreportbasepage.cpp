@@ -6,132 +6,140 @@
 
 #include "cppcheckreportbasepage.h"
 
-
 // Declare the bitmap loading function
 extern void wxCBCB5InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-CppCheckReportBasePage::CppCheckReportBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+CppCheckReportBasePage::CppCheckReportBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                               long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCBCB5InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer5);
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer5->Add(mainSizer, 1, wxEXPAND, 5);
-    
+
+    bSizer5->Add(mainSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer41 = new wxBoxSizer(wxVERTICAL);
-    
-    mainSizer->Add(bSizer41, 1, wxEXPAND, 5);
-    
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+
+    mainSizer->Add(bSizer41, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 0);
-    
+    m_stc->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stc->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stc->SetMarginWidth(2, 16);
     m_stc->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,0);
-    
+    m_stc->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_stc->SetMarginWidth(3, 0);
     // Select the lexer
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stc->StyleClearAll();
     m_stc->SetWrapMode(1);
     m_stc->SetIndentationGuides(0);
+    m_stc->SetEOLMode(2);
     m_stc->SetKeyWords(0, wxT(""));
     m_stc->SetKeyWords(1, wxT(""));
     m_stc->SetKeyWords(2, wxT(""));
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
-    
-    bSizer41->Add(m_stc, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer41->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
-    
-    mainSizer->Add(bSizer4, 0, wxEXPAND, 5);
-    
-    m_buttonClear = new wxButton(this, wxID_CLEAR, _("&Clear"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    mainSizer->Add(bSizer4, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonClear =
+        new clThemedButton(this, wxID_CLEAR, _("&Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonClear->SetToolTip(_("Clear the CppCheck report view"));
-    
-    bSizer4->Add(m_buttonClear, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonStop = new wxButton(this, wxID_STOP, _("&Stop"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer4->Add(m_buttonClear, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonStop =
+        new clThemedButton(this, wxID_STOP, _("&Stop"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonStop->SetDefault();
-    m_buttonStop->SetToolTip(_("Stop the current analysis"));
-    
-    bSizer4->Add(m_buttonStop, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticLine10 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLI_HORIZONTAL);
-    
-    bSizer4->Add(m_staticLine10, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonUp = new wxButton(this, wxID_UP, _("Up"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonStop->SetToolTip(_("Stop the curreny analysis"));
+
+    bSizer4->Add(m_buttonStop, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    bSizer4->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonUp = new clThemedButton(this, wxID_UP, _("Up"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonUp->SetToolTip(_("Move to previous error"));
-    
-    bSizer4->Add(m_buttonUp, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonDown = new wxButton(this, wxID_DOWN, _("Down"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    bSizer4->Add(m_buttonUp, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonDown =
+        new clThemedButton(this, wxID_DOWN, _("Down"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonDown->SetToolTip(_("Move to next error"));
-    
-    bSizer4->Add(m_buttonDown, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer4->Add(m_buttonDown, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("CppCheckReportBasePage"));
-    SetSizeHints(482,238);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    CentreOnParent(wxBOTH);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_stc->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(CppCheckReportBasePage::OnStyleNeeded), NULL, this);
     m_stc->Connect(wxEVT_STC_DOUBLECLICK, wxStyledTextEventHandler(CppCheckReportBasePage::OnOpenFile), NULL, this);
-    m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnClearReport), NULL, this);
-    m_buttonClear->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnClearReportUI), NULL, this);
-    m_buttonStop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnStopChecking), NULL, this);
-    m_buttonStop->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnStopCheckingUI), NULL, this);
+    m_buttonClear->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnClearReport),
+                           NULL, this);
+    m_buttonClear->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnClearReportUI), NULL,
+                           this);
+    m_buttonStop->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnStopChecking),
+                          NULL, this);
+    m_buttonStop->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnStopCheckingUI), NULL,
+                          this);
     m_buttonUp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnUp), NULL, this);
     m_buttonUp->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnUpUI), NULL, this);
-    m_buttonDown->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnDown), NULL, this);
+    m_buttonDown->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnDown), NULL,
+                          this);
     m_buttonDown->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnDownUI), NULL, this);
-    
 }
 
 CppCheckReportBasePage::~CppCheckReportBasePage()
 {
-    m_stc->Disconnect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(CppCheckReportBasePage::OnStyleNeeded), NULL, this);
+    m_stc->Disconnect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(CppCheckReportBasePage::OnStyleNeeded), NULL,
+                      this);
     m_stc->Disconnect(wxEVT_STC_DOUBLECLICK, wxStyledTextEventHandler(CppCheckReportBasePage::OnOpenFile), NULL, this);
-    m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnClearReport), NULL, this);
-    m_buttonClear->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnClearReportUI), NULL, this);
-    m_buttonStop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnStopChecking), NULL, this);
-    m_buttonStop->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnStopCheckingUI), NULL, this);
-    m_buttonUp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnUp), NULL, this);
+    m_buttonClear->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                              wxCommandEventHandler(CppCheckReportBasePage::OnClearReport), NULL, this);
+    m_buttonClear->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnClearReportUI), NULL,
+                              this);
+    m_buttonStop->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                             wxCommandEventHandler(CppCheckReportBasePage::OnStopChecking), NULL, this);
+    m_buttonStop->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnStopCheckingUI), NULL,
+                             this);
+    m_buttonUp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnUp), NULL,
+                           this);
     m_buttonUp->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnUpUI), NULL, this);
-    m_buttonDown->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnDown), NULL, this);
+    m_buttonDown->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CppCheckReportBasePage::OnDown), NULL,
+                             this);
     m_buttonDown->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CppCheckReportBasePage::OnDownUI), NULL, this);
-    
 }

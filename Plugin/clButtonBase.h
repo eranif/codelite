@@ -55,7 +55,7 @@ public:
     virtual ~clButtonBase();
     void SetColours(const clColours& colours);
     const clColours& GetColours() const { return m_colours; }
-    void SetText(const wxString& text) { this->m_text = text; }
+    void SetText(const wxString& text);
     const wxString& GetText() const { return m_text; }
 };
 

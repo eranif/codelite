@@ -10,8 +10,8 @@ clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& labe
                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
     : wxControl(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)
     , m_buttonStyle(style)
-    , m_text(label)
 {
+    SetText(label);
     Initialise();
 }
 
@@ -19,7 +19,7 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
                           const wxSize& size, long style, const wxValidator& validator, const wxString& name)
 {
     m_buttonStyle = style;
-    m_text = label;
+    SetText(label);
     if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) { return false; }
     Initialise();
     return true;
@@ -224,4 +224,14 @@ size_t clButtonBase::GetDrawingFlags() const
     size_t flags = 0;
     if(IsEnabled()) { flags |= kDrawingFlagEnabled; }
     return flags;
+}
+
+void clButtonBase::SetText(const wxString& text)
+{
+    // strip menemonics, not very efficient...
+    wxString tmp = text;
+    tmp.Replace("&&", "@@");
+    tmp.Replace("&", "");
+    tmp.Replace("@@", "&");
+    m_text = tmp;
 }

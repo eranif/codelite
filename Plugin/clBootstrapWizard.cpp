@@ -123,6 +123,22 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
 
 clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
 
+static wxColour GetBackgroundColourFromLexer(const wxString& themeName)
+{
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text", themeName);
+    if(!lexer) { return wxNullColour; }
+
+    wxColour bgColour;
+    if(lexer->IsDark()) {
+        bgColour = lexer->GetProperty(0).GetBgColour();
+        bgColour = bgColour.ChangeLightness(105);
+    } else {
+        bgColour = lexer->GetProperty(0).GetBgColour();
+        bgColour = bgColour.ChangeLightness(95);
+    }
+    return bgColour;
+}
+
 void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
@@ -133,15 +149,16 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
         m_selectedTheme = LIGHT_THEME;
         if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) { m_selectedTheme = DARK_THEME; }
         clConfig::Get().Write("UseCustomBaseColour", false);
-    } else if(themeID == 1) {
-        // Dark
-        m_selectedTheme = DARK_THEME;
-        clConfig::Get().Write("UseCustomBaseColour", true);
-        clConfig::Get().Write("BaseColour", wxString("rgb(48,48,48)"));
     } else {
-        m_selectedTheme = LIGHT_THEME;
-        clConfig::Get().Write("UseCustomBaseColour", true);
-        clConfig::Get().Write("BaseColour", wxString("rgb(242, 243, 244)"));
+        // Dark
+        m_selectedTheme = (themeID == 1) ? DARK_THEME : LIGHT_THEME;
+        wxColour bgColour = GetBackgroundColourFromLexer(m_selectedTheme);
+        if(bgColour.IsOk()) {
+            clConfig::Get().Write("UseCustomBaseColour", true);
+            clConfig::Get().Write("BaseColour", bgColour);
+        } else {
+            clConfig::Get().Write("UseCustomBaseColour", false);
+        }
     }
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);

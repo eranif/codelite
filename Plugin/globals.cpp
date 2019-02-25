@@ -2094,14 +2094,20 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
 
 wxSize clGetDisplaySize()
 {
-    int displayWidth = ::wxGetDisplaySize().GetWidth();
-    int displayHeight = ::wxGetDisplaySize().GetHeight();
-    for(size_t i = 0; i < wxDisplay::GetCount(); ++i) {
-        wxDisplay display(i);
-        displayWidth = wxMax(display.GetClientArea().GetWidth(), displayWidth);
-        displayHeight = wxMax(display.GetClientArea().GetHeight(), displayHeight);
+    // Calculate the display size only once. If the user changes the display size, he will need to restart CodeLite
+    static wxSize displaySize;
+    if(displaySize.GetHeight() == 0) {
+
+        int displayWidth = ::wxGetDisplaySize().GetWidth();
+        int displayHeight = ::wxGetDisplaySize().GetHeight();
+        for(size_t i = 0; i < wxDisplay::GetCount(); ++i) {
+            wxDisplay display(i);
+            displayWidth = wxMax(display.GetClientArea().GetWidth(), displayWidth);
+            displayHeight = wxMax(display.GetClientArea().GetHeight(), displayHeight);
+        }
+        displaySize = wxSize(displayWidth, displayHeight);
     }
-    return wxSize(displayWidth, displayHeight);
+    return displaySize;
 }
 
 void clFitColumnWidth(wxDataViewCtrl* ctrl)

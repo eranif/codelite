@@ -79,6 +79,7 @@
 #include <wx/wupdlock.h>
 #include "DebuggerToolBar.h"
 #include "clThemeUpdater.h"
+#include "clInfoBar.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1129,7 +1130,7 @@ void clMainFrame::CreateGUIControls()
 
     m_mainBook = new MainBook(container);
 
-    m_infoBar = new wxInfoBar(container);
+    m_infoBar = new clInfoBar(container);
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
     container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
     QuickFindBar* findbar = new QuickFindBar(container);
@@ -2594,8 +2595,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
         m_workspaceRetagIsRequired = false;
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
         this->AddPendingEvent(evt);
-        ::clInfoBarRemoveAllButtons(GetInfoBar());
-        GetInfoBar()->ShowMessage(_("A workspace reparse is needed"), wxICON_INFORMATION);
+        m_infoBar->DisplayMessage(_("A workspace reparse is needed"), wxICON_INFORMATION);
     }
 
     // For some reason, under Linux we need to force the menu accelerator again
@@ -3885,7 +3885,7 @@ void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
         // A restart required
         DoSuggestRestart();
     }
-    
+
     // Update the notebook colours on the next event iteration so clSystemSettings will get updated first
     m_themeHandler.CallAfter(&ThemeHandler::UpdateNotebookColours, this);
 }
@@ -4605,14 +4605,10 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 void clMainFrame::DoSuggestRestart()
 {
 #ifdef __WXMAC__
-    ::clInfoBarRemoveAllButtons(GetInfoBar());
-    GetInfoBar()->ShowMessage(_("Some of the changes made require a restart of CodeLite"), wxICON_QUESTION);
+    m_infoBar->DisplayMessage(_("Some of the changes made require a restart of CodeLite"), wxICON_INFORMATION);
 #else
-    ::clInfoBarRemoveAllButtons(GetInfoBar());
-    GetInfoBar()->AddButton(XRCID("restart-codelite"), _("Yes"));
-    GetInfoBar()->AddButton(wxID_NO);
-    GetInfoBar()->ShowMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"),
-                              wxICON_QUESTION);
+    m_infoBar->DisplayMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"),
+                              wxICON_QUESTION, { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
 #endif
 }
 

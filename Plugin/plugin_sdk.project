@@ -44,6 +44,16 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="CustomControls">
+    <File Name="clInfoBar.cpp"/>
+    <File Name="clInfoBar.h"/>
+    <File Name="clThemedButton.cpp"/>
+    <File Name="clThemedButton.h"/>
+    <File Name="clButtonBase.h"/>
+    <File Name="clButtonBase.cpp"/>
+    <File Name="clButton.h"/>
+    <File Name="clButton.cpp"/>
+  </VirtualDirectory>
   <VirtualDirectory Name="clTreeCtrl">
     <File Name="clCustomScrollBar.cpp"/>
     <File Name="clCustomScrollBar.h"/>

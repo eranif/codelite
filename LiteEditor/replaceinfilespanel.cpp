@@ -39,6 +39,7 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "file_logger.h"
+#include "clThemedButton.h"
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
@@ -46,12 +47,12 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnHoldOpenUpdateUI, this, XRCID("hold_pane_open"));
     wxBoxSizer* horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxButton* unmark = new wxButton(this, wxID_ANY, _("&Unmark All"));
+    clThemedButton* unmark = new clThemedButton(this, wxID_ANY, _("&Unmark All"));
     horzSizer->Add(unmark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     unmark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnUnmarkAll, this);
     unmark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnUnmarkAllUI, this);
 
-    wxButton* mark = new wxButton(this, wxID_ANY, _("Mark &All"));
+    clThemedButton* mark = new clThemedButton(this, wxID_ANY, _("Mark &All"));
     horzSizer->Add(mark, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     mark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnMarkAll, this);
     mark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnMarkAllUI, this);
@@ -64,7 +65,7 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
     m_replaceWith->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
 
-    wxButton* repl = new wxButton(this, wxID_ANY, _("&Replace Marked"));
+    clThemedButton* repl = new clThemedButton(this, wxID_ANY, _("&Replace Marked"));
     horzSizer->Add(repl, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     repl->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnReplace, this);
     repl->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceUI, this);

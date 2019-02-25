@@ -324,10 +324,7 @@ void Manager::OpenWorkspace(const wxString& path)
 
     // OpenWorkspace returned true, but errMsg is not empty
     // this could only mean that we removed a fauly project
-    if(errMsg.IsEmpty() == false) {
-        ::clInfoBarRemoveAllButtons(clMainFrame::Get()->GetInfoBar());
-        clMainFrame::Get()->GetInfoBar()->ShowMessage(errMsg, wxICON_ERROR);
-    }
+    if(errMsg.IsEmpty() == false) { clMainFrame::Get()->GetMessageBar()->DisplayMessage(errMsg, wxICON_ERROR); }
 
     if(GetActiveProjectName().IsEmpty()) {
         // This might happen if a removed faulty project was active

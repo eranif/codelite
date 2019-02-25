@@ -61,6 +61,7 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/toolbook.h>
+#include "clInfoBar.h"
 
 PluginManager* PluginManager::Get()
 {
@@ -262,13 +263,13 @@ void PluginManager::Load()
 
             // Load the toolbar
             plugin->CreateToolBar(GetToolBar());
-            
+
             // Keep the dynamic load library
             m_dl.push_back(dl);
         }
         clMainFrame::Get()->GetDockingManager().Update();
         GetToolBar()->Realize();
-        
+
         // Let the plugins plug their menu in the 'Plugins' menu at the menu bar
         // the create menu will be placed as a sub menu of the 'Plugin' menu
         wxMenu* pluginsMenu = NULL;
@@ -362,15 +363,9 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo(TreeType type)
     }
 }
 
-clTreeCtrl* PluginManager::GetWorkspaceTree()
-{
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
-}
+clTreeCtrl* PluginManager::GetWorkspaceTree() { return clMainFrame::Get()->GetWorkspaceTab()->GetFileView(); }
 
-clTreeCtrl* PluginManager::GetFileExplorerTree()
-{
-    return clMainFrame::Get()->GetFileExplorer()->GetTree();
-}
+clTreeCtrl* PluginManager::GetFileExplorerTree() { return clMainFrame::Get()->GetFileExplorer()->GetTree(); }
 
 Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }
 
@@ -888,7 +883,8 @@ clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetM
 
 clToolBar* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
 
-wxInfoBar* PluginManager::GetInfoBar()
+void PluginManager::DisplayMessage(const wxString& message, int flags,
+                                   const std::vector<std::pair<wxWindowID, wxString> >& buttons)
 {
-    return clMainFrame::Get()->GetInfoBar();
+    return clMainFrame::Get()->GetMessageBar()->DisplayMessage(message, flags, buttons);
 }

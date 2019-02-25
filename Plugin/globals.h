@@ -616,9 +616,4 @@ WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
  */
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
 
-/**
- * @brief remove all buttons from infobar class
- */
-WXDLLIMPEXP_SDK void clInfoBarRemoveAllButtons(wxInfoBar* bar);
-
 #endif // GLOBALS_H

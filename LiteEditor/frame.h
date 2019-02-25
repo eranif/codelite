@@ -55,6 +55,7 @@
 #include <wx/splash.h>
 #include <wx/minifram.h>
 #include <wx/infobar.h>
+#include "clInfoBar.h"
 
 // forward decls
 class DebuggerToolBar;
@@ -136,7 +137,7 @@ class clMainFrame : public wxFrame
     WebUpdateJob* m_webUpdate;
     clToolBar* m_toolbar;
     DebuggerToolBar* m_debuggerToolbar = nullptr;
-    wxInfoBar* m_infoBar = nullptr;
+    clInfoBar* m_infoBar = nullptr;
 
 public:
     static bool m_initCompleted;
@@ -151,10 +152,7 @@ public:
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
     
-    /**
-     * @brief return the info bar panel
-     */
-    wxInfoBar* GetInfoBar() { return m_infoBar; }
+    clInfoBar* GetMessageBar() { return m_infoBar; }
     
     /**
      * @brief goto anything..

@@ -224,22 +224,16 @@ void JSCodeCompletion::ReparseFile(IEditor* editor)
 void JSCodeCompletion::DoPromptForInstallNodeJS()
 {
     wxString msg;
-    wxInfoBar* bar = clGetManager()->GetInfoBar();
-    ::clInfoBarRemoveAllButtons(bar);
     msg << _("NodeJS and/or Npm are not installed on your machine. JavaScript code completion is disabled");
-    bar->AddButton(wxID_OK);
-    bar->ShowMessage(msg, wxICON_INFORMATION);
+    clGetManager()->DisplayMessage(msg);
 }
 
 void JSCodeCompletion::DoPromptForInstallTern()
 {
     // Show the info message
-    wxInfoBar* bar = clGetManager()->GetInfoBar();
-    ::clInfoBarRemoveAllButtons(bar);
-    bar->AddButton(XRCID("npm-install-tern"), _("Yes"));
-    bar->AddButton(wxID_NO);
-    bar->ShowMessage(_("CodeLite uses 'tern' for JavaScript code completion. Would you like to install tern now?"),
-                     wxICON_QUESTION);
+    clGetManager()->DisplayMessage(
+        _("CodeLite uses 'tern' for JavaScript code completion. Would you like to install tern now?"), wxICON_QUESTION,
+        { { XRCID("npm-install-tern"), _("Yes") }, { wxID_NO, "" } });
 }
 
 void JSCodeCompletion::OnInfoBarClicked(clCommandEvent& event)

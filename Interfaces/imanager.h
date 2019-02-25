@@ -39,9 +39,7 @@
 #include "debugger.h"
 #include "clStatusBar.h"
 #include "clTab.h"
-#include <wx/infobar.h>
 
-class wxInfoBar;
 class clTreeCtrl;
 class clEditorBar;
 class clWorkspaceView;
@@ -114,9 +112,7 @@ public:
      */
     void AddWorkspaceTab(const wxString& tabLabel)
     {
-        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) {
-            m_workspaceTabs.Add(tabLabel);
-        }
+        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) { m_workspaceTabs.Add(tabLabel); }
     }
 
     /**
@@ -124,13 +120,11 @@ public:
      */
     void AddOutputTab(const wxString& tabLabel)
     {
-        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) {
-            m_outputTabs.Add(tabLabel);
-        }
+        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) { m_outputTabs.Add(tabLabel); }
     }
-    
+
     virtual clToolBar* GetToolBar() = 0;
-    
+
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'
      * @param selectWindow tab within the 'Output Pane' to select, if empty don't change
@@ -166,12 +160,7 @@ public:
      * @brief return the main frame's status bar
      */
     virtual clStatusBar* GetStatusBar() = 0;
-    
-    /**
-     * @brief return the info bar
-     */
-    virtual wxInfoBar* GetInfoBar() = 0;
-    
+
     /**
      * @brief return the navigation bar (the one that contains the "File Name" + class::func location at the bottom of
      * the editor)
@@ -641,6 +630,12 @@ public:
      * @brief open the find in files dialog with multiple search paths
      */
     virtual void OpenFindInFileForPaths(const wxArrayString& paths) = 0;
+
+    /**
+     * @brief display message to the user using the info bar
+     */
+    virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
+                                const std::vector<std::pair<wxWindowID, wxString> >& buttons = {}) = 0;
 };
 
 #endif // IMANAGER_H

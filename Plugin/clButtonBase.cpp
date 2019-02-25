@@ -122,9 +122,13 @@ void clButtonBase::Render(wxDC& dc)
 {
     wxRect clientRect = GetClientRect();
     wxRect rect = clientRect;
+#ifdef __WXOSX__
+    clientRect.Inflate(1);
+#endif
+
     dc.SetBrush(m_colours.GetBgColour());
     dc.SetPen(m_colours.GetBgColour());
-    dc.DrawRectangle(rect);
+    dc.DrawRectangle(clientRect);
 
     bool isDisabled = !IsEnabled();
     bool isDark = DrawingUtils::IsDark(m_colours.GetBgColour());
@@ -141,7 +145,14 @@ void clButtonBase::Render(wxDC& dc)
         break;
     }
 
-    if(isDark) { borderColour = bgColour.ChangeLightness(50); }
+    if(isDark) { 
+#ifdef __WXOSX__
+        borderColour = bgColour.ChangeLightness(80);
+#else
+        borderColour = bgColour.ChangeLightness(50);
+#endif
+    }
+    
     if(isDisabled) {
         bgColour = bgColour.ChangeLightness(110);
         borderColour = borderColour.ChangeLightness(110);
@@ -260,6 +271,7 @@ void clButtonBase::OnKeyDown(wxKeyEvent& event)
     if((event.GetKeyCode() == WXK_SPACE) || (event.GetKeyCode() == WXK_NUMPAD_ENTER) ||
        (event.GetKeyCode() == WXK_RETURN)) {
         PostClickEvent();
+        event.Skip(false);
     } else if(event.GetKeyCode() == WXK_TAB) {
         Navigate(event.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
     }

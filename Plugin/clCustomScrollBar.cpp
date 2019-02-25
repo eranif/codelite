@@ -47,7 +47,7 @@ clCustomScrollBar::~clCustomScrollBar()
     Unbind(wxEVT_IDLE, &clCustomScrollBar::OnIdle, this);
 }
 
-void clCustomScrollBar::Update(int thumbSize, int range, int pageSize, int position)
+void clCustomScrollBar::UpdateScroll(int thumbSize, int range, int pageSize, int position)
 {
     m_thumbRect = wxRect();
     m_thumbSize = thumbSize;

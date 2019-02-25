@@ -58,7 +58,7 @@ public:
     bool CanScollDown() const { return (GetThumbPosition() + GetThumbSize()) < GetRange(); }
 
     void SetPosition(int pos, bool notify = true);
-    void Update(int thumbSize, int range, int pageSize, int position);
+    void UpdateScroll(int thumbSize, int range, int pageSize, int position);
 
     bool IsVertical() const { return m_sbStyle & wxSB_VERTICAL; }
     bool IsHorizontal() const { return m_sbStyle & wxSB_HORIZONTAL; }

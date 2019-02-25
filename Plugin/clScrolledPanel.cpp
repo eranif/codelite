@@ -218,7 +218,7 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_vsb->Refresh();
 #else
-    m_vsb->Update(thumbSize, rangeSize, pageSize, position);
+    m_vsb->UpdateScroll(thumbSize, rangeSize, pageSize, position);
 #endif
     CallAfter(&clScrolledPanel::DoPositionHScrollbar);
 }
@@ -425,7 +425,7 @@ void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSiz
     m_hsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_hsb->Refresh();
 #else
-    m_hsb->Update(thumbSize, rangeSize, pageSize, position);
+    m_hsb->UpdateScroll(thumbSize, rangeSize, pageSize, position);
 #endif
     CallAfter(&clScrolledPanel::DoPositionVScrollbar);
 }

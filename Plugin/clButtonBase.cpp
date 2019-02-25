@@ -105,13 +105,17 @@ void clButtonBase::OnLeftUp(wxMouseEvent& event)
 
 void clButtonBase::Initialise()
 {
-    SetBackgroundColour(wxBG_STYLE_PAINT);
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     BindEvents();
     m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     SetSizeHints(GetBestSize());
 }
 
+#ifdef __WXGTK__
+#define BUTTON_RADIUS 3.0
+#else
 #define BUTTON_RADIUS 0.0
+#endif
 
 void clButtonBase::Render(wxDC& dc)
 {

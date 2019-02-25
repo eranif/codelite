@@ -5,6 +5,12 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 
+#ifdef __WXMSW__
+#define BUTTON_RADIUS 0.0
+#else
+#define BUTTON_RADIUS 3.0
+#endif
+
 clButtonBase::clButtonBase() {}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
@@ -111,12 +117,6 @@ void clButtonBase::Initialise()
     SetSizeHints(GetBestSize());
 }
 
-#ifdef __WXGTK__
-#define BUTTON_RADIUS 3.0
-#else
-#define BUTTON_RADIUS 0.0
-#endif
-
 void clButtonBase::Render(wxDC& dc)
 {
     wxRect clientRect = GetClientRect();
@@ -129,7 +129,6 @@ void clButtonBase::Render(wxDC& dc)
     bool isDark = DrawingUtils::IsDark(m_colours.GetBgColour());
     wxColour bgColour = m_colours.GetBgColour();
     wxColour borderColour = m_colours.GetBorderColour();
-    if(isDark) { borderColour = borderColour.ChangeLightness(80); }
 
     switch(m_state) {
     case eButtonState::kNormal:
@@ -141,10 +140,31 @@ void clButtonBase::Render(wxDC& dc)
         break;
     }
 
+    if(isDark) { borderColour = bgColour.ChangeLightness(60); }
+    if(isDisabled) {
+        bgColour = bgColour.ChangeLightness(120);
+        borderColour = borderColour.ChangeLightness(120);
+    }
+
     // Draw the button border
     dc.SetPen(borderColour);
     dc.SetBrush(bgColour);
     dc.DrawRoundedRectangle(rect, BUTTON_RADIUS);
+
+    wxRect shadeRect = rect;
+    if(isDark) {
+        shadeRect.SetHeight(shadeRect.GetHeight() / 2);
+        shadeRect.SetY(shadeRect.GetY() + 1);
+    } else {
+        shadeRect.SetTopLeft(wxPoint(shadeRect.x, (shadeRect.y + shadeRect.GetHeight() / 2)));
+        shadeRect.SetHeight((shadeRect.GetHeight() / 2) - 1);
+    }
+
+    wxColour bgColourBottomRect = isDark ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
+    dc.SetBrush(bgColourBottomRect);
+    dc.SetPen(bgColourBottomRect);
+    shadeRect.Deflate(1);
+    dc.DrawRoundedRectangle(shadeRect, 0);
 
     // Draw the text
     if(!GetText().IsEmpty()) {

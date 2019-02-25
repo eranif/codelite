@@ -3077,16 +3077,14 @@ void Manager::DoRestartCodeLite()
 #else // OSX
 
     // on OSX, we use the open command
-    wxFileName bundlePath(clStandardPaths::Get().GetExecutablePath());
-    bundlePath.RemoveLastDir();
-    bundlePath.RemoveLastDir();
+    wxFileName bundlePath(clStandardPaths::Get().GetBinFolder(), "");
+    bundlePath.RemoveLastDir(); // MacOS
+    bundlePath.RemoveLastDir(); // Contents
     wxString bundlePathStr = bundlePath.GetPath();
     ::WrapWithQuotes(bundlePathStr);
     restartCodeLiteCommand << "/usr/bin/open " << bundlePathStr;
-
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-
     wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_NOHIDE);
 #endif
 }

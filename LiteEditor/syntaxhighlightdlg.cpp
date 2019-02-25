@@ -689,20 +689,6 @@ void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)
     ::wxLaunchDefaultBrowser("http://eclipsecolorthemes.org/");
 }
 
-static wxColour GetBackgroundColourFromLexer(LexerConf::Ptr_t lexer)
-{
-    if(!lexer) { return wxNullColour; }
-    wxColour bgColour;
-    if(lexer->IsDark()) {
-        bgColour = lexer->GetProperty(0).GetBgColour();
-        bgColour = bgColour.ChangeLightness(105);
-    } else {
-        bgColour = lexer->GetProperty(0).GetBgColour();
-        bgColour = bgColour.ChangeLightness(95);
-    }
-    return bgColour;
-}
-
 void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
@@ -713,12 +699,12 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
         ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
 
     if(previewLexer && previewLexer->IsDark() && m_cbUseCustomBaseColour->IsChecked()) {
-        wxColour bgColour = GetBackgroundColourFromLexer(previewLexer);
+        wxColour bgColour = ColoursAndFontsManager::Get().GetBackgroundColourFromLexer(previewLexer);
         m_colourPickerBaseColour->SetColour(bgColour);
         m_endingTheme = kTHEME_DARK;
     } else if(previewLexer && m_cbUseCustomBaseColour->IsChecked()) {
         // Light colour
-        wxColour bgColour = GetBackgroundColourFromLexer(previewLexer);
+        wxColour bgColour = ColoursAndFontsManager::Get().GetBackgroundColourFromLexer(previewLexer);
         m_colourPickerBaseColour->SetColour(bgColour);
         m_endingTheme = kTHEME_LIGHT;
     }
@@ -787,7 +773,7 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
         // Adjust the colour to the selected theme
         LexerConf::Ptr_t lexer =
             ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
-        wxColour bgColour = GetBackgroundColourFromLexer(lexer);
+        wxColour bgColour = ColoursAndFontsManager::Get().GetBackgroundColourFromLexer(lexer);
         if(bgColour.IsOk()) { m_colourPickerBaseColour->SetColour(bgColour); }
     }
     m_endingTheme = DrawingUtils::IsDark(m_colourPickerBaseColour->GetColour()) ? kTHEME_DARK : kTHEME_LIGHT;

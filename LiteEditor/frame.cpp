@@ -3265,6 +3265,18 @@ void clMainFrame::CompleteInitialization()
             buttons.begin(), buttons.end(), [&](clToolBarButtonBase* button) { return button->GetLabel() == label; });
         if(iter != buttons.end()) { (*iter)->Show(false); }
     }
+
+    // Prompt the user to adjust his colours
+    bool colourAdjusted = clConfig::Get().Read("ColoursAdjusted", false);
+    if(!colourAdjusted) {
+        // Adjust the user colour
+        GetMessageBar()->DisplayMessage(
+            _("CodeLite now offers a better editor colour theme support, would you like to fix this now?"),
+            wxICON_QUESTION, { { XRCID("adjust-current-theme"), _("Yes") }, { wxID_NO, "" } });
+
+        // regardless of the answer, dont bug the user again
+        clConfig::Get().Write("ColoursAdjusted", true);
+    }
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
@@ -4604,12 +4616,8 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 
 void clMainFrame::DoSuggestRestart()
 {
-#ifdef __WXMAC__
-    m_infoBar->DisplayMessage(_("Some of the changes made require a restart of CodeLite"), wxICON_INFORMATION);
-#else
-    m_infoBar->DisplayMessage(_("Some of the changes made require a restart of CodeLite. Restart now?"),
-                              wxICON_QUESTION, { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
-#endif
+    m_infoBar->DisplayMessage(_("A CodeLite restart is needed. Would you like to restart it now?"), wxICON_QUESTION,
+                              { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
 }
 
 void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)

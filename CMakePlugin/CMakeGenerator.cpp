@@ -206,7 +206,7 @@ bool CMakeGenerator::Generate(ProjectPtr p)
             for(wxArrayString::const_iterator it = list.begin(), ite = list.end(); it != ite; ++it) {
                 // Split into name, value pair
                 const wxArrayString pair = wxSplit(*it, '=');
-
+                if(pair.IsEmpty()) { continue; }
                 const wxString& name = pair[0];
                 const wxString value = (pair.GetCount() >= 2) ? pair[1] : "";
 

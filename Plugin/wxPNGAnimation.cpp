@@ -55,6 +55,11 @@ void wxPNGAnimation::OnPaint(wxPaintEvent& event)
 {
     wxBufferedPaintDC dc(this);
     wxRect rect = GetClientRect();
+
+#ifdef __WXOSX__
+    rect.Inflate(1);
+#endif
+
     dc.SetPen(m_bgColour);
     dc.SetBrush(m_bgColour);
     dc.DrawRectangle(rect);

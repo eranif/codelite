@@ -49,19 +49,14 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     : LLDBLocalsViewBase(parent)
     , m_plugin(plugin)
 {
-    m_treeList = new clTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                    wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS | wxTR_FULL_ROW_HIGHLIGHT | wxTR_COLUMN_LINES |
-                                        wxTR_ROW_LINES | wxTR_TWIST_BUTTONS | wxTR_MULTIPLE);
-    m_treeList->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    m_treeList->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_treeList = new clThemedTreeCtrl(this);
 
-    m_treeList->AddColumn(_("Name"), 150);
-    m_treeList->AddColumn(_("Summary"), 300);
-    m_treeList->AddColumn(_("Value"), 300, wxALIGN_LEFT, -1, true, true);
-    m_treeList->AddColumn(_("Type"), 300);
-
+    m_treeList->AddHeader(_("Name"));
+    m_treeList->AddHeader(_("Summary"));
+    m_treeList->AddHeader(_("Value"));
+    m_treeList->AddHeader(_("Type"));
     m_treeList->AddRoot(_("Local Variables"));
-    GetSizer()->Add(m_treeList, 1, wxEXPAND | wxALL, 2);
+    GetSizer()->Add(m_treeList, 1, wxEXPAND | wxALL, 0);
 
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_STARTED, &LLDBLocalsView::OnLLDBStarted, this);
     m_plugin->GetLLDB()->Bind(wxEVT_LLDB_EXITED, &LLDBLocalsView::OnLLDBExited, this);
@@ -74,8 +69,15 @@ LLDBLocalsView::LLDBLocalsView(wxWindow* parent, LLDBPlugin* plugin)
     m_treeList->Bind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &LLDBLocalsView::OnBeginDrag, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_END_DRAG, &LLDBLocalsView::OnEndDrag, this);
-    m_treeList->Bind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &LLDBLocalsView::OnEndEdit, this);
     m_treeList->Bind(wxEVT_COMMAND_TREE_KEY_DOWN, &LLDBLocalsView::OnKeyDown, this);
+
+    // Construct the toolbar
+    m_toolbar->AddTool(wxID_NEW, _("New"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
+    m_toolbar->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+    m_toolbar->Bind(wxEVT_TOOL, &LLDBLocalsView::OnNewWatch, this, wxID_NEW);
+    m_toolbar->Bind(wxEVT_TOOL, &LLDBLocalsView::OnDelete, this, wxID_DELETE);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &LLDBLocalsView::OnDeleteUI, this, wxID_DELETE);
+    m_toolbar->Realize();
 
     GetSizer()->Layout();
 }
@@ -93,7 +95,6 @@ LLDBLocalsView::~LLDBLocalsView()
     m_treeList->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &LLDBLocalsView::OnLocalsContextMenu, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_BEGIN_DRAG, &LLDBLocalsView::OnBeginDrag, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_END_DRAG, &LLDBLocalsView::OnEndDrag, this);
-    m_treeList->Unbind(wxEVT_COMMAND_TREE_END_LABEL_EDIT, &LLDBLocalsView::OnEndEdit, this);
     m_treeList->Unbind(wxEVT_COMMAND_TREE_KEY_DOWN, &LLDBLocalsView::OnKeyDown, this);
 }
 
@@ -142,23 +143,22 @@ void LLDBLocalsView::DoAddVariableToView(const LLDBVariable::Vect_t& variables, 
         LLDBVariable::Ptr_t variable = variables.at(i);
         LLDBVariableClientData* cd = new LLDBVariableClientData(variable);
         wxTreeItemId item = m_treeList->AppendItem(parent, variable->GetName(), wxNOT_FOUND, wxNOT_FOUND, cd);
-        m_treeList->SetItemText(item, LOCALS_VIEW_SUMMARY_COL_IDX,
-                                variable->GetSummary().IsEmpty() ? variable->GetValue() : variable->GetSummary());
+        m_treeList->SetItemText(item, variable->GetSummary().IsEmpty() ? variable->GetValue() : variable->GetSummary(),
+                                LOCALS_VIEW_SUMMARY_COL_IDX);
         cd->SetPath(GetItemPath(item));
 
         // Keep a map between the 'path'->wxTreeItemId
         m_pathToItem.erase(cd->GetPath());
         m_pathToItem.emplace(cd->GetPath(), item);
 
-        m_treeList->SetItemText(item, LOCALS_VIEW_VALUE_COL_IDX, variable->GetValue());
-        m_treeList->SetItemText(item, LOCALS_VIEW_TYPE_COL_IDX, variable->GetType());
+        m_treeList->SetItemText(item, variable->GetValue(), LOCALS_VIEW_VALUE_COL_IDX);
+        m_treeList->SetItemText(item, variable->GetType(), LOCALS_VIEW_TYPE_COL_IDX);
         if(variable->IsValueChanged()) { m_treeList->SetItemTextColour(item, "RED"); }
         if(variable->HasChildren()) {
             // insert dummy item here
             m_treeList->AppendItem(item, "<dummy>");
         }
     }
-
     if(!variables.empty()) { m_treeList->Expand(parent); }
 }
 
@@ -414,14 +414,15 @@ bool LLDBLocalsView::EditVariable()
     m_treeList->GetSelections(selections);
     if(1 != selections.GetCount()) { return false; }
 
-    m_treeList->EditLabel(selections.Item(0), LOCALS_VIEW_VALUE_COL_IDX);
-    return true;
-}
+    wxTreeItemId item = selections.Item(0);
+    wxString currentValue = m_treeList->GetItemText(item, LOCALS_VIEW_VALUE_COL_IDX);
+    wxString newValue = ::wxGetTextFromUser(_("New value:"), _("Edit"), "");
+    if(newValue.IsEmpty()) { return false; }
 
-void LLDBLocalsView::OnEndEdit(wxTreeEvent& event)
-{
-    const auto lldbVar = GetVariableFromItem(event.GetItem());
-    if(lldbVar) { m_plugin->GetLLDB()->SetVariableValue(lldbVar->GetLldbId(), event.GetLabel()); }
+    const auto lldbVar = GetVariableFromItem(item);
+    if(!lldbVar) { return false; }
+    m_plugin->GetLLDB()->SetVariableValue(lldbVar->GetLldbId(), newValue);
+    return true;
 }
 
 void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
@@ -430,15 +431,8 @@ void LLDBLocalsView::OnKeyDown(wxTreeEvent& event)
     case WXK_F2:
         if(EditVariable()) { return; }
         break;
-
-    case WXK_CONTROL_A:
-        m_treeList->SelectAll();
-        return;
-
     case WXK_DELETE:
-        if(DoDelete()) {
-            return;
-        }
+        if(DoDelete()) { return; }
         break;
 
     default:

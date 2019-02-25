@@ -28,10 +28,6 @@
 #include <wx/iconbndl.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
@@ -131,15 +127,11 @@ public:
 class LLDBLocalsViewBase : public wxPanel
 {
 protected:
-    wxAuiToolBar* m_auibar199;
+    clToolBar* m_toolbar;
 
 protected:
-    virtual void OnNewWatch(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
-
 public:
-    wxAuiToolBar* GetAuibar199() { return m_auibar199; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     LLDBLocalsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LLDBLocalsViewBase();

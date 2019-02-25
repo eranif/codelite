@@ -146,7 +146,7 @@ void LLDBBreakpoint::FromJSON(const JSONElement& json)
     m_id = json.namedObject("m_id").toInt(wxNOT_FOUND);
     m_type = json.namedObject("m_type").toInt(kInvalid);
     m_name = json.namedObject("m_name").toString();
-    SetFilename(json.namedObject("m_filename").toString());
+    SetFilename(json.namedObject("m_filename").toString(), false);
     m_lineNumber = json.namedObject("m_lineNumber").toInt();
     JSONElement arr = json.namedObject("m_children");
     for(int i=0; i<arr.arraySize(); ++i) {

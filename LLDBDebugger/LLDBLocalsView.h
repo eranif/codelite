@@ -32,13 +32,14 @@
 #include "cl_treelistctrl.h"
 #include <map>
 
+class clThemedTreeCtrl;
 class LLDBPlugin;
 class LLDBLocalsView : public LLDBLocalsViewBase
 {
     typedef std::map<int, wxTreeItemId> IntItemMap_t;
 
     LLDBPlugin* m_plugin;
-    clTreeListCtrl* m_treeList;
+    clThemedTreeCtrl* m_treeList;
     wxTreeItemId m_dragItem;
     LLDBLocalsView::IntItemMap_t m_pendingExpandItems;
     wxStringSet_t m_expandedItems;
@@ -76,7 +77,6 @@ protected:
     void OnLocalsContextMenu(wxTreeEvent& event);
     void OnBeginDrag(wxTreeEvent& event);
     void OnEndDrag(wxTreeEvent& event);
-    void OnEndEdit(wxTreeEvent& event);
     void OnKeyDown(wxTreeEvent& event);
 
 public:

@@ -106,7 +106,7 @@ void LLDBReply::UpdatePaths(const LLDBPivot& pivot)
 
         // Update the breakpoint list
         for(size_t i = 0; i < m_breakpoints.size(); ++i) {
-            m_breakpoints.at(i)->SetFilename(pivot.ToLocal(m_breakpoints.at(i)->GetFilename()));
+            m_breakpoints.at(i)->SetFilename(pivot.ToLocal(m_breakpoints.at(i)->GetFilename()), false);
         }
 
         // Update the call stack entries

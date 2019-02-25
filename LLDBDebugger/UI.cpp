@@ -26,9 +26,9 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
     this->SetSizer(boxSizer2);
 
     m_dvListCtrlBacktrace = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                                 wxDV_ROW_LINES | wxDV_SINGLE);
+                                                 wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
 
-    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer2->Add(m_dvListCtrlBacktrace, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     m_dvListCtrlBacktrace->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                             wxDATAVIEW_COL_RESIZABLE);
@@ -89,9 +89,9 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer211->Add(m_tbBreakpoints, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_treeCtrlBreakpoints =
-        new clThemedTreeCtrl(m_pageBreakpoints, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_pageBreakpoints, wxSize(-1, -1)), wxTR_MULTIPLE | wxTR_HIDE_ROOT);
+    m_treeCtrlBreakpoints = new clThemedTreeCtrl(m_pageBreakpoints, wxID_ANY, wxDefaultPosition,
+                                                 wxDLG_UNIT(m_pageBreakpoints, wxSize(-1, -1)),
+                                                 wxTR_MULTIPLE | wxTR_HIDE_ROOT | wxBORDER_NONE);
 
     boxSizer211->Add(m_treeCtrlBreakpoints, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -295,39 +295,18 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer67 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer67);
 
-    m_auibar199 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                   wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
-    m_auibar199->SetToolBitmapSize(wxSize(16, 16));
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer67->Add(m_auibar199, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_auibar199->AddTool(wxID_NEW, _("Add Watch..."), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap,
-                         wxITEM_NORMAL, _("Add Watch..."), _("Add Watch..."), NULL);
-
-    m_auibar199->AddTool(wxID_DELETE, _("Delete Watch"), wxXmlResource::Get()->LoadBitmap(wxT("16-clean")),
-                         wxNullBitmap, wxITEM_NORMAL, _("Delete Watch"), _("Delete Watch"), NULL);
-    m_auibar199->Realize();
+    boxSizer67->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("LLDBLocalsViewBase"));
     SetMinClientSize(wxSize(200, 200));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
-    // Connect events
-    this->Connect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnNewWatch), NULL,
-                  this);
-    this->Connect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnDelete), NULL,
-                  this);
-    this->Connect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBLocalsViewBase::OnDeleteUI), NULL, this);
 }
 
-LLDBLocalsViewBase::~LLDBLocalsViewBase()
-{
-    this->Disconnect(wxID_NEW, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnNewWatch), NULL,
-                     this);
-    this->Disconnect(wxID_DELETE, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(LLDBLocalsViewBase::OnDelete), NULL,
-                     this);
-    this->Disconnect(wxID_DELETE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBLocalsViewBase::OnDeleteUI), NULL, this);
-}
+LLDBLocalsViewBase::~LLDBLocalsViewBase() {}
 
 LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
                                              const wxSize& size, long style)

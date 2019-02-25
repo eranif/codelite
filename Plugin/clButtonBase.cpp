@@ -4,6 +4,7 @@
 #include <wx/buffer.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
+#include <wx/anybutton.h>
 
 #ifdef __WXMSW__
 #define BUTTON_RADIUS 0.0
@@ -150,29 +151,34 @@ void clButtonBase::Render(wxDC& dc)
     dc.SetPen(borderColour);
     dc.SetBrush(bgColour);
     dc.DrawRoundedRectangle(rect, BUTTON_RADIUS);
+    
+    // The "shade" rect is drawn when not disabled
+    if(!isDisabled) {
+        wxRect shadeRect = rect;
+        if(isDark) {
+            shadeRect.SetHeight(shadeRect.GetHeight() / 2);
+            shadeRect.SetY(shadeRect.GetY() + 1);
+        } else {
+            shadeRect.SetTopLeft(wxPoint(shadeRect.x, (shadeRect.y + shadeRect.GetHeight() / 2)));
+            shadeRect.SetHeight((shadeRect.GetHeight() / 2) - 1);
+        }
 
-    wxRect shadeRect = rect;
-    if(isDark) {
-        shadeRect.SetHeight(shadeRect.GetHeight() / 2);
-        shadeRect.SetY(shadeRect.GetY() + 1);
-    } else {
-        shadeRect.SetTopLeft(wxPoint(shadeRect.x, (shadeRect.y + shadeRect.GetHeight() / 2)));
-        shadeRect.SetHeight((shadeRect.GetHeight() / 2) - 1);
+        wxColour bgColourBottomRect = isDark ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
+        dc.SetBrush(bgColourBottomRect);
+        dc.SetPen(bgColourBottomRect);
+        shadeRect.Deflate(1);
+        dc.DrawRoundedRectangle(shadeRect, 0);
     }
-
-    wxColour bgColourBottomRect = isDark ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
-    dc.SetBrush(bgColourBottomRect);
-    dc.SetPen(bgColourBottomRect);
-    shadeRect.Deflate(1);
-    dc.DrawRoundedRectangle(shadeRect, 0);
-
+    
     // Draw the text
     if(!GetText().IsEmpty()) {
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
         dc.SetTextForeground(isDisabled ? m_colours.GetGrayText() : m_colours.GetItemTextColour());
         wxRect textRect = dc.GetTextExtent(GetText());
         textRect = textRect.CenterIn(clientRect);
+        dc.SetClippingRegion(textRect);
         dc.DrawText(GetText(), textRect.GetTopLeft());
+        dc.DestroyClippingRegion();
     }
 }
 
@@ -196,13 +202,23 @@ void clButtonBase::OnLeave(wxMouseEvent& event)
 
 wxSize clButtonBase::GetBestSize() const
 {
+    wxString sampleText;
+    if(m_buttonStyle & wxBU_EXACTFIT) {
+        sampleText = m_text.IsEmpty() ? "TTTppp" : m_text;
+    } else {
+        sampleText = "TTTpppTTTpp";
+    }
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     wxGCDC dc(memDC);
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
-    wxString sampleText = m_text.IsEmpty() ? "TTTppp" : m_text;
     wxRect rectSize = dc.GetTextExtent(sampleText);
-    rectSize.Inflate(10);
+    wxRect textSize = dc.GetTextExtent(m_text);
+
+    // If the text does not fit into the default button size, increase it
+    if(textSize.GetWidth() > rectSize.GetWidth()) { wxSwap(textSize, rectSize); }
+
+    rectSize.Inflate(8);
     return rectSize.GetSize();
 }
 

@@ -310,23 +310,23 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
         wxArrayTreeItemIds arr;
         m_treeList->GetSelections(arr);
         for(size_t i = 0; i < arr.GetCount(); ++i) {
-            wxString itemValue;
-            const auto lldbVar = GetVariableFromItem(arr.Item(i));
-            if(!lldbVar) { continue; }
+            wxString itemValue = m_treeList->GetItemText(arr.Item(i), LOCALS_VIEW_VALUE_COL_IDX);
+            wxString itemSummary = m_treeList->GetItemText(arr.Item(i), LOCALS_VIEW_SUMMARY_COL_IDX);
+            if(itemValue == itemSummary) { itemValue.clear(); }
+            wxString itemValueCombined;
 
-            if(!lldbVar->GetValue().IsEmpty()) { itemValue << lldbVar->GetValue(); }
-
-            if(!lldbVar->GetSummary().IsEmpty()) {
-                if(!itemValue.IsEmpty()) itemValue << " ";
-                itemValue << lldbVar->GetSummary();
+            // Combine the summary and value columns into one column
+            if(!itemValue.IsEmpty()) { itemValueCombined << itemValue; }
+            if(!itemSummary.IsEmpty()) {
+                if(!itemValueCombined.IsEmpty()) { itemValueCombined << " "; }
+                itemValueCombined << itemSummary;
             }
 
-            if(!itemValue.IsEmpty()) {
+            if(!itemValueCombined.IsEmpty()) {
                 if(!content.IsEmpty()) { content << "\n"; }
-                content << itemValue;
+                content << itemValueCombined;
             }
         }
-
         if(!content.IsEmpty()) { ::CopyToClipboard(content); }
     } else if(selection == lldbLocalsViewEditValueMenuId) {
         EditVariable();

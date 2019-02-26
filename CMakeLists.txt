@@ -503,7 +503,7 @@ if ( MAKE_DEB )
     elseif(OS_CODENAME STREQUAL "stretch")
         message("-- CPack deps for Debian-Stretch")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS
-            "libc6, ${LIBGTK}, libsqlite3-dev, libedit-dev, libhunspell-dev, libclang-4.0-dev, clang-format-4.0, python-lldb-4.0, liblldb-4.0-dev")
+            "libc6, ${LIBGTK}, libsqlite3-0, libedit2, libhunspell-1.4-0, libclang1-6.0, clang-format-6.0, python-lldb-6.0, liblldb-6.0")
     elseif(OS_CODENAME STREQUAL "bionic")
         message("-- CPack deps for Ubuntu-Bionic")
         set(CPACK_DEBIAN_PACKAGE_DEPENDS

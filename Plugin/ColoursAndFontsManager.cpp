@@ -24,6 +24,7 @@
 #include <wx/xml/xml.h>
 #include "globals.h"
 #include <imanager.h>
+#include <wx/xrc/xmlres.h>
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"

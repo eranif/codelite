@@ -6,6 +6,8 @@
 #include <wx/settings.h>
 #include <wx/anybutton.h>
 
+#define TEXT_SPACER 10
+
 #ifdef __WXMSW__
 #define BUTTON_RADIUS 0.0
 #else
@@ -145,14 +147,14 @@ void clButtonBase::Render(wxDC& dc)
         break;
     }
 
-    if(isDark) { 
+    if(isDark) {
 #ifdef __WXOSX__
         borderColour = bgColour.ChangeLightness(80);
 #else
         borderColour = bgColour.ChangeLightness(50);
 #endif
     }
-    
+
     if(isDisabled) {
         bgColour = bgColour.ChangeLightness(110);
         borderColour = borderColour.ChangeLightness(110);
@@ -160,7 +162,7 @@ void clButtonBase::Render(wxDC& dc)
 
     // Draw the background
     if(!isDisabled) {
-        if(m_state == eButtonState::kNormal || m_state == eButtonState::kHover) {
+        if(IsNormal() || IsHover()) {
             // fill the button bg colour with gradient
             dc.GradientFillLinear(rect, bgColour, m_colours.GetBgColour(), wxNORTH);
             // draw the border
@@ -181,35 +183,49 @@ void clButtonBase::Render(wxDC& dc)
         dc.DrawRoundedRectangle(rect, BUTTON_RADIUS);
     }
 
-    // The "shade" rect is drawn when not disabled
-//#ifdef __WXMSW__
-//    if(!isDisabled && !isDark) {
-//        wxRect shadeRect = rect;
-//        if(isDark) {
-//            shadeRect.SetHeight(shadeRect.GetHeight() / 2);
-//            shadeRect.SetY(shadeRect.GetY() + 1);
-//        } else {
-//            shadeRect.SetTopLeft(wxPoint(shadeRect.x, (shadeRect.y + shadeRect.GetHeight() / 2)));
-//            shadeRect.SetHeight((shadeRect.GetHeight() / 2) - 1);
-//        }
-//
-//        wxColour bgColourBottomRect = isDark ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
-//        dc.SetBrush(bgColourBottomRect);
-//        dc.SetPen(bgColourBottomRect);
-//        shadeRect.Deflate(1);
-//        dc.DrawRoundedRectangle(shadeRect, 0);
-//    }
-//#endif
+    if(!isDisabled && !IsPressed()) {
+        wxColour topLineColour = bgColour.ChangeLightness(130);
+        wxRect rr = rect;
+        rr.Deflate(2);
+        dc.SetPen(topLineColour);
+        dc.DrawLine(rr.GetTopLeft(), rr.GetTopRight());
+    }
 
     // Draw the text
+    int textWidth = rect.GetWidth() - (2 * TEXT_SPACER);
+    if(HasDropDownMenu()) { textWidth -= rect.GetHeight(); }
+
+    wxRect textBoundingRect(TEXT_SPACER, 0, textWidth, rect.GetHeight());
+    wxRect arrowRect;
+    if(HasDropDownMenu()) {
+        arrowRect.SetX(textBoundingRect.GetRight() + TEXT_SPACER);
+        arrowRect.SetY(0);
+        arrowRect.SetWidth(rect.GetHeight());
+        arrowRect.SetHeight(rect.GetHeight());
+    }
+
     if(!GetText().IsEmpty()) {
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+        textBoundingRect = textBoundingRect.CenterIn(rect, wxVERTICAL);
         dc.SetTextForeground(isDisabled ? m_colours.GetGrayText() : m_colours.GetItemTextColour());
-        wxRect textRect = dc.GetTextExtent(GetText());
-        textRect = textRect.CenterIn(clientRect);
-        dc.SetClippingRegion(textRect);
-        dc.DrawText(GetText(), textRect.GetTopLeft());
+        dc.SetClippingRegion(textBoundingRect);
+        // Truncate the text to fit the drawing area
+        wxString fixedText;
+        DrawingUtils::TruncateText(GetText(), textBoundingRect.GetWidth(), dc, fixedText);
+        dc.DrawLabel(fixedText, textBoundingRect, wxALIGN_CENTRE);
         dc.DestroyClippingRegion();
+    }
+
+    if(HasDropDownMenu()) {
+        // Draw an arrow
+        int arrowHeight = arrowRect.GetHeight() / 4;
+        int arrowWidth = arrowRect.GetWidth() / 2;
+        wxRect r(0, 0, arrowWidth, arrowHeight);
+        r = r.CenterIn(arrowRect);
+        wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
+        dc.SetPen(wxPen(isDisabled ? m_colours.GetGrayText() : m_colours.GetDarkBorderColour(), 3));
+        dc.DrawLine(r.GetTopLeft(), downCenterPoint);
+        dc.DrawLine(r.GetTopRight(), downCenterPoint);
     }
 }
 
@@ -233,24 +249,35 @@ void clButtonBase::OnLeave(wxMouseEvent& event)
 
 wxSize clButtonBase::GetBestSize() const
 {
-    wxString sampleText;
-    if(m_buttonStyle & wxBU_EXACTFIT) {
-        sampleText = m_text.IsEmpty() ? "TTTppp" : m_text;
-    } else {
-        sampleText = "TTTpppTTTpp";
-    }
     wxBitmap bmp(1, 1);
     wxMemoryDC memDC(bmp);
     wxGCDC dc(memDC);
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
-    wxRect rectSize = dc.GetTextExtent(sampleText);
-    wxRect textSize = dc.GetTextExtent(m_text);
+
+    int buttonHeight = 0;
+    int buttonWidth = 0;
+    {
+        wxRect r = dc.GetTextExtent("Tp");
+        r.Inflate(8);
+        buttonHeight = r.GetHeight();
+    }
+
+    wxString sampleText;
+    if(m_buttonStyle & wxBU_EXACTFIT) {
+        sampleText = m_text;
+    } else {
+        sampleText = "TTTpppTTTpp";
+    }
+
+    wxRect sampleTextRect = dc.GetTextExtent(sampleText);
+    wxRect textRect = dc.GetTextExtent(m_text);
 
     // If the text does not fit into the default button size, increase it
-    if(textSize.GetWidth() > rectSize.GetWidth()) { wxSwap(textSize, rectSize); }
-
-    rectSize.Inflate(8);
-    return rectSize.GetSize();
+    buttonWidth += TEXT_SPACER;
+    buttonWidth += wxMax(textRect.GetWidth(), sampleTextRect.GetWidth());
+    buttonWidth += TEXT_SPACER;
+    if(HasDropDownMenu()) { buttonWidth += buttonHeight; }
+    return wxSize(buttonWidth, buttonHeight);
 }
 
 void clButtonBase::SetColours(const clColours& colours)
@@ -309,6 +336,7 @@ void clButtonBase::SetText(const wxString& text)
     tmp.Replace("&", "");
     tmp.Replace("@@", "&");
     m_text = tmp;
+    Refresh();
 }
 
 void clButtonBase::SetDefault() {}
@@ -316,5 +344,11 @@ void clButtonBase::SetDefault() {}
 void clButtonBase::OnSize(wxSizeEvent& event)
 {
     event.Skip();
+    Refresh();
+}
+
+void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)
+{
+    m_hasDropDownMenu = hasDropDownMenu;
     Refresh();
 }

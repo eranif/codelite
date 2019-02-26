@@ -45,6 +45,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="CustomControls">
+    <File Name="clThemedChoice.cpp"/>
+    <File Name="clThemedChoice.h"/>
+    <File Name="clChoice.h"/>
+    <File Name="clChoice.cpp"/>
     <File Name="clInfoBar.cpp"/>
     <File Name="clInfoBar.h"/>
     <File Name="clThemedButton.cpp"/>

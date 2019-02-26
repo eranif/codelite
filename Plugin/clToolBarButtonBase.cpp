@@ -42,7 +42,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         penColour = pressBgColour;
         dc.SetBrush(pressBgColour);
         dc.SetPen(penColour);
-        dc.DrawRoundedRectangle(highlightRect, 3.0);
+        dc.DrawRoundedRectangle(highlightRect, 0);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
         
@@ -53,7 +53,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         wxRect highlightRect = m_buttonRect;
         dc.SetBrush(hoverColour);
         dc.SetPen(penColour);
-        dc.DrawRoundedRectangle(highlightRect, 3.0);
+        dc.DrawRoundedRectangle(highlightRect, 0);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
 

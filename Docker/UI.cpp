@@ -368,8 +368,8 @@ DockerOutputPaneBase::DockerOutputPaneBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer76->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stc =
-        new wxStyledTextCtrl(m_outputPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_outputPage, wxSize(-1, -1)), 0);
+    m_stc = new wxStyledTextCtrl(m_outputPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_outputPage, wxSize(-1, -1)),
+                                 wxBORDER_NONE);
     // Configure the fold margin
     m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);

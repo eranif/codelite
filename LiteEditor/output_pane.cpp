@@ -104,10 +104,6 @@ void OutputPane::CreateGUIControls()
     BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
-    int xx, yy;
-    wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(wxGetTranslation(REPLACE_IN_FILES), &xx, &yy, NULL, NULL, &fnt);
-
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 
     // the IManager instance

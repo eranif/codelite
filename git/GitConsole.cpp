@@ -45,6 +45,7 @@
 #include <wx/icon.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
+#include "clThemeUpdater.h"
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)
@@ -146,7 +147,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     // set the font to fit the C++ lexer default font
     m_styler.reset(new clGenericSTCStyler(m_stcLog));
     m_bitmapLoader = clGetManager()->GetStdIcons();
-
+    
+    clThemeUpdater::Get().RegisterWindow(m_splitter733);
     // Build the styles for git output
 
     // Error messages will be coloured with red
@@ -249,6 +251,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
 GitConsole::~GitConsole()
 {
+    clThemeUpdater::Get().UnRegisterWindow(m_splitter733);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL,

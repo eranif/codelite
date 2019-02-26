@@ -47,6 +47,7 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 #include "clSystemSettings.h"
+#include "clThemeUpdater.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -90,7 +91,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     //SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Add the 'close' button
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
-
+    clThemeUpdater::Get().RegisterWindow(this);
+    
     // Handle Edit events
     m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
     m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
@@ -185,6 +187,7 @@ QuickFindBar::~QuickFindBar()
     // m_findEventsHandler.Reset(nullptr);
     // m_replaceEventsHandler.Reset(nullptr);
     //Unbind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
+    clThemeUpdater::Get().RegisterWindow(this);
     
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());

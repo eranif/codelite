@@ -71,6 +71,7 @@
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clThemeUpdater.h"
 
 BEGIN_EVENT_TABLE(SubversionView, SubversionPageBase)
 EVT_UPDATE_UI(XRCID("svn_stop"), SubversionView::OnStopUI)
@@ -149,6 +150,8 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
     , m_codeliteEcho(NULL)
 {
+    clThemeUpdater::Get().RegisterWindow(m_splitter);
+    
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
@@ -179,6 +182,7 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
 
 SubversionView::~SubversionView()
 {
+    clThemeUpdater::Get().UnRegisterWindow(m_splitter);
     wxDELETE(m_themeHelper);
     DisconnectEvents();
 }

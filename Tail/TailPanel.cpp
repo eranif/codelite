@@ -11,6 +11,7 @@
 #include <imanager.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
+#include "clThemeUpdater.h"
 
 TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     : TailPanelBase(parent)
@@ -19,6 +20,9 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     , m_isDetached(false)
     , m_frame(NULL)
 {
+    clThemeUpdater::Get().RegisterWindow(this);
+    clThemeUpdater::Get().RegisterWindow(m_staticTextFileName);
+    
     DoBuildToolbar();
     m_fileWatcher.reset(new clFileSystemWatcher());
     m_fileWatcher->SetOwner(this);
@@ -31,6 +35,8 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
 
 TailPanel::~TailPanel()
 {
+    clThemeUpdater::Get().UnRegisterWindow(this);
+    clThemeUpdater::Get().UnRegisterWindow(m_staticTextFileName);
     Unbind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &TailPanel::OnThemeChanged, this);
 }

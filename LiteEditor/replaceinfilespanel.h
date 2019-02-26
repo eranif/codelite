@@ -36,8 +36,8 @@ protected:
     wxArrayString m_filesModified;
 
 protected:
-    void DoSaveResults(
-        wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin, std::map<int, SearchResult>::iterator end);
+    void DoSaveResults(wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin,
+                       std::map<int, SearchResult>::iterator end);
 
     wxStyledTextCtrl* DoGetEditor(const wxString& fileName);
 
@@ -60,6 +60,7 @@ protected:
 
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);
+    virtual ~ReplaceInFilesPanel();
 };
 
 #endif // __replaceinfilespanel__

@@ -150,7 +150,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_splitter17"
+         "m_value": "m_splitter"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -1205,7 +1205,7 @@
                    "border": 0,
                    "gbSpan": "1,1",
                    "gbPosition": "0,0",
-                   "m_styles": [],
+                   "m_styles": ["wxBORDER_NONE"],
                    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
                    "m_properties": [{
                      "type": "winid",

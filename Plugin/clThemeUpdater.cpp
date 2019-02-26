@@ -38,6 +38,7 @@ void clThemeUpdater::UpdateGlobalColours()
 void clThemeUpdater::RegisterWindow(wxWindow* win)
 {
     win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    win->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     m_windows.insert(win);
 }
 

@@ -25,15 +25,15 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_splitter17 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
-    m_splitter17->SetSashGravity(0.5);
-    m_splitter17->SetMinimumPaneSize(10);
+    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                      wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter->SetSashGravity(0.5);
+    m_splitter->SetMinimumPaneSize(10);
 
-    mainSizer->Add(m_splitter17, 1, wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_splitter, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPageLeft = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitter17, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageLeft =
+        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLeft->SetSizer(boxSizer27);
@@ -77,9 +77,9 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
                                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrlUnversioned->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                               wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPageRight = new wxPanel(m_splitter17, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitter17, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter17->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
+    m_splitterPageRight =
+        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPageLeft, m_splitterPageRight, 0);
 
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageRight->SetSizer(boxSizer30);
@@ -97,7 +97,8 @@ SubversionPageBase::SubversionPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer96 = new wxBoxSizer(wxVERTICAL);
     m_panel94->SetSizer(boxSizer96);
 
-    m_sci = new wxStyledTextCtrl(m_panel94, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel94, wxSize(-1, -1)), 0);
+    m_sci = new wxStyledTextCtrl(m_panel94, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel94, wxSize(-1, -1)),
+                                 wxBORDER_NONE);
     // Configure the fold margin
     m_sci->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_sci->SetMarginMask(4, wxSTC_MASK_FOLDERS);

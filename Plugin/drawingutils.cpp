@@ -714,38 +714,29 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
-#if 0
-    wxRendererNative::Get().DrawDropArrow(win, dc, rect, 0);
-#else
-    int size = wxMin(rect.GetHeight(), rect.GetWidth());
-    size = wxMin(10, size);
-    wxRect arrowRect = wxRect(0, 0, size, size);
-    int xx = rect.GetX() + ((rect.GetWidth() - arrowRect.GetWidth()) / 2);
-    int yy = rect.GetY() + ((rect.GetHeight() - arrowRect.GetHeight()) / 2);
-    arrowRect = wxRect(wxPoint(xx, yy), arrowRect.GetSize());
-
-    wxPoint points[3];
-    points[0] = arrowRect.GetTopLeft();
-    points[1] = arrowRect.GetTopRight();
-    points[2].x = arrowRect.GetBottomLeft().x + (arrowRect.GetWidth() / 2);
-    points[2].y = arrowRect.GetBottomLeft().y - 2;
-
-    // if a user provided a colour for the button, use it
+    // Draw an arrow
+    wxRect buttonRect(rect);
+    int sz = wxMin(rect.GetHeight(), rect.GetWidth());
+    sz = wxMin(10, sz);
+    double height = ((double)sz / 3.0) * 2;
+    buttonRect.SetHeight(height);
+    buttonRect.SetWidth(sz);
+    buttonRect = buttonRect.CenterIn(rect);
+    
     wxColour buttonColour = colour;
     if(!buttonColour.IsOk()) {
         // No colour provided, provide one
         wxColour buttonFace = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-        if(DrawingUtils::IsDark(buttonFace)) {
+        if(IsDark(buttonFace)) {
             buttonColour = buttonFace.ChangeLightness(150);
         } else {
             buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
         }
     }
-
-    dc.SetPen(buttonColour);
-    dc.SetBrush(buttonColour);
-    dc.DrawPolygon(3, points);
-#endif
+    wxPoint downCenterPoint = wxPoint(buttonRect.GetBottomLeft().x + buttonRect.GetWidth() / 2, buttonRect.GetBottom());
+    dc.SetPen(wxPen(buttonColour, 2));
+    dc.DrawLine(buttonRect.GetTopLeft(), downCenterPoint);
+    dc.DrawLine(buttonRect.GetTopRight(), downCenterPoint);
 }
 
 wxColour DrawingUtils::GetCaptionTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT); }

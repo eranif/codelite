@@ -64,18 +64,7 @@ clEditorBar::~clEditorBar()
 void clEditorBar::OnEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        m_buttonScope->Enable(true);
-        m_buttonFilePath->Enable(true);
-        m_buttonBookmarks->Enable(true);
-        m_buttonFilePath->SetText(editor->GetFileName().GetFullPath());
-
-    } else {
-        m_buttonScope->Enable(false);
-        m_buttonFilePath->Enable(false);
-        m_buttonBookmarks->Enable(false);
-    }
+    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
 void clEditorBar::SetMessage(const wxString& className, const wxString& function)
@@ -83,7 +72,7 @@ void clEditorBar::SetMessage(const wxString& className, const wxString& function
     if((className != m_classname) || (function != m_function)) {
         m_classname = className;
         m_function = function;
-        DoRefreshColoursAndFonts();
+        CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
     }
 }
 
@@ -95,7 +84,7 @@ void clEditorBar::DoShow(bool s)
 void clEditorBar::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    DoRefreshColoursAndFonts();
+    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
 void clEditorBar::DoRefreshColoursAndFonts()
@@ -115,19 +104,22 @@ void clEditorBar::DoRefreshColoursAndFonts()
 
         if(!m_bookmarks.empty()) {
             CreateBookmarksBitmap();
+            if(!m_buttonBookmarks->IsShown()) { m_buttonBookmarks->Show(); }
             m_buttonBookmarks->SetText(_("Bookmarks"));
             m_buttonBookmarks->SetBitmap(m_bookmarksBmp);
         } else {
-             m_buttonBookmarks->Enable(false);
+            m_buttonBookmarks->Hide();
         }
 
         // Update file path button
+        if(!m_buttonFilePath->IsShown()) { m_buttonFilePath->Show(); }
         m_buttonFilePath->SetText(editor->GetFileName().GetFullPath());
         m_filename = editor->GetFileName().GetFullPath();
 
         wxString scope;
         if(!m_classname.IsEmpty()) { scope << m_classname << "::"; }
         if(!m_function.IsEmpty()) { scope << m_function; }
+        if(!m_buttonScope->IsShown()) { m_buttonScope->Show(); }
         m_buttonScope->SetText(scope);
 
     } else {
@@ -136,11 +128,11 @@ void clEditorBar::DoRefreshColoursAndFonts()
         m_buttonScope->SetText("");
         m_buttonFilePath->SetText("");
         m_buttonBookmarks->SetText("");
-        m_buttonScope->Enable(false);
-        m_buttonFilePath->Enable(false);
-        m_buttonBookmarks->Enable(false);
+        m_buttonScope->Hide();
+        m_buttonFilePath->Hide();
+        m_buttonBookmarks->Hide();
     }
-    Refresh();
+    GetSizer()->Layout();
 }
 
 void clEditorBar::DoRefresh() { Refresh(); }
@@ -149,7 +141,7 @@ void clEditorBar::OnMarkerChanged(clCommandEvent& event)
 {
     event.Skip();
     if(!IsShown()) { return; }
-    DoRefreshColoursAndFonts();
+    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
 void clEditorBar::CreateBookmarksBitmap()
@@ -168,7 +160,7 @@ void clEditorBar::CreateBookmarksBitmap()
 void clEditorBar::OnButtonActions(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    
+
     wxMenu menu;
     wxString text;
 

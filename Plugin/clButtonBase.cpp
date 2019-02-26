@@ -184,15 +184,31 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     if(!isDisabled && !IsPressed()) {
-        wxColour topLineColour = bgColour.ChangeLightness(110);
+        wxColour topLineColour = bgColour.ChangeLightness(115);
         wxRect rr = rect;
         rr.Deflate(2);
         dc.SetPen(topLineColour);
         dc.DrawLine(rr.GetTopLeft(), rr.GetTopRight());
     }
 
+    // Draw the bitmap first
+    int xx = TEXT_SPACER;
+    if(GetBitmap().IsOk()) {
+        wxRect bitmapRect(xx, 0, GetBitmap().GetScaledWidth(), GetBitmap().GetScaledHeight());
+        bitmapRect = bitmapRect.CenterIn(rect, wxVERTICAL);
+        dc.DrawBitmap(GetBitmap(), bitmapRect.GetTopLeft());
+        xx += bitmapRect.GetWidth();
+        xx += TEXT_SPACER;
+    }
+
     // Draw the text
     int textWidth = rect.GetWidth() - (2 * TEXT_SPACER);
+    if(GetBitmap().IsOk()) {
+        // Reduce the space used by the bitmap
+        textWidth -= GetBitmap().GetScaledWidth();
+        textWidth -= TEXT_SPACER;
+    }
+
     if(HasDropDownMenu()) { textWidth -= rect.GetHeight(); }
 
     // Setup some colours (text and dropdown)
@@ -205,7 +221,7 @@ void clButtonBase::Render(wxDC& dc)
         dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
     }
 
-    wxRect textBoundingRect(TEXT_SPACER, 0, textWidth, rect.GetHeight());
+    wxRect textBoundingRect(xx, 0, textWidth, rect.GetHeight());
     wxRect arrowRect;
     if(HasDropDownMenu()) {
         arrowRect.SetX(textBoundingRect.GetRight() + TEXT_SPACER);
@@ -222,6 +238,11 @@ void clButtonBase::Render(wxDC& dc)
         // Truncate the text to fit the drawing area
         wxString fixedText;
         DrawingUtils::TruncateText(GetText(), textBoundingRect.GetWidth(), dc, fixedText);
+
+        //dc.SetPen(*wxBLUE);
+        //dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        //dc.DrawRectangle(textBoundingRect);
+
         dc.DrawLabel(fixedText, textBoundingRect, wxALIGN_CENTRE);
         dc.DestroyClippingRegion();
     }
@@ -232,6 +253,11 @@ void clButtonBase::Render(wxDC& dc)
         int arrowWidth = arrowRect.GetWidth() / 2;
         wxRect r(0, 0, arrowWidth, arrowHeight);
         r = r.CenterIn(arrowRect);
+
+        //dc.SetPen(*wxRED);
+        //dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        //dc.DrawRectangle(arrowRect);
+
         wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
         dc.SetPen(wxPen(dropDownColour, 3));
         dc.DrawLine(r.GetTopLeft(), downCenterPoint);
@@ -284,8 +310,17 @@ wxSize clButtonBase::GetBestSize() const
 
     // If the text does not fit into the default button size, increase it
     buttonWidth += TEXT_SPACER;
+
+    // Add bitmap length
+    if(GetBitmap().IsOk()) {
+        buttonWidth += GetBitmap().GetScaledWidth();
+        buttonWidth += TEXT_SPACER;
+    }
+    // Text width
     buttonWidth += wxMax(textRect.GetWidth(), sampleTextRect.GetWidth());
     buttonWidth += TEXT_SPACER;
+
+    // Drop down arrow width
     if(HasDropDownMenu()) { buttonWidth += buttonHeight; }
     return wxSize(buttonWidth, buttonHeight);
 }
@@ -346,6 +381,8 @@ void clButtonBase::SetText(const wxString& text)
     tmp.Replace("&", "");
     tmp.Replace("@@", "&");
     m_text = tmp;
+    SetSizeHints(GetBestSize());
+    if(GetParent() && GetParent()->GetSizer()) { GetParent()->Layout(); }
     Refresh();
 }
 
@@ -360,5 +397,29 @@ void clButtonBase::OnSize(wxSizeEvent& event)
 void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)
 {
     m_hasDropDownMenu = hasDropDownMenu;
+    Refresh();
+}
+
+void clButtonBase::SetBitmap(const wxBitmap& bmp)
+{
+    m_bitmap = bmp;
+    SetSizeHints(GetBestSize());
+    if(GetParent() && GetParent()->GetSizer()) { GetParent()->Layout(); }
+    Refresh();
+}
+
+const wxBitmap& clButtonBase::GetBitmap() const { return m_bitmap; }
+
+void clButtonBase::ShowMenu(wxMenu& menu)
+{
+    SetPressed();
+    Refresh();
+    
+    wxPoint menuPos = GetClientRect().GetBottomLeft();
+#ifdef __WXOSX__
+    menuPos.y += 5;
+#endif
+    PopupMenu(&menu, menuPos);
+    SetNormal();
     Refresh();
 }

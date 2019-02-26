@@ -27,6 +27,7 @@
 #include <wx/srchctrl.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
+#include "clThemedButton.h"
 #include <wx/frame.h>
 #include <wx/listbox.h>
 #if wxVERSION_NUMBER >= 2900
@@ -228,13 +229,20 @@ public:
 class WXDLLIMPEXP_SDK clEditorBarBase : public wxPanel
 {
 protected:
+    clThemedButton* m_buttonScope;
+    clThemedButton* m_buttonFilePath;
+    clThemedButton* m_buttonBookmarks;
+
 protected:
-    virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }
-    virtual void OnEraseBG(wxEraseEvent& event) { event.Skip(); }
     virtual void OnEditorSize(wxSizeEvent& event) { event.Skip(); }
-    virtual void OnLeftDown(wxMouseEvent& event) { event.Skip(); }
+    virtual void OnButtonScope(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonActions(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonBookmarks(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    clThemedButton* GetButtonScope() { return m_buttonScope; }
+    clThemedButton* GetButtonFilePath() { return m_buttonFilePath; }
+    clThemedButton* GetButtonBookmarks() { return m_buttonBookmarks; }
     clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~clEditorBarBase();

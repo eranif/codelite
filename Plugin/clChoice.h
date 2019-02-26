@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CHOICE_MENU_SHOWING, wxNotifyEvent);
+
 class WXDLLIMPEXP_SDK clChoice : public clButtonBase
 {
     std::vector<wxString> m_choices;

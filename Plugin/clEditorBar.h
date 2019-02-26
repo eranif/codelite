@@ -11,10 +11,6 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
 {
     wxString m_classname;
     wxString m_function;
-    wxColour m_functionColour;
-    wxColour m_classColour;
-    wxColour m_defaultColour;
-    wxColour m_bgColour;
     wxFont m_textFont;
     wxRect m_scopeRect;
     wxBitmap m_functionBmp;
@@ -31,9 +27,8 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     // Bookmarks button
     wxBitmap m_bookmarksBmp;
     wxRect m_bookmarksRect;
-    eButtonState m_bookmarksButtonState;
     std::vector<std::pair<int, wxString> > m_bookmarks;
-
+    
 private:
     void DoRefreshColoursAndFonts();
     void DoRefresh();
@@ -46,14 +41,11 @@ public:
     void DoShow(bool s);
 
 protected:
+    virtual void OnButtonActions(wxCommandEvent& event);
+    virtual void OnButtonBookmarks(wxCommandEvent& event);
+    virtual void OnButtonScope(wxCommandEvent& event);
     void OnMarkerChanged(clCommandEvent& event);
-    void OnEditorSize(wxSizeEvent& e);
-    void OnEraseBG(wxEraseEvent& e);
-    void OnPaint(wxPaintEvent& e);
     void OnEditorChanged(wxCommandEvent& e);
-    void OnLeftDown(wxMouseEvent& e);
-    void OnLeftUp(wxMouseEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
-    void OnIdle(wxIdleEvent& event);
 };
 #endif // CLEDITORBAR_H

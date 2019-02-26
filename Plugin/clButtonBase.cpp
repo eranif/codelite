@@ -184,7 +184,7 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     if(!isDisabled && !IsPressed()) {
-        wxColour topLineColour = bgColour.ChangeLightness(130);
+        wxColour topLineColour = bgColour.ChangeLightness(110);
         wxRect rr = rect;
         rr.Deflate(2);
         dc.SetPen(topLineColour);
@@ -194,6 +194,16 @@ void clButtonBase::Render(wxDC& dc)
     // Draw the text
     int textWidth = rect.GetWidth() - (2 * TEXT_SPACER);
     if(HasDropDownMenu()) { textWidth -= rect.GetHeight(); }
+
+    // Setup some colours (text and dropdown)
+    wxColour textColour = m_colours.GetItemTextColour();
+    wxColour dropDownColour = m_colours.GetDarkBorderColour();
+    if(isDisabled) {
+        dropDownColour = textColour = m_colours.GetGrayText();
+    } else if(IsPressed()) {
+        textColour = m_colours.GetItemTextColour().ChangeLightness(isDark ? 70 : 110);
+        dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
+    }
 
     wxRect textBoundingRect(TEXT_SPACER, 0, textWidth, rect.GetHeight());
     wxRect arrowRect;
@@ -207,7 +217,7 @@ void clButtonBase::Render(wxDC& dc)
     if(!GetText().IsEmpty()) {
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
         textBoundingRect = textBoundingRect.CenterIn(rect, wxVERTICAL);
-        dc.SetTextForeground(isDisabled ? m_colours.GetGrayText() : m_colours.GetItemTextColour());
+        dc.SetTextForeground(textColour);
         dc.SetClippingRegion(textBoundingRect);
         // Truncate the text to fit the drawing area
         wxString fixedText;
@@ -223,7 +233,7 @@ void clButtonBase::Render(wxDC& dc)
         wxRect r(0, 0, arrowWidth, arrowHeight);
         r = r.CenterIn(arrowRect);
         wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
-        dc.SetPen(wxPen(isDisabled ? m_colours.GetGrayText() : m_colours.GetDarkBorderColour(), 3));
+        dc.SetPen(wxPen(dropDownColour, 3));
         dc.DrawLine(r.GetTopLeft(), downCenterPoint);
         dc.DrawLine(r.GetTopRight(), downCenterPoint);
     }

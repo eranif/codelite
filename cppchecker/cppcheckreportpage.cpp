@@ -32,6 +32,7 @@
 #include "event_notifier.h"
 #include "lexer_configuration.h"
 #include "editor_config.h"
+#include "clThemeUpdater.h"
 
 static size_t sErrorCount(0);
 
@@ -43,15 +44,17 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
     , m_mgr(mgr)
     , m_plugin(plugin)
 {
+    clThemeUpdater::Get().RegisterWindow(this);
     DoInitStyle();
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged),
+                                  NULL, this);
 }
 
 CppCheckReportPage::~CppCheckReportPage()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged), NULL, this);
+    clThemeUpdater::Get().UnRegisterWindow(this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged),
+                                     NULL, this);
 }
 
 void CppCheckReportPage::OnClearReportUI(wxUpdateUIEvent& event)
@@ -188,9 +191,7 @@ bool CppCheckReportPage::FindPrevMarker(bool gotoMatch)
     if(nFoundLine == wxNOT_FOUND) {
         return false;
     } else {
-        if(!gotoMatch) {
-            return true;
-        }
+        if(!gotoMatch) { return true; }
         int matchPos = m_stc->PositionFromLine(nFoundLine);
         m_stc->SetCurrentPos(matchPos);
     }
@@ -211,9 +212,7 @@ bool CppCheckReportPage::FindNextMarker(bool gotoMatch)
     if(nFoundLine == wxNOT_FOUND) {
         return false;
     } else {
-        if(!gotoMatch) {
-            return true;
-        }
+        if(!gotoMatch) { return true; }
         int matchPos = m_stc->PositionFromLine(nFoundLine);
         m_stc->SetCurrentPos(matchPos);
     }

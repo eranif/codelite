@@ -14,7 +14,7 @@
    viewBox="0 0 15.999999 15.999999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.1 r15371"
    sodipodi:docname="mime-c.svg">
   <defs
      id="defs4">
@@ -34,7 +34,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="-128.69129"
+     inkscape:cx="-168.19129"
      inkscape:cy="29.029209"
      inkscape:document-units="px"
      inkscape:current-layer="g8794"
@@ -42,9 +42,9 @@
      inkscape:showpageshadow="false"
      units="px"
      inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-11"
-     inkscape:window-y="-11"
+     inkscape:window-height="1311"
+     inkscape:window-x="1920"
+     inkscape:window-y="41"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
@@ -113,15 +113,15 @@
            sodipodi:role="line" /></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:21.04109573px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffe680;fill-opacity:1;stroke:none;stroke-width:0.99999994"
-         x="2.1306267"
-         y="1054.9351"
+         style="font-style:normal;font-weight:normal;font-size:13.9319725px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffe680;fill-opacity:1;stroke:none;stroke-width:0.66213149"
+         x="4.0811906"
+         y="1052.9946"
          id="text827"><tspan
            sodipodi:role="line"
            id="tspan825"
-           x="2.1306267"
-           y="1054.9351"
-           style="fill:#ffe680;stroke-width:0.99999994">c</tspan></text>
+           x="4.0811906"
+           y="1052.9946"
+           style="fill:#ffe680;stroke-width:0.66213149">c</tspan></text>
     </g>
   </g>
 </svg>

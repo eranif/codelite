@@ -54,12 +54,14 @@ fi
 
 cd $curdir
 ORIG_PATH=$PATH
+ORIG_LDPATH=$LD_LIBRARY_PATH
 linux_build() {
     mkdir -p $curdir/$1
     cd $curdir/$1 # cd to the build folder
     echo rm -fr *.deb
     rm -fr *.deb
     export PATH=$2:${ORIG_PATH}
+    export LD_LIBRARY_PATH=$2/lib:${ORIG_LDPATH}
     cmake -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 ..
     make -j${cpu_count} && make package
     if [ "${upload_file}" == "yes" ]; then

@@ -590,9 +590,11 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="DiffUI.wxcp"/>
     <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="DiffUI_plugin_bitmaps.cpp"/>
       <File Name="clResizableTooltipBase_plugin_bitmaps.cpp"/>
       <File Name="clAboutDialogBase_plugin_bitmaps.cpp"/>
       <File Name="VirtualDirectorySelector_plugin_bitmaps.cpp"/>
@@ -611,6 +613,8 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="DiffUI.cpp"/>
+      <File Name="DiffUI.h"/>
       <File Name="clResizableTooltipBase.cpp"/>
       <File Name="clResizableTooltipBase.h"/>
       <File Name="clAboutDialogBase.cpp"/>
@@ -665,6 +669,10 @@
     <File Name="sftp_settings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Diff">
+    <File Name="DiffSelectFoldersDlg.cpp"/>
+    <File Name="DiffSelectFoldersDlg.h"/>
+    <File Name="DiffFoldersFrame.cpp"/>
+    <File Name="DiffFoldersFrame.h"/>
     <File Name="clDiffFrame.cpp"/>
     <File Name="clDiffFrame.h"/>
     <VirtualDirectory Name="dtl">

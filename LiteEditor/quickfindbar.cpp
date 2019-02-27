@@ -856,9 +856,20 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         m_sci->BeginUndoAction();
         m_sci->SetSelection(0, 0);
         m_sci->SetCurrentPos(0); // Start the search from the start
+        size_t replaced(0);
         while(DoSearch(DoGetSearchFlags() | kDisableDisplayErrorMessages | kBreakWhenWrapSearch | kSearchForward)) {
             DoReplace();
+            ++replaced;
         }
+        
+        wxString message;
+        if (replaced) {
+            message << _("Found and replaced ") << replaced << _(" matches");
+        } else {
+            message << _("No matches found");
+        }
+        clGetManager()->SetStatusMessage(message, 5);
+        
         m_sci->EndUndoAction();
         m_sci->ClearSelections();
     } else {

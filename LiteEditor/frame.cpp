@@ -5495,9 +5495,15 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
             DoShowToolbars(false, false);
         }
         if(m_frameHelper->IsCaptionsVisible()) { DoShowCaptions(false); }
+#ifndef __WXOSX__
+        GetMenuBar()->Hide();
+#endif
     } else {
         if(!m_frameHelper->IsToolbarShown()) { DoShowToolbars(true, false); }
         if(!m_frameHelper->IsCaptionsVisible()) { DoShowCaptions(true); }
+#ifndef __WXOSX__
+        GetMenuBar()->Show();
+#endif
     }
 
     // Update the various configurations

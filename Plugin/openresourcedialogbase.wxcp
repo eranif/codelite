@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 16,
+  "m_objCounter": 17,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCFB13InitBitmapResources",
   "m_bitmapsFile": "openresourcedialogbase_plugin_bitmaps.cpp",
@@ -19,7 +19,7 @@
    "border": 0,
    "gbSpan": ",",
    "gbPosition": ",",
-   "m_styles": ["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
+   "m_styles": [],
    "m_sizerFlags": [],
    "m_properties": [{
      "type": "string",
@@ -28,7 +28,7 @@
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
-     "m_value": "500,300"
+     "m_value": "-1,-1"
     }, {
      "type": "string",
      "m_label": "Name:",
@@ -166,7 +166,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "600,-1"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",
@@ -274,7 +274,7 @@
         }, {
          "type": "string",
          "m_label": "Size:",
-         "m_value": "-1,-1"
+         "m_value": "500,400"
         }, {
          "type": "string",
          "m_label": "Minimum Size:",

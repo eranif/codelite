@@ -330,6 +330,8 @@ EVT_MENU(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBar)
 EVT_UPDATE_UI(XRCID("hide_status_bar"), clMainFrame::OnShowStatusBarUI)
 EVT_MENU(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbar)
 EVT_UPDATE_UI(XRCID("hide_tool_bar"), clMainFrame::OnShowToolbarUI)
+EVT_MENU(XRCID("show_menu_bar"), clMainFrame::OnShowMenuBar)
+EVT_UPDATE_UI(XRCID("show_menu_bar"), clMainFrame::OnShowMenuBarUI)
 EVT_MENU(XRCID("show_tab_bar"), clMainFrame::OnShowTabBar)
 EVT_UPDATE_UI(XRCID("show_tab_bar"), clMainFrame::OnShowTabBarUI)
 EVT_MENU_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::DispatchCommandEvent)
@@ -5755,3 +5757,14 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
         EventNotifier::Get()->AddPendingEvent(buttonEvent);
     }
 }
+
+void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
+{
+    bool isShown = GetMenuBar()->IsShown();
+    GetMenuBar()->Show(!isShown);
+    GetSizer()->Layout();
+    PostSizeEvent();
+    clConfig::Get().Write(kConfigShowMenuBar, !isShown);
+}
+
+void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event) { event.Check(GetMenuBar()->IsShown()); }

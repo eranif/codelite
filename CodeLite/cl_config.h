@@ -77,6 +77,7 @@ public:
 #define kConfigUpdateParserPaths "updateParserPaths"
 #define kConfigShowToolBar "ShowToolBar"
 #define kConfigShowTabBar "ShowTabBar"
+#define kConfigShowMenuBar "ShowMenuBar"
 #define kConfigShowStatusBar "ShowStatusBar"
 #define kConfigWorkspaceTabSashPosition "WorkspaceTabSashPosition"
 #define kConfigTabsPaneSortAlphabetically "TabsPaneSortAlphabetically"

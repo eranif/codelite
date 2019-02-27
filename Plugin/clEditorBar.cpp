@@ -119,9 +119,12 @@ void clEditorBar::DoRefreshColoursAndFonts()
         wxString scope;
         if(!m_classname.IsEmpty()) { scope << m_classname << "::"; }
         if(!m_function.IsEmpty()) { scope << m_function; }
-        if(!m_buttonScope->IsShown()) { m_buttonScope->Show(); }
-        m_buttonScope->SetText(scope);
-
+        if(scope.IsEmpty()) {
+            m_buttonScope->Hide();
+        } else {
+            if(!m_buttonScope->IsShown()) { m_buttonScope->Show(); }
+            m_buttonScope->SetText(scope);
+        }
     } else {
         m_classname.clear();
         m_function.clear();
@@ -132,7 +135,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
         m_buttonFilePath->Hide();
         m_buttonBookmarks->Hide();
     }
-    GetSizer()->Layout();
+    GetParent()->GetSizer()->Layout();
 }
 
 void clEditorBar::DoRefresh() { Refresh(); }

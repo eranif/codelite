@@ -22,7 +22,6 @@ PhpSFTPHandler::~PhpSFTPHandler()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &PhpSFTPHandler::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_RENAMED, &PhpSFTPHandler::OnFileRenamed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpSFTPHandler::OnReplaceInFiles, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &PhpSFTPHandler::OnReplaceInFiles, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_DELETED, &PhpSFTPHandler::OnFileDeleted, this);
 }
 

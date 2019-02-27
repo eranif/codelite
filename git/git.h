@@ -221,6 +221,7 @@ private:
     void OnFolderMenu(clContextMenuEvent& event);
 
     void OnFileCreated(clFileSystemEvent& event);
+    void OnReplaceInFiles(clFileSystemEvent& event);
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);

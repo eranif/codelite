@@ -28,7 +28,9 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     wxBitmap m_bookmarksBmp;
     wxRect m_bookmarksRect;
     std::vector<std::pair<int, wxString> > m_bookmarks;
-    
+
+    bool m_shouldShow = false;
+
 private:
     void DoRefreshColoursAndFonts();
     void DoRefresh();

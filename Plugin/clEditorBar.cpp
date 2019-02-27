@@ -78,7 +78,9 @@ void clEditorBar::SetMessage(const wxString& className, const wxString& function
 
 void clEditorBar::DoShow(bool s)
 {
+    m_shouldShow = s;
     if(Show(s)) { GetParent()->GetSizer()->Layout(); }
+    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
 void clEditorBar::OnThemeChanged(wxCommandEvent& e)
@@ -95,9 +97,12 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_bookmarks.clear();
-
+    
+    if(!m_shouldShow) { return; }
+    
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
+        if(!IsShown()) { Show(); }
         // Update bookmarks button
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         editor->GetFindMarkers(m_bookmarks);
@@ -134,6 +139,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
         m_buttonScope->Hide();
         m_buttonFilePath->Hide();
         m_buttonBookmarks->Hide();
+        Hide();
     }
     GetParent()->GetSizer()->Layout();
 }

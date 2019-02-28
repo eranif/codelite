@@ -47,6 +47,8 @@ public:
     virtual ~ MemCheckOutputView();
 
 protected:
+    virtual void OnClearOutputUpdateUI(wxUpdateUIEvent& event);
+    virtual void OnClearOutput(wxCommandEvent& event);
     virtual void OnStop(wxCommandEvent& event);
     virtual void OnStopUI(wxUpdateUIEvent& event);
     virtual void OnListCtrlErrorsMouseLeave(wxMouseEvent& event);

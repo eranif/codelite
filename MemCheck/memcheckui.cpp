@@ -15,6 +15,8 @@ static bool bBitmapLoaded = false;
 
 MemCheckIcons16::MemCheckIcons16()
     : wxImageList(16, 16, true)
+    , m_imagesWidth(16)
+    , m_imagesHeight(16)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -27,81 +29,130 @@ MemCheckIcons16::MemCheckIcons16()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_check"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_check"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_import"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_import"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_settings"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_settings"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_error"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_error"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_error"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_location"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_location"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_location"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_auxiliary"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_auxiliary"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_auxiliary"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_transparent"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_transparent"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_transparent"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_current"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_current"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_current"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_stop"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_stop"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_stop"), bmp));
+        }
+    }
+    
+    {
+        wxBitmap bmp;
+        wxIcon icn;
+        bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_clear"));
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_clear"), bmp));
+        }
     }
     
 }
@@ -112,6 +163,8 @@ MemCheckIcons16::~MemCheckIcons16()
 
 MemCheckIcons24::MemCheckIcons24()
     : wxImageList(24, 24, true)
+    , m_imagesWidth(24)
+    , m_imagesHeight(24)
 {
     if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
@@ -124,27 +177,39 @@ MemCheckIcons24::MemCheckIcons24()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check_24"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_check_24"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_check_24"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import_24"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_import_24"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_import_24"), bmp));
+        }
     }
     
     {
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_stop_24"));
-        icn.CopyFromBitmap( bmp );
-        this->Add( icn );
-        m_bitmaps.insert( std::make_pair(wxT("memcheck_stop_24"), bmp ) );
+        if(bmp.IsOk()) {
+            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
+                icn.CopyFromBitmap(bmp);
+                this->Add(icn);
+            }
+            m_bitmaps.insert(std::make_pair(wxT("memcheck_stop_24"), bmp));
+        }
     }
     
 }
@@ -166,10 +231,10 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer221 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer221);
     
-    m_auibar223 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
+    m_auibar223 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxAUI_TB_PLAIN_BACKGROUND|wxAUI_TB_DEFAULT_STYLE);
     m_auibar223->SetToolBitmapSize(wxSize(16,16));
     
-    boxSizer221->Add(m_auibar223, 0, wxALL|wxEXPAND, 0);
+    boxSizer221->Add(m_auibar223, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
     m_auibar223->AddTool(XRCID("memcheck_check_active_project"), _("Run check"), wxXmlResource::Get()->LoadBitmap(wxT("check")), wxNullBitmap, wxITEM_NORMAL, _("Run check"), wxT(""), NULL);
     
@@ -185,6 +250,8 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     
     m_auibar223->AddTool(XRCID("memcheck_prev"), _("Jump to previous error"), wxXmlResource::Get()->LoadBitmap(wxT("arrow_up")), wxNullBitmap, wxITEM_NORMAL, _("Jump to previous error"), wxT(""), NULL);
     
+    m_auibar223->AddTool(XRCID("memcheck_clear"), _("Clear output"), wxXmlResource::Get()->LoadBitmap(wxT("clear")), wxNullBitmap, wxITEM_NORMAL, _("Clear output"), wxT(""), NULL);
+    
     m_auibar223->AddSeparator();
     
     m_auibar223->AddTool(XRCID("memcheck_settings"), _("Settings"), wxXmlResource::Get()->LoadBitmap(wxT("setting_tools")), wxNullBitmap, wxITEM_NORMAL, _("Settings"), wxT(""), NULL);
@@ -194,14 +261,14 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     m_auibar223->AddTool(XRCID("memcheck_open_plain"), _("Open plain output in editor window."), wxXmlResource::Get()->LoadBitmap(wxT("plain")), wxNullBitmap, wxITEM_NORMAL, _("Open plain output in editor window."), wxT(""), NULL);
     m_auibar223->Realize();
     
-    m_notebookOutputView = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+    m_notebookOutputView = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     m_notebookOutputView->SetName(wxT("m_notebookOutputView"));
     wxImageList* m_notebookOutputView_il = new wxImageList(16, 16);
     m_notebookOutputView->AssignImageList(m_notebookOutputView_il);
     
-    boxSizer221->Add(m_notebookOutputView, 1, wxALL|wxEXPAND, 2);
+    boxSizer221->Add(m_notebookOutputView, 1, wxALL|wxEXPAND, WXC_FROM_DIP(2));
     
-    m_panelErrors = new wxPanel(m_notebookOutputView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelErrors = new wxPanel(m_notebookOutputView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookOutputView, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panelErrorsImgIndex;
     m_panelErrorsImgIndex = m_notebookOutputView_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("node-tree")));
     m_notebookOutputView->AddPage(m_panelErrors, _("Errors"), true, m_panelErrorsImgIndex);
@@ -209,57 +276,57 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer534 = new wxBoxSizer(wxHORIZONTAL);
     m_panelErrors->SetSizer(boxSizer534);
     
-    m_dataViewCtrlErrors = new wxDataViewCtrl(m_panelErrors, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBORDER_THEME);
+    m_dataViewCtrlErrors = new wxDataViewCtrl(m_panelErrors, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), wxBORDER_THEME);
     
     m_dataViewCtrlErrorsModel = new MemCheckDVCErrorsModel;
     m_dataViewCtrlErrorsModel->SetColCount( 6 );
     m_dataViewCtrlErrors->AssociateModel(m_dataViewCtrlErrorsModel.get() );
     
-    boxSizer534->Add(m_dataViewCtrlErrors, 1, wxALL|wxEXPAND, 0);
+    boxSizer534->Add(m_dataViewCtrlErrors, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_dataViewCtrlErrors->AppendBitmapColumn(_("Current"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_CENTER);
-    m_dataViewCtrlErrors->AppendToggleColumn(_("Suppress"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, -2, wxALIGN_CENTER);
-    m_dataViewCtrlErrors->AppendIconTextColumn(_("Label"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataViewCtrlErrors->AppendTextColumn(_("File"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataViewCtrlErrors->AppendTextColumn(_("Line"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
-    m_dataViewCtrlErrors->AppendTextColumn(_("Object"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+    m_dataViewCtrlErrors->AppendBitmapColumn(_("Current"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dataViewCtrlErrors->AppendToggleColumn(_("Suppress"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(-2), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dataViewCtrlErrors->AppendIconTextColumn(_("Label"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataViewCtrlErrors->AppendTextColumn(_("File"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataViewCtrlErrors->AppendTextColumn(_("Line"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dataViewCtrlErrors->AppendTextColumn(_("Object"), m_dataViewCtrlErrors->GetColumnCount(), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer610 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer534->Add(boxSizer610, 0, wxALL|wxALIGN_CENTER_VERTICAL, 0);
+    boxSizer534->Add(boxSizer610, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(0));
     
-    m_bmpButtonPageFirst = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_first"), wxXmlResource::Get()->LoadBitmap(wxT("page_first")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonPageFirst = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_first"), wxXmlResource::Get()->LoadBitmap(wxT("page_first")), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), wxBU_AUTODRAW);
     m_bmpButtonPageFirst->SetToolTip(_("First result page."));
     
-    boxSizer610->Add(m_bmpButtonPageFirst, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_bmpButtonPageFirst, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_bmpButtonPagePrev = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_prev"), wxXmlResource::Get()->LoadBitmap(wxT("page_previous")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonPagePrev = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_prev"), wxXmlResource::Get()->LoadBitmap(wxT("page_previous")), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), wxBU_AUTODRAW);
     
-    boxSizer610->Add(m_bmpButtonPagePrev, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_bmpButtonPagePrev, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_textCtrlPageNumber = new wxTextCtrl(m_panelErrors, XRCID("memcheck_page_number"), wxT(""), wxDefaultPosition, wxSize(30,-1), wxTE_PROCESS_ENTER|wxTE_CENTRE);
+    m_textCtrlPageNumber = new wxTextCtrl(m_panelErrors, XRCID("memcheck_page_number"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(30,-1)), wxTE_PROCESS_ENTER|wxTE_CENTRE);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlPageNumber->SetHint(wxT(""));
     #endif
     
-    boxSizer610->Add(m_textCtrlPageNumber, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_textCtrlPageNumber, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_staticText622 = new wxStaticText(m_panelErrors, wxID_ANY, _("of"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText622 = new wxStaticText(m_panelErrors, wxID_ANY, _("of"), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), 0);
     
-    boxSizer610->Add(m_staticText622, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_staticText622, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_staticTextPageMax = new wxStaticText(m_panelErrors, wxID_ANY, _("0"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextPageMax = new wxStaticText(m_panelErrors, wxID_ANY, _("0"), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), 0);
     
-    boxSizer610->Add(m_staticTextPageMax, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_staticTextPageMax, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_bmpButtonPageNext = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_next"), wxXmlResource::Get()->LoadBitmap(wxT("page_next")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonPageNext = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_next"), wxXmlResource::Get()->LoadBitmap(wxT("page_next")), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), wxBU_AUTODRAW);
     
-    boxSizer610->Add(m_bmpButtonPageNext, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_bmpButtonPageNext, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_bmpButtonPageLast = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_last"), wxXmlResource::Get()->LoadBitmap(wxT("page_last")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButtonPageLast = new wxBitmapButton(m_panelErrors, XRCID("memcheck_page_last"), wxXmlResource::Get()->LoadBitmap(wxT("page_last")), wxDefaultPosition, wxDLG_UNIT(m_panelErrors, wxSize(-1,-1)), wxBU_AUTODRAW);
     
-    boxSizer610->Add(m_bmpButtonPageLast, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer610->Add(m_bmpButtonPageLast, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_panelSupp = new wxPanel(m_notebookOutputView, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panelSupp = new wxPanel(m_notebookOutputView, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookOutputView, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panelSuppImgIndex;
     m_panelSuppImgIndex = m_notebookOutputView_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("list")));
     m_notebookOutputView->AddPage(m_panelSupp, _(".supp"), false, m_panelSuppImgIndex);
@@ -267,81 +334,81 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer536 = new wxBoxSizer(wxHORIZONTAL);
     m_panelSupp->SetSizer(boxSizer536);
     
-    m_splitter542 = new wxSplitterWindow(m_panelSupp, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+    m_splitter542 = new wxSplitterWindow(m_panelSupp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSupp, wxSize(-1,-1)), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
     m_splitter542->SetSashGravity(0.5);
     m_splitter542->SetMinimumPaneSize(50);
     
-    boxSizer536->Add(m_splitter542, 1, wxALL|wxEXPAND, 0);
+    boxSizer536->Add(m_splitter542, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_splitterPageFilter = new wxPanel(m_splitter542, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageFilter = new wxPanel(m_splitter542, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter542, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     wxBoxSizer* boxSizer548 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageFilter->SetSizer(boxSizer548);
     
     wxBoxSizer* boxSizer655 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer548->Add(boxSizer655, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer548->Add(boxSizer655, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText657 = new wxStaticText(m_splitterPageFilter, wxID_ANY, _(".supp:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText657 = new wxStaticText(m_splitterPageFilter, wxID_ANY, _(".supp:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     
-    boxSizer655->Add(m_staticText657, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer655->Add(m_staticText657, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceSuppFileArr;
-    m_choiceSuppFile = new wxChoice(m_splitterPageFilter, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceSuppFileArr, 0);
+    m_choiceSuppFile = new wxChoice(m_splitterPageFilter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), m_choiceSuppFileArr, 0);
     m_choiceSuppFile->SetToolTip(_("Choose suppression file to use."));
     
-    boxSizer655->Add(m_choiceSuppFile, 1, wxLEFT|wxRIGHT|wxEXPAND, 0);
+    boxSizer655->Add(m_choiceSuppFile, 1, wxLEFT|wxRIGHT|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_buttonSuppOpen = new wxButton(m_splitterPageFilter, XRCID("memcheck_supp_open"), _("Open"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonSuppOpen = new wxButton(m_splitterPageFilter, XRCID("memcheck_supp_open"), _("Open"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     
-    boxSizer655->Add(m_buttonSuppOpen, 0, 0, 5);
+    boxSizer655->Add(m_buttonSuppOpen, 0, 0, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer485 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer548->Add(boxSizer485, 0, wxALL|wxEXPAND, 0);
+    boxSizer548->Add(boxSizer485, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_searchCtrlFilter = new wxSearchCtrl(m_splitterPageFilter, XRCID("memcheck_filter_supp"), wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+    m_searchCtrlFilter = new wxSearchCtrl(m_splitterPageFilter, XRCID("memcheck_filter_supp"), wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
     m_searchCtrlFilter->ShowSearchButton(true);
     m_searchCtrlFilter->ShowCancelButton(false);
     
-    boxSizer485->Add(m_searchCtrlFilter, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 5);
+    boxSizer485->Add(m_searchCtrlFilter, 1, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonClearFilter = new wxBitmapButton(m_splitterPageFilter, XRCID("memcheck_clear_filter"), wxXmlResource::Get()->LoadBitmap(wxT("broom")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_buttonClearFilter = new wxBitmapButton(m_splitterPageFilter, XRCID("memcheck_clear_filter"), wxXmlResource::Get()->LoadBitmap(wxT("broom")), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), wxBU_AUTODRAW);
     m_buttonClearFilter->SetToolTip(_("Clear filter"));
     
-    boxSizer485->Add(m_buttonClearFilter, 0, wxRIGHT|wxTOP|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer485->Add(m_buttonClearFilter, 0, wxRIGHT|wxTOP|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer489 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer548->Add(boxSizer489, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 0);
+    boxSizer548->Add(boxSizer489, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(0));
     
-    m_checkBoxInvert = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Invert"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxInvert = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Invert"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     m_checkBoxInvert->SetValue(false);
     
-    boxSizer489->Add(m_checkBoxInvert, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer489->Add(m_checkBoxInvert, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkBoxCase = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Case"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxCase = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Case"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     m_checkBoxCase->SetValue(false);
     
-    boxSizer489->Add(m_checkBoxCase, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer489->Add(m_checkBoxCase, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkBoxWord = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Word"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxWord = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("Word"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     m_checkBoxWord->SetValue(false);
     
-    boxSizer489->Add(m_checkBoxWord, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer489->Add(m_checkBoxWord, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_checkBoxRegexp = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("RegExp"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxRegexp = new wxCheckBox(m_splitterPageFilter, wxID_ANY, _("RegExp"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     m_checkBoxRegexp->SetValue(false);
     
-    boxSizer489->Add(m_checkBoxRegexp, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    boxSizer489->Add(m_checkBoxRegexp, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    boxSizer548->Add(0, 0, 1, wxALL, 5);
+    boxSizer548->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_staticTextSuppStatus = new wxStaticText(m_splitterPageFilter, wxID_ANY, _("Total: 0  Filtered: 0  Selected: 0"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticTextSuppStatus = new wxStaticText(m_splitterPageFilter, wxID_ANY, _("Total: 0  Filtered: 0  Selected: 0"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageFilter, wxSize(-1,-1)), 0);
     
-    boxSizer548->Add(m_staticTextSuppStatus, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer548->Add(m_staticTextSuppStatus, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
     
-    m_splitterPageList = new wxPanel(m_splitter542, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_splitterPageList = new wxPanel(m_splitter542, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter542, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter542->SplitVertically(m_splitterPageFilter, m_splitterPageList, 0);
     
     wxBoxSizer* boxSizer554 = new wxBoxSizer(wxVERTICAL);
@@ -349,31 +416,30 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxHORIZONTAL);
     
-    boxSizer554->Add(boxSizer678, 1, wxALL|wxEXPAND, 0);
+    boxSizer554->Add(boxSizer678, 1, wxALL|wxEXPAND, WXC_FROM_DIP(0));
     
-    m_listCtrlErrors = new MemCheckListCtrlErrors(m_splitterPageList, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_NO_HEADER|wxLC_VIRTUAL|wxLC_REPORT);
+    m_listCtrlErrors = new MemCheckListCtrlErrors(m_splitterPageList, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageList, wxSize(-1,-1)), wxLC_NO_HEADER|wxLC_VIRTUAL|wxLC_REPORT);
     
-    boxSizer678->Add(m_listCtrlErrors, 1, wxALL|wxEXPAND, 5);
+    boxSizer678->Add(m_listCtrlErrors, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_listCtrlErrors->InsertColumn(m_listCtrlErrors->GetColumnCount(), _("Label"), wxLIST_FORMAT_LEFT, -1);
     wxBoxSizer* boxSizer680 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer678->Add(boxSizer680, 0, wxALL, 5);
+    boxSizer678->Add(boxSizer680, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_buttonSuppressAll = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_all"), _("Suppress all"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonSuppressAll = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_all"), _("Suppress all"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageList, wxSize(-1,-1)), 0);
     
-    boxSizer680->Add(m_buttonSuppressAll, 0, wxBOTTOM|wxEXPAND, 5);
+    boxSizer680->Add(m_buttonSuppressAll, 0, wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_buttonSuppressSelected = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_selected"), _("Suppress selected"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_buttonSuppressSelected = new wxButton(m_splitterPageList, XRCID("memcheck_suppress_selected"), _("Suppress selected"), wxDefaultPosition, wxDLG_UNIT(m_splitterPageList, wxSize(-1,-1)), 0);
     
-    boxSizer680->Add(m_buttonSuppressSelected, 0, wxBOTTOM, 5);
+    boxSizer680->Add(m_buttonSuppressSelected, 0, wxBOTTOM, WXC_FROM_DIP(5));
     
     SetName(wxT("MemCheckOutputViewBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
     this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnStop), NULL, this);
     this->Connect(ID_TOOL_STOP_PROCESS, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnStopUI), NULL, this);
@@ -383,6 +449,8 @@ MemCheckOutputViewBase::MemCheckOutputViewBase(wxWindow* parent, wxWindowID id, 
     this->Connect(XRCID("memcheck_next"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Connect(XRCID("memcheck_prev"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnJumpToPrev), NULL, this);
     this->Connect(XRCID("memcheck_prev"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
+    this->Connect(XRCID("memcheck_clear"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnClearOutput), NULL, this);
+    this->Connect(XRCID("memcheck_clear"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnClearOutputUpdateUI), NULL, this);
     this->Connect(XRCID("memcheck_open_plain"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Connect(XRCID("memcheck_open_plain"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnOpenPlain), NULL, this);
     m_notebookOutputView->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(MemCheckOutputViewBase::OutputViewPageChanged), NULL, this);
@@ -436,6 +504,8 @@ MemCheckOutputViewBase::~MemCheckOutputViewBase()
     this->Disconnect(XRCID("memcheck_next"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Disconnect(XRCID("memcheck_prev"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnJumpToPrev), NULL, this);
     this->Disconnect(XRCID("memcheck_prev"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
+    this->Disconnect(XRCID("memcheck_clear"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnClearOutput), NULL, this);
+    this->Disconnect(XRCID("memcheck_clear"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnClearOutputUpdateUI), NULL, this);
     this->Disconnect(XRCID("memcheck_open_plain"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MemCheckOutputViewBase::OnMemCheckUI), NULL, this);
     this->Disconnect(XRCID("memcheck_open_plain"), wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(MemCheckOutputViewBase::OnOpenPlain), NULL, this);
     m_notebookOutputView->Disconnect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxNotebookEventHandler(MemCheckOutputViewBase::OutputViewPageChanged), NULL, this);
@@ -492,14 +562,14 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer249);
     
-    m_treebook251 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_treebook251 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBK_DEFAULT);
     m_treebook251->SetName(wxT("m_treebook251"));
     wxImageList* m_treebook251_il = new wxImageList(16, 16);
     m_treebook251->AssignImageList(m_treebook251_il);
     
-    boxSizer249->Add(m_treebook251, 1, wxALL|wxEXPAND, 5);
+    boxSizer249->Add(m_treebook251, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel259 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel259 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook251, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panel259ImgIndex;
     m_panel259ImgIndex = m_treebook251_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("cog")));
     m_treebook251->AddPage(m_panel259, _("General"), false, m_panel259ImgIndex);
@@ -512,59 +582,59 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     flexGridSizer351->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer351->AddGrowableCol(1);
     
-    boxSizer261->Add(flexGridSizer351, 0, wxALL|wxEXPAND, 5);
+    boxSizer261->Add(flexGridSizer351, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText349 = new wxStaticText(m_panel259, wxID_ANY, _("Engine:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText349 = new wxStaticText(m_panel259, wxID_ANY, _("Engine:"), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     m_staticText349->SetToolTip(_("At this time (1Q 2014) only valgrind supported - development state."));
     
-    flexGridSizer351->Add(m_staticText349, 0, wxRIGHT|wxTOP|wxBOTTOM, 5);
+    flexGridSizer351->Add(m_staticText349, 0, wxRIGHT|wxTOP|wxBOTTOM, WXC_FROM_DIP(5));
     
     wxArrayString m_choiceEngineArr;
     m_choiceEngineArr.Add(wxT("Valgrind"));
-    m_choiceEngine = new wxChoice(m_panel259, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceEngineArr, 0);
+    m_choiceEngine = new wxChoice(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), m_choiceEngineArr, 0);
     m_choiceEngine->SetSelection(0);
     
-    flexGridSizer351->Add(m_choiceEngine, 0, wxLEFT|wxRIGHT|wxBOTTOM, 5);
+    flexGridSizer351->Add(m_choiceEngine, 0, wxLEFT|wxRIGHT|wxBOTTOM, WXC_FROM_DIP(5));
     
-    m_staticText638 = new wxStaticText(m_panel259, wxID_ANY, _("Errors on page:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText638 = new wxStaticText(m_panel259, wxID_ANY, _("Errors on page:"), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     
-    boxSizer261->Add(m_staticText638, 0, wxLEFT|wxRIGHT|wxTOP, 5);
+    boxSizer261->Add(m_staticText638, 0, wxLEFT|wxRIGHT|wxTOP, WXC_FROM_DIP(5));
     
-    m_sliderPageCapacity = new wxSlider(m_panel259, wxID_ANY, 100, 1, 200, wxDefaultPosition, wxSize(-1,-1), wxSL_LABELS|wxSL_HORIZONTAL);
+    m_sliderPageCapacity = new wxSlider(m_panel259, wxID_ANY, 100, 1, 200, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), wxSL_LABELS|wxSL_HORIZONTAL);
     
-    boxSizer261->Add(m_sliderPageCapacity, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, 5);
+    boxSizer261->Add(m_sliderPageCapacity, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxOmitNonWorkspace = new wxCheckBox(m_panel259, wxID_ANY, _("Show locations only from my workspace."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxOmitNonWorkspace = new wxCheckBox(m_panel259, wxID_ANY, _("Show locations only from my workspace."), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     m_checkBoxOmitNonWorkspace->SetValue(false);
     
-    boxSizer261->Add(m_checkBoxOmitNonWorkspace, 0, wxALL, 5);
+    boxSizer261->Add(m_checkBoxOmitNonWorkspace, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxOmitDuplications = new wxCheckBox(m_panel259, wxID_ANY, _("Remove duplicate records."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxOmitDuplications = new wxCheckBox(m_panel259, wxID_ANY, _("Remove duplicate records."), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     m_checkBoxOmitDuplications->SetValue(false);
     
-    boxSizer261->Add(m_checkBoxOmitDuplications, 0, wxALL, 5);
+    boxSizer261->Add(m_checkBoxOmitDuplications, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_checkBoxOmitSuppressed = new wxCheckBox(m_panel259, wxID_ANY, _("Remove suppressed errors."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxOmitSuppressed = new wxCheckBox(m_panel259, wxID_ANY, _("Remove suppressed errors."), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     m_checkBoxOmitSuppressed->SetValue(false);
     
-    boxSizer261->Add(m_checkBoxOmitSuppressed, 0, wxALL, 5);
+    boxSizer261->Add(m_checkBoxOmitSuppressed, 0, wxALL, WXC_FROM_DIP(5));
     
     wxBoxSizer* boxSizer430 = new wxBoxSizer(wxVERTICAL);
     
-    boxSizer261->Add(boxSizer430, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_LEFT, 20);
+    boxSizer261->Add(boxSizer430, 0, wxLEFT|wxRIGHT|wxEXPAND|wxALIGN_LEFT, WXC_FROM_DIP(20));
     
-    m_checkBoxOmitSuppressionsUnchanged = new wxCheckBox(m_panel259, wxID_ANY, _("Remove errors only if suppression rule was added without any change."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxOmitSuppressionsUnchanged = new wxCheckBox(m_panel259, wxID_ANY, _("Remove errors only if suppression rule was added without any change."), wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1,-1)), 0);
     m_checkBoxOmitSuppressionsUnchanged->SetValue(false);
     m_checkBoxOmitSuppressionsUnchanged->Hide();
     
-    boxSizer430->Add(m_checkBoxOmitSuppressionsUnchanged, 0, wxALL, 5);
+    boxSizer430->Add(m_checkBoxOmitSuppressionsUnchanged, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_panel263 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel263 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook251, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     int m_panel263ImgIndex;
     m_panel263ImgIndex = m_treebook251_il->Add(wxXmlResource::Get()->LoadBitmap(wxT("st-george_sm")));
     m_treebook251->AddPage(m_panel263, _("Valgrind (memcheck)"), false, m_panel263ImgIndex);
     
-    m_panel669 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel669 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook251, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook251->InsertSubPage(1, m_panel669, _("Command Line"), false, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer673 = new wxBoxSizer(wxVERTICAL);
@@ -575,76 +645,76 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     flexGridSizer269->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer269->AddGrowableCol(1);
     
-    boxSizer673->Add(flexGridSizer269, 0, wxALL|wxEXPAND, 5);
+    boxSizer673->Add(flexGridSizer269, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText271 = new wxStaticText(m_panel669, wxID_ANY, _("Valgrind executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText271 = new wxStaticText(m_panel669, wxID_ANY, _("Valgrind executable:"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     
-    flexGridSizer269->Add(m_staticText271, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer269->Add(m_staticText271, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_filePickerValgrindBinary = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
+    m_filePickerValgrindBinary = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL);
     m_filePickerValgrindBinary->SetToolTip(_("Select valgrind executable"));
     
-    flexGridSizer269->Add(m_filePickerValgrindBinary, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer269->Add(m_filePickerValgrindBinary, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxStaticBoxSizer* staticBoxSizer329 = new wxStaticBoxSizer( new wxStaticBox(m_panel669, wxID_ANY, _("Command line options")), wxVERTICAL);
     
-    boxSizer673->Add(staticBoxSizer329, 0, wxALL|wxEXPAND, 5);
+    boxSizer673->Add(staticBoxSizer329, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     wxFlexGridSizer* flexGridSizer331 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer331->SetFlexibleDirection( wxBOTH );
     flexGridSizer331->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
     flexGridSizer331->AddGrowableCol(1);
     
-    staticBoxSizer329->Add(flexGridSizer331, 1, wxALL|wxEXPAND, 5);
+    staticBoxSizer329->Add(flexGridSizer331, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText333 = new wxStaticText(m_panel669, wxID_ANY, _("Mandatory:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText333 = new wxStaticText(m_panel669, wxID_ANY, _("Mandatory:"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     m_staticText333->SetToolTip(_("Please do not use these options again and do not change their values!\nPlugin won't work."));
     
-    flexGridSizer331->Add(m_staticText333, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(m_staticText333, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlValgrindMandatoryOptions = new wxTextCtrl(m_panel669, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlValgrindMandatoryOptions = new wxTextCtrl(m_panel669, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     m_textCtrlValgrindMandatoryOptions->SetToolTip(_("Please do not use these options again and do not change their values!\nPlugin won't work."));
     m_textCtrlValgrindMandatoryOptions->Enable(false);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlValgrindMandatoryOptions->SetHint(wxT(""));
     #endif
     
-    flexGridSizer331->Add(m_textCtrlValgrindMandatoryOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(m_textCtrlValgrindMandatoryOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    flexGridSizer331->Add(0, 0, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(0, 0, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_staticText337 = new wxStaticText(m_panel669, wxID_ANY, _("Regular:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText337 = new wxStaticText(m_panel669, wxID_ANY, _("Regular:"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     
-    flexGridSizer331->Add(m_staticText337, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(m_staticText337, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_textCtrlValgrindOptions = new wxTextCtrl(m_panel669, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_textCtrlValgrindOptions = new wxTextCtrl(m_panel669, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     #if wxVERSION_NUMBER >= 3000
     m_textCtrlValgrindOptions->SetHint(wxT(""));
     #endif
     
-    flexGridSizer331->Add(m_textCtrlValgrindOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(m_textCtrlValgrindOptions, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
-    m_bmpButton341 = new wxBitmapButton(m_panel669, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("reload")), wxDefaultPosition, wxSize(-1,-1), wxBU_AUTODRAW);
+    m_bmpButton341 = new wxBitmapButton(m_panel669, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("reload")), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), wxBU_AUTODRAW);
     m_bmpButton341->SetToolTip(_("Reload defaults"));
     
-    flexGridSizer331->Add(m_bmpButton341, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    flexGridSizer331->Add(m_bmpButton341, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     wxStaticBoxSizer* staticBoxSizer432 = new wxStaticBoxSizer( new wxStaticBox(m_panel669, wxID_ANY, _("Temporary output file")), wxVERTICAL);
     
-    boxSizer673->Add(staticBoxSizer432, 0, wxALL|wxEXPAND, 5);
+    boxSizer673->Add(staticBoxSizer432, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxOutputInPrivateFolder = new wxCheckBox(m_panel669, wxID_ANY, _("Use log file in workspace private folder."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxOutputInPrivateFolder = new wxCheckBox(m_panel669, wxID_ANY, _("Use log file in workspace private folder."), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     m_checkBoxOutputInPrivateFolder->SetValue(false);
     m_checkBoxOutputInPrivateFolder->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
-    staticBoxSizer432->Add(m_checkBoxOutputInPrivateFolder, 0, wxALL, 5);
+    staticBoxSizer432->Add(m_checkBoxOutputInPrivateFolder, 0, wxALL, WXC_FROM_DIP(5));
     
-    m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1,-1), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
-    m_filePickerValgrindOutputFile->SetToolTip(_("It is used intenally by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
+    m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
+    m_filePickerValgrindOutputFile->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
-    staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND, 5);
+    staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_panel671 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_panel671 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook251, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_treebook251->InsertSubPage(1, m_panel671, _("Supression"), false, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer675 = new wxBoxSizer(wxVERTICAL);
@@ -652,29 +722,29 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     wxStaticBoxSizer* staticBoxSizer437 = new wxStaticBoxSizer( new wxStaticBox(m_panel671, wxID_ANY, _("Suppression files")), wxVERTICAL);
     
-    boxSizer675->Add(staticBoxSizer437, 1, wxALL|wxEXPAND, 5);
+    boxSizer675->Add(staticBoxSizer437, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_checkBoxSuppFileInPrivateFolder = new wxCheckBox(m_panel671, wxID_ANY, _("Use workspace specific supp file as default."), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_checkBoxSuppFileInPrivateFolder = new wxCheckBox(m_panel671, wxID_ANY, _("Use workspace specific supp file as default."), wxDefaultPosition, wxDLG_UNIT(m_panel671, wxSize(-1,-1)), 0);
     m_checkBoxSuppFileInPrivateFolder->SetValue(false);
-    m_checkBoxSuppFileInPrivateFolder->SetToolTip(_("This file is located in workspace private folder.\nIf you don't like this option, you have to add at least one file to list below."));
+    m_checkBoxSuppFileInPrivateFolder->SetToolTip(_("This file is located in workspace private folder.\nIf you don't like this option, you have to add at leas one file to list below."));
     
-    staticBoxSizer437->Add(m_checkBoxSuppFileInPrivateFolder, 0, wxALL, 5);
+    staticBoxSizer437->Add(m_checkBoxSuppFileInPrivateFolder, 0, wxALL, WXC_FROM_DIP(5));
     
     wxArrayString m_listBoxSuppFilesArr;
-    m_listBoxSuppFiles = new wxListBox(m_panel671, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxSuppFilesArr, wxLB_EXTENDED|wxLB_MULTIPLE);
+    m_listBoxSuppFiles = new wxListBox(m_panel671, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel671, wxSize(-1,-1)), m_listBoxSuppFilesArr, wxLB_EXTENDED|wxLB_MULTIPLE);
     
-    staticBoxSizer437->Add(m_listBoxSuppFiles, 1, wxALL|wxEXPAND, 5);
+    staticBoxSizer437->Add(m_listBoxSuppFiles, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     m_listBoxSuppFiles->SetMinSize(wxSize(-1,200));
     
     m_stdBtnSizer511 = new wxStdDialogButtonSizer();
     
-    boxSizer249->Add(m_stdBtnSizer511, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
+    boxSizer249->Add(m_stdBtnSizer511, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
     
-    m_button513 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button513 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button513->SetDefault();
     m_stdBtnSizer511->AddButton(m_button513);
     
-    m_button515 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_button515 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer511->AddButton(m_button515);
     m_stdBtnSizer511->Realize();
     
@@ -692,11 +762,15 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     m_treebook251->ExpandNode( 3, true );
     
     SetName(wxT("MemCheckSettingsDialogBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
+    SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
+    if (GetSizer()) {
          GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);

@@ -971,3 +971,13 @@ void MemCheckOutputView::Clear()
 }
 void MemCheckOutputView::OnStop(wxCommandEvent& event) { m_plugin->StopProcess(); }
 void MemCheckOutputView::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->IsRunning()); }
+
+void MemCheckOutputView::OnClearOutput(wxCommandEvent& event)
+{
+    Clear();
+}
+
+void MemCheckOutputView::OnClearOutputUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_notebookOutputView->GetCurrentPage() == m_panelErrors && m_listCtrlErrors->GetItemCount() > 0);
+}

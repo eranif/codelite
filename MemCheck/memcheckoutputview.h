@@ -132,12 +132,14 @@ protected:
     wxDataViewItem GetAdjacentItem(const wxDataViewItem &item, bool forward); ///< for an item(error or location) get adjecent item. this is used for next/prev functionality. Forward == true means item below, forward == false means item above.
     void ExpandAll(const wxDataViewItem & item); ///< wxDVC doesn't implenet ExpandAll, so this is it
     void SetCurrentItem(const wxDataViewItem &item); ///< marks current item with little green right arrow
-    void MarkTree(const wxDataViewItem &item, bool checked); ///< (un)checks all items (whole one tree) that belong to an error
+    void MarkTree(const wxDataViewItem &item, bool checked); ///< (un)checks all items that belong to a particular error
+    void MarkAllErrors(bool state); // (Un)Marks all errors. Called by On(un)MarkAllErrors()
     unsigned int GetColumnByName(const wxString & name); ///< Finds index of an wxDVC column by its caption
     void JumpToLocation(const wxDataViewItem &item); ///< Opens file specifieed in particular ErrorLocation in editor
     void ShowPageView(size_t page); ///< Item could be more than is good for wxDVC. So paging is implementetd. This method fills wxDVC with portion of errors.
     void AddTree(const wxDataViewItem & parentItem, MemCheckError & error); ///< Adds one error and all its location into wxDVC as tree
     void OnJumpToLocation(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
+    void OnMarkAllErrors(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
     void OnUnmarkAllErrors(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
     void OnSuppressError(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
     void OnSuppressMarkedErrors(wxCommandEvent & event); ///< Callback from wxDVC popupmenu

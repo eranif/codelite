@@ -488,6 +488,7 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     menuItem = menu.Append(XRCID("memcheck_jump_to_location"), wxT("Jump to location"));
     menuItem->Enable(dataItem.IsOk() && !m_dataViewCtrlErrorsModel->IsContainer(dataItem));
     menu.AppendSeparator();
+    menuItem = menu.Append(XRCID("memcheck_mark_all_errors"), "Mark all");
     menuItem = menu.Append(XRCID("memcheck_unmark_all_errors"), wxT("Unmark all"));
     menuItem->Enable(m_markedErrorsCount);
     menu.AppendSeparator();
@@ -505,6 +506,8 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
 
     menu.Connect(XRCID("memcheck_jump_to_location"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(MemCheckOutputView::OnJumpToLocation), new wxDataViewEvent(event), (wxEvtHandler*)this);
+    menu.Connect(XRCID("memcheck_mark_all_errors"), wxEVT_COMMAND_MENU_SELECTED,
+        wxCommandEventHandler(MemCheckOutputView::OnMarkAllErrors), new wxDataViewEvent(event), (wxEvtHandler*)this);
     menu.Connect(XRCID("memcheck_unmark_all_errors"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(MemCheckOutputView::OnUnmarkAllErrors), new wxDataViewEvent(event), (wxEvtHandler*)this);
     menu.Connect(XRCID("memcheck_suppress_error"), wxEVT_COMMAND_MENU_SELECTED,
@@ -533,13 +536,23 @@ void MemCheckOutputView::OnJumpToLocation(wxCommandEvent& event)
     JumpToLocation(item);
 }
 
+void MemCheckOutputView::OnMarkAllErrors(wxCommandEvent& event)
+{
+    MarkAllErrors(true);
+}
+
 void MemCheckOutputView::OnUnmarkAllErrors(wxCommandEvent& event)
+{
+    MarkAllErrors(false);
+}
+
+void MemCheckOutputView::MarkAllErrors(bool state)
 {
     wxDataViewItemArray items;
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
 
     for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
-        MarkTree(*it, false);
+        MarkTree(*it, state);
     }
 }
 

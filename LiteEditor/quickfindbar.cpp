@@ -109,7 +109,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
                        wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bmps->LoadBitmap("whole-word"), "", wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("use-regex"), _("Regex"), bmps->LoadBitmap("regular-expression"), "", wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("highlight-matches"), _("Regex"), bmps->LoadBitmap("marker"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("highlight-matches"), _("Highlight matches"), bmps->LoadBitmap("marker"), "", wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bmps->LoadBitmap("text_selection"), "",
                        wxITEM_CHECK);
     m_toolbar->Realize();

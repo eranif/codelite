@@ -36,6 +36,7 @@ class CodeLiteDiff : public IPlugin
 
 protected:
     void OnNewDiff(wxCommandEvent& e);
+    void OnNewDiffFolder(wxCommandEvent& e);
     void OnTabContextMenu(clContextMenuEvent& event);
     void OnDiff(wxCommandEvent& event);
     void DoClear();

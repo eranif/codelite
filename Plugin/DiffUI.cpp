@@ -32,36 +32,15 @@ DiffFoldersBaseFrame::DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(boxSizer6);
 
-    m_splitter = new wxSplitterWindow(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)),
-                                      wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter->SetSashGravity(0.5);
-    m_splitter->SetMinimumPaneSize(10);
+    m_dvListCtrl = new clThemedListCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(500, 400)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer6->Add(m_splitter, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer6->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage12 =
-        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage12->SetSizer(boxSizer18);
-
-    m_treeCtrlLeft = new clThemedTreeCtrl(m_splitterPage12, wxID_ANY, wxDefaultPosition,
-                                          wxDLG_UNIT(m_splitterPage12, wxSize(-1, -1)), wxTR_DEFAULT_STYLE);
-
-    boxSizer18->Add(m_treeCtrlLeft, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitterPage16 =
-        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPage12, m_splitterPage16, 0);
-
-    wxBoxSizer* boxSizer20 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage16->SetSizer(boxSizer20);
-
-    m_treeCtrlRight = new clThemedTreeCtrl(m_splitterPage16, wxID_ANY, wxDefaultPosition,
-                                           wxDLG_UNIT(m_splitterPage16, wxSize(-1, -1)), wxTR_DEFAULT_STYLE);
-
-    boxSizer20->Add(m_treeCtrlRight, 1, wxEXPAND, WXC_FROM_DIP(5));
-
+    m_dvListCtrl->AppendIconTextColumn(_("Left"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("Right"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
     m_menuBar26 = new wxMenuBar(0);
     this->SetMenuBar(m_menuBar26);
 
@@ -77,7 +56,7 @@ DiffFoldersBaseFrame::DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id, cons
     m_menuFile->Append(m_menuItemClose);
 
     SetName(wxT("DiffFoldersBaseFrame"));
-    SetSize(wxDLG_UNIT(this, wxSize(800, 600)));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -92,18 +71,10 @@ DiffFoldersBaseFrame::DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id, cons
     }
 #endif
     // Connect events
-    m_treeCtrlLeft->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
-                            wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftFolderExpanding), NULL, this);
-    m_treeCtrlLeft->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                            wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftSelectionChanged), NULL, this);
-    m_treeCtrlLeft->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                            wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftItemActivated), NULL, this);
-    m_treeCtrlRight->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
-                             wxTreeEventHandler(DiffFoldersBaseFrame::OnRightFolderExpanding), NULL, this);
-    m_treeCtrlRight->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                             wxTreeEventHandler(DiffFoldersBaseFrame::OnRightItemActivated), NULL, this);
-    m_treeCtrlRight->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                             wxTreeEventHandler(DiffFoldersBaseFrame::OnRightSelectionChanged), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                          wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                          wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemContextMenu), NULL, this);
     this->Connect(m_menuItemNewComparison->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                   wxCommandEventHandler(DiffFoldersBaseFrame::OnNewCmparison), NULL, this);
     this->Connect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
@@ -112,18 +83,10 @@ DiffFoldersBaseFrame::DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id, cons
 
 DiffFoldersBaseFrame::~DiffFoldersBaseFrame()
 {
-    m_treeCtrlLeft->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
-                               wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftFolderExpanding), NULL, this);
-    m_treeCtrlLeft->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                               wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftSelectionChanged), NULL, this);
-    m_treeCtrlLeft->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                               wxTreeEventHandler(DiffFoldersBaseFrame::OnLeftItemActivated), NULL, this);
-    m_treeCtrlRight->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
-                                wxTreeEventHandler(DiffFoldersBaseFrame::OnRightFolderExpanding), NULL, this);
-    m_treeCtrlRight->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                                wxTreeEventHandler(DiffFoldersBaseFrame::OnRightItemActivated), NULL, this);
-    m_treeCtrlRight->Disconnect(wxEVT_COMMAND_TREE_SEL_CHANGED,
-                                wxTreeEventHandler(DiffFoldersBaseFrame::OnRightSelectionChanged), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                             wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                             wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemContextMenu), NULL, this);
     this->Disconnect(m_menuItemNewComparison->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(DiffFoldersBaseFrame::OnNewCmparison), NULL, this);
     this->Disconnect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,

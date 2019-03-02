@@ -34,6 +34,7 @@
 #include "wx/menu.h"
 #include <wx/ffile.h>
 #include <wx/xrc/xmlres.h>
+#include "DiffFoldersFrame.h"
 
 static CodeLiteDiff* thePlugin = NULL;
 
@@ -66,7 +67,9 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_comparison", "Ctrl-Shift-C",
                                                    "Plugins::Diff Tool::New File Comparison");
-    wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
+    clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_folder", "", "Plugins::Diff Tool::New Folder Comparison");
+    wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
+    wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiffFolder, this, XRCID("diff_new_folder"));
 }
 
 CodeLiteDiff::~CodeLiteDiff() {}
@@ -76,7 +79,8 @@ void CodeLiteDiff::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu;
-    menu->Append(XRCID("diff_new_comparison"), _("New Diff.."), _("Start new diff"));
+    menu->Append(XRCID("diff_new_comparison"), _("New File Comparison"), _("Start new diff"));
+    menu->Append(XRCID("diff_new_folder"), _("New Folder Comparison"), _("Start new folders diff"));
     pluginsMenu->Append(wxID_ANY, _("Diff Tool"), menu);
 }
 
@@ -187,4 +191,10 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
     }
 
     return tmpFile;
+}
+
+void CodeLiteDiff::OnNewDiffFolder(wxCommandEvent& e)
+{
+    DiffFoldersFrame* frame = new DiffFoldersFrame(EventNotifier::Get()->TopFrame());
+    frame->Show();
 }

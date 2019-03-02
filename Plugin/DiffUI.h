@@ -15,9 +15,8 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/splitter.h>
-#include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/menu.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
@@ -43,11 +42,7 @@ class DiffFoldersBaseFrame : public wxFrame
 {
 protected:
     wxPanel* m_panel4;
-    wxSplitterWindow* m_splitter;
-    wxPanel* m_splitterPage12;
-    clThemedTreeCtrl* m_treeCtrlLeft;
-    wxPanel* m_splitterPage16;
-    clThemedTreeCtrl* m_treeCtrlRight;
+    clThemedListCtrl* m_dvListCtrl;
     wxMenuBar* m_menuBar26;
     wxMenu* m_menuFile;
     wxMenuItem* m_menuItemNewComparison;
@@ -55,25 +50,17 @@ protected:
     wxMenuItem* m_menuItemClose;
 
 protected:
-    virtual void OnLeftFolderExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnLeftSelectionChanged(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnLeftItemActivated(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnRightFolderExpanding(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnRightItemActivated(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnRightSelectionChanged(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemContextMenu(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewCmparison(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clThemedTreeCtrl* GetTreeCtrlLeft() { return m_treeCtrlLeft; }
-    wxPanel* GetSplitterPage12() { return m_splitterPage12; }
-    clThemedTreeCtrl* GetTreeCtrlRight() { return m_treeCtrlRight; }
-    wxPanel* GetSplitterPage16() { return m_splitterPage16; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel4() { return m_panel4; }
     wxMenuBar* GetMenuBar26() { return m_menuBar26; }
     DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Diff Folders"),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxRESIZE_BORDER);
     virtual ~DiffFoldersBaseFrame();
 };

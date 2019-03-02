@@ -89,7 +89,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     DoCreateToolbar();
     SetName("SvnCommitDialog");
     GetSizer()->Fit(this);
-    // WindowAttrManager::Load(this);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,

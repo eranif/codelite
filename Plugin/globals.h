@@ -616,4 +616,8 @@ WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
  */
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
 
+/**
+ * @brief returna top level window best size using its parent's size as reference
+ */
+WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
 #endif // GLOBALS_H

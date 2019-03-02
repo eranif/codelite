@@ -67,7 +67,8 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
     clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_comparison", "Ctrl-Shift-C",
                                                    "Plugins::Diff Tool::New File Comparison");
-    clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_folder", "", "Plugins::Diff Tool::New Folder Comparison");
+    clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_folder", "Ctrl-Alt-F",
+                                                   "Plugins::Diff Tool::New Folder Comparison");
     wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
     wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiffFolder, this, XRCID("diff_new_folder"));
 }
@@ -195,6 +196,6 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
 
 void CodeLiteDiff::OnNewDiffFolder(wxCommandEvent& e)
 {
-    DiffFoldersFrame* frame = new DiffFoldersFrame(EventNotifier::Get()->TopFrame());
-    frame->Show();
+    DiffFoldersFrame dlg(EventNotifier::Get()->TopFrame());
+    dlg.ShowModal();
 }

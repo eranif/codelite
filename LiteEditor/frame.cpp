@@ -5768,3 +5768,8 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 }
 
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event) { event.Check(GetMenuBar()->IsShown()); }
+
+void clMainFrame::Raise()
+{
+    wxFrame::Raise();
+}

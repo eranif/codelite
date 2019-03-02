@@ -11,88 +11,6 @@ extern void wxCrafterIlcShpInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-DiffFoldersBaseFrame::DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                           const wxSize& size, long style)
-    : wxFrame(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCrafterIlcShpInitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer2);
-
-    m_panel4 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    boxSizer2->Add(m_panel4, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer6 = new wxBoxSizer(wxVERTICAL);
-    m_panel4->SetSizer(boxSizer6);
-
-    m_dvListCtrl = new clThemedListCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(500, 400)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer6->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvListCtrl->AppendIconTextColumn(_("Left"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                       wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendIconTextColumn(_("Right"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                       wxDATAVIEW_COL_RESIZABLE);
-    m_menuBar26 = new wxMenuBar(0);
-    this->SetMenuBar(m_menuBar26);
-
-    m_menuFile = new wxMenu();
-    m_menuBar26->Append(m_menuFile, _("&File"));
-
-    m_menuItemNewComparison = new wxMenuItem(m_menuFile, wxID_NEW, _("New Comparison"), wxT(""), wxITEM_NORMAL);
-    m_menuFile->Append(m_menuItemNewComparison);
-
-    m_menuFile->AppendSeparator();
-
-    m_menuItemClose = new wxMenuItem(m_menuFile, wxID_CLOSE, _("&Close"), wxT(""), wxITEM_NORMAL);
-    m_menuFile->Append(m_menuItemClose);
-
-    SetName(wxT("DiffFoldersBaseFrame"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemActivated), NULL, this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                          wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemContextMenu), NULL, this);
-    this->Connect(m_menuItemNewComparison->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(DiffFoldersBaseFrame::OnNewCmparison), NULL, this);
-    this->Connect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(DiffFoldersBaseFrame::OnClose), NULL, this);
-}
-
-DiffFoldersBaseFrame::~DiffFoldersBaseFrame()
-{
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemActivated), NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                             wxDataViewEventHandler(DiffFoldersBaseFrame::OnItemContextMenu), NULL, this);
-    this->Disconnect(m_menuItemNewComparison->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(DiffFoldersBaseFrame::OnNewCmparison), NULL, this);
-    this->Disconnect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(DiffFoldersBaseFrame::OnClose), NULL, this);
-}
-
 DiffSelectFoldersBaseDlg::DiffSelectFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
                                                    const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
@@ -165,4 +83,70 @@ DiffSelectFoldersBaseDlg::DiffSelectFoldersBaseDlg(wxWindow* parent, wxWindowID 
 DiffSelectFoldersBaseDlg::~DiffSelectFoldersBaseDlg()
 {
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DiffSelectFoldersBaseDlg::OnOKUI), NULL, this);
+}
+
+DiffFoldersBaseDlg::DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterIlcShpInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer2);
+
+    m_panel4 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer2->Add(m_panel4, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer6 = new wxBoxSizer(wxVERTICAL);
+    m_panel4->SetSizer(boxSizer6);
+
+    m_toolbar = new clToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer6->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl = new clThemedListCtrl(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(500, 400)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer6->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl->AppendIconTextColumn(_("Left"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(_("Right"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
+
+    SetName(wxT("DiffFoldersBaseDlg"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                          wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemActivated), NULL, this);
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                          wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemContextMenu), NULL, this);
+}
+
+DiffFoldersBaseDlg::~DiffFoldersBaseDlg()
+{
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                             wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemActivated), NULL, this);
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                             wxDataViewEventHandler(DiffFoldersBaseDlg::OnItemContextMenu), NULL, this);
 }

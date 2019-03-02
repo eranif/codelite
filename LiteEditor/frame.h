@@ -147,8 +147,9 @@ protected:
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show, bool update = true);
     void InitializeLogo();
-
+    
 public:
+    virtual void Raise();
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
     

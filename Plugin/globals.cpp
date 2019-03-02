@@ -2134,3 +2134,20 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
     vr << cb;
     return vr;
 }
+
+void clSetTLWindowBestSizeAndPosition(wxWindow* win)
+{
+    if(!win || !win->GetParent()) { return; }
+    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
+    wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win);
+    
+    if(!tlw || !parentTlw) { return; }
+    
+    wxRect parentRect = parentTlw->GetSize();
+    parentRect.Deflate(20);
+    tlw->SetSize(parentRect.GetSize());
+    tlw->CenterOnParent();
+    
+    // If the parent is maximized, maximize this window as well
+    if(parentTlw->IsMaximized()) { tlw->Maximize(); }
+}

@@ -10,18 +10,18 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/frame.h>
+#include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/dataview.h>
-#include "clThemedListCtrl.h"
-#include <wx/menu.h>
-#include <wx/dialog.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -37,33 +37,6 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
-
-class DiffFoldersBaseFrame : public wxFrame
-{
-protected:
-    wxPanel* m_panel4;
-    clThemedListCtrl* m_dvListCtrl;
-    wxMenuBar* m_menuBar26;
-    wxMenu* m_menuFile;
-    wxMenuItem* m_menuItemNewComparison;
-    wxMenuItem* m_menuItem32;
-    wxMenuItem* m_menuItemClose;
-
-protected:
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnItemContextMenu(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnNewCmparison(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    wxPanel* GetPanel4() { return m_panel4; }
-    wxMenuBar* GetMenuBar26() { return m_menuBar26; }
-    DiffFoldersBaseFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Diff Folders"),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                         long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxRESIZE_BORDER);
-    virtual ~DiffFoldersBaseFrame();
-};
 
 class DiffSelectFoldersBaseDlg : public wxDialog
 {
@@ -88,6 +61,27 @@ public:
                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DiffSelectFoldersBaseDlg();
+};
+
+class DiffFoldersBaseDlg : public wxDialog
+{
+protected:
+    wxPanel* m_panel4;
+    clToolBar* m_toolbar;
+    clThemedListCtrl* m_dvListCtrl;
+
+protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemContextMenu(wxDataViewEvent& event) { event.Skip(); }
+
+public:
+    clToolBar* GetToolbar() { return m_toolbar; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxPanel* GetPanel4() { return m_panel4; }
+    DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Diff Folders"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~DiffFoldersBaseDlg();
 };
 
 #endif

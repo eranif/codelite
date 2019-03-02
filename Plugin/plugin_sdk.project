@@ -669,6 +669,8 @@
     <File Name="sftp_settings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Diff">
+    <File Name="DiffFoldersDlg.cpp"/>
+    <File Name="DiffFoldersDlg.h"/>
     <File Name="DiffSelectFoldersDlg.cpp"/>
     <File Name="DiffSelectFoldersDlg.h"/>
     <File Name="DiffFoldersFrame.cpp"/>

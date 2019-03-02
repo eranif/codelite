@@ -5,7 +5,7 @@
 class DiffSelectFoldersDlg : public DiffSelectFoldersBaseDlg
 {
 public:
-    DiffSelectFoldersDlg(wxWindow* parent);
+    DiffSelectFoldersDlg(wxWindow* parent, const wxString& left = "", const wxString& right = "");
     virtual ~DiffSelectFoldersDlg();
 
 protected:

@@ -15,9 +15,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
     DiffSideBySidePanel* p = new DiffSideBySidePanel(this);
     p->SetFilesDetails(left, right);
     p->Diff();
-    if(originSourceControl) {
-        p->SetOriginSourceControl();
-    }
+    if(originSourceControl) { p->SetOriginSourceControl(); }
     sz->Add(p, 1, wxEXPAND, 0);
     WindowAttrManager::Load(this);
 
@@ -28,6 +26,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
         b.AddIcon(icn);
     }
     SetIcons(b);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent)
@@ -47,6 +46,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
         b.AddIcon(icn);
     }
     SetIcons(b);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile)
@@ -57,10 +57,8 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
     SetSizer(sz);
     DiffSideBySidePanel* p = new DiffSideBySidePanel(this);
     sz->Add(p, 1, wxEXPAND, 0);
-    if(isTempFile) {
-        p->SetSaveFilepaths(false);
-    }
-    
+    if(isTempFile) { p->SetSaveFilepaths(false); }
+
     p->DiffNew(left, right);
     WindowAttrManager::Load(this);
     wxIconBundle b;
@@ -70,6 +68,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
         b.AddIcon(icn);
     }
     SetIcons(b);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::~clDiffFrame() {}

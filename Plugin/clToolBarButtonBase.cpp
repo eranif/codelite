@@ -39,6 +39,8 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         wxColour highlightColour = bgColour;
         wxColour pressBgColour = bgColour.ChangeLightness(70);
         wxRect highlightRect = m_buttonRect;
+        highlightRect.Inflate(1);
+        
         penColour = pressBgColour;
         dc.SetBrush(pressBgColour);
         dc.SetPen(penColour);

@@ -268,6 +268,7 @@ void clToolBar::OnMotion(wxMouseEvent& event)
 {
     wxPoint pos = event.GetPosition();
     bool refreshNeeded = false;
+    bool tooltipValid = false;
     for(size_t i = 0; i < m_visibleButtons.size(); ++i) {
         clToolBarButtonBase* button = m_visibleButtons[i];
         if(button->Contains(pos)) {
@@ -281,6 +282,7 @@ void clToolBar::OnMotion(wxMouseEvent& event)
                 UnsetToolTip();
             } else {
                 // button->SetHover(true);
+                tooltipValid = true;
                 if(button->GetLabel().IsEmpty()) {
                     UnsetToolTip();
                 } else {
@@ -296,6 +298,7 @@ void clToolBar::OnMotion(wxMouseEvent& event)
             button->SetHover(false);
         }
     }
+    if (!tooltipValid) { UnsetToolTip(); }
     if(refreshNeeded) { Refresh(); }
 }
 

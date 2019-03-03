@@ -51,7 +51,7 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : inactiveTabPenColour);
     wxColour separatorColour = penColour.ChangeLightness(110);
 
-    wxFont font = GetTabFont(tabInfo.IsActive());
+    wxFont font = GetTabFont(false);
     fontDC.SetTextForeground(textColour);
     fontDC.SetFont(font);
 

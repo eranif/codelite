@@ -178,23 +178,28 @@ void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
 
     DiffView viewList;
 
-    // Add all the left entries
-    for(size_t i = 0; i < leftFiles.size(); ++i) {
-        const wxString& filename = leftFiles.Item(i);
-        wxString fullname = wxFileName(filename).GetFullName();
-        viewList.AddFile(fullname);
-        viewList.GetEntry(fullname).SetExistsInLeft(true);
-    }
-
-    // add the right entries
-    for(size_t i = 0; i < rightFiles.size(); ++i) {
-        const wxString& filename = rightFiles.Item(i);
-        wxString fullname = wxFileName(filename).GetFullName();
-        if(viewList.HasFile(fullname)) {
-            viewList.GetEntry(fullname).SetExistsInRight(true);
-        } else {
-            viewList.AddFile(fullname);
-            viewList.GetEntry(fullname).SetExistsInRight(true);
+    // Add all the files
+    size_t count = wxMax(leftFiles.size(), rightFiles.size());
+    for(size_t i = 0; i < count; ++i) {
+        if(i < leftFiles.size()) {
+            const wxString& filename = leftFiles.Item(i);
+            wxString fullname = wxFileName(filename).GetFullName();
+            if(viewList.HasFile(fullname)) {
+                viewList.GetEntry(fullname).SetExistsInLeft(true);
+            } else {
+                viewList.AddFile(fullname);
+                viewList.GetEntry(fullname).SetExistsInLeft(true);
+            }
+        }
+        if(i < rightFiles.size()) {
+            const wxString& filename = rightFiles.Item(i);
+            wxString fullname = wxFileName(filename).GetFullName();
+            if(viewList.HasFile(fullname)) {
+                viewList.GetEntry(fullname).SetExistsInRight(true);
+            } else {
+                viewList.AddFile(fullname);
+                viewList.GetEntry(fullname).SetExistsInRight(true);
+            }
         }
     }
 

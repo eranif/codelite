@@ -1054,6 +1054,11 @@ void clMainFrame::CreateGUIControls()
     m_myMenuBar = new MyMenuBar();
     m_myMenuBar->Set(mb);
     SetMenuBar(mb);
+    
+#ifdef __WXGTK__
+    bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
+    GetMenuBar()->Show(showMenuBar);
+#endif
 
     // Create the status bar
     m_statusBar = new clStatusBar(this, PluginManager::Get());
@@ -5767,7 +5772,15 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowMenuBar, !isShown);
 }
 
-void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event) { event.Check(GetMenuBar()->IsShown()); }
+void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event) 
+{ 
+#ifdef __WXGTK__
+    event.Check(GetMenuBar()->IsShown()); 
+#else
+    event.Check(true);
+    event.Enable(false); 
+#endif
+}
 
 void clMainFrame::Raise()
 {

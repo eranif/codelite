@@ -38,7 +38,7 @@ protected:
 public:
     typedef std::vector<clHeaderItem> Vect_t;
     static const int X_SPACER = 5;
-    static const int Y_SPACER = 2;
+    static const int Y_SPACER = 5;
 
 public:
     clHeaderItem();

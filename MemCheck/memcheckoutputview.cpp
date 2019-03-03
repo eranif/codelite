@@ -468,6 +468,7 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     menuItem->Enable(dataItem.IsOk() && !m_dataViewCtrlErrorsModel->IsContainer(dataItem));
     menu.AppendSeparator();
     menuItem = menu.Append(XRCID("memcheck_mark_all_errors"), "Mark all");
+    menuItem->Enable(unmarked);
     menuItem = menu.Append(XRCID("memcheck_unmark_all_errors"), wxT("Unmark all"));
     menuItem->Enable(marked);
     menu.AppendSeparator();

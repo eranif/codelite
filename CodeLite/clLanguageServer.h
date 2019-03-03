@@ -4,9 +4,9 @@
 #include "codelite_exports.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
-#include "clJSONRPC.h"
+#include "json_rpc/clJSONRPC.h"
 
-class WXDLLIMPEXP_CL clLanguageServer : public clJSONRPCSender
+class WXDLLIMPEXP_CL clLanguageServer : public json_rpc::Sender
 {
     IProcess* m_process = NULL;
 

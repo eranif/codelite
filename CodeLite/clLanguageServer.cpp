@@ -1,6 +1,8 @@
 #include "clLanguageServer.h"
 #include "file_logger.h"
 #include "processreaderthread.h"
+#include "json_rpc/clJSONRPC.h"
+#include "json_rpc/GotoDefinitionRequest.h"
 
 clLanguageServer::clLanguageServer()
 {
@@ -23,9 +25,6 @@ void clLanguageServer::Start(const wxString& command, const wxString& workingDir
 
 void clLanguageServer::FindDefinition(const wxFileName& filename, size_t line, size_t column)
 {
-    wxUnusedVar(filename);
-    wxUnusedVar(line);
-    wxUnusedVar(column);
     //{
     //  "jsonrpc": "2.0",
     //  "id": 1,
@@ -40,22 +39,9 @@ void clLanguageServer::FindDefinition(const wxFileName& filename, size_t line, s
     //    }
     //  }
     //}
-
-    clJSONRPCRequest req;
-    req.SetMethod("textDocument/definition");
-
-    // Build the params part of the request
-    clJSONRPC_Params params;
-    clJSONRPC_TextDocumentIdentifier text;
-    clJSONRPC_Position pos;
-    text.SetFilename(filename);
-    params.AddParam("textDocument", text);
-
-    pos.SetCharacter(column).SetLine(line);
-    params.AddParam("position", pos);
-
-    // Set the params
-    req.SetParams(params);
+    json_rpc::GotoDefinitionRequest req(filename, line, column);
+    wxString messageBuffer = req.ToString();
+    Send(messageBuffer);
 }
 
 void clLanguageServer::OnProcessTerminated(clProcessEvent& event) { clDEBUG() << "Langauge Server Terminated"; }

@@ -7,13 +7,13 @@
 clLanguageServer::clLanguageServer()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clLanguageServer::OnProcessTerminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clLanguageServer::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clLanguageServer::OnProcessOutput, this);
 }
 
 clLanguageServer::~clLanguageServer()
 {
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clLanguageServer::OnProcessTerminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clLanguageServer::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clLanguageServer::OnProcessOutput, this);
 }
 
 void clLanguageServer::Start(const wxString& command, const wxString& workingDirectory)

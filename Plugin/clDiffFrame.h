@@ -5,14 +5,14 @@
 #include "codelite_exports.h"
 #include <wx/frame.h>
 
-class WXDLLIMPEXP_SDK clDiffFrame : public wxFrame
+class WXDLLIMPEXP_SDK clDiffFrame : public wxDialog
 {
 public:
     clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& left, const DiffSideBySidePanel::FileInfo& right,
                 bool originSourceControl);
     clDiffFrame(wxWindow* parent);
     clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile);
-    ~clDiffFrame();
+    virtual ~clDiffFrame();
 };
 
 #endif // CLDIFFFRAME_H

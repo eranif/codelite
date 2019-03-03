@@ -94,8 +94,8 @@ void CodeLiteDiff::UnPlug()
 
 void CodeLiteDiff::OnNewDiff(wxCommandEvent& e)
 {
-    clDiffFrame* diff = new clDiffFrame(EventNotifier::Get()->TopFrame());
-    diff->Show();
+    clDiffFrame diff(EventNotifier::Get()->TopFrame());
+    diff.ShowModal();
 }
 
 void CodeLiteDiff::OnTabContextMenu(clContextMenuEvent& event)
@@ -164,8 +164,8 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             }
         }
 
-        clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), m_leftFile, secondFile, tempfile);
-        diffView->Show();
+        clDiffFrame diffView(EventNotifier::Get()->TopFrame(), m_leftFile, secondFile, tempfile);
+        diffView.ShowModal();
     }
 }
 

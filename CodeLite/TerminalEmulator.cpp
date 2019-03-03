@@ -72,8 +72,7 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command, bool waitOnExit, 
     console->SetWaitWhenDone(waitOnExit);
     console->SetWorkingDirectory(workingDirectory);
     console->SetCallback(new MyProcess(this));
-    
-    wxString consoleCommand;
+
     wxString strTitle = title;
     if(strTitle.IsEmpty()) {
         strTitle << "'" << command << "'";

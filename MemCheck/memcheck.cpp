@@ -377,7 +377,6 @@ void MemCheckPlugin::OnProcessOutput(clCommandEvent& event)
 void MemCheckPlugin::OnProcessTerminated(clCommandEvent& event)
 {
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("\n-- MemCheck process completed\n"));
-    wxWindowDisabler disableAll;
     wxBusyInfo wait(wxT(BUSY_MESSAGE));
     m_mgr->GetTheApp()->Yield();
 

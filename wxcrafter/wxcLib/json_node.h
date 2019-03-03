@@ -132,6 +132,11 @@ public:
      */
     void removeProperty(const wxString& name);
 
+    /**
+     * @brief detach element from json. Return the detached element
+     */
+    JSONElement detachProperty(const wxString& name);
+
     //////////////////////////////////////////////////
     // Array operations
     //////////////////////////////////////////////////

@@ -28,7 +28,6 @@
 #include <wx/filename.h>
 #include <wx/ffile.h>
 
-
 JSONRoot::JSONRoot(const wxString& text)
     : _json(NULL)
 {
@@ -50,14 +49,10 @@ JSONRoot::JSONRoot(const wxFileName& filename)
     wxString content;
     wxFFile fp(filename.GetFullPath(), wxT("rb"));
     if(fp.IsOpened()) {
-        if(fp.ReadAll(&content, wxConvUTF8)) {
-            _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
-        }
+        if(fp.ReadAll(&content, wxConvUTF8)) { _json = cJSON_Parse(content.mb_str(wxConvUTF8).data()); }
     }
 
-    if(!_json) {
-        _json = cJSON_CreateObject();
-    }
+    if(!_json) { _json = cJSON_CreateObject(); }
 }
 
 JSONRoot::~JSONRoot()
@@ -79,9 +74,7 @@ void JSONRoot::save(const wxFileName& fn) const
 
 JSONElement JSONRoot::toElement() const
 {
-    if(!_json) {
-        return JSONElement(NULL);
-    }
+    if(!_json) { return JSONElement(NULL); }
     return JSONElement(_json);
 }
 
@@ -89,14 +82,10 @@ wxString JSONRoot::errorString() const { return _errorString; }
 
 JSONElement JSONElement::namedObject(const wxString& name) const
 {
-    if(!_json) {
-        return JSONElement(NULL);
-    }
+    if(!_json) { return JSONElement(NULL); }
 
     cJSON* obj = cJSON_GetObjectItem(_json, name.mb_str(wxConvUTF8).data());
-    if(!obj) {
-        return JSONElement(NULL);
-    }
+    if(!obj) { return JSONElement(NULL); }
     return JSONElement(obj);
 }
 
@@ -138,9 +127,7 @@ JSONElement::JSONElement(const wxString& name, const wxVariant& val, int type)
 
 JSONElement JSONElement::arrayItem(int pos) const
 {
-    if(!_json) {
-        return JSONElement(NULL);
-    }
+    if(!_json) { return JSONElement(NULL); }
 
     if(_json->type != cJSON_Array) return JSONElement(NULL);
 
@@ -152,61 +139,45 @@ JSONElement JSONElement::arrayItem(int pos) const
 
 bool JSONElement::isNull() const
 {
-    if(!_json) {
-        return false;
-    }
+    if(!_json) { return false; }
     return _json->type == cJSON_NULL;
 }
 
 bool JSONElement::toBool(bool defaultValue) const
 {
-    if(!_json) {
-        return defaultValue;
-    }
+    if(!_json) { return defaultValue; }
 
-    if(!isBool()) {
-        return defaultValue;
-    }
+    if(!isBool()) { return defaultValue; }
 
     return _json->type == cJSON_True;
 }
 
 wxString JSONElement::toString(const wxString& defaultValue) const
 {
-    if(!_json) {
-        return defaultValue;
-    }
+    if(!_json) { return defaultValue; }
 
-    if(_json->type != cJSON_String) {
-        return defaultValue;
-    }
+    if(_json->type != cJSON_String) { return defaultValue; }
 
     return wxString(_json->valuestring, wxConvUTF8);
 }
 
 bool JSONElement::isBool() const
 {
-    if(!_json) {
-        return false;
-    }
+    if(!_json) { return false; }
 
     return _json->type == cJSON_True || _json->type == cJSON_False;
 }
 
 bool JSONElement::isString() const
 {
-    if(!_json) {
-        return false;
-    }
+    if(!_json) { return false; }
 
     return _json->type == cJSON_String;
 }
 
 void JSONElement::append(const JSONElement& element)
 {
-    if(!_json) {
-        return;
-    }
+    if(!_json) { return; }
 
     switch(element.getType()) {
     case cJSON_False:
@@ -226,8 +197,7 @@ void JSONElement::append(const JSONElement& element)
         break;
 
     case cJSON_String:
-        cJSON_AddStringToObject(_json,
-                                element.getName().mb_str(wxConvUTF8).data(),
+        cJSON_AddStringToObject(_json, element.getName().mb_str(wxConvUTF8).data(),
                                 element.getValue().GetString().mb_str(wxConvUTF8).data());
         break;
 
@@ -240,9 +210,7 @@ void JSONElement::append(const JSONElement& element)
 
 void JSONElement::arrayAppend(const JSONElement& element)
 {
-    if(!_json) {
-        return;
-    }
+    if(!_json) { return; }
 
     cJSON* p = NULL;
     switch(element.getType()) {
@@ -270,9 +238,7 @@ void JSONElement::arrayAppend(const JSONElement& element)
         p = element._json;
         break;
     }
-    if(p) {
-        cJSON_AddItemToArray(_json, p);
-    }
+    if(p) { cJSON_AddItemToArray(_json, p); }
 }
 
 JSONElement JSONElement::createArray(const wxString& name)
@@ -293,13 +259,11 @@ JSONElement JSONElement::createObject(const wxString& name)
 
 char* JSONElement::FormatRawString(bool formatted) const
 {
-    if(!_json) {
-        return NULL;
-    }
-    
+    if(!_json) { return NULL; }
+
     if(formatted) {
         return cJSON_Print(_json);
-        
+
     } else {
         return cJSON_PrintUnformatted(_json);
     }
@@ -307,9 +271,7 @@ char* JSONElement::FormatRawString(bool formatted) const
 
 wxString JSONElement::format() const
 {
-    if(!_json) {
-        return wxT("");
-    }
+    if(!_json) { return wxT(""); }
 
     char* p = cJSON_Print(_json);
     wxString output(p, wxConvUTF8);
@@ -319,48 +281,34 @@ wxString JSONElement::format() const
 
 int JSONElement::toInt(int defaultVal) const
 {
-    if(!_json) {
-        return defaultVal;
-    }
+    if(!_json) { return defaultVal; }
 
-    if(_json->type != cJSON_Number) {
-        return defaultVal;
-    }
+    if(_json->type != cJSON_Number) { return defaultVal; }
 
     return _json->valueint;
 }
 
 size_t JSONElement::toSize_t(size_t defaultVal) const
 {
-    if(!_json) {
-        return defaultVal;
-    }
+    if(!_json) { return defaultVal; }
 
-    if(_json->type != cJSON_Number) {
-        return defaultVal;
-    }
+    if(_json->type != cJSON_Number) { return defaultVal; }
 
     return (size_t)_json->valueint;
 }
 
 double JSONElement::toDouble(double defaultVal) const
 {
-    if(!_json) {
-        return defaultVal;
-    }
+    if(!_json) { return defaultVal; }
 
-    if(_json->type != cJSON_Number) {
-        return defaultVal;
-    }
+    if(_json->type != cJSON_Number) { return defaultVal; }
 
     return _json->valuedouble;
 }
 
 int JSONElement::arraySize() const
 {
-    if(!_json) {
-        return 0;
-    }
+    if(!_json) { return 0; }
 
     if(_json->type != cJSON_Array) return 0;
 
@@ -411,13 +359,9 @@ void JSONElement::arrayAppend(const wxString& value) { arrayAppend(JSONElement(w
 wxArrayString JSONElement::toArrayString() const
 {
     wxArrayString arr;
-    if(!_json) {
-        return arr;
-    }
+    if(!_json) { return arr; }
 
-    if(_json->type != cJSON_Array) {
-        return arr;
-    }
+    if(_json->type != cJSON_Array) { return arr; }
 
     for(int i = 0; i < arraySize(); i++) {
         arr.Add(arrayItem(i).toString());
@@ -427,9 +371,7 @@ wxArrayString JSONElement::toArrayString() const
 
 bool JSONElement::hasNamedObject(const wxString& name) const
 {
-    if(!_json) {
-        return false;
-    }
+    if(!_json) { return false; }
 
     cJSON* obj = cJSON_GetObjectItem(_json, name.mb_str(wxConvUTF8).data());
     return obj != NULL;
@@ -451,22 +393,16 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxSize& sz)
 
 JSONElement& JSONElement::addProperty(const wxString& name, const JSONElement& element)
 {
-    if(!_json) {
-        return *this;
-    }
+    if(!_json) { return *this; }
     cJSON_AddItemToObject(_json, name.mb_str(wxConvUTF8).data(), element._json);
     return *this;
 }
 
 wxPoint JSONElement::toPoint() const
 {
-    if(!_json) {
-        return wxDefaultPosition;
-    }
+    if(!_json) { return wxDefaultPosition; }
 
-    if(_json->type != cJSON_String) {
-        return wxDefaultPosition;
-    }
+    if(_json->type != cJSON_String) { return wxDefaultPosition; }
 
     wxString str = _json->valuestring;
     wxString x = str.BeforeFirst(',');
@@ -480,13 +416,9 @@ wxPoint JSONElement::toPoint() const
 
 wxColour JSONElement::toColour(const wxColour& defaultColour) const
 {
-    if(!_json) {
-        return defaultColour;
-    }
+    if(!_json) { return defaultColour; }
 
-    if(_json->type != cJSON_String) {
-        return defaultColour;
-    }
+    if(_json->type != cJSON_String) { return defaultColour; }
 
     return wxColour(_json->valuestring);
 }
@@ -500,9 +432,7 @@ wxSize JSONElement::toSize() const
 void JSONElement::removeProperty(const wxString& name)
 {
     // delete child property
-    if(!_json) {
-        return;
-    }
+    if(!_json) { return; }
     cJSON_DeleteItemFromObject(_json, name.mb_str(wxConvUTF8).data());
 }
 
@@ -525,13 +455,9 @@ JSONElement& JSONElement::addProperty(const wxString& name, const wxStringMap_t&
 wxStringMap_t JSONElement::toStringMap() const
 {
     wxStringMap_t res;
-    if(!_json) {
-        return res;
-    }
+    if(!_json) { return res; }
 
-    if(_json->type != cJSON_Array) {
-        return res;
-    }
+    if(_json->type != cJSON_Array) { return res; }
 
     for(int i = 0; i < arraySize(); ++i) {
         wxString key = arrayItem(i).namedObject("key").toString();
@@ -546,22 +472,16 @@ JSONElement& JSONElement::addProperty(const wxString& name, size_t value) { retu
 JSONElement& JSONElement::addProperty(const wxString& name, const wxColour& colour)
 {
     wxString colourValue;
-    if(colour.IsOk()) {
-        colourValue = colour.GetAsString(wxC2S_HTML_SYNTAX);
-    }
+    if(colour.IsOk()) { colourValue = colour.GetAsString(wxC2S_HTML_SYNTAX); }
     return addProperty(name, colourValue);
 }
 
 JSONElement JSONElement::firstChild()
 {
     _walker = NULL;
-    if(!_json) {
-        return JSONElement(NULL);
-    }
+    if(!_json) { return JSONElement(NULL); }
 
-    if(!_json->child) {
-        return JSONElement(NULL);
-    }
+    if(!_json->child) { return JSONElement(NULL); }
 
     _walker = _json->child;
     return JSONElement(_walker);
@@ -569,9 +489,7 @@ JSONElement JSONElement::firstChild()
 
 JSONElement JSONElement::nextChild()
 {
-    if(!_walker) {
-        return JSONElement(NULL);
-    }
+    if(!_walker) { return JSONElement(NULL); }
 
     JSONElement element(_walker->next);
     _walker = _walker->next;
@@ -581,4 +499,11 @@ JSONElement JSONElement::nextChild()
 JSONElement& JSONElement::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
+}
+
+JSONElement JSONElement::detachProperty(const wxString& name)
+{
+    if(!_json) { return JSONElement(NULL); }
+    cJSON* j = cJSON_DetachItemFromObject(_json, name);
+    return JSONElement(j);
 }

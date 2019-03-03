@@ -99,7 +99,7 @@ public:
     int toInt(int defaultVal = -1) const;
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
-    
+
 #if wxUSE_GUI
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
@@ -148,6 +148,11 @@ public:
      * @brief delete property by name
      */
     void removeProperty(const wxString& name);
+
+    /**
+     * @brief detach element from json. Return the detached element
+     */
+    JSONElement detachProperty(const wxString& name);
 
     //////////////////////////////////////////////////
     // Array operations

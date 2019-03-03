@@ -21,7 +21,7 @@ public:
     virtual JSONElement ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONElement& json);
     virtual wxString ToString() const;
-    void Send(Sender* sender) const { sender->Send(ToString()); }
+    void Send(Sender* sender) const;
 
     void SetId(int id) { this->m_id = id; }
     void SetMethod(const wxString& method) { this->m_method = method; }

@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include "json_node.h"
 #include "basic_types.h"
+#include <wx/event.h>
 
 namespace json_rpc
 {

@@ -1,6 +1,7 @@
 #include "json_rpc/RequestMessage.h"
 #include <wx/string.h>
 #include "json_node.h"
+#include "file_logger.h"
 
 json_rpc::RequestMessage::RequestMessage() { m_id = Message::GetNextID(); }
 
@@ -36,4 +37,12 @@ wxString json_rpc::RequestMessage::ToString() const
     buffer << "\r\n";
     buffer << data;
     return buffer;
+}
+
+void json_rpc::RequestMessage::Send(Sender* sender) const
+{
+    wxString buffer = ToString();
+    clDEBUG() << "Sending message to language server:";
+    clDEBUG() << buffer;
+    sender->Send(buffer);
 }

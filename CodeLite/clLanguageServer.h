@@ -9,6 +9,9 @@
 class WXDLLIMPEXP_CL clLanguageServer : public json_rpc::Sender
 {
     IProcess* m_process = NULL;
+    wxString m_command;
+    wxString m_workingDirectory;
+    bool m_goingDown = false;
 
 protected:
     void OnProcessTerminated(clProcessEvent& event);
@@ -17,17 +20,22 @@ protected:
 public:
     clLanguageServer();
     virtual ~clLanguageServer();
-    
+
     /**
      * @brief pure method
      */
     virtual void Send(const wxString& message);
-    
+
     /**
      * @brief start a server for an executable
      */
     void Start(const wxString& command, const wxString& workingDirectory);
 
+    /**
+     * @brief stop the language server
+     */
+    void Stop();
+    
     /**
      * @brief find definition of a word.
      * @param filename the filename

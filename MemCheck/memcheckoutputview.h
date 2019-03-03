@@ -80,7 +80,6 @@ protected:
     virtual void OnSuppressSelected(wxCommandEvent& event);
     virtual void OnSelectionChanged(wxDataViewEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
-    virtual void OnValueChanged(wxDataViewEvent& event);
     virtual void OnMemCheckUI(wxUpdateUIEvent& event);
     virtual void OnActivated(wxDataViewEvent& event);
     virtual void OnJumpToNext(wxCommandEvent& event);
@@ -122,7 +121,6 @@ protected:
     bool m_currentPageIsEmptyView;
     wxDataViewItem m_currentItem;
     bool m_onValueChangedLocked; ///< if user (un)checks an item, all items in its tree must be (un)checked. This action is trigered by OnValueChanged callback. Problem is that if an item is checked is also invoked that callback. So this lock brakes the infinite loop.
-    int m_markedErrorsCount;
     size_t m_totalErrorsView;
     size_t m_currentPage;
     size_t m_pageMax;
@@ -134,6 +132,7 @@ protected:
     void SetCurrentItem(const wxDataViewItem &item); ///< marks current item with little green right arrow
     void MarkTree(const wxDataViewItem &item, bool checked); ///< (un)checks all items that belong to a particular error
     void MarkAllErrors(bool state); // (Un)Marks all errors. Called by On(un)MarkAllErrors()
+    void GetStatusOfErrors(bool& unmarked, bool& marked); // Are there any unmarked, any marked errors?
     unsigned int GetColumnByName(const wxString & name); ///< Finds index of an wxDVC column by its caption
     void JumpToLocation(const wxDataViewItem &item); ///< Opens file specifieed in particular ErrorLocation in editor
     void ShowPageView(size_t page); ///< Item could be more than is good for wxDVC. So paging is implementetd. This method fills wxDVC with portion of errors.

@@ -148,7 +148,6 @@ void MemCheckOutputView::ShowPageView(size_t page)
     m_currentPageIsEmptyView = true;
     m_currentItem = wxDataViewItem(0);
     m_onValueChangedLocked = false;
-    m_markedErrorsCount = 0;
     m_dataViewCtrlErrorsModel->Clear();
 
     if(m_totalErrorsView == 0) return;
@@ -451,35 +450,15 @@ void MemCheckOutputView::MarkTree(const wxDataViewItem& item, bool checked)
     }
 }
 
-/**
- * @brief This callback is trigered when user click on checkbox - wants un/mark error.
- * @param event just wxDataViewEvent
- */
-void MemCheckOutputView::OnValueChanged(wxDataViewEvent& event)
-{
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnValueChanged()"));
-    int col = GetColumnByName(_("Suppress"));
-    if(col == wxNOT_FOUND) {
-        return;
-    }
-    if(m_onValueChangedLocked || event.GetColumn() != col) return;
-
-    m_onValueChangedLocked = true;
-
-    wxVariant variant;
-    m_dataViewCtrlErrorsModel->GetValue(variant, event.GetItem(), col);
-
-    MarkTree(GetTopParent(event.GetItem()), variant.GetBool());
-    variant.GetBool() ? ++m_markedErrorsCount : --m_markedErrorsCount;
-
-    m_onValueChangedLocked = false;
-}
 
 void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnContextMenu()"));
 
     if(m_currentPageIsEmptyView) return;
+
+    bool unmarked, marked;
+    GetStatusOfErrors(unmarked, marked);
 
     const wxDataViewItem& dataItem = event.GetItem();
     wxMenuItem* menuItem(NULL);
@@ -490,19 +469,19 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     menu.AppendSeparator();
     menuItem = menu.Append(XRCID("memcheck_mark_all_errors"), "Mark all");
     menuItem = menu.Append(XRCID("memcheck_unmark_all_errors"), wxT("Unmark all"));
-    menuItem->Enable(m_markedErrorsCount);
+    menuItem->Enable(marked);
     menu.AppendSeparator();
     menuItem = menu.Append(XRCID("memcheck_suppress_error"), wxT("Suppress this error"));
     menuItem->Enable(dataItem.IsOk() && m_choiceSuppFile->GetSelection() != wxNOT_FOUND);
     menuItem = menu.Append(XRCID("memcheck_suppress_marked_errors"), wxT("Suppress all marked errors"));
-    menuItem->Enable(m_markedErrorsCount && m_choiceSuppFile->GetSelection() != wxNOT_FOUND);
+    menuItem->Enable(marked && m_choiceSuppFile->GetSelection() != wxNOT_FOUND);
     menu.AppendSeparator();
     menuItem = menu.Append(XRCID("memcheck_row_to_clip"), wxT("Copy line as string to clipboard"));
     menuItem->Enable(dataItem.IsOk());
     menuItem = menu.Append(XRCID("memcheck_error_to_clip"), wxT("Copy error as string to clipboard"));
     menuItem->Enable(dataItem.IsOk());
     menuItem = menu.Append(XRCID("memcheck_marked_errors_to_clip"), wxT("Copy marked errors to clipboard"));
-    menuItem->Enable(m_markedErrorsCount);
+    menuItem->Enable(marked);
 
     menu.Connect(XRCID("memcheck_jump_to_location"), wxEVT_COMMAND_MENU_SELECTED,
         wxCommandEventHandler(MemCheckOutputView::OnJumpToLocation), new wxDataViewEvent(event), (wxEvtHandler*)this);
@@ -553,6 +532,21 @@ void MemCheckOutputView::MarkAllErrors(bool state)
 
     for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
         MarkTree(*it, state);
+    }
+}
+
+void MemCheckOutputView::GetStatusOfErrors(bool& unmarked, bool& marked)
+{
+    wxDataViewItemArray items;
+    wxVariant variant;
+    int supColumn = GetColumnByName(_("Suppress"));
+    if(supColumn == wxNOT_FOUND) {
+        return;
+    }
+    m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
+    for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
+        m_dataViewCtrlErrorsModel->GetValue(variant, *it, supColumn);
+        variant.GetBool() ? (marked = true):(unmarked = true);
     }
 }
 

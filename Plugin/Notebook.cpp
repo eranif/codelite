@@ -383,7 +383,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     // Draw the tab area background colours
     clTabInfo::Ptr_t active_tab = GetActiveTabInfo();
-    wxColour tabAreaBgCol = m_colours.tabAreaColour;
     clTabColours activeTabColours = m_colours;
 
 #ifdef __WXOSX__

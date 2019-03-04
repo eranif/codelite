@@ -57,13 +57,34 @@ public:
 
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON(const wxString& name) const;
-    
+
     DidOpenTextDocumentParams& SetTextDocument(const TextDocumentItem& textDocument)
     {
         this->m_textDocument = textDocument;
         return *this;
     }
     const TextDocumentItem& GetTextDocument() const { return m_textDocument; }
+};
+
+//===----------------------------------------------------------------------------------
+// DidCloseTextDocumentParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL DidCloseTextDocumentParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+
+public:
+    DidCloseTextDocumentParams();
+    virtual ~DidCloseTextDocumentParams() {}
+
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON(const wxString& name) const;
+    DidCloseTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
+    {
+        this->m_textDocument = textDocument;
+        return *this;
+    }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
 
 };     // namespace json_rpc

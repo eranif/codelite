@@ -697,6 +697,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_COLOURS_FONTS_UPDATED, clComm
 // User: clCommandEvnet::GetFileName() to get the file name
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_LOADED, clCommandEvent);
 
+// File has been closed
+// User: clCommandEvnet::GetFileName() to get the file name
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_CLOSED, clCommandEvent);
+
 // Sent when codelite is about to set the main frame's title.
 // A plugin may alter the frame title by calling event.SetString(..)
 // To get the current frame title, a plugin may call event.GetString()

@@ -4,6 +4,7 @@
 #include "json_rpc/clJSONRPC.h"
 #include "json_rpc/GotoDefinitionRequest.h"
 #include "json_rpc/DidOpenTextDocumentRequest.h"
+#include "json_rpc/DidCloseTextDocumentRequest.h"
 
 clLanguageServer::clLanguageServer()
 {
@@ -61,4 +62,20 @@ void clLanguageServer::FileOpened(const wxFileName& filename, const wxString& fi
 {
     json_rpc::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
     req.Send(this);
+}
+
+void clLanguageServer::FileClosed(const wxFileName& filename)
+{
+    json_rpc::DidCloseTextDocumentRequest req(filename);
+    req.Send(this);
+}
+
+void clLanguageServer::OnFileLoaded(clCommandEvent& event)
+{
+    event.Skip();
+}
+
+void clLanguageServer::OnFileClosed(clCommandEvent& event)
+{
+    event.Skip();
 }

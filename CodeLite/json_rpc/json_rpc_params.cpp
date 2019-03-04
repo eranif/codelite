@@ -38,4 +38,21 @@ JSONElement DidOpenTextDocumentParams::ToJSON(const wxString& name) const
     return json;
 }
 
+//===----------------------------------------------------------------------------------
+// DidCloseTextDocumentParams
+//===----------------------------------------------------------------------------------
+DidCloseTextDocumentParams::DidCloseTextDocumentParams() {}
+
+void DidCloseTextDocumentParams::FromJSON(const JSONElement& json)
+{
+    m_textDocument.FromJSON(json);
+}
+
+JSONElement DidCloseTextDocumentParams::ToJSON(const wxString& name) const
+{
+    JSONElement json = JSONElement::createObject(name);
+    json.append(m_textDocument.ToJSON("textDocument"));
+    return json;
+}
+
 }; // namespace json_rpc

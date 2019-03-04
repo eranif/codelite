@@ -5,6 +5,7 @@
 #include <wx/font.h>
 #include <wx/settings.h>
 #include "clSystemSettings.h"
+#include "clColours.h"
 
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
@@ -27,33 +28,39 @@ clTabRendererClassic::~clTabRendererClassic() {}
 void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     // Active tab
-    colours.activeTabTextColour = "WHITE";
+    clColours c;
+    c.InitFromColour(activeTabBGColour.ChangeLightness(110));
+
+    colours.activeTabTextColour = c.GetItemTextColour();
     colours.activeTabBgColour = activeTabBGColour;
-    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(90);
-    colours.activeTabInnerPenColour = activeTabBGColour;
+    colours.activeTabPenColour = c.GetBorderColour();
+    colours.activeTabInnerPenColour = c.GetBgColour();
 
     // Inactive tab
-    colours.inactiveTabBgColour = activeTabBGColour.ChangeLightness(120);
-    colours.inactiveTabTextColour = colours.activeTabTextColour.ChangeLightness(80);
-    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
-    colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(110);
-    colours.tabAreaColour = colours.inactiveTabBgColour;
+    colours.inactiveTabBgColour = c.GetBgColour();
+    colours.inactiveTabTextColour = c.GetItemTextColour().ChangeLightness(90);
+    colours.inactiveTabPenColour = c.GetBgColour();
+    colours.inactiveTabInnerPenColour = c.GetBgColour();
+    colours.tabAreaColour = c.GetBgColour();
 }
 
 void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     // Active tab
-    colours.activeTabTextColour = DrawingUtils::GetButtonTextColour();
+    clColours c;
+    c.InitFromColour(activeTabBGColour.ChangeLightness(90));
+
+    colours.activeTabTextColour = c.GetItemTextColour();
     colours.activeTabBgColour = activeTabBGColour;
-    colours.activeTabPenColour = activeTabBGColour.ChangeLightness(75);
-    colours.activeTabInnerPenColour = activeTabBGColour.ChangeLightness(110);
+    colours.activeTabPenColour = c.GetBorderColour();
+    colours.activeTabInnerPenColour = c.GetBgColour();
 
     // Inactive tab
-    colours.inactiveTabBgColour = colours.activeTabBgColour.ChangeLightness(85); // darker
-    colours.inactiveTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-    colours.inactiveTabPenColour = colours.inactiveTabBgColour.ChangeLightness(95);
-    colours.inactiveTabInnerPenColour = colours.inactiveTabBgColour.ChangeLightness(130);
-    colours.tabAreaColour = colours.inactiveTabBgColour;
+    colours.inactiveTabBgColour = c.GetBgColour();
+    colours.inactiveTabTextColour = c.GetGrayText();
+    colours.inactiveTabPenColour = c.GetBgColour();
+    colours.inactiveTabInnerPenColour = c.GetBgColour();
+    colours.tabAreaColour = c.GetBgColour();
 }
 
 void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
@@ -134,12 +141,11 @@ void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
                                           size_t style)
 {
     clTabColours c = colours;
-    if(DrawingUtils::IsDark(colours.activeTabBgColour)) {
-        InitDarkColours(c, colours.activeTabBgColour);
+    if(DrawingUtils::IsDark(c.activeTabBgColour)) {
+        InitDarkColours(c, c.activeTabBgColour);
     } else {
-        InitLightColours(c, colours.activeTabBgColour);
+        InitLightColours(c, c.activeTabBgColour);
     }
-    c.tabAreaColour = c.tabAreaColour.ChangeLightness(DrawingUtils::IsDark(c.tabAreaColour) ? 110 : 130);
     clTabRenderer::DrawBackground(parent, dc, rect, c, style);
 }
 
@@ -147,7 +153,14 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
                                               const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
-    dc.SetPen(colours.activeTabBgColour);
+    clTabColours c = colours;
+    if(DrawingUtils::IsDark(c.activeTabBgColour)) {
+        InitDarkColours(c, c.activeTabBgColour);
+    } else {
+        InitLightColours(c, c.activeTabBgColour);
+    }
+
+    dc.SetPen(c.activeTabPenColour);
     if(style & kNotebook_BottomTabs) {
         dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
     } else {

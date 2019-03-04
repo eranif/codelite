@@ -415,6 +415,13 @@ clEditor::clEditor(wxWindow* parent)
 
 clEditor::~clEditor()
 {
+    // Report file-close event
+    if(GetFileName().IsOk() && GetFileName().FileExists()) {
+        clCommandEvent eventClose(wxEVT_FILE_CLOSED);
+        eventClose.SetFileName(GetFileName().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(eventClose);
+    }
+    
     wxDELETE(m_richTooltip);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
 
@@ -5513,6 +5520,11 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     }
 
     SetReloadingFile(false);
+    
+    // Notify about file-reload
+    clCommandEvent e(wxEVT_FILE_LOADED);
+    e.SetFileName(GetFileName().GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(e);
 }
 
 void clEditor::PreferencesChanged()

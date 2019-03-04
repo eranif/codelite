@@ -16,7 +16,10 @@ class WXDLLIMPEXP_CL clLanguageServer : public json_rpc::Sender
 protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
-
+    
+    void OnFileLoaded(clCommandEvent& event);
+    void OnFileClosed(clCommandEvent& event);
+    
 public:
     clLanguageServer();
     virtual ~clLanguageServer();
@@ -48,6 +51,11 @@ public:
      * @brief notify about file open
      */
     void FileOpened(const wxFileName& filename, const wxString& fileContent, const wxString& languageId);
+    
+    /**
+     * @brief report a file-close notification
+     */
+    void FileClosed(const wxFileName& filename);
 };
 
 #endif // CLLANGUAGESERVER_H

@@ -152,7 +152,10 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     event.Skip();
     const wxString& filename = event.GetFileName();
     IEditor* editor = clGetManager()->FindEditor(filename);
-    if(editor) { FileSaved(editor->GetFileName(), editor->GetCtrl()->GetText()); }
+    if(editor) { 
+        // We should have called here FileSaved(), however, clangd-7 does not support this yet...
+        FileChanged(editor->GetFileName(), editor->GetCtrl()->GetText()); 
+    }
 }
 
 void LanguageServerProtocol::FileChanged(const wxFileName& filename, const wxString& fileContent)

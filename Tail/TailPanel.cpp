@@ -104,6 +104,8 @@ void TailPanel::OnThemeChanged(wxCommandEvent& event)
     event.Skip(); // must call this to allow other handlers to work
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) { lexer->Apply(m_stc); }
+    m_stc->SetEOLMode(wxSTC_EOL_CRLF);
+    m_stc->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
 }
 
 void TailPanel::OnClear(wxCommandEvent& event)

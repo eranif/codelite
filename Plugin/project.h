@@ -102,9 +102,7 @@ public:
 
     ProjectItem& operator=(const ProjectItem& item)
     {
-        if(this == &item) {
-            return *this;
-        }
+        if(this == &item) { return *this; }
 
         m_key = item.m_key;
         m_displayName = item.m_displayName;
@@ -340,7 +338,7 @@ public:
      * @brief return list of files that are excluded from *any* build configuration
      */
     const wxStringSet_t& GetExcludeFiles() const { return m_excludeFiles; }
-    
+
     /**
      * @brief return the meta data about a file
      */
@@ -772,7 +770,8 @@ public:
      * file
      * name which can later be replaced by the caller with the actual file name
      */
-    wxString GetCompileLineForCXXFile(const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true) const;
+    wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths,
+                                      const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true) const;
 
     void ClearAllVirtDirs();
 
@@ -825,7 +824,7 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON(JSONElement& compile_commands);
+    void CreateCompileCommandsJSON(JSONElement& compile_commands, const wxStringMap_t& compilersGlobalPaths);
 
     void SetWorkspaceFolder(const wxString& workspaceFolders) { this->m_workspaceFolder = workspaceFolders; }
     const wxString& GetWorkspaceFolder() const { return m_workspaceFolder; }

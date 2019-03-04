@@ -36,6 +36,7 @@
 #include <globals.h>
 #include "ICompilerLocator.h"
 #include <algorithm>
+#include "json_node.h"
 
 BuildSettingsConfig::BuildSettingsConfig()
 {
@@ -64,9 +65,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
         }
         m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
 
-        if(loaded) {
-            DoUpdateCompilers();
-        }
+        if(loaded) { DoUpdateCompilers(); }
     } else {
         wxFileName xmlPath(xmlFilePath);
         loaded = m_doc->Load(xmlPath.GetFullPath());
@@ -75,6 +74,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
             m_fileName = xmlPath;
         }
     }
+    if(loaded) { SaveXmlFile(); }
     return loaded;
 }
 
@@ -147,13 +147,9 @@ CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie& coo
 
 CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cookie)
 {
-    if(cookie.parent == NULL) {
-        return NULL;
-    }
+    if(cookie.parent == NULL) { return NULL; }
 
-    if(cookie.child == NULL) {
-        cookie.child = cookie.parent->GetChildren();
-    }
+    if(cookie.child == NULL) { cookie.child = cookie.parent->GetChildren(); }
 
     while(cookie.child) {
         if(cookie.child->GetName() == wxT("Compiler")) {
@@ -163,9 +159,7 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cook
 
             // incase we dont have more childs to iterate
             // reset the parent as well so the next call to GetNexeLexer() will fail
-            if(cookie.child == NULL) {
-                cookie.parent = NULL;
-            }
+            if(cookie.child == NULL) { cookie.parent = NULL; }
             return new Compiler(n);
         }
         cookie.child = cookie.child->GetNext();
@@ -201,11 +195,9 @@ void BuildSettingsConfig::SetBuildSystem(BuilderConfigPtr bs)
 
 BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString& name)
 {
-    wxXmlNode* node = XmlUtils::FindNodeByName(
-        m_doc->GetRoot(), wxT("BuildSystem"), name.IsEmpty() ? GetSelectedBuildSystem() : name);
-    if(node) {
-        return new BuilderConfig(node);
-    }
+    wxXmlNode* node = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("BuildSystem"),
+                                               name.IsEmpty() ? GetSelectedBuildSystem() : name);
+    if(node) { return new BuilderConfig(node); }
     return NULL;
 }
 
@@ -295,9 +287,7 @@ wxArrayString BuildSettingsConfig::GetAllCompilersNames() const
     if(compilersNode) {
         wxXmlNode* child = compilersNode->GetChildren();
         while(child) {
-            if(child->GetName() == "Compiler") {
-                allCompilers.Add(XmlUtils::ReadString(child, "Name"));
-            }
+            if(child->GetName() == "Compiler") { allCompilers.Add(XmlUtils::ReadString(child, "Name")); }
             child = child->GetNext();
         }
     }
@@ -314,7 +304,23 @@ void BuildSettingsConfig::DoUpdateCompilers()
     }
 }
 
-bool BuildSettingsConfig::SaveXmlFile() { return ::SaveXmlToFile(m_doc, m_fileName.GetFullPath()); }
+bool BuildSettingsConfig::SaveXmlFile()
+{
+    // Store this information for later retrieval
+    wxArrayString compilers = GetAllCompilersNames();
+    JSONRoot root(cJSON_Array);
+    JSONElement e = root.toElement();
+    for(size_t i = 0; i < compilers.size(); ++i) {
+        CompilerPtr cmp = GetCompiler(compilers[i]);
+        if(!cmp) { continue; }
+        JSONElement o = JSONElement::createObject();
+        o.addProperty("name", cmp->GetName()).addProperty("paths", cmp->GetDefaultIncludePaths());
+        e.arrayAppend(o);
+    }
+    wxFileName compilersFile(clStandardPaths::Get().GetUserDataDir(), "compilers_paths.json");
+    root.save(compilersFile);
+    return ::SaveXmlToFile(m_doc, m_fileName.GetFullPath());
+}
 
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;
 void BuildSettingsConfigST::Free()
@@ -342,16 +348,14 @@ CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFami
     CompilerPtr defaultComp;
     wxString family = compilerFamilty.IsEmpty() ? DEFAULT_COMPILER : compilerFamilty;
 
-    std::map<wxString, CompilerPtr>::const_iterator iter = m_compilers.begin();
+    std::unordered_map<wxString, CompilerPtr>::const_iterator iter = m_compilers.begin();
     for(; iter != m_compilers.end(); ++iter) {
         if(iter->second->GetCompilerFamily() == family) {
             if(!defaultComp) {
                 // keep the first one, just incase
                 defaultComp = iter->second;
             }
-            if(iter->second->IsDefault()) {
-                return iter->second;
-            }
+            if(iter->second->IsDefault()) { return iter->second; }
         }
     }
     return defaultComp;

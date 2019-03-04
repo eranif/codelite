@@ -55,6 +55,7 @@
     <Project Name="Docker" Path="Docker/Docker.project" Active="No"/>
     <Project Name="wxcrafter" Path="wxcrafter/wxcrafter.project" Active="No"/>
     <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project" Active="No"/>
+    <Project Name="LanguageServer" Path="LanguageServer/LanguageServer.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
@@ -142,6 +143,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="Win_x86_Release"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -204,6 +206,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -265,6 +268,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -327,6 +331,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -389,6 +394,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment/>
@@ -450,6 +456,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Release"/>
       <Project Name="wxcrafter" ConfigName="Win_x64_Release"/>
       <Project Name="wxcLib" ConfigName="Win_x64_Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment/>
@@ -511,8 +518,9 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcLib" ConfigName="Win_x64_Debug"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -572,8 +580,9 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -633,8 +642,9 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -694,6 +704,7 @@
       <Project Name="Docker" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="yes">
       <Environment/>
@@ -755,6 +766,7 @@
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="wxcLib" ConfigName="Release"/>
+      <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

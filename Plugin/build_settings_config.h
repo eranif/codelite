@@ -37,6 +37,7 @@
 #include "json_node.h"
 #include "cl_config.h"
 #include <map>
+#include <wxStringHash.h>
 
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)
@@ -65,7 +66,7 @@ class WXDLLIMPEXP_SDK BuildSettingsConfig
     wxXmlDocument* m_doc;
     wxFileName m_fileName;
     wxString m_version;
-    std::map<wxString, CompilerPtr> m_compilers;
+    std::unordered_map<wxString, CompilerPtr> m_compilers;
 
 protected:
     wxXmlNode* GetCompilerNode(const wxString& name) const;
@@ -92,14 +93,14 @@ public:
      * @brief return list of all compiler names
      */
     wxArrayString GetAllCompilersNames() const;
-    
+
     /**
      * @brief return vector with all compilers defined
-     * @param family the compiler family. Leave empty to get list of 
+     * @param family the compiler family. Leave empty to get list of
      * all compilers regardless their family
      */
     CompilerPtrVec_t GetAllCompilers(const wxString& family = "") const;
-    
+
     /**
      * @brief replace the current compilers list with a new one
      */

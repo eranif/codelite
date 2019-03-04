@@ -81,4 +81,23 @@ JSONElement DidChangeTextDocumentParams::ToJSON(const wxString& name) const
     return json;
 }
 
+//===----------------------------------------------------------------------------------
+// DidSaveTextDocumentParams
+//===----------------------------------------------------------------------------------
+DidSaveTextDocumentParams::DidSaveTextDocumentParams() {}
+
+void DidSaveTextDocumentParams::FromJSON(const JSONElement& json)
+{
+    m_textDocument.FromJSON(json);
+    m_text = json.namedObject("text").toString();
+}
+
+JSONElement DidSaveTextDocumentParams::ToJSON(const wxString& name) const
+{
+    JSONElement json = JSONElement::createObject(name);
+    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("text", m_text);
+    return json;
+}
+
 }; // namespace json_rpc

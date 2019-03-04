@@ -7,7 +7,7 @@
 namespace json_rpc
 {
 
-class DidCloseTextDocumentRequest : public json_rpc::RequestMessage
+class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public json_rpc::RequestMessage
 {
 public:
     DidCloseTextDocumentRequest(const wxFileName& filename);

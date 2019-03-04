@@ -115,5 +115,33 @@ public:
     const VersionedTextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
 
+//===----------------------------------------------------------------------------------
+// DidSaveTextDocumentParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL DidSaveTextDocumentParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+    wxString m_text;
+
+public:
+    DidSaveTextDocumentParams();
+    virtual ~DidSaveTextDocumentParams() {}
+
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON(const wxString& name) const;
+    DidSaveTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
+    {
+        this->m_textDocument = textDocument;
+        return *this;
+    }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+    DidSaveTextDocumentParams& SetText(const wxString& text)
+    {
+        this->m_text = text;
+        return *this;
+    }
+    const wxString& GetText() const { return m_text; }
+};
+
 };     // namespace json_rpc
 #endif // JSONRPC_PARAMS_H

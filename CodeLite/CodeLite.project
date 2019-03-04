@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="json_rpc">
+    <File Name="json_rpc/DidSaveTextDocumentRequest.cpp"/>
+    <File Name="json_rpc/DidSaveTextDocumentRequest.h"/>
     <File Name="json_rpc/DidChangeTextDocumentRequest.cpp"/>
     <File Name="json_rpc/DidChangeTextDocumentRequest.h"/>
     <File Name="json_rpc/DidCloseTextDocumentRequest.cpp"/>

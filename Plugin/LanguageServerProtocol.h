@@ -21,9 +21,13 @@ protected:
 
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
+    void OnFileSaved(clCommandEvent& event);
 
 protected:
     void DoClear();
+
+    wxString GetLanguageId(const wxFileName& fn) const { return GetLanguageId(fn.GetFullName()); }
+    wxString GetLanguageId(const wxString& fn) const;
 
 public:
     LanguageServerProtocol();
@@ -61,6 +65,16 @@ public:
      * @brief report a file-close notification
      */
     void FileClosed(const wxFileName& filename);
+
+    /**
+     * @brief report a file-changed notification
+     */
+    void FileChanged(const wxFileName& filename, const wxString& fileContent);
+
+    /**
+     * @brief report a file-save notification
+     */
+    void FileSaved(const wxFileName& filename, const wxString& fileContent);
 };
 
 #endif // CLLANGUAGESERVER_H

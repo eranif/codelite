@@ -5,17 +5,33 @@
 #include "json_rpc/GotoDefinitionRequest.h"
 #include "json_rpc/DidOpenTextDocumentRequest.h"
 #include "json_rpc/DidCloseTextDocumentRequest.h"
+#include "json_rpc/DidSaveTextDocumentRequest.h"
+#include "json_rpc/DidChangeTextDocumentRequest.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
+#include "fileextmanager.h"
+#include "ieditor.h"
+#include "globals.h"
+#include "imanager.h"
+#include <wx/stc/stc.h>
 
 LanguageServerProtocol::LanguageServerProtocol()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
 }
 
 LanguageServerProtocol::~LanguageServerProtocol()
 {
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
 }
 
 void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory)
@@ -49,6 +65,34 @@ void LanguageServerProtocol::Stop()
     if(m_process) { m_process->Terminate(); }
 }
 
+wxString LanguageServerProtocol::GetLanguageId(const wxString& fn) const
+{
+    FileExtManager::FileType type = FileExtManager::GetType(fn, FileExtManager::TypeText);
+    switch(type) {
+    case FileExtManager::TypeSourceC:
+        return "c";
+    case FileExtManager::TypeSourceCpp:
+    case FileExtManager::TypeHeader:
+        return "cpp";
+    case FileExtManager::TypeJS:
+        return "javascript";
+    case FileExtManager::TypeDockerfile:
+        return "dockerfile";
+    case FileExtManager::TypeJava:
+        return "java";
+    case FileExtManager::TypePython:
+        return "python";
+    case FileExtManager::TypeMakefile:
+        return "makefile";
+    case FileExtManager::TypePhp:
+        return "php";
+    case FileExtManager::TypeSQL:
+        return "sql";
+    default:
+        return "";
+    }
+}
+
 //===--------------------------------------------------
 // Protocol implementation
 //===--------------------------------------------------
@@ -64,7 +108,8 @@ void LanguageServerProtocol::FileOpened(const wxFileName& filename, const wxStri
 {
     if(m_filesSent.count(filename.GetFullPath())) {
         // The file is already opened on the server side, so just notify about 'change' event
-        // FileChanged(filename, fileContent, languageId);
+        wxUnusedVar(languageId);
+        FileChanged(filename, fileContent);
     } else {
 
         json_rpc::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
@@ -85,8 +130,39 @@ void LanguageServerProtocol::FileClosed(const wxFileName& filename)
     m_filesSent.erase(filename.GetFullPath());
 }
 
-void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event) { event.Skip(); }
+void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
+{
+    event.Skip();
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        FileOpened(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
+    }
+}
 
-void LanguageServerProtocol::OnFileClosed(clCommandEvent& event) { event.Skip(); }
+void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
+{
+    event.Skip();
+    FileClosed(event.GetFileName());
+}
 
 void LanguageServerProtocol::DoClear() { m_filesSent.clear(); }
+
+void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    const wxString& filename = event.GetFileName();
+    IEditor* editor = clGetManager()->FindEditor(filename);
+    if(editor) { FileSaved(editor->GetFileName(), editor->GetCtrl()->GetText()); }
+}
+
+void LanguageServerProtocol::FileChanged(const wxFileName& filename, const wxString& fileContent)
+{
+    json_rpc::DidChangeTextDocumentRequest req(filename, fileContent);
+    req.Send(this);
+}
+
+void LanguageServerProtocol::FileSaved(const wxFileName& filename, const wxString& fileContent)
+{
+    json_rpc::DidSaveTextDocumentRequest req(filename, fileContent);
+    req.Send(this);
+}

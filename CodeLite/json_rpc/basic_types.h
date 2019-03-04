@@ -9,6 +9,31 @@
 namespace json_rpc
 {
 //===----------------------------------------------------------------------------------
+// TextDocumentContentChangeEvent
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
+{
+    wxString m_text;
+
+public:
+    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONElement& json);
+
+    TextDocumentContentChangeEvent() {}
+    TextDocumentContentChangeEvent(const wxString& text)
+        : m_text(text)
+    {
+    }
+    virtual ~TextDocumentContentChangeEvent() {}
+    TextDocumentContentChangeEvent& SetText(const wxString& text)
+    {
+        this->m_text = text;
+        return *this;
+    }
+    const wxString& GetText() const { return m_text; }
+};
+
+//===----------------------------------------------------------------------------------
 // TextDocumentIdentifier
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
@@ -31,6 +56,31 @@ public:
         return *this;
     }
     const wxFileName& GetFilename() const { return m_filename; }
+};
+
+//===----------------------------------------------------------------------------------
+// VersionedTextDocumentIdentifier
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdentifier
+{
+    int m_version = 1;
+
+public:
+    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONElement& json);
+
+    VersionedTextDocumentIdentifier() {}
+    VersionedTextDocumentIdentifier(int version)
+        : m_version(version)
+    {
+    }
+    virtual ~VersionedTextDocumentIdentifier() {}
+    VersionedTextDocumentIdentifier& SetVersion(int version)
+    {
+        this->m_version = version;
+        return *this;
+    }
+    int GetVersion() const { return m_version; }
 };
 
 //===----------------------------------------------------------------------------------

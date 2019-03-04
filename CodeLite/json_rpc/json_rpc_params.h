@@ -87,5 +87,33 @@ public:
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
 
+//===----------------------------------------------------------------------------------
+// DidChangeTextDocumentParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL DidChangeTextDocumentParams : public Params
+{
+    VersionedTextDocumentIdentifier m_textDocument;
+    std::vector<TextDocumentContentChangeEvent> m_contentChanges;
+
+public:
+    DidChangeTextDocumentParams();
+    virtual ~DidChangeTextDocumentParams() {}
+
+    virtual void FromJSON(const JSONElement& json);
+    virtual JSONElement ToJSON(const wxString& name) const;
+    DidChangeTextDocumentParams& SetContentChanges(const std::vector<TextDocumentContentChangeEvent>& contentChanges)
+    {
+        this->m_contentChanges = contentChanges;
+        return *this;
+    }
+    DidChangeTextDocumentParams& SetTextDocument(const VersionedTextDocumentIdentifier& textDocument)
+    {
+        this->m_textDocument = textDocument;
+        return *this;
+    }
+    const std::vector<TextDocumentContentChangeEvent>& GetContentChanges() const { return m_contentChanges; }
+    const VersionedTextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+};
+
 };     // namespace json_rpc
 #endif // JSONRPC_PARAMS_H

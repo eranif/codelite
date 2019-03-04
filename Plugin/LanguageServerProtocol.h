@@ -1,5 +1,5 @@
-#ifndef CLLANGUAGESERVER_H
-#define CLLANGUAGESERVER_H
+#ifndef LANGUAG_ESERVER_PROTOCOL_H
+#define LANGUAG_ESERVER_PROTOCOL_H
 
 #include "codelite_exports.h"
 #include "asyncprocess.h"
@@ -7,7 +7,7 @@
 #include "json_rpc/clJSONRPC.h"
 #include <wxStringHash.h>
 
-class WXDLLIMPEXP_CL clLanguageServer : public json_rpc::Sender
+class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
 {
     IProcess* m_process = NULL;
     wxString m_command;
@@ -26,8 +26,8 @@ protected:
     void DoClear();
 
 public:
-    clLanguageServer();
-    virtual ~clLanguageServer();
+    LanguageServerProtocol();
+    virtual ~LanguageServerProtocol();
 
     /**
      * @brief pure method

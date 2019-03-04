@@ -1,5 +1,6 @@
-#include "basic_types.h"
+#include "json_rpc/basic_types.h"
 #include <wx/filesys.h>
+#include "json_node.h"
 
 //===------------------------------------------------
 // Request
@@ -22,6 +23,22 @@ JSONElement TextDocumentIdentifier::ToJSON(const wxString& name) const
     json.addProperty("uri", wxFileSystem::FileNameToURL(m_filename));
     return json;
 }
+//===----------------------------------------------------------------------------------
+// VersionedTextDocumentIdentifier
+//===----------------------------------------------------------------------------------
+void VersionedTextDocumentIdentifier::FromJSON(const JSONElement& json)
+{
+    TextDocumentIdentifier::FromJSON(json);
+    m_version = json.namedObject("version").toInt(m_version);
+}
+
+JSONElement VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
+{
+    JSONElement json = TextDocumentIdentifier::ToJSON(name);
+    json.addProperty("version", m_version);
+    return json;
+}
+
 //===----------------------------------------------------------------------------------
 // Position
 //===----------------------------------------------------------------------------------
@@ -57,6 +74,20 @@ JSONElement TextDocumentItem::ToJSON(const wxString& name) const
         .addProperty("languageId", GetLanguageId())
         .addProperty("version", GetVersion())
         .addProperty("text", GetText());
+    return json;
+}
+//===----------------------------------------------------------------------------------
+// TextDocumentContentChangeEvent
+//===----------------------------------------------------------------------------------
+void TextDocumentContentChangeEvent::FromJSON(const JSONElement& json)
+{
+    m_text = json.namedObject("text").toString();
+}
+
+JSONElement TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
+{
+    JSONElement json = JSONElement::createObject(name);
+    json.addProperty("text", m_text);
     return json;
 }
 }; // namespace json_rpc

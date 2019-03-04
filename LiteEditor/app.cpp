@@ -60,7 +60,6 @@
 #include "fileexplorer.h"
 #include "workspace_pane.h"
 #include "clSystemSettings.h"
-#include "clLanguageServer.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -249,7 +248,6 @@ CodeLiteApp::CodeLiteApp(void)
     , m_startedInDebuggerMode(false)
 {
 }
-//static clLanguageServer server;
 CodeLiteApp::~CodeLiteApp(void)
 {
     wxImage::CleanUpHandlers();
@@ -653,9 +651,6 @@ bool CodeLiteApp::OnInit()
     // Merge the user settings with any new settings
     ColoursAndFontsManager::Get().ImportLexersFile(wxFileName(clStandardPaths::Get().GetLexersDir(), "lexers.json"),
                                                    false);
-    
-    //server.Start("D:\\software\\llvm-7\\LLVM\\bin\\clangd.exe", ::wxGetCwd());
-    //server.FindDefinition(wxFileName("C:\\src\\codelite\\CodeLite\\archive.cpp"), 37, 15);
     
     // Create the main application window
     clMainFrame::Initialize((parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());

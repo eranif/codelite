@@ -89,8 +89,6 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Network">
-    <File Name="clLanguageServer.cpp"/>
-    <File Name="clLanguageServer.h"/>
     <File Name="clNetworkMessage.h"/>
     <File Name="clNetworkMessage.cpp"/>
   </VirtualDirectory>

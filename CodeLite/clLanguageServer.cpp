@@ -3,6 +3,7 @@
 #include "processreaderthread.h"
 #include "json_rpc/clJSONRPC.h"
 #include "json_rpc/GotoDefinitionRequest.h"
+#include "json_rpc/DidOpenTextDocumentRequest.h"
 
 clLanguageServer::clLanguageServer()
 {
@@ -26,26 +27,6 @@ void clLanguageServer::Start(const wxString& command, const wxString& workingDir
     if(!m_process) { clWARNING() << "Failed to start Language Server:" << command; }
 }
 
-void clLanguageServer::FindDefinition(const wxFileName& filename, size_t line, size_t column)
-{
-    //{
-    //  "jsonrpc": "2.0",
-    //  "id": 1,
-    //  "method": "textDocument/definition",
-    //  "params": {
-    //    "textDocument": {
-    //      "uri": "file:///Users/NSHipster/Example.swift"
-    //    },
-    //    "position": {
-    //      "line": 1,
-    //      "character": 13
-    //    }
-    //  }
-    //}
-    json_rpc::GotoDefinitionRequest req(filename, line, column);
-    req.Send(this);
-}
-
 void clLanguageServer::OnProcessTerminated(clProcessEvent& event)
 {
     clDEBUG() << "Langauge Server Terminated";
@@ -64,4 +45,20 @@ void clLanguageServer::Stop()
 {
     m_goingDown = true;
     if(m_process) { m_process->Terminate(); }
+}
+
+//===--------------------------------------------------
+// Protocol implementation
+//===--------------------------------------------------
+
+void clLanguageServer::FindDefinition(const wxFileName& filename, size_t line, size_t column)
+{
+    json_rpc::GotoDefinitionRequest req(filename, line, column);
+    req.Send(this);
+}
+
+void clLanguageServer::FileOpened(const wxFileName& filename, const wxString& fileContent, const wxString& languageId)
+{
+    json_rpc::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
+    req.Send(this);
 }

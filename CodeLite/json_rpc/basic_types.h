@@ -9,20 +9,6 @@
 namespace json_rpc
 {
 //===----------------------------------------------------------------------------------
-// Params
-//===----------------------------------------------------------------------------------
-class WXDLLIMPEXP_CL Params : public Serializable
-{
-public:
-    typedef wxSharedPtr<Params> Ptr_t;
-
-public:
-    Params() {}
-    virtual ~Params() {}
-    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Params*>(this)); }
-};
-
-//===----------------------------------------------------------------------------------
 // TextDocumentIdentifier
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
@@ -80,22 +66,54 @@ public:
     int GetLine() const { return m_line; }
 };
 
-class WXDLLIMPEXP_CL TextDocumentPositionParams : public Params
+//===----------------------------------------------------------------------------------
+// TextDocumentItem
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
 {
-    TextDocumentIdentifier m_textDocument;
-    Position m_position;
+    wxFileName m_uri;
+    wxString m_languageId;
+    wxString m_text;
+    int m_version = 1;
 
 public:
-    TextDocumentPositionParams();
-    virtual ~TextDocumentPositionParams() {}
-
     virtual void FromJSON(const JSONElement& json);
     virtual JSONElement ToJSON(const wxString& name) const;
 
-    void SetPosition(const Position& position) { this->m_position = position; }
-    void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
-    const Position& GetPosition() const { return m_position; }
-    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+    TextDocumentItem(const wxFileName& uri, const wxString& langId, const wxString& text, int version = 1)
+        : m_uri(uri)
+        , m_languageId(langId)
+        , m_text(text)
+        , m_version(version)
+    {
+    }
+    TextDocumentItem() {}
+    virtual ~TextDocumentItem() {}
+    TextDocumentItem& SetLanguageId(const wxString& languageId)
+    {
+        this->m_languageId = languageId;
+        return *this;
+    }
+    TextDocumentItem& SetText(const wxString& text)
+    {
+        this->m_text = text;
+        return *this;
+    }
+    TextDocumentItem& SetUri(const wxFileName& uri)
+    {
+        this->m_uri = uri;
+        return *this;
+    }
+    TextDocumentItem& SetVersion(int version)
+    {
+        this->m_version = version;
+        return *this;
+    }
+    const wxString& GetLanguageId() const { return m_languageId; }
+    const wxString& GetText() const { return m_text; }
+    const wxFileName& GetUri() const { return m_uri; }
+    int GetVersion() const { return m_version; }
 };
+
 };     // namespace json_rpc
 #endif // JSONRPC_BASICTYPES_H

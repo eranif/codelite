@@ -4,11 +4,12 @@
 #include "json_rpc/Message.h" // Base class: json_rpc::Message
 #include "clJSONRPC.h"
 #include "json_rpc/basic_types.h"
+#include "json_rpc_params.h"
 
 namespace json_rpc
 {
 
-class RequestMessage : public json_rpc::Message
+class WXDLLIMPEXP_CL RequestMessage : public json_rpc::Message
 {
 protected:
     int m_id = wxNOT_FOUND;

@@ -43,6 +43,11 @@ public:
      * @param column the current caret column (0 based)
      */
     void FindDefinition(const wxFileName& filename, size_t line, size_t column);
+    
+    /**
+     * @brief notify about file open
+     */
+    void FileOpened(const wxFileName& filename, const wxString& fileContent, const wxString& languageId);
 };
 
 #endif // CLLANGUAGESERVER_H

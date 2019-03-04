@@ -40,22 +40,23 @@ JSONElement Position::ToJSON(const wxString& name) const
 }
 
 //===----------------------------------------------------------------------------------
-// TextDocumentPositionParams
+// TextDocumentItem
 //===----------------------------------------------------------------------------------
-
-TextDocumentPositionParams::TextDocumentPositionParams() {}
-
-void TextDocumentPositionParams::FromJSON(const JSONElement& json)
+void TextDocumentItem::FromJSON(const JSONElement& json)
 {
-    m_textDocument.FromJSON(json);
-    m_position.FromJSON(json);
+    m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
+    m_languageId = json.namedObject("languageId").toString();
+    m_version = json.namedObject("version").toInt();
+    m_text = json.namedObject("text").toString();
 }
 
-JSONElement TextDocumentPositionParams::ToJSON(const wxString& name) const
+JSONElement TextDocumentItem::ToJSON(const wxString& name) const
 {
     JSONElement json = JSONElement::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
-    json.append(m_position.ToJSON("position"));
+    json.addProperty("uri", wxFileSystem::FileNameToURL(GetUri()))
+        .addProperty("languageId", GetLanguageId())
+        .addProperty("version", GetVersion())
+        .addProperty("text", GetText());
     return json;
 }
 }; // namespace json_rpc

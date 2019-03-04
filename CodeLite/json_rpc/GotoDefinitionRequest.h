@@ -7,7 +7,7 @@
 
 namespace json_rpc
 {
-class GotoDefinitionRequest : public json_rpc::RequestMessage
+class WXDLLIMPEXP_CL GotoDefinitionRequest : public json_rpc::RequestMessage
 {
 public:
     GotoDefinitionRequest(const wxFileName& filename, size_t line, size_t column);

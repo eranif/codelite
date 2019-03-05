@@ -27,12 +27,11 @@ wxString json_rpc::RequestMessage::ToString() const
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON("");
 
-    wxString data = json.format();
+    wxString data = json.format(false);
     size_t len = data.length();
 
     // Build the request
     wxString buffer;
-    buffer << "Content-Type: application/jsonrpc; charset=utf8\r\n";
     buffer << "Content-Length: " << len << "\r\n";
     buffer << "\r\n";
     buffer << data;

@@ -1256,13 +1256,15 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     // Build the command line
     wxString commandLine;
     wxString extraFlags;
+#ifdef __WXMSW__
     if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
 #if _WIN64
         extraFlags = "-target x86_64-pc-windows-gnu";
 #else
-        extraFlags = "-target i686-pc-windows-gnu"
+        extraFlags = "-target i686-pc-windows-gnu";
 #endif
     }
+#endif
 
     // Add the compiler global paths if needed
     if(compilersGlobalPaths.count(compiler->GetName())) {

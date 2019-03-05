@@ -43,6 +43,7 @@
 #include <wx/thread.h>
 #include <wx/tokenzr.h>
 #include "file_logger.h"
+#include "macromanager.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -1023,14 +1024,16 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
         BuildConfigPtr buildConf = activeProject->GetBuildConfiguration();
         if(buildConf && buildConf->IsCustomBuild()) {
             // Using custom build
-            wxFileName fnWorkingDirectory(buildConf->GetWorkingDirectory(), "compile_commands.json");
+            wxString buildWorkingDirectory = MacroManager::Instance()->Expand(
+                buildConf->GetCustomBuildWorkingDir(), NULL, activeProject->GetName(), buildConf->GetName());
+            wxFileName fnWorkingDirectory(buildWorkingDirectory, "compile_commands.json");
             if(fnWorkingDirectory.FileExists()) {
                 JSON root(fnWorkingDirectory);
                 return root.release();
             }
         }
     }
-    
+
     JSONItem compile_commands = JSONItem::createArray();
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {

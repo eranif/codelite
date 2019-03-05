@@ -44,14 +44,14 @@ MacroManager* MacroManager::Instance()
     return &ms_instance;
 }
 
-wxString MacroManager::Expand(
-    const wxString& expression, IManager* manager, const wxString& project, const wxString& confToBuild)
+wxString MacroManager::Expand(const wxString& expression, IManager* manager, const wxString& project,
+                              const wxString& confToBuild)
 {
     return DoExpand(expression, manager, project, true, confToBuild);
 }
 
-wxString MacroManager::Replace(
-    const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase)
+wxString MacroManager::Replace(const wxString& inString, const wxString& variableName, const wxString& replaceWith,
+                               bool bIgnoreCase)
 {
     size_t flags = wxRE_DEFAULT;
     if(bIgnoreCase) flags |= wxRE_ICASE;
@@ -72,21 +72,13 @@ wxString MacroManager::Replace(
     wxRegEx reFour(strRe4, flags);  // %variable%
 
     wxString result = inString;
-    if(reOne.Matches(result)) {
-        reOne.ReplaceAll(&result, replaceWith);
-    }
+    if(reOne.Matches(result)) { reOne.ReplaceAll(&result, replaceWith); }
 
-    if(reTwo.Matches(result)) {
-        reTwo.ReplaceAll(&result, replaceWith);
-    }
+    if(reTwo.Matches(result)) { reTwo.ReplaceAll(&result, replaceWith); }
 
-    if(reThree.Matches(result)) {
-        reThree.ReplaceAll(&result, replaceWith);
-    }
+    if(reThree.Matches(result)) { reThree.ReplaceAll(&result, replaceWith); }
 
-    if(reFour.Matches(result)) {
-        reFour.ReplaceAll(&result, replaceWith);
-    }
+    if(reFour.Matches(result)) { reFour.ReplaceAll(&result, replaceWith); }
     return result;
 }
 
@@ -104,10 +96,10 @@ bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxStri
     strRe3 << wxT("\\$(") << wxT("[a-z_0-9]+") << wxT(")");
     strRe4 << wxT("%(") << wxT("[a-z_0-9]+") << wxT(")%");
 
-    static wxRegEx reOne(strRe1, flags);   // $(variable)
-    static wxRegEx reTwo(strRe2, flags);   // ${variable}
-    static wxRegEx reThree(strRe3, flags); // $variable
-    static wxRegEx reFour(strRe4, flags);  // %variable%
+    wxRegEx reOne(strRe1, flags);   // $(variable)
+    wxRegEx reTwo(strRe2, flags);   // ${variable}
+    wxRegEx reThree(strRe3, flags); // $variable
+    wxRegEx reFour(strRe4, flags);  // %variable%
 
     if(reOne.Matches(inString)) {
         name = reOne.GetMatch(inString, 1);
@@ -140,16 +132,14 @@ wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& p
     return DoExpand(expression, NULL, project, false, confToBuild);
 }
 
-wxString MacroManager::DoExpand(
-    const wxString& expression, IManager* manager, const wxString& project, bool applyEnv, const wxString& confToBuild)
+wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
+                                const wxString& confToBuild)
 {
     wxString expandedString(expression);
     clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
-    //IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
-    
-    if(!manager) {
-        manager = clGetManager();
-    }
+    // IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
+
+    if(!manager) { manager = clGetManager(); }
 
     size_t retries = 0;
     wxString dummyname, dummfullname;
@@ -165,7 +155,7 @@ wxString MacroManager::DoExpand(
             } else {
                 expandedString.Replace("$(WorkspaceConfiguration)", "");
             }
-            
+
             ProjectPtr proj = workspace->GetProject(project);
             if(proj) {
                 wxString prjBuildWd;
@@ -199,38 +189,37 @@ wxString MacroManager::DoExpand(
                     expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
                     expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
                     expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
-                    
-  
+
                     // Compiler-related variables
 
                     wxString cFlags = bldConf->GetCCompileOptions();
                     cFlags.Replace(wxT(";"), wxT(" "));
                     expandedString.Replace(wxT("$(CC)"), bldConf->GetCompiler()->GetTool("CC"));
                     expandedString.Replace(wxT("$(CFLAGS)"), cFlags);
-                    
+
                     wxString cxxFlags = bldConf->GetCompileOptions();
                     cxxFlags.Replace(wxT(";"), wxT(" "));
                     expandedString.Replace(wxT("$(CXX)"), bldConf->GetCompiler()->GetTool("CXX"));
                     expandedString.Replace(wxT("$(CXXFLAGS)"), cxxFlags);
-                  
+
                     wxString ldFlags = bldConf->GetLinkOptions();
                     ldFlags.Replace(wxT(";"), wxT(" "));
                     expandedString.Replace(wxT("$(LDFLAGS)"), ldFlags);
-                    
+
                     wxString asFlags = bldConf->GetAssmeblerOptions();
                     asFlags.Replace(wxT(";"), wxT(" "));
                     expandedString.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
                     expandedString.Replace(wxT("$(ASFLAGS)"), asFlags);
-                    
+
                     wxString resFlags = bldConf->GetResCompileOptions();
                     resFlags.Replace(wxT(";"), wxT(" "));
                     expandedString.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
                     expandedString.Replace(wxT("$(RESFLAGS)"), resFlags);
-  
+
                     expandedString.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
-                    
+
                     expandedString.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
-                    
+
                     expandedString.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
                     expandedString.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
                     expandedString.Replace(wxT("$(ResourcePath)"), bldConf->GetResCmpIncludePath());

@@ -135,7 +135,7 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     // set the working directory to the workspace path
     ::wxSetWorkingDirectory(m_workspaceFile.GetPath());
 
-    JSONRoot root(m_workspaceFile);
+    JSON root(m_workspaceFile);
     FromJSON(root.toElement());
 
     // We open the symbols database manually here and _not_ via an event
@@ -336,12 +336,12 @@ bool PHPWorkspace::HasProject(const wxString& projectname) const
     return m_projects.count(projectname);
 }
 
-void PHPWorkspace::FromJSON(const JSONElement& e)
+void PHPWorkspace::FromJSON(const JSONItem& e)
 {
     m_projects.clear();
     if(e.hasNamedObject("projects")) {
         PHPProject::Ptr_t firstProject;
-        JSONElement projects = e.namedObject("projects");
+        JSONItem projects = e.namedObject("projects");
         int count = projects.arraySize();
         for(int i = 0; i < count; ++i) {
             PHPProject::Ptr_t p(new PHPProject());
@@ -375,9 +375,9 @@ void PHPWorkspace::FromJSON(const JSONElement& e)
 #define PHP_WORKSPACE_VERSION wxString("1.0")
 #define PHP_WORKSPACE_IDE wxString("CodeLite")
 
-JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
+JSONItem PHPWorkspace::ToJSON(JSONItem& e) const
 {
-    JSONElement metadata = JSONElement::createObject("metadata");
+    JSONItem metadata = JSONItem::createObject("metadata");
     e.append(metadata);
 
     metadata.addProperty("version", PHP_WORKSPACE_VERSION);
@@ -385,7 +385,7 @@ JSONElement PHPWorkspace::ToJSON(JSONElement& e) const
     metadata.addProperty("type", wxString("php"));
 
     // Store the list of files
-    JSONElement projectsArr = JSONElement::createArray("projects");
+    JSONItem projectsArr = JSONItem::createArray("projects");
     e.append(projectsArr);
 
     PHPProject::Map_t::const_iterator iter = m_projects.begin();
@@ -414,8 +414,8 @@ void PHPWorkspace::Save()
         return;
     }
     // serialize the workspace and store it to disk
-    JSONRoot root(cJSON_Object);
-    JSONElement ele = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem ele = root.toElement();
     ToJSON(ele);
     root.save(m_workspaceFile);
 }
@@ -436,8 +436,8 @@ bool PHPWorkspace::Create(const wxString& filename)
     }
 
     // create it
-    JSONRoot root(cJSON_Object);
-    JSONElement ele = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem ele = root.toElement();
     ToJSON(ele);
     root.save(fn);
     return true;

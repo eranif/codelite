@@ -25,7 +25,7 @@
 
 #include "autoversion.h"
 #include "file_logger.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "webupdatethread.h"
@@ -46,7 +46,7 @@ struct CodeLiteVersion
     wxString m_url;
     int m_version;
     bool m_isReleaseVersion;
-    CodeLiteVersion(const JSONElement& json)
+    CodeLiteVersion(const JSONItem& json)
         : m_version(wxNOT_FOUND)
         , m_isReleaseVersion(false)
     {
@@ -113,8 +113,8 @@ void WebUpdateJob::ParseFile()
 
     clDEBUG() << "Current platform details:" << os << "," << codename << "," << arch << "," << CODELITE_VERSION_STRING
               << clEndl;
-    JSONRoot root(m_dataRead);
-    JSONElement platforms = root.toElement().namedObject("platforms");
+    JSON root(m_dataRead);
+    JSONItem platforms = root.toElement().namedObject("platforms");
 
     int count = platforms.arraySize();
     for(int i = 0; i < count; ++i) {

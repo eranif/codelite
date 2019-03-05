@@ -1,6 +1,6 @@
 #include "json_rpc/basic_types.h"
 #include <wx/filesys.h>
-#include "json_node.h"
+#include "JSON.h"
 
 //===------------------------------------------------
 // Request
@@ -11,30 +11,30 @@ namespace json_rpc
 //===----------------------------------------------------------------------------------
 // TextDocumentIdentifier
 //===----------------------------------------------------------------------------------
-void TextDocumentIdentifier::FromJSON(const JSONElement& json)
+void TextDocumentIdentifier::FromJSON(const JSONItem& json)
 {
     wxString uri = json.namedObject("uri").toString();
     m_filename = wxFileSystem::URLToFileName(uri);
 }
 
-JSONElement TextDocumentIdentifier::ToJSON(const wxString& name) const
+JSONItem TextDocumentIdentifier::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("uri", wxFileSystem::FileNameToURL(m_filename));
     return json;
 }
 //===----------------------------------------------------------------------------------
 // VersionedTextDocumentIdentifier
 //===----------------------------------------------------------------------------------
-void VersionedTextDocumentIdentifier::FromJSON(const JSONElement& json)
+void VersionedTextDocumentIdentifier::FromJSON(const JSONItem& json)
 {
     TextDocumentIdentifier::FromJSON(json);
     m_version = json.namedObject("version").toInt(m_version);
 }
 
-JSONElement VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
+JSONItem VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
 {
-    JSONElement json = TextDocumentIdentifier::ToJSON(name);
+    JSONItem json = TextDocumentIdentifier::ToJSON(name);
     json.addProperty("version", m_version);
     return json;
 }
@@ -42,15 +42,15 @@ JSONElement VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // Position
 //===----------------------------------------------------------------------------------
-void Position::FromJSON(const JSONElement& json)
+void Position::FromJSON(const JSONItem& json)
 {
     m_line = json.namedObject("line").toInt(0);
     m_character = json.namedObject("character").toInt(0);
 }
 
-JSONElement Position::ToJSON(const wxString& name) const
+JSONItem Position::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("line", m_line);
     json.addProperty("character", m_character);
     return json;
@@ -59,7 +59,7 @@ JSONElement Position::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // TextDocumentItem
 //===----------------------------------------------------------------------------------
-void TextDocumentItem::FromJSON(const JSONElement& json)
+void TextDocumentItem::FromJSON(const JSONItem& json)
 {
     m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
     m_languageId = json.namedObject("languageId").toString();
@@ -67,9 +67,9 @@ void TextDocumentItem::FromJSON(const JSONElement& json)
     m_text = json.namedObject("text").toString();
 }
 
-JSONElement TextDocumentItem::ToJSON(const wxString& name) const
+JSONItem TextDocumentItem::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("uri", wxFileSystem::FileNameToURL(GetUri()))
         .addProperty("languageId", GetLanguageId())
         .addProperty("version", GetVersion())
@@ -79,14 +79,14 @@ JSONElement TextDocumentItem::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
 //===----------------------------------------------------------------------------------
-void TextDocumentContentChangeEvent::FromJSON(const JSONElement& json)
+void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json)
 {
     m_text = json.namedObject("text").toString();
 }
 
-JSONElement TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
+JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("text", m_text);
     return json;
 }

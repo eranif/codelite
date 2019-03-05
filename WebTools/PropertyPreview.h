@@ -12,8 +12,8 @@ class PropertyPreview : public nSerializableObject
     wxString m_subtype; // "object" types only
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     PropertyPreview();
     virtual ~PropertyPreview();
     void SetName(const wxString& name) { this->m_name = name; }

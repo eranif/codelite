@@ -38,7 +38,7 @@
 #include <wx/choicdlg.h>
 #include "includepathlocator.h"
 #include "build_settings_config.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/stream.h>
 #include <wx/url.h>
 #include "environmentconfig.h"
@@ -149,12 +149,12 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 
             } while(!in_stream->Eof());
 
-            JSONRoot root(dataRead);
-            JSONElement compilers = root.toElement().namedObject("Compilers");
-            JSONElement arr = compilers.namedObject("MinGW");
+            JSON root(dataRead);
+            JSONItem compilers = root.toElement().namedObject("Compilers");
+            JSONItem arr = compilers.namedObject("MinGW");
             int count = arr.arraySize();
             for(int i = 0; i < count; ++i) {
-                JSONElement compiler = arr.arrayItem(i);
+                JSONItem compiler = arr.arrayItem(i);
                 mingwCompilers.insert(
                     std::make_pair(compiler.namedObject("Name").toString(), compiler.namedObject("URL").toString()));
                 options.Add(compiler.namedObject("Name").toString());

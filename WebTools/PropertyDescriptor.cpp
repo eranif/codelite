@@ -4,15 +4,15 @@ PropertyDescriptor::PropertyDescriptor() {}
 
 PropertyDescriptor::~PropertyDescriptor() {}
 
-void PropertyDescriptor::FromJSON(const JSONElement& json)
+void PropertyDescriptor::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();
     if(json.hasNamedObject("value")) { m_value.FromJSON(json.namedObject("value")); }
 }
 
-JSONElement PropertyDescriptor::ToJSON(const wxString& name) const
+JSONItem PropertyDescriptor::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("name", m_name);
     if(!m_value.IsEmpty()) { json.append(m_value.ToJSON("value")); }
     return json;

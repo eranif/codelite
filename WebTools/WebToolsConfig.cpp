@@ -1,5 +1,5 @@
 #include "WebToolsConfig.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "NodeJSLocator.h"
 #include <set>
 #include <algorithm>
@@ -30,7 +30,7 @@ WebToolsConfig& WebToolsConfig::SaveConfig()
     return *this;
 }
 
-void WebToolsConfig::FromJSON(const JSONElement& json)
+void WebToolsConfig::FromJSON(const JSONItem& json)
 {
     m_jsFlags = json.namedObject("m_jsFlags").toSize_t(m_jsFlags);
     m_xmlFlags = json.namedObject("m_xmlFlags").toSize_t(m_xmlFlags);
@@ -46,9 +46,9 @@ void WebToolsConfig::FromJSON(const JSONElement& json)
     if(!v.IsEmpty() && wxFileName::FileExists(v)) { m_npm = v; }
 }
 
-JSONElement WebToolsConfig::ToJSON() const
+JSONItem WebToolsConfig::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_jsFlags", m_jsFlags);
     element.addProperty("m_xmlFlags", m_xmlFlags);
     element.addProperty("m_htmlFlags", m_htmlFlags);
@@ -60,8 +60,8 @@ JSONElement WebToolsConfig::ToJSON() const
 
 wxString WebToolsConfig::GetTernProjectFile() const
 {
-    JSONRoot root(cJSON_Object);
-    JSONElement libs = JSONElement::createArray("libs");
+    JSON root(cJSON_Object);
+    JSONItem libs = JSONItem::createArray("libs");
     root.toElement().append(libs);
 
     if(m_jsFlags & kJSLibraryBrowser) libs.arrayAppend("browser");
@@ -72,7 +72,7 @@ wxString WebToolsConfig::GetTernProjectFile() const
     if(m_jsFlags & kJSLibraryUnderscore) libs.arrayAppend("underscore");
     if(m_jsFlags & kJSPluginQML) libs.arrayAppend("qml");
 
-    JSONElement plugins = JSONElement::createObject("plugins");
+    JSONItem plugins = JSONItem::createObject("plugins");
     root.toElement().append(plugins);
 
     std::vector<wxString> pluginsToLoad;
@@ -104,7 +104,7 @@ wxString WebToolsConfig::GetTernProjectFile() const
     std::for_each(pluginsToLoad.begin(), pluginsToLoad.end(), [&](const wxString& name) {
         if(uniquePlugins.count(name) == 0) {
             uniquePlugins.insert(name);
-            JSONElement node = JSONElement::createObject(name);
+            JSONItem node = JSONItem::createObject(name);
             plugins.append(node);
         }
     });

@@ -27,7 +27,7 @@
 #define LLDBREMOTEHANDSHAKEPACKET_H
 
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 
 class LLDBRemoteHandshakePacket
 {
@@ -39,8 +39,8 @@ public:
     ~LLDBRemoteHandshakePacket();
     
     // Serialization API
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 
     void SetHost(const wxString& host) {
         this->m_host = host;

@@ -53,8 +53,8 @@ public:
     DbConnectionInfo();
     virtual ~DbConnectionInfo();
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void SetConnectionName(const wxString& connectionName) {
         this->m_connectionName = connectionName;
@@ -137,8 +137,8 @@ public:
     const wxArrayString& GetSqlHistory() const {
         return m_sqlHistory;
     }
-    virtual void FromJSON(const JSONElement &json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem &json);
+    virtual JSONItem ToJSON() const;
 };
 
 #endif // DBEXPLORERSETTINGS_H

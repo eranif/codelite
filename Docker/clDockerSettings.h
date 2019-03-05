@@ -28,8 +28,8 @@ public:
     bool HasFlag(int flag) const { return (m_flags & flag); }
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     clDockerSettings();
     virtual ~clDockerSettings();

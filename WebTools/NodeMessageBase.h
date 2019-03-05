@@ -2,7 +2,7 @@
 #define NODEDBGEVENTBASE_H
 
 #include "SocketAPI/clWebSocketClient.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/sharedptr.h>
 
 class NodeMessageBase
@@ -19,7 +19,7 @@ public:
     /**
      * @brief process message in JSON format
      */
-    virtual void Process(clWebSocketClient& socket, const JSONElement& json) = 0;
+    virtual void Process(clWebSocketClient& socket, const JSONItem& json) = 0;
 
     /**
      * @brief create new instance of this type

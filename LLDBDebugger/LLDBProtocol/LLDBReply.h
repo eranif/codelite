@@ -26,7 +26,7 @@
 #ifndef LLDBREPLY_H
 #define LLDBREPLY_H
 
-#include "json_node.h"
+#include "JSON.h"
 #include "LLDBEnums.h"
 #include "LLDBBreakpoint.h"
 #include "LLDBBacktrace.h"
@@ -89,8 +89,8 @@ public:
     int GetLine() const { return m_line; }
     int GetInterruptResaon() const { return m_interruptResaon; }
     // Serialization API
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 };
 
 #endif // LLDBREPLY_H

@@ -44,9 +44,7 @@ void CompileCommandsCreateor::Process(wxThread* thread)
     clCxxWorkspace workspace;
     workspace.OpenReadOnly(m_filename.GetFullPath(), errMsg);
 
-    JSONRoot json(cJSON_Array);
-    JSONElement compile_commands = json.toElement();
-    workspace.CreateCompileCommandsJSON(compile_commands);
+    JSON json(workspace.CreateCompileCommandsJSON());
 
     // Save the file
     wxFileName compileCommandsFile(m_filename.GetPath(), "compile_commands.json");

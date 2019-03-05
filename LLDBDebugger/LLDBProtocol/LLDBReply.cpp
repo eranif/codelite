@@ -30,11 +30,11 @@ LLDBReply::~LLDBReply() {}
 
 LLDBReply::LLDBReply(const wxString& str)
 {
-    JSONRoot root(str);
+    JSON root(str);
     FromJSON(root.toElement());
 }
 
-void LLDBReply::FromJSON(const JSONElement& json)
+void LLDBReply::FromJSON(const JSONItem& json)
 {
     m_replyType = json.namedObject("m_replyType").toInt(kReplyTypeInvalid);
     m_interruptResaon = json.namedObject("m_stopResaon").toInt(kInterruptReasonNone);
@@ -46,7 +46,7 @@ void LLDBReply::FromJSON(const JSONElement& json)
     m_text = json.namedObject("m_text").toString();
     
     m_breakpoints.clear();
-    JSONElement arr = json.namedObject("m_breakpoints");
+    JSONItem arr = json.namedObject("m_breakpoints");
     for(int i = 0; i < arr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint());
         bp->FromJSON(arr.arrayItem(i));
@@ -54,7 +54,7 @@ void LLDBReply::FromJSON(const JSONElement& json)
     }
 
     m_variables.clear();
-    JSONElement localsArr = json.namedObject("m_locals");
+    JSONItem localsArr = json.namedObject("m_locals");
     m_variables.reserve(localsArr.arraySize());
     for(int i = 0; i < localsArr.arraySize(); ++i) {
         LLDBVariable::Ptr_t variable(new LLDBVariable());
@@ -63,15 +63,15 @@ void LLDBReply::FromJSON(const JSONElement& json)
     }
 
     m_backtrace.Clear();
-    JSONElement backtrace = json.namedObject("m_backtrace");
+    JSONItem backtrace = json.namedObject("m_backtrace");
     m_backtrace.FromJSON(backtrace);
 
     m_threads = LLDBThread::FromJSON(json, "m_threads");
 }
 
-JSONElement LLDBReply::ToJSON() const
+JSONItem LLDBReply::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_replyType", m_replyType);
     json.addProperty("m_stopResaon", m_interruptResaon);
     json.addProperty("m_line", m_line);
@@ -80,13 +80,13 @@ JSONElement LLDBReply::ToJSON() const
     json.addProperty("m_expression", m_expression);
     json.addProperty("m_debugSessionType", m_debugSessionType);
     json.addProperty("m_text", m_text);
-    JSONElement bparr = JSONElement::createArray("m_breakpoints");
+    JSONItem bparr = JSONItem::createArray("m_breakpoints");
     json.append(bparr);
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {
         bparr.arrayAppend(m_breakpoints.at(i)->ToJSON());
     }
 
-    JSONElement localsArr = JSONElement::createArray("m_locals");
+    JSONItem localsArr = JSONItem::createArray("m_locals");
     json.append(localsArr);
     for(size_t i = 0; i < m_variables.size(); ++i) {
         localsArr.arrayAppend(m_variables.at(i)->ToJSON());

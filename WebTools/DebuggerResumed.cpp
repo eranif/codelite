@@ -10,7 +10,7 @@ DebuggerResumed::DebuggerResumed()
 
 DebuggerResumed::~DebuggerResumed() {}
 
-void DebuggerResumed::Process(clWebSocketClient& socket, const JSONElement& json)
+void DebuggerResumed::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     // Notify the UI that the debugger paused
     clDebugEvent resumeEvent(wxEVT_NODEJS_DEBUGGER_INTERACT);

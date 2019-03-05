@@ -5,7 +5,7 @@ PropertyPreview::PropertyPreview() {}
 
 PropertyPreview::~PropertyPreview() { wxDELETE(m_valuePreview); }
 
-void PropertyPreview::FromJSON(const JSONElement& json)
+void PropertyPreview::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();
     m_type = json.namedObject("type").toString();
@@ -16,9 +16,9 @@ void PropertyPreview::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement PropertyPreview::ToJSON(const wxString& name) const
+JSONItem PropertyPreview::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("name", m_name);
     json.addProperty("type", m_type);
     json.addProperty("value", m_value);

@@ -40,8 +40,8 @@ public:
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
     
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
     
 protected:
     // The local variabels defined in this function of type

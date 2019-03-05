@@ -15,8 +15,8 @@ public:
     virtual ~ResponseMessage();
     virtual wxString ToString() const;
 
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     ResponseMessage& SetId(int id)
     {

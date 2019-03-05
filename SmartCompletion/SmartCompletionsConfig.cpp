@@ -25,15 +25,15 @@ SmartCompletionsConfig& SmartCompletionsConfig::Save()
     return *this;
 }
 
-void SmartCompletionsConfig::FromJSON(const JSONElement& json)
+void SmartCompletionsConfig::FromJSON(const JSONItem& json)
 {
-    JSONElement e = json.namedObject(GetName());
+    JSONItem e = json.namedObject(GetName());
     m_flags = e.namedObject("m_flags").toSize_t(m_flags);
 }
 
-JSONElement SmartCompletionsConfig::ToJSON() const
+JSONItem SmartCompletionsConfig::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("m_flags", m_flags);
     return json;
 }

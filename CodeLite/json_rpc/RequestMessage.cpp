@@ -1,22 +1,22 @@
 #include "json_rpc/RequestMessage.h"
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 #include "file_logger.h"
 
 json_rpc::RequestMessage::RequestMessage() { m_id = Message::GetNextID(); }
 
 json_rpc::RequestMessage::~RequestMessage() {}
 
-JSONElement json_rpc::RequestMessage::ToJSON(const wxString& name) const
+JSONItem json_rpc::RequestMessage::ToJSON(const wxString& name) const
 {
-    JSONElement json = Message::ToJSON(name);
+    JSONItem json = Message::ToJSON(name);
     json.addProperty("id", GetId());
     json.addProperty("method", GetMethod());
     if(m_params) { json.append(m_params->ToJSON("params")); }
     return json;
 }
 
-void json_rpc::RequestMessage::FromJSON(const JSONElement& json)
+void json_rpc::RequestMessage::FromJSON(const JSONItem& json)
 {
     // we dont need to un-serialize a request object
     wxUnusedVar(json);
@@ -25,7 +25,7 @@ void json_rpc::RequestMessage::FromJSON(const JSONElement& json)
 wxString json_rpc::RequestMessage::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
-    JSONElement json = ToJSON("");
+    JSONItem json = ToJSON("");
 
     wxString data = json.format();
     size_t len = data.length();

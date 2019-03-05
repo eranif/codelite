@@ -68,8 +68,8 @@ public:
     const wxString& GetDefaultFolder() const { return m_defaultFolder; }
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 };
 #endif // USE_SFTP
 #endif // SSHACCOUNTINFO_H

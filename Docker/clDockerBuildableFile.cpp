@@ -14,7 +14,7 @@ clDockerBuildableFile::clDockerBuildableFile(const wxString& path, eDockerFileTy
 clDockerBuildableFile::clDockerBuildableFile() {}
 clDockerBuildableFile::~clDockerBuildableFile() {}
 
-void clDockerBuildableFile::FromJSON(const JSONElement& json, const wxString& workspaceDir)
+void clDockerBuildableFile::FromJSON(const JSONItem& json, const wxString& workspaceDir)
 {
     m_type = (eDockerFileType)json.namedObject("type").toInt((int)eDockerFileType::kDockerfile);
     m_path = json.namedObject("path").toString();
@@ -27,9 +27,9 @@ void clDockerBuildableFile::FromJSON(const JSONElement& json, const wxString& wo
     m_runOptions = json.namedObject("runOptions").toString();
 }
 
-JSONElement clDockerBuildableFile::ToJSON(const wxString& workspaceDir) const
+JSONItem clDockerBuildableFile::ToJSON(const wxString& workspaceDir) const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
 
     // m_path is absolute, convert to relative before we save it
     wxFileName fn(m_path);

@@ -481,11 +481,11 @@ SettersGetterData::SettersGetterData()
 }
 
 SettersGetterData::~SettersGetterData() {}
-void SettersGetterData::FromJSON(const JSONElement& json) { m_flags = json.namedObject("m_flags").toSize_t(m_flags); }
+void SettersGetterData::FromJSON(const JSONItem& json) { m_flags = json.namedObject("m_flags").toSize_t(m_flags); }
 
-JSONElement SettersGetterData::ToJSON() const
+JSONItem SettersGetterData::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_flags", m_flags);
     return element;
 }

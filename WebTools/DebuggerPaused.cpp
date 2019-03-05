@@ -12,14 +12,14 @@ DebuggerPaused::DebuggerPaused()
 
 DebuggerPaused::~DebuggerPaused() {}
 
-void DebuggerPaused::Process(clWebSocketClient& socket, const JSONElement& json)
+void DebuggerPaused::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     m_stopReason = json.namedObject("reason").toString();
-    JSONElement frames = json.namedObject("callFrames");
+    JSONItem frames = json.namedObject("callFrames");
     nSerializableObject::Vec_t V;
     int size = frames.arraySize();
     for(int i = 0; i < size; ++i) {
-        JSONElement frame = frames.arrayItem(i);
+        JSONItem frame = frames.arrayItem(i);
         nSerializableObject::Ptr_t f(new CallFrame());
         f->FromJSON(frame);
         V.push_back(f);
@@ -27,7 +27,7 @@ void DebuggerPaused::Process(clWebSocketClient& socket, const JSONElement& json)
     
     wxString extraMessage;
     if(json.hasNamedObject("data")) {
-        JSONElement data = json.namedObject("data");
+        JSONItem data = json.namedObject("data");
         if(data.hasNamedObject("description")) {
             extraMessage = data.namedObject("description").toString();
         }

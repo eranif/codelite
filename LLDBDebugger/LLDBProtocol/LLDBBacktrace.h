@@ -46,7 +46,7 @@
 #include "lldb/API/SBListener.h"
 #endif
 
-#include "json_node.h"
+#include "JSON.h"
 
 /**
  * @class LLDBBacktrace
@@ -62,8 +62,8 @@ public:
         wxString functionName;
         wxString address;
 
-        JSONElement ToJSON() const;
-        void FromJSON(const JSONElement& json);
+        JSONItem ToJSON() const;
+        void FromJSON(const JSONItem& json);
 
         Entry()
             : id(0)
@@ -108,8 +108,8 @@ public:
     wxString ToString() const;
 
     // Serialization API
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 };
 
 #endif // LLDBBACKTRACE_H

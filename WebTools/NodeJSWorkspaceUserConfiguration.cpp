@@ -1,6 +1,6 @@
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include <globals.h>
-#include <json_node.h>
+#include "JSON.h"
 
 NodeJSWorkspaceUser::NodeJSWorkspaceUser(const wxString& workspacePath)
     : m_workspacePath(workspacePath)
@@ -25,8 +25,8 @@ wxFileName NodeJSWorkspaceUser::GetFileName() const
 NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
 {
     wxFileName fn = GetFileName();
-    JSONRoot root(fn);
-    JSONElement element = root.toElement();
+    JSON root(fn);
+    JSONItem element = root.toElement();
 
     m_debuggerPort = element.namedObject("m_debuggerPort").toInt(m_debuggerPort);
     m_debuggerHost = element.namedObject("m_debuggerHost").toString(m_debuggerHost);
@@ -35,7 +35,7 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
     m_workingDirectory = element.namedObject("m_workingDirectory").toString();
 
     m_breakpoints.clear();
-    JSONElement bpArr = element.namedObject("m_breakpoints");
+    JSONItem bpArr = element.namedObject("m_breakpoints");
     int bpcount = bpArr.arraySize();
     for(int i = 0; i < bpcount; ++i) {
         NodeJSBreakpoint bp;
@@ -48,14 +48,14 @@ NodeJSWorkspaceUser& NodeJSWorkspaceUser::Load()
 NodeJSWorkspaceUser& NodeJSWorkspaceUser::Save()
 {
     // Serialize the breakpoints
-    JSONRoot root(cJSON_Object);
-    JSONElement json = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem json = root.toElement();
     json.addProperty("m_debuggerPort", m_debuggerPort);
     json.addProperty("m_debuggerHost", m_debuggerHost);
     json.addProperty("m_scriptToExecute", m_scriptToExecute);
     json.addProperty("m_commandLineArgs", m_commandLineArgs);
     json.addProperty("m_workingDirectory", m_workingDirectory);
-    JSONElement bpArr = JSONElement::createArray("m_breakpoints");
+    JSONItem bpArr = JSONItem::createArray("m_breakpoints");
     json.append(bpArr);
 
     NodeJSBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();

@@ -44,8 +44,8 @@ public:
     PHPEntityFunctionAlias();
     virtual ~PHPEntityFunctionAlias();
     
-    void FromJSON(const JSONElement &json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem &json);
+    JSONItem ToJSON() const;
     
 public:
     virtual bool Is(eEntityType type) const;

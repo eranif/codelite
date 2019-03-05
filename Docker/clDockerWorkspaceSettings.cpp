@@ -9,14 +9,14 @@ clDockerWorkspaceSettings::clDockerWorkspaceSettings()
 
 clDockerWorkspaceSettings::~clDockerWorkspaceSettings() {}
 
-void clDockerWorkspaceSettings::FromJSON(const JSONElement& json)
+void clDockerWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_files.clear();
     m_version = json.namedObject("Version").toString();
-    JSONElement files = json.namedObject("files");
+    JSONItem files = json.namedObject("files");
     int filesCount = files.arraySize();
     for(int i = 0; i < filesCount; ++i) {
-        JSONElement fileJson = files.arrayItem(i);
+        JSONItem fileJson = files.arrayItem(i);
         clDockerBuildableFile::Ptr_t f = clDockerBuildableFile::New(
             (eDockerFileType)fileJson.namedObject("type").toInt((int)eDockerFileType::kDockerfile));
         if(!f) { continue; }
@@ -25,11 +25,11 @@ void clDockerWorkspaceSettings::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement clDockerWorkspaceSettings::ToJSON() const
+JSONItem clDockerWorkspaceSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("Version", DOCKER_VERSION);
-    JSONElement files = JSONElement::createArray("files");
+    JSONItem files = JSONItem::createArray("files");
     json.append(files);
     std::for_each(m_files.begin(), m_files.end(), [&](const clDockerBuildableFile::Map_t::value_type& vt) {
         files.arrayAppend(vt.second->ToJSON(m_workspaceFile.GetPath()));

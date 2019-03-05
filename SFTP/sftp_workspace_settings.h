@@ -60,8 +60,8 @@ public:
     }
     
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 };
 
 #endif // SFTPWORKSPACESETTINGS_H

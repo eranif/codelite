@@ -1,7 +1,7 @@
 #ifndef EVENTSDATABASE_H
 #define EVENTSDATABASE_H
 
-#include "json_node.h"
+#include "wxcLib/json_node.h"
 #include "wx_ordered_map.h"
 #include <map>
 #include <wx/menu.h>

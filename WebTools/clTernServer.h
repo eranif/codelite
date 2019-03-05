@@ -32,7 +32,7 @@
 #include "wxCodeCompletionBoxEntry.h"
 #include "clTernWorkerThread.h"
 #include "cl_calltip.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "cl_command_event.h"
 
 class IEditor;
@@ -93,8 +93,8 @@ protected:
     // Worker thread callbacks
     void OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply);
     void OnError(const wxString& why);
-    JSONElement CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
-    JSONElement CreateFilesArray(IEditor *editor, bool forDelete = false);
+    JSONItem CreateLocation(wxStyledTextCtrl* ctrl, int pos = wxNOT_FOUND);
+    JSONItem CreateFilesArray(IEditor *editor, bool forDelete = false);
 
 public:
     void RecycleIfNeeded(bool force = false);

@@ -2,7 +2,7 @@
 #define CLDOCKERFILE_H
 
 #include "clDockerBuildableFile.h"
-#include "json_node.h"
+#include "JSON.h"
 
 class clDockerfile : public clDockerBuildableFile
 {
@@ -11,8 +11,8 @@ public:
     clDockerfile();
     virtual ~clDockerfile();
 
-    void FromJSON(const JSONElement& json, const wxString& workspaceDir);
-    JSONElement ToJSON(const wxString& workspaceDir) const;
+    void FromJSON(const JSONItem& json, const wxString& workspaceDir);
+    JSONItem ToJSON(const wxString& workspaceDir) const;
 };
 
 #endif // CLDOCKERFILE_H

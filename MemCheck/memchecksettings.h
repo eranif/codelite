@@ -68,8 +68,8 @@ public:
     virtual ~ ValgrindSettings() {
     }
 
-    virtual void FromJSON(const JSONElement & json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem & json);
+    virtual JSONItem ToJSON() const;
 
 private:
     wxString m_binary;
@@ -148,8 +148,8 @@ public:
     virtual ~ MemCheckSettings() {
     }
 
-    virtual void FromJSON(const JSONElement & json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem & json);
+    virtual JSONItem ToJSON() const;
 
 private:
     wxString m_engine;

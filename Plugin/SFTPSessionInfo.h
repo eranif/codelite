@@ -22,8 +22,8 @@ public:
     SFTPSessionInfo();
     ~SFTPSessionInfo();
 
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 
     void SetFiles(const std::vector<wxString>& files) { this->m_files = files; }
     void SetRootFolder(const wxString& rootFolder) { this->m_rootFolder = rootFolder; }
@@ -45,8 +45,8 @@ class WXDLLIMPEXP_SDK SFTPSessionInfoList : public clConfigItem
 public:
     SFTPSessionInfoList();
     virtual ~SFTPSessionInfoList();
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 
     SFTPSessionInfoList& Load();
     SFTPSessionInfoList& Save();

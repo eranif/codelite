@@ -19,8 +19,8 @@ public:
     RemoteObject();
     virtual ~RemoteObject();
 
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON(const wxString& name) const;
     bool IsObject() const { return GetType() == "object"; }
     bool IsString() const { return GetType() == "string"; }
     bool IsUndefined() const { return GetType() == "undefined"; }

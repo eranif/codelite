@@ -37,7 +37,7 @@
 #include <map>
 #include <wx/regex.h>
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 
 class wxEvtHandler;
 class SearchResult;
@@ -192,8 +192,8 @@ public:
         return *this;
     }
 
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
     //------------------------------------------------------
     // Setters/getters
@@ -279,8 +279,8 @@ public:
         return *this;
     }
 
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
     void SetReplaceWith(const wxString& replaceWith) { this->m_replaceWith = replaceWith; }

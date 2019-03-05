@@ -111,8 +111,8 @@ public:
     static size_t CURRENT_VERSION;
 
 protected:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void DoUpdateTokensWxMap();
     void DoUpdateTokensWxMapReversed();

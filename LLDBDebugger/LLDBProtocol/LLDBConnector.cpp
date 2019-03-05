@@ -34,7 +34,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "processreaderthread.h"
 #include <wx/filefn.h>
 #include <wx/log.h>

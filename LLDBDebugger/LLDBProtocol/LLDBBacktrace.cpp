@@ -82,12 +82,12 @@ wxString LLDBBacktrace::ToString() const
     return str;
 }
 
-void LLDBBacktrace::FromJSON(const JSONElement& json)
+void LLDBBacktrace::FromJSON(const JSONItem& json)
 {
     m_callstack.clear();
     m_threadId = json.namedObject("m_threadId").toInt(0);
     m_selectedFrameId = json.namedObject("m_selectedFrameId").toInt(0);
-    JSONElement arr = json.namedObject("m_callstack");
+    JSONItem arr = json.namedObject("m_callstack");
     for(int i = 0; i < arr.arraySize(); ++i) {
         LLDBBacktrace::Entry entry;
         entry.FromJSON(arr.arrayItem(i));
@@ -95,13 +95,13 @@ void LLDBBacktrace::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement LLDBBacktrace::ToJSON() const
+JSONItem LLDBBacktrace::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_threadId", m_threadId);
     json.addProperty("m_selectedFrameId", m_selectedFrameId);
 
-    JSONElement arr = JSONElement::createArray("m_callstack");
+    JSONItem arr = JSONItem::createArray("m_callstack");
     json.append(arr);
 
     for(size_t i = 0; i < m_callstack.size(); ++i) {
@@ -114,7 +114,7 @@ JSONElement LLDBBacktrace::ToJSON() const
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 
-void LLDBBacktrace::Entry::FromJSON(const JSONElement& json)
+void LLDBBacktrace::Entry::FromJSON(const JSONItem& json)
 {
     id = json.namedObject("id").toInt(0);
     line = json.namedObject("line").toInt(0);
@@ -123,9 +123,9 @@ void LLDBBacktrace::Entry::FromJSON(const JSONElement& json)
     address = json.namedObject("address").toString();
 }
 
-JSONElement LLDBBacktrace::Entry::ToJSON() const
+JSONItem LLDBBacktrace::Entry::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("id", id);
     json.addProperty("line", line);
     json.addProperty("filename", filename);

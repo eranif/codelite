@@ -39,8 +39,8 @@ class WebToolsConfig : public clConfigItem
     int m_portNumber = 12089;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     enum eJSFlags {
         kJSEnableCC = (1 << 0),

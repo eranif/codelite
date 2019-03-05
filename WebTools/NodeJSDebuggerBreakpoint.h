@@ -26,7 +26,7 @@
 #ifndef NODEJSDEBUGGERBREAKPOINT_H
 #define NODEJSDEBUGGERBREAKPOINT_H
 
-#include "json_node.h"
+#include "JSON.h"
 #include "nSerializableObject.h"
 #include <vector>
 #include <wx/string.h>
@@ -44,8 +44,8 @@ public:
     NodeJSBreakpoint();
     virtual ~NodeJSBreakpoint();
 
-    JSONElement ToJSON(const wxString& name) const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json);
 
     bool IsOk() const { return !m_filename.IsEmpty() && (m_line != wxNOT_FOUND); }
 

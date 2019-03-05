@@ -44,7 +44,7 @@ TweaksSettings::~TweaksSettings()
 {
 }
 
-void TweaksSettings::FromJSON(const JSONElement& json)
+void TweaksSettings::FromJSON(const JSONItem& json)
 {
     m_projects.clear();
     m_globalBgColour = json.namedObject("m_globalBgColour").toColour();
@@ -52,7 +52,7 @@ void TweaksSettings::FromJSON(const JSONElement& json)
     m_enableTweaks = json.namedObject("m_enableTweaks").toBool(false);
     m_flags = json.namedObject("m_flags").toSize_t();
     
-    JSONElement arr = json.namedObject("projects");
+    JSONItem arr = json.namedObject("projects");
     int size = arr.arraySize();
     for(int i=0; i<size; ++i) {
         ProjectTweaks tw;
@@ -61,15 +61,15 @@ void TweaksSettings::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement TweaksSettings::ToJSON() const
+JSONItem TweaksSettings::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject(GetName());
+    JSONItem e = JSONItem::createObject(GetName());
     
     e.addProperty("m_globalBgColour", m_globalBgColour);
     e.addProperty("m_globalFgColour", m_globalFgColour);
     e.addProperty("m_enableTweaks", m_enableTweaks);
     e.addProperty("m_flags", m_flags);
-    JSONElement arr = JSONElement::createArray("projects");
+    JSONItem arr = JSONItem::createArray("projects");
     e.append( arr );
     
     ProjectTweaks::Map_t::const_iterator iter = m_projects.begin();
@@ -166,7 +166,7 @@ ProjectTweaks::~ProjectTweaks()
 {
 }
 
-void ProjectTweaks::FromJSON(const JSONElement& json)
+void ProjectTweaks::FromJSON(const JSONItem& json)
 {
     m_tabBgColour = json.namedObject("m_tabBgColour").toColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     m_tabFgColour = json.namedObject("m_tabFgColour").toColour(*wxBLACK);
@@ -174,9 +174,9 @@ void ProjectTweaks::FromJSON(const JSONElement& json)
     m_bitmapFilename = json.namedObject("m_bitmapFilename").toString();
 }
 
-JSONElement ProjectTweaks::ToJSON() const
+JSONItem ProjectTweaks::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject();
+    JSONItem e = JSONItem::createObject();
     e.addProperty("m_tabFgColour",      m_tabFgColour);
     e.addProperty("m_tabBgColour",      m_tabBgColour);
     e.addProperty("m_projectName",      m_projectName);

@@ -271,11 +271,11 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
 // Debugger config
 //----------------------------------------------------------------
 
-void DebuggerPaneConfig::FromJSON(const JSONElement& json) { m_windows = json.namedObject("m_windows").toSize_t(All); }
+void DebuggerPaneConfig::FromJSON(const JSONItem& json) { m_windows = json.namedObject("m_windows").toSize_t(All); }
 
-JSONElement DebuggerPaneConfig::ToJSON() const
+JSONItem DebuggerPaneConfig::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject(GetName());
+    JSONItem e = JSONItem::createObject(GetName());
     e.addProperty("m_windows", m_windows);
     return e;
 }

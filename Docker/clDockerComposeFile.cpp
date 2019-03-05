@@ -12,13 +12,13 @@ clDockerComposeFile::clDockerComposeFile()
 
 clDockerComposeFile::~clDockerComposeFile() {}
 
-void clDockerComposeFile::FromJSON(const JSONElement& json, const wxString& workspaceDir)
+void clDockerComposeFile::FromJSON(const JSONItem& json, const wxString& workspaceDir)
 {
     clDockerBuildableFile::FromJSON(json, workspaceDir);
 }
 
-JSONElement clDockerComposeFile::ToJSON(const wxString& workspaceDir) const
+JSONItem clDockerComposeFile::ToJSON(const wxString& workspaceDir) const
 {
-    JSONElement json = clDockerBuildableFile::ToJSON(workspaceDir);
+    JSONItem json = clDockerBuildableFile::ToJSON(workspaceDir);
     return json;
 }

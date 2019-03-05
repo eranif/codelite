@@ -57,8 +57,8 @@ public:
     SFTPSettings& Save();
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 };
 #endif // USE_SFTP
 #endif // SFTPSETTINGS_H

@@ -31,7 +31,7 @@
 #include "wx/filename.h"
 #include "project.h"
 #include <map>
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/event.h>
 #include <cl_command_event.h>
 #include "IWorkspace.h"
@@ -149,9 +149,10 @@ public:
     wxArrayString GetWorkspaceFolders() const;
 
     /**
-     * @brief createa 'compile_commands' json object for the workspace projects (only the enabled ones)
+     * @brief create 'compile_commands' json object for the workspace projects (only the enabled ones)
      */
-    void CreateCompileCommandsJSON(JSONElement& compile_commands) const;
+    cJSON* CreateCompileCommandsJSON() const;
+    
     wxFileName GetFileName() const { return GetWorkspaceFileName(); }
     void SetStartupDir(const wxString& startupDir) { this->m_startupDir = startupDir; }
     const wxString& GetStartupDir() const { return m_startupDir; }

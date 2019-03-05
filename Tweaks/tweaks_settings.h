@@ -41,8 +41,8 @@ public:
     typedef std::map<wxString, ProjectTweaks> Map_t;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
     ProjectTweaks();
     virtual ~ ProjectTweaks();
     
@@ -90,8 +90,8 @@ public:
     };
     
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     TweaksSettings();
     virtual ~TweaksSettings();

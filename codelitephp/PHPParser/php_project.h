@@ -88,8 +88,8 @@ public:
     const PHPProjectSettingsData& GetSettings() const { return m_settings; }
     PHPProjectSettingsData& GetSettings() { return m_settings; }
 
-    void ToJSON(JSONElement& element) const;
-    void FromJSON(const JSONElement& element);
+    void ToJSON(JSONItem& element) const;
+    void FromJSON(const JSONItem& element);
 
     bool IsOk() const { return !m_name.IsEmpty(); }
     bool IsActive() const { return m_isActive; }

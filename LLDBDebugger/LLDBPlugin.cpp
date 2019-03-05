@@ -42,7 +42,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>

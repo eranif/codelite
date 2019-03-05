@@ -1,7 +1,7 @@
 #ifndef WXCSETTINGS_H
 #define WXCSETTINGS_H
 
-#include <json_node.h>
+#include "wxcLib/json_node.h"
 #include <map>
 
 // ----------------------------------------------------------------------

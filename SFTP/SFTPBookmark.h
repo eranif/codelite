@@ -27,7 +27,7 @@
 #define SFTPBOOKMARK_H
 
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 #include "ssh_account_info.h"
 
 class SFTPBookmark
@@ -63,8 +63,8 @@ public:
     //-----------------------
     // Seerialization API
     //-----------------------
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement &json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem &json);
 };
 
 #endif // SFTPBOOKMARK_H

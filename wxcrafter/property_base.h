@@ -1,7 +1,7 @@
 #ifndef PROPERTYBASE_H
 #define PROPERTYBASE_H
 
-#include "json_node.h"
+#include "wxcLib/json_node.h"
 #include <wx/stattext.h>
 #include <wx/string.h>
 #include <wx/window.h>

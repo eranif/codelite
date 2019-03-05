@@ -85,12 +85,12 @@ public:
      * @brief
      * @param json
      */
-    virtual void FromJSON(const JSONElement& json);
+    virtual void FromJSON(const JSONItem& json);
     /**
      * @brief
      * @return
      */
-    virtual JSONElement ToJSON() const;
+    virtual JSONItem ToJSON() const;
     FindReplaceData();
     virtual ~FindReplaceData() {}
 

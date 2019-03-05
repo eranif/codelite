@@ -9,8 +9,8 @@
 class SmartCompletionsConfig : public clConfigItem
 {
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     enum eOptions {
         kEnabled = (1 << 0),

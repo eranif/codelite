@@ -25,7 +25,7 @@
 
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
@@ -195,7 +195,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             if(content.Contains("<CodeLite_Workspace")) {
                 return TypeWorkspace;
             } else {
-                JSONRoot root(content);
+                JSON root(content);
                 if(!root.isOk()) return TypeWorkspace;
                 if(root.toElement().hasNamedObject("NodeJS")) {
                     return TypeWorkspaceNodeJS;

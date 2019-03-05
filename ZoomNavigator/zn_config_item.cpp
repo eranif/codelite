@@ -36,7 +36,7 @@ znConfigItem::znConfigItem()
 
 znConfigItem::~znConfigItem() {}
 
-void znConfigItem::FromJSON(const JSONElement& json)
+void znConfigItem::FromJSON(const JSONItem& json)
 {
     m_highlightColour = json.namedObject("m_highlightColour").toString();
     m_enabled = json.namedObject("m_enabled").toBool(m_enabled);
@@ -44,9 +44,9 @@ void znConfigItem::FromJSON(const JSONElement& json)
     m_useScrollbar = json.namedObject("m_useScrollbar").toBool(m_useScrollbar);
 }
 
-JSONElement znConfigItem::ToJSON() const
+JSONItem znConfigItem::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_highlightColour", m_highlightColour);
     element.addProperty("m_enabled", m_enabled);
     element.addProperty("m_zoomFactor", m_zoomFactor);

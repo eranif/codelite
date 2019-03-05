@@ -34,8 +34,8 @@ class WXDLLIMPEXP_CL PHPEntityKeyword : public PHPEntityBase
 public:
     PHPEntityKeyword();
     virtual ~PHPEntityKeyword();
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
     
 public:
     virtual wxString FormatPhpDoc(const CommentConfigData& data) const;

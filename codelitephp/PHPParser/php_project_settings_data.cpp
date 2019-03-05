@@ -63,7 +63,7 @@ wxArrayString PHPProjectSettingsData::GetAllIncludePaths()
     return includes;
 }
 
-void PHPProjectSettingsData::FromJSON(const JSONElement& ele)
+void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 {
     m_runAs = ele.namedObject("m_runAs").toInt(0);
     m_phpExe = ele.namedObject("m_phpExe").toString();
@@ -78,9 +78,9 @@ void PHPProjectSettingsData::FromJSON(const JSONElement& ele)
     m_fileMapping = ele.namedObject("m_fileMapping").toStringMap();
 }
 
-JSONElement PHPProjectSettingsData::ToJSON() const
+JSONItem PHPProjectSettingsData::ToJSON() const
 {
-    JSONElement settings = JSONElement::createObject("settings");
+    JSONItem settings = JSONItem::createObject("settings");
     settings.addProperty("m_runAs", m_runAs);
     settings.addProperty("m_phpExe", m_phpExe);
     settings.addProperty("m_indexFile", m_indexFile);

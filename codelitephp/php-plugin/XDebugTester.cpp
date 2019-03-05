@@ -4,7 +4,7 @@
 #include "clZipReader.h"
 #include "phpexecutor.h"
 #include <wx/msgdlg.h>
-#include "json_node.h"
+#include "JSON.h"
 #include "php_configuration_data.h"
 
 XDebugTester::XDebugTester() {}
@@ -27,8 +27,8 @@ bool XDebugTester::RunTest()
         PHPExecutor executor;
         wxString php_output;
         if(executor.RunScript(xdebugTesterScript.GetFullPath(), php_output)) {
-            JSONRoot root(php_output);
-            JSONElement rootElement = root.toElement();
+            JSON root(php_output);
+            JSONItem rootElement = root.toElement();
 
             //////////////////////////////////////////////////
             // Directives

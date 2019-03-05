@@ -54,7 +54,7 @@
 #include <wx/arrstr.h>
 
 // Codelite
-#include "json_node.h"
+#include "JSON.h"
 #include "workspace.h"
 
 // CMakePlugin
@@ -202,7 +202,7 @@ CMakeSettingsManager::SaveProject(const wxString& name)
         return;
 
     // Create JSON object
-    JSONElement json = JSONElement::createArray("configurations");
+    JSONItem json = JSONItem::createArray("configurations");
 
     // Foreach settings
     for (std::map<wxString, CMakeProjectSettings>::const_iterator it = itSettings->second.begin(),
@@ -211,7 +211,7 @@ CMakeSettingsManager::SaveProject(const wxString& name)
         const CMakeProjectSettings& settings = it->second;
 
         // Create item
-        JSONElement item = JSONElement::createObject("configuration");
+        JSONItem item = JSONItem::createObject("configuration");
 
         // Store name
         item.addProperty("name", it->first);
@@ -278,9 +278,9 @@ CMakeSettingsManager::LoadProject(const wxString& name)
     const wxString jsonStr = project->GetPluginData("CMakePlugin");
 
     // Create JSON object
-    JSONRoot jsonRoot(jsonStr);
-    // JSONRoot cannot be temporary, because destructor deletes cJSON object.
-    JSONElement json = jsonRoot.toElement();
+    JSON jsonRoot(jsonStr);
+    // JSON cannot be temporary, because destructor deletes cJSON object.
+    JSONItem json = jsonRoot.toElement();
 
     // Unable to parse
     if (!json.isOk())
@@ -293,7 +293,7 @@ CMakeSettingsManager::LoadProject(const wxString& name)
     // Foreach array
     for (int i = 0; i < json.arraySize(); ++i) {
         // Get item
-        JSONElement item = json.arrayItem(i);
+        JSONItem item = json.arrayItem(i);
 
         // Name
         const wxString name = item.namedObject("name").toString();

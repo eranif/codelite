@@ -27,7 +27,7 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "project.h"
 #include "workspace.h"
 #include <algorithm>
@@ -314,8 +314,8 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
 
 void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& compile_commands)
 {
-    JSONRoot root(compile_commands);
-    JSONElement arr = root.toElement();
+    JSON root(compile_commands);
+    JSONItem arr = root.toElement();
 
     try {
 
@@ -327,7 +327,7 @@ void CompilationDatabase::ProcessCMakeCompilationDatabase(const wxFileName& comp
         for(int i = 0; i < arr.arraySize(); ++i) {
             // Each object has 3 properties:
             // directory, command, file
-            JSONElement element = arr.arrayItem(i);
+            JSONItem element = arr.arrayItem(i);
             if(element.hasNamedObject("file") && element.hasNamedObject("directory") &&
                element.hasNamedObject("command")) {
                 wxString cmd = element.namedObject("command").toString();
@@ -362,8 +362,8 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
 
         if(content.IsEmpty()) return wxFileName();
 
-        JSONRoot root(cJSON_Array);
-        JSONElement arr = root.toElement();
+        JSON root(cJSON_Array);
+        JSONItem arr = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines.GetCount(); ++i) {
             wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
@@ -373,7 +373,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
             wxString cwd = parts.Item(1).Trim().Trim(false);
             wxString cmp_flags = parts.Item(2).Trim().Trim(false);
 
-            JSONElement element = JSONElement::createObject();
+            JSONItem element = JSONItem::createObject();
             element.addProperty("directory", cwd);
             element.addProperty("command", cmp_flags);
             element.addProperty("file", file_name);
@@ -411,13 +411,13 @@ wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, 
     lastCompileCommandsModified = compile_commands.GetModificationTime().GetTicks();
 
     wxStringSet_t paths;
-    JSONRoot root(compile_commands);
-    JSONElement arr = root.toElement();
+    JSON root(compile_commands);
+    JSONItem arr = root.toElement();
     const int file_size = arr.arraySize();
     for(int i = 0; i < file_size; ++i) {
         // Each object has 3 properties:
         // directory, command, file
-        JSONElement element = arr.arrayItem(i);
+        JSONItem element = arr.arrayItem(i);
         if(element.hasNamedObject("file") && element.hasNamedObject("directory") && element.hasNamedObject("command")) {
             wxString cmd = element.namedObject("command").toString();
             wxString cwd = element.namedObject("directory").toString();

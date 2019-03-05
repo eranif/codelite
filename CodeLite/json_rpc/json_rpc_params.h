@@ -2,7 +2,7 @@
 #define JSONRPC_PARAMS_H
 
 #include "codelite_exports.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "json_rpc/JSONObject.h"
 #include <wx/sharedptr.h>
 #include "basic_types.h"
@@ -35,8 +35,8 @@ public:
     TextDocumentPositionParams();
     virtual ~TextDocumentPositionParams() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     void SetPosition(const Position& position) { this->m_position = position; }
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
@@ -55,8 +55,8 @@ public:
     DidOpenTextDocumentParams();
     virtual ~DidOpenTextDocumentParams() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     DidOpenTextDocumentParams& SetTextDocument(const TextDocumentItem& textDocument)
     {
@@ -77,8 +77,8 @@ public:
     DidCloseTextDocumentParams();
     virtual ~DidCloseTextDocumentParams() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     DidCloseTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;
@@ -99,8 +99,8 @@ public:
     DidChangeTextDocumentParams();
     virtual ~DidChangeTextDocumentParams() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     DidChangeTextDocumentParams& SetContentChanges(const std::vector<TextDocumentContentChangeEvent>& contentChanges)
     {
         this->m_contentChanges = contentChanges;
@@ -127,8 +127,8 @@ public:
     DidSaveTextDocumentParams();
     virtual ~DidSaveTextDocumentParams() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     DidSaveTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;

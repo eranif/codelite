@@ -34,7 +34,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "sftp.h"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"

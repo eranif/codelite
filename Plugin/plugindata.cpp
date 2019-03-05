@@ -31,7 +31,7 @@ PluginInfo::PluginInfo()
 
 PluginInfo::~PluginInfo() {}
 
-void PluginInfo::FromJSON(const JSONElement& json)
+void PluginInfo::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();
     m_author = json.namedObject("author").toString();
@@ -40,9 +40,9 @@ void PluginInfo::FromJSON(const JSONElement& json)
     m_flags = json.namedObject("flags").toSize_t();
 }
 
-JSONElement PluginInfo::ToJSON() const
+JSONItem PluginInfo::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject();
+    JSONItem e = JSONItem::createObject();
     e.addProperty("name", m_name);
     e.addProperty("author", m_author);
     e.addProperty("description", m_description);
@@ -72,11 +72,11 @@ bool PluginInfoArray::CanLoad(const PluginInfo& plugin) const
     return true;
 }
 
-void PluginInfoArray::FromJSON(const JSONElement& json)
+void PluginInfoArray::FromJSON(const JSONItem& json)
 {
     m_disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
     m_plugins.clear();
-    JSONElement arr = json.namedObject("installed-plugins");
+    JSONItem arr = json.namedObject("installed-plugins");
     for(int i = 0; i < arr.arraySize(); ++i) {
         PluginInfo pi;
         pi.FromJSON(arr.arrayItem(i));
@@ -84,12 +84,12 @@ void PluginInfoArray::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement PluginInfoArray::ToJSON() const
+JSONItem PluginInfoArray::ToJSON() const
 {
-    JSONElement el = JSONElement::createObject(GetName());
+    JSONItem el = JSONItem::createObject(GetName());
     el.addProperty("disabledPlugins", m_disabledPlugins);
 
-    JSONElement arr = JSONElement::createArray("installed-plugins");
+    JSONItem arr = JSONItem::createArray("installed-plugins");
     PluginInfo::PluginMap_t::const_iterator iter = m_plugins.begin();
     for(; iter != m_plugins.end(); ++iter) {
         arr.arrayAppend(iter->second.ToJSON());

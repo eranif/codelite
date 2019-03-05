@@ -38,7 +38,7 @@ LLDBThread::~LLDBThread()
 {
 }
 
-void LLDBThread::FromJSON(const JSONElement& json)
+void LLDBThread::FromJSON(const JSONItem& json)
 {
     m_id   = json.namedObject("m_id").toInt();
     m_func = json.namedObject("m_func").toString();
@@ -51,9 +51,9 @@ void LLDBThread::FromJSON(const JSONElement& json)
     m_name = json.namedObject("m_name").toString();
 }
 
-JSONElement LLDBThread::ToJSON() const
+JSONItem LLDBThread::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_id", m_id);
     json.addProperty("m_func", m_func);
     json.addProperty("m_file", m_file);
@@ -66,19 +66,19 @@ JSONElement LLDBThread::ToJSON() const
     return json;
 }
 
-JSONElement LLDBThread::ToJSON(const LLDBThread::Vect_t& threads, const wxString &name)
+JSONItem LLDBThread::ToJSON(const LLDBThread::Vect_t& threads, const wxString &name)
 {
-    JSONElement arr = JSONElement::createArray(name);
+    JSONItem arr = JSONItem::createArray(name);
     for(size_t i=0; i<threads.size(); ++i) {
         arr.arrayAppend( threads.at(i).ToJSON() );
     }
     return arr;
 }
 
-LLDBThread::Vect_t LLDBThread::FromJSON(const JSONElement& json, const wxString& name)
+LLDBThread::Vect_t LLDBThread::FromJSON(const JSONItem& json, const wxString& name)
 {
     LLDBThread::Vect_t v;
-    JSONElement arr = json.namedObject(name);
+    JSONItem arr = json.namedObject(name);
     for(int i=0; i<arr.arraySize(); ++i) {
         LLDBThread thr;
         thr.FromJSON( arr.arrayItem(i) );

@@ -61,8 +61,8 @@ public:
     };
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void SetWindows(size_t windows) { this->m_windows = windows; }
     size_t GetWindows() const { return m_windows; }

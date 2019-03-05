@@ -31,7 +31,7 @@ HelpPluginSettings& HelpPluginSettings::Save()
     conf.WriteItem(this);
     return *this;
 }
-void HelpPluginSettings::FromJSON(const JSONElement& json)
+void HelpPluginSettings::FromJSON(const JSONItem& json)
 {
     m_cxxDocset = json.namedObject("m_cxxDocset").toString(m_cxxDocset);
     m_phpDocset = json.namedObject("m_phpDocset").toString(m_phpDocset);
@@ -42,9 +42,9 @@ void HelpPluginSettings::FromJSON(const JSONElement& json)
     m_javaDocset = json.namedObject("m_javaDocset").toString(m_javaDocset);
 }
 
-JSONElement HelpPluginSettings::ToJSON() const
+JSONItem HelpPluginSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("m_cxxDocset", m_cxxDocset);
     json.addProperty("m_phpDocset", m_phpDocset);
     json.addProperty("m_htmlDocset", m_htmlDocset);

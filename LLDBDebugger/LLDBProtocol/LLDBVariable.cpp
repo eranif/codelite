@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBVariable.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "LLDBEnums.h"
 
 #if BUILD_CODELITE_LLDB
@@ -59,7 +59,7 @@ void LLDBVariable::DoInitFromLLDBValue(lldb::SBValue value)
 
 LLDBVariable::~LLDBVariable() {}
 
-void LLDBVariable::FromJSON(const JSONElement& json)
+void LLDBVariable::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("m_name").toString();
     m_value = json.namedObject("m_value").toString();
@@ -72,9 +72,9 @@ void LLDBVariable::FromJSON(const JSONElement& json)
     m_isWatch = json.namedObject("m_isWatch").toBool(m_isWatch);
 }
 
-JSONElement LLDBVariable::ToJSON() const
+JSONItem LLDBVariable::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_name", m_name);
     json.addProperty("m_value", m_value);
     json.addProperty("m_summary", m_summary);

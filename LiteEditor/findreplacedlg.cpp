@@ -510,7 +510,7 @@ void FindReplaceData::TruncateArray(wxArrayString& arr, size_t maxSize)
         arr.RemoveAt(arr.GetCount() - 1);
     }
 }
-void FindReplaceData::FromJSON(const JSONElement& json)
+void FindReplaceData::FromJSON(const JSONItem& json)
 {
     m_findString = json.namedObject("m_findString").toArrayString();
     m_replaceString = json.namedObject("m_replaceString").toArrayString();
@@ -530,9 +530,9 @@ void FindReplaceData::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement FindReplaceData::ToJSON() const
+JSONItem FindReplaceData::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_findString", m_findString);
     element.addProperty("m_replaceString", m_replaceString);
     element.addProperty("m_flags", m_flags);

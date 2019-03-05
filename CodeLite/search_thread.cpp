@@ -615,9 +615,9 @@ SearchThread* SearchThreadST::Get()
     return gs_SearchThread;
 }
 
-JSONElement SearchResult::ToJSON() const
+JSONItem SearchResult::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("file", m_fileName);
     json.addProperty("line", m_lineNumber);
     json.addProperty("col", m_column);
@@ -633,7 +633,7 @@ JSONElement SearchResult::ToJSON() const
     return json;
 }
 
-void SearchResult::FromJSON(const JSONElement& json)
+void SearchResult::FromJSON(const JSONItem& json)
 {
     m_position = json.namedObject("pos").toInt(m_position);
     m_column = json.namedObject("col").toInt(m_column);
@@ -649,9 +649,9 @@ void SearchResult::FromJSON(const JSONElement& json)
     // m_scope = json.namedObject("scope").toString(m_scope);
 }
 
-JSONElement SearchSummary::ToJSON() const
+JSONItem SearchSummary::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("filesScanned", m_fileScanned);
     json.addProperty("matchesFound", m_matchesFound);
     json.addProperty("elapsed", m_elapsed);
@@ -661,7 +661,7 @@ JSONElement SearchSummary::ToJSON() const
     return json;
 }
 
-void SearchSummary::FromJSON(const JSONElement& json)
+void SearchSummary::FromJSON(const JSONItem& json)
 {
     m_fileScanned = json.namedObject("filesScanned").toInt(m_fileScanned);
     m_matchesFound = json.namedObject("matchesFound").toInt(m_matchesFound);

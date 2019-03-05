@@ -30,7 +30,7 @@
 #include "LLDBEnums.h"
 #include "LLDBPivot.h"
 #include "LLDBSettings.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/string.h>
 
 class LLDBCommand
@@ -56,8 +56,8 @@ protected:
 
 public:
     // Serialization API
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
     LLDBCommand()
         : m_commandType(kCommandInvalid)

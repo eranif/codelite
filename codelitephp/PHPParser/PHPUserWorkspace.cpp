@@ -1,6 +1,6 @@
 #include "PHPUserWorkspace.h"
 #include <globals.h>
-#include <json_node.h>
+#include "JSON.h"
 
 PHPUserWorkspace::PHPUserWorkspace(const wxString& workspacePath)
     : m_workspacePath(workspacePath)
@@ -25,11 +25,11 @@ wxFileName PHPUserWorkspace::GetFileName() const
 PHPUserWorkspace& PHPUserWorkspace::Load()
 {
     wxFileName fn = GetFileName();
-    JSONRoot root(fn);
-    JSONElement element = root.toElement();
+    JSON root(fn);
+    JSONItem element = root.toElement();
     m_breakpoints.clear();
     
-    JSONElement bpArr = element.namedObject("m_breakpoints");
+    JSONItem bpArr = element.namedObject("m_breakpoints");
     int bpcount = bpArr.arraySize();
     for( int i=0; i<bpcount; ++i ) {
         XDebugBreakpoint bp;
@@ -42,9 +42,9 @@ PHPUserWorkspace& PHPUserWorkspace::Load()
 PHPUserWorkspace& PHPUserWorkspace::Save()
 {
     // Serialize the breakpoints
-    JSONRoot root(cJSON_Object);
-    JSONElement json = root.toElement();
-    JSONElement bpArr = JSONElement::createArray("m_breakpoints");
+    JSON root(cJSON_Object);
+    JSONItem json = root.toElement();
+    JSONItem bpArr = JSONItem::createArray("m_breakpoints");
     json.append( bpArr );
     
     XDebugBreakpoint::List_t::const_iterator iter = m_breakpoints.begin();

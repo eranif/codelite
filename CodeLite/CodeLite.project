@@ -349,8 +349,8 @@
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="configuration">
-    <File Name="json_node.cpp"/>
-    <File Name="json_node.h"/>
+    <File Name="JSON.cpp"/>
+    <File Name="JSON.h"/>
     <File Name="cJSON.cpp"/>
     <File Name="cJSON.h"/>
     <File Name="cl_config.cpp"/>

@@ -12,6 +12,6 @@ void PHPEntityKeyword::PrintStdout(int indent) const { wxUnusedVar(indent); }
 void PHPEntityKeyword::Store(PHPLookupTable* lookup) { wxUnusedVar(lookup); }
 wxString PHPEntityKeyword::Type() const { return ""; }
 
-void PHPEntityKeyword::FromJSON(const JSONElement& json) { BaseFromJSON(json); }
+void PHPEntityKeyword::FromJSON(const JSONItem& json) { BaseFromJSON(json); }
 
-JSONElement PHPEntityKeyword::ToJSON() const { return BaseToJSON("k"); }
+JSONItem PHPEntityKeyword::ToJSON() const { return BaseToJSON("k"); }

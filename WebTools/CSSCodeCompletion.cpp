@@ -6,7 +6,7 @@
 #include <wx/xrc/xmlres.h>
 #include "wxCodeCompletionBoxEntry.h"
 #include "wxCodeCompletionBoxManager.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/tokenzr.h>
 #include <set>
 #include <algorithm>
@@ -14,12 +14,12 @@
 CSSCodeCompletion::CSSCodeCompletion()
     : m_isEnabled(true)
 {
-    JSONRoot root(CSS_JSON);
-    JSONElement arr = root.toElement();
+    JSON root(CSS_JSON);
+    JSONItem arr = root.toElement();
     int count = arr.arraySize();
     std::set<wxString> valuesSet;
     for(int i = 0; i < count; ++i) {
-        JSONElement entry = arr.arrayItem(i);
+        JSONItem entry = arr.arrayItem(i);
         if(!entry.hasNamedObject("name")) continue;
 
         Entry e;

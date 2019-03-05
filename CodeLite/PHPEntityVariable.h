@@ -56,8 +56,8 @@ public:
     virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
     
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
     
     /**
      * @brief format this variable

@@ -10,7 +10,7 @@
 #include <map>
 #include "php_project.h"
 #include "php_workspace.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "PHPSourceFile.h"

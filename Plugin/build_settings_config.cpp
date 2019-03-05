@@ -36,7 +36,7 @@
 #include <globals.h>
 #include "ICompilerLocator.h"
 #include <algorithm>
-#include "json_node.h"
+#include "JSON.h"
 
 BuildSettingsConfig::BuildSettingsConfig()
 {
@@ -308,12 +308,12 @@ bool BuildSettingsConfig::SaveXmlFile()
 {
     // Store this information for later retrieval
     wxArrayString compilers = GetAllCompilersNames();
-    JSONRoot root(cJSON_Array);
-    JSONElement e = root.toElement();
+    JSON root(cJSON_Array);
+    JSONItem e = root.toElement();
     for(size_t i = 0; i < compilers.size(); ++i) {
         CompilerPtr cmp = GetCompiler(compilers[i]);
         if(!cmp) { continue; }
-        JSONElement o = JSONElement::createObject();
+        JSONItem o = JSONItem::createObject();
         o.addProperty("name", cmp->GetName()).addProperty("paths", cmp->GetDefaultIncludePaths());
         e.arrayAppend(o);
     }

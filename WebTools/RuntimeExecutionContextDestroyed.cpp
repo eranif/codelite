@@ -15,7 +15,7 @@ NodeMessageBase::Ptr_t RuntimeExecutionContextDestroyed::Clone()
     return NodeMessageBase::Ptr_t(new RuntimeExecutionContextDestroyed());
 }
 
-void RuntimeExecutionContextDestroyed::Process(clWebSocketClient& socket, const JSONElement& json)
+void RuntimeExecutionContextDestroyed::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     clDebugEvent eventFinish(wxEVT_NODEJS_DEBUGGER_FINISHED);
     EventNotifier::Get()->AddPendingEvent(eventFinish);

@@ -8,7 +8,7 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "macros.h"
 #include "wxStringHash.h"
 #include "xmlutils.h"
@@ -169,7 +169,7 @@ void ColoursAndFontsManager::Load()
 
     // Load the global settings
     if(GetConfigFile().FileExists()) {
-        JSONRoot root(GetConfigFile());
+        JSON root(GetConfigFile());
         if(root.isOk()) { m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Default"); }
     }
 
@@ -377,8 +377,8 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
 void ColoursAndFontsManager::Save(bool forExport)
 {
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
-    JSONRoot root(cJSON_Array);
-    JSONElement element = root.toElement();
+    JSON root(cJSON_Array);
+    JSONItem element = root.toElement();
     for(; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
@@ -514,7 +514,7 @@ wxFileName ColoursAndFontsManager::GetConfigFile() const
 void ColoursAndFontsManager::SaveGlobalSettings()
 {
     // save the global settings
-    JSONRoot root(cJSON_Object);
+    JSON root(cJSON_Object);
     root.toElement().addProperty("m_globalTheme", m_globalTheme);
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
@@ -529,7 +529,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::CopyTheme(const wxString& lexerName, co
     LexerConf::Ptr_t sourceLexer = GetLexer(lexerName, sourceTheme);
     CHECK_PTR_RET_NULL(sourceLexer);
 
-    JSONElement json = sourceLexer->ToJSON();
+    JSONItem json = sourceLexer->ToJSON();
     LexerConf::Ptr_t newLexer(new LexerConf());
     newLexer->FromJSON(json);
 
@@ -728,18 +728,18 @@ void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
 {
     if(!path.FileExists()) return;
 
-    JSONRoot root(path);
-    JSONElement arr = root.toElement();
+    JSON root(path);
+    JSONItem arr = root.toElement();
     int arrSize = arr.arraySize();
     CL_DEBUG("Loading JSON file: %s (contains %d lexers)", path.GetFullPath(), arrSize);
     for(int i = 0; i < arrSize; ++i) {
-        JSONElement json = arr.arrayItem(i);
+        JSONItem json = arr.arrayItem(i);
         DoAddLexer(json);
     }
     CL_DEBUG("Loading JSON file...done");
 }
 
-LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONElement json)
+LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 {
     LexerConf::Ptr_t lexer(new LexerConf());
     lexer->FromJSON(json);
@@ -914,8 +914,8 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
         M.insert(names.Item(i).Lower());
     }
 
-    JSONRoot root(cJSON_Array);
-    JSONElement arr = root.toElement();
+    JSON root(cJSON_Array);
+    JSONItem arr = root.toElement();
     std::vector<LexerConf::Ptr_t> Lexers;
     std::for_each(m_allLexers.begin(), m_allLexers.end(), [&](LexerConf::Ptr_t lexer) {
         if(M.empty() || M.count(lexer->GetThemeName().Lower())) { Lexers.push_back(lexer); }
@@ -926,7 +926,7 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
 
 bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool prompt)
 {
-    JSONRoot root(inputFile);
+    JSON root(inputFile);
     if(!root.isOk()) {
         clWARNING() << "Invalid lexers input file:" << inputFile << clEndl;
         return false;
@@ -941,10 +941,10 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
     }
 
     std::vector<LexerConf::Ptr_t> Lexers;
-    JSONElement arr = root.toElement();
+    JSONItem arr = root.toElement();
     int arrSize = arr.arraySize();
     for(int i = 0; i < arrSize; ++i) {
-        JSONElement lexerObj = arr.arrayItem(i);
+        JSONItem lexerObj = arr.arrayItem(i);
         LexerConf::Ptr_t lexer(new LexerConf());
         lexer->FromJSON(lexerObj);
         Lexers.push_back(lexer);

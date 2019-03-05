@@ -106,7 +106,7 @@ void LLDBSettings::SavePerspective(const wxString& perspective)
     }
 }
 
-void LLDBSettings::FromJSON(const JSONElement& json)
+void LLDBSettings::FromJSON(const JSONItem& json)
 {
     m_arrItems = json.namedObject("m_maxArrayElements").toSize_t(m_arrItems);
     m_stackFrames = json.namedObject("m_maxCallstackFrames").toSize_t(m_stackFrames);
@@ -119,9 +119,9 @@ void LLDBSettings::FromJSON(const JSONElement& json)
     m_debugserver = json.namedObject("m_debugserver").toString(m_debugserver);
 }
 
-JSONElement LLDBSettings::ToJSON() const
+JSONItem LLDBSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_maxArrayElements", m_arrItems);
     json.addProperty("m_maxCallstackFrames", m_stackFrames);
     json.addProperty("m_flags", m_flags);
@@ -145,7 +145,7 @@ LLDBSettings& LLDBSettings::Load()
             wxString content;
             fp.ReadAll(&content, wxConvUTF8);
 
-            JSONRoot root(content);
+            JSON root(content);
             FromJSON(root.toElement());
             fp.Close();
         }

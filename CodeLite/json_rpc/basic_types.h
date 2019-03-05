@@ -2,7 +2,7 @@
 #define JSONRPC_BASICTYPES_H
 
 #include "codelite_exports.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "JSONObject.h"
 #include <wx/sharedptr.h>
 
@@ -16,8 +16,8 @@ class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
     wxString m_text;
 
 public:
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     TextDocumentContentChangeEvent() {}
     TextDocumentContentChangeEvent(const wxString& text)
@@ -41,8 +41,8 @@ class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
     wxFileName m_filename;
 
 public:
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     TextDocumentIdentifier() {}
     TextDocumentIdentifier(const wxFileName& filename)
@@ -66,8 +66,8 @@ class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdenti
     int m_version = 1;
 
 public:
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     VersionedTextDocumentIdentifier() {}
     VersionedTextDocumentIdentifier(int version)
@@ -92,8 +92,8 @@ class WXDLLIMPEXP_CL Position : public Serializable
     int m_character;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     Position(int line, int col)
         : m_line(line)
@@ -127,8 +127,8 @@ class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
     int m_version = 1;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     TextDocumentItem(const wxFileName& uri, const wxString& langId, const wxString& text, int version = 1)
         : m_uri(uri)

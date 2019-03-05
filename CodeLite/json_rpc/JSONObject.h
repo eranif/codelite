@@ -2,7 +2,7 @@
 #define JSONObject_H
 
 #include "codelite_exports.h"
-#include "json_node.h"
+#include "JSON.h"
 
 namespace json_rpc
 {
@@ -14,8 +14,8 @@ class WXDLLIMPEXP_CL Serializable
 public:
     Serializable() {}
     virtual ~Serializable() {}
-    virtual JSONElement ToJSON(const wxString& name) const = 0;
-    virtual void FromJSON(const JSONElement& json) = 0;
+    virtual JSONItem ToJSON(const wxString& name) const = 0;
+    virtual void FromJSON(const JSONItem& json) = 0;
 };
 
 };     // namespace json_rpc

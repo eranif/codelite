@@ -2,7 +2,7 @@
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>

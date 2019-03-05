@@ -17,8 +17,8 @@ protected:
     void DeleteProperties();
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     ObjectPreview();
     virtual ~ObjectPreview();

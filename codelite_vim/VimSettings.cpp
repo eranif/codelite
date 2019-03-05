@@ -8,11 +8,11 @@ VimSettings::VimSettings()
 
 VimSettings::~VimSettings() {}
 
-void VimSettings::FromJSON(const JSONElement& json) { m_enabled = json.namedObject("enabled").toBool(m_enabled); }
+void VimSettings::FromJSON(const JSONItem& json) { m_enabled = json.namedObject("enabled").toBool(m_enabled); }
 
-JSONElement VimSettings::ToJSON() const
+JSONItem VimSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("enabled", m_enabled);
     return element;
 }

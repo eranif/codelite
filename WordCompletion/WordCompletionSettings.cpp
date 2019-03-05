@@ -9,15 +9,15 @@ WordCompletionSettings::WordCompletionSettings()
 
 WordCompletionSettings::~WordCompletionSettings() {}
 
-void WordCompletionSettings::FromJSON(const JSONElement& json)
+void WordCompletionSettings::FromJSON(const JSONItem& json)
 {
     m_comparisonMethod = json.namedObject("m_comparisonMethod").toInt(m_comparisonMethod);
     m_enabled = json.namedObject("m_enabled").toBool(m_enabled);
 }
 
-JSONElement WordCompletionSettings::ToJSON() const
+JSONItem WordCompletionSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_comparisonMethod", m_comparisonMethod);
     element.addProperty("m_enabled", m_enabled);
     return element;

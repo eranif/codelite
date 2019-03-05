@@ -758,7 +758,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
                 bool dummy;
                 client.ConnectRemote("127.0.0.1", SINGLE_INSTANCE_PORT, dummy);
 
-                JSONRoot json(cJSON_Object);
+                JSON json(cJSON_Object);
                 json.toElement().addProperty("args", files);
                 client.WriteMessage(json.toElement().format());
                 return false;

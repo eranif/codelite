@@ -49,7 +49,7 @@ SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
     return *this;
 }
 
-void SSHAccountInfo::FromJSON(const JSONElement& json)
+void SSHAccountInfo::FromJSON(const JSONItem& json)
 {
     m_accountName = json.namedObject("m_accountName").toString();
     m_username = json.namedObject("m_username").toString();
@@ -62,9 +62,9 @@ void SSHAccountInfo::FromJSON(const JSONElement& json)
     m_defaultFolder = json.namedObject("m_defaultFolder").toString();
 }
 
-JSONElement SSHAccountInfo::ToJSON() const
+JSONItem SSHAccountInfo::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_accountName", m_accountName);
     element.addProperty("m_username", m_username);
     element.addProperty("m_port", m_port);

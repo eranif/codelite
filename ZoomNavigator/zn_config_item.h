@@ -40,8 +40,8 @@ public:
     virtual ~znConfigItem();
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     void SetHighlightColour(const wxString& highlightColour) { this->m_highlightColour = highlightColour; }

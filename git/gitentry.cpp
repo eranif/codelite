@@ -72,7 +72,7 @@ GitEntry::GitEntry()
 
 GitEntry::~GitEntry() {}
 
-void GitEntry::FromJSON(const JSONElement& json)
+void GitEntry::FromJSON(const JSONItem& json)
 {
     GitLocator locator;
     m_entries = json.namedObject("m_entries").toStringMap();
@@ -122,7 +122,7 @@ void GitEntry::FromJSON(const JSONElement& json)
     m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
 
     // read the git commands
-    JSONElement arrCommands = json.namedObject("Commands");
+    JSONItem arrCommands = json.namedObject("Commands");
     for(int i = 0; i < arrCommands.arraySize(); ++i) {
         GitCommandsEntries entry;
         entry.FromJSON(arrCommands.arrayItem(i));
@@ -130,7 +130,7 @@ void GitEntry::FromJSON(const JSONElement& json)
     }
 
     // Load the workspace info: each known workspace name & its known projects' repo paths
-    JSONElement arrWorkspaces = json.namedObject("Workspaces");
+    JSONItem arrWorkspaces = json.namedObject("Workspaces");
     for(int i = 0; i < arrWorkspaces.arraySize(); ++i) {
         GitWorkspace workspace;
         workspace.FromJSON(arrWorkspaces.arrayItem(i));
@@ -138,9 +138,9 @@ void GitEntry::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement GitEntry::ToJSON() const
+JSONItem GitEntry::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("m_entries", m_entries);
     if(m_colourTrackedFile.IsOk()) {
         json.addProperty("m_colourTrackedFile", m_colourTrackedFile.GetAsString(wxC2S_HTML_SYNTAX));
@@ -170,14 +170,14 @@ JSONElement GitEntry::ToJSON() const
     json.addProperty("m_gitBlameDlgVSashPos", m_gitBlameDlgVSashPos);
 
     // Add the git commands array
-    JSONElement arrCommands = JSONElement::createArray("Commands");
+    JSONItem arrCommands = JSONItem::createArray("Commands");
     json.append(arrCommands);
     GitCommandsEntriesMap_t::const_iterator iter = m_commandsMap.begin();
     for(; iter != m_commandsMap.end(); ++iter) {
         iter->second.ToJSON(arrCommands);
     }
     // and the workspace info
-    JSONElement arrWorkspaces = JSONElement::createArray("Workspaces");
+    JSONItem arrWorkspaces = JSONItem::createArray("Workspaces");
     json.append(arrWorkspaces);
     GitWorkspaceMap_t::const_iterator it = m_workspacesMap.begin();
     for(; it != m_workspacesMap.end(); ++it) {
@@ -403,13 +403,13 @@ void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxStr
     workspace.SetProjectLastRepoPath(projectName, lastRepoPath);
 }
 
-void GitCommandsEntries::FromJSON(const JSONElement& json)
+void GitCommandsEntries::FromJSON(const JSONItem& json)
 {
     m_commands.clear();
     m_commandName = json.namedObject("m_commandName").toString();
     m_lastUsed = json.namedObject("m_lastUsed").toInt();
 
-    JSONElement arrCommandChoices = json.namedObject("m_commands");
+    JSONItem arrCommandChoices = json.namedObject("m_commands");
     for(int i = 0; i < arrCommandChoices.arraySize(); ++i) {
         GitLabelCommand item;
         item.label = arrCommandChoices.arrayItem(i).namedObject("label").toString();
@@ -418,18 +418,18 @@ void GitCommandsEntries::FromJSON(const JSONElement& json)
     }
 }
 
-void GitCommandsEntries::ToJSON(JSONElement& arr) const
+void GitCommandsEntries::ToJSON(JSONItem& arr) const
 {
-    JSONElement obj = JSONElement::createObject();
+    JSONItem obj = JSONItem::createObject();
     obj.addProperty("m_commandName", m_commandName);
     obj.addProperty("m_lastUsed", m_lastUsed);
 
-    JSONElement commandsArr = JSONElement::createArray("m_commands");
+    JSONItem commandsArr = JSONItem::createArray("m_commands");
     obj.append(commandsArr);
 
     vGitLabelCommands_t::const_iterator iter = m_commands.begin();
     for(; iter != m_commands.end(); ++iter) {
-        JSONElement e = JSONElement::createObject();
+        JSONItem e = JSONItem::createObject();
         e.addProperty("label", iter->label);
         e.addProperty("command", iter->command);
         commandsArr.arrayAppend(e);
@@ -444,17 +444,17 @@ void GitWorkspace::SetProjectLastRepoPath(const wxString& projectName, const wxS
     m_projectData[projectName] = lastRepoPath;
 }
 
-void GitWorkspace::FromJSON(const JSONElement& json)
+void GitWorkspace::FromJSON(const JSONItem& json)
 {
     m_projectData.clear();
     SetWorkspaceName(json.namedObject("m_workspaceName").toString());
     m_projectData = json.namedObject("m_projectData").toStringMap();
 }
 
-void GitWorkspace::ToJSON(JSONElement& arr) const
+void GitWorkspace::ToJSON(JSONItem& arr) const
 {
     if(!GetWorkspaceName().empty()) {
-        JSONElement json = JSONElement::createObject(GetWorkspaceName());
+        JSONItem json = JSONItem::createObject(GetWorkspaceName());
         json.addProperty("m_workspaceName", GetWorkspaceName());
         json.addProperty("m_projectData", m_projectData);
         arr.arrayAppend(json);

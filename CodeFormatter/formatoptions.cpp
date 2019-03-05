@@ -28,7 +28,7 @@
 #include "editor_config.h"
 #include "file_logger.h"
 #include "globals.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "phpoptions.h"
 
 FormatOptions::FormatOptions()
@@ -439,8 +439,8 @@ wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
         }
     }
 
-    JSONRoot root(cJSON_Object);
-    JSONElement rules = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem rules = root.toElement();
     if(m_PHPCSFixerPharRules & kPcfPHP56Migration) {
         rules.addProperty("@PHP56Migration", true);
     }
@@ -469,13 +469,13 @@ wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
         }
     }
     if(m_PHPCSFixerPharRules & (kPcfShortArray | kPcfLongArray)) {
-        JSONElement array_syntax = JSONElement::createObject("array_syntax");
+        JSONItem array_syntax = JSONItem::createObject("array_syntax");
         array_syntax.addProperty("syntax", m_PHPCSFixerPharRules & kPcfShortArray ? "short" : "long");
         rules.addProperty("array_syntax", array_syntax);
     }
     if(m_PHPCSFixerPharRules &
        (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreDoubleArrow)) {
-        JSONElement binary_operator_spaces = JSONElement::createObject("binary_operator_spaces");
+        JSONItem binary_operator_spaces = JSONItem::createObject("binary_operator_spaces");
         if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
             binary_operator_spaces.addProperty("align_double_arrow",
                                                m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
@@ -491,7 +491,7 @@ wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
         rules.addProperty("binary_operator_spaces", binary_operator_spaces);
     }
     if(m_PHPCSFixerPharRules & (kPcfConcatSpaceNone | kPcfConcatSpaceOne)) {
-        JSONElement concat_space = JSONElement::createObject("concat_space");
+        JSONItem concat_space = JSONItem::createObject("concat_space");
         concat_space.addProperty("spacing", m_PHPCSFixerPharRules & kPcfConcatSpaceNone ? "none" : "one");
         rules.addProperty("concat_space", concat_space);
     }

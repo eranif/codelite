@@ -26,7 +26,7 @@
 #ifndef HELPPLUGINSETTINGS_H
 #define HELPPLUGINSETTINGS_H
 
-#include "json_node.h"
+#include "JSON.h"
 #include "cl_config.h"
 
 class HelpPluginSettings : public clConfigItem
@@ -40,8 +40,8 @@ class HelpPluginSettings : public clConfigItem
     wxString m_javaDocset;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     HelpPluginSettings();
     virtual ~HelpPluginSettings();

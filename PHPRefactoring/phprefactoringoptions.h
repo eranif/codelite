@@ -12,8 +12,8 @@ public:
     PHPRefactoringOptions();
     virtual ~PHPRefactoringOptions();
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     PHPRefactoringOptions& Load();
     PHPRefactoringOptions& Save();

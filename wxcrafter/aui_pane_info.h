@@ -1,7 +1,7 @@
 #ifndef AUIPANEINFO_H
 #define AUIPANEINFO_H
 
-#include <json_node.h>
+#include "wxcLib/json_node.h"
 #include <wx/aui/framemanager.h>
 #include <wx/propgrid/propgrid.h>
 

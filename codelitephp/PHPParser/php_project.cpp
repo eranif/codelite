@@ -86,7 +86,7 @@ PHPProject::~PHPProject()
     Unbind(wxEVT_PHP_PROJECT_FILES_SYNC_END, &PHPProject::OnFileScanEnd, this);
 }
 
-void PHPProject::FromJSON(const JSONElement& element)
+void PHPProject::FromJSON(const JSONItem& element)
 {
     m_importFileSpec = element.namedObject("m_importFileSpec").toString(m_importFileSpec);
     m_excludeFolders = element.namedObject("m_excludeFolders").toString(m_excludeFolders);
@@ -95,7 +95,7 @@ void PHPProject::FromJSON(const JSONElement& element)
     m_settings.FromJSON(element.namedObject("settings"));
 }
 
-void PHPProject::ToJSON(JSONElement& pro) const
+void PHPProject::ToJSON(JSONItem& pro) const
 {
     pro.addProperty("m_name", m_name);
     pro.addProperty("m_isActive", m_isActive);
@@ -126,14 +126,14 @@ void PHPProject::Create(const wxFileName& filename, const wxString& name)
 void PHPProject::Load(const wxFileName& filename)
 {
     m_filename = filename;
-    JSONRoot root(m_filename);
+    JSON root(m_filename);
     FromJSON(root.toElement());
 }
 
 void PHPProject::Save()
 {
-    JSONRoot root(cJSON_Object);
-    JSONElement pro = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem pro = root.toElement();
     ToJSON(pro);
     root.save(m_filename);
 }

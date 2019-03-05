@@ -11,7 +11,7 @@ NodeJSWorkspaceConfiguration::NodeJSWorkspaceConfiguration(const wxFileName& fil
 
 NodeJSWorkspaceConfiguration::~NodeJSWorkspaceConfiguration() {}
 
-void NodeJSWorkspaceConfiguration::FromJSON(const JSONElement& json)
+void NodeJSWorkspaceConfiguration::FromJSON(const JSONItem& json)
 {
     m_folders = json.namedObject("folders").toArrayString();
     ConvertToRelative(m_folders);
@@ -20,16 +20,16 @@ void NodeJSWorkspaceConfiguration::FromJSON(const JSONElement& json)
 
     m_isOk = false;
     if(json.hasNamedObject("metadata")) {
-        JSONElement e = json.namedObject("metadata");
+        JSONItem e = json.namedObject("metadata");
         if(e.hasNamedObject("type")) { m_isOk = (e.namedObject("type").toString() == "NodeJS"); }
     }
 }
 
-JSONElement NodeJSWorkspaceConfiguration::ToJSON() const
+JSONItem NodeJSWorkspaceConfiguration::ToJSON() const
 {
     // add the metadata
-    JSONElement json = JSONElement::createObject(GetName());
-    JSONElement metadata = JSONElement::createObject("metadata");
+    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem metadata = JSONItem::createObject("metadata");
     json.append(metadata);
     metadata.addProperty("version", "1.0");
     metadata.addProperty("ide", "CodeLite");

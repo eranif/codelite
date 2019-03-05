@@ -32,13 +32,13 @@
 
 #define ADD_OBJ_IF_NOT_EXISTS(parent, objName)                \
     if(!parent.hasNamedObject(objName)) {                     \
-        JSONElement obj = JSONElement::createObject(objName); \
+        JSONItem obj = JSONItem::createObject(objName); \
         parent.append(obj);                                   \
     }
 
 #define ADD_ARR_IF_NOT_EXISTS(parent, arrName)               \
     if(!parent.hasNamedObject(arrName)) {                    \
-        JSONElement arr = JSONElement::createArray(arrName); \
+        JSONItem arr = JSONItem::createArray(arrName); \
         parent.append(arr);                                  \
     }
 
@@ -53,16 +53,16 @@ clConfig::clConfig(const wxString& filename)
     m_filename.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     if(m_filename.FileExists()) {
-        m_root = new JSONRoot(m_filename);
+        m_root = new JSON(m_filename);
 
     } else {
-        m_root = new JSONRoot(cJSON_Object);
+        m_root = new JSON(cJSON_Object);
     }
 
     // Load the "Recent Items" cache
     {
         wxArrayString recentFiles;
-        JSONElement e = m_root->toElement();
+        JSONItem e = m_root->toElement();
         if(e.hasNamedObject("RecentWorkspaces")) {
             recentFiles = e.namedObject("RecentWorkspaces").toArrayString();
             m_cacheRecentItems.insert(std::make_pair("RecentWorkspaces", recentFiles));
@@ -71,7 +71,7 @@ clConfig::clConfig(const wxString& filename)
 
     {
         wxArrayString recentFiles;
-        JSONElement e = m_root->toElement();
+        JSONItem e = m_root->toElement();
         if(e.hasNamedObject("RecentFiles")) {
             recentFiles = e.namedObject("RecentFiles").toArrayString();
             m_cacheRecentItems.insert(std::make_pair("RecentFiles", recentFiles));
@@ -90,7 +90,7 @@ clConfig& clConfig::Get()
 bool clConfig::GetOutputTabOrder(wxArrayString& tabs, int& selected)
 {
     if(m_root->toElement().hasNamedObject("outputTabOrder")) {
-        JSONElement element = m_root->toElement().namedObject("outputTabOrder");
+        JSONItem element = m_root->toElement().namedObject("outputTabOrder");
         tabs = element.namedObject("tabs").toArrayString();
         selected = element.namedObject("selected").toInt();
         return true;
@@ -103,7 +103,7 @@ void clConfig::SetOutputTabOrder(const wxArrayString& tabs, int selected)
     DoDeleteProperty("outputTabOrder");
 
     // first time
-    JSONElement e = JSONElement::createObject("outputTabOrder");
+    JSONItem e = JSONItem::createObject("outputTabOrder");
     e.addProperty("tabs", tabs);
     e.addProperty("selected", selected);
     m_root->toElement().append(e);
@@ -113,7 +113,7 @@ void clConfig::SetOutputTabOrder(const wxArrayString& tabs, int selected)
 bool clConfig::GetWorkspaceTabOrder(wxArrayString& tabs, int& selected)
 {
     if(m_root->toElement().hasNamedObject("workspaceTabOrder")) {
-        JSONElement element = m_root->toElement().namedObject("workspaceTabOrder");
+        JSONItem element = m_root->toElement().namedObject("workspaceTabOrder");
         tabs = element.namedObject("tabs").toArrayString();
         selected = element.namedObject("selected").toInt();
         return true;
@@ -126,7 +126,7 @@ void clConfig::SetWorkspaceTabOrder(const wxArrayString& tabs, int selected)
     DoDeleteProperty("workspaceTabOrder");
 
     // first time
-    JSONElement e = JSONElement::createObject("workspaceTabOrder");
+    JSONItem e = JSONItem::createObject("workspaceTabOrder");
     e.addProperty("tabs", tabs);
     e.addProperty("selected", selected);
     m_root->toElement().append(e);
@@ -164,7 +164,7 @@ void clConfig::Reload()
     if(m_filename.FileExists() == false) return;
 
     delete m_root;
-    m_root = new JSONRoot(m_filename);
+    m_root = new JSON(m_filename);
 }
 
 wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const
@@ -201,10 +201,10 @@ void clConfig::Save(const wxFileName& fn)
     if(m_root) m_root->save(fn);
 }
 
-JSONElement clConfig::GetGeneralSetting()
+JSONItem clConfig::GetGeneralSetting()
 {
     if(!m_root->toElement().hasNamedObject("General")) {
-        JSONElement general = JSONElement::createObject("General");
+        JSONItem general = JSONItem::createObject("General");
         m_root->toElement().append(general);
     }
     return m_root->toElement().namedObject("General");
@@ -212,7 +212,7 @@ JSONElement clConfig::GetGeneralSetting()
 
 void clConfig::Write(const wxString& name, bool value)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         general.removeProperty(name);
     }
@@ -223,7 +223,7 @@ void clConfig::Write(const wxString& name, bool value)
 
 bool clConfig::Read(const wxString& name, bool defaultValue)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.namedObject(name).isBool()) {
         return general.namedObject(name).toBool();
     }
@@ -233,7 +233,7 @@ bool clConfig::Read(const wxString& name, bool defaultValue)
 
 void clConfig::Write(const wxString& name, int value)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         general.removeProperty(name);
     }
@@ -244,13 +244,13 @@ void clConfig::Write(const wxString& name, int value)
 
 int clConfig::Read(const wxString& name, int defaultValue)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     return general.namedObject(name).toInt(defaultValue);
 }
 
 void clConfig::Write(const wxString& name, const wxString& value)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         general.removeProperty(name);
     }
@@ -261,7 +261,7 @@ void clConfig::Write(const wxString& name, const wxString& value)
 
 wxString clConfig::Read(const wxString& name, const wxString& defaultValue)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.namedObject(name).isString()) {
         return general.namedObject(name).toString();
     }
@@ -273,7 +273,7 @@ int clConfig::GetAnnoyingDlgAnswer(const wxString& name, int defaultValue)
 {
     if(m_root->toElement().hasNamedObject("AnnoyingDialogsAnswers")) {
 
-        JSONElement element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
+        JSONItem element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
         if(element.hasNamedObject(name)) {
             return element.namedObject(name).toInt(defaultValue);
         }
@@ -284,11 +284,11 @@ int clConfig::GetAnnoyingDlgAnswer(const wxString& name, int defaultValue)
 void clConfig::SetAnnoyingDlgAnswer(const wxString& name, int value)
 {
     if(!m_root->toElement().hasNamedObject("AnnoyingDialogsAnswers")) {
-        JSONElement element = JSONElement::createObject("AnnoyingDialogsAnswers");
+        JSONItem element = JSONItem::createObject("AnnoyingDialogsAnswers");
         m_root->toElement().append(element);
     }
 
-    JSONElement element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
+    JSONItem element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
     if(element.hasNamedObject(name)) {
         element.removeProperty(name);
     }
@@ -306,7 +306,7 @@ void clConfig::ClearAnnoyingDlgAnswers()
 void clConfig::SetQuickFindSearchItems(const wxArrayString& items)
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     if(quickFindBar.hasNamedObject("SearchHistory")) {
         quickFindBar.removeProperty("SearchHistory");
     }
@@ -317,7 +317,7 @@ void clConfig::SetQuickFindSearchItems(const wxArrayString& items)
 void clConfig::SetQuickFindReplaceItems(const wxArrayString& items)
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     if(quickFindBar.hasNamedObject("ReplaceHistory")) {
         quickFindBar.removeProperty("ReplaceHistory");
     }
@@ -329,10 +329,10 @@ void clConfig::AddQuickFindReplaceItem(const wxString& str)
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
 
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     ADD_ARR_IF_NOT_EXISTS(quickFindBar, "ReplaceHistory");
 
-    JSONElement arr = quickFindBar.namedObject("ReplaceHistory");
+    JSONItem arr = quickFindBar.namedObject("ReplaceHistory");
     wxArrayString items = arr.toArrayString();
 
     // Update the array
@@ -359,10 +359,10 @@ void clConfig::AddQuickFindSearchItem(const wxString& str)
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
 
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     ADD_ARR_IF_NOT_EXISTS(quickFindBar, "SearchHistory");
 
-    JSONElement arr = quickFindBar.namedObject("SearchHistory");
+    JSONItem arr = quickFindBar.namedObject("SearchHistory");
     wxArrayString items = arr.toArrayString();
 
     // Update the array
@@ -386,7 +386,7 @@ void clConfig::AddQuickFindSearchItem(const wxString& str)
 wxArrayString clConfig::GetQuickFindReplaceItems() const
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     ADD_ARR_IF_NOT_EXISTS(quickFindBar, "ReplaceHistory");
     return quickFindBar.namedObject("ReplaceHistory").toArrayString();
 }
@@ -394,14 +394,14 @@ wxArrayString clConfig::GetQuickFindReplaceItems() const
 wxArrayString clConfig::GetQuickFindSearchItems() const
 {
     ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "QuickFindBar");
-    JSONElement quickFindBar = m_root->toElement().namedObject("QuickFindBar");
+    JSONItem quickFindBar = m_root->toElement().namedObject("QuickFindBar");
     ADD_ARR_IF_NOT_EXISTS(quickFindBar, "SearchHistory");
     return quickFindBar.namedObject("SearchHistory").toArrayString();
 }
 
 wxArrayString clConfig::Read(const wxString& name, const wxArrayString& defaultValue)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         return general.namedObject(name).toArrayString();
     }
@@ -410,7 +410,7 @@ wxArrayString clConfig::Read(const wxString& name, const wxArrayString& defaultV
 
 void clConfig::Write(const wxString& name, const wxArrayString& value)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         general.removeProperty(name);
     }
@@ -450,7 +450,7 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
     recentItems.swap(existingFiles);
 
     // Remove old node if exists
-    JSONElement e = m_root->toElement();
+    JSONItem e = m_root->toElement();
     if(e.hasNamedObject(propName)) {
         e.removeProperty(propName);
     }
@@ -469,7 +469,7 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
 
 void clConfig::DoClearRecentItems(const wxString& propName)
 {
-    JSONElement e = m_root->toElement();
+    JSONItem e = m_root->toElement();
     if(e.hasNamedObject(propName)) {
         e.removeProperty(propName);
     }
@@ -489,7 +489,7 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
         recentItems = m_cacheRecentItems.find(propName)->second;
 
     } else {
-        JSONElement e = m_root->toElement();
+        JSONItem e = m_root->toElement();
         if(e.hasNamedObject(propName)) {
             recentItems = e.namedObject(propName).toArrayString();
         }
@@ -499,12 +499,12 @@ wxArrayString clConfig::DoGetRecentItems(const wxString& propName) const
 #if wxUSE_GUI
 wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
 {
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(!general.hasNamedObject(name)) return defaultValue;
 
     // Unserialize the font
     wxFont font;
-    JSONElement f = general.namedObject(name);
+    JSONItem f = general.namedObject(name);
 
     font.SetPointSize(f.namedObject("pointSize").toInt());
     font.SetFaceName(f.namedObject("face").toString());
@@ -515,13 +515,13 @@ wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
 
 void clConfig::Write(const wxString& name, const wxFont& value)
 {
-    JSONElement font = JSONElement::createObject(name);
+    JSONItem font = JSONItem::createObject(name);
     font.addProperty("pointSize", value.GetPointSize());
     font.addProperty("face", value.GetFaceName());
     font.addProperty("bold", (value.GetWeight() == wxFONTWEIGHT_BOLD));
     font.addProperty("italic", (value.GetStyle() == wxFONTSTYLE_ITALIC));
 
-    JSONElement general = GetGeneralSetting();
+    JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {
         general.removeProperty(name);
     }

@@ -21,7 +21,7 @@ PHPConfigurationData::PHPConfigurationData()
 
 PHPConfigurationData::~PHPConfigurationData() {}
 
-void PHPConfigurationData::FromJSON(const JSONElement& json)
+void PHPConfigurationData::FromJSON(const JSONItem& json)
 {
     m_findInFilesMask = json.namedObject("m_findInFilesMask").toString(m_findInFilesMask);
     m_xdebugPort = json.namedObject("m_xdebugPort").toInt(m_xdebugPort);
@@ -38,9 +38,9 @@ void PHPConfigurationData::FromJSON(const JSONElement& json)
     m_ccIncludePath = json.namedObject("m_ccIncludePath").toArrayString();
 }
 
-JSONElement PHPConfigurationData::ToJSON() const
+JSONItem PHPConfigurationData::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject(GetName());
+    JSONItem e = JSONItem::createObject(GetName());
     e.addProperty("m_xdebugPort", m_xdebugPort);
     e.addProperty("m_xdebugHost", m_xdebugHost);
     e.addProperty("m_ccIncludePath", m_ccIncludePath);

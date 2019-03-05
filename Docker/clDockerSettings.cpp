@@ -28,16 +28,16 @@ clDockerSettings::clDockerSettings()
 
 clDockerSettings::~clDockerSettings() {}
 
-void clDockerSettings::FromJSON(const JSONElement& json)
+void clDockerSettings::FromJSON(const JSONItem& json)
 {
     m_docker = json.namedObject("docker").toString(m_docker.GetFullPath());
     m_dockerCompose = json.namedObject("docker-compose").toString(m_dockerCompose.GetFullPath());
     m_flags = json.namedObject("flags").toSize_t(m_flags);
 }
 
-JSONElement clDockerSettings::ToJSON() const
+JSONItem clDockerSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("docker", m_docker.GetFullPath());
     json.addProperty("docker-compose", m_dockerCompose.GetFullPath());
     json.addProperty("flags", m_flags);

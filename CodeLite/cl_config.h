@@ -27,7 +27,7 @@
 #define CLCONFIG_H
 
 #include "codelite_exports.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <map>
 
 ////////////////////////////////////////////////////////
@@ -48,8 +48,8 @@ public:
     const wxString& GetName() const { return m_name; }
 
     void SetName(const wxString& name) { this->m_name = name; }
-    virtual void FromJSON(const JSONElement& json) = 0;
-    virtual JSONElement ToJSON() const = 0;
+    virtual void FromJSON(const JSONItem& json) = 0;
+    virtual JSONItem ToJSON() const = 0;
 };
 
 ////////////////////////////////////////////////////////
@@ -87,12 +87,12 @@ class WXDLLIMPEXP_CL clConfig
 {
 protected:
     wxFileName m_filename;
-    JSONRoot* m_root;
+    JSON* m_root;
     std::map<wxString, wxArrayString> m_cacheRecentItems;
     
 protected:
     void DoDeleteProperty(const wxString& property);
-    JSONElement GetGeneralSetting();
+    JSONItem GetGeneralSetting();
 
     void DoAddRecentItem(const wxString& propName, const wxString& filename);
     wxArrayString DoGetRecentItems(const wxString& propName) const;

@@ -323,12 +323,12 @@ void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
     m_treeCtrlLocals->DeleteChildren(item);
     // Get the output result (an array of PropertyDescriptor)
     wxString s = event.GetString();
-    JSONRoot root(s);
-    JSONElement prop_arr = root.toElement();
+    JSON root(s);
+    JSONItem prop_arr = root.toElement();
     int size = prop_arr.arraySize();
     std::vector<PropertyDescriptor> propVec;
     for(int i = 0; i < size; ++i) {
-        JSONElement prop = prop_arr.arrayItem(i);
+        JSONItem prop = prop_arr.arrayItem(i);
         PropertyDescriptor propDesc;
         propDesc.FromJSON(prop);
         if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }

@@ -34,7 +34,7 @@
 #include "wx/xml/xml.h"
 #include "wx/filename.h"
 #include "build_system.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "cl_config.h"
 #include <map>
 #include <wxStringHash.h>

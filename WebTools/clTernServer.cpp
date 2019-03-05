@@ -124,8 +124,8 @@ bool clTernServer::PostCCRequest(IEditor* editor)
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
 
     // Prepare the request
-    JSONRoot root(cJSON_Object);
-    JSONElement query = JSONElement::createObject("query");
+    JSON root(cJSON_Object);
+    JSONItem query = JSONItem::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("completions"));
     query.addProperty("file", wxString("#0"));
@@ -135,7 +135,7 @@ bool clTernServer::PostCCRequest(IEditor* editor)
     query.addProperty("includeKeywords", true);
     query.addProperty("types", true);
 
-    JSONElement files = CreateFilesArray(editor);
+    JSONItem files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
@@ -263,10 +263,10 @@ void clTernServer::ProcessOutput(const wxString& output, wxCodeCompletionBoxEntr
 
     entries.clear();
 
-    JSONRoot root(output);
-    JSONElement completionsArr = root.toElement().namedObject("completions");
+    JSON root(output);
+    JSONItem completionsArr = root.toElement().namedObject("completions");
     for(int i = 0; i < completionsArr.arraySize(); ++i) {
-        JSONElement item = completionsArr.arrayItem(i);
+        JSONItem item = completionsArr.arrayItem(i);
         wxString name = item.namedObject("name").toString();
         wxString doc = item.namedObject("doc").toString();
         wxString url = item.namedObject("url").toString();
@@ -345,7 +345,7 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     // }
     TagEntryPtrVector_t tags;
     TagEntryPtr t(new TagEntry());
-    JSONRoot root(output);
+    JSON root(output);
     wxString type = root.toElement().namedObject("type").toString();
     int imgID;
     wxString sig, retValue;
@@ -359,11 +359,11 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     return new clCallTip(tags);
 }
 
-JSONElement clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
+JSONItem clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
 {
     if(pos == wxNOT_FOUND) { pos = ctrl->GetCurrentPos(); }
     int lineNo = ctrl->LineFromPosition(pos);
-    JSONElement loc = JSONElement::createObject("end");
+    JSONItem loc = JSONItem::createObject("end");
     loc.addProperty("line", lineNo);
 
     // Pass the column
@@ -387,15 +387,15 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     // if(!FileUtils::WriteFileContent(tmpFileName, ctrl->GetText())) return false;
 
     // Prepare the request
-    JSONRoot root(cJSON_Object);
-    JSONElement query = JSONElement::createObject("query");
+    JSON root(cJSON_Object);
+    JSONItem query = JSONItem::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("type"));
     query.addProperty("file", wxString("#0"));
     query.append(CreateLocation(ctrl, pos));
 
     // Creae the files array
-    JSONElement files = CreateFilesArray(editor);
+    JSONItem files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
@@ -410,12 +410,12 @@ bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
     return true;
 }
 
-JSONElement clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
+JSONItem clTernServer::CreateFilesArray(IEditor* editor, bool forDelete)
 {
     const wxString fileContent = editor->GetCtrl()->GetText();
-    JSONElement files = JSONElement::createArray("files");
+    JSONItem files = JSONItem::createArray("files");
 
-    JSONElement file = JSONElement::createObject();
+    JSONItem file = JSONItem::createObject();
     files.arrayAppend(file);
 
     wxString filename;
@@ -457,15 +457,15 @@ bool clTernServer::PostFindDefinitionRequest(IEditor* editor)
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
 
     // Prepare the request
-    JSONRoot root(cJSON_Object);
-    JSONElement query = JSONElement::createObject("query");
+    JSON root(cJSON_Object);
+    JSONItem query = JSONItem::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("definition"));
     query.addProperty("file", wxString("#0"));
     query.append(CreateLocation(ctrl));
 
     // Creae the files array
-    JSONElement files = CreateFilesArray(editor);
+    JSONItem files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
@@ -482,8 +482,8 @@ bool clTernServer::PostFindDefinitionRequest(IEditor* editor)
 
 bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinition& loc)
 {
-    JSONRoot root(output);
-    JSONElement json = root.toElement();
+    JSON root(output);
+    JSONItem json = root.toElement();
 
     if(json.hasNamedObject("file")) {
         wxFileName fn(json.namedObject("file").toString());
@@ -508,8 +508,8 @@ bool clTernServer::PostResetCommand(bool forgetFiles)
     ++m_recycleCount;
 
     // Prepare the request
-    JSONRoot root(cJSON_Object);
-    JSONElement query = JSONElement::createObject("query");
+    JSON root(cJSON_Object);
+    JSONItem query = JSONItem::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("reset"));
     if(forgetFiles) { query.addProperty("forgetFiles", true); }
@@ -534,8 +534,8 @@ bool clTernServer::PostReparseCommand(IEditor* editor)
     ++m_recycleCount;
 
     // Prepare the request
-    JSONRoot root(cJSON_Object);
-    JSONElement files = CreateFilesArray(editor);
+    JSON root(cJSON_Object);
+    JSONItem files = CreateFilesArray(editor);
     root.toElement().append(files);
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;

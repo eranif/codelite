@@ -16,8 +16,8 @@ PhpOptions::PhpOptions()
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
             wxFileName::GetPathSeparator() + "php.conf";
         // first time, copy the values from the old settings
-        JSONRoot root(oldConfigFile);
-        JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
+        JSON root(oldConfigFile);
+        JSONItem oldJson = root.toElement().namedObject("PHPConfigurationData");
 
         m_phpExe = oldJson.namedObject("m_phpExe").toString();
         m_includePaths = oldJson.namedObject("m_includePaths").toArrayString();
@@ -25,8 +25,8 @@ PhpOptions::PhpOptions()
 
         // Save it
 
-        JSONRoot newRoot(newConfigFile);
-        JSONElement e = JSONElement::createObject(GetName());
+        JSON newRoot(newConfigFile);
+        JSONItem e = JSONItem::createObject(GetName());
         e.addProperty("m_phpExe", m_phpExe);
         e.addProperty("m_includePaths", m_includePaths);
         e.addProperty("m_errorReporting", m_errorReporting);
@@ -37,7 +37,7 @@ PhpOptions::PhpOptions()
 
 PhpOptions::~PhpOptions() {}
 
-void PhpOptions::FromJSON(const JSONElement& json)
+void PhpOptions::FromJSON(const JSONItem& json)
 {
     m_phpExe = json.namedObject("m_phpExe").toString(m_phpExe);
     if (m_phpExe.IsEmpty()) {
@@ -50,9 +50,9 @@ void PhpOptions::FromJSON(const JSONElement& json)
     m_includePaths = json.namedObject("m_includePaths").toArrayString();
 }
 
-JSONElement PhpOptions::ToJSON() const
+JSONItem PhpOptions::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_phpExe", m_phpExe);
     element.addProperty("m_errorReporting", m_errorReporting);
     element.addProperty("m_includePaths", m_includePaths);

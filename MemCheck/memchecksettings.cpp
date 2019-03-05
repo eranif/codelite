@@ -21,7 +21,7 @@ ValgrindSettings::ValgrindSettings():clConfigItem(CONFIG_ITEM_NAME_VALGRIND),
 }
 
 
-void ValgrindSettings::FromJSON(const JSONElement & json)
+void ValgrindSettings::FromJSON(const JSONItem & json)
 {
     if (json.hasNamedObject("m_binary")) m_binary = json.namedObject("m_binary").toString();
     if (json.hasNamedObject("m_outputInPrivateFolder")) m_outputInPrivateFolder = json.namedObject("m_outputInPrivateFolder").toBool();
@@ -34,9 +34,9 @@ void ValgrindSettings::FromJSON(const JSONElement & json)
     if (json.hasNamedObject("m_suppFiles")) m_suppFiles = json.namedObject("m_suppFiles").toArrayString();
 }
 
-JSONElement ValgrindSettings::ToJSON() const
+JSONItem ValgrindSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_binary", m_binary);
     element.addProperty("m_outputInPrivateFolder", m_outputInPrivateFolder);
     element.addProperty("m_outputFile", m_outputFile);
@@ -64,7 +64,7 @@ MemCheckSettings::MemCheckSettings():clConfigItem(CONFIG_ITEM_NAME_MEMCHECK),
 }
 
 
-void MemCheckSettings::FromJSON(const JSONElement & json)
+void MemCheckSettings::FromJSON(const JSONItem & json)
 {
     if (json.hasNamedObject("m_engine")) m_engine = json.namedObject("m_engine").toString();
     if (json.hasNamedObject("m_result_page_size")) m_result_page_size = json.namedObject("m_result_page_size").toSize_t();
@@ -76,9 +76,9 @@ void MemCheckSettings::FromJSON(const JSONElement & json)
     m_valgrindSettings.FromJSON(json.namedObject(CONFIG_ITEM_NAME_VALGRIND));
 }
 
-JSONElement MemCheckSettings::ToJSON() const
+JSONItem MemCheckSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_engine", m_engine);
     element.addProperty("m_result_page_size", m_result_page_size);
     element.addProperty("m_result_page_size_max", m_result_page_size_max);

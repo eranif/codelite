@@ -550,9 +550,9 @@ void LexerConf::SetLineNumbersFgColour(const wxColour& colour)
     if(!style.IsNull()) { style.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX)); }
 }
 
-JSONElement LexerConf::ToJSON(bool forExport) const
+JSONItem LexerConf::ToJSON(bool forExport) const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("Name", GetName());
     json.addProperty("Theme", GetThemeName());
     json.addProperty("Flags", m_flags);
@@ -564,7 +564,7 @@ JSONElement LexerConf::ToJSON(bool forExport) const
     json.addProperty("KeyWords4", GetKeyWords(4));
     json.addProperty("Extensions", GetFileSpec());
 
-    JSONElement properties = JSONElement::createArray("Properties");
+    JSONItem properties = JSONItem::createArray("Properties");
     json.append(properties);
 
     StyleProperty::Map_t::const_iterator iter = m_properties.begin();
@@ -574,7 +574,7 @@ JSONElement LexerConf::ToJSON(bool forExport) const
     return json;
 }
 
-void LexerConf::FromJSON(const JSONElement& json)
+void LexerConf::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("Name").toString();
     m_lexerId = json.namedObject("Id").toInt();
@@ -594,7 +594,7 @@ void LexerConf::FromJSON(const JSONElement& json)
     SetFileSpec(json.namedObject("Extensions").toString());
 
     m_properties.clear();
-    JSONElement properties = json.namedObject("Properties");
+    JSONItem properties = json.namedObject("Properties");
     int arrSize = properties.arraySize();
     for(int i = 0; i < arrSize; ++i) {
         // Construct a style property

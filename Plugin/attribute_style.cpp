@@ -43,7 +43,7 @@ StyleProperty& StyleProperty::operator=(const StyleProperty& rhs)
     return *this;
 }
 
-void StyleProperty::FromJSON(JSONElement json)
+void StyleProperty::FromJSON(JSONItem json)
 {
     m_id = json.namedObject("Id").toInt(0);
     m_name = json.namedObject("Name").toString("DEFAULT");
@@ -55,9 +55,9 @@ void StyleProperty::FromJSON(JSONElement json)
     m_fontSize = json.namedObject("Size").toInt(10);
 }
 
-JSONElement StyleProperty::ToJSON(bool portable) const
+JSONItem StyleProperty::ToJSON(bool portable) const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("Id", GetId());
     json.addProperty("Name", GetName());
     json.addProperty("Flags", m_flags);

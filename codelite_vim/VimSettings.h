@@ -12,8 +12,8 @@ public:
     virtual ~VimSettings();
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     VimSettings& Load();
     VimSettings& Save();

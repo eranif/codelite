@@ -1,5 +1,5 @@
 #include "NodeJSPackageJSON.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "NoteJSWorkspace.h"
 
 NodeJSPackageJSON::NodeJSPackageJSON() {}
@@ -14,7 +14,7 @@ bool NodeJSPackageJSON::Load(const wxString& projectPath)
         return false;
     }
     
-    JSONRoot root(filename);
+    JSON root(filename);
     if(!root.isOk()) return false;
 
     m_name = root.toElement().namedObject("name").toString();
@@ -32,7 +32,7 @@ bool NodeJSPackageJSON::Create(const wxString& projectPath)
         return false;
     }
     
-    JSONRoot root(filename);
+    JSON root(filename);
     if(!root.isOk()) return false;
 
     m_name = root.toElement().namedObject("name").toString();
@@ -55,8 +55,8 @@ bool NodeJSPackageJSON::Save(const wxString& projectPath)
     filename.AppendDir(".codelite");
     
     // Override the previous settings
-    JSONRoot root(cJSON_Object);
-    JSONElement json = root.toElement();
+    JSON root(cJSON_Object);
+    JSONItem json = root.toElement();
     
     json.addProperty("name", m_name);
     json.addProperty("version", m_version);

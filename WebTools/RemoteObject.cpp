@@ -5,13 +5,13 @@ RemoteObject::RemoteObject() {}
 
 RemoteObject::~RemoteObject() {}
 
-void RemoteObject::FromJSON(const JSONElement& json)
+void RemoteObject::FromJSON(const JSONItem& json)
 {
     m_type = json.namedObject("type").toString();
     m_subtype = json.namedObject("subtype").toString();
     m_className = json.namedObject("className").toString();
     m_objectId = json.namedObject("objectId").toString();
-    JSONElement value = json.namedObject("value");
+    JSONItem value = json.namedObject("value");
     if(value.isNull()) {
         m_value = "null";
     } else if(value.isBool()) {
@@ -24,9 +24,9 @@ void RemoteObject::FromJSON(const JSONElement& json)
     if(json.hasNamedObject("preview")) { m_preview.FromJSON(json.namedObject("preview")); }
 }
 
-JSONElement RemoteObject::ToJSON(const wxString& name) const
+JSONItem RemoteObject::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.addProperty("type", m_type);
     json.addProperty("subtype", m_subtype);
     json.addProperty("className", m_className);

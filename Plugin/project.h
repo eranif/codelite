@@ -26,7 +26,7 @@
 #define PROJECT_H
 
 #include "codelite_exports.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "localworkspace.h"
 #include "macros.h"
 #include "optionsconfig.h"
@@ -824,7 +824,7 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON(JSONElement& compile_commands, const wxStringMap_t& compilersGlobalPaths);
+    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths);
 
     void SetWorkspaceFolder(const wxString& workspaceFolders) { this->m_workspaceFolder = workspaceFolders; }
     const wxString& GetWorkspaceFolder() const { return m_workspaceFolder; }

@@ -103,6 +103,13 @@ void JSONRoot::clear()
         _json = cJSON_CreateObject();
 }
 
+JSONElement JSONRoot::release()
+{
+    cJSON* p = _json;
+    _json = NULL;
+    return JSONElement(p);
+}
+
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 JSONElement::JSONElement(cJSON* json)

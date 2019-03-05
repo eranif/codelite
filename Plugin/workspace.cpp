@@ -994,17 +994,17 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
     return fn_tags;
 }
 
-void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) const
+cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
 {
     // Build the global compiler paths, we will need this later on...
     wxStringMap_t compilersGlobalPaths;
     wxFileName globalCompilersFile(clStandardPaths::Get().GetUserDataDir(), "compilers_paths.json");
-    JSONRoot root(globalCompilersFile);
+    JSON root(globalCompilersFile);
     if(root.isOk()) {
-        JSONElement arr = root.toElement();
+        JSONItem arr = root.toElement();
         int count = arr.arraySize();
         for(int i = 0; i < count; ++i) {
-            JSONElement c = arr.arrayItem(i);
+            JSONItem c = arr.arrayItem(i);
             wxString compiler_name = c.namedObject("name").toString();
             wxArrayString pathsArr = c.namedObject("paths").toArrayString();
             wxString paths;
@@ -1017,6 +1017,21 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
         }
     }
 
+    // Check if the active project is using custom build
+    ProjectPtr activeProject = GetActiveProject();
+    if(activeProject) {
+        BuildConfigPtr buildConf = activeProject->GetBuildConfiguration();
+        if(buildConf && buildConf->IsCustomBuild()) {
+            // Using custom build
+            wxFileName fnWorkingDirectory(buildConf->GetWorkingDirectory(), "compile_commands.json");
+            if(fnWorkingDirectory.FileExists()) {
+                JSON root(fnWorkingDirectory);
+                return root.release();
+            }
+        }
+    }
+    
+    JSONItem compile_commands = JSONItem::createArray();
     clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
         BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
@@ -1025,6 +1040,7 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
             iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths);
         }
     }
+    return compile_commands.release();
 }
 
 ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }

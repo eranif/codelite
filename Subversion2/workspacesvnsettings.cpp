@@ -43,14 +43,14 @@ WorkspaceSvnSettings::~WorkspaceSvnSettings()
 {
 }
 
-void WorkspaceSvnSettings::FromJSON(const JSONElement& json)
+void WorkspaceSvnSettings::FromJSON(const JSONItem& json)
 {
     m_repoPath = json.namedObject("m_repoPath").toString();
 }
 
-JSONElement WorkspaceSvnSettings::ToJSON() const
+JSONItem WorkspaceSvnSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("m_repoPath", m_repoPath);
     return json;
 }

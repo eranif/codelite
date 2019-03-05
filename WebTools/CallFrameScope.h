@@ -11,8 +11,8 @@ class CallFrameScope : public nSerializableObject
     RemoteObject m_remoteObject;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     CallFrameScope();
     virtual ~CallFrameScope();
 

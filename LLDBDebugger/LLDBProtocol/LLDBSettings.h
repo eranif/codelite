@@ -28,7 +28,7 @@
 
 #include "LLDBEnums.h"
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 
 class LLDBSettings
 {
@@ -88,8 +88,8 @@ public:
     static void SavePerspective(const wxString& perspective);
 
     // Serialization API
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
     LLDBSettings& SetArrItems(size_t arrItems)
     {
         this->m_arrItems = arrItems;

@@ -8,7 +8,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "macros.h"
 #include "navigationmanager.h"
 #include "wxCodeCompletionBoxEntry.h"

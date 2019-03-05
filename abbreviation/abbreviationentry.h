@@ -27,7 +27,7 @@
 #define __abbreviationentry__
 
 #include "cl_config.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "serialized_object.h"
 
 class AbbreviationEntry : public SerializedObject
@@ -66,8 +66,8 @@ public:
 
     virtual ~AbbreviationJSONEntry() {}
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void SetEntries(const wxStringMap_t& entries) { this->m_entries = entries; }
     const wxStringMap_t& GetEntries() const { return m_entries; }

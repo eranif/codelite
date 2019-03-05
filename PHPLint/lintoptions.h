@@ -16,8 +16,8 @@ public:
     LintOptions();
     virtual ~LintOptions();
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     LintOptions& Load();
     LintOptions& Save();

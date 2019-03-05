@@ -34,7 +34,7 @@
 #include <wx/stc/stc.h>
 #include <wx/sharedptr.h>
 #include <smart_ptr.h>
-#include "json_node.h"
+#include "JSON.h"
 
 #define ANNOTATION_STYLE_WARNING 210
 #define ANNOTATION_STYLE_ERROR 211
@@ -98,13 +98,13 @@ public:
     /**
      * @brief convert the lexer settings into a JSON object
      */
-    JSONElement ToJSON(bool forExport = false) const;
+    JSONItem ToJSON(bool forExport = false) const;
 
     /**
      * @brief construt this object from a JSON object
      * @param json
      */
-    void FromJSON(const JSONElement& json);
+    void FromJSON(const JSONItem& json);
 
 public:
     LexerConf();

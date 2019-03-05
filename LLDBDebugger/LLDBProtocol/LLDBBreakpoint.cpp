@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBBreakpoint.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/filename.h>
 #include "workspace.h"
 
@@ -140,7 +140,7 @@ void LLDBBreakpoint::Invalidate()
     m_children.clear();
 }
 
-void LLDBBreakpoint::FromJSON(const JSONElement& json)
+void LLDBBreakpoint::FromJSON(const JSONItem& json)
 {
     m_children.clear();
     m_id = json.namedObject("m_id").toInt(wxNOT_FOUND);
@@ -148,7 +148,7 @@ void LLDBBreakpoint::FromJSON(const JSONElement& json)
     m_name = json.namedObject("m_name").toString();
     SetFilename(json.namedObject("m_filename").toString(), false);
     m_lineNumber = json.namedObject("m_lineNumber").toInt();
-    JSONElement arr = json.namedObject("m_children");
+    JSONItem arr = json.namedObject("m_children");
     for(int i=0; i<arr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
         bp->FromJSON( arr.arrayItem(i) );
@@ -156,16 +156,16 @@ void LLDBBreakpoint::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement LLDBBreakpoint::ToJSON() const
+JSONItem LLDBBreakpoint::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_id", m_id);
     json.addProperty("m_type", m_type);
     json.addProperty("m_name", m_name);
     json.addProperty("m_filename", m_filename);
     json.addProperty("m_lineNumber", m_lineNumber);
 
-    JSONElement arr = JSONElement::createArray("m_children");
+    JSONItem arr = JSONItem::createArray("m_children");
     json.append( arr );
     for(size_t i=0; i<m_children.size(); ++i) {
         arr.arrayAppend( m_children.at(i)->ToJSON() );

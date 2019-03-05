@@ -27,7 +27,7 @@
 #define OUTLINESETTINGS_H
 
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 
 class OutlineSettings
 {

@@ -34,15 +34,15 @@ SFTPWorkspaceSettings::~SFTPWorkspaceSettings()
 {
 }
 
-void SFTPWorkspaceSettings::FromJSON(const JSONElement& json)
+void SFTPWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_remoteWorkspacePath = json.namedObject("m_remoteWorkspacePath").toString();
     m_account = json.namedObject("m_account").toString();
 }
 
-JSONElement SFTPWorkspaceSettings::ToJSON() const
+JSONItem SFTPWorkspaceSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_account", m_account);
     element.addProperty("m_remoteWorkspacePath", m_remoteWorkspacePath);
     return element;

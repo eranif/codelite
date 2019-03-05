@@ -45,11 +45,11 @@ SFTPSettings::SFTPSettings()
 
 SFTPSettings::~SFTPSettings() {}
 
-void SFTPSettings::FromJSON(const JSONElement& json)
+void SFTPSettings::FromJSON(const JSONItem& json)
 {
     m_accounts.clear();
     m_sshClient = json.namedObject("sshClient").toString(m_sshClient);
-    JSONElement arrAccounts = json.namedObject("accounts");
+    JSONItem arrAccounts = json.namedObject("accounts");
     int size = arrAccounts.arraySize();
     for(int i = 0; i < size; ++i) {
         SSHAccountInfo account;
@@ -58,11 +58,11 @@ void SFTPSettings::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement SFTPSettings::ToJSON() const
+JSONItem SFTPSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("sshClient", m_sshClient);
-    JSONElement arrAccounts = JSONElement::createArray("accounts");
+    JSONItem arrAccounts = JSONItem::createArray("accounts");
     element.append(arrAccounts);
     for(size_t i = 0; i < m_accounts.size(); ++i) {
         arrAccounts.append(m_accounts.at(i).ToJSON());

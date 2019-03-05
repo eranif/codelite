@@ -9,15 +9,15 @@ AutoSaveSettings::AutoSaveSettings()
 
 AutoSaveSettings::~AutoSaveSettings() {}
 
-void AutoSaveSettings::FromJSON(const JSONElement& json)
+void AutoSaveSettings::FromJSON(const JSONItem& json)
 {
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
     m_checkInterval = json.namedObject("m_checkInterval").toSize_t(m_checkInterval);
 }
 
-JSONElement AutoSaveSettings::ToJSON() const
+JSONItem AutoSaveSettings::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject(GetName());
+    JSONItem json = JSONItem::createObject(GetName());
     json.addProperty("m_flags", m_flags);
     json.addProperty("m_checkInterval", m_checkInterval);
     return json;

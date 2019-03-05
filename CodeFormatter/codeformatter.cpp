@@ -35,7 +35,7 @@
 #include "fileutils.h"
 #include "formatoptions.h"
 #include "globals.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "macros.h"
 #include "phpoptions.h"
 #include "precompiled_header.h"
@@ -433,7 +433,7 @@ void CodeFormatter::DoFormatWithClang(wxString& content, const wxFileName& fileN
     // The first line contains the cursor position
     if(cursorPosition != wxNOT_FOUND) {
         wxString metadata = content.BeforeFirst('\n');
-        JSONRoot root(metadata);
+        JSON root(metadata);
         cursorPosition = root.toElement().namedObject("cursor").toInt(wxNOT_FOUND);
         content = content.AfterFirst('\n');
     }

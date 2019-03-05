@@ -3,7 +3,7 @@
 
 #include "codelite_exports.h"
 #include "JSONObject.h"
-#include "json_node.h"
+#include "JSON.h"
 
 namespace json_rpc
 {
@@ -17,8 +17,8 @@ public:
 public:
     Message();
     virtual ~Message();
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     /**
      * @brief serialize this message into string

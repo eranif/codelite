@@ -351,7 +351,7 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
 {
     e.Skip();
     wxFileName workspaceFile(e.GetFileName());
-    JSONRoot root(workspaceFile);
+    JSON root(workspaceFile);
     if(!root.isOk()) return;
 
     wxString type = root.toElement().namedObject("metadata").namedObject("type").toString();

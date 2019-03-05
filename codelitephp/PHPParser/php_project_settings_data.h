@@ -28,7 +28,7 @@
 
 #include <wx/string.h>
 #include <wx/arrstr.h>
-#include <json_node.h>
+#include "JSON.h"
 #include <macros.h>
 #include "XDebugBreakpoint.h"
 
@@ -63,8 +63,8 @@ public:
     PHPProjectSettingsData();
     virtual ~PHPProjectSettingsData();
 
-    void FromJSON(const JSONElement& ele);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& ele);
+    JSONItem ToJSON() const;
 
     void EnableFlag(int flag, bool b)
     {

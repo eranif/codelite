@@ -27,7 +27,7 @@
 
 #include "codelite_exports.h"
 #include "plugin_version.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "cl_config.h"
 #include <map>
 #include <set>
@@ -76,8 +76,8 @@ public:
     const wxString& GetName() const { return m_name; }
     const wxString& GetVersion() const { return m_version; }
 
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 };
 
 class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
@@ -97,8 +97,8 @@ public:
     void DisablePugins(const wxArrayString& plugins);
     void DisablePlugin(const wxString& plugin);
     const wxArrayString& GetDisabledPlugins() const { return m_disabledPlugins; }
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 };
 
 #endif // __plugindata__

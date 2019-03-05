@@ -92,9 +92,9 @@ void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
     child->m_parent = NULL;
 }
 
-JSONElement PHPEntityBase::BaseToJSON(const wxString& entityType) const
+JSONItem PHPEntityBase::BaseToJSON(const wxString& entityType) const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("type", entityType);
     json.addProperty("file", m_filename.GetFullPath());
     json.addProperty("name", m_shortName);
@@ -106,7 +106,7 @@ JSONElement PHPEntityBase::BaseToJSON(const wxString& entityType) const
     return json;
 }
 
-void PHPEntityBase::BaseFromJSON(const JSONElement& json)
+void PHPEntityBase::BaseFromJSON(const JSONItem& json)
 {
     m_filename = json.namedObject("file").toString();
     m_shortName = json.namedObject("name").toString();

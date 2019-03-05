@@ -35,18 +35,18 @@ LLDBRemoteHandshakePacket::~LLDBRemoteHandshakePacket()
 
 LLDBRemoteHandshakePacket::LLDBRemoteHandshakePacket(const wxString& json)
 {
-    JSONRoot root(json);
+    JSON root(json);
     FromJSON( root.toElement() );
 }
 
-void LLDBRemoteHandshakePacket::FromJSON(const JSONElement& json)
+void LLDBRemoteHandshakePacket::FromJSON(const JSONItem& json)
 {
     m_host = json.namedObject("m_host").toString();
 }
 
-JSONElement LLDBRemoteHandshakePacket::ToJSON() const
+JSONItem LLDBRemoteHandshakePacket::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_host", m_host);
     return json;
 }

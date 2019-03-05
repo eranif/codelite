@@ -19,8 +19,8 @@ protected:
 public:
     RequestMessage();
     virtual ~RequestMessage();
-    virtual JSONElement ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONElement& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
     virtual wxString ToString() const;
     void Send(Sender* sender) const;
 

@@ -180,7 +180,7 @@ wxString PHPEntityVariable::ToTooltip() const
     }
 }
 
-void PHPEntityVariable::FromJSON(const JSONElement& json)
+void PHPEntityVariable::FromJSON(const JSONItem& json)
 {
     BaseFromJSON(json);
     m_typeHint = json.namedObject("type-hint").toString();
@@ -188,9 +188,9 @@ void PHPEntityVariable::FromJSON(const JSONElement& json)
     m_defaultValue = json.namedObject("defaultValue").toString();
 }
 
-JSONElement PHPEntityVariable::ToJSON() const
+JSONItem PHPEntityVariable::ToJSON() const
 {
-    JSONElement json = BaseToJSON("v"); // type variable
+    JSONItem json = BaseToJSON("v"); // type variable
     json.addProperty("type-hint", m_typeHint);
     json.addProperty("expr-hint", m_expressionHint);
     json.addProperty("defaultValue", m_defaultValue);

@@ -77,8 +77,8 @@ public:
     }
 
     virtual ~GitCommandsEntries() {}
-    void FromJSON(const JSONElement& json);
-    void ToJSON(JSONElement& arr) const;
+    void FromJSON(const JSONItem& json);
+    void ToJSON(JSONItem& arr) const;
 
     const wxString& GetCommandname() const { return m_commandName; }
 
@@ -113,8 +113,8 @@ public:
     const wxString GetProjectLastRepoPath(const wxString& projectName);
     void SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath);
 
-    void FromJSON(const JSONElement& json);
-    void ToJSON(JSONElement& arr) const;
+    void FromJSON(const JSONItem& json);
+    void ToJSON(JSONItem& arr) const;
 
 protected:
     wxString m_name;
@@ -236,7 +236,7 @@ public:
     wxString GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName);
     void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath);
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 };
 #endif

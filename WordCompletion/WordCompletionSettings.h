@@ -45,8 +45,8 @@ public:
     virtual ~WordCompletionSettings();
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     void SetComparisonMethod(int comparisonMethod) { this->m_comparisonMethod = comparisonMethod; }
     int GetComparisonMethod() const { return m_comparisonMethod; }

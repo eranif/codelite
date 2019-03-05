@@ -30,7 +30,7 @@
 #include <vector>
 #include <set>
 #include "phpexecutor.h"
-#include <json_node.h>
+#include "JSON.h"
 #include <wx/filename.h>
 #include "PHPWrokspaceStorageInterface.h"
 #include <macros.h>
@@ -81,8 +81,8 @@ public:
     static PHPWorkspace* Get();
     static void Release();
     void SetPluginManager(IManager* manager) { this->m_manager = manager; }
-    JSONElement ToJSON(JSONElement& e) const;
-    void FromJSON(const JSONElement& e);
+    JSONItem ToJSON(JSONItem& e) const;
+    void FromJSON(const JSONItem& e);
 
 public:
     PHPWorkspace();

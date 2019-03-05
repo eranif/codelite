@@ -34,7 +34,7 @@
 #include "smart_ptr.h"
 #include "macros.h"
 #include "lexer_configuration.h"
-#include "json_node.h"
+#include "JSON.h"
 
 class WXDLLIMPEXP_SDK EclipseThemeImporterBase
 {

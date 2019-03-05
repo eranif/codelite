@@ -1,5 +1,5 @@
 #include "clKeyboardBindingConfig.h"
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/filename.h>
 #include "cl_standard_paths.h"
 
@@ -14,13 +14,13 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
     if(!fn.Exists()) return *this;
 
     m_bindings.clear();
-    JSONRoot root(fn);
+    JSON root(fn);
 
     {
-        JSONElement menus = root.toElement().namedObject("menus");
+        JSONItem menus = root.toElement().namedObject("menus");
         int arrSize = menus.arraySize();
         for(int i = 0; i < arrSize; ++i) {
-            JSONElement item = menus.arrayItem(i);
+            JSONItem item = menus.arrayItem(i);
             MenuItemData binding;
             binding.action = item.namedObject("description").toString();
             binding.accel = item.namedObject("accelerator").toString();
@@ -45,12 +45,12 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 
 clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
 {
-    JSONRoot root(cJSON_Object);
-    JSONElement mainObj = root.toElement();
-    JSONElement menuArr = JSONElement::createArray("menus");
+    JSON root(cJSON_Object);
+    JSONItem mainObj = root.toElement();
+    JSONItem menuArr = JSONItem::createArray("menus");
     mainObj.append(menuArr);
     for(MenuItemDataMap_t::iterator iter = m_bindings.begin(); iter != m_bindings.end(); ++iter) {
-        JSONElement binding = JSONElement::createObject();
+        JSONItem binding = JSONItem::createObject();
         binding.addProperty("description", iter->second.action);
         binding.addProperty("accelerator", iter->second.accel);
         binding.addProperty("resourceID", iter->second.resourceID);

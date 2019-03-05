@@ -29,7 +29,7 @@
 #include <list>
 #include <map>
 #include <wx/colour.h>
-#include "json_node.h"
+#include "JSON.h"
 #include "codelite_exports.h"
 
 // Set default font size per-OS
@@ -125,13 +125,13 @@ public:
     /**
      * @brief unserialize an object from JSON
      */
-    void FromJSON(JSONElement json);
+    void FromJSON(JSONItem json);
 
     /**
      * @brief serialize this style property into a JSON object
      * @param portable set to true to avoid serializing non portables properties (e.g. face name)
      */
-    JSONElement ToJSON(bool portable = false) const;
+    JSONItem ToJSON(bool portable = false) const;
 
     // Accessors
 

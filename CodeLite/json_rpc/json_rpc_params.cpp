@@ -7,15 +7,15 @@ namespace json_rpc
 {
 TextDocumentPositionParams::TextDocumentPositionParams() {}
 
-void TextDocumentPositionParams::FromJSON(const JSONElement& json)
+void TextDocumentPositionParams::FromJSON(const JSONItem& json)
 {
     m_textDocument.FromJSON(json);
     m_position.FromJSON(json);
 }
 
-JSONElement TextDocumentPositionParams::ToJSON(const wxString& name) const
+JSONItem TextDocumentPositionParams::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.append(m_textDocument.ToJSON("textDocument"));
     json.append(m_position.ToJSON("position"));
     return json;
@@ -26,11 +26,11 @@ JSONElement TextDocumentPositionParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 DidOpenTextDocumentParams::DidOpenTextDocumentParams() {}
 
-void DidOpenTextDocumentParams::FromJSON(const JSONElement& json) { m_textDocument.FromJSON(json); }
+void DidOpenTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json); }
 
-JSONElement DidOpenTextDocumentParams::ToJSON(const wxString& name) const
+JSONItem DidOpenTextDocumentParams::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.append(m_textDocument.ToJSON("textDocument"));
     return json;
 }
@@ -40,11 +40,11 @@ JSONElement DidOpenTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 DidCloseTextDocumentParams::DidCloseTextDocumentParams() {}
 
-void DidCloseTextDocumentParams::FromJSON(const JSONElement& json) { m_textDocument.FromJSON(json); }
+void DidCloseTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json); }
 
-JSONElement DidCloseTextDocumentParams::ToJSON(const wxString& name) const
+JSONItem DidCloseTextDocumentParams::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.append(m_textDocument.ToJSON("textDocument"));
     return json;
 }
@@ -54,12 +54,12 @@ JSONElement DidCloseTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 DidChangeTextDocumentParams::DidChangeTextDocumentParams() {}
 
-void DidChangeTextDocumentParams::FromJSON(const JSONElement& json)
+void DidChangeTextDocumentParams::FromJSON(const JSONItem& json)
 {
     m_textDocument.FromJSON(json);
     m_contentChanges.clear();
     if(json.hasNamedObject("contentChanges")) {
-        JSONElement arr = json.namedObject("contentChanges");
+        JSONItem arr = json.namedObject("contentChanges");
         int count = arr.arraySize();
         for(int i = 0; i < count; ++i) {
             TextDocumentContentChangeEvent c;
@@ -69,11 +69,11 @@ void DidChangeTextDocumentParams::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement DidChangeTextDocumentParams::ToJSON(const wxString& name) const
+JSONItem DidChangeTextDocumentParams::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.append(m_textDocument.ToJSON("textDocument"));
-    JSONElement arr = JSONElement::createArray("contentChanges");
+    JSONItem arr = JSONItem::createArray("contentChanges");
     for(size_t i = 0; i < m_contentChanges.size(); ++i) {
         arr.arrayAppend(m_contentChanges[i].ToJSON(""));
     }
@@ -86,15 +86,15 @@ JSONElement DidChangeTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 DidSaveTextDocumentParams::DidSaveTextDocumentParams() {}
 
-void DidSaveTextDocumentParams::FromJSON(const JSONElement& json)
+void DidSaveTextDocumentParams::FromJSON(const JSONItem& json)
 {
     m_textDocument.FromJSON(json);
     m_text = json.namedObject("text").toString();
 }
 
-JSONElement DidSaveTextDocumentParams::ToJSON(const wxString& name) const
+JSONItem DidSaveTextDocumentParams::ToJSON(const wxString& name) const
 {
-    JSONElement json = JSONElement::createObject(name);
+    JSONItem json = JSONItem::createObject(name);
     json.append(m_textDocument.ToJSON("textDocument"));
     json.addProperty("text", m_text);
     return json;

@@ -29,11 +29,11 @@ LLDBCommand::~LLDBCommand() {}
 
 LLDBCommand::LLDBCommand(const wxString& jsonString)
 {
-    JSONRoot root(jsonString);
+    JSON root(jsonString);
     FromJSON(root.toElement());
 }
 
-void LLDBCommand::FromJSON(const JSONElement& json)
+void LLDBCommand::FromJSON(const JSONItem& json)
 {
     m_commandType = json.namedObject("m_commandType").toInt(kCommandInvalid);
     m_commandArguments = json.namedObject("m_commandArguments").toString();
@@ -48,12 +48,12 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     m_startupCommands = json.namedObject("m_startupCommands").toString();
     m_displayFormat = json.namedObject("m_displayFormat").toInt((int)eLLDBFormat::kFormatDefault);
 
-    JSONElement threadIdArr = json.namedObject("m_threadIds");
+    JSONItem threadIdArr = json.namedObject("m_threadIds");
     for(int i = 0; i < threadIdArr.arraySize(); ++i) {
         m_threadIds.push_back(threadIdArr.arrayItem(i).toInt());
     }
 
-    JSONElement bparr = json.namedObject("m_breakpoints");
+    JSONItem bparr = json.namedObject("m_breakpoints");
     for(int i = 0; i < bparr.arraySize(); ++i) {
         LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint());
         bp->FromJSON(bparr.arrayItem(i));
@@ -69,9 +69,9 @@ void LLDBCommand::FromJSON(const JSONElement& json)
     if(m_commandType == kCommandAttachProcess) { m_processID = json.namedObject("m_processID").toInt(); }
 }
 
-JSONElement LLDBCommand::ToJSON() const
+JSONItem LLDBCommand::ToJSON() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_commandType", m_commandType);
     json.addProperty("m_commandArguments", m_commandArguments);
     json.addProperty("m_workingDirectory", m_workingDirectory);
@@ -83,16 +83,16 @@ JSONElement LLDBCommand::ToJSON() const
     json.addProperty("m_frameId", m_frameId);
     json.addProperty("m_displayFormat", (int)m_displayFormat);
 
-    JSONElement threadIdsArr = JSONElement::createArray("m_threadIds");
+    JSONItem threadIdsArr = JSONItem::createArray("m_threadIds");
     json.append(threadIdsArr);
     for(const auto threadId : m_threadIds) {
-        threadIdsArr.arrayAppend(JSONElement("", threadId, cJSON_Number));
+        threadIdsArr.arrayAppend(JSONItem("", threadId, cJSON_Number));
     }
 
     json.addProperty("m_expression", m_expression);
     json.addProperty("m_startupCommands", m_startupCommands);
 
-    JSONElement bparr = JSONElement::createArray("m_breakpoints");
+    JSONItem bparr = JSONItem::createArray("m_breakpoints");
     json.append(bparr);
 
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {

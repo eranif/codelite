@@ -27,7 +27,7 @@
 #define LLDBTHREAD_H
 
 #include <wx/string.h>
-#include "json_node.h"
+#include "JSON.h"
 #include <vector>
 
 class LLDBThread
@@ -113,11 +113,11 @@ public:
     }
 
     // Serialization API
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
-    static JSONElement ToJSON(const LLDBThread::Vect_t& threads, const wxString &name);
-    static LLDBThread::Vect_t FromJSON(const JSONElement& json, const wxString &name);
+    static JSONItem ToJSON(const LLDBThread::Vect_t& threads, const wxString &name);
+    static LLDBThread::Vect_t FromJSON(const JSONItem& json, const wxString &name);
 };
 
 #endif // LLDBTHREAD_H

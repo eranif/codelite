@@ -43,8 +43,8 @@ public:
     AutoSaveSettings();
     ~AutoSaveSettings();
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     static AutoSaveSettings Load();
     static void Save(const AutoSaveSettings& settings);

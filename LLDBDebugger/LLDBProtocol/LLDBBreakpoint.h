@@ -31,7 +31,7 @@
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 #include "debugger.h"
-#include "json_node.h"
+#include "JSON.h"
 
 class LLDBBreakpoint
 {
@@ -145,8 +145,8 @@ public:
     int GetId() const { return m_id; }
 
     // Serialization API
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 };
 
 #endif // LLDBBREAKPOINT_H

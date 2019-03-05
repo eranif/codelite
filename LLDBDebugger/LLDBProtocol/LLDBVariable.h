@@ -30,7 +30,7 @@
 #include <wx/string.h>
 #include <wx/clntdata.h>
 #include <wx/sharedptr.h>
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/treebase.h>
 #include "LLDBEnums.h"
 #if BUILD_CODELITE_LLDB
@@ -77,8 +77,8 @@ public:
     int GetLldbId() const { return m_lldbId; }
 
     // Seriliazation API
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 
     void SetValueChanged(bool valueChanged) { this->m_valueChanged = valueChanged; }
     bool IsValueChanged() const { return m_valueChanged; }

@@ -12,7 +12,7 @@ public:
     virtual ~DebuggerPaused();
 
 public:
-    void Process(clWebSocketClient& socket, const JSONElement& json);
+    void Process(clWebSocketClient& socket, const JSONItem& json);
     NodeMessageBase::Ptr_t Clone();
 };
 

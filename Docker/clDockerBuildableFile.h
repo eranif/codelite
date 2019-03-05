@@ -1,7 +1,7 @@
 #ifndef CLDOCKERBUILDABLEFILE_H
 #define CLDOCKERBUILDABLEFILE_H
 
-#include "json_node.h"
+#include "JSON.h"
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wxStringHash.h>
@@ -38,8 +38,8 @@ public:
     const wxString& GetRunOptions() const { return m_runOptions; }
     eDockerFileType GetType() const { return m_type; };
 
-    void FromJSON(const JSONElement& json, const wxString& workspaceDir);
-    JSONElement ToJSON(const wxString& workspaceDir) const;
+    void FromJSON(const JSONItem& json, const wxString& workspaceDir);
+    JSONItem ToJSON(const wxString& workspaceDir) const;
 
     /**
      * @brief return the build/run base command for this file (e.g. docker build, docker-compose build)

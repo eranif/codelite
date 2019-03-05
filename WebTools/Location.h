@@ -11,8 +11,8 @@ class Location : public nSerializableObject
 public:
     Location() {}
     virtual ~Location();
-    JSONElement ToJSON(const wxString& name) const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json);
     void SetLineNumber(long lineNumber) { this->m_lineNumber = lineNumber; }
     void SetScriptId(const wxString& scriptId) { this->m_scriptId = scriptId; }
     long GetLineNumber() const { return m_lineNumber; }

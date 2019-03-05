@@ -88,13 +88,13 @@ void DbExplorerSettings::SetPgSQLConnections(const DbConnectionInfoVec& conns)
     m_connections.insert(m_connections.end(), conns.begin(), conns.end());
 }
 
-void DbExplorerSettings::FromJSON(const JSONElement& json)
+void DbExplorerSettings::FromJSON(const JSONItem& json)
 {
     m_recentFiles = json.namedObject("m_recentFiles").toArrayString();
     m_sqlHistory  = json.namedObject("m_sqlHistory").toArrayString();
     
     // read the connections
-    JSONElement arrConnections = json.namedObject("connections");
+    JSONItem arrConnections = json.namedObject("connections");
     for(int i=0; i<arrConnections.arraySize(); ++i) {
         DbConnectionInfo ci;
         ci.FromJSON( arrConnections.arrayItem(i) );
@@ -102,14 +102,14 @@ void DbExplorerSettings::FromJSON(const JSONElement& json)
     }
 }
 
-JSONElement DbExplorerSettings::ToJSON() const
+JSONItem DbExplorerSettings::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_recentFiles", m_recentFiles);
     element.addProperty("m_sqlHistory",  m_sqlHistory);
     
     // add the connections array
-    JSONElement arrConnections = JSONElement::createArray("connections");
+    JSONItem arrConnections = JSONItem::createArray("connections");
     element.append(arrConnections);
     DbConnectionInfoVec::const_iterator iter = m_connections.begin();
     for(; iter != m_connections.end(); ++iter) {
@@ -132,9 +132,9 @@ DbConnectionInfo::~DbConnectionInfo()
 {
 }
 
-JSONElement DbConnectionInfo::ToJSON() const
+JSONItem DbConnectionInfo::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_connectionName",  m_connectionName );
     element.addProperty("m_connectionType",  m_connectionType );
     element.addProperty("m_defaultDatabase", m_defaultDatabase);
@@ -145,7 +145,7 @@ JSONElement DbConnectionInfo::ToJSON() const
     return element;
 }
 
-void DbConnectionInfo::FromJSON(const JSONElement& json)
+void DbConnectionInfo::FromJSON(const JSONItem& json)
 {
     m_connectionName  = json.namedObject("m_connectionName").toString(m_connectionName);
     m_connectionType  = json.namedObject("m_connectionType").toInt(m_connectionType);

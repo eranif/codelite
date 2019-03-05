@@ -28,7 +28,7 @@
 
 #include <wx/string.h>
 #include <list>
-#include <json_node.h>
+#include "JSON.h"
 
 class XDebugBreakpoint
 {
@@ -92,8 +92,8 @@ public:
     }
     
     /// Serialization
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 };
 
 #endif // XDEBUGBREAKPOINT_H

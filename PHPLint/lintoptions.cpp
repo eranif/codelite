@@ -20,14 +20,14 @@ LintOptions::LintOptions()
                                    wxFileName::GetPathSeparator() + "php.conf";
 
         // first time, copy the values from the old settings
-        JSONRoot root(oldConfigFile);
-        JSONElement oldJson = root.toElement().namedObject("PHPConfigurationData");
+        JSON root(oldConfigFile);
+        JSONItem oldJson = root.toElement().namedObject("PHPConfigurationData");
         size_t m_flags = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
         m_lintOnFileSave = m_flags & (1 << 1);
 
         // Save it
-        JSONRoot newRoot(newConfigFile);
-        JSONElement e = JSONElement::createObject(GetName());
+        JSON newRoot(newConfigFile);
+        JSONItem e = JSONItem::createObject(GetName());
         e.addProperty("lintOnFileSave", m_lintOnFileSave);
         newRoot.toElement().append(e);
         newRoot.save(newConfigFile);
@@ -36,7 +36,7 @@ LintOptions::LintOptions()
 
 LintOptions::~LintOptions() {}
 
-void LintOptions::FromJSON(const JSONElement& json)
+void LintOptions::FromJSON(const JSONItem& json)
 {
     m_lintOnFileLoad = json.namedObject("lintOnFileLoad").toBool(m_lintOnFileLoad);
     m_lintOnFileSave = json.namedObject("lintOnFileSave").toBool(m_lintOnFileSave);
@@ -69,9 +69,9 @@ void LintOptions::FromJSON(const JSONElement& json)
 #endif
 }
 
-JSONElement LintOptions::ToJSON() const
+JSONItem LintOptions::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject(GetName());
+    JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("lintOnFileLoad", m_lintOnFileLoad);
     element.addProperty("lintOnFileSave", m_lintOnFileSave);
     element.addProperty("phpcsPhar", m_phpcsPhar);

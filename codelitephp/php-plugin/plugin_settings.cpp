@@ -9,14 +9,14 @@ PluginSettings::~PluginSettings()
 {
 }
 
-void PluginSettings::FromJSON(const JSONElement& json)
+void PluginSettings::FromJSON(const JSONItem& json)
 {
     m_openWorkspaceFilter = json.namedObject("m_openWorkspaceFilter").toString();
 }
 
-JSONElement PluginSettings::ToJSON() const
+JSONItem PluginSettings::ToJSON() const
 {
-    JSONElement e = JSONElement::createObject(GetName());
+    JSONItem e = JSONItem::createObject(GetName());
     e.addProperty("m_openWorkspaceFilter", m_openWorkspaceFilter);
     return e;
 }

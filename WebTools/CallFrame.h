@@ -16,8 +16,8 @@ class CallFrame : public nSerializableObject
 public:
     CallFrame();
     virtual ~CallFrame();
-    JSONElement ToJSON(const wxString& name) const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json);
 
     void SetCallFrameId(const wxString& callFrameId) { this->m_callFrameId = callFrameId; }
     void SetFunctionName(const wxString& functionName) { this->m_functionName = functionName; }

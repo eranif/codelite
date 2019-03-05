@@ -62,25 +62,25 @@ wxString PHPEntityFunctionAlias::Type() const
     return "";
 }
 
-void PHPEntityFunctionAlias::FromJSON(const JSONElement& json)
+void PHPEntityFunctionAlias::FromJSON(const JSONItem& json)
 {
     BaseFromJSON(json);
     m_realname = json.namedObject("realName").toString();
     m_scope = json.namedObject("scope").toString();
     if(json.hasNamedObject("func")) {
-        JSONElement func = json.namedObject("func");
+        JSONItem func = json.namedObject("func");
         m_func.Reset(new PHPEntityFunction());
         m_func->FromJSON(func);
     }
 }
 
-JSONElement PHPEntityFunctionAlias::ToJSON() const
+JSONItem PHPEntityFunctionAlias::ToJSON() const
 {
-    JSONElement json = BaseToJSON("a");
+    JSONItem json = BaseToJSON("a");
     json.addProperty("realName", m_realname);
     json.addProperty("scope", m_scope);
     if(m_func) {
-        JSONElement func = m_func->ToJSON();
+        JSONItem func = m_func->ToJSON();
         json.addProperty("func", func);
     }
     return json;

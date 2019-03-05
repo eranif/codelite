@@ -1345,7 +1345,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
     return cmpOption;
 }
 
-void Project::CreateCompileCommandsJSON(JSONElement& compile_commands, const wxStringMap_t& compilersGlobalPaths)
+void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths)
 {
     wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, "$FileName", false);
     wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, "$FileName", true);
@@ -1365,7 +1365,7 @@ void Project::CreateCompileCommandsJSON(JSONElement& compile_commands, const wxS
             if(file_name.Contains(" ")) { file_name.Prepend("\"").Append("\""); }
             compilePattern.Replace("$FileName", file_name);
 
-            JSONElement json = JSONElement::createObject();
+            JSONItem json = JSONItem::createObject();
             json.addProperty("file", fullpath);
             json.addProperty("directory", workingDirectory);
             json.addProperty("command", compilePattern);

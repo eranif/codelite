@@ -10,8 +10,8 @@ class PropertyDescriptor : public nSerializableObject
     RemoteObject m_value;
 
 public:
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     PropertyDescriptor();
     void SetName(const wxString& name) { this->m_name = name; }
     void SetValue(const RemoteObject& value) { this->m_value = value; }

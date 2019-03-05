@@ -15,8 +15,8 @@ public:
     PhpOptions();
     virtual ~PhpOptions();
 
-    virtual void FromJSON(const JSONElement& json);
-    virtual JSONElement ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON() const;
 
     PhpOptions& Load();
     PhpOptions& Save();

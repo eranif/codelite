@@ -27,7 +27,7 @@
 #include "singleinstancethreadjob.h"
 #include <wx/filename.h>
 #include "file_logger.h"
-#include "json_node.h"
+#include "JSON.h"
 #include "event_notifier.h"
 
 wxDEFINE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clCommandEvent);
@@ -57,7 +57,7 @@ void* clSingleInstanceThread::Entry()
             if(client->ReadMessage(message, 3) == clSocketBase::kTimeout) continue;
             CL_DEBUG("clSingleInstanceThread: received new message: %s", message);
 
-            JSONRoot root(message);
+            JSON root(message);
             wxArrayString args = root.toElement().namedObject("args").toArrayString();
 
             if(args.IsEmpty()) {

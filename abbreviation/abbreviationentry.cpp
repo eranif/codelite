@@ -48,15 +48,15 @@ void AbbreviationEntry::Serialize(Archive& arch)
 // JSON
 ////////////////////////////////////////////////////////////////
 
-void AbbreviationJSONEntry::FromJSON(const JSONElement& json)
+void AbbreviationJSONEntry::FromJSON(const JSONItem& json)
 {
     m_entries = json.namedObject("entries").toStringMap();
     m_autoInsert = json.namedObject("autoInsert").toBool();
 }
 
-JSONElement AbbreviationJSONEntry::ToJSON() const
+JSONItem AbbreviationJSONEntry::ToJSON() const
 {
-    JSONElement ele = JSONElement::createObject(GetName());
+    JSONItem ele = JSONItem::createObject(GetName());
     ele.addProperty("entries", m_entries);
     ele.addProperty("autoInsert", m_autoInsert);
     return ele;

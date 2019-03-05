@@ -8,7 +8,7 @@
 #include <wx/arrstr.h>
 
 class NodeDebugger;
-typedef std::function<void(const JSONElement&)> ResultFunc_t;
+typedef std::function<void(const JSONItem&)> ResultFunc_t;
 class CommandHandler
 {
 public:
@@ -31,7 +31,7 @@ class NodeJSDevToolsProtocol
 
 protected:
     void SendSimpleCommand(clWebSocketClient& socket, const wxString& command,
-                           const JSONElement& params = JSONElement(NULL));
+                           const JSONItem& params = JSONItem(NULL));
 
     NodeJSDevToolsProtocol();
 

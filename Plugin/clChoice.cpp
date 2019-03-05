@@ -62,6 +62,7 @@ void clChoice::SetString(size_t index, const wxString& str)
 {
     if(index >= m_choices.size()) { return; }
     m_choices[index] = str;
+    // if we are updating the selected item, refresh the view
     if(index == (size_t)m_selection) { SetText(m_choices[m_selection]); }
 }
 
@@ -70,7 +71,7 @@ wxString clChoice::GetStringSelection() const { return GetString((size_t)m_selec
 void clChoice::SetStringSelection(const wxString& str)
 {
     int where = FindString(str, true);
-    if(where != wxNOT_FOUND) { SetString((size_t)where, str); }
+    if(where != wxNOT_FOUND) { SetSelection((size_t)where); }
 }
 
 void clChoice::OnClick(wxCommandEvent& event)

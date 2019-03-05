@@ -36,6 +36,8 @@ void clConfigurationSelectionCtrl::Update(const wxArrayString& projects, const w
 void clConfigurationSelectionCtrl::SetActiveConfiguration(const wxString& activeConfiguration)
 {
     this->m_activeConfiguration = activeConfiguration;
+    m_choice->SetStringSelection(m_activeConfiguration); // this will ensure that the checkbox is placed correctly
+    // override the text to include the active project name
     m_choice->SetText(wxString() << m_activeProject << " :: " << m_activeConfiguration);
 }
 

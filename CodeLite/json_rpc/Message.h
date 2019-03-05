@@ -7,7 +7,7 @@
 
 namespace json_rpc
 {
-class WXDLLIMPEXP_CL Message : public Serializable
+class WXDLLIMPEXP_CL Message : public json_rpc::Serializable
 {
     wxString m_jsonrpc = "2.0";
 

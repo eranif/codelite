@@ -29,33 +29,7 @@ protected:
     wxString GetLanguageId(const wxFileName& fn) const { return GetLanguageId(fn.GetFullName()); }
     wxString GetLanguageId(const wxString& fn) const;
 
-public:
-    LanguageServerProtocol();
-    virtual ~LanguageServerProtocol();
-
-    /**
-     * @brief pure method
-     */
-    virtual void Send(const wxString& message);
-
-    /**
-     * @brief start a server for an executable
-     */
-    void Start(const wxString& command, const wxString& workingDirectory);
-
-    /**
-     * @brief stop the language server
-     */
-    void Stop();
-
-    /**
-     * @brief find definition of a word.
-     * @param filename the filename
-     * @param line the current caret line (0 based)
-     * @param column the current caret column (0 based)
-     */
-    void FindDefinition(const wxFileName& filename, size_t line, size_t column);
-
+protected:
     /**
      * @brief notify about file open
      */
@@ -75,6 +49,38 @@ public:
      * @brief report a file-save notification
      */
     void FileSaved(const wxFileName& filename, const wxString& fileContent);
+
+public:
+    LanguageServerProtocol();
+    virtual ~LanguageServerProtocol();
+
+    /**
+     * @brief pure method
+     */
+    virtual void Send(const wxString& message);
+
+    /**
+     * @brief start a server for an executable
+     */
+    void Start(const wxString& command, const wxString& workingDirectory);
+    
+    /**
+     * @brief is the LSP running?
+     */
+    bool IsRunning() const;
+    
+    /**
+     * @brief stop the language server
+     */
+    void Stop();
+
+    /**
+     * @brief find definition of a word.
+     * @param filename the filename
+     * @param line the current caret line (0 based)
+     * @param column the current caret column (0 based)
+     */
+    void FindDefinition(const wxFileName& filename, size_t line, size_t column);
 };
 
 #endif // CLLANGUAGESERVER_H

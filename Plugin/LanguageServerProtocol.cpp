@@ -152,9 +152,9 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     event.Skip();
     const wxString& filename = event.GetFileName();
     IEditor* editor = clGetManager()->FindEditor(filename);
-    if(editor) { 
+    if(editor) {
         // We should have called here FileSaved(), however, clangd-7 does not support this yet...
-        FileChanged(editor->GetFileName(), editor->GetCtrl()->GetText()); 
+        FileChanged(editor->GetFileName(), editor->GetCtrl()->GetText());
     }
 }
 
@@ -169,3 +169,5 @@ void LanguageServerProtocol::FileSaved(const wxFileName& filename, const wxStrin
     json_rpc::DidSaveTextDocumentRequest req(filename, fileContent);
     req.Send(this);
 }
+
+bool LanguageServerProtocol::IsRunning() const { return m_process != nullptr; }

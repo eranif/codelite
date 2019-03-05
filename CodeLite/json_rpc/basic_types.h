@@ -116,6 +116,66 @@ public:
     int GetLine() const { return m_line; }
 };
 
+class WXDLLIMPEXP_CL Range : public Serializable
+{
+    Position m_start;
+    Position m_end;
+
+public:
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+
+    Range(const Position& start, const Position& end)
+        : m_start(start)
+        , m_end(end)
+    {
+    }
+    Range() {}
+    virtual ~Range() {}
+    Range& SetEnd(const Position& end)
+    {
+        this->m_end = end;
+        return *this;
+    }
+    Range& SetStart(const Position& start)
+    {
+        this->m_start = start;
+        return *this;
+    }
+    const Position& GetEnd() const { return m_end; }
+    const Position& GetStart() const { return m_start; }
+};
+
+class WXDLLIMPEXP_CL Location : public Serializable
+{
+    wxString m_uri;
+    Range m_range;
+
+public:
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+
+    Location(const wxString& uri, const Range& range)
+        : m_uri(uri)
+        , m_range(range)
+    {
+    }
+    Location() {}
+    virtual ~Location() {}
+    Location& SetRange(const Range& range)
+    {
+        this->m_range = range;
+        return *this;
+    }
+    Location& SetUri(const wxString& uri)
+    {
+        this->m_uri = uri;
+        return *this;
+    }
+    const Range& GetRange() const { return m_range; }
+    const wxString& GetUri() const { return m_uri; }
+};
+
 //===----------------------------------------------------------------------------------
 // TextDocumentItem
 //===----------------------------------------------------------------------------------

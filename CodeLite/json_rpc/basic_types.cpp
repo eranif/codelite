@@ -79,15 +79,40 @@ JSONItem TextDocumentItem::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
 //===----------------------------------------------------------------------------------
-void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json)
-{
-    m_text = json.namedObject("text").toString();
-}
+void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json) { m_text = json.namedObject("text").toString(); }
 
 JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("text", m_text);
+    return json;
+}
+
+void Range::FromJSON(const JSONItem& json)
+{
+    m_start.FromJSON(json.namedObject("start"));
+    m_end.FromJSON(json.namedObject("end"));
+}
+
+JSONItem Range::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_start.ToJSON("start"));
+    json.append(m_start.ToJSON("end"));
+    return json;
+}
+
+void Location::FromJSON(const JSONItem& json)
+{
+    m_uri = json.namedObject("uri").toString();
+    m_range.FromJSON(json.namedObject("range"));
+}
+
+JSONItem Location::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.addProperty("uri", m_uri);
+    json.append(m_range.ToJSON("range"));
     return json;
 }
 }; // namespace json_rpc

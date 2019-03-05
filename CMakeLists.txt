@@ -639,6 +639,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(PHPRefactoring)
     add_subdirectory(codelite_vim)
     add_subdirectory(Docker)
+    add_subdirectory(LanguageServer)
     
     if (WITH_SFTP)
         add_subdirectory(SFTP)

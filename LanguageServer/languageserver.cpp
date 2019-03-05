@@ -4,6 +4,7 @@
 #include <wx/stc/stc.h>
 #include "event_notifier.h"
 #include <macros.h>
+#include "globals.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -34,8 +35,14 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
-    //m_server.Start("D:\\software\\llvm-7\\LLVM\\bin\\clangd.exe", wxEmptyString);
-
+#ifdef __WXMSW__
+    m_server.Start("D:\\software\\llvm-7\\LLVM\\bin\\clangd.exe", wxEmptyString);
+#else
+    wxString command;
+    command << "clangd-7";
+    ::WrapInShell(command);
+    m_server.Start(command, wxEmptyString);
+#endif
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerPlugin::OnFindSymbold, this);
 }
 

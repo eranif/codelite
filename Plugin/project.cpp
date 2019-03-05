@@ -1313,6 +1313,8 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     }
 
     commandLine.Trim().Trim(false);
+    commandLine.Replace("\n", " ");
+    commandLine.Replace("\r", " ");
     return commandLine;
 }
 

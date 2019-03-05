@@ -1007,13 +1007,12 @@ void clCxxWorkspace::CreateCompileCommandsJSON(JSONElement& compile_commands) co
             JSONElement c = arr.arrayItem(i);
             wxString compiler_name = c.namedObject("name").toString();
             wxArrayString pathsArr = c.namedObject("paths").toArrayString();
-            // Prepend each entry with -I
+            wxString paths;
             std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
                 path.Trim().Trim(false);
                 if(path.EndsWith("\\")) { path.RemoveLast(); }
-                path.Prepend("-I").Append(" ");
+                paths << "-I" << path << " ";
             });
-            wxString paths = wxJoin(pathsArr, ' ');
             compilersGlobalPaths.insert({ compiler_name, paths });
         }
     }

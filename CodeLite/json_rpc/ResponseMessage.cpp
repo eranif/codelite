@@ -9,8 +9,9 @@ wxString json_rpc::ResponseMessage::ToString() const { return ""; }
 // we dont really serialise response messages
 JSONItem json_rpc::ResponseMessage::ToJSON(const wxString& name) const { return JSONItem(nullptr); }
 
-void json_rpc::ResponseMessage::FromJSON(const JSONItem& json) 
+void json_rpc::ResponseMessage::FromJSON(const JSONItem& json)
 {
     Message::FromJSON(json);
     m_id = json.namedObject("id").toInt();
+    if(json.hasNamedObject("result") && m_result) { m_result->FromJSON(json.namedObject("result")); }
 }

@@ -2,6 +2,7 @@
 #define RESPONSEMESSAGE_H
 
 #include "json_rpc/Message.h"
+#include "json_rpc/json_rpc_results.h"
 
 namespace json_rpc
 {
@@ -9,6 +10,7 @@ namespace json_rpc
 class WXDLLIMPEXP_CL ResponseMessage : public json_rpc::Message
 {
     int m_id = wxNOT_FOUND;
+    Result::Ptr_t m_result;
 
 public:
     ResponseMessage();

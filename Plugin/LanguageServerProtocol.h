@@ -26,8 +26,8 @@ protected:
 protected:
     void DoClear();
 
-    wxString GetLanguageId(const wxFileName& fn) const { return GetLanguageId(fn.GetFullName()); }
-    wxString GetLanguageId(const wxString& fn) const;
+    static wxString GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullName()); }
+    static wxString GetLanguageId(const wxString& fn) ;
 
 protected:
     /**

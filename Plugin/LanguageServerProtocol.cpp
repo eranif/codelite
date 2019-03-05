@@ -65,7 +65,7 @@ void LanguageServerProtocol::Stop()
     if(m_process) { m_process->Terminate(); }
 }
 
-wxString LanguageServerProtocol::GetLanguageId(const wxString& fn) const
+wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
 {
     FileExtManager::FileType type = FileExtManager::GetType(fn, FileExtManager::TypeText);
     switch(type) {

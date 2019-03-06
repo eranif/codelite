@@ -18,15 +18,23 @@ LanguageServerCluster::~LanguageServerCluster()
 
 void LanguageServerCluster::Reload()
 {
+    for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
+        // stop all current processes
+        LanguageServerProtocol::Ptr_t server = vt.second;
+        if(server->IsRunning()) { server->Stop(true); }
+    }
+    m_servers.clear();
+
+    // create a new list
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    std::for_each(servers.begin(), servers.end(), [&](const LanguageServerEntry::Map_t::value_type& vt) {
+    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
         if(entry.IsEnabled()) {
             LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol());
             lsp->Start(entry.GetExepath(), entry.GetWorkingDirectory(), entry.GetLanguages());
-            if(lsp->IsRunning()) { m_servers.insert({ entry.GetName(), lsp }); }
+            m_servers.insert({ entry.GetName(), lsp });
         }
-    });
+    }
 }
 
 void LanguageServerCluster::OnFindSymbold(clCodeCompletionEvent& event)

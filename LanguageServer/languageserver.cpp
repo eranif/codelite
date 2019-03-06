@@ -6,6 +6,7 @@
 #include <macros.h>
 #include "globals.h"
 #include "LanguageServerConfig.h"
+#include "LanguageServerSettingsDlg.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -33,10 +34,10 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 {
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
-    
+
     // Load the configuration
     LanguageServerConfig::Get().Load();
-    
+
     // Start all the servers
     m_servers.reset(new LanguageServerCluster());
     m_servers->Reload();
@@ -50,7 +51,13 @@ void LanguageServerPlugin::CreateToolBar(clToolBar* toolbar)
     wxUnusedVar(toolbar);
 }
 
-void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu) {}
+void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
+{
+    wxMenu *menu = new wxMenu();
+    menu->Append(XRCID("language-server-settings"), _("Settings"));
+    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
+    pluginsMenu->Append(wxID_ANY, _("Language Server"), menu);
+}
 
 void LanguageServerPlugin::UnPlug()
 {
@@ -58,3 +65,11 @@ void LanguageServerPlugin::UnPlug()
     m_servers.reset(nullptr);
 }
 
+void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
+{
+    LanguageServerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+    if(dlg.ShowModal() == wxID_OK) {
+        // restart all language servers
+        m_servers->Reload();
+    }
+}

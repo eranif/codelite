@@ -49,6 +49,8 @@ public:
         return *this;
     }
     const LanguageServerEntry::Map_t& GetServers() const { return m_servers; }
+    void AddServer(const LanguageServerEntry& server);
+    void RemoveServer(const wxString& name);
 };
 
 #endif // LANGUAGESERVERCONFIG_H

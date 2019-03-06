@@ -8,6 +8,7 @@
 #include <wxStringHash.h>
 #include <wx/sharedptr.h>
 #include "macros.h"
+#include <map>
 
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
 {
@@ -62,6 +63,10 @@ public:
     LanguageServerProtocol();
     virtual ~LanguageServerProtocol();
 
+    /**
+     * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
+     */
+    static const std::set<wxString>& GetSupportedLanguages();
     bool CanHandle(const wxFileName& filename) const;
 
     /**
@@ -82,7 +87,12 @@ public:
     /**
      * @brief stop the language server
      */
-    void Stop();
+    void Stop(bool goingDown);
+
+    /**
+     * @brief restart the server. If the server is not running, start it
+     */
+    void Restart();
 
     /**
      * @brief find definition of a word.

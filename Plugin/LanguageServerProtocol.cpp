@@ -27,8 +27,10 @@ LanguageServerProtocol::LanguageServerProtocol()
 
 LanguageServerProtocol::~LanguageServerProtocol()
 {
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+    if(!m_goingDown) {
+        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
+        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+    }
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
@@ -67,10 +69,22 @@ void LanguageServerProtocol::Send(const wxString& message)
     if(m_process) { m_process->Write(message); }
 }
 
-void LanguageServerProtocol::Stop()
+void LanguageServerProtocol::Stop(bool goingDown)
 {
-    m_goingDown = true;
-    if(m_process) { m_process->Terminate(); }
+    m_goingDown = goingDown;
+    if(m_goingDown) {
+        // Unbound the events so we dont get the 'terminated' process event
+        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
+        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+    }
+    if(m_process) {
+        m_process->Terminate();
+        if(m_goingDown) {
+            wxString dummy;
+            m_process->WaitForTerminate(dummy);
+            wxDELETE(m_process);
+        }
+    }
 }
 
 wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
@@ -184,4 +198,72 @@ bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
 {
     wxString lang = GetLanguageId(filename);
     return m_languages.count(lang) != 0;
+}
+
+const std::set<wxString>& LanguageServerProtocol::GetSupportedLanguages()
+{
+    static std::set<wxString> S;
+    if(S.empty()) {
+        S.insert("bat");
+        S.insert("bibtex");
+        S.insert("clojure");
+        S.insert("coffeescript");
+        S.insert("c");
+        S.insert("cpp");
+        S.insert("csharp");
+        S.insert("css");
+        S.insert("diff");
+        S.insert("dart");
+        S.insert("dockerfile");
+        S.insert("fsharp");
+        S.insert("git-commit");
+        S.insert("git-rebase");
+        S.insert("go");
+        S.insert("groovy");
+        S.insert("handlebars");
+        S.insert("html");
+        S.insert("ini");
+        S.insert("java");
+        S.insert("javascript");
+        S.insert("json");
+        S.insert("latex");
+        S.insert("less");
+        S.insert("lua");
+        S.insert("makefile");
+        S.insert("markdown");
+        S.insert("objective-c");
+        S.insert("objective-cpp");
+        S.insert("perl and perl6");
+        S.insert("php");
+        S.insert("powershell");
+        S.insert("jade");
+        S.insert("python");
+        S.insert("r");
+        S.insert("razor");
+        S.insert("ruby");
+        S.insert("rust");
+        S.insert("scss");
+        S.insert("sass");
+        S.insert("scala");
+        S.insert("shaderlab");
+        S.insert("shellscript");
+        S.insert("sql");
+        S.insert("swift");
+        S.insert("typescript");
+        S.insert("tex");
+        S.insert("vb");
+        S.insert("xml");
+        S.insert("xsl");
+        S.insert("yaml");
+    }
+    return S;
+}
+
+void LanguageServerProtocol::Restart()
+{
+    if(IsRunning()) {
+        Stop(false);
+    } else {
+        DoStart();
+    }
 }

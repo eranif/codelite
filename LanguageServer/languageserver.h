@@ -9,6 +9,9 @@ class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
 
+protected:
+    void OnSettings(wxCommandEvent& e);
+
 public:
     LanguageServerPlugin(IManager* manager);
     virtual ~LanguageServerPlugin();
@@ -26,11 +29,6 @@ public:
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
     virtual void UnPlug();
-
-    /**
-     * @brief user as requested to 'find declaration'
-     */
-    void OnFindSymbold(clCodeCompletionEvent& event);
 };
 
 #endif // LanguageServerPlugin

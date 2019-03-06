@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include <macros.h>
 #include "globals.h"
+#include "LanguageServerConfig.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -32,7 +33,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     : IPlugin(manager)
 {
-
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
 #ifdef __WXMSW__
@@ -44,6 +44,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_server.Start(command, wxEmptyString);
 #endif
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerPlugin::OnFindSymbold, this);
+    
+    // Load the configuration
+    LanguageServerConfig::Get().Load();
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}

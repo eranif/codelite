@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="LanguageServer" Version="10.0.0">
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="base">
+      <File Name="UI.cpp"/>
+      <File Name="UI.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="UI_languageserver_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <File Name="UI.wxcp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="UI">
+    <File Name="LanguageServerSettingsDlg.cpp"/>
+    <File Name="LanguageServerSettingsDlg.h"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="LanguageServerEntry.cpp"/>
+    <File Name="LanguageServerEntry.h"/>
+    <File Name="LanguageServerConfig.cpp"/>
+    <File Name="LanguageServerConfig.h"/>
     <File Name="languageserver.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">

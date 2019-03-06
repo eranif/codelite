@@ -6,6 +6,7 @@
 #include "json_rpc/JSONObject.h"
 #include <wx/sharedptr.h>
 #include "basic_types.h"
+#include <vector>
 
 namespace json_rpc
 {

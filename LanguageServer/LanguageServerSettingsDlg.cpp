@@ -28,3 +28,12 @@ void LanguageServerSettingsDlg::OnAddServer(wxCommandEvent& event)
         m_notebook->AddPage(new LanguageServerPage(m_notebook, server), server.GetName());
     }
 }
+
+void LanguageServerSettingsDlg::Save()
+{
+    for(size_t i=0; i<m_notebook->GetPageCount(); ++i) {
+        LanguageServerPage* page = dynamic_cast<LanguageServerPage*>(m_notebook->GetPage(i));
+        LanguageServerConfig::Get().AddServer(page->GetData());
+    }
+    LanguageServerConfig::Get().SetEnabled(GetCheckBoxEnable()->IsChecked());
+}

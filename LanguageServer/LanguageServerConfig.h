@@ -49,7 +49,13 @@ public:
         return *this;
     }
     const LanguageServerEntry::Map_t& GetServers() const { return m_servers; }
+    /**
+     * @brief add server. erase an existing one with the same name
+     */
     void AddServer(const LanguageServerEntry& server);
+    /**
+     * @brief delete an existing server by name
+     */
     void RemoveServer(const wxString& name);
 };
 

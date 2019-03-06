@@ -57,7 +57,11 @@ JSONItem LanguageServerConfig::ToJSON() const
 
 void LanguageServerConfig::AddServer(const LanguageServerEntry& server)
 {
+    RemoveServer(server.GetName());
     m_servers.insert({ server.GetName(), server });
 }
 
-void LanguageServerConfig::RemoveServer(const wxString& name) { m_servers.erase(name); }
+void LanguageServerConfig::RemoveServer(const wxString& name)
+{
+    if(m_servers.count(name)) { m_servers.erase(name); }
+}

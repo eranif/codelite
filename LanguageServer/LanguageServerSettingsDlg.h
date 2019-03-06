@@ -7,7 +7,8 @@ class LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 public:
     LanguageServerSettingsDlg(wxWindow* parent);
     virtual ~LanguageServerSettingsDlg();
-
+    void Save();
+    
 protected:
     virtual void OnAddServer(wxCommandEvent& event);
 };

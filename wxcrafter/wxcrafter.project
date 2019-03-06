@@ -653,7 +653,8 @@
   <Dependencies Name="Win_x64_Debug">
     <Project Name="wxcLib"/>
   </Dependencies>
-  <Settings Type="Executable">
+  <Dependencies Name="Win_x64_Release"/>
+  <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -1088,6 +1089,7 @@
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="wxcLib/"/>
       </Compiler>
       <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon)" Required="yes">
         <LibraryPath Value="../lib/gcc_lib"/>
@@ -1202,5 +1204,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

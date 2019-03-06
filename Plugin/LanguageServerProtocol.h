@@ -6,6 +6,8 @@
 #include "cl_command_event.h"
 #include "json_rpc/clJSONRPC.h"
 #include <wxStringHash.h>
+#include <wx/sharedptr.h>
+#include "macros.h"
 
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
 {
@@ -13,7 +15,11 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
     wxString m_command;
     wxString m_workingDirectory;
     bool m_goingDown = false;
-    std::unordered_set<wxString> m_filesSent;
+    wxStringSet_t m_filesSent;
+    wxStringSet_t m_languages;
+
+public:
+    typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
 
 protected:
     void OnProcessTerminated(clProcessEvent& event);
@@ -27,7 +33,7 @@ protected:
     void DoClear();
 
     static wxString GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullName()); }
-    static wxString GetLanguageId(const wxString& fn) ;
+    static wxString GetLanguageId(const wxString& fn);
 
 protected:
     /**
@@ -50,9 +56,13 @@ protected:
      */
     void FileSaved(const wxFileName& filename, const wxString& fileContent);
 
+    void DoStart();
+
 public:
     LanguageServerProtocol();
     virtual ~LanguageServerProtocol();
+
+    bool CanHandle(const wxFileName& filename) const;
 
     /**
      * @brief pure method
@@ -62,13 +72,13 @@ public:
     /**
      * @brief start a server for an executable
      */
-    void Start(const wxString& command, const wxString& workingDirectory);
-    
+    void Start(const wxString& command, const wxString& workingDirectory, const wxArrayString& languages);
+
     /**
      * @brief is the LSP running?
      */
     bool IsRunning() const;
-    
+
     /**
      * @brief stop the language server
      */

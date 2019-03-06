@@ -12,8 +12,8 @@ class LanguageServerEntry : public clConfigItem
     wxString m_name;
     wxString m_exepath;
     wxString m_args;
-    wxString m_languageId;
-    wxString m_filesPattern;
+    wxString m_workingDirectory;
+    wxArrayString m_languages;
 
 public:
     typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
@@ -33,26 +33,26 @@ public:
         this->m_exepath = exepath;
         return *this;
     }
-    LanguageServerEntry& SetFilesPattern(const wxString& filesPattern)
-    {
-        this->m_filesPattern = filesPattern;
-        return *this;
-    }
-    LanguageServerEntry& SetLanguageId(const wxString& languageId)
-    {
-        this->m_languageId = languageId;
-        return *this;
-    }
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetExepath() const { return m_exepath; }
-    const wxString& GetFilesPattern() const { return m_filesPattern; }
-    const wxString& GetLanguageId() const { return m_languageId; }
     LanguageServerEntry& SetEnabled(bool enabled)
     {
         this->m_enabled = enabled;
         return *this;
     }
     bool IsEnabled() const { return m_enabled; }
+    LanguageServerEntry& SetLanguages(const wxArrayString& languages)
+    {
+        this->m_languages = languages;
+        return *this;
+    }
+    const wxArrayString& GetLanguages() const { return m_languages; }
+    LanguageServerEntry& SetWorkingDirectory(const wxString& workingDirectory)
+    {
+        this->m_workingDirectory = workingDirectory;
+        return *this;
+    }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

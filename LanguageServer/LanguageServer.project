@@ -20,6 +20,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="LanguageServerCluster.cpp"/>
+    <File Name="LanguageServerCluster.h"/>
     <File Name="LanguageServerEntry.cpp"/>
     <File Name="LanguageServerEntry.h"/>
     <File Name="LanguageServerConfig.cpp"/>

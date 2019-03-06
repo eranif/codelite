@@ -43,6 +43,12 @@ public:
     size_t GetFlags() const { return m_flags; }
     bool IsEnabled() const { return HasFlag(kEnabaled); }
     void SetEnabled(bool b) { EnableFlag(kEnabaled, b); }
+    LanguageServerConfig& SetServers(const LanguageServerEntry::Map_t& servers)
+    {
+        this->m_servers = servers;
+        return *this;
+    }
+    const LanguageServerEntry::Map_t& GetServers() const { return m_servers; }
 };
 
 #endif // LANGUAGESERVERCONFIG_H

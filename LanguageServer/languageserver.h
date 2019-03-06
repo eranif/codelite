@@ -2,12 +2,12 @@
 #define __LanguageServerPlugin__
 
 #include "plugin.h"
-#include "LanguageServerProtocol.h"
 #include "cl_command_event.h"
+#include "LanguageServerCluster.h"
 
 class LanguageServerPlugin : public IPlugin
 {
-    LanguageServerProtocol m_server;
+    LanguageServerCluster::Ptr_t m_servers;
 
 public:
     LanguageServerPlugin(IManager* manager);
@@ -26,7 +26,7 @@ public:
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
     virtual void UnPlug();
-    
+
     /**
      * @brief user as requested to 'find declaration'
      */

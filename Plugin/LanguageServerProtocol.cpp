@@ -34,14 +34,22 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
 }
 
-void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory)
+void LanguageServerProtocol::DoStart()
+{
+    m_process = ::CreateAsyncProcess(this, m_command, IProcessCreateDefault, m_workingDirectory);
+    if(!m_process) { clWARNING() << "Failed to start Language Server:" << m_command; }
+}
+
+void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory,
+                                   const wxArrayString& languages)
 {
     if(m_process) { return; }
+    m_languages.clear();
+    std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
     m_goingDown = false;
     m_command = command;
     m_workingDirectory = workingDirectory;
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
-    if(!m_process) { clWARNING() << "Failed to start Language Server:" << command; }
+    DoStart();
 }
 
 void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
@@ -49,7 +57,7 @@ void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
     clDEBUG() << "Langauge Server Terminated";
     wxDELETE(m_process);
     DoClear();
-    if(!m_goingDown) { Start(m_command, m_workingDirectory); }
+    if(!m_goingDown) { DoStart(); }
 }
 
 void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event) { clDEBUG() << event.GetOutput(); }
@@ -171,3 +179,9 @@ void LanguageServerProtocol::FileSaved(const wxFileName& filename, const wxStrin
 }
 
 bool LanguageServerProtocol::IsRunning() const { return m_process != nullptr; }
+
+bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
+{
+    wxString lang = GetLanguageId(filename);
+    return m_languages.count(lang) != 0;
+}

@@ -9,8 +9,6 @@
 
 static LanguageServerPlugin* thePlugin = NULL;
 
-#define CHECK_LSP_RUNNING() if(!m_server.IsRunning()) { return; }
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
@@ -35,18 +33,13 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 {
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
-#ifdef __WXMSW__
-    m_server.Start("D:\\software\\llvm-7\\LLVM\\bin\\clangd.exe", wxEmptyString);
-#else
-    wxString command;
-    command << "clangd-7";
-    ::WrapInShell(command);
-    m_server.Start(command, wxEmptyString);
-#endif
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerPlugin::OnFindSymbold, this);
     
     // Load the configuration
     LanguageServerConfig::Get().Load();
+    
+    // Start all the servers
+    m_servers.reset(new LanguageServerCluster());
+    m_servers->Reload();
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -61,19 +54,7 @@ void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu) {}
 
 void LanguageServerPlugin::UnPlug()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerPlugin::OnFindSymbold, this);
+    LanguageServerConfig::Get().Save();
+    m_servers.reset(nullptr);
 }
 
-void LanguageServerPlugin::OnFindSymbold(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    CHECK_LSP_RUNNING();
-    
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
-    CHECK_PTR_RET(editor);
-
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    int col = ctrl->GetColumn(ctrl->GetCurrentPos());
-    int line = ctrl->LineFromPosition(ctrl->GetCurrentPos());
-    m_server.FindDefinition(editor->GetFileName(), line, col);
-}

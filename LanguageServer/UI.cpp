@@ -58,29 +58,14 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
     m_stdBtnSizer4->AddButton(m_button8);
     m_stdBtnSizer4->Realize();
 
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook);
-    }
-#endif
-
     SetName(wxT("LanguageServerSettingsDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                          wxCommandEventHandler(LanguageServerSettingsDlgBase::OnAddServer), NULL, this);
@@ -170,7 +155,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_staticText6311, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(10));
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 100)),
                                         wxDV_ROW_LINES | wxDV_SINGLE);
 
     flexGridSizer432->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -219,13 +204,6 @@ NewLanguageServerDlgBase::NewLanguageServerDlgBase(wxWindow* parent, wxWindowID 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewLanguageServerDlgBase::OnOKUI), NULL, this);
 }

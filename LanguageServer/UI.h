@@ -58,8 +58,8 @@ public:
     wxNotebook* GetNotebook() { return m_notebook; }
     LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                   const wxString& title = _("Language Server Settings"),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
-                                  long style = wxDEFAULT_DIALOG_STYLE);
+                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+                                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };
 

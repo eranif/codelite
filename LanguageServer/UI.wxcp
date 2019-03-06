@@ -19,12 +19,12 @@
    "border": 5,
    "gbSpan": "1,1",
    "gbPosition": "0,0",
-   "m_styles": ["wxDEFAULT_DIALOG_STYLE"],
+   "m_styles": ["wxDEFAULT_DIALOG_STYLE", "wxRESIZE_BORDER"],
    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
    "m_properties": [{
      "type": "string",
      "m_label": "Size:",
-     "m_value": "500,300"
+     "m_value": "400,300"
     }, {
      "type": "string",
      "m_label": "Minimum Size:",
@@ -76,7 +76,7 @@
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",
-     "m_value": true
+     "m_value": false
     }, {
      "type": "string",
      "m_label": "Title:",
@@ -1438,7 +1438,7 @@
           }, {
            "type": "string",
            "m_label": "Size:",
-           "m_value": "-1,200"
+           "m_value": "-1,100"
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
@@ -1598,7 +1598,7 @@
     }, {
      "type": "bool",
      "m_label": "Enable Window Persistency:",
-     "m_value": true
+     "m_value": false
     }, {
      "type": "string",
      "m_label": "Title:",

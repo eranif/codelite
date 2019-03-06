@@ -2144,7 +2144,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     if(!tlw || !parentTlw) { return; }
 
     wxRect parentRect = parentTlw->GetSize();
-    parentRect.Deflate(20);
+    parentRect.Deflate(50);
     tlw->SetSize(parentRect.GetSize());
     tlw->CenterOnParent();
 

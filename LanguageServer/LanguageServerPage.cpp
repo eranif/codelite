@@ -11,7 +11,8 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     m_dirPickerWorkingDir->SetPath(data.GetWorkingDirectory());
     m_filePickerExe->SetPath(data.GetExepath());
     m_textCtrlArgs->SetValue(data.GetArgs());
-
+    m_checkBoxEnabled->SetValue(data.IsEnabled());
+    
     const wxArrayString& langs = data.GetLanguages();
     wxStringSet_t checkedLanguages;
     for(const wxString& lang : langs) {
@@ -49,6 +50,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetExepath(m_filePickerExe->GetPath());
     d.SetWorkingDirectory(m_dirPickerWorkingDir->GetPath());
     d.SetLanguages(GetLanguages());
+    d.SetEnabled(m_checkBoxEnabled->IsChecked());
     return d;
 }
 

@@ -76,6 +76,7 @@ protected:
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
     clThemedListCtrl* m_dvListCtrl;
+    wxCheckBox* m_checkBoxEnabled;
 
 protected:
 public:
@@ -89,6 +90,7 @@ public:
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();

@@ -21,7 +21,8 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/filepicker.h>
-#include <wx/checklst.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -74,7 +75,7 @@ protected:
     wxStaticText* m_staticText579;
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
-    wxCheckListBox* m_checkListBoxLanguages;
+    clThemedListCtrl* m_dvListCtrl;
 
 protected:
 public:
@@ -87,7 +88,7 @@ public:
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
-    wxCheckListBox* GetCheckListBoxLanguages() { return m_checkListBoxLanguages; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();
@@ -96,16 +97,6 @@ public:
 class NewLanguageServerDlgBase : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText45;
-    wxTextCtrl* m_textCtrlName;
-    wxStaticText* m_staticText49;
-    wxFilePickerCtrl* m_filePickerExe;
-    wxStaticText* m_staticText53;
-    wxTextCtrl* m_textCtrlArgs;
-    wxStaticText* m_staticText57;
-    wxDirPickerCtrl* m_dirPickerWorkingDir;
-    wxStaticText* m_staticText63;
-    wxCheckListBox* m_checkListBoxLanguages;
     wxStdDialogButtonSizer* m_stdBtnSizer37;
     wxButton* m_buttonOK;
     wxButton* m_button41;
@@ -114,16 +105,6 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText45() { return m_staticText45; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText49() { return m_staticText49; }
-    wxFilePickerCtrl* GetFilePickerExe() { return m_filePickerExe; }
-    wxStaticText* GetStaticText53() { return m_staticText53; }
-    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
-    wxStaticText* GetStaticText57() { return m_staticText57; }
-    wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
-    wxStaticText* GetStaticText63() { return m_staticText63; }
-    wxCheckListBox* GetCheckListBoxLanguages() { return m_checkListBoxLanguages; }
     NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                              const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition,
                              const wxSize& size = wxSize(-1, -1),

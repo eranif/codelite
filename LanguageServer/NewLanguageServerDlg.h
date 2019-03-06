@@ -5,8 +5,11 @@
 #include "LanguageServerEntry.h"
 #include <wx/arrstr.h>
 
+class LanguageServerPage;
 class NewLanguageServerDlg : public NewLanguageServerDlgBase
 {
+    LanguageServerPage* m_page = nullptr;
+
 public:
     NewLanguageServerDlg(wxWindow* parent);
     virtual ~NewLanguageServerDlg();
@@ -15,6 +18,5 @@ public:
 
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
-    wxArrayString GetLanguages() const;
 };
 #endif // NEWLANGUAGESERVERDLG_H

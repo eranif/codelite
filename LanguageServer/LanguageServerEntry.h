@@ -6,7 +6,7 @@
 #include "cl_config.h"
 #include <wxStringHash.h>
 
-class LanguageServerEntry : public clConfigItem
+class LanguageServerEntry
 {
     bool m_enabled = true;
     wxString m_name;
@@ -53,6 +53,12 @@ public:
         return *this;
     }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
+    LanguageServerEntry& SetName(const wxString& name)
+    {
+        this->m_name = name;
+        return *this;
+    }
+    const wxString& GetName() const { return m_name; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

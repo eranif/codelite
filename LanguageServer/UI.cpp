@@ -170,11 +170,13 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_staticText6311, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(10));
 
-    wxArrayString m_checkListBoxLanguagesArr;
-    m_checkListBoxLanguages = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                                 m_checkListBoxLanguagesArr, wxLB_SINGLE);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
+                                        wxDV_ROW_LINES | wxDV_SINGLE);
 
-    flexGridSizer432->Add(m_checkListBoxLanguages, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+    flexGridSizer432->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrl->AppendTextColumn(_("Language"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("LanguageServerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -196,76 +198,6 @@ NewLanguageServerDlgBase::NewLanguageServerDlgBase(wxWindow* parent, wxWindowID 
 
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer35);
-
-    wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer43->SetFlexibleDirection(wxBOTH);
-    flexGridSizer43->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer43->AddGrowableCol(1);
-    flexGridSizer43->AddGrowableRow(4);
-
-    boxSizer35->Add(flexGridSizer43, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText45 =
-        new wxStaticText(this, wxID_ANY, _("Name"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer43->Add(m_staticText45, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, -1)), 0);
-    m_textCtrlName->SetToolTip(_("Give this language server a unique name"));
-    m_textCtrlName->SetFocus();
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlName->SetHint(wxT(""));
-#endif
-
-    flexGridSizer43->Add(m_textCtrlName, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_staticText49 =
-        new wxStaticText(this, wxID_ANY, _("Executable:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer43->Add(m_staticText49, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_filePickerExe =
-        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
-    m_filePickerExe->SetToolTip(_("The language server executable"));
-
-    flexGridSizer43->Add(m_filePickerExe, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText53 =
-        new wxStaticText(this, wxID_ANY, _("Arguments:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer43->Add(m_staticText53, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlArgs = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlArgs->SetToolTip(_("Set here any arguments to pass to the language server executable"));
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlArgs->SetHint(wxT(""));
-#endif
-
-    flexGridSizer43->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText57 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
-                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer43->Add(m_staticText57, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_dirPickerWorkingDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
-                                                wxDLG_UNIT(this, wxSize(-1, -1)),
-                                                wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
-    m_dirPickerWorkingDir->SetToolTip(_("Set the language server working directory"));
-
-    flexGridSizer43->Add(m_dirPickerWorkingDir, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_staticText63 =
-        new wxStaticText(this, wxID_ANY, _("Languages:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer43->Add(m_staticText63, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(10));
-
-    wxArrayString m_checkListBoxLanguagesArr;
-    m_checkListBoxLanguages = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                                 m_checkListBoxLanguagesArr, wxLB_SINGLE);
-
-    flexGridSizer43->Add(m_checkListBoxLanguages, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
 
     m_stdBtnSizer37 = new wxStdDialogButtonSizer();
 

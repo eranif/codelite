@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <macros.h>
 #include "LanguageServerProtocol.h"
+#include "globals.h"
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
@@ -18,12 +19,48 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     }
 
     const std::set<wxString>& langsSet = LanguageServerProtocol::GetSupportedLanguages();
+    wxVector<wxVariant> cols;
     std::for_each(langsSet.begin(), langsSet.end(), [&](const wxString& lang) {
-        int where = m_checkListBoxLanguages->Append(lang);
-        m_checkListBoxLanguages->Check(where, (checkedLanguages.count(lang) != 0));
+        cols.clear();
+        cols.push_back(::MakeCheckboxVariant(lang, (checkedLanguages.count(lang) != 0), wxNOT_FOUND));
+        m_dvListCtrl->AppendItem(cols);
     });
     SetSize(400, 300);
     GetSizer()->Fit(this);
 }
 
+LanguageServerPage::LanguageServerPage(wxWindow* parent)
+    : LanguageServerPageBase(parent)
+{
+    const std::set<wxString>& langsSet = LanguageServerProtocol::GetSupportedLanguages();
+    wxVector<wxVariant> cols;
+    std::for_each(langsSet.begin(), langsSet.end(), [&](const wxString& lang) {
+        cols.clear();
+        cols.push_back(::MakeCheckboxVariant(lang, false, wxNOT_FOUND));
+        m_dvListCtrl->AppendItem(cols);
+    });
+    SetSize(400, 300);
+}
+
 LanguageServerPage::~LanguageServerPage() {}
+
+LanguageServerEntry LanguageServerPage::GetData() const
+{
+    LanguageServerEntry d;
+    d.SetName(m_textCtrlName->GetValue());
+    d.SetArgs(m_textCtrlArgs->GetValue());
+    d.SetExepath(m_filePickerExe->GetPath());
+    d.SetWorkingDirectory(m_dirPickerWorkingDir->GetPath());
+    d.SetLanguages(GetLanguages());
+    return d;
+}
+
+wxArrayString LanguageServerPage::GetLanguages() const
+{
+    wxArrayString selectedLanguages;
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(m_dvListCtrl->IsItemChecked(item, 0)) { selectedLanguages.Add(m_dvListCtrl->GetItemText(item, 0)); }
+    }
+    return selectedLanguages;
+}

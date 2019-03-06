@@ -9,7 +9,7 @@ NewLanguageServerDlg::NewLanguageServerDlg(wxWindow* parent)
 {
     m_page = new LanguageServerPage(this);
     GetSizer()->Insert(0, m_page, 1, wxEXPAND);
-    ::clSetTLWindowBestSizeAndPosition(GetParent());
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 NewLanguageServerDlg::~NewLanguageServerDlg() {}

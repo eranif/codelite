@@ -70,6 +70,7 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
     LanguageServerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {
         // restart all language servers
+        LanguageServerConfig::Get().SetEnabled(dlg.GetCheckBoxEnable()->IsChecked());
         m_servers->Reload();
     }
 }

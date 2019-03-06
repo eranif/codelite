@@ -24,7 +24,10 @@ void LanguageServerCluster::Reload()
         if(server->IsRunning()) { server->Stop(true); }
     }
     m_servers.clear();
-
+    
+    // If we are not enabled, stop here
+    if(!LanguageServerConfig::Get().IsEnabled()) { return; }
+    
     // create a new list
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {

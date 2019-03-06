@@ -25,7 +25,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
         cols.push_back(::MakeCheckboxVariant(lang, (checkedLanguages.count(lang) != 0), wxNOT_FOUND));
         m_dvListCtrl->AppendItem(cols);
     });
-    ::clSetTLWindowBestSizeAndPosition(GetParent());
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
@@ -38,7 +37,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
         cols.push_back(::MakeCheckboxVariant(lang, false, wxNOT_FOUND));
         m_dvListCtrl->AppendItem(cols);
     });
-    ::clSetTLWindowBestSizeAndPosition(GetParent());
 }
 
 LanguageServerPage::~LanguageServerPage() {}

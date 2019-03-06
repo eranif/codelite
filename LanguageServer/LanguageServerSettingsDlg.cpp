@@ -3,6 +3,7 @@
 #include "LanguageServerEntry.h"
 #include "LanguageServerConfig.h"
 #include "LanguageServerPage.h"
+#include "globals.h"
 
 LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
     : LanguageServerSettingsDlgBase(parent)
@@ -11,6 +12,8 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
     }
+    m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}
@@ -23,6 +26,5 @@ void LanguageServerSettingsDlg::OnAddServer(wxCommandEvent& event)
         // Update the configuration
         LanguageServerConfig::Get().AddServer(server);
         m_notebook->AddPage(new LanguageServerPage(m_notebook, server), server.GetName());
-        GetSizer()->Fit(this);
     }
 }

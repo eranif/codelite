@@ -84,8 +84,11 @@ void IProcess::WaitForTerminate(wxString& output)
 {
     if(IsRedirect()) {
         wxString buff;
-        while(Read(buff)) {
+        wxString buffErr;
+        while(Read(buff, buffErr)) {
             output << buff;
+            if(!buff.IsEmpty() && !buffErr.IsEmpty()) { output << "\n"; }
+            output << buffErr;
         }
     } else {
         // Just wait for the process to terminate in a busy loop

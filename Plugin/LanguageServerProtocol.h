@@ -9,6 +9,7 @@
 #include <wx/sharedptr.h>
 #include "macros.h"
 #include <map>
+#include "json_rpc/RequestMessage.h"
 
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
 {
@@ -18,6 +19,8 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
     bool m_goingDown = false;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
+    std::unordered_map<int, json_rpc::RequestMessage::Ptr_t> m_requestsSent;
+    wxString m_outputBuffer;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -25,7 +28,7 @@ public:
 protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
-
+    void OnProcessStderr(clProcessEvent& event);
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);

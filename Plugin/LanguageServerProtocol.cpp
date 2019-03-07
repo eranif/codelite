@@ -7,6 +7,7 @@
 #include "json_rpc/DidCloseTextDocumentRequest.h"
 #include "json_rpc/DidSaveTextDocumentRequest.h"
 #include "json_rpc/DidChangeTextDocumentRequest.h"
+#include "json_rpc/ResponseMessage.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "fileextmanager.h"
@@ -19,6 +20,7 @@ LanguageServerProtocol::LanguageServerProtocol()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
@@ -30,15 +32,17 @@ LanguageServerProtocol::~LanguageServerProtocol()
     if(!m_goingDown) {
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+        Unbind(wxEVT_ASYNC_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
     }
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+    DoClear();
 }
 
 void LanguageServerProtocol::DoStart()
 {
-    m_process = ::CreateAsyncProcess(this, m_command, IProcessCreateDefault, m_workingDirectory);
+    m_process = ::CreateAsyncProcess(this, m_command, IProcessCreateDefault | IProcessStderrEvent, m_workingDirectory);
     if(!m_process) { clWARNING() << "Failed to start Language Server:" << m_command; }
 }
 
@@ -62,7 +66,21 @@ void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
     if(!m_goingDown) { DoStart(); }
 }
 
-void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event) { clDEBUG() << event.GetOutput(); }
+void LanguageServerProtocol::OnProcessStderr(clProcessEvent& event) { clDEBUG1() << event.GetOutput(); }
+
+void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
+{
+    clDEBUG() << event.GetOutput();
+    const wxString& buffer = event.GetOutput();
+    m_outputBuffer << buffer;
+
+    json_rpc::ResponseMessage res(m_outputBuffer);
+    if(res.IsOk() && m_requestsSent.count(res.GetId())) {
+        // let the originating request to handle it
+        m_requestsSent[res.GetId()]->OnReponse(res, this);
+        m_requestsSent.erase(res.GetId());
+    }
+}
 
 void LanguageServerProtocol::Send(const wxString& message)
 {
@@ -76,6 +94,7 @@ void LanguageServerProtocol::Stop(bool goingDown)
         // Unbound the events so we dont get the 'terminated' process event
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
+        Unbind(wxEVT_ASYNC_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
     }
     if(m_process) {
         m_process->Terminate();
@@ -121,8 +140,9 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
 
 void LanguageServerProtocol::FindDefinition(const wxFileName& filename, size_t line, size_t column)
 {
-    json_rpc::GotoDefinitionRequest req(filename, line, column);
-    req.Send(this);
+    json_rpc::GotoDefinitionRequest::Ptr_t req(new json_rpc::GotoDefinitionRequest(filename, line, column));
+    req->Send(this);
+    m_requestsSent.insert({ req->GetId(), req });
 }
 
 void LanguageServerProtocol::FileOpened(const wxFileName& filename, const wxString& fileContent,
@@ -167,7 +187,11 @@ void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
     FileClosed(event.GetFileName());
 }
 
-void LanguageServerProtocol::DoClear() { m_filesSent.clear(); }
+void LanguageServerProtocol::DoClear()
+{
+    m_filesSent.clear();
+    m_requestsSent.clear();
+}
 
 void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
 {

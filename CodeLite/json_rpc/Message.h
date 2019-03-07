@@ -13,7 +13,7 @@ class WXDLLIMPEXP_CL Message : public json_rpc::Serializable
 
 public:
     static int GetNextID();
-
+    
 public:
     Message();
     virtual ~Message();

@@ -26,6 +26,7 @@
 #include "processreaderthread.h"
 
 wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_OUTPUT, clProcessEvent);
+wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_STDERR, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_PROCESS_TERMINATED, clProcessEvent);
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
@@ -49,21 +50,31 @@ void* ProcessReaderThread::Entry()
 
         if(m_process) {
             wxString buff;
+            wxString buffErr;
             if(m_process->IsRedirect()) {
-                if(m_process->Read(buff)) {
-                    if(buff.IsEmpty() == false) {
-
+                if(m_process->Read(buff, buffErr)) {
+                    if(!buff.IsEmpty() || !buffErr.IsEmpty()) {
                         // If we got a callback object, use it
                         if(m_process && m_process->GetCallback()) {
                             m_process->GetCallback()->CallAfter(&IProcessCallback::OnProcessOutput, buff);
 
                         } else {
-                            // fallback to the event system
-                            // we got some data, send event to parent
-                            clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
-                            e.SetOutput(buff);
-                            e.SetProcess(m_process);
-                            if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+                            // We fire an event per data (stderr/stdout)
+                            if(!buff.IsEmpty()) {
+                                // fallback to the event system
+                                // we got some data, send event to parent
+                                clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+                                e.SetOutput(buff);
+                                e.SetProcess(m_process);
+                                if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+                            }
+                            if(!buffErr.IsEmpty()) {
+                                // we got some data, send event to parent
+                                clProcessEvent e(wxEVT_ASYNC_PROCESS_STDERR);
+                                e.SetOutput(buffErr);
+                                e.SetProcess(m_process);
+                                if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+                            }
                         }
                     }
                 } else {

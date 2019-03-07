@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include "ieditor.h"
 #include <wx/stc/stc.h>
+#include "globals.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -24,17 +25,20 @@ void LanguageServerCluster::Reload()
         if(server->IsRunning()) { server->Stop(true); }
     }
     m_servers.clear();
-    
+
     // If we are not enabled, stop here
     if(!LanguageServerConfig::Get().IsEnabled()) { return; }
-    
+
     // create a new list
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
         if(entry.IsEnabled()) {
             LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol());
-            lsp->Start(entry.GetExepath(), entry.GetWorkingDirectory(), entry.GetLanguages());
+            wxString command = entry.GetExepath();
+            ::WrapWithQuotes(command);
+            if(!entry.GetArgs().IsEmpty()) { command << " " << entry.GetArgs(); }
+            lsp->Start(command, entry.GetWorkingDirectory(), entry.GetLanguages());
             m_servers.insert({ entry.GetName(), lsp });
         }
     }

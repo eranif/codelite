@@ -26,7 +26,7 @@
 #ifndef __unixprocessimpl__
 #define __unixprocessimpl__
 
-#if defined(__WXMAC__)||defined(__WXGTK__)
+#if defined(__WXMAC__) || defined(__WXGTK__)
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 #include "codelite_exports.h"
@@ -34,42 +34,39 @@
 class wxTerminal;
 class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
-    int                  m_readHandle;
-    int                  m_writeHandle;
-    ProcessReaderThread *m_thr;
+    int m_readHandle;
+    int m_stderrHandle = wxNOT_FOUND;
+    int m_writeHandle;
+    ProcessReaderThread* m_thr = nullptr;
 
     friend class wxTerminal;
+
 private:
     void StartReaderThread();
-
+    bool ReadFromFd(int fd, fd_set& rset, wxString& output);
+    
 public:
-    UnixProcessImpl(wxEvtHandler *parent);
+    UnixProcessImpl(wxEvtHandler* parent);
     virtual ~UnixProcessImpl();
 
-    static IProcess *Execute(wxEvtHandler *parent, const wxString &cmd, size_t flags, const wxString &workingDirectory = wxEmptyString, IProcessCallback *cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+                             const wxString& workingDirectory = wxEmptyString, IProcessCallback* cb = NULL);
 
-    void SetReadHandle(const int& readHandle) {
-        this->m_readHandle = readHandle;
-    }
-    void SetWriteHandler(const int& writeHandler) {
-        this->m_writeHandle = writeHandler;
-    }
-    const int& GetReadHandle() const {
-        return m_readHandle;
-    }
-    const int& GetWriteHandle() const {
-        return m_writeHandle;
-    }
+    void SetReadHandle(const int& readHandle) { this->m_readHandle = readHandle; }
+    void SetWriteHandler(const int& writeHandler) { this->m_writeHandle = writeHandler; }
+    int GetReadHandle() const { return m_readHandle; }
+    int GetStderrHandle() const { return m_stderrHandle; }
+    int GetWriteHandle() const { return m_writeHandle; }
+    void SetStderrHandle(int stderrHandle) { this->m_stderrHandle = stderrHandle; }
 
 public:
     virtual void Cleanup();
     virtual bool IsAlive();
-    virtual bool Read(wxString& buff);
+    virtual bool Read(wxString& buff, wxString& buffErr);
     virtual bool Write(const wxString& buff);
     virtual void Terminate();
     virtual bool WriteToConsole(const wxString& buff);
     virtual void Detach();
-
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
 #endif // __unixprocessimpl__

@@ -250,7 +250,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, wxS
             return NULL;
         }
     }
-    
+
     if((prc->m_flags & IProcessCreateConsole) || (prc->m_flags & IProcessCreateWithHiddenConsole)) {
         ConsoleAttacher ca(prc->GetPid());
         if(ca.isAttached) {
@@ -284,10 +284,10 @@ bool WinProcessImpl::Read(wxString& buff)
     DWORD le1(-1);
     DWORD le2(-1);
     buff.Clear();
-    
+
     // Sanity
     if(!IsRedirect()) { return false; }
-    
+
     if(!DoReadFromPipe(hChildStderrRdDup, buff)) { le2 = GetLastError(); }
     if(!DoReadFromPipe(hChildStdoutRdDup, buff)) { le1 = GetLastError(); }
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
@@ -308,18 +308,19 @@ bool WinProcessImpl::Write(const wxString& buff)
 {
     // Sanity
     if(!IsRedirect()) { return false; }
-    
+
     DWORD dwMode;
     DWORD dwTimeout;
-    
+
     wxUnusedVar(dwTimeout);
-    char chBuf[4097];
 
     wxString tmpCmd = buff;
     tmpCmd = tmpCmd.Trim().Trim(false);
     tmpCmd += wxT("\r\n");
 
-    strcpy(chBuf, tmpCmd.mb_str());
+    const char* data = tmpCmd.mb_str(wxConvUTF8);
+    if(!data) { data = tmpCmd.To8BitData().data(); }
+    if(!data) { return false; }
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
@@ -327,7 +328,7 @@ bool WinProcessImpl::Write(const wxString& buff)
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
     DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, chBuf, (unsigned long)strlen(chBuf), &dwWritten, NULL)) return false;
+    if(!WriteFile(hChildStdinWrDup, data, (unsigned long)strlen(data), &dwWritten, NULL)) return false;
     return true;
 }
 
@@ -362,7 +363,7 @@ void WinProcessImpl::Cleanup()
         }
         TerminateProcess(piProcInfo.hProcess, 255);
     }
-    
+
     if(IsRedirect()) {
         CloseHandle(hChildStdinRd);
         CloseHandle(hChildStdinWrDup);
@@ -371,10 +372,10 @@ void WinProcessImpl::Cleanup()
         CloseHandle(hChildStderrWr);
         CloseHandle(hChildStderrRdDup);
     }
-    
+
     CloseHandle(piProcInfo.hProcess);
     CloseHandle(piProcInfo.hThread);
-    
+
     hChildStdinRd = NULL;
     hChildStdoutWr = NULL;
     hChildStdinWrDup = NULL;

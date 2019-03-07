@@ -373,8 +373,8 @@ bool UnixProcessImpl::Write(const wxString& buff)
 {
     wxString tmpbuf = buff;
     tmpbuf << wxT("\n");
-    const char* data = tmpCmd.mb_str(wxConvUTF8);
-    if(!data) { data = tmpCmd.To8BitData().data(); }
+    const char* data = tmpbuf.mb_str(wxConvUTF8);
+    if(!data) { data = tmpbuf.To8BitData().data(); }
     if(!data) { return false; }
     
     int bytes = write(GetWriteHandle(), data, strlen(data));

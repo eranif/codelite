@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="libCodeLite" Version="10.0.0">
+  <VirtualDirectory Name="LSP">
+    <File Name="LSP/ResponseMessage.h"/>
+    <File Name="LSP/ResponseMessage.cpp"/>
+    <File Name="LSP/RequestMessage.h"/>
+    <File Name="LSP/RequestMessage.cpp"/>
+    <File Name="LSP/Message.h"/>
+    <File Name="LSP/Message.cpp"/>
+    <File Name="LSP/JSONObject.h"/>
+    <File Name="LSP/JSONObject.cpp"/>
+    <File Name="LSP/json_rpc_results.h"/>
+    <File Name="LSP/json_rpc_results.cpp"/>
+    <File Name="LSP/json_rpc_params.h"/>
+    <File Name="LSP/json_rpc_params.cpp"/>
+    <File Name="LSP/GotoDefinitionRequest.h"/>
+    <File Name="LSP/GotoDefinitionRequest.cpp"/>
+    <File Name="LSP/DidSaveTextDocumentRequest.h"/>
+    <File Name="LSP/DidSaveTextDocumentRequest.cpp"/>
+    <File Name="LSP/DidOpenTextDocumentRequest.h"/>
+    <File Name="LSP/DidOpenTextDocumentRequest.cpp"/>
+    <File Name="LSP/DidCloseTextDocumentRequest.h"/>
+    <File Name="LSP/DidCloseTextDocumentRequest.cpp"/>
+    <File Name="LSP/DidChangeTextDocumentRequest.h"/>
+    <File Name="LSP/DidChangeTextDocumentRequest.cpp"/>
+    <File Name="LSP/clJSONRPC.h"/>
+    <File Name="LSP/clJSONRPC.cpp"/>
+    <File Name="LSP/basic_types.h"/>
+    <File Name="LSP/basic_types.cpp"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00090001N0012DebugUnicode0000000000000001N0014ReleaseUnicode0000000000000001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0017WinReleaseUnicode0000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -44,34 +72,6 @@
  }]]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="json_rpc">
-    <File Name="json_rpc/json_rpc_results.cpp"/>
-    <File Name="json_rpc/json_rpc_results.h"/>
-    <File Name="json_rpc/ResponseMessage.cpp"/>
-    <File Name="json_rpc/ResponseMessage.h"/>
-    <File Name="json_rpc/DidSaveTextDocumentRequest.cpp"/>
-    <File Name="json_rpc/DidSaveTextDocumentRequest.h"/>
-    <File Name="json_rpc/DidChangeTextDocumentRequest.cpp"/>
-    <File Name="json_rpc/DidChangeTextDocumentRequest.h"/>
-    <File Name="json_rpc/DidCloseTextDocumentRequest.cpp"/>
-    <File Name="json_rpc/DidCloseTextDocumentRequest.h"/>
-    <File Name="json_rpc/json_rpc_params.cpp"/>
-    <File Name="json_rpc/json_rpc_params.h"/>
-    <File Name="json_rpc/DidOpenTextDocumentRequest.cpp"/>
-    <File Name="json_rpc/DidOpenTextDocumentRequest.h"/>
-    <File Name="json_rpc/GotoDefinitionRequest.cpp"/>
-    <File Name="json_rpc/GotoDefinitionRequest.h"/>
-    <File Name="json_rpc/basic_types.cpp"/>
-    <File Name="json_rpc/basic_types.h"/>
-    <File Name="json_rpc/RequestMessage.cpp"/>
-    <File Name="json_rpc/RequestMessage.h"/>
-    <File Name="json_rpc/JSONObject.cpp"/>
-    <File Name="json_rpc/JSONObject.h"/>
-    <File Name="json_rpc/Message.cpp"/>
-    <File Name="json_rpc/Message.h"/>
-    <File Name="json_rpc/clJSONRPC.h"/>
-    <File Name="json_rpc/clJSONRPC.cpp"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="Console">
     <File Name="clConsoleXfce4Terminal.cpp"/>
     <File Name="clConsoleXfce4Terminal.h"/>

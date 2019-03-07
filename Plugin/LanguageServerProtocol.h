@@ -4,14 +4,14 @@
 #include "codelite_exports.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
-#include "json_rpc/clJSONRPC.h"
+#include "LSP/clJSONRPC.h"
 #include <wxStringHash.h>
 #include <wx/sharedptr.h>
 #include "macros.h"
 #include <map>
-#include "json_rpc/RequestMessage.h"
+#include "LSP/RequestMessage.h"
 
-class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
+class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
 {
     IProcess* m_process = NULL;
     wxString m_command;
@@ -19,7 +19,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public json_rpc::Sender
     bool m_goingDown = false;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
-    std::unordered_map<int, json_rpc::RequestMessage::Ptr_t> m_requestsSent;
+    std::unordered_map<int, LSP::RequestMessage::Ptr_t> m_requestsSent;
     wxString m_outputBuffer;
 
 public:

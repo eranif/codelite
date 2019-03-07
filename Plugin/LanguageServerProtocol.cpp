@@ -1,13 +1,13 @@
 #include "LanguageServerProtocol.h"
 #include "file_logger.h"
 #include "processreaderthread.h"
-#include "json_rpc/clJSONRPC.h"
-#include "json_rpc/GotoDefinitionRequest.h"
-#include "json_rpc/DidOpenTextDocumentRequest.h"
-#include "json_rpc/DidCloseTextDocumentRequest.h"
-#include "json_rpc/DidSaveTextDocumentRequest.h"
-#include "json_rpc/DidChangeTextDocumentRequest.h"
-#include "json_rpc/ResponseMessage.h"
+#include "LSP/clJSONRPC.h"
+#include "LSP/GotoDefinitionRequest.h"
+#include "LSP/DidOpenTextDocumentRequest.h"
+#include "LSP/DidCloseTextDocumentRequest.h"
+#include "LSP/DidSaveTextDocumentRequest.h"
+#include "LSP/DidChangeTextDocumentRequest.h"
+#include "LSP/ResponseMessage.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "fileextmanager.h"
@@ -74,7 +74,7 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
     const wxString& buffer = event.GetOutput();
     m_outputBuffer << buffer;
 
-    json_rpc::ResponseMessage res(m_outputBuffer);
+    LSP::ResponseMessage res(m_outputBuffer);
     if(res.IsOk() && m_requestsSent.count(res.GetId())) {
         // let the originating request to handle it
         m_requestsSent[res.GetId()]->OnReponse(res, this);
@@ -140,7 +140,7 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
 
 void LanguageServerProtocol::FindDefinition(const wxFileName& filename, size_t line, size_t column)
 {
-    json_rpc::GotoDefinitionRequest::Ptr_t req(new json_rpc::GotoDefinitionRequest(filename, line, column));
+    LSP::GotoDefinitionRequest::Ptr_t req(new LSP::GotoDefinitionRequest(filename, line, column));
     req->Send(this);
     m_requestsSent.insert({ req->GetId(), req });
 }
@@ -154,7 +154,7 @@ void LanguageServerProtocol::FileOpened(const wxFileName& filename, const wxStri
         FileChanged(filename, fileContent);
     } else {
 
-        json_rpc::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
+        LSP::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
         req.Send(this);
         m_filesSent.insert(filename.GetFullPath());
     }
@@ -167,7 +167,7 @@ void LanguageServerProtocol::FileClosed(const wxFileName& filename)
         return;
     }
 
-    json_rpc::DidCloseTextDocumentRequest req(filename);
+    LSP::DidCloseTextDocumentRequest req(filename);
     req.Send(this);
     m_filesSent.erase(filename.GetFullPath());
 }
@@ -206,13 +206,13 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
 
 void LanguageServerProtocol::FileChanged(const wxFileName& filename, const wxString& fileContent)
 {
-    json_rpc::DidChangeTextDocumentRequest req(filename, fileContent);
+    LSP::DidChangeTextDocumentRequest req(filename, fileContent);
     req.Send(this);
 }
 
 void LanguageServerProtocol::FileSaved(const wxFileName& filename, const wxString& fileContent)
 {
-    json_rpc::DidSaveTextDocumentRequest req(filename, fileContent);
+    LSP::DidSaveTextDocumentRequest req(filename, fileContent);
     req.Send(this);
 }
 

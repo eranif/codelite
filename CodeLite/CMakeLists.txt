@@ -99,7 +99,7 @@ if (NOT MINGW AND WXC_APP)
     set (LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
     message( "-- libcodelite.so is using RPATH set to ${WXC_LIBS_DIR}")
 endif ()
-FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp" "json_rpc/*.cpp")
+FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp" "LSP/*.cpp")
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})

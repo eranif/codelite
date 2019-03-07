@@ -11,6 +11,7 @@
 #include <wx/dcmemory.h>
 #include <wx/bitmap.h>
 #include "GitDiffOutputParser.h"
+#include "globals.h"
 
 #define TEXT_MARGIN_ID 0
 #define LINENUMBER_MARGIN_ID 1
@@ -142,6 +143,7 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitBlameDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitBlameDlg::OnProcessTerminated, this);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 GitBlameDlg::~GitBlameDlg()
@@ -448,7 +450,7 @@ void GitBlameDlg::OnProcessTerminated(clProcessEvent& event)
         m_fileListBox->SetStringSelection(file);
     }
 
-    for (size_t i = 0; i < commitMessage.GetCount(); ++i) {
+    for(size_t i = 0; i < commitMessage.GetCount(); ++i) {
         m_stcCommitMessage->AppendText(commitMessage.Item(i));
     }
 

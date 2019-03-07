@@ -94,6 +94,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         if(lexers.Item(i) == "c++") {
             m_listBox->Append(CXX_AND_JAVASCRIPT);
         } else {
+            m_listBox->Append(lexers.Item(i));
         }
     }
 

@@ -14,6 +14,11 @@ NewLanguageServerDlg::NewLanguageServerDlg(wxWindow* parent)
 
 NewLanguageServerDlg::~NewLanguageServerDlg() {}
 
-void NewLanguageServerDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(true); }
+void NewLanguageServerDlg::OnOKUI(wxUpdateUIEvent& event)
+{
+    wxString name = m_page->GetTextCtrlName()->GetValue();
+    name.Trim().Trim(false);
+    event.Enable(!name.IsEmpty());
+}
 
 LanguageServerEntry NewLanguageServerDlg::GetData() const { return m_page->GetData(); }

@@ -57,8 +57,6 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"),
                        clGetManager()->GetStdIcons()->LoadBitmap("history"));
     m_toolbar->Realize();
-    SetName("GitCommitDlg");
-    WindowAttrManager::Load(this);
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));

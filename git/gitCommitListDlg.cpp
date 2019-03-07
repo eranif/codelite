@@ -65,13 +65,12 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     m_gitPath.Trim().Trim(false);
 
     if(m_gitPath.IsEmpty()) { m_gitPath = "git"; }
-    SetName("GitCommitListDlg");
-    WindowAttrManager::Load(this);
 
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnRevertCommit), NULL, this);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 /*******************************************************************************/
@@ -121,7 +120,7 @@ void GitCommitListDlg::OnProcessTerminated(clProcessEvent& event)
         m_fileListBox->Select(0);
     }
 
-    for (size_t i = 0; i < commitMessage.GetCount(); ++i) {
+    for(size_t i = 0; i < commitMessage.GetCount(); ++i) {
         m_stcCommitMessage->AppendText(commitMessage.Item(i));
     }
 

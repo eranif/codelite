@@ -620,4 +620,10 @@ WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
  * @brief returna top level window best size using its parent's size as reference
  */
 WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
+
+/**
+ * @brief set dialog best size and position
+ * @param win
+ */
+WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog* win);
 #endif // GLOBALS_H

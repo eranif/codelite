@@ -13,7 +13,7 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
         m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
     }
     m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}

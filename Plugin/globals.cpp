@@ -2145,11 +2145,24 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
     wxRect parentRect = parentTlw->GetSize();
     parentRect.Deflate(50);
-    tlw->SetSize(parentRect.GetSize());
+    tlw->SetSizeHints(parentRect.GetSize());
+    tlw->GetSizer()->Fit(win); 
     tlw->CenterOnParent();
 
     // If the parent is maximized, maximize this window as well
     if(parentTlw->IsMaximized()) {
         if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
     }
+}
+
+void clSetDialogBestSizeAndPosition(wxDialog* win)
+{
+    if(!win || !win->GetParent()) { return; }
+
+    wxRect parentRect = win->GetParent()->GetSize();
+    parentRect.SetWidth(parentRect.GetWidth() / 3);
+    parentRect.SetHeight(parentRect.GetHeight() / 3);
+    win->SetSizeHints(parentRect.GetSize());
+    win->GetSizer()->Fit(win);
+    win->CenterOnParent();
 }

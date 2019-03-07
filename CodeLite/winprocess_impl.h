@@ -54,12 +54,11 @@ public:
                              IProcessCallback* cb = NULL);
 
     /**
-     * @brief read data from stdout, if no data is available, return
-     * if timeout occurred, return with true.
+     * @brief read data from stdout and error
      * @param buff check the buffer when true is returned
      * @return return true on success or timeout, flase otherwise, incase of false the reader thread will terminate
      */
-    virtual bool Read(wxString& buff);
+    virtual bool Read(wxString& buff, wxString& buffErr);
 
     // Write to the process stdin
     virtual bool Write(const wxString& buff);

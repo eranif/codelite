@@ -279,16 +279,18 @@ WinProcessImpl::WinProcessImpl(wxEvtHandler* parent)
 
 WinProcessImpl::~WinProcessImpl() { Cleanup(); }
 
-bool WinProcessImpl::Read(wxString& buff)
+bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
 {
     DWORD le1(-1);
     DWORD le2(-1);
     buff.Clear();
+    buffErr.Clear();
 
     // Sanity
     if(!IsRedirect()) { return false; }
 
-    if(!DoReadFromPipe(hChildStderrRdDup, buff)) { le2 = GetLastError(); }
+    // Read data from STDOUT and STDERR
+    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) { le2 = GetLastError(); }
     if(!DoReadFromPipe(hChildStdoutRdDup, buff)) { le1 = GetLastError(); }
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
         if(IsAlive()) {
@@ -296,7 +298,7 @@ bool WinProcessImpl::Read(wxString& buff)
             return true;
         }
     }
-    bool success = !buff.IsEmpty();
+    bool success = !buff.IsEmpty() || !buffErr.IsEmpty();
     if(!success) {
         DWORD dwExitCode;
         if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) { SetProcessExitCode(GetPid(), (int)dwExitCode); }

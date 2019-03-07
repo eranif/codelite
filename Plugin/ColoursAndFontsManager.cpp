@@ -25,6 +25,7 @@
 #include "globals.h"
 #include <imanager.h>
 #include <wx/xrc/xmlres.h>
+#include "theme_handler_helper.h"
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
@@ -709,7 +710,7 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
     if(isDark) {
         fallbackTheme = "One Dark Like";
     } else {
-        fallbackTheme = "Default";
+        fallbackTheme = "Atom One Light";
     }
 
     const wxArrayString& lexers = GetAllLexersNames();
@@ -722,6 +723,13 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
         }
     }
     SetGlobalTheme(themeName);
+    
+    clColours colours;
+    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+    if(useCustomColour) {
+        wxColour bgColour = GetBackgroundColourFromLexer(lexer);
+        clConfig::Get().Write("BaseColour", bgColour);
+    }
 }
 
 void ColoursAndFontsManager::LoadJSON(const wxFileName& path)

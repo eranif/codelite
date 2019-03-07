@@ -1,6 +1,7 @@
 #include "json_rpc/basic_types.h"
 #include <wx/filesys.h>
 #include "JSON.h"
+#include <wx/filesys.h>
 
 //===------------------------------------------------
 // Request
@@ -104,14 +105,14 @@ JSONItem Range::ToJSON(const wxString& name) const
 
 void Location::FromJSON(const JSONItem& json)
 {
-    m_uri = json.namedObject("uri").toString();
+    m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString()).GetFullPath();
     m_range.FromJSON(json.namedObject("range"));
 }
 
 JSONItem Location::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", m_uri);
+    json.addProperty("uri", wxFileSystem::FileNameToURL(m_uri));
     json.append(m_range.ToJSON("range"));
     return json;
 }

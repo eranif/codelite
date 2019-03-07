@@ -12,3 +12,16 @@ json_rpc::GotoDefinitionRequest::GotoDefinitionRequest(const wxFileName& filenam
 }
 
 json_rpc::GotoDefinitionRequest::~GotoDefinitionRequest() {}
+
+void json_rpc::GotoDefinitionRequest::OnReponse(const json_rpc::ResponseMessage& response, wxEvtHandler* owner)
+{
+    // {"id":2,"jsonrpc":"2.0","result":[{"range":{"end":{"character":38,"line":73},"start":{"character":32,"line":73}},"uri":"file:///usr/include/c%2b%2b/6/bits/stringfwd.h"},{"range":{"end":{"character":38,"line":73},"start":{"character":32,"line":73}},"uri":"file:///usr/lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c%2b%2b/6.3.0/bits/stringfwd.h"}]}
+    JSONItem result = response.Get("result");
+    if(!result.isOk()) { return; }
+    json_rpc::Location loc;
+    if(result.isArray()) {
+        loc.FromJSON(result.arrayItem(0));
+    } else {
+        loc.FromJSON(result);
+    }
+}

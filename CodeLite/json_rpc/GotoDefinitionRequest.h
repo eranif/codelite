@@ -22,6 +22,7 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
+    void OnReponse(const json_rpc::ResponseMessage& response, wxEvtHandler* owner);
 };
 };     // namespace json_rpc
 #endif // GOTODEFINITIONREQUEST_H

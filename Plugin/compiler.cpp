@@ -581,7 +581,7 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-std=c99", "Enable ANSI C99 features");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
     AddCompilerOption("-std=c++14", "Enable C++14 features");
-	AddCompilerOption("-std=c++17", "Enable C++17 features");
+    AddCompilerOption("-std=c++17", "Enable C++17 features");
 }
 
 void Compiler::AddDefaultGnuLinkerOptions()
@@ -710,7 +710,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
         ProcUtils::SafeExecuteCommand(command);
         wxFileName cmpMacrosFile(tmpFile);
         if(cmpMacrosFile.Exists()) {
-            CL_DEBUG("Compiler builtin macros are written into: %s\n", cmpMacrosFile.GetFullPath());
+            clDEBUG1() << "Compiler builtin macros are written into:" << cmpMacrosFile.GetFullPath();
             // we got our macro files
             {
                 CxxPreProcessor pp;
@@ -719,7 +719,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
             }
 
             for(size_t i = 0; i < definitions.GetCount(); ++i) {
-                CL_DEBUG("BUILTIN: %s\n", definitions.Item(i));
+                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
             }
 
             {

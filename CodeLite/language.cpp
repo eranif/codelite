@@ -491,8 +491,6 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
                                  wxString& oper,                  // output
                                  wxString& scopeTemplateInitList) // output
 {
-    CL_DEBUG(wxT(" >>> Language::ProcessExpression started ..."));
-
     bool evaluationSucceeded = true;
     m_templateArgs.clear();
 
@@ -507,17 +505,13 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     wxString lastFuncSig;
     wxString visibleScope, scopeName, localsBody;
 
-    clDEBUG() << "Getting function signature from the database...";
     TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
     if(tag) {
         lastFuncSig = tag->GetSignature();
-        clDEBUG() << "Using function signaure:" << lastFuncSig;
         lastFuncSig.Trim().Trim(false);
         if(!lastFuncSig.IsEmpty() && lastFuncSig[0] == '(') { lastFuncSig.Remove(0, 1); }
         if(!lastFuncSig.IsEmpty() && lastFuncSig[lastFuncSig.size() - 1] == ')') { lastFuncSig.RemoveLast(); }
     }
-    clDEBUG() << "Getting function signature from the database... done";
-    clDEBUG() << "Optimizing scope...";
     wxString textAfterTokensReplacements;
     textAfterTokensReplacements = ApplyCtagsReplacementTokens(text);
 
@@ -539,9 +533,7 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
 
     std::vector<wxString> additionalScopes;
 
-    CL_DEBUG(wxT("Obtaining the scope name..."));
     scopeName = GetScopeName(visibleScope, &additionalScopes);
-    CL_DEBUG(wxT("Obtaining the scope name...done"));
 
     // Always use the global namespace as an addition scope
     // but make sure we add it last
@@ -558,18 +550,14 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     // of the chain
     TokenContainer container;
 
-    CL_DEBUG(wxT("Parsing tokens of scope: %s..."), scopeName.c_str());
     container.head = ParseTokens(scopeName);
     if(!container.head) { return false; }
-    CL_DEBUG(wxT("Parsing tokens of scope: %s... done"), scopeName.c_str());
 
     container.current = container.head;
 
     while(container.current) {
 
-        CL_DEBUG(wxT("PrcocessToken..."));
         bool res = ProcessToken(&container);
-        CL_DEBUG(wxT("step 1 completed"));
 
         if(!res && !container.Rewind()) {
             evaluationSucceeded = false;
@@ -584,18 +572,10 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
         container.retries = 0;
 
         // HACK1: Let the user override the parser decisions
-        CL_DEBUG(wxT("Checking ExcuteUserTypes..."));
         RunUserTypes(container.current);
-        CL_DEBUG(wxT("Checking ExcuteUserTypes... done"));
-
-        CL_DEBUG(wxT("Checking DoIsTypeAndScopeExist..."));
         // We call here to IsTypeAndScopeExists which will attempt to provide the best scope / type
         DoIsTypeAndScopeExist(container.current);
-        CL_DEBUG(wxT("Checking DoIsTypeAndScopeExist... done"));
-
-        CL_DEBUG(wxT("Checking DoExtractTemplateInitListFromInheritance..."));
         DoExtractTemplateInitListFromInheritance(container.current);
-        CL_DEBUG(wxT("Checking DoExtractTemplateInitListFromInheritance... done"));
 
         if(container.current->GetIsTemplate() && container.current->GetTemplateArgList().IsEmpty()) {
             // We got no template declaration...
@@ -607,10 +587,7 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
         bool cont2(false);
 
         do {
-            CL_DEBUG(wxT("Checking CheckForTemplateAndTypedef..."));
             CheckForTemplateAndTypedef(container.current);
-            CL_DEBUG(wxT("Checking CheckForTemplateAndTypedef... done"));
-
             // We check subscript operator only once
             cont = (container.current->GetSubscriptOperator() && OnSubscriptOperator(container.current));
             if(cont) { RunUserTypes(container.current); }
@@ -628,12 +605,10 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
         oper = container.current->GetOperator();
 
         container.current = container.current->GetNext();
-        CL_DEBUG(wxT("PrcocessToken... done"));
     }
 
     // release the tokens
     ParsedToken::DeleteTokens(container.head);
-    CL_DEBUG(wxT(" <<< Language::ProcessExpression started ... done"));
     return evaluationSucceeded;
 }
 

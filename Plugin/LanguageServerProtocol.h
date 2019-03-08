@@ -78,6 +78,11 @@ protected:
      * @brief report a file-save notification
      */
     void SendSaveRequest(const wxFileName& filename, const wxString& fileContent);
+    
+    /**
+     * @brief request for a code completion at a given doc/position
+     */
+    void SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column);
 
     void DoStart();
 
@@ -132,6 +137,11 @@ public:
      * @param column the current caret column (0 based)
      */
     void FindDefinition(const wxFileName& filename, size_t line, size_t column);
+    
+    /**
+     * @brief perform code completion for a given editor
+     */
+    void CodeComplete(IEditor* editor);
     
     /**
      * @brief manually load file into the server

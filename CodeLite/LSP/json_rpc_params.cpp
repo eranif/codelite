@@ -100,4 +100,16 @@ JSONItem DidSaveTextDocumentParams::ToJSON(const wxString& name) const
     return json;
 }
 
+//===----------------------------------------------------------------------------------
+// CompletionParams
+//===----------------------------------------------------------------------------------
+CompletionParams::CompletionParams() {}
+
+void CompletionParams::FromJSON(const JSONItem& json) { TextDocumentPositionParams::FromJSON(json); }
+
+JSONItem CompletionParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = TextDocumentPositionParams::ToJSON(name);
+    return json;
+}
 }; // namespace LSP

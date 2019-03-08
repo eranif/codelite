@@ -43,6 +43,18 @@ public:
     const Position& GetPosition() const { return m_position; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
+//===----------------------------------------------------------------------------------
+// CompletionParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL CompletionParams : public TextDocumentPositionParams
+{
+public:
+    CompletionParams();
+    virtual ~CompletionParams() {}
+
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+};
 
 //===----------------------------------------------------------------------------------
 // DidOpenTextDocumentParams

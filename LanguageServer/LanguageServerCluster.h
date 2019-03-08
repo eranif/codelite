@@ -28,6 +28,7 @@ public:
 
     void Reload();
     void OnFindSymbold(clCodeCompletionEvent& event);
+    void OnCodeComplete(clCodeCompletionEvent& event);
 };
 
 #endif // LANGUAGESERVERCLUSTER_H

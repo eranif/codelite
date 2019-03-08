@@ -7,6 +7,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
+#include "LSP/CompletionRequest.h"
 #include "LSP/InitializeRequest.h"
 #include "LSP/ResponseMessage.h"
 #include "event_notifier.h"
@@ -18,6 +19,7 @@
 #include <wx/stc/stc.h>
 #include "LSP/LSPEvent.h"
 #include "clWorkspaceManager.h"
+#include <wx/stc/stc.h>
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandler* owner)
     : m_name(name)
@@ -401,5 +403,24 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         } else {
             SendOpenRequest(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
         }
+    }
+}
+
+void LanguageServerProtocol::CodeComplete(IEditor* editor)
+{
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    if(editor->IsModified()) { SendChangeRequest(editor->GetFileName(), editor->GetTextRange(0, editor->GetLength())); }
+    // Now request the for code completion
+    SendCodeCompleteRequest(editor->GetFileName(), editor->GetCurrentLine(),
+                            editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));
+}
+
+void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
+{
+    if(ShouldHandleFile(filename)) {
+        LSP::CompletionRequest::Ptr_t req(
+            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
+        req->Send(this);
+        m_requestsSent.insert({ req->GetId(), req });
     }
 }

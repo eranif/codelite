@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="libCodeLite" Version="10.0.0">
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/CompletionRequest.cpp"/>
+    <File Name="LSP/CompletionRequest.h"/>
     <File Name="LSP/InitializeRequest.cpp"/>
     <File Name="LSP/InitializeRequest.h"/>
     <File Name="LSP/LSPEvent.cpp"/>

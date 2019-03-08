@@ -12,12 +12,14 @@
 LanguageServerCluster::LanguageServerCluster()
 {
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
 {
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
 }
 
@@ -100,4 +102,16 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
     for(IEditor* editor : editors) {
         if(lsp->CanHandle(editor->GetFileName())) { lsp->OpenEditor(editor); }
     }
+}
+
+void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
+    if(!lsp) { return; }
+    event.Skip(false);
+    lsp->CodeComplete(editor);
 }

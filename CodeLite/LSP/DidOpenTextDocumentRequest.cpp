@@ -10,3 +10,8 @@ LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxFileName& fi
 }
 
 LSP::DidOpenTextDocumentRequest::~DidOpenTextDocumentRequest() {}
+
+void LSP::DidOpenTextDocumentRequest::OnReponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+{
+    
+}

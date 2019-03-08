@@ -9,11 +9,19 @@
 #include <wx/sharedptr.h>
 #include "macros.h"
 #include <map>
+#include <queue>
+#include <string>
 #include "LSP/RequestMessage.h"
 
 class IEditor;
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
 {
+    enum eState {
+        kUnInitialized,
+        kInitialized,
+    };
+
+    wxString m_name;
     wxEvtHandler* m_owner = nullptr;
     IProcess* m_process = nullptr;
     wxString m_command;
@@ -23,6 +31,11 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
     wxStringSet_t m_languages;
     std::unordered_map<int, LSP::RequestMessage::Ptr_t> m_requestsSent;
     wxString m_outputBuffer;
+    wxString m_workspaceFolder;
+
+    // initialization
+    eState m_state = kUnInitialized;
+    int m_initializeRequestID = wxNOT_FOUND;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -34,12 +47,14 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
+    void OnWorkspaceLoaded(wxCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
 
 protected:
     void DoClear();
     bool ShouldHandleFile(const wxFileName& fn) const;
     bool ShouldHandleFile(IEditor* editor) const;
-    
+    wxString GetLogPrefix() const;
     static wxString GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullName()); }
     static wxString GetLanguageId(const wxString& fn);
 
@@ -47,29 +62,38 @@ protected:
     /**
      * @brief notify about file open
      */
-    void FileOpened(const wxFileName& filename, const wxString& fileContent, const wxString& languageId);
+    void SendOpenRequest(const wxFileName& filename, const wxString& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
      */
-    void FileClosed(const wxFileName& filename);
+    void SendCloseRequest(const wxFileName& filename);
 
     /**
      * @brief report a file-changed notification
      */
-    void FileChanged(const wxFileName& filename, const wxString& fileContent);
+    void SendChangeRequest(const wxFileName& filename, const wxString& fileContent);
 
     /**
      * @brief report a file-save notification
      */
-    void FileSaved(const wxFileName& filename, const wxString& fileContent);
+    void SendSaveRequest(const wxFileName& filename, const wxString& fileContent);
 
     void DoStart();
 
 public:
-    LanguageServerProtocol(wxEvtHandler* owner);
+    LanguageServerProtocol(const wxString& name, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
 
+    LanguageServerProtocol& SetName(const wxString& name)
+    {
+        this->m_name = name;
+        return *this;
+    }
+    
+    const wxString& GetName() const { return m_name; }
+    bool IsInitialized() const { return (m_state == kInitialized); }
+    
     /**
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */

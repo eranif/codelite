@@ -15,6 +15,8 @@ class LanguageServerCluster : public wxEvtHandler
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
 
+    void OnLSPInitialized(LSPEvent& event);
+
 protected:
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
 

@@ -36,6 +36,11 @@ public:
     bool IsOk() const { return m_json != nullptr; }
     bool Has(const wxString& property) const;
     JSONItem Get(const wxString& property) const;
+    
+    /**
+     * @brief is this a "textDocument/publishDiagnostics" message?
+     */
+    bool IsPushDiagnostics() const { return Get("method").toString() == "textDocument/publishDiagnostics"; }
 };
 
 }; // namespace LSP

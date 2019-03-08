@@ -1,6 +1,7 @@
 #include "LSPEvent.h"
 
 wxDEFINE_EVENT(wxEVT_LSP_DEFINITION, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_INITIALIZED, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -17,6 +18,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
 {
     clCommandEvent::operator=(other);
     m_location = other.m_location;
+    m_serverName = other.m_serverName;
     return *this;
 }
 

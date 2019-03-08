@@ -38,12 +38,13 @@ void LanguageServerCluster::Reload()
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
         if(entry.IsEnabled()) {
-            LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(this));
+            LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
             wxString command = entry.GetExepath();
             ::WrapWithQuotes(command);
             if(!entry.GetArgs().IsEmpty()) { command << " " << entry.GetArgs(); }
             lsp->Start(command, entry.GetWorkingDirectory(), entry.GetLanguages());
             m_servers.insert({ entry.GetName(), lsp });
+            lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
         }
     }
 }
@@ -88,4 +89,9 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
               << location.GetRange().GetStart().GetCharacter() << ")";
     IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND);
     if(editor) { editor->SelectRange(location.GetRange()); }
+}
+
+void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
+{
+    // TODO :: locate all open files and send them to be processed by the LSP
 }

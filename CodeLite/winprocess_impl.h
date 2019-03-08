@@ -62,7 +62,8 @@ public:
 
     // Write to the process stdin
     virtual bool Write(const wxString& buff);
-
+    virtual bool Write(const std::string& buff);
+    
     virtual bool WriteToConsole(const wxString& buff);
 
     // Return true if the process is still alive

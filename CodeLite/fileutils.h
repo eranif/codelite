@@ -219,5 +219,10 @@ public:
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
     static wxString RealPath(const wxString& filepath);
+    
+    /**
+     * @brief convert string into std::string
+     */
+    static std::string ToStdString(const wxString& str);
 };
 #endif // FILEUTILS_H

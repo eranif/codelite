@@ -36,6 +36,7 @@
 #include <list>
 #include <map>
 #include "optionsconfig.h"
+#include "LSP/basic_types.h"
 
 class wxStyledTextCtrl;
 
@@ -340,6 +341,12 @@ public:
      * @return return true if a match was found, false otherwise
      */
     virtual bool FindAndSelect(const wxString& pattern, const wxString& what, int from_pos, NavMgr* navmgr) = 0;
+    
+    /**
+     * @brief select range
+     */
+    virtual bool SelectRange(const LSP::Range& range) = 0;
+    
     /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */

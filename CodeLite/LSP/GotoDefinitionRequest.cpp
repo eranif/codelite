@@ -1,4 +1,5 @@
 #include "GotoDefinitionRequest.h"
+#include "LSP/LSPEvent.h"
 
 LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxFileName& filename, size_t line, size_t column)
     : m_filename(filename)
@@ -24,4 +25,9 @@ void LSP::GotoDefinitionRequest::OnReponse(const LSP::ResponseMessage& response,
     } else {
         loc.FromJSON(result);
     }
+
+    // Fire an event with the matching location
+    LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
+    definitionEvent.SetLocation(loc);
+    owner->AddPendingEvent(definitionEvent);
 }

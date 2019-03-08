@@ -63,6 +63,7 @@ JSONItem Position::ToJSON(const wxString& name) const
 void TextDocumentItem::FromJSON(const JSONItem& json)
 {
     m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
+    m_uri.Normalize();
     m_languageId = json.namedObject("languageId").toString();
     m_version = json.namedObject("version").toInt();
     m_text = json.namedObject("text").toString();
@@ -105,7 +106,9 @@ JSONItem Range::ToJSON(const wxString& name) const
 
 void Location::FromJSON(const JSONItem& json)
 {
-    m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString()).GetFullPath();
+    wxFileName fn = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
+    fn.Normalize();
+    m_uri = fn.GetFullPath();
     m_range.FromJSON(json.namedObject("range"));
 }
 

@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include "JSONObject.h"
 #include "JSON.h"
+#include <string>
 
 namespace LSP
 {
@@ -23,7 +24,7 @@ public:
     /**
      * @brief serialize this message into string
      */
-    virtual wxString ToString() const = 0;
+    virtual std::string ToString() const = 0;
 };
 
 }; // namespace LSP

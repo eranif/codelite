@@ -16,7 +16,7 @@ public:
      * @brief send a JSONRPC request object (represented as a string) over the network
      * The response is received as an event of type ResponseEvent
      */
-    virtual void Send(const wxString& message) = 0;
+    virtual void Send(const std::string& message) = 0;
 };
 
 };     // namespace LSP

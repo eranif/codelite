@@ -603,6 +603,7 @@ public:
     void QuickFindAll();
 
     bool FindAndSelect();
+    bool SelectRange(const LSP::Range& range);
     bool FindAndSelect(const FindReplaceData& data);
     bool FindAndSelect(const wxString& pattern, const wxString& name);
     void FindAndSelectV(const wxString& pattern, const wxString& name, int pos = 0,

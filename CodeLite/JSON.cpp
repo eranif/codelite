@@ -51,6 +51,8 @@ JSON::JSON(int type)
 {
     if(type == cJSON_Array)
         _json = cJSON_CreateArray();
+    else if(type == cJSON_NULL)
+        _json = cJSON_CreateNull();
     else
         _json = cJSON_CreateObject();
 }

@@ -7,6 +7,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
+#include "LSP/InitializeRequest.h"
 #include "LSP/ResponseMessage.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
@@ -16,7 +17,8 @@
 #include "imanager.h"
 #include <wx/stc/stc.h>
 
-LanguageServerProtocol::LanguageServerProtocol()
+LanguageServerProtocol::LanguageServerProtocol(wxEvtHandler* owner)
+    : m_owner(owner)
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
@@ -43,13 +45,22 @@ LanguageServerProtocol::~LanguageServerProtocol()
 void LanguageServerProtocol::DoStart()
 {
     m_process = ::CreateAsyncProcess(this, m_command, IProcessCreateDefault | IProcessStderrEvent, m_workingDirectory);
-    if(!m_process) { clWARNING() << "Failed to start Language Server:" << m_command; }
+    if(!m_process) {
+        clWARNING() << "Failed to start Language Server:" << m_command;
+        return;
+    }
+    // The process started successfully
+    // Send the 'initialize' request
+    LSP::InitializeRequest::Ptr_t req(new LSP::InitializeRequest());
+    req->Send(this);
+    m_requestsSent.insert({ req->GetId(), req });
 }
 
 void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory,
                                    const wxArrayString& languages)
 {
     if(m_process) { return; }
+    DoClear();
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
     m_goingDown = false;
@@ -74,15 +85,21 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
     const wxString& buffer = event.GetOutput();
     m_outputBuffer << buffer;
 
-    LSP::ResponseMessage res(m_outputBuffer);
-    if(res.IsOk() && m_requestsSent.count(res.GetId())) {
-        // let the originating request to handle it
-        m_requestsSent[res.GetId()]->OnReponse(res, this);
-        m_requestsSent.erase(res.GetId());
+    while(true) {
+        LSP::ResponseMessage res(m_outputBuffer);
+        if(res.IsOk() && m_requestsSent.count(res.GetId())) {
+            // let the originating request to handle it
+            m_requestsSent[res.GetId()]->OnReponse(res, m_owner);
+            m_requestsSent.erase(res.GetId());
+
+            // If we got more in the buffer, try to process another message
+            if(!m_outputBuffer.IsEmpty()) { continue; }
+        }
+        break;
     }
 }
 
-void LanguageServerProtocol::Send(const wxString& message)
+void LanguageServerProtocol::Send(const std::string& message)
 {
     if(m_process) { m_process->Write(message); }
 }
@@ -177,7 +194,9 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
-        FileOpened(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
+        if(ShouldHandleFile(editor)) {
+            FileOpened(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
+        }
     }
 }
 
@@ -191,6 +210,7 @@ void LanguageServerProtocol::DoClear()
 {
     m_filesSent.clear();
     m_requestsSent.clear();
+    m_outputBuffer.clear();
 }
 
 void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
@@ -199,8 +219,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     const wxString& filename = event.GetFileName();
     IEditor* editor = clGetManager()->FindEditor(filename);
     if(editor) {
-        // We should have called here FileSaved(), however, clangd-7 does not support this yet...
-        FileChanged(editor->GetFileName(), editor->GetCtrl()->GetText());
+        if(ShouldHandleFile(editor)) { FileChanged(editor->GetFileName(), editor->GetCtrl()->GetText()); }
     }
 }
 
@@ -290,4 +309,15 @@ void LanguageServerProtocol::Restart()
     } else {
         DoStart();
     }
+}
+
+bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
+{
+    wxString lang = GetLanguageId(fn);
+    return (m_languages.count(lang) != 0);
+}
+
+bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
+{
+    return editor && ShouldHandleFile(editor->GetFileName());
 }

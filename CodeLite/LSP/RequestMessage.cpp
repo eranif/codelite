@@ -2,6 +2,8 @@
 #include <wx/string.h>
 #include "JSON.h"
 #include "file_logger.h"
+#include "fileutils.h"
+#include <sstream>
 
 LSP::RequestMessage::RequestMessage() { m_id = Message::GetNextID(); }
 
@@ -22,25 +24,26 @@ void LSP::RequestMessage::FromJSON(const JSONItem& json)
     wxUnusedVar(json);
 }
 
-wxString LSP::RequestMessage::ToString() const
+std::string LSP::RequestMessage::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON("");
-
     wxString data = json.format(false);
-    size_t len = data.length();
 
+    std::string s = FileUtils::ToStdString(data);
+    size_t len = s.length();
+
+    std::stringstream ss;
     // Build the request
-    wxString buffer;
-    buffer << "Content-Length: " << len << "\r\n";
-    buffer << "\r\n";
-    buffer << data;
-    return buffer;
+    ss << "Content-Length: " << len << "\r\n";
+    ss << "\r\n";
+    ss << s;
+    return ss.str();
 }
 
 void LSP::RequestMessage::Send(Sender* sender) const
 {
-    wxString buffer = ToString();
+    std::string buffer = ToString();
     clDEBUG() << "Sending message to language server:";
     clDEBUG() << buffer;
     sender->Send(buffer);

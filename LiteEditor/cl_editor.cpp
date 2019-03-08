@@ -4497,6 +4497,22 @@ bool clEditor::FindAndSelect(const wxString& pattern, const wxString& what, int 
     return DoFindAndSelect(pattern, what, pos, navmgr);
 }
 
+bool clEditor::SelectRange(const LSP::Range& range)
+{
+    BrowseRecord jumpfrom = CreateBrowseRecord();
+    ClearSelections();
+    int startPos = PositionFromLine(range.GetStart().GetLine());
+    startPos += range.GetStart().GetCharacter();
+    
+    int endPos = PositionFromLine(range.GetEnd().GetLine());
+    endPos += range.GetEnd().GetCharacter();
+    CenterLine(LineFromPosition(startPos), GetColumn(startPos));
+    SetSelectionStart(startPos);
+    SetSelectionEnd(endPos);
+    NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
+    return true;
+}
+
 bool clEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, int start_pos, NavMgr* navmgr)
 {
     BrowseRecord jumpfrom = CreateBrowseRecord();

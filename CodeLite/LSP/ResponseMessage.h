@@ -25,7 +25,7 @@ public:
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
 
-    virtual wxString ToString() const;
+    virtual std::string ToString() const;
     ResponseMessage& SetId(int id)
     {
         this->m_id = id;

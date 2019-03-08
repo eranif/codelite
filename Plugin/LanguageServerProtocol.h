@@ -11,9 +11,11 @@
 #include <map>
 #include "LSP/RequestMessage.h"
 
+class IEditor;
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
 {
-    IProcess* m_process = NULL;
+    wxEvtHandler* m_owner = nullptr;
+    IProcess* m_process = nullptr;
     wxString m_command;
     wxString m_workingDirectory;
     bool m_goingDown = false;
@@ -35,7 +37,9 @@ protected:
 
 protected:
     void DoClear();
-
+    bool ShouldHandleFile(const wxFileName& fn) const;
+    bool ShouldHandleFile(IEditor* editor) const;
+    
     static wxString GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullName()); }
     static wxString GetLanguageId(const wxString& fn);
 
@@ -63,7 +67,7 @@ protected:
     void DoStart();
 
 public:
-    LanguageServerProtocol();
+    LanguageServerProtocol(wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
 
     /**
@@ -75,7 +79,7 @@ public:
     /**
      * @brief pure method
      */
-    virtual void Send(const wxString& message);
+    virtual void Send(const std::string& message);
 
     /**
      * @brief start a server for an executable

@@ -6,6 +6,7 @@
 #include <wxStringHash.h>
 #include "cl_command_event.h"
 #include <wx/sharedptr.h>
+#include "LSP/LSPEvent.h"
 
 class LanguageServerCluster : public wxEvtHandler
 {
@@ -16,6 +17,8 @@ public:
 
 protected:
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
+
+    void OnSymbolFound(LSPEvent& event);
 
 public:
     LanguageServerCluster();

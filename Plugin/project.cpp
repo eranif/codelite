@@ -46,6 +46,7 @@
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
 #include "ICompilerLocator.h"
+#include "asyncprocess.h"
 
 static wxStringMap_t s_backticks;
 
@@ -1240,16 +1241,11 @@ void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringS
     SaveXmlFile();
 }
 
-wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths,
+wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
                                            const wxString& filenamePlaceholder, bool cxxFile) const
 {
     // Return a compilation line for a CXX file
-    BuildMatrixPtr matrix = GetWorkspace()->GetBuildMatrix();
-    if(!matrix) { return ""; }
-    wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
-    wxString projectSelConf = matrix->GetProjectSelectedConf(workspaceSelConf, GetName());
-    BuildConfigPtr buildConf = GetWorkspace()->GetProjBuildConf(this->GetName(), projectSelConf);
-    if(!buildConf || buildConf->IsCustomBuild() || !buildConf->IsCompilerRequired()) { return ""; }
+    if(!buildConf) { return ""; }
 
     CompilerPtr compiler = buildConf->GetCompiler();
     if(!compiler) { return ""; }
@@ -1272,7 +1268,8 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     }
 
     wxString compilerExe = compiler->GetTool(cxxFile ? "CXX" : "CC");
-    commandLine << "clang " << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
+    commandLine << "clang "
+                << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
@@ -1333,7 +1330,14 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
         if(s_backticks.find(cmpOption) == s_backticks.end()) {
 
             // Expand the backticks into their value
-            wxString expandedValue = ::wxShellExec(cmpOption, GetName());
+            wxString expandedValue;
+            {
+                EnvSetter es(NULL, NULL, GetName(), wxEmptyString);
+                cmpOption = MacroManager::Instance()->Expand(cmpOption, nullptr, GetName(), wxEmptyString);
+                IProcess::Ptr_t p(::CreateSyncProcess(cmpOption, IProcessCreateDefault, GetFileName().GetPath()));
+                if(p) { p->WaitForTerminate(expandedValue); }
+            }
+
             s_backticks[cmpOption] = expandedValue;
             cmpOption = expandedValue;
 
@@ -1347,8 +1351,9 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
 
 void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths)
 {
-    wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, "$FileName", false);
-    wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, "$FileName", true);
+    BuildConfigPtr buildConf = GetBuildConfiguration();
+    wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
+    wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
     wxString workingDirectory = m_fileName.GetPath();
     std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
         const wxString& fullpath = vt.second->GetFilename();

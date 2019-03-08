@@ -30,6 +30,7 @@
 #include "winprocess_impl.h"
 #include <memory>
 #include <wx/filefn.h>
+#include "fileutils.h"
 
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
@@ -317,20 +318,38 @@ bool WinProcessImpl::Write(const wxString& buff)
     wxUnusedVar(dwTimeout);
 
     wxString tmpCmd = buff;
-    tmpCmd = tmpCmd.Trim().Trim(false);
-    tmpCmd += wxT("\r\n");
-
-    const char* data = tmpCmd.mb_str(wxConvUTF8);
-    if(!data) { data = tmpCmd.To8BitData().data(); }
-    if(!data) { return false; }
+    tmpCmd += "\r\n";
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
     dwTimeout = 30000;
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
     DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, data, (unsigned long)strlen(data), &dwWritten, NULL)) return false;
+    if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str(), tmpCmd.length(), &dwWritten, NULL)) { return false; }
+    return true;
+}
+
+bool WinProcessImpl::Write(const std::string& buff)
+{
+    // Sanity
+    if(!IsRedirect()) { return false; }
+
+    DWORD dwMode;
+    DWORD dwTimeout;
+
+    wxUnusedVar(dwTimeout);
+
+    std::string tmpCmd = buff;
+    tmpCmd += "\r\n";
+
+    // Make the pipe to non-blocking mode
+    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
+    dwTimeout = 30000;
+    SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
+                            NULL); // Timeout of 30 seconds
+    DWORD dwWritten;
+    if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str(), tmpCmd.length(), &dwWritten, NULL)) { return false; }
     return true;
 }
 

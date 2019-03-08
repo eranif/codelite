@@ -27,6 +27,7 @@
 #include "unixprocess_impl.h"
 #include <cstring>
 #include "file_logger.h"
+#include "fileutils.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -388,12 +389,19 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
 bool UnixProcessImpl::Write(const wxString& buff)
 {
     wxString tmpbuf = buff;
-    tmpbuf << wxT("\n");
-    const char* data = tmpbuf.mb_str(wxConvUTF8);
-    if(!data) { data = tmpbuf.To8BitData().data(); }
-    if(!data) { return false; }
+    tmpbuf << "\n";
+    std::string cstr = FileUtils::ToStdString(tmpbuf);
 
-    int bytes = write(GetWriteHandle(), data, strlen(data));
+    int bytes = write(GetWriteHandle(), cstr.c_str(), cstr.length());
+    return bytes == (int)cstr.length();
+}
+
+bool UnixProcessImpl::Write(const std::string& buff)
+{
+    std::string tmpbuf = buff;
+    tmpbuf.append("\n");
+
+    int bytes = write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length());
     return bytes == (int)tmpbuf.length();
 }
 
@@ -442,11 +450,11 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         //===-------------------------------------------------------
         // Child process
         //===-------------------------------------------------------
-        
+
         // Set 'slave' as STD{IN|OUT|ERR} and close slave FD
         login_tty(slave);
         close(master); // close the un-needed master end
-        
+
         // Incase the user wants to get separate events for STDERR, dup2 STDERR to the PIPE write end
         // we opened earlier
         if(flags & IProcessStderrEvent) {

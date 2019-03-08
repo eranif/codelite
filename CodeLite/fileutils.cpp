@@ -368,7 +368,7 @@ bool FileUtils::IsHidden(const wxString& filename) { return IsHidden(filename); 
 bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
 {
     if(masks.IsEmpty()) { return false; }
-    
+
     if(masks.Index("*") != wxNOT_FOUND) {
         // If one of the masks is plain "*" - we match everything
         return true;
@@ -576,4 +576,14 @@ void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_com
     }
     newCommand << " --cmd " << title;
     ::wxExecute(newCommand, wxEXEC_ASYNC);
+}
+
+std::string FileUtils::ToStdString(const wxString& str)
+{
+    const char* data = str.mb_str(wxConvUTF8).data();
+    if(!data) { data = str.To8BitData().data(); }
+    std::string res;
+    if(!data) { return res; }
+    res = data;
+    return res;
 }

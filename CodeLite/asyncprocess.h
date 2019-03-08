@@ -98,6 +98,9 @@ public:
 
     // Write to the process stdin
     virtual bool Write(const wxString& buff) = 0;
+    
+    // ANSI version
+    virtual bool Write(const std::string& buff) = 0;
 
     /**
      * @brief wait for process to terminate and return all its output to the caller

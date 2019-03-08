@@ -770,7 +770,7 @@ public:
      * file
      * name which can later be replaced by the caller with the actual file name
      */
-    wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths,
+    wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
                                       const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true) const;
 
     void ClearAllVirtDirs();

@@ -132,6 +132,12 @@ public:
      * @param column the current caret column (0 based)
      */
     void FindDefinition(const wxFileName& filename, size_t line, size_t column);
+    
+    /**
+     * @brief manually load file into the server
+     */
+    void OpenEditor(IEditor *editor);
+    
 };
 
 #endif // CLLANGUAGESERVER_H

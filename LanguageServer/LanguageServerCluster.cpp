@@ -93,5 +93,11 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
 {
-    // TODO :: locate all open files and send them to be processed by the LSP
+    if(m_servers.count(event.GetServerName()) == 0) { return; }
+    LanguageServerProtocol::Ptr_t lsp = m_servers[event.GetServerName()];
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(IEditor* editor : editors) {
+        if(lsp->CanHandle(editor->GetFileName())) { lsp->OpenEditor(editor); }
+    }
 }

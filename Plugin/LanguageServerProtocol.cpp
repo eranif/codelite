@@ -357,13 +357,7 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor && ShouldHandleFile(editor)) {
-        if(m_filesSent.count(editor->GetFileName().GetFullPath())) {
-            SendChangeRequest(editor->GetFileName(), editor->GetCtrl()->GetText());
-        } else {
-            SendOpenRequest(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
-        }
-    }
+    OpenEditor(editor);
 }
 
 void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
@@ -398,3 +392,14 @@ void LanguageServerProtocol::OnWorkspaceClosed(wxCommandEvent& event)
 }
 
 wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "LSP [" << GetName() << "]:"; }
+
+void LanguageServerProtocol::OpenEditor(IEditor* editor)
+{
+    if(editor && ShouldHandleFile(editor)) {
+        if(m_filesSent.count(editor->GetFileName().GetFullPath())) {
+            SendChangeRequest(editor->GetFileName(), editor->GetCtrl()->GetText());
+        } else {
+            SendOpenRequest(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
+        }
+    }
+}

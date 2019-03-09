@@ -43,10 +43,6 @@
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
 
-#if HAS_LIBCLANG
-#include "ClangOutputTab.h"
-#endif
-
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250))
     , m_caption(caption)
@@ -152,20 +148,6 @@ void OutputPane::CreateGUIControls()
     m_tabs.insert(std::make_pair(wxGetTranslation(OUTPUT_WIN), Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind,
                                                                    bmpLoader->LoadBitmap(wxT("console")))));
     mgr->AddOutputTab(wxGetTranslation(OUTPUT_WIN));
-
-#if HAS_LIBCLANG
-    // Clang tab
-    NewProjImgList images;
-    m_clangOutputTab = new ClangOutputTab(m_book);
-#if PHP_BUILD
-    m_clangOutputTab->Hide();
-#else
-    m_book->AddPage(m_clangOutputTab, wxGetTranslation(CLANG_TAB), false, bmpLoader->LoadBitmap("clang"));
-    m_tabs.insert(std::make_pair(wxGetTranslation(CLANG_TAB),
-                                 Tab(wxGetTranslation(CLANG_TAB), m_clangOutputTab, bmpLoader->LoadBitmap("clang"))));
-    mgr->AddOutputTab(wxGetTranslation(CLANG_TAB));
-#endif
-#endif
 
     // Tasks panel
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));

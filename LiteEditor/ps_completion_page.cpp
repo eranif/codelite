@@ -24,17 +24,16 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ps_completion_page.h"
-#include "clang_code_completion.h"
 #include <wx/filedlg.h>
 
-PSCompletionPage::PSCompletionPage( wxWindow* parent, ProjectSettingsDlg* dlg )
-    : PSCompletionBase( parent )
+PSCompletionPage::PSCompletionPage(wxWindow* parent, ProjectSettingsDlg* dlg)
+    : PSCompletionBase(parent)
     , m_dlg(dlg)
     , m_ccSettingsModified(false)
 {
 }
 
-void PSCompletionPage::OnCmdEvtVModified( wxCommandEvent& event )
+void PSCompletionPage::OnCmdEvtVModified(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_dlg->SetIsDirty(true);
@@ -55,7 +54,7 @@ void PSCompletionPage::Load(BuildConfigPtr buildConf)
     m_textCtrlSearchPaths->SetValue(buildConf->GetCcSearchPaths());
     m_checkBoxC11->SetValue(buildConf->IsClangC11());
     m_checkBoxC14->SetValue(buildConf->IsClangC14());
-	m_checkBoxC17->SetValue(buildConf->IsClangC17());
+    m_checkBoxC17->SetValue(buildConf->IsClangC17());
 }
 
 void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -64,28 +63,11 @@ void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSet
     buildConf->SetCcSearchPaths(m_textCtrlSearchPaths->GetValue());
     buildConf->SetClangC11(m_checkBoxC11->IsChecked());
     buildConf->SetClangC14(m_checkBoxC14->IsChecked());
-	buildConf->SetClangC17(m_checkBoxC17->IsChecked());
+    buildConf->SetClangC17(m_checkBoxC17->IsChecked());
     // Save was requested
-    if(m_ccSettingsModified) {
-        m_ccSettingsModified = false;
-
-#if HAS_LIBCLANG
-        ClangCodeCompletion::Instance()->ClearCache();
-#endif
-
-    }
+    if(m_ccSettingsModified) { m_ccSettingsModified = false; }
 }
 
-void PSCompletionPage::OnBrowsePCH(wxCommandEvent& event)
-{
-//    wxString filename = wxFileSelector(wxT("Select a Header File:"));
-//    if ( !filename.empty() ) {
-//        // work with the file
-//        m_filePickerClangPCH->SetValue(filename);
-//        OnCmdEvtVModified(event);
-//    }
-}
-void PSCompletionPage::OnProjectEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dlg->IsProjectEnabled());
-}
+void PSCompletionPage::OnBrowsePCH(wxCommandEvent& event) {}
+
+void PSCompletionPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }

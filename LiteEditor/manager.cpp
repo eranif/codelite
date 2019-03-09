@@ -22,7 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "clang_code_completion.h"
 #include "code_completion_manager.h"
 #include "crawler_include.h"
 #include "dbcontentcacher.h"
@@ -69,7 +68,6 @@
 #include "clWorkspaceView.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
-#include "clang_compilation_db_thread.h"
 #include "clean_request.h"
 #include "code_completion_manager.h"
 #include "compile_request.h"
@@ -256,14 +254,11 @@ Manager::~Manager(void)
         JobQueueSingleton::Instance()->Stop();
         ParseThreadST::Get()->Stop();
         SearchThreadST::Get()->Stop();
-        ClangCompilationDbThreadST::Get()->Stop();
     }
 
     // free all plugins
     PluginManager::Get()->UnLoad();
 
-    // release singleton objects
-    ClangCompilationDbThreadST::Free();
     DebuggerMgr::Free();
     JobQueueSingleton::Release();
     ParseThreadST::Free(); // since the parser is making use of the TagsManager,
@@ -276,10 +271,6 @@ Manager::~Manager(void)
     SearchThreadST::Free();
     MenuManager::Free();
     EnvironmentConfig::Release();
-
-#if HAS_LIBCLANG
-    ClangCodeCompletion::Release();
-#endif
 
     wxDELETE(m_shellProcess);
     wxDELETE(m_breakptsmgr);

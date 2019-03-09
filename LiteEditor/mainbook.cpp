@@ -27,7 +27,6 @@
 #include "clAuiMainNotebookTabArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
-#include "clang_code_completion.h"
 #include "close_all_dlg.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
@@ -911,10 +910,6 @@ bool MainBook::CloseAll(bool cancellable)
 
     // Delete the files without notifications (it will be faster)
     clWindowUpdateLocker locker(this);
-#if HAS_LIBCLANG
-    ClangCodeCompletion::Instance()->CancelCodeComplete();
-#endif
-
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
 
     m_reloadingDoRaise = false;
@@ -1154,9 +1149,6 @@ void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {
     clEditor* editor = GetActiveEditor();
     if(editor) { editor->CallTipCancel(); }
-#if HAS_LIBCLANG
-    ClangCodeCompletion::Instance()->CancelCodeComplete();
-#endif
     e.Skip();
 }
 

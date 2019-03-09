@@ -54,9 +54,10 @@ void CompileCommandsCreateor::Process(wxThread* thread)
 
     // Save the file
     json.save(compileCommandsFile);
-    
+
     clDEBUG() << "Created" << compileCommandsFile;
-    
+
     clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+    eventCompileCommandsGenerated.SetFileName(compileCommandsFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
 }

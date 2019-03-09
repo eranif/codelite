@@ -36,7 +36,6 @@
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
-#include "clang_code_completion.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
 #include "colourrequest.h"
@@ -1575,17 +1574,6 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
                 bSaveSucceeded = true;
             }
         }
-#if HAS_LIBCLANG
-        if(!bSaveSucceeded) {
-            // Try clearing the clang cache and try again
-            ClangCodeCompletion::Instance()->ClearCache();
-            if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
-                wxMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite",
-                             wxOK | wxICON_WARNING);
-                return false;
-            }
-        }
-#endif
     }
 #else
     if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {

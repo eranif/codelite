@@ -169,7 +169,7 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
         LSP::ResponseMessage res(m_outputBuffer);
         if(res.IsOk()) {
             clDEBUG() << GetLogPrefix() << "received a complete message";
-            
+
             if(IsInitialized()) {
                 LSP::RequestMessage::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 if(msg_ptr) {
@@ -318,10 +318,22 @@ bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 // Protocol implementation
 //===--------------------------------------------------
 
-void LanguageServerProtocol::FindDefinition(const wxFileName& filename, size_t line, size_t column)
+void LanguageServerProtocol::FindDefinition(IEditor* editor)
 {
-    LSP::GotoDefinitionRequest::Ptr_t req =
-        LSP::RequestMessage::MakeRequest(new LSP::GotoDefinitionRequest(filename, line, column));
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxFileName& filename = editor->GetFileName();
+    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        // we already sent this file over, ask for change parse
+        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+    }
+
+    LSP::GotoDefinitionRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::GotoDefinitionRequest(
+        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
 

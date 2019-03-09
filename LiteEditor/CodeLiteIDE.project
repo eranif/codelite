@@ -666,8 +666,6 @@
     </VirtualDirectory>
     <File Name="editor_options_docking_windows.wxcp"/>
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
-    <File Name="ClangOutputTab.h"/>
-    <File Name="ClangOutputTab.cpp"/>
     <VirtualDirectory Name="OutputTab">
       <File Name="OutputDebugStringThread.h"/>
       <File Name="OutputDebugStringThread.cpp"/>
@@ -783,30 +781,14 @@
     <Project Name="DebuggerGDB"/>
   </Dependencies>
   <VirtualDirectory Name="CodeCompletion">
-    <File Name="clang_code_completion.h"/>
-    <File Name="clang_code_completion.cpp"/>
-    <File Name="clangpch_cache.h"/>
-    <File Name="clangpch_cache.cpp"/>
-    <File Name="clang_driver.h"/>
-    <File Name="clang_driver.cpp"/>
     <File Name="code_completion_manager.h"/>
     <File Name="code_completion_manager.cpp"/>
-    <File Name="clang_pch_maker_thread.h"/>
-    <File Name="clang_pch_maker_thread.cpp"/>
     <VirtualDirectory Name="GeneratedCode">
       <File Name="clang_output_parser_api.h"/>
       <File Name="clang_result_lexer.cpp"/>
       <File Name="clang_result_parser.cpp"/>
       <File Name="clang_result_parser.h"/>
     </VirtualDirectory>
-    <File Name="clang_utils.h"/>
-    <File Name="clang_utils.cpp"/>
-    <File Name="clang_unsaved_files.h"/>
-    <File Name="clang_unsaved_files.cpp"/>
-    <File Name="clang_compilation_db_thread.h"/>
-    <File Name="clang_compilation_db_thread.cpp"/>
-    <File Name="clang_cleaner_thread.h"/>
-    <File Name="clang_cleaner_thread.cpp"/>
     <File Name="CxxPreProcessorThread.h"/>
     <File Name="CxxPreProcessorThread.cpp"/>
     <File Name="CxxUsingNamespaceCollectorThread.h"/>
@@ -2069,8 +2051,6 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../sdk/clang/include"/>
-        <Preprocessor Value="HAS_LIBCLANG=1"/>
-        <Preprocessor Value="HAS_LIBCLANG_BRIEFCOMMENTS=1"/>
         <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
       <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid --unicode=yes);-Wl,--subsystem,windows -mwindows;" Required="yes">
@@ -2080,7 +2060,6 @@ resources.cpp: resources.xrc
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
-        <Library Value="libclang64.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
@@ -2115,7 +2094,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2179,8 +2159,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2199,8 +2178,6 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/clang/include"/>
-        <Preprocessor Value="HAS_LIBCLANG=1"/>
-        <Preprocessor Value="HAS_LIBCLANG_BRIEFCOMMENTS=1"/>
       </Compiler>
       <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2" Required="yes">
         <LibraryPath Value="."/>
@@ -2209,7 +2186,6 @@ resources.cpp: resources.xrc
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libclang64.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" UseSeparateDebugArgs="yes" DebugArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>

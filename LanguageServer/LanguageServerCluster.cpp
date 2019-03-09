@@ -70,7 +70,7 @@ void LanguageServerCluster::OnFindSymbold(clCodeCompletionEvent& event)
     if(server) {
         // this event is ours to handle
         event.Skip(false);
-        server->FindDefinition(editor->GetFileName(), line, col);
+        server->FindDefinition(editor);
     }
 }
 

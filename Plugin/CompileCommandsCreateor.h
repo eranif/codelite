@@ -37,6 +37,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
 class WXDLLIMPEXP_SDK CompileCommandsCreateor : public Job
 {
     wxFileName m_filename;
+
 public:
     CompileCommandsCreateor(const wxFileName& path);
     virtual ~CompileCommandsCreateor();

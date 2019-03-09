@@ -32,7 +32,6 @@
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
-#include "clang_code_completion.h"
 #include "ctags_manager.h"
 #include "debugger.h"
 #include "detachedpanesinfo.h"
@@ -682,26 +681,7 @@ IEditor* PluginManager::FindEditor(const wxString& filename) const
     return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
 }
 
-void PluginManager::EnableClangCodeCompletion(bool b)
-{
-#if HAS_LIBCLANG
-    ClangCodeCompletion::Instance()->ClearCache();
-    TagsOptionsData& options = clMainFrame::Get()->GetTagsOptions();
-    size_t clang_flags = options.GetClangOptions();
-
-    if(b) {
-        clang_flags |= CC_CLANG_ENABLED;
-    } else {
-        clang_flags &= ~CC_CLANG_ENABLED;
-    }
-
-    options.SetClangOptions(clang_flags);
-    TagsManagerST::Get()->SetCtagsOptions(options);
-
-#else
-    wxUnusedVar(b);
-#endif
-}
+void PluginManager::EnableClangCodeCompletion(bool b) { wxUnusedVar(b); }
 
 size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainBook()->GetPageCount(); }
 

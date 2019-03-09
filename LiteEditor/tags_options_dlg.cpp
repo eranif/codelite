@@ -36,7 +36,6 @@
 #include "add_option_dialog.h"
 #include "globals.h"
 #include "includepathlocator.h"
-#include "clang_code_completion.h"
 #include <build_settings_config.h>
 #include <compiler.h>
 #include <ICompilerLocator.h>
@@ -130,9 +129,7 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     m_choiceCachePolicy->Select(1);
 
     int where = m_choiceCachePolicy->FindString(m_data.GetClangCachePolicy());
-    if(where != wxNOT_FOUND) {
-        m_choiceCachePolicy->Select(where);
-    }
+    if(where != wxNOT_FOUND) { m_choiceCachePolicy->Select(where); }
 }
 
 CodeCompletionSettingsDialog::~CodeCompletionSettingsDialog() {}
@@ -264,9 +261,7 @@ void CodeCompletionSettingsDialog::OnAddExcludePath(wxCommandEvent& event)
         wxArrayString currPaths = wxStringTokenize(currPathsStr, wxT("\n\r"), wxTOKEN_STRTOK);
         if(currPaths.Index(new_path) == wxNOT_FOUND) {
             currPathsStr.Trim().Trim(false);
-            if(currPathsStr.IsEmpty() == false) {
-                currPathsStr << wxT("\n");
-            }
+            if(currPathsStr.IsEmpty() == false) { currPathsStr << wxT("\n"); }
             currPathsStr << new_path;
             m_textCtrlCtagsExcludePaths->ChangeValue(currPathsStr);
         }
@@ -284,9 +279,7 @@ void CodeCompletionSettingsDialog::OnAddSearchPath(wxCommandEvent& event)
         if(currPaths.Index(new_path) == wxNOT_FOUND) {
 
             currPathsStr.Trim().Trim(false);
-            if(currPathsStr.IsEmpty() == false) {
-                currPathsStr << wxT("\n");
-            }
+            if(currPathsStr.IsEmpty() == false) { currPathsStr << wxT("\n"); }
             currPathsStr << new_path;
 
             m_textCtrlCtagsSearchPaths->ChangeValue(currPathsStr);
@@ -294,26 +287,19 @@ void CodeCompletionSettingsDialog::OnAddSearchPath(wxCommandEvent& event)
     }
 }
 
-void CodeCompletionSettingsDialog::OnAutoShowWordAssitUI(wxUpdateUIEvent& event) { event.Enable(m_checkWordAssist->IsChecked()); }
-
-void CodeCompletionSettingsDialog::OnClangCCEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnableClangCC->IsChecked()); }
-
-void CodeCompletionSettingsDialog::OnClearClangCache(wxCommandEvent& event)
+void CodeCompletionSettingsDialog::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
 {
-    wxBusyCursor cursor;
-#if HAS_LIBCLANG
-    ClangCodeCompletion::Instance()->ClearCache();
-#endif
+    event.Enable(m_checkWordAssist->IsChecked());
 }
 
-void CodeCompletionSettingsDialog::OnClearClangCacheUI(wxUpdateUIEvent& event)
+void CodeCompletionSettingsDialog::OnClangCCEnabledUI(wxUpdateUIEvent& event)
 {
-#if HAS_LIBCLANG
-    event.Enable(m_checkBoxEnableClangCC->IsChecked() && !ClangCodeCompletion::Instance()->IsCacheEmpty());
-#else
-    event.Enable(false);
-#endif
+    event.Enable(m_checkBoxEnableClangCC->IsChecked());
 }
+
+void CodeCompletionSettingsDialog::OnClearClangCache(wxCommandEvent& event) { wxBusyCursor cursor; }
+
+void CodeCompletionSettingsDialog::OnClearClangCacheUI(wxUpdateUIEvent& event) { event.Enable(false); }
 
 void CodeCompletionSettingsDialog::OnFileSelectedUI(wxUpdateUIEvent& event)
 {

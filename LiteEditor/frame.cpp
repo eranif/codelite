@@ -49,7 +49,6 @@
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "cl_unredo.h"
-#include "clang_compilation_db_thread.h"
 #include "code_completion_manager.h"
 #include "console_frame.h"
 #include "event_notifier.h"
@@ -99,7 +98,6 @@
 #include "buildmanager.h"
 #include "buildtabsettingsdata.h"
 #include "cl_defs.h"
-#include "clang_code_completion.h"
 #include "configuration_manager_dlg.h"
 #include "cpp_symbol_tree.h"
 #include "debugcoredump.h"
@@ -1203,8 +1201,7 @@ void clMainFrame::CreateGUIControls()
                                          m_tagsOptionsData.GetParserExcludePaths());
 
     ParseThreadST::Get()->Start();
-    ClangCompilationDbThreadST::Get()->Start();
-
+    
     // Connect this tree to the parse thread
     ParseThreadST::Get()->SetNotifyWindow(this);
 
@@ -2146,11 +2143,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
             wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
             AddPendingEvent(e);
         }
-
-#if HAS_LIBCLANG
-        // Clear clang's cache
-        ClangCodeCompletion::Instance()->ClearCache();
-#endif
         // Update the pre-processor dimming feature
         CodeCompletionManager::Get().RefreshPreProcessorColouring();
     }

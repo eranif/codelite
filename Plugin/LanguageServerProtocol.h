@@ -155,12 +155,9 @@ public:
     void Restart();
 
     /**
-     * @brief find definition of a word.
-     * @param filename the filename
-     * @param line the current caret line (0 based)
-     * @param column the current caret column (0 based)
+     * @brief find the definition of the item at the caret position
      */
-    void FindDefinition(const wxFileName& filename, size_t line, size_t column);
+    void FindDefinition(IEditor* editor);
 
     /**
      * @brief perform code completion for a given editor

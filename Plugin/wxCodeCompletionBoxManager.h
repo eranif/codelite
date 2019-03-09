@@ -58,6 +58,7 @@ protected:
     void OnAppActivate(wxActivateEvent& event);
     
     void DoShowCCBoxTags(const TagEntryPtrVector_t& tags);
+    void DoShowCCBoxLSPItems(const LSP::CompletionItem::Vec_t& items);
     void DoShowCCBoxEntries(const wxCodeCompletionBoxEntry::Vec_t& entries);
     void DoConnectStcEventHandlers(wxStyledTextCtrl* ctrl);
     
@@ -113,6 +114,15 @@ public:
                            const TagEntryPtrVector_t& tags,
                            size_t flags,
                            int startPos,
+                           wxEvtHandler* eventObject = NULL);
+
+    /**
+     * @brief show the completion box. Language Server Protocol version
+     */
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const LSP::CompletionItem::Vec_t& completions,
+                           size_t flags = 0,
+                           int startPos = wxNOT_FOUND,
                            wxEvtHandler* eventObject = NULL);
 
     /**

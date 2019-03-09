@@ -313,20 +313,23 @@ bool WinProcessImpl::Write(const wxString& buff)
     if(!IsRedirect()) { return false; }
 
     DWORD dwMode;
-    DWORD dwTimeout;
-
-    wxUnusedVar(dwTimeout);
 
     wxString tmpCmd = buff;
     tmpCmd += "\r\n";
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
-    dwTimeout = 30000;
+    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
-    DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str(), tmpCmd.length(), &dwWritten, NULL)) { return false; }
+    DWORD bytesLeft = buff.length();
+    long offset = 0;
+    while(bytesLeft > 0) {
+        DWORD dwWritten = 0;
+        if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str() + offset, bytesLeft, &dwWritten, NULL)) { return false; }
+        if(!IsAlive()) { return false; }
+        bytesLeft -= dwWritten;
+        offset += dwWritten;
+    }
     return true;
 }
 
@@ -334,22 +337,24 @@ bool WinProcessImpl::Write(const std::string& buff)
 {
     // Sanity
     if(!IsRedirect()) { return false; }
-
     DWORD dwMode;
-    DWORD dwTimeout;
-
-    wxUnusedVar(dwTimeout);
 
     std::string tmpCmd = buff;
     tmpCmd += "\r\n";
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
-    dwTimeout = 30000;
+    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
-    DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str(), tmpCmd.length(), &dwWritten, NULL)) { return false; }
+    DWORD bytesLeft = buff.length();
+    long offset = 0;
+    while(bytesLeft > 0) {
+        DWORD dwWritten = 0;
+        if(!WriteFile(hChildStdinWrDup, tmpCmd.c_str() + offset, bytesLeft, &dwWritten, NULL)) { return false; }
+        if(!IsAlive()) { return false; }
+        bytesLeft -= dwWritten;
+        offset += dwWritten;
+    }
     return true;
 }
 

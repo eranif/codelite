@@ -12,6 +12,7 @@ class WXDLLIMPEXP_CL DidSaveTextDocumentRequest : public LSP::RequestMessage
 public:
     DidSaveTextDocumentRequest(const wxFileName& filename, const wxString& fileContent);
     virtual ~DidSaveTextDocumentRequest();
+    void BuildUID();
 };
 
 }; // namespace LSP

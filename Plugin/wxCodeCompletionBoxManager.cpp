@@ -336,3 +336,26 @@ void wxCodeCompletionBoxManager::InsertSelectionTemplateFunction(const wxString&
         }
     }
 }
+
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                                                   const LSP::CompletionItem::Vec_t& completions, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
+{
+    DestroyCurrent();
+    CHECK_PTR_RET(ctrl);
+    CHECK_COND_RET(!completions.empty());
+
+    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    m_box->SetFlags(flags);
+    m_box->SetStartPos(startPos);
+    m_stc = ctrl;
+    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxLSPItems, completions);
+}
+
+void wxCodeCompletionBoxManager::DoShowCCBoxLSPItems(const LSP::CompletionItem::Vec_t& items)
+{
+    if(m_box && m_stc) {
+        m_box->ShowCompletionBox(m_stc, items);
+        DoConnectStcEventHandlers(m_stc);
+    }
+}

@@ -8,12 +8,14 @@
 #include "globals.h"
 #include "imanager.h"
 #include "file_logger.h"
+#include "wxCodeCompletionBoxManager.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
+    Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -21,6 +23,7 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
+    Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -95,13 +98,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
 {
-    if(m_servers.count(event.GetServerName()) == 0) { return; }
-    LanguageServerProtocol::Ptr_t lsp = m_servers[event.GetServerName()];
-    IEditor::List_t editors;
-    clGetManager()->GetAllEditors(editors);
-    for(IEditor* editor : editors) {
-        if(lsp->CanHandle(editor->GetFileName())) { lsp->OpenEditor(editor); }
-    }
+    wxUnusedVar(event);
 }
 
 void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
@@ -109,9 +106,20 @@ void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
+    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
 
     LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
     if(!lsp) { return; }
     event.Skip(false);
     lsp->CodeComplete(editor);
+}
+
+void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
+{
+    const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
+    
+    IEditor *editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(clGetManager()->GetActiveEditor()->GetCtrl(), items);
 }

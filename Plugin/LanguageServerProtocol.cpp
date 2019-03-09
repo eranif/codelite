@@ -20,6 +20,7 @@
 #include "LSP/LSPEvent.h"
 #include "clWorkspaceManager.h"
 #include <wx/stc/stc.h>
+#include <wx/filesys.h>
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandler* owner)
     : m_name(name)
@@ -150,22 +151,30 @@ void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
     }
 }
 
-void LanguageServerProtocol::OnProcessStderr(clProcessEvent& event) { clDEBUG1() << event.GetOutput(); }
+void LanguageServerProtocol::OnProcessStderr(clProcessEvent& event)
+{
+    clDEBUG1() << event.GetOutput();
+    m_Queue.SetWaitingReponse(false);
+    ProcessQueue();
+}
 
 void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
 {
     clDEBUG() << GetLogPrefix() << event.GetOutput();
     const wxString& buffer = event.GetOutput();
     m_outputBuffer << buffer;
+    m_Queue.SetWaitingReponse(false);
 
     while(true) {
         LSP::ResponseMessage res(m_outputBuffer);
         if(res.IsOk()) {
+            clDEBUG() << GetLogPrefix() << "received a complete message";
+            
             if(IsInitialized()) {
-                if(m_requestsSent.count(res.GetId())) {
+                LSP::RequestMessage::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
+                if(msg_ptr) {
                     // let the originating request to handle it
-                    m_requestsSent[res.GetId()]->OnReponse(res, m_owner);
-                    m_requestsSent.erase(res.GetId());
+                    msg_ptr->OnResponse(res, m_owner);
 
                     // If we got more in the buffer, try to process another message
                     if(!m_outputBuffer.IsEmpty()) { continue; }
@@ -195,11 +204,14 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
         }
         break;
     }
+    ProcessQueue();
 }
 
-void LanguageServerProtocol::Send(const std::string& message)
+void LanguageServerProtocol::QueueMessage(LSP::RequestMessage::Ptr_t request)
 {
-    if(m_process && IsInitialized()) { m_process->Write(message); }
+    if(!IsInitialized() || !m_process) { return; }
+    m_Queue.Push(request);
+    ProcessQueue();
 }
 
 void LanguageServerProtocol::DoStart()
@@ -220,16 +232,14 @@ void LanguageServerProtocol::DoStart()
     }
     // The process started successfully
     // Send the 'initialize' request
-    LSP::InitializeRequest* initReq = new LSP::InitializeRequest();
-    LSP::InitializeRequest::Ptr_t req(initReq);
-    initReq->SetRootUri(m_workspaceFolder);
+    LSP::InitializeRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::InitializeRequest());
+    req->As<LSP::InitializeRequest>()->SetRootUri(m_workspaceFolder);
 
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
-    req->Send(this);
+    QueueMessage(req);
     m_state = kUnInitialized;
     m_initializeRequestID = req->GetId();
-    m_requestsSent.insert({ req->GetId(), req });
 }
 
 void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory,
@@ -270,10 +280,10 @@ void LanguageServerProtocol::Stop(bool goingDown)
 void LanguageServerProtocol::DoClear()
 {
     m_filesSent.clear();
-    m_requestsSent.clear();
     m_outputBuffer.clear();
     m_state = kUnInitialized;
     m_initializeRequestID = wxNOT_FOUND;
+    m_Queue.Clear();
 }
 
 bool LanguageServerProtocol::IsRunning() const { return m_process != nullptr; }
@@ -310,18 +320,18 @@ bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 
 void LanguageServerProtocol::FindDefinition(const wxFileName& filename, size_t line, size_t column)
 {
-    LSP::GotoDefinitionRequest::Ptr_t req(new LSP::GotoDefinitionRequest(filename, line, column));
-    req->Send(this);
-    m_requestsSent.insert({ req->GetId(), req });
+    LSP::GotoDefinitionRequest::Ptr_t req =
+        LSP::RequestMessage::MakeRequest(new LSP::GotoDefinitionRequest(filename, line, column));
+    QueueMessage(req);
 }
 
 void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const wxString& fileContent,
                                              const wxString& languageId)
 {
-    LSP::DidOpenTextDocumentRequest req(filename, fileContent, languageId);
-    req.Send(this);
-    m_filesSent.insert(filename.GetFullPath());
-    clGetManager()->SetStatusMessage(wxString() << "[LSP] parsing file: " << filename.GetFullName(), 1);
+    LSP::DidOpenTextDocumentRequest::Ptr_t req =
+        LSP::RequestMessage::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
+    req->SetStatusMessage(wxString() << "[LSP] parsing file: " << filename.GetFullName());
+    QueueMessage(req);
 }
 
 void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
@@ -331,15 +341,18 @@ void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
         return;
     }
 
-    LSP::DidCloseTextDocumentRequest req(filename);
-    req.Send(this);
+    LSP::DidCloseTextDocumentRequest::Ptr_t req =
+        LSP::RequestMessage::MakeRequest(new LSP::DidCloseTextDocumentRequest(filename));
+    QueueMessage(req);
     m_filesSent.erase(filename.GetFullPath());
 }
+
 void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const wxString& fileContent)
 {
-    LSP::DidChangeTextDocumentRequest req(filename, fileContent);
-    req.Send(this);
-    clGetManager()->SetStatusMessage(wxString() << "[LSP] re-parsing file: " << filename.GetFullName(), 1);
+    LSP::DidChangeTextDocumentRequest::Ptr_t req =
+        LSP::RequestMessage::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
+    req->SetStatusMessage(wxString() << "[LSP] re-parsing file: " << filename.GetFullName());
+    QueueMessage(req);
 }
 
 void LanguageServerProtocol::SendSaveRequest(const wxFileName& filename, const wxString& fileContent)
@@ -350,6 +363,15 @@ void LanguageServerProtocol::SendSaveRequest(const wxFileName& filename, const w
 
     // For now: report a change event
     SendChangeRequest(filename, fileContent);
+}
+
+void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
+{
+    if(ShouldHandleFile(filename)) {
+        LSP::CompletionRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(
+            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
+        QueueMessage(req);
+    }
 }
 
 //===------------------------------------------------------------------
@@ -397,6 +419,7 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "LS
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
+    if(!IsInitialized()) { return; }
     if(editor && ShouldHandleFile(editor)) {
         if(m_filesSent.count(editor->GetFileName().GetFullPath())) {
             SendChangeRequest(editor->GetFileName(), editor->GetCtrl()->GetText());
@@ -408,19 +431,75 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 
 void LanguageServerProtocol::CodeComplete(IEditor* editor)
 {
+    // sanity
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    if(editor->IsModified()) { SendChangeRequest(editor->GetFileName(), editor->GetTextRange(0, editor->GetLength())); }
+    const wxFileName& filename = editor->GetFileName();
+    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        // we already sent this file over, ask for change parse
+        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+    }
     // Now request the for code completion
     SendCodeCompleteRequest(editor->GetFileName(), editor->GetCurrentLine(),
                             editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));
 }
 
-void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
+void LanguageServerProtocol::ProcessQueue()
 {
-    if(ShouldHandleFile(filename)) {
-        LSP::CompletionRequest::Ptr_t req(
-            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
-        req->Send(this);
-        m_requestsSent.insert({ req->GetId(), req });
+    if(m_Queue.IsEmpty()) { return; }
+    if(m_Queue.IsWaitingReponse()) {
+        clDEBUG() << "LSP is busy, will not send message";
+        return;
     }
+    LSP::RequestMessage::Ptr_t req = m_Queue.Get();
+    if(!m_process) { return; }
+    if(m_process->Write(req->ToString())) {
+        m_Queue.SetWaitingReponse(true);
+        m_Queue.Pop();
+        if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
+    }
+}
+
+//===------------------------------------------------------------------
+// LSPRequestMessageQueue
+//===------------------------------------------------------------------
+
+void LSPRequestMessageQueue::Push(LSP::RequestMessage::Ptr_t message)
+{
+    m_Queue.push(message);
+    if(message->IsNeedsReply()) { m_pendingReplyMessages.insert({ message->GetId(), message }); }
+}
+
+void LSPRequestMessageQueue::Pop()
+{
+    if(!m_Queue.empty()) { m_Queue.pop(); }
+    SetWaitingReponse(false);
+}
+
+LSP::RequestMessage::Ptr_t LSPRequestMessageQueue::Get()
+{
+    if(m_Queue.empty()) { return LSP::RequestMessage::Ptr_t(nullptr); }
+    return m_Queue.front();
+}
+
+void LSPRequestMessageQueue::Clear()
+{
+    while(!m_Queue.empty()) {
+        m_Queue.pop();
+    }
+    SetWaitingReponse(false);
+    m_pendingReplyMessages.clear();
+}
+
+LSP::RequestMessage::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(int msgid)
+{
+    if(m_pendingReplyMessages.empty()) { return LSP::RequestMessage::Ptr_t(nullptr); }
+    if(m_pendingReplyMessages.count(msgid) == 0) { return LSP::RequestMessage::Ptr_t(nullptr); }
+    LSP::RequestMessage::Ptr_t msgptr = m_pendingReplyMessages[msgid];
+    m_pendingReplyMessages.erase(msgid);
+    return msgptr;
 }

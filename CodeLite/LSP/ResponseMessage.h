@@ -32,8 +32,7 @@ public:
         return *this;
     }
     int GetId() const { return m_id; }
-
-    bool IsOk() const { return m_json != nullptr; }
+    bool IsOk() const { return m_json && m_json->isOk(); }
     bool Has(const wxString& property) const;
     JSONItem Get(const wxString& property) const;
     

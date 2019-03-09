@@ -41,10 +41,9 @@ std::string LSP::RequestMessage::ToString() const
     return ss.str();
 }
 
-void LSP::RequestMessage::Send(Sender* sender) const
+LSP::RequestMessage::Ptr_t LSP::RequestMessage::MakeRequest(LSP::RequestMessage* message_ptr)
 {
-    std::string buffer = ToString();
-    clDEBUG() << "Sending message to language server:";
-    clDEBUG() << buffer;
-    sender->Send(buffer);
+    LSP::RequestMessage::Ptr_t p(message_ptr);
+    p->BuildUID();
+    return p;
 }

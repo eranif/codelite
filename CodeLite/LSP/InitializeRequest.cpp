@@ -13,7 +13,7 @@ LSP::InitializeRequest::~InitializeRequest() {}
 JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
 {
     JSONItem json = RequestMessage::ToJSON(name);
-    
+
     // add the 'params'
     JSONItem params = JSONItem::createObject("params");
     json.append(params);
@@ -31,4 +31,10 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     JSONItem textDocument = JSONItem::createObject("textDocument");
     capabilities.append(textDocument);
     return json;
+}
+
+void LSP::InitializeRequest::BuildUID()
+{
+    if(!m_uuid.IsEmpty()) { return; }
+    m_uuid << GetMethod() << ":" << GetProcessId() << GetRootUri();
 }

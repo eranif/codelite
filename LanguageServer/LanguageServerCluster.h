@@ -21,6 +21,7 @@ protected:
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
 
     void OnSymbolFound(LSPEvent& event);
+    void OnCompletionReady(LSPEvent& event);
 
 public:
     LanguageServerCluster();

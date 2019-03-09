@@ -12,9 +12,30 @@
 #include <queue>
 #include <string>
 #include "LSP/RequestMessage.h"
+#include <unordered_map>
 
 class IEditor;
-class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
+class WXDLLIMPEXP_SDK LSPRequestMessageQueue
+{
+    std::queue<LSP::RequestMessage::Ptr_t> m_Queue;
+    std::unordered_map<int, LSP::RequestMessage::Ptr_t> m_pendingReplyMessages;
+    bool m_waitingReponse = false;
+
+public:
+    LSPRequestMessageQueue() {}
+    virtual ~LSPRequestMessageQueue() {}
+    
+    LSP::RequestMessage::Ptr_t TakePendingReplyMessage(int msgid);
+    void Push(LSP::RequestMessage::Ptr_t message);
+    void Pop();
+    LSP::RequestMessage::Ptr_t Get();
+    void Clear();
+    bool IsEmpty() const { return m_Queue.empty(); }
+    void SetWaitingReponse(bool waitingReponse) { this->m_waitingReponse = waitingReponse; }
+    bool IsWaitingReponse() const { return m_waitingReponse; }
+};
+
+class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 {
     enum eState {
         kUnInitialized,
@@ -29,13 +50,15 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public LSP::Sender
     bool m_goingDown = false;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
-    std::unordered_map<int, LSP::RequestMessage::Ptr_t> m_requestsSent;
     wxString m_outputBuffer;
     wxString m_workspaceFolder;
 
     // initialization
     eState m_state = kUnInitialized;
     int m_initializeRequestID = wxNOT_FOUND;
+
+    // Parsing queue
+    LSPRequestMessageQueue m_Queue;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -55,6 +78,7 @@ protected:
     bool ShouldHandleFile(const wxFileName& fn) const;
     bool ShouldHandleFile(IEditor* editor) const;
     wxString GetLogPrefix() const;
+    void ProcessQueue();
     static wxString GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullName()); }
     static wxString GetLanguageId(const wxString& fn);
 
@@ -78,13 +102,18 @@ protected:
      * @brief report a file-save notification
      */
     void SendSaveRequest(const wxFileName& filename, const wxString& fileContent);
-    
+
     /**
      * @brief request for a code completion at a given doc/position
      */
     void SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column);
 
     void DoStart();
+
+    /**
+     * @brief add message to the outgoing queue
+     */
+    void QueueMessage(LSP::RequestMessage::Ptr_t request);
 
 public:
     LanguageServerProtocol(const wxString& name, wxEvtHandler* owner);
@@ -95,20 +124,15 @@ public:
         this->m_name = name;
         return *this;
     }
-    
+
     const wxString& GetName() const { return m_name; }
     bool IsInitialized() const { return (m_state == kInitialized); }
-    
+
     /**
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */
     static const std::set<wxString>& GetSupportedLanguages();
     bool CanHandle(const wxFileName& filename) const;
-
-    /**
-     * @brief pure method
-     */
-    virtual void Send(const std::string& message);
 
     /**
      * @brief start a server for an executable
@@ -137,17 +161,16 @@ public:
      * @param column the current caret column (0 based)
      */
     void FindDefinition(const wxFileName& filename, size_t line, size_t column);
-    
+
     /**
      * @brief perform code completion for a given editor
      */
     void CodeComplete(IEditor* editor);
-    
+
     /**
      * @brief manually load file into the server
      */
-    void OpenEditor(IEditor *editor);
-    
+    void OpenEditor(IEditor* editor);
 };
 
 #endif // CLLANGUAGESERVER_H

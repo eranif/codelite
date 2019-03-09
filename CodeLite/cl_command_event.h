@@ -35,6 +35,7 @@
 #include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
+#include "LSP/CompletionItem.h"
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -228,6 +229,7 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     wxCodeCompletionBoxEntry::Ptr_t m_entry;
     wxArrayString m_definitions;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
+    LSP::CompletionItem::eTriggerKind m_triggerKind = LSP::CompletionItem::kTriggerUnknown;
 
 public:
     clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -249,6 +251,9 @@ public:
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
     wxCodeCompletionBoxEntry::Vec_t& GetEntries() { return m_entries; }
 
+    const LSP::CompletionItem::eTriggerKind& GetTriggerKind() const { return m_triggerKind; }
+    void SetTriggerKind(const LSP::CompletionItem::eTriggerKind& triggerKind) { this->m_triggerKind = triggerKind; }
+    
     /**
      * @brief return the Editor object
      */

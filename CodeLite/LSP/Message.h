@@ -14,7 +14,7 @@ class WXDLLIMPEXP_CL Message : public LSP::Serializable
 
 public:
     static int GetNextID();
-    
+
 public:
     Message();
     virtual ~Message();
@@ -25,6 +25,8 @@ public:
      * @brief serialize this message into string
      */
     virtual std::string ToString() const = 0;
+
+    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Message*>(this)); }
 };
 
 }; // namespace LSP

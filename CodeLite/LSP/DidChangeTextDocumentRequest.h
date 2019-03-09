@@ -12,6 +12,7 @@ class WXDLLIMPEXP_CL DidChangeTextDocumentRequest : public LSP::RequestMessage
 public:
     DidChangeTextDocumentRequest(const wxFileName& filename, const wxString& fileContent);
     virtual ~DidChangeTextDocumentRequest();
+    void BuildUID();
 };
 
 }; // namespace LSP

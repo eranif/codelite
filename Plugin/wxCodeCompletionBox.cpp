@@ -47,25 +47,53 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("class"));              // 0
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("struct"));             // 1
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("namespace"));          // 2
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public"));      // 3
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("typedef"));            // 4
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_private"));     // 5
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public"));      // 6
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_protected"));   // 7
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_private"));   // 8
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_public"));    // 9
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("class")); // 0
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindClass, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("struct")); // 1
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindStruct, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("namespace")); // 2
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindModule, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public")); // 3
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindVariable, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("typedef")); // 4
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindReference, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_private")); // 5
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindVariable, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public")); // 6
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindVariable, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("member_protected")); // 7
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindVariable, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_private")); // 8
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("function_public"));  // 9
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindFunction, m_bitmaps.size() - 1 });
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindMethod, m_bitmaps.size() - 1 });
+
     m_bitmaps.push_back(bmpLoader->LoadBitmap("function_protected")); // 10
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("macro"));              // 11
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 12
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("enumerator"));         // 13
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));           // 14
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));             // 15
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));          // 16
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("cpp_keyword"));        // 17
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum"));               // 18
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("macro")); // 11
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindText, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum")); // 12
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindEnum, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enumerator")); // 13
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindValue, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));    // 14
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));      // 15
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));   // 16
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("cpp_keyword")); // 17
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindKeyword, m_bitmaps.size() - 1 });
+
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("enum")); // 18
 
     InitializeDefaultBitmaps();
     // Set the control width
@@ -823,4 +851,32 @@ wxString wxCodeCompletionBox::GetFilter()
     int end = m_stc->GetCurrentPos();
 
     return m_stc->GetTextRange(start, end);
+}
+
+void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions)
+{
+    ShowCompletionBox(ctrl, LSPCompletionsToEntries(completions));
+}
+
+wxCodeCompletionBoxEntry::Vec_t
+wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& completions)
+{
+    wxCodeCompletionBoxEntry::Vec_t entries;
+    for(size_t i = 0; i < completions.size(); ++i) {
+        LSP::CompletionItem::Ptr_t completion = completions[i];
+        wxString text = completion->GetLabel();
+        int imgIndex = GetImageId(completion);
+        wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
+        entry->SetComment(completion->GetDetail());
+        entries.push_back(entry);
+    }
+    return entries;
+}
+
+int wxCodeCompletionBox::GetImageId(LSP::CompletionItem::Ptr_t entry) const
+{
+    if(m_lspCompletionItemImageIndexMap.count(entry->GetKind())) {
+        return m_lspCompletionItemImageIndexMap.find(entry->GetKind())->second;
+    }
+    return m_lspCompletionItemImageIndexMap.find(LSP::CompletionItem::kKindText)->second;
 }

@@ -421,7 +421,7 @@ clEditor::~clEditor()
         eventClose.SetFileName(GetFileName().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(eventClose);
     }
-    
+
     wxDELETE(m_richTooltip);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
 
@@ -1145,7 +1145,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_WORD_ASSIST) {
             if(GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
                pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen()) {
-                CompleteWord();
+                CompleteWord(LSP::CompletionItem::kTriggerKindInvoked);
             }
         }
     }
@@ -1647,7 +1647,7 @@ wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition
 // layer (outside of the library) to provide the input arguments for
 // the CodeParser library
 //---------------------------------------------------------------------------
-void clEditor::CompleteWord(bool onlyRefresh)
+void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool onlyRefresh)
 {
     if(EventNotifier::Get()->IsEventsDiabled()) return;
     if(AutoCompActive()) return; // Don't clobber the boxes
@@ -1664,6 +1664,7 @@ void clEditor::CompleteWord(bool onlyRefresh)
                 evt.SetEditor(this);
                 evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
                 evt.SetEventObject(this);
+                evt.SetTriggerKind(triggerKind);
                 EventNotifier::Get()->ProcessEvent(evt);
                 return;
             }
@@ -1675,7 +1676,7 @@ void clEditor::CompleteWord(bool onlyRefresh)
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor(this);
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-
+    evt.SetTriggerKind(triggerKind);
     evt.SetEventObject(this);
 
     if(EventNotifier::Get()->ProcessEvent(evt)) {
@@ -1703,6 +1704,7 @@ void clEditor::CodeComplete(bool refreshingList)
     if(!refreshingList) {
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());
+        evt.SetTriggerKind(LSP::CompletionItem::kTriggerCharacter);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetEventObject(this);
         evt.SetEditor(this);
@@ -1717,7 +1719,7 @@ void clEditor::CodeComplete(bool refreshingList)
         }
 
     } else {
-        CompleteWord();
+        CompleteWord(LSP::CompletionItem::kTriggerCharacter);
     }
 }
 
@@ -4503,7 +4505,7 @@ bool clEditor::SelectRange(const LSP::Range& range)
     ClearSelections();
     int startPos = PositionFromLine(range.GetStart().GetLine());
     startPos += range.GetStart().GetCharacter();
-    
+
     int endPos = PositionFromLine(range.GetEnd().GetLine());
     endPos += range.GetEnd().GetCharacter();
     CenterLine(LineFromPosition(startPos), GetColumn(startPos));
@@ -5536,7 +5538,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     }
 
     SetReloadingFile(false);
-    
+
     // Notify about file-reload
     clCommandEvent e(wxEVT_FILE_LOADED);
     e.SetFileName(GetFileName().GetFullPath());

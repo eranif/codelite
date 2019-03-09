@@ -13,9 +13,9 @@ class WXDLLIMPEXP_CL DidOpenTextDocumentRequest : public LSP::RequestMessage
 public:
     DidOpenTextDocumentRequest(const wxFileName& filename, const wxString& text, const wxString& langugage);
     virtual ~DidOpenTextDocumentRequest();
-    void OnReponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    void BuildUID();
 };
 
-} // namespace LSP
+}; // namespace LSP
 
 #endif // DIDOPENTEXTDOCUMENTREQUEST_H

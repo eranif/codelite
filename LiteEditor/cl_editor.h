@@ -47,6 +47,7 @@
 #include <wx/bitmap.h>
 #include <wx/cmndata.h>
 #include <wx/stc/stc.h>
+#include "LSP/CompletionItem.h"
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -353,7 +354,7 @@ public:
      */
     void SetEOL();
 
-    void CompleteWord(bool onlyRefresh = false);
+    void CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool onlyRefresh = false);
 
     /**
      * \brief chage the case of the current selection. If selection is empty,

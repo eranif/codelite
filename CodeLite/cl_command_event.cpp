@@ -118,6 +118,7 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     m_entry = src.m_entry;
     m_definitions = src.m_definitions;
     m_entries = src.m_entries;
+    m_triggerKind = src.m_triggerKind;
     return *this;
 }
 

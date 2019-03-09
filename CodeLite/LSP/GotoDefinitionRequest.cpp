@@ -10,13 +10,13 @@ LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxFileName& filename, si
     m_params.reset(new TextDocumentPositionParams());
     m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
+    SetNeedsReply(true);
 }
 
 LSP::GotoDefinitionRequest::~GotoDefinitionRequest() {}
 
-void LSP::GotoDefinitionRequest::OnReponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
-    // {"id":2,"jsonrpc":"2.0","result":[{"range":{"end":{"character":38,"line":73},"start":{"character":32,"line":73}},"uri":"file:///usr/include/c%2b%2b/6/bits/stringfwd.h"},{"range":{"end":{"character":38,"line":73},"start":{"character":32,"line":73}},"uri":"file:///usr/lib/gcc/x86_64-linux-gnu/6.3.0/../../../../include/c%2b%2b/6.3.0/bits/stringfwd.h"}]}
     JSONItem result = response.Get("result");
     if(!result.isOk()) { return; }
     LSP::Location loc;
@@ -30,4 +30,11 @@ void LSP::GotoDefinitionRequest::OnReponse(const LSP::ResponseMessage& response,
     LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
     definitionEvent.SetLocation(loc);
     owner->AddPendingEvent(definitionEvent);
+}
+
+void LSP::GotoDefinitionRequest::BuildUID()
+{
+    if(!m_uuid.IsEmpty()) { return; }
+    m_uuid << GetMethod() << ":"
+           << m_params->As<TextDocumentPositionParams>()->GetTextDocument().GetFilename().GetFullPath();
 }

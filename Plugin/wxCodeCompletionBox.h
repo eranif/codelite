@@ -38,6 +38,8 @@
 #include "entry.h"
 #include <wx/event.h>
 #include <wx/bitmap.h>
+#include "LSP/CompletionItem.h"
+#include <wxStringHash.h>
 
 class CCBoxTipWindow;
 class wxCodeCompletionBox;
@@ -62,7 +64,7 @@ protected:
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     wxCodeCompletionBox::BmpVec_t m_bitmaps;
     static wxCodeCompletionBox::BmpVec_t m_defaultBitmaps;
-
+    std::unordered_map<int, int> m_lspCompletionItemImageIndexMap;
     int m_index;
     wxString m_displayedTip;
     wxStyledTextCtrl* m_stc;
@@ -143,6 +145,11 @@ public:
      */
     void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags);
 
+    /**
+     * @brief show the completion box  (Language Server Protocol support)
+     */
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions);
+
     void SetBitmaps(const wxCodeCompletionBox::BmpVec_t& bitmaps) { this->m_bitmaps = bitmaps; }
     const wxCodeCompletionBox::BmpVec_t& GetBitmaps() const { return m_bitmaps; }
 
@@ -177,7 +184,9 @@ protected:
     // For backward compatibility, we support initializing the list with TagEntryPtrVector_t
     // These 2 functions provide conversion between wxCodeCompletionBoxEntry and TagEntryPtr
     wxCodeCompletionBoxEntry::Vec_t TagsToEntries(const TagEntryPtrVector_t& tags);
+    wxCodeCompletionBoxEntry::Vec_t LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& completions);
     static int GetImageId(TagEntryPtr entry);
+    int GetImageId(LSP::CompletionItem::Ptr_t entry) const;
     void DoDisplayTipWindow();
     void DoDestroyTipWindow();
 

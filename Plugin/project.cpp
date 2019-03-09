@@ -1274,21 +1274,6 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
-    // Clear the backticks cache
-    //    s_backticks.clear();
-
-    // Get the compile options
-    wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
-    wxArrayString projectCompileOptionsArr = ::wxStringTokenize(projectCompileOptions, ";", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < projectCompileOptionsArr.GetCount(); ++i) {
-        wxString cmpOption(projectCompileOptionsArr.Item(i));
-        cmpOption.Trim().Trim(false);
-
-        // expand backticks, if the option is not a backtick the value remains
-        // unchanged
-        commandLine << " " << DoExpandBacktick(cmpOption) << " ";
-    }
-
     // Add the macros
     wxArrayString prepArr;
     buildConf->GetPreprocessor(prepArr);
@@ -1308,7 +1293,19 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
 
         commandLine << "-I" << incl_path << " ";
     }
+    
+    // Get the compile options
+    wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
+    wxArrayString projectCompileOptionsArr = ::wxStringTokenize(projectCompileOptions, ";", wxTOKEN_STRTOK);
+    for(size_t i = 0; i < projectCompileOptionsArr.GetCount(); ++i) {
+        wxString cmpOption(projectCompileOptionsArr.Item(i));
+        cmpOption.Trim().Trim(false);
 
+        // expand backticks, if the option is not a backtick the value remains
+        // unchanged
+        commandLine << " " << DoExpandBacktick(cmpOption) << " ";
+    }
+    
     commandLine.Trim().Trim(false);
     commandLine.Replace("\n", " ");
     commandLine.Replace("\r", " ");

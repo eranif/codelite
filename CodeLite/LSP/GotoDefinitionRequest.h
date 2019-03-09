@@ -22,7 +22,8 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
-    void OnReponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    void BuildUID();
 };
 };     // namespace LSP
 #endif // GOTODEFINITIONREQUEST_H

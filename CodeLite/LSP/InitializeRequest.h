@@ -26,6 +26,7 @@ public:
     int GetProcessId() const { return m_processId; }
     const wxString& GetRootUri() const { return m_rootUri; }
     JSONItem ToJSON(const wxString& name) const;
+    void BuildUID();
 };
 
 }; // namespace LSP

@@ -12,6 +12,7 @@ class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::RequestMessage
 public:
     DidCloseTextDocumentRequest(const wxFileName& filename);
     virtual ~DidCloseTextDocumentRequest();
+    void BuildUID();
 };
 
 }; // namespace LSP

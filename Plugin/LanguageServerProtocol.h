@@ -168,6 +168,11 @@ public:
      * @brief manually load file into the server
      */
     void OpenEditor(IEditor* editor);
+    
+    /**
+     * @brief tell the server to close editor
+     */
+    void CloseEditor(IEditor* editor);
 };
 
 #endif // CLLANGUAGESERVER_H

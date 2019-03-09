@@ -42,11 +42,7 @@ public:
      * @brief this method will get called by the protocol for handling the response.
      * Override it in the various requests
      */
-    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
-    {
-        wxUnusedVar(response);
-        wxUnusedVar(owner);
-    }
+    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 
     void SetNeedsReply(bool needsReply) { this->m_needsReply = needsReply; }
     bool IsNeedsReply() const { return m_needsReply; }

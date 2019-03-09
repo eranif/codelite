@@ -58,6 +58,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     m_bitmaps.push_back(bmpLoader->LoadBitmap("member_public")); // 3
     m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindVariable, m_bitmaps.size() - 1 });
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindField, m_bitmaps.size() - 1 });
 
     m_bitmaps.push_back(bmpLoader->LoadBitmap("typedef")); // 4
     m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindReference, m_bitmaps.size() - 1 });

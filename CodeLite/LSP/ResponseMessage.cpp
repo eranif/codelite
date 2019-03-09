@@ -21,14 +21,14 @@ LSP::ResponseMessage::ResponseMessage(wxString& message)
     }
     
     // Remove the message from the buffer
-    wxString jsonMessage = message.Mid(0, headersSize + nLen);
+    m_jsonMessage = message.Mid(0, headersSize + nLen);
     message.Remove(0, headersSize + nLen);
     
     // Remove the headers part from the JSON message
-    jsonMessage.Remove(0, headersSize);
+    m_jsonMessage.Remove(0, headersSize);
     
     // a valid JSON-RPC response
-    m_json.reset(new JSON(jsonMessage));
+    m_json.reset(new JSON(m_jsonMessage));
     if(!m_json->isOk()) {
         m_json.reset(nullptr);
     } else {

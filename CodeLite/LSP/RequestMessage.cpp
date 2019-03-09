@@ -47,3 +47,9 @@ LSP::RequestMessage::Ptr_t LSP::RequestMessage::MakeRequest(LSP::RequestMessage*
     p->BuildUID();
     return p;
 }
+
+void LSP::RequestMessage::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+{
+    wxUnusedVar(owner);
+    wxUnusedVar(response);
+}

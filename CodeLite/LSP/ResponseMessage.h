@@ -12,6 +12,7 @@ class WXDLLIMPEXP_CL ResponseMessage : public LSP::Message
 {
     int m_id = wxNOT_FOUND;
     wxSharedPtr<JSON> m_json;
+    wxString m_jsonMessage;
 
 protected:
     /**
@@ -31,11 +32,12 @@ public:
         this->m_id = id;
         return *this;
     }
+    const wxString& GetMessageString() const { return m_jsonMessage; }
     int GetId() const { return m_id; }
     bool IsOk() const { return m_json && m_json->isOk(); }
     bool Has(const wxString& property) const;
     JSONItem Get(const wxString& property) const;
-    
+
     /**
      * @brief is this a "textDocument/publishDiagnostics" message?
      */

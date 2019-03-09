@@ -10,6 +10,7 @@
 #include "LSP/CompletionRequest.h"
 #include "LSP/InitializeRequest.h"
 #include "LSP/ResponseMessage.h"
+#include "LSP/ResponseError.h"
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "fileextmanager.h"
@@ -166,27 +167,52 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
     m_Queue.SetWaitingReponse(false);
 
     while(true) {
+        // Did we get a complete message?
         LSP::ResponseMessage res(m_outputBuffer);
         if(res.IsOk()) {
             clDEBUG() << GetLogPrefix() << "received a complete message";
 
             if(IsInitialized()) {
                 LSP::RequestMessage::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
-                if(msg_ptr) {
-                    // let the originating request to handle it
-                    msg_ptr->OnResponse(res, m_owner);
+                // Is this an error message?
+                if(res.Has("error")) {
+                    LSP::ResponseError errMsg(res.GetMessageString());
+                    switch(errMsg.GetErrorCode()) {
+                    case LSP::ResponseError::kErrorCodeInternalError:
+                    case LSP::ResponseError::kErrorCodeInvalidRequest: {
+                        // Restart this server
+                        LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
+                        restartEvent.SetServerName(GetName());
+                        AddPendingEvent(restartEvent);
+                        break;
+                    }
+                    case LSP::ResponseError::kErrorCodeInvalidParams: {
+                        // Recreate this AST (in other words: reparse), by default we reparse the current editor
+                        LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
+                        reparseEvent.SetServerName(GetName());
+                        AddPendingEvent(reparseEvent);
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                } else {
+                    if(msg_ptr) {
+                        // let the originating request to handle it
+                        msg_ptr->OnResponse(res, m_owner);
 
-                    // If we got more in the buffer, try to process another message
-                    if(!m_outputBuffer.IsEmpty()) { continue; }
+                        // If we got more in the buffer, try to process another message
+                        if(!m_outputBuffer.IsEmpty()) { continue; }
 
-                } else if(res.IsPushDiagnostics()) {
-                    // Get the URI
-                    JSONItem params = res.Get("params");
-                    JSONItem uri = params.namedObject("uri");
-                    wxFileName fn(wxFileSystem::URLToFileName(uri.toString()));
-                    fn.Normalize();
-                    clGetManager()->SetStatusMessage(
-                        wxString() << "[LSP] parsing of file: " << fn.GetFullName() << " is completed", 1);
+                    } else if(res.IsPushDiagnostics()) {
+                        // Get the URI
+                        JSONItem params = res.Get("params");
+                        JSONItem uri = params.namedObject("uri");
+                        wxFileName fn(wxFileSystem::URLToFileName(uri.toString()));
+                        fn.Normalize();
+                        clGetManager()->SetStatusMessage(
+                            wxString() << "[LSP] parsing of file: " << fn.GetFullName() << " is completed", 1);
+                    }
                 }
             } else {
                 // we only accept initialization responses here
@@ -473,6 +499,14 @@ void LanguageServerProtocol::ProcessQueue()
         m_Queue.SetWaitingReponse(true);
         m_Queue.Pop();
         if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
+    }
+}
+
+void LanguageServerProtocol::CloseEditor(IEditor* editor)
+{
+    if(!IsInitialized()) { return; }
+    if(editor && ShouldHandleFile(editor)) {
+        SendCloseRequest(editor->GetFileName());
     }
 }
 

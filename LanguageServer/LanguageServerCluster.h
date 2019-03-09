@@ -7,6 +7,7 @@
 #include "cl_command_event.h"
 #include <wx/sharedptr.h>
 #include "LSP/LSPEvent.h"
+#include "LanguageServerEntry.h"
 
 class LanguageServerCluster : public wxEvtHandler
 {
@@ -15,13 +16,18 @@ class LanguageServerCluster : public wxEvtHandler
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
 
-    void OnLSPInitialized(LSPEvent& event);
-
 protected:
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
+    LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
+    void RestartServer(const wxString& name);
+    void StartServer(const LanguageServerEntry& entry);
 
+protected:
     void OnSymbolFound(LSPEvent& event);
     void OnCompletionReady(LSPEvent& event);
+    void OnReparseNeeded(LSPEvent& event);
+    void OnRestartNeeded(LSPEvent& event);
+    void OnLSPInitialized(LSPEvent& event);
 
 public:
     LanguageServerCluster();

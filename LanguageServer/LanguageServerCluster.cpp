@@ -16,6 +16,8 @@ LanguageServerCluster::LanguageServerCluster()
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
+    Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
+    Bind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -24,6 +26,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
+    Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
+    Unbind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -42,15 +46,7 @@ void LanguageServerCluster::Reload()
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
-        if(entry.IsEnabled()) {
-            LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
-            wxString command = entry.GetExepath();
-            ::WrapWithQuotes(command);
-            if(!entry.GetArgs().IsEmpty()) { command << " " << entry.GetArgs(); }
-            lsp->Start(command, entry.GetWorkingDirectory(), entry.GetLanguages());
-            m_servers.insert({ entry.GetName(), lsp });
-            lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
-        }
+        StartServer(entry);
     }
 }
 
@@ -96,10 +92,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     if(editor) { editor->SelectRange(location.GetRange()); }
 }
 
-void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
-{
-    wxUnusedVar(event);
-}
+void LanguageServerCluster::OnLSPInitialized(LSPEvent& event) { wxUnusedVar(event); }
 
 void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
 {
@@ -117,9 +110,58 @@ void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
     const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
-    
-    IEditor *editor = clGetManager()->GetActiveEditor();
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(clGetManager()->GetActiveEditor()->GetCtrl(), items);
+}
+
+void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
+{
+    LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
+    if(!server) { return; }
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    server->CloseEditor(editor);
+    server->OpenEditor(editor);
+}
+
+void LanguageServerCluster::OnRestartNeeded(LSPEvent& event) { RestartServer(event.GetServerName()); }
+
+LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxString& name)
+{
+    if(m_servers.count(name) == 0) { return LanguageServerProtocol::Ptr_t(nullptr); }
+    return m_servers[name];
+}
+
+void LanguageServerCluster::RestartServer(const wxString& name)
+{
+    LanguageServerProtocol::Ptr_t server = GetServerByName(name);
+    if(!server) { return; }
+    clDEBUG() << "Restarting LSP server:" << name;
+    server->Stop(true);
+
+    // Remove the old instance
+    m_servers.erase(name);
+
+    // Create new instance
+    if(LanguageServerConfig::Get().GetServers().count(name) == 0) { return; }
+    const LanguageServerEntry& entry = LanguageServerConfig::Get().GetServers().at(name);
+    StartServer(entry);
+}
+
+void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
+{
+    if(entry.IsEnabled()) {
+        LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
+        wxString command = entry.GetExepath();
+        ::WrapWithQuotes(command);
+        if(!entry.GetArgs().IsEmpty()) { command << " " << entry.GetArgs(); }
+        lsp->Start(command, entry.GetWorkingDirectory(), entry.GetLanguages());
+        m_servers.insert({ entry.GetName(), lsp });
+        lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
+    }
 }

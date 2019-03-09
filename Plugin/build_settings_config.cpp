@@ -373,3 +373,15 @@ CompilerPtrVec_t BuildSettingsConfig::GetAllCompilers(const wxString& family) co
     });
     return all;
 }
+
+std::unordered_map<wxString, wxArrayString> BuildSettingsConfig::GetCompilersGlobalPaths() const
+{
+    std::unordered_map<wxString, wxArrayString> M;
+    wxArrayString compilers = GetAllCompilersNames();
+    for(const wxString& name : compilers) {
+        CompilerPtr cmp = GetCompiler(name);
+        if(!cmp) { continue; }
+        M.insert({ name, cmp->GetDefaultIncludePaths() });
+    }
+    return M;
+}

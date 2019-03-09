@@ -4683,6 +4683,10 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
     e.Skip();
+    
+    // Generate compile_commands.json file
+    ManagerST::Get()->GenerateCompileCommands();
+    
     GetStatusBar()->SetMessage(_("Done"));
     GetWorkspacePane()->ClearProgress();
 

@@ -31,7 +31,6 @@
 #include "cl_editor.h"
 #include "cl_command_event.h"
 #include <wx/event.h>
-#include "CompileCommandsCreateor.h"
 #include "CxxPreProcessorThread.h"
 #include "CxxPreProcessorCache.h"
 #include "CxxUsingNamespaceCollectorThread.h"

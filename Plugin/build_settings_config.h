@@ -38,6 +38,7 @@
 #include "cl_config.h"
 #include <map>
 #include <wxStringHash.h>
+#include <macros.h>
 
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)
@@ -76,6 +77,11 @@ protected:
 public:
     BuildSettingsConfig();
     virtual ~BuildSettingsConfig();
+
+    /**
+     * @brief return a map for the available compilers and their global include paths
+     */
+    std::unordered_map<wxString, wxArrayString> GetCompilersGlobalPaths() const;
 
     /**
      * Load the configuration file

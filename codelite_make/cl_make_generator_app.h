@@ -20,11 +20,12 @@ protected:
     int m_exitCode;
     eCommandType m_commandType;
     wxString m_buildSettingsXml;
+    bool m_generateCompileCommands;
 
 protected:
     bool DoParseCommandLine(wxCmdLineParser& parser);
     void DoExecCommand(const wxString& command);
-
+    void DoGenerateCompileCommands();
     void Notice(const wxString& msg);
     void Error(const wxString& msg);
     void Info(const wxString& msg);

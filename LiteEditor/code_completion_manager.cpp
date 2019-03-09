@@ -47,6 +47,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
 #include "manager.h"
+#include "CompileCommandsCreateor.h"
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -270,10 +271,7 @@ void CodeCompletionManager::GotoImpl(clEditor* editor)
     if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangGotoImpl(editor); }
 }
 
-void CodeCompletionManager::DoClangGotoImpl(clEditor* editor)
-{
-    wxUnusedVar(editor);
-}
+void CodeCompletionManager::DoClangGotoImpl(clEditor* editor) { wxUnusedVar(editor); }
 
 bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
 {
@@ -290,10 +288,7 @@ bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
     return false;
 }
 
-void CodeCompletionManager::DoClangGotoDecl(clEditor* editor)
-{
-    wxUnusedVar(editor);
-}
+void CodeCompletionManager::DoClangGotoDecl(clEditor* editor) { wxUnusedVar(editor); }
 
 bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
 {
@@ -351,7 +346,7 @@ void CodeCompletionManager::OnBuildStarted(clBuildEvent& e)
 void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event)
 {
     event.Skip();
-    clDEBUG() <<"-- Code Completion Manager: process file" << event.GetFileName();
+    clDEBUG() << "-- Code Completion Manager: process file" << event.GetFileName();
     clMainFrame::Get()->SetStatusText("Ready");
 }
 

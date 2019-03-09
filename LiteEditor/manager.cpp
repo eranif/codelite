@@ -3402,7 +3402,10 @@ void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
 void Manager::GenerateCompileCommands()
 {
     if(clCxxWorkspaceST::Get()->IsOpen()) {
-        CompileCommandsCreateor* job = new CompileCommandsCreateor(clCxxWorkspaceST::Get()->GetWorkspaceFileName());
+        wxString configName =
+            clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
+        CompileCommandsCreateor* job =
+            new CompileCommandsCreateor(clCxxWorkspaceST::Get()->GetWorkspaceFileName(), configName);
         JobQueueSingleton::Instance()->PushJob(job);
         clMainFrame::Get()->GetStatusBar()->SetMessage(_("Generating compile_commands.json file..."));
     }

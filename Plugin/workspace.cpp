@@ -44,6 +44,7 @@
 #include <wx/tokenzr.h>
 #include "file_logger.h"
 #include "macromanager.h"
+#include "build_settings_config.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -999,23 +1000,17 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
 {
     // Build the global compiler paths, we will need this later on...
     wxStringMap_t compilersGlobalPaths;
-    wxFileName globalCompilersFile(clStandardPaths::Get().GetUserDataDir(), "compilers_paths.json");
-    JSON root(globalCompilersFile);
-    if(root.isOk()) {
-        JSONItem arr = root.toElement();
-        int count = arr.arraySize();
-        for(int i = 0; i < count; ++i) {
-            JSONItem c = arr.arrayItem(i);
-            wxString compiler_name = c.namedObject("name").toString();
-            wxArrayString pathsArr = c.namedObject("paths").toArrayString();
-            wxString paths;
-            std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
-                path.Trim().Trim(false);
-                if(path.EndsWith("\\")) { path.RemoveLast(); }
-                paths << "-I" << path << " ";
-            });
-            compilersGlobalPaths.insert({ compiler_name, paths });
-        }
+    std::unordered_map<wxString, wxArrayString> pathsMap = BuildSettingsConfigST::Get()->GetCompilersGlobalPaths();
+    for(const auto& vt : pathsMap) {
+        wxString compiler_name = vt.first;
+        wxArrayString pathsArr = vt.second;
+        wxString paths;
+        std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
+            path.Trim().Trim(false);
+            if(path.EndsWith("\\")) { path.RemoveLast(); }
+            paths << "-I" << path << " ";
+        });
+        compilersGlobalPaths.insert({ compiler_name, paths });
     }
 
     // Check if the active project is using custom build

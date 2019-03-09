@@ -46,6 +46,10 @@ void CompileCommandsCreateor::Process(wxThread* thread)
     wxUnusedVar(thread);
     
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
+#ifdef __WXMSW__
+    codeliteMake.SetExt("exe");
+#endif
+
     if(!codeliteMake.FileExists()) {
         clWARNING() << "Could not find" << codeliteMake;
         return;

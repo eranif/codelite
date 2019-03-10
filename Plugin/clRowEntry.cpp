@@ -335,6 +335,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             // The expand button is only make sense for the first cell
             if(HasChildren()) {
                 wxRect buttonRect = GetButtonRect();
+                buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
                 if(m_tree->IsNativeTheme() && !IS_OSX) {
                     int flags = wxCONTROL_CURRENT;
@@ -346,7 +347,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                     modButtonRect = modButtonRect.CenterIn(buttonRect);
                     wxRendererNative::Get().DrawTreeItemButton(win, dc, modButtonRect, flags);
                 } else {
-                    wxPoint pts[3];
                     wxRect buttonRect = GetButtonRect();
                     if(textXOffset >= cellRect.GetWidth()) {
                         // if we cant draw the button (off screen etc)
@@ -354,21 +354,23 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                         continue;
                     }
                     buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
+                    wxRect tribtn = buttonRect;
+                    dc.SetPen(wxPen(buttonColour, 2));
                     if(IsExpanded()) {
-                        pts[0] = buttonRect.GetTopRight();
-                        pts[1] = buttonRect.GetBottomRight();
-                        pts[2] = buttonRect.GetBottomLeft();
-                        dc.SetBrush(buttonColour);
-                        dc.SetPen(buttonColour);
-                        dc.DrawPolygon(3, pts);
+                        tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
+                        tribtn = tribtn.CenterIn(buttonRect);
+                        wxPoint middleLeft = wxPoint((tribtn.GetLeft() + tribtn.GetWidth() / 2), tribtn.GetBottom());
+                        dc.DrawLine(tribtn.GetTopLeft(), middleLeft);
+                        dc.DrawLine(tribtn.GetTopRight(), middleLeft);
                     } else {
-                        pts[0] = buttonRect.GetTopLeft();
-                        pts[1] = buttonRect.GetBottomLeft();
-                        pts[2].x = buttonRect.GetRight();
-                        pts[2].y = (buttonRect.GetY() + (buttonRect.GetHeight() / 2));
-                        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-                        dc.SetPen(buttonColour);
-                        dc.DrawPolygon(3, pts);
+                        tribtn.SetWidth(tribtn.GetWidth() - tribtn.GetWidth() / 2);
+                        tribtn = tribtn.CenterIn(buttonRect);
+
+                        wxPoint middleLeft = wxPoint(tribtn.GetRight(), (tribtn.GetY() + (tribtn.GetHeight() / 2)));
+                        wxPoint p1 = tribtn.GetTopLeft();
+                        wxPoint p2 = tribtn.GetBottomLeft();
+                        dc.DrawLine(p1, middleLeft);
+                        dc.DrawLine(middleLeft, p2);
                     }
                 }
 

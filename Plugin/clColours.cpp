@@ -48,7 +48,8 @@ void clColours::InitFromColour(const wxColour& baseColour)
         headerVBorderColour = headerBgColour.ChangeLightness(90);
         selItemTextColour = itemTextColour;
         selItemBgColour = bgColour.ChangeLightness(80);
-        selbuttonColour = selItemTextColour;
+        selbuttonColour = selItemTextColour.ChangeLightness(120);
+        buttonColour = itemTextColour.ChangeLightness(120);
         selItemBgColourNoFocus = selItemBgColour.ChangeLightness(FACTOR_SEL_BG_COLOUR_NOFOCUS);
         grayText = itemTextColour.ChangeLightness(150);
     } else {
@@ -59,13 +60,12 @@ void clColours::InitFromColour(const wxColour& baseColour)
         headerVBorderColour = headerBgColour.ChangeLightness(112);
         selItemTextColour = itemTextColour;
         selItemBgColour = bgColour.ChangeLightness(130);
-        selbuttonColour = selItemTextColour;
+        selbuttonColour = selItemTextColour.ChangeLightness(80);
+        buttonColour = itemTextColour.ChangeLightness(80);
         selItemBgColourNoFocus = bgColour.ChangeLightness(115);
         grayText = itemTextColour.ChangeLightness(50);
     }
     itemBgColour = bgColour;
-
-    buttonColour = itemTextColour;
     matchedItemBgText = wxColour("#8BC34A");
     matchedItemText = wxColour("#FDFEFE");
     fillColour = bgColour;

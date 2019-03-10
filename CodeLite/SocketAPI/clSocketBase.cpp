@@ -188,7 +188,7 @@ void clSocketBase::Send(const wxMemoryBuffer& msg)
     int bytesLeft = msg.GetDataLen();
     while(bytesLeft) {
         if(SelectWriteMS(1000) == kTimeout) continue;
-        int bytesSent = ::send(m_socket, (const char*)pdata, bytesLeft, 0);
+        int bytesSent = ::write(m_socket, (const char*)pdata, bytesLeft);
         if(bytesSent <= 0) throw clSocketException("Send error: " + error());
         pdata += bytesSent;
         bytesLeft -= bytesSent;
@@ -307,7 +307,7 @@ void clSocketBase::WriteMessage(const wxString& message)
     memset(msglen, 0, sizeof(msglen));
     sprintf(msglen, "%010d", len);
     // send it without the NULL byte
-    if(::send(m_socket, msglen, sizeof(msglen) - 1, 0) < 0) {
+    if(::write(m_socket, msglen, sizeof(msglen) - 1) < 0) {
         throw clSocketException("Send error: " + error(errno));
     }
 

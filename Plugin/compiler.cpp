@@ -718,9 +718,9 @@ const wxArrayString& Compiler::GetBuiltinMacros()
                 definitions = pp.GetDefinitions();
             }
 
-            for(size_t i = 0; i < definitions.GetCount(); ++i) {
-                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
-            }
+//            for(size_t i = 0; i < definitions.GetCount(); ++i) {
+//                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
+//            }
 
             {
                 // Delete the file

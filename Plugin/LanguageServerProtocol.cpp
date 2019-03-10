@@ -499,6 +499,9 @@ void LanguageServerProtocol::ProcessQueue()
         m_Queue.SetWaitingReponse(true);
         m_Queue.Pop();
         if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
+    } else {
+        // failed to write? restart the process
+        m_process->Terminate();
     }
 }
 

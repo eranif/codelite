@@ -14,7 +14,7 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
     CxxPreProcessorScanner* scanner = NULL;
     try {
-        CL_DEBUG("Calling CxxPreProcessor::Parse for file '%s'\n", filename.GetFullPath());
+        //CL_DEBUG("Calling CxxPreProcessor::Parse for file '%s'\n", filename.GetFullPath());
         m_options = options;
         scanner = new CxxPreProcessorScanner(filename, m_options);
         // Remove the option so recursive scanner won't get it
@@ -73,7 +73,7 @@ CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& in
         // CL_DEBUG(" ... Checking include file: %s\n", fn.GetFullPath());
         struct stat buff;
         if((stat(tmpfile.mb_str(wxConvUTF8).data(), &buff) == 0)) {
-            CL_DEBUG1(" ==> Creating scanner for file: %s\n", tmpfile);
+            //CL_DEBUG1(" ==> Creating scanner for file: %s\n", tmpfile);
             wxFileName fixedFileName(tmpfile);
             if(fixedFileName.FileExists()) {
                 fixedFileName.Normalize(wxPATH_NORM_DOTS);
@@ -82,7 +82,7 @@ CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& in
                 outFile = fixedFileName;
                 return true;
             } else {
-                CL_DEBUG("Including a folder :/ : %s", fixedFileName.GetFullPath());
+                //CL_DEBUG("Including a folder :/ : %s", fixedFileName.GetFullPath());
             }
         }
     }

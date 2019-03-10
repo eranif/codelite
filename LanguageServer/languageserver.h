@@ -4,13 +4,21 @@
 #include "plugin.h"
 #include "cl_command_event.h"
 #include "LanguageServerCluster.h"
+#include "cl_command_event.h"
 
 class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
+    IProcess* m_process = nullptr;
 
 protected:
     void OnSettings(wxCommandEvent& e);
+
+protected:
+    void GenerateCompileCommands();
+    void OnBuildEnded(clBuildEvent& event);
+    void OnFilesAdded(clCommandEvent& event);
+    void OnWorkspaceLoaded(wxCommandEvent& event);
 
 public:
     LanguageServerPlugin(IManager* manager);

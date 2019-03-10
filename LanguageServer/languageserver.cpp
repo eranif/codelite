@@ -7,6 +7,8 @@
 #include "globals.h"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
+#include "cl_standard_paths.h"
+#include "CompileCommandsGenerator.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -41,6 +43,10 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // Start all the servers
     m_servers.reset(new LanguageServerCluster());
     m_servers->Reload();
+
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerPlugin::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &LanguageServerPlugin::OnFilesAdded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerPlugin::OnWorkspaceLoaded, this);
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -53,7 +59,7 @@ void LanguageServerPlugin::CreateToolBar(clToolBar* toolbar)
 
 void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-    wxMenu *menu = new wxMenu();
+    wxMenu* menu = new wxMenu();
     menu->Append(XRCID("language-server-settings"), _("Settings"));
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     pluginsMenu->Append(wxID_ANY, _("Language Server"), menu);
@@ -63,6 +69,10 @@ void LanguageServerPlugin::UnPlug()
 {
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
+
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerPlugin::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &LanguageServerPlugin::OnFilesAdded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerPlugin::OnWorkspaceLoaded, this);
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
@@ -73,4 +83,29 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
         dlg.Save();
         m_servers->Reload();
     }
+}
+
+void LanguageServerPlugin::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    GenerateCompileCommands();
+}
+
+void LanguageServerPlugin::GenerateCompileCommands()
+{
+    // this is a self destruct objecy
+    CompileCommandsGenerator* generator = new CompileCommandsGenerator();
+    generator->GenerateCompileCommands();
+}
+
+void LanguageServerPlugin::OnFilesAdded(clCommandEvent& event)
+{
+    event.Skip();
+    GenerateCompileCommands();
+}
+
+void LanguageServerPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
+{
+    event.Skip();
+    GenerateCompileCommands();
 }

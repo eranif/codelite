@@ -118,6 +118,7 @@ public:
     void GotoImpl(clEditor* editor);
     void GotoDecl(clEditor* editor);
     bool GetDefinitionsAndSearchPaths(clEditor* editor, wxArrayString& searchPaths, wxArrayString& definitions);
+    void UpdateParserPaths();
 };
 
 #endif // CODECOMPLETIONMANAGER_H

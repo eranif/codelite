@@ -634,3 +634,8 @@ size_t CodeCompletionManager::CreateBlockCommentKeywordsList(wxCodeCompletionBox
                   [&](const wxString& keyword) { entries.push_back(wxCodeCompletionBoxEntry::New(keyword, 0)); });
     return entries.size();
 }
+
+void CodeCompletionManager::UpdateParserPaths()
+{
+    if(clCxxWorkspaceST::Get()->IsOpen()) { DoProcessCompileCommands(); }
+}

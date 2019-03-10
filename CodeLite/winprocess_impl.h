@@ -31,13 +31,16 @@
 #include "codelite_exports.h"
 #include <Windows.h>
 #include <wx/string.h>
+#include <thread>
 
 class ProcessReaderThread;
+class WinWriterThread;
 
 class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 {
     ProcessReaderThread* m_thr;
     char m_buffer[65537];
+    WinWriterThread* m_writerThread = nullptr;
 
 protected:
     void StartReaderThread();
@@ -63,7 +66,7 @@ public:
     // Write to the process stdin
     virtual bool Write(const wxString& buff);
     virtual bool Write(const std::string& buff);
-    
+
     virtual bool WriteToConsole(const wxString& buff);
 
     // Return true if the process is still alive

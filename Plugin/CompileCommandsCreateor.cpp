@@ -42,38 +42,5 @@ CompileCommandsCreateor::~CompileCommandsCreateor() {}
 
 void CompileCommandsCreateor::Process(wxThread* thread)
 {
-    wxString errMsg;
     wxUnusedVar(thread);
-    
-    wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
-#ifdef __WXMSW__
-    codeliteMake.SetExt("exe");
-#endif
-
-    if(!codeliteMake.FileExists()) {
-        clWARNING() << "Could not find" << codeliteMake;
-        return;
-    }
-    
-    wxString command;
-    command << codeliteMake.GetFullPath();
-    ::WrapWithQuotes(command);
-    
-    wxString workspaceFile = m_filename.GetFullPath();
-    ::WrapWithQuotes(workspaceFile);
-    
-    command << " --workspace=" << workspaceFile << " --verbose --json --config=" << m_configName;
-    
-    wxString output;
-    IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault, m_filename.GetPath()));
-    process->WaitForTerminate(output);
-    
-    clDEBUG() << output;
-    
-    wxFileName compileCommandsFile = m_filename;
-    compileCommandsFile.SetFullName("compile_commands.json");
-    
-    clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-    eventCompileCommandsGenerated.SetFileName(compileCommandsFile.GetFullPath());
-    EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
 }

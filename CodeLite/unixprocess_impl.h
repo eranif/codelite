@@ -32,13 +32,14 @@
 #include "codelite_exports.h"
 
 class wxTerminal;
+class UnixWriteThread;
 class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
 {
     int m_readHandle;
     int m_stderrHandle = wxNOT_FOUND;
     int m_writeHandle;
     ProcessReaderThread* m_thr = nullptr;
-
+    UnixWriteThread* m_writerThread = nullptr;
     friend class wxTerminal;
 
 private:

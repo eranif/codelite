@@ -28,6 +28,8 @@
 #include <cstring>
 #include "file_logger.h"
 #include "fileutils.h"
+#include <thread>
+#include "SocketAPI/clSocketBase.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -388,21 +390,41 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
 
 bool UnixProcessImpl::Write(const wxString& buff)
 {
-    wxString tmpbuf = buff;
-    tmpbuf << "\n";
-    std::string cstr = FileUtils::ToStdString(tmpbuf);
-
-    int bytes = write(GetWriteHandle(), cstr.c_str(), cstr.length());
-    return bytes == (int)cstr.length();
+    // Sanity
+    std::string cstr = FileUtils::ToStdString(buff);
+    return Write(cstr);
+    // if(!IsRedirect()) { return false; }
+    // m_writerThread->Write(buff + "\n");
+    // return true;
 }
 
 bool UnixProcessImpl::Write(const std::string& buff)
 {
-    std::string tmpbuf = buff;
-    tmpbuf.append("\n");
+    // Sanity
+    if(!IsRedirect()) { return false; }
+    std::string tmp = buff;
+    tmp += "\n";
 
-    int bytes = write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length());
-    return bytes == (int)tmpbuf.length();
+    clSocketBase c(GetWriteHandle());
+    c.MakeSocketBlocking(false);
+
+    while(!tmp.empty()) {
+        errno = 0;
+        int bytes = ::write(GetWriteHandle(), tmp.c_str(), (tmp.length() > 1024 ? 1024 : tmp.length()));
+        int errCode = errno;
+        if(bytes < 0) {
+            if(((errCode == EWOULDBLOCK) || (errCode == EAGAIN))) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            } else {
+                clWARNING() << "Write error:" << strerror(errCode);
+                return false;
+            }
+        } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            tmp.erase(0, bytes);
+        }
+    }
+    return true;
 }
 
 IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,

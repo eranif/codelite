@@ -29,7 +29,8 @@ std::string LSP::RequestMessage::ToString() const
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON("");
     wxString data = json.format(false);
-
+    data.Trim().Trim(false);
+    
     std::string s = FileUtils::ToStdString(data);
     size_t len = s.length();
 

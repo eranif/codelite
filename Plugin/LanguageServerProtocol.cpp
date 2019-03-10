@@ -154,7 +154,7 @@ void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
 
 void LanguageServerProtocol::OnProcessStderr(clProcessEvent& event)
 {
-    clDEBUG1() << event.GetOutput();
+    clDEBUG() << GetLogPrefix() << event.GetOutput();
     m_Queue.SetWaitingReponse(false);
     ProcessQueue();
 }

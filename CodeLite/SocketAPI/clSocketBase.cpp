@@ -329,9 +329,9 @@ void clSocketBase::MakeSocketBlocking(bool blocking)
     int flags;
     flags = ::fcntl(m_socket, F_GETFL);
     if(blocking) {
-        flags |= O_NONBLOCK;
-    } else {
         flags &= ~O_NONBLOCK;
+    } else {
+        flags |= O_NONBLOCK;
     }
     ::fcntl(m_socket, F_SETFL, flags);
 #else

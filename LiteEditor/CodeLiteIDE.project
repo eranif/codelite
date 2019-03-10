@@ -1428,7 +1428,7 @@
         <Target Name="cmake">cmake -DPREFIX=/home/eran/root   -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCOPY_WX_LIBS=1 -DWITH_WXPATH=/usr/bin/</Target>
         <RebuildCommand>make clean &amp;&amp; make -j8</RebuildCommand>
         <CleanCommand>make clean</CleanCommand>
-        <BuildCommand>make -j8</BuildCommand>
+        <BuildCommand>make -j8 install</BuildCommand>
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
@@ -2157,8 +2157,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

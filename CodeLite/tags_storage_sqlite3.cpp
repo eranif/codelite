@@ -1355,7 +1355,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const std::vector<TagEnt
 
 void TagsStorageSQLiteCache::Clear()
 {
-    CL_DEBUG1(wxT("[CACHE CLEARED]"));
+    //CL_DEBUG1(wxT("[CACHE CLEARED]"));
     m_cache.clear();
 }
 

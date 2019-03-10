@@ -6,14 +6,14 @@
 wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 
 #ifdef __WXOSX__
-#define SB_WIDTH 8
-#define SB_RADIUS 5.0
+#define SB_WIDTH 12
+#define SB_RADIUS 0.0
 #elif defined(__WXGTK__)
-#define SB_WIDTH 10
-#define SB_RADIUS 5.0
+#define SB_WIDTH 12
+#define SB_RADIUS 0.0
 #else
-#define SB_WIDTH 10
-#define SB_RADIUS 5.0
+#define SB_WIDTH 12
+#define SB_RADIUS 0.0
 #endif
 
 clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

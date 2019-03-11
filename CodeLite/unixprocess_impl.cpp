@@ -29,6 +29,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "SocketAPI/clSocketBase.h"
+#include <thread>
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -403,10 +404,14 @@ bool UnixProcessImpl::Write(const std::string& buff)
     c.MakeSocketBlocking(false);
     c.SetCloseOnExit(false);
 
+    const int chunk_size = 1024;
     while(!tmpbuf.empty()) {
-        const char& ch = *tmpbuf.begin();
-        if(::write(GetWriteHandle(), &ch, 1) < 0) { return false; }
-        tmpbuf.erase(0, 1);
+        int bytes_written =
+            ::write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length() > chunk_size ? chunk_size : tmpbuf.length());
+        if(bytes_written <= 0) { 
+            return false; 
+        }
+        tmpbuf.erase(0, bytes_written);
     }
     return true;
 }
@@ -456,11 +461,17 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         //===-------------------------------------------------------
         // Child process
         //===-------------------------------------------------------
-
+        struct termios termio;
+        tcgetattr(slave, &termio);
+        cfmakeraw(&termio);
+        termio.c_lflag = ICANON;
+        termio.c_oflag = ONOCR | ONLRET;
+        tcsetattr(slave, TCSANOW, &termio);
+        
         // Set 'slave' as STD{IN|OUT|ERR} and close slave FD
         login_tty(slave);
         close(master); // close the un-needed master end
-
+        
         // Incase the user wants to get separate events for STDERR, dup2 STDERR to the PIPE write end
         // we opened earlier
         if(flags & IProcessStderrEvent) {

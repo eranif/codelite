@@ -28,6 +28,7 @@
 #include <cstring>
 #include "file_logger.h"
 #include "fileutils.h"
+#include "SocketAPI/clSocketBase.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -389,11 +390,8 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
 bool UnixProcessImpl::Write(const wxString& buff)
 {
     wxString tmpbuf = buff;
-    tmpbuf << "\n";
     std::string cstr = FileUtils::ToStdString(tmpbuf);
-
-    int bytes = write(GetWriteHandle(), cstr.c_str(), cstr.length());
-    return bytes == (int)cstr.length();
+    return Write(cstr);
 }
 
 bool UnixProcessImpl::Write(const std::string& buff)
@@ -401,8 +399,16 @@ bool UnixProcessImpl::Write(const std::string& buff)
     std::string tmpbuf = buff;
     tmpbuf.append("\n");
 
-    int bytes = write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length());
-    return bytes == (int)tmpbuf.length();
+    clSocketBase c(GetWriteHandle());
+    c.MakeSocketBlocking(false);
+    c.SetCloseOnExit(false);
+
+    while(!tmpbuf.empty()) {
+        const char& ch = *tmpbuf.begin();
+        if(::write(GetWriteHandle(), &ch, 1) < 0) { return false; }
+        tmpbuf.erase(0, 1);
+    }
+    return true;
 }
 
 IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,

@@ -82,7 +82,7 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
 bool ChildProcess::DoReadAll(int fd, std::string& content, int timeoutMilliseconds)
 {
     fd_set rset;
-    char buff[1024];
+    char buff[4096];
     FD_ZERO(&rset);
     FD_SET(fd, &rset);
 
@@ -98,7 +98,7 @@ bool ChildProcess::DoReadAll(int fd, std::string& content, int timeoutMillisecon
     if(rc > 0) {
         memset(buff, 0, sizeof(buff));
         errno = 0;
-        int bytes = read(fd, buff, sizeof(buff));
+        int bytes = read(fd, buff, sizeof(buff)-1);
         int readErrno = errno;
         if(bytes > 0) {
             // read success

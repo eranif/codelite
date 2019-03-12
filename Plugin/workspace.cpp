@@ -992,6 +992,7 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
     if(!IsOpen()) { return wxFileName(); }
 
     wxFileName fn_tags(GetPrivateFolder(), GetWorkspaceFileName().GetFullName());
+    fn_tags.SetName(fn_tags.GetName() + "-" + ::clGetUserName());
     fn_tags.SetExt("tags");
     return fn_tags;
 }

@@ -6,6 +6,7 @@
 #include "LSP/JSONObject.h"
 #include <wx/sharedptr.h>
 #include "basic_types.h"
+#include <vector>
 
 namespace LSP
 {

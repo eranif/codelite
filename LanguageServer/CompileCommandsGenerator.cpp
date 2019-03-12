@@ -8,37 +8,28 @@
 #include "environmentconfig.h"
 #include "imanager.h"
 
-CompileCommandsGenerator::CompileCommandsGenerator()
-{
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &CompileCommandsGenerator::OnProcessTeraminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
-}
+CompileCommandsGenerator::CompileCommandsGenerator() {}
+CompileCommandsGenerator::~CompileCommandsGenerator() {}
 
-CompileCommandsGenerator::~CompileCommandsGenerator()
-{
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CompileCommandsGenerator::OnProcessTeraminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
-}
-
-void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { clDEBUG() << event.GetOutput(); }
+void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { clSYSTEM() << event.GetOutput(); }
 
 void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 {
-    wxDELETE(m_process);
-
+    m_childProcess.reset(nullptr);
     clGetManager()->SetStatusMessage(_("Ready"));
 
     // Notify about completion
     clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
     eventCompileCommandsGenerated.SetFileName(m_outputFile.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
-
-    // Delete this instance
-    //delete this;
 }
 
 void CompileCommandsGenerator::GenerateCompileCommands()
 {
+    m_childProcess.reset(new ChildProcess());
+    m_childProcess->Bind(wxEVT_CHILD_PROCESS_STDOUT, &CompileCommandsGenerator::OnProcessOutput, this);
+    m_childProcess->Bind(wxEVT_CHILD_PROCESS_EXIT, &CompileCommandsGenerator::OnProcessTeraminated, this);
+
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
 #ifdef __WXMSW__
     codeliteMake.SetExt("exe");
@@ -60,14 +51,18 @@ void CompileCommandsGenerator::GenerateCompileCommands()
         clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
     ::WrapWithQuotes(workspaceFile);
 
-    command << " --workspace=" << workspaceFile << " --verbose --json --config=" << configName;
-    clDEBUG() << "Running: " << command;
+    wxArrayString args;
+    args.Add(command);
+    args.Add("--workspace=" + workspaceFile);
+    args.Add("--verbose");
+    args.Add("--json");
+    args.Add("--config=" + configName);
 
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault, wxFileName(workspaceFile).GetPath());
+    m_childProcess->Start(args, wxFileName(workspaceFile).GetPath());
 
     m_outputFile = workspaceFile;
     m_outputFile.SetFullName("compile_commands.json");
 
-    clGetManager()->SetStatusMessage(wxString() << _("Generating ") << m_outputFile.GetFullPath());
+    clGetManager()->SetStatusMessage(wxString() << _("Generating ") << m_outputFile.GetFullPath(), 2);
 }

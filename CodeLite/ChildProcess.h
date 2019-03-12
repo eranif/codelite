@@ -1,8 +1,6 @@
-//
-// Example of communication with a subprocess via stdin/stdout
-// Author: Konstantin Tretyakov
-// License: MIT
-//
+#ifndef CHILD_PROCESS_H
+#define CHILD_PROCESS_H
+
 #if defined(__WXGTK__) || defined(__WXOSX__)
 #define USE_IPROCESS 0
 #else
@@ -81,11 +79,12 @@ private:
     void OnProcessTerminated(clProcessEvent& event);
 #else
     void DoAsyncRead();
+    void ReaderThreadExit();
 #endif
 
     // wait for process termination
     int Wait();
-    
+    void Cleanup();
 
 public:
     int child_pid = wxNOT_FOUND;
@@ -118,3 +117,4 @@ public:
     void Write(const std::string& message);
     void Write(const wxString& message);
 };
+#endif // CHILD_PROCESS_H

@@ -5,10 +5,11 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <wx/filename.h>
+#include "ChildProcess.h"
 
 class CompileCommandsGenerator : public wxEvtHandler
 {
-    IProcess* m_process = nullptr;
+    ChildProcess::Ptr_t m_childProcess;
     wxFileName m_outputFile;
 
 protected:

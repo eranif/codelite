@@ -34,22 +34,25 @@ ChildProcess::ChildProcess()
 void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirectory)
 {
 #if !USE_IPROCESS
-    m_goingDown.store(false);
-    read_pipe.reset(new CPipe());
-    write_pipe.reset(new CPipe());
+    Cleanup();
     child_pid = fork();
     if(child_pid == -1) { throw clException(wxString() << "fork error: " << strerror(errno)); }
     if(child_pid == 0) {
 
         // create c-style array
+        wxString commandToExecute;
         char** pargv = new char*[argv.size() + 1];
         for(size_t i = 0; i < argv.size(); ++i) {
             std::string cstr = FileUtils::ToStdString(wrap_spaces(argv[i]));
             pargv[i] = new char[cstr.length() + 1];
             strcpy(pargv[i], cstr.c_str());
+            commandToExecute << pargv[i] << " ";
+            
         }
         pargv[argv.size()] = NULL;
-
+        
+        clDEBUG() << "Will execute the command:" << commandToExecute;
+        
         // In child process
         dup2(write_pipe->read_fd(), STDIN_FILENO);
         dup2(read_pipe->write_fd(), STDOUT_FILENO);
@@ -57,7 +60,9 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         read_pipe->close();
         // Change the working directory
         if(!workingDirectory.IsEmpty()) { ::wxSetWorkingDirectory(workingDirectory); }
-
+        
+        // Before we start the process, let the parent process do its magic 
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         int result = execvp(pargv[0], const_cast<char* const*>(pargv));
         if(result == -1) {
             // Note: no point writing to stdout here, it has been redirected
@@ -98,13 +103,13 @@ bool ChildProcess::DoReadAll(int fd, std::string& content, int timeoutMillisecon
     if(rc > 0) {
         memset(buff, 0, sizeof(buff));
         errno = 0;
-        int bytes = read(fd, buff, sizeof(buff)-1);
+        int bytes = read(fd, buff, sizeof(buff) - 1);
         int readErrno = errno;
         if(bytes > 0) {
             // read success
             content.append(buff);
             return true;
-        } else if(rc == 0) {
+        } else if(bytes == 0) {
             // process terminated
             return false;
         } else {
@@ -152,20 +157,7 @@ int ChildProcess::Wait()
 #endif
 }
 
-void ChildProcess::Stop()
-{
-#if !USE_IPROCESS
-    m_goingDown.store(true);
-    if(m_reader) {
-        m_reader->join();
-        wxDELETE(m_reader);
-    }
-    ::kill(child_pid, SIGTERM);
-    Wait();
-#else
-    wxDELETE(m_process);
-#endif
-}
+void ChildProcess::Stop() { Cleanup(); }
 
 void ChildProcess::Write(const wxString& message)
 {
@@ -206,18 +198,16 @@ void ChildProcess::DoAsyncRead()
             std::string content;
             std::string errContent;
             while(true) {
-                if(!ChildProcess::DoReadAll(fd, content, 100)) {
-                    break;
-                }
+                if(!ChildProcess::DoReadAll(fd, content, 100)) { break; }
 
                 if(!content.empty()) { ChildProcess::OnDataRead(process, content, errContent); }
                 content.clear();
                 // are we going down?
                 if(process->m_goingDown.load()) { break; }
             }
-            // notify about process termination event here
-            clProcessEvent exitEvent(wxEVT_CHILD_PROCESS_EXIT);
-            process->AddPendingEvent(exitEvent);
+            
+            // Notify about process termination event here
+            process->CallAfter(&ChildProcess::ReaderThreadExit);
         },
         this, read_pipe->read_fd());
 }
@@ -275,3 +265,35 @@ wxString ChildProcess::BuildCommand(const wxArrayString& argv)
     }
     return command;
 }
+
+void ChildProcess::Cleanup()
+{
+#if !USE_IPROCESS
+    m_goingDown.store(true);
+    if(m_reader) {
+        m_reader->join();
+        wxDELETE(m_reader);
+    }
+    if(child_pid != wxNOT_FOUND) {
+        ::kill(child_pid, SIGTERM);
+        Wait();
+    }
+    // Prepare it for next execution
+    m_goingDown.store(false);
+    read_pipe.reset(new CPipe());
+    write_pipe.reset(new CPipe());
+    child_pid = wxNOT_FOUND;
+#else
+    wxDELETE(m_process);
+#endif
+}
+
+#if !USE_IPROCESS
+void ChildProcess::ReaderThreadExit()
+{
+    clProcessEvent exitEvent(wxEVT_CHILD_PROCESS_EXIT);
+    AddPendingEvent(exitEvent);
+    // Make sure we clean this object
+    Cleanup();
+}
+#endif

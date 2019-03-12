@@ -1411,7 +1411,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="--with-plugins=LanguageServerPlugin -d /home/eran/.codelite-debug" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins=LanguageServerPlugin -d /home/eran/.codelite-debug" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="--with-plugins=LanguageServerPlugin" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins=LanguageServerPlugin" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

@@ -44,6 +44,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_servers.reset(new LanguageServerCluster());
     m_servers->Reload();
 
+    m_compileCommandsGenerator.reset(new CompileCommandsGenerator());
+
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerPlugin::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &LanguageServerPlugin::OnFilesAdded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerPlugin::OnWorkspaceLoaded, this);
@@ -94,8 +96,7 @@ void LanguageServerPlugin::OnBuildEnded(clBuildEvent& event)
 void LanguageServerPlugin::GenerateCompileCommands()
 {
     // this is a self destruct objecy
-    CompileCommandsGenerator* generator = new CompileCommandsGenerator();
-    generator->GenerateCompileCommands();
+    m_compileCommandsGenerator->GenerateCompileCommands();
 }
 
 void LanguageServerPlugin::OnFilesAdded(clCommandEvent& event)

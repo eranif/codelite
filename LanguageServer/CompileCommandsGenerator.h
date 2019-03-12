@@ -16,6 +16,7 @@ protected:
     void OnProcessTeraminated(clProcessEvent& event);
 
 public:
+    typedef wxSharedPtr<CompileCommandsGenerator> Ptr_t;
     CompileCommandsGenerator();
     virtual ~CompileCommandsGenerator();
 

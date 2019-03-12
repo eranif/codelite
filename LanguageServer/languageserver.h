@@ -5,11 +5,13 @@
 #include "cl_command_event.h"
 #include "LanguageServerCluster.h"
 #include "cl_command_event.h"
+#include "CompileCommandsGenerator.h"
 
 class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
     IProcess* m_process = nullptr;
+    CompileCommandsGenerator::Ptr_t m_compileCommandsGenerator;
 
 protected:
     void OnSettings(wxCommandEvent& e);

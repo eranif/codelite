@@ -789,9 +789,7 @@ void BuilderGNUMakeClassic::CreateFileTargets(ProjectPtr proj, const wxString& c
                 }
 
                 // set the file rule
-                text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT(" ") << dependFile
-                     << wxT("\n");
-                text << wxT("\t") << compilationLine << wxT("\n");
+                text << objectName << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
 
                 wxString cmpOptions(wxT("$(CXXFLAGS) $(IncludePCH)"));
                 if(isCFile) { cmpOptions = wxT("$(CFLAGS)"); }
@@ -802,11 +800,11 @@ void BuilderGNUMakeClassic::CreateFileTargets(ProjectPtr proj, const wxString& c
 
                 wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
                 if(generateDependenciesFiles) {
-                    text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
                     text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions
                          << wxT(" $(IncludePath) -MG -MP -MT") << objectName << wxT(" -MF") << dependFile
-                         << wxT(" -MM ") << source_file_to_compile << wxT("\n\n");
+                         << wxT(" -MM ") << source_file_to_compile << wxT("\n");
                 }
+                text << wxT("\t") << compilationLine << wxT("\n");
 
                 if(supportPreprocessOnlyFiles) {
                     text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");

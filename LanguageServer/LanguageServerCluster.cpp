@@ -157,10 +157,13 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(entry.IsEnabled()) {
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
-        wxString command = entry.GetExepath();
-        ::WrapWithQuotes(command);
-        if(!entry.GetArgs().IsEmpty()) { command << " " << entry.GetArgs(); }
-        lsp->Start(command, entry.GetWorkingDirectory(), entry.GetLanguages());
+        wxArrayString argv;
+        argv.Add(entry.GetExepath());
+        if(!entry.GetArgs().IsEmpty()) {
+            wxArrayString args = ::wxStringTokenize(entry.GetArgs(), " ", wxTOKEN_STRTOK);
+            argv.insert(argv.end(), args.begin(), args.end());
+        }
+        lsp->Start(argv, entry.GetWorkingDirectory(), entry.GetLanguages());
         m_servers.insert({ entry.GetName(), lsp });
         lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     }

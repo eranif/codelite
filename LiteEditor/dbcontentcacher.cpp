@@ -27,35 +27,31 @@
 #include <wx/ffile.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/stopwatch.h>
+#include "fileutils.h"
 
 const wxEventType wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED = XRCID("wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED");
 
 DbContentCacher::DbContentCacher(wxEvtHandler* parent, const wxChar* dbfilename)
-	: Job(parent)
-	, m_filename(dbfilename)
+    : Job(parent)
+    , m_filename(dbfilename)
 {
 }
 
-DbContentCacher::~DbContentCacher()
-{
-}
+DbContentCacher::~DbContentCacher() {}
 
 void DbContentCacher::Process(wxThread* thread)
 {
-	wxStopWatch sw;
-	sw.Start();
-	
-	wxFFile dbFile(m_filename, wxT("rb"));
-	if(dbFile.IsOpened()) {
-		wxString fileContent;
-		wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
-		dbFile.ReadAll(&fileContent, fontEncConv);
-		dbFile.Close();
-	}
-	
-	if (m_parent) {
-		wxCommandEvent e(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED);
-		e.SetString(wxString::Format(_("Symbols file loaded into OS file system cache (%ld seconds)"), sw.Time()/1000).c_str());
-		m_parent->AddPendingEvent(e);
-	}
+    wxStopWatch sw;
+    sw.Start();
+
+    wxString fileContent;
+    wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
+    FileUtils::ReadFileContent(m_filename, fileContent, fontEncConv);
+
+    if(m_parent) {
+        wxCommandEvent e(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED);
+        e.SetString(wxString::Format(_("Symbols file loaded into OS file system cache (%ld seconds)"), sw.Time() / 1000)
+                        .c_str());
+        m_parent->AddPendingEvent(e);
+    }
 }

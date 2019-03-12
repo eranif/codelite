@@ -27,10 +27,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     : m_name(name)
     , m_owner(owner)
 {
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
-
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
@@ -142,7 +138,7 @@ const std::set<wxString>& LanguageServerProtocol::GetSupportedLanguages()
 void LanguageServerProtocol::OnProcessTerminated(clProcessEvent& event)
 {
     clDEBUG() << GetLogPrefix() << "Langauge Server Terminated";
-    wxDELETE(m_process);
+    m_process->Stop();
     if(m_goingDown) {
         // Dont restart the server
         DoClear();
@@ -235,7 +231,7 @@ void LanguageServerProtocol::OnProcessOutput(clProcessEvent& event)
 
 void LanguageServerProtocol::QueueMessage(LSP::RequestMessage::Ptr_t request)
 {
-    if(!IsInitialized() || !m_process) { return; }
+    if(!IsInitialized()) { return; }
     m_Queue.Push(request);
     ProcessQueue();
 }
@@ -251,11 +247,12 @@ void LanguageServerProtocol::DoStart()
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
 
-    m_process = ::CreateAsyncProcess(this, m_command, IProcessCreateDefault | IProcessStderrEvent, m_workingDirectory);
-    if(!m_process) {
-        clWARNING() << "Failed to start Language Server:" << m_command;
-        return;
-    }
+    m_process.reset(new ChildProcess());
+    m_process->Bind(wxEVT_CHILD_PROCESS_EXIT, &LanguageServerProtocol::OnProcessTerminated, this);
+    m_process->Bind(wxEVT_CHILD_PROCESS_STDOUT, &LanguageServerProtocol::OnProcessOutput, this);
+    m_process->Bind(wxEVT_CHILD_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
+    m_process->Start(m_command, m_workingDirectory);
+
     // The process started successfully
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::InitializeRequest());
@@ -268,15 +265,15 @@ void LanguageServerProtocol::DoStart()
     m_initializeRequestID = req->GetId();
 }
 
-void LanguageServerProtocol::Start(const wxString& command, const wxString& workingDirectory,
+void LanguageServerProtocol::Start(const wxArrayString& argv, const wxString& workingDirectory,
                                    const wxArrayString& languages)
 {
-    if(m_process) { return; }
+    if(IsRunning()) { return; }
     DoClear();
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
     m_goingDown = false;
-    m_command = command;
+    m_command = argv;
     m_workingDirectory = workingDirectory;
     if(clWorkspaceManager::Get().GetWorkspace()) {
         m_workspaceFolder = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
@@ -287,19 +284,13 @@ void LanguageServerProtocol::Start(const wxString& command, const wxString& work
 void LanguageServerProtocol::Stop(bool goingDown)
 {
     m_goingDown = goingDown;
-    if(m_goingDown) {
-        // Unbound the events so we dont get the 'terminated' process event
-        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &LanguageServerProtocol::OnProcessTerminated, this);
-        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &LanguageServerProtocol::OnProcessOutput, this);
-        Unbind(wxEVT_ASYNC_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
-    }
-    if(m_process) {
-        m_process->Terminate();
-        if(m_goingDown) {
-            wxString dummy;
-            m_process->WaitForTerminate(dummy);
-            wxDELETE(m_process);
-        }
+    m_process->Unbind(wxEVT_CHILD_PROCESS_EXIT, &LanguageServerProtocol::OnProcessTerminated, this);
+    m_process->Unbind(wxEVT_CHILD_PROCESS_STDOUT, &LanguageServerProtocol::OnProcessOutput, this);
+    m_process->Unbind(wxEVT_CHILD_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
+    m_process->Stop();
+    m_process.reset(nullptr);
+    if(!goingDown) {
+        DoStart();
     }
 }
 
@@ -312,7 +303,7 @@ void LanguageServerProtocol::DoClear()
     m_Queue.Clear();
 }
 
-bool LanguageServerProtocol::IsRunning() const { return m_process != nullptr; }
+bool LanguageServerProtocol::IsRunning() const { return m_process && m_process->IsRunning(); }
 
 bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
 {
@@ -494,23 +485,17 @@ void LanguageServerProtocol::ProcessQueue()
         return;
     }
     LSP::RequestMessage::Ptr_t req = m_Queue.Get();
-    if(!m_process) { return; }
-    if(m_process->Write(req->ToString())) {
-        m_Queue.SetWaitingReponse(true);
-        m_Queue.Pop();
-        if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
-    } else {
-        // failed to write? restart the process
-        m_process->Terminate();
-    }
+    if(!IsRunning()) { return; }
+    m_process->Write(req->ToString());
+    m_Queue.SetWaitingReponse(true);
+    m_Queue.Pop();
+    if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
 }
 
 void LanguageServerProtocol::CloseEditor(IEditor* editor)
 {
     if(!IsInitialized()) { return; }
-    if(editor && ShouldHandleFile(editor)) {
-        SendCloseRequest(editor->GetFileName());
-    }
+    if(editor && ShouldHandleFile(editor)) { SendCloseRequest(editor->GetFileName()); }
 }
 
 //===------------------------------------------------------------------

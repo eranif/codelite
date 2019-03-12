@@ -13,6 +13,7 @@
 #include <string>
 #include "LSP/RequestMessage.h"
 #include <unordered_map>
+#include "ChildProcess.h"
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -44,8 +45,8 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 
     wxString m_name;
     wxEvtHandler* m_owner = nullptr;
-    IProcess* m_process = nullptr;
-    wxString m_command;
+    ChildProcess::Ptr_t m_process;
+    wxArrayString m_command;
     wxString m_workingDirectory;
     bool m_goingDown = false;
     wxStringSet_t m_filesSent;
@@ -137,7 +138,7 @@ public:
     /**
      * @brief start a server for an executable
      */
-    void Start(const wxString& command, const wxString& workingDirectory, const wxArrayString& languages);
+    void Start(const wxArrayString& command, const wxString& workingDirectory, const wxArrayString& languages);
 
     /**
      * @brief is the LSP running?

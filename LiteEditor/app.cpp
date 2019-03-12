@@ -279,6 +279,7 @@ bool CodeLiteApp::OnInit()
     sigset_t mask_set;
     sigemptyset(&mask_set);
     sigaddset(&mask_set, SIGPIPE);
+    sigaddset(&mask_set, SIGTTIN);
     sigprocmask(SIG_SETMASK, &mask_set, NULL);
 
     // Handle sigchld

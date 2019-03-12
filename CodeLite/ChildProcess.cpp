@@ -163,7 +163,7 @@ void ChildProcess::Stop()
     ::kill(child_pid, SIGTERM);
     Wait();
 #else
-    wxDELETE(m_progress);
+    wxDELETE(m_process);
 #endif
 }
 

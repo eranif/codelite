@@ -529,7 +529,7 @@ BPtoMarker clEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
 void clEditor::SetCaretAt(long pos)
 {
     DoSetCaretAt(pos);
-    EnsureCaretVisible();
+    CallAfter(&clEditor::EnsureCaretVisible);
 }
 
 /// Setup some scintilla properties
@@ -1162,16 +1162,18 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
 
 void clEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/, bool forceDelay /*=false*/)
 {
-    OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    if(forceDelay || (opts && opts->GetWordWrap())) {
-        // If the text may be word-wrapped, don't EnsureVisible immediately but from the
-        // paintevent handler, so that scintilla has time to take word-wrap into account
-        m_positionToEnsureVisible = pos;
-        m_preserveSelection = preserveSelection;
-    } else {
-        DoEnsureCaretIsVisible(pos, preserveSelection);
-        m_positionToEnsureVisible = wxNOT_FOUND;
-    }
+    wxUnusedVar(forceDelay);
+    DoEnsureCaretIsVisible(pos, preserveSelection);
+    //OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    //if(forceDelay || (opts && opts->GetWordWrap())) {
+    //    // If the text may be word-wrapped, don't EnsureVisible immediately but from the
+    //    // paintevent handler, so that scintilla has time to take word-wrap into account
+    //    m_positionToEnsureVisible = pos;
+    //    m_preserveSelection = preserveSelection;
+    //} else {
+    //    DoEnsureCaretIsVisible(pos, preserveSelection);
+    //    m_positionToEnsureVisible = wxNOT_FOUND;
+    //}
 }
 
 void clEditor::OnScnPainted(wxStyledTextEvent& event)

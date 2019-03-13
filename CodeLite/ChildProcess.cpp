@@ -38,7 +38,10 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
 #if !USE_IPROCESS
     Cleanup();
     child_pid = fork();
-    if(child_pid == -1) { throw clException(wxString() << "fork error: " << strerror(errno)); }
+    if(child_pid == -1) {
+        clERROR() << "fork error: " << strerror(errno));
+        return;
+    }
     if(child_pid == 0) {
 
         // create c-style array
@@ -49,12 +52,11 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
             pargv[i] = new char[cstr.length() + 1];
             strcpy(pargv[i], cstr.c_str());
             commandToExecute << pargv[i] << " ";
-            
         }
         pargv[argv.size()] = NULL;
-        
+
         clDEBUG() << "Will execute the command:" << commandToExecute;
-        
+
         // In child process
         dup2(write_pipe->read_fd(), STDIN_FILENO);
         dup2(read_pipe->write_fd(), STDOUT_FILENO);
@@ -62,8 +64,8 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         read_pipe->close();
         // Change the working directory
         if(!workingDirectory.IsEmpty()) { ::wxSetWorkingDirectory(workingDirectory); }
-        
-        // Before we start the process, let the parent process do its magic 
+
+        // Before we start the process, let the parent process do its magic
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         int result = execvp(pargv[0], const_cast<char* const*>(pargv));
         if(result == -1) {
@@ -80,9 +82,8 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         DoAsyncRead();
     }
 #else
-
     m_process = ::CreateAsyncProcess(this, BuildCommand(argv), IProcessCreateDefault, workingDirectory);
-    if(!m_process) { throw clException(wxString() << ":CreateAsyncProcess()." << strerror(errno)); }
+    if(!m_process) { clERROR() << "CreateAsyncProcess() error." << BuildCommand(argv); }
 #endif
 }
 #if !USE_IPROCESS
@@ -207,7 +208,7 @@ void ChildProcess::DoAsyncRead()
                 // are we going down?
                 if(process->m_goingDown.load()) { break; }
             }
-            
+
             // Notify about process termination event here
             process->CallAfter(&ChildProcess::ReaderThreadExit);
         },

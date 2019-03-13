@@ -44,8 +44,6 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     wxString command;
     command << codeliteMake.GetFullPath();
-    ::WrapWithQuotes(command);
-
     wxString workspaceFile = clCxxWorkspaceST::Get()->GetFileName().GetFullPath();
     wxString configName =
         clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";

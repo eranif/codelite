@@ -37,9 +37,7 @@ public:
     const inline int write_fd() const { return fd[1]; }
     CPipe()
     {
-        if(pipe(fd)) {
-            throw clException("Failed to create pipe");
-        }
+        if(pipe(fd)) { clERROR() << "pipe() error:" << strerror(errno); }
     }
     void close()
     {
@@ -89,18 +87,18 @@ private:
 public:
     int child_pid = wxNOT_FOUND;
     typedef wxSharedPtr<ChildProcess> Ptr_t;
-    
+
     /**
      * @brief construct and start child process. argv[0] should contain the commands + arguments similar to main()
      */
     ChildProcess();
     virtual ~ChildProcess();
-    
+
     /**
      * @brief return an execution line from an array of argv
      */
-    static wxString BuildCommand(const wxArrayString &argv);
-    
+    static wxString BuildCommand(const wxArrayString& argv);
+
     /**
      * @brief start the process
      */
@@ -108,12 +106,12 @@ public:
 
     // stop the running process
     void Stop();
-    
+
     /**
      * @brief is the process running?
      */
     bool IsRunning() const;
-    
+
     void Write(const std::string& message);
     void Write(const wxString& message);
 };

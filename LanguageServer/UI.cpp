@@ -91,6 +91,12 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer31 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer31);
 
+    m_checkBoxEnabled =
+        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxEnabled->SetValue(true);
+
+    boxSizer31->Add(m_checkBoxEnabled, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* flexGridSizer432 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer432->SetFlexibleDirection(wxBOTH);
     flexGridSizer432->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
@@ -155,20 +161,13 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_staticText6311, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(10));
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 100)),
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 150)),
                                         wxDV_ROW_LINES | wxDV_SINGLE);
 
     flexGridSizer432->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendTextColumn(_("Language"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrl->AppendTextColumn(_("Supported Languages"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
-    flexGridSizer432->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxEnabled =
-        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxEnabled->SetValue(true);
-
-    flexGridSizer432->Add(m_checkBoxEnabled, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("LanguageServerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

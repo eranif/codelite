@@ -341,6 +341,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeComplet
 // Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionEvent);
 
+// User requested to a symbol declaration
+// Use evt.GetWord() to get the searched string
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DECLARATION, clCodeCompletionEvent);
+
 // Event type: clCodeCompletionEvent
 // Sent by codelite to generate documentation block for class or function
 // after the user has typed "/**" followed by ENTER

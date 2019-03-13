@@ -267,6 +267,12 @@ void CodeCompletionManager::GotoImpl(clEditor* editor)
 {
     DoUpdateOptions();
     bool res = false;
+    
+    // Let the plugins handle this first
+    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL);
+    event.SetEditor(editor);
+    if(EventNotifier::Get()->ProcessEvent(event)) { return; }
+    
     if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsGotoImpl(editor); }
     if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangGotoImpl(editor); }
 }
@@ -312,7 +318,12 @@ void CodeCompletionManager::GotoDecl(clEditor* editor)
 {
     DoUpdateOptions();
     bool res = false;
-
+    
+    // Let the plugins handle this first
+    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL_DECLARATION);
+    event.SetEditor(editor);
+    if(EventNotifier::Get()->ProcessEvent(event)) { return; }
+    
     if(GetOptions() & CC_CTAGS_ENABLED) { res = DoCtagsGotoDecl(editor); }
 
     if(!res && (GetOptions() & CC_CLANG_ENABLED)) { DoClangGotoDecl(editor); }

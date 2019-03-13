@@ -66,6 +66,7 @@ public:
 class LanguageServerPageBase : public wxPanel
 {
 protected:
+    wxCheckBox* m_checkBoxEnabled;
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
@@ -76,10 +77,10 @@ protected:
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
     clThemedListCtrl* m_dvListCtrl;
-    wxCheckBox* m_checkBoxEnabled;
 
 protected:
 public:
+    wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     wxStaticText* GetStaticText453() { return m_staticText453; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
@@ -90,7 +91,6 @@ public:
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();

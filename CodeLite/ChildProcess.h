@@ -57,8 +57,9 @@ class WXDLLIMPEXP_CL ChildProcess : public wxEvtHandler
 {
 private:
 #if !USE_IPROCESS
-    CPipe::Ptr_t write_pipe;
-    CPipe::Ptr_t read_pipe;
+    CPipe::Ptr_t childStdout;
+    CPipe::Ptr_t childStdin;
+    CPipe::Ptr_t childStderr;
     std::thread* m_reader = nullptr;
     std::atomic_bool m_goingDown;
 #else

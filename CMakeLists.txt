@@ -267,6 +267,8 @@ if(ENABLE_CLANG MATCHES 0)
 endif (ENABLE_CLANG MATCHES 0)
 unset(ENABLE_CLANG CACHE)
 
+# Now that we support LSP, we no longer link againt clang
+set( USE_CLANG 0 )
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
 else (AUTOGEN_REVISION MATCHES 1)

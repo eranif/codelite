@@ -43,7 +43,14 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         return;
     }
     if(child_pid == 0) {
-
+        setsid();
+        // Child
+        for(int i=3; i<65536; ++i) { 
+            if( i == childStdin->read_fd() || 
+                i == childStdout->write_fd() ||
+                i == childStderr->write_fd()) { continue; }
+            ::close(i); 
+        }
         // create c-style array
         wxString commandToExecute;
         char** pargv = new char*[argv.size() + 1];
@@ -58,10 +65,14 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         clDEBUG() << "Will execute the command:" << commandToExecute;
 
         // In child process
-        dup2(write_pipe->read_fd(), STDIN_FILENO);
-        dup2(read_pipe->write_fd(), STDOUT_FILENO);
-        write_pipe->close();
-        read_pipe->close();
+        dup2(childStdin->read_fd(), STDIN_FILENO);
+        dup2(childStdout->write_fd(), STDOUT_FILENO);
+        dup2(childStderr->write_fd(), STDERR_FILENO);
+        
+        childStdin->close();
+        childStdout->close();
+        childStderr->close();
+        
         // Change the working directory
         if(!workingDirectory.IsEmpty()) { ::wxSetWorkingDirectory(workingDirectory); }
 
@@ -75,9 +86,10 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
         }
     } else {
         // parent process
-        close(write_pipe->read_fd());
-        close(read_pipe->write_fd());
-
+        close(childStdin->read_fd());
+        close(childStdout->write_fd());
+        close(childStderr->write_fd());
+        
         // Start the reader thread here
         DoAsyncRead();
     }
@@ -172,7 +184,7 @@ void ChildProcess::Write(const std::string& message)
 {
 #if !USE_IPROCESS
     std::thread worker([](int fd, const std::string& message) { ChildProcess::DoWrite(fd, message); },
-                       write_pipe->write_fd(), message);
+                       childStdin->write_fd(), message);
     worker.detach();
 #else
     if(m_process) { m_process->Write(message); }
@@ -197,14 +209,18 @@ void ChildProcess::OnDataRead(ChildProcess* process, const std::string& dataStdo
 void ChildProcess::DoAsyncRead()
 {
     m_reader = new std::thread(
-        [](ChildProcess* process, int fd) {
+        [](ChildProcess* process, int fd, int stderrFd) {
             std::string content;
             std::string errContent;
             while(true) {
-                if(!ChildProcess::DoReadAll(fd, content, 100)) { break; }
+                if(!ChildProcess::DoReadAll(fd, content, 100) || 
+                    !ChildProcess::DoReadAll(stderrFd, errContent, 100)) { break; }
 
-                if(!content.empty()) { ChildProcess::OnDataRead(process, content, errContent); }
+                if(!content.empty() || !errContent.empty()) {
+                    ChildProcess::OnDataRead(process, content, errContent); 
+                }
                 content.clear();
+                errContent.clear();
                 // are we going down?
                 if(process->m_goingDown.load()) { break; }
             }
@@ -212,7 +228,7 @@ void ChildProcess::DoAsyncRead()
             // Notify about process termination event here
             process->CallAfter(&ChildProcess::ReaderThreadExit);
         },
-        this, read_pipe->read_fd());
+        this, childStdout->read_fd(), childStderr->read_fd());
 }
 #endif
 
@@ -283,8 +299,9 @@ void ChildProcess::Cleanup()
     }
     // Prepare it for next execution
     m_goingDown.store(false);
-    read_pipe.reset(new CPipe());
-    write_pipe.reset(new CPipe());
+    childStdout.reset(new CPipe());
+    childStdin.reset(new CPipe());
+    childStderr.reset(new CPipe());
     child_pid = wxNOT_FOUND;
 #else
     wxDELETE(m_process);

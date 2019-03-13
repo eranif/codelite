@@ -1,7 +1,9 @@
 #include "ChildProcess.h"
 #include <signal.h>
 #include <string.h>
+#if !USE_IPROCESS
 #include <sys/select.h>
+#endif
 #include <sys/types.h>
 #include "fileutils.h"
 #include "cl_exception.h"

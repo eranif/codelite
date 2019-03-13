@@ -23,6 +23,7 @@
 #include <unistd.h>
 #endif
 #include "cl_exception.h"
+#include "file_logger.h"
 
 class IProcess;
 #if !USE_IPROCESS

@@ -39,7 +39,7 @@ void ChildProcess::Start(const wxArrayString& argv, const wxString& workingDirec
     Cleanup();
     child_pid = fork();
     if(child_pid == -1) {
-        clERROR() << "fork error: " << strerror(errno));
+        clERROR() << "fork error: " << strerror(errno);
         return;
     }
     if(child_pid == 0) {

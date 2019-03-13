@@ -42,6 +42,7 @@
 #include "manager.h"
 #include "quickoutlinedlg.h"
 #include "windowattrmanager.h"
+#include "globals.h"
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
@@ -63,21 +64,15 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
 
     Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
     mainSizer->Add(m_treeOutline, 1, wxEXPAND);
-
+    
+    m_treeOutline->SetSize(wxDLG_UNIT(this, wxSize(200, 200)));
     SetName("QuickOutlineDlg");
-    SetMinClientSize(wxSize(500, 400));
     Layout();
-
     CallAfter(&QuickOutlineDlg::DoParseActiveBuffer);
-
-    WindowAttrManager::Load(this);
-    CentreOnParent();
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
-QuickOutlineDlg::~QuickOutlineDlg()
-{
-    m_treeOutline->Unbind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
-}
+QuickOutlineDlg::~QuickOutlineDlg() { m_treeOutline->Unbind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this); }
 
 void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 {

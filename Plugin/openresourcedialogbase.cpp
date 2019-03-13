@@ -27,20 +27,20 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
                                             wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-    m_textCtrlResourceName->SetToolTip(_(
-        "Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of "
-        "choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
+    m_textCtrlResourceName->SetToolTip(_("Type resource name to open.\nYou may use a space delimited list of words to "
+                                         "narrow down the list of choices\ne.g. Typing: 'Open Dialog' will include "
+                                         "results that contain both words \"Open\" _and_ \"Dialog\""));
     m_textCtrlResourceName->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlResourceName->SetHint(wxT(""));
 #endif
 
-    mainSizer->Add(m_textCtrlResourceName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_textCtrlResourceName, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
                                       wxDV_ROW_LINES | wxDV_SINGLE);
 
-    mainSizer->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_dataview, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dataview->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                  wxDATAVIEW_COL_RESIZABLE);
@@ -48,11 +48,15 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
                                  wxDATAVIEW_COL_RESIZABLE);
     m_dataview->AppendTextColumn(_("Full Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                  wxDATAVIEW_COL_RESIZABLE);
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
+
+    mainSizer->Add(boxSizer19, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection(wxBOTH);
     fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
-    mainSizer->Add(fgSizer1, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+    boxSizer19->Add(fgSizer1, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_checkBoxFiles =
         new wxCheckBox(this, wxID_ANY, _("Show &files"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -66,9 +70,11 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     fgSizer1->Add(m_checkBoxShowSymbols, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    boxSizer19->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
 
-    mainSizer->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    boxSizer19->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(10));
 
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
@@ -79,7 +85,6 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     m_stdBtnSizer2->Realize();
 
     SetName(wxT("OpenResourceDialogBase"));
-    SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {

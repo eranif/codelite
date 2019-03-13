@@ -1087,7 +1087,7 @@ void ContextCpp::DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blo
 
     wxString classPattern = data.GetClassPattern();
     wxString funcPattern = data.GetFunctionPattern();
-    
+
     // Make sure we are using the correct keyword prefix
     classPattern.Replace("@", sKeywordPrefix);
     classPattern.Replace("\\", sKeywordPrefix);
@@ -2234,8 +2234,8 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
     }
 
     // Invoke the RefactorEngine
-    if(!RefactoringEngine::Instance()->IsCacheInitialized()) {
-        ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite",
+    if(RefactoringEngine::Instance()->IsBusy()) {
+        ::wxMessageBox(_("Refactoring engine is busy with another request. Please try again later"), "CodeLite",
                        wxOK | wxICON_WARNING);
         return;
     }
@@ -2908,23 +2908,19 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
     if(!clMainFrame::Get()->GetMainBook()->SaveAll(true, false)) return;
 
     // Invoke the RefactorEngine
-    if(!RefactoringEngine::Instance()->IsCacheInitialized()) {
-        ::wxMessageBox(_("Refactoring engine is still caching workspace info. Try again in a few seconds"), "codelite",
+    if(RefactoringEngine::Instance()->IsBusy()) {
+        ::wxMessageBox(_("Refactoring engine is busy with another request. Please try again later"), "CodeLite",
                        wxOK | wxICON_WARNING);
         return;
     }
 
     // Get list of files to search in
-    wxFileList_t files;
+    std::vector<wxFileName> files;
     ManagerST::Get()->GetWorkspaceFiles(files, true);
 
     // Invoke the RefactorEngine
     RefactoringEngine::Instance()->FindReferences(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos + 1),
                                                   word_start, files);
-
-    // Show the results
-    clMainFrame::Get()->GetOutputPane()->GetShowUsageTab()->ShowUsage(RefactoringEngine::Instance()->GetCandidates(),
-                                                                      word);
 }
 
 bool ContextCpp::IsDefaultContext() const { return false; }

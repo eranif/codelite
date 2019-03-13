@@ -358,9 +358,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
     wxFileList_t allfiles;
     GetWorkspaceFiles(allfiles, true);
 
-    // Initialize the cache
-    RefactoringEngine::Instance()->InitializeCache(allfiles);
-
     {
         SessionEntry session;
         if(SessionManager::Get().GetSession(path, session)) {

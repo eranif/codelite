@@ -56,6 +56,7 @@
 #include <wx/minifram.h>
 #include <wx/infobar.h>
 #include "clInfoBar.h"
+#include "refactorengine.h"
 
 // forward decls
 class DebuggerToolBar;
@@ -523,6 +524,7 @@ protected:
     void OnWebSearchSelectionUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
+    void OnFindReferences(clRefactoringEvent& e);
 
     // handle symbol tree events
     void OnParsingThreadMessage(wxCommandEvent& e);

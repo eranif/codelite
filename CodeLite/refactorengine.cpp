@@ -28,18 +28,31 @@
 #include "entry.h"
 #include "ctags_manager.h"
 #include "fileextmanager.h"
+#include "event_notifier.h"
+#include "search_thread.h"
 #if wxUSE_GUI
 #include <wx/progdlg.h>
 #include <wx/sizer.h>
 #include "progress_dialog.h"
 #endif
-#include "refactoring_storage.h"
 
-wxDEFINE_EVENT(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_REFACTORE_ENGINE_REFERENCES, clRefactoringEvent);
 
-RefactoringEngine::RefactoringEngine() {}
+RefactoringEngine::RefactoringEngine()
+{
+    Bind(wxEVT_SEARCH_THREAD_MATCHFOUND, &RefactoringEngine::OnSearchMatch, this);
+    Bind(wxEVT_SEARCH_THREAD_SEARCHEND, &RefactoringEngine::OnSearchEnded, this);
+    Bind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &RefactoringEngine::OnSearchEnded, this);
+    Bind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &RefactoringEngine::OnSearchStarted, this);
+}
 
-RefactoringEngine::~RefactoringEngine() {}
+RefactoringEngine::~RefactoringEngine()
+{
+    Unbind(wxEVT_SEARCH_THREAD_MATCHFOUND, &RefactoringEngine::OnSearchMatch, this);
+    Unbind(wxEVT_SEARCH_THREAD_SEARCHEND, &RefactoringEngine::OnSearchEnded, this);
+    Unbind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &RefactoringEngine::OnSearchEnded, this);
+    Unbind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &RefactoringEngine::OnSearchStarted, this);
+}
 
 RefactoringEngine* RefactoringEngine::Instance()
 {
@@ -47,11 +60,7 @@ RefactoringEngine* RefactoringEngine::Instance()
     return &ms_instance;
 }
 
-void RefactoringEngine::Clear()
-{
-    m_possibleCandidates.clear();
-    m_candidates.clear();
-}
+void RefactoringEngine::Clear() { DoCleanup(); }
 
 void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos,
                                            const wxFileList_t& files)
@@ -69,15 +78,11 @@ void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileN
 
     // get the current file states
     TextStatesPtr states = scanner.states();
-    if(!states) {
-        return;
-    }
+    if(!states) { return; }
 
     // get the local by scanning from the current function's
     TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(fn, line + 1);
-    if(!tag) {
-        return;
-    }
+    if(!tag) { return; }
 
     // Get the line number of the function
     int funcLine = tag->GetLine() - 1;
@@ -213,9 +218,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         wxChar ch = states->Previous();
 
         // eof?
-        if(ch == 0) {
-            break;
-        }
+        if(ch == 0) { break; }
 
         switch(ch) {
         case wxT(';'):
@@ -228,9 +231,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
                 // which was increased
                 depth--;
             } else {
-                if(depth <= 0) {
-                    cont = false;
-                }
+                if(depth <= 0) { cont = false; }
             }
             break;
         case wxT(' '):
@@ -239,9 +240,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
         case wxT('\t'):
         case wxT('\r'):
             prevGt = false;
-            if(depth <= 0) {
-                cont = false;
-            }
+            if(depth <= 0) { cont = false; }
             break;
         case wxT('{'):
         case wxT('='):
@@ -295,9 +294,7 @@ wxString RefactoringEngine::GetExpression(int pos, TextStatesPtr states)
             break;
         }
 
-        if(cont) {
-            expression.Prepend(ch);
-        }
+        if(cont) { expression.Prepend(ch); }
     }
     return expression;
 }
@@ -307,7 +304,8 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
 {
     clProgressDlg* prgDlg = NULL;
     // Create a progress dialog
-    prgDlg = new clProgressDlg(NULL, title, wxT(""), maxValue);
+    prgDlg = new clProgressDlg(EventNotifier::Get()->TopFrame(), title, wxT(""), maxValue);
+    prgDlg->CentreOnParent();
     return prgDlg;
 }
 #endif
@@ -321,13 +319,9 @@ void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName
 void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
                                          const wxFileList_t& files, bool onlyDefiniteMatches)
 {
+    if(IsBusy()) { return; }
     // Clear previous results
     Clear();
-
-    if(!m_storage.IsCacheReady()) {
-        m_storage.InitializeCache(files);
-        return;
-    }
 
     // Container for the results found in the 'files'
     CppTokensMap tokensMap;
@@ -340,123 +334,46 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     if(!states) return;
 
     // Attempt to understand the expression that the caret is currently located at (using line:pos:file)
-    RefactorSource rs;
-    if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &rs)) return;
+    m_refactorSource.Reset();
+    if(!DoResolveWord(states, fn, pos + symname.Len(), line, symname, &m_refactorSource)) return;
 
-    wxFileList_t modifiedFilesList = m_storage.FilterUpToDateFiles(files);
-#if wxUSE_GUI
-    clProgressDlg* prgDlg = NULL;
-#endif
-
-    if(!modifiedFilesList.empty()) {
-#if wxUSE_GUI
-        prgDlg = CreateProgressDialog(_("Updating cache..."), files.size());
-#endif
-        // Search the provided input files for the symbol to rename and prepare
-        // a CppTokensMap
-        for(size_t i = 0; i < modifiedFilesList.size(); i++) {
-            wxFileName curfile = modifiedFilesList.at(i);
-
-            wxString msg;
-            msg << _("Caching file: ") << curfile.GetFullName();
-#if wxUSE_GUI
-            // update the progress bar
-            if(!prgDlg->Update(i, msg)) {
-                prgDlg->Destroy();
-                Clear();
-                return;
-            }
-#endif
-            // Scan only valid C / C++ files
-            switch(FileExtManager::GetType(curfile.GetFullName())) {
-            case FileExtManager::TypeHeader:
-            case FileExtManager::TypeSourceC:
-            case FileExtManager::TypeSourceCpp: {
-                // load matches for a give symbol
-                m_storage.Match(symname, curfile.GetFullPath(), tokensMap);
-            } break;
-            default:
-                break;
-            }
-        }
-#if wxUSE_GUI
-        prgDlg->Destroy();
-#endif
+    // Now that we got here, ask the search thread to search for this symbol in the list of input files
+    SearchData sd;
+    sd.SetFindString(symname);
+    sd.SetEnablePipeSupport(false);
+    sd.SetMatchCase(true);
+    sd.SetMatchWholeWord(true);
+    sd.SetRegularExpression(false);
+    wxArrayString filesArray;
+    filesArray.reserve(files.size());
+    for(const wxFileName& fn : files) {
+        if(fn.GetFullPath() == "sqlite3.c") { continue; }
+        filesArray.Add(fn.GetFullPath());
     }
-    // load all tokens, first we need to parse the workspace files...
-    CppToken::Vec_t tokens = m_storage.GetTokens(symname, files);
-    if(tokens.empty()) return;
 
-    // sort the tokens
-    std::sort(tokens.begin(), tokens.end());
+    sd.SetFiles(filesArray);
+    sd.SetOwner(this); // send back the events here
 
-    RefactorSource target;
-    CppToken::Vec_t::iterator iter = tokens.begin();
-    int counter(0);
-
-    TextStatesPtr statesPtr(NULL);
-    wxString statesPtrFileName;
-#if wxUSE_GUI
-    prgDlg = CreateProgressDialog(_("Stage 2/2: Parsing matches..."), (int)tokens.size());
-#endif
-    for(; iter != tokens.end(); ++iter) {
-
-        // TODO :: send an event here to report our progress
-        wxFileName f(iter->getFilename());
-        wxString msg;
-        msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
-#if wxUSE_GUI
-        if(!prgDlg->Update(counter, msg)) {
-            // user clicked 'Cancel'
-            Clear();
-            prgDlg->Destroy();
-            return;
-        }
-#endif
-        counter++;
-        // reset the result
-        target.Reset();
-
-        if(!statesPtr || statesPtrFileName != iter->getFilename()) {
-            // Create new statesPtr
-            CppWordScanner sc(iter->getFilename());
-            statesPtr = sc.states();
-            statesPtrFileName = iter->getFilename();
-        }
-
-        if(!statesPtr) continue;
-
-        if(DoResolveWord(statesPtr, wxFileName(iter->getFilename()), iter->getOffset(), iter->getLineNumber(), symname,
-                         &target)) {
-
-            // set the line number
-            if(statesPtr->states.size() > iter->getOffset())
-                iter->setLineNumber(statesPtr->states[iter->getOffset()].lineNo);
-
-            if(target.name == rs.name && target.scope == rs.scope) {
-                // full match
-                m_candidates.push_back(*iter);
-
-            } else if(target.name == rs.scope && !rs.isClass) {
-                // source is function, and target is class
-                m_candidates.push_back(*iter);
-
-            } else if(target.name == rs.name && rs.isClass) {
-                // source is class, and target is ctor
-                m_candidates.push_back(*iter);
-
-            } else if(!onlyDefiniteMatches) {
-                // add it to the possible match list
-                m_possibleCandidates.push_back(*iter);
-            }
-        } else if(!onlyDefiniteMatches) {
-            // resolved word failed, add it to the possible list
-            m_possibleCandidates.push_back(*iter);
-        }
+    // based on the input file, set the file extensions
+    wxString extensions;
+    FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName(), FileExtManager::TypeText);
+    switch(type) {
+    case FileExtManager::TypeSourceC:
+    case FileExtManager::TypeSourceCpp:
+    case FileExtManager::TypeHeader:
+        extensions = "*.cpp;*.c;*.h;*.hpp;*.cxx;*.cc;";
+        break;
+    default:
+        extensions = "*";
+        break;
     }
-#if wxUSE_GUI
-    prgDlg->Destroy();
-#endif
+    sd.SetExtensions(extensions); // All the files in the list should be scanned
+    SearchThreadST::Get()->PerformSearch(sd);
+    m_currentAction = kFindReferences;
+    m_symbolName = symname;
+    m_onlyDefiniteMatches = onlyDefiniteMatches;
+
+    // Find references will complete when the 'Find in files' action is completed
 }
 
 TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn, int line, int pos, const wxString& word,
@@ -491,4 +408,116 @@ TagEntryPtr RefactoringEngine::SyncSignature(const wxFileName& fn, int line, int
     return tag;
 }
 
-bool RefactoringEngine::IsCacheInitialized() const { return m_storage.IsCacheReady(); }
+void RefactoringEngine::OnSearchStarted(wxCommandEvent& event) { wxUnusedVar(event); }
+
+void RefactoringEngine::OnSearchEnded(wxCommandEvent& event) { DoCompleteFindReferences(); }
+
+void RefactoringEngine::OnSearchMatch(wxCommandEvent& event)
+{
+    SearchResultList* res = (SearchResultList*)event.GetClientData();
+    if(!res) { return; }
+
+    SearchResultList::iterator iter = res->begin();
+    for(const SearchResult& result : *res) {
+        CppToken tok;
+        tok.setFilename(result.GetFileName());
+        tok.setLineNumber(result.GetLineNumber());
+        tok.setOffset(result.GetPosition());
+        tok.setName(result.GetFindWhat());
+        m_tokens.push_back(std::move(tok));
+    }
+    wxDELETE(res);
+}
+
+void RefactoringEngine::DoCompleteFindReferences()
+{
+    ScopeCleaner cleaner; // ensure that DoCleanup is called when leave this scope
+
+    // Load all tokens, first we need to parse the workspace files...
+    CppToken::Vec_t tokens = std::move(m_tokens);
+
+    // sort the tokens
+    std::sort(tokens.begin(), tokens.end());
+
+    RefactorSource target;
+    int counter(0);
+
+    TextStatesPtr statesPtr(NULL);
+    wxString statesPtrFileName;
+#if wxUSE_GUI
+    clProgressDlg* prgDlg = CreateProgressDialog(_("Parsing matches..."), (int)tokens.size());
+#endif
+    for(CppToken& token : tokens) {
+        wxFileName f(token.getFilename());
+#if wxUSE_GUI
+        wxString msg;
+        msg << _("Parsing expression ") << counter << wxT("/") << tokens.size() << _(" in file: ") << f.GetFullName();
+        if(!prgDlg->Update(counter, msg)) {
+            // user clicked 'Cancel'
+            Clear();
+            prgDlg->Destroy();
+            return;
+        }
+#endif
+        counter++;
+        // reset the result
+        target.Reset();
+
+        if(!statesPtr || statesPtrFileName != token.getFilename()) {
+            // Create new statesPtr
+            CppWordScanner sc(token.getFilename());
+            statesPtr = sc.states();
+            statesPtrFileName = token.getFilename();
+        }
+
+        if(!statesPtr) continue;
+
+        if(DoResolveWord(statesPtr, wxFileName(token.getFilename()), token.getOffset(), token.getLineNumber(),
+                         m_symbolName, &target)) {
+
+            // set the line number
+            if(statesPtr->states.size() > token.getOffset())
+                token.setLineNumber(statesPtr->states[token.getOffset()].lineNo);
+
+            if(target.name == m_refactorSource.name && target.scope == m_refactorSource.scope) {
+                // full match
+                m_candidates.push_back(token);
+
+            } else if(target.name == m_refactorSource.scope && !m_refactorSource.isClass) {
+                // source is function, and target is class
+                m_candidates.push_back(token);
+
+            } else if(target.name == m_refactorSource.name && m_refactorSource.isClass) {
+                // source is class, and target is ctor
+                m_candidates.push_back(token);
+
+            } else if(!m_onlyDefiniteMatches) {
+                // add it to the possible match list
+                m_possibleCandidates.push_back(token);
+            }
+        } else if(!m_onlyDefiniteMatches) {
+            // resolved word failed, add it to the possible list
+            m_possibleCandidates.push_back(token);
+        }
+    }
+#if wxUSE_GUI
+    prgDlg->Destroy();
+#endif
+
+    clRefactoringEvent event(wxEVT_REFACTORE_ENGINE_REFERENCES);
+    event.SetPossibleMatches(m_possibleCandidates);
+    event.SetMatches(m_candidates);
+    event.SetString(m_symbolName);
+    EventNotifier::Get()->AddPendingEvent(event);
+}
+
+void RefactoringEngine::DoCleanup()
+{
+    m_possibleCandidates.clear();
+    m_candidates.clear();
+    m_currentAction = kNone;
+    m_refactorSource.Reset();
+    m_onlyDefiniteMatches = false;
+    m_symbolName.Clear();
+    m_tokens.clear();
+}

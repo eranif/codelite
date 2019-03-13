@@ -358,8 +358,6 @@
     <File Name="clprogressdlgbase.cpp"/>
     <File Name="clprogressdlgbase.fbp"/>
     <File Name="clprogressdlgbase.h"/>
-    <File Name="refactoring_storage.h"/>
-    <File Name="refactoring_storage.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="configuration">

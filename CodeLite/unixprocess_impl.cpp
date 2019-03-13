@@ -400,9 +400,9 @@ bool UnixProcessImpl::Write(const std::string& buff)
     std::string tmpbuf = buff;
     tmpbuf.append("\n");
 
-    clSocketBase c(GetWriteHandle());
-    c.MakeSocketBlocking(false);
-    c.SetCloseOnExit(false);
+//    clSocketBase c(GetWriteHandle());
+//    c.MakeSocketBlocking(false);
+//    c.SetCloseOnExit(false);
 
     const int chunk_size = 1024;
     while(!tmpbuf.empty()) {

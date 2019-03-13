@@ -34,7 +34,7 @@
 #include "cppwordscanner.h"
 #include "cpptoken.h"
 #include "codelite_exports.h"
-#include "refactoring_storage.h"
+#include "cl_command_event.h"
 
 class clProgressDlg;
 
@@ -61,14 +61,66 @@ struct RefactorSource {
 };
 
 //-----------------------------------------------------------------------------------
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING, wxCommandEvent);
 
-class WXDLLIMPEXP_CL RefactoringEngine
+// --------------------------------------------------------------
+// Refactoring event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clRefactoringEvent : public clCommandEvent
+{
+    CppToken::Vec_t m_matches;
+    CppToken::Vec_t m_possibleMatches;
+
+public:
+    clRefactoringEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
+        : clCommandEvent(commandType, winid)
+    {
+    }
+    clRefactoringEvent(const clRefactoringEvent& event) { *this = event; }
+    clRefactoringEvent& operator=(const clRefactoringEvent& src)
+    {
+        clCommandEvent::operator=(src);
+        m_matches = src.m_matches;
+        m_possibleMatches = src.m_possibleMatches;
+        return *this;
+    }
+
+    virtual ~clRefactoringEvent() {}
+    void SetMatches(const CppToken::Vec_t& matches) { this->m_matches = matches; }
+    void SetPossibleMatches(const CppToken::Vec_t& possibleMatches) { this->m_possibleMatches = possibleMatches; }
+    const CppToken::Vec_t& GetMatches() const { return m_matches; }
+    const CppToken::Vec_t& GetPossibleMatches() const { return m_possibleMatches; }
+    virtual wxEvent* Clone() const { return new clRefactoringEvent(*this); }
+};
+
+typedef void (wxEvtHandler::*clRefactoringEventFunction)(clRefactoringEvent&);
+#define clRefactoringEventHandler(func) wxEVENT_HANDLER_CAST(clRefactoringEventFunction, func)
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTORE_ENGINE_REFERENCES, clRefactoringEvent);
+
+class WXDLLIMPEXP_CL RefactoringEngine : public wxEvtHandler
 {
     CppToken::Vec_t m_candidates;
     CppToken::Vec_t m_possibleCandidates;
     wxEvtHandler* m_evtHandler;
-    RefactoringStorage m_storage;
+
+    RefactorSource m_refactorSource;
+    enum eActionType {
+        kNone,
+        kFindReferences,
+        kRenameSymbol,
+    };
+    eActionType m_currentAction = kNone;
+    CppToken::Vec_t m_tokens;
+    wxString m_symbolName;
+    bool m_onlyDefiniteMatches = false;
+    friend class ScopeCleaner;
+
+    class ScopeCleaner
+    {
+    public:
+        ScopeCleaner() {}
+        ~ScopeCleaner() { RefactoringEngine::Instance()->DoCleanup(); }
+    };
 
 public:
     static RefactoringEngine* Instance();
@@ -77,9 +129,10 @@ protected:
 #if wxUSE_GUI
     clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);
 #endif
-
     void DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files,
                           bool onlyDefiniteMatches);
+    void DoCompleteFindReferences();
+    void DoCleanup();
 
 private:
     RefactoringEngine();
@@ -87,9 +140,12 @@ private:
     bool DoResolveWord(TextStatesPtr states, const wxFileName& fn, int pos, int line, const wxString& word,
                        RefactorSource* rs);
 
+    void OnSearchStarted(wxCommandEvent& event);
+    void OnSearchEnded(wxCommandEvent& event);
+    void OnSearchMatch(wxCommandEvent& event);
+
 public:
-    void InitializeCache(const wxFileList_t& files) { m_storage.InitializeCache(files); }
-    bool IsCacheInitialized() const;
+    bool IsBusy() const { return m_currentAction != kNone; }
     void SetCandidates(const CppToken::Vec_t& candidates) { this->m_candidates = candidates; }
     void SetPossibleCandidates(const CppToken::Vec_t& possibleCandidates)
     {

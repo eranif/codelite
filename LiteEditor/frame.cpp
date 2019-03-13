@@ -62,7 +62,6 @@
 #include "precompiled_header.h"
 #include "quickfindbar.h"
 #include "refactorengine.h"
-#include "refactoring_storage.h"
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
 #include "theme_handler_helper.h"
@@ -79,6 +78,7 @@
 #include "DebuggerToolBar.h"
 #include "clThemeUpdater.h"
 #include "clInfoBar.h"
+#include "findusagetab.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -793,8 +793,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed), NULL,
                                   this);
-    EventNotifier::Get()->Connect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,
-                                  wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
@@ -818,6 +816,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
+    EventNotifier::Get()->Bind(wxEVT_REFACTORE_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
 
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
@@ -881,7 +880,7 @@ clMainFrame::~clMainFrame(void)
                          NULL, this);
     wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
                          this);
-
+    EventNotifier::Get()->Unbind(wxEVT_REFACTORE_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
     EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
                                  this);
     EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED,
@@ -890,8 +889,6 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(clMainFrame::OnWorkspaceClosed),
                                      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_REFACTORING_ENGINE_CACHE_INITIALIZING,
-                                     wxCommandEventHandler(clMainFrame::OnRefactoringCacheStatus), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
@@ -1201,7 +1198,7 @@ void clMainFrame::CreateGUIControls()
                                          m_tagsOptionsData.GetParserExcludePaths());
 
     ParseThreadST::Get()->Start();
-    
+
     // Connect this tree to the parse thread
     ParseThreadST::Get()->SetNotifyWindow(this);
 
@@ -3099,18 +3096,18 @@ void clMainFrame::OnIdle(wxIdleEvent& e)
     e.Skip();
 
     // make sure that we are always set to the working directory of the workspace
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
-        // Check that current working directory is set to the workspace folder
-        wxString path = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
-        wxString curdir = ::wxGetCwd();
-        if(path != curdir) {
-            // Check that it really *is* different, not just a symlink issue: see bug #942
-            if(CLRealPath(path) != CLRealPath(curdir)) {
-                clDEBUG1() << "Current working directory is reset to:" << path;
-                ::wxSetWorkingDirectory(path);
-            }
-        }
-    }
+    //    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    //        // Check that current working directory is set to the workspace folder
+    //        wxString path = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
+    //        wxString curdir = ::wxGetCwd();
+    //        if(path != curdir) {
+    //            // Check that it really *is* different, not just a symlink issue: see bug #942
+    //            if(CLRealPath(path) != CLRealPath(curdir)) {
+    //                clDEBUG1() << "Current working directory is reset to:" << path;
+    //                ::wxSetWorkingDirectory(path);
+    //            }
+    //        }
+    //    }
 }
 
 void clMainFrame::OnLinkClicked(wxHtmlLinkEvent& e)
@@ -4683,10 +4680,10 @@ void clMainFrame::UpdateAUI()
 void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
 {
     e.Skip();
-    
+
     // Generate compile_commands.json file
     ManagerST::Get()->GenerateCompileCommands();
-    
+
     GetStatusBar()->SetMessage(_("Done"));
     GetWorkspacePane()->ClearProgress();
 
@@ -5775,3 +5772,10 @@ void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 }
 
 void clMainFrame::Raise() { wxFrame::Raise(); }
+
+void clMainFrame::OnFindReferences(clRefactoringEvent& e)
+{
+    e.Skip();
+    // Show the results
+    GetOutputPane()->GetShowUsageTab()->ShowUsage(e.GetMatches(), e.GetString());
+}

@@ -13,6 +13,7 @@
 LanguageServerCluster::LanguageServerCluster()
 {
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -23,6 +24,7 @@ LanguageServerCluster::LanguageServerCluster()
 LanguageServerCluster::~LanguageServerCluster()
 {
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -166,5 +168,25 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         lsp->Start(argv, entry.GetWorkingDirectory(), entry.GetLanguages());
         m_servers.insert({ entry.GetName(), lsp });
         lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
+    }
+}
+
+void LanguageServerCluster::OnFindSymbolDecl(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    if(m_servers.empty()) return;
+    if(!LanguageServerConfig::Get().IsEnabled()) { return; }
+
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    int col = ctrl->GetColumn(ctrl->GetCurrentPos());
+    int line = ctrl->LineFromPosition(ctrl->GetCurrentPos());
+    LanguageServerProtocol::Ptr_t server = GetServerForFile(editor->GetFileName());
+    if(server) {
+        // this event is ours to handle
+        event.Skip(false);
+        server->FindDeclaration(editor);
     }
 }

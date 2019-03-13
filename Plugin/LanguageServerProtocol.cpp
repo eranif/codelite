@@ -3,6 +3,7 @@
 #include "processreaderthread.h"
 #include "LSP/clJSONRPC.h"
 #include "LSP/GotoDefinitionRequest.h"
+#include "LSP/GotoDeclarationRequest.h"
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
@@ -289,9 +290,7 @@ void LanguageServerProtocol::Stop(bool goingDown)
     m_process->Unbind(wxEVT_CHILD_PROCESS_STDERR, &LanguageServerProtocol::OnProcessStderr, this);
     m_process->Stop();
     m_process.reset(nullptr);
-    if(!goingDown) {
-        DoStart();
-    }
+    if(!goingDown) { DoStart(); }
 }
 
 void LanguageServerProtocol::DoClear()
@@ -498,6 +497,25 @@ void LanguageServerProtocol::CloseEditor(IEditor* editor)
 {
     if(!IsInitialized()) { return; }
     if(editor && ShouldHandleFile(editor)) { SendCloseRequest(editor->GetFileName()); }
+}
+
+void LanguageServerProtocol::FindDeclaration(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxFileName& filename = editor->GetFileName();
+    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        // we already sent this file over, ask for change parse
+        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+    }
+
+    LSP::GotoDeclarationRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::GotoDeclarationRequest(
+        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+    QueueMessage(req);
 }
 
 //===------------------------------------------------------------------

@@ -320,7 +320,9 @@ void CodeCompletionManager::GotoDecl(clEditor* editor)
     bool res = false;
     
     // Let the plugins handle this first
-    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL_DECLARATION);
+    // NOTE: we send here the event 'wxEVT_CC_FIND_SYMBOL' and not 'wxEVT_CC_FIND_SYMBOL_DECLARATION'
+    // becuase clangd does not support this method yet...
+    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL);
     event.SetEditor(editor);
     if(EventNotifier::Get()->ProcessEvent(event)) { return; }
     

@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/GotoDeclarationRequest.h"/>
+    <File Name="LSP/GotoDeclarationRequest.cpp"/>
     <File Name="LSP/ResponseError.cpp"/>
     <File Name="LSP/ResponseError.h"/>
     <File Name="LSP/CompletionItem.cpp"/>

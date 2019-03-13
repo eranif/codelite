@@ -159,6 +159,10 @@ public:
      * @brief find the definition of the item at the caret position
      */
     void FindDefinition(IEditor* editor);
+    /**
+     * @brief find the definition of the item at the caret position
+     */
+    void FindDeclaration(IEditor* editor);
 
     /**
      * @brief perform code completion for a given editor

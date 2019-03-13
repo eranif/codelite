@@ -35,6 +35,7 @@ public:
 
     void Reload();
     void OnFindSymbold(clCodeCompletionEvent& event);
+    void OnFindSymbolDecl(clCodeCompletionEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
 };
 

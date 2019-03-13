@@ -860,9 +860,6 @@
             <object class="wxMenuItem" name="rename_symbol">
                 <label>Rename Symbol...\tCtrl-Shift-H</label>
             </object>
-            <object class="wxMenuItem" name="rename_local_variable">
-                <label>Rename Local Variable...\tCtrl-Shift-L</label>
-            </object>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="wxID_COPY">

@@ -36,52 +36,51 @@ public:
     CppToken m_token;
 
 public:
-    RenameSymbolData(const CppToken& token) : m_token(token) {}
+    RenameSymbolData(const CppToken& token)
+        : m_token(token)
+    {
+    }
     ~RenameSymbolData() {}
 };
 
-RenameSymbol::RenameSymbol( wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t &possCandidates, const wxString& oldname )
-    : RenameSymbolBase( parent )
+RenameSymbol::RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t& possCandidates,
+                           const wxString& oldname)
+    : RenameSymbolBase(parent)
 {
     m_preview->SetReadOnly(true);
-    EditorConfigST::Get()->GetLexer("C++")->Apply( m_preview, true );
+    EditorConfigST::Get()->GetLexer("C++")->Apply(m_preview, true);
     m_tokens.clear();
 
     CppToken::Vec_t::const_iterator iter = candidates.begin();
-    for (; iter != candidates.end(); ++iter) {
+    for(; iter != candidates.end(); ++iter) {
         AddMatch(*iter, true);
         m_tokens.push_back(*iter);
     }
 
     iter = possCandidates.begin();
-    for (; iter != possCandidates.end(); iter++) {
+    for(; iter != possCandidates.end(); iter++) {
         AddMatch(*iter, false);
         m_tokens.push_back(*iter);
     }
 
-    if (m_tokens.empty() == false) {
-        DoSelectFile(m_tokens.at((size_t)0));
-    }
+    if(m_tokens.empty() == false) { DoSelectFile(m_tokens.at((size_t)0)); }
 
     m_textCtrlNewName->SetValue(oldname);
     m_textCtrlNewName->SetFocus();
-    
-    SetName("RenameSymbol");
-    WindowAttrManager::Load(this);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 void RenameSymbol::AddMatch(const CppToken& token, bool check)
 {
     wxString relativeTo = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
-    wxFileName fn( token.getFilename() );
-    fn.MakeRelativeTo( relativeTo );
-
+    wxFileName fn(token.getFilename());
+    fn.MakeRelativeTo(relativeTo);
 
     wxVector<wxVariant> cols;
     cols.push_back(check);
     cols.push_back(fn.GetFullPath());
-    cols.push_back( wxString() << token.getOffset() );
-    m_dvListCtrl->AppendItem( cols, (wxUIntPtr)new RenameSymbolData(token) );
+    cols.push_back(wxString() << token.getOffset());
+    m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new RenameSymbolData(token));
 }
 
 void RenameSymbol::OnButtonOK(wxCommandEvent& e)
@@ -89,7 +88,7 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
     wxUnusedVar(e);
 
     if(!IsValidCppIndetifier(m_textCtrlNewName->GetValue())) {
-        wxMessageBox(_("Invalid C/C++ symbol name"), _("CodeLite"), wxICON_WARNING|wxOK);
+        wxMessageBox(_("Invalid C/C++ symbol name"), _("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
@@ -99,11 +98,11 @@ void RenameSymbol::OnButtonOK(wxCommandEvent& e)
 void RenameSymbol::GetMatches(CppToken::Vec_t& matches)
 {
     wxVariant v;
-    for (int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->GetValue(v, i, 0);
 
-        if ( v.GetBool() ) {
-            matches.push_back( ((RenameSymbolData*) m_dvListCtrl->GetItemData( m_dvListCtrl->RowToItem(i) ))->m_token );
+        if(v.GetBool()) {
+            matches.push_back(((RenameSymbolData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i)))->m_token);
         }
     }
 }
@@ -113,42 +112,45 @@ void RenameSymbol::DoSelectFile(const CppToken& token)
     m_preview->SetReadOnly(false);
 
     wxString file_name(token.getFilename());
-    if( m_filename != file_name ) {
-        m_preview->LoadFile( file_name );
+    if(m_filename != file_name) {
+        m_preview->LoadFile(file_name);
         m_filename = file_name;
     }
 
     m_preview->ClearSelections();
-    m_preview->SetSelection(token.getOffset(), token.getOffset()+token.getName().length());
-    m_preview->ScrollToLine( m_preview->LineFromPosition( token.getOffset() ) );
+    m_preview->SetSelection(token.getOffset(), token.getOffset() + token.getName().length());
+    int line_number = m_preview->LineFromPosition(token.getOffset());
+
+    int linesOnScreen = m_preview->LinesOnScreen();
+    // To place our line in the middle, the first visible line should be
+    // the: line - (linesOnScreen / 2)
+    int firstVisibleLine = line_number - (linesOnScreen / 2);
+    if(firstVisibleLine < 0) { firstVisibleLine = 0; }
+    m_preview->EnsureVisible(firstVisibleLine);
+    m_preview->SetFirstVisibleLine(firstVisibleLine);
     m_preview->SetReadOnly(true);
 }
 
 void RenameSymbol::OnSelection(wxDataViewEvent& event)
 {
     CHECK_ITEM_RET(event.GetItem());
-    
-    RenameSymbolData* data = (RenameSymbolData*) m_dvListCtrl->GetItemData( event.GetItem() );
-    if(data) {
-        DoSelectFile( data->m_token );
-    }
+
+    RenameSymbolData* data = (RenameSymbolData*)m_dvListCtrl->GetItemData(event.GetItem());
+    if(data) { DoSelectFile(data->m_token); }
 }
 
-RenameSymbol::~RenameSymbol()
-{
-    
-}
+RenameSymbol::~RenameSymbol() {}
 
 void RenameSymbol::OnCheckAll(wxCommandEvent& event)
 {
-    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->SetValue(true, i, 0);
     }
 }
 
 void RenameSymbol::OnUncheckAll(wxCommandEvent& event)
 {
-    for(int i=0; i<m_dvListCtrl->GetItemCount(); ++i) {
+    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         m_dvListCtrl->SetValue(false, i, 0);
     }
 }

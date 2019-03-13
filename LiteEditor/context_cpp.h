@@ -131,7 +131,6 @@ public:
     virtual void OnAddMultiImpl(wxCommandEvent& e);
     virtual void OnOverrideParentVritualFunctions(wxCommandEvent& e);
     virtual void OnRenameGlobalSymbol(wxCommandEvent& e);
-    virtual void OnRenameLocalSymbol(wxCommandEvent& e);
     virtual void OnFindReferences(wxCommandEvent& e);
     virtual void OnSyncSignatures(wxCommandEvent& e);
     virtual void OnRetagFile(wxCommandEvent& e);
@@ -156,6 +155,12 @@ private:
 
 public:
     void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix);
+    /**
+     * \brief replace list of tokens representd by li with 'word'
+     * \param li
+     * \return
+     */
+    static void ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li);
 
 private:
     /**
@@ -168,12 +173,6 @@ private:
     bool FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others);
     bool FindSwappedFile(const wxFileName& rhs, wxString& lhs);
 
-    /**
-     * \brief replace list of tokens representd by li with 'word'
-     * \param li
-     * \return
-     */
-    void ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li);
 
     /**
      * @brief format editor

@@ -525,6 +525,7 @@ protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
     void OnFindReferences(clRefactoringEvent& e);
+    void OnRenameSymbol(clRefactoringEvent& e);
 
     // handle symbol tree events
     void OnParsingThreadMessage(wxCommandEvent& e);

@@ -451,8 +451,10 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
     if(!IsInitialized()) { return; }
     if(editor && ShouldHandleFile(editor)) {
         if(m_filesSent.count(editor->GetFileName().GetFullPath())) {
+            clDEBUG() << "OpenEditor->SendChangeRequest called for:" << editor->GetFileName().GetFullName();
             SendChangeRequest(editor->GetFileName(), editor->GetCtrl()->GetText());
         } else {
+            clDEBUG() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
             SendOpenRequest(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
         }
     }

@@ -95,7 +95,8 @@ public:
 typedef void (wxEvtHandler::*clRefactoringEventFunction)(clRefactoringEvent&);
 #define clRefactoringEventHandler(func) wxEVENT_HANDLER_CAST(clRefactoringEventFunction, func)
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTORE_ENGINE_REFERENCES, clRefactoringEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTOR_ENGINE_REFERENCES, clRefactoringEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, clRefactoringEvent);
 
 class WXDLLIMPEXP_CL RefactoringEngine : public wxEvtHandler
 {
@@ -130,7 +131,7 @@ protected:
     clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);
 #endif
     void DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos, const wxFileList_t& files,
-                          bool onlyDefiniteMatches);
+                          bool onlyDefiniteMatches, eActionType type);
     void DoCompleteFindReferences();
     void DoCleanup();
 

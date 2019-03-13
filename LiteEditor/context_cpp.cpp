@@ -153,7 +153,6 @@ EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 EVT_MENU(XRCID("add_forward_decl"), ContextCpp::OnAddForwardDecl)
 EVT_MENU(XRCID("rename_symbol"), ContextCpp::OnRenameGlobalSymbol)
-EVT_MENU(XRCID("rename_local_variable"), ContextCpp::OnRenameLocalSymbol)
 EVT_MENU(XRCID("find_references"), ContextCpp::OnFindReferences)
 EVT_MENU(XRCID("sync_signatures"), ContextCpp::OnSyncSignatures)
 EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
@@ -2156,38 +2155,6 @@ bool ContextCpp::IsComment(long pos)
             style == wxSTC_C_COMMENTDOCKEYWORDERROR);
 }
 
-void ContextCpp::OnRenameLocalSymbol(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
-
-    clEditor& rCtrl = GetCtrl();
-    // get expression
-    int pos = rCtrl.GetCurrentPos();
-    int word_start = rCtrl.WordStartPosition(pos, true);
-    int word_end = rCtrl.WordEndPosition(pos, true);
-
-    // Read the word that we want to refactor
-    wxString word = rCtrl.GetTextRange(word_start, word_end);
-    if(word.IsEmpty()) return;
-
-    // save the current file
-    if(!rCtrl.SaveFile()) return;
-
-    // Invoke the RefactorEngine
-    RefactoringEngine::Instance()->RenameLocalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos + 1),
-                                                     word_start);
-
-    if(RefactoringEngine::Instance()->GetCandidates().empty()) {
-        wxMessageBox(_("No matches were found!"), _("Refactoring local variable"), wxOK | wxCENTER);
-        return;
-    }
-
-    wxString newName = wxGetTextFromUser(_("Insert New Variable Name:"), _("Refactoring local variable"), word);
-    if(newName == word || newName.IsEmpty()) return;
-    ReplaceInFiles(newName, RefactoringEngine::Instance()->GetCandidates());
-}
-
 void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
@@ -2242,19 +2209,6 @@ void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
 
     RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos + 1),
                                                       word_start, files);
-
-    if(RefactoringEngine::Instance()->GetCandidates().empty() &&
-       RefactoringEngine::Instance()->GetPossibleCandidates().empty())
-        return;
-
-    // display the refactor dialog
-    RenameSymbol dlg(&rCtrl, RefactoringEngine::Instance()->GetCandidates(),
-                     RefactoringEngine::Instance()->GetPossibleCandidates(), word);
-    if(dlg.ShowModal() == wxID_OK) {
-        CppToken::Vec_t matches;
-        dlg.GetMatches(matches);
-        if(!matches.empty() && dlg.GetWord() != word) { ReplaceInFiles(dlg.GetWord(), matches); }
-    }
 }
 
 void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
@@ -2318,7 +2272,7 @@ void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
     // re-enable the feature again
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(true);
 
-    if(success) { GetCtrl().GetManager()->GetStatusBar()->SetMessage(_("Symbol renamed")); }
+    if(success) { clGetManager()->GetStatusBar()->SetMessage(_("Symbol renamed")); }
 }
 
 void ContextCpp::OnRetagFile(wxCommandEvent& e)

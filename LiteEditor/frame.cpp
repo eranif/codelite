@@ -79,6 +79,9 @@
 #include "clThemeUpdater.h"
 #include "clInfoBar.h"
 #include "findusagetab.h"
+#include "context_cpp.h"
+#include "renamesymboldlg.h"
+#include <cpptoken.h>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -671,7 +674,6 @@ EVT_MENU(XRCID("find_references"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("comment_selection"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("comment_line"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("retag_file"), clMainFrame::OnCppContextMenu)
-EVT_MENU(XRCID("rename_local_variable"), clMainFrame::OnCppContextMenu)
 
 //-----------------------------------------------------------------
 // Hyperlinks
@@ -816,8 +818,9 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
-    EventNotifier::Get()->Bind(wxEVT_REFACTORE_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
-
+    EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
+    EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
+    
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -880,7 +883,8 @@ clMainFrame::~clMainFrame(void)
                          NULL, this);
     wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
                          this);
-    EventNotifier::Get()->Unbind(wxEVT_REFACTORE_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
+    EventNotifier::Get()->Unbind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
+    EventNotifier::Get()->Unbind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
     EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
                                  this);
     EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED,
@@ -5778,4 +5782,16 @@ void clMainFrame::OnFindReferences(clRefactoringEvent& e)
     e.Skip();
     // Show the results
     GetOutputPane()->GetShowUsageTab()->ShowUsage(e.GetMatches(), e.GetString());
+}
+
+void clMainFrame::OnRenameSymbol(clRefactoringEvent& e)
+{
+    e.Skip();
+    // display the refactor dialog
+    RenameSymbol dlg(this, e.GetMatches(), e.GetPossibleMatches(), e.GetString());
+    if(dlg.ShowModal() == wxID_OK) {
+        CppToken::Vec_t matches;
+        dlg.GetMatches(matches);
+        if(!matches.empty() && dlg.GetWord() != e.GetString()) { ContextCpp::ReplaceInFiles(dlg.GetWord(), matches); }
+    }
 }

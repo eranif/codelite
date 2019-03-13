@@ -36,7 +36,8 @@
 #include "progress_dialog.h"
 #endif
 
-wxDEFINE_EVENT(wxEVT_REFACTORE_ENGINE_REFERENCES, clRefactoringEvent);
+wxDEFINE_EVENT(wxEVT_REFACTOR_ENGINE_REFERENCES, clRefactoringEvent);
+wxDEFINE_EVENT(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, clRefactoringEvent);
 
 RefactoringEngine::RefactoringEngine()
 {
@@ -65,7 +66,7 @@ void RefactoringEngine::Clear() { DoCleanup(); }
 void RefactoringEngine::RenameGlobalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos,
                                            const wxFileList_t& files)
 {
-    DoFindReferences(symname, fn, line, pos, files, false);
+    DoFindReferences(symname, fn, line, pos, files, false, kRenameSymbol);
 }
 
 void RefactoringEngine::RenameLocalSymbol(const wxString& symname, const wxFileName& fn, int line, int pos)
@@ -313,11 +314,11 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
 void RefactoringEngine::FindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
                                        const wxFileList_t& files)
 {
-    DoFindReferences(symname, fn, line, pos, files, true);
+    DoFindReferences(symname, fn, line, pos, files, true, kFindReferences);
 }
 
 void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileName& fn, int line, int pos,
-                                         const wxFileList_t& files, bool onlyDefiniteMatches)
+                                         const wxFileList_t& files, bool onlyDefiniteMatches, eActionType type)
 {
     if(IsBusy()) { return; }
     // Clear previous results
@@ -356,8 +357,8 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
 
     // based on the input file, set the file extensions
     wxString extensions;
-    FileExtManager::FileType type = FileExtManager::GetType(fn.GetFullName(), FileExtManager::TypeText);
-    switch(type) {
+    FileExtManager::FileType fileType = FileExtManager::GetType(fn.GetFullName(), FileExtManager::TypeText);
+    switch(fileType) {
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp:
     case FileExtManager::TypeHeader:
@@ -369,7 +370,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
     }
     sd.SetExtensions(extensions); // All the files in the list should be scanned
     SearchThreadST::Get()->PerformSearch(sd);
-    m_currentAction = kFindReferences;
+    m_currentAction = type;
     m_symbolName = symname;
     m_onlyDefiniteMatches = onlyDefiniteMatches;
 
@@ -417,7 +418,6 @@ void RefactoringEngine::OnSearchMatch(wxCommandEvent& event)
     SearchResultList* res = (SearchResultList*)event.GetClientData();
     if(!res) { return; }
 
-    SearchResultList::iterator iter = res->begin();
     for(const SearchResult& result : *res) {
         CppToken tok;
         tok.setFilename(result.GetFileName());
@@ -504,7 +504,8 @@ void RefactoringEngine::DoCompleteFindReferences()
     prgDlg->Destroy();
 #endif
 
-    clRefactoringEvent event(wxEVT_REFACTORE_ENGINE_REFERENCES);
+    clRefactoringEvent event(m_currentAction == kRenameSymbol ? wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL
+                                                              : wxEVT_REFACTOR_ENGINE_REFERENCES);
     event.SetPossibleMatches(m_possibleCandidates);
     event.SetMatches(m_candidates);
     event.SetString(m_symbolName);

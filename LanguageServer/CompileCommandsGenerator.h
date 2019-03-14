@@ -5,16 +5,15 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include <wx/filename.h>
-#include "ChildProcess.h"
+#include <wx/process.h>
 
 class CompileCommandsGenerator : public wxEvtHandler
 {
-    ChildProcess::Ptr_t m_childProcess;
+    wxProcess* m_process = nullptr;
     wxFileName m_outputFile;
 
 protected:
-    void OnProcessOutput(clProcessEvent& event);
-    void OnProcessTeraminated(clProcessEvent& event);
+    void OnProcessTeraminated(wxProcessEvent& event);
 
 public:
     typedef wxSharedPtr<CompileCommandsGenerator> Ptr_t;

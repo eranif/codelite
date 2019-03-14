@@ -33,6 +33,7 @@
 #include "worker_thread.h"
 #include <wx/event.h>
 #include <wx/msgqueue.h>
+#include <wx/sharedptr.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
@@ -50,7 +51,7 @@ public:
 
     struct MyRequest {
         eCommand m_command;
-        wxString m_buffer;
+        std::string m_buffer;
     };
 
 protected:
@@ -60,7 +61,7 @@ protected:
     wxMessageQueue<MyRequest> m_queue;
     bool m_nonBlockingMode;
     bool m_messageMode;
-    
+
 protected:
     void MessageLoop(clSocketBase::Ptr_t socket);
     void BufferLoop(clSocketBase::Ptr_t socket);
@@ -96,14 +97,16 @@ public:
     virtual ~clSocketClientAsyncHelperThread();
 };
 
-class WXDLLIMPEXP_CL clSocketClientAsync
+class WXDLLIMPEXP_CL clSocketClientAsync : public wxEvtHandler
 {
-    wxEvtHandler* m_owner;
     clSocketClientAsyncHelperThread* m_thread;
     bool m_messageMode;
 
 public:
-    clSocketClientAsync(wxEvtHandler* owner, bool messageMode = false);
+    typedef wxSharedPtr<clSocketClientAsync> Ptr_t;
+
+public:
+    clSocketClientAsync(bool messageMode = false);
     ~clSocketClientAsync();
 
     /**
@@ -112,6 +115,7 @@ public:
     void Connect(const wxString& connectionString, const wxString& keepAliveMessage = "");
     void ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage = "");
     void Send(const wxString& buffer);
+    void Send(const std::string& buffer);
     void Disconnect();
 };
 

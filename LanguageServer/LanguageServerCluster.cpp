@@ -37,7 +37,7 @@ void LanguageServerCluster::Reload()
     for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
         // stop all current processes
         LanguageServerProtocol::Ptr_t server = vt.second;
-        if(server->IsRunning()) { server->Stop(true); }
+        server.reset(nullptr);
     }
     m_servers.clear();
 
@@ -144,8 +144,9 @@ void LanguageServerCluster::RestartServer(const wxString& name)
     LanguageServerProtocol::Ptr_t server = GetServerByName(name);
     if(!server) { return; }
     clDEBUG() << "Restarting LSP server:" << name;
-    server->Stop(true);
-
+    server->Stop();
+    server->Start();
+    
     // Remove the old instance
     m_servers.erase(name);
 

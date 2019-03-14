@@ -9,13 +9,17 @@
 #include "imanager.h"
 
 CompileCommandsGenerator::CompileCommandsGenerator() {}
-CompileCommandsGenerator::~CompileCommandsGenerator() {}
 
-void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { clSYSTEM() << event.GetOutput(); }
-
-void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
+CompileCommandsGenerator::~CompileCommandsGenerator()
 {
-    m_childProcess.reset(nullptr);
+    // If the child process is still running, detach from it. i.e. OnProcessTeraminated() event is not called
+    if(m_process) { m_process->Detach(); }
+}
+
+void CompileCommandsGenerator::OnProcessTeraminated(wxProcessEvent& event)
+{
+    // dont call event.Skip() so we will delete the m_process ourself
+    wxDELETE(m_process);
     clGetManager()->SetStatusMessage(_("Ready"));
 
     // Notify about completion
@@ -26,9 +30,9 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 
 void CompileCommandsGenerator::GenerateCompileCommands()
 {
-    m_childProcess.reset(new ChildProcess());
-    m_childProcess->Bind(wxEVT_CHILD_PROCESS_STDOUT, &CompileCommandsGenerator::OnProcessOutput, this);
-    m_childProcess->Bind(wxEVT_CHILD_PROCESS_EXIT, &CompileCommandsGenerator::OnProcessTeraminated, this);
+    if(m_process) { m_process->Detach(); }
+    m_process = new wxProcess();
+    m_process->Bind(wxEVT_END_PROCESS, &CompileCommandsGenerator::OnProcessTeraminated, this);
 
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
 #ifdef __WXMSW__
@@ -44,20 +48,17 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     wxString command;
     command << codeliteMake.GetFullPath();
+    ::WrapWithQuotes(command);
+
     wxString workspaceFile = clCxxWorkspaceST::Get()->GetFileName().GetFullPath();
-    wxString configName =
-        clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
     ::WrapWithQuotes(workspaceFile);
 
-    wxArrayString args;
-    args.Add(command);
-    args.Add("--workspace=" + workspaceFile);
-    args.Add("--verbose");
-    args.Add("--json");
-    args.Add("--config=" + configName);
+    wxString configName =
+        clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
+    command << " --workspace=" << workspaceFile << " --verbose --json --config=" << configName;
 
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
-    m_childProcess->Start(args, wxFileName(workspaceFile).GetPath());
+    ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE, m_process);
 
     m_outputFile = workspaceFile;
     m_outputFile.SetFullName("compile_commands.json");

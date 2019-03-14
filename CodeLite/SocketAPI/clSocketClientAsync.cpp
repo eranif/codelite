@@ -1,6 +1,7 @@
 #include "SocketAPI/clSocketClient.h"
 #include "clSocketClientAsync.h"
 #include <wx/utils.h>
+#include "fileutils.h"
 
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);
@@ -8,9 +9,8 @@ wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_INPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_ERROR, clCommandEvent);
 
-clSocketClientAsync::clSocketClientAsync(wxEvtHandler* owner, bool messageMode)
-    : m_owner(owner)
-    , m_thread(NULL)
+clSocketClientAsync::clSocketClientAsync(bool messageMode)
+    : m_thread(NULL)
     , m_messageMode(messageMode)
 {
 }
@@ -20,26 +20,20 @@ clSocketClientAsync::~clSocketClientAsync() { Disconnect(); }
 void clSocketClientAsync::Connect(const wxString& connectionString, const wxString& keepAliveMessage)
 {
     Disconnect();
-    m_thread = new clSocketClientAsyncHelperThread(m_owner, m_messageMode, connectionString, false, keepAliveMessage);
+    m_thread = new clSocketClientAsyncHelperThread(this, m_messageMode, connectionString, false, keepAliveMessage);
     m_thread->Start();
 }
 
 void clSocketClientAsync::ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage)
 {
     Disconnect();
-    m_thread = new clSocketClientAsyncHelperThread(m_owner, m_messageMode, connectionString, true, keepAliveMessage);
+    m_thread = new clSocketClientAsyncHelperThread(this, m_messageMode, connectionString, true, keepAliveMessage);
     m_thread->Start();
 }
 
-void clSocketClientAsync::Disconnect()
-{
-    if(m_thread) {
-        m_thread->Stop();
-        wxDELETE(m_thread);
-    }
-}
+void clSocketClientAsync::Disconnect() { wxDELETE(m_thread); }
 
-void clSocketClientAsync::Send(const wxString& buffer)
+void clSocketClientAsync::Send(const std::string& buffer)
 {
     if(m_thread) {
         clSocketClientAsyncHelperThread::MyRequest req;
@@ -48,6 +42,8 @@ void clSocketClientAsync::Send(const wxString& buffer)
         m_thread->AddRequest(req);
     }
 }
+
+void clSocketClientAsync::Send(const wxString& buffer) { Send(FileUtils::ToStdString(buffer)); }
 
 //-----------------------------------------------------------------------------------------------
 // The helper thread
@@ -64,7 +60,7 @@ clSocketClientAsyncHelperThread::clSocketClientAsyncHelperThread(wxEvtHandler* s
 {
 }
 
-clSocketClientAsyncHelperThread::~clSocketClientAsyncHelperThread() {}
+clSocketClientAsyncHelperThread::~clSocketClientAsyncHelperThread() { Stop(); }
 
 void* clSocketClientAsyncHelperThread::Entry()
 {
@@ -78,9 +74,7 @@ void* clSocketClientAsyncHelperThread::Entry()
     if(!m_nonBlockingMode) {
         for(size_t i = 0; i < 10; ++i) {
             connected = client->Connect(m_connectionString, false);
-            if(connected) {
-                break;
-            }
+            if(connected) { break; }
             if(TestDestroy()) {
                 // We were requested to go down during connect phase
                 return NULL;
@@ -107,9 +101,7 @@ void* clSocketClientAsyncHelperThread::Entry()
                 }
 
                 // Test for thread shutdown before we continue
-                if(TestDestroy()) {
-                    break;
-                }
+                if(TestDestroy()) { break; }
             }
         }
     }
@@ -226,6 +218,5 @@ void clSocketClientAsyncHelperThread::BufferLoop(clSocketBase::Ptr_t socket)
         clCommandEvent event(wxEVT_ASYNC_SOCKET_ERROR);
         event.SetString(e.what());
         m_sink->AddPendingEvent(event);
-        return;
     }
 }

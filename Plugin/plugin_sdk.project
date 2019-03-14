@@ -45,6 +45,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LanguageServerProtocol">
+    <File Name="LSPNetworkSocket.cpp"/>
+    <File Name="LSPNetworkSocket.h"/>
+    <File Name="LSPNetwork.cpp"/>
+    <File Name="LSPNetwork.h"/>
     <File Name="LanguageServerProtocol.h"/>
     <File Name="LanguageServerProtocol.cpp"/>
   </VirtualDirectory>

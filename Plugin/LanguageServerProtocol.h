@@ -14,6 +14,7 @@
 #include "LSP/RequestMessage.h"
 #include <unordered_map>
 #include "SocketAPI/clSocketClientAsync.h"
+#include "LSPNetwork.h"
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -45,7 +46,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 
     wxString m_name;
     wxEvtHandler* m_owner = nullptr;
-    clSocketClientAsync::Ptr_t m_socket;
+    LSPNetwork::Ptr_t m_network;
     wxArrayString m_command;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
@@ -63,11 +64,9 @@ public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
 
 protected:
-    void OnSocketConnected(clCommandEvent& event);
-    void OnSocketConnectionLost(clCommandEvent& event);
-    void OnSocketConnectionError(clCommandEvent& event);
-    void OnSocketError(clCommandEvent& event);
-    void OnSocketData(clCommandEvent& event);
+    void OnNetConnected(clCommandEvent& event);
+    void OnNetError(clCommandEvent& event);
+    void OnNetDataReady(clCommandEvent& event);
 
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);

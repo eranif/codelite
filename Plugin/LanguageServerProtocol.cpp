@@ -25,6 +25,7 @@
 #include <wx/filesys.h>
 #include <iomanip>
 #include <sstream>
+#include "LSPNetworkSocket.h"
 
 #define PORT 12989
 
@@ -35,6 +36,12 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+
+    // Use sockets here
+    m_network.reset(new LSPNetworkSocket());
+    m_network->Bind(wxEVT_LSP_NET_DATA_READY, &LanguageServerProtocol::OnNetDataReady, this);
+    m_network->Bind(wxEVT_LSP_NET_ERROR, &LanguageServerProtocol::OnNetError, this);
+    m_network->Bind(wxEVT_LSP_NET_CONNECTED, &LanguageServerProtocol::OnNetConnected, this);
 }
 
 LanguageServerProtocol::~LanguageServerProtocol()
@@ -142,20 +149,24 @@ void LanguageServerProtocol::QueueMessage(LSP::RequestMessage::Ptr_t request)
 void LanguageServerProtocol::DoStart()
 {
     DoClear();
+
+    if(m_command.IsEmpty()) { return; }
+    wxString command;
+    command << m_command.Item(0);
+    ::WrapWithQuotes(command);
+
+    for(size_t i = 1; i < m_command.size(); ++i) {
+        command << " " << m_command.Item(i);
+    }
+
     clDEBUG() << GetLogPrefix() << "Starting...";
-    clDEBUG() << GetLogPrefix() << "Command:" << m_command;
+    clDEBUG() << GetLogPrefix() << "Command:" << command;
     clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder;
     for(const wxString& lang : m_languages) {
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
-
-    m_socket.reset(new clSocketClientAsync());
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LanguageServerProtocol::OnSocketConnected, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LanguageServerProtocol::OnSocketConnectionLost, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LanguageServerProtocol::OnSocketConnectionError, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &LanguageServerProtocol::OnSocketError, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &LanguageServerProtocol::OnSocketData, this);
-    m_socket->Connect("tcp://127.0.0.1:12898");
+    LSPNetwork::StartupInfo info = { m_rootFolder, command, m_languages };
+    m_network->Open(info);
 }
 
 void LanguageServerProtocol::Start(const wxArrayString& argv, const wxString& rootFolder,
@@ -185,10 +196,10 @@ void LanguageServerProtocol::DoClear()
     m_Queue.Clear();
 
     // Destory the current connection
-    m_socket.reset(nullptr);
+    m_network->Close();
 }
 
-bool LanguageServerProtocol::IsRunning() const { return m_socket != nullptr; }
+bool LanguageServerProtocol::IsRunning() const { return m_network->IsConnected(); }
 
 bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
 {
@@ -348,15 +359,8 @@ void LanguageServerProtocol::ProcessQueue()
     LSP::RequestMessage::Ptr_t req = m_Queue.Get();
     if(!IsRunning()) { return; }
 
-    std::string message = req->ToString();
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(10) << message.length();
-    std::string message_len = std::move(ss.str());
     // Write the message length as string of 10 bytes
-    m_socket->Send(message_len);
-    // Followed by the actual buffer
-    m_socket->Send(message);
-
+    m_network->Send(req->ToString());
     m_Queue.SetWaitingReponse(true);
     m_Queue.Pop();
     if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
@@ -387,7 +391,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::OnSocketConnected(clCommandEvent& event)
+void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 {
     // The process started successfully
     // Send the 'initialize' request
@@ -401,17 +405,13 @@ void LanguageServerProtocol::OnSocketConnected(clCommandEvent& event)
     m_initializeRequestID = req->GetId();
 }
 
-void LanguageServerProtocol::OnSocketConnectionLost(clCommandEvent& event) { OnSocketError(event); }
-
-void LanguageServerProtocol::OnSocketConnectionError(clCommandEvent& event) { OnSocketError(event); }
-
-void LanguageServerProtocol::OnSocketError(clCommandEvent& event)
+void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 {
     clDEBUG() << GetLogPrefix() << "Socket error." << event.GetString();
     DoClear();
 }
 
-void LanguageServerProtocol::OnSocketData(clCommandEvent& event)
+void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
     clDEBUG() << GetLogPrefix() << event.GetString();
     wxString buffer = std::move(event.GetString());
@@ -488,7 +488,7 @@ void LanguageServerProtocol::OnSocketData(clCommandEvent& event)
 void LanguageServerProtocol::Stop()
 {
     clDEBUG() << GetLogPrefix() << "Going down";
-    m_socket.reset(nullptr);
+    m_network->Close();
 }
 
 //===------------------------------------------------------------------

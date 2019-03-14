@@ -5,6 +5,8 @@
 // to CodeLite
 //===-----------------------------
 let net = require('net');
+let Message = require('./Message');
+const { spawn } = require('child_process');
 
 function createTCPServer()
 {
@@ -15,20 +17,36 @@ function createTCPServer()
 }
 
 /**
- * parse buffer and attempt to consume a complete message out of it
+ * start LSP server and associate it with the TCP connection
  */
-function parseMessage(buffer) {
-    let tmpbuffer = buffer.toString();
-    let where = tmpbuffer.indexOf('\n');
-    let messageLen = -1;
-    if(where != -1) {
-        let header = tmpbuffer.substr(0, where + 1); // including the "\n"
-        tmpbuffer = tmpbuffer.substr(where+1); // consume the header
-        if(tmpbuffer.startsWith("Content-Length: ")) {
-            tmpbuffer = tmpbuffer.substr("Content-Length: ".length);
+function processCommand(command, conn)
+{
+    switch(command.method) {
+    case 'execute':
+        // The 'execute' is a special command that we handle it ourself
+        let lsp = spawn(command.command);
+        if(lsp != undefined) {
+            conn.lsp_process = lsp;
+            lsp.stdout.on('data', (data) => {
+                console.log("LSP\n" + data.toString());
+                conn.write(data.toString()); // pass the data as-is back to CodeLite
+            });
+            lsp.stderr.on('stderr', (data) => {
+                console.error("LSP\n" + data.toString()); 
+            });
+            lsp.on('close', (code) => {
+               // Close the tcp connection
+               process.exit(0);
+            });
         }
-        tmpbuffer = tmpbuffer.substr("Content-Length: ".length);
-        
+    break;
+    default:
+        if(conn.lsp_process != undefined) {
+            let asString = JSON.stringify(command);
+            let jsonMessage = "Content-Length: " + asString.length + "\r\n\r\n" + asString; 
+            conn.lsp_process.stdin.write(jsonMessage);
+        }
+    break;
     }
 }
 
@@ -39,14 +57,24 @@ function parseMessage(buffer) {
  */
 function onDataRead(data)
 {
-    if(!this.hasOwnProperty('incoming_buffer')) { this['incoming_buffer'] = {}; }
-    let message = parseMessage(this.incoming_buffer);
-    if(message != undefined) {}
+    if(!this.hasOwnProperty('incoming_buffer')) { this['incoming_buffer'] = ""; }
+    this.incoming_buffer += typeof data == "string" ? data : data.toString();
+    while(true) {
+        let message = new Message();
+        let command = message.parse(this.incoming_buffer);
+        if(command == undefined) { break; }
+        this.incoming_buffer = command.remainder;
+        processCommand(command.request, this);
+    }
 }
 
 // Start a server
 let server = createTCPServer();
-server.on('connection', (c) => {
+server.on('connection', (conn) => {
     console.log("Client connected!");
-    c.on('data', onDataRead.bind(c));
+    conn.on('data', onDataRead.bind(conn));
+    conn.on('close', (code) => {
+        // if CodeLite termianted, exit
+        process.exit(0);
+    });
 });

@@ -148,7 +148,7 @@ public:
                         clERROR() << "WriteFile error:" << GetLastError();
                         // TODO: how do we report an error here !?
                     } else {
-                        clDEBUG() << "Writer thread: wrote buffer of" << wxstr.length() << "bytes";
+                        clDEBUG1() << "Writer thread: wrote buffer of" << wxstr.length() << "bytes";
                     }
                 }
             }
@@ -159,13 +159,13 @@ public:
                         clERROR() << "WriteFile error:" << GetLastError();
                         // TODO: how do we report an error here !?
                     } else {
-                        clDEBUG() << "Writer thread: wrote buffer of" << cstr.length() << "bytes";
+                        clDEBUG1() << "Writer thread: wrote buffer of" << cstr.length() << "bytes";
                     }
                 }
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        clDEBUG() << "Write thread going down";
+        clDEBUG1() << "Write thread going down";
     }
 
     void Write(const std::string& buffer) { m_Q2.Post(buffer); }

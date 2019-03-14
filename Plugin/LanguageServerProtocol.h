@@ -52,6 +52,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
     wxString m_rootFolder;
+    wxString m_helperCommand;
 
     // initialization
     eState m_state = kUnInitialized;
@@ -71,6 +72,8 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceOpen(wxCommandEvent& event);
 
 protected:
     void DoClear();
@@ -134,10 +137,15 @@ public:
     bool CanHandle(const wxFileName& filename) const;
 
     /**
-     * @brief start a server for an executable
+     * @brief start LSP server and connect to it (e.g. clangd)
+     * @param helperCommand path to helper script (nodejs script) that does the actual launching of the LSP server
+     * @param argv LSP server command + arguments if any
+     * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
+     * @param languages supported languages by this LSP
      */
-    void Start(const wxArrayString& argv, const wxString& rootFolder, const wxArrayString& languages);
-    
+    void Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
+               const wxArrayString& languages);
+
     /**
      * @brief same as above, but reuse the current parameters
      */

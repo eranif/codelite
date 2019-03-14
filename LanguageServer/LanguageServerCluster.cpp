@@ -9,6 +9,7 @@
 #include "imanager.h"
 #include "file_logger.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "cl_standard_paths.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -146,7 +147,7 @@ void LanguageServerCluster::RestartServer(const wxString& name)
     clDEBUG() << "Restarting LSP server:" << name;
     server->Stop();
     server->Start();
-    
+
     // Remove the old instance
     m_servers.erase(name);
 
@@ -166,7 +167,20 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             wxArrayString args = ::wxStringTokenize(entry.GetArgs(), " ", wxTOKEN_STRTOK);
             argv.insert(argv.end(), args.begin(), args.end());
         }
-        lsp->Start(argv, entry.GetWorkingDirectory(), entry.GetLanguages());
+
+        wxString helperCommand = LanguageServerConfig::Get().GetNodejs();
+        if(helperCommand.IsEmpty() || !wxFileName::FileExists(helperCommand)) {
+            // TODO : prompt the user to install NodeJS
+            return;
+        }
+
+        ::WrapWithQuotes(helperCommand);
+        wxFileName fnScriptPath(clStandardPaths::Get().GetDataDir(), "codelite-lsp-helper.js");
+        wxString scriptPath = fnScriptPath.GetFullPath();
+        ::WrapWithQuotes(scriptPath);
+        helperCommand << " " << scriptPath;
+
+        lsp->Start(helperCommand, argv, entry.GetWorkingDirectory(), entry.GetLanguages());
         m_servers.insert({ entry.GetName(), lsp });
         lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     }

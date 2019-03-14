@@ -36,6 +36,8 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
 
     // Use sockets here
     m_network.reset(new LSPNetworkSocket());
@@ -49,6 +51,8 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
     DoClear();
 }
 
@@ -165,11 +169,11 @@ void LanguageServerProtocol::DoStart()
     for(const wxString& lang : m_languages) {
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
-    LSPNetwork::StartupInfo info = { m_rootFolder, command, m_languages };
+    LSPNetwork::StartupInfo info = { m_helperCommand, command };
     m_network->Open(info);
 }
 
-void LanguageServerProtocol::Start(const wxArrayString& argv, const wxString& rootFolder,
+void LanguageServerProtocol::Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
                                    const wxArrayString& languages)
 {
     if(IsRunning()) { return; }
@@ -178,6 +182,7 @@ void LanguageServerProtocol::Start(const wxArrayString& argv, const wxString& ro
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
     m_command = argv;
     m_rootFolder = rootFolder;
+    m_helperCommand = helperCommand;
     DoStart();
 }
 
@@ -357,7 +362,10 @@ void LanguageServerProtocol::ProcessQueue()
         return;
     }
     LSP::RequestMessage::Ptr_t req = m_Queue.Get();
-    if(!IsRunning()) { return; }
+    if(!IsRunning()) {
+        clDEBUG() << GetLogPrefix() << "is down.";
+        return;
+    }
 
     // Write the message length as string of 10 bytes
     m_network->Send(req->ToString());
@@ -489,6 +497,22 @@ void LanguageServerProtocol::Stop()
 {
     clDEBUG() << GetLogPrefix() << "Going down";
     m_network->Close();
+}
+
+void LanguageServerProtocol::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    m_rootFolder.Clear();
+    Stop();
+    Start();
+}
+
+void LanguageServerProtocol::OnWorkspaceOpen(wxCommandEvent& event)
+{
+    event.Skip();
+    m_rootFolder = wxFileName(event.GetString()).GetPath();
+    Stop();
+    Start();
 }
 
 //===------------------------------------------------------------------

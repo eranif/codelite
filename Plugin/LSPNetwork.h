@@ -17,28 +17,23 @@ class WXDLLIMPEXP_SDK LSPNetwork : public wxEvtHandler
 public:
     struct StartupInfo {
     protected:
-        wxString m_rootUri;
-        wxString m_command;
-        wxArrayString m_languages;
+        wxString m_helperCommand;
+        wxString m_lspServerCommand;
 
     public:
-        void SetCommand(const wxString& command) { this->m_command = command; }
-        void SetLanguages(const wxArrayString& languages) { this->m_languages = languages; }
-        void SetRootUri(const wxString& rootUri) { this->m_rootUri = rootUri; }
-        const wxString& GetCommand() const { return m_command; }
-        const wxArrayString& GetLanguages() const { return m_languages; }
-        const wxString& GetRootUri() const { return m_rootUri; }
+        void SetHelperCommand(const wxString& helperCommand) { this->m_helperCommand = helperCommand; }
+        const wxString& GetHelperCommand() const { return m_helperCommand; }
+
+        void SetLspServerCommand(const wxString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
+        const wxString& GetLspServerCommand() const { return m_lspServerCommand; }
 
     public:
         StartupInfo() {}
-        
-        StartupInfo(const wxString& rootUri, const wxString& command, const wxStringSet_t& langsSet)
-            : m_rootUri(rootUri)
-            , m_command(command)
+
+        StartupInfo(const wxString& helperCommand, const wxString& lspServerCommand)
+            : m_helperCommand(helperCommand)
+            , m_lspServerCommand(lspServerCommand)
         {
-            for(const wxString& lang : langsSet) {
-                m_languages.Add(lang);
-            }
         }
     };
 

@@ -580,8 +580,11 @@ void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_com
 
 std::string FileUtils::ToStdString(const wxString& str)
 {
-    const char* data = str.mb_str(wxConvUTF8).data();
-    if(!data) { data = str.To8BitData().data(); }
+    wxCharBuffer cb = str.ToAscii();
+    const char* data = cb.data();
+    if(!data) { data = str.mb_str(wxConvUTF8).data(); }
+    if(!data) { data = str.To8BitData(); }
+    
     std::string res;
     if(!data) { return res; }
     res = data;

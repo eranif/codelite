@@ -38,8 +38,7 @@ wxDEFINE_EVENT(wxEVT_CMD_VERSION_CHECK_ERROR, wxCommandEvent);
 
 static const size_t DLBUFSIZE = 4096;
 
-struct CodeLiteVersion
-{
+struct CodeLiteVersion {
     wxString m_os;
     wxString m_codename;
     wxString m_arch;
@@ -72,9 +71,7 @@ struct CodeLiteVersion
 
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
             bool res = (m_version > nVersionNumber);
-            if(res) {
-                clDEBUG() << "Found new version!" << clEndl;
-            }
+            if(res) { clDEBUG() << "Found new version!" << clEndl; }
             return res;
         }
         return false;
@@ -90,18 +87,9 @@ struct CodeLiteVersion
 
 WebUpdateJob::WebUpdateJob(wxEvtHandler* parent, bool userRequest, bool onlyRelease)
     : m_parent(parent)
-    , m_socket(this)
     , m_userRequest(userRequest)
     , m_onlyRelease(onlyRelease)
-    , m_eventsConnected(true)
-    , m_testSocket(this)
-    , m_testingConnection(false)
 {
-    Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
-    Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
-    Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
-    Bind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
-    Bind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
 }
 
 WebUpdateJob::~WebUpdateJob() { Clear(); }
@@ -191,46 +179,31 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
 
 void WebUpdateJob::OnConnected(clCommandEvent& e)
 {
-    if(m_testingConnection) {
-        // Now that we confirmed that we have connectivity, run the check
-        m_testSocket.Disconnect();
-        m_testingConnection = false;
-        // Now do the real check
-        RealCheck();
-
-    } else {
-        wxString message;
-        message << "GET /packages.json HTTP/1.1\r\n"
-                << "Host: www.codelite.org\r\n"
-                << "\r\n";
-        m_socket.Send(message);
-    }
+    wxString message;
+    message << "GET /packages.json HTTP/1.1\r\n"
+            << "Host: www.codelite.org\r\n"
+            << "\r\n";
+    m_socket->Send(message);
 }
 
 void WebUpdateJob::OnConnectionLost(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: Connection lost:" << e.GetString() << clEndl;
-    m_socket.Disconnect();
-    m_testSocket.Disconnect();
-    m_testingConnection = false;
+    m_socket.reset(nullptr);
     NotifyError("Connection lost:" + e.GetString());
 }
 
 void WebUpdateJob::OnConnectionError(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: Connection error:" << e.GetString() << clEndl;
-    m_socket.Disconnect();
-    m_testSocket.Disconnect();
-    m_testingConnection = false;
+    m_socket.reset(nullptr);
     NotifyError("Connection error:" + e.GetString());
 }
 
 void WebUpdateJob::OnSocketError(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: socket error:" << e.GetString() << clEndl;
-    m_socket.Disconnect();
-    m_testSocket.Disconnect();
-    m_testingConnection = false;
+    m_socket.reset(nullptr);
     NotifyError("Socker error:" + e.GetString());
 }
 
@@ -246,33 +219,22 @@ void WebUpdateJob::OnSocketInput(clCommandEvent& e)
     }
 }
 
-void WebUpdateJob::Check() { CheckConnectivity(); }
-
-void WebUpdateJob::Clear()
-{
-    if(m_eventsConnected) {
-        Unbind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
-        Unbind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
-        Unbind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
-        Unbind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
-        Unbind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
-        m_eventsConnected = false;
-    }
-    m_socket.Disconnect();
-    m_testSocket.Disconnect();
-}
-
-void WebUpdateJob::CheckConnectivity()
-{
-    m_testingConnection = true;
-    m_testSocket.ConnectNonBlocking("tcp://79.143.189.67:80");
-}
-
-void WebUpdateJob::RealCheck() { m_socket.ConnectNonBlocking("tcp://79.143.189.67:80"); }
+void WebUpdateJob::Clear() { m_socket.reset(nullptr); }
 
 void WebUpdateJob::NotifyError(const wxString& errmsg)
 {
     wxCommandEvent event(wxEVT_CMD_VERSION_CHECK_ERROR);
     event.SetString(errmsg);
     m_parent->AddPendingEvent(event);
+}
+
+void WebUpdateJob::Check()
+{
+    m_socket.reset(new clSocketClientAsync());
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
+    m_socket->ConnectNonBlocking("tcp://79.143.189.67:80");
 }

@@ -70,13 +70,10 @@ public:
 class WebUpdateJob : public wxEvtHandler
 {
     wxEvtHandler* m_parent;
-    clSocketClientAsync m_socket;
+    clSocketClientAsync::Ptr_t m_socket;
     wxString m_dataRead;
     bool m_userRequest;
     bool m_onlyRelease;
-    bool m_eventsConnected;
-    clSocketClientAsync m_testSocket;
-    bool m_testingConnection;
 
 protected:
     /**
@@ -97,15 +94,6 @@ public:
     virtual ~WebUpdateJob();
     void ParseFile();
     bool IsUserRequest() const { return m_userRequest; }
-
-protected:
-    /**
-     * @brief check the connectivity to the internet
-     */
-    void CheckConnectivity();
-    void RealCheck();
-
-public:
-    virtual void Check();
+    void Check();
 };
 #endif // __webupdatethread__

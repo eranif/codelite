@@ -106,10 +106,7 @@
     <File Name="clConsoleBase.cpp"/>
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Network">
-    <File Name="clNetworkMessage.h"/>
-    <File Name="clNetworkMessage.cpp"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
     <File Name="clJoinableThread.h"/>
     <File Name="clJoinableThread.cpp"/>

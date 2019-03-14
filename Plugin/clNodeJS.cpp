@@ -196,3 +196,30 @@ bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& working
     }
     return (process != nullptr);
 }
+
+wxProcess* clNodeJS::RunScript(const wxArrayString& argv, const wxString& workingDirectory, size_t execFlags)
+{
+    if(!IsInitialised() || argv.IsEmpty()) { return nullptr; }
+    wxFileName scriptPath(argv.Item(0));
+    if(!scriptPath.FileExists()) {
+        clERROR() << "NodeJS: cant run script:" << scriptPath << ". No such file";
+        return nullptr;
+    }
+
+    wxString command;
+    for(const wxString& arg : argv) {
+        // Build the command line
+        wxString tmp = std::move(arg);
+        ::WrapWithQuotes(tmp);
+        command << tmp << " ";
+    }
+
+    wxProcess* process = new wxProcess();
+    process->Redirect();
+
+    if(::wxExecute(command, execFlags, process) <= 0) {
+        wxDELETE(process);
+        return nullptr;
+    }
+    return process;
+}

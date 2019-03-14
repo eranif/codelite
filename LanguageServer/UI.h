@@ -16,11 +16,11 @@
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/filepicker.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/filepicker.h>
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
@@ -44,6 +44,7 @@ class LanguageServerSettingsDlgBase : public wxDialog
 protected:
     wxCheckBox* m_checkBoxEnable;
     wxButton* m_buttonNew;
+    wxFilePickerCtrl* m_filePickerNodeJS;
     wxNotebook* m_notebook;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_button6;
@@ -55,6 +56,7 @@ protected:
 public:
     wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }
     wxButton* GetButtonNew() { return m_buttonNew; }
+    wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
     wxNotebook* GetNotebook() { return m_notebook; }
     LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                   const wxString& title = _("Language Server Settings"),

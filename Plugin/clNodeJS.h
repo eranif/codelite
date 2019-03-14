@@ -8,6 +8,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include <unordered_map>
+#include <wx/process.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
 
@@ -57,6 +58,12 @@ private:
 public:
     static clNodeJS& Get();
     virtual ~clNodeJS();
+
+    /**
+     * @brief execute NodeJS script. Return the wxProcess executed
+     */
+    wxProcess* RunScript(const wxArrayString& argv, const wxString& workingDirectory = "",
+                         size_t execFlags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE);
 
     /**
      * @brief initialise this class by finding all the binaries required

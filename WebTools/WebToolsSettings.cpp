@@ -40,10 +40,7 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
         m_filePickerNpm->SetPath(config.GetNpm());
         m_checkBoxJSLint->SetValue(config.IsLintOnSave());
     }
-
-    SetName("WebToolsSettings");
-    WindowAttrManager::Load(this);
-    CenterOnParent();
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 WebToolsSettings::~WebToolsSettings() {}

@@ -2,9 +2,10 @@
 #include "JSON.h"
 #include <sstream>
 #include "file_logger.h"
+#include "clcommandlineparser.h"
 
-static std::vector<int> availablePorts;
-static std::vector<int> returnedPorts;
+thread_local std::vector<int> availablePorts;
+thread_local std::vector<int> returnedPorts;
 
 static void ReturnPort(int& port)
 {
@@ -116,7 +117,13 @@ void LSPNetworkSocket::OnSocketConnected(clCommandEvent& event)
     // Build custom command that tells the helper to start the LSP server on its end
     JSON json(cJSON_Object);
     JSONItem item = json.toElement();
-    item.addProperty("command", m_startupInfo.GetLspServerCommand());
+
+    clCommandLineParser parser(m_startupInfo.GetLspServerCommand());
+    wxArrayString argv = parser.ToArray();
+    if(argv.IsEmpty()) { return; }
+    item.addProperty("command", argv.Item(0));
+    argv.RemoveAt(0, 1);
+    item.addProperty("args", argv);
     item.addProperty("wd", m_startupInfo.GetLspServerCommandWorkingDirectory().IsEmpty()
                                ? ::wxGetCwd()
                                : m_startupInfo.GetLspServerCommandWorkingDirectory());

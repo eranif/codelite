@@ -85,6 +85,7 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(IntermediateDirectory)\LanguageServer-dbg.dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(ProjectPath)\codelite-lsp\codelite-lsp-helper" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -141,6 +142,7 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(IntermediateDirectory)\LanguageServer.dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(ProjectPath)\codelite-lsp\codelite-lsp-helper" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

@@ -86,59 +86,19 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
 
 const std::set<wxString>& LanguageServerProtocol::GetSupportedLanguages()
 {
-    static std::set<wxString> S;
+    thread_local std::set<wxString> S;
     if(S.empty()) {
-        S.insert("bat");
-        S.insert("bibtex");
-        S.insert("clojure");
-        S.insert("coffeescript");
-        S.insert("c");
-        S.insert("cpp");
-        S.insert("csharp");
-        S.insert("css");
-        S.insert("diff");
-        S.insert("dart");
-        S.insert("dockerfile");
-        S.insert("fsharp");
-        S.insert("git-commit");
-        S.insert("git-rebase");
-        S.insert("go");
-        S.insert("groovy");
-        S.insert("handlebars");
-        S.insert("html");
-        S.insert("ini");
-        S.insert("java");
-        S.insert("javascript");
-        S.insert("json");
-        S.insert("latex");
-        S.insert("less");
-        S.insert("lua");
-        S.insert("makefile");
-        S.insert("markdown");
-        S.insert("objective-c");
-        S.insert("objective-cpp");
-        S.insert("perl and perl6");
-        S.insert("php");
-        S.insert("powershell");
-        S.insert("jade");
-        S.insert("python");
-        S.insert("r");
-        S.insert("razor");
-        S.insert("ruby");
-        S.insert("rust");
-        S.insert("scss");
-        S.insert("sass");
-        S.insert("scala");
-        S.insert("shaderlab");
-        S.insert("shellscript");
-        S.insert("sql");
-        S.insert("swift");
-        S.insert("typescript");
-        S.insert("tex");
-        S.insert("vb");
-        S.insert("xml");
-        S.insert("xsl");
-        S.insert("yaml");
+        S = { "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
+              "cpp",        "csharp",     "css",         "diff",          "dart",
+              "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
+              "groovy",     "handlebars", "html",        "ini",           "java",
+              "javascript", "json",       "latex",       "less",          "lua",
+              "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
+              "php",        "powershell", "jade",        "python",        "r",
+              "razor",      "ruby",       "rust",        "scss",          "sass",
+              "scala",      "shaderlab",  "shellscript", "sql",           "swift",
+              "typescript", "tex",        "vb",          "xml",           "xsl",
+              "yaml" };
     }
     return S;
 }

@@ -110,7 +110,8 @@ function processCommand(command, conn)
         try {
             console.log("program: " + command.command);
             console.log("cwd: " + command.wd);
-            lsp = spawn(command.command, {cwd : command.wd});
+            console.log("args:" + command.args);
+            lsp = spawn(command.command, command.args, {cwd : command.wd});
             
         } catch(e) {
             console.log(e.message);

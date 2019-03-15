@@ -35,6 +35,7 @@
 #include <map>
 #include <wx/ffile.h>
 #include <wx/log.h>
+#include <fstream>
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
@@ -584,9 +585,25 @@ std::string FileUtils::ToStdString(const wxString& str)
     const char* data = cb.data();
     if(!data) { data = str.mb_str(wxConvUTF8).data(); }
     if(!data) { data = str.To8BitData(); }
-    
+
     std::string res;
     if(!data) { return res; }
     res = data;
     return res;
+}
+
+bool FileUtils::ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t bufferSize)
+{
+    if(!fn.FileExists()) { return false; }
+    std::wifstream fin(fn.GetFullPath().c_str(), std::ios::binary);
+    if(fin.bad()) {
+        clERROR() << "Failed to open file:" << fn;
+        return false;
+    }
+
+    std::vector<wchar_t> buffer(bufferSize, 0);
+    if(!fin.eof()) { fin.read(buffer.data(), buffer.size()); }
+    data.reserve(buffer.size());
+    data << std::wstring(buffer.begin(), buffer.begin() + buffer.size());
+    return true;
 }

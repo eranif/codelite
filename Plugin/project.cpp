@@ -48,7 +48,8 @@
 #include "ICompilerLocator.h"
 #include "asyncprocess.h"
 
-static wxStringMap_t s_backticks;
+// Make the s_backticks thread safe
+thread_local wxStringMap_t s_backticks;
 
 #define EXCLUDE_FROM_BUILD_FOR_CONFIG "ExcludeProjConfig"
 
@@ -1220,7 +1221,7 @@ const wxStringSet_t& Project::GetExcludeConfigForFile(const wxString& filename) 
 {
     clProjectFile::Ptr_t pfile = GetFile(filename);
     if(!pfile) {
-        static wxStringSet_t emptySet;
+        thread_local wxStringSet_t emptySet;
         return emptySet;
     }
     return pfile->GetExcludeConfigs();
@@ -1574,7 +1575,7 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
     if(buildConfig) {
         // Check for environment variables
         // Environment variable has the format of $(VAR_NAME)
-        static wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
+        thread_local wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
 
         wxString includePaths = buildConfig->GetIncludePath();
         wxString libPaths = buildConfig->GetLibPath();

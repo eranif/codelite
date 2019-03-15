@@ -188,6 +188,10 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             return TypeMakefile;
         } else if(fn.GetFullName().Lower() == "dockerfile") {
             return TypeDockerfile;
+        } else {
+            // try auto detecting
+            FileType autoDetectType = defaultType;
+            if(AutoDetectByContent(filename, autoDetectType)) { return autoDetectType; }
         }
         return defaultType;
     } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
@@ -231,10 +235,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
-    if(!FileUtils::ReadFileContent(filename, fileContent, wxConvLibc)) return false;
-
-    // Use only the first 4K bytes from the input file (tested with default STL headers)
-    if(fileContent.length() > 4096) { fileContent.Truncate(4096); }
+    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) { return false; }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers.at(i)->Matches(fileContent)) {

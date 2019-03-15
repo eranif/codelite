@@ -54,7 +54,12 @@ public:
 
 public:
     static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);
-
+    
+    /**
+     * @brief attempt to read up to bufferSize from the beginning of file
+     */
+    static bool ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t bufferSize);
+    
     /**
      * @brief set the file content (replacing it)
      */

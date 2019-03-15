@@ -56,3 +56,11 @@ target_link_libraries(${PLUGIN_NAME}
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation
 CL_INSTALL_PLUGIN(${PLUGIN_NAME})
+
+set(EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+if(NOT APPLE)
+    install(FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+else()
+    install(FILES ${CL_SRC_ROOT}/LanguageServer/codelite-lsp/codelite-lsp-helper DESTINATION 
+            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/ PERMISSIONS ${EXE_PERM})
+endif()

@@ -47,7 +47,8 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     wxString m_name;
     wxEvtHandler* m_owner = nullptr;
     LSPNetwork::Ptr_t m_network;
-    wxArrayString m_command;
+    wxString m_lspCommand;
+    wxString m_lspCommandWorkingDirectory;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
@@ -140,12 +141,12 @@ public:
     /**
      * @brief start LSP server and connect to it (e.g. clangd)
      * @param helperCommand path to helper script (nodejs script) that does the actual launching of the LSP server
-     * @param argv LSP server command + arguments if any
+     * @param lspCommand LSP server command
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
      */
-    void Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
-               const wxArrayString& languages, size_t flags);
+    void Start(const wxString& helperCommand, const wxString& lspCommand, const wxString& lspCommandWorkingDirectory,
+               const wxString& rootFolder, const wxArrayString& languages, size_t flags);
 
     /**
      * @brief same as above, but reuse the current parameters

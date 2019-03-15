@@ -7,6 +7,7 @@
 #include <wx/string.h>
 #include <wx/arrstr.h>
 #include <macros.h>
+#include "LSPStartupInfo.h"
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_DATA_READY, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_ERROR, clCommandEvent);
@@ -14,50 +15,18 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_CONNECTED, clCommandEven
 
 class WXDLLIMPEXP_SDK LSPNetwork : public wxEvtHandler
 {
-public:
-    struct StartupInfo {
-    public:
-        enum eFlags {
-            kShowConsole = (1 << 0),
-        };
-
-    protected:
-        wxString m_helperCommand;
-        wxString m_lspServerCommand;
-        size_t m_flags = 0;
-
-    public:
-        void SetHelperCommand(const wxString& helperCommand) { this->m_helperCommand = helperCommand; }
-        const wxString& GetHelperCommand() const { return m_helperCommand; }
-
-        void SetLspServerCommand(const wxString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
-        const wxString& GetLspServerCommand() const { return m_lspServerCommand; }
-
-        void SetFlags(size_t flags) { this->m_flags = flags; }
-        size_t GetFlags() const { return m_flags; }
-
-    public:
-        StartupInfo() {}
-
-        StartupInfo(const wxString& helperCommand, const wxString& lspServerCommand)
-            : m_helperCommand(helperCommand)
-            , m_lspServerCommand(lspServerCommand)
-        {
-        }
-    };
-
 protected:
-    LSPNetwork::StartupInfo m_startupInfo;
+    LSPStartupInfo m_startupInfo;
 
 public:
     typedef wxSharedPtr<LSPNetwork> Ptr_t;
 
-    LSPNetwork& SetStartupInfo(const LSPNetwork::StartupInfo& startupInfo)
+    LSPNetwork& SetStartupInfo(const LSPStartupInfo& startupInfo)
     {
         this->m_startupInfo = startupInfo;
         return *this;
     }
-    const LSPNetwork::StartupInfo& GetStartupInfo() const { return m_startupInfo; }
+    const LSPStartupInfo& GetStartupInfo() const { return m_startupInfo; }
 
 public:
     LSPNetwork();
@@ -80,7 +49,7 @@ public:
     /**
      * @brief open connection to the LSP server
      */
-    virtual void Open(const LSPNetwork::StartupInfo& info) = 0;
+    virtual void Open(const LSPStartupInfo& info) = 0;
 
     /**
      * @brief are we connected to the LSP server?

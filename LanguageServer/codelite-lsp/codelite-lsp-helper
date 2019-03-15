@@ -72,6 +72,7 @@ function createTCPServer()
     let server = net.createServer();
     // Make the server TCP/IP server on port 12898
     let port = (process.argv.length > 2) ? process.argv[2] : 12898;
+    console.log("starting server on: 127.0.0.1:" + port);
     server.listen(port, '127.0.0.1');
     return server;
 }
@@ -105,7 +106,17 @@ function processCommand(command, conn)
     switch(command.method) {
     case 'execute':
         // The 'execute' is a special command that we handle it ourself
-        let lsp = spawn(command.command);
+        let lsp = {}
+        try {
+            console.log("program: " + command.command);
+            console.log("cwd: " + command.wd);
+            lsp = spawn(command.command, {cwd : command.wd});
+            
+        } catch(e) {
+            console.log(e.message);
+            return;
+        }
+        
         if(lsp != undefined) {
             conn.lsp_process = lsp;
             lsp.stdout.on('data', (data) => {
@@ -167,12 +178,6 @@ server.on('connection', (conn) => {
     });
 });
 
-//process
-//  .on('unhandledRejection', (reason, p) => {
-//    console.error(reason, 'Unhandled Rejection at Promise', p);
-//  })
-//  .on('uncaughtException', err => {
-//      console.log(err.toString());
-//      process.stdin.read(1);
-//  });
-//  
+//process.on('uncaughtException', err => {
+//    process.stdin.read(1);
+//});

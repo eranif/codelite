@@ -153,35 +153,32 @@ void LanguageServerProtocol::QueueMessage(LSP::RequestMessage::Ptr_t request)
 void LanguageServerProtocol::DoStart()
 {
     DoClear();
-
-    if(m_command.IsEmpty()) { return; }
-    wxString command;
-    command << m_command.Item(0);
-    ::WrapWithQuotes(command);
-
-    for(size_t i = 1; i < m_command.size(); ++i) {
-        command << " " << m_command.Item(i);
-    }
+    if(m_lspCommand.IsEmpty()) { return; }
 
     clDEBUG() << GetLogPrefix() << "Starting...";
-    clDEBUG() << GetLogPrefix() << "Command:" << command;
+    clDEBUG() << GetLogPrefix() << "Command:" << m_lspCommand;
     clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder;
     for(const wxString& lang : m_languages) {
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
-    LSPNetwork::StartupInfo info = { m_helperCommand, command };
+    LSPStartupInfo info;
+    info.SetHelperCommand(m_helperCommand);
+    info.SetLspServerCommand(m_lspCommand);
+    info.SetLspServerCommandWorkingDirectory(m_lspCommandWorkingDirectory);
     info.SetFlags(m_createFlags);
     m_network->Open(info);
 }
 
-void LanguageServerProtocol::Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
+void LanguageServerProtocol::Start(const wxString& helperCommand, const wxString& lspCommand,
+                                   const wxString& lspCommandWorkingDirectory, const wxString& rootFolder,
                                    const wxArrayString& languages, size_t flags)
 {
     if(IsRunning()) { return; }
     DoClear();
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
-    m_command = argv;
+    m_lspCommand = lspCommand;
+    m_lspCommandWorkingDirectory = lspCommandWorkingDirectory;
     m_rootFolder = rootFolder;
     m_helperCommand = helperCommand;
     m_createFlags = flags;

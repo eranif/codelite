@@ -27,7 +27,7 @@ protected:
 
 public:
     virtual void Close();
-    virtual void Open(const LSPNetwork::StartupInfo& info);
+    virtual void Open(const LSPStartupInfo& info);
     virtual void Send(const std::string& data);
     virtual bool IsConnected() const;
 

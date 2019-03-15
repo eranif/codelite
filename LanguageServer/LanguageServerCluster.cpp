@@ -10,6 +10,7 @@
 #include "file_logger.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "cl_standard_paths.h"
+#include "clWorkspaceManager.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -161,12 +162,11 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(entry.IsEnabled()) {
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
-        wxArrayString argv;
-        argv.Add(entry.GetExepath());
-        if(!entry.GetArgs().IsEmpty()) {
-            wxArrayString args = ::wxStringTokenize(entry.GetArgs(), " ", wxTOKEN_STRTOK);
-            argv.insert(argv.end(), args.begin(), args.end());
-        }
+
+        wxString lspCommand = entry.GetExepath();
+        ::WrapWithQuotes(lspCommand);
+
+        if(!entry.GetArgs().IsEmpty()) { lspCommand << " " << entry.GetArgs(); }
 
         wxString helperCommand = LanguageServerConfig::Get().GetNodejs();
         if(helperCommand.IsEmpty() || !wxFileName::FileExists(helperCommand)) {
@@ -181,8 +181,19 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         helperCommand << " " << scriptPath;
 
         size_t flags = 0;
-        if(entry.IsShowConsole()) { flags |= LSPNetwork::StartupInfo::kShowConsole; }
-        lsp->Start(helperCommand, argv, entry.GetWorkingDirectory(), entry.GetLanguages(), flags);
+        if(entry.IsShowConsole()) { flags |= LSPStartupInfo::kShowConsole; }
+        wxString rootDir;
+        if(clWorkspaceManager::Get().GetWorkspace()) {
+            rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
+        }
+        clDEBUG() << "Starting lsp:";
+        clDEBUG() << "helperCommand:" << helperCommand;
+        clDEBUG() << "lspCommand:" << lspCommand;
+        clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
+        clDEBUG() << "rootDir:" << rootDir;
+        clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
+
+        lsp->Start(helperCommand, lspCommand, entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
     }
 }

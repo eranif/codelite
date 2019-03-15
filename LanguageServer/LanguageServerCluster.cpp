@@ -175,7 +175,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         }
 
         ::WrapWithQuotes(helperCommand);
-        wxFileName fnScriptPath(clStandardPaths::Get().GetDataDir(), "codelite-lsp-helper.js");
+        wxFileName fnScriptPath(clStandardPaths::Get().GetDataDir(), "codelite-lsp-helper");
         wxString scriptPath = fnScriptPath.GetFullPath();
         ::WrapWithQuotes(scriptPath);
         helperCommand << " " << scriptPath;

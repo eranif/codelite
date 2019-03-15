@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 //===--------------------------------------------------------------------------------
 // Copyright: Eran Ifrah
 // This scripts attempts to launch LSP server(s)

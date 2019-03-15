@@ -145,8 +145,14 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/python", TypePython)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/node", TypeJS)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/node", TypeJS)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/nodejs", TypeJS)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/nodejs", TypeJS)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#!/usr/bin/env node", TypeJS, false)));
+        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#!/usr/bin/env nodejs", TypeJS, false)));
         m_matchers.push_back(Matcher::Ptr_t(new Matcher("SQLite format 3", TypeDatabase, false)));
 
         // STL sources places "-*- C++ -*-" at the top of their headers

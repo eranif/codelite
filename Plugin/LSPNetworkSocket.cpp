@@ -77,6 +77,8 @@ void LSPNetworkSocket::Open(const LSPNetwork::StartupInfo& info)
 
     // First, start the helper script
     m_lspServer = new wxProcess(this);
+    // FIXME: restart the helper when it crashes
+    // FIXME: add HIDE_CONSOLE flag
     if(::wxExecute(helperScript, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, m_lspServer) <= 0) {
         clCommandEvent evt(wxEVT_LSP_NET_ERROR);
         evt.SetString(wxString() << "Failed to execute: " << info.GetLspServerCommand());

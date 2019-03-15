@@ -1,1 +1,14 @@
-* wxCrafter: replace the code toolbar
+LSP:
+====
+
+1. Add an option to delete a LSP configuration
+2. Add IDLE timer
+3. Should parse the buffer when an editor is selected? 
+4. Prompt the user to install nodejs and clangd automatically when enabling LSP
+5. Remove all Clang related configuration from CodeLite
+
+Project View:
+=============
+
+1. Support pinned projects
+

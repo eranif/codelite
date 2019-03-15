@@ -98,11 +98,22 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer31 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer31);
 
+    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer31->Add(boxSizer97, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_checkBoxShowConsole =
+        new wxCheckBox(this, wxID_ANY, _("Show Console"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxShowConsole->SetValue(false);
+    m_checkBoxShowConsole->SetToolTip(_("Open the LSP server in a console\nUseful for debugging"));
+
+    boxSizer97->Add(m_checkBoxShowConsole, 0, wxALL, WXC_FROM_DIP(5));
+
     m_checkBoxEnabled =
         new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxEnabled->SetValue(true);
 
-    boxSizer31->Add(m_checkBoxEnabled, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+    boxSizer97->Add(m_checkBoxEnabled, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* flexGridSizer432 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer432->SetFlexibleDirection(wxBOTH);

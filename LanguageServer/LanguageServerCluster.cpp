@@ -180,7 +180,9 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         ::WrapWithQuotes(scriptPath);
         helperCommand << " " << scriptPath;
 
-        lsp->Start(helperCommand, argv, entry.GetWorkingDirectory(), entry.GetLanguages());
+        size_t flags = 0;
+        if(entry.IsShowConsole()) { flags |= LSPNetwork::StartupInfo::kShowConsole; }
+        lsp->Start(helperCommand, argv, entry.GetWorkingDirectory(), entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
     }
 }

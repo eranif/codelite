@@ -170,11 +170,12 @@ void LanguageServerProtocol::DoStart()
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
     LSPNetwork::StartupInfo info = { m_helperCommand, command };
+    info.SetFlags(m_createFlags);
     m_network->Open(info);
 }
 
 void LanguageServerProtocol::Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
-                                   const wxArrayString& languages)
+                                   const wxArrayString& languages, size_t flags)
 {
     if(IsRunning()) { return; }
     DoClear();
@@ -183,6 +184,7 @@ void LanguageServerProtocol::Start(const wxString& helperCommand, const wxArrayS
     m_command = argv;
     m_rootFolder = rootFolder;
     m_helperCommand = helperCommand;
+    m_createFlags = flags;
     DoStart();
 }
 

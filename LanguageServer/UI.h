@@ -68,6 +68,7 @@ public:
 class LanguageServerPageBase : public wxPanel
 {
 protected:
+    wxCheckBox* m_checkBoxShowConsole;
     wxCheckBox* m_checkBoxEnabled;
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
@@ -82,6 +83,7 @@ protected:
 
 protected:
 public:
+    wxCheckBox* GetCheckBoxShowConsole() { return m_checkBoxShowConsole; }
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     wxStaticText* GetStaticText453() { return m_staticText453; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }

@@ -14,6 +14,7 @@ class LanguageServerEntry
     wxString m_args;
     wxString m_workingDirectory;
     wxArrayString m_languages;
+    bool m_showConsole = false;
 
 public:
     typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
@@ -59,6 +60,12 @@ public:
         return *this;
     }
     const wxString& GetName() const { return m_name; }
+    LanguageServerEntry& SetShowConsole(bool showConsole)
+    {
+        this->m_showConsole = showConsole;
+        return *this;
+    }
+    bool IsShowConsole() const { return m_showConsole; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

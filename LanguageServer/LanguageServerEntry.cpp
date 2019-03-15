@@ -12,6 +12,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_workingDirectory = json.namedObject("workingDirectory").toString();
     m_languages = json.namedObject("languages").toArrayString();
     m_enabled = json.namedObject("enabled").toBool(m_enabled);
+    m_showConsole = json.namedObject("showConsole").toBool(false);
 }
 
 JSONItem LanguageServerEntry::ToJSON() const
@@ -23,5 +24,6 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("languages", m_languages);
     json.addProperty("enabled", m_enabled);
     json.addProperty("workingDirectory", m_workingDirectory);
+    json.addProperty("showConsole", m_showConsole);
     return json;
 }

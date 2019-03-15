@@ -16,9 +16,15 @@ class WXDLLIMPEXP_SDK LSPNetwork : public wxEvtHandler
 {
 public:
     struct StartupInfo {
+    public:
+        enum eFlags {
+            kShowConsole = (1 << 0),
+        };
+
     protected:
         wxString m_helperCommand;
         wxString m_lspServerCommand;
+        size_t m_flags = 0;
 
     public:
         void SetHelperCommand(const wxString& helperCommand) { this->m_helperCommand = helperCommand; }
@@ -26,6 +32,9 @@ public:
 
         void SetLspServerCommand(const wxString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
         const wxString& GetLspServerCommand() const { return m_lspServerCommand; }
+
+        void SetFlags(size_t flags) { this->m_flags = flags; }
+        size_t GetFlags() const { return m_flags; }
 
     public:
         StartupInfo() {}

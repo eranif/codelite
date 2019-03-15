@@ -60,6 +60,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
+    size_t m_createFlags = 0;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -144,7 +145,7 @@ public:
      * @param languages supported languages by this LSP
      */
     void Start(const wxString& helperCommand, const wxArrayString& argv, const wxString& rootFolder,
-               const wxArrayString& languages);
+               const wxArrayString& languages, size_t flags);
 
     /**
      * @brief same as above, but reuse the current parameters

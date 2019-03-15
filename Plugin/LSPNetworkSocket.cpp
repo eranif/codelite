@@ -78,10 +78,11 @@ void LSPNetworkSocket::Open(const LSPNetwork::StartupInfo& info)
     // First, start the helper script
     m_lspServer = new wxProcess(this);
 
-    size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE;
-#ifdef CL_DEBUG_BUILD
-    flags &= ~wxEXEC_HIDE_CONSOLE;
-#endif
+    size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER;
+    
+    if(info.GetFlags() & LSPNetwork::StartupInfo::kShowConsole) {
+        flags |= wxEXEC_HIDE_CONSOLE;
+    }
 
     if(::wxExecute(helperScript, flags, m_lspServer) <= 0) {
         clCommandEvent evt(wxEVT_LSP_NET_ERROR);

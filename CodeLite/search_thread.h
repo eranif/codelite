@@ -333,7 +333,7 @@ class WXDLLIMPEXP_CL SearchThread : public WorkerThread
     bool m_matchCase;
     wxCriticalSection m_cs;
 
-private:
+public:
     /**
      * Default constructor.
      */
@@ -343,8 +343,7 @@ private:
      * Destructor.
      */
     virtual ~SearchThread();
-
-public:
+    
     /**
      * Process request from caller
      */

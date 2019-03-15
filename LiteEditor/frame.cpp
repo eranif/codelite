@@ -851,14 +851,17 @@ clMainFrame::~clMainFrame(void)
 {
     wxDELETE(m_singleInstanceThread);
     wxDELETE(m_webUpdate);
-
+    
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
 #endif
 
     // Free the code completion manager
     CodeCompletionManager::Release();
-
+    
+    // Release the refactoring engine
+    RefactoringEngine::Shutdown();
+    
 // this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
 // see this wxWidgets bug report for more details:
 //  http://trac.wxwidgets.org/ticket/14292

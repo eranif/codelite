@@ -36,6 +36,7 @@
 #include "codelite_exports.h"
 #include "cl_command_event.h"
 
+class SearchThread;
 class clProgressDlg;
 
 //----------------------------------------------------------------------------------
@@ -115,7 +116,8 @@ class WXDLLIMPEXP_CL RefactoringEngine : public wxEvtHandler
     wxString m_symbolName;
     bool m_onlyDefiniteMatches = false;
     friend class ScopeCleaner;
-
+    SearchThread* m_seartchThread = nullptr;
+    
     class ScopeCleaner
     {
     public:
@@ -125,7 +127,8 @@ class WXDLLIMPEXP_CL RefactoringEngine : public wxEvtHandler
 
 public:
     static RefactoringEngine* Instance();
-
+    static void Shutdown();
+    
 protected:
 #if wxUSE_GUI
     clProgressDlg* CreateProgressDialog(const wxString& title, int maxValue);

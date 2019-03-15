@@ -9,6 +9,9 @@ thread_local std::vector<int> returnedPorts;
 
 static void ReturnPort(int& port)
 {
+    if(port == wxNOT_FOUND) { 
+        return; 
+    }
     returnedPorts.push_back(port);
     port = wxNOT_FOUND;
 }

@@ -549,7 +549,7 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
 {
     if(!m_notifiedWindow && !owner) return;
 
-    static int counter(0);
+    thread_local int counter(0);
 
     wxCommandEvent event(type, GetId());
 

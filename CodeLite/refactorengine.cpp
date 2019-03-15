@@ -45,20 +45,32 @@ RefactoringEngine::RefactoringEngine()
     Bind(wxEVT_SEARCH_THREAD_SEARCHEND, &RefactoringEngine::OnSearchEnded, this);
     Bind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &RefactoringEngine::OnSearchEnded, this);
     Bind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &RefactoringEngine::OnSearchStarted, this);
+    m_seartchThread = new SearchThread();
+    m_seartchThread->Start();
 }
 
 RefactoringEngine::~RefactoringEngine()
 {
+    wxDELETE(m_seartchThread);
     Unbind(wxEVT_SEARCH_THREAD_MATCHFOUND, &RefactoringEngine::OnSearchMatch, this);
     Unbind(wxEVT_SEARCH_THREAD_SEARCHEND, &RefactoringEngine::OnSearchEnded, this);
     Unbind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &RefactoringEngine::OnSearchEnded, this);
     Unbind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &RefactoringEngine::OnSearchStarted, this);
 }
 
+static RefactoringEngine* ms_instance = nullptr;
 RefactoringEngine* RefactoringEngine::Instance()
 {
-    static RefactoringEngine ms_instance;
-    return &ms_instance;
+    if(!ms_instance) { ms_instance = new RefactoringEngine(); }
+    return ms_instance;
+}
+
+void RefactoringEngine::Shutdown()
+{
+    if(ms_instance) {
+        delete ms_instance;
+        ms_instance = nullptr;
+    }
 }
 
 void RefactoringEngine::Clear() { DoCleanup(); }
@@ -369,7 +381,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
         break;
     }
     sd.SetExtensions(extensions); // All the files in the list should be scanned
-    SearchThreadST::Get()->PerformSearch(sd);
+    m_seartchThread->PerformSearch(sd);
     m_currentAction = type;
     m_symbolName = symname;
     m_onlyDefiniteMatches = onlyDefiniteMatches;

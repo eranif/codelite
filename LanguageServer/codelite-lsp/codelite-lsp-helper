@@ -77,6 +77,27 @@ function createTCPServer()
 }
 
 /**
+ * attempt to consume a single message from the incoming buffer
+ * @param conn socket on which the data received
+ */
+function tryProcessMessage(conn)
+{
+    if(conn.incoming_buffer.length > 0) {
+        let message = new Message();
+        let command = message.parse(conn.incoming_buffer);
+        if(command == undefined) { 
+            console.log("<<< Message is incomplete. incoming_buffer: " +  conn.incoming_buffer.length);
+            return false;
+        }
+        conn.incoming_buffer = command.remainder;
+        console.log(`<<< Message is complete. incoming_buffer: ${conn.incoming_buffer.length}`);
+        processCommand(command.request, conn);
+        return true;
+    }
+    return false;
+}
+
+/**
  * start LSP server and associate it with the TCP connection
  */
 function processCommand(command, conn)
@@ -90,9 +111,13 @@ function processCommand(command, conn)
             lsp.stdout.on('data', (data) => {
                 console.log("LSP\n" + data.toString());
                 conn.write(data.toString()); // pass the data as-is back to CodeLite
+                // Now that we got a reply from the LSP, try to process the next message
+                tryProcessMessage(conn);
             });
-            lsp.stderr.on('stderr', (data) => {
-                console.error("LSP\n" + data.toString()); 
+            lsp.stderr.on('data', (data) => {
+                console.error("LSP\n" + data.toString());
+                // Now that we got a reply from the LSP, try to process the next message
+                tryProcessMessage(conn);
             });
             lsp.on('close', (code) => {
                // Close the tcp connection
@@ -118,14 +143,13 @@ function processCommand(command, conn)
 function onDataRead(data)
 {
     if(!this.hasOwnProperty('incoming_buffer')) { this['incoming_buffer'] = ""; }
-    this.incoming_buffer += typeof data == "string" ? data : data.toString();
-    while(true) {
-        let message = new Message();
-        let command = message.parse(this.incoming_buffer);
-        if(command == undefined) { break; }
-        this.incoming_buffer = command.remainder;
-        processCommand(command.request, this);
-    }
+
+    // Add the buffer to the connections' buffer storage
+    let bufferRead = typeof data == "string" ? data : data.toString();
+    this.incoming_buffer += bufferRead;
+    
+    // Try processing the buffer
+    tryProcessMessage(this);
 }
 
 //===--------------------------------------------------------------------------------
@@ -142,3 +166,13 @@ server.on('connection', (conn) => {
         process.exit(0);
     });
 });
+
+//process
+//  .on('unhandledRejection', (reason, p) => {
+//    console.error(reason, 'Unhandled Rejection at Promise', p);
+//  })
+//  .on('uncaughtException', err => {
+//      console.log(err.toString());
+//      process.stdin.read(1);
+//  });
+//  

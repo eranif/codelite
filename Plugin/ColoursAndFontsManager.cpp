@@ -450,6 +450,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
         case FileExtManager::TypeScript:
             lexerByContent = GetLexer("script");
             break;
+        case FileExtManager::TypeJS:
+            lexerByContent = GetLexer("javascript");
+            break;
         case FileExtManager::TypePhp:
             lexerByContent = GetLexer("php");
             break;

@@ -4455,17 +4455,6 @@ void clMainFrame::OnDatabaseUpgrade(wxCommandEvent& e)
     m_workspaceRetagIsRequired = true;
 }
 
-void clMainFrame::UpdateTagsOptions(const TagsOptionsData& tod)
-{
-    m_tagsOptionsData = tod;
-    TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
-
-    clConfig ccConfig("code-completion.conf");
-    ccConfig.WriteItem(&m_tagsOptionsData);
-
-    ParseThreadST::Get()->SetSearchPaths(tod.GetParserSearchPaths(), tod.GetParserExcludePaths());
-}
-
 void clMainFrame::OnCheckForUpdate(wxCommandEvent& e)
 {
     if(!m_webUpdate) {

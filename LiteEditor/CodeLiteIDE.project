@@ -975,8 +975,6 @@
     <File Name="ImportFilesDialogNew.h"/>
     <File Name="ImportFilesDialogNew.cpp"/>
     <File Name="DebuggerSettings_liteeditor_bitmaps.cpp"/>
-    <File Name="FileExplorerTab.h"/>
-    <File Name="FileExplorerTab.cpp"/>
     <File Name="breakpoint_dlg_liteeditor_bitmaps.cpp"/>
     <File Name="breakpointdlgbase.cpp"/>
   </VirtualDirectory>

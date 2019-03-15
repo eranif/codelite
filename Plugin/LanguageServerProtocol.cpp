@@ -417,6 +417,9 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 {
     clDEBUG() << GetLogPrefix() << "Socket error." << event.GetString();
     DoClear();
+    LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
+    restartEvent.SetServerName(GetName());
+    m_owner->AddPendingEvent(restartEvent);
 }
 
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
@@ -443,14 +446,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         // Restart this server
                         LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
                         restartEvent.SetServerName(GetName());
-                        AddPendingEvent(restartEvent);
+                        m_owner->AddPendingEvent(restartEvent);
                         break;
                     }
                     case LSP::ResponseError::kErrorCodeInvalidParams: {
                         // Recreate this AST (in other words: reparse), by default we reparse the current editor
                         LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
                         reparseEvent.SetServerName(GetName());
-                        AddPendingEvent(reparseEvent);
+                        m_owner->AddPendingEvent(reparseEvent);
                         break;
                     }
                     default:
@@ -484,7 +487,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());
-                    AddPendingEvent(initEvent);
+                    m_owner->AddPendingEvent(initEvent);
                 }
             }
         }

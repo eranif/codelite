@@ -28,7 +28,6 @@
 #include "wx/tokenzr.h"
 #include "wx/xrc/xmlres.h"
 
-#include "FileExplorerTab.h"
 #include "OpenFolderDlg.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButton.h"

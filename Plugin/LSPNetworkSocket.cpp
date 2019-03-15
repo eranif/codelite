@@ -78,8 +78,6 @@ void LSPNetworkSocket::Open(const LSPNetwork::StartupInfo& info)
     // First, start the helper script
     m_lspServer = new wxProcess(this);
 
-    // FIXME: restart the helper when it crashes
-    // FIXME: add HIDE_CONSOLE flag
     size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE;
 #ifdef CL_DEBUG_BUILD
     flags &= ~wxEXEC_HIDE_CONSOLE;

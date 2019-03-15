@@ -33,14 +33,11 @@
 
 class wxTreeCtrl;
 class clTreeCtrlPanel;
-class FileExplorerTab;
 
 class FileExplorer : public wxPanel
 {
 private:
     clTreeCtrlPanel* m_view;
-
-    // FileExplorerTab *m_fileTree;
     wxString m_caption;
     ThemeHandlerHelper* m_themeHelper;
     void CreateGUIControls();

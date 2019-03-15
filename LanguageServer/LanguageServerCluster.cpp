@@ -182,7 +182,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         lsp->Start(helperCommand, argv, entry.GetWorkingDirectory(), entry.GetLanguages());
         m_servers.insert({ entry.GetName(), lsp });
-        lsp->Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     }
 }
 

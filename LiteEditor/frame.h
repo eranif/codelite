@@ -216,13 +216,6 @@ public:
     void SetFrameFlag(bool set, int flag);
 
     /**
-     * @brief update the tags options data on the disc as well as
-     * the parser thread
-     * @param tod
-     */
-    void UpdateTagsOptions(const TagsOptionsData& tod);
-
-    /**
      * @brief return the current tags options data
      * @return
      */

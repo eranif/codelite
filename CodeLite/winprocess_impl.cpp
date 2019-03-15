@@ -413,7 +413,7 @@ bool WinProcessImpl::Write(const wxString& buff)
 {
     // Sanity
     if(!IsRedirect()) { return false; }
-    m_writerThread->Write(buff);
+    m_writerThread->Write(buff + "\r\n");
     return true;
 }
 
@@ -421,7 +421,7 @@ bool WinProcessImpl::Write(const std::string& buff)
 {
     // Sanity
     if(!IsRedirect()) { return false; }
-    m_writerThread->Write(buff);
+    m_writerThread->Write(buff + "\r\n");
     return true;
 }
 

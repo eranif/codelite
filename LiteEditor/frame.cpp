@@ -4226,13 +4226,6 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 
     else if(event.GetId() == XRCID("retag_workspace_no_includes"))
         type = TagsManager::Retag_Quick_No_Scan;
-
-    wxMenu* menu = dynamic_cast<wxMenu*>(event.GetEventObject());
-    if(menu) {
-        // the event was fired from the menu bar, trigger a compile_commands.json file generation
-        // Generate the compile_commands files (needed for Clang)
-        ManagerST::Get()->GenerateCompileCommands();
-    }
     ManagerST::Get()->RetagWorkspace(type);
 }
 

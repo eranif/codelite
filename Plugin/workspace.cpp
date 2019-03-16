@@ -400,6 +400,7 @@ ProjectPtr clCxxWorkspace::FindProjectByName(const wxString& projName, wxString&
 
 void clCxxWorkspace::GetProjectList(wxArrayString& list) const
 {
+    list.reserve(m_projects.size());
     ProjectMap_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); iter++) {
         wxString name;

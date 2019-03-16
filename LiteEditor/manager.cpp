@@ -892,11 +892,6 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
     // it is faster to drop the tables instead of deleting
     if(type == TagsManager::Retag_Full) { TagsManagerST::Get()->GetDatabase()->RecreateDatabase(); }
 
-    // Incase anything was changed, update the parser search paths
-    clDEBUG() << "Updating parser paths..." << clEndl;
-    UpdateParserPaths(false);
-    clDEBUG() << "Updating parser paths...done" << clEndl;
-
     clDEBUG() << "Fetching project list..." << clEndl;
     // Start the parsing by collecing list of files to parse
     wxArrayString projects;

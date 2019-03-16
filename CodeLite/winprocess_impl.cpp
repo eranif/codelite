@@ -113,8 +113,7 @@ template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hPr
 class WXDLLIMPEXP_CL WinWriterThread
 {
     std::thread* m_thread = nullptr;
-    wxMessageQueue<wxString> m_Q1;
-    wxMessageQueue<std::string> m_Q2;
+    wxMessageQueue<std::string> m_outgoingQueue;
     std::atomic_bool m_shutdown;
     HANDLE m_hProcess = INVALID_HANDLE_VALUE;
     HANDLE m_hStdin = INVALID_HANDLE_VALUE;
@@ -140,36 +139,21 @@ public:
     }
     static void Entry(WinWriterThread* thr, HANDLE hStdin)
     {
+        auto& Q = thr->m_outgoingQueue;
         while(!thr->m_shutdown.load()) {
-            {
-                wxString wxstr;
-                if(thr->m_Q1.ReceiveTimeout(1, wxstr) == wxMSGQUEUE_NO_ERROR) {
-                    if(!WriteStdin(wxstr, hStdin, thr->m_hProcess)) {
-                        clERROR() << "WriteFile error:" << GetLastError();
-                        // TODO: how do we report an error here !?
-                    } else {
-                        clDEBUG1() << "Writer thread: wrote buffer of" << wxstr.length() << "bytes";
-                    }
+            std::string cstr;
+            if(Q.ReceiveTimeout(50, cstr) == wxMSGQUEUE_NO_ERROR) {
+                if(!WriteStdin(cstr, hStdin, thr->m_hProcess)) {
+                    clERROR() << "WriteFile error:" << GetLastError();
+                } else {
+                    clDEBUG1() << "Writer thread: wrote buffer of" << cstr.length() << "bytes";
                 }
             }
-            {
-                std::string cstr;
-                if(thr->m_Q2.ReceiveTimeout(1, cstr) == wxMSGQUEUE_NO_ERROR) {
-                    if(!WriteStdin(cstr, hStdin, thr->m_hProcess)) {
-                        clERROR() << "WriteFile error:" << GetLastError();
-                        // TODO: how do we report an error here !?
-                    } else {
-                        clDEBUG1() << "Writer thread: wrote buffer of" << cstr.length() << "bytes";
-                    }
-                }
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         clDEBUG1() << "Write thread going down";
     }
 
-    void Write(const std::string& buffer) { m_Q2.Post(buffer); }
-    void Write(const wxString& buffer) { m_Q1.Post(buffer); }
+    void Write(const std::string& buffer) { m_outgoingQueue.Post(buffer); }
 };
 
 /*static*/
@@ -412,9 +396,7 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
 bool WinProcessImpl::Write(const wxString& buff)
 {
     // Sanity
-    if(!IsRedirect()) { return false; }
-    m_writerThread->Write(buff + "\r\n");
-    return true;
+    return Write(FileUtils::ToStdString(buff));
 }
 
 bool WinProcessImpl::Write(const std::string& buff)

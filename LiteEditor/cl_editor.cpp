@@ -1571,8 +1571,6 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
                 wxMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite",
                              wxOK | wxICON_WARNING);
                 return false;
-            } else {
-                bSaveSucceeded = true;
             }
         }
     }

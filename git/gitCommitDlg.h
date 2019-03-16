@@ -70,7 +70,7 @@ public:
     bool IsAmending() const { return m_checkBoxAmend->IsChecked(); }
 
 private:
-    void OnChangeFile(wxCommandEvent& e);
+    void OnChangeFile(wxDataViewEvent& e);
 
 protected:
     virtual void OnAmendClicked(wxCommandEvent& event);

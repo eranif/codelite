@@ -42,11 +42,11 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     , m_workingDir(workingDir)
     , m_toggleChecks(false)
 {
+    m_dvListCtrlFiles->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     // read the configuration
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    ::MSWSetNativeTheme(m_listBox);
     m_splitterInner->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgHSashPos(), true);
     m_splitterMain->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgVSashPos(), true);
 
@@ -84,16 +84,19 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 {
     GitDiffOutputParser diff_parser;
     diff_parser.GetDiffMap(diff, m_diffMap);
-    size_t index = 0;
-    for(wxStringMap_t::iterator it = m_diffMap.begin(); it != m_diffMap.end(); ++it) {
-        m_listBox->Append((*it).first);
-        m_listBox->Check(index++, true);
+    m_dvListCtrlFiles->DeleteAllItems();
+    wxVector<wxVariant> cols;
+    BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
+    for(const wxStringMap_t::value_type& vt : m_diffMap) {
+        cols.clear();
+        cols.push_back(::MakeCheckboxVariant(vt.first, true, bitmaps->GetMimeImageId(vt.first)));
+        m_dvListCtrlFiles->AppendItem(cols);
     }
 
-    if(m_diffMap.size() != 0) {
+    if(!m_diffMap.empty()) {
+        m_dvListCtrlFiles->Select(m_dvListCtrlFiles->RowToItem(0));
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);
-        m_listBox->Select(0);
         m_stcDiff->SetReadOnly(true);
     }
 }
@@ -102,11 +105,13 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 wxArrayString GitCommitDlg::GetSelectedFiles()
 {
     wxArrayString ret;
-    for(unsigned i = 0; i < m_listBox->GetCount(); ++i) {
-        if(m_listBox->IsChecked(i)) ret.Add(m_listBox->GetString(i));
+    for(size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrlFiles->RowToItem(i);
+        if(m_dvListCtrlFiles->IsItemChecked(item, 0)) { ret.Add(m_dvListCtrlFiles->GetItemText(item, 0)); }
     }
     return ret;
 }
+
 /*******************************************************************************/
 wxString GitCommitDlg::GetCommitMessage()
 {
@@ -115,10 +120,9 @@ wxString GitCommitDlg::GetCommitMessage()
     return msg;
 }
 /*******************************************************************************/
-void GitCommitDlg::OnChangeFile(wxCommandEvent& e)
+void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 {
-    int sel = m_listBox->GetSelection();
-    wxString file = m_listBox->GetString(sel);
+    wxString file = m_dvListCtrlFiles->GetItemText(e.GetItem(), 0);
     m_stcDiff->SetReadOnly(false);
     m_stcDiff->SetText(m_diffMap[file]);
     ::clRecalculateSTCHScrollBar(m_stcDiff);
@@ -137,8 +141,8 @@ void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 /*******************************************************************************/
 void GitCommitDlg::OnToggleCheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_listBox->GetCount(); ++i) {
-        m_listBox->Check(i, m_toggleChecks);
+    for(size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
+        m_dvListCtrlFiles->SetItemChecked(m_dvListCtrlFiles->RowToItem(i), m_toggleChecks, 0);
     }
     m_toggleChecks = !m_toggleChecks;
 }

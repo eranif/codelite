@@ -253,17 +253,12 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
 
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    bSizer4->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
-
     m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                           wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitterMain->SetSashGravity(0.5);
     m_splitterMain->SetMinimumPaneSize(150);
 
-    bSizer4->Add(m_splitterMain, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer4->Add(m_splitterMain, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel3 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)),
                            wxTAB_TRAVERSAL);
@@ -284,12 +279,14 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
 
-    wxArrayString m_listBoxArr;
-    m_listBox = new wxCheckListBox(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(250, -1)),
-                                   m_listBoxArr, wxLB_SINGLE);
+    m_dvListCtrlFiles =
+        new clThemedListCtrl(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
+                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    bSizer11->Add(m_listBox, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer11->Add(m_dvListCtrlFiles, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_dvListCtrlFiles->AppendTextColumn(_("Files"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                        wxDATAVIEW_COL_RESIZABLE);
     m_panel2 = new wxPanel(m_splitterInner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterInner, wxSize(-1, -1)),
                            wxTAB_TRAVERSAL);
     m_splitterInner->SplitVertically(m_panel1, m_panel2, 0);
@@ -333,7 +330,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcDiff->SetKeyWords(3, wxT(""));
     m_stcDiff->SetKeyWords(4, wxT(""));
 
-    bSizer9->Add(m_stcDiff, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer9->Add(m_stcDiff, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel4 = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)),
                            wxTAB_TRAVERSAL);
@@ -342,9 +339,13 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
 
+    m_toolbar = new clToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panel4, wxSize(-1, 250)), wxBORDER_THEME);
-    m_stcCommitMessage->SetToolTip(_("Type your commit message here"));
+                                              wxDLG_UNIT(m_panel4, wxSize(-1, 250)), wxBORDER_NONE);
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -381,7 +382,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_stcCommitMessage->SetKeyWords(3, wxT(""));
     m_stcCommitMessage->SetKeyWords(4, wxT(""));
 
-    bSizer13->Add(m_stcCommitMessage, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer13->Add(m_stcCommitMessage, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxAmend = new wxCheckBox(m_panel4, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
@@ -416,8 +417,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_listBox->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL,
-                       this);
+    m_dvListCtrlFiles->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+                               wxDataViewEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_checkBoxAmend->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked),
                              NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL, this);
@@ -425,8 +426,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
 
 GitCommitDlgBase::~GitCommitDlgBase()
 {
-    m_listBox->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(GitCommitDlgBase::OnChangeFile), NULL,
-                          this);
+    m_dvListCtrlFiles->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+                                  wxDataViewEventHandler(GitCommitDlgBase::OnChangeFile), NULL, this);
     m_checkBoxAmend->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnAmendClicked),
                                 NULL, this);
     m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitCommitDlgBase::OnCommitOK), NULL,

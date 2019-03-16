@@ -230,11 +230,12 @@ void WebUpdateJob::NotifyError(const wxString& errmsg)
 
 void WebUpdateJob::Check()
 {
-    m_socket.reset(new clSocketClientAsync());
+    m_socket.reset(
+        new clAsyncSocket("tcp://79.143.189.67:80", kAsyncSocketBuffer | kAsyncSocketClient | kAsyncSocketNonBlocking));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &WebUpdateJob::OnConnected, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &WebUpdateJob::OnConnectionLost, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &WebUpdateJob::OnConnectionError, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &WebUpdateJob::OnSocketError, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &WebUpdateJob::OnSocketInput, this);
-    m_socket->ConnectNonBlocking("tcp://79.143.189.67:80");
+    m_socket->Start();
 }

@@ -13,7 +13,7 @@
 class LSPNetworkSocket : public LSPNetwork
 {
 protected:
-    clSocketClientAsync::Ptr_t m_socket;
+    clAsyncSocket::Ptr_t m_socket;
     wxProcess* m_lspServer = nullptr;
     int m_port = wxNOT_FOUND;
 

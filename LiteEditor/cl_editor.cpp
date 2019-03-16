@@ -1565,7 +1565,6 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 // The write was done to a temporary file, override it
 #ifdef __WXMSW__
     if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
-        bool bSaveSucceeded = false;
         // Check if the file has the ReadOnly attribute and attempt to remove it
         if(MSWRemoveROFileAttribute(symlinkedFile)) {
             if(!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {

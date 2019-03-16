@@ -34,7 +34,7 @@ class Message
 
     parse(buffer)
     {
-        let str = (typeof buffer == "string") ? buffer : buffer.toString();
+        let str = Buffer.isBuffer(buffer) ?  buffer.toString() : buffer;
         let where = str.indexOf("\r\n\r\n");
         if(where != -1) {
             this.content = str.substr(where + 4);
@@ -66,16 +66,6 @@ class Message
 ///===---------------------------------------------------------------------------------------------
 ///===---------------------------------------------------------------------------------------------
 ///===---------------------------------------------------------------------------------------------
-
-function createTCPServer()
-{
-    let server = net.createServer();
-    // Make the server TCP/IP server on port 12898
-    let port = (process.argv.length > 2) ? process.argv[2] : 12898;
-    console.log("starting server on: 127.0.0.1:" + port);
-    server.listen(port, '127.0.0.1');
-    return server;
-}
 
 /**
  * attempt to consume a single message from the incoming buffer
@@ -168,16 +158,28 @@ function onDataRead(data)
 // Main
 //===--------------------------------------------------------------------------------
 
-// Start a server
-let server = createTCPServer();
-server.on('connection', (conn) => {
-    console.log("Client connected!");
-    conn.on('data', onDataRead.bind(conn));
-    conn.on('close', (code) => {
+
+function connectToCodeLite()
+{
+    let socket = net.Socket();
+    
+    // Make the server TCP/IP server on port 12898
+    let port = (process.argv.length > 2) ? process.argv[2] : 12898;
+    socket.connect(port, "127.0.0.1", function() {
+        console.log(`Successfully connected to tcp://127.0.0.1:${port}`);
+    });
+    socket.on('error', (code) => {
+        console.log(`Unable to connect to CodeLite. ${code}`);
+        process.exit(1);
+    });
+    socket.on('data', onDataRead.bind(socket));
+    socket.on('close', (code) => {
         // if CodeLite termianted, exit
+        console.log(`close event ${code}`);
         process.exit(0);
     });
-});
+}
+connectToCodeLite();
 
 //process.on('uncaughtException', err => {
 //    process.stdin.read(1);

@@ -70,7 +70,7 @@ public:
 class WebUpdateJob : public wxEvtHandler
 {
     wxEvtHandler* m_parent;
-    clSocketClientAsync::Ptr_t m_socket;
+    clAsyncSocket::Ptr_t m_socket;
     wxString m_dataRead;
     bool m_userRequest;
     bool m_onlyRelease;

@@ -9,9 +9,7 @@ thread_local std::vector<int> returnedPorts;
 
 static void ReturnPort(int& port)
 {
-    if(port == wxNOT_FOUND) { 
-        return; 
-    }
+    if(port == wxNOT_FOUND) { return; }
     returnedPorts.push_back(port);
     port = wxNOT_FOUND;
 }
@@ -93,13 +91,15 @@ void LSPNetworkSocket::Open(const LSPStartupInfo& siInfo)
     }
 
     // Start the network client
-    m_socket.reset(new clSocketClientAsync());
+    wxString connectionString;
+    connectionString << "tcp://127.0.0.1:" << m_port;
+    m_socket.reset(new clAsyncSocket(connectionString, kAsyncSocketBuffer | kAsyncSocketServer));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocket::OnSocketConnected, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkSocket::OnSocketConnectionLost, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkSocket::OnSocketConnectionError, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &LSPNetworkSocket::OnSocketError, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &LSPNetworkSocket::OnSocketData, this);
-    m_socket->ConnectNonBlocking(wxString() << "tcp://127.0.0.1:" << m_port);
+    m_socket->Start();
 }
 
 void LSPNetworkSocket::Send(const std::string& data)

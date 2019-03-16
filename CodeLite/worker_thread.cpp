@@ -30,7 +30,7 @@ WorkerThread::WorkerThread()
 {
 }
 
-WorkerThread::~WorkerThread() {}
+WorkerThread::~WorkerThread() { Stop(); }
 
 void* WorkerThread::Entry()
 {

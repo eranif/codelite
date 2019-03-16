@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : clSocketClientAsync.h
+// File name            : clAsyncSocket.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -41,7 +41,15 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_INPUT, clCommandEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);
 
-class WXDLLIMPEXP_CL clSocketClientAsyncHelperThread : public wxThread
+enum eAsyncSocketMode {
+    kAsyncSocketClient = (1 << 0),
+    kAsyncSocketServer = (1 << 1),
+    kAsyncSocketMessage = (1 << 2),
+    kAsyncSocketBuffer = (1 << 3),
+    kAsyncSocketNonBlocking = (1 << 4),
+};
+
+class WXDLLIMPEXP_CL clSocketAsyncThread : public wxThread
 {
 public:
     enum eCommand {
@@ -59,12 +67,14 @@ protected:
     wxString m_keepAliveMessage;
     wxString m_connectionString;
     wxMessageQueue<MyRequest> m_queue;
-    bool m_nonBlockingMode;
-    bool m_messageMode;
+    size_t m_mode = (kAsyncSocketClient | kAsyncSocketBuffer);
 
 protected:
     void MessageLoop(clSocketBase::Ptr_t socket);
     void BufferLoop(clSocketBase::Ptr_t socket);
+
+    void* ClientMain();
+    void* ServerMain();
 
 public:
     virtual void AddRequest(const MyRequest& req) { m_queue.Post(req); }
@@ -92,31 +102,32 @@ public:
         }
     }
 
-    clSocketClientAsyncHelperThread(wxEvtHandler* sink, bool messageMode, const wxString& connectionString,
-                                    bool nonBlockingMode, const wxString& keepAliveMessage = "");
-    virtual ~clSocketClientAsyncHelperThread();
+    clSocketAsyncThread(wxEvtHandler* sink, const wxString& connectionString, size_t mode,
+                        const wxString& keepAliveMessage = "");
+    virtual ~clSocketAsyncThread();
 };
 
-class WXDLLIMPEXP_CL clSocketClientAsync : public wxEvtHandler
+class WXDLLIMPEXP_CL clAsyncSocket : public wxEvtHandler
 {
-    clSocketClientAsyncHelperThread* m_thread;
-    bool m_messageMode;
+    clSocketAsyncThread* m_thread;
+    size_t m_mode = kAsyncSocketClient | kAsyncSocketBuffer;
+    wxString m_connectionString;
 
 public:
-    typedef wxSharedPtr<clSocketClientAsync> Ptr_t;
+    typedef wxSharedPtr<clAsyncSocket> Ptr_t;
 
 public:
-    clSocketClientAsync(bool messageMode = false);
-    ~clSocketClientAsync();
+    clAsyncSocket(const wxString& connectionString,
+                  size_t mode = (kAsyncSocketClient | kAsyncSocketBuffer));
+    virtual ~clAsyncSocket();
 
     /**
      * @brief connect using connection string
      */
-    void Connect(const wxString& connectionString, const wxString& keepAliveMessage = "");
-    void ConnectNonBlocking(const wxString& connectionString, const wxString& keepAliveMessage = "");
+    void Start();
+    void Stop();
     void Send(const wxString& buffer);
     void Send(const std::string& buffer);
-    void Disconnect();
 };
 
 #endif // CLSOCKETCLIENTASYNC_H

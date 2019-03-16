@@ -54,6 +54,7 @@ public:
      * @brief add server. erase an existing one with the same name
      */
     void AddServer(const LanguageServerEntry& server);
+    
     /**
      * @brief delete an existing server by name
      */

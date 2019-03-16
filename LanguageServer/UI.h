@@ -15,11 +15,12 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
-#include <wx/button.h>
-#include <wx/filepicker.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/filepicker.h>
+#include <wx/statline.h>
+#include <wx/notebook.h>
+#include <wx/button.h>
+#include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
@@ -43,24 +44,34 @@ class LanguageServerSettingsDlgBase : public wxDialog
 {
 protected:
     wxCheckBox* m_checkBoxEnable;
-    wxButton* m_buttonNew;
+    wxStaticText* m_staticText100;
     wxFilePickerCtrl* m_filePickerNodeJS;
+    wxStaticLine* m_staticLine102;
+    wxStaticText* m_staticText105;
     wxNotebook* m_notebook;
+    wxButton* m_buttonNew;
+    wxButton* m_buttonDelete;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_button6;
     wxButton* m_button8;
 
 protected:
     virtual void OnAddServer(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteLSP(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteLSPUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }
-    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxStaticText* GetStaticText100() { return m_staticText100; }
     wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
+    wxStaticLine* GetStaticLine102() { return m_staticLine102; }
+    wxStaticText* GetStaticText105() { return m_staticText105; }
     wxNotebook* GetNotebook() { return m_notebook; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
     LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                   const wxString& title = _("Language Server Settings"),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };

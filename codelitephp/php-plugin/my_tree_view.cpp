@@ -4,7 +4,7 @@
 #include <wx/settings.h>
 
 MyTreeView::MyTreeView(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clThemedTreeCtrl(parent, id, pos, size, style)
+    : clThemedTreeCtrl(parent, id, pos, size, 0)
 {
     clSortFunc_t SortFunc = [&](clRowEntry* itemA, clRowEntry* itemB) {
         ItemData* a = dynamic_cast<ItemData*>(itemA->GetClientObject());

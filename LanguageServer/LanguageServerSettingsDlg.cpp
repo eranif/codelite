@@ -49,7 +49,7 @@ void LanguageServerSettingsDlg::OnDeleteLSP(wxCommandEvent& event)
     if(sel == wxNOT_FOUND) { return; }
     wxString serverName = m_notebook->GetPageText(sel);
 
-    if(::wxMessageBox(wxString() << _("Are you sure you want to delete '") << serverName << "'", "CodeLite",
+    if(::wxMessageBox(wxString() << _("Are you sure you want to delete '") << serverName << "' ?", "CodeLite",
                       wxICON_QUESTION | wxCENTRE | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
         return;
     }

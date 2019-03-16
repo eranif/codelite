@@ -1797,7 +1797,8 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
 void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
+    
+    wxBusyCursor bc;
     // let the plugins close any custom workspace
     clCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
     e.SetEventObject(this);
@@ -1810,6 +1811,9 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    
+    wxBusyCursor bc;
+    
     wxString wspFile;
     const wxString WSP_EXT = "workspace";
 

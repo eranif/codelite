@@ -150,7 +150,7 @@ void clCustomScrollBar::OnMouseLeftUp(wxMouseEvent& e)
 void clCustomScrollBar::OnMotion(wxMouseEvent& e)
 {
     e.Skip();
-    if(m_dragging && wxGetMouseState().LeftIsDown()) { UpdateDrag(e.GetPosition()); }
+    if(m_dragging && wxGetMouseState().LeftIsDown()) { CallAfter(&clCustomScrollBar::UpdateDrag, e.GetPosition()); }
 }
 
 void clCustomScrollBar::OnSize(wxSizeEvent& e)

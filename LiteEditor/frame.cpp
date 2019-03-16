@@ -820,7 +820,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
-    
+
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -851,17 +851,17 @@ clMainFrame::~clMainFrame(void)
 {
     wxDELETE(m_singleInstanceThread);
     wxDELETE(m_webUpdate);
-    
+
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
 #endif
 
     // Free the code completion manager
     CodeCompletionManager::Release();
-    
+
     // Release the refactoring engine
     RefactoringEngine::Shutdown();
-    
+
 // this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
 // see this wxWidgets bug report for more details:
 //  http://trac.wxwidgets.org/ticket/14292
@@ -1096,8 +1096,6 @@ void clMainFrame::CreateGUIControls()
     m_workspacePane = new WorkspacePane(m_mainPanel, wxT("Workspace View"), &m_mgr);
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
                                        .CaptionVisible(true)
-                                       .MinimizeButton()
-                                       .MaximizeButton()
                                        .Name(m_workspacePane->GetCaption())
                                        .Caption(m_workspacePane->GetCaption())
                                        .Left()
@@ -1117,9 +1115,7 @@ void clMainFrame::CreateGUIControls()
                                       .Layer(1)
                                       .Position(1)
                                       .CloseButton(true)
-                                      .MinimizeButton()
-                                      .Hide()
-                                      .MaximizeButton());
+                                      .Hide());
     RegisterDockWindow(XRCID("debugger_pane"), wxT("Debugger"));
 
     // Wrap the mainbook with a wxPanel
@@ -1160,10 +1156,8 @@ void clMainFrame::CreateGUIControls()
                                     .Bottom()
                                     .Layer(1)
                                     .Position(0)
-                                    .MinimizeButton()
                                     .Show(false)
-                                    .BestSize(wxSize(wxNOT_FOUND, 400))
-                                    .MaximizeButton());
+                                    .BestSize(wxSize(wxNOT_FOUND, 400)));
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
     long show_nav = EditorConfigST::Get()->GetInteger(wxT("ShowNavBar"), 0);

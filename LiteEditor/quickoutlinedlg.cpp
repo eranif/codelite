@@ -46,7 +46,7 @@
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
-    : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER)
+    : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE)
     , m_fileName(fileName)
 {
     wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);
@@ -65,7 +65,7 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
     Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
     mainSizer->Add(m_treeOutline, 1, wxEXPAND);
     
-    m_treeOutline->SetSize(wxDLG_UNIT(this, wxSize(200, 200)));
+    m_treeOutline->SetSizeHints(wxDLG_UNIT(this, wxSize(200, 200)));
     SetName("QuickOutlineDlg");
     Layout();
     CallAfter(&QuickOutlineDlg::DoParseActiveBuffer);

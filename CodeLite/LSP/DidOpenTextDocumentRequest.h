@@ -3,13 +3,12 @@
 
 #include "MessageWithParams.h"
 #include <wx/filename.h>
-#include "LSP/ResponseMessage.h"
-#include "LSP/Request.h"
+#include "LSP/Notification.h"
 
 namespace LSP
 {
 
-class WXDLLIMPEXP_CL DidOpenTextDocumentRequest : public LSP::Request
+class WXDLLIMPEXP_CL DidOpenTextDocumentRequest : public LSP::Notification
 {
 public:
     DidOpenTextDocumentRequest(const wxFileName& filename, const wxString& text, const wxString& langugage);

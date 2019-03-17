@@ -10,7 +10,6 @@ LSP::CompletionRequest::CompletionRequest(const LSP::TextDocumentIdentifier& tex
     m_params.reset(new CompletionParams());
     m_params->As<CompletionParams>()->SetPosition(position);
     m_params->As<CompletionParams>()->SetTextDocument(textDocument);
-    SetNeedsReply(true);
 }
 
 LSP::CompletionRequest::~CompletionRequest() {}
@@ -31,17 +30,11 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
         completionItem->FromJSON(items.arrayItem(i));
         completions.push_back(completionItem);
     }
-    
+
     clDEBUG() << "Received:" << completions.size() << "completion items";
     if(!completions.empty()) {
         LSPEvent event(wxEVT_LSP_COMPLETION_READY);
         event.SetCompletions(completions);
         owner->AddPendingEvent(event);
     }
-}
-
-void LSP::CompletionRequest::BuildUID()
-{
-    if(!m_uuid.IsEmpty()) { return; }
-    m_uuid << GetMethod() << ":" << m_params->As<CompletionParams>()->GetTextDocument().GetFilename().GetFullPath();
 }

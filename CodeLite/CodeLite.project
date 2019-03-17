@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/Notification.cpp"/>
+    <File Name="LSP/Notification.h"/>
     <File Name="LSP/Request.cpp"/>
     <File Name="LSP/Request.h"/>
     <File Name="LSP/MessageWithParams.cpp"/>

@@ -6,7 +6,7 @@
 namespace LSP
 {
 
-class Request : public LSP::MessageWithParams
+class WXDLLIMPEXP_SDK Request : public LSP::MessageWithParams
 {
     int m_id = wxNOT_FOUND;
 
@@ -19,8 +19,13 @@ public:
 
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
-};
 
-} // namespace LSP
+    /**
+     * @brief this method will get called by the protocol for handling the response.
+     * Override it in the various requests
+     */
+    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) = 0;
+};
+}; // namespace LSP
 
 #endif // REQUEST_H

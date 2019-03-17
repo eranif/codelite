@@ -19,18 +19,18 @@
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
 {
-    std::queue<LSP::RequestMessage::Ptr_t> m_Queue;
-    std::unordered_map<int, LSP::RequestMessage::Ptr_t> m_pendingReplyMessages;
+    std::queue<LSP::MessageWithParams::Ptr_t> m_Queue;
+    std::unordered_map<int, LSP::MessageWithParams::Ptr_t> m_pendingReplyMessages;
     bool m_waitingReponse = false;
 
 public:
     LSPRequestMessageQueue() {}
     virtual ~LSPRequestMessageQueue() {}
 
-    LSP::RequestMessage::Ptr_t TakePendingReplyMessage(int msgid);
-    void Push(LSP::RequestMessage::Ptr_t message);
+    LSP::MessageWithParams::Ptr_t TakePendingReplyMessage(int msgid);
+    void Push(LSP::MessageWithParams::Ptr_t message);
     void Pop();
-    LSP::RequestMessage::Ptr_t Get();
+    LSP::MessageWithParams::Ptr_t Get();
     void Clear();
     bool IsEmpty() const { return m_Queue.empty(); }
     void SetWaitingReponse(bool waitingReponse) { this->m_waitingReponse = waitingReponse; }
@@ -117,7 +117,7 @@ protected:
     /**
      * @brief add message to the outgoing queue
      */
-    void QueueMessage(LSP::RequestMessage::Ptr_t request);
+    void QueueMessage(LSP::MessageWithParams::Ptr_t request);
 
 public:
     LanguageServerProtocol(const wxString& name, wxEvtHandler* owner);

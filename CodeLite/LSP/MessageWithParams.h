@@ -35,12 +35,6 @@ public:
     Params::Ptr_t GetParams() { return m_params; }
 
     /**
-     * @brief this method will get called by the protocol for handling the response.
-     * Override it in the various requests
-     */
-    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
-
-    /**
      * @brief factory method for creating Ptr_t type
      */
     static LSP::MessageWithParams::Ptr_t MakeRequest(LSP::MessageWithParams* message_ptr);

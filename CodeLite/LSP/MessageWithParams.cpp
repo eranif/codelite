@@ -46,9 +46,3 @@ LSP::MessageWithParams::Ptr_t LSP::MessageWithParams::MakeRequest(LSP::MessageWi
     LSP::MessageWithParams::Ptr_t p(message_ptr);
     return p;
 }
-
-void LSP::MessageWithParams::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
-{
-    wxUnusedVar(owner);
-    wxUnusedVar(response);
-}

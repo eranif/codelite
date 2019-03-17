@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <sstream>
 #include "LSPNetworkSocket.h"
+#include "LSP/Request.h"
 
 #define PORT 12989
 
@@ -103,7 +104,7 @@ const std::set<wxString>& LanguageServerProtocol::GetSupportedLanguages()
     return S;
 }
 
-void LanguageServerProtocol::QueueMessage(LSP::RequestMessage::Ptr_t request)
+void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 {
     if(!IsInitialized()) { return; }
     m_Queue.Push(request);
@@ -200,7 +201,7 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
         SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
     }
 
-    LSP::GotoDefinitionRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::GotoDefinitionRequest(
+    LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
         editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
@@ -209,7 +210,7 @@ void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const w
                                              const wxString& languageId)
 {
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
-        LSP::RequestMessage::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
+        LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
     req->SetStatusMessage(wxString() << "[LSP] parsing file: " << filename.GetFullName());
     QueueMessage(req);
 }
@@ -222,7 +223,7 @@ void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
     }
 
     LSP::DidCloseTextDocumentRequest::Ptr_t req =
-        LSP::RequestMessage::MakeRequest(new LSP::DidCloseTextDocumentRequest(filename));
+        LSP::MessageWithParams::MakeRequest(new LSP::DidCloseTextDocumentRequest(filename));
     QueueMessage(req);
     m_filesSent.erase(filename.GetFullPath());
 }
@@ -230,7 +231,7 @@ void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
 void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const wxString& fileContent)
 {
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
-        LSP::RequestMessage::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
+        LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
     req->SetStatusMessage(wxString() << "[LSP] re-parsing file: " << filename.GetFullName());
     QueueMessage(req);
 }
@@ -248,7 +249,7 @@ void LanguageServerProtocol::SendSaveRequest(const wxFileName& filename, const w
 void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
 {
     if(ShouldHandleFile(filename)) {
-        LSP::CompletionRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(
+        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
         QueueMessage(req);
     }
@@ -320,7 +321,7 @@ void LanguageServerProtocol::ProcessQueue()
         clDEBUG() << "LSP is busy, will not send message";
         return;
     }
-    LSP::RequestMessage::Ptr_t req = m_Queue.Get();
+    LSP::MessageWithParams::Ptr_t req = m_Queue.Get();
     if(!IsRunning()) {
         clDEBUG() << GetLogPrefix() << "is down.";
         return;
@@ -353,7 +354,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
         SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
     }
 
-    LSP::GotoDeclarationRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::GotoDeclarationRequest(
+    LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
         editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
@@ -362,14 +363,14 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 {
     // The process started successfully
     // Send the 'initialize' request
-    LSP::InitializeRequest::Ptr_t req = LSP::RequestMessage::MakeRequest(new LSP::InitializeRequest());
+    LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     req->As<LSP::InitializeRequest>()->SetRootUri(m_rootFolder);
 
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
     QueueMessage(req);
     m_state = kUnInitialized;
-    m_initializeRequestID = req->GetId();
+    m_initializeRequestID = req->As<LSP::InitializeRequest>()->GetId();
 }
 
 void LanguageServerProtocol::OnNetError(clCommandEvent& event)
@@ -395,7 +396,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
             clDEBUG() << GetLogPrefix() << "received a complete message";
 
             if(IsInitialized()) {
-                LSP::RequestMessage::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
+                LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
                     LSP::ResponseError errMsg(res.GetMessageString());
@@ -419,9 +420,9 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         break;
                     }
                 } else {
-                    if(msg_ptr) {
+                    if(msg_ptr && msg_ptr->As<LSP::Request>()) {
                         // let the originating request to handle it
-                        msg_ptr->OnResponse(res, m_owner);
+                        msg_ptr->As<LSP::Request>()->OnResponse(res, m_owner);
 
                         // If we got more in the buffer, try to process another message
                         if(!m_outputBuffer.IsEmpty()) { continue; }
@@ -481,10 +482,13 @@ void LanguageServerProtocol::OnWorkspaceOpen(wxCommandEvent& event)
 // LSPRequestMessageQueue
 //===------------------------------------------------------------------
 
-void LSPRequestMessageQueue::Push(LSP::RequestMessage::Ptr_t message)
+void LSPRequestMessageQueue::Push(LSP::MessageWithParams::Ptr_t message)
 {
     m_Queue.push(message);
-    if(message->IsNeedsReply()) { m_pendingReplyMessages.insert({ message->GetId(), message }); }
+    
+    // Messages of type 'Request' require responses from the server
+    LSP::Request* req = message->As<LSP::Request>();
+    if(req) { m_pendingReplyMessages.insert({ req->GetId(), message }); }
 }
 
 void LSPRequestMessageQueue::Pop()
@@ -493,9 +497,9 @@ void LSPRequestMessageQueue::Pop()
     SetWaitingReponse(false);
 }
 
-LSP::RequestMessage::Ptr_t LSPRequestMessageQueue::Get()
+LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::Get()
 {
-    if(m_Queue.empty()) { return LSP::RequestMessage::Ptr_t(nullptr); }
+    if(m_Queue.empty()) { return LSP::MessageWithParams::Ptr_t(nullptr); }
     return m_Queue.front();
 }
 
@@ -508,11 +512,11 @@ void LSPRequestMessageQueue::Clear()
     m_pendingReplyMessages.clear();
 }
 
-LSP::RequestMessage::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(int msgid)
+LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(int msgid)
 {
-    if(m_pendingReplyMessages.empty()) { return LSP::RequestMessage::Ptr_t(nullptr); }
-    if(m_pendingReplyMessages.count(msgid) == 0) { return LSP::RequestMessage::Ptr_t(nullptr); }
-    LSP::RequestMessage::Ptr_t msgptr = m_pendingReplyMessages[msgid];
+    if(m_pendingReplyMessages.empty()) { return LSP::MessageWithParams::Ptr_t(nullptr); }
+    if(m_pendingReplyMessages.count(msgid) == 0) { return LSP::MessageWithParams::Ptr_t(nullptr); }
+    LSP::MessageWithParams::Ptr_t msgptr = m_pendingReplyMessages[msgid];
     m_pendingReplyMessages.erase(msgid);
     return msgptr;
 }

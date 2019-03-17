@@ -10,7 +10,6 @@ LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxFileName& filename, si
     m_params.reset(new TextDocumentPositionParams());
     m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
-    SetNeedsReply(true);
 }
 
 LSP::GotoDefinitionRequest::~GotoDefinitionRequest() {}
@@ -30,11 +29,4 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
     LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
     definitionEvent.SetLocation(loc);
     owner->AddPendingEvent(definitionEvent);
-}
-
-void LSP::GotoDefinitionRequest::BuildUID()
-{
-    if(!m_uuid.IsEmpty()) { return; }
-    m_uuid << GetMethod() << ":"
-           << m_params->As<TextDocumentPositionParams>()->GetTextDocument().GetFilename().GetFullPath();
 }

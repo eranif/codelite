@@ -2,17 +2,16 @@
 #define DIDCHANGE_TEXTDOCUMENTREQUEST_H
 
 #include <wx/filename.h>
-#include "LSP/MessageWithParams.h"
+#include "LSP/Notification.h"
 
 namespace LSP
 {
 
-class WXDLLIMPEXP_CL DidChangeTextDocumentRequest : public LSP::RequestMessage
+class WXDLLIMPEXP_CL DidChangeTextDocumentRequest : public LSP::Notification
 {
 public:
     DidChangeTextDocumentRequest(const wxFileName& filename, const wxString& fileContent);
     virtual ~DidChangeTextDocumentRequest();
-    void BuildUID();
 };
 
 }; // namespace LSP

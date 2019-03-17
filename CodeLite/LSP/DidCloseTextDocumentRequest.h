@@ -3,18 +3,16 @@
 
 #include <wx/filename.h>
 #include "LSP/MessageWithParams.h"
-#include "LSP/Request.h"
+#include "LSP/Notification.h"
 
 namespace LSP
 {
 
-class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::Request
+class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::Notification
 {
 public:
     DidCloseTextDocumentRequest(const wxFileName& filename);
     virtual ~DidCloseTextDocumentRequest();
 };
-
-}; // namespace LSP
-
+};     // namespace LSP
 #endif // DIDCLOSETEXTDOCUMENTREQUEST_H

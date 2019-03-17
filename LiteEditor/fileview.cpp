@@ -311,7 +311,7 @@ void FileViewTree::BuildProjectNode(const wxString& projectName)
 
     FolderColour::Map_t coloursMap;
     FolderColour::List_t coloursList;
-    LocalWorkspaceST::Get()->GetFolderColours(coloursMap);
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetFolderColours(coloursMap);
 
     // Sort the list
     FolderColour::SortToList(coloursMap, coloursList);
@@ -1036,7 +1036,7 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
         return; // Probably not possible, but...
     }
 
-    wxXmlNode* lwsnode = LocalWorkspaceST::Get()->GetLocalWorkspaceOptionsNode();
+    wxXmlNode* lwsnode = clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetLocalWorkspaceOptionsNode();
     // Don't check lwsnode: it'll be NULL if there are currently no local workspace options
 
     // Start by getting the global settings
@@ -1045,7 +1045,8 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
     // If we're setting workspace options, run the dialog and return
     if(event.GetId() == XRCID("local_workspace_prefs")) {
         EditorSettingsLocal dlg(higherOptions, lwsnode, pLevel_workspace, this);
-        if(dlg.ShowModal() == wxID_OK && LocalWorkspaceST::Get()->SetWorkspaceOptions(dlg.GetLocalOpts())) {
+        if(dlg.ShowModal() == wxID_OK &&
+           clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetWorkspaceOptions(dlg.GetLocalOpts())) {
             clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
             // Notify plugins that some settings have changed
             PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
@@ -1057,14 +1058,14 @@ void FileViewTree::OnLocalPrefs(wxCommandEvent& event)
     wxTreeItemId item = GetSingleSelection();
     if(!item.IsOk()) { return; }
 
-    wxXmlNode* lpnode = LocalWorkspaceST::Get()->GetLocalProjectOptionsNode(GetItemText(item));
+    wxXmlNode* lpnode = clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetLocalProjectOptionsNode(GetItemText(item));
     // Don't check lpnode: it'll be NULL if there are currently no local project options
     // Merge any local workspace options with the global ones inside 'higherOptions'
     LocalOptionsConfig wsOC(higherOptions, lwsnode);
 
     EditorSettingsLocal dlg(higherOptions, lpnode, pLevel_project, this);
     if(dlg.ShowModal() == wxID_OK &&
-       LocalWorkspaceST::Get()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item))) {
+       clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetProjectOptions(dlg.GetLocalOpts(), GetItemText(item))) {
         clMainFrame::Get()->GetMainBook()->ApplySettingsChanges();
         // Notify plugins that some settings have changed
         PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
@@ -1931,7 +1932,7 @@ void FileViewTree::OnRebuildProjectOnly(wxCommandEvent& event)
 void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
 {
     if(ManagerST::Get()->IsWorkspaceOpen()) {
-        WorkspaceSettingsDlg dlg(clMainFrame::Get(), LocalWorkspaceST::Get());
+        WorkspaceSettingsDlg dlg(clMainFrame::Get(), clCxxWorkspaceST::Get()->GetLocalWorkspace());
         if(dlg.ShowModal() == wxID_OK) {
             clMainFrame::Get()->SelectBestEnvSet();
             // Update the new paths
@@ -2703,11 +2704,11 @@ void FileViewTree::OnSetBgColourVirtualFolder(wxCommandEvent& e)
 
     // Read the current colours map
     FolderColour::Map_t coloursMap;
-    if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
+    if(!clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetFolderColours(coloursMap)) return;
     // Colour the tree (it will also update the 'coloursMap' table)
     m_colourHelper->SetBgColour(item, col, coloursMap);
     // Store the settings
-    LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetFolderColours(coloursMap);
 }
 
 void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
@@ -2718,13 +2719,13 @@ void FileViewTree::OnClearBgColourVirtualFolder(wxCommandEvent& e)
 
     // Fetch the current colours map
     FolderColour::Map_t coloursMap;
-    if(!LocalWorkspaceST::Get()->GetFolderColours(coloursMap)) return;
+    if(!clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetFolderColours(coloursMap)) return;
 
     // Colour the tree (it will also update the 'coloursMap' table)
     m_colourHelper->ResetBgColour(item, coloursMap);
 
     // Update the local settings
-    LocalWorkspaceST::Get()->SetFolderColours(coloursMap);
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetFolderColours(coloursMap);
 }
 
 void FileViewTree::OnAddProjectToWorkspaceFolder(wxCommandEvent& evt)
@@ -2787,7 +2788,7 @@ void FileViewTree::DoAddChildren(const wxTreeItemId& parentItem)
 
     FolderColour::Map_t coloursMap;
     FolderColour::List_t coloursList;
-    LocalWorkspaceST::Get()->GetFolderColours(coloursMap);
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetFolderColours(coloursMap);
 
     // Sort the list
     FolderColour::SortToList(coloursMap, coloursList);

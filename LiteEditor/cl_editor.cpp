@@ -1164,8 +1164,8 @@ void clEditor::SetEnsureCaretIsVisible(int pos, bool preserveSelection /*=true*/
 {
     wxUnusedVar(forceDelay);
     DoEnsureCaretIsVisible(pos, preserveSelection);
-    //OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
-    //if(forceDelay || (opts && opts->GetWordWrap())) {
+    // OptionsConfigPtr opts = EditorConfigST::Get()->GetOptions();
+    // if(forceDelay || (opts && opts->GetWordWrap())) {
     //    // If the text may be word-wrapped, don't EnsureVisible immediately but from the
     //    // paintevent handler, so that scintilla has time to take word-wrap into account
     //    m_positionToEnsureVisible = pos;
@@ -4649,7 +4649,9 @@ void clEditor::DoUpdateOptions()
     m_options = EditorConfigST::Get()->GetOptions();
 
     // Now let any local preferences overwrite the global equivalent
-    if(ManagerST::Get()->IsWorkspaceOpen()) { LocalWorkspaceST::Get()->GetOptions(m_options, GetProject()); }
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(m_options, GetProject());
+    }
 
     clEditorConfigEvent event(wxEVT_EDITOR_CONFIG_LOADING);
     event.SetFileName(GetFileName().GetFullPath());

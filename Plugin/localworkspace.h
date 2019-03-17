@@ -107,58 +107,42 @@ public:
 
     bool GetHideChangeMarkerMargin() const
     {
-        if(m_localhideChangeMarkerMargin.isValid()) {
-            return m_localhideChangeMarkerMargin.GetDatum();
-        }
+        if(m_localhideChangeMarkerMargin.isValid()) { return m_localhideChangeMarkerMargin.GetDatum(); }
         return false; // It's invalid anyway, so false will do as well as anything
     }
     bool GetDisplayFoldMargin() const
     {
-        if(m_localdisplayFoldMargin.isValid()) {
-            return m_localdisplayFoldMargin.GetDatum();
-        }
+        if(m_localdisplayFoldMargin.isValid()) { return m_localdisplayFoldMargin.GetDatum(); }
         return false;
     }
     bool GetDisplayBookmarkMargin() const
     {
-        if(m_localdisplayBookmarkMargin.isValid()) {
-            return m_localdisplayBookmarkMargin.GetDatum();
-        }
+        if(m_localdisplayBookmarkMargin.isValid()) { return m_localdisplayBookmarkMargin.GetDatum(); }
         return false;
     }
     bool GetHighlightCaretLine() const
     {
-        if(m_localhighlightCaretLine.isValid()) {
-            return m_localhighlightCaretLine.GetDatum();
-        }
+        if(m_localhighlightCaretLine.isValid()) { return m_localhighlightCaretLine.GetDatum(); }
         return false;
     }
     bool GetTrimLine() const
     {
-        if(m_localTrimLine.isValid()) {
-            return m_localTrimLine.GetDatum();
-        }
+        if(m_localTrimLine.isValid()) { return m_localTrimLine.GetDatum(); }
         return false;
     }
     bool GetAppendLF() const
     {
-        if(m_localAppendLF.isValid()) {
-            return m_localAppendLF.GetDatum();
-        }
+        if(m_localAppendLF.isValid()) { return m_localAppendLF.GetDatum(); }
         return false;
     }
     bool GetDisplayLineNumbers() const
     {
-        if(m_localdisplayLineNumbers.isValid()) {
-            return m_localdisplayLineNumbers.GetDatum();
-        }
+        if(m_localdisplayLineNumbers.isValid()) { return m_localdisplayLineNumbers.GetDatum(); }
         return false;
     }
     bool GetShowIndentationGuidelines() const
     {
-        if(m_localshowIndentationGuidelines.isValid()) {
-            return m_localshowIndentationGuidelines.GetDatum();
-        }
+        if(m_localshowIndentationGuidelines.isValid()) { return m_localshowIndentationGuidelines.GetDatum(); }
         return false;
     }
 
@@ -176,33 +160,25 @@ public:
     void SetIndentUsesTabs(const bool& indentUsesTabs) { m_localindentUsesTabs.Set(indentUsesTabs); }
     bool GetIndentUsesTabs() const
     {
-        if(m_localindentUsesTabs.isValid()) {
-            return m_localindentUsesTabs.GetDatum();
-        }
+        if(m_localindentUsesTabs.isValid()) { return m_localindentUsesTabs.GetDatum(); }
         return false;
     }
     void SetIndentWidth(const int& indentWidth) { m_localindentWidth.Set(indentWidth); }
     int GetIndentWidth() const
     {
-        if(m_localindentWidth.isValid()) {
-            return m_localindentWidth.GetDatum();
-        }
+        if(m_localindentWidth.isValid()) { return m_localindentWidth.GetDatum(); }
         return wxNOT_FOUND;
     }
     void SetTabWidth(const int& tabWidth) { m_localtabWidth.Set(tabWidth); }
     int GetTabWidth() const
     {
-        if(m_localtabWidth.isValid()) {
-            return m_localtabWidth.GetDatum();
-        }
+        if(m_localtabWidth.isValid()) { return m_localtabWidth.GetDatum(); }
         return wxNOT_FOUND;
     }
 
     wxFontEncoding GetFileFontEncoding() const
     {
-        if(m_localfileFontEncoding.isValid()) {
-            return m_localfileFontEncoding.GetDatum();
-        }
+        if(m_localfileFontEncoding.isValid()) { return m_localfileFontEncoding.GetDatum(); }
         return (wxFontEncoding)(wxFONTENCODING_MAX + 1);
     }
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
@@ -210,18 +186,14 @@ public:
     void SetShowWhitespaces(const int& showWhitespaces) { m_localshowWhitspaces.Set(showWhitespaces); }
     int GetShowWhitespaces() const
     {
-        if(m_localshowWhitspaces.isValid()) {
-            return m_localshowWhitspaces.GetDatum();
-        }
+        if(m_localshowWhitspaces.isValid()) { return m_localshowWhitspaces.GetDatum(); }
         return wxNOT_FOUND;
     }
 
     void SetEolMode(const wxString& eolMode) { m_localeolMode.Set(eolMode); }
     wxString GetEolMode() const
     {
-        if(m_localeolMode.isValid()) {
-            return m_localeolMode.GetDatum();
-        }
+        if(m_localeolMode.isValid()) { return m_localeolMode.GetDatum(); }
         return wxT("");
     }
 
@@ -238,7 +210,7 @@ public:
     enum CC_FLAGS {
         EnableCpp11 = 0x00000001,
         EnableCpp14 = 0x00000002,
-		EnableCpp17 = 0x00000004,
+        EnableCpp17 = 0x00000004,
         EnableSWTLW = 0x00000008 // Save Parse folders to Workspace file.
     };
 
@@ -247,11 +219,6 @@ private:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
 
-    /// Constructor
-    LocalWorkspace() {}
-
-    /// Destructor
-    virtual ~LocalWorkspace() {}
 
 protected:
     /*void SaveWorkspaceOptions(LocalOptionsConfigPtr opts);
@@ -262,27 +229,33 @@ protected:
     wxFileName DoGetFilePath() const;
 
 public:
+    /// Constructor
+    LocalWorkspace() {}
+
+    /// Destructor
+    virtual ~LocalWorkspace() {}
+    
     /**
      * @brief flush the XML content to the disk
      */
     void Flush() { SaveXmlFile(); }
 
     /**
-    * @brief Get any local editor preferences, merging the values into the global options
-    * \param options the global options
-    * \param projectname the name of the currently active project
-    */
+     * @brief Get any local editor preferences, merging the values into the global options
+     * \param options the global options
+     * \param projectname the name of the currently active project
+     */
     void GetOptions(OptionsConfigPtr options, const wxString& projectname);
     /**
-    * @brief Sets any local editor preferences for the current workspace
-    * \param opts the local options to save
-    */
+     * @brief Sets any local editor preferences for the current workspace
+     * \param opts the local options to save
+     */
     bool SetWorkspaceOptions(LocalOptionsConfigPtr opts);
     /**
-    * @brief Sets any local editor preferences for the named project
-    * \param opts the local options to save
-    * \param projectname the name of the project
-    */
+     * @brief Sets any local editor preferences for the named project
+     * \param opts the local options to save
+     * \param projectname the name of the project
+     */
     bool SetProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);
 
     /**
@@ -296,13 +269,13 @@ public:
     bool GetFolderColours(FolderColour::Map_t& vdColours);
 
     /**
-    * @brief Returns the node where any current local workspace options are stored
-    */
+     * @brief Returns the node where any current local workspace options are stored
+     */
     wxXmlNode* GetLocalWorkspaceOptionsNode() const;
     /**
-    * @brief Returns the node where any current local project options are stored
-    * \param projectname the name of the project
-    */
+     * @brief Returns the node where any current local project options are stored
+     * \param projectname the name of the project
+     */
     wxXmlNode* GetLocalProjectOptionsNode(const wxString& projectname) const;
 
     /**
@@ -330,13 +303,6 @@ public:
      */
     void SetActiveEnvironmentSet(const wxString& setName);
     wxString GetActiveEnvironmentSet();
-};
-
-class WXDLLIMPEXP_SDK LocalWorkspaceST
-{
-public:
-    static LocalWorkspace* Get();
-    static void Free();
 };
 
 #endif // __localoptions__

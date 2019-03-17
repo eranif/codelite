@@ -39,16 +39,17 @@ CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
         wxString opts, c_opts;
         wxString macros;
 
-        LocalWorkspaceST::Get()->GetParserPaths(includePaths, excludePaths);
-        LocalWorkspaceST::Get()->GetParserMacros(macros);
+        LocalWorkspace* lw = clCxxWorkspaceST::Get()->GetLocalWorkspace();
+        lw->GetParserPaths(includePaths, excludePaths);
+        lw->GetParserMacros(macros);
 
         m_textCtrlSearchPaths->SetValue(wxImplode(includePaths, wxT("\n")));
         m_textCtrlMacros->SetValue(macros);
 
-        m_checkBoxCpp11->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp11);
-        m_checkBoxCpp14->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp14);
-        m_checkBoxCpp17->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableCpp17);
-        m_checkBoxSWTLW->SetValue(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW);
+        m_checkBoxCpp11->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp11);
+        m_checkBoxCpp14->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp14);
+        m_checkBoxCpp17->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp17);
+        m_checkBoxSWTLW->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableSWTLW);
     }
 }
 
@@ -67,15 +68,16 @@ void CodeCompletionPage::Save()
 {
     if(m_type == TypeWorkspace) {
         size_t flags = 0;
-        LocalWorkspaceST::Get()->SetParserPaths(GetIncludePaths(), wxArrayString());
-        LocalWorkspaceST::Get()->SetParserMacros(GetMacros());
+        LocalWorkspace* lw = clCxxWorkspaceST::Get()->GetLocalWorkspace();
+        lw->SetParserPaths(GetIncludePaths(), wxArrayString());
+        lw->SetParserMacros(GetMacros());
 
         if(m_checkBoxCpp11->IsChecked()) flags |= LocalWorkspace::EnableCpp11;
         if(m_checkBoxCpp14->IsChecked()) flags |= LocalWorkspace::EnableCpp14;
         if(m_checkBoxCpp17->IsChecked()) flags |= LocalWorkspace::EnableCpp17;
         if(m_checkBoxSWTLW->IsChecked()) flags |= LocalWorkspace::EnableSWTLW;
-        LocalWorkspaceST::Get()->SetParserFlags(flags);
-        LocalWorkspaceST::Get()->Flush();
+        lw->SetParserFlags(flags);
+        lw->Flush();
     }
 }
 

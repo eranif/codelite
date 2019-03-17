@@ -3173,7 +3173,7 @@ void Manager::UpdateParserPaths(bool notify)
                 }
             }
         }
-        LocalWorkspaceST::Get()->GetParserPaths(localIncludePaths, localExcludePaths);
+        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetParserPaths(localIncludePaths, localExcludePaths);
 
         BuildConfigPtr buildConf = GetCurrentBuildConf();
         if(buildConf) {

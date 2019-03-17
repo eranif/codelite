@@ -151,7 +151,7 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_codeliteEcho(NULL)
 {
     clThemeUpdater::Get().RegisterWindow(m_splitter);
-    
+
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
@@ -1161,9 +1161,9 @@ void SubversionView::DoRootDirChanged(const wxString& path)
         ssd.SetRepos(modDirs);
         m_plugin->SetSettings(ssd);
 
-        if(m_plugin->GetManager()->IsWorkspaceOpen()) {
-            LocalWorkspaceST::Get()->SetCustomData(wxT("SubversionPath"), path);
-            LocalWorkspaceST::Get()->Flush();
+        if(clCxxWorkspaceST::Get()->IsOpen()) {
+            clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetCustomData(wxT("SubversionPath"), path);
+            clCxxWorkspaceST::Get()->GetLocalWorkspace()->Flush();
         }
         DoChangeRootPathUI(path);
         BuildTree();
@@ -1247,7 +1247,7 @@ void SubversionView::OnCloseView(wxCommandEvent& event)
             return;
         }
         DoCloseView();
-        
+
         // Clear the source control bitmap
         clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
     }

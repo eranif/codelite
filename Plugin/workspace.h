@@ -48,11 +48,10 @@
  * Workspace manager class
  *
  */
-class CompileCommandsCreateor;
+class LocalWorkspace;
 class WXDLLIMPEXP_SDK clCxxWorkspace : public IWorkspace
 {
     friend class clCxxWorkspaceST;
-    friend class CompileCommandsCreateor;
 
 public:
     virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
@@ -73,6 +72,7 @@ protected:
     time_t m_modifyTime;
     bool m_saveOnExit;
     BuildMatrixPtr m_buildMatrix;
+    LocalWorkspace* m_localWorkspace = nullptr;
 
 public:
     /// Constructor
@@ -84,7 +84,13 @@ public:
      * @brief return the XML version of this workspace
      */
     wxString GetVersion() const;
-
+    
+    /**
+     * @brief return the local workspace settings associated with this workspace
+     * @return 
+     */
+    LocalWorkspace* GetLocalWorkspace() const { return m_localWorkspace; }
+    
 private:
     void DoUpdateBuildMatrix();
     /**
@@ -152,7 +158,12 @@ public:
      * @brief create 'compile_commands' json object for the workspace projects (only the enabled ones)
      */
     cJSON* CreateCompileCommandsJSON() const;
-    
+
+    /**
+     * @brief generate compile_flags.txt for each project
+     */
+    void CreateCompileFlags() const;
+
     wxFileName GetFileName() const { return GetWorkspaceFileName(); }
     void SetStartupDir(const wxString& startupDir) { this->m_startupDir = startupDir; }
     const wxString& GetStartupDir() const { return m_startupDir; }
@@ -469,12 +480,12 @@ public:
      * @brief return list of projects for this workspace
      */
     virtual wxArrayString GetWorkspaceProjects() const;
-    
+
     /**
      * @brief return list of files that are exluded for a given workspace configuration
      */
     size_t GetExcludeFilesForConfig(std::vector<wxString>& files, const wxString& workspaceConfigName = "");
-    
+
 private:
     /**
      * Do the actual add project

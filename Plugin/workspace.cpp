@@ -45,16 +45,20 @@
 #include "file_logger.h"
 #include "macromanager.h"
 #include "build_settings_config.h"
+#include "localworkspace.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
 {
     SetWorkspaceType(_("C++"));
+    m_localWorkspace = new LocalWorkspace();
 }
 
 clCxxWorkspace::~clCxxWorkspace()
 {
     if(m_saveOnExit && m_doc.IsOk()) { SaveXmlFile(); }
+    delete m_localWorkspace;
+    m_localWorkspace = nullptr;
 }
 
 wxString clCxxWorkspace::GetName() const
@@ -194,7 +198,7 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
     m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
 
     m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
-    if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
+    if(GetLocalWorkspace()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
     }
 
@@ -638,7 +642,7 @@ bool clCxxWorkspace::SaveXmlFile()
     // we read new path values from the LW and set the appropiate attribute value.
     if(m_doc.GetRoot()->GetAttribute(wxT("SWTLW")) != wxEmptyString) { m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW")); }
 
-    if(LocalWorkspaceST::Get()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
+    if(GetLocalWorkspace()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
         m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
         SyncFromLocalWorkspaceSTParserMacros();
@@ -679,7 +683,7 @@ void clCxxWorkspace::SyncToLocalWorkspaceSTParserPaths()
 
             child = child->GetNext();
         }
-        LocalWorkspaceST::Get()->SetParserPaths(inclduePaths, excludePaths);
+        GetLocalWorkspace()->SetParserPaths(inclduePaths, excludePaths);
     }
 }
 
@@ -699,7 +703,7 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserPaths()
     //
     wxArrayString inclduePaths;
     wxArrayString excludePaths;
-    LocalWorkspaceST::Get()->GetParserPaths(inclduePaths, excludePaths);
+    GetLocalWorkspace()->GetParserPaths(inclduePaths, excludePaths);
 
     workspaceInclPaths = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserPaths"));
     for(size_t i = 0; i < inclduePaths.GetCount(); i++) {
@@ -720,7 +724,7 @@ void clCxxWorkspace::SyncToLocalWorkspaceSTParserMacros()
     if(workspaceMacros) {
         macros = workspaceMacros->GetNodeContent();
         macros.Trim().Trim(false);
-        LocalWorkspaceST::Get()->SetParserMacros(macros);
+        GetLocalWorkspace()->SetParserMacros(macros);
     }
 }
 
@@ -739,7 +743,7 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserMacros()
     // Get workspace parse macros from local workspace file.
     //
     wxString macros;
-    LocalWorkspaceST::Get()->GetParserMacros(macros);
+    GetLocalWorkspace()->GetParserMacros(macros);
     workspaceMacros = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserMacros"));
     if(!macros.IsEmpty()) {
         wxXmlNode* contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, macros);
@@ -1131,7 +1135,7 @@ wxString clCxxWorkspace::GetFilesMask() const
     wxString findInFilesMask = "*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.ini;*.xml";
     if(IsOpen()) {
         wxString fifMask;
-        LocalWorkspaceST::Get()->GetSearchInFilesMask(fifMask, findInFilesMask);
+        GetLocalWorkspace()->GetSearchInFilesMask(fifMask, findInFilesMask);
         if(fifMask.IsEmpty()) { fifMask = findInFilesMask; }
     }
     return findInFilesMask;
@@ -1218,8 +1222,8 @@ void clCxxWorkspace::DoLoadProjectsFromXml(wxXmlNode* parentNode, const wxString
                   (child->GetName() == wxT("WorkspaceParserMacros"))) {
             wxString swtlw = XmlUtils::ReadString(m_doc.GetRoot(), "SWTLW");
             if(swtlw.CmpNoCase("yes") == 0) {
-                LocalWorkspaceST::Get()->SetParserFlags(LocalWorkspaceST::Get()->GetParserFlags() |
-                                                        LocalWorkspace::EnableSWTLW);
+                GetLocalWorkspace()->SetParserFlags(GetLocalWorkspace()->GetParserFlags() |
+                                                    LocalWorkspace::EnableSWTLW);
                 SyncToLocalWorkspaceSTParserPaths();
                 SyncToLocalWorkspaceSTParserMacros();
             }
@@ -1449,4 +1453,26 @@ size_t clCxxWorkspace::GetExcludeFilesForConfig(std::vector<wxString>& files, co
         }
     });
     return files.size();
+}
+
+void clCxxWorkspace::CreateCompileFlags() const
+{
+    // Build the global compiler paths, we will need this later on...
+    wxStringMap_t compilersGlobalPaths;
+    std::unordered_map<wxString, wxArrayString> pathsMap = BuildSettingsConfigST::Get()->GetCompilersGlobalPaths();
+    for(const std::unordered_map<wxString, wxArrayString>::value_type& vt : pathsMap) {
+        wxString compiler_name = vt.first;
+        wxArrayString pathsArr = vt.second;
+        wxString paths;
+        std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
+            path.Trim().Trim(false);
+            if(path.EndsWith("\\")) { path.RemoveLast(); }
+            paths << path << ";";
+        });
+        compilersGlobalPaths.insert({ compiler_name, paths });
+    }
+
+    for(const ProjectMap_t::value_type& vt : m_projects) {
+        vt.second->CreateCompileFlags(compilersGlobalPaths);
+    }
 }

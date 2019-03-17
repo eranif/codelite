@@ -1797,7 +1797,7 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
 void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    
+
     wxBusyCursor bc;
     // let the plugins close any custom workspace
     clCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
@@ -1811,9 +1811,9 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    
+
     wxBusyCursor bc;
-    
+
     wxString wspFile;
     const wxString WSP_EXT = "workspace";
 
@@ -4507,6 +4507,7 @@ void clMainFrame::SelectBestEnvSet()
     wxString projectDbgSetName;
 
     // First, if the project has an environment which is not '<Use Defaults>' use it
+    wxString workspaceSetName;
     if(ManagerST::Get()->IsWorkspaceOpen()) {
         wxString activeProj = clCxxWorkspaceST::Get()->GetActiveProjectName();
         ProjectPtr p = ManagerST::Get()->GetProject(activeProj);
@@ -4521,9 +4522,9 @@ void clMainFrame::SelectBestEnvSet()
                 if(buildConf->GetDbgEnvSet() != USE_GLOBAL_SETTINGS) { projectDbgSetName = buildConf->GetDbgEnvSet(); }
             }
         }
+        workspaceSetName = clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetActiveEnvironmentSet();
     }
 
-    wxString workspaceSetName = LocalWorkspaceST::Get()->GetActiveEnvironmentSet();
     wxString globalActiveSet = wxT("Default");
     wxString activeSetName;
     EvnVarList vars = EnvironmentConfig::Instance()->GetSettings();

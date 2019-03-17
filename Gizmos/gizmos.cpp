@@ -414,7 +414,8 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions(); // Globals first
     wxString TargetProj = info.virtualDirectory.BeforeFirst(wxT(':'));
     if(!TargetProj.empty()) {
-        LocalWorkspaceST::Get()->GetOptions(options, TargetProj); // Then override with any local ones
+        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(options,
+                                                                 TargetProj); // Then override with any local ones
     }
 
     wxString separator(wxT("\t"));

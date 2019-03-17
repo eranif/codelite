@@ -381,6 +381,7 @@ void RefactoringEngine::DoFindReferences(const wxString& symname, const wxFileNa
         break;
     }
     sd.SetExtensions(extensions); // All the files in the list should be scanned
+    sd.SetEncoding("ISO-8859-1");
     m_seartchThread->PerformSearch(sd);
     m_currentAction = type;
     m_symbolName = symname;

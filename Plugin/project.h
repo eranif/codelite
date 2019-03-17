@@ -825,6 +825,12 @@ public:
      * @brief add this project files into the 'compile_commands' json object
      */
     void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths);
+    
+    /**
+     * @brief create compile_flags.txt file for this project
+     * @param compilersGlobalPaths
+     */
+    void CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths);
 
     void SetWorkspaceFolder(const wxString& workspaceFolders) { this->m_workspaceFolder = workspaceFolders; }
     const wxString& GetWorkspaceFolder() const { return m_workspaceFolder; }

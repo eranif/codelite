@@ -61,6 +61,7 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     GetSizer()->Fit(this);
     GetSizer()->Layout();
     CenterOnParent();
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 PreferencesDialog::~PreferencesDialog() {}

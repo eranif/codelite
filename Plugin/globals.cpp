@@ -2161,8 +2161,7 @@ void clSetDialogBestSizeAndPosition(wxDialog* win)
     if(!win || !win->GetParent()) { return; }
 
     wxRect parentRect = win->GetParent()->GetSize();
-    parentRect.SetWidth(parentRect.GetWidth() / 2);
-    parentRect.SetHeight(parentRect.GetHeight() / 2);
+    parentRect.Deflate(150);
     win->SetSizeHints(parentRect.GetSize());
     win->SetSize(parentRect.GetSize());
 //    win->GetSizer()->Fit(win);

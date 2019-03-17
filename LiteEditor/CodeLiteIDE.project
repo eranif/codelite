@@ -783,12 +783,6 @@
   <VirtualDirectory Name="CodeCompletion">
     <File Name="code_completion_manager.h"/>
     <File Name="code_completion_manager.cpp"/>
-    <VirtualDirectory Name="GeneratedCode">
-      <File Name="clang_output_parser_api.h"/>
-      <File Name="clang_result_lexer.cpp"/>
-      <File Name="clang_result_parser.cpp"/>
-      <File Name="clang_result_parser.h"/>
-    </VirtualDirectory>
     <File Name="CxxPreProcessorThread.h"/>
     <File Name="CxxPreProcessorThread.cpp"/>
     <File Name="CxxUsingNamespaceCollectorThread.h"/>

@@ -318,7 +318,6 @@ clProgressDlg* RefactoringEngine::CreateProgressDialog(const wxString& title, in
     clProgressDlg* prgDlg = NULL;
     // Create a progress dialog
     prgDlg = new clProgressDlg(EventNotifier::Get()->TopFrame(), title, wxT(""), maxValue);
-    prgDlg->CentreOnParent();
     return prgDlg;
 }
 #endif

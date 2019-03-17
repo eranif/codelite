@@ -4216,7 +4216,10 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
     wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
     e.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(e)) return;
-
+    
+    // Update the parser paths with the global ones
+    ManagerST::Get()->UpdateParserPaths(false);
+    
     TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
     if(event.GetId() == XRCID("retag_workspace"))
         type = TagsManager::Retag_Quick;

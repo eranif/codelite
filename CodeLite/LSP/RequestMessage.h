@@ -11,10 +11,10 @@
 namespace LSP
 {
 
-class WXDLLIMPEXP_CL RequestMessage : public LSP::Message
+class WXDLLIMPEXP_CL MessageWithParams : public LSP::Message
 {
 public:
-    typedef wxSharedPtr<LSP::RequestMessage> Ptr_t;
+    typedef wxSharedPtr<LSP::MessageWithParams> Ptr_t;
 
 protected:
     int m_id = wxNOT_FOUND;
@@ -25,8 +25,8 @@ protected:
     bool m_needsReply = false;
 
 public:
-    RequestMessage();
-    virtual ~RequestMessage();
+    MessageWithParams();
+    virtual ~MessageWithParams();
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
     virtual std::string ToString() const;
@@ -50,7 +50,7 @@ public:
     /**
      * @brief factory method for creating Ptr_t type
      */
-    static LSP::RequestMessage::Ptr_t MakeRequest(LSP::RequestMessage* message_ptr);
+    static LSP::MessageWithParams::Ptr_t MakeRequest(LSP::MessageWithParams* message_ptr);
 
     /**
      * @brief return a unique ID identifying this request

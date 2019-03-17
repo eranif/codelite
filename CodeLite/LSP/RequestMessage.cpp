@@ -5,11 +5,11 @@
 #include "fileutils.h"
 #include <sstream>
 
-LSP::RequestMessage::RequestMessage() { m_id = Message::GetNextID(); }
+LSP::MessageWithParams::MessageWithParams() { m_id = Message::GetNextID(); }
 
-LSP::RequestMessage::~RequestMessage() {}
+LSP::MessageWithParams::~MessageWithParams() {}
 
-JSONItem LSP::RequestMessage::ToJSON(const wxString& name) const
+JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
 {
     JSONItem json = Message::ToJSON(name);
     json.addProperty("id", GetId());
@@ -18,13 +18,13 @@ JSONItem LSP::RequestMessage::ToJSON(const wxString& name) const
     return json;
 }
 
-void LSP::RequestMessage::FromJSON(const JSONItem& json)
+void LSP::MessageWithParams::FromJSON(const JSONItem& json)
 {
     // we dont need to un-serialize a request object
     wxUnusedVar(json);
 }
 
-std::string LSP::RequestMessage::ToString() const
+std::string LSP::MessageWithParams::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON("");
@@ -42,14 +42,14 @@ std::string LSP::RequestMessage::ToString() const
     return ss.str();
 }
 
-LSP::RequestMessage::Ptr_t LSP::RequestMessage::MakeRequest(LSP::RequestMessage* message_ptr)
+LSP::MessageWithParams::Ptr_t LSP::MessageWithParams::MakeRequest(LSP::MessageWithParams* message_ptr)
 {
-    LSP::RequestMessage::Ptr_t p(message_ptr);
+    LSP::MessageWithParams::Ptr_t p(message_ptr);
     p->BuildUID();
     return p;
 }
 
-void LSP::RequestMessage::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::MessageWithParams::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
     wxUnusedVar(response);

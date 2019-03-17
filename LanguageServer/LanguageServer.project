@@ -24,8 +24,6 @@
     <File Name="LanguageServerSettingsDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
-    <File Name="CompileCommandsGenerator.cpp"/>
-    <File Name="CompileCommandsGenerator.h"/>
     <File Name="LanguageServerCluster.cpp"/>
     <File Name="LanguageServerCluster.h"/>
     <File Name="LanguageServerEntry.cpp"/>

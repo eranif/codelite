@@ -11,16 +11,9 @@ class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
     IProcess* m_process = nullptr;
-    CompileCommandsGenerator::Ptr_t m_compileCommandsGenerator;
-
+    
 protected:
     void OnSettings(wxCommandEvent& e);
-
-protected:
-    void GenerateCompileCommands();
-    void OnBuildEnded(clBuildEvent& event);
-    void OnFilesAdded(clCommandEvent& event);
-    void OnWorkspaceLoaded(wxCommandEvent& event);
 
 public:
     LanguageServerPlugin(IManager* manager);

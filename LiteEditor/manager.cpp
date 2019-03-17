@@ -50,7 +50,6 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
-#include "CompileCommandsCreateor.h"
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
 #include "NewProjectWizard.h"

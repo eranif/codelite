@@ -35,6 +35,7 @@
 #include "CxxPreProcessorCache.h"
 #include "CxxUsingNamespaceCollectorThread.h"
 #include <thread>
+#include "CompileCommandsGenerator.h"
 
 class CodeCompletionManager : public wxEvtHandler
 {
@@ -47,6 +48,7 @@ protected:
     std::thread* m_compileCommandsThread = nullptr;
     wxFileName m_compileCommands;
     time_t m_compileCommandsLastModified = 0;
+    CompileCommandsGenerator::Ptr_t m_compileCommandsGenerator;
 
 protected:
     /// ctags implementions
@@ -64,7 +66,6 @@ protected:
     void DoClangGotoDecl(clEditor* editor);
 
     void DoUpdateOptions();
-    void DoUpdateCompilationDatabase();
     void DoProcessCompileCommands();
     static void ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder);
     void CompileCommandsFileProcessed(const wxArrayString& includePaths);
@@ -73,6 +74,9 @@ protected:
 protected:
     // Event handlers
     void OnBuildEnded(clBuildEvent& e);
+    void OnFilesAdded(clCommandEvent& e);
+    void OnWorkspaceLoaded(wxCommandEvent& e);
+
     void OnBuildStarted(clBuildEvent& e);
     void OnAppActivated(wxActivateEvent& e);
     void OnCompileCommandsFileGenerated(clCommandEvent& event);

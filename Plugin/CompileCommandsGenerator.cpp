@@ -1,7 +1,6 @@
 #include "CompileCommandsGenerator.h"
 #include "processreaderthread.h"
 #include "file_logger.h"
-#include "CompileCommandsCreateor.h"
 #include "event_notifier.h"
 #include "workspace.h"
 #include "globals.h"
@@ -14,6 +13,10 @@
 #include "JSON.h"
 #include "clcommandlineparser.h"
 #include "compiler_command_line_parser.h"
+#include "CompileFlagsTxt.h"
+#include "CompileCommandsJSON.h"
+
+wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 
 CompileCommandsGenerator::CompileCommandsGenerator() {}
 
@@ -35,45 +38,26 @@ void CompileCommandsGenerator::OnProcessTeraminated(wxProcessEvent& event)
         [=](const wxString& compile_commands) {
             clFilesScanner scanner;
             wxArrayString includePaths;
-            wxStringSet_t uniqueIncludePaths;
+            wxStringSet_t includeSet;
             std::vector<wxString> files;
             if(scanner.Scan(wxFileName(compile_commands).GetPath(), files, "compile_flags.txt")) {
                 for(const wxString& file : files) {
-                    wxString data;
-                    if(FileUtils::ReadFileContent(file, data)) {
-                        wxArrayString lines = ::wxStringTokenize(data, "\n", wxTOKEN_STRTOK);
-                        for(size_t i = 0; i < lines.GetCount(); ++i) {
-                            wxString& line = lines.Item(i);
-                            line.Trim().Trim(false);
-                            if(line.StartsWith("-I")) {
-                                line.Remove(0, 2); // remove the "-I"
-                                if(uniqueIncludePaths.count(line) == 0) {
-                                    uniqueIncludePaths.insert(line);
-                                    includePaths.Add(line);
-                                }
-                            }
-                        }
-                    }
+                    CompileFlagsTxt f(file);
+                    includePaths = f.GetIncludes();
+                    includeSet.insert(includePaths.begin(), includePaths.end());
                 }
             }
 
-            // Process the compile_commands.json file now
-            JSON json(compile_commands);
-            JSONItem arr = json.toElement();
-            const int count = arr.arraySize();
-            for(int i = 0; i < count; ++i) {
-                wxString command = arr.arrayItem(i).namedObject("command").toString();
-                CompilerCommandLineParser cclp(command);
-                const wxArrayString& paths = cclp.GetIncludes();
-                for(const wxString& path : paths) {
-                    if(uniqueIncludePaths.count(path) == 0) {
-                        uniqueIncludePaths.insert(path);
-                        includePaths.Add(path);
-                    }
+            CompileCommandsJSON compileCommands(compile_commands);
+            const wxArrayString& paths = compileCommands.GetIncludes();
+            for(const wxString& path : paths) {
+                if(includeSet.count(path) == 0) {
+                    includeSet.insert(path);
+                    includePaths.Add(path);
                 }
             }
 
-            clDEBUG() << "wxEVT_COMPILE_COMMANDS_JSON_GENERATED paths\n" << includePaths;
+            clDEBUG() << "wxEVT_COMPILE_COMMANDS_JSON_GENERATED paths:\n" << includePaths;
 
             // Notify about it
             clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);

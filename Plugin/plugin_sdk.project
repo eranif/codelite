@@ -139,6 +139,16 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="clangd">
+      <File Name="CompileFlagsTxt.cpp"/>
+      <File Name="CompileFlagsTxt.h"/>
+      <File Name="CompileCommandsJSON.cpp"/>
+      <File Name="CompileCommandsJSON.h"/>
+      <File Name="CompileCommandsGenerator.h"/>
+      <File Name="CompileCommandsGenerator.cpp"/>
+      <File Name="compilation_database.h"/>
+      <File Name="compilation_database.cpp"/>
+    </VirtualDirectory>
     <File Name="clSystemSettings.cpp"/>
     <File Name="clSystemSettings.h"/>
     <File Name="async_executable_cmd.cpp"/>
@@ -163,8 +173,6 @@
     <File Name="localworkspace.h"/>
     <File Name="localworkspace.cpp"/>
     <File Name="shell_command.cpp"/>
-    <File Name="compilation_database.h"/>
-    <File Name="compilation_database.cpp"/>
     <File Name="Markup.cpp"/>
     <File Name="Markup.h"/>
     <File Name="VirtualDirectorySelectorDlg.h"/>
@@ -173,8 +181,6 @@
     <File Name="bookmark_manager.cpp"/>
     <File Name="unredobase.cpp"/>
     <File Name="unredobase.h"/>
-    <File Name="CompileCommandsCreateor.h"/>
-    <File Name="CompileCommandsCreateor.cpp"/>
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="EclipseImporters">

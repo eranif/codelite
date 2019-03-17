@@ -43,12 +43,6 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // Start all the servers
     m_servers.reset(new LanguageServerCluster());
     m_servers->Reload();
-
-    m_compileCommandsGenerator.reset(new CompileCommandsGenerator());
-
-    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerPlugin::OnBuildEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_PROJ_FILE_ADDED, &LanguageServerPlugin::OnFilesAdded, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerPlugin::OnWorkspaceLoaded, this);
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -71,10 +65,6 @@ void LanguageServerPlugin::UnPlug()
 {
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
-
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerPlugin::OnBuildEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &LanguageServerPlugin::OnFilesAdded, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerPlugin::OnWorkspaceLoaded, this);
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
@@ -85,28 +75,4 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
         dlg.Save();
         m_servers->Reload();
     }
-}
-
-void LanguageServerPlugin::OnBuildEnded(clBuildEvent& event)
-{
-    event.Skip();
-    GenerateCompileCommands();
-}
-
-void LanguageServerPlugin::GenerateCompileCommands()
-{
-    // this is a self destruct objecy
-    m_compileCommandsGenerator->GenerateCompileCommands();
-}
-
-void LanguageServerPlugin::OnFilesAdded(clCommandEvent& event)
-{
-    event.Skip();
-    GenerateCompileCommands();
-}
-
-void LanguageServerPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
-{
-    event.Skip();
-    GenerateCompileCommands();
 }

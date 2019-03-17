@@ -117,8 +117,11 @@ bool clMakeGeneratorApp::OnInit()
 
     if(this->m_generateCompileCommands) {
         // If the --json flag was passed, exit now
+#ifdef __WXOSX__
+        _exit(0);
+#else
         CallAfter(&clMakeGeneratorApp::DoExitApp);
-
+#endif
     } else {
         if(bldConf->IsCustomBuild()) {
             Notice(wxString() << "Configuration " << projectConfiguraion << " for project " << m_project
@@ -138,7 +141,11 @@ bool clMakeGeneratorApp::OnInit()
             if(m_executeCommand) {
                 CallAfter(&clMakeGeneratorApp::DoExecCommand, command);
             } else {
+#ifdef __WXOSX__
+                _exit(0);
+#else
                 CallAfter(&clMakeGeneratorApp::DoExitApp);
+#endif
             }
             return true;
         }
@@ -177,7 +184,11 @@ bool clMakeGeneratorApp::OnInit()
         } else {
             Info("-- To use the makefile, run the following commands from a terminal:");
             Out(command);
+#ifdef __WXOSX__
+            _exit(0);
+#else
             CallAfter(&clMakeGeneratorApp::DoExitApp);
+#endif
         }
     }
     return true;
@@ -230,7 +241,6 @@ void clMakeGeneratorApp::DoExitApp()
 {
     ExitMainLoop();
     // Force an exit here
-    exit(m_exitCode);
 }
 
 // Log functions

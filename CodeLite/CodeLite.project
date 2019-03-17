@@ -45,6 +45,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/Request.cpp"/>
+    <File Name="LSP/Request.h"/>
+    <File Name="LSP/MessageWithParams.cpp"/>
+    <File Name="LSP/MessageWithParams.h"/>
     <File Name="LSP/GotoDeclarationRequest.h"/>
     <File Name="LSP/GotoDeclarationRequest.cpp"/>
     <File Name="LSP/ResponseError.cpp"/>
@@ -59,8 +63,6 @@
     <File Name="LSP/LSPEvent.h"/>
     <File Name="LSP/ResponseMessage.h"/>
     <File Name="LSP/ResponseMessage.cpp"/>
-    <File Name="LSP/RequestMessage.h"/>
-    <File Name="LSP/RequestMessage.cpp"/>
     <File Name="LSP/Message.h"/>
     <File Name="LSP/Message.cpp"/>
     <File Name="LSP/JSONObject.h"/>

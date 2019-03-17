@@ -1,7 +1,7 @@
 #ifndef GOTODEFINITIONREQUEST_H
 #define GOTODEFINITIONREQUEST_H
 
-#include "RequestMessage.h" // Base class: LSP::RequestMessage
+#include "MessageWithParams.h" // Base class: LSP::RequestMessage
 #include <wx/filename.h>
 #include "basic_types.h"
 

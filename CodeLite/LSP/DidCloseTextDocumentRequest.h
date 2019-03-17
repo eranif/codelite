@@ -2,17 +2,17 @@
 #define DIDCLOSETEXTDOCUMENTREQUEST_H
 
 #include <wx/filename.h>
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
+#include "LSP/Request.h"
 
 namespace LSP
 {
 
-class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::RequestMessage
+class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::Request
 {
 public:
     DidCloseTextDocumentRequest(const wxFileName& filename);
     virtual ~DidCloseTextDocumentRequest();
-    void BuildUID();
 };
 
 }; // namespace LSP

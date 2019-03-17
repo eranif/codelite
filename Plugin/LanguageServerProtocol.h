@@ -11,7 +11,7 @@
 #include <map>
 #include <queue>
 #include <string>
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
 #include <unordered_map>
 #include "SocketAPI/clSocketClientAsync.h"
 #include "LSPNetwork.h"

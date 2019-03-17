@@ -1,18 +1,17 @@
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
 #include <wx/string.h>
 #include "JSON.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include <sstream>
 
-LSP::MessageWithParams::MessageWithParams() { m_id = Message::GetNextID(); }
+LSP::MessageWithParams::MessageWithParams() {}
 
 LSP::MessageWithParams::~MessageWithParams() {}
 
 JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
 {
     JSONItem json = Message::ToJSON(name);
-    json.addProperty("id", GetId());
     json.addProperty("method", GetMethod());
     if(m_params) { json.append(m_params->ToJSON("params")); }
     return json;
@@ -30,7 +29,7 @@ std::string LSP::MessageWithParams::ToString() const
     JSONItem json = ToJSON("");
     wxString data = json.format(false);
     data.Trim().Trim(false);
-    
+
     std::string s = FileUtils::ToStdString(data);
     size_t len = s.length();
 
@@ -45,7 +44,6 @@ std::string LSP::MessageWithParams::ToString() const
 LSP::MessageWithParams::Ptr_t LSP::MessageWithParams::MakeRequest(LSP::MessageWithParams* message_ptr)
 {
     LSP::MessageWithParams::Ptr_t p(message_ptr);
-    p->BuildUID();
     return p;
 }
 

@@ -1,7 +1,7 @@
 #ifndef INITIALIZEREQUEST_H
 #define INITIALIZEREQUEST_H
 
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
 namespace LSP
 {
 

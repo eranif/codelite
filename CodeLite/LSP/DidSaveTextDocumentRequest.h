@@ -2,7 +2,7 @@
 #define DIDSAVE_TEXTDOCUMENTREQUEST_H
 
 #include <wx/filename.h>
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
 
 namespace LSP
 {

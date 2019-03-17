@@ -8,10 +8,3 @@ LSP::DidCloseTextDocumentRequest::DidCloseTextDocumentRequest(const wxFileName& 
 }
 
 LSP::DidCloseTextDocumentRequest::~DidCloseTextDocumentRequest() {}
-
-void LSP::DidCloseTextDocumentRequest::BuildUID()
-{
-    if(!m_uuid.IsEmpty()) { return; }
-    m_uuid << GetMethod() << ":"
-           << m_params->As<DidCloseTextDocumentParams>()->GetTextDocument().GetFilename().GetFullPath();
-}

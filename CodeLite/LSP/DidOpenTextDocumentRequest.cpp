@@ -10,9 +10,3 @@ LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxFileName& fi
 }
 
 LSP::DidOpenTextDocumentRequest::~DidOpenTextDocumentRequest() {}
-
-void LSP::DidOpenTextDocumentRequest::BuildUID()
-{
-    if(!m_uuid.IsEmpty()) { return; }
-    m_uuid << GetMethod() << ":" << m_params->As<DidOpenTextDocumentParams>()->GetTextDocument().GetUri().GetFullPath();
-}

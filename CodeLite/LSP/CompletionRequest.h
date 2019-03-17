@@ -1,7 +1,7 @@
 #ifndef COMPLETIONREQUEST_H
 #define COMPLETIONREQUEST_H
 
-#include "LSP/RequestMessage.h"
+#include "LSP/MessageWithParams.h"
 #include "LSP/basic_types.h"
 
 namespace LSP

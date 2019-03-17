@@ -1255,10 +1255,10 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 {
     wxArrayString strFiles;
     strFiles.Alloc(files.size()); // At most files.size() entries
+    
     // step 1: remove all non-tags files
     for(size_t i = 0; i < files.size(); i++) {
         if(!IsValidCtagsFile(files.at(i).GetFullPath())) { continue; }
-
         strFiles.Add(files.at(i).GetFullPath());
     }
 
@@ -1275,7 +1275,9 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
     }
 
     // step 2: remove all files which do not need retag
-    if(type == Retag_Quick || type == Retag_Quick_No_Scan) DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
+    if(type == Retag_Quick || type == Retag_Quick_No_Scan) {
+        DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
+    }
 
     // If there are no files to tag - send the 'end' event
     if(strFiles.IsEmpty()) {

@@ -11,7 +11,7 @@ class CompileCommandsGenerator : public wxEvtHandler
 {
     wxProcess* m_process = nullptr;
     wxFileName m_outputFile;
-
+    
 protected:
     void OnProcessTeraminated(wxProcessEvent& event);
 

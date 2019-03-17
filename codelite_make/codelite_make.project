@@ -61,7 +61,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Debug" Command="C:/src/codelite/codelite_make/Debug/codelite-make.exe" CommandArguments="-w fplog.workspace -p spipc_test -c Release -d rebuild -e" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Users/PC/Downloads/reproducing_issue" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Debug" Command="C:/src/codelite/codelite_make/Debug/codelite-make.exe" CommandArguments="--workspace=C:\src\codelite\CodeLiteIDE.workspace --json --verbose --config=Win_x64_Release" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$(WorkspacePath)\..\lib\gcc_lib;$PATH]]>

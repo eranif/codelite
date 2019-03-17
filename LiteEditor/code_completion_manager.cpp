@@ -360,6 +360,7 @@ void CodeCompletionManager::OnCompileCommandsFileGenerated(clCommandEvent& event
 {
     event.Skip();
     clDEBUG() << "-- Code Completion Manager: process file" << event.GetFileName();
+    this->CompileCommandsFileProcessed(event.GetStrings());
     clMainFrame::Get()->SetStatusText("Ready");
 }
 

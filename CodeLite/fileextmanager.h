@@ -91,36 +91,6 @@ public:
         TypeLast,
     };
 
-    struct Matcher {
-        SmartPtr<wxRegEx> m_regex;
-        wxString m_exactMatch;
-        FileType m_fileType;
-
-        Matcher(const wxString& pattern, FileType fileType, bool regex = true)
-            : m_fileType(fileType)
-        {
-            if(regex) {
-                m_regex = new wxRegEx(pattern, wxRE_ADVANCED | wxRE_ICASE);
-            } else {
-                m_exactMatch = pattern;
-            }
-        }
-
-        bool Matches(const wxString& in) const
-        {
-            if(m_regex) {
-                return m_regex->Matches(in);
-            } else {
-                return in.Find(m_exactMatch) != wxNOT_FOUND;
-            }
-        }
-        typedef SmartPtr<Matcher> Ptr_t;
-    };
-
-private:
-    static std::unordered_map<wxString, FileType> m_map;
-    static std::vector<FileExtManager::Matcher::Ptr_t> m_matchers;
-
 public:
     static FileType GetType(const wxString& filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void Init();

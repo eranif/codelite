@@ -7,6 +7,13 @@
 #include "globals.h"
 #include "environmentconfig.h"
 #include "imanager.h"
+#include <thread>
+#include <macros.h>
+#include "clFilesCollector.h"
+#include "fileutils.h"
+#include "JSON.h"
+#include "clcommandlineparser.h"
+#include "compiler_command_line_parser.h"
 
 CompileCommandsGenerator::CompileCommandsGenerator() {}
 
@@ -22,10 +29,61 @@ void CompileCommandsGenerator::OnProcessTeraminated(wxProcessEvent& event)
     wxDELETE(m_process);
     clGetManager()->SetStatusMessage(_("Ready"));
 
+    // Process the compile_flags.txt files starting from the "compile_commands.json" root folder
     // Notify about completion
-    clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-    eventCompileCommandsGenerated.SetFileName(m_outputFile.GetFullPath());
-    EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
+    std::thread thr(
+        [=](const wxString& compile_commands) {
+            clFilesScanner scanner;
+            wxArrayString includePaths;
+            wxStringSet_t uniqueIncludePaths;
+            std::vector<wxString> files;
+            if(scanner.Scan(wxFileName(compile_commands).GetPath(), files, "compile_flags.txt")) {
+                for(const wxString& file : files) {
+                    wxString data;
+                    if(FileUtils::ReadFileContent(file, data)) {
+                        wxArrayString lines = ::wxStringTokenize(data, "\n", wxTOKEN_STRTOK);
+                        for(size_t i = 0; i < lines.GetCount(); ++i) {
+                            wxString& line = lines.Item(i);
+                            line.Trim().Trim(false);
+                            if(line.StartsWith("-I")) {
+                                line.Remove(0, 2); // remove the "-I"
+                                if(uniqueIncludePaths.count(line) == 0) {
+                                    uniqueIncludePaths.insert(line);
+                                    includePaths.Add(line);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Process the compile_commands.json file now
+            JSON json(compile_commands);
+            JSONItem arr = json.toElement();
+            const int count = arr.arraySize();
+            for(int i = 0; i < count; ++i) {
+                wxString command = arr.arrayItem(i).namedObject("command").toString();
+                CompilerCommandLineParser cclp(command);
+                const wxArrayString& paths = cclp.GetIncludes();
+                for(const wxString& path : paths) {
+                    if(uniqueIncludePaths.count(path) == 0) {
+                        uniqueIncludePaths.insert(path);
+                        includePaths.Add(path);
+                    }
+                }
+            }
+
+            clDEBUG() << "wxEVT_COMPILE_COMMANDS_JSON_GENERATED paths\n" << includePaths;
+
+            // Notify about it
+            clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+            eventCompileCommandsGenerated.SetFileName(compile_commands); // compile_commands.json
+            eventCompileCommandsGenerated.SetStrings(
+                includePaths); // include paths found and gathered from all the compile_flags.txt files scanned
+            EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
+        },
+        m_outputFile.GetFullPath());
+    thr.detach();
 }
 
 void CompileCommandsGenerator::GenerateCompileCommands()

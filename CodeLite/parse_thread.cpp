@@ -42,6 +42,7 @@
 #include <wx/ffile.h>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
+#include "fileextmanager.h"
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -104,6 +105,22 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
 {
     // request is delete by the parent WorkerThread after this method is completed
     ParseRequest* req = (ParseRequest*)request;
+    FileLogger::RegisterThread(wxThread::GetCurrentId(), "C++ Parser Thread");
+    
+    // Filter non C++ files
+    if(!req->_workspaceFiles.empty()) {
+        std::vector<std::string> filtered_list;
+        filtered_list.reserve(req->_workspaceFiles.size());
+        for(std::string& filename : req->_workspaceFiles) {
+            if(FileExtManager::IsCxxFile(wxString() << filename)) { filtered_list.push_back(std::move(filename)); }
+        }
+        req->_workspaceFiles.swap(filtered_list);
+    }
+
+    wxArrayString inc, exc;
+    GetSearchPaths(inc, exc);
+
+    clDEBUG1() << "include paths:\n" << inc;
 
     switch(req->getType()) {
     case ParseRequest::PR_PARSEINCLUDES:
@@ -639,7 +656,7 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
     wxString content;
     if(FileUtils::ReadFileContent(req->getFile(), content)) {
         wxString flatStrLocals, flatClasses;
-    
+
         tokenizer.Reset(content);
 
         // lex the file and collect all tokens of type IDENTIFIER

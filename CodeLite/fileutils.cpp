@@ -229,7 +229,8 @@ static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wx
     for(size_t i = 0; i < masks.size(); ++i) {
         wxString& mask = masks.Item(i);
         mask.Trim().Trim(false);
-        if(mask[0] == '!') {
+        // exclude mask starts with "!" or "-"
+        if((mask[0] == '!') || (mask[0] == '-')) {
             mask.Remove(0, 1);
             excludeMask.Add(mask);
         } else {

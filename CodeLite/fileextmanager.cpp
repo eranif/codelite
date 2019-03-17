@@ -30,16 +30,41 @@
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
 
-std::unordered_map<wxString, FileExtManager::FileType> FileExtManager::m_map;
-std::vector<FileExtManager::Matcher::Ptr_t> FileExtManager::m_matchers;
+struct Matcher {
+    SmartPtr<wxRegEx> m_regex;
+    wxString m_exactMatch;
+    FileExtManager::FileType m_fileType;
+
+    Matcher(const wxString& pattern, FileExtManager::FileType fileType, bool regex = true)
+        : m_fileType(fileType)
+    {
+        if(regex) {
+            m_regex = new wxRegEx(pattern, wxRE_ADVANCED | wxRE_ICASE);
+        } else {
+            m_exactMatch = pattern;
+        }
+    }
+
+    bool Matches(const wxString& in) const
+    {
+        if(m_regex) {
+            return m_regex->Matches(in);
+        } else {
+            return in.Find(m_exactMatch) != wxNOT_FOUND;
+        }
+    }
+    typedef SmartPtr<Matcher> Ptr_t;
+};
+
+thread_local std::unordered_map<wxString, FileExtManager::FileType> m_map;
+thread_local std::vector<Matcher::Ptr_t> m_matchers;
 
 void FileExtManager::Init()
 {
-    static bool init_done(false);
-
+    // per thread initialization
+    thread_local bool init_done(false);
     if(!init_done) {
         init_done = true;
-
         m_map[wxT("cc")] = TypeSourceCpp;
         m_map[wxT("cpp")] = TypeSourceCpp;
         m_map[wxT("cxx")] = TypeSourceCpp;

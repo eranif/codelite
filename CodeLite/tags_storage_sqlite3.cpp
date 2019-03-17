@@ -328,19 +328,16 @@ void TagsStorageSQLite::DeleteByFileName(const wxFileName& path, const wxString&
     try {
         OpenDatabase(path);
 
-        if(autoCommit) m_db->Begin();
+        if(autoCommit) { m_db->Begin(); }
 
-        wxString sql = wxString::Format(wxT("Delete from tags where File='%s'"), fileName.GetData());
-        //#ifdef __WXMSW__
-        //        sql << " COLLATE NOCASE ";
-        //#endif
-        CL_DEBUG("TagsStorageSQLite: DeleteByFileName: '%s'", sql);
+        wxString sql;
+        sql << "delete from tags where File='" << fileName << "'";
         m_db->ExecuteUpdate(sql);
 
         if(autoCommit) m_db->Commit();
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
-        if(autoCommit) m_db->Rollback();
+        if(autoCommit) { m_db->Rollback(); }
     }
 }
 
@@ -470,8 +467,10 @@ void TagsStorageSQLite::GetFiles(std::vector<FileEntryPtr>& files)
         wxString query(wxT("select * from files order by file"));
         wxSQLite3ResultSet res = m_db->ExecuteQuery(query);
 
-        while(res.NextRow()) {
+        // Pre allocate a reasonable amount of entries
+        files.reserve(5000);
 
+        while(res.NextRow()) {
             FileEntryPtr fe(new FileEntry());
             fe->SetId(res.GetInt(0));
             fe->SetFile(res.GetString(1));
@@ -479,6 +478,8 @@ void TagsStorageSQLite::GetFiles(std::vector<FileEntryPtr>& files)
 
             files.push_back(fe);
         }
+        // release unneeded memory
+        files.shrink_to_fit();
 
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);

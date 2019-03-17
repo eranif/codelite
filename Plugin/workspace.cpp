@@ -1010,7 +1010,7 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
         std::for_each(pathsArr.begin(), pathsArr.end(), [&](wxString& path) {
             path.Trim().Trim(false);
             if(path.EndsWith("\\")) { path.RemoveLast(); }
-            paths << "-I" << path << " ";
+            paths << path << ";";
         });
         compilersGlobalPaths.insert({ compiler_name, paths });
     }

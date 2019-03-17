@@ -902,19 +902,21 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
         if(proj) {
-            clDEBUG() << "Fetching files for project:" << proj->GetName() << clEndl;
+            clDEBUG1() << "Fetching files for project:" << proj->GetName() << clEndl;
             proj->GetFilesAsVectorOfFileName(projectFiles);
-            clDEBUG() << "Fetching files for project:" << proj->GetName() << "...done" << clEndl;
+            clDEBUG1() << "Fetching files for project:" << proj->GetName() << "...done" << clEndl;
         }
     }
 
     // Create a parsing request
     ParseRequest* parsingRequest = new ParseRequest(clMainFrame::Get());
     clDEBUG() << "Filtering non relevant files..." << clEndl;
+    parsingRequest->_workspaceFiles.reserve(projectFiles.size());
+
     for(size_t i = 0; i < projectFiles.size(); i++) {
         // filter any non valid coding file
-        if(!TagsManagerST::Get()->IsValidCtagsFile(projectFiles.at(i))) continue;
-        parsingRequest->_workspaceFiles.push_back(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
+        const wxFileName& fn = projectFiles[i];
+        parsingRequest->_workspaceFiles.push_back(fn.GetFullPath().ToAscii().data());
     }
 
     clDEBUG() << "Filtering non relevant files...done" << clEndl;
@@ -943,11 +945,10 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
 
 void Manager::RetagFile(const wxString& filename)
 {
-    if(IsWorkspaceClosing()) {
-        clLogMessage(wxString::Format(wxT("Workspace in being closed, skipping re-tag for file %s"), filename.c_str()));
-        return;
-    }
-    if(!TagsManagerST::Get()->IsValidCtagsFile(wxFileName(filename))) { return; }
+    if(IsWorkspaceClosing()) { return; }
+
+    // Is this a C++ file?
+    if(!FileExtManager::IsCxxFile(wxFileName(filename))) { return; }
 
     wxFileName absFile(filename);
     absFile.MakeAbsolute();
@@ -3244,6 +3245,9 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
     wxArrayString projects;
     GetProjectList(projects);
 
+    clDEBUG() << "Scan for include files is done";
+
+    clDEBUG() << "Building project file list...";
     std::vector<wxFileName> projectFiles;
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
@@ -3256,8 +3260,9 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
         wxString fn(projectFiles.at(i).GetFullPath());
         fileSet->insert(fn);
     }
+    clDEBUG() << "Building project file list...done";
 
-    //	fprintf(stderr, "Parsing the following files\n");
+    clDEBUG() << "Converting set to vector...";
     // recreate the list in the form of vector (the API requirs vector)
     projectFiles.clear();
     std::set<wxString>::iterator iter = fileSet->begin();
@@ -3268,6 +3273,7 @@ void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)
         if(fn.IsRelative()) { fn.MakeAbsolute(); }
         projectFiles.push_back(fn);
     }
+    clDEBUG() << "Converting set to vector...done";
 
 #if !USE_PARSER_TREAD_FOR_RETAGGING_WORKSPACE
     wxStopWatch sw;

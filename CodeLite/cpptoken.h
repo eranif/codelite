@@ -56,7 +56,7 @@ public:
     };
 
     // Required by later versions of clang compiler
-    bool operator<(const CppToken& rhs) const { return this->getName() < rhs.getName(); }
+    bool operator<(const CppToken& rhs) const;
 
     /**
      * @class Predicate

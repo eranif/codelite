@@ -30,6 +30,11 @@ CppToken::CppToken() { reset(); }
 
 CppToken::~CppToken() {}
 
+bool CppToken::operator<(const CppToken& rhs) const
+{
+    return this->getName() < rhs.getName();
+}
+
 void CppToken::reset()
 {
     name.clear();
@@ -168,9 +173,7 @@ void CppTokensMap::findTokens(const wxString& name, std::vector<CppToken>& token
 {
     std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(name);
     //	std::vector<CppToken> *tokensList(NULL);
-    if(iter != m_tokens.end()) {
-        tokens = *(iter->second);
-    }
+    if(iter != m_tokens.end()) { tokens = *(iter->second); }
 }
 void CppTokensMap::clear()
 {

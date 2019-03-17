@@ -448,9 +448,6 @@ void RefactoringEngine::DoCompleteFindReferences()
     // Load all tokens, first we need to parse the workspace files...
     CppToken::Vec_t tokens = std::move(m_tokens);
 
-    // sort the tokens
-    std::sort(tokens.begin(), tokens.end());
-
     RefactorSource target;
     int counter(0);
 

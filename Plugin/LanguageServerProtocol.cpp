@@ -393,12 +393,11 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         // Did we get a complete message?
         LSP::ResponseMessage res(m_outputBuffer);
         if(res.IsOk()) {
-            clDEBUG() << GetLogPrefix() << "received a complete message";
-
             if(IsInitialized()) {
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
+                    clDEBUG() << GetLogPrefix() << "received an error complete message";
                     LSP::ResponseError errMsg(res.GetMessageString());
                     switch(errMsg.GetErrorCode()) {
                     case LSP::ResponseError::kErrorCodeInternalError:
@@ -421,20 +420,22 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     }
                 } else {
                     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
+                        clDEBUG() << GetLogPrefix() << "received a reply message";
                         // let the originating request to handle it
                         msg_ptr->As<LSP::Request>()->OnResponse(res, m_owner);
 
-                        // If we got more in the buffer, try to process another message
-                        if(!m_outputBuffer.IsEmpty()) { continue; }
-
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
+                        clDEBUG() << GetLogPrefix() << "Received diagnostic message";
+
                         JSONItem params = res.Get("params");
                         JSONItem uri = params.namedObject("uri");
                         wxFileName fn(wxFileSystem::URLToFileName(uri.toString()));
                         fn.Normalize();
                         clGetManager()->SetStatusMessage(
                             wxString() << "[LSP] parsing of file: " << fn.GetFullName() << " is completed", 1);
+                    } else {
+                        clDEBUG() << GetLogPrefix() << "received an unsupported message";
                     }
                 }
             } else {
@@ -448,8 +449,12 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());
                     m_owner->AddPendingEvent(initEvent);
+                } else {
+                    clDEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
                 }
             }
+            // A message was consumed from the buffer, see if we got more messages
+            if(!m_outputBuffer.empty()) { continue; }
         }
         break;
     }
@@ -485,7 +490,7 @@ void LanguageServerProtocol::OnWorkspaceOpen(wxCommandEvent& event)
 void LSPRequestMessageQueue::Push(LSP::MessageWithParams::Ptr_t message)
 {
     m_Queue.push(message);
-    
+
     // Messages of type 'Request' require responses from the server
     LSP::Request* req = message->As<LSP::Request>();
     if(req) { m_pendingReplyMessages.insert({ req->GetId(), message }); }

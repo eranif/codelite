@@ -98,10 +98,9 @@ function processCommand(command, conn)
         // The 'execute' is a special command that we handle it ourself
         let lsp = {}
         try {
-            console.log("program: " + command.command);
-            console.log("cwd: " + command.wd);
-            console.log("args:" + command.args);
+            console.log(JSON.stringify(command.command));
             lsp = spawn(command.command, command.args, {cwd : command.wd});
+            console.log("LSP: process started");
             
         } catch(e) {
             console.log(e.message);

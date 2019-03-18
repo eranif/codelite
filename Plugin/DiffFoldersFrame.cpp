@@ -72,15 +72,36 @@ void DiffFoldersFrame::OnNewCmparison(wxCommandEvent& event)
     }
 }
 
-static unsigned char GetSimpleChecksum(const wxString& fn)
-{
-    FILE* fp = fopen(fn.mb_str(), "rb");
-    unsigned char checksum = 0;
-    while(!feof(fp) && !ferror(fp)) {
-        checksum ^= fgetc(fp);
+#define CLOSE_FP(fp)      \
+    {                     \
+        if(fp) {          \
+            fclose(fp);   \
+            fp = nullptr; \
+        }                 \
     }
-    fclose(fp);
-    return checksum;
+
+static bool CompareFilesCheckSum(const wxString& fn1, const wxString& fn2)
+{
+    // The sizes are the same
+    unsigned char checksum1 = 0;
+    unsigned char checksum2 = 0;
+
+    FILE* fp1 = fopen(fn1.mb_str(), "rb");
+    FILE* fp2 = fopen(fn2.mb_str(), "rb");
+    if(!fp1 || !fp2) {
+        CLOSE_FP(fp1);
+        CLOSE_FP(fp2);
+        return false;
+    }
+
+    while(!feof(fp1) && !ferror(fp1) && !feof(fp2) && !ferror(fp2)) {
+        checksum1 ^= fgetc(fp1);
+        checksum2 ^= fgetc(fp2);
+        if(checksum1 != checksum2) { break; }
+    }
+    CLOSE_FP(fp1);
+    CLOSE_FP(fp2);
+    return (checksum1 == checksum2);
 }
 
 static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items, const wxString& left,
@@ -92,9 +113,13 @@ static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items
         wxFileName fnLeft(left, items.Item(i));
         wxFileName fnRight(right, items.Item(i));
         if(fnLeft.IsOk() && fnLeft.FileExists() && fnRight.IsOk() && fnRight.FileExists()) {
-            unsigned char cksum1 = GetSimpleChecksum(fnLeft.GetFullPath());
-            unsigned char cksum2 = GetSimpleChecksum(fnRight.GetFullPath());
-            results.Add(cksum1 == cksum2 ? "same" : "different");
+            if(fnLeft.GetSize() != fnRight.GetSize()) {
+                // If the size is different, no need to go further
+                results.Add("different");
+            } else {
+                bool isSame = CompareFilesCheckSum(fnLeft.GetFullPath(), fnRight.GetFullPath());
+                results.Add(isSame ? "same" : "different");
+            }
         } else {
             results.Add("n/a"); // Dont know
         }
@@ -104,9 +129,7 @@ static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items
 
 void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
 {
-    wxWindowUpdateLocker locker(m_dvListCtrl);
     StopChecksumThread();
-
     wxBusyCursor bc;
     m_dvListCtrl->DeleteAllItems();
     m_entries.clear();
@@ -324,11 +347,11 @@ void DiffFoldersFrame::OnUpFolder(wxCommandEvent& event)
 
     wxFileName fnLeft(m_leftFolder, "");
     wxFileName fnRight(m_rightFolder, "");
-    
+
     fnLeft.RemoveLastDir();
     fnRight.RemoveLastDir();
     --m_depth;
-    
+
     BuildTrees(fnLeft.GetPath(), fnRight.GetPath());
 }
 

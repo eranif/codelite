@@ -14,88 +14,15 @@
 #include <wx/wupdlock.h>
 #include <macros.h>
 #include "globals.h"
+#include <atomic>
 
 static int nCallCounter = 0;
-static bool checksumThreadStop = false;
-
-struct DiffViewEntry {
-protected:
-    bool m_existsInLeft = false;
-    bool m_existsInRight = false;
-    wxString filename;
-    wxString fullpath;
-    size_t m_flags = 0; // See clFilesScanner for details
-
-public:
-    void SetFilename(const clFilesScanner::EntryData& d)
-    {
-        wxFileName fn(d.fullpath);
-        this->filename = fn.GetFullName();
-        this->fullpath = fn.GetFullPath();
-        this->m_flags = d.flags;
-    }
-
-    void SetExistsInLeft(bool existsInLeft) { this->m_existsInLeft = existsInLeft; }
-    void SetExistsInRight(bool existsInRight) { this->m_existsInRight = existsInRight; }
-    const wxString& GetFilename() const { return filename; }
-    const wxString& GetFullPath() const { return fullpath; }
-    bool IsExistsInLeft() const { return m_existsInLeft; }
-    bool IsExistsInRight() const { return m_existsInRight; }
-    bool IsExistsInBoth() const { return m_existsInRight && m_existsInLeft; }
-    bool IsOK() const { return !filename.IsEmpty(); }
-    int GetImageId() const
-    {
-        if(IsFolder()) {
-            return clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
-        } else {
-            return clGetManager()->GetStdIcons()->GetMimeImageId(GetFilename());
-        }
-    }
-    size_t GetFlags() const { return m_flags; }
-    bool IsHidden() const { return m_flags & clFilesScanner::kIsHidden; }
-    bool IsFolder() const { return m_flags & clFilesScanner::kIsFolder; }
-    bool IsSymlink() const { return m_flags & clFilesScanner::kIsSymlink; }
-    typedef std::vector<DiffViewEntry> Vect_t;
-    typedef std::unordered_map<wxString, DiffViewEntry> Hash_t;
-};
-
-struct DiffView {
-protected:
-    DiffViewEntry::Hash_t m_table;
-
-public:
-    void AddFile(const clFilesScanner::EntryData& d)
-    {
-        DiffViewEntry entry;
-        entry.SetFilename(d);
-        m_table.insert({ entry.GetFilename(), entry });
-    }
-
-    DiffViewEntry& GetEntry(const wxString& filename)
-    {
-        static DiffViewEntry nullEntry;
-        if(HasFile(filename)) { return m_table[filename]; }
-        return nullEntry;
-    }
-
-    bool HasFile(const wxString& filename) const { return m_table.count(filename); }
-    DiffViewEntry::Hash_t& GetTable() { return m_table; }
-    DiffViewEntry::Vect_t ToSortedVector() const
-    {
-        DiffViewEntry::Vect_t V;
-        std::for_each(m_table.begin(), m_table.end(),
-                      [&](const DiffViewEntry::Hash_t::value_type& vt) { V.push_back(vt.second); });
-        // sort the vector
-        std::sort(V.begin(), V.end(), [&](const DiffViewEntry& a, const DiffViewEntry& b) {
-            return a.GetFilename().CmpNoCase(b.GetFilename()) < 0;
-        });
-        return V;
-    }
-};
+static std::atomic_bool checksumThreadStop;
 
 DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     : DiffFoldersBaseDlg(parent)
 {
+    checksumThreadStop.store(false);
     m_toolbar->SetMiniToolBar(false);
     m_toolbar->AddTool(wxID_NEW, _("New comparison"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
     m_toolbar->AddTool(wxID_CLOSE, _("Close"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
@@ -103,6 +30,9 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("diff-intersection"), _("Show similar files only"),
                        clGetManager()->GetStdIcons()->LoadBitmap("intersection"), "", wxITEM_CHECK);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("diff-up-folder"), _("Parent folder"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
+
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewCmparison, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnClose, this, wxID_CLOSE);
@@ -110,6 +40,8 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnShowSimilarFilesUI, this, XRCID("diff-intersection"));
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnRefresh, this, wxID_REFRESH);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnRefreshUI, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnUpFolder, this, XRCID("diff-up-folder"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnUpFolderUI, this, XRCID("diff-up-folder"));
 
     ::clSetTLWindowBestSizeAndPosition(this);
 
@@ -135,6 +67,7 @@ void DiffFoldersFrame::OnNewCmparison(wxCommandEvent& event)
         right = dlg.GetDirPickerRight()->GetPath();
         clConfig::Get().Write("DiffFolders/Left", left);
         clConfig::Get().Write("DiffFolders/Right", right);
+        m_depth = 0;
         CallAfter(&DiffFoldersFrame::BuildTrees, left, right);
     }
 }
@@ -155,7 +88,7 @@ static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items
 {
     wxArrayString results;
     for(size_t i = 0; i < items.size(); ++i) {
-        if(checksumThreadStop) { break; }
+        if(checksumThreadStop.load()) { break; }
         wxFileName fnLeft(left, items.Item(i));
         wxFileName fnRight(right, items.Item(i));
         if(fnLeft.IsOk() && fnLeft.FileExists() && fnRight.IsOk() && fnRight.FileExists()) {
@@ -166,7 +99,7 @@ static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items
             results.Add("n/a"); // Dont know
         }
     }
-    if(!checksumThreadStop) { sink->CallAfter(&DiffFoldersFrame::OnChecksum, callId, results); }
+    if(!checksumThreadStop.load()) { sink->CallAfter(&DiffFoldersFrame::OnChecksum, callId, results); }
 }
 
 void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
@@ -176,6 +109,7 @@ void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
 
     wxBusyCursor bc;
     m_dvListCtrl->DeleteAllItems();
+    m_entries.clear();
     m_dvListCtrl->SetSortFunction(nullptr);
     m_leftFolder = left;
     m_rightFolder = right;
@@ -201,60 +135,72 @@ void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
     for(size_t i = 0; i < count; ++i) {
         if(i < leftFiles.size()) {
             const clFilesScanner::EntryData& entry = leftFiles[i];
-            
             wxFileName fn(entry.fullpath);
             wxString fullname = fn.GetFullName();
-            if(viewList.HasFile(fullname)) {
-                viewList.GetEntry(fullname).SetExistsInLeft(true);
-            } else {
-                viewList.AddFile(entry);
-                viewList.GetEntry(fullname).SetExistsInLeft(true);
-            }
+            if(!viewList.HasFile(fullname)) { viewList.CreateEntry(entry, true); }
+            viewList.GetEntry(fullname).SetLeft(entry);
         }
-        
+
         if(i < rightFiles.size()) {
             const clFilesScanner::EntryData& entry = rightFiles[i];
             wxFileName fn(entry.fullpath);
             wxString fullname = fn.GetFullName();
-            if(viewList.HasFile(fullname)) {
-                viewList.GetEntry(fullname).SetExistsInRight(true);
-            } else {
-                viewList.AddFile(entry);
-                viewList.GetEntry(fullname).SetExistsInRight(true);
-            }
+            if(!viewList.HasFile(fullname)) { viewList.CreateEntry(entry, false); }
+            viewList.GetEntry(fullname).SetRight(entry);
         }
     }
 
     // Sort the merged list
-    DiffViewEntry::Vect_t V = viewList.ToSortedVector();
+    m_entries = viewList.ToSortedVector();
     wxArrayString displayedItems;
-    for(size_t i = 0; i < V.size(); ++i) {
+    for(size_t i = 0; i < m_entries.size(); ++i) {
         cols.clear();
-        const DiffViewEntry& entry = V[i];
+        const DiffViewEntry& entry = m_entries[i];
 
         // If the "show similar files" button is clicked, display only files that exists in both lists
         if(m_showSimilarItems && !entry.IsExistsInBoth()) { continue; }
-        displayedItems.Add(entry.GetFullPath());
+
+        // This will be passed to the checksum thread
+        displayedItems.Add(entry.GetFullName());
 
         if(entry.IsExistsInLeft()) {
-            cols.push_back(::MakeBitmapIndexText(entry.GetFullPath(), entry.GetImageId()));
+            cols.push_back(::MakeBitmapIndexText(entry.GetLeft().fullpath, entry.GetImageId(true)));
         } else {
             cols.push_back(::MakeBitmapIndexText("", wxNOT_FOUND));
         }
 
         if(entry.IsExistsInRight()) {
-            cols.push_back(::MakeBitmapIndexText(entry.GetFullPath(), entry.GetImageId()));
+            cols.push_back(::MakeBitmapIndexText(entry.GetRight().fullpath, entry.GetImageId(false)));
         } else {
             cols.push_back(::MakeBitmapIndexText("", wxNOT_FOUND));
         }
-        m_dvListCtrl->AppendItem(cols);
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&entry);
     }
 
     m_checksumThread = new std::thread(&HelperThreadCalculateChecksum, (++nCallCounter), displayedItems, m_leftFolder,
                                        m_rightFolder, this);
 }
 
-void DiffFoldersFrame::OnItemActivated(wxDataViewEvent& event) { DoOpenDiff(event.GetItem()); }
+void DiffFoldersFrame::OnItemActivated(wxDataViewEvent& event)
+{
+    DiffViewEntry* entry = reinterpret_cast<DiffViewEntry*>(m_dvListCtrl->GetItemData(event.GetItem()));
+    if(!entry) { return; }
+
+    if(entry->IsExistsInBoth() && (entry->GetLeft().flags & clFilesScanner::kIsFolder) &&
+       (entry->GetRight().flags & clFilesScanner::kIsFolder)) {
+        // Refresh the view to the current folder
+        wxFileName left(m_leftFolder, "");
+        wxFileName right(m_rightFolder, "");
+        left.AppendDir(entry->GetFullName());
+        right.AppendDir(entry->GetFullName());
+        m_leftFolder = left.GetPath();
+        m_rightFolder = right.GetPath();
+        ++m_depth;
+        CallAfter(&DiffFoldersFrame::BuildTrees, m_leftFolder, m_rightFolder);
+    } else {
+        DoOpenDiff(event.GetItem());
+    }
+}
 
 void DiffFoldersFrame::OnItemContextMenu(wxDataViewEvent& event)
 {
@@ -366,8 +312,31 @@ void DiffFoldersFrame::OnRefreshUI(wxUpdateUIEvent& event)
 
 void DiffFoldersFrame::StopChecksumThread()
 {
-    checksumThreadStop = true;
+    checksumThreadStop.store(false);
     if(m_checksumThread) { m_checksumThread->join(); }
-    checksumThreadStop = false;
+    checksumThreadStop.store(false);
     wxDELETE(m_checksumThread);
+}
+
+void DiffFoldersFrame::OnUpFolder(wxCommandEvent& event)
+{
+    if(!CanUp()) { return; }
+
+    wxFileName fnLeft(m_leftFolder, "");
+    wxFileName fnRight(m_rightFolder, "");
+    
+    fnLeft.RemoveLastDir();
+    fnRight.RemoveLastDir();
+    --m_depth;
+    
+    BuildTrees(fnLeft.GetPath(), fnRight.GetPath());
+}
+
+void DiffFoldersFrame::OnUpFolderUI(wxUpdateUIEvent& event) { event.Enable(CanUp()); }
+
+bool DiffFoldersFrame::CanUp() const
+{
+    wxFileName fnLeft(m_leftFolder, "");
+    wxFileName fnRight(m_rightFolder, "");
+    return m_depth && fnLeft.GetDirCount() && fnRight.GetDirCount();
 }

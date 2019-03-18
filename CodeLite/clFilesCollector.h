@@ -35,7 +35,7 @@ public:
      * @param excludeFolders list of folder to exclude from the search
      * @return number of files found
      */
-    size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "",
+    size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "*",
                 const wxString& excludeFilespec = "", const wxStringSet_t& excludeFolders = wxStringSet_t());
 
     /**
@@ -43,7 +43,7 @@ public:
      * "matchSpec" will get collected.
      */
     size_t ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
-                         const wxString& matchSpec = "");
+                         const wxString& matchSpec = "*");
 };
 
 #endif // CLFILESCOLLECTOR_H

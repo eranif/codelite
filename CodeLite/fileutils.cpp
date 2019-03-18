@@ -353,19 +353,20 @@ bool FileUtils::FuzzyMatch(const wxString& needle, const wxString& haystack)
     return true;
 }
 
-bool FileUtils::IsHidden(const wxFileName& filename)
+bool FileUtils::IsHidden(const wxString& filename)
 {
 #ifdef __WXMSW__
-    DWORD dwAttrs = GetFileAttributes(filename.GetFullPath().c_str());
+    DWORD dwAttrs = GetFileAttributes(filename.c_str());
     if(dwAttrs == INVALID_FILE_ATTRIBUTES) return false;
-    return (dwAttrs & FILE_ATTRIBUTE_HIDDEN) || (filename.GetFullName().StartsWith("."));
+    return (dwAttrs & FILE_ATTRIBUTE_HIDDEN) || (wxFileName(filename).GetFullName().StartsWith("."));
 #else
     // is it enough to test for file name?
-    return filename.GetFullName().StartsWith(".");
+    wxFileName fn(filename);
+    return fn.GetFullName().StartsWith(".");
 #endif
 }
 
-bool FileUtils::IsHidden(const wxString& filename) { return IsHidden(filename); }
+bool FileUtils::IsHidden(const wxFileName& filename) { return IsHidden(filename.GetFullPath()); }
 
 bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
 {

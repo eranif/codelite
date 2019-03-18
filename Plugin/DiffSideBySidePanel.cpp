@@ -39,6 +39,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include "clToolBar.h"
+#include "ColoursAndFontsManager.h"
 
 #define RED_MARKER 5
 #define GREEN_MARKER 6
@@ -119,6 +120,11 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
     CallAfter(&DiffSideBySidePanel::DoLayout);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_stcLeft);
+        lexer->Apply(m_stcRight);
+    }
     CentreOnParent();
 }
 

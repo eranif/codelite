@@ -38,3 +38,11 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
         owner->AddPendingEvent(event);
     }
 }
+
+bool LSP::CompletionRequest::IsValidAt(const wxFileName& filename, size_t line, size_t col) const
+{
+    const wxFileName& fn = m_params->As<CompletionParams>()->GetTextDocument().GetFilename();
+    size_t calledLine = m_params->As<Position>()->GetLine();
+    size_t calledColumn = m_params->As<Position>()->GetCharacter();
+    return (fn == filename) && (calledLine == line) && (calledColumn == col);
+}

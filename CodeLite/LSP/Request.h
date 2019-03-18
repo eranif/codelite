@@ -2,6 +2,7 @@
 #define LSP_REQUEST_H
 
 #include "LSP/MessageWithParams.h"
+#include <wx/filename.h>
 
 namespace LSP
 {
@@ -19,6 +20,25 @@ public:
 
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
+
+    /**
+     * @brief is this request position dependant? (i.e. the response should be diplsayed where the request was
+     * triggered?)
+     */
+    virtual bool IsPositionDependantRequest() const = 0;
+
+    /**
+     * @brief in case 'IsPositionDependantRequest' is true, return true if the response is valid at
+     * a given position. Usually, when the user moves while waiting for a response, it makes no sense on
+     * displaying the response in the wrong location...
+     */
+    virtual bool IsValidAt(const wxFileName& filename, size_t line, size_t col)
+    {
+        wxUnusedVar(filename);
+        wxUnusedVar(line);
+        wxUnusedVar(col);
+        return true;
+    }
 
     /**
      * @brief this method will get called by the protocol for handling the response.

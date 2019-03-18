@@ -25,8 +25,15 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
         loc.FromJSON(result);
     }
 
-    // Fire an event with the matching location
-    LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
-    definitionEvent.SetLocation(loc);
-    owner->AddPendingEvent(definitionEvent);
+    if(!loc.GetUri().IsEmpty()) {
+        // Fire an event with the matching location
+        LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
+        definitionEvent.SetLocation(loc);
+        owner->AddPendingEvent(definitionEvent);
+    }
+}
+
+bool LSP::GotoDefinitionRequest::IsValidAt(const wxFileName& filename, size_t line, size_t col) const
+{
+    return (m_filename == filename) && (m_line == line) && (m_column == col);
 }

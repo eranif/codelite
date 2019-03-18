@@ -37,6 +37,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
 
@@ -52,6 +53,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
     DoClear();
@@ -397,7 +399,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
-                    clDEBUG() << GetLogPrefix() << "received an error complete message";
+                    clDEBUG() << GetLogPrefix() << "received an error message";
                     LSP::ResponseError errMsg(res.GetMessageString());
                     switch(errMsg.GetErrorCode()) {
                     case LSP::ResponseError::kErrorCodeInternalError:
@@ -420,9 +422,21 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     }
                 } else {
                     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
-                        clDEBUG() << GetLogPrefix() << "received a reply message";
-                        // let the originating request to handle it
-                        msg_ptr->As<LSP::Request>()->OnResponse(res, m_owner);
+                        clDEBUG() << GetLogPrefix() << "received a response";
+                        // Check if the reply is still valid
+                        IEditor* editor = clGetManager()->GetActiveEditor();
+                        if(editor) {
+                            LSP::Request* preq = msg_ptr->As<LSP::Request>();
+                            // let the originating request to handle it
+                            const wxFileName& filename = editor->GetFileName();
+                            size_t line = editor->GetCurrentLine();
+                            size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
+                            if(preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
+                                clDEBUG() << "Response is no longer valid. Discarding its result";
+                            } else {
+                                preq->OnResponse(res, m_owner);
+                            }
+                        }
 
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
@@ -481,6 +495,13 @@ void LanguageServerProtocol::OnWorkspaceOpen(wxCommandEvent& event)
     m_rootFolder = wxFileName(event.GetString()).GetPath();
     Stop();
     Start();
+}
+
+void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) { OpenEditor(editor); }
 }
 
 //===------------------------------------------------------------------

@@ -26,7 +26,14 @@ void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& respons
     }
 
     // We send the same event for declaraion as we do for definition
-    LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
-    definitionEvent.SetLocation(loc);
-    owner->AddPendingEvent(definitionEvent);
+    if(!loc.GetUri().IsEmpty()) {
+        LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
+        definitionEvent.SetLocation(loc);
+        owner->AddPendingEvent(definitionEvent);
+    }
+}
+
+bool LSP::GotoDeclarationRequest::IsValidAt(const wxFileName& filename, size_t line, size_t col) const
+{
+    return (m_filename == filename) && (m_line == line) && (m_column == col);
 }

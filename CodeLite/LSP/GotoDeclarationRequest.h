@@ -23,6 +23,8 @@ public:
     const wxFileName& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    bool IsPositionDependantRequest() const { return true; }
+    bool IsValidAt(const wxFileName& filename, size_t line, size_t col) const;
 };
 };     // namespace LSP
 #endif // GOTO_DECLARATION_REQUEST_H

@@ -27,6 +27,7 @@ public:
     const wxString& GetRootUri() const { return m_rootUri; }
     JSONItem ToJSON(const wxString& name) const;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    bool IsPositionDependantRequest() const { return false; }
 };
 };     // namespace LSP
 #endif // INITIALIZEREQUEST_H

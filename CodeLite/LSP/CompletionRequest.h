@@ -13,7 +13,8 @@ public:
     CompletionRequest(const LSP::TextDocumentIdentifier& textDocument, const LSP::Position& position);
     virtual ~CompletionRequest();
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    bool IsPositionDependantRequest() const { return true; }
+    bool IsValidAt(const wxFileName& filename, size_t line, size_t col) const;
 };
-
 };     // namespace LSP
 #endif // COMPLETIONREQUEST_H

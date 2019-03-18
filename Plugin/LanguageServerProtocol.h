@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include "SocketAPI/clSocketClientAsync.h"
 #include "LSPNetwork.h"
+#include <wx/filename.h>
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -62,7 +63,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
     size_t m_createFlags = 0;
-
+    
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
 
@@ -76,7 +77,8 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceOpen(wxCommandEvent& event);
-
+    void OnEditorChanged(wxCommandEvent& event);
+    
 protected:
     void DoClear();
     bool ShouldHandleFile(const wxFileName& fn) const;

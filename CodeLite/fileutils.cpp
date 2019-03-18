@@ -608,3 +608,29 @@ bool FileUtils::ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t 
     data << std::wstring(buffer.begin(), buffer.begin() + buffer.size());
     return true;
 }
+
+bool FileUtils::IsSymlink(const wxString& filename)
+{
+#ifdef __WXMSW__
+    DWORD dwAttrs = GetFileAttributesW(filename.c_str());
+    if(dwAttrs == INVALID_FILE_ATTRIBUTES) { return false; }
+    return dwAttrs & FILE_ATTRIBUTE_REPARSE_POINT;
+#else
+    wxStructStat buff;
+    if(wxLstat(filename, &buff) != 0) { return false; }
+    return S_ISLNK(buff.st_mode);
+#endif
+}
+
+bool FileUtils::IsDirectory(const wxString& filename)
+{
+#ifdef __WXMSW__
+    DWORD dwAttrs = GetFileAttributesW(filename.c_str());
+    if(dwAttrs == INVALID_FILE_ATTRIBUTES) { return false; }
+    return dwAttrs & FILE_ATTRIBUTE_DIRECTORY;
+#else
+    wxStructStat buff;
+    if(wxLstat(filename, &buff) != 0) { return false; }
+    return S_ISDIR(buff.st_mode);
+#endif
+}

@@ -1,6 +1,7 @@
 #include "DiffFoldersFrame.h"
 #include "DiffSelectFoldersDlg.h"
 #include "clFilesCollector.h"
+#include "fileextmanager.h"
 #include <wx/dir.h>
 #include <algorithm>
 #include "globals.h"
@@ -22,22 +23,38 @@ protected:
     bool m_existsInLeft = false;
     bool m_existsInRight = false;
     wxString filename;
+    wxString fullpath;
+    size_t m_flags = 0; // See clFilesScanner for details
 
 public:
-    void SetFilename(const wxString& filename)
+    void SetFilename(const clFilesScanner::EntryData& d)
     {
-        wxFileName fn(filename);
+        wxFileName fn(d.fullpath);
         this->filename = fn.GetFullName();
+        this->fullpath = fn.GetFullPath();
+        this->m_flags = d.flags;
     }
 
     void SetExistsInLeft(bool existsInLeft) { this->m_existsInLeft = existsInLeft; }
     void SetExistsInRight(bool existsInRight) { this->m_existsInRight = existsInRight; }
     const wxString& GetFilename() const { return filename; }
+    const wxString& GetFullPath() const { return fullpath; }
     bool IsExistsInLeft() const { return m_existsInLeft; }
     bool IsExistsInRight() const { return m_existsInRight; }
     bool IsExistsInBoth() const { return m_existsInRight && m_existsInLeft; }
     bool IsOK() const { return !filename.IsEmpty(); }
-    int GetImageId() const { return clGetManager()->GetStdIcons()->GetMimeImageId(GetFilename()); }
+    int GetImageId() const
+    {
+        if(IsFolder()) {
+            return clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+        } else {
+            return clGetManager()->GetStdIcons()->GetMimeImageId(GetFilename());
+        }
+    }
+    size_t GetFlags() const { return m_flags; }
+    bool IsHidden() const { return m_flags & clFilesScanner::kIsHidden; }
+    bool IsFolder() const { return m_flags & clFilesScanner::kIsFolder; }
+    bool IsSymlink() const { return m_flags & clFilesScanner::kIsSymlink; }
     typedef std::vector<DiffViewEntry> Vect_t;
     typedef std::unordered_map<wxString, DiffViewEntry> Hash_t;
 };
@@ -47,11 +64,11 @@ protected:
     DiffViewEntry::Hash_t m_table;
 
 public:
-    void AddFile(const wxString& filename)
+    void AddFile(const clFilesScanner::EntryData& d)
     {
         DiffViewEntry entry;
-        entry.SetFilename(filename);
-        m_table.insert({ filename, entry });
+        entry.SetFilename(d);
+        m_table.insert({ entry.GetFilename(), entry });
     }
 
     DiffViewEntry& GetEntry(const wxString& filename)
@@ -169,35 +186,40 @@ void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
     // Set up the roots
     wxVector<wxVariant> cols;
 
-    wxArrayString leftFiles;
-    wxArrayString rightFiles;
+    clFilesScanner::EntryData::Vec_t leftFiles;
+    clFilesScanner::EntryData::Vec_t rightFiles;
+
+    clFilesScanner scanner;
+    scanner.ScanNoRecurse(left, leftFiles);
+    scanner.ScanNoRecurse(right, rightFiles);
 
     // Get list of all files in the given folders
-    wxDir::GetAllFiles(left, &leftFiles, wxEmptyString, wxDIR_FILES);
-    wxDir::GetAllFiles(right, &rightFiles, wxEmptyString, wxDIR_FILES);
-
     DiffView viewList;
 
     // Add all the files
     size_t count = wxMax(leftFiles.size(), rightFiles.size());
     for(size_t i = 0; i < count; ++i) {
         if(i < leftFiles.size()) {
-            const wxString& filename = leftFiles.Item(i);
-            wxString fullname = wxFileName(filename).GetFullName();
+            const clFilesScanner::EntryData& entry = leftFiles[i];
+            
+            wxFileName fn(entry.fullpath);
+            wxString fullname = fn.GetFullName();
             if(viewList.HasFile(fullname)) {
                 viewList.GetEntry(fullname).SetExistsInLeft(true);
             } else {
-                viewList.AddFile(fullname);
+                viewList.AddFile(entry);
                 viewList.GetEntry(fullname).SetExistsInLeft(true);
             }
         }
+        
         if(i < rightFiles.size()) {
-            const wxString& filename = rightFiles.Item(i);
-            wxString fullname = wxFileName(filename).GetFullName();
+            const clFilesScanner::EntryData& entry = rightFiles[i];
+            wxFileName fn(entry.fullpath);
+            wxString fullname = fn.GetFullName();
             if(viewList.HasFile(fullname)) {
                 viewList.GetEntry(fullname).SetExistsInRight(true);
             } else {
-                viewList.AddFile(fullname);
+                viewList.AddFile(entry);
                 viewList.GetEntry(fullname).SetExistsInRight(true);
             }
         }
@@ -212,16 +234,16 @@ void DiffFoldersFrame::BuildTrees(const wxString& left, const wxString& right)
 
         // If the "show similar files" button is clicked, display only files that exists in both lists
         if(m_showSimilarItems && !entry.IsExistsInBoth()) { continue; }
-        displayedItems.Add(entry.GetFilename());
+        displayedItems.Add(entry.GetFullPath());
 
         if(entry.IsExistsInLeft()) {
-            cols.push_back(::MakeBitmapIndexText(entry.GetFilename(), entry.GetImageId()));
+            cols.push_back(::MakeBitmapIndexText(entry.GetFullPath(), entry.GetImageId()));
         } else {
             cols.push_back(::MakeBitmapIndexText("", wxNOT_FOUND));
         }
 
         if(entry.IsExistsInRight()) {
-            cols.push_back(::MakeBitmapIndexText(entry.GetFilename(), entry.GetImageId()));
+            cols.push_back(::MakeBitmapIndexText(entry.GetFullPath(), entry.GetImageId()));
         } else {
             cols.push_back(::MakeBitmapIndexText("", wxNOT_FOUND));
         }
@@ -241,14 +263,17 @@ void DiffFoldersFrame::OnItemContextMenu(wxDataViewEvent& event)
     wxString right = m_dvListCtrl->GetItemText(item, 1);
 
     wxMenu menu;
-    if(right.IsEmpty()) {
-        menu.Append(XRCID("diff-copy-left-to-right"), _("Copy from Left to Right"));
-        menu.Bind(wxEVT_MENU, &DiffFoldersFrame::OnCopyToRight, this, XRCID("diff-copy-left-to-right"));
-
-    } else if(left.IsEmpty()) {
+    if(!right.IsEmpty()) {
         menu.Append(XRCID("diff-copy-right-to-left"), _("Copy from Right to Left"));
         menu.Bind(wxEVT_MENU, &DiffFoldersFrame::OnCopyToLeft, this, XRCID("diff-copy-right-to-left"));
     }
+
+    if(!left.IsEmpty()) {
+        menu.Append(XRCID("diff-copy-left-to-right"), _("Copy from Left to Right"));
+        menu.Bind(wxEVT_MENU, &DiffFoldersFrame::OnCopyToRight, this, XRCID("diff-copy-left-to-right"));
+    }
+    if(menu.GetMenuItemCount()) { menu.AppendSeparator(); }
+
     if(!right.IsEmpty() && !left.IsEmpty()) {
         menu.Append(XRCID("diff-open-diff"), _("Diff"));
         menu.Bind(wxEVT_MENU, &DiffFoldersFrame::OnMenuDiff, this, XRCID("diff-open-diff"));
@@ -283,8 +308,8 @@ void DiffFoldersFrame::DoOpenDiff(const wxDataViewItem& item)
     wxString rightFile = m_dvListCtrl->GetItemText(item, 1);
     if(leftFile.IsEmpty() || rightFile.IsEmpty()) { return; }
 
-    wxFileName fnLeft(m_leftFolder, leftFile);
-    wxFileName fnRight(m_rightFolder, rightFile);
+    wxFileName fnLeft(leftFile);
+    wxFileName fnRight(rightFile);
     clDiffFrame diffFiles(this, fnLeft, fnRight, false);
     diffFiles.ShowModal();
 }

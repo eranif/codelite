@@ -9,6 +9,21 @@
 class WXDLLIMPEXP_CL clFilesScanner
 {
 public:
+    struct EntryData {
+        size_t flags = 0;
+        wxString fullpath;
+        typedef std::vector<EntryData> Vec_t;
+    };
+
+    enum eFileAttributes {
+        kInvalid = 0,
+        kIsFile = (1 << 0),
+        kIsFolder = (1 << 1),
+        kIsHidden = (1 << 2),
+        kIsSymlink = (1 << 3),
+    };
+
+public:
     clFilesScanner();
     virtual ~clFilesScanner();
 
@@ -22,6 +37,13 @@ public:
      */
     size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "",
                 const wxString& excludeFilespec = "", const wxStringSet_t& excludeFolders = wxStringSet_t());
+
+    /**
+     * @brief scan folder for files and folders. This function does not recurse into folders. Everything that matches
+     * "matchSpec" will get collected.
+     */
+    size_t ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
+                         const wxString& matchSpec = "");
 };
 
 #endif // CLFILESCOLLECTOR_H

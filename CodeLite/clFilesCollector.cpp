@@ -53,3 +53,41 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     }
     return filesOutput.size();
 }
+
+size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
+                                     const wxString& matchSpec)
+{
+    results.clear();
+    if(!wxFileName::DirExists(rootFolder)) {
+        clDEBUG() << "clFilesScanner::ScanNoRecurse(): No such dir:" << rootFolder << clEndl;
+        return 0;
+    }
+    wxArrayString specArr = ::wxStringTokenize(matchSpec.Lower(), ";,|", wxTOKEN_STRTOK);
+    wxDir dir(rootFolder);
+    if(!dir.IsOpened()) {
+        clDEBUG() << "Failed to open root dir:" << rootFolder;
+        return 0;
+    }
+    wxString dirWithSep = dir.GetNameWithSep();
+
+    wxString filename;
+    bool cont = dir.GetFirst(&filename);
+    while(cont) {
+        if(FileUtils::WildMatch(specArr, filename)) {
+            wxString fullpath;
+            fullpath << dirWithSep << filename;
+            EntryData ed;
+            if(FileUtils::IsDirectory(fullpath)) {
+                ed.flags |= kIsFolder;
+            } else {
+                ed.flags |= kIsFile;
+            }
+            if(FileUtils::IsSymlink(fullpath)) { ed.flags |= kIsSymlink; }
+            if(FileUtils::IsHidden(fullpath)) { ed.flags |= kIsHidden; }
+            ed.fullpath = fullpath;
+            results.push_back(ed);
+        }
+        cont = dir.GetNext(&filename);
+    }
+    return results.size();
+}

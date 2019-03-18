@@ -54,12 +54,12 @@ public:
 
 public:
     static bool ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv = wxConvUTF8);
-    
+
     /**
      * @brief attempt to read up to bufferSize from the beginning of file
      */
     static bool ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t bufferSize);
-    
+
     /**
      * @brief set the file content (replacing it)
      */
@@ -176,6 +176,24 @@ public:
     static bool IsHidden(const wxString& path);
 
     /**
+     * @brief return true if filename is a symlink
+     */
+    static bool IsSymlink(const wxFileName& filename) { return IsSymlink(filename.GetFullPath()); }
+    /**
+     * @brief return true if filename is a symlink
+     */
+    static bool IsSymlink(const wxString& filename);
+    
+    /**
+     * @brief return true if filename is a symlink
+     */
+    static bool IsDirectory(const wxFileName& filename) { return IsDirectory(filename.GetFullPath()); }
+    /**
+     * @brief return true if filename is a symlink
+     */
+    static bool IsDirectory(const wxString& filename);
+    
+    /**
      * @brief set permissions to filename
      */
     static bool SetFilePermissions(const wxFileName& filename, mode_t perm);
@@ -224,7 +242,7 @@ public:
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
     static wxString RealPath(const wxString& filepath);
-    
+
     /**
      * @brief convert string into std::string
      */

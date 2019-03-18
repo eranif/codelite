@@ -4488,7 +4488,6 @@ bool clEditor::FindAndSelect(const wxString& pattern, const wxString& what, int 
 
 bool clEditor::SelectRange(const LSP::Range& range)
 {
-    BrowseRecord jumpfrom = CreateBrowseRecord();
     ClearSelections();
     int startPos = PositionFromLine(range.GetStart().GetLine());
     startPos += range.GetStart().GetCharacter();
@@ -4498,7 +4497,6 @@ bool clEditor::SelectRange(const LSP::Range& range)
     CenterLine(LineFromPosition(startPos), GetColumn(startPos));
     SetSelectionStart(startPos);
     SetSelectionEnd(endPos);
-    NavMgr::Get()->AddJump(jumpfrom, CreateBrowseRecord());
     return true;
 }
 

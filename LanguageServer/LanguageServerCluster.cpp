@@ -92,8 +92,16 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     wxFileName fn(location.GetUri());
     clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
               << location.GetRange().GetStart().GetCharacter() << ")";
-    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND);
-    if(editor) { editor->SelectRange(location.GetRange()); }
+    
+    // Manage the browser (BACK and FORWARD) ourself
+    BrowseRecord from;
+    IEditor* oldEditor = clGetManager()->GetActiveEditor();
+    if(oldEditor) { from = oldEditor->CreateBrowseRecord(); }
+    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
+    if(editor) {
+        editor->SelectRange(location.GetRange());
+        if(oldEditor) { NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord()); }
+    }
 }
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event) { wxUnusedVar(event); }

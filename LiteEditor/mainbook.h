@@ -36,9 +36,10 @@
 #include "wxStringHash.h"
 #include <set>
 #include <wx/panel.h>
+#include "navigationmanager.h"
 
 class FilesModifiedDlg;
-enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
+
 
 class MessagePane;
 class clEditorBar;

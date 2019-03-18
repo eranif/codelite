@@ -32,7 +32,7 @@ public:
      * a given position. Usually, when the user moves while waiting for a response, it makes no sense on
      * displaying the response in the wrong location...
      */
-    virtual bool IsValidAt(const wxFileName& filename, size_t line, size_t col)
+    virtual bool IsValidAt(const wxFileName& filename, size_t line, size_t col) const
     {
         wxUnusedVar(filename);
         wxUnusedVar(line);

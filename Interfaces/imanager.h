@@ -39,6 +39,7 @@
 #include "debugger.h"
 #include "clStatusBar.h"
 #include "clTab.h"
+#include "navigationmanager.h"
 
 class clTreeCtrl;
 class clEditorBar;
@@ -76,6 +77,8 @@ public:
 enum TreeType { TreeFileView = 0, TreeFileExplorer };
 
 enum eOutputPaneTab { kOutputTab_Build, kOutputTab_Output };
+
+enum OF_extra { OF_None = 0x00000001, OF_AddJump = 0x00000002, OF_PlaceNextToCurrent = 0x00000004 };
 
 //------------------------------------------------------------------
 // Defines the interface of the manager
@@ -172,10 +175,10 @@ public:
      * @param fileName the file to open - use absolute path
      * @param projectName project to associate this file - can be wxEmptyString
      * @param lineno if lineno is not wxNOT_FOUD, the caret will placed on this line number
-     * @return true if file opened
+     * @return Pointer to the newly opened editor or nullptr
      */
     virtual IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString,
-                              int lineno = wxNOT_FOUND) = 0;
+                              int lineno = wxNOT_FOUND, OF_extra flags = OF_AddJump) = 0;
 
     /**
      * @brief open a file with a given tooltip and bitmap

@@ -1536,6 +1536,7 @@ clEditor* MainBook::OpenFile(const BrowseRecord& rec)
             editor->SetCurrentPos(rec.position);
             editor->SetSelectionStart(rec.position);
             editor->SetSelectionEnd(rec.position);
+            editor->EnsureCaretVisible();
         }
     }
     return editor;

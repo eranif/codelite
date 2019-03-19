@@ -42,18 +42,20 @@ protected:
      * @param pipePath
      * @throw clSocketException
      */
-    void CreateServer(const std::string& pipePath);
+    int CreateServer(const std::string& pipePath);
     /**
      * @throw clSocketException
+     * @return port number
      */
-    void CreateServer(const std::string& address, int port);
+    int CreateServer(const std::string& address, int port);
 
 public:
     /**
      * @brief Create server using connection string
+     * @return port number on success
      * @throw clSocketException
      */
-    void Start(const wxString& connectionString);
+    int Start(const wxString& connectionString);
     clSocketBase::Ptr_t WaitForNewConnection(long timeout = -1);
     /**
      * @brief same as above, however, return a pointer to the connection that should be freed by the caller

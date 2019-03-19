@@ -4,39 +4,7 @@
 #include "file_logger.h"
 #include "clcommandlineparser.h"
 
-thread_local std::vector<int> availablePorts;
-thread_local std::vector<int> returnedPorts;
-
-static void ReturnPort(int& port)
-{
-    if(port == wxNOT_FOUND) { return; }
-    returnedPorts.push_back(port);
-    port = wxNOT_FOUND;
-}
-
-static int GetNextPort()
-{
-    if(!availablePorts.empty()) {
-        int port = availablePorts.back();
-        availablePorts.pop_back();
-        return port;
-    } else {
-        // no more ports, swap between the available and returnedPorts
-        returnedPorts.swap(availablePorts);
-        return GetNextPort();
-    }
-    return wxNOT_FOUND;
-}
-
-LSPNetworkSocket::LSPNetworkSocket()
-{
-    if(availablePorts.empty()) {
-        for(int i = 12850; i < 12899; ++i) {
-            availablePorts.push_back(i);
-        }
-    }
-    Bind(wxEVT_END_PROCESS, &LSPNetworkSocket::OnProcessTerminated, this);
-}
+LSPNetworkSocket::LSPNetworkSocket() { Bind(wxEVT_END_PROCESS, &LSPNetworkSocket::OnProcessTerminated, this); }
 
 LSPNetworkSocket::~LSPNetworkSocket()
 {
@@ -53,7 +21,6 @@ void LSPNetworkSocket::Close()
         ::wxKill(pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
         m_lspServer = nullptr;
     }
-    ReturnPort(m_port);
     m_socket.reset(nullptr);
 }
 
@@ -63,38 +30,13 @@ void LSPNetworkSocket::Open(const LSPStartupInfo& siInfo)
 
     // Start the LSP server first
     Close();
-    // Close resets our port number
-    m_port = GetNextPort();
-    if(m_port == wxNOT_FOUND) {
-        clCommandEvent evt(wxEVT_LSP_NET_ERROR);
-        evt.SetString(wxString() << "Cant run LSP: can't allocate port");
-        AddPendingEvent(evt);
-        return;
-    }
 
-    wxString helperScript;
-    helperScript << m_startupInfo.GetHelperCommand() << " " << m_port;
-    clDEBUG() << "Starting helper script:" << helperScript;
-
-    // First, start the helper script
-    m_lspServer = new wxProcess(this);
-
-    size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE;
-
-    if(m_startupInfo.GetFlags() & LSPStartupInfo::kShowConsole) { flags &= ~wxEXEC_HIDE_CONSOLE; }
-
-    if(::wxExecute(helperScript, flags, m_lspServer) <= 0) {
-        clCommandEvent evt(wxEVT_LSP_NET_ERROR);
-        evt.SetString(wxString() << "Failed to execute: " << m_startupInfo.GetLspServerCommand());
-        AddPendingEvent(evt);
-        return;
-    }
-
-    // Start the network client
+    // Start the network server
     wxString connectionString;
-    connectionString << "tcp://127.0.0.1:" << m_port;
+    connectionString << "tcp://127.0.0.1:0";
     m_socket.reset(new clAsyncSocket(connectionString, kAsyncSocketBuffer | kAsyncSocketServer));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocket::OnSocketConnected, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_SERVER_READY, &LSPNetworkSocket::OnSocketServerReady, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkSocket::OnSocketConnectionLost, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkSocket::OnSocketConnectionError, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &LSPNetworkSocket::OnSocketError, this);
@@ -114,9 +56,8 @@ void LSPNetworkSocket::Send(const std::string& data)
 
 void LSPNetworkSocket::OnSocketConnected(clCommandEvent& event)
 {
-    clCommandEvent evt(wxEVT_LSP_NET_CONNECTED);
-    AddPendingEvent(evt);
-
+    clDEBUG() << "Connection established successfully.";
+    
     // Build custom command that tells the helper to start the LSP server on its end
     JSON json(cJSON_Object);
     JSONItem item = json.toElement();
@@ -143,6 +84,10 @@ void LSPNetworkSocket::OnSocketConnected(clCommandEvent& event)
     // Send the data
     clDEBUG() << "Sending request\n" << ss.str();
     Send(ss.str());
+    
+    // Now that everything is up, send the "initialize" request
+    clCommandEvent evtReady(wxEVT_LSP_NET_CONNECTED);
+    AddPendingEvent(evtReady);
 }
 
 void LSPNetworkSocket::OnSocketConnectionLost(clCommandEvent& event)
@@ -168,8 +113,9 @@ void LSPNetworkSocket::OnSocketError(clCommandEvent& event)
 
 void LSPNetworkSocket::OnSocketData(clCommandEvent& event)
 {
+    const wxString& dataRead = event.GetString();
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
-    evt.SetString(event.GetString());
+    evt.SetString(dataRead);
     AddPendingEvent(evt);
 }
 
@@ -181,4 +127,27 @@ void LSPNetworkSocket::OnProcessTerminated(wxProcessEvent& event)
     clDEBUG() << "LSPNetworkSocket: helper program terminated:" << m_startupInfo.GetLspServerCommand();
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
+}
+
+void LSPNetworkSocket::OnSocketServerReady(clCommandEvent& event)
+{
+    // Now that the socket server is ready and we know which port we bound, start the helper script
+    int port = event.GetInt();
+    wxString helperScript;
+    helperScript << m_startupInfo.GetHelperCommand() << " " << port;
+    clDEBUG() << "Starting helper script:" << helperScript;
+
+    // First, start the helper script
+    m_lspServer = new wxProcess(this);
+    clDEBUG() << " >>> Waiting on 127.0.0.1:" << port;
+
+    size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE;
+    if(m_startupInfo.GetFlags() & LSPStartupInfo::kShowConsole) { flags &= ~wxEXEC_HIDE_CONSOLE; }
+
+    if(::wxExecute(helperScript, flags, m_lspServer) <= 0) {
+        clCommandEvent evt(wxEVT_LSP_NET_ERROR);
+        evt.SetString(wxString() << "Failed to execute: " << m_startupInfo.GetLspServerCommand());
+        AddPendingEvent(evt);
+        return;
+    }
 }

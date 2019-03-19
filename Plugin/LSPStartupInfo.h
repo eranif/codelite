@@ -9,6 +9,7 @@ class WXDLLIMPEXP_SDK LSPStartupInfo
 public:
     enum eFlags {
         kShowConsole = (1 << 0),
+        kUseTcp = (1 << 1),
     };
 
 protected:
@@ -19,6 +20,10 @@ protected:
 
 public:
     void SetHelperCommand(const wxString& helperCommand) { this->m_helperCommand = helperCommand; }
+    /**
+     * @brief the helper command: In case the connection should be made over TCP/IP it will contain the connection
+     * string, else it will contain the actual helper script command
+     */
     const wxString& GetHelperCommand() const { return m_helperCommand; }
 
     void SetLspServerCommand(const wxString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
@@ -34,8 +39,8 @@ public:
     const wxString& GetLspServerCommandWorkingDirectory() const { return m_lspServerCommandWorkingDirectory; }
 
 public:
-    LSPStartupInfo() {}
-    LSPStartupInfo(const LSPStartupInfo& other) { *this = other; }
+    LSPStartupInfo();
+    LSPStartupInfo(const LSPStartupInfo& other);
     virtual ~LSPStartupInfo() {}
     LSPStartupInfo& operator=(const LSPStartupInfo& other);
 };

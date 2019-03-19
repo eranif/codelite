@@ -22,8 +22,8 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
-#include <wx/dataview.h>
-#include "clThemedListCtrl.h"
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -90,9 +90,14 @@ protected:
     wxStaticText* m_staticText579;
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
-    clThemedListCtrl* m_dvListCtrl;
+    wxTextCtrl* m_textCtrlLanguages;
+    wxButton* m_button115;
+    wxStaticText* m_staticText117;
+    wxComboBox* m_comboBoxConnection;
 
 protected:
+    virtual void OnSuggestLanguages(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxCheckBox* GetCheckBoxShowConsole() { return m_checkBoxShowConsole; }
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
@@ -105,7 +110,10 @@ public:
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
-    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxTextCtrl* GetTextCtrlLanguages() { return m_textCtrlLanguages; }
+    wxButton* GetButton115() { return m_button115; }
+    wxStaticText* GetStaticText117() { return m_staticText117; }
+    wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();

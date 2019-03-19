@@ -15,6 +15,7 @@ class LanguageServerEntry
     wxString m_workingDirectory;
     wxArrayString m_languages;
     bool m_showConsole = false;
+    wxString m_connectionString;
 
 public:
     typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
@@ -34,6 +35,12 @@ public:
         this->m_exepath = exepath;
         return *this;
     }
+    LanguageServerEntry& SetConnectionString(const wxString& connectionString)
+    {
+        this->m_connectionString = connectionString;
+        return *this;
+    }
+    const wxString& GetConnectionString() const { return m_connectionString; }
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetExepath() const { return m_exepath; }
     LanguageServerEntry& SetEnabled(bool enabled)

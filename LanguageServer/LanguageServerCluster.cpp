@@ -17,6 +17,9 @@ LanguageServerCluster::LanguageServerCluster()
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
+
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -28,6 +31,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -36,22 +41,12 @@ LanguageServerCluster::~LanguageServerCluster()
 
 void LanguageServerCluster::Reload()
 {
-    for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
-        // stop all current processes
-        LanguageServerProtocol::Ptr_t server = vt.second;
-        server.reset(nullptr);
-    }
-    m_servers.clear();
+    StopAll();
 
     // If we are not enabled, stop here
     if(!LanguageServerConfig::Get().IsEnabled()) { return; }
 
-    // create a new list
-    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
-        const LanguageServerEntry& entry = vt.second;
-        StartServer(entry);
-    }
+    StartAll();
 }
 
 void LanguageServerCluster::OnFindSymbold(clCodeCompletionEvent& event)
@@ -92,7 +87,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     wxFileName fn(location.GetUri());
     clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
               << location.GetRange().GetStart().GetCharacter() << ")";
-    
+
     // Manage the browser (BACK and FORWARD) ourself
     BrowseRecord from;
     IEditor* oldEditor = clGetManager()->GetActiveEditor();
@@ -223,5 +218,37 @@ void LanguageServerCluster::OnFindSymbolDecl(clCodeCompletionEvent& event)
         // this event is ours to handle
         event.Skip(false);
         server->FindDeclaration(editor);
+    }
+}
+
+void LanguageServerCluster::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    this->StopAll();
+}
+
+void LanguageServerCluster::OnWorkspaceOpen(wxCommandEvent& event)
+{
+    event.Skip();
+    this->Reload();
+}
+
+void LanguageServerCluster::StopAll()
+{
+    for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
+        // stop all current processes
+        LanguageServerProtocol::Ptr_t server = vt.second;
+        server.reset(nullptr);
+    }
+    m_servers.clear();
+}
+
+void LanguageServerCluster::StartAll()
+{
+    // create a new list
+    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
+        const LanguageServerEntry& entry = vt.second;
+        StartServer(entry);
     }
 }

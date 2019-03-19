@@ -10,8 +10,11 @@ public:
     LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data);
     LanguageServerPage(wxWindow* parent);
     virtual ~LanguageServerPage();
-    
+
     wxArrayString GetLanguages() const;
     LanguageServerEntry GetData() const;
+
+protected:
+    virtual void OnSuggestLanguages(wxCommandEvent& event);
 };
 #endif // LANGUAGESERVERPAGE_H

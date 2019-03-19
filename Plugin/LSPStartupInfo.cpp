@@ -1,4 +1,9 @@
 #include "LSPStartupInfo.h"
+
+LSPStartupInfo::LSPStartupInfo() {}
+
+LSPStartupInfo::LSPStartupInfo(const LSPStartupInfo& other) { *this = other; }
+
 LSPStartupInfo& LSPStartupInfo::operator=(const LSPStartupInfo& other)
 {
     m_helperCommand = other.m_helperCommand;

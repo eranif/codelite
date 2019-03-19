@@ -3,6 +3,7 @@
 #include <macros.h>
 #include "LanguageServerProtocol.h"
 #include "globals.h"
+#include <wx/choicdlg.h>
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
@@ -14,30 +15,14 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     m_checkBoxShowConsole->SetValue(data.IsShowConsole());
     const wxArrayString& langs = data.GetLanguages();
-    wxStringSet_t checkedLanguages;
-    for(const wxString& lang : langs) {
-        checkedLanguages.insert(lang);
-    }
-
-    const std::set<wxString>& langsSet = LanguageServerProtocol::GetSupportedLanguages();
-    wxVector<wxVariant> cols;
-    std::for_each(langsSet.begin(), langsSet.end(), [&](const wxString& lang) {
-        cols.clear();
-        cols.push_back(::MakeCheckboxVariant(lang, (checkedLanguages.count(lang) != 0), wxNOT_FOUND));
-        m_dvListCtrl->AppendItem(cols);
-    });
+    wxString languages = wxJoin(langs, ';');
+    this->m_textCtrlLanguages->SetValue(languages);
+    this->m_comboBoxConnection->SetValue(data.GetConnectionString());
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
     : LanguageServerPageBase(parent)
 {
-    const std::set<wxString>& langsSet = LanguageServerProtocol::GetSupportedLanguages();
-    wxVector<wxVariant> cols;
-    std::for_each(langsSet.begin(), langsSet.end(), [&](const wxString& lang) {
-        cols.clear();
-        cols.push_back(::MakeCheckboxVariant(lang, false, wxNOT_FOUND));
-        m_dvListCtrl->AppendItem(cols);
-    });
 }
 
 LanguageServerPage::~LanguageServerPage() {}
@@ -52,15 +37,34 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetLanguages(GetLanguages());
     d.SetEnabled(m_checkBoxEnabled->IsChecked());
     d.SetShowConsole(m_checkBoxShowConsole->IsChecked());
+    d.SetConnectionString(m_comboBoxConnection->GetValue());
     return d;
 }
 
 wxArrayString LanguageServerPage::GetLanguages() const
 {
     wxArrayString selectedLanguages;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
-        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(m_dvListCtrl->IsItemChecked(item, 0)) { selectedLanguages.Add(m_dvListCtrl->GetItemText(item, 0)); }
-    }
+    wxString langStr = m_textCtrlLanguages->GetValue();
+    selectedLanguages = ::wxStringTokenize(langStr, ";,", wxTOKEN_STRTOK);
     return selectedLanguages;
+}
+
+void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
+{
+    const std::set<wxString>& langSet = LanguageServerProtocol::GetSupportedLanguages();
+    wxArrayString arrLang;
+    for(const wxString& lang : langSet) {
+        arrLang.Add(lang);
+    }
+
+    wxArrayInt selections;
+    int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), _("CodeLite"),
+                                       arrLang, GetParent());
+    if(count == wxNOT_FOUND) { return; }
+
+    wxString newText;
+    for(int sel : selections) {
+        newText << arrLang.Item(sel) << ";";
+    }
+    m_textCtrlLanguages->ChangeValue(newText);
 }

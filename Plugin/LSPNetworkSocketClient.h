@@ -1,24 +1,18 @@
-#ifndef LSPNETWORKSOCKET_H
-#define LSPNETWORKSOCKET_H
+#ifndef LSPNETWORKSOCKETCLIENT_H
+#define LSPNETWORKSOCKETCLIENT_H
 
-#include "LSPNetwork.h"
-#include "cl_command_event.h"
+#include "LSPNetwork.h" // Base class: LSPNetwork
 #include "SocketAPI/clSocketClientAsync.h"
-#include <wx/process.h>
+#include "wx/process.h"
 
-///===------------------------------
-/// LSPNetwork based on sockets
-///===------------------------------
-
-class LSPNetworkSocket : public LSPNetwork
+class LSPNetworkSocketClient : public LSPNetwork
 {
 protected:
     clAsyncSocket::Ptr_t m_socket;
     wxProcess* m_lspServer = nullptr;
-
+    
 protected:
     void OnSocketConnected(clCommandEvent& event);
-    void OnSocketServerReady(clCommandEvent& event);
     void OnSocketConnectionLost(clCommandEvent& event);
     void OnSocketConnectionError(clCommandEvent& event);
     void OnSocketError(clCommandEvent& event);
@@ -26,13 +20,14 @@ protected:
     void OnProcessTerminated(wxProcessEvent& event);
 
 public:
+    LSPNetworkSocketClient();
+    virtual ~LSPNetworkSocketClient();
+
+public:
     virtual void Close();
+    virtual bool IsConnected() const;
     virtual void Open(const LSPStartupInfo& info);
     virtual void Send(const std::string& data);
-    virtual bool IsConnected() const;
-
-    LSPNetworkSocket();
-    virtual ~LSPNetworkSocket();
 };
 
-#endif // LSPNETWORKSOCKET_H
+#endif // LSPNETWORKSOCKETCLIENT_H

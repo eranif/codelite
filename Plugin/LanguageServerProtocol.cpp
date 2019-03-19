@@ -38,8 +38,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
 
     // Use sockets here
     m_network.reset(new LSPNetworkSocket());
@@ -54,8 +52,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceOpen, this);
     DoClear();
 }
 
@@ -367,7 +363,9 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     req->As<LSP::InitializeRequest>()->SetRootUri(m_rootFolder);
-
+    
+    clDEBUG() << GetLogPrefix() << "Sending initialize request...";
+    
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
     QueueMessage(req);
@@ -479,22 +477,6 @@ void LanguageServerProtocol::Stop()
 {
     clDEBUG() << GetLogPrefix() << "Going down";
     m_network->Close();
-}
-
-void LanguageServerProtocol::OnWorkspaceClosed(wxCommandEvent& event)
-{
-    event.Skip();
-    m_rootFolder.Clear();
-    Stop();
-    Start();
-}
-
-void LanguageServerProtocol::OnWorkspaceOpen(wxCommandEvent& event)
-{
-    event.Skip();
-    m_rootFolder = wxFileName(event.GetString()).GetPath();
-    Stop();
-    Start();
 }
 
 void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)

@@ -21,13 +21,18 @@ protected:
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     void RestartServer(const wxString& name);
     void StartServer(const LanguageServerEntry& entry);
-
+    
+    void StopAll();
+    void StartAll();
+    
 protected:
     void OnSymbolFound(LSPEvent& event);
     void OnCompletionReady(LSPEvent& event);
     void OnReparseNeeded(LSPEvent& event);
     void OnRestartNeeded(LSPEvent& event);
     void OnLSPInitialized(LSPEvent& event);
+    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceOpen(wxCommandEvent& event);
 
 public:
     LanguageServerCluster();

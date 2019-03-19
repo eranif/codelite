@@ -1,6 +1,9 @@
 #include "LanguageServerEntry.h"
 
-LanguageServerEntry::LanguageServerEntry() {}
+LanguageServerEntry::LanguageServerEntry()
+    : m_connectionString("stdio")
+{
+}
 
 LanguageServerEntry::~LanguageServerEntry() {}
 
@@ -13,6 +16,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_languages = json.namedObject("languages").toArrayString();
     m_enabled = json.namedObject("enabled").toBool(m_enabled);
     m_showConsole = json.namedObject("showConsole").toBool(false);
+    m_connectionString = json.namedObject("connectionString").toString("stdio");
 }
 
 JSONItem LanguageServerEntry::ToJSON() const
@@ -25,5 +29,6 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("enabled", m_enabled);
     json.addProperty("workingDirectory", m_workingDirectory);
     json.addProperty("showConsole", m_showConsole);
+    json.addProperty("connectionString", m_connectionString);
     return json;
 }

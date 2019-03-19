@@ -39,10 +39,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
-
-    // Start all the servers
     m_servers.reset(new LanguageServerCluster());
-    m_servers->Reload();
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}

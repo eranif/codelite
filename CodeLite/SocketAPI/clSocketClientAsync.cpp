@@ -11,6 +11,7 @@ wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_INPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_ERROR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_SERVER_READY, clCommandEvent);
 
 clAsyncSocket::clAsyncSocket(const wxString& connectionString, size_t mode)
     : m_thread(NULL)
@@ -71,7 +72,12 @@ void* clSocketAsyncThread::ServerMain()
 {
     try {
         clSocketServer server;
-        server.Start(m_connectionString);
+        int port = server.Start(m_connectionString);
+        
+        // Notify that we are ready to accept connections
+        clCommandEvent eventReady(wxEVT_ASYNC_SOCKET_SERVER_READY);
+        eventReady.SetInt(port);
+        m_sink->AddPendingEvent(eventReady);
 
         clSocketBase::Ptr_t conn;
         while(!TestDestroy()) {

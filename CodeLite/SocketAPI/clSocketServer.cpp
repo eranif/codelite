@@ -41,7 +41,7 @@ clSocketServer::clSocketServer() {}
 
 clSocketServer::~clSocketServer() { DestroySocket(); }
 
-void clSocketServer::CreateServer(const std::string& pipePath)
+int clSocketServer::CreateServer(const std::string& pipePath)
 {
 #ifndef __WXMSW__
     unlink(pipePath.c_str());
@@ -74,13 +74,14 @@ void clSocketServer::CreateServer(const std::string& pipePath)
 
     // define the accept queue size
     ::listen(m_socket, 10);
+    return 0;
 #else
     int port = ::atoi(pipePath.c_str());
-    CreateServer("127.0.0.1", port);
+    return CreateServer("127.0.0.1", port);
 #endif
 }
 
-void clSocketServer::CreateServer(const std::string& address, int port)
+int clSocketServer::CreateServer(const std::string& address, int port)
 {
     // Create a socket
     if((m_socket = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
@@ -105,21 +106,35 @@ void clSocketServer::CreateServer(const std::string& address, int port)
     server.sin_port = htons(port);
 
     // Bind
-    if(::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) == -1) {
-        throw clSocketException("CreateServer: bind operation failed: " + error());
+    if(::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
+        throw clSocketException("CreateServer: bind() error: " + error());
+    }
+    
+    if(port == 0) {
+        struct sockaddr_in socket_name;
+        int name_len = sizeof(socket_name);
+        if(::getsockname(m_socket, (struct sockaddr*)&socket_name, &name_len) != 0) {
+            throw clSocketException("CreateServer: getsockname() error: " + error());
+        }
+        port = ntohs(socket_name.sin_port);
     }
     // define the accept queue size
-    ::listen(m_socket, 10);
+    if(::listen(m_socket, 10) != 0) {
+        throw clSocketException("CreateServer: listen() error: " + error());
+    }
+    
+    // return the bound port number
+    return port;
 }
 
-void clSocketServer::Start(const wxString& connectionString)
+int clSocketServer::Start(const wxString& connectionString)
 {
     clConnectionString cs(connectionString);
     if(!cs.IsOK()) { throw clSocketException("Invalid connection string provided"); }
     if(cs.GetProtocol() == clConnectionString::kTcp) {
-        CreateServer(cs.GetHost().mb_str(wxConvUTF8).data(), cs.GetPort());
+        return CreateServer(cs.GetHost().mb_str(wxConvUTF8).data(), cs.GetPort());
     } else {
-        CreateServer(cs.GetPath().mb_str(wxConvUTF8).data());
+        return CreateServer(cs.GetPath().mb_str(wxConvUTF8).data());
     }
 }
 

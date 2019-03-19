@@ -173,11 +173,11 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     m_staticText453 =
         new wxStaticText(this, wxID_ANY, _("Name"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText453->SetToolTip(_("Give this language server a unique name"));
 
     flexGridSizer432->Add(m_staticText453, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, -1)), 0);
-    m_textCtrlName->SetToolTip(_("Give this language server a unique name"));
     m_textCtrlName->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));
@@ -187,23 +187,23 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     m_staticText495 =
         new wxStaticText(this, wxID_ANY, _("Executable:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText495->SetToolTip(_("The language server executable"));
 
     flexGridSizer432->Add(m_staticText495, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_filePickerExe =
         new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
                              wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
-    m_filePickerExe->SetToolTip(_("The language server executable"));
 
     flexGridSizer432->Add(m_filePickerExe, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText537 =
         new wxStaticText(this, wxID_ANY, _("Arguments:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText537->SetToolTip(_("Set here any arguments to pass to the language server executable"));
 
     flexGridSizer432->Add(m_staticText537, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlArgs = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlArgs->SetToolTip(_("Set here any arguments to pass to the language server executable"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlArgs->SetHint(wxT(""));
 #endif
@@ -212,35 +212,71 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     m_staticText579 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText579->SetToolTip(_("Set the language server working directory"));
 
     flexGridSizer432->Add(m_staticText579, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_dirPickerWorkingDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
                                                 wxDLG_UNIT(this, wxSize(-1, -1)),
                                                 wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
-    m_dirPickerWorkingDir->SetToolTip(_("Set the language server working directory"));
 
     flexGridSizer432->Add(m_dirPickerWorkingDir, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText6311 =
         new wxStaticText(this, wxID_ANY, _("Languages:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText6311->SetToolTip(_("List of supported languages by this Language Server"));
 
-    flexGridSizer432->Add(m_staticText6311, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(10));
+    flexGridSizer432->Add(m_staticText6311, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(10));
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 150)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+    wxBoxSizer* boxSizer113 = new wxBoxSizer(wxHORIZONTAL);
 
-    flexGridSizer432->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer432->Add(boxSizer113, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendTextColumn(_("Supported Languages"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
+    m_textCtrlLanguages =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlLanguages->SetHint(wxT(""));
+#endif
+
+    boxSizer113->Add(m_textCtrlLanguages, 1, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button115 =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button115->SetToolTip(_("Show List of Languages"));
+
+    boxSizer113->Add(m_button115, 0, wxLEFT | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText117 = new wxStaticText(this, wxID_ANY, _("Connection string:"), wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText117->SetToolTip(_("Set the connection string here.\nIf the server connects using 'stdio', choose the "
+                                  "'stdio' entry\nOtherwise, set a connection in the form of:\ntcp://127.0.0.1:12345"));
+
+    flexGridSizer432->Add(m_staticText117, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxConnectionArr;
+    m_comboBoxConnectionArr.Add(wxT("stdio"));
+    m_comboBoxConnection = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                          m_comboBoxConnectionArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxConnection->SetHint(wxT(""));
+#endif
+    m_comboBoxConnection->SetSelection(0);
+
+    flexGridSizer432->Add(m_comboBoxConnection, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("LanguageServerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
+    // Connect events
+    m_button115->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                         wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
 }
 
-LanguageServerPageBase::~LanguageServerPageBase() {}
+LanguageServerPageBase::~LanguageServerPageBase()
+{
+    m_button115->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
+}
 
 NewLanguageServerDlgBase::NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                    const wxPoint& pos, const wxSize& size, long style)

@@ -75,8 +75,6 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
-    void OnWorkspaceOpen(wxCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
     
 protected:

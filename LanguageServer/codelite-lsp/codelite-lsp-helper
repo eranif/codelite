@@ -81,7 +81,7 @@ function tryProcessMessage(conn)
             return false;
         }
         conn.incoming_buffer = command.remainder;
-        console.log(`<<< Message is complete. incoming_buffer: ${conn.incoming_buffer.length}`);
+       // console.log(`<<< Message is complete. incoming_buffer: ${conn.incoming_buffer.length}`);
         processCommand(command.request, conn);
         return true;
     }
@@ -143,14 +143,7 @@ function processCommand(command, conn)
  */
 function onDataRead(data)
 {
-    if(!this.hasOwnProperty('incoming_buffer')) { this['incoming_buffer'] = ""; }
-
-    // Add the buffer to the connections' buffer storage
-    let bufferRead = typeof data == "string" ? data : data.toString();
-    this.incoming_buffer += bufferRead;
     
-    // Try processing the buffer
-    tryProcessMessage(this);
 }
 
 //===--------------------------------------------------------------------------------
@@ -164,18 +157,29 @@ function connectToCodeLite()
     
     // Make the server TCP/IP server on port 12898
     let port = (process.argv.length > 2) ? process.argv[2] : 12898;
-    socket.connect(port, "127.0.0.1", function() {
-        console.log(`Successfully connected to tcp://127.0.0.1:${port}`);
-    });
     socket.on('error', (code) => {
         console.log(`Unable to connect to CodeLite. ${code}`);
         process.exit(1);
     });
-    socket.on('data', onDataRead.bind(socket));
+    socket.on('data', (data) => {
+        if(!socket.hasOwnProperty('incoming_buffer')) { socket['incoming_buffer'] = ""; }
+        // Add the buffer to the connections' buffer storage
+        let bufferRead = typeof data == "string" ? data : data.toString();
+        socket.incoming_buffer += bufferRead;
+        // Try processing the buffer
+        tryProcessMessage(socket);
+    });
     socket.on('close', (code) => {
         // if CodeLite termianted, exit
         console.log(`close event ${code}`);
         process.exit(0);
+    });
+    socket.on('ready', () => {
+        console.log("Connection established");
+    });
+    
+    socket.connect(port, "127.0.0.1", function() {
+        console.log(`>>> Successfully connected to tcp://127.0.0.1:${port}`);
     });
 }
 connectToCodeLite();

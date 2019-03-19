@@ -112,6 +112,10 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="ServiceProviderManager.cpp"/>
+    <File Name="ServiceProviderManager.h"/>
+    <File Name="ServiceProvider.cpp"/>
+    <File Name="ServiceProvider.h"/>
     <File Name="clJoinableThread.h"/>
     <File Name="clJoinableThread.cpp"/>
     <File Name="search_thread.h"/>

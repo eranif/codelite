@@ -63,7 +63,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
     size_t m_createFlags = 0;
-    
+
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
 
@@ -76,7 +76,7 @@ protected:
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
-    
+
 protected:
     void DoClear();
     bool ShouldHandleFile(const wxFileName& fn) const;
@@ -120,7 +120,7 @@ protected:
     void QueueMessage(LSP::MessageWithParams::Ptr_t request);
 
 public:
-    LanguageServerProtocol(const wxString& name, wxEvtHandler* owner);
+    LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
 
     LanguageServerProtocol& SetName(const wxString& name)

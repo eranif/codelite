@@ -164,24 +164,30 @@ void LanguageServerCluster::RestartServer(const wxString& name)
 void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(entry.IsEnabled()) {
-        LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), this));
+        LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
 
         wxString lspCommand = entry.GetExepath();
         ::WrapWithQuotes(lspCommand);
 
         if(!entry.GetArgs().IsEmpty()) { lspCommand << " " << entry.GetArgs(); }
 
-        wxString helperCommand = LanguageServerConfig::Get().GetNodejs();
-        if(helperCommand.IsEmpty() || !wxFileName::FileExists(helperCommand)) {
-            // TODO : prompt the user to install NodeJS
-            return;
-        }
+        wxString helperCommand;
 
-        ::WrapWithQuotes(helperCommand);
-        wxFileName fnScriptPath(clStandardPaths::Get().GetBinFolder(), "codelite-lsp-helper");
-        wxString scriptPath = fnScriptPath.GetFullPath();
-        ::WrapWithQuotes(scriptPath);
-        helperCommand << " " << scriptPath;
+        if(entry.GetNetType() == eNetworkType::kStdio) {
+            helperCommand = LanguageServerConfig::Get().GetNodejs();
+            if(helperCommand.IsEmpty() || !wxFileName::FileExists(helperCommand)) {
+                // TODO : prompt the user to install NodeJS
+                return;
+            }
+
+            ::WrapWithQuotes(helperCommand);
+            wxFileName fnScriptPath(clStandardPaths::Get().GetBinFolder(), "codelite-lsp-helper");
+            wxString scriptPath = fnScriptPath.GetFullPath();
+            ::WrapWithQuotes(scriptPath);
+            helperCommand << " " << scriptPath;
+        } else {
+            helperCommand = entry.GetConnectionString();
+        }
 
         size_t flags = 0;
         if(entry.IsShowConsole()) { flags |= LSPStartupInfo::kShowConsole; }
@@ -190,7 +196,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
         }
         clDEBUG() << "Starting lsp:";
-        clDEBUG() << "helperCommand:" << helperCommand;
+        clDEBUG() << "helperCommand / connection string:" << helperCommand;
         clDEBUG() << "lspCommand:" << lspCommand;
         clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
         clDEBUG() << "rootDir:" << rootDir;

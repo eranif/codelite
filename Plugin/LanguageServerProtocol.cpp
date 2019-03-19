@@ -27,10 +27,11 @@
 #include <sstream>
 #include "LSPNetworkSocket.h"
 #include "LSP/Request.h"
+#include "LSPNetworkSocketClient.h"
 
 #define PORT 12989
 
-LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandler* owner)
+LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : m_name(name)
     , m_owner(owner)
 {
@@ -40,7 +41,14 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, wxEvtHandle
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
 
     // Use sockets here
-    m_network.reset(new LSPNetworkSocket());
+    switch(netType) {
+    case eNetworkType::kStdio:
+        m_network.reset(new LSPNetworkStdio());
+        break;
+    case eNetworkType::kTcpIP:
+        m_network.reset(new LSPNetworkSocketClient());
+        break;
+    }
     m_network->Bind(wxEVT_LSP_NET_DATA_READY, &LanguageServerProtocol::OnNetDataReady, this);
     m_network->Bind(wxEVT_LSP_NET_ERROR, &LanguageServerProtocol::OnNetError, this);
     m_network->Bind(wxEVT_LSP_NET_CONNECTED, &LanguageServerProtocol::OnNetConnected, this);
@@ -121,7 +129,7 @@ void LanguageServerProtocol::DoStart()
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
     LSPStartupInfo info;
-    info.SetHelperCommand(m_helperCommand);
+    info.SetHelperCommand(m_helperCommand); // the helper command or connection string
     info.SetLspServerCommand(m_lspCommand);
     info.SetLspServerCommandWorkingDirectory(m_lspCommandWorkingDirectory);
     info.SetFlags(m_createFlags);
@@ -363,9 +371,9 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     req->As<LSP::InitializeRequest>()->SetRootUri(m_rootFolder);
-    
+
     clDEBUG() << GetLogPrefix() << "Sending initialize request...";
-    
+
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request
     m_state = kInitialized;
     QueueMessage(req);

@@ -1,4 +1,5 @@
 #include "LanguageServerEntry.h"
+#include "LanguageServerProtocol.h"
 
 LanguageServerEntry::LanguageServerEntry()
     : m_connectionString("stdio")
@@ -31,4 +32,15 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("showConsole", m_showConsole);
     json.addProperty("connectionString", m_connectionString);
     return json;
+}
+
+eNetworkType LanguageServerEntry::GetNetType() const
+{
+    wxString connectionString = GetConnectionString();
+    connectionString.Trim().Trim(false);
+    if(connectionString.CmpNoCase("stdio") == 0) {
+        return eNetworkType::kStdio;
+    } else {
+        return eNetworkType::kTcpIP;
+    }
 }

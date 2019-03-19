@@ -10,7 +10,7 @@
 /// LSPNetwork based on sockets
 ///===------------------------------
 
-class LSPNetworkSocket : public LSPNetwork
+class LSPNetworkStdio : public LSPNetwork
 {
 protected:
     clAsyncSocket::Ptr_t m_socket;
@@ -31,8 +31,8 @@ public:
     virtual void Send(const std::string& data);
     virtual bool IsConnected() const;
 
-    LSPNetworkSocket();
-    virtual ~LSPNetworkSocket();
+    LSPNetworkStdio();
+    virtual ~LSPNetworkStdio();
 };
 
 #endif // LSPNETWORKSOCKET_H

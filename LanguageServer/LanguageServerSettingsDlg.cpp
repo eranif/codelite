@@ -16,6 +16,7 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
     m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
     m_filePickerNodeJS->SetPath(LanguageServerConfig::Get().GetNodejs());
     GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}

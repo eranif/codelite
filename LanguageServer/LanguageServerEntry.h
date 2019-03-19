@@ -5,6 +5,7 @@
 #include <wx/string.h>
 #include "cl_config.h"
 #include <wxStringHash.h>
+#include "LSPNetwork.h"
 
 class LanguageServerEntry
 {
@@ -73,6 +74,7 @@ public:
         return *this;
     }
     bool IsShowConsole() const { return m_showConsole; }
+    eNetworkType GetNetType() const;
 };
 
 #endif // LANGUAGESERVERENTRY_H

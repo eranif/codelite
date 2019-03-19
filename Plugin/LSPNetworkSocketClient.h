@@ -10,7 +10,7 @@ class LSPNetworkSocketClient : public LSPNetwork
 protected:
     clAsyncSocket::Ptr_t m_socket;
     wxProcess* m_lspServer = nullptr;
-    
+
 protected:
     void OnSocketConnected(clCommandEvent& event);
     void OnSocketConnectionLost(clCommandEvent& event);

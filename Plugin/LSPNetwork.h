@@ -13,6 +13,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_DATA_READY, clCommandEve
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_CONNECTED, clCommandEvent);
 
+enum class eNetworkType {
+    kStdio,
+    kTcpIP,
+};
+
 class WXDLLIMPEXP_SDK LSPNetwork : public wxEvtHandler
 {
 protected:

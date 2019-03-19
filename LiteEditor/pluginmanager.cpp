@@ -378,7 +378,7 @@ IEditor* PluginManager::OpenFile(const wxString& fileName, const wxBitmap& bmp, 
 
 IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& projectName, int lineno, OF_extra flags)
 {
-    IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno, flags);
+    IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, projectName, lineno, wxNOT_FOUND, flags);
     if(editor) { editor->SetActive(); }
     return editor;
 }

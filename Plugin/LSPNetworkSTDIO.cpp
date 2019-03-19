@@ -1,18 +1,18 @@
-#include "LSPNetworkSocket.h"
+#include "LSPNetworkSTDIO.h"
 #include "JSON.h"
 #include <sstream>
 #include "file_logger.h"
 #include "clcommandlineparser.h"
 
-LSPNetworkStdio::LSPNetworkStdio() { Bind(wxEVT_END_PROCESS, &LSPNetworkStdio::OnProcessTerminated, this); }
+LSPNetworkSTDIO::LSPNetworkSTDIO() { Bind(wxEVT_END_PROCESS, &LSPNetworkSTDIO::OnProcessTerminated, this); }
 
-LSPNetworkStdio::~LSPNetworkStdio()
+LSPNetworkSTDIO::~LSPNetworkSTDIO()
 {
-    Unbind(wxEVT_END_PROCESS, &LSPNetworkStdio::OnProcessTerminated, this);
+    Unbind(wxEVT_END_PROCESS, &LSPNetworkSTDIO::OnProcessTerminated, this);
     Close();
 }
 
-void LSPNetworkStdio::Close()
+void LSPNetworkSTDIO::Close()
 {
     if(m_lspServer) {
         long pid = m_lspServer->GetPid();
@@ -24,7 +24,7 @@ void LSPNetworkStdio::Close()
     m_socket.reset(nullptr);
 }
 
-void LSPNetworkStdio::Open(const LSPStartupInfo& siInfo)
+void LSPNetworkSTDIO::Open(const LSPStartupInfo& siInfo)
 {
     m_startupInfo = siInfo;
 
@@ -35,16 +35,16 @@ void LSPNetworkStdio::Open(const LSPStartupInfo& siInfo)
     wxString connectionString;
     connectionString << "tcp://127.0.0.1:0";
     m_socket.reset(new clAsyncSocket(connectionString, kAsyncSocketBuffer | kAsyncSocketServer));
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkStdio::OnSocketConnected, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_SERVER_READY, &LSPNetworkStdio::OnSocketServerReady, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkStdio::OnSocketConnectionLost, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkStdio::OnSocketConnectionError, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &LSPNetworkStdio::OnSocketError, this);
-    m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &LSPNetworkStdio::OnSocketData, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSTDIO::OnSocketConnected, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_SERVER_READY, &LSPNetworkSTDIO::OnSocketServerReady, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkSTDIO::OnSocketConnectionLost, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkSTDIO::OnSocketConnectionError, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_ERROR, &LSPNetworkSTDIO::OnSocketError, this);
+    m_socket->Bind(wxEVT_ASYNC_SOCKET_INPUT, &LSPNetworkSTDIO::OnSocketData, this);
     m_socket->Start();
 }
 
-void LSPNetworkStdio::Send(const std::string& data)
+void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_socket) {
         clDEBUG() << "LSP socket:\n" << data;
@@ -54,7 +54,7 @@ void LSPNetworkStdio::Send(const std::string& data)
     }
 }
 
-void LSPNetworkStdio::OnSocketConnected(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketConnected(clCommandEvent& event)
 {
     clDEBUG() << "Connection established successfully.";
     
@@ -90,28 +90,28 @@ void LSPNetworkStdio::OnSocketConnected(clCommandEvent& event)
     AddPendingEvent(evtReady);
 }
 
-void LSPNetworkStdio::OnSocketConnectionLost(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketConnectionLost(clCommandEvent& event)
 {
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     evt.SetString(event.GetString());
     AddPendingEvent(evt);
 }
 
-void LSPNetworkStdio::OnSocketConnectionError(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketConnectionError(clCommandEvent& event)
 {
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     evt.SetString(event.GetString());
     AddPendingEvent(evt);
 }
 
-void LSPNetworkStdio::OnSocketError(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketError(clCommandEvent& event)
 {
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     evt.SetString(event.GetString());
     AddPendingEvent(evt);
 }
 
-void LSPNetworkStdio::OnSocketData(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketData(clCommandEvent& event)
 {
     const wxString& dataRead = event.GetString();
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
@@ -119,17 +119,17 @@ void LSPNetworkStdio::OnSocketData(clCommandEvent& event)
     AddPendingEvent(evt);
 }
 
-bool LSPNetworkStdio::IsConnected() const { return m_socket != nullptr; }
+bool LSPNetworkSTDIO::IsConnected() const { return m_socket != nullptr; }
 
-void LSPNetworkStdio::OnProcessTerminated(wxProcessEvent& event)
+void LSPNetworkSTDIO::OnProcessTerminated(wxProcessEvent& event)
 {
     wxDELETE(m_lspServer);
-    clDEBUG() << "LSPNetworkStdio: helper program terminated:" << m_startupInfo.GetLspServerCommand();
+    clDEBUG() << "LSPNetworkSTDIO: helper program terminated:" << m_startupInfo.GetLspServerCommand();
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
 }
 
-void LSPNetworkStdio::OnSocketServerReady(clCommandEvent& event)
+void LSPNetworkSTDIO::OnSocketServerReady(clCommandEvent& event)
 {
     // Now that the socket server is ready and we know which port we bound, start the helper script
     int port = event.GetInt();

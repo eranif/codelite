@@ -25,7 +25,7 @@
 #include <wx/filesys.h>
 #include <iomanip>
 #include <sstream>
-#include "LSPNetworkSocket.h"
+#include "LSPNetworkSTDIO.h"
 #include "LSP/Request.h"
 #include "LSPNetworkSocketClient.h"
 
@@ -43,7 +43,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     // Use sockets here
     switch(netType) {
     case eNetworkType::kStdio:
-        m_network.reset(new LSPNetworkStdio());
+        m_network.reset(new LSPNetworkSTDIO());
         break;
     case eNetworkType::kTcpIP:
         m_network.reset(new LSPNetworkSocketClient());

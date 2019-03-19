@@ -101,7 +101,7 @@ void LSPNetworkSocketClient::OnSocketData(clCommandEvent& event)
 void LSPNetworkSocketClient::OnProcessTerminated(wxProcessEvent& event)
 {
     wxDELETE(m_lspServer);
-    clDEBUG() << "LSPNetworkStdio: LSP program terminated:" << m_startupInfo.GetLspServerCommand();
+    clDEBUG() << "LSPNetworkSTDIO: LSP program terminated:" << m_startupInfo.GetLspServerCommand();
     clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
 }

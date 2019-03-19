@@ -45,12 +45,12 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LanguageServerProtocol">
+    <File Name="LSPNetworkSTDIO.cpp"/>
+    <File Name="LSPNetworkSTDIO.h"/>
     <File Name="LSPNetworkSocketClient.cpp"/>
     <File Name="LSPNetworkSocketClient.h"/>
     <File Name="LSPStartupInfo.cpp"/>
     <File Name="LSPStartupInfo.h"/>
-    <File Name="LSPNetworkSocket.cpp"/>
-    <File Name="LSPNetworkSocket.h"/>
     <File Name="LSPNetwork.cpp"/>
     <File Name="LSPNetwork.h"/>
     <File Name="LanguageServerProtocol.h"/>

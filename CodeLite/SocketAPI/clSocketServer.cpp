@@ -109,20 +109,22 @@ int clSocketServer::CreateServer(const std::string& address, int port)
     if(::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
         throw clSocketException("CreateServer: bind() error: " + error());
     }
-    
+
     if(port == 0) {
         struct sockaddr_in socket_name;
+#ifdef __WXMSW__
         int name_len = sizeof(socket_name);
+#else
+        socklen_t name_len = sizeof(socket_name);
+#endif
         if(::getsockname(m_socket, (struct sockaddr*)&socket_name, &name_len) != 0) {
             throw clSocketException("CreateServer: getsockname() error: " + error());
         }
         port = ntohs(socket_name.sin_port);
     }
     // define the accept queue size
-    if(::listen(m_socket, 10) != 0) {
-        throw clSocketException("CreateServer: listen() error: " + error());
-    }
-    
+    if(::listen(m_socket, 10) != 0) { throw clSocketException("CreateServer: listen() error: " + error()); }
+
     // return the bound port number
     return port;
 }

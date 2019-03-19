@@ -15,7 +15,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##                                                                                                                                                              #
 ##      -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull // Build release, debug + optimisation or debug without optimisation (for others see the Cmake docs)         #
 ##      -DCL_PREFIX="<some-prefix>"                // Installation prefix. The default on unix is /usr/                                                         #
-##      -DENABLE_CLANG=1|0                         // Build codelite with clang code completion support?, default is 1 (with clang)                             #
 ##      -DWITH_WXC=1|0                             // Build wxCrafter (sources are not part of codelite distribution) default is 0                              #
 ##      -DCOPY_WX_LIBS=1|0                         // Incorporate the wxWidgets libs into CodeLite so the binary doesn't depend on them. default is 0           #
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                          #
@@ -60,7 +59,6 @@ else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
 endif()
 
-include(FindLibClang)
 include(FindSqlite3)
 
 if(NOT SQLITE3_FOUND)
@@ -68,7 +66,6 @@ if(NOT SQLITE3_FOUND)
     set(SQLITE3_LIBRARY "-lsqlite3lib")
 endif()
 
-set( USE_CLANG 1 )
 set( IS_FREEBSD 0 )
 set( BUILD_WXC 0 )
 set( CL_COPY_WX_LIBS 0 )
@@ -261,14 +258,6 @@ if (UNIX AND NOT APPLE)
 
 endif (UNIX AND NOT APPLE)
 
-## enable clang support?
-if(ENABLE_CLANG MATCHES 0)
-  set( USE_CLANG 0 )
-endif (ENABLE_CLANG MATCHES 0)
-unset(ENABLE_CLANG CACHE)
-
-# Now that we support LSP, we no longer link againt clang
-set( USE_CLANG 0 )
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
 else (AUTOGEN_REVISION MATCHES 1)
@@ -503,57 +492,6 @@ if ( MAKE_DEB )
     set(CPACK_STRIP_FILES TRUE)
     INCLUDE(CPack)
 endif( MAKE_DEB )
-
-
-############################################
-## Clang support
-############################################
-
-if (USE_CLANG)
-
-if (APPLE)
-  set( CLANG_INCLUDE "${CL_SRC_ROOT}/sdk/clang/include" )
-  set( CLANG_LIBRARY "-L${CL_SRC_ROOT}/sdk/clang/lib -lclang.3.7" )
-  set( CLANG_BINARY "${CL_SRC_ROOT}/sdk/clang/lib/libclang.3.7.dylib")
-
-elseif (MINGW)
-  find_package(LLVM)
-  if (LLVM_FOUND)
-    find_package(Clang)
-    if (CLANG_FOUND)
-        set( CLANG_INCLUDE "${CLANG_INCLUDE_DIRS}" )
-        set( CLANG_LIBRARY "${CLANG_LDFLAGS}")
-        set( CLANG_BINARY "")
-    endif ()
-  endif ()
-elseif (UNIX)
-    FIND_LIBCLANG_OFFICIAL()
-    if ( LIBCLANG STREQUAL "LIBCLANG-NOTFOUND" )
-        set(USE_CLANG 0)
-    else()
-        set(CLANG_LIBRARY ${LIBCLANG})
-        set(CLANG_INCLUDE ${LIBCLANG_INCLUDE})
-        set( CLANG_BINARY ${CLANG_LIBRARY})
-    endif()
-endif()
-
-if (USE_CLANG)
-    message( "-- clang link line ${CLANG_LIBRARY} ")
-    message( "-- clang include path ${CLANG_INCLUDE} ")
-    message( "-- clang binary ${CLANG_BINARY}" )
-    message( "-- CL_SRC_ROOT is set to => " ${CL_SRC_ROOT} )
-    message( "-- CL_PREFIX      is set to => " ${CL_PREFIX} )
-    message( "-- CL_PREFIX/LIB_DIR is set to => " ${CL_PREFIX}/${CL_INSTALL_LIBDIR} )
-    message( "-- PLUGINS_DIR is set to => " ${PLUGINS_DIR} )
-    message( "-- wx-config   is set to => " ${WX_TOOL} )
-else()
-    message( "-- *** NOTICE ***: clang code completion support is disabled" )
-    message( "-- *** NOTICE ***: On Ubuntu / Debian you might want to install libclang-3.4-dev package")
-endif()
-
-else()
-    message( "-- *** NOTICE ***: clang code completion support is disabled" )
-endif(USE_CLANG)
 
 ############################################
 ## SFTP support

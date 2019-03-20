@@ -264,6 +264,20 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_comboBoxConnection, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText125 =
+        new wxStaticText(this, wxID_ANY, _("Priority:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText125->SetToolTip(
+        _("Multiple Plugins / Servers can compete for providing code completion\nfor a given language. Set here the "
+          "server priority.\nThe server with the highest priority will be triggered first\n\nNote that the builtin "
+          "plugins are using priority of 50 by default."));
+
+    flexGridSizer432->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_sliderPriority =
+        new wxSlider(this, wxID_ANY, 50, 0, 200, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSL_LABELS);
+
+    flexGridSizer432->Add(m_sliderPriority, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("LanguageServerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }

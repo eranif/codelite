@@ -24,6 +24,7 @@
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
+#include <wx/slider.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -94,6 +95,8 @@ protected:
     wxButton* m_button115;
     wxStaticText* m_staticText117;
     wxComboBox* m_comboBoxConnection;
+    wxStaticText* m_staticText125;
+    wxSlider* m_sliderPriority;
 
 protected:
     virtual void OnSuggestLanguages(wxCommandEvent& event) { event.Skip(); }
@@ -114,6 +117,8 @@ public:
     wxButton* GetButton115() { return m_button115; }
     wxStaticText* GetStaticText117() { return m_staticText117; }
     wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
+    wxStaticText* GetStaticText125() { return m_staticText125; }
+    wxSlider* GetSliderPriority() { return m_sliderPriority; }
     LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();

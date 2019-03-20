@@ -12,8 +12,6 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
 {
     // No duplicates
     Unregister(provider);
-    clDEBUG() << "Handler:" << provider->GetName() << "registerd. Priority:" << provider->GetPriority()
-              << ". Type:" << (int)provider->GetType();
     // Now register the service
     if(this->m_providers.count(provider->GetType()) == 0) {
         m_providers.insert({ provider->GetType(), ServiceProvider::Vec_t() });
@@ -21,15 +19,18 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
     ServiceProvider::Vec_t& V = m_providers[provider->GetType()];
     V.push_back(provider);
 
+    clDEBUG() << "Handler:" << provider->GetName() << "registerd. Priority:" << provider->GetPriority()
+              << ". Type:" << (int)provider->GetType();
+
     // Sort the providers by priority (descending order)
     std::sort(V.begin(), V.end(),
               [](ServiceProvider* a, ServiceProvider* b) { return a->GetPriority() > b->GetPriority(); });
 
     wxString order;
     for(ServiceProvider* p : V) {
-        order << p->GetName() << ", ";
+        order << p->GetName() << "(" << p->GetPriority() << ") ";
     }
-    clDEBUG() << "Handlers list:" << order;
+    clDEBUG() << "Service providers:" << order;
 }
 
 void ServiceProviderManager::Unregister(ServiceProvider* provider)
@@ -84,3 +85,17 @@ eServiceType ServiceProviderManager::GetServiceFromEvent(wxEvent& event)
 }
 
 void ServiceProviderManager::UnregisterAll() { m_providers.clear(); }
+
+void ServiceProviderManager::Sort(eServiceType type)
+{
+    if(m_providers.count(type) == 0) { return; }
+    clDEBUG() << "sorting providers for type:" << (int)type;
+    ServiceProvider::Vec_t& V = m_providers[type];
+    std::sort(V.begin(), V.end(),
+              [](ServiceProvider* a, ServiceProvider* b) { return a->GetPriority() > b->GetPriority(); });
+    wxString order;
+    for(ServiceProvider* p : V) {
+        order << p->GetName() << "(" << p->GetPriority() << ") ";
+    }
+    clDEBUG() << "Service providers:" << order;
+}

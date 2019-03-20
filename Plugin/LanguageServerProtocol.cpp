@@ -32,13 +32,18 @@
 #define PORT 12989
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
-    : m_name(name)
+    : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
+    , m_name(name)
     , m_owner(owner)
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
+
+    Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
+    Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
 
     // Use sockets here
     switch(netType) {
@@ -60,6 +65,10 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
+    Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
+    Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+
     DoClear();
 }
 
@@ -183,6 +192,45 @@ bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
 bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 {
     return editor && ShouldHandleFile(editor->GetFileName());
+}
+
+void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
+
+    if(CanHandle(editor->GetFileName())) {
+        event.Skip(false);
+        CodeComplete(editor);
+    }
+}
+
+void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    if(CanHandle(editor->GetFileName())) {
+        // this event is ours to handle
+        event.Skip(false);
+        FindDeclaration(editor);
+    }
+}
+
+void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    if(CanHandle(editor->GetFileName())) {
+        // this event is ours to handle
+        event.Skip(false);
+        FindDefinition(editor);
+    }
 }
 
 //===--------------------------------------------------

@@ -36,5 +36,10 @@ public:
      * @brief process service event
      */
     virtual bool ProcessEvent(wxEvent& event);
+    
+    /**
+     * @brief sort the service providers for a given type
+     */
+    void Sort(eServiceType type);
 };
 #endif // SERVICEPROVIDERMANAGER_H

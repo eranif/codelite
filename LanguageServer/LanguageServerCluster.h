@@ -21,10 +21,10 @@ protected:
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     void RestartServer(const wxString& name);
     void StartServer(const LanguageServerEntry& entry);
-    
+
     void StopAll();
     void StartAll();
-    
+
 protected:
     void OnSymbolFound(LSPEvent& event);
     void OnCompletionReady(LSPEvent& event);
@@ -39,9 +39,6 @@ public:
     virtual ~LanguageServerCluster();
 
     void Reload();
-    void OnFindSymbold(clCodeCompletionEvent& event);
-    void OnFindSymbolDecl(clCodeCompletionEvent& event);
-    void OnCodeComplete(clCodeCompletionEvent& event);
 };
 
 #endif // LANGUAGESERVERCLUSTER_H

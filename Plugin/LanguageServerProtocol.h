@@ -16,6 +16,7 @@
 #include "SocketAPI/clSocketClientAsync.h"
 #include "LSPNetwork.h"
 #include <wx/filename.h>
+#include "ServiceProvider.h"
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -38,7 +39,7 @@ public:
     bool IsWaitingReponse() const { return m_waitingReponse; }
 };
 
-class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
+class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
 {
     enum eState {
         kUnInitialized,
@@ -76,7 +77,10 @@ protected:
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
-
+    void OnCodeComplete(clCodeCompletionEvent& event);
+    void OnFindSymbolDecl(clCodeCompletionEvent& event);
+    void OnFindSymbol(clCodeCompletionEvent& event);
+    
 protected:
     void DoClear();
     bool ShouldHandleFile(const wxFileName& fn) const;

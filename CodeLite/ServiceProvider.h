@@ -25,7 +25,7 @@ public:
     ServiceProvider(const wxString& name, eServiceType type);
     virtual ~ServiceProvider();
     void SetName(const wxString& name) { this->m_name = name; }
-    void SetPriority(int priority) { this->m_priority = priority; }
+    void SetPriority(int priority);
     void SetType(const eServiceType& type) { this->m_type = type; }
     const wxString& GetName() const { return m_name; }
     int GetPriority() const { return m_priority; }

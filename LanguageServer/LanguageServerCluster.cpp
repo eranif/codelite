@@ -14,9 +14,6 @@
 
 LanguageServerCluster::LanguageServerCluster()
 {
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
 
@@ -28,9 +25,6 @@ LanguageServerCluster::LanguageServerCluster()
 
 LanguageServerCluster::~LanguageServerCluster()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerCluster::OnFindSymbold, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerCluster::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerCluster::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
@@ -47,26 +41,6 @@ void LanguageServerCluster::Reload()
     if(!LanguageServerConfig::Get().IsEnabled()) { return; }
 
     StartAll();
-}
-
-void LanguageServerCluster::OnFindSymbold(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    if(m_servers.empty()) return;
-    if(!LanguageServerConfig::Get().IsEnabled()) { return; }
-
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
-    CHECK_PTR_RET(editor);
-
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    int col = ctrl->GetColumn(ctrl->GetCurrentPos());
-    int line = ctrl->LineFromPosition(ctrl->GetCurrentPos());
-    LanguageServerProtocol::Ptr_t server = GetServerForFile(editor->GetFileName());
-    if(server) {
-        // this event is ours to handle
-        event.Skip(false);
-        server->FindDefinition(editor);
-    }
 }
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxFileName& filename)
@@ -100,19 +74,6 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 }
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event) { wxUnusedVar(event); }
-
-void LanguageServerCluster::OnCodeComplete(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
-    CHECK_PTR_RET(editor);
-    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
-
-    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
-    if(!lsp) { return; }
-    event.Skip(false);
-    lsp->CodeComplete(editor);
-}
 
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
@@ -150,7 +111,6 @@ void LanguageServerCluster::RestartServer(const wxString& name)
     if(!server) { return; }
     clDEBUG() << "Restarting LSP server:" << name;
     server->Stop();
-    server->Start();
 
     // Remove the old instance
     m_servers.erase(name);
@@ -165,7 +125,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(entry.IsEnabled()) {
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
-
+        lsp->SetPriority(entry.GetPriority());
         wxString lspCommand = entry.GetExepath();
         ::WrapWithQuotes(lspCommand);
 
@@ -204,26 +164,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         lsp->Start(helperCommand, lspCommand, entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
-    }
-}
-
-void LanguageServerCluster::OnFindSymbolDecl(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    if(m_servers.empty()) return;
-    if(!LanguageServerConfig::Get().IsEnabled()) { return; }
-
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
-    CHECK_PTR_RET(editor);
-
-    wxStyledTextCtrl* ctrl = editor->GetCtrl();
-    int col = ctrl->GetColumn(ctrl->GetCurrentPos());
-    int line = ctrl->LineFromPosition(ctrl->GetCurrentPos());
-    LanguageServerProtocol::Ptr_t server = GetServerForFile(editor->GetFileName());
-    if(server) {
-        // this event is ours to handle
-        event.Skip(false);
-        server->FindDeclaration(editor);
     }
 }
 

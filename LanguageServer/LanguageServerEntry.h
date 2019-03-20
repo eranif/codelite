@@ -17,6 +17,7 @@ class LanguageServerEntry
     wxArrayString m_languages;
     bool m_showConsole = false;
     wxString m_connectionString;
+    int m_priority = 50;
 
 public:
     typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
@@ -44,6 +45,12 @@ public:
     const wxString& GetConnectionString() const { return m_connectionString; }
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetExepath() const { return m_exepath; }
+    LanguageServerEntry& SetPriority(int priority)
+    {
+        this->m_priority = priority;
+        return *this;
+    }
+    int GetPriority() const { return m_priority; }
     LanguageServerEntry& SetEnabled(bool enabled)
     {
         this->m_enabled = enabled;

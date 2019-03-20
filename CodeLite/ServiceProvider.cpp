@@ -9,3 +9,9 @@ ServiceProvider::ServiceProvider(const wxString& name, eServiceType type)
 }
 
 ServiceProvider::~ServiceProvider() { ServiceProviderManager::Get().Unregister(this); }
+
+void ServiceProvider::SetPriority(int priority)
+{
+    m_priority = priority;
+    ServiceProviderManager::Get().Sort(GetType());
+}

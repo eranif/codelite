@@ -37,6 +37,7 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
+#include "ServiceProviderManager.h"
 
 // static wxColor GetInactiveColor(const wxColor& col)
 //{
@@ -201,7 +202,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
         ccEvt.SetPosition(GetCtrl().GetCurrentPos());
         ccEvt.SetWord(word);
 
-        if(!EventNotifier::Get()->ProcessEvent(ccEvt)) {
+        if(!ServiceProviderManager::Get().ProcessEvent(ccEvt)) {
             // This is ugly, since CodeLite should not be calling
             // the plugins... we take comfort in the fact that it
             // merely fires an event and not calling it directly

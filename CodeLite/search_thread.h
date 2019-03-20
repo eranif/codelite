@@ -99,10 +99,10 @@ public:
 
     SearchData(const SearchData& rhs) { Copy(rhs); }
     SearchData& operator=(const SearchData& rhs);
-    
+
     virtual ~SearchData() {}
     SearchData& Copy(const SearchData& other);
-    
+
 public:
     //------------------------------------------
     // Setters / Getters
@@ -332,6 +332,7 @@ class WXDLLIMPEXP_CL SearchThread : public WorkerThread
     wxRegEx m_regex;
     bool m_matchCase;
     wxCriticalSection m_cs;
+    int m_counter = 0;
 
 public:
     /**
@@ -343,7 +344,7 @@ public:
      * Destructor.
      */
     virtual ~SearchThread();
-    
+
     /**
      * Process request from caller
      */

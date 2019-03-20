@@ -111,8 +111,14 @@ static bool IsHeader(const wxString& ext)
 #define VALIDATE_PROJECT(ctrl) \
     if(ctrl.GetProject().IsEmpty()) { return; }
 
+#define VALIDATE_PROJECT_FALSE(ctrl) \
+    if(ctrl.GetProject().IsEmpty()) { return false; }
+
 #define VALIDATE_WORKSPACE() \
     if(ManagerST::Get()->IsWorkspaceOpen() == false) { return; }
+
+#define VALIDATE_WORKSPACE_FALSE() \
+    if(!ManagerST::Get()->IsWorkspaceOpen()) { return false; }
 
 struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
@@ -195,30 +201,26 @@ void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
     event.Skip();
 }
 
-void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
+bool ContextCpp::GetHoverTip(int pos)
 {
-    CHECK_JS_RETURN_VOID();
+    CHECK_JS_RETURN_FALSE();
 
     clEditor& rCtrl = GetCtrl();
 
-    VALIDATE_PROJECT(rCtrl);
+    VALIDATE_PROJECT_FALSE(rCtrl);
 
     // before we start, make sure we are the visible window
-    if(clMainFrame::Get()->GetMainBook()->GetActiveEditor(true) != &rCtrl) {
-        event.Skip();
-        return;
-    }
+    if(clMainFrame::Get()->GetMainBook()->GetActiveEditor(true) != &rCtrl) { return false; }
 
-    long pos = event.GetPosition();
     int end = rCtrl.WordEndPosition(pos, true);
     int word_start = rCtrl.WordStartPosition(pos, true);
 
     // get the expression we are standing on it
-    if(IsCommentOrString(pos)) return;
+    if(IsCommentOrString(pos)) return false;
 
     // get the token
     wxString word = rCtrl.GetTextRange(word_start, end);
-    if(word.IsEmpty()) { return; }
+    if(word.IsEmpty()) { return false; }
 
     int foundPos(wxNOT_FOUND);
     if(rCtrl.PreviousChar(word_start, foundPos) == wxT('~')) word.Prepend(wxT("~"));
@@ -246,7 +248,11 @@ void ContextCpp::OnDwellStart(wxStyledTextEvent& event)
         rCtrl.DoCancelCalltip();
 
         tooltip.Trim().Trim(false);
-        if(tooltip.IsEmpty() == false) { rCtrl.DoShowCalltip(-1, "", tooltip, true); }
+        if(tooltip.IsEmpty()) { return false; }
+        rCtrl.DoShowCalltip(-1, "", tooltip, true);
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -449,13 +455,13 @@ bool ContextCpp::IsCommentOrString(long pos)
 //=============================================================================
 
 // user pressed ., -> or ::
-void ContextCpp::CodeComplete(long pos)
+bool ContextCpp::CodeComplete(long pos)
 {
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
+    CHECK_JS_RETURN_FALSE();
+    VALIDATE_WORKSPACE_FALSE();
     long from = pos;
     if(from == wxNOT_FOUND) { from = GetCtrl().GetCurrentPos(); }
-    DoCodeComplete(from);
+    return DoCodeComplete(from);
 }
 
 void ContextCpp::RemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target)
@@ -693,27 +699,23 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
     return false;
 }
 
-void ContextCpp::CompleteWord()
+bool ContextCpp::CompleteWord()
 {
-    CHECK_JS_RETURN_VOID();
+    CHECK_JS_RETURN_FALSE();
     clEditor& rCtrl = GetCtrl();
 
-    VALIDATE_WORKSPACE();
+    VALIDATE_WORKSPACE_FALSE();
 
-    std::vector<TagEntryPtr> tags;
-    wxString scope;
-    wxString scopeName;
     wxString word;
     wxString fileName;
-
     wxString line = rCtrl.GetCurLine();
     if(IsIncludeStatement(line, NULL, &fileName)) {
         DisplayFilesCompletionBox(fileName);
-        return;
+        return true;
     }
 
-    //	Make sure we are not on a comment section
-    if(IsCommentOrString(rCtrl.GetCurrentPos())) return;
+    // Make sure we are not on a comment section
+    if(IsCommentOrString(rCtrl.GetCurrentPos())) return false;
 
     // Get the partial word that we have
     long pos = rCtrl.GetCurrentPos();
@@ -726,16 +728,16 @@ void ContextCpp::CompleteWord()
         wxChar ch2 = rCtrl.SafeGetChar(pos - 2);
 
         if(ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) || (ch2 == wxT(':') && ch1 == wxT(':'))) {
-            CodeComplete();
+            return CodeComplete();
         }
-        return;
+        return false;
     }
 
     // get the current expression
     wxString expr = GetExpression(rCtrl.GetCurrentPos(), true);
 
     DoSetProjectPaths();
-    CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
+    return CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
 }
 
 void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
@@ -878,20 +880,23 @@ TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
     return cd->m_ptr;
 }
 
-void ContextCpp::DoGotoSymbol(TagEntryPtr tag)
+bool ContextCpp::DoGotoSymbol(TagEntryPtr tag)
 {
-    CHECK_JS_RETURN_VOID();
+    CHECK_JS_RETURN_FALSE();
     if(tag) {
         clEditor* editor =
             clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
         if(editor) { editor->FindAndSelectV(tag->GetPattern(), tag->GetName()); }
+        return true;
+    } else {
+        return false;
     }
 }
 
-void ContextCpp::GotoDefinition()
+bool ContextCpp::GotoDefinition()
 {
-    CHECK_JS_RETURN_VOID();
-    DoGotoSymbol(GetTagAtCaret(false, false));
+    CHECK_JS_RETURN_FALSE();
+    return DoGotoSymbol(GetTagAtCaret(false, false));
 }
 
 void ContextCpp::SwapFiles(const wxFileName& fileName)
@@ -2368,9 +2373,9 @@ wxString ContextCpp::CallTipContent()
     return wxEmptyString;
 }
 
-void ContextCpp::DoCodeComplete(long pos)
+bool ContextCpp::DoCodeComplete(long pos)
 {
-    CHECK_JS_RETURN_VOID();
+    CHECK_JS_RETURN_FALSE();
     clDEBUG1() << "ContextCpp::DoCodeComplete(" << pos << ") is called" << clEndl;
     long currentPosition = pos;
     bool showFuncProto = false;
@@ -2379,7 +2384,7 @@ void ContextCpp::DoCodeComplete(long pos)
     wxChar ch = editor.PreviousChar(pos, pos1);
 
     //	Make sure we are not on a comment section
-    if(IsCommentOrString(editor.PositionBefore(pos))) { return; }
+    if(IsCommentOrString(editor.PositionBefore(pos))) { return false; }
 
     // Search for first non-whitespace wxChar
     clDEBUG1() << "Triggering char is:" << ch << clEndl;
@@ -2394,7 +2399,7 @@ void ContextCpp::DoCodeComplete(long pos)
         if(editor.PreviousChar(pos1, pos2) == '-') {
             editor.PreviousChar(pos2, end);
         } else {
-            return;
+            return false;
         }
         break;
     case ':':
@@ -2403,17 +2408,17 @@ void ContextCpp::DoCodeComplete(long pos)
         if(editor.PreviousChar(pos1, pos2) == wxT(':')) {
             editor.PreviousChar(pos2, end);
         } else {
-            return;
+            return false;
         }
         break;
     case '(':
         showFuncProto = true;
         // is this setting is on?
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) { return; }
+        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) { return false; }
         editor.PreviousChar(pos1, end);
         break;
     default:
-        return;
+        return false;
     }
 
     // get expression
@@ -2473,11 +2478,11 @@ void ContextCpp::DoCodeComplete(long pos)
         // get the token
         wxString word = editor.GetTextRange(word_start, word_end);
         clDEBUG1() << "Function prototype is requested for:" << expr << "|" << word << clEndl;
-        CodeCompletionManager::Get().Calltip(&editor, line, expr, text, word);
+        return CodeCompletionManager::Get().Calltip(&editor, line, expr, text, word);
 
     } else {
         DoSetProjectPaths();
-        CodeCompletionManager::Get().CodeComplete(&editor, line, expr, text);
+        return CodeCompletionManager::Get().CodeComplete(&editor, line, expr, text);
     }
 }
 

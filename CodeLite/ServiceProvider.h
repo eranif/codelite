@@ -12,7 +12,7 @@ enum class eServiceType {
     kCodeCompletion,
 };
 
-class WXDLLIMPEXP_SDK ServiceProvider : public wxEvtHandler
+class WXDLLIMPEXP_CL ServiceProvider : public wxEvtHandler
 {
     wxString m_name;
     eServiceType m_type = eServiceType::kUnknown;

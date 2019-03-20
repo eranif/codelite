@@ -29,6 +29,7 @@
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/xml/xml.h>
+#include <wx/thread.h>
 
 struct Matcher {
     SmartPtr<wxRegEx> m_regex;
@@ -53,16 +54,18 @@ struct Matcher {
             return in.Find(m_exactMatch) != wxNOT_FOUND;
         }
     }
-    typedef SmartPtr<Matcher> Ptr_t;
 };
 
-thread_local std::unordered_map<wxString, FileExtManager::FileType> m_map;
-thread_local std::vector<Matcher::Ptr_t> m_matchers;
+static std::unordered_map<wxString, FileExtManager::FileType> m_map;
+static std::vector<Matcher> m_matchers;
+static wxCriticalSection m_CS;
 
 void FileExtManager::Init()
 {
+    wxCriticalSectionLocker locker(m_CS);
+
     // per thread initialization
-    thread_local bool init_done(false);
+    static bool init_done(false);
     if(!init_done) {
         init_done = true;
         m_map[wxT("cc")] = TypeSourceCpp;
@@ -164,40 +167,41 @@ void FileExtManager::Init()
         m_map["tags"] = TypeDatabase;
 
         // Initialize regexes:
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/sh", TypeScript)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeScript)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/python", TypePython)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/node", TypeJS)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/node", TypeJS)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/bin/nodejs", TypeJS)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#[ \t]*![ \t]*/usr/bin/nodejs", TypeJS)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?xml", TypeXml, false)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("<?php", TypePhp, false)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#!/usr/bin/env node", TypeJS, false)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#!/usr/bin/env nodejs", TypeJS, false)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("SQLite format 3", TypeDatabase, false)));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/sh", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/python", TypePython));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/node", TypeJS));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/node", TypeJS));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/nodejs", TypeJS));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/nodejs", TypeJS));
+        m_matchers.push_back(Matcher("<?xml", TypeXml, false));
+        m_matchers.push_back(Matcher("<?php", TypePhp, false));
+        m_matchers.push_back(Matcher("#!/usr/bin/env node", TypeJS, false));
+        m_matchers.push_back(Matcher("#!/usr/bin/env nodejs", TypeJS, false));
+        m_matchers.push_back(Matcher("SQLite format 3", TypeDatabase, false));
 
         // STL sources places "-*- C++ -*-" at the top of their headers
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("-*- C++ -*-", TypeSourceCpp, false)));
+        m_matchers.push_back(Matcher("-*- C++ -*-", TypeSourceCpp, false));
 
         // #ifndef WORD
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#ifndef[ \t]+[a-zA-Z0-9_]+", TypeSourceCpp)));
+        m_matchers.push_back(Matcher("#ifndef[ \t]+[a-zA-Z0-9_]+", TypeSourceCpp));
 
         // vim modlines
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("/\\* \\-\\*\\- Mode:[ \t]+c\\+\\+", TypeSourceCpp)));
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("# \\-\\*\\- Mode:[ \t]+python", TypePython)));
+        m_matchers.push_back(Matcher("/\\* \\-\\*\\- Mode:[ \t]+c\\+\\+", TypeSourceCpp));
+        m_matchers.push_back(Matcher("# \\-\\*\\- Mode:[ \t]+python", TypePython));
 
         // #include <
-        m_matchers.push_back(Matcher::Ptr_t(new Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp)));
+        m_matchers.push_back(Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp));
     }
 }
 
 FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileExtManager::FileType defaultType)
 {
     Init();
+    wxCriticalSectionLocker locker(m_CS);
 
     wxFileName fn(filename);
     if(fn.IsOk() == false) { return defaultType; }
@@ -249,6 +253,7 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
 
 bool FileExtManager::IsCxxFile(const wxString& filename)
 {
+    wxCriticalSectionLocker locker(m_CS);
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
@@ -259,12 +264,13 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
+    wxCriticalSectionLocker locker(m_CS);
     wxString fileContent;
     if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) { return false; }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
-        if(m_matchers.at(i)->Matches(fileContent)) {
-            fileType = m_matchers.at(i)->m_fileType;
+        if(m_matchers[i].Matches(fileContent)) {
+            fileType = m_matchers[i].m_fileType;
             return true;
         }
     }
@@ -273,6 +279,7 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 
 bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileType type)
 {
+    wxCriticalSectionLocker locker(m_CS);
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
@@ -289,6 +296,7 @@ bool FileExtManager::IsJavaFile(const wxString& filename) { return FileExtManage
 
 FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& filename)
 {
+    wxCriticalSectionLocker locker(m_CS);
     std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
     if(iter == m_map.end()) return TypeOther;
     return iter->second;

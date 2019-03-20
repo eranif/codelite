@@ -65,7 +65,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         // No need to repopulate the list, just set the active thread indicator
 
         // Loop over the table and set all threads to "NO"
-        for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
             ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
             d->GetThreadEntry().active = false;
             wxVariant v = "NO";
@@ -86,7 +86,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 
         if(threadID != wxNOT_FOUND) {
             // Update the new active thread
-            for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+            for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
                 ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
                 if(d->GetThreadEntry().dbgid == threadID) {
                     d->GetThreadEntry().active = true;
@@ -136,7 +136,7 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
 
 void ThreadListPanel::Clear()
 {
-    for(int i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         ThreadListClientData* d = (ThreadListClientData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         delete d;
     }

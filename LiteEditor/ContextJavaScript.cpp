@@ -48,9 +48,7 @@ void ContextJavaScript::ApplySettings()
 {
     SetName(wxT("javascript"));
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) {
-        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
-    }
+    if(EditorConfigST::Get()->IsOk()) { lexPtr = EditorConfigST::Get()->GetLexer(GetName()); }
     clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
@@ -70,12 +68,8 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) {
-        return;
-    }
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
-        return;
-    }
+    if(rCtrl.GetDisableSmartIndent()) { return; }
+    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) { return; }
 
     int curpos = rCtrl.GetCurrentPos();
     if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
@@ -168,10 +162,6 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
 
 wxString ContextJavaScript::CallTipContent() { return wxEmptyString; }
 
-void ContextJavaScript::CodeComplete(long pos) {}
-
-void ContextJavaScript::CompleteWord() {}
-
 int ContextJavaScript::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
 
 wxString ContextJavaScript::GetCurrentScopeName() { return wxT(""); }
@@ -181,8 +171,6 @@ wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 TagEntryPtr ContextJavaScript::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
 void ContextJavaScript::GoHyperlink(int start, int end, int type, bool alt) {}
-
-void ContextJavaScript::GotoDefinition() {}
 
 void ContextJavaScript::GotoPreviousDefintion() {}
 
@@ -217,9 +205,7 @@ void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) {
-        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
-    }
+    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex()); }
 }
 
 void ContextJavaScript::RemoveMenuDynamicContent(wxMenu* menu) {}

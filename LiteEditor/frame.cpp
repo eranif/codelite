@@ -82,6 +82,7 @@
 #include "context_cpp.h"
 #include "renamesymboldlg.h"
 #include <cpptoken.h>
+#include "ServiceProviderManager.h"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -5605,12 +5606,13 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
     if(curPos < start) return;
+    
     clCodeCompletionEvent ccEvent(wxEVT_CC_WORD_COMPLETE);
     ccEvent.SetEditor(editor);
     ccEvent.SetEventObject(this);
     ccEvent.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
     ccEvent.SetWord(stc->GetTextRange(start, curPos));
-    EventNotifier::Get()->ProcessEvent(ccEvent);
+    ServiceProviderManager::Get().ProcessEvent(ccEvent);
 
     const wxCodeCompletionBoxEntry::Vec_t& entries = ccEvent.GetEntries();
     if(entries.empty()) return;

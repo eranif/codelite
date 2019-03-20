@@ -1,8 +1,9 @@
 #include "LSP/DidChangeTextDocumentRequest.h"
 
+static int counter = 0;
+
 LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxFileName& filename, const wxString& fileContent)
 {
-    thread_local int counter = 0;
     SetMethod("textDocument/didChange");
     m_params.reset(new DidChangeTextDocumentParams());
 

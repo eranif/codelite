@@ -84,13 +84,13 @@ public:
      * @brief return the XML version of this workspace
      */
     wxString GetVersion() const;
-    
+
     /**
      * @brief return the local workspace settings associated with this workspace
-     * @return 
+     * @return
      */
     LocalWorkspace* GetLocalWorkspace() const { return m_localWorkspace; }
-    
+
 private:
     void DoUpdateBuildMatrix();
     /**
@@ -129,6 +129,8 @@ private:
     void DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& curpath, wxArrayString& paths) const;
 
 public:
+    void ClearBacktickCache();
+    
     /**
      * @brief move 'projectName' to folder. Create the folder if it does not exists
      */

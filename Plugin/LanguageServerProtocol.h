@@ -135,7 +135,7 @@ public:
     /**
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */
-    static const std::set<wxString>& GetSupportedLanguages();
+    static std::set<wxString> GetSupportedLanguages();
     bool CanHandle(const wxFileName& filename) const;
 
     /**

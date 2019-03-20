@@ -36,8 +36,9 @@
 #include "CxxUsingNamespaceCollectorThread.h"
 #include <thread>
 #include "CompileCommandsGenerator.h"
+#include "ServiceProvider.h"
 
-class CodeCompletionManager : public wxEvtHandler
+class CodeCompletionManager : public ServiceProvider
 {
 protected:
     size_t m_options;
@@ -88,10 +89,20 @@ protected:
     void OnBlockCommentCodeComplete(clCodeCompletionEvent& event);
     void OnBlockCommentWordComplete(clCodeCompletionEvent& event);
 
+protected:
+    // Code completion handlers
+    void OnCodeCompletion(clCodeCompletionEvent& event);
+    void OnWordCompletion(clCodeCompletionEvent& event);
+    void OnFindSymbol(clCodeCompletionEvent& event);
+    void OnFindDecl(clCodeCompletionEvent& event);
+    void OnFindImpl(clCodeCompletionEvent& event);
+    void OnFunctionCalltip(clCodeCompletionEvent& event);
+    void OnTypeInfoToolTip(clCodeCompletionEvent& event);
+    
 public:
     CodeCompletionManager();
     virtual ~CodeCompletionManager();
-
+    
     /**
      * @brief force a refresh based on the current settings
      */
@@ -114,9 +125,9 @@ public:
     static CodeCompletionManager& Get();
     static void Release();
 
-    void WordCompletion(clEditor* editor, const wxString& expr, const wxString& word);
-    void Calltip(clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word);
-    void CodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text);
+    bool WordCompletion(clEditor* editor, const wxString& expr, const wxString& word);
+    bool Calltip(clEditor* editor, int line, const wxString& expr, const wxString& text, const wxString& word);
+    bool CodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text);
     void ProcessMacros(clEditor* editor);
     void ProcessUsingNamespace(clEditor* editor);
     void GotoImpl(clEditor* editor);

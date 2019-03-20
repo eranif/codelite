@@ -78,14 +78,14 @@ public:
     // ctor-dtor
     ContextBase(clEditor* container);
     ContextBase(const wxString& name);
-    
+
     virtual ~ContextBase();
-    
+
     /**
      * @brief user typed '@' inside a block comment. Code complete possible keywords
      */
     virtual void BlockCommentComplete();
-    
+
     /**
      * @brief return true if str is a string that should trigger a code completion
      */
@@ -118,7 +118,6 @@ public:
     virtual void OnCalltipCancel(){};
     virtual void OnDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnDwellStart(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellStart(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void AddMenuDynamicContent(wxMenu* WXUNUSED(menu)) {}
@@ -141,9 +140,14 @@ public:
     virtual bool IsAtLineComment() const { return false; }
     virtual void AutoIndent(const wxChar&);
     virtual void AutoAddComment();
-    virtual void CompleteWord() {}
-    virtual void CodeComplete(long pos = wxNOT_FOUND) { wxUnusedVar(pos); }
-    virtual void GotoDefinition() {}
+    virtual bool CompleteWord() { return false; }
+    virtual bool CodeComplete(long pos = wxNOT_FOUND)
+    {
+        wxUnusedVar(pos);
+        return false;
+    }
+    virtual bool GetHoverTip(int pos) { return false; }
+    virtual bool GotoDefinition() { return false; }
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return NULL; }
     virtual wxString GetCurrentScopeName() { return wxEmptyString; }
     virtual void SemicolonShift() {}

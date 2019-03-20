@@ -51,9 +51,7 @@
 #include "fileutils.h"
 #include "localworkspace.h"
 
-// Make the s_backticks thread safe
-thread_local wxStringMap_t s_backticks;
-
+// Make the m_backticks thread safe
 #define EXCLUDE_FROM_BUILD_FOR_CONFIG "ExcludeProjConfig"
 
 // ============---------------------
@@ -1223,10 +1221,7 @@ size_t Project::GetFileFlags(const wxString& fileName, const wxString& virtualDi
 const wxStringSet_t& Project::GetExcludeConfigForFile(const wxString& filename) const
 {
     clProjectFile::Ptr_t pfile = GetFile(filename);
-    if(!pfile) {
-        thread_local wxStringSet_t emptySet;
-        return emptySet;
-    }
+    if(!pfile) { return emptySet; }
     return pfile->GetExcludeConfigs();
 }
 
@@ -1308,7 +1303,7 @@ static void GetExtraFlags(wxString& content, CompilerPtr compiler)
 }
 
 wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
-                                           const wxString& filenamePlaceholder, bool cxxFile) const
+                                           const wxString& filenamePlaceholder, bool cxxFile)
 {
     // Return a compilation line for a CXX file
     if(!buildConf) { return ""; }
@@ -1374,7 +1369,7 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     return commandLine;
 }
 
-wxString Project::DoExpandBacktick(const wxString& backtick) const
+wxString Project::DoExpandBacktick(const wxString& backtick)
 {
     wxString tmp;
     wxString cmpOption = backtick;
@@ -1386,7 +1381,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
         tmp.Clear();
         if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) { cmpOption = tmp; }
 
-        if(s_backticks.find(cmpOption) == s_backticks.end()) {
+        if(m_backticks.find(cmpOption) == m_backticks.end()) {
 
             // Expand the backticks into their value
             wxString expandedValue;
@@ -1397,11 +1392,11 @@ wxString Project::DoExpandBacktick(const wxString& backtick) const
                 if(p) { p->WaitForTerminate(expandedValue); }
             }
 
-            s_backticks[cmpOption] = expandedValue;
+            m_backticks[cmpOption] = expandedValue;
             cmpOption = expandedValue;
 
         } else {
-            cmpOption = s_backticks.find(cmpOption)->second;
+            cmpOption = m_backticks.find(cmpOption)->second;
         }
     }
 
@@ -1517,7 +1512,7 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
-        if(clearCache) { s_backticks.clear(); }
+        if(clearCache) { m_backticks.clear(); }
 
         // Get the pre-processors and add them to the array
         wxString projectPPS = buildConf->GetPreprocessor();
@@ -1565,7 +1560,7 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
-        if(clearCache) { s_backticks.clear(); }
+        if(clearCache) { m_backticks.clear(); }
 
         // Get the switches from
         wxString optionsStr = cxxOptions ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -1630,7 +1625,7 @@ void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
     }
 }
 
-void Project::ClearBacktickCache() { s_backticks.clear(); }
+void Project::ClearBacktickCache() { m_backticks.clear(); }
 
 void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const
 {
@@ -1639,7 +1634,7 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
     if(buildConfig) {
         // Check for environment variables
         // Environment variable has the format of $(VAR_NAME)
-        thread_local wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
+        wxRegEx reEnvironmentVar("\\$\\(([a-z0-9_]+)\\)", wxRE_ICASE | wxRE_ADVANCED);
 
         wxString includePaths = buildConfig->GetIncludePath();
         wxString libPaths = buildConfig->GetLibPath();
@@ -1718,7 +1713,7 @@ wxArrayString Project::DoGetUnPreProcessors(bool clearCache, const wxString& cmp
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
-    if(clearCache) { s_backticks.clear(); }
+    if(clearCache) { m_backticks.clear(); }
 
     // Atm, we can only "set" undefined in the compiler options
     wxArrayString projectCompileOptionsArr = ::wxStringTokenize(cmpOptions, ";", wxTOKEN_STRTOK);
@@ -1915,7 +1910,7 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
         ProcessMacros(cxxParser.GetMacrosWithPrefix(), macroSet);
         ProcessMacros(cParser.GetMacrosWithPrefix(), macroSet);
     }
-    
+
     // Write the include paths
     for(const wxString& path : pathsVec) {
         compile_flags_content << path << "\n";

@@ -1,12 +1,18 @@
 #include "ServiceProviderManager.h"
 #include <algorithm>
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 ServiceProviderManager::ServiceProviderManager() {}
 
-ServiceProviderManager::~ServiceProviderManager() {}
+ServiceProviderManager::~ServiceProviderManager() { m_providers.clear(); }
 
 void ServiceProviderManager::Register(ServiceProvider* provider)
 {
+    // No duplicates
+    Unregister(provider);
+
+    // Now register the service
     if(this->m_providers.count(provider->GetType()) == 0) {
         m_providers.insert({ provider->GetType(), ServiceProvider::Vec_t() });
     }
@@ -36,19 +42,36 @@ void ServiceProviderManager::Unregister(ServiceProvider* provider)
 
 ServiceProviderManager& ServiceProviderManager::Get()
 {
-    thread_local ServiceProviderManager instance;
+    static ServiceProviderManager instance;
     return instance;
 }
 
-bool ServiceProviderManager::ProcessEvent(wxEvent& event, eServiceType type)
+bool ServiceProviderManager::ProcessEvent(wxEvent& event)
 {
-    if(m_providers.count(type)) {
+    eServiceType type = GetServiceFromEvent(event);
+    if(type == eServiceType::kUnknown || m_providers.count(type) == 0) {
+        // Let the default event processing take place by using EventNotifier
+        return EventNotifier::Get()->ProcessEvent(event);
+    } else {
+        // Call our chain
         auto& V = m_providers[type];
         for(ServiceProvider* p : V) {
             if(p->ProcessEvent(event)) { return true; }
         }
         return false;
-    } else {
-        return wxEvtHandler::ProcessEvent(event);
     }
 }
+
+eServiceType ServiceProviderManager::GetServiceFromEvent(wxEvent& event)
+{
+    wxEventType type = event.GetEventType();
+    // Code Completion events
+    if(type == wxEVT_CC_CODE_COMPLETE || type == wxEVT_CC_FIND_SYMBOL || type == wxEVT_CC_FIND_SYMBOL_DECLARATION ||
+       type == wxEVT_CC_FIND_SYMBOL_DEFINITION || type == wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP ||
+       type == wxEVT_CC_TYPEINFO_TIP || type == wxEVT_CC_WORD_COMPLETE) {
+        return eServiceType::kCodeCompletion;
+    }
+    return eServiceType::kUnknown;
+}
+
+void ServiceProviderManager::UnregisterAll() { m_providers.clear(); }

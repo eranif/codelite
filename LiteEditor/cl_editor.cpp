@@ -81,6 +81,7 @@
 #include <wx/wupdlock.h>
 #include "imanager.h"
 #include "bitmap_loader.h"
+#include "ServiceProviderManager.h"
 //#include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -1659,22 +1660,13 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     }
 
     // Let the plugins a chance to override the default behavior
-    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+    clCodeCompletionEvent evt(wxEVT_CC_WORD_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor(this);
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
     evt.SetTriggerKind(triggerKind);
     evt.SetEventObject(this);
-
-    if(EventNotifier::Get()->ProcessEvent(evt)) {
-        // the plugin handled the code-complete request
-        return;
-
-    } else {
-        CodeCompletionManager::Get().SetWordCompletionRefreshNeeded(onlyRefresh);
-        // let the built-in context do the job
-        m_context->CompleteWord();
-    }
+    ServiceProviderManager::Get().ProcessEvent(evt);
 }
 
 //------------------------------------------------------------------
@@ -1695,15 +1687,7 @@ void clEditor::CodeComplete(bool refreshingList)
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetEventObject(this);
         evt.SetEditor(this);
-
-        if(EventNotifier::Get()->ProcessEvent(evt))
-            // the plugin handled the code-complete request
-            return;
-
-        else {
-            // let the built-in context do the job
-            m_context->CodeComplete();
-        }
+        ServiceProviderManager::Get().ProcessEvent(evt);
 
     } else {
         CompleteWord(LSP::CompletionItem::kTriggerCharacter);
@@ -1725,9 +1709,7 @@ void clEditor::GotoDefinition()
     event.SetWord(word);
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    if(EventNotifier::Get()->ProcessEvent(event)) return;
-
-    m_context->GotoDefinition();
+    ServiceProviderManager::Get().ProcessEvent(event);
 }
 
 void clEditor::OnDwellStart(wxStyledTextEvent& event)
@@ -1795,12 +1777,8 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         evtTypeinfo.SetEditor(this);
         evtTypeinfo.SetPosition(event.GetPosition());
         evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
-
-        if(EventNotifier::Get()->ProcessEvent(evtTypeinfo)) {
-            // Did the user provide a tooltip?
+        if(ServiceProviderManager::Get().ProcessEvent(evtTypeinfo)) {
             if(!evtTypeinfo.GetTooltip().IsEmpty()) { DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip(), true); }
-        } else {
-            m_context->OnDwellStart(event);
         }
     }
 }
@@ -4052,26 +4030,18 @@ int clEditor::GetEOLByOS()
 
 void clEditor::ShowFunctionTipFromCurrentPos()
 {
-    clDEBUG1() << "Calling ShowFunctionTipFromCurrentPos..." << clEndl;
     if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
 
         if(EventNotifier::Get()->IsEventsDiabled()) return;
 
         int pos = DoGetOpenBracePos();
-        clDEBUG1() << "Brace open position is:" << pos << clEndl;
-        clDEBUG1() << "Firing wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event..." << clEndl;
         // see if any of the plugins want to handle it
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
         evt.SetEventObject(this);
         evt.SetEditor(this);
         evt.SetPosition(pos);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
-        if(EventNotifier::Get()->ProcessEvent(evt)) return;
-
-        if(pos != wxNOT_FOUND) {
-            clDEBUG1() << "Using default behavior for wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP event" << clEndl;
-            m_context->CodeComplete(pos);
-        }
+        ServiceProviderManager::Get().ProcessEvent(evt);
     }
 }
 

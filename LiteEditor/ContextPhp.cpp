@@ -211,10 +211,6 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
 
 wxString ContextPhp::CallTipContent() { return wxEmptyString; }
 
-void ContextPhp::CodeComplete(long pos) {}
-
-void ContextPhp::CompleteWord() {}
-
 int ContextPhp::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
 
 wxString ContextPhp::GetCurrentScopeName() { return wxT(""); }
@@ -222,10 +218,6 @@ wxString ContextPhp::GetCurrentScopeName() { return wxT(""); }
 wxMenu* ContextPhp::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextPhp::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
-
-void ContextPhp::GoHyperlink(int start, int end, int type, bool alt) {}
-
-void ContextPhp::GotoDefinition() {}
 
 void ContextPhp::GotoPreviousDefintion() {}
 

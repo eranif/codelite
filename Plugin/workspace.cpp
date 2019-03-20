@@ -1476,3 +1476,10 @@ void clCxxWorkspace::CreateCompileFlags() const
         vt.second->CreateCompileFlags(compilersGlobalPaths);
     }
 }
+
+void clCxxWorkspace::ClearBacktickCache()
+{
+    for(ProjectMap_t::value_type& vt : m_projects) {
+        vt.second->ClearBacktickCache();
+    }
+}

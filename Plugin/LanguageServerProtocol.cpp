@@ -91,23 +91,19 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
     }
 }
 
-const std::set<wxString>& LanguageServerProtocol::GetSupportedLanguages()
+std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 {
-    thread_local std::set<wxString> S;
-    if(S.empty()) {
-        S = { "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
-              "cpp",        "csharp",     "css",         "diff",          "dart",
-              "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
-              "groovy",     "handlebars", "html",        "ini",           "java",
-              "javascript", "json",       "latex",       "less",          "lua",
-              "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
-              "php",        "powershell", "jade",        "python",        "r",
-              "razor",      "ruby",       "rust",        "scss",          "sass",
-              "scala",      "shaderlab",  "shellscript", "sql",           "swift",
-              "typescript", "tex",        "vb",          "xml",           "xsl",
-              "yaml" };
-    }
-    return S;
+    return { "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
+             "cpp",        "csharp",     "css",         "diff",          "dart",
+             "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
+             "groovy",     "handlebars", "html",        "ini",           "java",
+             "javascript", "json",       "latex",       "less",          "lua",
+             "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
+             "php",        "powershell", "jade",        "python",        "r",
+             "razor",      "ruby",       "rust",        "scss",          "sass",
+             "scala",      "shaderlab",  "shellscript", "sql",           "swift",
+             "typescript", "tex",        "vb",          "xml",           "xsl",
+             "yaml" };
 }
 
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)

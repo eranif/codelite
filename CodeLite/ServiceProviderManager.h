@@ -11,7 +11,7 @@
 // But process events in order. Each 'handler' (aka: ServiceProvider)
 // Registers itself for a service with a priority. The higher the prio, it will get
 // called first
-class WXDLLIMPEXP_SDK ServiceProviderManager : public wxEvtHandler
+class WXDLLIMPEXP_CL ServiceProviderManager : public wxEvtHandler
 {
     std::unordered_map<eServiceType, ServiceProvider::Vec_t> m_providers;
     friend class ServiceProvider;
@@ -22,13 +22,19 @@ protected:
 
     void Register(ServiceProvider* provider);
     void Unregister(ServiceProvider* provider);
+    eServiceType GetServiceFromEvent(wxEvent& event);
 
 public:
     static ServiceProviderManager& Get();
     
     /**
+     * @brief remove all providers
+     */
+    void UnregisterAll();
+    
+    /**
      * @brief process service event
      */
-    bool ProcessEvent(wxEvent& event, eServiceType type);
+    virtual bool ProcessEvent(wxEvent& event);
 };
 #endif // SERVICEPROVIDERMANAGER_H

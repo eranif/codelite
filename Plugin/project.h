@@ -322,7 +322,9 @@ private:
     FilesMap_t m_filesTable;
     FoldersMap_t m_virtualFoldersTable;
     wxStringSet_t m_excludeFiles;
-
+    wxStringMap_t m_backticks;
+    wxStringSet_t emptySet;
+    
 private:
     void DoUpdateProjectSettings();
     void DoBuildCacheFromXml();
@@ -771,7 +773,7 @@ public:
      * name which can later be replaced by the caller with the actual file name
      */
     wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
-                                      const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true) const;
+                                      const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true);
 
     void ClearAllVirtDirs();
 
@@ -845,7 +847,7 @@ public:
     /**
      * @brief clear the backtick expansion info
      */
-    static void ClearBacktickCache();
+    void ClearBacktickCache();
 
 private:
     /**
@@ -858,7 +860,7 @@ private:
     void DoDeleteVDFromCache(const wxString& vd);
     wxArrayString DoBacktickToIncludePath(const wxString& backtick);
     wxArrayString DoBacktickToPreProcessors(const wxString& backtick);
-    wxString DoExpandBacktick(const wxString& backtick) const;
+    wxString DoExpandBacktick(const wxString& backtick);
     void DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree);
 
     // Recursive helper function

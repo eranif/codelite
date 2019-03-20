@@ -106,6 +106,7 @@
 #include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "ServiceProviderManager.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -257,7 +258,7 @@ Manager::~Manager(void)
 
     // free all plugins
     PluginManager::Get()->UnLoad();
-
+    ServiceProviderManager::Get().UnregisterAll();
     DebuggerMgr::Free();
     JobQueueSingleton::Release();
     ParseThreadST::Free(); // since the parser is making use of the TagsManager,

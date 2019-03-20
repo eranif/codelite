@@ -289,11 +289,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_SET_MEMORY, clDebugEvent
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 
-// User hit Ctrl-Space in the editor
-// let the plugins a chance to handle this
-// event.
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletionEvent);
-
 // User selected an entry from the code completion box. call event.Skip(false)
 // if you wish to perform something unique instead of the default "insert selection into editor"
 // The selected string can be retrieved by calling: event.GetWord()
@@ -304,28 +299,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SELECTION_MADE, clCodeCompl
 // via the event.SetEntries();
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CCBOX_SHOWING, clCodeCompletionEvent);
 
-/// User asked for "word completion" (non context code completion event)
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletionEvent);
-
-// A function calltip is requesed
-// clientData is set to the client data set by the user
-// the plugin returns the tooltip to the IDE using the:
-// evt.SetTooltip(..) method
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, clCodeCompletionEvent);
-
 // The code completion box has been dismissed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED, clCodeCompletionEvent);
 
 // User has requested to display the current files' outline
 // Use m_mgr->GetActiveEditor() to get the active editor
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SHOW_QUICK_OUTLINE, clCodeCompletionEvent);
-
-// User is hovering a text, display the typeinfo
-// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
-// Hover position is set in the evt.GetPosition()
-// To pass a new tooltip, just call event.SetTooltip(...)
-// CodeLite will display the tooltip if a non empty string is passed. Simple markup is allowed (<br> <hr> etc)
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEvent);
 
 // Send a clCodeCompletionEvent
 // Codelite is about to show the completion box for language keywords
@@ -337,13 +316,47 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, cl
 // Use event.GetString() to get the hyperlink text
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeCompletionEvent);
 
-// User requested to perform a raw search for a symbol
+//===----------------------------------------------------------------------------------------------
+//===----------------------------------------------------------------------------------------------
+//      Below events are processed via the ServiceProviderManager class and NOT by EventNotifier!!
+//      To be able to receive them your handler must subclass ServiceProvider
+//===----------------------------------------------------------------------------------------------
+//===----------------------------------------------------------------------------------------------
+
+// Search the workspace for a symbol
 // Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionEvent);
 
-// User requested to a symbol declaration
-// Use evt.GetWord() to get the searched string
+// Find symbol declaration. Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DECLARATION, clCodeCompletionEvent);
+
+// Find symbol definition. Use evt.GetWord() to get the searched string
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DEFINITION, clCodeCompletionEvent);
+
+// Request for code completion
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletionEvent);
+
+/// User asked for "word completion" (non context code completion event)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletionEvent);
+
+// A function calltip is requesed
+// clientData is set to the client data set by the user
+// the plugin returns the tooltip to the IDE using the:
+// evt.SetTooltip(..) method
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, clCodeCompletionEvent);
+
+// User is hovering a text, display the typeinfo
+// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
+// Hover position is set in the evt.GetPosition()
+// To pass a new tooltip, just call event.SetTooltip(...)
+// CodeLite will display the tooltip if a non empty string is passed. Simple markup is allowed (<br> <hr> etc)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEvent);
+
+//===----------------------------------------------------------------------------------------------
+//===----------------------------------------------------------------------------------------------
+//      END ServiceProviderManager events
+//===----------------------------------------------------------------------------------------------
+//===----------------------------------------------------------------------------------------------
 
 // Event type: clCodeCompletionEvent
 // Sent by codelite to generate documentation block for class or function

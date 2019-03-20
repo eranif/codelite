@@ -61,7 +61,8 @@ struct _SAscendingSort {
 PHPCodeCompletion* PHPCodeCompletion::m_instance = NULL;
 
 PHPCodeCompletion::PHPCodeCompletion()
-    : m_manager(NULL)
+    : ServiceProvider("PHP Plugin", eServiceType::kCodeCompletion)
+    , m_manager(NULL)
     , m_typeInfoTooltip(NULL)
 {
     EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_WORKSPACE, wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace),
@@ -70,22 +71,15 @@ PHPCodeCompletion::PHPCodeCompletion()
                                   wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
-    EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip), NULL, this);
+
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL,
                                   this);
-    EventNotifier::Get()->Connect(wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEventHandler(PHPCodeCompletion::OnTypeinfoTip),
-                                  NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_CC_GENERATE_DOXY_BLOCK,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CC_FIND_SYMBOL, clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol),
-                                  NULL, this);
     EventNotifier::Get()->Connect(wxEVT_CC_JUMP_HYPER_LINK,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
@@ -93,6 +87,12 @@ PHPCodeCompletion::PHPCodeCompletion()
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &PHPCodeCompletion::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE,
                                &PHPCodeCompletion::OnNavigationBarMenuSelectionMade, this);
+
+    // code completion events
+    Bind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
+    Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
+    Bind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
+    Bind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
 }
 
 PHPCodeCompletion::~PHPCodeCompletion()
@@ -104,21 +104,12 @@ PHPCodeCompletion::~PHPCodeCompletion()
                                      wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
-
-    EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeComplete), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnFunctionCallTip), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL,
                                      this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_TYPEINFO_TIP,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnTypeinfoTip), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_CODE_COMPLETE_BOX_DISMISSED,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompletionBoxDismissed),
                                      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_FIND_SYMBOL,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnFindSymbol), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_GENERATE_DOXY_BLOCK,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_JUMP_HYPER_LINK,
@@ -127,6 +118,11 @@ PHPCodeCompletion::~PHPCodeCompletion()
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &PHPCodeCompletion::OnNavigationBarMenuShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE,
                                  &PHPCodeCompletion::OnNavigationBarMenuSelectionMade, this);
+    // code completion events
+    Unbind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
+    Unbind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
+    Unbind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
 }
 
 PHPCodeCompletion* PHPCodeCompletion::Instance()
@@ -333,7 +329,7 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
                 e.Skip(false);
 
                 // get the position
-                PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition(), true);
+                PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, e.GetPosition(), true);
                 if(resolved) {
                     // In PHP there is no overloading, so there can be only one signature for a function
                     // so we simply place our match into TagEntryPtrVector_t structure and pass it to the editor

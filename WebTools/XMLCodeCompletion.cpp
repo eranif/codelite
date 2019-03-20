@@ -12,9 +12,12 @@
 #include "imanager.h"
 #include <wx/xrc/xmlres.h>
 #include "WebToolsConfig.h"
+#include "webtools.h"
 
-XMLCodeCompletion::XMLCodeCompletion()
-    : m_completeReason(kNone)
+XMLCodeCompletion::XMLCodeCompletion(WebTools* plugin)
+    : ServiceProvider("WebTools: XML", eServiceType::kCodeCompletion)
+    , m_completeReason(kNone)
+    , m_plugin(plugin)
 {
     PrepareHtmlCompletions();
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &XMLCodeCompletion::OnCodeCompleted, this);
@@ -22,11 +25,13 @@ XMLCodeCompletion::XMLCodeCompletion()
     WebToolsConfig& conf = WebToolsConfig::Get();
     m_htmlCcEnabeld = conf.HasHtmlFlag(WebToolsConfig::kHtmlEnableCC);
     m_xmlCcEnabled = conf.HasXmlFlag(WebToolsConfig::kXmlEnableCC);
+    Bind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
 }
 
 XMLCodeCompletion::~XMLCodeCompletion()
 {
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &XMLCodeCompletion::OnCodeCompleted, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE, &XMLCodeCompletion::OnCodeComplete, this);
 }
 
 void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)
@@ -356,4 +361,19 @@ int XMLCodeCompletion::GetWordStartPos(IEditor* editor)
         if(editor->GetCharAtPos(i) == '<') { return i; }
     }
     return editor->WordStartPos(editor->GetCurrentPosition(), true);
+}
+
+void XMLCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    if(editor && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
+        // an XML file
+        event.Skip(false);
+        XmlCodeComplete(editor);
+    } else if(editor && m_plugin->IsHTMLFile(editor)) {
+        // Html code completion
+        event.Skip(false);
+        HtmlCodeComplete(editor);
+    }
 }

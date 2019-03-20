@@ -81,7 +81,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
     m_topWindow = m_mgr->GetTheApp();
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
+    m_helper = new AbbreviationServiceProvider(this);
     InitDefaults();
 }
 
@@ -109,10 +109,10 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
+    wxDELETE(m_helper);
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SHOWING, &AbbreviationPlugin::OnCompletionBoxShowing, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationPlugin::OnWordComplete, this);
 }
 
 void AbbreviationPlugin::OnSettings(wxCommandEvent& e)
@@ -310,8 +310,16 @@ void AbbreviationPlugin::OnCompletionBoxShowing(clCodeCompletionEvent& event)
     event.Skip();
 }
 
-void AbbreviationPlugin::OnWordComplete(clCodeCompletionEvent& event)
+// Helper
+AbbreviationServiceProvider::AbbreviationServiceProvider(AbbreviationPlugin* plugin)
+    : ServiceProvider("Abbreviations", eServiceType::kCodeCompletion)
+    , m_plugin(plugin)
 {
-    event.Skip();
-    AddAbbreviations(event);
+    Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
 }
+
+AbbreviationServiceProvider::~AbbreviationServiceProvider()
+{
+    Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
+}
+void AbbreviationServiceProvider::OnWordComplete(clCodeCompletionEvent& event) { m_plugin->AddAbbreviations(event); }

@@ -28,11 +28,28 @@
 
 #include "cl_command_event.h"
 #include "plugin.h"
+#include "ServiceProvider.h"
+
+class AbbreviationPlugin;
+class AbbreviationServiceProvider : public ServiceProvider
+{
+    AbbreviationPlugin* m_plugin = nullptr;
+
+protected:
+    void OnWordComplete(clCodeCompletionEvent& event);
+
+public:
+    AbbreviationServiceProvider(AbbreviationPlugin* plugin);
+    virtual ~AbbreviationServiceProvider();
+};
 
 class AbbreviationPlugin : public IPlugin
 {
     wxEvtHandler* m_topWindow;
     clConfig m_config;
+    AbbreviationServiceProvider* m_helper = nullptr;
+
+    friend class AbbreviationServiceProvider;
 
 protected:
     void OnSettings(wxCommandEvent& e);
@@ -41,7 +58,6 @@ protected:
     void InitDefaults();
     bool InsertExpansion(const wxString& abbreviation);
     void OnCompletionBoxShowing(clCodeCompletionEvent& event);
-    void OnWordComplete(clCodeCompletionEvent& event);
 
 public:
     AbbreviationPlugin(IManager* manager);

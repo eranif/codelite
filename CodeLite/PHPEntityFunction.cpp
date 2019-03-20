@@ -147,3 +147,11 @@ JSONItem PHPEntityFunction::ToJSON() const
     json.addProperty("signature", m_strSignature);
     return json;
 }
+
+wxString PHPEntityFunction::ToTooltip() const
+{
+    wxString tip;
+    tip << GetShortName() << GetSignature();
+    if(!GetReturnValue().IsEmpty()) { tip << " : " << GetReturnValue(); }
+    return tip;
+}

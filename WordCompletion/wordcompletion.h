@@ -31,11 +31,27 @@
 #include "UI.h"
 #include "cl_command_event.h"
 #include "macros.h"
+#include "ServiceProvider.h"
 
 class WordCompletionDictionary;
+class WordCompletionPlugin;
+class WordCompleter : public ServiceProvider
+{
+    WordCompletionPlugin* m_plugin = nullptr;
+
+protected:
+    void OnWordComplete(clCodeCompletionEvent& event);
+
+public:
+    WordCompleter(WordCompletionPlugin* plugin);
+    virtual ~WordCompleter();
+};
+
 class WordCompletionPlugin : public IPlugin
 {
-    WordCompletionDictionary* m_dictionary;
+    WordCompletionDictionary* m_dictionary = nullptr;
+    WordCompleter* m_completer = nullptr;
+    friend class WordCompleter;
 
 public:
     void OnWordComplete(clCodeCompletionEvent& event);

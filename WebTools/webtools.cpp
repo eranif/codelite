@@ -81,12 +81,6 @@ WebTools::WebTools(IManager* manager)
     // Context menu
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &WebTools::OnEditorContextMenu, this);
 
-    // Code completion related events
-    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &WebTools::OnFindSymbol, this);
-
     // Workspace related events
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
@@ -103,8 +97,8 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_NODE_COMMAND_TERMINATED, &WebTools::OnNodeCommandCompleted, this);
 
     m_jsCodeComplete.Reset(new JSCodeCompletion("", this));
-    m_xmlCodeComplete.Reset(new XMLCodeCompletion());
-    m_cssCodeComplete.Reset(new CSSCodeCompletion());
+    m_xmlCodeComplete.Reset(new XMLCodeCompletion(this));
+    m_cssCodeComplete.Reset(new CSSCodeCompletion(this));
     m_jsctags.Reset(new clJSCTags());
 
     // Connect the timer
@@ -144,10 +138,6 @@ void WebTools::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &WebTools::OnThemeChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD, &WebTools::OnCodeComplete, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &WebTools::OnCodeCompleteFunctionCalltip,
-                                 this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WebTools::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WebTools::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &WebTools::OnEditorChanged, this);
@@ -198,33 +188,6 @@ void WebTools::OnThemeChanged(wxCommandEvent& event)
     }
 }
 
-void WebTools::OnCodeComplete(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor)) {
-        event.Skip(false);
-        if(InsideJSComment(editor) || InsideJSString(editor)) {
-            // User the word completion plugin instead
-            m_jsCodeComplete->TriggerWordCompletion();
-        } else {
-            m_jsCodeComplete->CodeComplete(editor);
-        }
-    } else if(editor && m_xmlCodeComplete && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
-        // an XML file
-        event.Skip(false);
-        m_xmlCodeComplete->XmlCodeComplete(editor);
-    } else if(editor && m_xmlCodeComplete && IsHTMLFile(editor)) {
-        // Html code completion
-        event.Skip(false);
-        m_xmlCodeComplete->HtmlCodeComplete(editor);
-    } else if(editor && m_cssCodeComplete && IsCSSFile(editor)) {
-        // CSS code completion
-        event.Skip(false);
-        m_cssCodeComplete->CssCodeComplete(editor);
-    }
-}
-
 bool WebTools::IsJavaScriptFile(const wxFileName& filename)
 {
     return FileExtManager::GetType(filename.GetFullName()) == FileExtManager::TypeJS;
@@ -233,16 +196,6 @@ bool WebTools::IsJavaScriptFile(const wxFileName& filename)
 bool WebTools::IsJavaScriptFile(const wxString& filename)
 {
     return FileExtManager::GetType(filename) == FileExtManager::TypeJS;
-}
-
-void WebTools::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        event.Skip(false);
-        m_jsCodeComplete->CodeComplete(editor);
-    }
 }
 
 void WebTools::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
@@ -411,11 +364,16 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
     event.Skip();
     wxFileName workspaceFile = event.GetString();
     if(FileExtManager::GetType(workspaceFile.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
+        // we need to do this in 2 steps: this is the because the service provider will auto register us on destuctions
+        // by NAME this means, that 'reset' will first call 'new' followed by 'delete' so we will end up to be removed
+        // from the list of service providers
+        m_jsCodeComplete.Reset(nullptr);
         m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
     } else {
         // For non NodeJS workspaces, create the .tern files under
         // the .codelite folder
         workspaceFile.AppendDir(".codelite");
+        m_jsCodeComplete.Reset(nullptr);
         m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
     }
 }
@@ -423,16 +381,6 @@ void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
 bool WebTools::IsCSSFile(IEditor* editor)
 {
     return (FileExtManager::GetType(editor->GetFileName().GetFullName()) == FileExtManager::TypeCSS);
-}
-
-void WebTools::OnFindSymbol(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        event.Skip(false);
-        m_jsCodeComplete->FindDefinition(editor);
-    }
 }
 
 void WebTools::OnFileLoaded(clCommandEvent& event)

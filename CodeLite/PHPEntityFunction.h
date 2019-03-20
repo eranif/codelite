@@ -77,6 +77,8 @@ public:
      * @param db
      */
     virtual void Store(PHPLookupTable* lookup);
+    
+    virtual wxString ToTooltip() const;
 };
 
 #endif // PHPENTITYFUNCTION_H

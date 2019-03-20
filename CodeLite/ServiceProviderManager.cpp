@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "event_notifier.h"
 #include "codelite_events.h"
+#include "file_logger.h"
 
 ServiceProviderManager::ServiceProviderManager() {}
 
@@ -11,7 +12,8 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
 {
     // No duplicates
     Unregister(provider);
-
+    clDEBUG() << "Handler:" << provider->GetName() << "registerd. Priority:" << provider->GetPriority()
+              << ". Type:" << (int)provider->GetType();
     // Now register the service
     if(this->m_providers.count(provider->GetType()) == 0) {
         m_providers.insert({ provider->GetType(), ServiceProvider::Vec_t() });
@@ -22,6 +24,12 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
     // Sort the providers by priority (descending order)
     std::sort(V.begin(), V.end(),
               [](ServiceProvider* a, ServiceProvider* b) { return a->GetPriority() > b->GetPriority(); });
+
+    wxString order;
+    for(ServiceProvider* p : V) {
+        order << p->GetName() << ", ";
+    }
+    clDEBUG() << "Handlers list:" << order;
 }
 
 void ServiceProviderManager::Unregister(ServiceProvider* provider)
@@ -32,11 +40,12 @@ void ServiceProviderManager::Unregister(ServiceProvider* provider)
     // Find our provider and remove it
     while(true) {
         // Do this in a loop, incase someone registered this provider twice...
-        auto where = std::find_if(V.begin(), V.end(), [&](ServiceProvider* p) {
-            return p == provider; // yes, pointer comparison...
-        });
+        auto where =
+            std::find_if(V.begin(), V.end(), [&](ServiceProvider* p) { return p->GetName() == provider->GetName(); });
         if(where == V.end()) { break; }
         V.erase(where); // remove it
+        clDEBUG() << "Handler:" << provider->GetName() << "Uregisterd. Priority:" << provider->GetPriority()
+                  << ". Type:" << (int)provider->GetType();
     }
 }
 

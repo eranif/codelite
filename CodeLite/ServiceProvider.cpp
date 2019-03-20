@@ -8,4 +8,4 @@ ServiceProvider::ServiceProvider(const wxString& name, eServiceType type)
     ServiceProviderManager::Get().Register(this);
 }
 
-ServiceProvider::~ServiceProvider() {}
+ServiceProvider::~ServiceProvider() { ServiceProviderManager::Get().Unregister(this); }

@@ -30,11 +30,13 @@
 #include "smart_ptr.h"
 #include <vector>
 #include <wx/arrstr.h>
+#include "cl_command_event.h"
+#include "ServiceProvider.h"
 
+class WebTools;
 class IEditor;
-class CSSCodeCompletion : public wxEvtHandler
+class CSSCodeCompletion : public ServiceProvider
 {
-
 public:
     typedef SmartPtr<CSSCodeCompletion> Ptr_t;
     struct Entry {
@@ -46,12 +48,14 @@ public:
 protected:
     bool m_isEnabled;
     Entry::Vec_t m_entries;
+    WebTools* m_plugin = nullptr;
 
 protected:
     wxString GetPreviousWord(IEditor* editor, int pos);
+    void OnCodeComplete(clCodeCompletionEvent& event);
 
 public:
-    CSSCodeCompletion();
+    CSSCodeCompletion(WebTools* plugin);
     virtual ~CSSCodeCompletion();
 
     void CssCodeComplete(IEditor* editor);

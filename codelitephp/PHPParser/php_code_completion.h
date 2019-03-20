@@ -38,6 +38,7 @@
 #include <cl_command_event.h>
 #include <smart_ptr.h>
 #include <vector>
+#include "ServiceProvider.h"
 
 struct PHPLocation {
     wxString what;     // Token name
@@ -49,7 +50,7 @@ struct PHPLocation {
 
 class IManager;
 class ResourceItem;
-class PHPCodeCompletion : public wxEvtHandler
+class PHPCodeCompletion : public ServiceProvider
 {
 public:
     enum {

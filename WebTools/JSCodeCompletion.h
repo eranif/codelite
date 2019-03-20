@@ -33,9 +33,10 @@
 #include "wxCodeCompletionBoxEntry.h"
 #include "cl_calltip.h"
 #include "clJSCTags.h"
+#include "ServiceProvider.h"
 
 class WebTools;
-class JSCodeCompletion : public wxEvtHandler
+class JSCodeCompletion : public ServiceProvider
 {
     clTernServer m_ternServer;
     int m_ccPos;
@@ -49,6 +50,11 @@ public:
     void OnDefinitionFound(const clTernDefinition& loc);
     void OnGotoDefinition(wxCommandEvent& event);
     void OnInfoBarClicked(clCommandEvent& event);
+
+    void OnFindSymbol(clCodeCompletionEvent& event);
+    void OnCodeComplete(clCodeCompletionEvent& event);
+    void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
+   
     /**
      * @brief start code completion based on the word completion plugin
      */

@@ -26,7 +26,8 @@
 #include "codelite_events.h"
 
 JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin)
-    : m_ternServer(this)
+    : ServiceProvider("WebTools: JavaScript", eServiceType::kCodeCompletion)
+    , m_ternServer(this)
     , m_ccPos(wxNOT_FOUND)
     , m_workingDirectory(workingDirectory)
     , m_plugin(plugin)
@@ -36,6 +37,9 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* p
         m_ternServer.Start(m_workingDirectory);
     }
     EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &JSCodeCompletion::OnInfoBarClicked, this);
+    Bind(wxEVT_CC_FIND_SYMBOL, &JSCodeCompletion::OnFindSymbol, this);
+    Bind(wxEVT_CC_CODE_COMPLETE, &JSCodeCompletion::OnCodeComplete, this);
+    Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &JSCodeCompletion::OnCodeCompleteFunctionCalltip, this);
 }
 
 JSCodeCompletion::~JSCodeCompletion()
@@ -43,6 +47,9 @@ JSCodeCompletion::~JSCodeCompletion()
     m_ternServer.Terminate();
     wxTheApp->Unbind(wxEVT_MENU, &JSCodeCompletion::OnGotoDefinition, this, XRCID("ID_MENU_JS_GOTO_DEFINITION"));
     EventNotifier::Get()->Unbind(wxEVT_INFO_BAR_BUTTON, &JSCodeCompletion::OnInfoBarClicked, this);
+    Unbind(wxEVT_CC_FIND_SYMBOL, &JSCodeCompletion::OnFindSymbol, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE, &JSCodeCompletion::OnCodeComplete, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &JSCodeCompletion::OnCodeCompleteFunctionCalltip, this);
 }
 
 bool JSCodeCompletion::SanityCheck()
@@ -246,5 +253,40 @@ void JSCodeCompletion::OnInfoBarClicked(clCommandEvent& event)
 
     } else {
         event.Skip();
+    }
+}
+
+void JSCodeCompletion::OnFindSymbol(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    if(editor && m_plugin->IsJavaScriptFile(editor) && !m_plugin->InsideJSComment(editor)) {
+        event.Skip(false);
+        FindDefinition(editor);
+    }
+}
+
+void JSCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    if(editor && m_plugin->IsJavaScriptFile(editor)) {
+        event.Skip(false);
+        if(m_plugin->InsideJSComment(editor) || m_plugin->InsideJSString(editor)) {
+            // User the word completion plugin instead
+            TriggerWordCompletion();
+        } else {
+            CodeComplete(editor);
+        }
+    }
+}
+
+void JSCodeCompletion::OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    if(editor && m_plugin->IsJavaScriptFile(editor) && !m_plugin->InsideJSComment(editor)) {
+        event.Skip(false);
+        CodeComplete(editor);
     }
 }

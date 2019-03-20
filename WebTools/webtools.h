@@ -66,8 +66,6 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
-    void OnCodeCompleteFunctionCalltip(clCodeCompletionEvent& event);
-    void OnFindSymbol(clCodeCompletionEvent& event);
     void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);
@@ -78,7 +76,7 @@ protected:
     void OnIsDebugger(clDebugEvent& event);
     void OnNodeCommandCompleted(clProcessEvent& event);
 
-private:
+public:
     bool IsJavaScriptFile(const wxString& filename);
     bool IsJavaScriptFile(const wxFileName& filename);
     bool IsJavaScriptFile(IEditor* editor);

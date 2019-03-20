@@ -31,9 +31,11 @@
 #include <vector>
 #include "cl_command_event.h"
 #include "macros.h"
+#include "ServiceProvider.h"
 
+class WebTools;
 class IEditor;
-class XMLCodeCompletion : public wxEvtHandler
+class XMLCodeCompletion : public ServiceProvider
 {
 public:
     typedef SmartPtr<XMLCodeCompletion> Ptr_t;
@@ -61,6 +63,7 @@ protected:
     eCompleteReason m_completeReason;
     bool m_xmlCcEnabled;
     bool m_htmlCcEnabeld;
+    WebTools* m_plugin = nullptr;
     
 protected:
     void PrepareHtmlCompletions();
@@ -72,16 +75,17 @@ protected:
     bool HasSpecialInsertPattern(const wxString& tag) const;
     void SuggestClosingTag(IEditor* editor, bool html);
     void OnCodeCompleted(clCodeCompletionEvent& event);
-    
+
     int GetWordStartPos(IEditor* editor);
-    
+    void OnCodeComplete(clCodeCompletionEvent& event);
+
 public:
-    XMLCodeCompletion();
+    XMLCodeCompletion(WebTools* plugin);
     virtual ~XMLCodeCompletion();
 
     void XmlCodeComplete(IEditor* editor);
     void HtmlCodeComplete(IEditor* editor);
-    
+
     void Reload();
 };
 

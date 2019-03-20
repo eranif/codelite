@@ -39,6 +39,7 @@ WordCompleter::WordCompleter(WordCompletionPlugin* plugin)
     : ServiceProvider("Words", eServiceType::kCodeCompletion)
     , m_plugin(plugin)
 {
+    SetPriority(20);
     Bind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
 }
 

@@ -315,6 +315,7 @@ AbbreviationServiceProvider::AbbreviationServiceProvider(AbbreviationPlugin* plu
     : ServiceProvider("Abbreviations", eServiceType::kCodeCompletion)
     , m_plugin(plugin)
 {
+    SetPriority(10);
     Bind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
 }
 
@@ -322,4 +323,8 @@ AbbreviationServiceProvider::~AbbreviationServiceProvider()
 {
     Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
 }
-void AbbreviationServiceProvider::OnWordComplete(clCodeCompletionEvent& event) { m_plugin->AddAbbreviations(event); }
+void AbbreviationServiceProvider::OnWordComplete(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    m_plugin->AddAbbreviations(event);
+}

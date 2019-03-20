@@ -74,6 +74,7 @@ CodeCompletionManager::CodeCompletionManager()
     , m_wordCompletionRefreshNeeded(false)
     , m_buildInProgress(false)
 {
+    SetPriority(75);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(CodeCompletionManager::OnBuildStarted), NULL,
                                   this);
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,

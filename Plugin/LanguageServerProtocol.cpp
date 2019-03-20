@@ -44,6 +44,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    Bind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
 
     // Use sockets here
     switch(netType) {
@@ -68,6 +69,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    Unbind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
 
     DoClear();
 }
@@ -199,7 +201,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
+    //if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
 
     if(CanHandle(editor->GetFileName())) {
         event.Skip(false);

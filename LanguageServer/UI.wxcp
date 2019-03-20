@@ -2497,7 +2497,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	"Multiple Plugins / Servers can compete for providing code completion\\nfor a given language. Set here the server priority.\\nThe server with the highest priority will be triggered first\\n\\nNote that the builtin plugins are using priority of 50 by default."
+											"m_value":	"Multiple Plugins / Servers can compete for providing code completion\\nfor a given language. Set here the server priority.\\nThe server with the highest priority will be triggered first\\n\\nNote that the builtin plugins are using priority in the range of 10 - 75\\nIf you want that the LSP will be the first in the chain, set its priority to a value that is higher than 75"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",

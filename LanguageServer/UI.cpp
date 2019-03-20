@@ -269,7 +269,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     m_staticText125->SetToolTip(
         _("Multiple Plugins / Servers can compete for providing code completion\nfor a given language. Set here the "
           "server priority.\nThe server with the highest priority will be triggered first\n\nNote that the builtin "
-          "plugins are using priority of 50 by default."));
+          "plugins are using priority in the range of 10 - 75\nIf you want that the LSP will be the first in the "
+          "chain, set its priority to a value that is higher than 75"));
 
     flexGridSizer432->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 

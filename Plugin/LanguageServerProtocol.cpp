@@ -29,8 +29,6 @@
 #include "LSP/Request.h"
 #include "LSPNetworkSocketClient.h"
 
-#define PORT 12989
-
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
     , m_name(name)
@@ -201,7 +199,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    //if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
+    // if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
 
     if(CanHandle(editor->GetFileName())) {
         event.Skip(false);

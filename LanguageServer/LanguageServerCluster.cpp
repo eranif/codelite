@@ -177,6 +177,13 @@ void LanguageServerCluster::OnWorkspaceOpen(wxCommandEvent& event)
 {
     event.Skip();
     this->Reload();
+
+    // Now that the workspace is loaded, parse the active file
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
+    if(lsp) { lsp->OpenEditor(editor); }
 }
 
 void LanguageServerCluster::StopAll()

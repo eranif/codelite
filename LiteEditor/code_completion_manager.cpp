@@ -693,6 +693,12 @@ void CodeCompletionManager::OnWordCompletion(clCodeCompletionEvent& event)
     // This class only handles C++/C code completion
     if(!FileExtManager::IsCxxFile(editor->GetFileName())) { return; }
 
+    // Dont attempt to code complete when inside comment blocks
+    if(editor->GetContext()->IsCommentOrString(editor->GetCurrentPos())) {
+        event.Skip(false);
+        return;
+    }
+    
     // Try to code complete
     bool completionSucceed = editor->GetContext()->CompleteWord();
 

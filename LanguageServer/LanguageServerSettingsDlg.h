@@ -10,6 +10,7 @@ public:
     void Save();
     
 protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event);
     virtual void OnDeleteLSP(wxCommandEvent& event);
     virtual void OnDeleteLSPUI(wxUpdateUIEvent& event);
     virtual void OnAddServer(wxCommandEvent& event);

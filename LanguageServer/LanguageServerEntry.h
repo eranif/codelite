@@ -22,6 +22,12 @@ class LanguageServerEntry
 public:
     typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
 
+    /**
+     * @brief try to validate the LSP by checking that all paths do exists
+     * @return
+     */
+    bool IsValid() const;
+
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

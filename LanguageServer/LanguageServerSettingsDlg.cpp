@@ -59,3 +59,7 @@ void LanguageServerSettingsDlg::OnDeleteLSP(wxCommandEvent& event)
 }
 
 void LanguageServerSettingsDlg::OnDeleteLSPUI(wxUpdateUIEvent& event) { event.Enable(m_notebook->GetPageCount()); }
+void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event)
+{
+    event.Enable(true);
+}

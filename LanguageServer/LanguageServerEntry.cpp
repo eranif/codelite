@@ -46,3 +46,15 @@ eNetworkType LanguageServerEntry::GetNetType() const
         return eNetworkType::kTcpIP;
     }
 }
+
+bool LanguageServerEntry::IsValid() const
+{
+    bool is_valid = true;
+    if(m_name.IsEmpty()) { return false; }
+
+    wxFileName exePath(m_exepath);
+    if(exePath.IsAbsolute() && !exePath.FileExists()) { return false; }
+    wxFileName wd(m_workingDirectory, "");
+    if(wd.IsAbsolute() && !wd.DirExists()) { return false; }
+    return true;
+}

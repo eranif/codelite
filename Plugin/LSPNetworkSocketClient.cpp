@@ -8,13 +8,14 @@ LSPNetworkSocketClient::~LSPNetworkSocketClient() {}
 
 void LSPNetworkSocketClient::Close()
 {
-    if(m_lspServer) {
-        long pid = m_lspServer->GetPid();
-        m_lspServer->Detach();
+    if(m_pid != wxNOT_FOUND) {
         wxKillError rc;
-        ::wxKill(pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
-        m_lspServer = nullptr;
+        ::wxKill(m_pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
     }
+    
+    // a detached process, no need to self delete it
+    m_lspServer = nullptr;
+    m_pid = wxNOT_FOUND;
     m_socket.reset(nullptr);
 }
 
@@ -40,8 +41,9 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
         AddPendingEvent(evt);
         return;
     }
+    m_pid = m_lspServer->GetPid();
     m_lspServer->Detach();
-    
+
     // Now that the process is up, connect to the server
     m_socket.reset(new clAsyncSocket(m_startupInfo.GetHelperCommand(), kAsyncSocketBuffer | kAsyncSocketClient));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocketClient::OnSocketConnected, this);
@@ -95,13 +97,5 @@ void LSPNetworkSocketClient::OnSocketData(clCommandEvent& event)
     const wxString& dataRead = event.GetString();
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
     evt.SetString(dataRead);
-    AddPendingEvent(evt);
-}
-
-void LSPNetworkSocketClient::OnProcessTerminated(wxProcessEvent& event)
-{
-    wxDELETE(m_lspServer);
-    clDEBUG() << "LSPNetworkSTDIO: LSP program terminated:" << m_startupInfo.GetLspServerCommand();
-    clCommandEvent evt(wxEVT_LSP_NET_ERROR);
     AddPendingEvent(evt);
 }

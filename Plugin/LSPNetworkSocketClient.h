@@ -10,15 +10,15 @@ class LSPNetworkSocketClient : public LSPNetwork
 protected:
     clAsyncSocket::Ptr_t m_socket;
     wxProcess* m_lspServer = nullptr;
-
+    int m_pid = wxNOT_FOUND;
+    
 protected:
     void OnSocketConnected(clCommandEvent& event);
     void OnSocketConnectionLost(clCommandEvent& event);
     void OnSocketConnectionError(clCommandEvent& event);
     void OnSocketError(clCommandEvent& event);
     void OnSocketData(clCommandEvent& event);
-    void OnProcessTerminated(wxProcessEvent& event);
-
+    
 public:
     LSPNetworkSocketClient();
     virtual ~LSPNetworkSocketClient();

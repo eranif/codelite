@@ -276,7 +276,7 @@ void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const w
 {
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
-    req->SetStatusMessage(wxString() << "[LSP] parsing file: " << filename.GetFullName());
+    req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename.GetFullName());
     QueueMessage(req);
 }
 
@@ -297,7 +297,7 @@ void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const
 {
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
-    req->SetStatusMessage(wxString() << "[LSP] re-parsing file: " << filename.GetFullName());
+    req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename.GetFullName());
     QueueMessage(req);
 }
 
@@ -475,6 +475,11 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         m_owner->AddPendingEvent(restartEvent);
                         break;
                     }
+                    case LSP::ResponseError::kErrorCodeMethodNotFound: {
+                        // User requested a mesasge which is not supported by this server
+                        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ")
+                                                                    << msg_ptr->GetMethod() << _(" is not supported"));
+                    } break;
                     case LSP::ResponseError::kErrorCodeInvalidParams: {
                         // Recreate this AST (in other words: reparse), by default we reparse the current editor
                         LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
@@ -512,7 +517,8 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         wxFileName fn(wxFileSystem::URLToFileName(uri.toString()));
                         fn.Normalize();
                         clGetManager()->SetStatusMessage(
-                            wxString() << "[LSP] parsing of file: " << fn.GetFullName() << " is completed", 1);
+                            wxString() << GetLogPrefix() << "parsing of file: " << fn.GetFullName() << " is completed",
+                            1);
                     } else {
                         clDEBUG() << GetLogPrefix() << "received an unsupported message";
                     }

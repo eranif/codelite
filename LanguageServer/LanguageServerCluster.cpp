@@ -21,6 +21,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
     Bind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
+    Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -31,6 +32,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
     Unbind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
+    Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -73,7 +75,15 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnLSPInitialized(LSPEvent& event) { wxUnusedVar(event); }
+void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
+{
+    wxUnusedVar(event); // Now that the workspace is loaded, parse the active file
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
+    if(lsp) { lsp->OpenEditor(editor); }
+}
 
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
@@ -177,13 +187,6 @@ void LanguageServerCluster::OnWorkspaceOpen(wxCommandEvent& event)
 {
     event.Skip();
     this->Reload();
-
-    // Now that the workspace is loaded, parse the active file
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
-    if(lsp) { lsp->OpenEditor(editor); }
 }
 
 void LanguageServerCluster::StopAll()

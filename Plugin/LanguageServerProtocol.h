@@ -79,6 +79,7 @@ protected:
     void OnEditorChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
+    void OnFindSymbolImpl(clCodeCompletionEvent& event);
     void OnFindSymbol(clCodeCompletionEvent& event);
     
 protected:
@@ -171,6 +172,10 @@ public:
      * @brief find the definition of the item at the caret position
      */
     void FindDefinition(IEditor* editor);
+    /**
+     * @brief find the implementatin of a symbol at the caret position
+     */
+    void FindImplementation(IEditor* editor);
     /**
      * @brief find the definition of the item at the caret position
      */

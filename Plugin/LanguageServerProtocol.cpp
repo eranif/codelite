@@ -8,6 +8,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
+#include "LSP/GotoImplementationRequest.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/InitializeRequest.h"
 #include "LSP/ResponseMessage.h"
@@ -41,6 +42,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
 
     Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Bind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
 
@@ -66,9 +68,9 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
     Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
+    Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Unbind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
-
     DoClear();
 }
 
@@ -217,6 +219,19 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
         // this event is ours to handle
         event.Skip(false);
         FindDeclaration(editor);
+    }
+}
+
+void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    if(CanHandle(editor->GetFileName())) {
+        // this event is ours to handle
+        event.Skip(false);
+        FindImplementation(editor);
     }
 }
 
@@ -536,6 +551,25 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) { OpenEditor(editor); }
+}
+
+void LanguageServerProtocol::FindImplementation(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxFileName& filename = editor->GetFileName();
+    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        // we already sent this file over, ask for change parse
+        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+    }
+
+    LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoImplementationRequest(
+        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+    QueueMessage(req);
 }
 
 //===------------------------------------------------------------------

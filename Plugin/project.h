@@ -322,9 +322,8 @@ private:
     FilesMap_t m_filesTable;
     FoldersMap_t m_virtualFoldersTable;
     wxStringSet_t m_excludeFiles;
-    wxStringMap_t m_backticks;
     wxStringSet_t emptySet;
-    
+
 private:
     void DoUpdateProjectSettings();
     void DoBuildCacheFromXml();
@@ -827,7 +826,7 @@ public:
      * @brief add this project files into the 'compile_commands' json object
      */
     void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths);
-    
+
     /**
      * @brief create compile_flags.txt file for this project
      * @param compilersGlobalPaths
@@ -843,11 +842,6 @@ public:
      * that matches the current workspace configuration
      */
     BuildConfigPtr GetBuildConfiguration(const wxString& configName = "") const;
-
-    /**
-     * @brief clear the backtick expansion info
-     */
-    void ClearBacktickCache();
 
 private:
     /**

@@ -73,6 +73,7 @@ protected:
     bool m_saveOnExit;
     BuildMatrixPtr m_buildMatrix;
     LocalWorkspace* m_localWorkspace = nullptr;
+    wxStringMap_t m_backticks;
 
 public:
     /// Constructor
@@ -90,7 +91,13 @@ public:
      * @return
      */
     LocalWorkspace* GetLocalWorkspace() const { return m_localWorkspace; }
-
+    
+    // Backtick cache
+    bool HasBacktick(const wxString& backtick) const;
+    bool GetBacktickValue(const wxString& backtick, wxString& value) const;
+    void SetBacktickValue(const wxString& backtick, const wxString& value);
+    void ClearBacktickCache();
+    
 private:
     void DoUpdateBuildMatrix();
     /**
@@ -129,8 +136,6 @@ private:
     void DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& curpath, wxArrayString& paths) const;
 
 public:
-    void ClearBacktickCache();
-    
     /**
      * @brief move 'projectName' to folder. Create the folder if it does not exists
      */

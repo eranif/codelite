@@ -1381,25 +1381,21 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
         tmp.Clear();
         if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) { cmpOption = tmp; }
 
-        if(m_backticks.find(cmpOption) == m_backticks.end()) {
+        // Expand the backticks into their value
+        wxString expandedValue;
+        {
+            EnvSetter es(NULL, NULL, GetName(), wxEmptyString);
+            cmpOption = MacroManager::Instance()->Expand(cmpOption, nullptr, GetName(), wxEmptyString);
 
-            // Expand the backticks into their value
-            wxString expandedValue;
-            {
-                EnvSetter es(NULL, NULL, GetName(), wxEmptyString);
-                cmpOption = MacroManager::Instance()->Expand(cmpOption, nullptr, GetName(), wxEmptyString);
+            // Check the cache
+            if(!GetWorkspace()->GetBacktickValue(cmpOption, expandedValue)) {
                 IProcess::Ptr_t p(::CreateSyncProcess(cmpOption, IProcessCreateDefault, GetFileName().GetPath()));
                 if(p) { p->WaitForTerminate(expandedValue); }
+                GetWorkspace()->SetBacktickValue(cmpOption, expandedValue);
             }
-
-            m_backticks[cmpOption] = expandedValue;
-            cmpOption = expandedValue;
-
-        } else {
-            cmpOption = m_backticks.find(cmpOption)->second;
+            return expandedValue;
         }
     }
-
     return cmpOption;
 }
 
@@ -1512,8 +1508,6 @@ wxArrayString Project::GetPreProcessors(bool clearCache)
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
 
-        if(clearCache) { m_backticks.clear(); }
-
         // Get the pre-processors and add them to the array
         wxString projectPPS = buildConf->GetPreprocessor();
         wxArrayString projectPPSArr = ::wxStringTokenize(projectPPS, wxT(";"), wxTOKEN_STRTOK);
@@ -1559,8 +1553,6 @@ wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool clearCache, bo
 
         // Apply the environment
         EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
-
-        if(clearCache) { m_backticks.clear(); }
 
         // Get the switches from
         wxString optionsStr = cxxOptions ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -1624,8 +1616,6 @@ void Project::ProjectRenamed(const wxString& oldname, const wxString& newname)
         XmlUtils::UpdateProperty(m_doc.GetRoot(), "Name", newname);
     }
 }
-
-void Project::ClearBacktickCache() { m_backticks.clear(); }
 
 void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const
 {
@@ -1712,8 +1702,6 @@ wxArrayString Project::DoGetUnPreProcessors(bool clearCache, const wxString& cmp
 
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());
-
-    if(clearCache) { m_backticks.clear(); }
 
     // Atm, we can only "set" undefined in the compiler options
     wxArrayString projectCompileOptionsArr = ::wxStringTokenize(cmpOptions, ";", wxTOKEN_STRTOK);

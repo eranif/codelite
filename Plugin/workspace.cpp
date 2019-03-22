@@ -1477,9 +1477,19 @@ void clCxxWorkspace::CreateCompileFlags() const
     }
 }
 
-void clCxxWorkspace::ClearBacktickCache()
+void clCxxWorkspace::ClearBacktickCache() { m_backticks.clear(); }
+
+bool clCxxWorkspace::HasBacktick(const wxString& backtick) const { return m_backticks.count(backtick) != 0; }
+
+void clCxxWorkspace::SetBacktickValue(const wxString& backtick, const wxString& value)
 {
-    for(ProjectMap_t::value_type& vt : m_projects) {
-        vt.second->ClearBacktickCache();
-    }
+    m_backticks.erase(backtick);
+    m_backticks.insert({ backtick, value });
+}
+
+bool clCxxWorkspace::GetBacktickValue(const wxString& backtick, wxString& value) const
+{
+    if(!HasBacktick(backtick)) { return false; }
+    value = m_backticks.find(backtick)->second;
+    return true;
 }

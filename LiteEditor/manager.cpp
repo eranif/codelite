@@ -347,10 +347,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
     wxBusyCursor cursor;
     AddToRecentlyOpenedWorkspaces(path);
 
-    wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
-    evtWorkspaceLoaded.SetString(path);
-    EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
-
     // set the C++ workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(clCxxWorkspaceST::Get());
 
@@ -394,6 +390,10 @@ void Manager::DoSetupWorkspace(const wxString& path)
 
     // Ensure that the "C++" view is selected
     clGetManager()->GetWorkspaceView()->SelectPage(clCxxWorkspaceST::Get()->GetWorkspaceType());
+    
+    wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
+    evtWorkspaceLoaded.SetString(path);
+    EventNotifier::Get()->AddPendingEvent(evtWorkspaceLoaded);
 }
 
 void Manager::CloseWorkspace()

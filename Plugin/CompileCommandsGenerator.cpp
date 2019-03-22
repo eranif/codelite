@@ -82,7 +82,8 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 #endif
 
     if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
-
+    if(!clCxxWorkspaceST::Get()->GetActiveProject()) { return; }
+    
     if(!codeliteMake.FileExists()) {
         clWARNING() << "Could not find" << codeliteMake;
         return;

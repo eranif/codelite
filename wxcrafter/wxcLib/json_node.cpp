@@ -511,6 +511,6 @@ JSONElement& JSONElement::addProperty(const wxString& name, const char* value, c
 JSONElement JSONElement::detachProperty(const wxString& name)
 {
     if(!_json) { return JSONElement(NULL); }
-    cJSON* j = cJSON_DetachItemFromObject(_json, name);
+    cJSON* j = cJSON_DetachItemFromObject(_json, name.mb_str().data());
     return JSONElement(j);
 }

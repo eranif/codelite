@@ -1,6 +1,6 @@
 #ifndef UNIX_PROCESS_H
 #define UNIX_PROCESS_H
-#if defined(__WXGTK__)||defined(__WXOSX__)
+#if defined(__WXGTK__) || defined(__WXOSX__)
 #include <exception>
 #include <functional>
 #include <iostream>
@@ -14,21 +14,36 @@
 #include <wx/event.h>
 
 // Wrapping pipe in a class makes sure they are closed when we leave scope
+#define CLOSE_FD(fd)        \
+    if(fd != wxNOT_FOUND) { \
+        ::close(fd);        \
+        fd = wxNOT_FOUND;   \
+    }
+
 class CPipe
 {
 private:
-    int fd[2];
+    int m_readFd = wxNOT_FOUND;
+    int m_writeFd = wxNOT_FOUND;
 
 public:
-    const inline int read_fd() const { return fd[0]; }
-    const inline int write_fd() const { return fd[1]; }
-    CPipe() { pipe(fd); }
-    void close()
+    const inline int GetReadFd() const { return m_readFd; }
+    const inline int GetWriteFd() const { return m_writeFd; }
+    CPipe()
     {
-        ::close(fd[0]);
-        ::close(fd[1]);
+        int fd[2];
+        pipe(fd);
+        m_readFd = fd[0];
+        m_writeFd = fd[1];
     }
-    ~CPipe() { close(); }
+    void Close()
+    {
+        CLOSE_FD(m_readFd);
+        CLOSE_FD(m_writeFd);
+    }
+    ~CPipe() { Close(); }
+    void CloseWriteFd() { CLOSE_FD(m_writeFd); }
+    void CloseReadFd() { CLOSE_FD(m_readFd); }
 };
 
 class UnixProcess
@@ -56,7 +71,7 @@ public:
 
     UnixProcess(wxEvtHandler* owner, const wxArrayString& args);
     ~UnixProcess();
-    
+
     // wait for process termination
     int Wait();
 
@@ -65,7 +80,7 @@ public:
 
     // stop the running process
     void Stop();
-    
+
     /**
      * @brief stop sending events from the process
      */

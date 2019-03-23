@@ -17,12 +17,12 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
     if(child_pid == -1) { clERROR() << _("Failed to start child process") << strerror(errno); }
     if(child_pid == 0) {
         // In child process
-        dup2(m_childStdin.read_fd(), STDIN_FILENO);
-        dup2(m_childStdout.write_fd(), STDOUT_FILENO);
-        dup2(m_childStderr.write_fd(), STDERR_FILENO);
-        m_childStdin.close();
-        m_childStdout.close();
-        m_childStderr.close();
+        dup2(m_childStdin.GetReadFd(), STDIN_FILENO);
+        dup2(m_childStdout.GetWriteFd(), STDOUT_FILENO);
+        dup2(m_childStderr.GetWriteFd(), STDERR_FILENO);
+        m_childStdin.Close();
+        m_childStdout.Close();
+        m_childStderr.Close();
 
         char** argv = new char*[args.size() + 1];
         for(size_t i = 0; i < args.size(); ++i) {
@@ -41,9 +41,9 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
         }
     } else {
         // parent process
-        close(m_childStdin.read_fd());
-        close(m_childStdout.write_fd());
-        close(m_childStderr.write_fd());
+        m_childStdin.CloseReadFd();
+        m_childStdout.CloseWriteFd();
+        m_childStderr.CloseWriteFd();
 
         // Start the reader and writer threads
         StartWriterThread();
@@ -141,7 +141,7 @@ void UnixProcess::StartWriterThread()
             }
             clDEBUG() << "UnixProcess writer thread: going down";
         },
-        this, m_childStdin.write_fd());
+        this, m_childStdin.GetWriteFd());
 }
 
 void UnixProcess::StartReaderThread()
@@ -172,7 +172,7 @@ void UnixProcess::StartReaderThread()
             }
             clDEBUG() << "UnixProcess reader thread: going down";
         },
-        this, m_childStdout.read_fd(), m_childStderr.read_fd());
+        this, m_childStdout.GetReadFd(), m_childStderr.GetReadFd());
 }
 
 void UnixProcess::Detach()

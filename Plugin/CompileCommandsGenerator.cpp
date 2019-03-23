@@ -18,15 +18,20 @@
 
 wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 
-CompileCommandsGenerator::CompileCommandsGenerator() {}
+CompileCommandsGenerator::CompileCommandsGenerator()
+{
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
+}
 
 CompileCommandsGenerator::~CompileCommandsGenerator()
 {
     // If the child process is still running, detach from it. i.e. OnProcessTeraminated() event is not called
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
     if(m_process) { m_process->Detach(); }
+    wxDELETE(m_process);
 }
 
-void CompileCommandsGenerator::OnProcessTeraminated(wxProcessEvent& event)
+void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 {
     // dont call event.Skip() so we will delete the m_process ourself
     wxDELETE(m_process);
@@ -72,9 +77,9 @@ void CompileCommandsGenerator::OnProcessTeraminated(wxProcessEvent& event)
 
 void CompileCommandsGenerator::GenerateCompileCommands()
 {
+    // Kill any previous process running
     if(m_process) { m_process->Detach(); }
-    m_process = new wxProcess();
-    m_process->Bind(wxEVT_END_PROCESS, &CompileCommandsGenerator::OnProcessTeraminated, this);
+    wxDELETE(m_process);
 
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
 #ifdef __WXMSW__
@@ -83,7 +88,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
     if(!clCxxWorkspaceST::Get()->GetActiveProject()) { return; }
-    
+
     if(!codeliteMake.FileExists()) {
         clWARNING() << "Could not find" << codeliteMake;
         return;
@@ -101,7 +106,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     command << " --workspace=" << workspaceFile << " --verbose --json --config=" << configName;
 
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
-    ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE, m_process);
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
 
     m_outputFile = workspaceFile;
     m_outputFile.SetFullName("compile_commands.json");

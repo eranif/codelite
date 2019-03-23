@@ -361,7 +361,7 @@ GUICraftMainPanel::~GUICraftMainPanel()
     // Only disconnect the events in Tabbed mode,
     // in the "frame" mode, the main panel and the tree view have the same
     // parent
-    if(m_plugin->IsTabMode()) {
+    if(false) {
         m_treeControls->Disconnect(wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnBeginDrag),
                                    NULL, this);
         m_treeControls->Disconnect(wxEVT_COMMAND_TREE_END_DRAG, wxTreeEventHandler(GUICraftMainPanel::OnEndDrag), NULL,

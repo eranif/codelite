@@ -12,11 +12,11 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
 
 class WXDLLIMPEXP_SDK CompileCommandsGenerator : public wxEvtHandler
 {
-    wxProcess* m_process = nullptr;
+    IProcess* m_process = nullptr;
     wxFileName m_outputFile;
     
 protected:
-    void OnProcessTeraminated(wxProcessEvent& event);
+    void OnProcessTeraminated(clProcessEvent& event);
 
 public:
     typedef wxSharedPtr<CompileCommandsGenerator> Ptr_t;

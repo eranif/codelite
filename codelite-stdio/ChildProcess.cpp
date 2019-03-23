@@ -30,11 +30,6 @@ void ChildProcess::Start(const wxArrayString& args)
 
     // Launch the process
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent);
-    if(m_process) {
-        wxString content;
-        FileUtils::ReadFileContent(wxFileName("C:/src/wxCustomControls/init.msg"), content);
-        m_process->WriteRaw(content);
-    }
 #else
     m_childProcess = new UnixProcess(this, args);
 #endif

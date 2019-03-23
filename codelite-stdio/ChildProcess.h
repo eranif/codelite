@@ -1,7 +1,7 @@
 #ifndef CHILDPROCESS_H
 #define CHILDPROCESS_H
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__)
 #define USE_IPROCESS 1
 #else
 #define USE_IPROCESS 0

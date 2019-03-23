@@ -97,6 +97,7 @@ bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& sh
             tmp.erase(0, bytes);
         }
     }
+    clDEBUG() << "Wrote message of size:" << message.length();
     return tmp.empty();
 }
 

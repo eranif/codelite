@@ -4,12 +4,24 @@
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include <cl_command_event.h>
+#include <wx/arrstr.h>
 
+#ifdef __WXOSX__
+#define APP_BASE wxApp
+#else
+#define APP_BASE wxAppConsole
+#endif
+
+class wxEventLoopBase;
 class ChildProcess;
-class MainApp : public wxAppConsole
+class MainApp : public APP_BASE
 {
     ChildProcess* m_child = nullptr;
+    wxArrayString m_argv;
 
+protected:
+    void DoStartup();
+    
 protected:
     /**
      * @brief parse the command line here

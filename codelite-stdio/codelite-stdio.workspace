@@ -10,9 +10,13 @@
       <Environment/>
       <Project Name="codelite-stdio" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Linux" Selected="no">
       <Environment/>
       <Project Name="codelite-stdio" ConfigName="Debug_Linux"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug_macOS" Selected="yes">
+      <Environment/>
+      <Project Name="codelite-stdio" ConfigName="Debug_macOS"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

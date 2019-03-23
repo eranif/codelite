@@ -30,7 +30,8 @@ protected:
     void Error(const wxString& msg);
     void Info(const wxString& msg);
     void Out(const wxString& msg);
-
+    void Bye();
+    
 public:
     clMakeGeneratorApp();
     virtual ~clMakeGeneratorApp();

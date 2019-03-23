@@ -37,29 +37,6 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
 
     boxSizer22->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    wxFlexGridSizer* flexGridSizer98 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer98->SetFlexibleDirection(wxBOTH);
-    flexGridSizer98->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer98->AddGrowableCol(1);
-
-    boxSizer2->Add(flexGridSizer98, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText100 = new wxStaticText(this, wxID_ANY, _("Nodejs executable:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_staticText100->SetToolTip(_("Set here the path to Nodejs executable.\nCodeLite uses Nodejs to wrap the Language "
-                                  "Servers that are using STDIO for communication."));
-
-    flexGridSizer98->Add(m_staticText100, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_filePickerNodeJS =
-        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
-    m_filePickerNodeJS->SetToolTip(_("Set here the path to Nodejs executable.\nCodeLite uses Nodejs to wrap the "
-                                     "Language Servers that are using STDIO for communication."));
-    m_filePickerNodeJS->SetFocus();
-
-    flexGridSizer98->Add(m_filePickerNodeJS, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticLine102 =
         new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
 

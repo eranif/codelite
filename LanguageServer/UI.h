@@ -15,13 +15,13 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
-#include <wx/stattext.h>
-#include <wx/filepicker.h>
 #include <wx/statline.h>
+#include <wx/stattext.h>
 #include <wx/notebook.h>
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
+#include <wx/filepicker.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/slider.h>
@@ -45,8 +45,6 @@ class LanguageServerSettingsDlgBase : public wxDialog
 {
 protected:
     wxCheckBox* m_checkBoxEnable;
-    wxStaticText* m_staticText100;
-    wxFilePickerCtrl* m_filePickerNodeJS;
     wxStaticLine* m_staticLine102;
     wxStaticText* m_staticText105;
     wxNotebook* m_notebook;
@@ -64,8 +62,6 @@ protected:
 
 public:
     wxCheckBox* GetCheckBoxEnable() { return m_checkBoxEnable; }
-    wxStaticText* GetStaticText100() { return m_staticText100; }
-    wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
     wxStaticLine* GetStaticLine102() { return m_staticLine102; }
     wxStaticText* GetStaticText105() { return m_staticText105; }
     wxNotebook* GetNotebook() { return m_notebook; }

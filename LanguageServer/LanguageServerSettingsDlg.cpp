@@ -14,7 +14,6 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
         m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
     }
     m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
-    m_filePickerNodeJS->SetPath(LanguageServerConfig::Get().GetNodejs());
     GetSizer()->Fit(this);
     CentreOnParent();
 }
@@ -40,7 +39,6 @@ void LanguageServerSettingsDlg::Save()
         conf.AddServer(page->GetData());
     }
     conf.SetEnabled(GetCheckBoxEnable()->IsChecked());
-    conf.SetNodejs(m_filePickerNodeJS->GetPath());
     conf.Save();
 }
 

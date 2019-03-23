@@ -4,7 +4,7 @@
 
 LSPNetworkSocketClient::LSPNetworkSocketClient() {}
 
-LSPNetworkSocketClient::~LSPNetworkSocketClient() {}
+LSPNetworkSocketClient::~LSPNetworkSocketClient() { Close(); }
 
 void LSPNetworkSocketClient::Close()
 {
@@ -50,7 +50,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
         return;
     }
 
-    m_lspServer->Detach(); // we dont want events 
+    m_lspServer->Detach(); // we dont want events
     m_pid = m_lspServer->GetPid();
 
     // Now that the process is up, connect to the server

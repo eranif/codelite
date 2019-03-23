@@ -4,12 +4,13 @@
 #include "LSPNetwork.h" // Base class: LSPNetwork
 #include "SocketAPI/clSocketClientAsync.h"
 #include "wx/process.h"
+#include "asyncprocess.h"
 
 class LSPNetworkSocketClient : public LSPNetwork
 {
 protected:
     clAsyncSocket::Ptr_t m_socket;
-    wxProcess* m_lspServer = nullptr;
+    IProcess* m_lspServer = nullptr;
     int m_pid = wxNOT_FOUND;
     
 protected:

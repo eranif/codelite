@@ -8,15 +8,10 @@ LSPNetworkSocketClient::~LSPNetworkSocketClient() {}
 
 void LSPNetworkSocketClient::Close()
 {
-    if(m_pid != wxNOT_FOUND) {
-        wxKillError rc;
-        ::wxKill(m_pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
-    }
-
-    // a detached process, no need to self delete it
-    m_lspServer = nullptr;
-    m_pid = wxNOT_FOUND;
+    if(m_lspServer) { m_lspServer->Detach(); }
+    wxDELETE(m_lspServer);
     m_socket.reset(nullptr);
+    m_pid = wxNOT_FOUND;
 }
 
 static wxString& wrap_with_quotes(wxString& str)
@@ -46,24 +41,17 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
 {
     m_startupInfo = info;
     // Start the process
-    m_lspServer = new wxProcess(this);
-    size_t flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | wxEXEC_HIDE_CONSOLE;
-    if(m_startupInfo.GetFlags() & LSPStartupInfo::kShowConsole) { flags &= ~wxEXEC_HIDE_CONSOLE; }
-
-    DirSaver ds;
-
-    if(!m_startupInfo.GetWorkingDirectory().IsEmpty()) { ::wxSetWorkingDirectory(m_startupInfo.GetWorkingDirectory()); }
-
-    // Start the process
     wxString cmd = BuildCommand(m_startupInfo.GetLspServerCommand());
-    if(::wxExecute(cmd, flags, m_lspServer) <= 0) {
+    m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_startupInfo.GetWorkingDirectory());
+    if(!m_lspServer) {
         clCommandEvent evt(wxEVT_LSP_NET_ERROR);
         evt.SetString(wxString() << "Failed to execute: " << cmd);
         AddPendingEvent(evt);
         return;
     }
+
+    m_lspServer->Detach(); // we dont want events 
     m_pid = m_lspServer->GetPid();
-    m_lspServer->Detach();
 
     // Now that the process is up, connect to the server
     m_socket.reset(new clAsyncSocket(m_startupInfo.GetConnectioString(), kAsyncSocketBuffer | kAsyncSocketClient));

@@ -117,14 +117,21 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxStr
 
 void LanguageServerCluster::RestartServer(const wxString& name)
 {
-    LanguageServerProtocol::Ptr_t server = GetServerByName(name);
-    if(!server) { return; }
-    clDEBUG() << "Restarting LSP server:" << name;
-    server->Stop();
+    {
+        // Incase a server terminated, remove it from the list of servers
+        // We do this in an inner block because 'server' (line below) will have
+        // ref-count of 2 to make sure it is destroyed (i.e. unregister itself from
+        // the service provider manager) the ref count needs to get to 0
+        // Hence the inner block
+        LanguageServerProtocol::Ptr_t server = GetServerByName(name);
+        if(!server) { return; }
+        clDEBUG() << "Restarting LSP server:" << name;
+        server->Stop();
 
-    // Remove the old instance
-    m_servers.erase(name);
-
+        // Remove the old instance
+        m_servers.erase(name);
+    }
+    
     // Create new instance
     if(LanguageServerConfig::Get().GetServers().count(name) == 0) { return; }
     const LanguageServerEntry& entry = LanguageServerConfig::Get().GetServers().at(name);
@@ -145,27 +152,12 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
         lsp->SetPriority(entry.GetPriority());
-        wxString lspCommand = entry.GetExepath();
-        ::WrapWithQuotes(lspCommand);
+        wxArrayString lspCommand;
+        lspCommand.Add(entry.GetExepath());
 
-        if(!entry.GetArgs().IsEmpty()) { lspCommand << " " << entry.GetArgs(); }
-
-        wxString helperCommand;
-
-        if(entry.GetNetType() == eNetworkType::kStdio) {
-            helperCommand = LanguageServerConfig::Get().GetNodejs();
-            if(helperCommand.IsEmpty() || !wxFileName::FileExists(helperCommand)) {
-                // TODO : prompt the user to install NodeJS
-                return;
-            }
-
-            ::WrapWithQuotes(helperCommand);
-            wxFileName fnScriptPath(clStandardPaths::Get().GetBinFolder(), "codelite-lsp-helper");
-            wxString scriptPath = fnScriptPath.GetFullPath();
-            ::WrapWithQuotes(scriptPath);
-            helperCommand << " " << scriptPath;
-        } else {
-            helperCommand = entry.GetConnectionString();
+        if(!entry.GetArgs().IsEmpty()) {
+            wxArrayString args = ::wxStringTokenize(entry.GetArgs(), " ", wxTOKEN_STRTOK);
+            lspCommand.insert(lspCommand.end(), args.begin(), args.end());
         }
 
         size_t flags = 0;
@@ -175,13 +167,14 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
         }
         clDEBUG() << "Starting lsp:";
-        clDEBUG() << "helperCommand / connection string:" << helperCommand;
+        clDEBUG() << "Connection string:" << entry.GetConnectionString();
         clDEBUG() << "lspCommand:" << lspCommand;
         clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
         clDEBUG() << "rootDir:" << rootDir;
         clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
 
-        lsp->Start(helperCommand, lspCommand, entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(), flags);
+        lsp->Start(lspCommand, entry.GetConnectionString(), entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(),
+                   flags);
         m_servers.insert({ entry.GetName(), lsp });
     }
 }

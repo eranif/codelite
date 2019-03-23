@@ -287,6 +287,10 @@
     <File Name="crawler_include.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="AsyncProcess">
+    <File Name="UnixProcess.h"/>
+    <File Name="UnixProcess.cpp"/>
+    <File Name="ChildProcess.h"/>
+    <File Name="ChildProcess.cpp"/>
     <File Name="asyncprocess.cpp"/>
     <File Name="asyncprocess.h"/>
     <File Name="processreaderthread.cpp"/>

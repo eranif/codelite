@@ -12,11 +12,33 @@ void LSPNetworkSocketClient::Close()
         wxKillError rc;
         ::wxKill(m_pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
     }
-    
+
     // a detached process, no need to self delete it
     m_lspServer = nullptr;
     m_pid = wxNOT_FOUND;
     m_socket.reset(nullptr);
+}
+
+static wxString& wrap_with_quotes(wxString& str)
+{
+    if(str.Contains(" ")) { str.Prepend("\"").Append("\""); }
+    return str;
+}
+
+wxString BuildCommand(const wxArrayString& args)
+{
+    if(args.empty()) { return ""; }
+    // Build command line from the array
+    wxString command;
+    command << args[0];
+
+    wrap_with_quotes(command);
+    for(size_t i = 1; i < args.size(); ++i) {
+        wxString argument = args[i];
+        wrap_with_quotes(argument);
+        command << " " << argument;
+    }
+    return command;
 }
 
 bool LSPNetworkSocketClient::IsConnected() const { return m_socket != nullptr; }
@@ -30,14 +52,13 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
 
     DirSaver ds;
 
-    if(!m_startupInfo.GetLspServerCommandWorkingDirectory().IsEmpty()) {
-        ::wxSetWorkingDirectory(m_startupInfo.GetLspServerCommandWorkingDirectory());
-    }
+    if(!m_startupInfo.GetWorkingDirectory().IsEmpty()) { ::wxSetWorkingDirectory(m_startupInfo.GetWorkingDirectory()); }
 
     // Start the process
-    if(::wxExecute(m_startupInfo.GetLspServerCommand(), flags, m_lspServer) <= 0) {
+    wxString cmd = BuildCommand(m_startupInfo.GetLspServerCommand());
+    if(::wxExecute(cmd, flags, m_lspServer) <= 0) {
         clCommandEvent evt(wxEVT_LSP_NET_ERROR);
-        evt.SetString(wxString() << "Failed to execute: " << m_startupInfo.GetLspServerCommand());
+        evt.SetString(wxString() << "Failed to execute: " << cmd);
         AddPendingEvent(evt);
         return;
     }
@@ -45,7 +66,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
     m_lspServer->Detach();
 
     // Now that the process is up, connect to the server
-    m_socket.reset(new clAsyncSocket(m_startupInfo.GetHelperCommand(), kAsyncSocketBuffer | kAsyncSocketClient));
+    m_socket.reset(new clAsyncSocket(m_startupInfo.GetConnectioString(), kAsyncSocketBuffer | kAsyncSocketClient));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocketClient::OnSocketConnected, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkSocketClient::OnSocketConnectionLost, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkSocketClient::OnSocketConnectionError, this);

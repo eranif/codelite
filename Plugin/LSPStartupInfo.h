@@ -3,6 +3,7 @@
 
 #include <wx/string.h>
 #include "codelite_exports.h"
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK LSPStartupInfo
 {
@@ -13,35 +14,35 @@ public:
     };
 
 protected:
-    wxString m_helperCommand;
-    wxString m_lspServerCommand;
-    wxString m_lspServerCommandWorkingDirectory;
+    wxString m_connectioString;
+    wxArrayString m_lspServerCommand;
+    wxString m_workingDirectory;
     size_t m_flags = 0;
 
 public:
-    void SetHelperCommand(const wxString& helperCommand) { this->m_helperCommand = helperCommand; }
-    /**
-     * @brief the helper command: In case the connection should be made over TCP/IP it will contain the connection
-     * string, else it will contain the actual helper script command
-     */
-    const wxString& GetHelperCommand() const { return m_helperCommand; }
-
-    void SetLspServerCommand(const wxString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
-    const wxString& GetLspServerCommand() const { return m_lspServerCommand; }
+    LSPStartupInfo& SetConnectioString(const wxString& connectioString)
+    {
+        this->m_connectioString = connectioString;
+        return *this;
+    }
+    const wxString& GetConnectioString() const { return m_connectioString; }
+    void SetLspServerCommand(const wxArrayString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
+    const wxArrayString& GetLspServerCommand() const { return m_lspServerCommand; }
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
 
-    void SetLspServerCommandWorkingDirectory(const wxString& lspServerCommandWorkingDirectory)
+    LSPStartupInfo& SetWorkingDirectory(const wxString& workingDirectory)
     {
-        this->m_lspServerCommandWorkingDirectory = lspServerCommandWorkingDirectory;
+        this->m_workingDirectory = workingDirectory;
+        return *this;
     }
-    const wxString& GetLspServerCommandWorkingDirectory() const { return m_lspServerCommandWorkingDirectory; }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
 public:
     LSPStartupInfo();
     LSPStartupInfo(const LSPStartupInfo& other);
-    virtual ~LSPStartupInfo() {}
+    virtual ~LSPStartupInfo();
     LSPStartupInfo& operator=(const LSPStartupInfo& other);
 };
 #endif // LSP_STARTUPINFO_H

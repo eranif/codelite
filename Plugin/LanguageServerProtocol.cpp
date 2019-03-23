@@ -136,15 +136,15 @@ void LanguageServerProtocol::DoStart()
         clDEBUG() << GetLogPrefix() << "Language:" << lang;
     }
     LSPStartupInfo info;
-    info.SetHelperCommand(m_helperCommand); // the helper command or connection string
     info.SetLspServerCommand(m_lspCommand);
-    info.SetLspServerCommandWorkingDirectory(m_lspCommandWorkingDirectory);
+    info.SetWorkingDirectory(m_workingDirectory);
+    info.SetConnectioString(m_connectionString);
     info.SetFlags(m_createFlags);
     m_network->Open(info);
 }
 
-void LanguageServerProtocol::Start(const wxString& helperCommand, const wxString& lspCommand,
-                                   const wxString& lspCommandWorkingDirectory, const wxString& rootFolder,
+void LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& connectionString,
+                                   const wxString& workingDirectory, const wxString& rootFolder,
                                    const wxArrayString& languages, size_t flags)
 {
     if(IsRunning()) { return; }
@@ -152,9 +152,9 @@ void LanguageServerProtocol::Start(const wxString& helperCommand, const wxString
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
     m_lspCommand = lspCommand;
-    m_lspCommandWorkingDirectory = lspCommandWorkingDirectory;
+    m_workingDirectory = workingDirectory;
     m_rootFolder = rootFolder;
-    m_helperCommand = helperCommand;
+    m_connectionString = connectionString;
     m_createFlags = flags;
     DoStart();
 }

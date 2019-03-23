@@ -49,14 +49,14 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxString m_name;
     wxEvtHandler* m_owner = nullptr;
     LSPNetwork::Ptr_t m_network;
-    wxString m_lspCommand;
-    wxString m_lspCommandWorkingDirectory;
+    wxArrayString m_lspCommand;
+    wxString m_workingDirectory;
     wxStringSet_t m_filesSent;
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
     wxString m_rootFolder;
-    wxString m_helperCommand;
-
+    wxString m_connectionString;
+    
     // initialization
     eState m_state = kUnInitialized;
     int m_initializeRequestID = wxNOT_FOUND;
@@ -81,7 +81,7 @@ protected:
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
     void OnFindSymbolImpl(clCodeCompletionEvent& event);
     void OnFindSymbol(clCodeCompletionEvent& event);
-    
+
 protected:
     void DoClear();
     bool ShouldHandleFile(const wxFileName& fn) const;
@@ -145,12 +145,12 @@ public:
 
     /**
      * @brief start LSP server and connect to it (e.g. clangd)
-     * @param helperCommand path to helper script (nodejs script) that does the actual launching of the LSP server
      * @param lspCommand LSP server command
+     * @param connectionString
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
      */
-    void Start(const wxString& helperCommand, const wxString& lspCommand, const wxString& lspCommandWorkingDirectory,
+    void Start(const wxArrayString& lspCommand, const wxString& connectionString, const wxString& workingDirectory,
                const wxString& rootFolder, const wxArrayString& languages, size_t flags);
 
     /**

@@ -13,6 +13,13 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
     : m_owner(owner)
 {
     m_goingDown.store(false);
+
+    // Open the pipes
+    if(!m_childStdin.Open() || !m_childStderr.Open() || !m_childStdout.Open()) {
+        clERROR() << "Could not open redirection pipes." << strerror(errno);
+        return;
+    }
+
     child_pid = fork();
     if(child_pid == -1) { clERROR() << _("Failed to start child process") << strerror(errno); }
     if(child_pid == 0) {
@@ -113,9 +120,13 @@ bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& sh
 
 int UnixProcess::Wait()
 {
-    int status = 0;
-    waitpid(child_pid, &status, WNOHANG);
-    return WEXITSTATUS(status);
+    if(child_pid != wxNOT_FOUND) {
+        int status = 0;
+        waitpid(child_pid, &status, WNOHANG);
+        return WEXITSTATUS(status);
+    } else {
+        return 0;
+    }
 }
 
 void UnixProcess::Stop()

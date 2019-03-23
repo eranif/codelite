@@ -29,19 +29,23 @@ private:
 public:
     const inline int GetReadFd() const { return m_readFd; }
     const inline int GetWriteFd() const { return m_writeFd; }
-    CPipe()
-    {
-        int fd[2];
-        pipe(fd);
-        m_readFd = fd[0];
-        m_writeFd = fd[1];
-    }
+    CPipe() {}
     void Close()
     {
         CLOSE_FD(m_readFd);
         CLOSE_FD(m_writeFd);
     }
     ~CPipe() { Close(); }
+    bool Open()
+    {
+        int fd[2];
+        if(pipe(fd) == 0) {
+            m_readFd = fd[0];
+            m_writeFd = fd[1];
+            return true;
+        }
+        return false;
+    }
     void CloseWriteFd() { CLOSE_FD(m_writeFd); }
     void CloseReadFd() { CLOSE_FD(m_readFd); }
 };

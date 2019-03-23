@@ -38,13 +38,13 @@ bool MainApp::OnInit()
 
     clSYSTEM() << "Started";
 
-    if(wxAppBase::argc < 2) { return false; }
+    if(argc < 2) { return false; }
 
-    wxArrayString argv = wxAppBase::argv.GetArguments();
-    argv.RemoveAt(0);
-    m_argv.swap(argv);
+    wxArrayString argvArr = this->argv.GetArguments();
+    argvArr.RemoveAt(0);
+    m_argv.swap(argvArr);
 
-    wxCmdLineParser parser(wxAppBase::argc, wxAppBase::argv);
+    wxCmdLineParser parser(argc, this->argv);
     if(!DoParseCommandLine(parser)) { return false; }
 
     CallAfter(&MainApp::DoStartup);
@@ -89,4 +89,5 @@ void MainApp::DoStartup()
     LSP::DidOpenTextDocumentRequest::Ptr_t openReq =
         LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(fn, fileContent, "cpp"));
     m_child->Write(openReq->ToString());
+    wxDELETE(m_child);
 }

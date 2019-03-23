@@ -1,6 +1,6 @@
 #ifndef UNIX_PROCESS_H
 #define UNIX_PROCESS_H
-
+#if defined(__WXGTK__)||defined(__WXOSX__)
 #include <exception>
 #include <functional>
 #include <iostream>
@@ -14,7 +14,6 @@
 #include <wx/event.h>
 
 // Wrapping pipe in a class makes sure they are closed when we leave scope
-class m_childStdout;
 class CPipe
 {
 private:
@@ -56,7 +55,8 @@ public:
     int child_pid = -1;
 
     UnixProcess(wxEvtHandler* owner, const wxArrayString& args);
-
+    ~UnixProcess();
+    
     // wait for process termination
     int Wait();
 
@@ -65,5 +65,11 @@ public:
 
     // stop the running process
     void Stop();
+    
+    /**
+     * @brief stop sending events from the process
+     */
+    void Detach();
 };
+#endif // defined(__WXGTK__)||defined(__WXOSX__)
 #endif // UNIX_PROCESS_H

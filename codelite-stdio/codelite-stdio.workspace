@@ -2,7 +2,7 @@
 <CodeLite_Workspace Name="codelite-stdio" Database="" Version="10.0.0">
   <Project Name="codelite-stdio" Path="codelite-stdio.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="codelite-stdio" ConfigName="Debug"/>
     </WorkspaceConfiguration>
@@ -14,7 +14,7 @@
       <Environment/>
       <Project Name="codelite-stdio" ConfigName="Debug_Linux"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_macOS" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_macOS" Selected="no">
       <Environment/>
       <Project Name="codelite-stdio" ConfigName="Debug_macOS"/>
     </WorkspaceConfiguration>

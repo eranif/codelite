@@ -1,4 +1,5 @@
 #include "UnixProcess.h"
+#if defined(__WXGTK__) || defined(__WXOSX__)
 #include <signal.h>
 #include <string.h>
 #include <sys/select.h>
@@ -48,6 +49,15 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
         StartWriterThread();
         StartReaderThread();
     }
+}
+
+UnixProcess::~UnixProcess()
+{
+    Detach();
+
+    // Kill the child process (if it is still alive)
+    Stop();
+    Wait();
 }
 
 bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
@@ -103,12 +113,15 @@ bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& sh
 
 int UnixProcess::Wait()
 {
-    int status;
-    waitpid(child_pid, &status, 0);
+    int status = 0;
+    waitpid(child_pid, &status, WNOHANG);
     return WEXITSTATUS(status);
 }
 
-void UnixProcess::Stop() { ::kill(child_pid, SIGTERM); }
+void UnixProcess::Stop()
+{
+    if(child_pid != wxNOT_FOUND) { ::kill(child_pid, SIGTERM); }
+}
 
 void UnixProcess::Write(const std::string& message)
 {
@@ -161,3 +174,18 @@ void UnixProcess::StartReaderThread()
         },
         this, m_childStdout.read_fd(), m_childStderr.read_fd());
 }
+
+void UnixProcess::Detach()
+{
+    m_goingDown.store(true);
+    if(m_writerThread) {
+        m_writerThread->join();
+        wxDELETE(m_writerThread);
+    }
+    if(m_readerThread) {
+        m_readerThread->join();
+        wxDELETE(m_readerThread);
+    }
+}
+
+#endif // OSX & GTK

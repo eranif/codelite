@@ -11,7 +11,16 @@
 
 ChildProcess::ChildProcess() {}
 
-ChildProcess::~ChildProcess() {}
+ChildProcess::~ChildProcess()
+{
+#if USE_IPROCESS
+    m_process->Detach();
+    wxDELETE(m_process);
+#else
+    m_childProcess->Detach();
+    wxDELETE(m_childProcess);
+#endif
+}
 
 void ChildProcess::Start(const wxArrayString& args)
 {

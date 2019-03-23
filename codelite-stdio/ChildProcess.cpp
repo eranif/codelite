@@ -5,24 +5,18 @@
 #include "processreaderthread.h"
 #include <globals.h>
 
-ChildProcess::ChildProcess()
-{
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ChildProcess::OnProcessTerminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ChildProcess::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_STDERR, &ChildProcess::OnProcessStderr, this);
-}
+#if !USE_IPROCESS
+#include "UnixProcess.h"
+#endif
 
-ChildProcess::~ChildProcess()
-{
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &ChildProcess::OnProcessTerminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &ChildProcess::OnProcessOutput, this);
-    Unbind(wxEVT_ASYNC_PROCESS_STDERR, &ChildProcess::OnProcessStderr, this);
-}
+ChildProcess::ChildProcess() {}
+
+ChildProcess::~ChildProcess() {}
 
 void ChildProcess::Start(const wxArrayString& args)
 {
     if(args.IsEmpty()) { return; }
-
+#if USE_IPROCESS
     // Build command line from the array
     wxString command;
     command << args[0];
@@ -33,7 +27,7 @@ void ChildProcess::Start(const wxArrayString& args)
         ::WrapWithQuotes(argument);
         command << " " << argument;
     }
-    
+
     // Launch the process
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent);
     if(m_process) {
@@ -41,10 +35,18 @@ void ChildProcess::Start(const wxArrayString& args)
         FileUtils::ReadFileContent(wxFileName("C:/src/wxCustomControls/init.msg"), content);
         m_process->WriteRaw(content);
     }
+#else
+    m_childProcess = new UnixProcess(this, args);
+#endif
 }
 
-void ChildProcess::OnProcessTerminated(clProcessEvent& event) { clDEBUG() << "Process terminated"; }
+void ChildProcess::Write(const wxString& message) { Write(FileUtils::ToStdString(message)); }
 
-void ChildProcess::OnProcessOutput(clProcessEvent& event) { clDEBUG() << event.GetOutput(); }
-
-void ChildProcess::OnProcessStderr(clProcessEvent& event) { clDEBUG() << event.GetOutput(); }
+void ChildProcess::Write(const std::string& message)
+{
+#if USE_IPROCESS
+    m_process->WriteRaw(message);
+#else
+    m_childProcess->Write(FileUtils::ToStdString(message));
+#endif
+}

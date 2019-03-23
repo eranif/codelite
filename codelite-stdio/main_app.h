@@ -3,18 +3,22 @@
 
 #include <wx/app.h>
 #include <wx/cmdline.h>
+#include <cl_command_event.h>
 
 class ChildProcess;
 class MainApp : public wxAppConsole
 {
     ChildProcess* m_child = nullptr;
-    
+
 protected:
     /**
      * @brief parse the command line here
      * @return true on success, false otherwise
      */
     bool DoParseCommandLine(wxCmdLineParser& parser);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessStderr(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 
 public:
     MainApp();

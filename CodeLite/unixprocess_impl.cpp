@@ -388,22 +388,20 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 }
 
-bool UnixProcessImpl::Write(const wxString& buff)
-{
-    wxString tmpbuf = buff;
-    std::string cstr = FileUtils::ToStdString(tmpbuf);
-    return Write(cstr);
-}
-
 bool UnixProcessImpl::Write(const std::string& buff)
 {
+    return WriteRaw(buff + "\n");
+}
+
+bool UnixProcessImpl::Write(const wxString& buff)
+{
+    return Write(FileUtils::ToStdString(buff));
+}
+
+bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
+bool UnixProcessImpl::WriteRaw(const std::string& buff)
+{
     std::string tmpbuf = buff;
-    tmpbuf.append("\n");
-
-//    clSocketBase c(GetWriteHandle());
-//    c.MakeSocketBlocking(false);
-//    c.SetCloseOnExit(false);
-
     const int chunk_size = 1024;
     while(!tmpbuf.empty()) {
         int bytes_written =

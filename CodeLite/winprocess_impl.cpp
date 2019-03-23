@@ -399,11 +399,15 @@ bool WinProcessImpl::Write(const wxString& buff)
     return Write(FileUtils::ToStdString(buff));
 }
 
-bool WinProcessImpl::Write(const std::string& buff)
+bool WinProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\r\n"); }
+
+bool WinProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
+
+bool WinProcessImpl::WriteRaw(const std::string& buff)
 {
     // Sanity
     if(!IsRedirect()) { return false; }
-    m_writerThread->Write(buff + "\r\n");
+    m_writerThread->Write(buff);
     return true;
 }
 
@@ -566,4 +570,5 @@ void WinProcessImpl::Detach()
     }
     m_thr = NULL;
 }
+
 #endif //__WXMSW__

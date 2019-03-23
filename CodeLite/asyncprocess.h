@@ -97,10 +97,18 @@ public:
     virtual bool Read(wxString& buff, wxString& buffErr) = 0;
 
     // Write to the process stdin
+    // This version add LF to the buffer
     virtual bool Write(const wxString& buff) = 0;
     
     // ANSI version
+    // This version add LF to the buffer
     virtual bool Write(const std::string& buff) = 0;
+
+    // Write to the process stdin
+    virtual bool WriteRaw(const wxString& buff) = 0;
+    
+    // ANSI version
+    virtual bool WriteRaw(const std::string& buff) = 0;
 
     /**
      * @brief wait for process to terminate and return all its output to the caller

@@ -39,7 +39,7 @@ void ChildProcess::Start(const wxArrayString& args)
     if(m_process) {
         wxString content;
         FileUtils::ReadFileContent(wxFileName("C:/src/wxCustomControls/init.msg"), content);
-        m_process->Write(content);
+        m_process->WriteRaw(content);
     }
 }
 

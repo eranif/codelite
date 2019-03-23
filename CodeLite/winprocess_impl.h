@@ -45,7 +45,6 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 protected:
     void StartReaderThread();
     bool DoReadFromPipe(HANDLE pipe, wxString& buff);
-    bool DoReadFromConsoleBuffer(HANDLE handle, wxString& buff);
 
 public:
     WinProcessImpl(wxEvtHandler* parent);
@@ -66,7 +65,8 @@ public:
     // Write to the process stdin
     virtual bool Write(const wxString& buff);
     virtual bool Write(const std::string& buff);
-
+    virtual bool WriteRaw(const wxString& buff);
+    virtual bool WriteRaw(const std::string& buff);
     virtual bool WriteToConsole(const wxString& buff);
 
     // Return true if the process is still alive
@@ -77,10 +77,6 @@ public:
     virtual void Cleanup();
     virtual void Terminate();
     virtual void Detach();
-
-protected:
-    bool RedirectHandle(DWORD id, SECURITY_ATTRIBUTES& saAttr, HANDLE& hSavedHandle, HANDLE& hChildRd,
-                        HANDLE& hChildRdDup, HANDLE& hChildWrite, long flags);
 
 private:
     // Creating process related handles

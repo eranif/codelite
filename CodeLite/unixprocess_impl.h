@@ -66,6 +66,8 @@ public:
     virtual bool Read(wxString& buff, wxString& buffErr);
     virtual bool Write(const wxString& buff);
     virtual bool Write(const std::string& buff);
+    virtual bool WriteRaw(const wxString& buff);
+    virtual bool WriteRaw(const std::string& buff);
     virtual void Terminate();
     virtual bool WriteToConsole(const wxString& buff);
     virtual void Detach();

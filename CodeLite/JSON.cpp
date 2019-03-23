@@ -77,10 +77,10 @@ JSON::~JSON()
 
 void JSON::save(const wxFileName& fn) const
 {
-    wxFFile fp(fn.GetFullPath(), wxT("w+b"));
-    if(fp.IsOpened()) {
-        fp.Write(toElement().format(), wxConvUTF8);
-        fp.Close();
+    if(!isOk()) {
+        FileUtils::WriteFileContent(fn, "[]");
+    } else {
+        FileUtils::WriteFileContent(fn, toElement().format(), wxConvUTF8);
     }
 }
 

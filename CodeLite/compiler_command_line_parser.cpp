@@ -282,14 +282,14 @@ wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
 {
     wxArrayString incls;
+    incls.reserve(m_includes.size());
+    
     for(size_t i = 0; i < m_includes.GetCount(); ++i) {
         wxFileName fn(m_includes.Item(i), wxT(""));
         fn.MakeAbsolute(path);
-        incls.Add(fn.GetFullPath());
+        incls.Add(fn.GetPath());
     }
-
-    m_includes.Clear();
-    m_includes = incls;
+    m_includes.swap(incls);
 
     m_includesWithPrefix.Clear();
     for(size_t i = 0; i < m_framworks.GetCount(); ++i) {

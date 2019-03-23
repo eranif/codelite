@@ -46,6 +46,7 @@
 #include "macromanager.h"
 #include "build_settings_config.h"
 #include "localworkspace.h"
+#include "compiler_command_line_parser.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -1029,8 +1030,31 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
                 buildConf->GetCustomBuildWorkingDir(), NULL, activeProject->GetName(), buildConf->GetName());
             wxFileName fnWorkingDirectory(buildWorkingDirectory, "compile_commands.json");
             if(fnWorkingDirectory.FileExists()) {
+
                 JSON root(fnWorkingDirectory);
-                return root.release();
+                if(root.isOk()) {
+                    JSON newFile(cJSON_Array);
+                    JSONItem newArr = newFile.toElement();
+                    JSONItem arr = root.toElement();
+                    int size = arr.arraySize();
+                    for(int i = 0; i < size; ++i) {
+                        JSONItem file = arr.arrayItem(i);
+                        wxString command = file.namedObject("command").toString();
+                        wxString filename = file.namedObject("file").toString();
+                        wxString directory = file.namedObject("directory").toString();
+
+                        JSONItem fileItem = JSONItem::createObject();
+                        fileItem.addProperty("file", filename).addProperty("directory", directory);
+
+                        // Fix the build command
+                        CompilerCommandLineParser cclp(command, directory);
+                        cclp.MakeAbsolute(directory);
+                        fileItem.addProperty("command", wxString()
+                                                            << "clang " << cclp.GetCompileLine() << " -c " << filename);
+                        newArr.arrayAppend(fileItem);
+                    }
+                    return newFile.release();
+                }
             }
         }
     }

@@ -189,9 +189,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
                 // The include folders are inside the file - read the file and process its content
                 wxFileName fnIncludes(workingDirectory + "/" + opt.Mid(1));
-                if(fnIncludes.Exists()) {
-                    AddIncludesFromFile(fnIncludes);
-                }
+                if(fnIncludes.Exists()) { AddIncludesFromFile(fnIncludes); }
 
             } else if(opt == "-isystem" && (i + 1 < m_argc)) {
 
@@ -218,11 +216,16 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
             }
-            
+
             else if((opt == "-include") && (i + 1 < m_argc)) {
                 wxString include_path = m_argv[i + 1];
                 include_path.Trim().Trim(false);
                 m_pchFile = include_path;
+                ++i;
+            } else if((opt == "-isysroot") && (i + 1 < m_argc)) {
+                wxString include_path = m_argv[i + 1];
+                include_path.Trim().Trim(false);
+                m_sysroots.Add(include_path);
                 ++i;
             }
 
@@ -240,9 +243,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 wxString stds = rest.AfterFirst(wxT('='));
                 stds.Trim().Trim(false);
 
-                if(stds.IsEmpty() == false) {
-                    m_standard = stds;
-                }
+                if(stds.IsEmpty() == false) { m_standard = stds; }
             } else {
                 m_otherOptions.Add(opt);
             }
@@ -268,6 +269,9 @@ wxString CompilerCommandLineParser::GetCompileLine() const
         s << wxT("-D") << m_macros.Item(i) << wxT(" ");
     }
 
+    for(size_t i = 0; i < m_sysroots.size(); ++i) {
+        s << "-isysroot " << m_sysroots.Item(i) << " ";
+    }
     s.Trim().Trim(false);
     return s;
 }
@@ -283,7 +287,7 @@ void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
 {
     wxArrayString incls;
     incls.reserve(m_includes.size());
-    
+
     for(size_t i = 0; i < m_includes.GetCount(); ++i) {
         wxFileName fn(m_includes.Item(i), wxT(""));
         fn.MakeAbsolute(path);
@@ -310,8 +314,8 @@ void CompilerCommandLineParser::AddIncludesFromFile(const wxFileName& includeFil
         content.Replace("\n", " ");
         CompilerCommandLineParser cclp(content);
         m_includes.insert(m_includes.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
-        m_includesWithPrefix.insert(
-            m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
+        m_includesWithPrefix.insert(m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(),
+                                    cclp.GetIncludesWithPrefix().end());
         fp.Close();
     }
 }

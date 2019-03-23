@@ -43,6 +43,7 @@ protected:
     wxArrayString m_macrosWithPrefix;
     wxArrayString m_includesWithPrefix;
     wxArrayString m_framworks;
+    wxArrayString m_sysroots; // -isysroot
     wxString m_standard;
     wxArrayString m_otherOptions;
 
@@ -64,6 +65,7 @@ public:
 
     wxString GetStandardWithPrefix() const;
 
+    const wxArrayString& GetSysroots() const { return m_sysroots; }
     const wxArrayString& GetOtherOptions() const { return m_otherOptions; }
     const wxArrayString& GetFramworks() const { return m_framworks; }
     const wxString& GetPchFile() const { return m_pchFile; }

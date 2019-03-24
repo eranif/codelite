@@ -2142,11 +2142,16 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
 
     if(!tlw || !parentTlw) { return; }
-
-    wxRect parentRect = parentTlw->GetSize();
-    parentRect.Deflate(50);
-    tlw->SetSizeHints(parentRect.GetSize());
-    tlw->SetSize(parentRect.GetSize());
+    
+    wxSize frameSize = wxSize(800, 600);
+    wxSize screenSize = clGetDisplaySize();
+    if(screenSize.GetWidth() > 1920) {
+        // More than FullHD screen
+        frameSize *= 2;
+    }
+    
+    tlw->SetSizeHints(frameSize);
+    tlw->SetSize(frameSize);
     tlw->CenterOnParent();
 
     // If the parent is maximized, maximize this window as well
@@ -2158,11 +2163,15 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
     if(!win || !win->GetParent()) { return; }
+    
+    wxSize dialogSize = wxSize(500, 300);
+    wxSize screenSize = clGetDisplaySize();
+    if(screenSize.GetWidth() > 1920) {
+        // More than FullHD screen
+        dialogSize *= 2;
+    }
 
-    wxRect parentRect = win->GetParent()->GetSize();
-    parentRect.SetWidth(parentRect.GetWidth() / 2);
-    parentRect.SetHeight(parentRect.GetHeight() / 2);
-    win->SetSizeHints(parentRect.GetSize());
-    win->SetSize(parentRect.GetSize());
+    win->SetSizeHints(dialogSize);
+    win->SetSize(dialogSize);
     win->CenterOnParent();
 }

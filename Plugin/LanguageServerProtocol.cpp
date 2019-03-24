@@ -344,7 +344,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     if(editor && ShouldHandleFile(editor)) { SendSaveRequest(editor->GetFileName(), editor->GetCtrl()->GetText()); }
 }
 
-wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "LSP [" << GetName() << "]:"; }
+wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "[" << GetName() << "] "; }
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
@@ -407,21 +407,28 @@ void LanguageServerProtocol::CloseEditor(IEditor* editor)
 
 void LanguageServerProtocol::FindDeclaration(IEditor* editor)
 {
-    CHECK_PTR_RET(editor);
-    CHECK_COND_RET(ShouldHandleFile(editor));
+    if(m_unimplementedMethods.count("textDocument/declaration")) {
+        // this method is not implemented
+        // use 'definition' instead
+        FindDefinition(editor);
+    } else {
+        CHECK_PTR_RET(editor);
+        CHECK_COND_RET(ShouldHandleFile(editor));
 
-    // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxFileName& filename = editor->GetFileName();
-    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
-        // we already sent this file over, ask for change parse
-        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
-    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
-        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+        // If the editor is modified, we need to tell the LSP to reparse the source file
+        const wxFileName& filename = editor->GetFileName();
+        if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+            // we already sent this file over, ask for change parse
+            SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+        } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+            SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+        }
+
+        LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+            new LSP::GotoDeclarationRequest(editor->GetFileName(), editor->GetCurrentLine(),
+                                            editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+        QueueMessage(req);
     }
-
-    LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
-        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
-    QueueMessage(req);
 }
 
 void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
@@ -479,6 +486,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         // User requested a mesasge which is not supported by this server
                         clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ")
                                                                     << msg_ptr->GetMethod() << _(" is not supported"));
+                        m_unimplementedMethods.insert(msg_ptr->GetMethod());
+                        
+                        // Report this missing event
+                        LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
+                        eventMethodNotFound.SetServerName(GetName());
+                        eventMethodNotFound.SetString(msg_ptr->GetMethod());
+                        m_owner->AddPendingEvent(eventMethodNotFound);
+                        
                     } break;
                     case LSP::ResponseError::kErrorCodeInvalidParams: {
                         // Recreate this AST (in other words: reparse), by default we reparse the current editor
@@ -561,21 +576,28 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 
 void LanguageServerProtocol::FindImplementation(IEditor* editor)
 {
-    CHECK_PTR_RET(editor);
-    CHECK_COND_RET(ShouldHandleFile(editor));
+    if(m_unimplementedMethods.count("textDocument/implementation")) {
+        // this method is not implemented
+        // use 'definition' instead
+        FindDefinition(editor);
+    } else {
+        CHECK_PTR_RET(editor);
+        CHECK_COND_RET(ShouldHandleFile(editor));
 
-    // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxFileName& filename = editor->GetFileName();
-    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
-        // we already sent this file over, ask for change parse
-        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
-    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
-        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+        // If the editor is modified, we need to tell the LSP to reparse the source file
+        const wxFileName& filename = editor->GetFileName();
+        if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+            // we already sent this file over, ask for change parse
+            SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+        } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+            SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+        }
+
+        LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+            new LSP::GotoImplementationRequest(editor->GetFileName(), editor->GetCurrentLine(),
+                                               editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+        QueueMessage(req);
     }
-
-    LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoImplementationRequest(
-        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
-    QueueMessage(req);
 }
 
 //===------------------------------------------------------------------

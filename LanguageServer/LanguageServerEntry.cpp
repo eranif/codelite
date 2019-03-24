@@ -18,6 +18,12 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_enabled = json.namedObject("enabled").toBool(m_enabled);
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
+
+    m_unimplementedMethods.clear();
+    wxArrayString methods = json.namedObject("unimplementedMethods").toArrayString();
+    for(const wxString& methodName : methods) {
+        m_unimplementedMethods.insert(methodName);
+    }
 }
 
 JSONItem LanguageServerEntry::ToJSON() const
@@ -31,6 +37,14 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("workingDirectory", m_workingDirectory);
     json.addProperty("connectionString", m_connectionString);
     json.addProperty("priority", m_priority);
+
+    wxArrayString methods;
+    methods.Alloc(m_unimplementedMethods.size());
+    for(const wxString& methodName : m_unimplementedMethods) {
+        methods.Add(methodName);
+    }
+
+    json.addProperty("unimplementedMethods", methods);
     return json;
 }
 
@@ -55,4 +69,9 @@ bool LanguageServerEntry::IsValid() const
     wxFileName wd(m_workingDirectory, "");
     if(wd.IsAbsolute() && !wd.DirExists()) { return false; }
     return true;
+}
+
+void LanguageServerEntry::AddUnImplementedMethod(const wxString& methodName)
+{
+    m_unimplementedMethods.insert(methodName);
 }

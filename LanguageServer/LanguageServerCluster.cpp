@@ -22,6 +22,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
     Bind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
     Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
+    Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -33,6 +34,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
     Unbind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
     Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
+    Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -85,6 +87,15 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
     if(lsp) { lsp->OpenEditor(editor); }
 }
 
+void LanguageServerCluster::OnMethodNotFound(LSPEvent& event)
+{
+    LanguageServerEntry& entry = LanguageServerConfig::Get().GetServer(event.GetServerName());
+    if(entry.IsValid()) {
+        entry.AddUnImplementedMethod(event.GetString());
+        LanguageServerConfig::Get().Save();
+    }
+}
+
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
     const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
@@ -131,7 +142,7 @@ void LanguageServerCluster::RestartServer(const wxString& name)
         // Remove the old instance
         m_servers.erase(name);
     }
-    
+
     // Create new instance
     if(LanguageServerConfig::Get().GetServers().count(name) == 0) { return; }
     const LanguageServerEntry& entry = LanguageServerConfig::Get().GetServers().at(name);
@@ -152,6 +163,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
         lsp->SetPriority(entry.GetPriority());
+        lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
+        
         wxArrayString lspCommand;
         lspCommand.Add(entry.GetExepath());
 

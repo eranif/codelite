@@ -5,6 +5,7 @@ wxDEFINE_EVENT(wxEVT_LSP_INITIALIZED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_COMPLETION_READY, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)

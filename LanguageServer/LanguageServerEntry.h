@@ -18,6 +18,7 @@ class LanguageServerEntry
     wxArrayString m_languages;
     wxString m_connectionString;
     int m_priority = 50;
+    wxStringSet_t m_unimplementedMethods;
 
 public:
     // use 'map' to keep the items sorted by name
@@ -34,6 +35,15 @@ public:
     virtual JSONItem ToJSON() const;
     LanguageServerEntry();
     virtual ~LanguageServerEntry();
+
+    const wxStringSet_t& GetUnimplementedMethods() const { return m_unimplementedMethods; }
+    
+    /**
+     * @brief add unimplemented method to this LSP
+     * @param methodName
+     */
+    void AddUnImplementedMethod(const wxString& methodName);
+
     LanguageServerEntry& SetArgs(const wxString& args)
     {
         this->m_args = args;

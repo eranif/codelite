@@ -31,6 +31,7 @@ protected:
     void OnReparseNeeded(LSPEvent& event);
     void OnRestartNeeded(LSPEvent& event);
     void OnLSPInitialized(LSPEvent& event);
+    void OnMethodNotFound(LSPEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceOpen(wxCommandEvent& event);
 

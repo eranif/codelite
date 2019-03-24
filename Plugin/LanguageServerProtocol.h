@@ -56,7 +56,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxString m_outputBuffer;
     wxString m_rootFolder;
     wxString m_connectionString;
-    
+
     // initialization
     eState m_state = kUnInitialized;
     int m_initializeRequestID = wxNOT_FOUND;
@@ -64,6 +64,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
     size_t m_createFlags = 0;
+    wxStringSet_t m_unimplementedMethods;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -134,6 +135,12 @@ public:
         return *this;
     }
 
+    LanguageServerProtocol& SetUnimplementedMethods(const wxStringSet_t& unimplementedMethods)
+    {
+        this->m_unimplementedMethods = unimplementedMethods;
+        return *this;
+    }
+    const wxStringSet_t& GetUnimplementedMethods() const { return m_unimplementedMethods; }
     const wxString& GetName() const { return m_name; }
     bool IsInitialized() const { return (m_state == kInitialized); }
 

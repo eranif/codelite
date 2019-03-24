@@ -51,6 +51,9 @@ public:
     }
     const LanguageServerEntry::Map_t& GetServers() const { return m_servers; }
     LanguageServerEntry::Map_t& GetServers() { return m_servers; }
+    
+    LanguageServerEntry& GetServer(const wxString& name);
+    const LanguageServerEntry& GetServer(const wxString& name) const;
     /**
      * @brief add server. erase an existing one with the same name
      */

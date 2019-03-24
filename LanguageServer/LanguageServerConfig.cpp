@@ -72,3 +72,17 @@ void LanguageServerConfig::RemoveServer(const wxString& name)
 {
     if(m_servers.count(name)) { m_servers.erase(name); }
 }
+
+const LanguageServerEntry& LanguageServerConfig::GetServer(const wxString& name) const
+{
+    static LanguageServerEntry NullEntry;
+    if(m_servers.count(name) == 0) { return NullEntry; }
+    return m_servers.find(name)->second;
+}
+
+LanguageServerEntry& LanguageServerConfig::GetServer(const wxString& name)
+{
+    static LanguageServerEntry NullEntry;
+    if(m_servers.count(name) == 0) { return NullEntry; }
+    return m_servers[name];
+}

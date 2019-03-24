@@ -160,8 +160,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             lspCommand.insert(lspCommand.end(), args.begin(), args.end());
         }
 
-        size_t flags = 0;
-        if(entry.IsShowConsole()) { flags |= LSPStartupInfo::kShowConsole; }
         wxString rootDir;
         if(clWorkspaceManager::Get().GetWorkspace()) {
             rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
@@ -173,6 +171,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         clDEBUG() << "rootDir:" << rootDir;
         clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
 
+        size_t flags = 0;
         lsp->Start(lspCommand, entry.GetConnectionString(), entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(),
                    flags);
         m_servers.insert({ entry.GetName(), lsp });

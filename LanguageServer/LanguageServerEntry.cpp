@@ -16,7 +16,6 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_workingDirectory = json.namedObject("workingDirectory").toString();
     m_languages = json.namedObject("languages").toArrayString();
     m_enabled = json.namedObject("enabled").toBool(m_enabled);
-    m_showConsole = json.namedObject("showConsole").toBool(false);
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
 }
@@ -30,7 +29,6 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("languages", m_languages);
     json.addProperty("enabled", m_enabled);
     json.addProperty("workingDirectory", m_workingDirectory);
-    json.addProperty("showConsole", m_showConsole);
     json.addProperty("connectionString", m_connectionString);
     json.addProperty("priority", m_priority);
     return json;

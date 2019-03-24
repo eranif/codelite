@@ -15,7 +15,6 @@ class LanguageServerEntry
     wxString m_args;
     wxString m_workingDirectory;
     wxArrayString m_languages;
-    bool m_showConsole = false;
     wxString m_connectionString;
     int m_priority = 50;
 
@@ -81,12 +80,6 @@ public:
         return *this;
     }
     const wxString& GetName() const { return m_name; }
-    LanguageServerEntry& SetShowConsole(bool showConsole)
-    {
-        this->m_showConsole = showConsole;
-        return *this;
-    }
-    bool IsShowConsole() const { return m_showConsole; }
     eNetworkType GetNetType() const;
 };
 

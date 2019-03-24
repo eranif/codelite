@@ -6,6 +6,7 @@
 #include "cl_config.h"
 #include <wxStringHash.h>
 #include "LSPNetwork.h"
+#include <map>
 
 class LanguageServerEntry
 {
@@ -19,7 +20,8 @@ class LanguageServerEntry
     int m_priority = 50;
 
 public:
-    typedef std::unordered_map<wxString, LanguageServerEntry> Map_t;
+    // use 'map' to keep the items sorted by name
+    typedef std::map<wxString, LanguageServerEntry> Map_t;
 
     /**
      * @brief try to validate the LSP by checking that all paths do exists

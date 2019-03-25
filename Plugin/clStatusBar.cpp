@@ -77,8 +77,9 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
     AddField(sourceControl);
-
-    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, clGetScaledSize(300)));
+    
+    int lineColWidth = GetTextWidth("Ln 100000, Col 999, Pos 12345678, Len 4821182");
+    wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, lineColWidth));
     AddField(lineCol);
 
     wxCustomStatusBarField::Ptr_t buildAnimation(new wxCustomStatusBarAnimationField(
@@ -90,8 +91,10 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t eol(new wxCustomStatusBarFieldText(this, clGetScaledSize(50)));
     AddField(eol);
-
-    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, clGetScaledSize(100)));
+    
+    // The longest language that we have is "properties"
+    int languageWidth = GetTextWidth("_properties_");
+    wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, languageWidth));
     AddField(language);
 
     wxCustomStatusBarField::Ptr_t encoding(new wxCustomStatusBarFieldText(this, clGetScaledSize(80)));
@@ -575,4 +578,17 @@ void clStatusBar::OnActionSelected(clGotoEvent& e)
         ColoursAndFontsManager::Get().SetTheme(m_gotoAnythingTableThemes[desc]);
         ColoursAndFontsManager::Get().Save();
     }
+}
+
+int clStatusBar::GetTextWidth(const wxString& text) const
+{
+    const int SPACER = 10;
+    wxBitmap bmp(1, 1);
+    wxMemoryDC memDc;
+    memDc.SelectObject(bmp);
+    wxGCDC gcdc(memDc);
+    gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
+    int textWidth = gcdc.GetTextExtent(text).GetWidth();
+    textWidth += 2 * SPACER;
+    return textWidth;
 }

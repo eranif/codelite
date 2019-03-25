@@ -871,9 +871,12 @@ void NewBuildTab::InitView(const wxString& theme)
         m_view->StyleSetBackground(i, defaultStyle.GetBgColour());
         m_view->StyleSetFont(i, defaultFont);
     }
-
-    m_view->StyleSetForeground(LEX_GCC_INFO, wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
-    m_view->StyleSetForeground(LEX_GCC_DEFAULT, props[0].GetFgColour());
+    
+    bool is_dark = DrawingUtils::IsDark(props[0].GetBgColour());
+    wxColour textColour = props[0].GetFgColour();
+    wxColour infoMsgColour = textColour.ChangeLightness(is_dark ? 50 : 150);
+    m_view->StyleSetForeground(LEX_GCC_INFO, infoMsgColour);
+    m_view->StyleSetForeground(LEX_GCC_DEFAULT, textColour);
     m_view->StyleSetForeground(LEX_GCC_WARNING, this->m_buildTabSettings.GetWarnColour());
     m_view->StyleSetForeground(LEX_GCC_ERROR, this->m_buildTabSettings.GetErrorColour());
 

@@ -252,15 +252,10 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
 
 static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 {
-    unsigned char red, green, blue;
-    const unsigned char alpha = 60; /* here is a blending value in precent */
-    wxColour fgColour = defaultStyle.GetFgColour();
-    wxColour bgColour = defaultStyle.GetBgColour();
-    red = ((fgColour.Red() * alpha + bgColour.Red() * (100 - alpha)) / 100);
-    green = ((fgColour.Green() * alpha + bgColour.Green() * (100 - alpha)) / 100);
-    blue = ((fgColour.Blue() * alpha + bgColour.Blue() * (100 - alpha)) / 100);
-    fgColour.Set(red, green, blue);
-    return fgColour;
+    wxColour fg = defaultStyle.GetFgColour();
+    wxColour bg = defaultStyle.GetBgColour();
+    bool is_dark = DrawingUtils::IsDark(bg);
+    return fg.ChangeLightness(is_dark ? 50 : 150);
 }
 
 #define CL_LINE_MODIFIED_STYLE 200

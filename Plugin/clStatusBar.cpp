@@ -48,12 +48,51 @@ static void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxSt
 
 class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
+    wxColour m_bgColour;
+    wxColour m_penColour;
+    wxColour m_textColour;
+    wxColour m_separatorColour;
+
+protected:
+    void InitialiseColours()
+    {
+        m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        bool isdark = DrawingUtils::IsDark(m_bgColour);
+        m_bgColour = m_bgColour.ChangeLightness(isdark ? 105 : 95);
+
+        m_penColour = m_bgColour; // clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+        m_textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+        m_separatorColour = m_bgColour; // clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+
+    void OnColoursChanged(clCommandEvent& event)
+    {
+        event.Skip();
+        InitialiseColours();
+    }
+
 public:
     clStatusBarArtNormal()
         : wxCustomStatusBarArt("Light")
     {
+        InitialiseColours();
+        EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clStatusBarArtNormal::OnColoursChanged, this);
     }
-    virtual ~clStatusBarArtNormal() {}
+    virtual ~clStatusBarArtNormal()
+    {
+        EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clStatusBarArtNormal::OnColoursChanged, this);
+    }
+
+    void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRec)
+    {
+        wxUnusedVar(dc);
+        wxUnusedVar(fieldRec);
+    }
+
+    virtual wxColour GetBgColour() const { return m_bgColour; }
+    virtual wxColour GetPenColour() const { return m_penColour; }
+    virtual wxColour GetTextColour() const { return m_textColour; }
+    virtual wxColour GetSeparatorColour() const { return m_separatorColour; }
 };
 
 clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
@@ -77,7 +116,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t sourceControl(new wxCustomStatusBarBitmapField(this, clGetScaledSize(30)));
     AddField(sourceControl);
-    
+
     int lineColWidth = GetTextWidth("Ln 100000, Col 999, Pos 12345678, Len 4821182");
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, lineColWidth));
     AddField(lineCol);
@@ -91,7 +130,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
 
     wxCustomStatusBarField::Ptr_t eol(new wxCustomStatusBarFieldText(this, clGetScaledSize(50)));
     AddField(eol);
-    
+
     // The longest language that we have is "properties"
     int languageWidth = GetTextWidth("_properties_");
     wxCustomStatusBarField::Ptr_t language(new wxCustomStatusBarFieldText(this, languageWidth));

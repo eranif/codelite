@@ -26,15 +26,15 @@ void wxCustomStatusBarArt::DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxStri
 void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
 {
     // draw border line
-    //dc.SetPen(GetPenColour());
-    //wxPoint bottomPt, topPt;
-    //
-    //topPt = fieldRect.GetTopLeft();
-    //topPt.y += 2;
-    //
-    //bottomPt = fieldRect.GetBottomLeft();
-    //bottomPt.y += 1;
-    //dc.DrawLine(topPt, bottomPt);
+    dc.SetPen(GetPenColour());
+    wxPoint bottomPt, topPt;
+    
+    topPt = fieldRect.GetTopLeft();
+    topPt.y += 2;
+    
+    bottomPt = fieldRect.GetBottomLeft();
+    bottomPt.y += 1;
+    dc.DrawLine(topPt, bottomPt);
 }
 
 //========================------------------------------------
@@ -235,8 +235,6 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     // Fill the background
     
     wxColour bgColour = m_art->GetBgColour();
-    bool isdark = DrawingUtils::IsDark(bgColour);
-    bgColour = bgColour.ChangeLightness(isdark ? 105 : 95);
     dc.SetBrush(bgColour);
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);

@@ -37,7 +37,7 @@
 #include "clSystemSettings.h"
 
 class wxCustomStatusBar;
-class WXDLLIMPEXP_SDK wxCustomStatusBarArt
+class WXDLLIMPEXP_SDK wxCustomStatusBarArt : public wxEvtHandler
 {
 protected:
     wxString m_name;
@@ -49,13 +49,13 @@ public:
     wxCustomStatusBarArt(const wxString& name);
     virtual ~wxCustomStatusBarArt() {}
 
-    void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
-    void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
+    virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
+    virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
 
-    wxColour GetBgColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); }
-    wxColour GetPenColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
-    wxColour GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
-    wxColour GetSeparatorColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
+    virtual wxColour GetBgColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); }
+    virtual wxColour GetPenColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
+    virtual wxColour GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
+    virtual wxColour GetSeparatorColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
 };

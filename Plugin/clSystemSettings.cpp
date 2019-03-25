@@ -7,6 +7,8 @@
 bool clSystemSettings::m_useCustomColours = false;
 clColours clSystemSettings::m_customColours;
 
+wxDEFINE_EVENT(wxEVT_SYS_COLOURS_CHANGED, clCommandEvent);
+
 clSystemSettings::clSystemSettings()
 {
     m_useCustomColours = clConfig::Get().Read("UseCustomBaseColour", false);
@@ -53,11 +55,15 @@ void clSystemSettings::OnColoursChanged(clCommandEvent& event)
     if(m_useCustomColours) {
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         m_customColours.InitFromColour(baseColour);
-        
+
         // Make sure that the notebook colours are getting updated as well
         ThemeHandlerHelper helper(EventNotifier::Get()->TopFrame());
         helper.UpdateNotebookColours(EventNotifier::Get()->TopFrame());
     }
+    
+    // Notify about colours changes
+    clCommandEvent evtColoursChanged(wxEVT_SYS_COLOURS_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(evtColoursChanged);
 }
 
 clSystemSettings& clSystemSettings::Get()

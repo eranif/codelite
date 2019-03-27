@@ -425,12 +425,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     // Add libraries paths
     {
         wxString lib_paths = buildConf->GetLibPath();
-        //wxString lib_switch = "-L";
-
         // Get switch from compiler
         if(compiler) {
-            lib_switch = compiler->GetSwitch("LibraryPath");
-
             // Append global library paths
             lib_paths << ";" << compiler->GetGlobalLibPath();
         }
@@ -452,7 +448,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             libPath.Replace("$(WorkspaceConfiguration)", "${CONFIGURATION_NAME}");
             libPath.Replace("$(ProjectPath)", projectPathVariableValue);
             ::WrapWithQuotes(libPath);
-            lib_paths << "    \"" << libPath << "\"\n";
+            lib_paths << "    " << libPath << "\n";
         }
 
         content << "# Library path\n";

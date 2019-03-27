@@ -335,6 +335,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             includePath.Trim(false).Trim();
             // Replace standard macros with CMake variables
             includePath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
+            includePath.Replace("$(WorkspaceConfiguration)", "${CONFIGURATION_NAME}");
             includePath.Replace("$(ProjectPath)", projectPathVariableValue);
             if(includePath.IsEmpty()) { continue; }
             content << "    " << includes.Item(i) << "\n";
@@ -448,6 +449,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             wxString libPath = lib_paths_list.Item(i);
             // Replace standard macros with CMake variables
             libPath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
+            libPath.Replace("$(WorkspaceConfiguration)", "${CONFIGURATION_NAME}");
             libPath.Replace("$(ProjectPath)", projectPathVariableValue);
             ::WrapWithQuotes(libPath);
             lib_paths << "    \"" << libPath << "\"\n";

@@ -43,7 +43,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
-    Bind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
 
     // Use sockets here
     switch(netType) {
@@ -69,7 +68,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
-    Unbind(wxEVT_CC_WORD_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     DoClear();
 }
 
@@ -486,13 +484,13 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ")
                                                                     << msg_ptr->GetMethod() << _(" is not supported"));
                         m_unimplementedMethods.insert(msg_ptr->GetMethod());
-                        
+
                         // Report this missing event
                         LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
                         eventMethodNotFound.SetServerName(GetName());
                         eventMethodNotFound.SetString(msg_ptr->GetMethod());
                         m_owner->AddPendingEvent(eventMethodNotFound);
-                        
+
                     } break;
                     case LSP::ResponseError::kErrorCodeInvalidParams: {
                         // Recreate this AST (in other words: reparse), by default we reparse the current editor

@@ -105,7 +105,6 @@ CodeCompletionManager::CodeCompletionManager()
     // Connect ourself to the cc event system
     Bind(wxEVT_CC_CODE_COMPLETE, &CodeCompletionManager::OnCodeCompletion, this);
     Bind(wxEVT_CC_FIND_SYMBOL, &CodeCompletionManager::OnFindSymbol, this);
-    Bind(wxEVT_CC_WORD_COMPLETE, &CodeCompletionManager::OnWordCompletion, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &CodeCompletionManager::OnFindDecl, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &CodeCompletionManager::OnFindImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &CodeCompletionManager::OnFunctionCalltip, this);
@@ -148,7 +147,6 @@ CodeCompletionManager::~CodeCompletionManager()
                                  &CodeCompletionManager::OnEnvironmentVariablesModified, this);
 
     Unbind(wxEVT_CC_CODE_COMPLETE, &CodeCompletionManager::OnCodeCompletion, this);
-    Unbind(wxEVT_CC_WORD_COMPLETE, &CodeCompletionManager::OnWordCompletion, this);
     Unbind(wxEVT_CC_FIND_SYMBOL, &CodeCompletionManager::OnFindSymbol, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &CodeCompletionManager::OnFindDecl, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &CodeCompletionManager::OnFindImpl, this);
@@ -199,8 +197,6 @@ bool CodeCompletionManager::DoCtagsWordCompletion(clEditor* editor, const wxStri
     return false;
 }
 
-void CodeCompletionManager::DoClangWordCompletion(clEditor* editor) { wxUnusedVar(editor); }
-
 bool CodeCompletionManager::DoCtagsCalltip(clEditor* editor, int line, const wxString& expr, const wxString& text,
                                            const wxString& word)
 {
@@ -213,8 +209,6 @@ bool CodeCompletionManager::DoCtagsCalltip(clEditor* editor, int line, const wxS
     editor->ShowCalltip(tip);
     return true;
 }
-
-void CodeCompletionManager::DoClangCalltip(clEditor* editor) { wxUnusedVar(editor); }
 
 bool CodeCompletionManager::Calltip(clEditor* editor, int line, const wxString& expr, const wxString& text,
                                     const wxString& word)
@@ -229,8 +223,6 @@ bool CodeCompletionManager::CodeComplete(clEditor* editor, int line, const wxStr
     DoUpdateOptions();
     return DoCtagsCodeComplete(editor, line, expr, text);
 }
-
-void CodeCompletionManager::DoClangCodeComplete(clEditor* editor) { wxUnusedVar(editor); }
 
 bool CodeCompletionManager::DoCtagsCodeComplete(clEditor* editor, int line, const wxString& expr, const wxString& text)
 {
@@ -281,8 +273,6 @@ void CodeCompletionManager::GotoImpl(clEditor* editor)
     ServiceProviderManager::Get().ProcessEvent(event);
 }
 
-void CodeCompletionManager::DoClangGotoImpl(clEditor* editor) { wxUnusedVar(editor); }
-
 bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
 {
     TagEntryPtr tag = editor->GetContext()->GetTagAtCaret(true, true);
@@ -297,8 +287,6 @@ bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
     }
     return false;
 }
-
-void CodeCompletionManager::DoClangGotoDecl(clEditor* editor) { wxUnusedVar(editor); }
 
 bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
 {
@@ -662,7 +650,9 @@ void CodeCompletionManager::OnCodeCompletion(clCodeCompletionEvent& event)
     if(!FileExtManager::IsCxxFile(editor->GetFileName())) { return; }
 
     // Try to code complete
-    bool completionSucceed = editor->GetContext()->CodeComplete();
+    bool completionSucceed = event.GetTriggerKind() == LSP::CompletionItem::kTriggerCharacter
+                                 ? editor->GetContext()->CodeComplete()
+                                 : editor->GetContext()->CompleteWord();
 
     // Skip the event if we managed to process
     event.Skip(!completionSucceed);
@@ -698,7 +688,7 @@ void CodeCompletionManager::OnWordCompletion(clCodeCompletionEvent& event)
         event.Skip(false);
         return;
     }
-    
+
     // Try to code complete
     bool completionSucceed = editor->GetContext()->CompleteWord();
 

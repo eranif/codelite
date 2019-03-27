@@ -1660,7 +1660,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     }
 
     // Let the plugins a chance to override the default behavior
-    clCodeCompletionEvent evt(wxEVT_CC_WORD_COMPLETE);
+    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
     evt.SetEditor(this);
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));

@@ -59,13 +59,6 @@ protected:
     bool DoCtagsGotoImpl(clEditor* editor);
     bool DoCtagsGotoDecl(clEditor* editor);
 
-    /// clang implementations
-    void DoClangWordCompletion(clEditor* editor);
-    void DoClangCalltip(clEditor* editor);
-    void DoClangCodeComplete(clEditor* editor);
-    void DoClangGotoImpl(clEditor* editor);
-    void DoClangGotoDecl(clEditor* editor);
-
     void DoUpdateOptions();
     void DoProcessCompileCommands();
     static void ThreadProcessCompileCommandsEntry(CodeCompletionManager* owner, const wxString& rootFolder);

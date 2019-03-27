@@ -2143,7 +2143,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
     if(!tlw || !parentTlw) { return; }
     
-    wxSize frameSize = wxSize(1000, 800);
+    wxSize frameSize = wxSize(1200, 1000);
     double factor = 1.0;
     wxSize screenSize = clGetDisplaySize();
     if(screenSize.GetWidth() > 1920) {
@@ -2167,7 +2167,7 @@ void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
     if(!win || !win->GetParent()) { return; }
     
-    wxSize dialogSize = wxSize(800, 600);
+    wxSize dialogSize = wxSize(1000, 800);
     double factor = 1.0;
     wxSize screenSize = clGetDisplaySize();
     if(screenSize.GetWidth() > 1920) {

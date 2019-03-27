@@ -56,7 +56,6 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     m_shortName = wxT("Word Completion");
 
     wxTheApp->Bind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
-    EventNotifier::Get()->Bind(wxEVT_CC_WORD_COMPLETE, &WordCompletionPlugin::OnWordComplete, this);
     m_dictionary = new WordCompletionDictionary();
     m_completer = new WordCompleter(this);
 }
@@ -76,7 +75,6 @@ void WordCompletionPlugin::UnPlug()
 {
     wxDELETE(m_dictionary);
     wxDELETE(m_completer);
-    EventNotifier::Get()->Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompletionPlugin::OnWordComplete, this);
     wxTheApp->Unbind(wxEVT_MENU, &WordCompletionPlugin::OnSettings, this, XRCID("text_word_complete_settings"));
 }
 

@@ -323,8 +323,12 @@ AbbreviationServiceProvider::~AbbreviationServiceProvider()
 {
     Unbind(wxEVT_CC_WORD_COMPLETE, &AbbreviationServiceProvider::OnWordComplete, this);
 }
+
 void AbbreviationServiceProvider::OnWordComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
-    m_plugin->AddAbbreviations(event);
+    if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerUser) {
+        // user used Ctr-SPACE
+        m_plugin->AddAbbreviations(event);
+    }
 }

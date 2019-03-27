@@ -81,6 +81,7 @@ protected:
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
     void OnFindSymbolImpl(clCodeCompletionEvent& event);
     void OnFindSymbol(clCodeCompletionEvent& event);
+    void OnFunctionCallTip(clCodeCompletionEvent& event);
 
 protected:
     void DoClear();
@@ -191,6 +192,11 @@ public:
      * @brief perform code completion for a given editor
      */
     void CodeComplete(IEditor* editor);
+    
+    /**
+     * @brief ask for function call help
+     */
+    void FunctionHelp(IEditor* editor);
 
     /**
      * @brief manually load file into the server

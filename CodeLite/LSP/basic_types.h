@@ -284,6 +284,9 @@ class WXDLLIMPEXP_CL SignatureInformation : public LSP::Serializable
     ParameterInformation::Vec_t m_parameters;
 
 public:
+    typedef std::vector<LSP::SignatureInformation> Vec_t;
+
+public:
     SignatureInformation() {}
     virtual ~SignatureInformation() {}
     SignatureInformation& SetParameters(const ParameterInformation::Vec_t& parameters)
@@ -304,6 +307,38 @@ public:
     }
     const wxString& GetDocumentation() const { return m_documentation; }
     const wxString& GetLabel() const { return m_label; }
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+};
+
+class WXDLLIMPEXP_CL SignatureHelp : public LSP::Serializable
+{
+    SignatureInformation::Vec_t m_signatures;
+    int m_activeSignature = 0;
+    int m_activeParameter = 0;
+
+public:
+    SignatureHelp() {}
+    virtual ~SignatureHelp() {}
+
+    SignatureHelp& SetActiveParameter(int activeParameter)
+    {
+        this->m_activeParameter = activeParameter;
+        return *this;
+    }
+    SignatureHelp& SetActiveSignature(int activeSignature)
+    {
+        this->m_activeSignature = activeSignature;
+        return *this;
+    }
+    SignatureHelp& SetSignatures(const SignatureInformation::Vec_t& signatures)
+    {
+        this->m_signatures = signatures;
+        return *this;
+    }
+    int GetActiveParameter() const { return m_activeParameter; }
+    int GetActiveSignature() const { return m_activeSignature; }
+    const SignatureInformation::Vec_t& GetSignatures() const { return m_signatures; }
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 };

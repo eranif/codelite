@@ -11,6 +11,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "cl_standard_paths.h"
 #include "clWorkspaceManager.h"
+#include "cl_calltip.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -23,6 +24,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
     Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
+    Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -35,6 +37,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
     Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
+    Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -85,6 +88,21 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
 
     LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
     if(lsp) { lsp->OpenEditor(editor); }
+}
+
+void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    // Signature help results are ready, display them in the editor
+    const LSP::SignatureHelp& sighelp = event.GetSignatureHelp();
+
+    TagEntryPtrVector_t tags;
+    LSPSignatureHelpToTagEntries(tags, sighelp);
+
+    if(tags.empty()) { return; }
+    editor->ShowCalltip(new clCallTip(tags));
 }
 
 void LanguageServerCluster::OnMethodNotFound(LSPEvent& event)
@@ -164,7 +182,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
         lsp->SetPriority(entry.GetPriority());
         lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
-        
+
         wxArrayString lspCommand;
         lspCommand.Add(entry.GetExepath());
 
@@ -220,5 +238,27 @@ void LanguageServerCluster::StartAll()
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
         StartServer(entry);
+    }
+}
+
+void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
+{
+    if(sighelp.GetSignatures().empty()) { return; }
+    const LSP::SignatureInformation::Vec_t& sigs = sighelp.GetSignatures();
+    for(const LSP::SignatureInformation& si : sigs) {
+        TagEntryPtr tag(new TagEntry());
+        wxString sig = si.GetLabel().BeforeFirst('-');
+        sig.Trim().Trim(false);
+        wxString returnValue = si.GetLabel().AfterFirst('-');
+        if(!returnValue.IsEmpty()) {
+            returnValue.Remove(0, 1); // remove ">"
+            returnValue.Trim().Trim(false);
+        }
+
+        tag->SetSignature(sig);
+        tag->SetReturnValue(returnValue);
+        tag->SetKind("function");
+        tag->SetFlags(TagEntry::Tag_No_Signature_Format);
+        tags.push_back(tag);
     }
 }

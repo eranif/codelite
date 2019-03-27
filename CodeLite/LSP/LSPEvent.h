@@ -11,6 +11,7 @@ class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
     LSP::Location m_location;
     wxString m_serverName;
     LSP::CompletionItem::Vec_t m_completions;
+    LSP::SignatureHelp m_signatureHelp;
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -36,6 +37,12 @@ public:
         return *this;
     }
     const LSP::CompletionItem::Vec_t& GetCompletions() const { return m_completions; }
+    LSPEvent& SetSignatureHelp(const LSP::SignatureHelp& signatureHelp)
+    {
+        this->m_signatureHelp = signatureHelp;
+        return *this;
+    }
+    const LSP::SignatureHelp& GetSignatureHelp() const { return m_signatureHelp; }
 };
 
 typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
@@ -47,5 +54,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_COMPLETION_READY, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
 
 #endif // LSPEVENT_H

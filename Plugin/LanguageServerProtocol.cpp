@@ -28,6 +28,7 @@
 #include "LSPNetworkSTDIO.h"
 #include "LSP/Request.h"
 #include "LSPNetworkSocketClient.h"
+#include "LSP/SignatureHelpRequest.h"
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
@@ -43,6 +44,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
 
     // Use sockets here
     switch(netType) {
@@ -68,6 +70,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
+    Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
     DoClear();
 }
 
@@ -191,6 +194,17 @@ bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
 bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 {
     return editor && ShouldHandleFile(editor->GetFileName());
+}
+
+void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+    if(CanHandle(editor->GetFileName())) {
+        event.Skip(false);
+        FunctionHelp(editor);
+    }
 }
 
 void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
@@ -354,6 +368,27 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
             clDEBUG() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
             SendOpenRequest(editor->GetFileName(), editor->GetCtrl()->GetText(), GetLanguageId(editor->GetFileName()));
         }
+    }
+}
+
+void LanguageServerProtocol::FunctionHelp(IEditor* editor)
+{
+    // sanity
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxFileName& filename = editor->GetFileName();
+    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        // we already sent this file over, ask for change parse
+        SendChangeRequest(filename, editor->GetTextRange(0, editor->GetLength()));
+    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        SendOpenRequest(filename, editor->GetTextRange(0, editor->GetLength()), GetLanguageId(filename));
+    }
+
+    if(ShouldHandleFile(filename)) {
+        LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
+            filename, editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+        QueueMessage(req);
     }
 }
 

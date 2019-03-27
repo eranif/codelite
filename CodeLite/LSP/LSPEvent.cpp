@@ -6,6 +6,7 @@ wxDEFINE_EVENT(wxEVT_LSP_COMPLETION_READY, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -24,6 +25,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_location = other.m_location;
     m_serverName = other.m_serverName;
     m_completions = other.m_completions;
+    m_signatureHelp = other.m_signatureHelp;
     return *this;
 }
 

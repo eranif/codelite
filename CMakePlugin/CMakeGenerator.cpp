@@ -424,7 +424,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     // Add libraries paths
     {
         wxString lib_paths = buildConf->GetLibPath();
-        wxString lib_switch = "-L";
+        //wxString lib_switch = "-L";
 
         // Get switch from compiler
         if(compiler) {
@@ -450,11 +450,11 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             libPath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
             libPath.Replace("$(ProjectPath)", projectPathVariableValue);
             ::WrapWithQuotes(libPath);
-            lib_paths << lib_switch << libPath << " ";
+            lib_paths << "    \"" << libPath << "\"\n";
         }
 
         content << "# Library path\n";
-        content << "set(CMAKE_LDFLAGS \"${CMAKE_LDFLAGS} " << lib_paths << "\")\n\n";
+        content << "link_directories(\n" << lib_paths << "\")\n\n";
     }
 
     // Write sources

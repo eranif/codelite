@@ -39,6 +39,7 @@ JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* p
     EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &JSCodeCompletion::OnInfoBarClicked, this);
     Bind(wxEVT_CC_FIND_SYMBOL, &JSCodeCompletion::OnFindSymbol, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &JSCodeCompletion::OnCodeComplete, this);
+    Bind(wxEVT_CC_WORD_COMPLETE, &JSCodeCompletion::OnCodeComplete, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &JSCodeCompletion::OnCodeCompleteFunctionCalltip, this);
 }
 

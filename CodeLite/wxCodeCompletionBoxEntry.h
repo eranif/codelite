@@ -34,12 +34,15 @@
 #include <wx/string.h>
 #include "entry.h" // TagEntryPtr
 #include <wx/bitmap.h>
+#include "LSP/basic_types.h"
 
 class wxStyledTextCtrl;
 class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
 {
     wxString m_text;
     wxString m_comment;
+    wxString m_insertText;
+    LSP::Range m_insertRage;
     int m_imgIndex;
     wxClientData* m_clientData;
     wxRect m_itemRect;
@@ -47,6 +50,8 @@ class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
     TagEntryPtr m_tag; // Internal
     int m_weight;
     wxBitmap m_alternateBitmap;
+    bool m_isFunction = false;
+    bool m_isTemplateFunction = false;
 
 public:
     typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
@@ -55,6 +60,7 @@ public:
 public:
     wxCodeCompletionBoxEntry(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
         : m_text(text)
+        , m_insertText(text)
         , m_imgIndex(imgId)
         , m_clientData(userData)
         , m_weight(0)
@@ -63,6 +69,7 @@ public:
 
     wxCodeCompletionBoxEntry(const wxString& text, const wxBitmap& bmp, wxClientData* userData = NULL)
         : m_text(text)
+        , m_insertText(text)
         , m_imgIndex(wxNOT_FOUND)
         , m_clientData(userData)
         , m_weight(0)
@@ -74,6 +81,7 @@ public:
                              wxClientData* userData = NULL)
         : m_text(text)
         , m_comment(helpText)
+        , m_insertText(text)
         , m_imgIndex(wxNOT_FOUND)
         , m_clientData(userData)
         , m_weight(0)
@@ -87,12 +95,22 @@ public:
         m_imgIndex = wxNOT_FOUND;
         m_text.Clear();
     }
-    
+
+    void SetInsertRange(const LSP::Range& insertRage) { this->m_insertRage = insertRage; }
+    void SetInsertText(const wxString& insertText) { this->m_insertText = insertText; }
+    const LSP::Range& GetInsertRange() const { return m_insertRage; }
+    const wxString& GetInsertText() const { return m_insertText; }
+
+    void SetIsFunction(bool isFunction) { this->m_isFunction = isFunction; }
+    bool IsFunction() const { return m_isFunction; }
+
+    void SetIsTemplateFunction(bool isTemplateFunction) { this->m_isTemplateFunction = isTemplateFunction; }
+    bool IsTemplateFunction() const { return m_isTemplateFunction; }
     /**
      * @brief return the associated tag (might be null)
      */
     TagEntryPtr GetTag() const { return m_tag; }
-    
+
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */

@@ -46,7 +46,7 @@ private:
 protected:
     void DestroyCCBox();
     void DestroyCurrent();
-    void InsertSelection(const wxString& selection);
+    void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match);
     void InsertSelectionTemplateFunction(const wxString& selection);
 
     // Handle the current editor events

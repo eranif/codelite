@@ -1,7 +1,6 @@
 #include "LanguageServerProtocol.h"
 #include "file_logger.h"
 #include "processreaderthread.h"
-#include "LSP/clJSONRPC.h"
 #include "LSP/GotoDefinitionRequest.h"
 #include "LSP/GotoDeclarationRequest.h"
 #include "LSP/DidOpenTextDocumentRequest.h"

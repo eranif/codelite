@@ -4,7 +4,6 @@
 #include "codelite_exports.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
-#include "LSP/clJSONRPC.h"
 #include <wxStringHash.h>
 #include <wx/sharedptr.h>
 #include "macros.h"

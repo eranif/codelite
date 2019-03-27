@@ -535,7 +535,7 @@ void wxCodeCompletionBox::InsertSelection()
         wxCodeCompletionBoxEntry::Ptr_t match = m_entries.at(m_index);
         // Let the owner override the default behavior
         clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
-        e.SetWord(match->GetText());
+        e.SetWord(match->GetInsertText());
         e.SetEventObject(m_eventObject);
         e.SetEntry(match);
         if(!EventNotifier::Get()->ProcessEvent(e)) {
@@ -549,7 +549,7 @@ void wxCodeCompletionBox::InsertSelection()
                     return;
                 }
             }
-            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match->GetText());
+            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match);
         }
     }
 }
@@ -588,6 +588,9 @@ wxCodeCompletionBoxEntry::Vec_t wxCodeCompletionBox::TagsToEntries(const TagEntr
         int imgIndex = GetImageId(tag);
         wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
         entry->m_tag = tag;
+        entry->SetInsertText(text);
+        entry->SetIsFunction(tag->IsMethod());
+        entry->SetIsTemplateFunction(tag->IsTemplateFunction());
         entries.push_back(entry);
     }
     return entries;
@@ -649,6 +652,7 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     int imgIndex = GetImageId(tag);
     wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
     entry->m_tag = tag;
+    entry->SetInsertText(text);
     return entry;
 }
 
@@ -868,7 +872,26 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
         wxString text = completion->GetLabel();
         int imgIndex = GetImageId(completion);
         wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
-        entry->SetComment(completion->GetDetail());
+
+        wxString comment;
+        if(!completion->GetDetail().IsEmpty()) { comment << completion->GetDetail(); }
+        if(!completion->GetDocumentation().IsEmpty()) { comment << "\n" << completion->GetDocumentation(); }
+
+        // if 'insertText' is provided, use it instead of the label
+        wxString insertText;
+        insertText = completion->GetInsertText().IsEmpty() ? completion->GetLabel() : completion->GetInsertText();
+        if(completion->GetTextEdit().IsOk()) {
+            // According to the spec: if textEdit exists, we ignore 'insertText'
+            insertText = completion->GetTextEdit().GetNewText();
+        }
+        entry->SetInsertText(insertText);
+        entry->SetInsertRange(completion->GetTextEdit().GetRange());
+        entry->SetImgIndex(imgIndex);
+        entry->SetComment(comment);
+        entry->SetIsFunction(completion->GetKind() == LSP::CompletionItem::kKindConstructor ||
+                             completion->GetKind() == LSP::CompletionItem::kKindFunction ||
+                             completion->GetKind() == LSP::CompletionItem::kKindMethod);
+        entry->SetIsTemplateFunction(completion->GetLabel().Contains("<") && completion->GetLabel().Contains(">"));
         entries.push_back(entry);
     }
     return entries;

@@ -111,10 +111,34 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 
 void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
 
-void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
+int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
+{
+    if(from < 0) { return wxNOT_FOUND; }
+    int line = ctrl->LineFromPosition(from);
+    int startLinePos = ctrl->PositionFromLine(line);
+    int current = ctrl->PositionBefore(from);
+    while(current > startLinePos) {
+        wxChar ch = ctrl->GetCharAt(current);
+        if((ch >= 97 && ch <= 122)   // a-z
+           || (ch >= 65 && ch <= 90) // A-Z
+           || (ch == '_')            // _
+           || (includeNekudotaiim && (ch == ':'))) {
+            current = ctrl->PositionBefore(current);
+            continue;
+        } else {
+            // we want the previous position
+            current = ctrl->PositionAfter(current);
+            break;
+        }
+    }
+    return current;
+}
+
+void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match)
 {
     IManager* manager = ::clGetManager();
     IEditor* editor = manager->GetActiveEditor();
+    wxString entryText = match->GetInsertText();
     if(editor) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         bool addParens(false);
@@ -124,7 +148,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
         std::vector<std::pair<int, int> > ranges;
         if(ctrl->GetSelections() > 1) {
             for(int i = 0; i < ctrl->GetSelections(); ++i) {
-                int nStart = ctrl->WordStartPosition(ctrl->GetSelectionNCaret(i), true);
+                int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains(":"));
                 int nEnd = ctrl->GetSelectionNCaret(i);
                 ranges.push_back(std::make_pair(nStart, nEnd));
             }
@@ -134,7 +158,7 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
         } else {
             // Default behviour: remove the partial text from the editor and replace it
             // with the selection
-            start = ctrl->WordStartPosition(ctrl->GetCurrentPos(), true);
+            start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains(":"));
             end = ctrl->GetCurrentPos();
             ctrl->SetSelection(start, end);
             wxChar endChar = ctrl->GetCharAt(end);
@@ -146,7 +170,6 @@ void wxCodeCompletionBoxManager::InsertSelection(const wxString& selection)
             }
         }
 
-        wxString entryText = selection;
         if(entryText.Find("(") != wxNOT_FOUND) {
             // a function like
             wxString textToInsert = entryText.BeforeFirst('(');

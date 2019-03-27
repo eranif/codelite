@@ -85,8 +85,6 @@
     <File Name="LSP/DidCloseTextDocumentRequest.cpp"/>
     <File Name="LSP/DidChangeTextDocumentRequest.h"/>
     <File Name="LSP/DidChangeTextDocumentRequest.cpp"/>
-    <File Name="LSP/clJSONRPC.h"/>
-    <File Name="LSP/clJSONRPC.cpp"/>
     <File Name="LSP/basic_types.h"/>
     <File Name="LSP/basic_types.cpp"/>
   </VirtualDirectory>

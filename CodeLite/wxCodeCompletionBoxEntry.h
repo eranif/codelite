@@ -52,6 +52,7 @@ class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
     wxBitmap m_alternateBitmap;
     bool m_isFunction = false;
     bool m_isTemplateFunction = false;
+    wxString m_signature; // when IsFunction() is true
 
 public:
     typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
@@ -106,6 +107,9 @@ public:
 
     void SetIsTemplateFunction(bool isTemplateFunction) { this->m_isTemplateFunction = isTemplateFunction; }
     bool IsTemplateFunction() const { return m_isTemplateFunction; }
+    void SetSignature(const wxString& signature) { this->m_signature = signature; }
+    const wxString& GetSignature() const { return m_signature; }
+    
     /**
      * @brief return the associated tag (might be null)
      */

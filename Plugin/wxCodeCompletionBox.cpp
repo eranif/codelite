@@ -583,14 +583,8 @@ wxCodeCompletionBoxEntry::Vec_t wxCodeCompletionBox::TagsToEntries(const TagEntr
 {
     wxCodeCompletionBoxEntry::Vec_t entries;
     for(size_t i = 0; i < tags.size(); ++i) {
-        TagEntryPtr tag = tags.at(i);
-        wxString text = tag->GetDisplayName().Trim().Trim(false);
-        int imgIndex = GetImageId(tag);
-        wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
-        entry->m_tag = tag;
-        entry->SetInsertText(text);
-        entry->SetIsFunction(tag->IsMethod());
-        entry->SetIsTemplateFunction(tag->IsTemplateFunction());
+        TagEntryPtr tag = tags[i];
+        wxCodeCompletionBoxEntry::Ptr_t entry = TagToEntry(tag);
         entries.push_back(entry);
     }
     return entries;
@@ -652,7 +646,13 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     int imgIndex = GetImageId(tag);
     wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
     entry->m_tag = tag;
-    entry->SetInsertText(text);
+    entry->SetInsertText(text.BeforeFirst('('));
+    entry->SetIsFunction(tag->IsMethod());
+    entry->SetIsTemplateFunction(tag->IsTemplateFunction());
+    
+    wxString sig = tag->GetSignature();
+    sig = sig.AfterFirst('(').BeforeLast(')');
+    entry->SetSignature(sig);
     return entry;
 }
 
@@ -892,6 +892,14 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
                              completion->GetKind() == LSP::CompletionItem::kKindFunction ||
                              completion->GetKind() == LSP::CompletionItem::kKindMethod);
         entry->SetIsTemplateFunction(completion->GetLabel().Contains("<") && completion->GetLabel().Contains(">"));
+        if(entry->IsFunction()) {
+            // extract the function signature from the label
+            wxString label = completion->GetLabel();
+            wxString signature = label.AfterFirst('(');
+            signature = signature.BeforeLast(')');
+            signature.Trim().Trim(false);
+            entry->SetSignature(signature);
+        }
         entries.push_back(entry);
     }
     return entries;

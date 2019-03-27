@@ -106,7 +106,7 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     // request is delete by the parent WorkerThread after this method is completed
     ParseRequest* req = (ParseRequest*)request;
     FileLogger::RegisterThread(wxThread::GetCurrentId(), "C++ Parser Thread");
-    
+
     // Filter non C++ files
     if(!req->_workspaceFiles.empty()) {
         std::vector<std::string> filtered_list;
@@ -714,3 +714,64 @@ void ParseThread::ProcessSourceToTags(ParseRequest* req)
     event.SetInt(req->_uid); // send back the unique ID
     req->_evtHandler->AddPendingEvent(event);
 }
+
+void ParseThread::AddPaths(const wxArrayString& inc, const wxArrayString& exc)
+{
+    // remove all duplicates
+    wxCriticalSectionLocker locker(m_cs);
+    {
+        wxStringSet_t unique;
+        wxArrayString tmp;
+        for(const wxString& path : inc) {
+            wxFileName fnPath(path, "");
+            wxString canonPath = fnPath.GetPath();
+            if(FileUtils::IsDirectory(canonPath)) {
+                if(unique.count(canonPath) == 0) {
+                    unique.insert(canonPath);
+                    tmp.Add(canonPath);
+                }
+            }
+        }
+        for(const wxString& path : m_searchPaths) {
+            wxFileName fnPath(path, "");
+            wxString canonPath = fnPath.GetPath();
+            if(FileUtils::IsDirectory(canonPath)) {
+                if(unique.count(canonPath) == 0) {
+                    unique.insert(canonPath);
+                    tmp.Add(canonPath);
+                }
+            }
+        }
+        m_searchPaths.swap(tmp);
+        std::sort(m_searchPaths.begin(), m_searchPaths.end());
+    }
+    
+    {
+        wxStringSet_t unique;
+        wxArrayString tmp;
+        for(const wxString& path : exc) {
+            wxFileName fnPath(path, "");
+            wxString canonPath = fnPath.GetPath();
+            if(FileUtils::IsDirectory(canonPath)) {
+                if(unique.count(canonPath) == 0) {
+                    unique.insert(canonPath);
+                    tmp.Add(canonPath);
+                }
+            }
+        }
+        for(const wxString& path : m_excludePaths) {
+            wxFileName fnPath(path, "");
+            wxString canonPath = fnPath.GetPath();
+            if(FileUtils::IsDirectory(canonPath)) {
+                if(unique.count(canonPath) == 0) {
+                    unique.insert(canonPath);
+                    tmp.Add(canonPath);
+                }
+            }
+        }
+        m_excludePaths.swap(tmp);
+        std::sort(m_excludePaths.begin(), m_excludePaths.end());
+    }
+}
+
+void ParseThread::ClearPaths() {}

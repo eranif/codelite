@@ -104,7 +104,18 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     wxString configName =
         clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
     command << " --workspace=" << workspaceFile << " --verbose --json --config=" << configName;
-
+    
+    // since we might be activated with a different settings directory
+    // pass the build_settings.xml to codelite-make
+    
+    wxFileName xmlFile(clStandardPaths::Get().GetUserDataDir(), "build_settings.xml");
+    xmlFile.AppendDir("config");
+    wxString xmlPath = xmlFile.GetFullPath();
+    ::WrapWithQuotes(xmlPath);
+    command << " --settings=" << xmlPath;
+    
+    clDEBUG() << "Executing:" << command;
+    
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
 

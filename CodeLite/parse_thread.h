@@ -132,6 +132,15 @@ public:
     void SetSearchPaths(const wxArrayString& paths, const wxArrayString& exlucdePaths);
     void GetSearchPaths(wxArrayString& paths, wxArrayString& excludePaths);
     bool IsCrawlerEnabled();
+    /**
+     * @brief add search paths to the parser. This method is thread safe
+     */
+    void AddPaths(const wxArrayString& inc, const wxArrayString& exc);
+
+    /**
+     * @brief clear the current search paths
+     */
+    void ClearPaths();
 
 private:
     /**

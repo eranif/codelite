@@ -562,14 +562,11 @@ void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& in
         wxDELETE(m_compileCommandsThread);
     }
     if(includePaths.IsEmpty()) { return; }
-
+    ParseThreadST::Get()->AddPaths(includePaths, {});
+    
     // Update the parser search paths
     wxArrayString inc, exc;
     ParseThreadST::Get()->GetSearchPaths(inc, exc);
-    for(size_t i = 0; i < includePaths.size(); ++i) {
-        if(inc.Index(includePaths.Item(i)) == wxNOT_FOUND) { inc.Add(includePaths.Item(i)); }
-    }
-    ParseThreadST::Get()->SetSearchPaths(inc, exc);
     clDEBUG() << "Parser thread search paths are now updated to:" << inc;
 
     // Trigger a quick parse

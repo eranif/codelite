@@ -349,7 +349,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
 
     // set the C++ workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(clCxxWorkspaceST::Get());
-    
+
     wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
     evtWorkspaceLoaded.SetString(path);
     EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
@@ -369,6 +369,9 @@ void Manager::DoSetupWorkspace(const wxString& path)
             clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
         }
     }
+
+    // clear old paths
+    ParseThreadST::Get()->ClearPaths();
 
     // Update the parser search paths
     UpdateParserPaths(false);
@@ -3152,14 +3155,7 @@ void Manager::UpdateParserPaths(bool notify)
     // Parser paths are now updated via the compile_commands.json which is auto generated when:
     // 1. Build process is ended
     // 2. Workspace is loaded
-
     wxBusyCursor bc;
-
-    wxArrayString localIncludePaths;
-    wxArrayString localExcludePaths;
-    wxArrayString projectIncludePaths;
-
-    wxStringSet_t compileIncludePaths;
 
     // If we have an opened workspace, get its search paths
     if(IsWorkspaceOpen()) {
@@ -3169,70 +3165,41 @@ void Manager::UpdateParserPaths(bool notify)
             ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(projects.Item(i));
             if(pProj) {
                 wxArrayString compilerIncPaths = pProj->GetIncludePaths();
-                for(size_t index = 0; index < compilerIncPaths.GetCount(); ++index) {
-                    compileIncludePaths.insert(compilerIncPaths.Item(index));
-                }
+                ParseThreadST::Get()->AddPaths(compilerIncPaths, {});
             }
         }
-        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetParserPaths(localIncludePaths, localExcludePaths);
 
+        // get the workspace search paths and append them to the current paths
+        wxArrayString localInc, localExc;
+        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetParserPaths(localInc, localExc);
+        ParseThreadST::Get()->AddPaths(localInc, localExc);
+
+        // get the build configuration specific paths and add them as well
         BuildConfigPtr buildConf = GetCurrentBuildConf();
         if(buildConf) {
             wxString projSearchPaths = buildConf->GetCcSearchPaths();
-            projectIncludePaths = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
+            wxArrayString projectInc = wxStringTokenize(projSearchPaths, wxT("\r\n"), wxTOKEN_STRTOK);
+
+            // Expand macros
+            for(wxString& projectPath : projectInc) {
+                projectPath =
+                    MacroManager::Instance()->Expand(projectPath, PluginManager::Get(), GetActiveProjectName());
+            }
+            ParseThreadST::Get()->AddPaths(projectInc, {});
         }
     }
 
-    for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-        projectIncludePaths.Item(i) =
-            MacroManager::Instance()->Expand(projectIncludePaths.Item(i), PluginManager::Get(), GetActiveProjectName());
-    }
+    // Get the global paths from the configuration (settings->code completion->ctags->search paths)
+    const TagsOptionsData& tod = clMainFrame::Get()->GetTagsOptions();
+    const wxArrayString& globalInc = tod.GetParserSearchPaths();
+    const wxArrayString& globalExc = tod.GetParserExcludePaths();
+    ParseThreadST::Get()->AddPaths(globalInc, globalExc);
 
-    // Update the parser thread with the new paths
-    wxArrayString globalIncludePath, uniExcludePath;
-    TagsOptionsData tod = clMainFrame::Get()->GetTagsOptions();
-    globalIncludePath = tod.GetParserSearchPaths();
-    uniExcludePath = tod.GetParserExcludePaths();
-
-    // Add the global search paths to the local workspace
-    // include paths (the order does matter)
-    for(size_t i = 0; i < globalIncludePath.GetCount(); i++) {
-        if(localIncludePaths.Index(globalIncludePath.Item(i)) == wxNOT_FOUND) {
-            localIncludePaths.Add(globalIncludePath.Item(i));
-        }
+    {
+        wxArrayString inc, exc;
+        ParseThreadST::Get()->GetSearchPaths(inc, exc);
+        clDEBUG() << "Parser paths are now set to:" << inc;
     }
-
-    // Add the project paths as well
-    for(size_t i = 0; i < projectIncludePaths.GetCount(); i++) {
-        if(localIncludePaths.Index(projectIncludePaths.Item(i)) == wxNOT_FOUND) {
-            localIncludePaths.Add(projectIncludePaths.Item(i));
-        }
-    }
-
-    for(size_t i = 0; i < localExcludePaths.GetCount(); i++) {
-        if(uniExcludePath.Index(localExcludePaths.Item(i)) == wxNOT_FOUND) {
-            uniExcludePath.Add(localExcludePaths.Item(i));
-        }
-    }
-
-    wxStringSet_t::iterator iter = compileIncludePaths.begin();
-    for(; iter != compileIncludePaths.end(); ++iter) {
-        if(localIncludePaths.Index(*iter) == wxNOT_FOUND) { localIncludePaths.Add(*iter); }
-    }
-
-    wxArrayString existingPaths;
-    for(size_t i = 0; i < localIncludePaths.GetCount(); ++i) {
-        if(wxFileName::DirExists(localIncludePaths.Item(i))) {
-            existingPaths.Add(localIncludePaths.Item(i));
-            CL_DEBUG("Parser thread include path: %s", localIncludePaths.Item(i));
-        }
-    }
-    localIncludePaths.swap(existingPaths);
-
-    for(size_t i = 0; i < localExcludePaths.GetCount(); ++i) {
-        CL_DEBUG("Parser thread exclude path: %s", localExcludePaths.Item(i));
-    }
-    ParseThreadST::Get()->SetSearchPaths(localIncludePaths, uniExcludePath);
 }
 
 void Manager::OnIncludeFilesScanDone(wxCommandEvent& event)

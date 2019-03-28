@@ -212,8 +212,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    // if(event.GetTriggerKind() == LSP::CompletionItem::kTriggerKindInvoked) { return; }
-
+    if(event.IsInsideCommentOrString()) { return; }
     if(CanHandle(editor->GetFileName())) {
         event.Skip(false);
         CodeComplete(editor);

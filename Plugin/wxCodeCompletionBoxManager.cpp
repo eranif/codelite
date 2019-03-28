@@ -113,25 +113,30 @@ void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
 
 int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
 {
-    if(from < 0) { return wxNOT_FOUND; }
-    int line = ctrl->LineFromPosition(from);
-    int startLinePos = ctrl->PositionFromLine(line);
-    int current = ctrl->PositionBefore(from);
-    while(current > startLinePos) {
-        wxChar ch = ctrl->GetCharAt(current);
+    int lineNumber = ctrl->LineFromPosition(from);
+    int lineStartPos = ctrl->PositionFromLine(lineNumber);
+    if(from == lineStartPos) { return from; }
+
+    // 4 5 6 7 8
+    // # i n c | from = 8, lineStartPos = 5
+    // when we start the loop from is ALWAYS  greater than lineStartPos
+    while(from >= lineStartPos) {
+        --from;
+        if(from < lineStartPos) {
+            ++from;
+            break;
+        }
+        wxChar ch = ctrl->GetCharAt(from);
         if((ch >= 97 && ch <= 122)   // a-z
            || (ch >= 65 && ch <= 90) // A-Z
            || (ch == '_')            // _
            || (includeNekudotaiim && (ch == ':'))) {
-            current = ctrl->PositionBefore(current);
             continue;
-        } else {
-            // we want the previous position
-            current = ctrl->PositionAfter(current);
-            break;
         }
+        ++from;
+        break;
     }
-    return current;
+    return from;
 }
 
 void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match)

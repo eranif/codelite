@@ -199,6 +199,7 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
         // Try to call code completion
         clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
         ccEvt.SetEditor(&GetCtrl());
+        ccEvt.SetInsideCommentOrString(IsCommentOrString(GetCtrl().GetCurrentPos()));
         ccEvt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
         ccEvt.SetPosition(GetCtrl().GetCurrentPos());
         ccEvt.SetWord(word);
@@ -368,7 +369,7 @@ void ContextBase::BlockCommentComplete()
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
     if(curPos < start) return;
-    
+
     // Fire an event indicating user typed '@' in a block comment
     clCodeCompletionEvent ccEvent(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE);
     ccEvent.SetEditor(&GetCtrl());

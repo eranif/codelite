@@ -1145,7 +1145,8 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_WORD_ASSIST) {
             if(GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
                pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen()) {
-                CompleteWord(LSP::CompletionItem::kTriggerKindInvoked);
+                // We need to use here 'CallAfter' since the style is not updated until next Paint
+                CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerKindInvoked, false);
             }
         }
     }

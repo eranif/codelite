@@ -345,19 +345,7 @@ bool ContextPhp::IsAtLineComment() const
 
 bool ContextPhp::IsStringTriggerCodeComplete(const wxString& str) const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    // curpos = GetCtrl().PositionBefore(curpos);
-    int style = GetCtrl().GetStyleAt(curpos);
-    if(IS_BETWEEN(style, wxSTC_HJ_START, wxSTC_HJA_REGEX)) {
-        // When in JS section, trigger CC if str is a dot
-        return str == ".";
-
-    } else if(IS_BETWEEN(style, wxSTC_H_DEFAULT, wxSTC_H_ENTITY)) {
-        return str == "</" || str == "<";
-
-    } else {
-        return (m_completionTriggerStrings.count(str) > 0);
-    }
+    return (m_completionTriggerStrings.count(str) > 0);
 }
 
 void ContextPhp::ProcessIdleActions() { ContextGeneric::ProcessIdleActions(); }

@@ -117,8 +117,6 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
     int lineStartPos = ctrl->PositionFromLine(lineNumber);
     if(from == lineStartPos) { return from; }
 
-    // 4 5 6 7 8
-    // # i n c | from = 8, lineStartPos = 5
     // when we start the loop from is ALWAYS  greater than lineStartPos
     while(from >= lineStartPos) {
         --from;
@@ -127,9 +125,9 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
             break;
         }
         wxChar ch = ctrl->GetCharAt(from);
-        if((ch >= 97 && ch <= 122)   // a-z
-           || (ch >= 65 && ch <= 90) // A-Z
-           || (ch == '_')            // _
+        if((ch >= 97 && ch <= 122)       // a-z
+           || (ch >= 65 && ch <= 90)     // A-Z
+           || (ch == '_') || (ch == '$') // _ or $ (for PHP)
            || (includeNekudotaiim && (ch == ':'))) {
             continue;
         }

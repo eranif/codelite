@@ -1102,7 +1102,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     if((GetContext()->IsStringTriggerCodeComplete(strTyped) || GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
        !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
-        CodeComplete();
+        CallAfter(&clEditor::CodeComplete, false);
     }
 
     if(matchChar && !m_disableSmartIndent && !m_context->IsCommentOrString(pos)) {

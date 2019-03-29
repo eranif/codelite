@@ -758,13 +758,15 @@ void clEditor::SetProperties()
 
     wxBitmap breakpointBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint");
     wxBitmap breakpointCondBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cond");
-
+    wxBitmap breakpointCmdList = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cmdlist");
+    wxBitmap breakpointIgnored = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_ignored");
+    
     MarkerDefineBitmap(smt_breakpoint, breakpointBmp);
     MarkerDefineBitmap(smt_bp_disabled, breakpointBmp.ConvertToDisabled());
 
-    MarkerDefineBitmap(smt_bp_cmdlist, wxBitmap(wxImage(BreakptCommandList)));
-    MarkerDefineBitmap(smt_bp_cmdlist_disabled, wxBitmap(wxImage(BreakptCommandListDisabled)));
-    MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
+    MarkerDefineBitmap(smt_bp_cmdlist, breakpointCmdList);
+    MarkerDefineBitmap(smt_bp_cmdlist_disabled, breakpointCmdList.ConvertToDisabled());
+    MarkerDefineBitmap(smt_bp_ignored, breakpointIgnored.ConvertToDisabled());
     MarkerDefineBitmap(smt_cond_bp, breakpointCondBmp);
     MarkerDefineBitmap(smt_cond_bp_disabled, breakpointCondBmp.ConvertToDisabled());
 

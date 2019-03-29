@@ -755,13 +755,13 @@ void clEditor::SetProperties()
         MarkerSetBackground(smt_breakpoint, "RED");
         MarkerSetAlpha(smt_breakpoint, 30);
     }
-    
+
     wxBitmap breakpointBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint");
     wxBitmap breakpointCondBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cond");
-    
+
     MarkerDefineBitmap(smt_breakpoint, breakpointBmp);
     MarkerDefineBitmap(smt_bp_disabled, breakpointBmp.ConvertToDisabled());
-    
+
     MarkerDefineBitmap(smt_bp_cmdlist, wxBitmap(wxImage(BreakptCommandList)));
     MarkerDefineBitmap(smt_bp_cmdlist_disabled, wxBitmap(wxImage(BreakptCommandListDisabled)));
     MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
@@ -773,12 +773,10 @@ void clEditor::SetProperties()
         MarkerSetAlpha(smt_indicator, 50);
 
     } else {
-
-        wxImage img(arrow_right_green_xpm);
-        wxBitmap bmp(img);
-        MarkerDefineBitmap(smt_indicator, bmp);
-        MarkerSetBackground(smt_indicator, wxT("LIME GREEN"));
-        MarkerSetForeground(smt_indicator, wxT("BLACK"));
+        MarkerDefine(smt_indicator, wxSTC_MARK_SHORTARROW);
+        wxColour debuggerMarkerColour(136, 170, 0);
+        MarkerSetBackground(smt_indicator, debuggerMarkerColour);
+        MarkerSetForeground(smt_indicator, debuggerMarkerColour.ChangeLightness(50));
     }
 
     // warning and error markers

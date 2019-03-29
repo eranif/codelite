@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="-6.610545"
+     inkscape:cx="-35.985545"
      inkscape:cy="31.132363"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -56,21 +56,21 @@
      id="layer1"
      transform="translate(0,-288.53332)">
     <circle
-       style="fill:#c83737;fill-opacity:1;stroke:#000000;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#c83737;fill-opacity:1;stroke:none;stroke-width:0.31624007;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path817"
        cx="4.2333336"
        cy="292.76666"
-       r="3.5418327" />
+       r="4.2333336" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.7076149px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="2.6099517"
-       y="294.88333"
+       style="font-style:normal;font-weight:normal;font-size:8.05780888px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.37352937;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
+       x="1.9415005"
+       y="295.75488"
        id="text821"><tspan
          sodipodi:role="line"
          id="tspan819"
-         x="2.6099517"
-         y="294.88333"
-         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.26458332;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">?</tspan></text>
+         x="1.9415005"
+         y="295.75488"
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.37352937;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;">?</tspan></text>
   </g>
 </svg>

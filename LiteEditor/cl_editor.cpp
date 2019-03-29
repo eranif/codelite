@@ -755,19 +755,18 @@ void clEditor::SetProperties()
         MarkerSetBackground(smt_breakpoint, "RED");
         MarkerSetAlpha(smt_breakpoint, 30);
     }
-
-    MarkerDefineBitmap(smt_breakpoint, wxBitmap(wxImage(stop_xpm)));
-    MarkerDefineBitmap(smt_bp_disabled, wxBitmap(wxImage(BreakptDisabled)));
-
-    // Give disabled breakpoints a "grey" look
-    MarkerSetBackground(smt_bp_disabled, "GREY");
-    MarkerSetAlpha(smt_bp_disabled, 30);
-
+    
+    wxBitmap breakpointBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint");
+    wxBitmap breakpointCondBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cond");
+    
+    MarkerDefineBitmap(smt_breakpoint, breakpointBmp);
+    MarkerDefineBitmap(smt_bp_disabled, breakpointBmp.ConvertToDisabled());
+    
     MarkerDefineBitmap(smt_bp_cmdlist, wxBitmap(wxImage(BreakptCommandList)));
     MarkerDefineBitmap(smt_bp_cmdlist_disabled, wxBitmap(wxImage(BreakptCommandListDisabled)));
     MarkerDefineBitmap(smt_bp_ignored, wxBitmap(wxImage(BreakptIgnore)));
-    MarkerDefineBitmap(smt_cond_bp, wxBitmap(wxImage(ConditionalBreakpt)));
-    MarkerDefineBitmap(smt_cond_bp_disabled, wxBitmap(wxImage(ConditionalBreakptDisabled)));
+    MarkerDefineBitmap(smt_cond_bp, breakpointCondBmp);
+    MarkerDefineBitmap(smt_cond_bp_disabled, breakpointCondBmp.ConvertToDisabled());
 
     if(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line)) {
         MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());

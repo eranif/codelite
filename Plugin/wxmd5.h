@@ -46,12 +46,14 @@
 
 #include "precompiled_header.h"
 #include "codelite_exports.h"
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_SDK wxMD5
 {
 public:
     wxMD5();
     wxMD5(const wxString& szText);
+    wxMD5(const wxFileName& filename);
     virtual ~wxMD5();
 
     // Other Methods
@@ -61,9 +63,10 @@ public:
 
     // Static Methods
     static const wxString GetDigest(const wxString& szText);
+    static const wxString GetDigest(const wxFileName& filename);
 
 protected:
-    wxString  m_szText;
+    wxString m_szText;
 };
 
 #endif // _WXMD5_H__

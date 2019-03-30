@@ -423,7 +423,6 @@
       <File Name="pluginmgrdlg.cpp"/>
       <File Name="plugindlgbase.wxcp"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="DoxygenUI"/>
     <VirtualDirectory Name="Accelerators">
       <File Name="acceltabledlg.h"/>
       <File Name="acceltabledlg.cpp"/>

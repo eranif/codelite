@@ -7,6 +7,7 @@
 #include <wx/filename.h>
 #include <wx/process.h>
 #include "codelite_exports.h"
+#include <macros.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 

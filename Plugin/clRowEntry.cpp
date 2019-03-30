@@ -375,7 +375,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 }
 
             } else {
-                textXOffset += rowRect.GetHeight();
+                wxRect buttonRect(rowRect);
+                buttonRect.SetWidth(rowRect.GetHeight());
+                buttonRect.Deflate(1);
+                textXOffset += buttonRect.GetWidth();
                 if(textXOffset >= cellRect.GetWidth()) {
                     SetRects(GetItemRect(), wxRect());
                     continue;

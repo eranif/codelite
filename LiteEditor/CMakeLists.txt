@@ -205,13 +205,13 @@ if(NOT APPLE)
 
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
         install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
-        install(CODE "set(INSTALL_DIR \"${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite\")")
-        install(FILES ${CL_SRC_ROOT}/Runtime/codelite-fix-rpath DESTINATION 
-                ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite 
-                PERMISSIONS 
-                ${EXE_PERM})
-        install(CODE "set(SOURCE_DIR \"${CL_SRC_ROOT}\")")
-        install(SCRIPT "${CL_SRC_ROOT}/Runtime/codelite_post_install.cmake")
+        #install(CODE "set(INSTALL_DIR \"${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite\")")
+        #install(FILES ${CL_SRC_ROOT}/Runtime/codelite-fix-rpath DESTINATION 
+        #        ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite 
+        #        PERMISSIONS 
+        #        ${EXE_PERM})
+        #install(CODE "set(SOURCE_DIR \"${CL_SRC_ROOT}\")")
+        #install(SCRIPT "${CL_SRC_ROOT}/Runtime/codelite_post_install.cmake")
     endif()
 
     if ( USE_CLANG AND MINGW )

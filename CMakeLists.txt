@@ -74,6 +74,8 @@ set( WITH_SFTP 1 )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 
 if( UNIX AND NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--disable-new-dtags")
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(CMAKE_LIBRARY_ARCHITECTURE "x86_64-linux-gnu")
     else()
@@ -405,7 +407,7 @@ else ()
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")        ## Optimize
     if(CMAKE_COMPILER_IS_GNUCXX)
-        set(CMAKE_EXE_LINKER_FLAGS "-s")  ## Strip binary
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s")  ## Strip binary
     endif(CMAKE_COMPILER_IS_GNUCXX)
 
     ## In release, add NDEBUG unless explicitly told not to

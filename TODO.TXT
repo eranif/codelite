@@ -1,11 +1,7 @@
 LSP:
 ====
-
-2. Add IDLE timer
-5. Remove all Clang related configuration from CodeLite
+Display diagnostic messages
 
 Project View:
 =============
-
-1. Support pinned projects
-
+Support pinned projects

@@ -11,6 +11,13 @@ find_package(wxWidgets COMPONENTS std stc REQUIRED)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
+if (UNIX AND NOT APPLE)
+    SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_INSTALL_RPATH "${PLUGINS_DIR}")
+endif(UNIX AND NOT APPLE)
+
 # Flex files
 if (UNIX AND NOT APPLE)
     if(WITH_FLEX)

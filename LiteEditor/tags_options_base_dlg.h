@@ -30,8 +30,6 @@
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/hyperlink.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -99,20 +97,6 @@ protected:
     wxStyledTextCtrl* m_textTypes;
     wxTextCtrl* m_textCtrlFilesList;
     wxButton* m_buttonParse;
-    wxPanel* m_panelClang;
-    wxCheckBox* m_checkBoxEnableClangCC;
-    wxNotebook* m_notebookClang;
-    wxPanel* m_panel3;
-    wxCheckBox* m_checkBoxClangFirst;
-    wxStaticText* m_staticText13;
-    wxPanel* m_panel8;
-    wxStyledTextCtrl* m_textCtrlClangSearchPaths;
-    wxButton* m_buttonSuggest;
-    wxPanel* m_panel4;
-    wxStaticText* m_staticText101;
-    wxButton* m_buttonClearCache;
-    wxStaticText* m_staticText12;
-    wxChoice* m_choiceCachePolicy;
     wxButton* m_button104;
     wxButton* m_button106;
 
@@ -124,10 +108,6 @@ protected:
     virtual void OnAddExcludePath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnParse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFileSelectedUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClangCCEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSuggestSearchPaths(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearClangCache(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearClangCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
 
@@ -175,24 +155,12 @@ public:
     wxPanel* GetPanelCtagsAdvanced() { return m_panelCtagsAdvanced; }
     wxNotebook* GetNotebook93() { return m_notebook93; }
     wxPanel* GetPageCtags() { return m_pageCtags; }
-    wxCheckBox* GetCheckBoxEnableClangCC() { return m_checkBoxEnableClangCC; }
-    wxCheckBox* GetCheckBoxClangFirst() { return m_checkBoxClangFirst; }
-    wxStaticText* GetStaticText13() { return m_staticText13; }
-    wxStyledTextCtrl* GetTextCtrlClangSearchPaths() { return m_textCtrlClangSearchPaths; }
-    wxButton* GetButtonSuggest() { return m_buttonSuggest; }
-    wxPanel* GetPanel8() { return m_panel8; }
-    wxPanel* GetPanel3() { return m_panel3; }
-    wxStaticText* GetStaticText101() { return m_staticText101; }
-    wxButton* GetButtonClearCache() { return m_buttonClearCache; }
-    wxStaticText* GetStaticText12() { return m_staticText12; }
-    wxChoice* GetChoiceCachePolicy() { return m_choiceCachePolicy; }
-    wxPanel* GetPanel4() { return m_panel4; }
-    wxNotebook* GetNotebookClang() { return m_notebookClang; }
-    wxPanel* GetPanelClang() { return m_panelClang; }
     wxNotebook* GetNotebook87() { return m_notebook87; }
     wxButton* GetButton104() { return m_button104; }
     wxButton* GetButton106() { return m_button106; }
-    TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Code Completion"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~TagsOptionsBaseDlg();
 };
 

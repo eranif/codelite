@@ -53,7 +53,6 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     DoSetEditEventsHandler(this);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
-        lexer->Apply(m_textCtrlClangSearchPaths);
         lexer->Apply(m_textCtrlCtagsExcludePaths);
         lexer->Apply(m_textCtrlCtagsSearchPaths);
         lexer->Apply(m_textPrep);
@@ -108,28 +107,6 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     m_textPrep->SetValue(m_data.GetTokens());
     m_textTypes->SetValue(m_data.GetTypes());
     m_textCtrlFilesList->SetValue(m_data.GetMacrosFiles());
-
-//----------------------------------------------------
-// Clang page
-//----------------------------------------------------
-#if HAS_LIBCLANG
-    m_checkBoxEnableClangCC->SetValue(m_data.GetClangOptions() & CC_CLANG_ENABLED);
-#else
-    m_checkBoxEnableClangCC->SetValue(false);
-    m_checkBoxEnableClangCC->Enable(false);
-#endif
-
-    m_checkBoxClangFirst->SetValue(m_data.GetClangOptions() & CC_CLANG_FIRST);
-    m_textCtrlClangSearchPaths->SetValue(m_data.GetClangSearchPaths());
-    m_choiceCachePolicy->Clear();
-
-    // defaults
-    m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_LAZY);
-    m_choiceCachePolicy->Append(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD);
-    m_choiceCachePolicy->Select(1);
-
-    int where = m_choiceCachePolicy->FindString(m_data.GetClangCachePolicy());
-    if(where != wxNOT_FOUND) { m_choiceCachePolicy->Select(where); }
 }
 
 CodeCompletionSettingsDialog::~CodeCompletionSettingsDialog() {}
@@ -183,18 +160,6 @@ void CodeCompletionSettingsDialog::CopyData()
     m_data.SetTokens(m_textPrep->GetValue());
     m_data.SetTypes(m_textTypes->GetValue());
     m_data.SetMacrosFiles(m_textCtrlFilesList->GetValue());
-
-    //----------------------------------------------------
-    // Clang
-    //----------------------------------------------------
-    size_t options(0);
-    if(m_checkBoxEnableClangCC->IsChecked()) options |= CC_CLANG_ENABLED;
-
-    if(m_checkBoxClangFirst->IsChecked()) options |= CC_CLANG_FIRST;
-
-    m_data.SetClangOptions(options);
-    m_data.SetClangSearchPaths(m_textCtrlClangSearchPaths->GetValue());
-    m_data.SetClangCachePolicy(m_choiceCachePolicy->GetStringSelection());
 }
 
 void CodeCompletionSettingsDialog::SetFlag(CodeCompletionOpts flag, bool set)
@@ -292,15 +257,6 @@ void CodeCompletionSettingsDialog::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
     event.Enable(m_checkWordAssist->IsChecked());
 }
 
-void CodeCompletionSettingsDialog::OnClangCCEnabledUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxEnableClangCC->IsChecked());
-}
-
-void CodeCompletionSettingsDialog::OnClearClangCache(wxCommandEvent& event) { wxBusyCursor cursor; }
-
-void CodeCompletionSettingsDialog::OnClearClangCacheUI(wxUpdateUIEvent& event) { event.Enable(false); }
-
 void CodeCompletionSettingsDialog::OnFileSelectedUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_textCtrlFilesList->GetValue().IsEmpty() == false);
@@ -310,12 +266,6 @@ void CodeCompletionSettingsDialog::OnParse(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     Parse();
-}
-
-void CodeCompletionSettingsDialog::OnSuggestSearchPaths(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoSuggest(m_textCtrlClangSearchPaths);
 }
 
 wxArrayString CodeCompletionSettingsDialog::GetCTagsSearchPaths() const

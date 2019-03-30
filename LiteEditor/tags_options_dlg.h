@@ -58,12 +58,8 @@ protected:
     virtual void OnAddExcludePath(wxCommandEvent& event);
     virtual void OnAddSearchPath(wxCommandEvent& event);
     virtual void OnAutoShowWordAssitUI(wxUpdateUIEvent& event);
-    virtual void OnClangCCEnabledUI(wxUpdateUIEvent& event);
-    virtual void OnClearClangCache(wxCommandEvent& event);
-    virtual void OnClearClangCacheUI(wxUpdateUIEvent& event);
     virtual void OnFileSelectedUI(wxUpdateUIEvent& event);
     virtual void OnParse(wxCommandEvent& event);
-    virtual void OnSuggestSearchPaths(wxCommandEvent& event);
 
 public:
     void Parse();

@@ -2,6 +2,7 @@
 #define JSONRPC_BASICTYPES_H
 
 #include "JSON.h"
+#include <vector>
 #include "JSONObject.h"
 #include "codelite_exports.h"
 #include <wx/sharedptr.h>

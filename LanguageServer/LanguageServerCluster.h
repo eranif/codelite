@@ -42,6 +42,7 @@ protected:
     void OnMethodNotFound(LSPEvent& event);
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceOpen(wxCommandEvent& event);
+    void OnCompileCommandsGenerated(clCommandEvent& event);
 
 public:
     LanguageServerCluster();

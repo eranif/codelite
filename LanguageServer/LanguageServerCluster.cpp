@@ -12,11 +12,14 @@
 #include "cl_standard_paths.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
+#include "CompileCommandsGenerator.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
+                               &LanguageServerCluster::OnCompileCommandsGenerated, this);
 
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -31,6 +34,8 @@ LanguageServerCluster::~LanguageServerCluster()
 {
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
+                                 &LanguageServerCluster::OnCompileCommandsGenerated, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -261,4 +266,10 @@ void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& ta
         tag->SetFlags(TagEntry::Tag_No_Signature_Format);
         tags.push_back(tag);
     }
+}
+
+void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
+{
+    event.Skip();
+    this->Reload(); // restart the servers
 }

@@ -104,7 +104,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite-make" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=HelloWorld.workspace  --config=Debug -e" WorkingDirectory="/home/eran/Documents/HelloWorld" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/build-debug/bin/codelite-make" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/devl/codelite/CodeLiteIDE.workspace --verbose --json --config=CMake_Debug --settings=/home/eran/.codelite/config/build_settings.xml" WorkingDirectory="/home/eran/devl/codelite" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

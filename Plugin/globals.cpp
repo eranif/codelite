@@ -2143,18 +2143,10 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
     if(!tlw || !parentTlw) { return; }
     
-    wxSize frameSize = wxSize(1200, 1000);
-    double factor = 1.0;
-    wxSize screenSize = clGetDisplaySize();
-    if(screenSize.GetWidth() > 1920) {
-        // More than FullHD screen
-        factor = (double)screenSize.GetWidth() / (double)1920;
-        frameSize.SetWidth(factor * (double)frameSize.GetWidth());
-        frameSize.SetHeight(factor * (double)frameSize.GetHeight());
-    }
-    
-    tlw->SetSizeHints(frameSize);
-    tlw->SetSize(frameSize);
+    wxRect frameSize = parentTlw->GetSize();
+    frameSize.Deflate(100);
+    tlw->SetSizeHints(frameSize.GetSize());
+    tlw->SetSize(frameSize.GetSize());
     tlw->CenterOnParent();
 
     // If the parent is maximized, maximize this window as well

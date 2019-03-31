@@ -25,7 +25,7 @@ public:
      * @brief is this request position dependant? (i.e. the response should be diplsayed where the request was
      * triggered?)
      */
-    virtual bool IsPositionDependantRequest() const = 0;
+    virtual bool IsPositionDependantRequest() const { return false; }
 
     /**
      * @brief in case 'IsPositionDependantRequest' is true, return true if the response is valid at
@@ -44,7 +44,11 @@ public:
      * @brief this method will get called by the protocol for handling the response.
      * Override it in the various requests
      */
-    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) = 0;
+    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) 
+    {
+        wxUnusedVar(response);
+        wxUnusedVar(owner);
+    }
 };
 }; // namespace LSP
 

@@ -547,7 +547,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             const wxFileName& filename = editor->GetFileName();
                             size_t line = editor->GetCurrentLine();
                             size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
-                            if(preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
+                            if(false && preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG() << "Response is no longer valid. Discarding its result";
                             } else {
                                 preq->OnResponse(res, m_owner);

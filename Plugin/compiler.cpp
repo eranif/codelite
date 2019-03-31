@@ -236,8 +236,8 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
             AddPattern(eWarningPattern,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ ]*(warning|required)", 1,
-                       3, 4);
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \\t]*(warning|required)",
+                       1, 3, 4);
             AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
                        1, 3, -1);
             AddPattern(eWarningPattern,
@@ -718,9 +718,9 @@ const wxArrayString& Compiler::GetBuiltinMacros()
                 definitions = pp.GetDefinitions();
             }
 
-//            for(size_t i = 0; i < definitions.GetCount(); ++i) {
-//                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
-//            }
+            //            for(size_t i = 0; i < definitions.GetCount(); ++i) {
+            //                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
+            //            }
 
             {
                 // Delete the file

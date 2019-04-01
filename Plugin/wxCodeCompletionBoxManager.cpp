@@ -179,7 +179,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
 
             // Build the function signature
             wxString funcSig = match->GetSignature();
-
+            bool userProvidedSignature = (match->GetText().Find("(") != wxNOT_FOUND);
             clDEBUG() << "Inserting selection:" << textToInsert;
             clDEBUG() << "Signature is:" << funcSig;
 
@@ -203,7 +203,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
                 }
             } else {
                 ctrl->ReplaceSelection(textToInsert);
-                if(!funcSig.IsEmpty() && (funcSig != "()")) {
+                if(!userProvidedSignature || (!funcSig.IsEmpty() && (funcSig != "()"))) {
 
                     // Place the caret between the parenthesis
                     int caretPos(wxNOT_FOUND);

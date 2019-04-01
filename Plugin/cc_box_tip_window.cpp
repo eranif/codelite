@@ -116,7 +116,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC memDC(bmp);
     wxGCDC gcdc(memDC);
     wxSize size;
-    m_commentFont = DrawingUtils::GetDefaultGuiFont();
+    m_commentFont = DrawingUtils::GetBestFixedFont(editor);
     m_codeFont = DrawingUtils::GetBestFixedFont(editor);
     gcdc.SetFont(m_commentFont);
 

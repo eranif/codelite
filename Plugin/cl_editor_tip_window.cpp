@@ -52,7 +52,7 @@ clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     , m_highlighIndex(0)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    IEditor* editor = ::clGetManager()->GetActiveEditor();
+    IEditor* editor = dynamic_cast<IEditor*>(GetParent());
     m_font = DrawingUtils::GetBestFixedFont(editor);
     Hide();
     EventNotifier::Get()->Connect(wxEVT_CMD_COLOURS_FONTS_UPDATED,
@@ -281,8 +281,15 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_lineHeight = lineHeight;
     m_parentBgColour = parentBgColour;
 
+    // update the font to the current editor
+    IEditor* editor = dynamic_cast<IEditor*>(GetParent());
+    m_font = DrawingUtils::GetBestFixedFont(editor);
+
     DoAdjustPosition();
-    if(!IsActive()) { Show(); }
+    if(!IsActive()) {
+        Show();
+        Refresh();
+    }
 }
 
 void clEditorTipWindow::Deactivate()

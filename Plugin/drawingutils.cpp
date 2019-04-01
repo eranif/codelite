@@ -880,7 +880,7 @@ wxFont DrawingUtils::GetBestFixedFont(IEditor* editor)
     wxFont bestFont = defaultFont;
     if(editor) {
         bestFont = editor->GetCtrl()->StyleGetFont(0);
-#ifndef __WXGTK3__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
         bestFont.SetPointSize(defaultFont.GetPointSize());
 #endif
     }

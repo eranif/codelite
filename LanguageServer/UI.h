@@ -41,6 +41,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+
 class LanguageServerSettingsDlgBase : public wxDialog
 {
 protected:
@@ -67,12 +68,10 @@ public:
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                  const wxString& title = _("Language Server Settings"),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Language Server Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };
+
 
 class LanguageServerPageBase : public wxPanel
 {
@@ -114,10 +113,10 @@ public:
     wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
     wxStaticText* GetStaticText125() { return m_staticText125; }
     wxSlider* GetSliderPriority() { return m_sliderPriority; }
-    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();
 };
+
 
 class NewLanguageServerDlgBase : public wxDialog
 {
@@ -130,10 +129,7 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                             const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(-1, -1),
-                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewLanguageServerDlgBase();
 };
 

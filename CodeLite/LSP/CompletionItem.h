@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL CompletionItem : public Serializable
     wxString m_documentation;
     wxString m_filterText;
     wxString m_insertText;
-    LSP::TextEdit m_textEdit;
+    wxSharedPtr<LSP::TextEdit> m_textEdit;
 
 public:
     enum eTriggerKind {
@@ -76,8 +76,8 @@ public:
     const wxString& GetInsertText() const { return m_insertText; }
     int GetKind() const { return m_kind; }
     const wxString& GetLabel() const { return m_label; }
-    void SetTextEdit(const LSP::TextEdit& textEdit) { this->m_textEdit = textEdit; }
-    const LSP::TextEdit& GetTextEdit() const { return m_textEdit; }
+    wxSharedPtr<LSP::TextEdit> GetTextEdit() { return m_textEdit; }
+    bool HasTextEdit() const { return m_textEdit != nullptr; }
 };
 
 }; // namespace LSP

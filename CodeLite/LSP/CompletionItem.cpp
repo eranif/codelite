@@ -19,5 +19,8 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     m_label.Trim().Trim(false);
     m_detail.Trim().Trim(false);
     m_documentation.Trim().Trim(false);
-    if(json.hasNamedObject("textEdit")) { m_textEdit.FromJSON(json.namedObject("textEdit")); }
+    if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) { 
+        m_textEdit.reset(new LSP::TextEdit());
+        m_textEdit->FromJSON(json.namedObject("textEdit")); 
+    }
 }

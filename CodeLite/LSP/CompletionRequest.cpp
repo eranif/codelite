@@ -28,6 +28,7 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     for(int i = 0; i < itemsCount; ++i) {
         CompletionItem::Ptr_t completionItem(new CompletionItem());
         completionItem->FromJSON(items.arrayItem(i));
+        if(completionItem->GetInsertText().IsEmpty()) { completionItem->SetInsertText(completionItem->GetLabel()); }
         completions.push_back(completionItem);
     }
 

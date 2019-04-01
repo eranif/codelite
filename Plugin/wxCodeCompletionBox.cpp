@@ -649,7 +649,7 @@ wxCodeCompletionBoxEntry::Ptr_t wxCodeCompletionBox::TagToEntry(TagEntryPtr tag)
     entry->SetInsertText(text.BeforeFirst('('));
     entry->SetIsFunction(tag->IsMethod());
     entry->SetIsTemplateFunction(tag->IsTemplateFunction());
-    
+
     wxString sig = tag->GetSignature();
     sig = sig.AfterFirst('(').BeforeLast(')');
     entry->SetSignature(sig);
@@ -880,12 +880,11 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
         // if 'insertText' is provided, use it instead of the label
         wxString insertText;
         insertText = completion->GetInsertText().IsEmpty() ? completion->GetLabel() : completion->GetInsertText();
-        if(completion->GetTextEdit().IsOk()) {
+        if(completion->HasTextEdit()) {
             // According to the spec: if textEdit exists, we ignore 'insertText'
-            insertText = completion->GetTextEdit().GetNewText();
+            insertText = completion->GetTextEdit()->GetNewText();
         }
         entry->SetInsertText(insertText);
-        entry->SetInsertRange(completion->GetTextEdit().GetRange());
         entry->SetImgIndex(imgIndex);
         entry->SetComment(comment);
         entry->SetIsFunction(completion->GetKind() == LSP::CompletionItem::kKindConstructor ||

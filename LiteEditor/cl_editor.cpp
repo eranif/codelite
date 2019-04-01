@@ -760,15 +760,38 @@ void clEditor::SetProperties()
     wxBitmap breakpointCondBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cond");
     wxBitmap breakpointCmdList = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cmdlist");
     wxBitmap breakpointIgnored = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_ignored");
-    
-    MarkerDefineBitmap(smt_breakpoint, breakpointBmp);
-    MarkerDefineBitmap(smt_bp_disabled, breakpointBmp.ConvertToDisabled());
 
-    MarkerDefineBitmap(smt_bp_cmdlist, breakpointCmdList);
-    MarkerDefineBitmap(smt_bp_cmdlist_disabled, breakpointCmdList.ConvertToDisabled());
-    MarkerDefineBitmap(smt_bp_ignored, breakpointIgnored.ConvertToDisabled());
-    MarkerDefineBitmap(smt_cond_bp, breakpointCondBmp);
-    MarkerDefineBitmap(smt_cond_bp_disabled, breakpointCondBmp.ConvertToDisabled());
+    wxColour breakpointColour = wxColour("#FF5733");
+    wxColour disabledColour = breakpointColour.ChangeLightness(165);
+    wxColour defaultBgColour = StyleGetBackground(0); // Default style background colour
+    
+    MarkerDefine(smt_breakpoint, wxSTC_MARK_CIRCLE);
+    this->MarkerSetBackground(smt_breakpoint, breakpointColour);
+    this->MarkerSetForeground(smt_breakpoint, breakpointColour);
+
+    MarkerDefine(smt_bp_disabled, wxSTC_MARK_CIRCLE);
+    this->MarkerSetBackground(smt_bp_disabled, disabledColour);
+    this->MarkerSetForeground(smt_bp_disabled, disabledColour);
+
+    MarkerDefine(smt_bp_cmdlist, wxSTC_MARK_CHARACTER + 33); // !
+    this->MarkerSetBackground(smt_bp_cmdlist, breakpointColour);
+    this->MarkerSetForeground(smt_bp_cmdlist, breakpointColour);
+
+    MarkerDefine(smt_bp_cmdlist_disabled, wxSTC_MARK_CHARACTER + 33); // !
+    this->MarkerSetForeground(smt_bp_cmdlist, disabledColour);
+    this->MarkerSetBackground(smt_bp_cmdlist, defaultBgColour);
+
+    MarkerDefine(smt_bp_ignored, wxSTC_MARK_CHARACTER + 105); // i
+    this->MarkerSetForeground(smt_bp_ignored, breakpointColour);
+    this->MarkerSetBackground(smt_bp_ignored, defaultBgColour);
+
+    MarkerDefine(smt_cond_bp, wxSTC_MARK_CHARACTER + 63); // ?
+    this->MarkerSetForeground(smt_cond_bp, breakpointColour);
+    this->MarkerSetBackground(smt_cond_bp, defaultBgColour);
+    
+    MarkerDefine(smt_cond_bp_disabled, wxSTC_MARK_CHARACTER + 63); // ?
+    this->MarkerSetForeground(smt_cond_bp_disabled, disabledColour);
+    this->MarkerSetBackground(smt_cond_bp_disabled, defaultBgColour);
 
     if(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line)) {
         MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());

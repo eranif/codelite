@@ -452,7 +452,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         }
 
         content << "# Library path\n";
-        content << "link_directories(\n" << lib_paths << "\")\n\n";
+        content << "link_directories(\n" << lib_paths << ")\n\n";
     }
 
     // Write sources

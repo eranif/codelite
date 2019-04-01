@@ -97,6 +97,10 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
         return "php";
     case FileExtManager::TypeSQL:
         return "sql";
+    case FileExtManager::TypeCSS:
+        return "css";
+    case FileExtManager::TypeCMake:
+        return "cmake";
     default:
         return "";
     }

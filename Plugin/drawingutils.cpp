@@ -878,11 +878,12 @@ wxFont DrawingUtils::GetBestFixedFont(IEditor* editor)
 {
     wxFont defaultFont = DrawingUtils::GetDefaultFixedFont();
     wxFont bestFont = defaultFont;
-    if(editor) {
-        bestFont = editor->GetCtrl()->StyleGetFont(0);
-#if defined(__WXGTK__) && !defined(__WXGTK3__)
-        bestFont.SetPointSize(defaultFont.GetPointSize());
-#endif
-    }
+    wxUnusedVar(editor);
+//    if(editor) {
+//        bestFont = editor->GetCtrl()->StyleGetFont(0);
+//#if defined(__WXGTK__) && defined(__WXGTK3__)
+//        bestFont.SetPointSize(defaultFont.GetPointSize());
+//#endif
+//    }
     return bestFont;
 }

@@ -920,6 +920,8 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
     } else {
         e.Check(false);
     }
+    
+    m_sizerFlags.DoUpdateUI(m_pgMgrSizerFlags->GetGrid(), e); // This will do updateui for the alignment tools
 }
 
 wxString GUICraftMainPanel::GetStyleFromGuiID(int guiId) const

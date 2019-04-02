@@ -170,6 +170,12 @@ void SizerFlagsListView::DoUpdateUI(wxPropertyGrid* pg, wxUpdateUIEvent& event)
                            !hasEXPAND); // Can't have wxALIGN_CENTER_HORIZONTAL plus wxEXPAND in a vertical boxsizer
         pg->EnableProperty("Flags.wxEXPAND",
                            !hasACHoriz); // Still can't have wxALIGN_CENTER_HORIZONTAL plus wxEXPAND in a vertical boxsizer
+        // Similarly for the relevant toolbar tools
+        event.Enable(!(event.GetId() == ID_TOOL_ALIGN_VCENTER || event.GetId() == ID_TOOL_ALIGN_BOTTOM
+                        || (event.GetId() == ID_TOOL_ALIGN_HCENTER) && hasEXPAND
+                      )
+                    );
+        
     } else {
         pg->EnableProperty("Flags.wxALIGN_RIGHT", false); // Can't have wxALIGN_RIGHT in a horizontal boxsizer
         pg->EnableProperty("Flags.wxALIGN_CENTER_HORIZONTAL", false); // Can't have wxALIGN_CENTER_HORIZONTAL in a
@@ -180,5 +186,10 @@ void SizerFlagsListView::DoUpdateUI(wxPropertyGrid* pg, wxUpdateUIEvent& event)
                            !hasEXPAND); // Can't have wxALIGN_CENTER_VERTICAL plus wxEXPAND in a horizontal boxsizer
         pg->EnableProperty("Flags.wxEXPAND",
                            !hasACVert); // Can't have wxALIGN_CENTER_VERTICAL plus wxEXPAND in a horizontal boxsizer
+
+        event.Enable(!(event.GetId() == ID_TOOL_ALIGN_HCENTER || event.GetId() == ID_TOOL_ALIGN_RIGHT
+                        || (event.GetId() == ID_TOOL_ALIGN_VCENTER) && hasEXPAND
+                      )
+                    );
     }
 }

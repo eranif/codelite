@@ -114,6 +114,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="StringUtils.cpp"/>
+    <File Name="StringUtils.h"/>
     <File Name="ServiceProviderManager.cpp"/>
     <File Name="ServiceProviderManager.h"/>
     <File Name="ServiceProvider.cpp"/>

@@ -36,6 +36,7 @@
 #include <wx/ffile.h>
 #include <wx/log.h>
 #include <fstream>
+#include "StringUtils.h"
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
@@ -581,18 +582,7 @@ void FileUtils::OpenBuiltInTerminal(const wxString& wd, const wxString& user_com
     ::wxExecute(newCommand, wxEXEC_ASYNC);
 }
 
-std::string FileUtils::ToStdString(const wxString& str)
-{
-    wxCharBuffer cb = str.ToAscii();
-    const char* data = cb.data();
-    if(!data) { data = str.mb_str(wxConvUTF8).data(); }
-    if(!data) { data = str.To8BitData(); }
-
-    std::string res;
-    if(!data) { return res; }
-    res = data;
-    return res;
-}
+std::string FileUtils::ToStdString(const wxString& str) { return StringUtils::ToStdString(str); }
 
 bool FileUtils::ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t bufferSize)
 {

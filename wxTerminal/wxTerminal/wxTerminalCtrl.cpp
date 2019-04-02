@@ -45,7 +45,7 @@ void wxTerminalCtrl::PostCreate()
 #else
     shell = wxGetenv("SHELL");
 #endif
-    m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault);
+    m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput);
 }
 
 void wxTerminalCtrl::Run(const wxString& command)
@@ -78,7 +78,7 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         AppendText("\n");
     } else {
         int pos = m_ctrl->GetCurrentPos();
-        if(event.GetKeyCode() == WXK_BACK) {
+        if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
             // going backward
             event.Skip(pos > m_commandOffset);
         } else {

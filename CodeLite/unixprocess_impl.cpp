@@ -30,6 +30,7 @@
 #include "fileutils.h"
 #include "SocketAPI/clSocketBase.h"
 #include <thread>
+#include "StringUtils.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -244,63 +245,14 @@ static void make_argv(const wxString& cmd)
     }
 }
 
-#define BUFF_STATE_NORMAL 0
-#define BUFF_STATE_IN_ESC 1
-#define BUFF_STATE_IN_OSC 2
-
 static void RemoveTerminalColoring(char* buffer)
 {
-    char* saved_buff = buffer;
-    char tmpbuf[BUFF_SIZE + 1];
-    memset(tmpbuf, 0, sizeof(tmpbuf));
+    std::string cinput = buffer;
+    std::string coutout;
+    StringUtils::StripTerminalColouring(cinput, coutout);
 
-    short state = BUFF_STATE_NORMAL;
-    size_t i(0);
-    // see : https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
-    while((*buffer) != 0) {
-        switch(state) {
-        case BUFF_STATE_NORMAL:
-            if(*buffer == 0x1B) { // found ESC char
-                state = BUFF_STATE_IN_ESC;
-
-            } else {
-                tmpbuf[i] = *buffer;
-                i++;
-            }
-            break;
-        case BUFF_STATE_IN_ESC:
-            switch((*buffer)) {
-            case 'm':
-            case 'K':
-            case 'G':
-            case 'J':
-            case 'H':
-            case 'X':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'd':
-                state = BUFF_STATE_NORMAL;
-                break;
-            case ']':
-                // Operating System Command
-                state = BUFF_STATE_IN_OSC;
-                break;
-            default:
-                break;
-            }
-            break;
-        case BUFF_STATE_IN_OSC:
-            if(*buffer == '\a') {
-                // bell, leave the current state
-                state = BUFF_STATE_NORMAL;
-            }
-            break;
-        }
-        buffer++;
-    }
-    memset(saved_buff, 0, BUFF_SIZE);
-    memcpy(saved_buff, tmpbuf, strlen(tmpbuf));
+    // coutout is ALWAYS <= cinput, so we can safely copy the content to the buffer
+    strcpy(buffer, coutout.c_str());
 }
 
 UnixProcessImpl::UnixProcessImpl(wxEvtHandler* parent)

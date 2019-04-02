@@ -5,12 +5,10 @@
 MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)
 {
-    GetMainPanel()->GetSizer()->Add(new wxTerminalCtrl(this), 1, wxEXPAND);
+    GetMainPanel()->GetSizer()->Add(new wxTerminalCtrl(GetMainPanel()), 1, wxEXPAND);
 }
 
-MainFrame::~MainFrame()
-{
-}
+MainFrame::~MainFrame() {}
 
 void MainFrame::OnExit(wxCommandEvent& event)
 {

@@ -10,8 +10,9 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
 {
     if(!Create(parent, winid, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
-    GetSizer()->Add(m_ctrl, 1, wxEXPAND);
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
+                                wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
+    GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
     CallAfter(&wxTerminalCtrl::PostCreate);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessStderr, this);
@@ -19,7 +20,15 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_ctrl); }
+    if(lexer) {
+        wxFont font = lexer->GetFontForSyle(0);
+        const StyleProperty& sp = lexer->GetProperty(0);
+        wxColour bgColour = sp.GetBgColour();
+        wxColour fgColour = sp.GetFgColour();
+        m_textCtrl->SetBackgroundColour(bgColour);
+        m_textCtrl->SetDefaultStyle(wxTextAttr(fgColour, bgColour, font));
+    }
+    m_colourHandler.SetCtrl(m_textCtrl);
 }
 
 wxTerminalCtrl::~wxTerminalCtrl()
@@ -50,7 +59,10 @@ void wxTerminalCtrl::PostCreate()
 
 void wxTerminalCtrl::Run(const wxString& command)
 {
-    if(m_shell) { m_shell->Write(command); }
+    if(m_shell) {
+        m_shell->Write(command);
+        if(!command.IsEmpty()) { AppendText("\n"); }
+    }
 }
 
 void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { AppendText(event.GetOutput()); }
@@ -61,12 +73,8 @@ void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event) {}
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
-    m_ctrl->ClearSelections();
-    m_ctrl->SetInsertionPointEnd();
-    m_ctrl->AppendText(text);
-    m_commandOffset = m_ctrl->GetLastPosition();
-    m_ctrl->ScrollToEnd();
-    m_ctrl->SetSelection(m_commandOffset, m_commandOffset);
+    m_colourHandler << text;
+    m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
 }
 
@@ -75,9 +83,8 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
     if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
         // Execute command
         Run(GetShellCommand());
-        AppendText("\n");
     } else {
-        int pos = m_ctrl->GetCurrentPos();
+        int pos = m_textCtrl->GetInsertionPoint();
         if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
             // going backward
             event.Skip(pos > m_commandOffset);
@@ -89,5 +96,5 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
 
 wxString wxTerminalCtrl::GetShellCommand() const
 {
-    return m_ctrl->GetTextRange(m_commandOffset, m_ctrl->GetLastPosition());
+    return m_textCtrl->GetRange(m_commandOffset, m_textCtrl->GetLastPosition());
 }

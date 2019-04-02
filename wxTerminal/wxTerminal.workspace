@@ -2,13 +2,17 @@
 <CodeLite_Workspace Name="wxTerminal" Database="" Version="10.0.0">
   <Project Name="wxTerminal" Path="wxTerminal/wxTerminal.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Windows_Debug" Selected="yes">
+      <Environment/>
+      <Project Name="wxTerminal" ConfigName="Windows_Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

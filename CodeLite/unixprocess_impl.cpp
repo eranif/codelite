@@ -246,6 +246,7 @@ static void make_argv(const wxString& cmd)
 
 #define BUFF_STATE_NORMAL 0
 #define BUFF_STATE_IN_ESC 1
+#define BUFF_STATE_IN_OSC 2
 
 static void RemoveTerminalColoring(char* buffer)
 {
@@ -255,7 +256,7 @@ static void RemoveTerminalColoring(char* buffer)
 
     short state = BUFF_STATE_NORMAL;
     size_t i(0);
-
+    // see : https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
     while((*buffer) != 0) {
         switch(state) {
         case BUFF_STATE_NORMAL:
@@ -281,8 +282,18 @@ static void RemoveTerminalColoring(char* buffer)
             case 'd':
                 state = BUFF_STATE_NORMAL;
                 break;
+            case ']':
+                // Operating System Command
+                state = BUFF_STATE_IN_OSC;
+                break;
             default:
                 break;
+            }
+            break;
+        case BUFF_STATE_IN_OSC:
+            if(*buffer == '\a') {
+                // bell, leave the current state
+                state = BUFF_STATE_NORMAL;
             }
             break;
         }
@@ -330,15 +341,13 @@ bool UnixProcessImpl::ReadFromFd(int fd, fd_set& rset, wxString& output)
     if(FD_ISSET(fd, &rset)) {
         // there is something to read
         char buffer[BUFF_SIZE + 1]; // our read buffer
-        memset(buffer, 0, sizeof(buffer));
         int bytesRead = read(fd, buffer, sizeof(buffer));
         if(bytesRead > 0) {
-            buffer[BUFF_SIZE] = 0; // always place a terminator
+            buffer[bytesRead] = 0; // always place a terminator
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'
-            RemoveTerminalColoring(buffer);
-
+            if(!(this->m_flags & IProcessRawOutput)) { RemoveTerminalColoring(buffer); }
             wxString convBuff = wxString(buffer, wxConvUTF8);
             if(convBuff.IsEmpty()) { convBuff = wxString::From8BitData(buffer); }
 
@@ -388,15 +397,9 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 }
 
-bool UnixProcessImpl::Write(const std::string& buff)
-{
-    return WriteRaw(buff + "\n");
-}
+bool UnixProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\n"); }
 
-bool UnixProcessImpl::Write(const wxString& buff)
-{
-    return Write(FileUtils::ToStdString(buff));
-}
+bool UnixProcessImpl::Write(const wxString& buff) { return Write(FileUtils::ToStdString(buff)); }
 
 bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
 bool UnixProcessImpl::WriteRaw(const std::string& buff)
@@ -406,9 +409,7 @@ bool UnixProcessImpl::WriteRaw(const std::string& buff)
     while(!tmpbuf.empty()) {
         int bytes_written =
             ::write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length() > chunk_size ? chunk_size : tmpbuf.length());
-        if(bytes_written <= 0) { 
-            return false; 
-        }
+        if(bytes_written <= 0) { return false; }
         tmpbuf.erase(0, bytes_written);
     }
     return true;
@@ -465,11 +466,11 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         termio.c_lflag = ICANON;
         termio.c_oflag = ONOCR | ONLRET;
         tcsetattr(slave, TCSANOW, &termio);
-        
+
         // Set 'slave' as STD{IN|OUT|ERR} and close slave FD
         login_tty(slave);
         close(master); // close the un-needed master end
-        
+
         // Incase the user wants to get separate events for STDERR, dup2 STDERR to the PIPE write end
         // we opened earlier
         if(flags & IProcessStderrEvent) {

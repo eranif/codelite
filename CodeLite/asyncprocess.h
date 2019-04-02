@@ -41,6 +41,8 @@ enum IProcessCreateFlags {
     IProcessCreateAsSuperuser = (1 << 4), // On platforms that support it, start the process as superuser
     IProcessNoRedirect = (1 << 5),
     IProcessStderrEvent = (1 << 6), // fire a separate event for stderr output
+    IProcessRawOutput = (1 << 7),   // return the process output as is, don't strip anything. By default CodeLite strips
+                                    // terminal colours escape sequences
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -99,14 +101,14 @@ public:
     // Write to the process stdin
     // This version add LF to the buffer
     virtual bool Write(const wxString& buff) = 0;
-    
+
     // ANSI version
     // This version add LF to the buffer
     virtual bool Write(const std::string& buff) = 0;
 
     // Write to the process stdin
     virtual bool WriteRaw(const wxString& buff) = 0;
-    
+
     // ANSI version
     virtual bool WriteRaw(const std::string& buff) = 0;
 

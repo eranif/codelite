@@ -14,5 +14,9 @@
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Windows_Debug"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Windows_Release" Selected="no">
+      <Environment/>
+      <Project Name="wxTerminal" ConfigName="Windows_Release"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

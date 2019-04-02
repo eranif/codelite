@@ -1,5 +1,6 @@
 #include "wxTerminalColourHandler.h"
 #include <wx/tokenzr.h>
+#include <wx/wupdlock.h>
 
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
@@ -48,6 +49,7 @@ wxTerminalColourHandler::~wxTerminalColourHandler() {}
 
 void wxTerminalColourHandler::Append(const wxString& buffer)
 {
+    wxWindowUpdateLocker locker(m_ctrl);
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
     wxString m_chunk;

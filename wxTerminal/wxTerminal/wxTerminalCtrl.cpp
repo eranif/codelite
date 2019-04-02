@@ -11,7 +11,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     if(!Create(parent, winid, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
-                                wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
+                                wxTE_MULTILINE | wxTE_RICH2 | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
     CallAfter(&wxTerminalCtrl::PostCreate);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);

@@ -5,7 +5,7 @@
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
     // we use the Ubuntu colour scheme
-    
+
     // Text colours
     m_colours.insert({ 30, wxColour(1, 1, 1) });
     m_colours.insert({ 31, wxColour(222, 56, 43) });
@@ -23,7 +23,7 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     m_colours.insert({ 95, wxColour(255, 0, 255) });
     m_colours.insert({ 96, wxColour(0, 255, 255) });
     m_colours.insert({ 97, wxColour(255, 255, 255) });
-    
+
     // Background colours
     m_colours.insert({ 40, wxColour(1, 1, 1) });
     m_colours.insert({ 41, wxColour(222, 56, 43) });
@@ -61,6 +61,26 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
     wxString m_chunk;
     for(const wxChar& ch : buffer) {
         switch(m_state) {
+        case eColourHandlerState::kFoundCR: {
+            switch(ch) {
+            case '\n':
+                // Windows style CRLF
+                m_chunk << "\r\n";
+                break;
+            default: {
+                // only CR was found, erase everything until the the first LF found or start of string
+                size_t where = m_chunk.rfind('\n');
+                if(where == wxString::npos) {
+                    m_chunk.Clear();
+                } else {
+                    m_chunk.erase(where + 1); // erase everything}
+                    m_chunk << ch;
+                }
+                break;
+            } // default
+            } // switch
+            m_state = eColourHandlerState::kNormal;
+        } break;
         case eColourHandlerState::kNormal:
             switch(ch) {
             case 0x1B: // ESC
@@ -70,6 +90,9 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                     m_chunk.Clear();
                 }
                 m_state = eColourHandlerState::kInEscape;
+                break;
+            case '\r':
+                m_state = eColourHandlerState::kFoundCR;
                 break;
             default:
                 m_chunk << ch;

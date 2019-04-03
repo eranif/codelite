@@ -10,6 +10,7 @@ enum class eColourHandlerState {
     kInEscape, // found ESC char
     kInOsc,    // Operating System Command
     kInCsi,    // Control Sequence Introducer
+    kFoundCR,  // Found CR
 };
 
 class wxTerminalColourHandler

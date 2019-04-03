@@ -2,6 +2,18 @@
 #include <wx/event.h>
 #include "MainFrame.h"
 #include <wx/image.h>
+#include <iostream>
+#include <thread>
+
+#ifdef __WXMSW__
+void RedirectIOToConsole()
+{
+    AllocConsole();
+    freopen("CON", "wb", stdout);
+    freopen("CON", "wb", stderr);
+    freopen("CON", "r", stdin); // Note: "r", not "w"
+}
+#endif
 
 // Define the MainApp
 class MainApp : public wxApp

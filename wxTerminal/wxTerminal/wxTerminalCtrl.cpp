@@ -54,7 +54,8 @@ void wxTerminalCtrl::PostCreate()
 #else
     shell = wxGetenv("SHELL");
 #endif
-    m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput);
+    m_shell =
+        ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
 }
 
 void wxTerminalCtrl::Run(const wxString& command)

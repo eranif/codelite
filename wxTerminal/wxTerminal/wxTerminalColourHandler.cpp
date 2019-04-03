@@ -5,6 +5,8 @@
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
     // we use the Ubuntu colour scheme
+    
+    // Text colours
     m_colours.insert({ 30, wxColour(1, 1, 1) });
     m_colours.insert({ 31, wxColour(222, 56, 43) });
     m_colours.insert({ 32, wxColour(57, 181, 74) });
@@ -21,6 +23,8 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     m_colours.insert({ 95, wxColour(255, 0, 255) });
     m_colours.insert({ 96, wxColour(0, 255, 255) });
     m_colours.insert({ 97, wxColour(255, 255, 255) });
+    
+    // Background colours
     m_colours.insert({ 40, wxColour(1, 1, 1) });
     m_colours.insert({ 41, wxColour(222, 56, 43) });
     m_colours.insert({ 42, wxColour(57, 181, 74) });
@@ -49,7 +53,9 @@ wxTerminalColourHandler::~wxTerminalColourHandler() {}
 
 void wxTerminalColourHandler::Append(const wxString& buffer)
 {
+#ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_ctrl);
+#endif
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
     wxString m_chunk;
@@ -135,25 +141,49 @@ void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)
         // reset to normal
         m_ctrl->SetDefaultStyle(m_defaultAttr);
     } else {
-        wxArrayString colourCodes = ::wxStringTokenize(escape, ";", wxTOKEN_RET_EMPTY);
-        if(colourCodes.size() == 1) {
-            // foreground colur only
-            wxColour fg_colour = GetColour(colourCodes.Item(0));
-            if(fg_colour.IsOk()) { m_ctrl->SetDefaultStyle(wxTextAttr(fg_colour)); }
-        } else if(colourCodes.size() == 2) {
-            wxColour fg_colour = GetColour(colourCodes.Item(0));
-            wxColour bg_colour = GetColour(colourCodes.Item(1));
-            if(bg_colour.IsOk() && fg_colour.IsOk()) { m_ctrl->SetDefaultStyle(wxTextAttr(fg_colour, bg_colour)); }
+        // see: https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
+        wxArrayString attrs = ::wxStringTokenize(escape, ";", wxTOKEN_RET_EMPTY);
+        wxTextAttr textAttr = m_defaultAttr;
+        for(const wxString& attr : attrs) {
+            long number;
+            if(!attr.ToCLong(&number)) { continue; }
+            switch(number) {
+            case 0:
+                // reset attributes
+                textAttr = m_defaultAttr;
+                break;
+            case 1:
+                textAttr.SetFontWeight(wxFONTWEIGHT_BOLD);
+                break;
+            case 2:
+                textAttr.SetFontWeight(wxFONTWEIGHT_LIGHT);
+                break;
+            case 3:
+                textAttr.SetFontStyle(wxFONTSTYLE_ITALIC);
+                break;
+            case 4:
+                textAttr.SetFontUnderlined(true);
+                break;
+            default:
+                if((number >= 30 && number <= 37) || (number >= 90 && number <= 97)) {
+                    // use colour table to set the text colour
+                    wxColour c = GetColour(number);
+                    if(c.IsOk()) { textAttr.SetTextColour(c); }
+                } else if((number >= 40 && number <= 47) || (number >= 100 && number <= 107)) {
+                    wxColour c = GetColour(number);
+                    if(c.IsOk()) { textAttr.SetBackgroundColour(c); }
+                }
+                break;
+            }
         }
+        m_ctrl->SetDefaultStyle(textAttr);
     }
 }
 
-wxColour wxTerminalColourHandler::GetColour(const wxString& colour)
+wxColour wxTerminalColourHandler::GetColour(long colour_number)
 {
-    long colourNumber(0);
-    if(!colour.ToCLong(&colourNumber)) { return wxNullColour; }
-    if(m_colours.count(colourNumber) == 0) { return wxNullColour; }
-    return m_colours.find(colourNumber)->second;
+    if(m_colours.count(colour_number) == 0) { return wxNullColour; }
+    return m_colours.find(colour_number)->second;
 }
 
 wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const wxString& buffer)

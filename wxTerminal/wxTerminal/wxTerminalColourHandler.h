@@ -21,7 +21,7 @@ class wxTerminalColourHandler
 
 protected:
     eColourHandlerState m_state = eColourHandlerState::kNormal;
-    wxColour GetColour(const wxString& colour);
+    wxColour GetColour(long colour_number);
 
 protected:
     void Append(const wxString& buffer);

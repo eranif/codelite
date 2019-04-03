@@ -13,7 +13,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     if(!Create(parent, winid, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
-                                wxTE_MULTILINE | wxTE_RICH2 | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
+                                wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
     CallAfter(&wxTerminalCtrl::PostCreate);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
@@ -63,6 +63,13 @@ void wxTerminalCtrl::PostCreate()
 #endif
     m_shell =
         ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
+
+    // Keep a list of initial processes that we DONT want to kill
+    std::vector<long> children;
+    ProcUtils::GetChildren(m_shell->GetPid(), children);
+    for(long pid : children) {
+        m_initialProcesses.insert(pid);
+    }
 }
 
 void wxTerminalCtrl::Run(const wxString& command)
@@ -143,6 +150,14 @@ void wxTerminalCtrl::SetCaretAtEnd()
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 
+#ifdef __WXMSW__
+static void KillPorcessByPID(DWORD pid)
+{
+    HANDLE hProcess = OpenProcess(SYNCHRONIZE | PROCESS_TERMINATE, TRUE, pid);
+    if(hProcess != INVALID_HANDLE_VALUE) { TerminateProcess(hProcess, 0); }
+}
+#endif
+
 void wxTerminalCtrl::GenerateCtrlC()
 {
     // Get list of the process children
@@ -150,8 +165,14 @@ void wxTerminalCtrl::GenerateCtrlC()
     std::vector<long> children;
     ProcUtils::GetChildren(m_shell->GetPid(), children);
     for(long pid : children) {
+        // Don't kill any initial process
+        if(m_initialProcesses.count(pid)) { continue; }
+#ifdef __WXMSW__
+        KillPorcessByPID(pid);
+#else
         wxKillError rc;
-        ::wxKill(pid, wxSIGINT, &rc, wxKILL_CHILDREN);
+        ::wxKill(pid, wxSIGTERM, &rc, wxKILL_CHILDREN);
+#endif
     }
 }
 

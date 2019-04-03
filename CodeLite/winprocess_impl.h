@@ -32,6 +32,7 @@
 #include <Windows.h>
 #include <wx/string.h>
 #include <thread>
+#include <unordered_set>
 
 class ProcessReaderThread;
 class WinWriterThread;
@@ -41,6 +42,7 @@ class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
     ProcessReaderThread* m_thr;
     char m_buffer[65537];
     WinWriterThread* m_writerThread = nullptr;
+    std::unordered_set<long> m_initialChildren;
 
 protected:
     void StartReaderThread();

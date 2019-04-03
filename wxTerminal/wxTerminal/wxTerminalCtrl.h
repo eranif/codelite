@@ -54,6 +54,7 @@ protected:
     long m_commandOffset = 0;
     wxTerminalColourHandler m_colourHandler;
     History m_history;
+    std::unordered_set<long> m_initialProcesses;
 
 protected:
     void PostCreate();

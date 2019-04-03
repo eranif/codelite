@@ -4,6 +4,7 @@
 #include <wx/textctrl.h>
 #include <unordered_map>
 #include <map>
+#include <vector>
 
 enum class eColourHandlerState {
     kNormal = 0,
@@ -28,7 +29,8 @@ protected:
     void Append(const wxString& buffer);
     void SetStyleFromEscape(const wxString& escape);
     void Clear();
-
+    void FlushBuffer(std::vector<std::string>& buf, std::string& incompleteLine);
+    
 public:
     wxTerminalColourHandler();
     wxTerminalColourHandler(wxTextCtrl* ctrl);

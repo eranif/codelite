@@ -440,12 +440,14 @@ void WinProcessImpl::Cleanup()
         std::map<unsigned long, bool> tree;
         ProcUtils::GetProcTree(tree, GetPid());
 
-        std::map<unsigned long, bool>::iterator iter = tree.begin();
-        for(; iter != tree.end(); iter++) {
+        for(const auto& vt : tree) {
+            // don't kill ourself
+            if((long)vt.first == GetPid()) { continue; }
+            wxLogNull NoLog;
             wxKillError rc;
-            wxKill(iter->first, wxSIGKILL, &rc);
+            wxKill(vt.first, wxSIGKILL, &rc);
         }
-        TerminateProcess(piProcInfo.hProcess, 255);
+        ::TerminateProcess(piProcInfo.hProcess, 0);
     }
 
     if(IsRedirect()) {
@@ -515,12 +517,13 @@ void WinProcessImpl::Terminate()
         std::map<unsigned long, bool> tree;
         ProcUtils::GetProcTree(tree, GetPid());
 
-        std::map<unsigned long, bool>::iterator iter = tree.begin();
-        for(; iter != tree.end(); iter++) {
+        for(const auto& vt : tree) {
+            if((long)vt.first == GetPid()) { continue; }
+            wxLogNull NoLOG;
             wxKillError rc;
-            wxKill(iter->first, wxSIGKILL, &rc);
+            wxKill(vt.first, wxSIGKILL, &rc);
         }
-        TerminateProcess(piProcInfo.hProcess, 255);
+        TerminateProcess(piProcInfo.hProcess, 0);
     }
 }
 

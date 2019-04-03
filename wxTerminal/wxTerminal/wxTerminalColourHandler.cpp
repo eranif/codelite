@@ -1,6 +1,7 @@
 #include "wxTerminalColourHandler.h"
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
+#include <fileutils.h>
 
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
@@ -56,26 +57,33 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_ctrl);
 #endif
+    std::vector<std::string> V;
+    std::string curline;
+
+    // we start were left (at the end of the buffer)
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
-    wxString m_chunk;
     for(const wxChar& ch : buffer) {
         switch(m_state) {
         case eColourHandlerState::kFoundCR: {
             switch(ch) {
             case '\n':
                 // Windows style CRLF
-                m_chunk << "\r\n";
+                curline += '\r';
+                V.push_back(curline);
+                curline.clear();
                 break;
             default: {
                 // only CR was found, erase everything until the the first LF found or start of string
-                size_t where = m_chunk.rfind('\n');
-                if(where == wxString::npos) {
-                    m_chunk.Clear();
-                } else {
-                    m_chunk.erase(where + 1); // erase everything}
-                    m_chunk << ch;
-                }
+                FlushBuffer(V, curline);
+                curline += ch;
+                // Make sure that the insertion poit is also set to the start of line
+                long x, y;
+                long curpos = m_ctrl->GetInsertionPoint();
+                m_ctrl->PositionToXY((curpos > 0) ? curpos - 1 : 0, &x, &y);
+                long line_pos = m_ctrl->XYToPosition(0, y);
+                m_ctrl->Replace(line_pos, curpos, "");
+                m_ctrl->SetInsertionPoint(line_pos);
                 break;
             } // default
             } // switch
@@ -85,17 +93,18 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             switch(ch) {
             case 0x1B: // ESC
                 // Add the current chunk using the current style
-                if(!m_chunk.IsEmpty()) {
-                    m_ctrl->AppendText(m_chunk);
-                    m_chunk.Clear();
-                }
+                FlushBuffer(V, curline);
                 m_state = eColourHandlerState::kInEscape;
                 break;
             case '\r':
                 m_state = eColourHandlerState::kFoundCR;
                 break;
+            case '\n':
+                V.push_back(curline);
+                curline.clear();
+                break;
             default:
-                m_chunk << ch;
+                curline += ch;
                 break;
             }
             break;
@@ -153,9 +162,8 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             }
         }
     }
-    if(!m_chunk.IsEmpty()) { m_ctrl->AppendText(m_chunk); }
+    FlushBuffer(V, curline);
     m_ctrl->ScrollLines(m_ctrl->GetNumberOfLines());
-    m_chunk.Clear();
 }
 
 void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)
@@ -223,3 +231,20 @@ void wxTerminalColourHandler::SetCtrl(wxTextCtrl* ctrl)
 }
 
 void wxTerminalColourHandler::Clear() { m_escapeSequence.Clear(); }
+
+void wxTerminalColourHandler::FlushBuffer(std::vector<std::string>& buf, std::string& incompleteLine)
+{
+    wxString bufAsStr;
+    for(const std::string& line : buf) {
+        wxString wxstr(line.c_str(), wxConvUTF8);
+        bufAsStr << wxstr << "\n";
+    }
+    bufAsStr << incompleteLine;
+    int insert_pos_before = m_ctrl->GetInsertionPoint();
+    m_ctrl->AppendText(bufAsStr);
+    int insert_pos_after = m_ctrl->GetInsertionPoint();
+    wxUnusedVar(insert_pos_after);
+    wxUnusedVar(insert_pos_before);
+    incompleteLine.clear();
+    buf.clear();
+}

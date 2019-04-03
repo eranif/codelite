@@ -10,11 +10,11 @@
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Windows_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Windows_Debug" Selected="no">
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Windows_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Windows_Release" Selected="no">
+    <WorkspaceConfiguration Name="Windows_Release" Selected="yes">
       <Environment/>
       <Project Name="wxTerminal" ConfigName="Windows_Release"/>
     </WorkspaceConfiguration>

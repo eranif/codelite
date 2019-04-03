@@ -75,7 +75,7 @@ void wxTerminalCtrl::PostCreate()
 void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
-        m_shell->Write(command);
+        m_shell->WriteRaw(command + "\n");
         if(!command.IsEmpty()) {
             AppendText("\n");
             m_history.Add(command);

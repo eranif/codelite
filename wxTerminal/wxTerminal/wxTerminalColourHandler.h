@@ -29,7 +29,7 @@ protected:
     void Append(const wxString& buffer);
     void SetStyleFromEscape(const wxString& escape);
     void Clear();
-    void FlushBuffer(std::vector<std::string>& buf, std::string& incompleteLine);
+    void FlushBuffer(wxString& line);
     
 public:
     wxTerminalColourHandler();

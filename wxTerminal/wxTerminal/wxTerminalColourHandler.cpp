@@ -57,54 +57,65 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_ctrl);
 #endif
-    std::vector<std::string> V;
-    std::string curline;
-
+    wxString curline;
     // we start were left (at the end of the buffer)
+    long lastPos = m_ctrl->GetLastPosition();
+    if(lastPos > 0) {
+        // test the last char
+        wxString text = m_ctrl->GetRange(lastPos - 1, lastPos);
+        if(text[0] != '\n') {
+            // we dont have a complete line here
+            // read the last line into the buffer and clear the line
+            long x, y;
+            m_ctrl->PositionToXY(lastPos, &x, &y);
+            long newpos = m_ctrl->XYToPosition(0, y);
+            curline = m_ctrl->GetRange(newpos, lastPos);
+            m_ctrl->Remove(newpos, lastPos);
+            m_ctrl->SetInsertionPoint(newpos);
+        }
+    }
+
     m_ctrl->SelectNone();
     m_ctrl->SetInsertionPointEnd();
     for(const wxChar& ch : buffer) {
         switch(m_state) {
         case eColourHandlerState::kFoundCR: {
             switch(ch) {
+            case '\r':
+                // another CR, ignore it and remain in this state
+                curline.Clear();
+                break;
             case '\n':
                 // Windows style CRLF
-                curline += '\r';
-                V.push_back(curline);
-                curline.clear();
+                curline << "\r\n";
+                FlushBuffer(curline);
+                m_state = eColourHandlerState::kNormal;
                 break;
             default: {
                 // only CR was found, erase everything until the the first LF found or start of string
-                FlushBuffer(V, curline);
-                curline += ch;
-                // Make sure that the insertion poit is also set to the start of line
-                long x, y;
-                long curpos = m_ctrl->GetInsertionPoint();
-                m_ctrl->PositionToXY((curpos > 0) ? curpos - 1 : 0, &x, &y);
-                long line_pos = m_ctrl->XYToPosition(0, y);
-                m_ctrl->Replace(line_pos, curpos, "");
-                m_ctrl->SetInsertionPoint(line_pos);
+                curline.Clear();
+                curline << ch;
+                m_state = eColourHandlerState::kNormal;
                 break;
             } // default
             } // switch
-            m_state = eColourHandlerState::kNormal;
         } break;
         case eColourHandlerState::kNormal:
             switch(ch) {
             case 0x1B: // ESC
                 // Add the current chunk using the current style
-                FlushBuffer(V, curline);
+                FlushBuffer(curline);
                 m_state = eColourHandlerState::kInEscape;
                 break;
             case '\r':
                 m_state = eColourHandlerState::kFoundCR;
                 break;
             case '\n':
-                V.push_back(curline);
-                curline.clear();
+                curline << "\n";
+                FlushBuffer(curline);
                 break;
             default:
-                curline += ch;
+                curline << ch;
                 break;
             }
             break;
@@ -162,7 +173,10 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             }
         }
     }
-    FlushBuffer(V, curline);
+    
+    // Write whatever left in the buffer into the control
+    FlushBuffer(curline);
+    // And ensure that the last line is visible
     m_ctrl->ScrollLines(m_ctrl->GetNumberOfLines());
 }
 
@@ -232,19 +246,12 @@ void wxTerminalColourHandler::SetCtrl(wxTextCtrl* ctrl)
 
 void wxTerminalColourHandler::Clear() { m_escapeSequence.Clear(); }
 
-void wxTerminalColourHandler::FlushBuffer(std::vector<std::string>& buf, std::string& incompleteLine)
+void wxTerminalColourHandler::FlushBuffer(wxString& line)
 {
-    wxString bufAsStr;
-    for(const std::string& line : buf) {
-        wxString wxstr(line.c_str(), wxConvUTF8);
-        bufAsStr << wxstr << "\n";
-    }
-    bufAsStr << incompleteLine;
     int insert_pos_before = m_ctrl->GetInsertionPoint();
-    m_ctrl->AppendText(bufAsStr);
+    m_ctrl->AppendText(line);
     int insert_pos_after = m_ctrl->GetInsertionPoint();
     wxUnusedVar(insert_pos_after);
     wxUnusedVar(insert_pos_before);
-    incompleteLine.clear();
-    buf.clear();
+    line.clear();
 }

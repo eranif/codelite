@@ -62,8 +62,6 @@ protected:
     wxString GetShellCommand() const;
     void SetShellCommand(const wxString& command);
     void SetCaretAtEnd();
-    void GenerateCtrlC();
-    void ClearScreen();
 
 protected:
     void OnProcessOutput(clProcessEvent& event);
@@ -83,6 +81,23 @@ public:
 
     // API
     void Run(const wxString& command);
+    /**
+     * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)
+     */
+    void GenerateCtrlC();
+    /**
+     * @brief clear the display (Ctrl-L)
+     */
+    void ClearScreen();
+
+    /**
+     * @brief clear the current line (Ctrl-U)
+     */
+    void ClearLine();
+    /**
+     * @brief Logout from the current session (Ctrl-D)
+     */
+    void Logout();
 };
 
 #endif // WXTERMINALCTRL_H

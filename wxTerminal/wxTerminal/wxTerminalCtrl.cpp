@@ -91,13 +91,6 @@ void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event) {}
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
-    //    wxRegEx reJob("\\[([0-9]+)\\][ \\t]+([0-9]+)", wxRE_ADVANCED);
-    //    if(reJob.IsValid() && reJob.Matches(text)) {
-    //        // A process started in the background
-    //        wxString process_id = reJob.GetMatch(text, 2);
-    //        long nProcessNumber;
-    //        if(process_id.ToCLong(&nProcessNumber)) { m_backgroundProcesses.insert(nProcessNumber); }
-    //    }
     m_colourHandler << text;
     m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
@@ -118,8 +111,11 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         // Generate Ctrl-C
         GenerateCtrlC();
     } else if((event.GetKeyCode() == 'L') && event.ControlDown()) {
-        // Generate Ctrl-C
         ClearScreen();
+    } else if((event.GetKeyCode() == 'U') && event.ControlDown()) {
+        ClearLine();
+    } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
+        Logout();
     } else {
         int pos = m_textCtrl->GetInsertionPoint();
         if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
@@ -187,4 +183,18 @@ void wxTerminalCtrl::ClearScreen()
     long doclen = m_textCtrl->GetValue().length();
     long lastLineStartPos = (doclen - lineLen);
     m_textCtrl->Remove(0, lastLineStartPos);
+}
+
+void wxTerminalCtrl::ClearLine() { m_textCtrl->Remove(m_commandOffset, m_textCtrl->GetLastPosition()); }
+
+void wxTerminalCtrl::Logout()
+{
+    wxString command;
+#ifdef __WXMSW__
+    command = "exit";
+#else
+    command = "exit";
+#endif
+    // Loguot
+    Run(command);
 }

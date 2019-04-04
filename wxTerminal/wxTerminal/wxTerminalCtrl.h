@@ -8,53 +8,55 @@
 #include "wxTerminalColourHandler.h"
 #include <wx/arrstr.h>
 
+struct wxTerminalHistory {
+    wxArrayString m_commands;
+    int m_current = wxNOT_FOUND;
+
+    void Add(const wxString& command)
+    {
+        m_commands.Insert(command, 0);
+        m_current = wxNOT_FOUND;
+    }
+
+    void Up()
+    {
+        if(m_commands.empty()) { return; }
+        ++m_current;
+        if(m_current >= (int)m_commands.size()) { m_current = (m_commands.size() - 1); }
+    }
+
+    void Down()
+    {
+        if(m_commands.empty()) { return; }
+        --m_current;
+        if(m_current < 0) { m_current = 0; }
+    }
+
+    wxString Get() const
+    {
+        if(m_current < 0 || m_current >= (int)m_commands.size()) { return ""; }
+        return m_commands.Item(m_current);
+    }
+
+    void Clear()
+    {
+        m_current = wxNOT_FOUND;
+        m_commands.clear();
+    }
+};
+
 class wxTerminalCtrl : public wxPanel
 {
 protected:
-    struct History {
-        wxArrayString m_commands;
-        int m_current = wxNOT_FOUND;
-
-        void Add(const wxString& command)
-        {
-            m_commands.Insert(command, 0);
-            m_current = wxNOT_FOUND;
-        }
-
-        void Up()
-        {
-            if(m_commands.empty()) { return; }
-            ++m_current;
-            if(m_current >= (int)m_commands.size()) { m_current = (m_commands.size() - 1); }
-        }
-
-        void Down()
-        {
-            if(m_commands.empty()) { return; }
-            --m_current;
-            if(m_current < 0) { m_current = 0; }
-        }
-
-        wxString Get() const
-        {
-            if(m_current < 0 || m_current >= (int)m_commands.size()) { return ""; }
-            return m_commands.Item(m_current);
-        }
-
-        void Clear()
-        {
-            m_current = wxNOT_FOUND;
-            m_commands.clear();
-        }
-    };
-
     long m_style = 0;
     wxTextCtrl* m_textCtrl = nullptr;
     IProcess* m_shell = nullptr;
     long m_commandOffset = 0;
     wxTerminalColourHandler m_colourHandler;
-    History m_history;
+    wxTerminalHistory m_history;
     std::unordered_set<long> m_initialProcesses;
+    std::string m_pts; // Unix only
+    std::string m_password;
 
 protected:
     void PostCreate();
@@ -68,6 +70,7 @@ protected:
     void OnProcessStderr(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnKeyDown(wxKeyEvent& event);
+    bool IsEchoOn() const;
 
 public:
     wxTerminalCtrl();
@@ -81,6 +84,7 @@ public:
 
     // API
     void Run(const wxString& command);
+
     /**
      * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)
      */
@@ -98,6 +102,10 @@ public:
      * @brief Logout from the current session (Ctrl-D)
      */
     void Logout();
+    /**
+     * @brief return the underlying controlling terminal. Returns empty string on Windows
+     */
+    const std::string& GetPts() const { return m_pts; }
 };
 
 #endif // WXTERMINALCTRL_H

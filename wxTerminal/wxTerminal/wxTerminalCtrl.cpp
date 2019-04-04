@@ -4,7 +4,11 @@
 #include <ColoursAndFontsManager.h>
 #include <wx/regex.h>
 #include "procutils.h"
-
+#ifndef __WXMSW__
+#include "unixprocess_impl.h"
+#include <termios.h>
+#include <unistd.h>
+#endif
 wxTerminalCtrl::wxTerminalCtrl() {}
 
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
@@ -64,6 +68,11 @@ void wxTerminalCtrl::PostCreate()
     m_shell =
         ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
 
+#ifndef __WXMSW__
+    UnixProcessImpl* unixProcess = dynamic_cast<UnixProcessImpl*>(m_shell);
+    if(unixProcess) { m_pts = unixProcess->GetTty(); }
+#endif
+
     // Keep a list of initial processes that we DONT want to kill
     std::vector<long> children;
     ProcUtils::GetChildren(m_shell->GetPid(), children);
@@ -77,7 +86,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");
-        if(!command.IsEmpty()) { m_history.Add(command); }
+        if(!command.empty()) { m_history.Add(command); }
     }
 }
 
@@ -98,7 +107,9 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
 {
     if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
         // Execute command
-        Run(GetShellCommand());
+        Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
+        m_password.clear();
+
     } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
         m_history.Up();
         SetShellCommand(m_history.Get());
@@ -115,12 +126,16 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
     } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
         Logout();
     } else {
-        int pos = m_textCtrl->GetInsertionPoint();
-        if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
-            // going backward
-            event.Skip(pos > m_commandOffset);
+        if(IsEchoOn()) {
+            int pos = m_textCtrl->GetInsertionPoint();
+            if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
+                // going backward
+                event.Skip(pos > m_commandOffset);
+            } else {
+                event.Skip(pos >= m_commandOffset);
+            }
         } else {
-            event.Skip(pos >= m_commandOffset);
+            if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
         }
     }
 }
@@ -195,4 +210,25 @@ void wxTerminalCtrl::Logout()
 #endif
     // Loguot
     Run(command);
+}
+
+bool wxTerminalCtrl::IsEchoOn() const
+{
+#ifdef __WXMSW__
+    return true;
+#else
+    return true;
+//    bool has_echo = true;
+//    if(m_pts.empty()) { return has_echo; }
+//
+//    // see if the ECHO bit is missing
+//    struct termios term;
+//    int fd = ::open(m_pts.c_str(), O_RDONLY);
+//    if(fd != -1) {
+//        ::tcgetattr(fd, &term);
+//        has_echo = term.c_lflag & ECHO;
+//        ::close(fd);
+//    }
+//    return has_echo;
+#endif
 }

@@ -85,8 +85,15 @@ void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
+#ifdef __WXMSW__
+        if(!command.empty()) {
+            AppendText("\n");
+            m_history.Add(command);
+        }
+#else
         AppendText("\n");
         if(!command.empty()) { m_history.Add(command); }
+#endif
     }
 }
 
@@ -112,7 +119,7 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
 
     } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
         m_textCtrl->SetInsertionPoint(m_commandOffset);
-        
+
     } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
         m_history.Up();
         SetShellCommand(m_history.Get());
@@ -192,13 +199,14 @@ void wxTerminalCtrl::ClearScreen()
 {
     // Delete the entire content excluding the last list
     if(m_textCtrl->GetNumberOfLines() < 1) { return; }
-    wxString curcmd = GetShellCommand();
-    int lineLen = m_textCtrl->GetLineLength(m_textCtrl->GetNumberOfLines() - 1);
-    m_commandOffset = (lineLen - curcmd.length());
-    // clear everything but the last line
-    long doclen = m_textCtrl->GetValue().length();
-    long lastLineStartPos = (doclen - lineLen);
-    m_textCtrl->Remove(0, lastLineStartPos);
+    long x, y;
+    if(!m_textCtrl->PositionToXY(m_textCtrl->GetLastPosition(), &x, &y)) { return; }
+    long insertPos = m_textCtrl->GetInsertionPoint();
+    long lineStartPos = m_textCtrl->XYToPosition(0, y);
+    m_textCtrl->Remove(0, lineStartPos);
+    m_commandOffset -= lineStartPos;
+    insertPos -= lineStartPos;
+    m_textCtrl->SetInsertionPoint(insertPos);
 }
 
 void wxTerminalCtrl::ClearLine() { m_textCtrl->Remove(m_commandOffset, m_textCtrl->GetLastPosition()); }

@@ -392,7 +392,9 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
 
     // Prentend that we are a terminal...
     int master, slave;
-    openpty(&master, &slave, NULL, NULL, NULL);
+    char pts_name[1024];
+    memset(pts_name, 0x0, sizeof(pts_name));
+    openpty(&master, &slave, pts_name, NULL, NULL);
 
     // Create a one-way communication channel (pipe).
     // If successful, two file descriptors are stored in stderrPipes;
@@ -483,7 +485,10 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         proc->SetWriteHandler(master);
         proc->SetPid(rc);
         proc->m_flags = flags; // Keep the creation flags
-
+        
+        // Keep the terminal name, we will need it
+        proc->SetTty(pts_name);
+        
         if(!(proc->m_flags & IProcessCreateSync)) { proc->StartReaderThread(); }
         return proc;
     }

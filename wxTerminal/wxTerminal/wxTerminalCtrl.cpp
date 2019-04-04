@@ -110,6 +110,9 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
         m_password.clear();
 
+    } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
+        m_textCtrl->SetInsertionPoint(m_commandOffset);
+        
     } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
         m_history.Up();
         SetShellCommand(m_history.Get());

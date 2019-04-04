@@ -53,7 +53,7 @@ static bool search_process_by_command(const wxString& name, wxString& tty, long&
 
 clConsoleGnomeTerminal::clConsoleGnomeTerminal()
 {
-    SetTerminalCommand("/usr/bin/gnome-terminal --working-directory=%WD% -e '%COMMAND%'");
+    SetTerminalCommand("/usr/bin/gnome-terminal --disable-factory --working-directory=%WD% -e '%COMMAND%'");
     SetEmptyTerminalCommand("/usr/bin/gnome-terminal --working-directory=%WD%");
 }
 

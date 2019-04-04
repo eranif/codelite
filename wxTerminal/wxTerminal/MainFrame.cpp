@@ -5,7 +5,10 @@
 MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)
 {
-    GetMainPanel()->GetSizer()->Add(new wxTerminalCtrl(GetMainPanel()), 1, wxEXPAND);
+    m_terminal = new wxTerminalCtrl(GetMainPanel());
+    GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
+    wxFont f(wxFontInfo(18).FaceName("Consolas"));
+    m_terminal->SetDefaultStyle(wxTextAttr(wxNullColour, wxNullColour, f));
 }
 
 MainFrame::~MainFrame() {}

@@ -55,7 +55,7 @@ wxTerminalColourHandler::~wxTerminalColourHandler() {}
 void wxTerminalColourHandler::Append(const wxString& buffer)
 {
 #ifdef __WXMSW__
-    wxWindowUpdateLocker locker(m_ctrl);
+    // wxWindowUpdateLocker locker(m_ctrl);
 #endif
     wxString curline;
     // we start were left (at the end of the buffer)
@@ -173,7 +173,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             }
         }
     }
-    
+
     // Write whatever left in the buffer into the control
     FlushBuffer(curline);
     // And ensure that the last line is visible
@@ -248,10 +248,21 @@ void wxTerminalColourHandler::Clear() { m_escapeSequence.Clear(); }
 
 void wxTerminalColourHandler::FlushBuffer(wxString& line)
 {
-    int insert_pos_before = m_ctrl->GetInsertionPoint();
     m_ctrl->AppendText(line);
-    int insert_pos_after = m_ctrl->GetInsertionPoint();
-    wxUnusedVar(insert_pos_after);
-    wxUnusedVar(insert_pos_before);
     line.clear();
+}
+
+void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
+{
+    m_ctrl->SetInsertionPointEnd();
+    if(attr.GetBackgroundColour().IsOk()) {
+        m_ctrl->SetBackgroundColour(attr.GetBackgroundColour());
+        m_defaultAttr.SetBackgroundColour(attr.GetBackgroundColour());
+    }
+    if(attr.GetTextColour().IsOk()) { m_defaultAttr.SetTextColour(attr.GetTextColour()); }
+    if(attr.GetFont().IsOk()) { 
+        m_defaultAttr.SetFont(attr.GetFont()); 
+    }
+    m_ctrl->SetDefaultStyle(m_defaultAttr);
+    m_ctrl->Refresh();
 }

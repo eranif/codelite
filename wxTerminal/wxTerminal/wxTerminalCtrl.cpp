@@ -1,7 +1,6 @@
 #include "wxTerminalCtrl.h"
 #include <wx/sizer.h>
 #include <processreaderthread.h>
-#include <ColoursAndFontsManager.h>
 #include <wx/regex.h>
 #include "procutils.h"
 #ifndef __WXMSW__
@@ -9,6 +8,29 @@
 #include <termios.h>
 #include <unistd.h>
 #endif
+
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_READY, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_OUTPUT, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_STDERR, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_DONE, clCommandEvent);
+
+///---------------------------------------------------------------
+/// Helper methods
+///---------------------------------------------------------------
+static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxConvISO8859_1)
+{
+    if(str.empty()) { return wxEmptyString; }
+    wxString wx_str = wxString(str.c_str(), conv);
+    if(wx_str.IsEmpty()) {
+        // conversion failed
+        wx_str = wxString::From8BitData(str.c_str());
+    }
+    return wx_str;
+}
+///---------------------------------------------------------------
+///
+///---------------------------------------------------------------
+
 wxTerminalCtrl::wxTerminalCtrl() {}
 
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
@@ -25,15 +47,12 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
 
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        wxFont font = lexer->GetFontForSyle(0);
-        const StyleProperty& sp = lexer->GetProperty(0);
-        wxColour bgColour = sp.GetBgColour();
-        wxColour fgColour = sp.GetFgColour();
-        m_textCtrl->SetBackgroundColour(bgColour);
-        m_textCtrl->SetDefaultStyle(wxTextAttr(fgColour, bgColour, font));
-    }
+    // Set default style
+    wxFont font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+    m_textCtrl->SetBackgroundColour(bgColour);
+    m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
     m_colourHandler.SetCtrl(m_textCtrl);
 }
 
@@ -54,24 +73,33 @@ bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& p
                             const wxString& name)
 {
     m_style = style & ~wxWINDOW_STYLE_MASK; // Remove all wxWindow style masking (Hi Word)
-    return wxWindow::Create(parent, winid, pos, size, style & wxWINDOW_STYLE_MASK);
+    return wxWindow::Create(parent, winid, pos, size,
+                            style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
 }
 
 void wxTerminalCtrl::PostCreate()
 {
     wxString shell;
 #ifdef __WXMSW__
-    shell = "C:\\Windows\\System32\\cmd.exe";
+    shell = "C:\\Windows\\System32\\cmd.exe /Q"; // echo off
 #else
     shell = wxGetenv("SHELL");
 #endif
     m_shell =
         ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
 
+    if(m_shell) {
+        clCommandEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
+        readyEvent.SetEventObject(this);
 #ifndef __WXMSW__
-    UnixProcessImpl* unixProcess = dynamic_cast<UnixProcessImpl*>(m_shell);
-    if(unixProcess) { m_pts = unixProcess->GetTty(); }
+        UnixProcessImpl* unixProcess = dynamic_cast<UnixProcessImpl*>(m_shell);
+        if(unixProcess) {
+            m_pts = unixProcess->GetTty();
+            readyEvent.SetString(GetPTS());
+        }
 #endif
+        if(m_style & wxTERMINAL_CTRL_USE_EVENTS) { GetEventHandler()->AddPendingEvent(readyEvent); }
+    }
 
     // Keep a list of initial processes that we DONT want to kill
     std::vector<long> children;
@@ -85,23 +113,43 @@ void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
-#ifdef __WXMSW__
-        if(!command.empty()) {
-            AppendText("\n");
-            m_history.Add(command);
-        }
-#else
         AppendText("\n");
         if(!command.empty()) { m_history.Add(command); }
-#endif
     }
 }
 
-void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event) { AppendText(event.GetOutput()); }
+void wxTerminalCtrl::OnProcessOutput(clProcessEvent& event)
+{
+    if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
+        clCommandEvent outputEvent(wxEVT_TERMINAL_CTRL_OUTPUT);
+        outputEvent.SetString(event.GetOutput());
+        outputEvent.SetEventObject(this);
+        GetEventHandler()->AddPendingEvent(outputEvent);
+    }
+    AppendText(event.GetOutput());
+}
 
-void wxTerminalCtrl::OnProcessStderr(clProcessEvent& event) { AppendText(event.GetOutput()); }
+void wxTerminalCtrl::OnProcessStderr(clProcessEvent& event)
+{
+    if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
+        clCommandEvent outputEvent(wxEVT_TERMINAL_CTRL_STDERR);
+        outputEvent.SetString(event.GetOutput());
+        outputEvent.SetEventObject(this);
+        GetEventHandler()->AddPendingEvent(outputEvent);
+    }
+    AppendText(event.GetOutput());
+}
 
-void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event) {}
+void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
+{
+    if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
+        clCommandEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
+        outputEvent.SetEventObject(this);
+        GetEventHandler()->AddPendingEvent(outputEvent);
+    }
+    AppendText("\n    [Process Terminated]");
+    m_textCtrl->SetEditable(false);
+}
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
@@ -112,6 +160,7 @@ void wxTerminalCtrl::AppendText(const wxString& text)
 
 void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
 {
+    if(!m_textCtrl->IsEditable()) { return; }
     if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
         // Execute command
         Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
@@ -223,23 +272,8 @@ void wxTerminalCtrl::Logout()
     Run(command);
 }
 
-bool wxTerminalCtrl::IsEchoOn() const
-{
-#ifdef __WXMSW__
-    return true;
-#else
-    return true;
-//    bool has_echo = true;
-//    if(m_pts.empty()) { return has_echo; }
-//
-//    // see if the ECHO bit is missing
-//    struct termios term;
-//    int fd = ::open(m_pts.c_str(), O_RDONLY);
-//    if(fd != -1) {
-//        ::tcgetattr(fd, &term);
-//        has_echo = term.c_lflag & ECHO;
-//        ::close(fd);
-//    }
-//    return has_echo;
-#endif
-}
+bool wxTerminalCtrl::IsEchoOn() const { return true; }
+
+wxString wxTerminalCtrl::GetPTS() const { return ConvertString(m_pts); }
+
+void wxTerminalCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_colourHandler.SetDefaultStyle(attr); }

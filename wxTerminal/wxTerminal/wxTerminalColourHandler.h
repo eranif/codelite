@@ -38,6 +38,7 @@ public:
 
     wxTerminalColourHandler& operator<<(const wxString& buffer);
     void SetCtrl(wxTextCtrl* ctrl);
+    void SetDefaultStyle(const wxTextAttr& attr);
 };
 
 #endif // WXTERMINALCOLOURHANDLER_H

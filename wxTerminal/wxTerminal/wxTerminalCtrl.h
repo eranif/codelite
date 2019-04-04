@@ -7,8 +7,9 @@
 #include <wx/textctrl.h>
 #include "wxTerminalColourHandler.h"
 #include <wx/arrstr.h>
+#include "codelite_exports.h"
 
-struct wxTerminalHistory {
+struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
     int m_current = wxNOT_FOUND;
 
@@ -45,7 +46,27 @@ struct wxTerminalHistory {
     }
 };
 
-class wxTerminalCtrl : public wxPanel
+// Styles
+enum {
+    // Low word (0-16)
+
+    // Should we forward the process events or handle them internally only?
+    // Note that the events will be processed internally first and then will
+    // be delegated
+    wxTERMINAL_CTRL_USE_EVENTS = (1 << 0),
+};
+
+// The terminal is ready. This event will include the PTS name (e.g. /dev/pts/12).
+// Use event.GetString()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_READY, clCommandEvent);
+// Fired when stdout output is ready
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_OUTPUT, clCommandEvent);
+// Fired when stderr output is ready
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_STDERR, clCommandEvent);
+// The terminal has exited
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, clCommandEvent);
+
+class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 protected:
     long m_style = 0;
@@ -55,8 +76,8 @@ protected:
     wxTerminalColourHandler m_colourHandler;
     wxTerminalHistory m_history;
     std::unordered_set<long> m_initialProcesses;
-    std::string m_pts; // Unix only
-    std::string m_password;
+    std::string m_pts;      // Unix only
+    std::string m_password; // Not used atm
 
 protected:
     void PostCreate();
@@ -75,10 +96,12 @@ protected:
 public:
     wxTerminalCtrl();
     wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+                   const wxSize& size = wxDefaultSize,
+                   long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                    const wxString& name = "terminal");
     bool Create(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+                const wxSize& size = wxDefaultSize,
+                long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
 
@@ -103,9 +126,15 @@ public:
      */
     void Logout();
     /**
-     * @brief return the underlying controlling terminal. Returns empty string on Windows
+     * @brief return the underlying controlling terminal (e.g. /dev/pts/9).
+     * Returns empty string on Windows
      */
-    const std::string& GetPts() const { return m_pts; }
+    wxString GetPTS() const;
+
+    /**
+     * @brief set default style
+     */
+    void SetDefaultStyle(const wxTextAttr& attr);
 };
 
 #endif // WXTERMINALCTRL_H

@@ -8,6 +8,7 @@
 #include "wxTerminalColourHandler.h"
 #include <wx/arrstr.h>
 #include "codelite_exports.h"
+#include <wx/utils.h>
 
 struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
@@ -69,6 +70,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, clCommandEve
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 protected:
+    wxExecuteEnv m_env;
     long m_style = 0;
     wxTextCtrl* m_textCtrl = nullptr;
     IProcess* m_shell = nullptr;
@@ -95,12 +97,12 @@ protected:
 
 public:
     wxTerminalCtrl();
-    wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize,
+    wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxExecuteEnv& env = wxExecuteEnv(),
+                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                    long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                    const wxString& name = "terminal");
-    bool Create(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
+    bool Create(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxExecuteEnv& env = wxExecuteEnv(),
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                 long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();

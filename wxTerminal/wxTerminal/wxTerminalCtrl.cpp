@@ -33,10 +33,10 @@ static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxC
 
 wxTerminalCtrl::wxTerminalCtrl() {}
 
-wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
-                               const wxString& name)
+wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecuteEnv& env, const wxPoint& pos,
+                               const wxSize& size, long style, const wxString& name)
 {
-    if(!Create(parent, winid, pos, size, style)) { return; }
+    if(!Create(parent, winid, env, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                                 wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
@@ -69,9 +69,10 @@ wxTerminalCtrl::~wxTerminalCtrl()
     Unbind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
 }
 
-bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
-                            const wxString& name)
+bool wxTerminalCtrl::Create(wxWindow* parent, wxWindowID winid, const wxExecuteEnv& env, const wxPoint& pos,
+                            const wxSize& size, long style, const wxString& name)
 {
+    m_env = env;
     m_style = style & ~wxWINDOW_STYLE_MASK; // Remove all wxWindow style masking (Hi Word)
     return wxWindow::Create(parent, winid, pos, size,
                             style & wxWINDOW_STYLE_MASK); // Pass only the Windows related styles
@@ -111,6 +112,8 @@ void wxTerminalCtrl::PostCreate()
 
 void wxTerminalCtrl::Run(const wxString& command)
 {
+    // TODO: if 'env' is not empty, close the current console and
+    // start a new one with the new environment applied
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");

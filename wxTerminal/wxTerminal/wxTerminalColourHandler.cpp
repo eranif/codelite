@@ -1,7 +1,9 @@
 #include "wxTerminalColourHandler.h"
+#include <windows.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 #include <fileutils.h>
+#include <Winuser.h>
 
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
@@ -55,7 +57,7 @@ wxTerminalColourHandler::~wxTerminalColourHandler() {}
 void wxTerminalColourHandler::Append(const wxString& buffer)
 {
 #ifdef __WXMSW__
-    // wxWindowUpdateLocker locker(m_ctrl);
+    wxWindowUpdateLocker locker(m_ctrl);
 #endif
     wxString curline;
     // we start were left (at the end of the buffer)
@@ -260,9 +262,7 @@ void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
         m_defaultAttr.SetBackgroundColour(attr.GetBackgroundColour());
     }
     if(attr.GetTextColour().IsOk()) { m_defaultAttr.SetTextColour(attr.GetTextColour()); }
-    if(attr.GetFont().IsOk()) { 
-        m_defaultAttr.SetFont(attr.GetFont()); 
-    }
+    if(attr.GetFont().IsOk()) { m_defaultAttr.SetFont(attr.GetFont()); }
     m_ctrl->SetDefaultStyle(m_defaultAttr);
     m_ctrl->Refresh();
 }

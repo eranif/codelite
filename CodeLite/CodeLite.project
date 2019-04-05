@@ -289,6 +289,8 @@
     <File Name="crawler_include.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="AsyncProcess">
+    <File Name="MyCreatePipe.h"/>
+    <File Name="MyCreatePipe.cpp"/>
     <File Name="UnixProcess.h"/>
     <File Name="UnixProcess.cpp"/>
     <File Name="ChildProcess.h"/>

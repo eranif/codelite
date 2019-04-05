@@ -7,8 +7,8 @@ MainFrame::MainFrame(wxWindow* parent)
 {
     m_terminal = new wxTerminalCtrl(GetMainPanel());
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
-    wxFont f(wxFontInfo(18).FaceName("Consolas"));
-    m_terminal->SetDefaultStyle(wxTextAttr(wxNullColour, wxNullColour, f));
+    //wxFont f(wxFontInfo(18).FaceName("Monoid"));
+    //m_terminal->SetDefaultStyle(wxTextAttr(wxNullColour, wxNullColour, f));
 }
 
 MainFrame::~MainFrame() {}

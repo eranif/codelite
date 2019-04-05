@@ -3,6 +3,7 @@
 #include <processreaderthread.h>
 #include <wx/regex.h>
 #include "procutils.h"
+#include <drawingutils.h>
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -48,9 +49,9 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
 
     // Set default style
-    wxFont font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
-    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+    wxFont font = DrawingUtils::GetDefaultFixedFont();
+    wxColour textColour = wxColour("rgb(248, 248, 242)");
+    wxColour bgColour = wxColour("rgb(41, 43, 55)");
     m_textCtrl->SetBackgroundColour(bgColour);
     m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
     m_colourHandler.SetCtrl(m_textCtrl);

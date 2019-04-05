@@ -128,6 +128,7 @@
         <IncludePath Value="."/>
         <IncludePath Value="../../CodeLite"/>
         <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../Interfaces"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">

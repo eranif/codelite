@@ -58,9 +58,18 @@ wxTerminalColourHandler::~wxTerminalColourHandler() {}
 
 void wxTerminalColourHandler::Append(const wxString& buffer)
 {
+    if(buffer == "\n") {
+        // small optimization:
+        // this is usually the case where the user simply hit ENTER after typing a command
+        // No need to do fancy stuff here
+        m_ctrl->AppendText(buffer);
+        return;
+    }
+    
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_ctrl);
 #endif
+    
     wxString curline;
     // we start were left (at the end of the buffer)
     long lastPos = m_ctrl->GetLastPosition();

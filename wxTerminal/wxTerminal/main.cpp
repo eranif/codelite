@@ -52,18 +52,22 @@ public:
         wxCmdLineParser parser(wxApp::argc, wxApp::argv);
         parser.AddLongOption("title");
         parser.AddLongOption("working-directory");
-        parser.AddSwitch("wait");
-        parser.AddLongOption("print-tty");
+        parser.AddLongSwitch("wait");
+        parser.AddLongSwitch("print-tty");
         parser.Parse();
 
-        if(parser.FoundSwitch("wait") != wxCMD_SWITCH_NOT_FOUND) { m_options.SetWaitOnExit(true); }
-        if(parser.FoundSwitch("print-tty") != wxCMD_SWITCH_NOT_FOUND) { m_options.SetPrintTTY(true); }
-        
+        if(parser.Found("wait")) { m_options.SetWaitOnExit(true); }
+        if(parser.Found("print-tty")) { m_options.SetPrintTTY(true); }
+
+        wxString workingDirectory;
+        if(parser.Found("working-directory", &workingDirectory)) { m_options.SetWorkingDirectory(workingDirectory); }
+        wxString title = "codelite-terminal";
+        if(parser.Found("title", &title)) { m_options.SetTitle(title); }
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        MainFrame* mainFrame = new MainFrame(NULL);
+        MainFrame* mainFrame = new MainFrame(NULL, m_options);
         SetTopWindow(mainFrame);
         return GetTopWindow()->Show();
     }

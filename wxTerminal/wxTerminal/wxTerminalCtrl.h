@@ -80,6 +80,10 @@ protected:
     std::unordered_set<long> m_initialProcesses;
     std::string m_pts;      // Unix only
     std::string m_password; // Not used atm
+    wxString m_workingDirectory;
+    bool m_pauseOnExit = false;
+    bool m_printTTY = false;
+    bool m_waitingForKey = false;
 
 protected:
     void PostCreate();
@@ -94,7 +98,8 @@ protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     bool IsEchoOn() const;
-
+    void DoProcessTerminated();
+    
 public:
     wxTerminalCtrl();
     wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxExecuteEnv& env = wxExecuteEnv(),
@@ -107,7 +112,24 @@ public:
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
 
-    // API
+    void SetPrintTTY(bool printTTY) { this->m_printTTY = printTTY; }
+    bool IsPrintTTY() const { return m_printTTY; }
+
+    void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
+
+    void SetPauseOnExit(bool pauseOnExit) { this->m_pauseOnExit = pauseOnExit; }
+    bool IsPauseOnExit() const { return m_pauseOnExit; }
+
+    /**
+     * @brief start the terminal
+     */
+    void Start();
+
+    /**
+     * @brief execute a command in the temrinal
+     * @param command
+     */
     void Run(const wxString& command);
 
     /**

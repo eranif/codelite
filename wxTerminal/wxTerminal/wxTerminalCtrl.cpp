@@ -42,7 +42,6 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                                 wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
-    CallAfter(&wxTerminalCtrl::PostCreate);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessStderr, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
@@ -87,8 +86,7 @@ void wxTerminalCtrl::PostCreate()
 #else
     shell = wxGetenv("SHELL");
 #endif
-    m_shell =
-        ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput | IProcessCreateWithHiddenConsole);
+    m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput, m_workingDirectory);
 
     if(m_shell) {
         clCommandEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
@@ -101,6 +99,7 @@ void wxTerminalCtrl::PostCreate()
         }
 #endif
         if(m_style & wxTERMINAL_CTRL_USE_EVENTS) { GetEventHandler()->AddPendingEvent(readyEvent); }
+        if(IsPrintTTY()) { AppendText(wxString() << "codelite-terminal: tty=" << GetPTS() << "\n"); }
     }
 
     // Keep a list of initial processes that we DONT want to kill
@@ -146,13 +145,12 @@ void wxTerminalCtrl::OnProcessStderr(clProcessEvent& event)
 
 void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 {
-    if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
-        clCommandEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
-        outputEvent.SetEventObject(this);
-        GetEventHandler()->AddPendingEvent(outputEvent);
+    if(IsPauseOnExit()) {
+        m_waitingForKey = true;
+        AppendText("\nHit any key to continue...\n");
+    } else {
+        DoProcessTerminated();
     }
-    AppendText("\n    [Process Terminated]");
-    m_textCtrl->SetEditable(false);
 }
 
 void wxTerminalCtrl::AppendText(const wxString& text)
@@ -164,41 +162,46 @@ void wxTerminalCtrl::AppendText(const wxString& text)
 
 void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
 {
-    if(!m_textCtrl->IsEditable()) { return; }
-    if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
-        // Execute command
-        Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
-        m_password.clear();
-
-    } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
-        m_textCtrl->SetInsertionPoint(m_commandOffset);
-
-    } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
-        m_history.Up();
-        SetShellCommand(m_history.Get());
-    } else if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN) {
-        m_history.Down();
-        SetShellCommand(m_history.Get());
-    } else if((event.GetKeyCode() == 'C') && event.ControlDown()) {
-        // Generate Ctrl-C
-        GenerateCtrlC();
-    } else if((event.GetKeyCode() == 'L') && event.ControlDown()) {
-        ClearScreen();
-    } else if((event.GetKeyCode() == 'U') && event.ControlDown()) {
-        ClearLine();
-    } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
-        Logout();
+    if(m_waitingForKey) {
+        DoProcessTerminated();
+        m_waitingForKey = false;
     } else {
-        if(IsEchoOn()) {
-            int pos = m_textCtrl->GetInsertionPoint();
-            if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
-                // going backward
-                event.Skip(pos > m_commandOffset);
-            } else {
-                event.Skip(pos >= m_commandOffset);
-            }
+        if(!m_textCtrl->IsEditable()) { return; }
+        if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
+            // Execute command
+            Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
+            m_password.clear();
+
+        } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
+            m_textCtrl->SetInsertionPoint(m_commandOffset);
+
+        } else if(event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP) {
+            m_history.Up();
+            SetShellCommand(m_history.Get());
+        } else if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN) {
+            m_history.Down();
+            SetShellCommand(m_history.Get());
+        } else if((event.GetKeyCode() == 'C') && event.ControlDown()) {
+            // Generate Ctrl-C
+            GenerateCtrlC();
+        } else if((event.GetKeyCode() == 'L') && event.ControlDown()) {
+            ClearScreen();
+        } else if((event.GetKeyCode() == 'U') && event.ControlDown()) {
+            ClearLine();
+        } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
+            Logout();
         } else {
-            if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
+            if(IsEchoOn()) {
+                int pos = m_textCtrl->GetInsertionPoint();
+                if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
+                    // going backward
+                    event.Skip(pos > m_commandOffset);
+                } else {
+                    event.Skip(pos >= m_commandOffset);
+                }
+            } else {
+                if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
+            }
         }
     }
 }
@@ -278,6 +281,19 @@ void wxTerminalCtrl::Logout()
 
 bool wxTerminalCtrl::IsEchoOn() const { return true; }
 
+void wxTerminalCtrl::DoProcessTerminated()
+{
+    if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
+        clCommandEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
+        outputEvent.SetEventObject(this);
+        GetEventHandler()->AddPendingEvent(outputEvent);
+    }
+    AppendText("\n    [Process Terminated]");
+    m_textCtrl->SetEditable(false);
+}
+
 wxString wxTerminalCtrl::GetPTS() const { return ConvertString(m_pts); }
 
 void wxTerminalCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_colourHandler.SetDefaultStyle(attr); }
+
+void wxTerminalCtrl::Start() { CallAfter(&wxTerminalCtrl::PostCreate); }

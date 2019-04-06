@@ -192,7 +192,9 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
             Logout();
         } else {
-            if(IsEchoOn()) {
+            if(IsEchoOFF()) {
+                if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
+            } else {
                 int pos = m_textCtrl->GetInsertionPoint();
                 if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
                     // going backward
@@ -200,8 +202,6 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
                 } else {
                     event.Skip(pos >= m_commandOffset);
                 }
-            } else {
-                if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
             }
         }
     }
@@ -280,11 +280,11 @@ void wxTerminalCtrl::Logout()
     Run(command);
 }
 
-bool wxTerminalCtrl::IsEchoOn() const
+bool wxTerminalCtrl::IsEchoOFF() const
 {
-    wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
+    wxString line = m_textCtrl->GetRange(m_commandOffset, m_textCtrl->GetLastPosition());
     line = line.Lower();
-    return !line.Contains("password");
+    return line.Contains("password:") || line.Contains("password for");
 }
 
 void wxTerminalCtrl::DoProcessTerminated()

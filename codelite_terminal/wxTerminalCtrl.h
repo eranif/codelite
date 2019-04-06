@@ -97,7 +97,7 @@ protected:
     void OnProcessStderr(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnKeyDown(wxKeyEvent& event);
-    bool IsEchoOn() const;
+    bool IsEchoOFF() const;
     void DoProcessTerminated();
     
 public:

@@ -9,15 +9,31 @@
 #include <wx/persist.h>
 #include "clPersistenceManager.h"
 
-#ifdef __WXMSW__
-void RedirectIOToConsole()
-{
-    AllocConsole();
-    freopen("CON", "wb", stdout);
-    freopen("CON", "wb", stderr);
-    freopen("CON", "r", stdin); // Note: "r", not "w"
-}
-#endif
+//#ifdef __WXMSW__
+// void RedirectIOToConsole()
+//{
+//    AllocConsole();
+//    freopen("CON", "wb", stdout);
+//    freopen("CON", "wb", stderr);
+//    freopen("CON", "r", stdin); // Note: "r", not "w"
+//}
+//#endif
+
+static const wxCmdLineEntryDesc cmdLineDesc[] = {
+    // Switches
+    { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_SWITCH, "w", "wait", "Wait for any key to be pressed before exiting", wxCMD_LINE_VAL_STRING,
+      wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_SWITCH, "p", "print-tty", "Print the terminals tty (*nix only)", wxCMD_LINE_VAL_STRING,
+      wxCMD_LINE_PARAM_OPTIONAL },
+    // Options
+    { wxCMD_LINE_OPTION, "t", "title", "Set the console title", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "d", "working-directory", "Set the working directory", wxCMD_LINE_VAL_STRING,
+      wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "c", "command", "Command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_NONE }
+};
 
 // Define the MainApp
 class MainApp : public wxApp
@@ -28,17 +44,6 @@ class MainApp : public wxApp
 public:
     MainApp() {}
     virtual ~MainApp() {}
-
-    void PrintUsage()
-    {
-        std::cout << wxApp::argv[0] << " [-t <title>] [-e] [-w] [-d <working directory>] [--cmd ...]" << std::endl;
-        std::cout << "-t | --title             Set the console title\n" << std::endl;
-        std::cout << "-w | --wait              Wait for any key to be pressed before exiting\n" << std::endl;
-        std::cout << "-d | --working-directory Set the working directory\n" << std::endl;
-        std::cout << "-p | --print-tty         Print terminal info to stdout\n" << std::endl;
-        std::cout << std::endl;
-        wxExit();
-    }
 
     virtual bool OnInit()
     {
@@ -57,19 +62,21 @@ public:
 #endif
 
         wxCmdLineParser parser(wxApp::argc, wxApp::argv);
-        parser.AddLongOption("title");
-        parser.AddLongOption("working-directory");
-        parser.AddLongSwitch("wait");
-        parser.AddLongSwitch("print-tty");
-        parser.Parse();
+        parser.SetDesc(cmdLineDesc);
+        if(parser.Parse() != 0) { return false; }
 
-        if(parser.Found("wait")) { m_options.SetWaitOnExit(true); }
-        if(parser.Found("print-tty")) { m_options.SetPrintTTY(true); }
+        if(parser.Found("w")) { m_options.SetWaitOnExit(true); }
+        if(parser.Found("p")) { m_options.SetPrintTTY(true); }
 
         wxString workingDirectory;
-        if(parser.Found("working-directory", &workingDirectory)) { m_options.SetWorkingDirectory(workingDirectory); }
+        if(parser.Found("d", &workingDirectory)) { m_options.SetWorkingDirectory(workingDirectory); }
+        
         wxString title = "codelite-terminal";
-        if(parser.Found("title", &title)) { m_options.SetTitle(title); }
+        if(parser.Found("t", &title)) { m_options.SetTitle(title); }
+        
+        wxString command;
+        if(parser.Found("c", &command)) { m_options.SetCommand(command); }
+        
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);

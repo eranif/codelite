@@ -111,10 +111,11 @@ void wxTerminalCtrl::PostCreate()
     }
 }
 
-void wxTerminalCtrl::Run(const wxString& command)
+void wxTerminalCtrl::Run(const wxString& command, bool echoCommand)
 {
-    // TODO: if 'env' is not empty, close the current console and
-    // start a new one with the new environment applied
+    if(echoCommand) {
+        AppendText(command + "\n");
+    }
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");

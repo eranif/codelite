@@ -130,7 +130,7 @@ public:
      * @brief execute a command in the temrinal
      * @param command
      */
-    void Run(const wxString& command);
+    void Run(const wxString& command, bool echoCommand = false);
 
     /**
      * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)

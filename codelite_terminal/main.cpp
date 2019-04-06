@@ -6,6 +6,8 @@
 #include <thread>
 #include <wx/cmdline.h>
 #include "wxTerminalOptions.h"
+#include <wx/persist.h>
+#include "clPersistenceManager.h"
 
 #ifdef __WXMSW__
 void RedirectIOToConsole()
@@ -21,6 +23,7 @@ void RedirectIOToConsole()
 class MainApp : public wxApp
 {
     wxTerminalOptions m_options;
+    clPersistenceManager* m_persistencManager = nullptr;
 
 public:
     MainApp() {}
@@ -39,6 +42,10 @@ public:
 
     virtual bool OnInit()
     {
+        SetAppName("codelite-terminal");
+
+        m_persistencManager = new clPersistenceManager();
+        wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
         typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");

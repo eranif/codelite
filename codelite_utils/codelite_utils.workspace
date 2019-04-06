@@ -39,7 +39,7 @@
       <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_launcher" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_make" ConfigName="Win_x64_Release"/>
-      <Project Name="codelite_terminal" ConfigName="Win_x64_Release"/>
+      <Project Name="codelite_terminal" ConfigName="Release"/>
       <Project Name="codelitegcc" ConfigName="Win_x64_Release"/>
       <Project Name="le_exec" ConfigName="Win_x64_Release"/>
       <Project Name="makedir" ConfigName="Win_x64_Release"/>

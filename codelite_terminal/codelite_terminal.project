@@ -177,11 +177,18 @@
     <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../Plugin"/>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libplugin_sdku.dll"/>
+      </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../Runtime/codelite-terminal" IntermediateDirectory="./Release" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../Runtime/codelite-terminal" IntermediateDirectory="./Release" Command="./codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -192,7 +199,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes"/>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>

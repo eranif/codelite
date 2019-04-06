@@ -282,7 +282,7 @@ void wxTerminalCtrl::Logout()
 
 bool wxTerminalCtrl::IsEchoOFF() const
 {
-    wxString line = m_textCtrl->GetRange(m_commandOffset, m_textCtrl->GetLastPosition());
+    wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
     line = line.Lower();
     return line.Contains("password:") || line.Contains("password for");
 }

@@ -261,8 +261,10 @@ void wxTerminalColourHandler::Clear() { m_escapeSequence.Clear(); }
 
 void wxTerminalColourHandler::FlushBuffer(wxString& line)
 {
-    m_ctrl->AppendText(line);
-    line.clear();
+    if(!line.empty()) {
+        m_ctrl->AppendText(line);
+        line.clear();
+    }
 }
 
 void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)

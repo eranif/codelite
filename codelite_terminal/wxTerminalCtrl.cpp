@@ -280,7 +280,12 @@ void wxTerminalCtrl::Logout()
     Run(command);
 }
 
-bool wxTerminalCtrl::IsEchoOn() const { return true; }
+bool wxTerminalCtrl::IsEchoOn() const
+{
+    wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
+    line = line.Lower();
+    return !line.Contains("password");
+}
 
 void wxTerminalCtrl::DoProcessTerminated()
 {

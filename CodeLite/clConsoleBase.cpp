@@ -7,6 +7,7 @@
 #include "clConsoleMateTerminal.h"
 #include "clConsoleOSXTerminal.h"
 #include "clConsoleXfce4Terminal.h"
+#include "clConsoleRXVTerminal.h"
 #include "cl_config.h"
 #include "file_logger.h"
 #include <algorithm>
@@ -60,6 +61,8 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleXfce4Terminal());
     } else if(terminalName.CmpNoCase("qterminal") == 0) {
         terminal.reset(new clConsoleQTerminal());
+    } else if(terminalName.CmpNoCase("rxvt-unicode") == 0) {
+        terminal.reset(new clConsoleRXVTTerminal());
     } else {
         // the default terminal is "gnome-terminal"
         terminal.reset(new clConsoleGnomeTerminal());
@@ -84,6 +87,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("mate-terminal");
     terminals.Add("qterminal");
     terminals.Add("xfce4-terminal");
+    terminals.Add("rxvt-unicode");
 #else
     terminals.Add("Terminal");
     terminals.Add("iTerm2");

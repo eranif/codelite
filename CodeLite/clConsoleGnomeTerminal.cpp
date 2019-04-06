@@ -80,9 +80,11 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 
     wxString sleepCommand = "/bin/sleep";
     sleepCommand << " " << secondsToSleep;
-    
+
+    wxString homedir = wxGetHomeDir();
+    if(homedir.Contains(" ")) { homedir.Prepend("\"").Append("\""); }
     wxString commandToExecute = GetTerminalCommand();
-    commandToExecute.Replace("%WD%", ".");
+    commandToExecute.Replace("%WD%", homedir);
     commandToExecute.Replace("%COMMAND%", sleepCommand);
     ::wxExecute(commandToExecute);
 

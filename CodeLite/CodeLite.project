@@ -91,6 +91,8 @@
     <File Name="LSP/basic_types.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Console">
+    <File Name="clConsoleRXVTerminal.h"/>
+    <File Name="clConsoleRXVTerminal.cpp"/>
     <File Name="clConsoleXfce4Terminal.cpp"/>
     <File Name="clConsoleXfce4Terminal.h"/>
     <File Name="clConsoleMateTerminal.cpp"/>

@@ -52,6 +52,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     wxColour textColour = wxColour("rgb(248, 248, 242)");
     wxColour bgColour = wxColour("rgb(41, 43, 55)");
     m_textCtrl->SetBackgroundColour(bgColour);
+    m_textCtrl->SetForegroundColour(textColour);
     m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
     m_colourHandler.SetCtrl(m_textCtrl);
 }
@@ -99,7 +100,7 @@ void wxTerminalCtrl::PostCreate()
         }
 #endif
         if(m_style & wxTERMINAL_CTRL_USE_EVENTS) { GetEventHandler()->AddPendingEvent(readyEvent); }
-        if(IsPrintTTY()) { AppendText(wxString() << "codelite-terminal: tty=" << GetPTS() << "\n"); }
+        if(IsPrintTTY()) { std::cout << "codelite-terminal: tty=" << GetPTS() << std::endl; }
     }
 
     // Keep a list of initial processes that we DONT want to kill

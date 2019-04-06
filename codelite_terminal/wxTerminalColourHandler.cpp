@@ -65,11 +65,11 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
         m_ctrl->AppendText(buffer);
         return;
     }
-    
+
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(m_ctrl);
 #endif
-    
+
     wxString curline;
     // we start were left (at the end of the buffer)
     long lastPos = m_ctrl->GetLastPosition();
@@ -272,7 +272,10 @@ void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
         m_ctrl->SetBackgroundColour(attr.GetBackgroundColour());
         m_defaultAttr.SetBackgroundColour(attr.GetBackgroundColour());
     }
-    if(attr.GetTextColour().IsOk()) { m_defaultAttr.SetTextColour(attr.GetTextColour()); }
+    if(attr.GetTextColour().IsOk()) {
+        m_defaultAttr.SetTextColour(attr.GetTextColour());
+        m_ctrl->SetForegroundColour(attr.GetTextColour());
+    }
     if(attr.GetFont().IsOk()) { m_defaultAttr.SetFont(attr.GetFont()); }
     m_ctrl->SetDefaultStyle(m_defaultAttr);
     m_ctrl->Refresh();

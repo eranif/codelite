@@ -1,111 +1,74 @@
-#include "MainFrame.h"
-#include "commandlineparser.h"
-#include "terminal_options.h"
 #include <wx/app.h>
-#include <wx/cmdline.h>
-#include <wx/crt.h>
-#include <wx/dir.h>
 #include <wx/event.h>
+#include "MainFrame.h"
 #include <wx/image.h>
-#include <wx/log.h>
-#include <wx/stdpaths.h>
-
-#ifdef __WXMAC__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include <iostream>
+#include <thread>
+#include <wx/cmdline.h>
+#include "wxTerminalOptions.h"
 
 #ifdef __WXMSW__
-typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
+void RedirectIOToConsole()
+{
+    AllocConsole();
+    freopen("CON", "wb", stdout);
+    freopen("CON", "wb", stderr);
+    freopen("CON", "r", stdin); // Note: "r", not "w"
+}
 #endif
 
 // Define the MainApp
 class MainApp : public wxApp
 {
+    wxTerminalOptions m_options;
+
 public:
     MainApp() {}
     virtual ~MainApp() {}
 
     void PrintUsage()
     {
-        wxPrintf("%s [-t <title>] [-e] [-w] [-d <working directory>] [--cmd <command to execute>]\n", wxApp::argv[0]);
-        wxPrintf("-t | --title             Set the console title\n");
-        wxPrintf("-e | --exit              Exit when execution of command terminates\n");
-        wxPrintf("-w | --wait              Wait for any key to be pressed before exiting\n");
-        wxPrintf("-d | --working-directory Set the working directory\n");
-        wxPrintf("-p | --print-info        Print terminal info to stdout\n");
-        wxPrintf("-z | --always-on-top     The terminal is always on top of all windows\n");
-        wxPrintf("-g | --dbg-terminal      The terminal is for debugging redirection purposes\n");
-        wxPrintf("\n");
-        exit(1);
+        std::cout << wxApp::argv[0] << " [-t <title>] [-e] [-w] [-d <working directory>] [--cmd ...]" << std::endl;
+        std::cout << "-t | --title             Set the console title\n" << std::endl;
+        std::cout << "-w | --wait              Wait for any key to be pressed before exiting\n" << std::endl;
+        std::cout << "-d | --working-directory Set the working directory\n" << std::endl;
+        std::cout << "-p | --print-tty         Print terminal info to stdout\n" << std::endl;
+        std::cout << std::endl;
+        wxExit();
     }
 
     virtual bool OnInit()
     {
-
 #ifdef __WXMSW__
-        HINSTANCE m_user32Dll = LoadLibrary(L"User32.dll");
-        if(m_user32Dll) {
-            SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
+        typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
+        HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
+        if(user32Dll) {
+            SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");
             if(pFunc) { pFunc(); }
-            FreeLibrary(m_user32Dll);
-            m_user32Dll = NULL;
+            FreeLibrary(user32Dll);
         }
 #endif
 
-        SetAppName("codelite-terminal");
-
-        CommandLineParser parser(wxApp::argc, wxApp::argv);
-        parser.AddOption("t", "title", CommandLineParser::kOptionWithValue | CommandLineParser::kOptional);
-        parser.AddOption("d", "working-directory", CommandLineParser::kOptionWithValue | CommandLineParser::kOptional);
-        parser.AddOption("e", "exit");          // optional, no value
-        parser.AddOption("w", "wait");          // optional, no value
-        parser.AddOption("p", "print-info");    // optional
-        parser.AddOption("z", "always-on-top"); // optional
-        parser.AddOption("g", "dbg-terminal");  // optional
+        wxCmdLineParser parser(wxApp::argc, wxApp::argv);
+        parser.AddLongOption("title");
+        parser.AddLongOption("working-directory");
+        parser.AddLongSwitch("wait");
+        parser.AddLongSwitch("print-tty");
         parser.Parse();
 
-        {
-            wxLogNull noLog;
-            wxFileName::Mkdir(wxStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            ::wxMkdir(wxStandardPaths::Get().GetUserDataDir());
-        }
+        if(parser.Found("wait")) { m_options.SetWaitOnExit(true); }
+        if(parser.Found("print-tty")) { m_options.SetPrintTTY(true); }
 
+        wxString workingDirectory;
+        if(parser.Found("working-directory", &workingDirectory)) { m_options.SetWorkingDirectory(workingDirectory); }
+        wxString title = "codelite-terminal";
+        if(parser.Found("title", &title)) { m_options.SetTitle(title); }
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        TerminalOptions options;
-        wxString commandToRun, title, workingDirectory;
-        commandToRun = parser.GetCommand();
-        workingDirectory = parser.GetArg("d", "working-directory");
-
-        if(parser.HasOption("t", "title")) {
-            options.SetTitle(parser.GetArg("t", "title"));
-
-        } else if(!parser.GetCommand().IsEmpty()) {
-            options.SetTitle(parser.GetCommand());
-        }
-
-        if(!workingDirectory.IsEmpty()) { ::wxSetWorkingDirectory(workingDirectory); }
-
-        options.EnableFlag(TerminalOptions::kExitWhenInfiriorTerminates, parser.HasOption("e", "exit"));
-        options.EnableFlag(TerminalOptions::kPauseBeforeExit, parser.HasOption("w", "wait"));
-        options.EnableFlag(TerminalOptions::kPrintInfo, parser.HasOption("p", "print-info"));
-        options.EnableFlag(TerminalOptions::kAlwaysOnTop, parser.HasOption("z", "always-on-top"));
-        options.EnableFlag(TerminalOptions::kDebuggerTerminal, parser.HasOption("g", "dbg-terminal"));
-        options.SetCommand(commandToRun);
-
-        long style = wxDEFAULT_FRAME_STYLE;
-        if(options.HasFlag(TerminalOptions::kAlwaysOnTop)) { style = wxSTAY_ON_TOP; }
-
-        MainFrame* mainFrame = new MainFrame(NULL, options, style);
+        MainFrame* mainFrame = new MainFrame(NULL, m_options);
         SetTopWindow(mainFrame);
-
-#ifdef __WXMAC__
-        ProcessSerialNumber PSN;
-        GetCurrentProcess(&PSN);
-        TransformProcessType(&PSN, kProcessTransformToForegroundApplication);
-#endif
         return GetTopWindow()->Show();
     }
 };

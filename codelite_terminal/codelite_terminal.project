@@ -47,34 +47,16 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="clTerminalSTC.h"/>
-    <File Name="clTerminalSTC.cpp"/>
+    <File Name="wxTerminalOptions.h"/>
+    <File Name="wxTerminalOptions.cpp"/>
+    <File Name="wxTerminalCtrl.h"/>
+    <File Name="wxTerminalCtrl.cpp"/>
+    <File Name="wxTerminalColourHandler.h"/>
+    <File Name="wxTerminalColourHandler.cpp"/>
+    <File Name="wxcrafter_bitmaps.cpp"/>
+    <File Name="wxcrafter.cpp"/>
     <File Name="main.cpp"/>
     <File Name="MainFrame.cpp"/>
-    <File Name="wxcrafter.cpp"/>
-    <File Name="wxcrafter_bitmaps.cpp"/>
-    <File Name="asyncprocess.cpp"/>
-    <File Name="processreaderthread.cpp"/>
-    <File Name="procutils.cpp"/>
-    <File Name="unixprocess_impl.cpp"/>
-    <File Name="winprocess.cpp"/>
-    <File Name="winprocess_impl.cpp"/>
-    <File Name="asyncprocess.h"/>
-    <File Name="processreaderthread.h"/>
-    <File Name="procutils.h"/>
-    <File Name="unixprocess_impl.h"/>
-    <File Name="winprocess.h"/>
-    <File Name="winprocess_impl.h"/>
-    <File Name="my_callback.h"/>
-    <File Name="my_callback.cpp"/>
-    <File Name="terminal_options.h"/>
-    <File Name="terminal_options.cpp"/>
-    <File Name="my_config.h"/>
-    <File Name="my_config.cpp"/>
-    <File Name="SettingsDlg.h"/>
-    <File Name="SettingsDlg.cpp"/>
-    <File Name="commandlineparser.h"/>
-    <File Name="commandlineparser.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <File Name="MainFrame.h"/>
@@ -141,16 +123,21 @@
     </Configuration>
     <Configuration Name="Debug_Linux" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;$(shell wx-config --cflags --debug)" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../Plugin"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc,aui --debug);" Required="yes">
+        <LibraryPath Value="/home/eran/root/lib/codelite"/>
         <Library Value="util"/>
+        <Library Value="liblibcodelite.so"/>
+        <Library Value="libplugin.so"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite_terminal/Debug/codelite-terminal" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/TestArea/TestWXC_Grid/Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/root/lib/codelite:$LD_LIBRARY_PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths>/home/eran/devl/wx295/build</DebuggerSearchPaths>

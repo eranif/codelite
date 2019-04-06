@@ -1,3 +1,4 @@
+aaaaaaaaaaa ICON  terminal.ico
 #include "wx/msw/wx.rc"
 #ifdef WIN64
 1 24 "wx/msw/amd64.manifest"

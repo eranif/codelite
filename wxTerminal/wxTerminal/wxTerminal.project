@@ -14,6 +14,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="wxTerminalOptions.cpp"/>
+    <File Name="wxTerminalOptions.h"/>
     <File Name="main.cpp"/>
     <File Name="MainFrame.cpp"/>
     <File Name="wxcrafter.cpp"/>
@@ -24,6 +26,9 @@
     <File Name="wxcrafter.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
+    <File Name="terminal-32.png"/>
+    <File Name="terminal-16.png"/>
+    <File Name="terminal.ico"/>
     <File Name="wxcrafter.wxcp"/>
     <File Name="win_resources.rc"/>
   </VirtualDirectory>

@@ -66,10 +66,6 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
         return;
     }
 
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(m_ctrl);
-#endif
-
     wxString curline;
     // we start were left (at the end of the buffer)
     long lastPos = m_ctrl->GetLastPosition();

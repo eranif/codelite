@@ -141,7 +141,7 @@
         <Library Value="libplugin.so"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite_terminal/Debug/codelite-terminal" CommandArguments="--command='ls -l' --wait" UseSeparateDebugArgs="no" DebugArguments="--command='ls -l'" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/codelite_terminal/Debug/codelite-terminal" CommandArguments="--command=&quot;ls -l&quot; --wait" UseSeparateDebugArgs="no" DebugArguments="--command=&quot;ls -l&quot; --wait" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/root/lib/codelite:$LD_LIBRARY_PATH]]>

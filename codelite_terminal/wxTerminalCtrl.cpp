@@ -311,7 +311,6 @@ void wxTerminalCtrl::DoProcessTerminated()
         outputEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(outputEvent);
     }
-    AppendText("\n    [Process Terminated]");
     m_textCtrl->SetEditable(false);
 }
 

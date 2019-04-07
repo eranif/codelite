@@ -85,6 +85,7 @@ protected:
     bool m_printTTY = false;
     bool m_waitingForKey = false;
     bool m_exitWhenDone = false;
+    wxString m_startupCommand;
 
 protected:
     void PostCreate();
@@ -125,7 +126,11 @@ public:
     /**
      * @brief start the terminal
      */
-    void Start();
+    /**
+     * @brief 
+     * @param startupCommand
+     */
+    void Start(const wxString& startupCommand);
 
     /**
      * @brief execute a command in the temrinal

@@ -95,7 +95,7 @@
         <Library Value="libplugin_sdkud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="--wait  --working-directory=C:\src --command=&quot;ls -l&quot; --title=&quot;My Terminal&quot;" UseSeparateDebugArgs="yes" DebugArguments="--wait  --working-directory=C:\src --command=&quot;ls -l&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./Debug" Command="./codelite-terminal" CommandArguments="--working-directory=&quot;C:\src\wxCustomControls\clTreeCtrl\Debug&quot; --file=C:\Users\Eran\Desktop\command.txt --wait" UseSeparateDebugArgs="yes" DebugArguments="--working-directory=&quot;C:\src\wxCustomControls\clTreeCtrl\Debug&quot; --file=C:\Users\Eran\Desktop\command.txt --wait" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

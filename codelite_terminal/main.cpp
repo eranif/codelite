@@ -32,6 +32,7 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_OPTION, "d", "working-directory", "Set the working directory", wxCMD_LINE_VAL_STRING,
       wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_OPTION, "c", "command", "Command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "f", "file", "File contains command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_NONE }
 };
 
@@ -48,7 +49,6 @@ public:
     virtual bool OnInit()
     {
         SetAppName("codelite-terminal");
-
         m_persistencManager = new clPersistenceManager();
         wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
@@ -63,6 +63,7 @@ public:
         wxCmdLineParser parser(wxApp::argc, wxApp::argv);
         parser.SetDesc(cmdLineDesc);
         const wxArrayString& argv = wxApp::argv.GetArguments();
+
         for(const wxString& arg : argv) {
             if(arg.StartsWith("--wait")) {
                 m_options.SetWaitOnExit(true);
@@ -81,6 +82,9 @@ public:
             } else if(arg.StartsWith("--command")) {
                 wxString cmd = arg.AfterFirst('=');
                 m_options.SetCommand(cmd);
+            } else if(arg.StartsWith("--file")) {
+                wxString cmdfile = arg.AfterFirst('=');
+                m_options.SetCommandFromFile(cmdfile);
             }
         }
 
@@ -96,3 +100,15 @@ public:
 
 DECLARE_APP(MainApp)
 IMPLEMENT_APP(MainApp)
+
+//int main(int argc, char** argv)
+//{
+//    // MyWxApp derives from wxApp
+//    wxApp::SetInstance(new MainApp());
+//    wxEntryStart(argc, argv);
+//    wxTheApp->OnInit();
+//    wxTheApp->OnRun();
+//    wxTheApp->OnExit();
+//    wxEntryCleanup();
+//    return 0;
+//}

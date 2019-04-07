@@ -53,6 +53,8 @@ public:
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     const wxString& GetCommand() const { return m_command; }
+
+    void SetCommandFromFile(const wxString& command);
 };
 
 #endif // WXTERMINALOPTIONS_H

@@ -84,6 +84,7 @@ void wxTerminalCtrl::PostCreate()
     wxString shell;
 #ifdef __WXMSW__
     shell = "C:\\Windows\\System32\\cmd.exe /Q"; // echo off
+    if(!m_startupCommand.IsEmpty()) { shell << " /K"; }
 #else
     shell = wxGetenv("SHELL");
 #endif
@@ -318,4 +319,9 @@ wxString wxTerminalCtrl::GetPTS() const { return ConvertString(m_pts); }
 
 void wxTerminalCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_colourHandler.SetDefaultStyle(attr); }
 
-void wxTerminalCtrl::Start() { PostCreate(); }
+void wxTerminalCtrl::Start(const wxString& startupCommand)
+{
+    m_startupCommand = startupCommand;
+    PostCreate();
+    if(!m_startupCommand.IsEmpty()) { Run(m_startupCommand, true); }
+}

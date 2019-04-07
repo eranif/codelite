@@ -8,6 +8,7 @@
 #include "clConsoleOSXTerminal.h"
 #include "clConsoleXfce4Terminal.h"
 #include "clConsoleRXVTerminal.h"
+#include "clConsoleCodeLiteTerminal.h"
 #include "cl_config.h"
 #include "file_logger.h"
 #include <algorithm>
@@ -48,8 +49,11 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
     clConsoleBase::Ptr_t terminal;
     wxString terminalName = GetSelectedTerminalName();
 #ifdef __WXMSW__
-    wxUnusedVar(terminalName);
-    terminal.reset(new clConsoleCMD());
+    if(terminalName.CmpNoCase("codelite-terminal") == 0) {
+        terminal.reset(new clConsoleCodeLiteTerminal());
+    } else {
+        terminal.reset(new clConsoleCMD());
+    }
 #elif defined(__WXGTK__)
     if(terminalName.CmpNoCase("konsole") == 0) {
         terminal.reset(new clConsoleKonsole());
@@ -63,14 +67,20 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
         terminal.reset(new clConsoleQTerminal());
     } else if(terminalName.CmpNoCase("rxvt-unicode") == 0) {
         terminal.reset(new clConsoleRXVTTerminal());
+    } else if(terminalName.CmpNoCase("codelite-terminal") == 0) {
+        terminal.reset(new clConsoleCodeLiteTerminal());
     } else {
         // the default terminal is "gnome-terminal"
         terminal.reset(new clConsoleGnomeTerminal());
     }
 #else
-    clConsoleOSXTerminal* t = new clConsoleOSXTerminal();
-    terminal.reset(t);
-    if(terminalName.CmpNoCase("iTerm2") == 0) { t->SetTerminalApp("iTerm"); }
+    if(terminalName.CmpNoCase("codelite-terminal") == 0) {
+        terminal.reset(new clConsoleCodeLiteTerminal());
+    } else {
+        clConsoleOSXTerminal* t = new clConsoleOSXTerminal();
+        terminal.reset(t);
+        if(terminalName.CmpNoCase("iTerm2") == 0) { t->SetTerminalApp("iTerm"); }
+    }
 #endif
     return terminal;
 }
@@ -92,6 +102,7 @@ wxArrayString clConsoleBase::GetAvailaleTerminals()
     terminals.Add("Terminal");
     terminals.Add("iTerm2");
 #endif
+    terminals.Add("codelite-terminal");
     return terminals;
 }
 

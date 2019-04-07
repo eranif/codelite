@@ -55,7 +55,7 @@ protected:
 
     wxString WrapWithQuotesIfNeeded(const wxString& s) const;
     wxString EscapeString(const wxString& str, const wxString& c = "\"") const;
-    bool StartProcess(const wxString& command);
+    virtual bool StartProcess(const wxString& command);
 
 public:
     clConsoleBase();

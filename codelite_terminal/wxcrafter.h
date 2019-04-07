@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _WXTERMINAL_WXTERMINAL_WXCRAFTER_BASE_CLASSES_H
-#define _WXTERMINAL_WXTERMINAL_WXCRAFTER_BASE_CLASSES_H
+#ifndef _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
+#define _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
@@ -16,6 +16,11 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/menu.h>
+#include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/clrpicker.h>
+#include <wx/fontpicker.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -38,20 +43,55 @@ class MainFrameBaseClass : public wxFrame
 protected:
     wxPanel* m_mainPanel;
     wxMenuBar* m_menuBar;
-    wxMenu* m_name6;
+    wxMenu* m_File;
+    wxMenuItem* m_menuItemPreferences;
+    wxMenuItem* m_menuItem51;
     wxMenuItem* m_menuItem7;
-    wxMenu* m_name8;
+    wxMenu* m_Help;
     wxMenuItem* m_menuItem9;
 
 protected:
+    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
-    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Frame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxSYSTEM_MENU|wxCLOSE_BOX);
+    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrameBaseClass();
+};
+
+
+class SettingsDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText31;
+    wxColourPickerCtrl* m_colourPickerFG;
+    wxStaticText* m_staticText35;
+    wxColourPickerCtrl* m_colourPickerBG;
+    wxStaticText* m_staticText39;
+    wxFontPickerCtrl* m_fontPicker;
+    wxButton* m_button45;
+    wxButton* m_button47;
+
+protected:
+    virtual void OnFGColour(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnBGColour(wxColourPickerEvent& event) { event.Skip(); }
+    virtual void OnFontSelected(wxFontPickerEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText31() { return m_staticText31; }
+    wxColourPickerCtrl* GetColourPickerFG() { return m_colourPickerFG; }
+    wxStaticText* GetStaticText35() { return m_staticText35; }
+    wxColourPickerCtrl* GetColourPickerBG() { return m_colourPickerBG; }
+    wxStaticText* GetStaticText39() { return m_staticText39; }
+    wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
+    wxButton* GetButton45() { return m_button45; }
+    wxButton* GetButton47() { return m_button47; }
+    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    virtual ~SettingsDlgBase();
 };
 
 #endif

@@ -11,7 +11,7 @@ MainFrame::MainFrame(wxWindow* parent, wxTerminalOptions& options)
     m_terminal->SetPauseOnExit(m_options.IsWaitOnExit());
     m_terminal->SetPrintTTY(m_options.IsPrintTTY());
     m_terminal->Start(m_options.GetCommand());
-    
+
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
     SetLabel(m_options.GetTitle().IsEmpty() ? "codelite-terminal" : m_options.GetTitle());
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
@@ -21,8 +21,8 @@ MainFrame::~MainFrame() {}
 
 void MainFrame::OnExit(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
-    Close();
+    Hide();
+    CallAfter(&MainFrame::DoClose);
 }
 
 void MainFrame::OnAbout(wxCommandEvent& event)
@@ -36,4 +36,19 @@ void MainFrame::OnAbout(wxCommandEvent& event)
     ::wxAboutBox(info);
 }
 
-void MainFrame::OnTerminalExit(clCommandEvent& event) { wxExit(); }
+void MainFrame::OnTerminalExit(clCommandEvent& event)
+{
+    Hide();
+    CallAfter(&MainFrame::DoClose);
+}
+
+void MainFrame::DoClose() { wxExit(); }
+
+void MainFrame::OnSettings(wxCommandEvent& event)
+{
+}
+void MainFrame::OnClose(wxCloseEvent& event)
+{
+    Hide();
+    CallAfter(&MainFrame::DoClose);
+}

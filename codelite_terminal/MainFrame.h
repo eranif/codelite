@@ -10,6 +10,11 @@ class MainFrame : public MainFrameBaseClass
     wxTerminalCtrl* m_terminal = nullptr;
     wxTerminalOptions& m_options;
 
+protected:
+    virtual void OnClose(wxCloseEvent& event);
+    virtual void OnSettings(wxCommandEvent& event);
+    void DoClose();
+
 public:
     MainFrame(wxWindow* parent, wxTerminalOptions& options);
     virtual ~MainFrame();

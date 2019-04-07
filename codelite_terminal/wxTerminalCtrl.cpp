@@ -4,6 +4,7 @@
 #include <wx/regex.h>
 #include "procutils.h"
 #include <drawingutils.h>
+#include <wx/wupdlock.h>
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -272,6 +273,7 @@ void wxTerminalCtrl::GenerateCtrlC()
 
 void wxTerminalCtrl::ClearScreen()
 {
+    wxWindowUpdateLocker locker(m_textCtrl);
     // Delete the entire content excluding the last list
     if(m_textCtrl->GetNumberOfLines() < 1) { return; }
     long x, y;

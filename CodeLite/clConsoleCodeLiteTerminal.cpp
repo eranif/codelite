@@ -28,7 +28,9 @@ wxString clConsoleCodeLiteTerminal::PrepareCommand()
         // For testing purposes
         wxString command = WrapWithQuotesIfNeeded(GetCommand());
         if(!command.IsEmpty()) {
+#ifdef __WXMSW__
             command.Prepend("start /B /WAIT "); // start the application in the foreground
+#endif
             if(!GetCommandArgs().IsEmpty()) {
                 wxString cmdArgs = GetCommandArgs();
                 command << " " << GetCommandArgs();

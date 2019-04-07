@@ -47,6 +47,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="SettingsDlg.cpp"/>
+    <File Name="SettingsDlg.h"/>
     <File Name="wxTerminalOptions.h"/>
     <File Name="wxTerminalOptions.cpp"/>
     <File Name="wxTerminalCtrl.h"/>

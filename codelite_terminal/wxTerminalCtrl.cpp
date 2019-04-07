@@ -113,9 +113,7 @@ void wxTerminalCtrl::PostCreate()
 
 void wxTerminalCtrl::Run(const wxString& command, bool echoCommand)
 {
-    if(echoCommand) {
-        AppendText(command + "\n");
-    }
+    if(echoCommand) { AppendText(command + "\n"); }
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");
@@ -201,7 +199,8 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
                     // going backward
                     event.Skip(pos > m_commandOffset);
                 } else {
-                    event.Skip(pos >= m_commandOffset);
+                    if(pos < m_commandOffset) { m_textCtrl->SetInsertionPointEnd(); }
+                    event.Skip(true);
                 }
             }
         }

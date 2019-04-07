@@ -351,8 +351,6 @@ wxFont clScrolledPanel::GetDefaultFont()
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 #ifdef __WXGTK__
     static double ratio = 1.0;
-
-#ifdef __WXGTK3__
     static bool once = false;
     if(!once) {
         GdkScreen* screen = gdk_screen_get_default();
@@ -362,8 +360,6 @@ wxFont clScrolledPanel::GetDefaultFont()
         }
         once = true;
     }
-#endif
-
 #if wxCHECK_VERSION(3, 1, 2)
     float pointSize = f.GetFractionalPointSize() * ratio;
     f.SetFractionalPointSize(pointSize);

@@ -2,6 +2,7 @@
 #define MAINFRAME_H
 #include "wxcrafter.h"
 #include "wxTerminalOptions.h"
+#include <cl_command_event.h>
 
 class wxTerminalCtrl;
 class MainFrame : public MainFrameBaseClass
@@ -15,5 +16,6 @@ public:
 
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnTerminalExit(clCommandEvent& event);
 };
 #endif // MAINFRAME_H

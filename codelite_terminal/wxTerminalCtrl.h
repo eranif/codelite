@@ -84,6 +84,7 @@ protected:
     bool m_pauseOnExit = false;
     bool m_printTTY = false;
     bool m_waitingForKey = false;
+    bool m_exitWhenDone = false;
 
 protected:
     void PostCreate();
@@ -99,7 +100,7 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     bool IsEchoOFF() const;
     void DoProcessTerminated();
-    
+
 public:
     wxTerminalCtrl();
     wxTerminalCtrl(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxExecuteEnv& env = wxExecuteEnv(),
@@ -130,7 +131,7 @@ public:
      * @brief execute a command in the temrinal
      * @param command
      */
-    void Run(const wxString& command, bool echoCommand = false);
+    void Run(const wxString& command, bool exitAfter = false);
 
     /**
      * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)

@@ -111,13 +111,19 @@ void wxTerminalCtrl::PostCreate()
     }
 }
 
-void wxTerminalCtrl::Run(const wxString& command, bool echoCommand)
+void wxTerminalCtrl::Run(const wxString& command, bool exitAfter)
 {
-    if(echoCommand) { AppendText(command + "\n"); }
     if(m_shell) {
-        m_shell->WriteRaw(command + "\n");
-        AppendText("\n");
-        if(!command.empty()) { m_history.Add(command); }
+        m_exitWhenDone = exitAfter;
+        wxString cmd = command;
+        if(exitAfter) {
+            cmd << " && echo [command-terminated]"; // print the
+            m_shell->WriteRaw(cmd + "\n");
+        } else {
+            m_shell->WriteRaw(command + "\n");
+            AppendText("\n");
+            if(!command.empty()) { m_history.Add(command); }
+        }
     }
 }
 
@@ -155,7 +161,18 @@ void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
-    m_colourHandler << text;
+    if(m_exitWhenDone) {
+        wxString outputText = text;
+        bool exitAfter = false;
+        if(outputText.Contains("[command-terminated]")) {
+            outputText.Replace("[command-terminated]", "");
+            exitAfter = true;
+        }
+        m_colourHandler << outputText;
+        if(exitAfter && m_shell) { m_shell->Terminate(); }
+    } else {
+        m_colourHandler << text;
+    }
     m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
 }
@@ -302,4 +319,4 @@ wxString wxTerminalCtrl::GetPTS() const { return ConvertString(m_pts); }
 
 void wxTerminalCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_colourHandler.SetDefaultStyle(attr); }
 
-void wxTerminalCtrl::Start() { CallAfter(&wxTerminalCtrl::PostCreate); }
+void wxTerminalCtrl::Start() { PostCreate(); }

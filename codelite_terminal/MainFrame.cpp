@@ -11,9 +11,10 @@ MainFrame::MainFrame(wxWindow* parent, wxTerminalOptions& options)
     m_terminal->SetPauseOnExit(m_options.IsWaitOnExit());
     m_terminal->SetPrintTTY(m_options.IsPrintTTY());
     m_terminal->Start();
-    if(!m_options.GetCommand().IsEmpty()) { m_terminal->CallAfter(&wxTerminalCtrl::Run, m_options.GetCommand(), true); }
+    if(!m_options.GetCommand().IsEmpty()) { m_terminal->Run(m_options.GetCommand(), true); }
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
     SetLabel(m_options.GetTitle().IsEmpty() ? "codelite-terminal" : m_options.GetTitle());
+    m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
 }
 
 MainFrame::~MainFrame() {}
@@ -34,3 +35,5 @@ void MainFrame::OnAbout(wxCommandEvent& event)
     info.SetDescription(_("CodeLite built-in terminal emulator"));
     ::wxAboutBox(info);
 }
+
+void MainFrame::OnTerminalExit(clCommandEvent& event) { wxExit(); }

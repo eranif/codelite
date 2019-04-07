@@ -60,23 +60,30 @@ public:
             FreeLibrary(user32Dll);
         }
 #endif
-
         wxCmdLineParser parser(wxApp::argc, wxApp::argv);
         parser.SetDesc(cmdLineDesc);
-        if(parser.Parse() != 0) { return false; }
+        const wxArrayString& argv = wxApp::argv.GetArguments();
+        for(const wxString& arg : argv) {
+            if(arg.StartsWith("--wait")) {
+                m_options.SetWaitOnExit(true);
+            } else if(arg.StartsWith("--help")) {
+                // Print usage and exit
+                std::cout << parser.GetUsageString() << std::endl;
+                wxExit();
+            } else if(arg.StartsWith("--title")) {
+                wxString title = arg.AfterFirst('=');
+                m_options.SetTitle(title);
+            } else if(arg.StartsWith("--print-tty")) {
+                m_options.SetPrintTTY(true);
+            } else if(arg.StartsWith("--working-directory")) {
+                wxString wd = arg.AfterFirst('=');
+                m_options.SetWorkingDirectory(wd);
+            } else if(arg.StartsWith("--command")) {
+                wxString cmd = arg.AfterFirst('=');
+                m_options.SetCommand(cmd);
+            }
+        }
 
-        if(parser.Found("w")) { m_options.SetWaitOnExit(true); }
-        if(parser.Found("p")) { m_options.SetPrintTTY(true); }
-
-        wxString workingDirectory;
-        if(parser.Found("d", &workingDirectory)) { m_options.SetWorkingDirectory(workingDirectory); }
-        
-        wxString title = "codelite-terminal";
-        if(parser.Found("t", &title)) { m_options.SetTitle(title); }
-        
-        wxString command;
-        if(parser.Found("c", &command)) { m_options.SetCommand(command); }
-        
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);

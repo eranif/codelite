@@ -228,57 +228,55 @@ clConsoleEnvironment::clConsoleEnvironment(const wxStringMap_t& env)
 wxArrayString clConsoleBase::SplitArguments(const wxString& args)
 {
     const int STATE_NORMAL = 0;
-    const int STATE_DQUOTES = 1;
-    const int STATE_ESCAPE = 2;
+    const int STATE_STRING = 1;
+
     int state = STATE_NORMAL;
-    int prevState = STATE_NORMAL;
     wxArrayString outputArr;
     wxString curtoken;
+    wxChar prevChar = 0;
     for(size_t i = 0; i < args.size(); ++i) {
         wxChar ch = args[i];
         switch(state) {
         case STATE_NORMAL: {
             switch(ch) {
-            case '\\':
-                curtoken << ch;
-                prevState = STATE_NORMAL;
-                state = STATE_ESCAPE;
-                break;
             case ' ':
-                ADD_CURRENT_TOKEN();
+            case '\t':
+                if(prevChar == '\\') {
+                    curtoken << ch;
+                } else {
+                    ADD_CURRENT_TOKEN();
+                }
                 break;
             case '"':
-                ADD_CURRENT_TOKEN();
-                state = STATE_DQUOTES;
+            case '\'':
+                // we dont want to keep the string markers
+                state = STATE_STRING;
                 break;
             default:
                 curtoken << ch;
                 break;
             }
         } break;
-        case STATE_DQUOTES: {
+        case STATE_STRING: {
             switch(ch) {
-            case '\\':
-                curtoken << ch;
-                prevState = STATE_DQUOTES;
-                state = STATE_ESCAPE;
-                break;
             case '"':
-                ADD_CURRENT_TOKEN();
-                state = STATE_NORMAL;
+            case '\'':
+                if(prevChar == '\\') {
+                    curtoken << ch;
+                } else {
+                    // we dont want to keep the string markers
+                    state = STATE_NORMAL;
+                }
                 break;
             default:
                 curtoken << ch;
                 break;
             }
         } break;
-        case STATE_ESCAPE:
-            curtoken << ch;
-            state = prevState;
-            break;
         default:
             break;
         }
+        prevChar = ch;
     }
     // if we still got some unprocessed token, add it
     ADD_CURRENT_TOKEN();

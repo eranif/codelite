@@ -134,13 +134,10 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 m_state = eColourHandlerState::kInCsi;
                 break;
             case ']':
-                // Add the current chunk using the current style
-                FlushBuffer(curline);
                 m_state = eColourHandlerState::kInOsc;
                 break;
             default:
                 // Add the current chunk using the current style
-                FlushBuffer(curline);
                 break;
             }
             break;
@@ -154,10 +151,6 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             // found ESC[
             switch(ch) {
             case 'K':
-                // erase inline
-                curline.Clear();
-                m_state = eColourHandlerState::kNormal;
-                break;
             case 'A':
             case 'B':
             case 'C':
@@ -178,9 +171,8 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 m_state = eColourHandlerState::kNormal;
                 break;
             case 'm':
-                // write we got so far and clear the buffer
-                FlushBuffer(curline);
                 // update the style
+                FlushBuffer(curline);
                 SetStyleFromEscape(m_escapeSequence);
                 m_state = eColourHandlerState::kNormal;
                 break;

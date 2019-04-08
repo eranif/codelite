@@ -16,6 +16,7 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_READY, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_OUTPUT, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_STDERR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_DONE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_SET_TITLE, clCommandEvent);
 
 ///---------------------------------------------------------------
 /// Helper methods
@@ -34,10 +35,14 @@ static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxC
 ///
 ///---------------------------------------------------------------
 
-wxTerminalCtrl::wxTerminalCtrl() {}
+wxTerminalCtrl::wxTerminalCtrl()
+    : m_colourHandler(nullptr)
+{
+}
 
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecuteEnv& env, const wxPoint& pos,
                                const wxSize& size, long style, const wxString& name)
+    : m_colourHandler(this)
 {
     if(!Create(parent, winid, env, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -335,4 +340,12 @@ void wxTerminalCtrl::CheckInsertionPoint()
 {
     int pos = m_textCtrl->GetInsertionPoint();
     m_textCtrl->SetEditable(pos >= m_commandOffset);
+}
+
+void wxTerminalCtrl::SetTitle(const wxString& title)
+{
+    clCommandEvent eventTitle(wxEVT_TERMINAL_CTRL_SET_TITLE);
+    eventTitle.SetString(title);
+    eventTitle.SetEventObject(this);
+    GetEventHandler()->AddPendingEvent(eventTitle);
 }

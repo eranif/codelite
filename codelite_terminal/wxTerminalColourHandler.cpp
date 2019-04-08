@@ -1,4 +1,5 @@
 #include "wxTerminalColourHandler.h"
+#include "wxTerminalCtrl.h"
 #ifdef __WXMSW__
 #include <windows.h>
 #include <Winuser.h>
@@ -48,10 +49,10 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     m_colours.insert({ 107, wxColour(255, 255, 255) });
 }
 
-wxTerminalColourHandler::wxTerminalColourHandler(wxTextCtrl* ctrl)
+wxTerminalColourHandler::wxTerminalColourHandler(wxTerminalCtrl* ctrl)
     : wxTerminalColourHandler()
 {
-    SetCtrl(m_ctrl);
+    m_terminal = ctrl;
 }
 
 wxTerminalColourHandler::~wxTerminalColourHandler() {}
@@ -135,6 +136,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 break;
             case ']':
                 m_state = eColourHandlerState::kInOsc;
+                m_title.Clear();
                 break;
             default:
                 // Add the current chunk using the current style
@@ -142,9 +144,20 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             }
             break;
         case eColourHandlerState::kInOsc:
+            // ESC ]
             if(ch == '\a') {
                 // bell, leave the current state
                 m_state = eColourHandlerState::kNormal;
+                if(!m_title.IsEmpty()) {
+                    if(m_title.StartsWith("0;")) {
+                        // see https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
+                        // OSC
+                        m_terminal->SetTitle(m_title.Mid(2)); // Skip the "0;"
+                    }
+                    m_title.Clear();
+                }
+            } else {
+                m_title << ch;
             }
             break;
         case eColourHandlerState::kInCsi:

@@ -16,6 +16,7 @@ MainFrame::MainFrame(wxWindow* parent, wxTerminalOptions& options)
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
     SetLabel(m_options.GetTitle().IsEmpty() ? "codelite-terminal" : m_options.GetTitle());
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
+    m_terminal->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &MainFrame::OnSetTitle, this);
 }
 
 MainFrame::~MainFrame() {}
@@ -45,11 +46,12 @@ void MainFrame::OnTerminalExit(clCommandEvent& event)
 
 void MainFrame::DoClose() { wxExit(); }
 
-void MainFrame::OnSettings(wxCommandEvent& event)
-{
-}
+void MainFrame::OnSettings(wxCommandEvent& event) {}
+
 void MainFrame::OnClose(wxCloseEvent& event)
 {
     Hide();
     CallAfter(&MainFrame::DoClose);
 }
+
+void MainFrame::OnSetTitle(clCommandEvent& event) { SetLabel(event.GetString()); }

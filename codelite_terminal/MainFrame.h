@@ -22,5 +22,6 @@ public:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnTerminalExit(clCommandEvent& event);
+    void OnSetTitle(clCommandEvent& event);
 };
 #endif // MAINFRAME_H

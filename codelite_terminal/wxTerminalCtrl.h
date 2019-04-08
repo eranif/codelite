@@ -67,6 +67,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_OUTPUT, clCommandE
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_STDERR, clCommandEvent);
 // The terminal has exited
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, clCommandEvent);
+// Set the terminal title
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, clCommandEvent);
 
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
@@ -118,6 +120,9 @@ public:
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
 
+    wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
+
+    void SetTitle(const wxString& title);
     void SetPrintTTY(bool printTTY) { this->m_printTTY = printTTY; }
     bool IsPrintTTY() const { return m_printTTY; }
 

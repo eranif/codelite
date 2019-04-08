@@ -6,9 +6,9 @@
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
-static bool search_process_by_command(const wxString& name, wxString& tty, long& pid)
+bool clConsoleGnomeTerminal::FindProcessByCommand(const wxString& name, wxString& tty, long& pid)
 {
-    clDEBUG() << "search_process_by_command is called";
+    clDEBUG() << "FindProcessByCommand is called";
     tty.Clear();
     pid = wxNOT_FOUND;
 
@@ -90,7 +90,7 @@ bool clConsoleGnomeTerminal::StartForDebugger()
 
     // Let it start ... (wait for it up to 5 seconds)
     for(size_t i = 0; i < 100; ++i) {
-        if(search_process_by_command(sleepCommand, m_tty, m_pid)) {
+        if(FindProcessByCommand(sleepCommand, m_tty, m_pid)) {
             // On GTK, redirection to TTY does not work with lldb
             // as a workaround, we create a symlink with different name
 

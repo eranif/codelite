@@ -17,6 +17,7 @@ protected:
         this->m_emptyTerminalCommand = emptyTerminalCommand;
     }
     const wxString& GetEmptyTerminalCommand() const { return m_emptyTerminalCommand; }
+    bool FindProcessByCommand(const wxString& name, wxString& tty, long& pid);
 
 public:
     clConsoleGnomeTerminal();

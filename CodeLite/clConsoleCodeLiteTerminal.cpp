@@ -4,11 +4,7 @@
 
 clConsoleCodeLiteTerminal::clConsoleCodeLiteTerminal()
 {
-    wxFileName codeliteTerminal(clStandardPaths::Get().GetBinFolder(), "codelite-terminal");
-#ifdef __WXMSW__
-    codeliteTerminal.SetExt("exe");
-#endif
-    wxString cmd = codeliteTerminal.GetFullPath();
+    wxString cmd = GetBinary();
     WrapWithQuotesIfNeeded(cmd);
     SetTerminalCommand(wxString() << cmd << " --working-directory=%WD% --file=%COMMANDFILE%");
     SetEmptyTerminalCommand(wxString() << cmd << " --working-directory=%WD%");
@@ -62,6 +58,54 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
 #ifdef __WXMSW__
     return false;
 #else
-    return clConsoleGnomeTerminal::StartForDebugger();
+    // generate a random value to differntiate this instance of codelite
+    // from other instances
+
+    time_t curtime = time(NULL);
+    int randomSeed = (curtime % 947);
+    wxString secondsToSleep;
+
+    secondsToSleep << (85765 + randomSeed);
+
+    wxString sleepCommand = "/bin/sleep";
+    sleepCommand << " " << secondsToSleep;
+
+    wxString homedir = wxGetHomeDir();
+    if(homedir.Contains(" ")) { homedir.Prepend("\"").Append("\""); }
+    wxString commandToExecute;
+    commandToExecute << GetBinary();
+    WrapWithQuotesIfNeeded(commandToExecute);
+
+    commandToExecute << " --working-directory=" << homedir << " --command=\"" << sleepCommand << "\"";
+    ::wxExecute(commandToExecute);
+
+    // Let it start ... (wait for it up to 5 seconds)
+    for(size_t i = 0; i < 100; ++i) {
+        if(FindProcessByCommand(sleepCommand, m_tty, m_pid)) {
+            // On GTK, redirection to TTY does not work with lldb
+            // as a workaround, we create a symlink with different name
+
+            // Keep the real tty
+            m_realPts = m_tty;
+
+            wxString symlinkName = m_tty;
+            symlinkName.Replace("/dev/pts/", "/tmp/pts");
+            wxString lnCommand;
+            lnCommand << "ln -sf " << m_tty << " " << symlinkName;
+            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) { m_tty.swap(symlinkName); }
+            break;
+        }
+        wxThread::Sleep(50);
+    }
+    return !m_tty.IsEmpty();
 #endif
+}
+
+wxString clConsoleCodeLiteTerminal::GetBinary() const
+{
+    wxFileName codeliteTerminal(clStandardPaths::Get().GetBinFolder(), "codelite-terminal");
+#ifdef __WXMSW__
+    codeliteTerminal.SetExt("exe");
+#endif
+    return codeliteTerminal.GetFullPath();
 }

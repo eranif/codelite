@@ -9,6 +9,7 @@
 #include <wx/arrstr.h>
 #include "codelite_exports.h"
 #include <wx/utils.h>
+#include <thread>
 
 struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
@@ -84,8 +85,8 @@ protected:
     bool m_pauseOnExit = false;
     bool m_printTTY = false;
     bool m_waitingForKey = false;
-    bool m_exitWhenDone = false;
     wxString m_startupCommand;
+    std::thread* m_threadCheckChildren = nullptr;
 
 protected:
     void PostCreate();
@@ -127,7 +128,7 @@ public:
      * @brief start the terminal
      */
     /**
-     * @brief 
+     * @brief
      * @param startupCommand
      */
     void Start(const wxString& startupCommand);
@@ -136,7 +137,7 @@ public:
      * @brief execute a command in the temrinal
      * @param command
      */
-    void Run(const wxString& command, bool exitAfter = false);
+    void Run(const wxString& command);
 
     /**
      * @brief generate Ctrl-C like. By default this will send SIGTERM (Ctrl-C)

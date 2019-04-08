@@ -5,6 +5,9 @@
 
 class WXDLLIMPEXP_CL clConsoleCodeLiteTerminal : public clConsoleGnomeTerminal
 {
+protected:
+    wxString GetBinary() const;
+
 public:
     clConsoleCodeLiteTerminal();
     virtual ~clConsoleCodeLiteTerminal();

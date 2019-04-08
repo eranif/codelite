@@ -85,9 +85,13 @@ void wxTerminalCtrl::PostCreate()
     wxString shell;
 #ifdef __WXMSW__
     shell = "C:\\Windows\\System32\\cmd.exe /Q"; // echo off
-    if(!m_startupCommand.IsEmpty()) { shell << " /K"; }
+    if(!m_startupCommand.IsEmpty()) {
+        // /C means: terminate when the command has completed
+        shell << " /C " << m_startupCommand;
+    }
 #else
-    shell = wxGetenv("SHELL");
+    shell = "/bin/bash";
+    if(!m_startupCommand.IsEmpty()) { shell << " -c '" << m_startupCommand << "'"; }
 #endif
     m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput, m_workingDirectory);
 
@@ -113,19 +117,12 @@ void wxTerminalCtrl::PostCreate()
     }
 }
 
-void wxTerminalCtrl::Run(const wxString& command, bool exitAfter)
+void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
-        m_exitWhenDone = exitAfter;
-        wxString cmd = command;
-        if(exitAfter) {
-            cmd << " && echo [command-terminated]"; // print the
-            m_shell->WriteRaw(cmd + "\n");
-        } else {
-            m_shell->WriteRaw(command + "\n");
-            AppendText("\n");
-            if(!command.empty()) { m_history.Add(command); }
-        }
+        m_shell->WriteRaw(command + "\n");
+        AppendText("\n");
+        if(!command.empty()) { m_history.Add(command); }
     }
 }
 
@@ -163,18 +160,7 @@ void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
-    if(m_exitWhenDone) {
-        wxString outputText = text;
-        bool exitAfter = false;
-        if(outputText.Contains("[command-terminated]")) {
-            outputText.Replace("[command-terminated]", "");
-            exitAfter = true;
-        }
-        m_colourHandler << outputText;
-        if(exitAfter && m_shell) { m_shell->Terminate(); }
-    } else {
-        m_colourHandler << text;
-    }
+    m_colourHandler << text;
     m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
 }
@@ -325,5 +311,4 @@ void wxTerminalCtrl::Start(const wxString& startupCommand)
 {
     m_startupCommand = startupCommand;
     PostCreate();
-    if(!m_startupCommand.IsEmpty()) { Run(m_startupCommand, true); }
 }

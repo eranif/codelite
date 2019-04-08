@@ -82,7 +82,8 @@ protected:
     wxTerminalHistory m_history;
     std::unordered_set<long> m_initialProcesses;
     std::string m_pts;      // Unix only
-    std::string m_password; // Not used atm
+    bool m_echoOff = false; // Not used atm
+    wxTextAttr m_preEchoOffAttr;
     wxString m_workingDirectory;
     bool m_pauseOnExit = false;
     bool m_printTTY = false;
@@ -104,7 +105,7 @@ protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnLeftDown(wxMouseEvent& event);
-    bool IsEchoOFF() const;
+    void SetEchoOff();
     void DoProcessTerminated();
     void CheckInsertionPoint();
 

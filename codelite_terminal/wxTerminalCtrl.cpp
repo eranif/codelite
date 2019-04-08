@@ -186,8 +186,10 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         if(!m_textCtrl->IsEditable()) { return; }
         if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
             // Execute command
-            Run(m_password.empty() ? GetShellCommand() : (wxString() << m_password));
-            m_password.clear();
+            Run(GetShellCommand());
+            m_echoOff = false;
+            m_textCtrl->SetDefaultStyle(m_preEchoOffAttr);
+            m_preEchoOffAttr = wxTextAttr();
 
         } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
             m_textCtrl->SetInsertionPoint(m_commandOffset);
@@ -208,17 +210,14 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         } else if((event.GetKeyCode() == 'D') && event.ControlDown()) {
             Logout();
         } else {
-            if(IsEchoOFF()) {
-                if(isascii(event.GetRawKeyCode())) { m_password += event.GetRawKeyCode(); }
+            SetEchoOff();
+            int pos = m_textCtrl->GetInsertionPoint();
+            if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
+                // going backward
+                event.Skip(pos > m_commandOffset);
             } else {
-                int pos = m_textCtrl->GetInsertionPoint();
-                if(event.GetKeyCode() == WXK_BACK || event.GetKeyCode() == WXK_LEFT) {
-                    // going backward
-                    event.Skip(pos > m_commandOffset);
-                } else {
-                    if(pos < m_commandOffset) { m_textCtrl->SetInsertionPointEnd(); }
-                    event.Skip(true);
-                }
+                if(pos < m_commandOffset) { m_textCtrl->SetInsertionPointEnd(); }
+                event.Skip(true);
             }
         }
     }
@@ -298,11 +297,20 @@ void wxTerminalCtrl::Logout()
     Run(command);
 }
 
-bool wxTerminalCtrl::IsEchoOFF() const
+void wxTerminalCtrl::SetEchoOff()
 {
-    wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
-    line = line.Lower();
-    return line.Contains("password:") || line.Contains("password for");
+    if(!m_echoOff) {
+        wxString line = m_textCtrl->GetLineText(m_textCtrl->GetNumberOfLines() - 1);
+        line = line.Lower();
+        if(line.Contains("password:") || line.Contains("password for")) {
+            m_echoOff = true;
+            m_preEchoOffAttr = m_textCtrl->GetDefaultStyle();
+            wxTextAttr echoOffAttr = m_preEchoOffAttr;
+            echoOffAttr.SetFontSize(0);
+            echoOffAttr.SetTextColour(echoOffAttr.GetBackgroundColour());
+            m_textCtrl->SetDefaultStyle(echoOffAttr);
+        }
+    }
 }
 
 void wxTerminalCtrl::DoProcessTerminated()

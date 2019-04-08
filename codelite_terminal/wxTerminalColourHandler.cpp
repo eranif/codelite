@@ -112,8 +112,6 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
         case eColourHandlerState::kNormal:
             switch(ch) {
             case 0x1B: // ESC
-                // Add the current chunk using the current style
-                FlushBuffer(curline);
                 m_state = eColourHandlerState::kInEscape;
                 break;
             case '\r':
@@ -136,9 +134,13 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 m_state = eColourHandlerState::kInCsi;
                 break;
             case ']':
+                // Add the current chunk using the current style
+                FlushBuffer(curline);
                 m_state = eColourHandlerState::kInOsc;
                 break;
             default:
+                // Add the current chunk using the current style
+                FlushBuffer(curline);
                 break;
             }
             break;
@@ -151,6 +153,11 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
         case eColourHandlerState::kInCsi:
             // found ESC[
             switch(ch) {
+            case 'K':
+                // erase inline
+                curline.Clear();
+                m_state = eColourHandlerState::kNormal;
+                break;
             case 'A':
             case 'B':
             case 'C':
@@ -160,7 +167,6 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             case 'G':
             case 'H':
             case 'J':
-            case 'K':
             case 'S':
             case 'T':
             case 'f':
@@ -172,7 +178,9 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 m_state = eColourHandlerState::kNormal;
                 break;
             case 'm':
-                // colour sequence
+                // write we got so far and clear the buffer
+                FlushBuffer(curline);
+                // update the style
                 SetStyleFromEscape(m_escapeSequence);
                 m_state = eColourHandlerState::kNormal;
                 break;

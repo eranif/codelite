@@ -9,11 +9,11 @@
       <Environment/>
       <Project Name="codelite_terminal" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="codelite_terminal" ConfigName="Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Linux" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Linux" Selected="no">
       <Environment/>
       <Project Name="codelite_terminal" ConfigName="Debug_Linux"/>
     </WorkspaceConfiguration>

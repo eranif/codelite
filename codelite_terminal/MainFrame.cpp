@@ -10,6 +10,7 @@ MainFrame::MainFrame(wxWindow* parent, wxTerminalOptions& options)
     m_terminal->SetWorkingDirectory(m_options.GetWorkingDirectory());
     m_terminal->SetPauseOnExit(m_options.IsWaitOnExit());
     m_terminal->SetPrintTTY(m_options.IsPrintTTY());
+    m_terminal->SetLogfile(m_options.GetLogfile());
     m_terminal->Start(m_options.GetCommand());
 
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);

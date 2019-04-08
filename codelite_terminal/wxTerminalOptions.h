@@ -14,6 +14,7 @@ class wxTerminalOptions
     wxString m_workingDirectory;
     wxString m_title;
     wxString m_command;
+    wxString m_logfile;
 
 protected:
     void EnableFlag(bool b, eTerminalOptions flag)
@@ -55,6 +56,9 @@ public:
     const wxString& GetCommand() const { return m_command; }
 
     void SetCommandFromFile(const wxString& command);
+    
+    void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
+    const wxString& GetLogfile() const { return m_logfile; }
 };
 
 #endif // WXTERMINALOPTIONS_H

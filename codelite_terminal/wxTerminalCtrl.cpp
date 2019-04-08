@@ -5,6 +5,7 @@
 #include "procutils.h"
 #include <drawingutils.h>
 #include <wx/wupdlock.h>
+#include <wx/log.h>
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -46,7 +47,9 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessStderr, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
+
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
+    m_textCtrl->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
 
     // Set default style
     wxFont font = DrawingUtils::GetDefaultFixedFont();
@@ -160,6 +163,10 @@ void wxTerminalCtrl::OnProcessTerminated(clProcessEvent& event)
 
 void wxTerminalCtrl::AppendText(const wxString& text)
 {
+    if(m_log.IsOpened()) {
+        m_log.Write(text);
+        m_log.Flush();
+    }
     m_colourHandler << text;
     m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
@@ -311,4 +318,21 @@ void wxTerminalCtrl::Start(const wxString& startupCommand)
 {
     m_startupCommand = startupCommand;
     PostCreate();
+    if(!GetLogfile().IsEmpty()) {
+        wxFileName logfile(GetLogfile());
+        wxLogNull NOLOG;
+        m_log.Open(logfile.GetFullPath(), "a+b");
+    }
+}
+
+void wxTerminalCtrl::OnLeftDown(wxMouseEvent& event)
+{
+    event.Skip();
+    CallAfter(&wxTerminalCtrl::CheckInsertionPoint);
+}
+
+void wxTerminalCtrl::CheckInsertionPoint()
+{
+    int pos = m_textCtrl->GetInsertionPoint();
+    m_textCtrl->SetEditable(pos >= m_commandOffset);
 }

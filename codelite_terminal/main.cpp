@@ -85,6 +85,9 @@ public:
             } else if(arg.StartsWith("--file")) {
                 wxString cmdfile = arg.AfterFirst('=');
                 m_options.SetCommandFromFile(cmdfile);
+            } else if(arg.StartsWith("--log")) {
+                wxString logfile = arg.AfterFirst('=');
+                m_options.SetLogfile(logfile);
             }
         }
 

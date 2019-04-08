@@ -9,7 +9,7 @@
 #include <wx/arrstr.h>
 #include "codelite_exports.h"
 #include <wx/utils.h>
-#include <thread>
+#include <wx/ffile.h>
 
 struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
@@ -86,7 +86,8 @@ protected:
     bool m_printTTY = false;
     bool m_waitingForKey = false;
     wxString m_startupCommand;
-    std::thread* m_threadCheckChildren = nullptr;
+    wxString m_logfile;
+    wxFFile m_log;
 
 protected:
     void PostCreate();
@@ -100,8 +101,10 @@ protected:
     void OnProcessStderr(clProcessEvent& event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnKeyDown(wxKeyEvent& event);
+    void OnLeftDown(wxMouseEvent& event);
     bool IsEchoOFF() const;
     void DoProcessTerminated();
+    void CheckInsertionPoint();
 
 public:
     wxTerminalCtrl();
@@ -166,6 +169,9 @@ public:
      * @brief set default style
      */
     void SetDefaultStyle(const wxTextAttr& attr);
+
+    void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
+    const wxString& GetLogfile() const { return m_logfile; }
 };
 
 #endif // WXTERMINALCTRL_H

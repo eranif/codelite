@@ -75,6 +75,13 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MainFrameBaseClass::OnClose), NULL, this);
     this->Connect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
@@ -142,17 +149,8 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     flexGridSizer29->Add(m_staticText39, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-#ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
-    // wxFONTFAMILY_TELETYPE
-    wxFont m_fontPickerFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_fontPickerFont.SetFamily(wxFONTFAMILY_TELETYPE);
-#else
-    wxFont m_fontPickerFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_fontPickerFont.SetFamily(wxFONTFAMILY_TELETYPE);
-#endif
-    m_fontPicker = new wxFontPickerCtrl(this, wxID_ANY, m_fontPickerFont, wxDefaultPosition,
-                                        wxDLG_UNIT(this, wxSize(-1, -1)), wxFNTP_DEFAULT_STYLE);
+    m_fontPicker = new wxFontPickerCtrl(this, wxID_ANY, wxNullFont, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxFNTP_DEFAULT_STYLE);
 
     flexGridSizer29->Add(m_fontPicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -177,21 +175,13 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
     } else {
         CentreOnScreen(wxBOTH);
     }
-    // Connect events
-    m_colourPickerFG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                              wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
-    m_colourPickerBG->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                              wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);
-    m_fontPicker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEventHandler(SettingsDlgBase::OnFontSelected),
-                          NULL, this);
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
 }
 
-SettingsDlgBase::~SettingsDlgBase()
-{
-    m_colourPickerFG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                 wxColourPickerEventHandler(SettingsDlgBase::OnFGColour), NULL, this);
-    m_colourPickerBG->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                 wxColourPickerEventHandler(SettingsDlgBase::OnBGColour), NULL, this);
-    m_fontPicker->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
-                             wxFontPickerEventHandler(SettingsDlgBase::OnFontSelected), NULL, this);
-}
+SettingsDlgBase::~SettingsDlgBase() {}

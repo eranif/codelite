@@ -1,20 +1,25 @@
 #include "SettingsDlg.h"
+#include "wxTerminalOptions.h"
+#include <drawingutils.h>
 
 SettingsDlg::SettingsDlg(wxWindow* parent)
     : SettingsDlgBase(parent)
 {
+    Load();
 }
 
-SettingsDlg::~SettingsDlg()
+SettingsDlg::~SettingsDlg() {}
+
+void SettingsDlg::Load()
 {
+    m_fontPicker->SetSelectedFont(wxTerminalOptions::Get().GetFont());
+    m_colourPickerBG->SetColour(wxTerminalOptions::Get().GetBgColour());
+    m_colourPickerFG->SetColour(wxTerminalOptions::Get().GetTextColour());
 }
 
-void SettingsDlg::OnBGColour(wxColourPickerEvent& event)
+void SettingsDlg::Save()
 {
-}
-void SettingsDlg::OnFGColour(wxColourPickerEvent& event)
-{
-}
-void SettingsDlg::OnFontSelected(wxFontPickerEvent& event)
-{
+    wxTerminalOptions::Get().SetFont(GetFontPicker()->GetSelectedFont());
+    wxTerminalOptions::Get().SetBgColour(GetColourPickerBG()->GetColour());
+    wxTerminalOptions::Get().SetTextColour(GetColourPickerFG()->GetColour());
 }

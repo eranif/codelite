@@ -6,6 +6,7 @@
 #include <drawingutils.h>
 #include <wx/wupdlock.h>
 #include <wx/log.h>
+#include "wxTerminalOptions.h"
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -57,12 +58,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     m_textCtrl->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
 
     // Set default style
-    wxFont font = DrawingUtils::GetDefaultFixedFont();
-    wxColour textColour = wxColour("rgb(248, 248, 242)");
-    wxColour bgColour = wxColour("rgb(41, 43, 55)");
-    m_textCtrl->SetBackgroundColour(bgColour);
-    m_textCtrl->SetForegroundColour(textColour);
-    m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
+    ReloadSettings();
     m_colourHandler.SetCtrl(m_textCtrl);
 }
 
@@ -357,4 +353,16 @@ void wxTerminalCtrl::SetTitle(const wxString& title)
     eventTitle.SetString(title);
     eventTitle.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(eventTitle);
+}
+
+void wxTerminalCtrl::ReloadSettings()
+{
+    wxFont font = wxTerminalOptions::Get().GetFont();
+    wxColour textColour = wxTerminalOptions::Get().GetTextColour();
+    wxColour bgColour = wxTerminalOptions::Get().GetBgColour();
+    m_textCtrl->SetBackgroundColour(bgColour);
+    m_textCtrl->SetForegroundColour(textColour);
+    m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
+    m_textCtrl->Refresh();
+    CallAfter(&wxTerminalCtrl::ClearScreen);
 }

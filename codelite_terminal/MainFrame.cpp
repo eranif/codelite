@@ -1,20 +1,23 @@
 #include "MainFrame.h"
 #include <wx/aboutdlg.h>
 #include "wxTerminalCtrl.h"
+#include "SettingsDlg.h"
+#include "wxTerminalOptions.h"
 
-MainFrame::MainFrame(wxWindow* parent, wxTerminalOptions& options)
+MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)
-    , m_options(options)
 {
+    wxTerminalOptions& options = wxTerminalOptions::Get();
+    options.Load();
     m_terminal = new wxTerminalCtrl(GetMainPanel());
-    m_terminal->SetWorkingDirectory(m_options.GetWorkingDirectory());
-    m_terminal->SetPauseOnExit(m_options.IsWaitOnExit());
-    m_terminal->SetPrintTTY(m_options.IsPrintTTY());
-    m_terminal->SetLogfile(m_options.GetLogfile());
-    m_terminal->Start(m_options.GetCommand());
+    m_terminal->SetWorkingDirectory(options.GetWorkingDirectory());
+    m_terminal->SetPauseOnExit(options.IsWaitOnExit());
+    m_terminal->SetPrintTTY(options.IsPrintTTY());
+    m_terminal->SetLogfile(options.GetLogfile());
+    m_terminal->Start(options.GetCommand());
 
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
-    SetLabel(m_options.GetTitle().IsEmpty() ? "codelite-terminal" : m_options.GetTitle());
+    SetLabel(options.GetTitle().IsEmpty() ? "codelite-terminal" : options.GetTitle());
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &MainFrame::OnSetTitle, this);
 }
@@ -44,9 +47,20 @@ void MainFrame::OnTerminalExit(clCommandEvent& event)
     CallAfter(&MainFrame::DoClose);
 }
 
-void MainFrame::DoClose() { wxExit(); }
+void MainFrame::DoClose()
+{
+    wxTerminalOptions::Get().Save();
+    wxTheApp->ExitMainLoop();
+}
 
-void MainFrame::OnSettings(wxCommandEvent& event) {}
+void MainFrame::OnSettings(wxCommandEvent& event)
+{
+    SettingsDlg dlg(this);
+    if(dlg.ShowModal() == wxID_OK) {
+        dlg.Save();
+        m_terminal->ReloadSettings();
+    }
+}
 
 void MainFrame::OnClose(wxCloseEvent& event)
 {

@@ -1,14 +1,12 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 #include "wxcrafter.h"
-#include "wxTerminalOptions.h"
 #include <cl_command_event.h>
 
 class wxTerminalCtrl;
 class MainFrame : public MainFrameBaseClass
 {
     wxTerminalCtrl* m_terminal = nullptr;
-    wxTerminalOptions& m_options;
 
 protected:
     virtual void OnClose(wxCloseEvent& event);
@@ -16,7 +14,7 @@ protected:
     void DoClose();
 
 public:
-    MainFrame(wxWindow* parent, wxTerminalOptions& options);
+    MainFrame(wxWindow* parent);
     virtual ~MainFrame();
 
     void OnExit(wxCommandEvent& event);

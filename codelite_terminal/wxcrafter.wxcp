@@ -76,7 +76,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Enable Window Persistency:",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
@@ -625,7 +625,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Enable Window Persistency:",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
@@ -890,14 +890,7 @@
 											"m_label":	"Value:",
 											"colour":	"(255,255,255)"
 										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_COLOURPICKER_CHANGED",
-											"m_eventClass":	"wxColourPickerEvent",
-											"m_eventHandler":	"wxColourPickerEventHandler",
-											"m_functionNameAndSignature":	"OnFGColour(wxColourPickerEvent& event)",
-											"m_description":	"The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
-											"m_noBody":	false
-										}],
+									"m_events":	[],
 									"m_children":	[]
 								}, {
 									"m_type":	4405,
@@ -1043,14 +1036,7 @@
 											"m_label":	"Value:",
 											"colour":	"(32,32,32)"
 										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_COLOURPICKER_CHANGED",
-											"m_eventClass":	"wxColourPickerEvent",
-											"m_eventHandler":	"wxColourPickerEventHandler",
-											"m_functionNameAndSignature":	"OnBGColour(wxColourPickerEvent& event)",
-											"m_description":	"The user changed the colour selected in the control either using the button or using text control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's input is valid, i.e. recognizable).",
-											"m_noBody":	false
-										}],
+									"m_events":	[],
 									"m_children":	[]
 								}, {
 									"m_type":	4405,
@@ -1190,16 +1176,9 @@
 										}, {
 											"type":	"font",
 											"m_label":	"Value:",
-											"m_value":	"wxSYS_ANSI_FIXED_FONT,normal,normal,normal"
+											"m_value":	""
 										}],
-									"m_events":	[{
-											"m_eventName":	"wxEVT_COMMAND_FONTPICKER_CHANGED",
-											"m_eventClass":	"wxFontPickerEvent",
-											"m_eventHandler":	"wxFontPickerEventHandler",
-											"m_functionNameAndSignature":	"OnFontSelected(wxFontPickerEvent& event)",
-											"m_description":	"Generated whenever the selected font changes.",
-											"m_noBody":	false
-										}],
+									"m_events":	[],
 									"m_children":	[]
 								}]
 						}, {

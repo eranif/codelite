@@ -122,7 +122,7 @@ public:
     virtual ~wxTerminalCtrl();
 
     wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
-
+    void ReloadSettings();
     void SetTitle(const wxString& title);
     void SetPrintTTY(bool printTTY) { this->m_printTTY = printTTY; }
     bool IsPrintTTY() const { return m_printTTY; }

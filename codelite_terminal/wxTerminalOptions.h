@@ -2,6 +2,7 @@
 #define WXTERMINALOPTIONS_H
 
 #include <wx/string.h>
+#include "JSON.h"
 
 enum eTerminalOptions {
     kPrintTTY = (1 << 0),
@@ -16,6 +17,11 @@ class wxTerminalOptions
     wxString m_command;
     wxString m_logfile;
 
+    // seriliazable fields
+    wxFont m_font;
+    wxColour m_bgColour;
+    wxColour m_textColour;
+
 protected:
     void EnableFlag(bool b, eTerminalOptions flag)
     {
@@ -29,17 +35,32 @@ protected:
 public:
     wxTerminalOptions();
     ~wxTerminalOptions();
+    
+    static wxTerminalOptions& Get();
+    wxTerminalOptions& Load();
+    wxTerminalOptions& Save();
+    
     wxTerminalOptions& SetFlags(size_t flags)
     {
         this->m_flags = flags;
         return *this;
     }
+    
+    void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
+    void SetFont(const wxFont& font) { this->m_font = font; }
+    void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
+    const wxColour& GetBgColour() const { return m_bgColour; }
+    const wxFont& GetFont() const { return m_font; }
+    const wxColour& GetTextColour() const { return m_textColour; }
     wxTerminalOptions& SetWorkingDirectory(const wxString& workingDirectory)
     {
         this->m_workingDirectory = workingDirectory;
         return *this;
     }
-
+    
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
+    
     size_t GetFlags() const { return m_flags; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
@@ -54,7 +75,6 @@ public:
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     const wxString& GetCommand() const { return m_command; }
-
     void SetCommandFromFile(const wxString& command);
     
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }

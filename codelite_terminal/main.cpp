@@ -32,14 +32,14 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_OPTION, "d", "working-directory", "Set the working directory", wxCMD_LINE_VAL_STRING,
       wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_OPTION, "c", "command", "Command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "f", "file", "File contains command to execute", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_OPTION, "f", "file", "File contains command to execute", wxCMD_LINE_VAL_STRING,
+      wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_NONE }
 };
 
 // Define the MainApp
 class MainApp : public wxApp
 {
-    wxTerminalOptions m_options;
     clPersistenceManager* m_persistencManager = nullptr;
 
 public:
@@ -49,6 +49,12 @@ public:
     virtual bool OnInit()
     {
         SetAppName("codelite-terminal");
+        wxFileName configDir(clStandardPaths::Get().GetUserDataDir(), "");
+        configDir.AppendDir("config");
+        configDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+        wxTerminalOptions& m_options = wxTerminalOptions::Get();
+
         m_persistencManager = new clPersistenceManager();
         wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
@@ -95,7 +101,7 @@ public:
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        MainFrame* mainFrame = new MainFrame(NULL, m_options);
+        MainFrame* mainFrame = new MainFrame(NULL);
         SetTopWindow(mainFrame);
         return GetTopWindow()->Show();
     }
@@ -104,7 +110,7 @@ public:
 DECLARE_APP(MainApp)
 IMPLEMENT_APP(MainApp)
 
-//int main(int argc, char** argv)
+// int main(int argc, char** argv)
 //{
 //    // MyWxApp derives from wxApp
 //    wxApp::SetInstance(new MainApp());

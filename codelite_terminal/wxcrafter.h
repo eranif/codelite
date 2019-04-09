@@ -37,7 +37,6 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class MainFrameBaseClass : public wxFrame
 {
 protected:
@@ -59,10 +58,11 @@ protected:
 public:
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
-    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_FRAME_STYLE);
+    MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_FRAME_STYLE);
     virtual ~MainFrameBaseClass();
 };
-
 
 class SettingsDlgBase : public wxDialog
 {
@@ -77,10 +77,6 @@ protected:
     wxButton* m_button47;
 
 protected:
-    virtual void OnFGColour(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnBGColour(wxColourPickerEvent& event) { event.Skip(); }
-    virtual void OnFontSelected(wxFontPickerEvent& event) { event.Skip(); }
-
 public:
     wxStaticText* GetStaticText31() { return m_staticText31; }
     wxColourPickerCtrl* GetColourPickerFG() { return m_colourPickerFG; }
@@ -90,7 +86,9 @@ public:
     wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
     wxButton* GetButton45() { return m_button45; }
     wxButton* GetButton47() { return m_button47; }
-    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"),
+                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~SettingsDlgBase();
 };
 

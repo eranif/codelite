@@ -187,10 +187,11 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
             // Execute command
             Run(GetShellCommand());
-            m_echoOff = false;
-            m_textCtrl->SetDefaultStyle(m_preEchoOffAttr);
-            m_preEchoOffAttr = wxTextAttr();
-
+            if(m_echoOff) {
+                m_textCtrl->SetDefaultStyle(m_preEchoOffAttr);
+                m_preEchoOffAttr = wxTextAttr();
+                m_echoOff = false;
+            }
         } else if(event.GetKeyCode() == WXK_HOME || event.GetKeyCode() == WXK_NUMPAD_HOME) {
             m_textCtrl->SetInsertionPoint(m_commandOffset);
 

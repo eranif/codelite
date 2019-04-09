@@ -49,14 +49,14 @@ public:
     virtual bool OnInit()
     {
         SetAppName("codelite-terminal");
-        wxFileName configDir(clStandardPaths::Get().GetUserDataDir(), "");
-        configDir.AppendDir("config");
-        configDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+//        wxFileName configDir(clStandardPaths::Get().GetUserDataDir(), "");
+//        configDir.AppendDir("config");
+//        configDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
         wxTerminalOptions& m_options = wxTerminalOptions::Get();
 
-        m_persistencManager = new clPersistenceManager();
-        wxPersistenceManager::Set(*m_persistencManager);
+        //m_persistencManager = new clPersistenceManager();
+        //wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
         typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");

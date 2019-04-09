@@ -37,26 +37,42 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_NONE }
 };
 
+class MyPersistenceManager : public wxPersistenceManager
+{
+    wxFileConfig* m_config = nullptr;
+
+public:
+    MyPersistenceManager()
+    {
+        wxFileName localFile(wxStandardPaths::Get().GetUserDataDir(), "persistency.ini");
+        m_config = new wxFileConfig("codelite-terminal", "CodeLite", localFile.GetFullPath());
+    }
+
+    ~MyPersistenceManager() { wxDELETE(m_config); }
+    wxConfigBase* GetConfig() const { return m_config; }
+};
+
 // Define the MainApp
 class MainApp : public wxApp
 {
-    clPersistenceManager* m_persistencManager = nullptr;
+    MyPersistenceManager* m_persistency = nullptr;
 
 public:
     MainApp() {}
-    virtual ~MainApp() {}
+    virtual ~MainApp() { wxDELETE(m_persistency); }
 
     virtual bool OnInit()
     {
         SetAppName("codelite-terminal");
-//        wxFileName configDir(clStandardPaths::Get().GetUserDataDir(), "");
-//        configDir.AppendDir("config");
-//        configDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        wxFileName configDir(wxStandardPaths::Get().GetUserDataDir(), "");
+        configDir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
+        m_persistency = new MyPersistenceManager();
+        wxPersistenceManager::Set(*m_persistency);
         wxTerminalOptions& m_options = wxTerminalOptions::Get();
 
-        //m_persistencManager = new clPersistenceManager();
-        //wxPersistenceManager::Set(*m_persistencManager);
+        // m_persistencManager = new clPersistenceManager();
+        // wxPersistenceManager::Set(*m_persistencManager);
 #ifdef __WXMSW__
         typedef BOOL WINAPI (*SetProcessDPIAwareFunc)();
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");

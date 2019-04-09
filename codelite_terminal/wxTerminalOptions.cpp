@@ -3,6 +3,7 @@
 #include <drawingutils.h>
 #include <cl_standard_paths.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 void wxTerminalOptions::SetCommandFromFile(const wxString& command)
 {
@@ -46,7 +47,7 @@ wxTerminalOptions& wxTerminalOptions::Get()
 
 wxTerminalOptions& wxTerminalOptions::Load()
 {
-    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "wxterminalctrl.conf");
+    wxFileName fn(wxStandardPaths::Get().GetUserDataDir(), "wxterminalctrl.conf");
     JSON root(fn);
     if(root.isOk()) { FromJSON(root.toElement()); }
     return *this;
@@ -54,7 +55,7 @@ wxTerminalOptions& wxTerminalOptions::Load()
 
 wxTerminalOptions& wxTerminalOptions::Save()
 {
-    wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "wxterminalctrl.conf");
+    wxFileName fn(wxStandardPaths::Get().GetUserDataDir(), "wxterminalctrl.conf");
     JSON json(ToJSON());
     json.save(fn);
     return *this;

@@ -362,7 +362,9 @@ void wxTerminalCtrl::ReloadSettings()
     wxColour bgColour = wxTerminalOptions::Get().GetBgColour();
     m_textCtrl->SetBackgroundColour(bgColour);
     m_textCtrl->SetForegroundColour(textColour);
-    m_textCtrl->SetDefaultStyle(wxTextAttr(textColour, bgColour, font));
+    ClearScreen();
+    wxTextAttr defaultAttr = wxTextAttr(textColour, bgColour, font);
+    m_textCtrl->SetDefaultStyle(defaultAttr);
+    m_colourHandler.SetDefaultStyle(defaultAttr);
     m_textCtrl->Refresh();
-    CallAfter(&wxTerminalCtrl::ClearScreen);
 }

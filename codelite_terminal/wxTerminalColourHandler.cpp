@@ -278,16 +278,18 @@ void wxTerminalColourHandler::FlushBuffer(wxString& line)
 
 void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
 {
-    m_ctrl->SetInsertionPointEnd();
-    if(attr.GetBackgroundColour().IsOk()) {
-        m_ctrl->SetBackgroundColour(attr.GetBackgroundColour());
-        m_defaultAttr.SetBackgroundColour(attr.GetBackgroundColour());
+    if(m_ctrl) {
+        m_ctrl->SetInsertionPointEnd();
+        if(attr.GetBackgroundColour().IsOk()) {
+            m_ctrl->SetBackgroundColour(attr.GetBackgroundColour());
+            m_defaultAttr.SetBackgroundColour(attr.GetBackgroundColour());
+        }
+        if(attr.GetTextColour().IsOk()) {
+            m_defaultAttr.SetTextColour(attr.GetTextColour());
+            m_ctrl->SetForegroundColour(attr.GetTextColour());
+        }
+        if(attr.GetFont().IsOk()) { m_defaultAttr.SetFont(attr.GetFont()); }
+        m_ctrl->SetDefaultStyle(m_defaultAttr);
+        m_ctrl->Refresh();
     }
-    if(attr.GetTextColour().IsOk()) {
-        m_defaultAttr.SetTextColour(attr.GetTextColour());
-        m_ctrl->SetForegroundColour(attr.GetTextColour());
-    }
-    if(attr.GetFont().IsOk()) { m_defaultAttr.SetFont(attr.GetFont()); }
-    m_ctrl->SetDefaultStyle(m_defaultAttr);
-    m_ctrl->Refresh();
 }

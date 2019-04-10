@@ -14,18 +14,17 @@ enum class eColourHandlerState {
     kFoundCR,  // Found CR
 };
 
+class TextView;
 class wxTerminalCtrl;
 class wxTerminalColourHandler
 {
-    wxTextCtrl* m_ctrl = nullptr;
-    wxTerminalCtrl* m_terminal = nullptr;
+    TextView* m_ctrl = nullptr;
     wxString m_escapeSequence;
     std::unordered_map<int, wxColour> m_colours;
     wxTextAttr m_defaultAttr;
     wxString m_title;
 
 protected:
-    wxTerminalColourHandler();
     eColourHandlerState m_state = eColourHandlerState::kNormal;
     wxColour GetColour(long colour_number);
 
@@ -36,11 +35,11 @@ protected:
     void FlushBuffer(wxString& line);
 
 public:
-    wxTerminalColourHandler(wxTerminalCtrl* ctrl);
+    wxTerminalColourHandler();
     ~wxTerminalColourHandler();
 
     wxTerminalColourHandler& operator<<(const wxString& buffer);
-    void SetCtrl(wxTextCtrl* ctrl);
+    void SetCtrl(TextView* ctrl);
     void SetDefaultStyle(const wxTextAttr& attr);
 };
 

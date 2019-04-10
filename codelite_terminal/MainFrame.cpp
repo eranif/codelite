@@ -17,9 +17,11 @@ MainFrame::MainFrame(wxWindow* parent)
     m_terminal->Start(options.GetCommand());
 
     GetMainPanel()->GetSizer()->Add(m_terminal, 1, wxEXPAND);
+    GetSizer()->Fit(this);
     SetLabel(options.GetTitle().IsEmpty() ? "codelite-terminal" : options.GetTitle());
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &MainFrame::OnSetTitle, this);
+    m_terminal->CallAfter(&wxTerminalCtrl::Focus);
 }
 
 MainFrame::~MainFrame() {}
@@ -59,6 +61,7 @@ void MainFrame::OnSettings(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         dlg.Save();
         m_terminal->ReloadSettings();
+        m_terminal->ClearScreen();
     }
 }
 

@@ -11,6 +11,7 @@
 #include <wx/utils.h>
 #include <wx/ffile.h>
 
+class TextView;
 struct WXDLLIMPEXP_SDK wxTerminalHistory {
     wxArrayString m_commands;
     int m_current = wxNOT_FOUND;
@@ -75,10 +76,9 @@ class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 protected:
     wxExecuteEnv m_env;
     long m_style = 0;
-    wxTextCtrl* m_textCtrl = nullptr;
+    TextView* m_textCtrl = nullptr;
     IProcess* m_shell = nullptr;
     long m_commandOffset = 0;
-    wxTerminalColourHandler m_colourHandler;
     wxTerminalHistory m_history;
     std::unordered_set<long> m_initialProcesses;
     std::string m_pts;      // Unix only
@@ -121,7 +121,6 @@ public:
                 const wxString& name = "terminal");
     virtual ~wxTerminalCtrl();
 
-    wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
     void ReloadSettings();
     void SetTitle(const wxString& title);
     void SetPrintTTY(bool printTTY) { this->m_printTTY = printTTY; }
@@ -171,13 +170,13 @@ public:
      */
     wxString GetPTS() const;
 
-    /**
-     * @brief set default style
-     */
-    void SetDefaultStyle(const wxTextAttr& attr);
-
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
+    
+    /**
+     * @brief set the focus to the text area
+     */
+    void Focus();
 };
 
 #endif // WXTERMINALCTRL_H

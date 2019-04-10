@@ -7,6 +7,7 @@
 #include <wx/wupdlock.h>
 #include <wx/log.h>
 #include "wxTerminalOptions.h"
+#include "TextView.h"
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -36,30 +37,22 @@ static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxC
 ///
 ///---------------------------------------------------------------
 
-wxTerminalCtrl::wxTerminalCtrl()
-    : m_colourHandler(nullptr)
-{
-}
+wxTerminalCtrl::wxTerminalCtrl() {}
 
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecuteEnv& env, const wxPoint& pos,
                                const wxSize& size, long style, const wxString& name)
-    : m_colourHandler(this)
 {
     if(!Create(parent, winid, env, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
-                                wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL);
+    m_textCtrl = new TextView(this);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessStderr, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminalCtrl::OnProcessTerminated, this);
 
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
-    m_textCtrl->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
-
-    // Set default style
-    ReloadSettings();
-    m_colourHandler.SetCtrl(m_textCtrl);
+    GetSizer()->Fit(this);
+    m_textCtrl->GetCtrl()->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
 }
 
 wxTerminalCtrl::~wxTerminalCtrl()
@@ -168,7 +161,7 @@ void wxTerminalCtrl::AppendText(const wxString& text)
         m_log.Write(text);
         m_log.Flush();
     }
-    m_colourHandler << text;
+    m_textCtrl->StyleAndAppend(text);
     m_commandOffset = m_textCtrl->GetLastPosition();
     CallAfter(&wxTerminalCtrl::SetFocus);
 }
@@ -236,7 +229,7 @@ void wxTerminalCtrl::SetCaretAtEnd()
 {
     m_textCtrl->SelectNone();
     m_textCtrl->SetInsertionPointEnd();
-    m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
+    m_textCtrl->CallAfter(&TextView::Focus);
 }
 
 #ifdef __WXMSW__
@@ -322,8 +315,6 @@ void wxTerminalCtrl::DoProcessTerminated()
 
 wxString wxTerminalCtrl::GetPTS() const { return ConvertString(m_pts); }
 
-void wxTerminalCtrl::SetDefaultStyle(const wxTextAttr& attr) { m_colourHandler.SetDefaultStyle(attr); }
-
 void wxTerminalCtrl::Start(const wxString& startupCommand)
 {
     m_startupCommand = startupCommand;
@@ -355,16 +346,6 @@ void wxTerminalCtrl::SetTitle(const wxString& title)
     GetEventHandler()->AddPendingEvent(eventTitle);
 }
 
-void wxTerminalCtrl::ReloadSettings()
-{
-    wxFont font = wxTerminalOptions::Get().GetFont();
-    wxColour textColour = wxTerminalOptions::Get().GetTextColour();
-    wxColour bgColour = wxTerminalOptions::Get().GetBgColour();
-    m_textCtrl->SetBackgroundColour(bgColour);
-    m_textCtrl->SetForegroundColour(textColour);
-    ClearScreen();
-    wxTextAttr defaultAttr = wxTextAttr(textColour, bgColour, font);
-    m_textCtrl->SetDefaultStyle(defaultAttr);
-    m_colourHandler.SetDefaultStyle(defaultAttr);
-    m_textCtrl->Refresh();
-}
+void wxTerminalCtrl::ReloadSettings() { m_textCtrl->ReloadSettings(); }
+
+void wxTerminalCtrl::Focus() { m_textCtrl->Focus(); }

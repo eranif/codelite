@@ -1,5 +1,7 @@
 #include "wxTerminalColourHandler.h"
 #include "wxTerminalCtrl.h"
+#include "TextView.h"
+
 #ifdef __WXMSW__
 #include <windows.h>
 #include <Winuser.h>
@@ -47,12 +49,6 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     m_colours.insert({ 105, wxColour(255, 0, 255) });
     m_colours.insert({ 106, wxColour(0, 255, 255) });
     m_colours.insert({ 107, wxColour(255, 255, 255) });
-}
-
-wxTerminalColourHandler::wxTerminalColourHandler(wxTerminalCtrl* ctrl)
-    : wxTerminalColourHandler()
-{
-    m_terminal = ctrl;
 }
 
 wxTerminalColourHandler::~wxTerminalColourHandler() {}
@@ -152,7 +148,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                     if(m_title.StartsWith("0;")) {
                         // see https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
                         // OSC
-                        m_terminal->SetTitle(m_title.Mid(2)); // Skip the "0;"
+                        // fire event to set the title SetTitle(m_title.Mid(2)); // Skip the "0;"
                     }
                     m_title.Clear();
                 }
@@ -259,7 +255,7 @@ wxTerminalColourHandler& wxTerminalColourHandler::operator<<(const wxString& buf
     return *this;
 }
 
-void wxTerminalColourHandler::SetCtrl(wxTextCtrl* ctrl)
+void wxTerminalColourHandler::SetCtrl(TextView* ctrl)
 {
     Clear();
     m_ctrl = ctrl;

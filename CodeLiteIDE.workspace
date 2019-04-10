@@ -208,7 +208,7 @@
       <Project Name="wxcLib" ConfigName="Release"/>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="CMake_Debug"/>
@@ -333,7 +333,7 @@
       <Project Name="wxcLib" ConfigName="Release"/>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>

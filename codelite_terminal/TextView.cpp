@@ -8,6 +8,9 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                             wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
+#ifdef __WXOSX__
+    m_ctrl->OSXDisableAllSmartSubstitutions();
+#endif
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     ReloadSettings();

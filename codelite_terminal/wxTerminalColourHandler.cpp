@@ -93,7 +93,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                 break;
             case '\n':
                 // Windows style CRLF
-                curline << "\r\n";
+                curline << "\n";
                 FlushBuffer(curline);
                 m_state = eColourHandlerState::kNormal;
                 break;

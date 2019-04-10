@@ -5,7 +5,9 @@
 clConsoleCodeLiteTerminal::clConsoleCodeLiteTerminal()
 {
     wxString cmd = GetBinary();
+#ifndef __WXOSX__
     WrapWithQuotesIfNeeded(cmd);
+#endif
     SetTerminalCommand(wxString() << cmd << " --working-directory=%WD% --file=%COMMANDFILE%");
     SetEmptyTerminalCommand(wxString() << cmd << " --working-directory=%WD%");
 }
@@ -74,8 +76,9 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
     if(homedir.Contains(" ")) { homedir.Prepend("\"").Append("\""); }
     wxString commandToExecute;
     commandToExecute << GetBinary();
+#ifndef __WXOSX__
     WrapWithQuotesIfNeeded(commandToExecute);
-
+#endif
     commandToExecute << " --working-directory=" << homedir << " --command=\"" << sleepCommand << "\"";
     ::wxExecute(commandToExecute);
 
@@ -108,8 +111,15 @@ wxString clConsoleCodeLiteTerminal::GetBinary() const
     codeliteTerminal.SetExt("exe");
 #elif defined(__WXOSX__)
     codeliteTerminal.AppendDir("codelite-terminal.app");
-    codeliteTerminal.AppendDir("Contents");
-    codeliteTerminal.AppendDir("MacOS");
 #endif
+
+#ifdef __WXOSX__
+    wxString cmd = codeliteTerminal.GetPath();
+    cmd = WrapWithQuotesIfNeeded(cmd);
+    cmd.Prepend("/usr/bin/open ");
+    cmd << " --args ";
+    return cmd;
+#else
     return codeliteTerminal.GetFullPath();
+#endif
 }

@@ -50,8 +50,32 @@ if(APPLE)
     install(TARGETS codelite-terminal 
             DESTINATION 
             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
+    CL_INSTALL_NAME_TOOL_STD(
+        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
+        
+    install(TARGETS plugin DESTINATION 
+            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
+    CL_INSTALL_NAME_TOOL_STD(
+        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/libplugin.dylib)
+
+    install(TARGETS libcodelite DESTINATION 
+            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
+    CL_INSTALL_NAME_TOOL_STD(
+        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/liblibcodelite.dylib)
+
+    install(TARGETS wxsqlite3 DESTINATION 
+            ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS)
+    CL_INSTALL_NAME_TOOL_STD(
+        ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/libwxsqlite3.dylib)
+
     # @executable_path/../../../
-    CL_INSTALL_NAME_TOOL_EX("libwx_" "@executable_path/../../../" 
+    CL_INSTALL_NAME_TOOL_EX("libwx" "@executable_path" 
+                ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
+    CL_INSTALL_NAME_TOOL_EX("libwxsqlite3" "@executable_path" 
+                ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
+    CL_INSTALL_NAME_TOOL_EX("liblibcodelite" "@executable_path" 
+                ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
+    CL_INSTALL_NAME_TOOL_EX("libplugin" "@executable_path" 
                 ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-terminal.app/Contents/MacOS/codelite-terminal)
 else()
     install(TARGETS codelite-terminal DESTINATION ${CL_PREFIX}/bin)

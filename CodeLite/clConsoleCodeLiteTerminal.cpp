@@ -106,6 +106,10 @@ wxString clConsoleCodeLiteTerminal::GetBinary() const
     wxFileName codeliteTerminal(clStandardPaths::Get().GetBinFolder(), "codelite-terminal");
 #ifdef __WXMSW__
     codeliteTerminal.SetExt("exe");
+#elif defined(__WXOSX__)
+    codeliteTerminal.AppendDir("codelite-terminal.app");
+    codeliteTerminal.AppendDir("Contents");
+    codeliteTerminal.AppendDir("MacOS");
 #endif
     return codeliteTerminal.GetFullPath();
 }

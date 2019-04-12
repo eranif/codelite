@@ -91,6 +91,7 @@ protected:
     wxString m_startupCommand;
     wxString m_logfile;
     wxFFile m_log;
+    wxString m_ttyfile;
 
 protected:
     void PostCreate();
@@ -123,7 +124,11 @@ public:
 
     void ReloadSettings();
     void SetTitle(const wxString& title);
-    void SetPrintTTY(bool printTTY) { this->m_printTTY = printTTY; }
+    void SetPrintTTY(bool printTTY, const wxString& ttyfile)
+    {
+        this->m_printTTY = printTTY;
+        this->m_ttyfile = ttyfile;
+    }
     bool IsPrintTTY() const { return m_printTTY; }
 
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
@@ -172,7 +177,7 @@ public:
 
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
-    
+
     /**
      * @brief set the focus to the text area
      */

@@ -25,9 +25,9 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
     { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_SWITCH, "w", "wait", "Wait for any key to be pressed before exiting", wxCMD_LINE_VAL_STRING,
       wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH, "p", "print-tty", "Print the terminals tty (*nix only)", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
     // Options
+    { wxCMD_LINE_OPTION, "p", "print-tty", "Print the terminals tty (*nix only) into file", wxCMD_LINE_VAL_STRING,
+      wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_OPTION, "t", "title", "Set the console title", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
     { wxCMD_LINE_OPTION, "d", "working-directory", "Set the working directory", wxCMD_LINE_VAL_STRING,
       wxCMD_LINE_PARAM_OPTIONAL },
@@ -98,6 +98,8 @@ public:
                 m_options.SetTitle(title);
             } else if(arg.StartsWith("--print-tty")) {
                 m_options.SetPrintTTY(true);
+                wxString ttyfile = arg.AfterFirst('=');
+                m_options.SetTtyfile(ttyfile);
             } else if(arg.StartsWith("--working-directory")) {
                 wxString wd = arg.AfterFirst('=');
                 m_options.SetWorkingDirectory(wd);

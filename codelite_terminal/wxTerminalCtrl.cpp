@@ -8,6 +8,7 @@
 #include <wx/log.h>
 #include "wxTerminalOptions.h"
 #include "TextView.h"
+#include <fileutils.h>
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
 #include <termios.h>
@@ -103,7 +104,10 @@ void wxTerminalCtrl::PostCreate()
         }
 #endif
         if(m_style & wxTERMINAL_CTRL_USE_EVENTS) { GetEventHandler()->AddPendingEvent(readyEvent); }
-        if(IsPrintTTY()) { std::cout << "codelite-terminal: tty=" << GetPTS() << std::endl; }
+        if(IsPrintTTY()) {
+            //  Write the tty into a file
+            FileUtils::WriteFileContent(wxFileName(m_ttyfile), GetPTS());
+        }
     }
 
     // Keep a list of initial processes that we DONT want to kill

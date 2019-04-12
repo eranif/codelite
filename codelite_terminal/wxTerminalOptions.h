@@ -16,7 +16,7 @@ class wxTerminalOptions
     wxString m_title;
     wxString m_command;
     wxString m_logfile;
-
+    wxString m_ttyfile;
     // seriliazable fields
     wxFont m_font;
     wxColour m_bgColour;
@@ -35,16 +35,19 @@ protected:
 public:
     wxTerminalOptions();
     ~wxTerminalOptions();
-    
+
     static wxTerminalOptions& Get();
     wxTerminalOptions& Load();
     wxTerminalOptions& Save();
-    
+
     wxTerminalOptions& SetFlags(size_t flags)
     {
         this->m_flags = flags;
         return *this;
     }
+
+    void SetTtyfile(const wxString& ttyfile) { this->m_ttyfile = ttyfile; }
+    const wxString& GetTtyfile() const { return m_ttyfile; }
     
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetFont(const wxFont& font) { this->m_font = font; }
@@ -57,10 +60,10 @@ public:
         this->m_workingDirectory = workingDirectory;
         return *this;
     }
-    
+
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
     size_t GetFlags() const { return m_flags; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 
@@ -76,7 +79,7 @@ public:
     void SetCommand(const wxString& command) { this->m_command = command; }
     const wxString& GetCommand() const { return m_command; }
     void SetCommandFromFile(const wxString& command);
-    
+
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
 };

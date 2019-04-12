@@ -79,12 +79,17 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
 #ifndef __WXOSX__
     WrapWithQuotesIfNeeded(commandToExecute);
 #endif
-    commandToExecute << " --working-directory=" << homedir << " --command=\"" << sleepCommand << "\"";
-    ::wxExecute(commandToExecute);
+    wxFileName tmpfile("/tmp", "codelite-terminal.txt");
+    tmpfile.SetFullName(wxString() << "codelite-terminal." << secondsToSleep << ".txt");
+
+    commandToExecute << " --print-tty=" << tmpfile.GetFullPath() << " --working-directory=" << homedir
+                     << " --command=\"" << sleepCommand << "\"";
+    m_pid = ::wxExecute(commandToExecute);
 
     // Let it start ... (wait for it up to 5 seconds)
     for(size_t i = 0; i < 100; ++i) {
-        if(FindProcessByCommand(sleepCommand, m_tty, m_pid)) {
+        if(tmpfile.FileExists()) {
+            FileUtils::ReadFileContent(tmpfile.GetFullPath(), m_tty);
             // On GTK, redirection to TTY does not work with lldb
             // as a workaround, we create a symlink with different name
 

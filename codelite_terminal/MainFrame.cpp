@@ -12,7 +12,7 @@ MainFrame::MainFrame(wxWindow* parent)
     m_terminal = new wxTerminalCtrl(GetMainPanel());
     m_terminal->SetWorkingDirectory(options.GetWorkingDirectory());
     m_terminal->SetPauseOnExit(options.IsWaitOnExit());
-    m_terminal->SetPrintTTY(options.IsPrintTTY());
+    m_terminal->SetPrintTTY(options.IsPrintTTY(), options.GetTtyfile());
     m_terminal->SetLogfile(options.GetLogfile());
     m_terminal->Start(options.GetCommand());
 
@@ -22,6 +22,7 @@ MainFrame::MainFrame(wxWindow* parent)
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_DONE, &MainFrame::OnTerminalExit, this);
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &MainFrame::OnSetTitle, this);
     m_terminal->CallAfter(&wxTerminalCtrl::Focus);
+    PostSizeEvent();
 }
 
 MainFrame::~MainFrame() {}

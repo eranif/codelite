@@ -52,6 +52,8 @@ void MainFrame::OnTerminalExit(clCommandEvent& event)
 
 void MainFrame::DoClose()
 {
+    const wxTerminalHistory& history = m_terminal->GetHistory();
+    wxTerminalOptions::Get().SetHistory(history.GetCommands());
     wxTerminalOptions::Get().Save();
     wxTheApp->ExitMainLoop();
 }

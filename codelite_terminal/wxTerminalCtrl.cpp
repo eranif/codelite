@@ -54,6 +54,9 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     Bind(wxEVT_CHAR_HOOK, &wxTerminalCtrl::OnKeyDown, this);
     GetSizer()->Fit(this);
     m_textCtrl->GetCtrl()->Bind(wxEVT_LEFT_DOWN, &wxTerminalCtrl::OnLeftDown, this);
+
+    // load the commands from the configurationk file
+    m_history.SetCommands(wxTerminalOptions::Get().GetHistory());
 }
 
 wxTerminalCtrl::~wxTerminalCtrl()
@@ -123,7 +126,7 @@ void wxTerminalCtrl::Run(const wxString& command)
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");
-        if(!command.empty()) { m_history.Add(command); }
+        if(!command.empty() && (command != "exit")) { m_history.Add(command); }
     }
 }
 

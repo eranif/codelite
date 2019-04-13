@@ -47,6 +47,13 @@ struct WXDLLIMPEXP_SDK wxTerminalHistory {
         m_current = wxNOT_FOUND;
         m_commands.clear();
     }
+
+    const wxArrayString& GetCommands() const { return m_commands; }
+    void SetCommands(const wxArrayString& commands)
+    {
+        m_commands = commands;
+        m_current = wxNOT_FOUND;
+    }
 };
 
 // Styles
@@ -136,6 +143,8 @@ public:
 
     void SetPauseOnExit(bool pauseOnExit) { this->m_pauseOnExit = pauseOnExit; }
     bool IsPauseOnExit() const { return m_pauseOnExit; }
+
+    const wxTerminalHistory& GetHistory() const { return m_history; }
 
     /**
      * @brief start the terminal

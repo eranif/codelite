@@ -21,6 +21,7 @@ class wxTerminalOptions
     wxFont m_font;
     wxColour m_bgColour;
     wxColour m_textColour;
+    wxArrayString m_history;
 
 protected:
     void EnableFlag(bool b, eTerminalOptions flag)
@@ -48,7 +49,7 @@ public:
 
     void SetTtyfile(const wxString& ttyfile) { this->m_ttyfile = ttyfile; }
     const wxString& GetTtyfile() const { return m_ttyfile; }
-    
+
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetFont(const wxFont& font) { this->m_font = font; }
     void SetTextColour(const wxColour& textColour) { this->m_textColour = textColour; }
@@ -82,6 +83,9 @@ public:
 
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
+    
+    void SetHistory(const wxArrayString& history) ;
+    const wxArrayString& GetHistory() const { return m_history; }
 };
 
 #endif // WXTERMINALOPTIONS_H

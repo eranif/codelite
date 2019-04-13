@@ -28,6 +28,7 @@ void wxTerminalOptions::FromJSON(const JSONItem& json)
     m_font = json.namedObject("font").toFont(m_font);
     m_bgColour = json.namedObject("bgColour").toColour(m_bgColour);
     m_textColour = json.namedObject("textColour").toColour(m_textColour);
+    m_history = json.namedObject("history").toArrayString();
 }
 
 JSONItem wxTerminalOptions::ToJSON() const
@@ -36,6 +37,7 @@ JSONItem wxTerminalOptions::ToJSON() const
     json.addProperty("font", m_font);
     json.addProperty("bgColour", m_bgColour);
     json.addProperty("textColour", m_textColour);
+    json.addProperty("history", m_history);
     return json;
 }
 
@@ -59,4 +61,13 @@ wxTerminalOptions& wxTerminalOptions::Save()
     JSON json(ToJSON());
     json.save(fn);
     return *this;
+}
+
+void wxTerminalOptions::SetHistory(const wxArrayString& history)
+{
+    if(history.size() > 501) {
+        m_history = wxArrayString(history.begin(), history.begin() + 500);
+    } else {
+        m_history = history;
+    }
 }

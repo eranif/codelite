@@ -1,6 +1,8 @@
 #include "clConsoleCodeLiteTerminal.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
+#include "procutils.h"
+#include "file_logger.h"
 
 clConsoleCodeLiteTerminal::clConsoleCodeLiteTerminal()
 {
@@ -105,6 +107,29 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
         }
         wxThread::Sleep(50);
     }
+#ifdef __WXOSX__
+    // on OSX, wxExecute return the PID of the open command
+    // we want the sleep command PID (when we kill the 'sleep' the terminal will 
+    // close itself)
+    m_pid = wxNOT_FOUND;
+    wxString psCommand;
+    psCommand << "ps -A -o pid,command";
+    wxString psOutput = ProcUtils::SafeExecuteCommand(psCommand);
+    clDEBUG1() << "ps command output:\n" << psOutput;
+    wxArrayString lines = ::wxStringTokenize(psOutput, "\n", wxTOKEN_STRTOK);
+    for(size_t u = 0; u < lines.GetCount(); ++u) {
+        wxString l = lines.Item(u);
+        l.Trim().Trim(false);
+        if(l.Contains("sleep") && l.Contains(secondsToSleep) && !l.Contains("codelite-terminal")) {
+            // we got a match
+            wxString ppidString = l.BeforeFirst(' ');
+            ppidString.ToCLong(&m_pid);
+            clDEBUG() << "codelite-terminal process ID is:" << m_pid;
+            break;
+        }
+    }
+#endif
+
     return !m_tty.IsEmpty();
 #endif
 }

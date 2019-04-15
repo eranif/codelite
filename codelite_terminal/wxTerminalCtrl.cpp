@@ -46,6 +46,7 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
     if(!Create(parent, winid, env, pos, size, style)) { return; }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_textCtrl = new TextView(this);
+    m_textCtrl->SetSink(this);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminalCtrl::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_STDERR, &wxTerminalCtrl::OnProcessStderr, this);
@@ -343,14 +344,6 @@ void wxTerminalCtrl::CheckInsertionPoint()
 {
     int pos = m_textCtrl->GetInsertionPoint();
     m_textCtrl->SetEditable(pos >= m_commandOffset);
-}
-
-void wxTerminalCtrl::SetTitle(const wxString& title)
-{
-    clCommandEvent eventTitle(wxEVT_TERMINAL_CTRL_SET_TITLE);
-    eventTitle.SetString(title);
-    eventTitle.SetEventObject(this);
-    GetEventHandler()->AddPendingEvent(eventTitle);
 }
 
 void wxTerminalCtrl::ReloadSettings() { m_textCtrl->ReloadSettings(); }

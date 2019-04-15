@@ -130,7 +130,6 @@ public:
     virtual ~wxTerminalCtrl();
 
     void ReloadSettings();
-    void SetTitle(const wxString& title);
     void SetPrintTTY(bool printTTY, const wxString& ttyfile)
     {
         this->m_printTTY = printTTY;

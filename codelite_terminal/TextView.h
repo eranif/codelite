@@ -8,16 +8,18 @@
 
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
-    // wxStyledTextCtrl* m_ctrl = nullptr;
     wxTextCtrl* m_ctrl = nullptr;
     wxTerminalColourHandler m_colourHandler;
+    wxEvtHandler* m_sink = nullptr;
 
 public:
     TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
     virtual ~TextView();
     void Focus();
     wxWindow* GetCtrl() { return m_ctrl; }
-    
+    void SetSink(wxEvtHandler* sink) { this->m_sink = sink; }
+    wxEvtHandler* GetSink() { return m_sink; }
+
     // API
     void AppendText(const wxString& buffer);
     void StyleAndAppend(const wxString& buffer);

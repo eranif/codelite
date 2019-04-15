@@ -149,6 +149,12 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
                         // see https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences
                         // OSC
                         // fire event to set the title SetTitle(m_title.Mid(2)); // Skip the "0;"
+                        if(m_ctrl->GetSink()) {
+                            clCommandEvent eventTitle(wxEVT_TERMINAL_CTRL_SET_TITLE);
+                            eventTitle.SetString(m_title.Mid(2));
+                            eventTitle.SetEventObject(m_ctrl->GetSink());
+                            m_ctrl->GetSink()->AddPendingEvent(eventTitle);
+                        }
                     }
                     m_title.Clear();
                 }

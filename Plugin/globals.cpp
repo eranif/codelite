@@ -2121,18 +2121,6 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
     if(!win || !win->GetParent()) { return; }
-    
-    wxSize dialogSize = wxSize(1000, 800);
-    double factor = 1.0;
-    wxSize screenSize = clGetDisplaySize();
-    if(screenSize.GetWidth() > 1920) {
-        // More than FullHD screen
-        factor = (double)screenSize.GetWidth() / (double)1920;
-        dialogSize.SetWidth(factor * (double)dialogSize.GetWidth());
-        dialogSize.SetHeight(factor * (double)dialogSize.GetHeight());
-    }
-
-    win->SetSizeHints(dialogSize);
-    win->SetSize(dialogSize);
-    win->CenterOnParent();
+    win->GetSizer()->Fit(win);
+    win->CentreOnParent();
 }

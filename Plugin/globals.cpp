@@ -79,6 +79,7 @@
 #include <wx/xrc/xmlres.h>
 #include <wx/zipstrm.h>
 #include "StringUtils.h"
+#include "windowattrmanager.h"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -2105,7 +2106,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
 
     if(!tlw || !parentTlw) { return; }
-    
+
     wxRect frameSize = parentTlw->GetSize();
     frameSize.Deflate(100);
     tlw->SetSizeHints(frameSize.GetSize());
@@ -2120,7 +2121,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
 void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
-    if(!win || !win->GetParent()) { return; }
-    win->GetSizer()->Fit(win);
-    win->CentreOnParent();
+    if(!win) { return; }
+    WindowAttrManager::Load(win);
+    if(win->GetParent()) { win->CentreOnParent(); }
 }

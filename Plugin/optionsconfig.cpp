@@ -129,7 +129,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_workspaceTabsDirection(wxUP)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
-    , m_nbTabHeight(nbTabHt_Medium)
+    , m_nbTabHeight(nbTabHt_Tall)
     , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);

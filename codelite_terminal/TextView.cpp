@@ -6,11 +6,31 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_ctrl = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
+#if USE_STC
+    m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
+    m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
+    int caretSlop = 1;
+    int caretZone = 20;
+    int caretStrict = 0;
+    int caretEven = 0;
+    int caretJumps = 0;
+    m_ctrl->SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
+
+    caretSlop = 1;
+    caretZone = 2;
+    caretStrict = 4;
+    caretEven = 8;
+    caretJumps = 0;
+    m_ctrl->SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
+#else
+    m_ctrl = new TextCtrl_t(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                             wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
-#ifdef __WXOSX__
+#endif
+
+#if defined(__WXOSX__) && !USE_STC
     m_ctrl->OSXDisableAllSmartSubstitutions();
 #endif
+
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
     ReloadSettings();
@@ -55,6 +75,25 @@ void TextView::SetEditable(bool b) { m_ctrl->SetEditable(b); }
 
 void TextView::ReloadSettings()
 {
+#if USE_STC
+    wxFont font = wxTerminalOptions::Get().GetFont();
+    wxColour textColour = wxTerminalOptions::Get().GetTextColour();
+    wxColour bgColour = wxTerminalOptions::Get().GetBgColour();
+    SetBackgroundColour(bgColour);
+    SetForegroundColour(textColour);
+    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        m_ctrl->StyleSetBackground(i, bgColour);
+        m_ctrl->StyleSetForeground(i, textColour);
+        m_ctrl->StyleSetFont(i, font);
+    }
+    m_ctrl->SetCaretForeground(textColour);
+    m_ctrl->SetBackgroundColour(bgColour);
+    m_ctrl->SetForegroundColour(textColour);
+    wxTextAttr defaultAttr = wxTextAttr(textColour, bgColour, font);
+    SetDefaultStyle(defaultAttr);
+    m_colourHandler.SetDefaultStyle(defaultAttr);
+    m_ctrl->Refresh();
+#else
     wxFont font = wxTerminalOptions::Get().GetFont();
     wxColour textColour = wxTerminalOptions::Get().GetTextColour();
     wxColour bgColour = wxTerminalOptions::Get().GetBgColour();
@@ -66,8 +105,42 @@ void TextView::ReloadSettings()
     SetDefaultStyle(defaultAttr);
     m_colourHandler.SetDefaultStyle(defaultAttr);
     m_ctrl->Refresh();
+#endif
 }
 
 void TextView::StyleAndAppend(const wxString& buffer) { m_colourHandler << buffer; }
 
 void TextView::Focus() { m_ctrl->SetFocus(); }
+
+void TextView::ShowCommandLine()
+{
+#if USE_STC
+    m_ctrl->SetSelection(m_ctrl->GetLastPosition(), m_ctrl->GetLastPosition());
+    m_ctrl->EnsureCaretVisible();
+#else
+    m_ctrl->ScrollLines(m_ctrl->GetNumberOfLines());
+#endif
+}
+
+void TextView::SetCommand(long from, const wxString& command)
+{
+#if USE_STC
+    m_ctrl->SetSelection(from, GetLastPosition());
+    m_ctrl->ReplaceSelection(command);
+#else
+    m_ctrl->Replace(from, GetLastPosition(), command);
+#endif
+}
+
+void TextView::SetCaretEnd()
+{
+#if USE_STC
+    m_ctrl->SetSelection(GetLastPosition(), GetLastPosition());
+    m_ctrl->SetCurrentPos(GetLastPosition());
+    m_ctrl->SetFocus();
+#else
+    SelectNone();
+    SetInsertionPointEnd();
+    CallAfter(&TextView::Focus);
+#endif
+}

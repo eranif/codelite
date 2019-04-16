@@ -229,15 +229,13 @@ wxString wxTerminalCtrl::GetShellCommand() const
 void wxTerminalCtrl::SetShellCommand(const wxString& command)
 {
     if(command.IsEmpty()) { return; }
-    m_textCtrl->Replace(m_commandOffset, m_textCtrl->GetLastPosition(), command);
+    m_textCtrl->SetCommand(m_commandOffset, command);
     CallAfter(&wxTerminalCtrl::SetCaretAtEnd);
 }
 
 void wxTerminalCtrl::SetCaretAtEnd()
 {
-    m_textCtrl->SelectNone();
-    m_textCtrl->SetInsertionPointEnd();
-    m_textCtrl->CallAfter(&TextView::Focus);
+    m_textCtrl->SetCaretEnd();
 }
 
 #ifdef __WXMSW__

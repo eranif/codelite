@@ -2,7 +2,7 @@
 <CodeLite_Project Name="codelite_terminal" InternalType="GUI" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00030001N0005Debug0000000000000001N0011Debug_Linux0000000000000001N0007Release000000000000]]>
+      <![CDATA[00040001N0005Debug0000000000000001N0011Debug_Linux0000000000000001N0016Debug_Linux_GTK30000000000000001N0007Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -149,6 +149,53 @@
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[LD_LIBRARY_PATH=/home/eran/root/lib/codelite:$LD_LIBRARY_PATH]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths>/home/eran/devl/wx295/build</DebuggerSearchPaths>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Debug_Linux_GTK3" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;`/home/eran/devl/wxWidgets/build-release-gtk3/wx-config --cflags --debug`" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../Plugin"/>
+      </Compiler>
+      <Linker Options="`/home/eran/devl/wxWidgets/build-release-gtk3/wx-config --libs std,stc,aui --debug`;" Required="yes">
+        <LibraryPath Value="/home/eran/devl/codelite/build-release-gtk3/lib"/>
+        <Library Value="util"/>
+        <Library Value="liblibcodelite.so"/>
+        <Library Value="libplugin.so"/>
+      </Linker>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/codelite-terminal" IntermediateDirectory="./DebugGTK3" Command="/home/eran/devl/codelite/codelite_terminal/$(IntermediateDirectory)/codelite-terminal" CommandArguments="--file=/tmp/CodeLite/codelite-terminal.txt --print-tty=/tmp/cl-tty.txt" UseSeparateDebugArgs="no" DebugArguments="--file=/tmp/CodeLite/codelite-terminal.txt --print-tty=/tmp/cl-tty.txt" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[LD_LIBRARY_PATH=/home/eran/devl/wxWidgets/build-release-gtk3:/home/eran/devl/codelite/build-release-gtk3/lib:$LD_LIBRARY_PATH
+PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths>/home/eran/devl/wx295/build</DebuggerSearchPaths>

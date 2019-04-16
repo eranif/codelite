@@ -16,7 +16,7 @@ enum class eColourHandlerState {
 
 class TextView;
 class wxTerminalCtrl;
-class wxTerminalColourHandler
+class wxTerminalColourHandler : public wxEvtHandler
 {
     TextView* m_ctrl = nullptr;
     wxString m_escapeSequence;
@@ -27,7 +27,8 @@ class wxTerminalColourHandler
 protected:
     eColourHandlerState m_state = eColourHandlerState::kNormal;
     wxColour GetColour(long colour_number);
-
+    void SetCaretEnd();
+    
 protected:
     void Append(const wxString& buffer);
     void SetStyleFromEscape(const wxString& escape);

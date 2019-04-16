@@ -6,9 +6,17 @@
 #include "codelite_exports.h"
 #include "wxTerminalColourHandler.h"
 
+#define USE_STC 1
+
+#if USE_STC
+typedef wxStyledTextCtrl TextCtrl_t;
+#else
+typedef wxTextCtrl TextCtrl_t;
+#endif
+
 class WXDLLIMPEXP_SDK TextView : public wxWindow
 {
-    wxTextCtrl* m_ctrl = nullptr;
+    TextCtrl_t* m_ctrl = nullptr;
     wxTerminalColourHandler m_colourHandler;
     wxEvtHandler* m_sink = nullptr;
 
@@ -40,6 +48,9 @@ public:
     void Replace(long from, long to, const wxString& replaceWith);
     wxString GetLineText(int lineNumber) const;
     void ReloadSettings();
+    void ShowCommandLine();
+    void SetCommand(long from, const wxString& command);
+    void SetCaretEnd();
 };
 
 #endif // TEXTVIEW_H

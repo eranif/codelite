@@ -5,8 +5,13 @@
 #include <wx/stc/stc.h>
 #include "codelite_exports.h"
 #include "wxTerminalColourHandler.h"
+#include <wxStringHash.h>
 
+#ifdef __WXGTK3__
 #define USE_STC 1
+#else
+#define USE_STC 0
+#endif
 
 #if USE_STC
 typedef wxStyledTextCtrl TextCtrl_t;
@@ -19,6 +24,12 @@ class WXDLLIMPEXP_SDK TextView : public wxWindow
     TextCtrl_t* m_ctrl = nullptr;
     wxTerminalColourHandler m_colourHandler;
     wxEvtHandler* m_sink = nullptr;
+    wxTextAttr m_defaultAttr;
+    std::unordered_map<wxString, int> m_styles;
+    int m_nextStyle = 0;
+
+protected:
+    int GetCurrentStyle();
 
 public:
     TextView(wxWindow* parent, wxWindowID winid = wxNOT_FOUND);
@@ -53,6 +64,7 @@ public:
     void SetCaretEnd();
     void Truncate();
     wxChar GetLastChar() const;
+    void Clear();
 };
 
 #endif // TEXTVIEW_H

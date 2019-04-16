@@ -10,6 +10,9 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
     m_ctrl->SetYCaretPolicy(wxSTC_CARET_STRICT | wxSTC_CARET_SLOP, 4);
+    m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
+    m_ctrl->StartStyling(0);
+    m_ctrl->SetWrapMode(wxSTC_WRAP_CHAR);
 #else
     m_ctrl = new TextCtrl_t(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                             wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
@@ -27,7 +30,13 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
 
 TextView::~TextView() {}
 
-void TextView::AppendText(const wxString& buffer) { m_ctrl->AppendText(buffer); }
+void TextView::AppendText(const wxString& buffer)
+{
+    m_ctrl->AppendText(buffer);
+#if USE_STC
+    m_ctrl->SetStyling(buffer.Length(), GetCurrentStyle());
+#endif
+}
 
 long TextView::GetLastPosition() const { return m_ctrl->GetLastPosition(); }
 
@@ -47,9 +56,24 @@ void TextView::SetInsertionPointEnd() { m_ctrl->SetInsertionPointEnd(); }
 
 int TextView::GetNumberOfLines() const { return m_ctrl->GetNumberOfLines(); }
 
-void TextView::SetDefaultStyle(const wxTextAttr& attr) { m_ctrl->SetDefaultStyle(attr); }
+void TextView::SetDefaultStyle(const wxTextAttr& attr)
+{
+#if USE_STC
+    m_defaultAttr = attr;
+    m_ctrl->StartStyling(m_ctrl->GetLastPosition());
+#else
+    m_ctrl->SetDefaultStyle(attr);
+#endif
+}
 
-wxTextAttr TextView::GetDefaultStyle() const { return m_ctrl->GetDefaultStyle(); }
+wxTextAttr TextView::GetDefaultStyle() const
+{
+#if USE_STC
+    return m_defaultAttr;
+#else
+    return m_ctrl->GetDefaultStyle();
+#endif
+}
 
 bool TextView::IsEditable() const { return m_ctrl->IsEditable(); }
 
@@ -149,16 +173,39 @@ wxChar TextView::GetLastChar() const
 #if USE_STC
     return m_ctrl->GetCharAt(m_ctrl->GetLastPosition());
 #else
-    wxString text = m_ctrl->GetRange(lastPos - 1, lastPos);
-    if(text[0] != '\n') {
-        // we dont have a complete line here
-        // read the last line into the buffer and clear the line
-        long x, y;
-        m_ctrl->PositionToXY(lastPos, &x, &y);
-        long newpos = m_ctrl->XYToPosition(0, y);
-        curline = m_ctrl->GetRange(newpos, lastPos);
-        m_ctrl->Remove(newpos, lastPos);
-        m_ctrl->SetInsertionPoint(newpos);
-    }
+    wxString text = m_ctrl->GetRange(m_ctrl->GetLastPosition() - 1, m_ctrl->GetLastPosition());
+    return text[0];
+#endif
+}
+
+int TextView::GetCurrentStyle()
+{
+#if USE_STC
+#if 0
+    wxString key;
+    wxFont f = m_defaultAttr.GetFont();
+    const wxColour& bg = m_defaultAttr.GetBackgroundColour();
+    const wxColour& textColour = m_defaultAttr.GetTextColour();
+    key << bg.GetAsString() << ":" << textColour.GetAsString() << ":" << (f.GetWeight() == wxFONTWEIGHT_BOLD);
+    if(m_styles.count(key)) { return m_styles[key]; }
+    ++m_nextStyle;
+
+    m_ctrl->StyleSetBackground(m_nextStyle, bg);
+    m_ctrl->StyleSetForeground(m_nextStyle, textColour);
+    m_ctrl->StyleSetFont(m_nextStyle, f);
+    return m_nextStyle;
+#endif
+    return 0;
+#else
+    return wxNOT_FOUND;
+#endif
+}
+
+void TextView::Clear()
+{
+#if USE_STC
+    m_ctrl->ClearAll();
+    m_ctrl->ClearDocumentStyle();
+    m_ctrl->StartStyling(0);
 #endif
 }

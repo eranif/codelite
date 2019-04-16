@@ -68,8 +68,8 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
     long lastPos = m_ctrl->GetLastPosition();
     if(lastPos > 0) {
         // test the last char
-        wxString text = m_ctrl->GetRange(lastPos - 1, lastPos);
-        if(text[0] != '\n') {
+        wxChar lastCh = m_ctrl->GetLastChar();
+        if(lastCh != '\n') {
             // we dont have a complete line here
             // read the last line into the buffer and clear the line
             long x, y;

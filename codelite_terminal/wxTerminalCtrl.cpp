@@ -126,7 +126,7 @@ void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
         m_shell->WriteRaw(command + "\n");
-        AppendText("\n");
+        if(!command.IsEmpty()) { AppendText("\n"); }
         if(!m_echoOff && !command.empty() && (command != "exit")) { m_history.Add(command); }
     }
 }
@@ -233,10 +233,7 @@ void wxTerminalCtrl::SetShellCommand(const wxString& command)
     CallAfter(&wxTerminalCtrl::SetCaretAtEnd);
 }
 
-void wxTerminalCtrl::SetCaretAtEnd()
-{
-    m_textCtrl->SetCaretEnd();
-}
+void wxTerminalCtrl::SetCaretAtEnd() { m_textCtrl->SetCaretEnd(); }
 
 #ifdef __WXMSW__
 static void KillPorcessByPID(DWORD pid)
@@ -267,6 +264,11 @@ void wxTerminalCtrl::GenerateCtrlC()
 void wxTerminalCtrl::ClearScreen()
 {
     wxWindowUpdateLocker locker(m_textCtrl);
+#if USE_STC
+    m_textCtrl->Clear();
+    m_commandOffset = 0;
+    Run("");
+#else
     // Delete the entire content excluding the last list
     if(m_textCtrl->GetNumberOfLines() < 1) { return; }
     long x, y;
@@ -277,6 +279,7 @@ void wxTerminalCtrl::ClearScreen()
     m_commandOffset -= lineStartPos;
     insertPos -= lineStartPos;
     m_textCtrl->SetInsertionPoint(insertPos);
+#endif
 }
 
 void wxTerminalCtrl::ClearLine() { m_textCtrl->Remove(m_commandOffset, m_textCtrl->GetLastPosition()); }

@@ -585,6 +585,8 @@ bool VimCommand::Command_call()
     case COMMANDVI::O:
         this->m_tmpbuf.Clear();
         m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
         m_ctrl->NewLine();
         m_ctrl->LineUp();
         break;
@@ -1167,7 +1169,7 @@ bool VimCommand::Command_call()
         break;
 
     /*=============================== PASTE =========================*/
-    case COMMANDVI::p: /*FIXME CharLeft goes the previous line if at position 0!*/
+    case COMMANDVI::p: { /*FIXME CharLeft goes the previous line if at position 0!*/
         this->m_saveCommand = false;
         if(this->m_newLineCopy) {
             m_ctrl->LineEnd();
@@ -1181,33 +1183,38 @@ bool VimCommand::Command_call()
         } else {
             m_ctrl->CharRight();
         }
-        for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
-            yanked != this->m_listCopiedStr.end(); ++yanked) {
-            m_ctrl->AddText(*yanked);
+        int repeat = std::max(1, m_actions) ;
+        for(int i = 0; i < repeat; ++i) {
+            for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
+                yanked != this->m_listCopiedStr.end(); ++yanked) {
+                m_ctrl->AddText(*yanked);
+            }
         }
         // FIXME: troppo contorto!
         if(this->m_newLineCopy) m_ctrl->Home();
-        break;
-    case COMMANDVI::P:
+    } break;
+    case COMMANDVI::P: {
         this->m_saveCommand = false;
         if(this->m_newLineCopy) {
-            m_ctrl->LineUp();
-            m_ctrl->LineEnd();
+            m_ctrl->Home();
             m_ctrl->NewLine();
-            m_ctrl->DelLineLeft();
+            m_ctrl->LineUp();
             if (m_listCopiedStr.size() > 0) {
                 wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
                 if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
                 if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
             }
         }
-        for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
-            yanked != this->m_listCopiedStr.end(); ++yanked) {
-            m_ctrl->AddText(*yanked);
+        int repeat = std::max(1, m_actions);
+        for(int i = 0; i < repeat; ++i) {
+            for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
+                yanked != this->m_listCopiedStr.end(); ++yanked) {
+                m_ctrl->AddText(*yanked);
+            }
         }
         // FIXME: troppo contorto!
         if(this->m_newLineCopy) m_ctrl->Home();
-        break;
+    } break;
     case COMMANDVI::repeat:
         // RepeatCommand( m_ctrl );
         this->m_saveCommand = false;
@@ -2270,13 +2277,11 @@ bool VimCommand::is_cmd_complete()
         possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::p;
-        this->m_repeat = 1;
         break;
     case 'P':
         possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::P;
-        this->m_repeat = 1;
         break;
     case 'J':
         possible_command = true;

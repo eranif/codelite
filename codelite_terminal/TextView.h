@@ -51,6 +51,8 @@ public:
     void ShowCommandLine();
     void SetCommand(long from, const wxString& command);
     void SetCaretEnd();
+    void Truncate();
+    wxChar GetLastChar() const;
 };
 
 #endif // TEXTVIEW_H

@@ -9,19 +9,7 @@ TextView::TextView(wxWindow* parent, wxWindowID winid)
 #if USE_STC
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
-    int caretSlop = 1;
-    int caretZone = 20;
-    int caretStrict = 0;
-    int caretEven = 0;
-    int caretJumps = 0;
-    m_ctrl->SetXCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-
-    caretSlop = 1;
-    caretZone = 2;
-    caretStrict = 4;
-    caretEven = 8;
-    caretJumps = 0;
-    m_ctrl->SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
+    m_ctrl->SetYCaretPolicy(wxSTC_CARET_STRICT | wxSTC_CARET_SLOP, 4);
 #else
     m_ctrl = new TextCtrl_t(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize,
                             wxTE_MULTILINE | wxTE_RICH | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL | wxTE_PROCESS_TAB);
@@ -142,5 +130,35 @@ void TextView::SetCaretEnd()
     SelectNone();
     SetInsertionPointEnd();
     CallAfter(&TextView::Focus);
+#endif
+}
+
+void TextView::Truncate()
+{
+    if(GetNumberOfLines() > 1000) {
+        // Start removing lines from the top
+        long linesToRemove = (GetNumberOfLines() - 1000);
+        long startPos = 0;
+        long endPos = XYToPosition(0, linesToRemove);
+        Remove(startPos, endPos);
+    }
+}
+
+wxChar TextView::GetLastChar() const
+{
+#if USE_STC
+    return m_ctrl->GetCharAt(m_ctrl->GetLastPosition());
+#else
+    wxString text = m_ctrl->GetRange(lastPos - 1, lastPos);
+    if(text[0] != '\n') {
+        // we dont have a complete line here
+        // read the last line into the buffer and clear the line
+        long x, y;
+        m_ctrl->PositionToXY(lastPos, &x, &y);
+        long newpos = m_ctrl->XYToPosition(0, y);
+        curline = m_ctrl->GetRange(newpos, lastPos);
+        m_ctrl->Remove(newpos, lastPos);
+        m_ctrl->SetInsertionPoint(newpos);
+    }
 #endif
 }

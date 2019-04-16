@@ -200,13 +200,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
 
     // Write whatever left in the buffer into the control
     FlushBuffer(curline);
-//    if(m_ctrl->GetNumberOfLines() > 1000) {
-//        // Start removing lines from the top
-//        long linesToRemove = (m_ctrl->GetNumberOfLines() - 1000);
-//        long startPos = 0;
-//        long endPos = m_ctrl->XYToPosition(0, linesToRemove);
-//        m_ctrl->Remove(startPos, endPos);
-//    }
+    m_ctrl->Truncate(); // enforce our maximum number to display policy
     CallAfter(&wxTerminalColourHandler::SetCaretEnd);
 }
 

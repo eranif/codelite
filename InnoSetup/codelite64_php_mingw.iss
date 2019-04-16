@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=12.0.15
+AppVersion=12.0.16
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-php-amd64-12.0.15
+OutputBaseFilename=codelite-php-amd64-12.0.16
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico

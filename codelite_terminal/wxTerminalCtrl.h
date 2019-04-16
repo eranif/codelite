@@ -106,7 +106,8 @@ protected:
     wxString GetShellCommand() const;
     void SetShellCommand(const wxString& command);
     void SetCaretAtEnd();
-
+    void OnIdle(wxIdleEvent& event);
+    
 protected:
     void OnProcessOutput(clProcessEvent& event);
     void OnProcessStderr(clProcessEvent& event);

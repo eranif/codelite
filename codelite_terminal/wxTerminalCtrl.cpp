@@ -58,10 +58,12 @@ wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecu
 
     // load the commands from the configurationk file
     m_history.SetCommands(wxTerminalOptions::Get().GetHistory());
+    Bind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
 }
 
 wxTerminalCtrl::~wxTerminalCtrl()
 {
+    Unbind(wxEVT_IDLE, &wxTerminalCtrl::OnIdle, this);
     if(m_shell) {
         m_shell->Detach();
         wxDELETE(m_shell);
@@ -125,6 +127,10 @@ void wxTerminalCtrl::PostCreate()
 void wxTerminalCtrl::Run(const wxString& command)
 {
     if(m_shell) {
+        if(!command.IsEmpty()) {
+            int a = 0;
+            ++a;
+        }
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");
         if(!m_echoOff && !command.empty() && (command != "exit")) { m_history.Add(command); }
@@ -350,3 +356,15 @@ void wxTerminalCtrl::CheckInsertionPoint()
 void wxTerminalCtrl::ReloadSettings() { m_textCtrl->ReloadSettings(); }
 
 void wxTerminalCtrl::Focus() { m_textCtrl->Focus(); }
+
+void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
+{
+#if 0
+    int count = m_textCtrl->Truncate();
+    if(count) {
+        m_commandOffset -= count;
+        m_textCtrl->SetInsertionPointEnd();
+    }
+#endif
+}
+

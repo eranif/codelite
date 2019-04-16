@@ -200,8 +200,7 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
 
     // Write whatever left in the buffer into the control
     FlushBuffer(curline);
-    m_ctrl->Truncate(); // enforce our maximum number to display policy
-    CallAfter(&wxTerminalColourHandler::SetCaretEnd);
+    SetCaretEnd();
 }
 
 void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)

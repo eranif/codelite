@@ -62,7 +62,7 @@ public:
     void ShowCommandLine();
     void SetCommand(long from, const wxString& command);
     void SetCaretEnd();
-    void Truncate();
+    int Truncate();
     wxChar GetLastChar() const;
     void Clear();
 };

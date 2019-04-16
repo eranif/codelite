@@ -1,6 +1,7 @@
 #include "TextView.h"
 #include <wx/sizer.h>
 #include "wxTerminalOptions.h"
+#include <wx/wupdlock.h>
 
 TextView::TextView(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
@@ -130,7 +131,8 @@ void TextView::ShowCommandLine()
     m_ctrl->SetSelection(m_ctrl->GetLastPosition(), m_ctrl->GetLastPosition());
     m_ctrl->EnsureCaretVisible();
 #else
-    m_ctrl->ScrollLines(m_ctrl->GetNumberOfLines());
+    m_ctrl->SetInsertionPointEnd();
+    m_ctrl->ShowPosition(m_ctrl->GetLastPosition());
 #endif
 }
 
@@ -157,15 +159,17 @@ void TextView::SetCaretEnd()
 #endif
 }
 
-void TextView::Truncate()
+int TextView::Truncate()
 {
     if(GetNumberOfLines() > 1000) {
         // Start removing lines from the top
         long linesToRemove = (GetNumberOfLines() - 1000);
         long startPos = 0;
         long endPos = XYToPosition(0, linesToRemove);
-        Remove(startPos, endPos);
+        this->Remove(startPos, endPos);
+        return endPos - startPos;
     }
+    return 0;
 }
 
 wxChar TextView::GetLastChar() const

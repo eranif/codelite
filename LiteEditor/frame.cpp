@@ -4657,8 +4657,10 @@ void clMainFrame::SetAUIManagerFlags()
         auiMgrFlags |= wxAUI_MGR_VENETIAN_BLINDS_HINT;
         break;
     }
-#ifndef __WXGTK__
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
+#if defined(__WXGTK__) && !defined(__WXGTK3__) 
+    // GTK2, remove live-resize flag
+    auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
 #endif
     m_mgr.SetFlags(auiMgrFlags);
 }

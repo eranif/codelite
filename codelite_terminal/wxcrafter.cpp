@@ -53,13 +53,18 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     m_File = new wxMenu();
     m_menuBar->Append(m_File, _("File"));
 
+    m_menuItemClearScreen = new wxMenuItem(m_File, wxID_CLEAR, _("Clear screen\tCtrl-L"), wxT(""), wxITEM_NORMAL);
+    m_File->Append(m_menuItemClearScreen);
+
+    m_File->AppendSeparator();
+
     m_menuItemPreferences = new wxMenuItem(m_File, wxID_PREFERENCES, _("Preferences..."), wxT(""), wxITEM_NORMAL);
     m_File->Append(m_menuItemPreferences);
 
     m_File->AppendSeparator();
 
-    m_menuItem7 = new wxMenuItem(m_File, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
-    m_File->Append(m_menuItem7);
+    m_menuItemExit = new wxMenuItem(m_File, wxID_EXIT, _("Exit\tAlt-X"), _("Quit"), wxITEM_NORMAL);
+    m_File->Append(m_menuItemExit);
 
     m_Help = new wxMenu();
     m_menuBar->Append(m_Help, _("Help"));
@@ -84,10 +89,12 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 #endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MainFrameBaseClass::OnClose), NULL, this);
+    this->Connect(m_menuItemClearScreen->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                  wxCommandEventHandler(MainFrameBaseClass::OnClearScreen), NULL, this);
     this->Connect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                   wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit),
-                  NULL, this);
+    this->Connect(m_menuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                  wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout),
                   NULL, this);
 }
@@ -95,9 +102,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 MainFrameBaseClass::~MainFrameBaseClass()
 {
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MainFrameBaseClass::OnClose), NULL, this);
+    this->Disconnect(m_menuItemClearScreen->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(MainFrameBaseClass::OnClearScreen), NULL, this);
     this->Disconnect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+    this->Disconnect(m_menuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
     this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);

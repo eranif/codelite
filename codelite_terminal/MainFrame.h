@@ -9,6 +9,7 @@ class MainFrame : public MainFrameBaseClass
     wxTerminalCtrl* m_terminal = nullptr;
 
 protected:
+    virtual void OnClearScreen(wxCommandEvent& event);
     virtual void OnClose(wxCloseEvent& event);
     virtual void OnSettings(wxCommandEvent& event);
     void DoClose();

@@ -43,14 +43,17 @@ protected:
     wxPanel* m_mainPanel;
     wxMenuBar* m_menuBar;
     wxMenu* m_File;
+    wxMenuItem* m_menuItemClearScreen;
+    wxMenuItem* m_menuItemSep2;
     wxMenuItem* m_menuItemPreferences;
-    wxMenuItem* m_menuItem51;
-    wxMenuItem* m_menuItem7;
+    wxMenuItem* m_menuItemSep;
+    wxMenuItem* m_menuItemExit;
     wxMenu* m_Help;
     wxMenuItem* m_menuItem9;
 
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnClearScreen(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnExit(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }

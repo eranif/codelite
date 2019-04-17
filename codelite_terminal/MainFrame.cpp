@@ -75,3 +75,5 @@ void MainFrame::OnClose(wxCloseEvent& event)
 }
 
 void MainFrame::OnSetTitle(clCommandEvent& event) { SetLabel(event.GetString()); }
+
+void MainFrame::OnClearScreen(wxCommandEvent& event) { m_terminal->ClearScreen(); }

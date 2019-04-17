@@ -2983,7 +2983,7 @@ void clEditor::DoUpdateRelativeLineNumbers()
     m_lastBeginLine = beginLine;
     m_lastLineCount = lineCount;
     m_lastEndLine = endLine;
-    MarginSetText(curLine, (wxString() << " " << (curLine)));
+    MarginSetText(curLine, (wxString() << " " << (curLine + 1)));
 
     // Use a distinct style to highlight the current line number
     StyleSetBackground(CUR_LINE_NUMBER_STYLE, m_selTextBgColour);

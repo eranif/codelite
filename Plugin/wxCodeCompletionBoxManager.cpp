@@ -128,6 +128,7 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
         if((ch >= 97 && ch <= 122)       // a-z
            || (ch >= 65 && ch <= 90)     // A-Z
            || (ch == '_') || (ch == '$') // _ or $ (for PHP)
+           || (ch >= '0' && ch <= '9')
            || (includeNekudotaiim && (ch == ':'))) {
             continue;
         }

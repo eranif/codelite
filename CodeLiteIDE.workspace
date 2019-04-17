@@ -520,7 +520,7 @@
       <Project Name="wxcLib" ConfigName="Win_x64_Debug"/>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -582,7 +582,7 @@
       <Project Name="wxcLib" ConfigName="Release"/>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>

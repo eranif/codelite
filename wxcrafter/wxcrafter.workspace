@@ -48,7 +48,7 @@
       <Project Name="wxcDemo" ConfigName="Debug"/>
       <Project Name="wxcLib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_Application" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug_Application" Selected="yes">
       <Environment/>
       <Project Name="wxcrafter" ConfigName="CMake_Debug_Application"/>
       <Project Name="Resources" ConfigName="Debug"/>
@@ -62,7 +62,7 @@
       <Project Name="wxcLib" ConfigName="Release_WX28"/>
       <Project Name="wxcrafter" ConfigName="WinReleaseUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment/>
       <Project Name="Resources" ConfigName="Debug"/>
       <Project Name="wxcLib" ConfigName="Win_x64_Release"/>

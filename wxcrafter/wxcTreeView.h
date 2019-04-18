@@ -29,7 +29,7 @@ public:
     wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin);
     virtual ~wxcTreeView();
 
-    wxTreeCtrl* GetTree() { return m_treeControls; }
+    clTreeCtrl* GetTree() { return m_treeControls; }
     virtual void OnItemSelected(wxTreeEvent& event);
     void LoadProject(const wxFileName& filname);
     void SaveProject();

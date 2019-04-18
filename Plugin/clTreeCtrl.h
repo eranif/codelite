@@ -115,6 +115,12 @@ public:
      * @brief associate bitmap vector with this tree. The bitmaps array must exists as long as this control exists
      */
     virtual void SetBitmaps(BitmapVec_t* bitmaps);
+    
+    /**
+     * @brief set image list. The control does not take ownership on the input image list
+     * Instead, it creates a copy of the images. It is up to the user to free any resources allocated
+     */
+    virtual void SetImageList(wxImageList* images);
 
     /**
      * @brief return the tree style

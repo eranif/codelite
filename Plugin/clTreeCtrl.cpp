@@ -1200,3 +1200,10 @@ bool clTreeCtrl::IsChecked(const wxTreeItemId& item, size_t col) const
     if(!row) { return false; }
     return row->IsChecked(col);
 }
+
+void clTreeCtrl::SetImageList(wxImageList* images)
+{
+    clControlWithItems::SetImageList(images);
+    DoBitmapAdded();
+    Refresh();
+}

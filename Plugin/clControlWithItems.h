@@ -6,6 +6,7 @@
 #include "clRowEntry.h"
 #include "clScrolledPanel.h"
 #include <array>
+#include <wx/imaglist.h>
 
 #ifdef __WXOSX__
 #define SCROLL_TICK 2
@@ -53,6 +54,7 @@ protected:
     int m_lineHeight = 0;
     int m_indent = 0;
     BitmapVec_t* m_bitmaps = nullptr;
+    BitmapVec_t* m_bitmapsInternal = nullptr;
     int m_scrollTick = SCROLL_TICK;
     clSearchText m_search;
     clSearchControl* m_searchControl = nullptr;
@@ -97,6 +99,7 @@ public:
     virtual int GetLineHeight() const { return m_lineHeight; }
 
     virtual void SetBitmaps(BitmapVec_t* bitmaps) { this->m_bitmaps = bitmaps; }
+    virtual void SetImageList(wxImageList* images);
     virtual const BitmapVec_t* GetBitmaps() const { return m_bitmaps; }
     virtual BitmapVec_t* GetBitmaps() { return m_bitmaps; }
 

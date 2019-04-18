@@ -1020,9 +1020,8 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer357 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTree->SetSizer(boxSizer357);
 
-    m_treeControls =
-        new clThemedTreeCtrl(m_splitterPageTree, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)), wxTR_DEFAULT_STYLE | wxTR_SINGLE);
+    m_treeControls = new clTreeCtrl(m_splitterPageTree, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)), wxTR_ROW_LINES);
 
     boxSizer357->Add(m_treeControls, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 

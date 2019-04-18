@@ -414,7 +414,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 textXOffset += IsListItem() ? 0 : X_SPACER;
                 int bitmapY = rowRect.GetY() + ((rowRect.GetHeight() - bmp.GetScaledHeight()) / 2);
                 // if((textXOffset + bmp.GetScaledWidth()) >= cellRect.GetWidth()) { continue; }
-                dc.DrawBitmap(bmp, itemIndent + textXOffset, bitmapY);
+                dc.DrawBitmap(bmp, itemIndent + textXOffset, bitmapY, true);
                 textXOffset += bmp.GetScaledWidth();
                 textXOffset += X_SPACER;
             }

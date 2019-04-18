@@ -33,7 +33,7 @@
 #include <wx/combobox.h>
 #include <wx/splitter.h>
 #include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
+#include "clTreeCtrl.h"
 #include <wx/infobar.h>
 #include <wx/bannerwindow.h>
 #include "events_table_list_view.h"
@@ -312,7 +312,7 @@ protected:
     wxButton* m_button426;
     wxSplitterWindow* m_splitter347;
     wxPanel* m_splitterPageTree;
-    clThemedTreeCtrl* m_treeControls;
+    clTreeCtrl* m_treeControls;
     wxPanel* m_splitterPageEvents;
 
 protected:
@@ -328,7 +328,7 @@ protected:
 public:
     wxComboBox* GetComboBoxFiles() { return m_comboBoxFiles; }
     wxButton* GetButton426() { return m_button426; }
-    clThemedTreeCtrl* GetTreeControls() { return m_treeControls; }
+    clTreeCtrl* GetTreeControls() { return m_treeControls; }
     wxPanel* GetSplitterPageTree() { return m_splitterPageTree; }
     wxPanel* GetSplitterPageEvents() { return m_splitterPageEvents; }
     wxSplitterWindow* GetSplitter347() { return m_splitter347; }

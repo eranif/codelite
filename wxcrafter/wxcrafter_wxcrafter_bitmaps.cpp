@@ -1990,6 +1990,6 @@ void wxCA63InitBitmapResources()
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$resources_license-error.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$resources_license-ok.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
     XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$resources_wxc-logo.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$_home_eran_devl_codelite_wxcrafter_wxcrafter_wxcrafter_bitmaps.xrc"), xml_res_file_5, xml_res_size_5, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$_home_eran_devl_codelite_wxcrafter_wxcrafter_wxcrafter_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$C__src_codelite_wxcrafter_wxcrafter_wxcrafter_bitmaps.xrc"), xml_res_file_5, xml_res_size_5, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_wxcrafter_bitmaps.cpp$C__src_codelite_wxcrafter_wxcrafter_wxcrafter_bitmaps.xrc"));
 }

@@ -4658,10 +4658,10 @@ void clMainFrame::SetAUIManagerFlags()
         break;
     }
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-#if defined(__WXGTK__) && !defined(__WXGTK3__) 
+//#if defined(__WXGTK__) && !defined(__WXGTK3__) 
     // GTK2, remove live-resize flag
-    auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
-#endif
+    //auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
+//#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 

@@ -411,25 +411,6 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 {
     wxMenu menu;
     CreateProjectContextMenu(menu, projectName);
-
-    if(!ManagerST::Get()->IsBuildInProgress()) {
-        // Let the plugins alter it
-        wxMenu* pluginsMenu = new wxMenu;
-        clContextMenuEvent event(wxEVT_CONTEXT_MENU_PROJECT);
-        event.SetMenu(pluginsMenu);
-        pluginsMenu->SetParent(&menu);
-        EventNotifier::Get()->ProcessEvent(event);
-
-        // Use the old system
-        PluginManager::Get()->HookPopupMenu(pluginsMenu, MenuTypeFileView_Project);
-        if(pluginsMenu->GetMenuItemCount()) {
-            // we got something from the plugins
-            menu.PrependSeparator();
-            menu.Prepend(wxID_ANY, _("Plugins..."), pluginsMenu);
-        } else {
-            wxDELETE(pluginsMenu);
-        }
-    }
     PopupMenu(&menu);
 }
 
@@ -2350,7 +2331,7 @@ void FileViewTree::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
     }
 }
 
-void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projectName)
+void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projectName, bool usedByFileView)
 {
     wxMenuItem* item(NULL);
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
@@ -2363,10 +2344,14 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
     wxBitmap bmpColourPallette = bmpLoader->LoadBitmap("colour-pallette");
     wxBitmap bmpPin = bmpLoader->LoadBitmap("ToolPin");
 
-    item = new wxMenuItem(&menu, XRCID("pin_project"), _("Pin Project"), _("Pin Project"));
-    item->SetBitmap(bmpPin);
-    menu.Append(item);
-    menu.AppendSeparator();
+    if(usedByFileView) {
+        // When the menu is created for internal usage (i.e. by this class)
+        // add the "Pin Project" menu item
+        item = new wxMenuItem(&menu, XRCID("pin_project"), _("Pin Project"), _("Pin Project"));
+        item->SetBitmap(bmpPin);
+        menu.Append(item);
+        menu.AppendSeparator();
+    }
     
     item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
     item->SetBitmap(bmpBuild);
@@ -2459,6 +2444,26 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
     item = new wxMenuItem(&menu, XRCID("project_properties"), _("Settings..."), _("Settings..."));
     item->SetBitmap(bmpSettings);
     menu.Append(item);
+    
+    // Add the plugins menu
+    if(!ManagerST::Get()->IsBuildInProgress()) {
+        // Let the plugins alter it
+        wxMenu* pluginsMenu = new wxMenu;
+        clContextMenuEvent event(wxEVT_CONTEXT_MENU_PROJECT);
+        event.SetMenu(pluginsMenu);
+        pluginsMenu->SetParent(&menu);
+        EventNotifier::Get()->ProcessEvent(event);
+
+        // Use the old system
+        PluginManager::Get()->HookPopupMenu(pluginsMenu, MenuTypeFileView_Project);
+        if(pluginsMenu->GetMenuItemCount()) {
+            // we got something from the plugins
+            menu.PrependSeparator();
+            menu.Prepend(wxID_ANY, _("Plugins..."), pluginsMenu);
+        } else {
+            wxDELETE(pluginsMenu);
+        }
+    }
 }
 
 void FileViewTree::UnselectAllProject()

@@ -603,7 +603,7 @@ void WorkspaceTab::ShowPinnedProjectMenu(const wxString& project)
     menu.Append(XRCID("unpin_project"), _("Unpin Project"));
     menu.AppendSeparator();
     // Build the rest of the menu
-    m_fileView->CreateProjectContextMenu(menu, project);
+    m_fileView->CreateProjectContextMenu(menu, project, false);
     menu.Bind(wxEVT_MENU, [&](wxCommandEvent& menuEvent) {
         if(menuEvent.GetId() == XRCID("unpin_project")) {
             wxDataViewItem item = m_dvListCtrlPinnedProjects->GetSelection();

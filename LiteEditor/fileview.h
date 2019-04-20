@@ -84,7 +84,7 @@ public:
     /**
      * @brief build project context menu
      */
-    void CreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
+    void CreateProjectContextMenu(wxMenu& menu, const wxString& projectName, bool usedByFileView = true);
     
     // Build the actual tree from the workspace
     void BuildTree();

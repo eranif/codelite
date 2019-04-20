@@ -341,7 +341,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer505->Add(m_configChangeCtrl, 0, wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(2));
 
     m_splitter = new wxSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
-                                      wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+                                      wxSP_LIVE_UPDATE);
     m_splitter->SetSashGravity(0);
     m_splitter->SetMinimumPaneSize(10);
 

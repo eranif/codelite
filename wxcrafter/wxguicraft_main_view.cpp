@@ -1998,7 +1998,7 @@ void GUICraftMainPanel::DoPasteOrDuplicate(wxcWidget* source, wxcWidget* target,
 void GUICraftMainPanel::OnBeginDrag(wxTreeEvent& event)
 {
     // event.Skip();
-    m_draggedItem = event.GetItem();
+    m_draggedItem = m_treeControls->GetSelection();
     if(m_draggedItem.IsOk()) { event.Allow(); }
 }
 

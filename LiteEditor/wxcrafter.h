@@ -33,6 +33,7 @@
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include "clConfigurationSelectionCtrl.h"
+#include "clThemedSplitterWindow.h"
 #include <wx/treectrl.h>
 #include "fileview.h"
 #include <wx/frame.h>
@@ -185,7 +186,7 @@ protected:
     wxPanel* m_panelCxx;
     clToolBar* m_toolbar580;
     clConfigurationSelectionCtrl* m_configChangeCtrl;
-    wxSplitterWindow* m_splitter;
+    clThemedSplitterWindow* m_splitter;
     wxPanel* m_splitterPagePinnedProjects;
     clThemedListCtrl* m_dvListCtrlPinnedProjects;
     wxPanel* m_splitterPageTreeView;
@@ -202,7 +203,7 @@ public:
     wxPanel* GetSplitterPagePinnedProjects() { return m_splitterPagePinnedProjects; }
     FileViewTree* GetFileView() { return m_fileView; }
     wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

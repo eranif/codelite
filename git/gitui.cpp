@@ -253,8 +253,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
 
-    m_splitterMain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitterMain = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitterMain->SetSashGravity(0.5);
     m_splitterMain->SetMinimumPaneSize(150);
 
@@ -266,8 +266,9 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer12);
 
-    m_splitterInner = new wxSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)),
-                                           wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitterInner =
+        new clThemedSplitterWindow(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)),
+                                   wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitterInner->SetSashGravity(0.5);
     m_splitterInner->SetMinimumPaneSize(0);
 
@@ -1524,8 +1525,8 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     boxSizer36->Add(boxSizer711, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_splitter733 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter733 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                               wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter733->SetSashGravity(0.5);
     m_splitter733->SetMinimumPaneSize(10);
 

@@ -3137,11 +3137,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	""
+															"m_value":	"clThemedSplitterWindow"
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	""
+															"m_value":	"clThemedSplitterWindow.h"
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",

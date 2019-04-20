@@ -14,6 +14,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include "clThemedSplitterWindow.h"
 #include <wx/notebook.h>
 #include "Notebook.h"
 #include <wx/imaglist.h>
@@ -54,7 +55,7 @@
 class SubversionPageBase : public wxPanel
 {
 protected:
-    wxSplitterWindow* m_splitter;
+    clThemedSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
     Notebook* m_notebook80;
     wxPanel* m_panel82;
@@ -88,7 +89,7 @@ public:
     wxPanel* GetPanel94() { return m_panel94; }
     Notebook* GetNotebook92() { return m_notebook92; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     SubversionPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~SubversionPageBase();

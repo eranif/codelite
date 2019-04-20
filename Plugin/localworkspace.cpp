@@ -544,3 +544,42 @@ bool LocalWorkspace::GetFolderColours(FolderColour::Map_t& vdColours)
     }
     return true;
 }
+
+size_t LocalWorkspace::GetPinnedProjects(wxArrayString& projects)
+{
+    projects.clear();
+    if(!SanityCheck()) { return 0; }
+
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "PinnedProjects");
+    if(!node) return 0;
+
+    // Read all projects
+    wxXmlNode* child = node->GetChildren();
+    while(child) {
+        if(child->GetName() == "Project") { projects.Add(child->GetAttribute("Name")); }
+        child = child->GetNext();
+    }
+    return projects.size();
+}
+
+bool LocalWorkspace::SetPinnedProjects(const wxArrayString& projects)
+{
+    if(!SanityCheck()) { return false; }
+
+    wxXmlNode* root = m_doc.GetRoot();
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(root, wxT("PinnedProjects"));
+    if(node) {
+        root->RemoveChild(node);
+        wxDELETE(node);
+    }
+
+    node = new wxXmlNode(root, wxXML_ELEMENT_NODE, wxT("PinnedProjects"));
+    root->AddChild(node);
+
+    for(const wxString& project : projects) {
+        wxXmlNode* p = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
+        p->AddAttribute("Name", project);
+        node->AddChild(p);
+    }
+    return SaveXmlFile();
+}

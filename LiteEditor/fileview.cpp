@@ -101,6 +101,7 @@ EVT_MENU(XRCID("save_as_template"), FileViewTree::OnSaveAsTemplate)
 EVT_MENU(XRCID("build_order"), FileViewTree::OnBuildOrder)
 EVT_MENU(XRCID("clean_project"), FileViewTree::OnClean)
 EVT_MENU(XRCID("build_project"), FileViewTree::OnBuild)
+EVT_MENU(XRCID("pin_project"), FileViewTree::OnPinProject)
 EVT_MENU(XRCID("rebuild_project"), FileViewTree::OnReBuild)
 EVT_MENU(XRCID("generate_makefile"), FileViewTree::OnRunPremakeStep)
 EVT_MENU(XRCID("stop_build"), FileViewTree::OnStopBuild)
@@ -409,7 +410,7 @@ void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 {
     wxMenu menu;
-    DoCreateProjectContextMenu(menu, projectName);
+    CreateProjectContextMenu(menu, projectName);
 
     if(!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
@@ -1366,7 +1367,9 @@ void FileViewTree::OnCleanProjectOnly(wxCommandEvent& event)
 
 void FileViewTree::ExpandToPath(const wxString& project, const wxFileName& fileName)
 {
-    if(m_projectsMap.count(project)) {
+    if(m_projectsMap.count(project) == 0) { return; }
+
+    if(fileName.IsOk()) {
         wxTreeItemId child = m_projectsMap.find(project)->second;
         FilewViewTreeItemData* childData = static_cast<FilewViewTreeItemData*>(GetItemData(child));
         if(childData->GetData().GetDisplayName() == project) {
@@ -1383,6 +1386,12 @@ void FileViewTree::ExpandToPath(const wxString& project, const wxFileName& fileN
                 clLogMessage(message);
             }
         }
+    } else {
+        // just expand to the project
+        wxTreeItemId child = m_projectsMap.find(project)->second;
+        if(!child.IsOk()) { return; }
+        SelectItem(child);
+        EnsureVisible(child);
     }
 }
 
@@ -2341,7 +2350,7 @@ void FileViewTree::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
     }
 }
 
-void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName)
+void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projectName)
 {
     wxMenuItem* item(NULL);
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
@@ -2352,7 +2361,13 @@ void FileViewTree::DoCreateProjectContextMenu(wxMenu& menu, const wxString& proj
     wxBitmap bmpFolder = bmpLoader->LoadBitmap("folder-yellow");
     wxBitmap bmpConsole = bmpLoader->LoadBitmap("console");
     wxBitmap bmpColourPallette = bmpLoader->LoadBitmap("colour-pallette");
+    wxBitmap bmpPin = bmpLoader->LoadBitmap("ToolPin");
 
+    item = new wxMenuItem(&menu, XRCID("pin_project"), _("Pin Project"), _("Pin Project"));
+    item->SetBitmap(bmpPin);
+    menu.Append(item);
+    menu.AppendSeparator();
+    
     item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
     item->SetBitmap(bmpBuild);
     menu.Append(item);
@@ -2994,5 +3009,14 @@ void FileViewTree::OnFindInFilesShowing(clFindInFilesEvent& event)
         }
         selections.Trim();
         event.SetTransientPaths(selections);
+    }
+}
+
+void FileViewTree::OnPinProject(wxCommandEvent& event)
+{
+    wxTreeItemId item = GetSingleSelection();
+    if(item.IsOk()) {
+        wxString projectName = GetItemText(item);
+        clMainFrame::Get()->GetWorkspaceTab()->AddPinnedProject(projectName);
     }
 }

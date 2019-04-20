@@ -54,7 +54,6 @@ class FileViewTree : public clThemedTreeCtrl
     clTreeCtrlColourHelper::Ptr_t m_colourHelper;
 
 protected:
-    void DoCreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
     void DoBindEvents();
     void DoUnbindEvents();
     void DoFilesEndDrag(wxTreeItemId& itemDst);
@@ -81,7 +80,12 @@ public:
      * Destructor .
      */
     virtual ~FileViewTree();
-
+    
+    /**
+     * @brief build project context menu
+     */
+    void CreateProjectContextMenu(wxMenu& menu, const wxString& projectName);
+    
     // Build the actual tree from the workspace
     void BuildTree();
 
@@ -154,6 +158,7 @@ protected:
     virtual void OnBuildOrder(wxCommandEvent& event);
     virtual void OnClean(wxCommandEvent& event);
     virtual void OnBuild(wxCommandEvent& event);
+    virtual void OnPinProject(wxCommandEvent& event);
     virtual void OnReBuild(wxCommandEvent& event);
     virtual void OnRunPremakeStep(wxCommandEvent& event);
     virtual void OnBuildProjectOnly(wxCommandEvent& event);

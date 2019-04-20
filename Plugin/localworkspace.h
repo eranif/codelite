@@ -219,7 +219,6 @@ private:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
 
-
 protected:
     /*void SaveWorkspaceOptions(LocalOptionsConfigPtr opts);
     void SaveProjectOptions(LocalOptionsConfigPtr opts, const wxString& projectname);*/
@@ -234,7 +233,13 @@ public:
 
     /// Destructor
     virtual ~LocalWorkspace() {}
-    
+
+    /**
+     * @brief return list of pinned c++ projects
+     */
+    size_t GetPinnedProjects(wxArrayString& projects);
+    bool SetPinnedProjects(const wxArrayString& projects);
+
     /**
      * @brief flush the XML content to the disk
      */

@@ -84,6 +84,8 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
         Refresh();
         m_panelCxx->Refresh();
     });
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("project"));
+    m_dvListCtrlPinnedProjects->SetBitmaps(&m_bitmaps);
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -322,6 +324,9 @@ void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
         m_fileView->BuildTree();
         CallAfter(&WorkspaceTab::DoGoHome);
         SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
+
+        // Load the C++ pinned projects list
+        LoadCxxPinnedProjects();
     }
 }
 
@@ -333,6 +338,12 @@ void WorkspaceTab::OnWorkspaceClosed(wxCommandEvent& e)
     m_configChangeCtrl->Clear();
     m_configChangeCtrl->Enable(false);
     m_fileView->DeleteAllItems();
+
+    // Clear the pinned projects view
+    m_dvListCtrlPinnedProjects->DeleteAllItems();
+    SaveCxxPinnedProjects();
+    m_cxxPinnedProjects.clear();
+
     SendCmdEvent(wxEVT_FILE_VIEW_INIT_DONE);
 }
 
@@ -519,4 +530,96 @@ void WorkspaceTab::OnPaint(wxPaintEvent& event)
     dc.SetBrush(m_bgColour);
     dc.SetPen(m_bgColour);
     dc.DrawRectangle(GetClientRect());
+}
+
+void WorkspaceTab::LoadCxxPinnedProjects()
+{
+    m_cxxPinnedProjects.clear();
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetPinnedProjects(m_cxxPinnedProjects);
+
+    // We got the pinned projects loaded, update the view
+    if(m_cxxPinnedProjects.empty()) {
+        // hide the to view
+        if(m_splitter->IsSplit()) { m_splitter->Unsplit(m_splitterPagePinnedProjects); }
+    } else {
+        // ensure the view is visible
+        if(!m_splitter->IsSplit()) {
+            m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 100);
+        }
+        m_dvListCtrlPinnedProjects->DeleteAllItems();
+        for(const wxString& project : m_cxxPinnedProjects) {
+            wxVector<wxVariant> V;
+            V.push_back(::MakeBitmapIndexText(project, 0));
+            m_dvListCtrlPinnedProjects->AppendItem(V);
+        }
+    }
+}
+
+void WorkspaceTab::SaveCxxPinnedProjects()
+{
+    clCxxWorkspaceST::Get()->GetLocalWorkspace()->SetPinnedProjects(m_cxxPinnedProjects);
+}
+
+void WorkspaceTab::OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)
+{
+    wxDataViewItem item = event.GetItem();
+    if(!item.IsOk()) { return; }
+    SyncPinnedProjectsView(event.GetItem());
+
+    wxString project = m_dvListCtrlPinnedProjects->GetItemText(item);
+    CallAfter(&WorkspaceTab::ShowPinnedProjectMenu, project);
+}
+
+void WorkspaceTab::OnPinnedCxxProjectSelected(wxDataViewEvent& event)
+{
+    // we MUST sync the views, otherwise, the context menu wont work
+    // since it reliese on the current selection in the tree
+    SyncPinnedProjectsView(event.GetItem());
+}
+
+void WorkspaceTab::AddPinnedProject(const wxString& project)
+{
+    if(m_cxxPinnedProjects.Index(project) != wxNOT_FOUND) { return; }
+    m_cxxPinnedProjects.Add(project);
+
+    // Store the pinned projehcts
+    SaveCxxPinnedProjects();
+
+    // Refresh the view
+    LoadCxxPinnedProjects();
+}
+
+void WorkspaceTab::SyncPinnedProjectsView(const wxDataViewItem& item)
+{
+    if(!item.IsOk()) { return; }
+
+    wxString project = m_dvListCtrlPinnedProjects->GetItemText(item);
+    m_fileView->ExpandToPath(project, wxFileName()); // Select the project
+}
+
+void WorkspaceTab::ShowPinnedProjectMenu(const wxString& project)
+{
+    wxMenu menu;
+    menu.Append(XRCID("unpin_project"), _("Unpin Project"));
+    menu.AppendSeparator();
+    // Build the rest of the menu
+    m_fileView->CreateProjectContextMenu(menu, project);
+    menu.Bind(wxEVT_MENU, [&](wxCommandEvent& menuEvent) {
+        if(menuEvent.GetId() == XRCID("unpin_project")) {
+            wxDataViewItem item = m_dvListCtrlPinnedProjects->GetSelection();
+            if(item.IsOk()) {
+                m_dvListCtrlPinnedProjects->DeleteItem(m_dvListCtrlPinnedProjects->ItemToRow(item));
+                int where = m_cxxPinnedProjects.Index(project);
+                if(where != wxNOT_FOUND) {
+                    m_cxxPinnedProjects.RemoveAt(where);
+                    SaveCxxPinnedProjects();
+                    CallAfter(&WorkspaceTab::LoadCxxPinnedProjects);
+                }
+            }
+        } else {
+            // Pass all the context menu events to the tree tree view
+            m_fileView->GetEventHandler()->ProcessEvent(menuEvent);
+        }
+    });
+    m_dvListCtrlPinnedProjects->PopupMenu(&menu);
 }

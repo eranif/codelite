@@ -544,7 +544,7 @@ void WorkspaceTab::LoadCxxPinnedProjects()
     } else {
         // ensure the view is visible
         if(!m_splitter->IsSplit()) {
-            m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 100);
+            m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 50);
         }
         m_dvListCtrlPinnedProjects->DeleteAllItems();
         for(const wxString& project : m_cxxPinnedProjects) {
@@ -567,7 +567,7 @@ void WorkspaceTab::OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)
     SyncPinnedProjectsView(event.GetItem());
 
     wxString project = m_dvListCtrlPinnedProjects->GetItemText(item);
-    CallAfter(&WorkspaceTab::ShowPinnedProjectMenu, project);
+    ShowPinnedProjectMenu(project);
 }
 
 void WorkspaceTab::OnPinnedCxxProjectSelected(wxDataViewEvent& event)

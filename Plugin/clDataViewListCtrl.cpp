@@ -345,12 +345,13 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
     clRowEntry* root = m_model.GetRoot();
     if(!root) { return; }
 
-    if(!CompareFunc) {
-        m_model.SetSortFunction(nullptr);
-        return;
-    }
     // Disconnect the current function, if any
     m_model.SetSortFunction(nullptr);
+    if(!CompareFunc) {
+        // we are done
+        return;
+    }
+    
     // This list ctrl is composed of a hidden root + its children
     // Step 1:
     clRowEntry::Vec_t& children = root->GetChildren();
@@ -374,6 +375,10 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
         child->SetPrev(prev);
         prev = child;
     }
+    
+    // and store the new sorting method
+    m_model.SetSortFunction(CompareFunc);
+    
     Refresh();
 }
 

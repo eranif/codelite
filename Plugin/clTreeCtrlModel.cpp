@@ -17,7 +17,7 @@ clTreeCtrlModel::clTreeCtrlModel(clTreeCtrl* tree)
 {
     // Setup a default compare function
     m_shouldInsertBeforeFunc = [&](clRowEntry* a, clRowEntry* b) {
-        return a->GetLabel(0).CmpNoCase(a->GetLabel(0)) < 0;
+        return a->GetLabel(0).CmpNoCase(b->GetLabel(0)) < 0;
     };
 }
 
@@ -150,7 +150,7 @@ wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxStr
     if(!parentNode->IsRoot() && (m_tree->GetTreeStyle() & wxTR_SORT_TOP_LEVEL)) {
         // We have been requested to sort top level items only
         parentNode->AddChild(child);
-    } else if(m_shouldInsertBeforeFunc) {
+    } else if(m_shouldInsertBeforeFunc != nullptr) {
         const clRowEntry::Vec_t& children = parentNode->GetChildren();
         // Loop over the parent's children and add execute the compare function
         for(int i = ((int)children.size() - 1); i >= 0; --i) {

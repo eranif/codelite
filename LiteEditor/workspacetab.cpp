@@ -93,9 +93,6 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
     });
     m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("project"));
     m_dvListCtrlPinnedProjects->SetBitmaps(&m_bitmaps);
-    // Since the clDVC is actually a tree with hidden root
-    // the visible text is placed in the first column and not in the 0 column
-    m_dvListCtrlPinnedProjects->SetSortFunction(SortPinnedProjects);
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -556,12 +553,16 @@ void WorkspaceTab::LoadCxxPinnedProjects()
         if(!m_splitter->IsSplit()) {
             m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 50);
         }
+        
         m_dvListCtrlPinnedProjects->DeleteAllItems();
+        m_dvListCtrlPinnedProjects->SetSortFunction(nullptr);
         for(const wxString& project : m_cxxPinnedProjects) {
             wxVector<wxVariant> V;
             V.push_back(::MakeBitmapIndexText(project, 0));
             m_dvListCtrlPinnedProjects->AppendItem(V);
         }
+        // apply the sort
+        m_dvListCtrlPinnedProjects->SetSortFunction(SortPinnedProjects);
     }
 }
 

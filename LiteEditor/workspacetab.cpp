@@ -52,7 +52,7 @@ static bool SortPinnedProjects(clRowEntry* a, clRowEntry* b)
 {
     wxString a_label = a->GetLabel(0);
     wxString b_label = b->GetLabel(0);
-    return a_label.CmpNoCase(b_label) > 0;
+    return a_label.CmpNoCase(b_label) < 0;
 }
 
 WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)

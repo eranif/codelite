@@ -343,5 +343,35 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 };
+
+class WXDLLIMPEXP_CL Diagnostic : public Serializable
+{
+    Range m_range;
+    wxString m_message;
+
+public:
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+
+    Diagnostic(const Range& range, const wxString& message)
+        : m_range(range)
+        , m_message(message)
+    {
+    }
+    Diagnostic() {}
+    virtual ~Diagnostic() {}
+    Diagnostic& SetRange(const Range& range)
+    {
+        this->m_range = range;
+        return *this;
+    }
+    const Range& GetRange() const { return m_range; }
+    Diagnostic& SetMessage(const wxString& message)
+    {
+        this->m_message = message;
+        return *this;
+    }
+    const wxString& GetMessage() const { return m_message; }
+};
 };     // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

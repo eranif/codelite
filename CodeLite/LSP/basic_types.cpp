@@ -211,3 +211,18 @@ JSONItem LSP::SignatureHelp::ToJSON(const wxString& name) const
     json.addProperty("activeParameter", m_activeParameter);
     return json;
 }
+
+void LSP::Diagnostic::FromJSON(const JSONItem& json)
+{
+    // Read the signatures
+    m_range.FromJSON(json.namedObject("range"));
+    m_message = json.namedObject("message").toString();
+}
+
+JSONItem LSP::Diagnostic::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_range.ToJSON("range"));
+    json.addProperty("message", m_message);
+    return json;
+}

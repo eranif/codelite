@@ -26,12 +26,12 @@ protected:
 
     void StopAll();
     void StartAll();
-    
+
     /**
      * @brief covnert LSP::SignatureHelp class to TagEntryPtrVector_t
      */
     void LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp);
-    
+
 protected:
     void OnSignatureHelp(LSPEvent& event);
     void OnSymbolFound(LSPEvent& event);
@@ -43,6 +43,8 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnWorkspaceOpen(wxCommandEvent& event);
     void OnCompileCommandsGenerated(clCommandEvent& event);
+    void OnSetDiagnostics(LSPEvent& event);
+    void OnClearDiagnostics(LSPEvent& event);
 
 public:
     LanguageServerCluster();

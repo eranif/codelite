@@ -5,6 +5,7 @@
 #include "LSP/basic_types.h"
 #include "codelite_exports.h"
 #include "LSP/CompletionItem.h"
+#include <vector>
 
 class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
 {
@@ -12,6 +13,7 @@ class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
     wxString m_serverName;
     LSP::CompletionItem::Vec_t m_completions;
     LSP::SignatureHelp m_signatureHelp;
+    std::vector<LSP::Diagnostic> m_diagnostics;
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -24,6 +26,7 @@ public:
         return *this;
     }
     const LSP::Location& GetLocation() const { return m_location; }
+    LSP::Location& GetLocation() { return m_location; }
     wxEvent* Clone() const { return new LSPEvent(*this); }
     LSPEvent& SetServerName(const wxString& serverName)
     {
@@ -43,6 +46,12 @@ public:
         return *this;
     }
     const LSP::SignatureHelp& GetSignatureHelp() const { return m_signatureHelp; }
+    LSPEvent& SetDiagnostics(const std::vector<LSP::Diagnostic>& diagnostics)
+    {
+        this->m_diagnostics = diagnostics;
+        return *this;
+    }
+    const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return m_diagnostics; }
 };
 
 typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
@@ -55,5 +64,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 
 #endif // LSPEVENT_H

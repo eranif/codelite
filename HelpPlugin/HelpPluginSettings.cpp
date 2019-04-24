@@ -2,7 +2,7 @@
 
 HelpPluginSettings::HelpPluginSettings()
     : clConfigItem("HelpPlugin")
-    , m_cxxDocset("c++,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages")
+    , m_cxxDocset("cpp,net,boost,qt 4,qt 5,cvcpp,cocos2dx,c,manpages")
     , m_phpDocset("php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,"
                   "smarty,phpp,html,statamic,mysql,sqlite,mongodb,psql,redis,zend framework 1,zend framework 2")
     , m_htmlDocset(

@@ -28,6 +28,8 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
+    Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
+    Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -43,6 +45,8 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
+    Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
+    Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -272,4 +276,28 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
     this->Reload(); // restart the servers
+}
+
+void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
+{
+    event.Skip();
+    wxString uri = event.GetLocation().GetUri();
+    wxFileName fn(uri);
+    IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
+    if(editor) {
+        editor->DelAllCompilerMarkers();
+        for(const LSP::Diagnostic& d : event.GetDiagnostics()) {
+            // LSP uses 1 based line numbers
+            editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), d.GetMessage());
+        }
+    }
+}
+
+void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
+{
+    event.Skip();
+    wxString uri = event.GetLocation().GetUri();
+    wxFileName fn(uri);
+    IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
+    if(editor) { editor->DelAllCompilerMarkers(); }
 }

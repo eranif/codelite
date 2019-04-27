@@ -551,7 +551,8 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             const wxFileName& filename = editor->GetFileName();
                             size_t line = editor->GetCurrentLine();
                             size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
-                            if(false && preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
+                            if(false && preq->IsPositionDependantRequest() &&
+                               !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG() << "Response is no longer valid. Discarding its result";
                             } else {
                                 preq->OnResponse(res, m_owner);
@@ -561,14 +562,24 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
                         clDEBUG() << GetLogPrefix() << "Received diagnostic message";
-
-                        JSONItem params = res.Get("params");
-                        JSONItem uri = params.namedObject("uri");
-                        wxFileName fn(wxFileSystem::URLToFileName(uri.toString()));
+                        wxFileName fn(wxFileSystem::URLToFileName(res.GetDiagnosticsUri()));
                         fn.Normalize();
                         clGetManager()->SetStatusMessage(
                             wxString() << GetLogPrefix() << "parsing of file: " << fn.GetFullName() << " is completed",
                             1);
+                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
+                        if(!diags.empty()) {
+                            // report the diagnostics
+                            LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
+                            eventSetDiags.GetLocation().SetUri(fn.GetFullPath());
+                            eventSetDiags.SetDiagnostics(diags);
+                            m_owner->AddPendingEvent(eventSetDiags);
+                        } else {
+                            // clear all diagnostics
+                            LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
+                            eventClearDiags.GetLocation().SetUri(fn.GetFullPath());
+                            m_owner->AddPendingEvent(eventClearDiags);
+                        }
                     } else {
                         clDEBUG() << GetLogPrefix() << "received an unsupported message";
                     }

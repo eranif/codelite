@@ -4,6 +4,7 @@
 #include "LSP/Message.h"
 #include <wx/sharedptr.h>
 #include <macros.h>
+#include "LSP/basic_types.h"
 
 namespace LSP
 {
@@ -42,8 +43,16 @@ public:
      * @brief is this a "textDocument/publishDiagnostics" message?
      */
     bool IsPushDiagnostics() const { return Get("method").toString() == "textDocument/publishDiagnostics"; }
+    
+    /**
+     * @brief return list of diagnostics
+     */
+    std::vector<LSP::Diagnostic> GetDiagnostics() const;
+    /**
+     * @brief return the URI diagnostics
+     */
+    wxString GetDiagnosticsUri() const;
 };
-
 }; // namespace LSP
 
 #endif // RESPONSEMESSAGE_H

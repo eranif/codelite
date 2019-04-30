@@ -29,6 +29,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     , m_book(book)
     , m_selection(wxNOT_FOUND)
 {
+    m_dvListCtrl->SetSortFunction(nullptr);
     clTab::Vec_t allTabs;
     clGetManager()->GetAllTabs(allTabs);
     std::map<void*, clTab> tabsInfoMap;

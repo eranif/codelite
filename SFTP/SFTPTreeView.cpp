@@ -76,6 +76,19 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     m_bmpLoader = clGetManager()->GetStdIcons();
     m_treeCtrl->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
 
+    std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
+                                                                                 const wxTreeItemId& itemB) {
+        MyClientData* a = static_cast<MyClientData*>(GetItemData(itemA));
+        MyClientData* b = static_cast<MyClientData*>(GetItemData(itemB));
+        if(a->IsFolder() && !b->IsFolder())
+            return true;
+        else if(b->IsFolder() && !a->IsFolder())
+            return false;
+        // same kind
+        return (a->GetFullName().CmpNoCase(b->GetFullName()) < 0);
+    };
+    m_treeCtrl->SetSortFunction(SortFunc);
+
     SFTPSettings settings;
     settings.Load();
 
@@ -204,7 +217,7 @@ void SFTPTreeView::DoCloseSession()
 {
     // Clear the 'search' view
     m_plugin->GetOutputPane()->ClearSearchOutput();
-    
+
     // Check if we have unmodified files belonged to this session
     // Load the session name
     IEditor::List_t editors;
@@ -1001,12 +1014,12 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
         if(m_channel && m_channel->IsOpen()) { m_channel->Close(); }
         m_channel.reset(new clSSHChannel(m_sftp->GetSsh()));
         m_channel->Open();
-        
+
         // Prepare the UI for new search
         m_plugin->GetOutputPane()->ClearSearchOutput();
         m_plugin->GetOutputPane()->ShowSearchTab();
         clGetManager()->ShowOutputPane(_("SFTP Log"));
-        
+
         // Run the search
         GrepData gd = grep.GetData();
         wxString command = gd.GetGrepCommand(remoteFolder);
@@ -1017,4 +1030,3 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
     }
 }
-

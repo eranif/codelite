@@ -17,6 +17,7 @@ clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     : clDataViewListCtrl(parent, id, pos, size, style | LIST_STYLE)
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
+    SetSortFunction(nullptr);
     SetNativeTheme(true);
     ApplyTheme();
 

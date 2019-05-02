@@ -190,6 +190,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
         lsp->SetPriority(entry.GetPriority());
+        lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
         lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
 
         wxArrayString lspCommand;
@@ -238,11 +239,16 @@ void LanguageServerCluster::StopAll()
         server.reset(nullptr);
     }
     m_servers.clear();
+
+    // Clear all markers
+    ClearAllDiagnostics();
 }
 
 void LanguageServerCluster::StartAll()
 {
     // create a new list
+    ClearAllDiagnostics();
+    
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
@@ -300,4 +306,13 @@ void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
     wxFileName fn(uri);
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
     if(editor) { editor->DelAllCompilerMarkers(); }
+}
+
+void LanguageServerCluster::ClearAllDiagnostics()
+{
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(IEditor* editor : editors) {
+        editor->DelAllCompilerMarkers();
+    }
 }

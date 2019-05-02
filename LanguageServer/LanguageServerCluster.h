@@ -26,7 +26,8 @@ protected:
 
     void StopAll();
     void StartAll();
-
+    void ClearAllDiagnostics();
+    
     /**
      * @brief covnert LSP::SignatureHelp class to TagEntryPtrVector_t
      */

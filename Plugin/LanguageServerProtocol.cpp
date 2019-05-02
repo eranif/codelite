@@ -290,7 +290,9 @@ void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const w
 {
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
+#ifndef __WXOSX__
     req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename.GetFullName());
+#endif
     QueueMessage(req);
 }
 
@@ -311,7 +313,9 @@ void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const
 {
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
+#ifndef __WXOSX__
     req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename.GetFullName());
+#endif
     QueueMessage(req);
 }
 
@@ -564,17 +568,20 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         clDEBUG() << GetLogPrefix() << "Received diagnostic message";
                         wxFileName fn(wxFileSystem::URLToFileName(res.GetDiagnosticsUri()));
                         fn.Normalize();
+#ifndef __WXOSX__
+                        // Don't show this message on macOS as it appears in the middle of the screen...
                         clGetManager()->SetStatusMessage(
                             wxString() << GetLogPrefix() << "parsing of file: " << fn.GetFullName() << " is completed",
                             1);
+#endif
                         std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
-                        if(!diags.empty()) {
+                        if(!diags.empty() && IsDisaplayDiagnostics()) {
                             // report the diagnostics
                             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
                             eventSetDiags.GetLocation().SetUri(fn.GetFullPath());
                             eventSetDiags.SetDiagnostics(diags);
                             m_owner->AddPendingEvent(eventSetDiags);
-                        } else {
+                        } else if(diags.empty()) {
                             // clear all diagnostics
                             LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
                             eventClearDiags.GetLocation().SetUri(fn.GetFullPath());

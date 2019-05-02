@@ -64,6 +64,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     LSPRequestMessageQueue m_Queue;
     size_t m_createFlags = 0;
     wxStringSet_t m_unimplementedMethods;
+    bool m_disaplayDiagnostics = true;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -129,6 +130,12 @@ public:
     LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
 
+    LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
+    {
+        this->m_disaplayDiagnostics = disaplayDiagnostics;
+        return *this;
+    }
+    bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
     LanguageServerProtocol& SetName(const wxString& name)
     {
         this->m_name = name;
@@ -192,7 +199,7 @@ public:
      * @brief perform code completion for a given editor
      */
     void CodeComplete(IEditor* editor);
-    
+
     /**
      * @brief ask for function call help
      */

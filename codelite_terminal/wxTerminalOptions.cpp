@@ -65,8 +65,13 @@ wxTerminalOptions& wxTerminalOptions::Save()
 
 void wxTerminalOptions::SetHistory(const wxArrayString& history)
 {
-    if(history.size() > 501) {
-        m_history = wxArrayString(history.begin(), history.begin() + 500);
+    const std::size_t threshold = 500;
+    if(history.size() > threshold + 1) {
+        m_history = wxArrayString();
+        m_history.Alloc(threshold);
+        for(std::size_t i = 0; i < threshold; ++i) {
+            m_history.Add(history[i]);
+        }
     } else {
         m_history = history;
     }

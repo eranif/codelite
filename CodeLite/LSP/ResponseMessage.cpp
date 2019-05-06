@@ -60,7 +60,7 @@ JSONItem LSP::ResponseMessage::Get(const wxString& property) const
 
 int LSP::ResponseMessage::ReadHeaders(const wxString& message, wxStringMap_t& headers)
 {
-    int where = message.Index(wxString("\r\n\r\n"));
+    int where = message.Find("\r\n\r\n");
     if(where == wxNOT_FOUND) { return wxNOT_FOUND; }
     wxString headerSection = message.Mid(0, where); // excluding the "\r\n\r\n"
     wxArrayString lines = ::wxStringTokenize(headerSection, "\n", wxTOKEN_STRTOK);

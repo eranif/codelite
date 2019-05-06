@@ -549,6 +549,6 @@ bool JSONItem::isNumber() const
 JSONItem JSONItem::detachProperty(const wxString& name)
 {
     if(!_json) { return JSONItem(NULL); }
-    cJSON* j = cJSON_DetachItemFromObject(_json, name);
+    cJSON* j = cJSON_DetachItemFromObject(_json, name.c_str());
     return JSONItem(j);
 }

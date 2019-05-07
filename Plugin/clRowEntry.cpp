@@ -10,6 +10,7 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/window.h>
+#include <drawingutils.h>
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
@@ -406,7 +407,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         } else {
             cell.SetCheckboxRect(wxRect()); // clear the checkbox rect
         }
-
+        
         // Draw the bitmap
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
@@ -426,6 +427,15 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         int textY = textRect.GetY();
         int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
         RenderText(win, dc, colours, cell.GetValueString(), textX, textY, i);
+        textXOffset += textRect.GetWidth();
+        textXOffset += X_SPACER;
+        
+        if(cell.IsChoice()) {
+            // draw the drop down
+            wxRect dropDownRect(wxPoint(textXOffset, 0), rowRect.GetSize());
+            dropDownRect = dropDownRect.CenterIn(rowRect, wxVERTICAL);
+            DrawingUtils::DrawDropDownArrow(win, dc, dropDownRect, wxNullColour);
+        }
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
@@ -568,7 +578,11 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         // add the checkbox size
         item_width += rowHeight;
         item_width += X_SPACER;
+    } else if(cell.IsChoice()) {
+        item_width += rowHeight;
+        item_width += X_SPACER;
     }
+    
     wxSize textSize = dc.GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button

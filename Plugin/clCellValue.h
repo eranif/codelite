@@ -14,6 +14,7 @@ public:
         kTypeNull = 0,
         kTypeString = 1,
         kTypeBool = 2,
+        kTypeChoice = 3,
     };
 
 protected:
@@ -26,7 +27,9 @@ protected:
     wxColour m_textColour;
     wxColour m_bgColour;
     wxRect m_checkboxRect;
-
+    wxArrayString m_options;
+    int m_selection = wxNOT_FOUND;
+    
 public:
     clCellValue();
     clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
@@ -37,11 +40,12 @@ public:
     bool IsString() const { return m_type == kTypeString; }
     bool IsBool() const { return m_type == kTypeBool; }
     void SetType(eType type) { m_type = type; }
-    void SetValue(const wxString& text) { this->m_stringValue = text; }
+    void SetValue(const wxString& text);
     void SetValue(bool b) { this->m_boolValue = b; }
-    const wxString& GetValueString() const { return m_stringValue; }
+    const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
-
+    bool IsChoice() const { return m_type == kTypeChoice; }
+    
     int GetBitmapIndex() const { return m_bitmapIndex; }
     int GetBitmapSelectedIndex() const { return m_bitmapSelectedIndex; }
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }

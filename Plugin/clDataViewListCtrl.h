@@ -126,7 +126,7 @@ public:
     void SetItemText(const wxDataViewItem& item, const wxString& text, size_t col = 0);
     wxString GetItemText(const wxDataViewItem& item, size_t col = 0) const;
 
-    void SetItemChecked(const wxDataViewItem& item,  bool checked, size_t col = 0);
+    void SetItemChecked(const wxDataViewItem& item, bool checked, size_t col = 0);
     bool IsItemChecked(const wxDataViewItem& item, size_t col = 0) const;
 
     void SetItemBold(const wxDataViewItem& item, bool bold, size_t col = 0);
@@ -234,9 +234,9 @@ public:
         , m_bitmapIndex(other.m_bitmapIndex)
     {
     }
-    
+
     clDataViewCheckbox() {}
-    
+
     virtual ~clDataViewCheckbox() {}
 
     void SetChecked(bool checked) { this->m_checked = checked; }
@@ -259,6 +259,55 @@ public:
 };
 
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK)
+
+// Helper class passing bitmap bool + label with possible bitmap index
+class WXDLLIMPEXP_SDK clDataViewChoice : public wxObject
+{
+private:
+    wxArrayString m_choices;
+    int m_selection = wxNOT_FOUND;
+    int m_bitmapIndex = wxNOT_FOUND;
+
+public:
+    clDataViewChoice(const wxArrayString& choices, int selection, int bitmapIndex = wxNOT_FOUND)
+        : m_choices(choices)
+        , m_selection(selection)
+        , m_bitmapIndex(bitmapIndex)
+    {
+    }
+
+    clDataViewChoice(const clDataViewChoice& other)
+        : wxObject()
+        , m_choices(other.m_choices)
+        , m_selection(other.m_selection)
+        , m_bitmapIndex(other.m_bitmapIndex)
+    {
+    }
+
+    clDataViewChoice() {}
+
+    virtual ~clDataViewChoice() {}
+
+    void SetBitmapIndex(int index) { m_bitmapIndex = index; }
+    int GetBitmapIndex() const { return m_bitmapIndex; }
+
+    void SetChoices(const wxArrayString& choices) { this->m_choices = choices; }
+    void SetSelection(int selection) { this->m_selection = selection; }
+    const wxArrayString& GetChoices() const { return m_choices; }
+    int GetSelection() const { return m_selection; }
+    bool IsSameAs(const clDataViewChoice& other) const
+    {
+        return m_choices == other.m_choices && m_bitmapIndex == other.m_bitmapIndex && m_selection == other.m_selection;
+    }
+
+    bool operator==(const clDataViewChoice& other) const { return IsSameAs(other); }
+
+    bool operator!=(const clDataViewChoice& other) const { return !IsSameAs(other); }
+
+    wxDECLARE_DYNAMIC_CLASS(clDataViewChoice);
+};
+
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);

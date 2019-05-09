@@ -37,6 +37,7 @@
     if(!m_model.GetRoot()) { return; }
 
 wxDEFINE_EVENT(wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
+wxDEFINE_EVENT(wxEVT_TREE_CHOICE, wxTreeEvent);
 
 static void MSWSetNativeTheme(wxWindow* win)
 {
@@ -262,7 +263,13 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
     wxPoint pt = DoFixPoint(event.GetPosition());
     wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk()) {
-        if(flags & wxTREE_HITTEST_ONITEMBUTTON) {
+        if(flags & wxTREE_HITTEST_ONDROPDOWNARROW) {
+            wxTreeEvent evt(wxEVT_TREE_CHOICE);
+            evt.SetInt(column);
+            evt.SetEventObject(this);
+            evt.SetItem(where);
+            GetEventHandler()->ProcessEvent(evt);
+        } else if(flags & wxTREE_HITTEST_ONITEMBUTTON) {
             if(IsExpanded(where)) {
                 Collapse(where);
             } else {
@@ -361,10 +368,14 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                     if(cellRect.Contains(point)) {
                         // Check if click was made on the checkbox ("state icon")
                         wxRect checkboxRect = item->GetCheckboxRect(col);
+                        wxRect dropDownRect = item->GetChoiceRect(col);
                         if(!checkboxRect.IsEmpty()) {
                             // Adjust the coordiantes incase we got h-scroll
                             checkboxRect.SetX(checkboxRect.GetX() - GetFirstColumn());
                             if(checkboxRect.Contains(point)) { flags |= wxTREE_HITTEST_ONITEMSTATEICON; }
+                        } else if(!dropDownRect.IsEmpty()) {
+                            dropDownRect.SetX(dropDownRect.GetX() - GetFirstColumn());
+                            if(dropDownRect.Contains(point)) { flags |= wxTREE_HITTEST_ONDROPDOWNARROW; }
                         }
                         column = col;
                         break;

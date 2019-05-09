@@ -167,6 +167,16 @@ public:
      * @brief remove all columns from the control
      */
     void ClearColumns();
+
+    /**
+     * @brief display a menu for a given item & column ("cell")
+     */
+    void ShowMenuForItem(const wxDataViewItem& item, wxMenu& menu, size_t col = 0);
+
+    /**
+     * @brief display a string selection menu for a given cell. The selection string is set as the cell text
+     */
+    void ShowStringSelectionMenu(const wxDataViewItem& item, const wxArrayString& choices, size_t col = 0);
 };
 
 // Helper class passing bitmap index + text
@@ -264,22 +274,19 @@ DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK)
 class WXDLLIMPEXP_SDK clDataViewChoice : public wxObject
 {
 private:
-    wxArrayString m_choices;
-    int m_selection = wxNOT_FOUND;
+    wxString m_label;
     int m_bitmapIndex = wxNOT_FOUND;
 
 public:
-    clDataViewChoice(const wxArrayString& choices, int selection, int bitmapIndex = wxNOT_FOUND)
-        : m_choices(choices)
-        , m_selection(selection)
+    clDataViewChoice(const wxString& label, int bitmapIndex = wxNOT_FOUND)
+        : m_label(label)
         , m_bitmapIndex(bitmapIndex)
     {
     }
 
     clDataViewChoice(const clDataViewChoice& other)
         : wxObject()
-        , m_choices(other.m_choices)
-        , m_selection(other.m_selection)
+        , m_label(other.m_label)
         , m_bitmapIndex(other.m_bitmapIndex)
     {
     }
@@ -291,17 +298,15 @@ public:
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
-    void SetChoices(const wxArrayString& choices) { this->m_choices = choices; }
-    void SetSelection(int selection) { this->m_selection = selection; }
-    const wxArrayString& GetChoices() const { return m_choices; }
-    int GetSelection() const { return m_selection; }
+    void SetLabel(const wxString& label) { this->m_label = label; }
+    const wxString& GetLabel() const { return m_label; }
+
     bool IsSameAs(const clDataViewChoice& other) const
     {
-        return m_choices == other.m_choices && m_bitmapIndex == other.m_bitmapIndex && m_selection == other.m_selection;
+        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
     }
 
     bool operator==(const clDataViewChoice& other) const { return IsSameAs(other); }
-
     bool operator!=(const clDataViewChoice& other) const { return !IsSameAs(other); }
 
     wxDECLARE_DYNAMIC_CLASS(clDataViewChoice);
@@ -311,5 +316,6 @@ DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 #endif // CLDATAVIEWLISTCTRL_H

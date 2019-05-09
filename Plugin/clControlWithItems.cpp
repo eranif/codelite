@@ -195,6 +195,7 @@ void clControlWithItems::DoInitialize()
     m_viewHeader = new clHeaderBar(this, m_colours);
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
     Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& e) {
+        e.Skip();
         if(m_searchControl && m_searchControl->IsShown()) { m_searchControl->Dismiss(); }
     });
     wxSize textSize = GetTextSize("Tp");

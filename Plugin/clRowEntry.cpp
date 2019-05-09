@@ -282,6 +282,7 @@ void clRowEntry::ClearRects()
 
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)
 {
+    wxUnusedVar(searcher);
     wxRect rowRect = GetItemRect();
     bool zebraColouring = (m_tree->HasStyle(wxTR_ROW_LINES) || m_tree->HasStyle(wxDV_ROW_LINES));
     bool even_row = ((row_index % 2) == 0);
@@ -407,7 +408,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         } else {
             cell.SetCheckboxRect(wxRect()); // clear the checkbox rect
         }
-        
+
         // Draw the bitmap
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
@@ -429,13 +430,21 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         RenderText(win, dc, colours, cell.GetValueString(), textX, textY, i);
         textXOffset += textRect.GetWidth();
         textXOffset += X_SPACER;
-        
+
         if(cell.IsChoice()) {
-            // draw the drop down
-            wxRect dropDownRect(wxPoint(textXOffset, 0), rowRect.GetSize());
+            // draw the drop down arrow. Make it aligned to the right
+            wxRect dropDownRect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
+                                rowRect.GetHeight());
             dropDownRect = dropDownRect.CenterIn(rowRect, wxVERTICAL);
             DrawingUtils::DrawDropDownArrow(win, dc, dropDownRect, wxNullColour);
+            textXOffset += dropDownRect.GetWidth();
+            textXOffset += X_SPACER;
+            // Keep the rect to test clicks
+            cell.SetDropDownRect(dropDownRect);
+        } else {
+            cell.SetDropDownRect(wxRect());
         }
+
         if(!last_cell) {
             cellRect.SetHeight(rowRect.GetHeight());
             dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
@@ -492,6 +501,8 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
 void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
                                   size_t col)
 {
+    wxUnusedVar(win);
+    wxUnusedVar(col);
 #ifdef __WXMSW__
     if(m_tree->IsNativeTheme()) {
         dc.SetTextForeground(colours.GetItemTextColour());
@@ -582,7 +593,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += rowHeight;
         item_width += X_SPACER;
     }
-    
+
     wxSize textSize = dc.GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
@@ -770,12 +781,22 @@ const wxRect& clRowEntry::GetCheckboxRect(size_t col) const
     return cell.GetCheckboxRect();
 }
 
+const wxRect& clRowEntry::GetChoiceRect(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        static wxRect emptyRect;
+        return emptyRect;
+    }
+    return cell.GetDropDownRect();
+}
+
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
 #if 1
     wxUnusedVar(win);
     wxUnusedVar(colours);
-    wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : 0);
+    wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : wxCONTROL_NONE);
 #else
     dc.SetPen(wxPen(colours.GetBorderColour(), 2));
     dc.SetBrush(checked ? colours.GetBorderColour() : *wxTRANSPARENT_BRUSH);
@@ -811,4 +832,18 @@ int clRowEntry::GetCheckBoxWidth(wxWindow* win)
         }
     }
     return width;
+}
+
+void clRowEntry::SetChoice(bool b, size_t col)
+{
+    clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) { return; }
+    cell.SetType(clCellValue::kTypeChoice);
+}
+
+bool clRowEntry::IsChoice(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) { return false; }
+    return cell.IsChoice();
 }

@@ -27,9 +27,8 @@ protected:
     wxColour m_textColour;
     wxColour m_bgColour;
     wxRect m_checkboxRect;
-    wxArrayString m_options;
-    int m_selection = wxNOT_FOUND;
-    
+    wxRect m_dropDownRect;
+
 public:
     clCellValue();
     clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
@@ -45,7 +44,7 @@ public:
     const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
     bool IsChoice() const { return m_type == kTypeChoice; }
-    
+
     int GetBitmapIndex() const { return m_bitmapIndex; }
     int GetBitmapSelectedIndex() const { return m_bitmapSelectedIndex; }
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
@@ -56,9 +55,10 @@ public:
     const wxColour& GetBgColour() const { return m_bgColour; }
     const wxFont& GetFont() const { return m_font; }
     const wxColour& GetTextColour() const { return m_textColour; }
-
     void SetCheckboxRect(const wxRect& checkboxRect) { this->m_checkboxRect = checkboxRect; }
     const wxRect& GetCheckboxRect() const { return m_checkboxRect; }
+    void SetDropDownRect(const wxRect& dropDownRect) { this->m_dropDownRect = dropDownRect; }
+    const wxRect& GetDropDownRect() const { return m_dropDownRect; }
     typedef std::vector<clCellValue> Vect_t;
 };
 

@@ -26,28 +26,6 @@ clCellValue::clCellValue(const char* ptext, int bmpIndex, int bmpOpenIndex)
 {
 }
 
-const wxString& clCellValue::GetValueString() const
-{
-    if(IsChoice()) {
-        if(m_selection == wxNOT_FOUND) {
-            static wxString EmptyString;
-            return EmptyString;
-        } else {
-            return m_options.Item(m_selection);
-        }
-    } else {
-        return m_stringValue;
-    }
-}
+const wxString& clCellValue::GetValueString() const { return m_stringValue; }
 
-void clCellValue::SetValue(const wxString& text)
-{
-     if(IsChoice()) {
-         if(m_options.Index(text) == wxNOT_FOUND) {
-             m_options.Add(text);
-             m_selection = (int)(m_options.size() - 1);
-         }
-     } else {
-         this->m_stringValue = text;
-     }
-}
+void clCellValue::SetValue(const wxString& text) { this->m_stringValue = text; }

@@ -4,6 +4,8 @@
 #include <wx/dataview.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
+#include <wx/menu.h>
+#include <wx/xrc/xmlres.h>
 
 #define DV_ITEM(tree_item) wxDataViewItem(tree_item.GetID())
 #define TREE_ITEM(dv_item) wxTreeItemId(dv_item.GetID())
@@ -19,6 +21,7 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK);
 
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
+wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
 clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -50,6 +53,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
 
     // Translate the following events to wxDVC events
     Bind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
+    Bind(wxEVT_TREE_CHOICE, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -64,6 +68,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
 clDataViewListCtrl::~clDataViewListCtrl()
 {
     Unbind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
+    Unbind(wxEVT_TREE_CHOICE, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -148,6 +153,8 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         type = wxEVT_DATAVIEW_CLEAR_SEARCH;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_VALUE_CHANGED) {
         type = wxEVT_DATAVIEW_ITEM_VALUE_CHANGED;
+    } else if(event.GetEventType() == wxEVT_TREE_CHOICE) {
+        type = wxEVT_DATAVIEW_CHOICE;
     }
     if(type != wxEVT_ANY) { SendDataViewEvent(type, event, eventText); }
 }
@@ -334,6 +341,12 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         //  update the row with the icon + text
         row->SetLabel(iconText.GetText(), col);
         row->SetBitmapIndex(iconText.GetBitmapIndex(), col);
+    } else if(variantType == "clDataViewChoice") {
+        clDataViewChoice choice;
+        choice << value;
+        row->SetChoice(true, col);
+        row->SetBitmapIndex(choice.GetBitmapIndex());
+        row->SetLabel(choice.GetLabel());
     } else if(variantType == "double") {
         row->SetLabel(wxString() << value.GetDouble(), col);
     } else if(variantType == "datetime") {
@@ -354,7 +367,7 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
         // we are done
         return;
     }
-    
+
     // This list ctrl is composed of a hidden root + its children
     // Step 1:
     clRowEntry::Vec_t& children = root->GetChildren();
@@ -378,10 +391,10 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
         child->SetPrev(prev);
         prev = child;
     }
-    
+
     // and store the new sorting method
     m_model.SetSortFunction(CompareFunc);
-    
+
     Refresh();
 }
 
@@ -440,4 +453,37 @@ void clDataViewListCtrl::SetItemChecked(const wxDataViewItem& item, bool checked
 bool clDataViewListCtrl::IsItemChecked(const wxDataViewItem& item, size_t col) const
 {
     return clTreeCtrl::IsChecked(TREE_ITEM(item), col);
+}
+
+void clDataViewListCtrl::ShowMenuForItem(const wxDataViewItem& item, wxMenu& menu, size_t col)
+{
+    clRowEntry* row = m_model.ToPtr(TREE_ITEM(item));
+    if(!row) { return; }
+
+    wxRect r = row->GetCellRect(col);
+    PopupMenu(&menu, r.GetBottomLeft());
+}
+
+void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, const wxArrayString& choices, size_t col)
+{
+    clRowEntry* row = m_model.ToPtr(TREE_ITEM(item));
+    if(!row) { return; }
+    const wxString& currentSelection = row->GetLabel(col);
+    wxMenu menu;
+    wxString selectedString;
+    std::unordered_map<int, wxString> M;
+    for(const wxString& str : choices) {
+        int id = wxXmlResource::GetXRCID(str);
+        wxMenuItem* item = menu.Append(id, str, str, wxITEM_CHECK);
+        item->Check(currentSelection == str);
+        M.insert({ id, str });
+    }
+    menu.Bind(wxEVT_MENU,
+              [&](wxCommandEvent& event) {
+                  if(M.count(event.GetId())) { selectedString = M[event.GetId()]; }
+              },
+              wxID_ANY);
+    wxRect r = row->GetCellRect(col);
+    PopupMenu(&menu, r.GetBottomLeft());
+    if(!selectedString.IsEmpty()) { SetItemText(item, selectedString, col); }
 }

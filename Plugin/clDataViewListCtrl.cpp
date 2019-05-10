@@ -21,6 +21,7 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK);
 
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
+wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE_BUTTON, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
@@ -154,7 +155,7 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_VALUE_CHANGED) {
         type = wxEVT_DATAVIEW_ITEM_VALUE_CHANGED;
     } else if(event.GetEventType() == wxEVT_TREE_CHOICE) {
-        type = wxEVT_DATAVIEW_CHOICE;
+        type = wxEVT_DATAVIEW_CHOICE_BUTTON;
     }
     if(type != wxEVT_ANY) { SendDataViewEvent(type, event, eventText); }
 }
@@ -345,8 +346,8 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         clDataViewChoice choice;
         choice << value;
         row->SetChoice(true, col);
-        row->SetBitmapIndex(choice.GetBitmapIndex());
-        row->SetLabel(choice.GetLabel());
+        row->SetBitmapIndex(choice.GetBitmapIndex(), col);
+        row->SetLabel(choice.GetLabel(), col);
     } else if(variantType == "double") {
         row->SetLabel(wxString() << value.GetDouble(), col);
     } else if(variantType == "datetime") {
@@ -485,5 +486,18 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
               wxID_ANY);
     wxRect r = row->GetCellRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
-    if(!selectedString.IsEmpty()) { SetItemText(item, selectedString, col); }
+    if(!selectedString.IsEmpty()) {
+        SetItemText(item, selectedString, col);
+        // fire selection made event
+#if wxCHECK_VERSION(3, 1, 0)
+        wxDataViewEvent e(wxEVT_DATAVIEW_CHOICE, &m_dummy, item);
+#else
+        wxDataViewEvent e(wxEVT_DATAVIEW_CHOICE);
+        e.SetItem(item);
+#endif
+        e.SetEventObject(this);
+        e.SetColumn(col);
+        e.SetString(selectedString);
+        GetEventHandler()->ProcessEvent(e);
+    }
 }

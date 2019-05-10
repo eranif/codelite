@@ -247,7 +247,13 @@ void ConfigurationManagerDlg::SaveCurrentSettings()
 
 void ConfigurationManagerDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_dirty); }
 
-ConfigurationManagerDlg::~ConfigurationManagerDlg() {}
+ConfigurationManagerDlg::~ConfigurationManagerDlg()
+{
+    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
+        wxArrayString* choices = (wxArrayString*)d;
+        wxDELETE(choices);
+    });
+}
 
 void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
 {
@@ -271,7 +277,7 @@ void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
         m_dirty = true;
         event.Veto(); // prevent the change from taking place
         PopulateConfigurations();
-        
+
     } else {
         // just mark the page as dirty
         m_dirty = true;
@@ -284,6 +290,6 @@ void ConfigurationManagerDlg::OnShowConfigList(wxDataViewEvent& event)
     wxDataViewItem item = event.GetItem();
     wxArrayString* choices = reinterpret_cast<wxArrayString*>(m_dvListCtrl->GetItemData(item));
     if(!choices) { return; }
-    
+
     m_dvListCtrl->ShowStringSelectionMenu(item, *choices, event.GetColumn());
 }

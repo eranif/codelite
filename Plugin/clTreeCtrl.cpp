@@ -47,7 +47,7 @@ static void MSWSetNativeTheme(wxWindow* win)
 }
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clControlWithItems(parent, wxID_ANY, pos, size, style | wxWANTS_CHARS)
+    : clControlWithItems(parent, id, pos, size, style | wxWANTS_CHARS)
     , m_model(this)
 {
     m_treeStyle = style & ~wxWINDOW_STYLE_MASK; // remove the non window style
@@ -109,6 +109,7 @@ clTreeCtrl::~clTreeCtrl()
 
 void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
+    wxUnusedVar(event);
     wxAutoBufferedPaintDC pdc(this);
     PrepareDC(pdc);
 
@@ -263,13 +264,7 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
     wxPoint pt = DoFixPoint(event.GetPosition());
     wxTreeItemId where = HitTest(pt, flags, column);
     if(where.IsOk()) {
-        if(flags & wxTREE_HITTEST_ONDROPDOWNARROW) {
-            wxTreeEvent evt(wxEVT_TREE_CHOICE);
-            evt.SetInt(column);
-            evt.SetEventObject(this);
-            evt.SetItem(where);
-            GetEventHandler()->ProcessEvent(evt);
-        } else if(flags & wxTREE_HITTEST_ONITEMBUTTON) {
+        if(flags & wxTREE_HITTEST_ONITEMBUTTON) {
             if(IsExpanded(where)) {
                 Collapse(where);
             } else {
@@ -281,6 +276,7 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                 // Change the state
                 Check(where, !IsChecked(where, column), column);
             }
+            bool has_multiple_selection = (m_model.GetSelectionsCount() > 1);
             if(HasStyle(wxTR_MULTIPLE)) {
                 if(event.ControlDown()) {
                     // Toggle the selection
@@ -293,7 +289,6 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                                   [&](clRowEntry* p) { m_model.AddSelection(wxTreeItemId(p)); });
                 } else {
                     // The default, single selection
-                    bool has_multiple_selection = (m_model.GetSelectionsCount() > 1);
                     if(!has_multiple_selection && pNode->IsSelected()) {
                         // Nothing to be done here
                     } else if(!has_multiple_selection && !pNode->IsSelected()) {
@@ -314,6 +309,14 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                     SelectItem(wxTreeItemId(pNode));
                     EnsureVisible(where);
                 }
+            }
+
+            if((flags & wxTREE_HITTEST_ONDROPDOWNARROW) && !has_multiple_selection) {
+                wxTreeEvent evt(wxEVT_TREE_CHOICE);
+                evt.SetInt(column);
+                evt.SetEventObject(this);
+                evt.SetItem(where);
+                GetEventHandler()->ProcessEvent(evt);
             }
         }
         Refresh();
@@ -1120,7 +1123,7 @@ wxTreeItemId clTreeCtrl::FindPrev(const wxTreeItemId& from, const wxString& what
 void clTreeCtrl::HighlightText(const wxTreeItemId& item, bool b)
 {
     if(!item.IsOk()) { return; }
-    m_model.ToPtr(item)->SetHighlight(true);
+    m_model.ToPtr(item)->SetHighlight(b);
 }
 
 void clTreeCtrl::ClearHighlight(const wxTreeItemId& item)
@@ -1182,6 +1185,7 @@ void clTreeCtrl::AddHeader(const wxString& label, const wxBitmap& bmp, int width
 
 void clTreeCtrl::DoAddHeader(const wxString& label, const wxBitmap& bmp, int width)
 {
+    wxUnusedVar(bmp);
     if(m_needToClearDefaultHeader) {
         m_needToClearDefaultHeader = false;
         GetHeader()->Clear();

@@ -17,7 +17,8 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/propgrid/manager.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -35,13 +36,12 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
-
 class ConfigManagerBaseDlg : public wxDialog
 {
 protected:
     wxStaticText* m_staticText18;
     wxChoice* m_choiceConfigurations;
-    wxPropertyGridManager* m_pgMgr;
+    clThemedListCtrl* m_dvListCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_button8;
     wxButton* m_button6;
@@ -49,7 +49,6 @@ protected:
 
 protected:
     virtual void OnWorkspaceConfigSelected(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApply(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -57,8 +56,10 @@ protected:
 public:
     wxStaticText* GetStaticText18() { return m_staticText18; }
     wxChoice* GetChoiceConfigurations() { return m_choiceConfigurations; }
-    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    ConfigManagerBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Configuration Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    ConfigManagerBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Configuration Manager"),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ConfigManagerBaseDlg();
 };
 

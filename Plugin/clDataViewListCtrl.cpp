@@ -487,7 +487,6 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
     wxRect r = row->GetCellRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
     if(!selectedString.IsEmpty()) {
-        SetItemText(item, selectedString, col);
         // fire selection made event
 #if wxCHECK_VERSION(3, 1, 0)
         wxDataViewEvent e(wxEVT_DATAVIEW_CHOICE, &m_dummy, item);
@@ -498,6 +497,10 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
         e.SetEventObject(this);
         e.SetColumn(col);
         e.SetString(selectedString);
+        e.Allow(); // by default allow
         GetEventHandler()->ProcessEvent(e);
+        if(e.IsAllowed()) {
+            SetItemText(item, selectedString, col);
+        }
     }
 }

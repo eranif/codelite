@@ -31,26 +31,23 @@
 #include "project_settings.h"
 #include "configuration_mapping.h"
 
-class ConfigEntry
-{
-public:
-    ProjectSettingsPtr projectSettings;
-    wxString project;
-    wxPGProperty* choiceControl;
-};
-
 /** Implementing ConfigManagerBaseDlg */
 class ConfigurationManagerDlg : public ConfigManagerBaseDlg
 {
     bool m_dirty;
     wxString m_currentWorkspaceConfiguration;
-    std::map<wxString, ConfigEntry> m_projectPropertiesMap;
 
 protected:
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
-    void InitDialog();
-    ConfigEntry DoCreateChoicesForProject(
-        const wxString& projectName, const wxString& selectedConf, wxPGProperty* prop = NULL);
+    virtual void OnValueChanged(wxDataViewEvent& event);
+    void OnShowConfigList(wxDataViewEvent& event);
+    
+    /**
+     * @brief return list of build configurations for a project. In addition, return
+     * the project conifugration name that matches the workspace configuration that is selected
+     * in the m_choiceConfigurations drop down
+     */
+    wxArrayString GetChoicesForProject(const wxString& projectName, const wxString& workspaceConfig, size_t& index);
+
     //----------------------------------
     // Events
     //----------------------------------
@@ -60,10 +57,8 @@ protected:
     void OnButtonApply(wxCommandEvent& event);
     void OnButtonApplyUI(wxUpdateUIEvent& event);
     void LoadWorkspaceConfiguration(const wxString& confName);
-    void LoadProjectConfiguration(const wxString& projectName);
 
     void PopulateConfigurations();
-    void AddEntry(const wxString& projectName, const wxString& selectedConf);
     WorkspaceConfiguration::ConfigMappingList GetCurrentSettings();
     void SaveCurrentSettings();
 

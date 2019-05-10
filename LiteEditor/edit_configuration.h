@@ -64,8 +64,8 @@ protected:
 
 public:
     EditConfigurationDialog(wxWindow* parent, const wxString& projectName, int id = wxID_ANY,
-        wxString title = _("Edit Configurations"), wxPoint pos = wxDefaultPosition, wxSize size = wxSize(338, 199),
-        int style = wxDEFAULT_DIALOG_STYLE);
+                            wxString title = _("Edit Configurations"), wxPoint pos = wxDefaultPosition,
+                            wxSize size = wxSize(338, 199), int style = wxDEFAULT_DIALOG_STYLE);
 };
 
 #endif //__edit_configuration__

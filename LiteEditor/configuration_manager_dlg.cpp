@@ -43,27 +43,34 @@ ConfigurationManagerDlg::ConfigurationManagerDlg(wxWindow* parent)
     , m_dirty(false)
 {
     PopulateConfigurations();
-    InitDialog();
     CentreOnParent();
     SetName("ConfigurationManagerDlg");
     WindowAttrManager::Load(this);
+    m_dvListCtrl->Bind(wxEVT_DATAVIEW_CHOICE_BUTTON, &ConfigurationManagerDlg::OnShowConfigList, this);
+    m_dvListCtrl->Bind(wxEVT_DATAVIEW_CHOICE, &ConfigurationManagerDlg::OnValueChanged, this);
 }
 
-ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(const wxString& projectName,
-                                                               const wxString& selectedConf, wxPGProperty* prop)
+wxArrayString ConfigurationManagerDlg::GetChoicesForProject(const wxString& projectName,
+                                                            const wxString& workspaceConfig, size_t& index)
 {
-    wxPGChoices choices;
+    wxArrayString choices;
+    ProjectPtr project = ManagerST::Get()->GetProject(projectName);
+    if(!project) { return choices; }
+
+    // Get the workspace configuration
+    wxString projectConfig =
+        clCxxWorkspaceST::Get()->GetBuildMatrix()->GetProjectSelectedConf(workspaceConfig, projectName);
+    if(projectConfig.IsEmpty()) { return choices; }
 
     // Get all configuration of the project
-    int defaultValue = 0;
-    int counter = 0;
-    ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(projectName);
+    ProjectSettingsPtr settings = project->GetSettings();
+    size_t counter = 0;
     if(settings) {
         ProjectSettingsCookie cookie;
         BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
         while(bldConf) {
             choices.Add(bldConf->GetName());
-            if(bldConf->GetName() == selectedConf) { defaultValue = counter; }
+            if(projectConfig == bldConf->GetName()) { index = counter; }
             bldConf = settings->GetNextBuildConfiguration(cookie);
             ++counter;
         }
@@ -71,47 +78,34 @@ ConfigEntry ConfigurationManagerDlg::DoCreateChoicesForProject(const wxString& p
 
     choices.Add(wxGetTranslation(clCMD_NEW));
     choices.Add(wxGetTranslation(clCMD_EDIT));
-    wxPGProperty* p = prop;
-    if(!p) {
-        p = m_pgMgr->Append(new wxEnumProperty(projectName, wxPG_LABEL, choices, defaultValue));
-    } else {
-        p->SetChoices(choices);
-        p->SetValueFromString(selectedConf);
-    }
-    ConfigEntry entry;
-    entry.project = projectName;
-    entry.projectSettings = settings;
-    entry.choiceControl = p;
-    if(m_projectPropertiesMap.count(projectName)) { m_projectPropertiesMap.erase(projectName); }
-    m_projectPropertiesMap.insert(std::make_pair(projectName, entry));
-    return entry;
-}
-
-void ConfigurationManagerDlg::AddEntry(const wxString& projectName, const wxString& selectedConf)
-{
-    DoCreateChoicesForProject(projectName, selectedConf);
+    return choices;
 }
 
 void ConfigurationManagerDlg::PopulateConfigurations()
 {
-    m_pgMgr->GetGrid()->Clear();
     // popuplate the configurations
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     if(!matrix) { return; }
 
     wxWindowUpdateLocker locker(this);
-    m_projectPropertiesMap.clear();
+    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
+        wxArrayString* choices = (wxArrayString*)d;
+        wxDELETE(choices);
+    });
 
     std::list<WorkspaceConfigurationPtr> configs = matrix->GetConfigurations();
     m_choiceConfigurations->Clear();
-    std::for_each(configs.begin(), configs.end(),
-                  [&](WorkspaceConfigurationPtr config) { m_choiceConfigurations->Append(config->GetName()); });
+    for(WorkspaceConfigurationPtr config : configs) {
+        m_choiceConfigurations->Append(config->GetName());
+    }
 
     // append the 'New' & 'Delete' commands
     m_choiceConfigurations->Append(wxGetTranslation(clCMD_NEW));
     m_choiceConfigurations->Append(wxGetTranslation(clCMD_EDIT));
 
-    int sel = m_choiceConfigurations->FindString(matrix->GetSelectedConfigurationName());
+    int sel = m_choiceConfigurations->FindString(m_currentWorkspaceConfiguration.IsEmpty()
+                                                     ? matrix->GetSelectedConfigurationName()
+                                                     : m_currentWorkspaceConfiguration);
     if(sel != wxNOT_FOUND) {
         m_choiceConfigurations->SetSelection(sel);
     } else if(m_choiceConfigurations->GetCount() > 2) {
@@ -127,46 +121,24 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     wxArrayString projects;
     ManagerST::Get()->GetProjectList(projects);
     projects.Sort(wxStringCmpFunc);
-    for(size_t i = 0; i < projects.GetCount(); i++) {
-        wxString selConf = matrix->GetProjectSelectedConf(matrix->GetSelectedConfigurationName(), projects.Item(i));
-        AddEntry(projects.Item(i), selConf);
+    for(size_t i = 0; i < projects.GetCount(); ++i) {
+        size_t index = wxString::npos;
+        wxArrayString choices = GetChoicesForProject(projects[i], m_currentWorkspaceConfiguration, index);
+        clDataViewChoice c(index != wxString::npos ? choices[index] : "");
+        wxVariant v;
+        v << c;
+        wxVector<wxVariant> cols;
+        cols.push_back(projects[i]);
+        cols.push_back(v);
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new wxArrayString(choices));
     }
 }
 
 void ConfigurationManagerDlg::LoadWorkspaceConfiguration(const wxString& confName)
 {
-    BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) { return; }
-
     m_choiceConfigurations->SetStringSelection(confName);
-    std::map<wxString, ConfigEntry>::iterator iter = m_projectPropertiesMap.begin();
-    for(; iter != m_projectPropertiesMap.end(); ++iter) {
-        wxString selConf = matrix->GetProjectSelectedConf(confName, iter->second.project);
-        iter->second.choiceControl->SetValueFromString(selConf);
-    }
+    PopulateConfigurations();
 }
-
-void ConfigurationManagerDlg::LoadProjectConfiguration(const wxString& projectName)
-{
-    std::map<wxString, ConfigEntry>::iterator iter = m_projectPropertiesMap.begin();
-    for(; iter != m_projectPropertiesMap.end(); iter++) {
-        if(iter->second.project == projectName) {
-            wxPGProperty* prop = iter->second.choiceControl;
-            ProjectSettingsPtr proSet = ManagerST::Get()->GetProjectSettings(projectName);
-            if(proSet) {
-                // select the build configuration according to the build matrix
-                BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-                if(!matrix) { return; }
-                wxString configName =
-                    matrix->GetProjectSelectedConf(m_choiceConfigurations->GetStringSelection(), projectName);
-                DoCreateChoicesForProject(projectName, configName, prop);
-                return;
-            }
-        }
-    }
-}
-
-void ConfigurationManagerDlg::InitDialog() {}
 
 void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent& event)
 {
@@ -186,9 +158,10 @@ void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent& event)
                    wxString::Format(
                        _("Settings for workspace configuration '%s' have changed, would you like to save them?"),
                        m_currentWorkspaceConfiguration.GetData()),
-                   _("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES) {
-                SaveCurrentSettings();
+                   _("CodeLite"), wxYES | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION) != wxYES) {
+                return;
             }
+            SaveCurrentSettings();
             m_dirty = false;
         }
         m_currentWorkspaceConfiguration = event.GetString();
@@ -230,12 +203,12 @@ WorkspaceConfiguration::ConfigMappingList ConfigurationManagerDlg::GetCurrentSet
     // return the current settings as described by the dialog
     WorkspaceConfiguration::ConfigMappingList list;
 
-    std::map<wxString, ConfigEntry>::iterator iter = m_projectPropertiesMap.begin();
-    for(; iter != m_projectPropertiesMap.end(); ++iter) {
-
-        wxString value = iter->second.choiceControl->GetValueAsString();
-        if(value != wxGetTranslation(clCMD_NEW) && value != wxGetTranslation(clCMD_EDIT)) {
-            ConfigMappingEntry entry(iter->second.project, value);
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        wxString projectName = m_dvListCtrl->GetItemText(item, 0);
+        wxString configName = m_dvListCtrl->GetItemText(item, 1);
+        if((configName != wxGetTranslation(clCMD_NEW)) && (configName != wxGetTranslation(clCMD_EDIT))) {
+            ConfigMappingEntry entry(projectName, configName);
             list.push_back(entry);
         }
     }
@@ -276,33 +249,41 @@ void ConfigurationManagerDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.En
 
 ConfigurationManagerDlg::~ConfigurationManagerDlg() {}
 
-void ConfigurationManagerDlg::OnValueChanged(wxPropertyGridEvent& event)
+void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
 {
-    wxString projectName = event.GetProperty()->GetLabel();
-    wxString selection = event.GetProperty()->GetValueAsString();
+    wxString projectName = m_dvListCtrl->GetItemText(event.GetItem(), 0);
+    wxString selection = event.GetString(); // the new selection
+
     if(selection == wxGetTranslation(clCMD_NEW)) {
         // popup the 'New Configuration' dialog
         NewConfigurationDlg* dlg = new NewConfigurationDlg(this, projectName);
         dlg->ShowModal();
         dlg->Destroy();
 
-        // repopulate the configurations
-        LoadProjectConfiguration(projectName);
-
         // clCMD_NEW does not mark the page as dirty !
-
+        event.Veto(); // prevent the change from taking place
+        PopulateConfigurations();
     } else if(selection == wxGetTranslation(clCMD_EDIT)) {
         EditConfigurationDialog* dlg = new EditConfigurationDialog(this, projectName);
         dlg->ShowModal();
         dlg->Destroy();
 
-        // repopulate the configurations
-        LoadProjectConfiguration(projectName);
-
         m_dirty = true;
-
+        event.Veto(); // prevent the change from taking place
+        PopulateConfigurations();
+        
     } else {
         // just mark the page as dirty
         m_dirty = true;
     }
+}
+
+void ConfigurationManagerDlg::OnShowConfigList(wxDataViewEvent& event)
+{
+    event.Skip();
+    wxDataViewItem item = event.GetItem();
+    wxArrayString* choices = reinterpret_cast<wxArrayString*>(m_dvListCtrl->GetItemData(item));
+    if(!choices) { return; }
+    
+    m_dvListCtrl->ShowStringSelectionMenu(item, *choices, event.GetColumn());
 }

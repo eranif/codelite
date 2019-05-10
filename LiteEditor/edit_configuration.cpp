@@ -48,8 +48,8 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-EditConfigurationDialog::EditConfigurationDialog(
-    wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos, wxSize size, int style)
+EditConfigurationDialog::EditConfigurationDialog(wxWindow* parent, const wxString& projectName, int id, wxString title,
+                                                 wxPoint pos, wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
@@ -105,7 +105,7 @@ EditConfigurationDialog::EditConfigurationDialog(
     this->SetSizer(bSizer15);
     GetSizer()->Fit(this);
     Layout();
-
+    CentreOnParent();
     ConnectListBoxDClick(m_configurationsList, EditConfigurationDialog::OnItemDclick);
     ConnectButton(m_buttonClose, EditConfigurationDialog::OnButtonClose);
     ConnectButton(m_buttonRename, EditConfigurationDialog::OnButtonRename);
@@ -159,9 +159,7 @@ void EditConfigurationDialog::OnButtonRename(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString oldName = m_configurationsList->GetStringSelection();
-    if(oldName.IsEmpty()) {
-        return;
-    }
+    if(oldName.IsEmpty()) { return; }
     wxTextEntryDialog* dlg = new wxTextEntryDialog(this, _("Enter New Name:"), _("Rename"), oldName);
     dlg->SetTextValidator(wxFILTER_ASCII);
 
@@ -175,9 +173,7 @@ void EditConfigurationDialog::OnButtonDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString selection = m_configurationsList->GetStringSelection();
-    if(selection.IsEmpty()) {
-        return;
-    }
+    if(selection.IsEmpty()) { return; }
     wxString msg(_("Remove configuration '"));
     msg << selection << _("' ?");
     if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_QUESTION) == wxYES) {

@@ -253,17 +253,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panel38->SetSizer(boxSizer30);
 
-    m_banner34 = new wxBannerWindow(m_panel38, wxID_ANY, wxTOP, wxDefaultPosition,
-                                    wxDLG_UNIT(m_panel38, wxSize(-1, -1)), wxBORDER_THEME);
-    m_banner34->SetBitmap(wxNullBitmap);
-    m_banner34->SetText(_("Search paths"), _("CodeLite will search for include files in these locations"));
-    m_banner34->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION),
-                            wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner34->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner34->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-
-    boxSizer30->Add(m_banner34, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer30->Add(bSizer9, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -333,18 +322,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_panel40->SetSizer(boxSizer42);
-
-    m_banner44 = new wxBannerWindow(m_panel40, wxID_ANY, wxTOP, wxDefaultPosition,
-                                    wxDLG_UNIT(m_panel40, wxSize(-1, -1)), wxBORDER_THEME);
-    m_banner44->SetBitmap(wxNullBitmap);
-    m_banner44->SetText(_("Exclude paths"),
-                        _("CodeLite code completion will ignore any files found in one of the paths below"));
-    m_banner44->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION),
-                            wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner44->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_banner44->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT));
-
-    boxSizer42->Add(m_banner44, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* bSizer91 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -460,10 +437,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     bSizer5->Add(m_textPrep, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    wxStaticBoxSizer* sbSizer52 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelClangGeneral, wxID_ANY, wxT("")), wxVERTICAL);
+    wxBoxSizer* boxSizer130 = new wxBoxSizer(wxVERTICAL);
 
-    bSizer5->Add(sbSizer52, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer5->Add(boxSizer130, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText9 = new wxStaticText(m_panelClangGeneral, wxID_ANY,
                                      _("List here list of tokens to be pre-processed by codelite-indexer usually, you "
@@ -473,13 +449,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
                                 "would like to add here macros which confuse the parser\nClick the below link to read "
                                 "more about this feature and the syntax supported.\n"));
 
-    sbSizer52->Add(m_staticText9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer130->Add(m_staticText9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_hyperlink1 = new wxHyperlinkCtrl(m_panelClangGeneral, wxID_ANY, _("Macros Handling"),
                                        wxT("http://codelite.org/LiteEditor/MacrosHandling101"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelClangGeneral, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
 
-    sbSizer52->Add(m_hyperlink1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer130->Add(m_hyperlink1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     wxBoxSizer* bSizer131 = new wxBoxSizer(wxHORIZONTAL);
 

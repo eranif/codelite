@@ -26,7 +26,6 @@
 #include <wx/propgrid/advprops.h>
 #include <wx/statbox.h>
 #include <wx/slider.h>
-#include <wx/bannerwindow.h>
 #include <wx/stc/stc.h>
 #include <wx/button.h>
 #include <wx/hyperlink.h>
@@ -78,12 +77,10 @@ protected:
     wxPanel* m_pageCtags;
     wxNotebook* m_notebook93;
     wxPanel* m_panel38;
-    wxBannerWindow* m_banner34;
     wxStyledTextCtrl* m_textCtrlCtagsSearchPaths;
     wxButton* m_buttonAddSearchPath;
     wxButton* m_buttonCtagsSuggest;
     wxPanel* m_panel40;
-    wxBannerWindow* m_banner44;
     wxStyledTextCtrl* m_textCtrlCtagsExcludePaths;
     wxButton* m_buttonAddExcludePath;
     wxPanel* m_panelCtagsAdvanced;
@@ -133,12 +130,10 @@ public:
     wxSlider* GetSliderMinWordLen() { return m_sliderMinWordLen; }
     wxCheckBox* GetCheckAutoInsertSingleChoice() { return m_checkAutoInsertSingleChoice; }
     wxPanel* GetPaneTriggering() { return m_paneTriggering; }
-    wxBannerWindow* GetBanner34() { return m_banner34; }
     wxStyledTextCtrl* GetTextCtrlCtagsSearchPaths() { return m_textCtrlCtagsSearchPaths; }
     wxButton* GetButtonAddSearchPath() { return m_buttonAddSearchPath; }
     wxButton* GetButtonCtagsSuggest() { return m_buttonCtagsSuggest; }
     wxPanel* GetPanel38() { return m_panel38; }
-    wxBannerWindow* GetBanner44() { return m_banner44; }
     wxStyledTextCtrl* GetTextCtrlCtagsExcludePaths() { return m_textCtrlCtagsExcludePaths; }
     wxButton* GetButtonAddExcludePath() { return m_buttonAddExcludePath; }
     wxPanel* GetPanel40() { return m_panel40; }

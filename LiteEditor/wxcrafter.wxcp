@@ -3273,7 +3273,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Size:",
-																					"m_value":	"-1,100"
+																					"m_value":	"-1,150"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Minimum Size:",

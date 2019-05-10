@@ -354,7 +354,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_splitterPagePinnedProjects->SetSizer(boxSizer621);
 
     m_dvListCtrlPinnedProjects = new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
-                                                      wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 100)),
+                                                      wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
                                                       wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
 
     boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxEXPAND, WXC_FROM_DIP(5));

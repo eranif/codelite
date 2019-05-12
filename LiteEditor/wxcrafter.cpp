@@ -363,7 +363,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
                                                  wxDATAVIEW_COL_RESIZABLE);
     m_splitterPageTreeView =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 50);
+    m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 100);
 
     wxBoxSizer* boxSizer619 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer619);

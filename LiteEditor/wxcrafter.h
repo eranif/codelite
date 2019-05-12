@@ -62,6 +62,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+
 class NavBarControlBaseClass : public wxPanel
 {
 protected:
@@ -81,11 +82,10 @@ public:
     wxChoice* GetFunc() { return m_func; }
     wxPanel* GetSplitterPage41() { return m_splitterPage41; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
-    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1),
-                           long style = wxWANTS_CHARS | wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW);
+    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL|wxTRANSPARENT_WINDOW);
     virtual ~NavBarControlBaseClass();
 };
+
 
 class NewProjImgList : public wxImageList
 {
@@ -97,19 +97,24 @@ protected:
     int m_imagesWidth;
     int m_imagesHeight;
 
+
 protected:
+
 public:
     NewProjImgList();
-    const wxBitmap& Bitmap(const wxString& name) const
-    {
-        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
+    const wxBitmap& Bitmap(const wxString &name) const {
+        if ( !m_bitmaps.count(name + m_resolution) )
+            return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 
-    void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
+    void SetBitmapResolution(const wxString &res = wxEmptyString) {
+        m_resolution = res;
+    }
 
     virtual ~NewProjImgList();
 };
+
 
 class AddFunctionsImplBaseDlg : public wxDialog
 {
@@ -133,12 +138,10 @@ public:
     wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
     wxButton* GetButton121() { return m_button121; }
     wxButton* GetButton123() { return m_button123; }
-    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
-                            const wxString& title = _("Add function implementation"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add function implementation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~AddFunctionsImplBaseDlg();
 };
+
 
 class WelcomePageBase : public wxPanel
 {
@@ -174,10 +177,10 @@ public:
     wxCommandLinkButton* GetCmdLnkBtnWiki() { return m_cmdLnkBtnWiki; }
     wxPanel* GetPanel191() { return m_panel191; }
     wxScrolledWindow* GetScrollWin247() { return m_scrollWin247; }
-    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WelcomePageBase();
 };
+
 
 class WorkspaceTabBase : public wxPanel
 {
@@ -206,10 +209,10 @@ public:
     clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
 };
+
 
 class EditorFrameBase : public wxFrame
 {
@@ -245,11 +248,10 @@ public:
     clToolBar* GetToolbar() { return m_toolbar; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
     wxMenuBar* GetMenuBar587() { return m_menuBar587; }
-    EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"),
-                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
-                    long style = wxDEFAULT_FRAME_STYLE);
+    EditorFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("EditorFrame"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxDEFAULT_FRAME_STYLE);
     virtual ~EditorFrameBase();
 };
+
 
 class NewProjectWizardBase : public wxWizard
 {
@@ -310,16 +312,11 @@ public:
     wxStaticText* GetStaticText569() { return m_staticText569; }
     wxChoice* GetChoiceBuildSystem() { return m_choiceBuildSystem; }
     wxWizardPageSimple* GetWizardPageToolchain() { return m_wizardPageToolchain; }
-    NewProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project Wizard"),
-                         const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
-                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    wxWizardPageSimple* GetFirstPage() const
-    {
-        if(!m_pages.empty()) return m_pages.at(0);
-        return NULL;
-    }
+    NewProjectWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Project Wizard"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~NewProjectWizardBase();
 };
+
 
 class ClangOutputTabBase : public wxPanel
 {
@@ -328,7 +325,6 @@ public:
         ID_TOOL_CLEAR_LOG = 8001,
         ID_TOOL_CLEAR_ALL = 8002,
     };
-
 protected:
     clToolBar* m_toolbar578;
     wxCheckBox* m_checkBoxEnableClang;
@@ -350,10 +346,10 @@ public:
     wxCheckBox* GetCheckBoxShowErrors() { return m_checkBoxShowErrors; }
     clToolBar* GetToolbar578() { return m_toolbar578; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
-    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~ClangOutputTabBase();
 };
+
 
 class OpenFolderDlgBase : public wxDialog
 {
@@ -365,14 +361,14 @@ protected:
     wxButton* m_button477;
 
 protected:
+
 public:
     wxStaticText* GetStaticText479() { return m_staticText479; }
     wxTextCtrl* GetTextCtrlFolder() { return m_textCtrlFolder; }
-    OpenFolderDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Folder"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                      long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    OpenFolderDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Folder"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~OpenFolderDlgBase();
 };
+
 
 class DefaultWorkspacePageBase : public wxPanel
 {
@@ -381,13 +377,14 @@ protected:
     wxStaticBitmap* m_staticBitmap521;
 
 protected:
+
 public:
     wxStaticText* GetStaticText523() { return m_staticText523; }
     wxStaticBitmap* GetStaticBitmap521() { return m_staticBitmap521; }
-    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(400, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxTAB_TRAVERSAL|wxBORDER_NONE);
     virtual ~DefaultWorkspacePageBase();
 };
+
 
 class SelectDropTargetBaseDlg : public wxDialog
 {
@@ -406,9 +403,7 @@ protected:
 public:
     wxBannerWindow* GetBanner() { return m_banner; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 400),
-                            long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP);
+    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
     virtual ~SelectDropTargetBaseDlg();
 };
 

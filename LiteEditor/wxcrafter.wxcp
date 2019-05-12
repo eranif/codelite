@@ -3162,7 +3162,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Position:",
-															"m_value":	"50"
+															"m_value":	"100"
 														}],
 													"m_events":	[],
 													"m_children":	[{

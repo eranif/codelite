@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="EOSWiki" Version="10.0.0">
+  <VirtualDirectory Name="resources">
+    <File Name="resources/CMakeLists.txt"/>
+    <File Name="resources/SmartContractSample.txt"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="base">
+      <File Name="eosUI.cpp"/>
+      <File Name="eosUI.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="eosUI_eoswiki_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <File Name="eosUI.wxcp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <File Name="SmartContractSample.txt"/>
+    <File Name="EOSProjectData.cpp"/>
+    <File Name="EOSProjectData.h"/>
+    <File Name="EOSProjectWizard.cpp"/>
+    <File Name="EOSProjectWizard.h"/>
+    <File Name="eoswiki.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <File Name="eoswiki.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="CMake">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <Dependencies/>
+  <Settings Type="Dynamic Library">
+    <Configuration Name="Win_x64_Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/EOSWiki-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory="./DebugUnicode"/>
+      <Compiler Required="yes" Options="-g;$(shell wx-config --cxxflags)">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="$(shell wx-config --libs std,stc);">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdkud.dll"/>
+        <Library Value="libcodeliteud.dll"/>
+        <Library Value="libwxsqlite3ud.dll"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\EOSWiki-dbg.dll" ..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+    <Configuration Name="Win_x64_Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger">
+      <General OutputFile="$(IntermediateDirectory)/EOSWiki.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --debug=no) -O2" PCHFlagsPolicy="0"/>
+      <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no ); -O2">
+        <IncludePath Value="."/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Plugin"/>
+        <IncludePath Value="../sdk/wxsqlite3/include"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+      </Compiler>
+      <Linker Required="yes" Options="-O2;$(shell wx-config --debug=no --libs std,stc );-s">
+        <LibraryPath Value="../lib/gcc_lib"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libwxsqlite3u.dll"/>
+      </Linker>
+      <ResourceCompiler Required="no" Options=""/>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\EOSWiki.dll" ..\Runtime\plugins</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <CleanCommand/>
+        <BuildCommand/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

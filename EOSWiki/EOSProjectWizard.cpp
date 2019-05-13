@@ -66,7 +66,7 @@ wxString EOSProjectWizard::GetToolchainPath()
     if(!compiler) { return ""; }
     wxFileName cxx = compiler->GetTool("CXX");
     cxx = wxReadLink(cxx);
-    cxx.RemoveLastDir(); // remove the "bin" folder
+    if (cxx.GetDirCount()) { cxx.RemoveLastDir(); } // remove the "bin" folder
     return cxx.GetPath();
 }
 

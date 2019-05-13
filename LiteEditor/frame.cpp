@@ -5016,7 +5016,7 @@ void clMainFrame::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     CustomTargetsMgr::Get().Clear();
-    ManagerST::Get()->GetPerspectiveManager().ToggleOutputPane(true);
+
 #ifndef __WXMSW__
 #if wxVERSION_NUMBER >= 2900
     // This is needed in >=wxGTK-2.9, otherwise the current editor sometimes doesn't notice that the output pane has

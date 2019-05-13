@@ -262,22 +262,20 @@ void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
 
     if(selection == wxGetTranslation(clCMD_NEW)) {
         // popup the 'New Configuration' dialog
-        NewConfigurationDlg* dlg = new NewConfigurationDlg(this, projectName);
-        dlg->ShowModal();
-        dlg->Destroy();
+        NewConfigurationDlg dlg(this, projectName);
+        if(dlg.ShowModal() == wxID_OK) {
 
-        // clCMD_NEW does not mark the page as dirty !
+            // clCMD_NEW does not mark the page as dirty !
+            PopulateConfigurations();
+        }
         event.Veto(); // prevent the change from taking place
-        PopulateConfigurations();
     } else if(selection == wxGetTranslation(clCMD_EDIT)) {
-        EditConfigurationDialog* dlg = new EditConfigurationDialog(this, projectName);
-        dlg->ShowModal();
-        dlg->Destroy();
-
-        m_dirty = true;
+        EditConfigurationDialog dlg(this, projectName);
+        if(dlg.ShowModal() == wxID_OK) {
+            m_dirty = true;
+            PopulateConfigurations();
+        }
         event.Veto(); // prevent the change from taking place
-        PopulateConfigurations();
-
     } else {
         // just mark the page as dirty
         m_dirty = true;

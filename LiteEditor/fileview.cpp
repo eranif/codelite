@@ -2352,7 +2352,7 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
         menu.Append(item);
         menu.AppendSeparator();
     }
-    
+
     item = new wxMenuItem(&menu, XRCID("build_project"), _("Build"), _("Build project"));
     item->SetBitmap(bmpBuild);
     menu.Append(item);
@@ -2366,38 +2366,39 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
 
     item = new wxMenuItem(&menu, XRCID("stop_build"), _("Stop Build"), _("Stop Build"));
     menu.Append(item);
+
+    // Custom build targets
+    // Add custom project targets
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
+    if(bldConf && bldConf->IsCustomBuild() && !bldConf->GetCustomTargets().empty()) {
+        menu.AppendSeparator();
+        wxMenuItem* item = NULL;
+        // append the custom build targets
+        const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
+        if(!targets.empty()) {
+            CustomTargetsMgr::Get().SetTargets(projectName, targets);
+            const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
+            // get list of custom targets, and create menu entry for each target
+            CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
+            for(; iter != targetsMap.end(); ++iter) {
+                item = new wxMenuItem(&menu,
+                                      iter->first,        // Menu ID
+                                      iter->second.first, // Menu Name
+                                      wxEmptyString, wxITEM_NORMAL);
+                menu.Append(item);
+            }
+        }
+    }
+
     menu.AppendSeparator();
 
     wxMenu* projectOnly = new wxMenu();
     projectOnly->Append(XRCID("build_project_only"), _("Build"));
     projectOnly->Append(XRCID("clean_project_only"), _("Clean"));
     projectOnly->Append(XRCID("rebuild_project_only"), _("Rebuild"));
+
     menu.Append(wxID_ANY, _("Project Only"), projectOnly);
     menu.AppendSeparator();
-
-    // Add custom project targets
-    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-    if(bldConf && bldConf->IsCustomBuild()) {
-        wxMenuItem* item = NULL;
-        // append the custom build targets
-        const BuildConfig::StringMap_t& targets = bldConf->GetCustomTargets();
-        if(targets.empty() == false) {
-            wxMenu* customTargetsMenu = new wxMenu();
-            CustomTargetsMgr::Get().SetTargets(projectName, targets);
-            const CustomTargetsMgr::Map_t& targetsMap = CustomTargetsMgr::Get().GetTargets();
-            // get list of custom targets, and create menu entry for each target
-            CustomTargetsMgr::Map_t::const_iterator iter = targetsMap.begin();
-            for(; iter != targetsMap.end(); ++iter) {
-                item = new wxMenuItem(customTargetsMenu,
-                                      iter->first,        // Menu ID
-                                      iter->second.first, // Menu Name
-                                      wxEmptyString, wxITEM_NORMAL);
-                customTargetsMenu->Append(item);
-            }
-            menu.Append(wxID_ANY, _("Custom Targets..."), customTargetsMenu);
-            menu.AppendSeparator();
-        }
-    }
 
     item = new wxMenuItem(&menu, XRCID("build_order"), _("Build Order..."), _("Build Order..."));
     item->SetBitmap(bmpSort);
@@ -2444,7 +2445,7 @@ void FileViewTree::CreateProjectContextMenu(wxMenu& menu, const wxString& projec
     item = new wxMenuItem(&menu, XRCID("project_properties"), _("Settings..."), _("Settings..."));
     item->SetBitmap(bmpSettings);
     menu.Append(item);
-    
+
     // Add the plugins menu
     if(!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it

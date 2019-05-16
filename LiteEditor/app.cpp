@@ -264,7 +264,6 @@ bool CodeLiteApp::OnInit()
 #elif defined(__WXOSX__)
     SetAppName(wxT("CodeLite"));
 #else
-    wxUnsetEnv("GTK_IM_MODULE");
     SetAppName(wxT("codelite"));
 #endif
 

@@ -53,6 +53,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+
 class TextEditorBaseClass : public wxPanel
 {
 protected:
@@ -65,10 +66,10 @@ protected:
 
 public:
     wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
-    TextEditorBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxWANTS_CHARS | wxTAB_TRAVERSAL);
+    TextEditorBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxWANTS_CHARS|wxTAB_TRAVERSAL);
     virtual ~TextEditorBaseClass();
 };
+
 
 class FontPickerDlgBaseClass : public wxDialog
 {
@@ -103,11 +104,10 @@ public:
     wxStaticText* GetStaticTextSample() { return m_staticTextSample; }
     wxButton* GetButton34() { return m_button34; }
     wxButton* GetButton33() { return m_button33; }
-    FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Font Picker"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Font Picker"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~FontPickerDlgBaseClass();
 };
+
 
 class MessageDlgBaseClass : public wxDialog
 {
@@ -122,17 +122,17 @@ protected:
     wxButton* m_button339;
 
 protected:
+
 public:
     wxStaticBitmap* GetStaticBitmap75() { return m_staticBitmap75; }
     wxStaticText* GetTitle() { return m_title; }
     wxStaticText* GetMessage() { return m_message; }
     wxPanel* GetPanel70() { return m_panel70; }
     wxCheckBox* GetCheckBoxDontAnnoy() { return m_checkBoxDontAnnoy; }
-    MessageDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Message"),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    MessageDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Message"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~MessageDlgBaseClass();
 };
+
 
 class DefineCustomControlWizardBaseClass : public wxWizard
 {
@@ -195,17 +195,11 @@ public:
     wxButton* GetButton287() { return m_button287; }
     wxButton* GetButton289() { return m_button289; }
     wxWizardPageSimple* GetWizardPageEvents() { return m_wizardPageEvents; }
-    DefineCustomControlWizardBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                       const wxString& title = _("Define Custom Control"),
-                                       const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition,
-                                       long style = wxDEFAULT_DIALOG_STYLE);
-    wxWizardPageSimple* GetFirstPage() const
-    {
-        if(!m_pages.empty()) return m_pages.at(0);
-        return NULL;
-    }
+    DefineCustomControlWizardBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Define Custom Control"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
     virtual ~DefineCustomControlWizardBaseClass();
 };
+
 
 class EditCustomControlDlgBaseClass : public wxDialog
 {
@@ -252,12 +246,10 @@ public:
     wxNotebook* GetNotebook() { return m_notebook; }
     wxButton* GetButton114() { return m_button114; }
     wxButton* GetButton115() { return m_button115; }
-    EditCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                  const wxString& title = _("Edit Custom Control..."),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 400),
-                                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    EditCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Custom Control..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~EditCustomControlDlgBaseClass();
 };
+
 
 class ImportDlgBaseClass : public wxDialog
 {
@@ -298,12 +290,10 @@ public:
     wxTextCtrl* GetTextCtrl1VirtualFolder() { return m_textCtrl1VirtualFolder; }
     wxButton* GetButtonBrowseVD() { return m_buttonBrowseVD; }
     wxCheckBox* GetCheckBoxLoadWhenDone() { return m_checkBoxLoadWhenDone; }
-    ImportDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
-                       const wxString& title = _("Choose an XRC file to import"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                       long style = wxDEFAULT_DIALOG_STYLE | wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX);
+    ImportDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Choose an XRC file to import"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX);
     virtual ~ImportDlgBaseClass();
 };
+
 
 class wxcTreeViewBaseClass : public wxPanel
 {
@@ -320,7 +310,7 @@ protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnWxcpComboxTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshWxcpFiles(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSashPositionChanged(wxSplitterEvent& event) { event.Skip(); }
+    virtual void OnSashPositionChanged( wxSplitterEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxTreeEvent& event) { event.Skip(); }
     virtual void OnItemLabelEditEnd(wxTreeEvent& event) { event.Skip(); }
     virtual void OnChar(wxKeyEvent& event) { event.Skip(); }
@@ -332,10 +322,10 @@ public:
     wxPanel* GetSplitterPageTree() { return m_splitterPageTree; }
     wxPanel* GetSplitterPageEvents() { return m_splitterPageEvents; }
     wxSplitterWindow* GetSplitter347() { return m_splitter347; }
-    wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~wxcTreeViewBaseClass();
 };
+
 
 class DeleteCustomControlDlgBaseClass : public wxDialog
 {
@@ -355,12 +345,10 @@ public:
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxButton* GetButton163() { return m_button163; }
     wxButton* GetButton164() { return m_button164; }
-    DeleteCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                    const wxString& title = _("Delete Custom Control"),
-                                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
-                                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    DeleteCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Delete Custom Control"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,300), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~DeleteCustomControlDlgBaseClass();
 };
+
 
 class wxcAboutDlgBaseClass : public wxDialog
 {
@@ -415,11 +403,10 @@ public:
     wxPanel* GetPanel217() { return m_panel217; }
     wxNotebook* GetNotebook173() { return m_notebook173; }
     wxButton* GetButton171() { return m_button171; }
-    wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About wxCrafter..."),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                         long style = wxDEFAULT_DIALOG_STYLE);
+    wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("About wxCrafter..."), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~wxcAboutDlgBaseClass();
 };
+
 
 class NewCustomEventBaseDlg : public wxDialog
 {
@@ -432,6 +419,7 @@ protected:
     wxButton* m_button253;
 
 protected:
+
 public:
     wxStaticText* GetStaticText257() { return m_staticText257; }
     wxTextCtrl* GetTextCtrlEventType() { return m_textCtrlEventType; }
@@ -439,11 +427,10 @@ public:
     wxTextCtrl* GetTextCtrlEventClass() { return m_textCtrlEventClass; }
     wxButton* GetButton251() { return m_button251; }
     wxButton* GetButton253() { return m_button253; }
-    NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Custom Event"),
-                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Custom Event"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewCustomEventBaseDlg();
 };
+
 
 class BitmapSelectorDlgBase : public wxDialog
 {
@@ -484,11 +471,10 @@ public:
     wxChoice* GetChoiceSize() { return m_choiceSize; }
     wxButton* GetButton297() { return m_button297; }
     wxButton* GetButton299() { return m_button299; }
-    BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Bitmap"),
-                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Bitmap"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~BitmapSelectorDlgBase();
 };
+
 
 class EventsEditorPaneBase : public wxPanel
 {
@@ -501,6 +487,7 @@ protected:
     EventsTableListView* m_inheritedEventsTable;
 
 protected:
+
 public:
     wxStaticText* GetStaticTextEventsPaneTitle() { return m_staticTextEventsPaneTitle; }
     EventsTableListView* GetControlEventsTable() { return m_controlEventsTable; }
@@ -508,10 +495,10 @@ public:
     EventsTableListView* GetInheritedEventsTable() { return m_inheritedEventsTable; }
     wxPanel* GetPanelInheritedEvents() { return m_panelInheritedEvents; }
     wxNotebook* GetNotebook14() { return m_notebook14; }
-    EventsEditorPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    EventsEditorPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~EventsEditorPaneBase();
 };
+
 
 class DuplicateTLWBaseDlg : public wxDialog
 {
@@ -540,11 +527,10 @@ public:
     wxTextCtrl* GetTextFilename() { return m_textFilename; }
     wxButton* GetButton2518() { return m_button2518; }
     wxButton* GetButton2539() { return m_button2539; }
-    DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Choose names"),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                        long style = wxDEFAULT_DIALOG_STYLE);
+    DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Choose names"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~DuplicateTLWBaseDlg();
 };
+
 
 class BmpTextSelectorDlgBase : public wxDialog
 {
@@ -570,11 +556,10 @@ public:
     wxButton* GetButton392() { return m_button392; }
     wxButton* GetButton394() { return m_button394; }
     wxButton* GetButton396() { return m_button396; }
-    BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                           const wxString& title = _("Select Bitmap / Text"), const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Bitmap / Text"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~BmpTextSelectorDlgBase();
 };
+
 
 class SingleBitmapAndTextDlgBase : public wxDialog
 {
@@ -598,10 +583,7 @@ public:
     wxStaticText* GetStaticText414() { return m_staticText414; }
     wxTextCtrl* GetTextCtrlBmp() { return m_textCtrlBmp; }
     wxButton* GetButton416() { return m_button416; }
-    SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                               const wxString& title = _("Set File and Bitmap"), const wxPoint& pos = wxDefaultPosition,
-                               const wxSize& size = wxSize(-1, -1),
-                               long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Set File and Bitmap"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~SingleBitmapAndTextDlgBase();
 };
 

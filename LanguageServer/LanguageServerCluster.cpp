@@ -181,7 +181,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     if(entry.IsEnabled()) {
         if(!entry.IsValid()) {
             clWARNING() << "LSP Server" << entry.GetName()
-                        << "is not valid and it will not be started.(one of the sepcified paths do not "
+                        << "is not valid and it will not be started (one of the specified paths do not "
                            "exist)";
             LanguageServerConfig::Get().GetServers()[entry.GetName()].SetEnabled(false);
             LanguageServerConfig::Get().Save();

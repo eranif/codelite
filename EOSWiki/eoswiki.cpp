@@ -165,7 +165,7 @@ void EOSWiki::CreateSampleFile(ProjectPtr proj, const EOSProjectData& d)
     if(FileUtils::WriteFileContent(sourceFile, fileContent)) {
         proj->AddFile(sourceFile.GetFullPath(), "src");
     } else {
-        clWARNING() << "Faild to write file content:" << sourceFile;
+        clWARNING() << "Failed to write file content:" << sourceFile;
         return;
     }
 }
@@ -228,6 +228,6 @@ void EOSWiki::CreateCMakeListsFile(ProjectPtr proj, const EOSProjectData& d)
         proj->CreateVirtualDir("resources");
         proj->AddFile(cmakeListTxt.GetFullPath(), "resources");
     } else {
-        clWARNING() << "Faild to write file content:" << cmakeListTxt;
+        clWARNING() << "Failed to write file content:" << cmakeListTxt;
     }
 }

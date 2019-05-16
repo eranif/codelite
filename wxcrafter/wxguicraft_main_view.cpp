@@ -1029,7 +1029,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     } else {
 
         wxString msg;
-        msg << _("Error occured while opening file '") << wxcProjectMetadata::Get().GetProjectFile()
+        msg << _("Error occurred while opening file '") << wxcProjectMetadata::Get().GetProjectFile()
             << _("' for writing");
         wxMessageBox(msg, wxT("wxCrafter"), wxICON_ERROR | wxOK | wxCENTER);
     }

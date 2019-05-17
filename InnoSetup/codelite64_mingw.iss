@@ -136,6 +136,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\PHPRefactoring.dll"; DestDir: "{app}\p
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SmartCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Docker.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\LanguageServer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\EOSWiki.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 

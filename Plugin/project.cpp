@@ -1416,6 +1416,8 @@ void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStri
             compilePattern = cFilePattern;
         } else if(fileType == FileExtManager::TypeSourceCpp) {
             compilePattern = cxxFilePattern;
+        } else if(fileType == FileExtManager::TypeHeader) {
+            compilePattern = cxxFilePattern;
         }
 
         if(!compilePattern.IsEmpty()) {

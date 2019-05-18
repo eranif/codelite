@@ -47,6 +47,7 @@
 #include "build_settings_config.h"
 #include "localworkspace.h"
 #include "compiler_command_line_parser.h"
+#include "fileutils.h"
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -1040,18 +1041,28 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
                     for(int i = 0; i < size; ++i) {
                         JSONItem file = arr.arrayItem(i);
                         wxString command = file.namedObject("command").toString();
-                        wxString filename = file.namedObject("file").toString();
+                        wxString file_name = file.namedObject("file").toString();
                         wxString directory = file.namedObject("directory").toString();
 
-                        JSONItem fileItem = JSONItem::createObject();
-                        fileItem.addProperty("file", filename).addProperty("directory", directory);
+                        std::vector<wxString> files;
+                        files.push_back(file_name);
 
-                        // Fix the build command
-                        CompilerCommandLineParser cclp(command, directory);
-                        cclp.MakeAbsolute(directory);
-                        fileItem.addProperty("command", wxString()
-                                                            << "clang " << cclp.GetCompileLine() << " -c " << filename);
-                        newArr.arrayAppend(fileItem);
+                        wxFileName headerFile(file_name);
+                        headerFile.SetExt("h");
+                        if(headerFile.FileExists()) { files.push_back(headerFile.GetFullPath()); }
+                        
+                        // Create two entries: header & cpp (if the header exists)
+                        for(const wxString& filename : files) {
+                            JSONItem fileItem = JSONItem::createObject();
+                            fileItem.addProperty("file", filename).addProperty("directory", directory);
+
+                            // Fix the build command
+                            CompilerCommandLineParser cclp(command, directory);
+                            cclp.MakeAbsolute(directory);
+                            fileItem.addProperty("command",
+                                                 wxString() << "clang " << cclp.GetCompileLine() << " -c " << filename);
+                            newArr.arrayAppend(fileItem);
+                        }
                     }
                     return newFile.release();
                 }

@@ -12,6 +12,10 @@
 #include <wx/window.h>
 #include <drawingutils.h>
 
+#if !wxCHECK_VERSION(3, 1, 0)
+#define wxCONTROL_NONE 0
+#endif
+
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
 #else

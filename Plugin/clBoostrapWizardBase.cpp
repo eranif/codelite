@@ -80,10 +80,11 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     m_radioBoxProfileArr.Add(_("Default (Don't change the current settings)"));
     m_radioBoxProfileArr.Add(_("Both C/C++ and Web development"));
     m_radioBoxProfileArr.Add(_("C/C++ development"));
+    m_radioBoxProfileArr.Add(_("C/C++ development (Blockchain using EOSIO)"));
     m_radioBoxProfileArr.Add(_("Web development (PHP, JS etc)"));
     m_radioBoxProfile =
         new wxRadioBox(m_wizardPagePlugins, wxID_ANY, wxT(""), wxDefaultPosition,
-                       wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1, -1)), m_radioBoxProfileArr, 1, wxRA_SPECIFY_COLS);
+                       wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1, -1)), m_radioBoxProfileArr, 2, wxRA_SPECIFY_COLS);
     m_radioBoxProfile->SetSelection(0);
 
     boxSizer114->Add(m_radioBoxProfile, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));

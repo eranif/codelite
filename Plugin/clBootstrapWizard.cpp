@@ -12,6 +12,7 @@
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 #include "drawingutils.h"
+#include <wxStringHash.h>
 
 static std::vector<wxString> GetCxxPlugins()
 {
@@ -31,6 +32,7 @@ static std::vector<wxString> GetCxxPlugins()
         cxxPlugins.push_back("Wizards");
         cxxPlugins.push_back("wxFormBuilder");
         cxxPlugins.push_back("wxcrafter");
+        cxxPlugins.push_back("EOSWiki");
     }
     return cxxPlugins;
 }
@@ -38,6 +40,8 @@ static std::vector<wxString> GetCxxPlugins()
 static std::vector<wxString> GetAllPlugins()
 {
     static std::vector<wxString> allPlugins;
+    static std::unordered_set<wxString> commonPlugins;
+    if(commonPlugins.empty()) { commonPlugins.insert("Source Code Formatter"); }
     if(allPlugins.empty()) {
 
         clConfig conf("plugins.conf");
@@ -45,8 +49,9 @@ static std::vector<wxString> GetAllPlugins()
         conf.ReadItem(&plugins);
 
         const PluginInfo::PluginMap_t& pluginsInfo = plugins.GetPlugins();
-        std::for_each(pluginsInfo.begin(), pluginsInfo.end(),
-                      [&](const std::pair<wxString, PluginInfo>& item) { allPlugins.push_back(item.first); });
+        std::for_each(pluginsInfo.begin(), pluginsInfo.end(), [&](const std::pair<wxString, PluginInfo>& item) {
+            if(commonPlugins.count(item.second.GetName()) == 0) { allPlugins.push_back(item.first); }
+        });
     }
     return allPlugins;
 }
@@ -212,14 +217,15 @@ void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 
 bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
 {
-    if(m_radioBoxProfile->GetSelection() == 0) {
+    int profile = m_radioBoxProfile->GetSelection();
+    if(profile == 0) {
         // Default, dont change anything
         return false;
-    } else if(m_radioBoxProfile->GetSelection() == 1) {
+    } else if(profile == 1) {
         // Enable all
         plugins.Clear();
         return true;
-    } else if(m_radioBoxProfile->GetSelection() == 2) {
+    } else if(profile == 2) {
         // C/C++ developer
         std::vector<wxString> cxxPlugins = GetCxxPlugins();
         std::vector<wxString> allPlugins = GetAllPlugins();
@@ -230,6 +236,19 @@ bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
                             std::back_inserter(webPlugins));
         plugins.Clear();
         std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
+        return true;
+    } else if(profile == 3) {
+        // C/C++ developer for blockchain
+        std::vector<wxString> cxxPlugins = GetCxxPlugins();
+        std::vector<wxString> allPlugins = GetAllPlugins();
+        std::vector<wxString> webPlugins;
+        std::sort(cxxPlugins.begin(), cxxPlugins.end());
+        std::sort(allPlugins.begin(), allPlugins.end());
+        std::set_difference(allPlugins.begin(), allPlugins.end(), cxxPlugins.begin(), cxxPlugins.end(),
+                            std::back_inserter(webPlugins));
+        plugins.Clear();
+        std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
+        plugins.Add("wxcrafter"); // we don't want wxC enabled for this profile
         return true;
     } else {
         // Web developer

@@ -248,7 +248,8 @@ bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
                             std::back_inserter(webPlugins));
         plugins.Clear();
         std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
-        plugins.Add("wxcrafter"); // we don't want wxC enabled for this profile
+        plugins.Add("wxcrafter");     // we don't want wxC enabled for this profile
+        plugins.Add("wxFormBuilder"); // we don't want wxFB enabled for this profile
         return true;
     } else {
         // Web developer

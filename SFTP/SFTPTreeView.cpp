@@ -188,9 +188,9 @@ void SFTPTreeView::OnItemActivated(wxTreeEvent& event)
     if(cd->IsFolder()) {
         wxTreeItemId item = event.GetItem();
         if(m_treeCtrl->IsExpanded(item)) {
-            m_treeCtrl->CallAfter(&wxTreeCtrl::Collapse, item);
+            m_treeCtrl->CallAfter(&clThemedTreeCtrl::Collapse, item);
         } else {
-            m_treeCtrl->CallAfter(&wxTreeCtrl::Expand, item);
+            m_treeCtrl->CallAfter(&clThemedTreeCtrl::Expand, item);
         }
 
     } else {

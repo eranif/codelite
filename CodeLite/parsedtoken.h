@@ -171,6 +171,7 @@ public:
     TokenContainer()
         : head(NULL)
         , current(NULL)
+        , rew(false)
         , retries(0)
     {
     }

@@ -41,7 +41,7 @@ public:
 	{
 		std::map<size_t, std::string>::const_iterator iter = m_comments.begin();
 		for(; iter != m_comments.end(); iter++) {
-			printf("Line   : %d\n", (unsigned int)iter->first);
+			printf("Line   : %u\n", (unsigned int)iter->first);
 			printf("Comment:\n%s\n", iter->second.c_str());
 		}
 	}

@@ -51,6 +51,7 @@ DotWriter::DotWriter()
     dwce = 0;
     dwtn = 0;
     dwte = 0;
+    m_writedotfileFlag = false;
     dwhideparams = false;
     dwhidenamespaces = false;
     dwstripparams = false;

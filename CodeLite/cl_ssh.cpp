@@ -97,6 +97,11 @@ clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, i
 
 clSSH::clSSH()
     : m_port(22)
+    , m_connected(false)
+    , m_session(NULL)
+    , m_channel(NULL)
+    , m_timer(NULL)
+    , m_owner(NULL)
 {
 }
 

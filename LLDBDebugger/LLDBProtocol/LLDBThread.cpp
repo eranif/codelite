@@ -30,6 +30,7 @@ LLDBThread::LLDBThread()
     : m_id(wxNOT_FOUND)
     , m_line(wxNOT_FOUND)
     , m_active(false)
+    , m_suspended(false)
     , m_stopReason( kStopReasonInvalid )
 {
 }

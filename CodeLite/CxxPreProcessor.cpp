@@ -3,7 +3,8 @@
 #include "file_logger.h"
 
 CxxPreProcessor::CxxPreProcessor()
-    : m_maxDepth(-1)
+    : m_options(0)
+    , m_maxDepth(-1)
     , m_currentDepth(0)
 {
 }

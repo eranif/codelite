@@ -39,6 +39,11 @@ struct tagCallTipInfo {
     std::vector<std::pair<int, int> > paramLen;
 };
 
+clCallTip::clCallTip()
+    : m_curr(0)
+{
+}
+
 clCallTip::clCallTip(const std::vector<TagEntryPtr>& tips)
     : m_curr(0)
 {
@@ -51,6 +56,7 @@ clCallTip& clCallTip::operator=(const clCallTip& rhs)
 {
     if(this == &rhs) return *this;
     m_tips = rhs.m_tips;
+    m_curr = rhs.m_curr;
     return *this;
 }
 

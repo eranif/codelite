@@ -63,6 +63,7 @@ public:
         : m_commandType(kCommandInvalid)
         , m_interruptReason(kInterruptReasonNone)
         , m_lldbId(0)
+        , m_frameId(0)
         , m_processID(wxNOT_FOUND)
         , m_displayFormat((int)eLLDBFormat::kFormatDefault)
     {

@@ -89,7 +89,7 @@ bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
 bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& shutdown)
 {
     int bytes = 0;
-    std::string tmp = std::move(message);
+    std::string tmp = message;
     const int chunkSize = 4096;
     while(!tmp.empty() && !shutdown.load()) {
         errno = 0;

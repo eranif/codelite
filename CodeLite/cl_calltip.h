@@ -67,7 +67,7 @@ public:
     /**
      * default constructor
      */
-    clCallTip() {}
+    clCallTip();
 
     /**
      * Copy constructor

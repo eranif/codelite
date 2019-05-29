@@ -5,6 +5,7 @@
 CxxScannerBase::CxxScannerBase(CxxPreProcessor* preProcessor, const wxFileName& filename)
     : m_scanner(NULL)
     , m_filename(filename)
+    , m_options(0)
     , m_preProcessor(preProcessor)
 {
     wxString content;

@@ -448,10 +448,10 @@ IDbType* MySqlDbAdapter::ConvertType(IDbType* pType)
 	if (!newType) {
 		newType = GetDbTypeByUniversalName(pType->GetUniversalType());
 		delete pType;
-		pType = NULL;
 	}
 	return newType;
 }
+
 IDbType* MySqlDbAdapter::GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type)
 {
 	IDbType* newType = NULL;

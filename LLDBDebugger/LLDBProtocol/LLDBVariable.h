@@ -68,6 +68,7 @@ public:
         : m_valueChanged(false)
         , m_lldbId(wxNOT_FOUND)
         , m_hasChildren(false)
+        , m_isWatch(false)
     {
     }
     virtual ~LLDBVariable();

@@ -625,8 +625,10 @@ protected:
 
 public:
     IDebugger()
-        : m_env(NULL)
-        , m_isRemoteDebugging(false){};
+        : m_observer(NULL)
+        , m_env(NULL)
+        , m_isRemoteDebugging(false)
+        , m_isRemoteExtended(false){};
     virtual ~IDebugger(){};
     void SetProjectName(const wxString& project) { m_debuggeeProjectName = project; }
     void SetName(const wxString& name) { m_name = name; }

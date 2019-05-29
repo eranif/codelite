@@ -10,5 +10,6 @@ clGotoEntry::clGotoEntry(const wxString& desc, const wxString& shortcut, int id)
 
 clGotoEntry::clGotoEntry()
     : m_resourceID(wxNOT_FOUND)
+    , m_flags(0)
 {
 }

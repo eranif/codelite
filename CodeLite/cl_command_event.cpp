@@ -29,6 +29,8 @@ clCommandEvent::clCommandEvent(wxEventType commandType, int winid)
     : wxCommandEvent(commandType, winid)
     , m_answer(false)
     , m_allowed(true)
+    , m_lineNumber(0)
+    , m_selected(false)
 {
 }
 

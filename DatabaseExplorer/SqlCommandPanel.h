@@ -52,7 +52,10 @@ public:
     typedef std::vector<ColumnInfo> Vector_t;
 
 public:
-    ColumnInfo() {}
+    ColumnInfo()
+        : m_type(0)
+    {
+    }
 
     ColumnInfo(int type, const wxString& name)
         : m_type(type)

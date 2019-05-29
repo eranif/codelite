@@ -71,6 +71,7 @@ public:
     CxxVariable(eCxxStandard standard);
     CxxVariable()
         : m_standard(eCxxStandard::kCxx11)
+        , m_isAuto(false)
     {
     }
 

@@ -54,7 +54,11 @@ public:
         atPOSTGRES
     };
     
-    IDbAdapter() {}
+    IDbAdapter()
+        : m_adapterType(atUNKNOWN)
+    {
+    }
+
     virtual ~IDbAdapter() {}
     
     /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opend without defalut database. */

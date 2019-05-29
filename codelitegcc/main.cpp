@@ -40,11 +40,12 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
     int fd = ::open(logfile.c_str(), O_CREAT|O_APPEND, 0660);
     ::chmod(logfile.c_str(), 0660);
 
-    // Lock it
     if ( fd < 0 )
         return;
 
+    // Lock it
     if(::flock(fd, LOCK_EX) < 0) {
+        ::close(fd);
         return;
     }
 
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
     if ( argc < 2 ) {
         return -1;
     }
-    
+
     StringVec_t file_names;
     const char *pdb = getenv("CL_COMPILATION_DB");
     std::string commandline;
@@ -96,7 +97,7 @@ int main(int argc, char **argv)
         if ( is_source_file( arg, file_name ) ) {
             file_names.push_back( file_name );
         }
-        
+
         // re-escape double quotes if needed
         size_t pos = arg.find('"');
         while ( pos != std::string::npos ) {
@@ -146,7 +147,7 @@ bool is_source_file(const std::string& filename, std::string &fixed_file_name)
     extensions.push_back(".cxx");
     extensions.push_back(".cc");
     extensions.push_back(".c");
-    
+
     for(size_t n=0; n<extensions.size(); ++n) {
         if ( ends_with(filename, extensions.at(n)) ) {
             fixed_file_name = filename;

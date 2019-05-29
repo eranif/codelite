@@ -47,8 +47,8 @@ void Tester::RunTests()
 	if(success == totalTests) {
 		printf("    All tests passed successfully!!\n");
 	} else {
-		printf("    %u of %u tests passed\n", (int)success, (int)totalTests);
-		printf("    %u of %u tests failed\n", (int)errors,  (int)totalTests);
+		printf("    %u of %u tests passed\n", (unsigned int)success, (unsigned int)totalTests);
+		printf("    %u of %u tests failed\n", (unsigned int)errors,  (unsigned int)totalTests);
 	}
 }
 

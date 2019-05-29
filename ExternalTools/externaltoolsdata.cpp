@@ -26,7 +26,9 @@
 #include "externaltoolsdata.h"
 
 ToolInfo::ToolInfo()
-    : m_flags(0)
+    : m_captureOutput(false)
+    , m_saveAllFiles(false)
+    , m_flags(0)
 {
 }
 

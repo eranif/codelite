@@ -38,7 +38,7 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     mainSizer->Add(m_textCtrlResourceName, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, 200)),
-                                      wxDV_ROW_LINES | wxDV_SINGLE);
+                                      wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
 
     mainSizer->Add(m_dataview, 1, wxEXPAND, WXC_FROM_DIP(5));
 

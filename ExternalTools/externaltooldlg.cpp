@@ -107,8 +107,8 @@ void ExternalToolDlg::DoEditEntry(const wxDataViewItem& item)
 std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
     std::vector<ToolInfo> tools;
+    tools.reserve(m_dvListCtrlTools->GetItemCount());
     for(size_t i = 0; i < m_dvListCtrlTools->GetItemCount(); ++i) {
-
         ToolInfo ti;
         ExternalToolData* data = GetToolData(m_dvListCtrlTools->RowToItem(i));
 

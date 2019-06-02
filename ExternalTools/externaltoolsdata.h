@@ -28,8 +28,9 @@
 
 #include "serialized_object.h"
 #include <vector>
+#include <unordered_map>
 
-#define MAX_TOOLS 10
+#define MAX_TOOLS 20
 
 class ToolInfo : public SerializedObject
 {
@@ -50,7 +51,8 @@ public:
     enum {
         kCallOnFileSave = (1 << 0),
     };
-
+    typedef std::unordered_map<wxString, ToolInfo> Map_t;
+    
 protected:
     void EnableFlag(int flag, bool b)
     {

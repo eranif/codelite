@@ -102,6 +102,9 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 
     // Bind the "OnFileSave" event
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ExternalToolsPlugin::OnFileSave, this);
+
+    // Load the tools from the configuraton file
+    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &m_externalTools);
 }
 
 ExternalToolsPlugin::~ExternalToolsPlugin() {}
@@ -109,8 +112,6 @@ ExternalToolsPlugin::~ExternalToolsPlugin() {}
 void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
 {
     // support both toolbars icon size
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
     int size = m_mgr->GetToolbarIconSize();
     toolbar->AddSpacer();
     toolbar->AddButton(XRCID("external_tools_settings"), m_mgr->GetStdIcons()->LoadBitmap("tools", size),
@@ -149,17 +150,15 @@ void ExternalToolsPlugin::UnPlug()
 
 void ExternalToolsPlugin::OnSettings(wxCommandEvent& e)
 {
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
     ExternalToolDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
-    dlg.SetTools(inData.GetTools());
+    dlg.SetTools(m_externalTools.GetTools());
 
     if(dlg.ShowModal() == wxID_OK) {
-        // Do something here
-        ExternalToolsData data;
-        data.SetTools(dlg.GetTools());
-        m_mgr->GetConfigTool()->WriteObject(wxT("ExternalTools"), &data);
+        // Update the cache
+        m_externalTools.SetTools(dlg.GetTools());
 
+        // and the file system as well
+        m_mgr->GetConfigTool()->WriteObject(wxT("ExternalTools"), &m_externalTools);
         CallAfter(&ExternalToolsPlugin::OnRecreateTB);
     }
 }
@@ -172,24 +171,18 @@ void ExternalToolsPlugin::OnRecreateTB()
 
 void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 {
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
-
-    for(size_t i = 0; i < inData.GetTools().size(); i++) {
-        ToolInfo ti = inData.GetTools().at(i);
+    for(size_t i = 0; i < m_externalTools.GetTools().size(); i++) {
+        const ToolInfo& ti = m_externalTools.GetTools()[i];
         if(wxXmlResource::GetXRCID(ti.GetId().c_str()) == e.GetId()) { ToolsTaskManager::Instance()->StartTool(ti); }
     }
 }
 
 void ExternalToolsPlugin::DoRecreateToolbar()
 {
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
     int size = m_mgr->GetToolbarIconSize();
 
-    std::vector<ToolInfo> tools = inData.GetTools();
+    std::vector<ToolInfo> tools = m_externalTools.GetTools();
     std::sort(tools.begin(), tools.end(), DecSort());
-
     clToolBar* toolbar = clGetManager()->GetToolBar();
 
     // Remove the old tools
@@ -246,9 +239,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
         menu->AppendSeparator();
 
         // Loop and append the tools already defined
-        ExternalToolsData inData;
-        m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
-        std::vector<ToolInfo> tools = inData.GetTools();
+        std::vector<ToolInfo> tools = m_externalTools.GetTools();
         std::sort(tools.begin(), tools.end(), DecSort());
 
         for(size_t i = 0; i < tools.size(); i++) {
@@ -273,10 +264,8 @@ void ExternalToolsPlugin::OnFileSave(clCommandEvent& event)
     event.Skip(); // always skip
 
     // Get list of tools that should be triggered when a file is being saved
-    ExternalToolsData inData;
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &inData);
-    const std::vector<ToolInfo>& tools = inData.GetTools();
-    std::for_each(tools.begin(), tools.end(), [&](const ToolInfo& tool) {
+    const std::vector<ToolInfo>& tools = m_externalTools.GetTools();
+    for(const ToolInfo& tool : tools) {
         if(tool.IsCallOnFileSave()) {
             // Run this tool
             ToolInfo ti = tool;
@@ -284,5 +273,5 @@ void ExternalToolsPlugin::OnFileSave(clCommandEvent& event)
             ::WrapWithQuotes(filename);
             ToolsTaskManager::Instance()->StartTool(ti, filename);
         }
-    });
+    }
 }

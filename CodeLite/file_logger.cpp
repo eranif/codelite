@@ -136,8 +136,10 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 void FileLogger::Flush()
 {
     if(m_buffer.IsEmpty()) { return; }
-    wxFprintf(m_fp, "%s\n", m_buffer);
-    fflush(m_fp);
+    if(m_fp) {
+        wxFprintf(m_fp, "%s\n", m_buffer);
+        fflush(m_fp);
+    }
     m_buffer.Clear();
 }
 
@@ -171,11 +173,9 @@ wxString FileLogger::Prefix(int verbosity)
         prefix << wxT(" DVL]");
         break;
     }
-    
+
     wxString thread_name = GetCurrentThreadName();
-    if(!thread_name.IsEmpty()) {
-        prefix << " [" << thread_name << "]";
-    }
+    if(!thread_name.IsEmpty()) { prefix << " [" << thread_name << "]"; }
     return prefix;
 }
 

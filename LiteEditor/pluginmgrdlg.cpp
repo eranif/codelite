@@ -107,6 +107,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 
     m_richTextCtrl->Clear();
     m_richTextCtrl->Freeze();
+    m_richTextCtrl->SetEditable(true);
     // get the plugin name
     wxString pluginName = m_dvListCtrl->GetItemText(m_dvListCtrl->RowToItem(index));
     PluginInfo::PluginMap_t::const_iterator iter = plugins.GetPlugins().find(pluginName);
@@ -133,6 +134,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
         m_richTextCtrl->Newline();
         m_richTextCtrl->WriteText(info.GetDescription());
     }
+    m_richTextCtrl->SetEditable(false);
     m_richTextCtrl->Thaw();
 }
 

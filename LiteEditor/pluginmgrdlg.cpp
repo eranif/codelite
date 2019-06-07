@@ -50,29 +50,26 @@ void PluginMgrDlg::Initialize()
     const PluginInfo::PluginMap_t& pluginsMap = plugins.GetPlugins();
 
     // Clear the list
-    m_checkListPluginsList->Clear();
+    m_dvListCtrl->DeleteAllItems();
 
     PluginInfo::PluginMap_t::const_iterator iter = pluginsMap.begin();
-    for(; iter != pluginsMap.end(); ++iter) {
-        PluginInfo info = iter->second;
-
-        int item = m_checkListPluginsList->Append(info.GetName());
-        if(item != wxNOT_FOUND) {
-            m_checkListPluginsList->Check((unsigned int)item, plugins.CanLoad(info));
-        }
+    for(const auto& vt : pluginsMap) {
+        const PluginInfo& info = vt.second;
+        wxVector<wxVariant> cols;
+        cols.push_back(::MakeCheckboxVariant(info.GetName(), plugins.CanLoad(info), wxNOT_FOUND));
+        m_dvListCtrl->AppendItem(cols);
     }
 
-    if(m_checkListPluginsList->IsEmpty() == false) {
-        m_checkListPluginsList->Select(0);
+    if(!m_dvListCtrl->IsEmpty()) {
+        m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
         CreateInfoPage(0);
     }
-    m_checkListPluginsList->SetFocus();
 }
 
-void PluginMgrDlg::OnItemSelected(wxCommandEvent& event)
+void PluginMgrDlg::OnItemSelected(wxDataViewEvent& event)
 {
-    int item = event.GetSelection();
-    CreateInfoPage((unsigned int)item);
+    wxDataViewItem item = event.GetItem();
+    CreateInfoPage(m_dvListCtrl->ItemToRow(item));
 }
 
 void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
@@ -82,10 +79,9 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
     conf.ReadItem(&plugins);
 
     wxArrayString disabledPlugins;
-    for(unsigned int i = 0; i < m_checkListPluginsList->GetCount(); i++) {
-        if(m_checkListPluginsList->IsChecked(i) == false) {
-            disabledPlugins.Add(m_checkListPluginsList->GetString(i));
-        }
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(!m_dvListCtrl->IsItemChecked(item)) { disabledPlugins.Add(m_dvListCtrl->GetItemText(item)); }
     }
 
     std::sort(disabledPlugins.begin(), disabledPlugins.end());
@@ -95,94 +91,64 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
     EndModal(disabledPlugins == m_initialDisabledPlugins ? wxID_CANCEL : wxID_OK);
 }
 
+void PluginMgrDlg::WritePropertyLine(const wxString& label, const wxString& text)
+{
+    m_richTextCtrl->BeginBold();
+    m_richTextCtrl->WriteText(label + " : ");
+    m_richTextCtrl->EndBold();
+    m_richTextCtrl->WriteText(text);
+}
+
 void PluginMgrDlg::CreateInfoPage(unsigned int index)
 {
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
 
+    m_richTextCtrl->Clear();
+    m_richTextCtrl->Freeze();
     // get the plugin name
-    wxString pluginName = m_checkListPluginsList->GetString(index);
+    wxString pluginName = m_dvListCtrl->GetItemText(m_dvListCtrl->RowToItem(index));
     PluginInfo::PluginMap_t::const_iterator iter = plugins.GetPlugins().find(pluginName);
     if(iter != plugins.GetPlugins().end()) {
-        PluginInfo info = iter->second;
+        const PluginInfo& info = iter->second;
+        m_richTextCtrl->BeginBold();
+        m_richTextCtrl->WriteText(info.GetName());
+        m_richTextCtrl->EndBold();
+        m_richTextCtrl->Newline();
 
-        wxString content;
-        content << wxT("<html><body>");
-        content << wxT("<table border=0 width=\"100%\" >");
+        WritePropertyLine(_("Version"), info.GetVersion());
+        m_richTextCtrl->Newline();
 
-        // create line with the plugin name
-        content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-        content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" "
-                       "face=\"Verdana\"><strong>$(PluginName)</strong></font></td>");
-        content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetName()
-                << wxT("</font></td>");
-        content << wxT("</tr>");
+        WritePropertyLine(_("Author"), info.GetAuthor());
+        m_richTextCtrl->Newline();
 
-        // plugin author
-        content << wxT("<tr bgcolor=\"WHITE\">");
-        content << wxT(
-            "<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Author)</strong></font></td>");
-        content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetAuthor()
-                << wxT("</font></td>");
-        content << wxT("</tr>");
+        WritePropertyLine(_("Is Loaded?"), plugins.CanLoad(info) ? _("Yes") : _("No"));
+        m_richTextCtrl->Newline();
+        m_richTextCtrl->Newline();
 
-        // plugin version
-        content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-        content << wxT(
-            "<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Version)</strong></font></td>");
-        content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetVersion()
-                << wxT("</font></td>");
-        content << wxT("</tr>");
-
-        // plugin description
-        content << wxT("<tr bgcolor=\"WHITE\">");
-        content << wxT("<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" "
-                       "face=\"Verdana\"><strong>$(Description)</strong></font></td>");
-        content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << info.GetDescription()
-                << wxT("</font></td>");
-        content << wxT("</tr>");
-
-        content << wxT("<tr bgcolor=\"LIGHT GREY\">");
-        content << wxT(
-            "<td ALIGN=\"LEFT\" WIDTH=30%><font size=\"2\" face=\"Verdana\"><strong>$(Status)</strong></font></td>");
-
-        content.Replace(wxT("$(PluginName)"), _("Plugin Name:"));
-        content.Replace(wxT("$(Author)"), _("Author:"));
-        content.Replace(wxT("$(Version)"), _("Version:"));
-        content.Replace(wxT("$(Description)"), _("Description:"));
-        content.Replace(wxT("$(Status)"), _("Status:"));
-
-        wxString status;
-        if(plugins.CanLoad(info)) {
-            status = wxT("<img src=\"$(InstallPath)/images/plugin_ok.png\" ></img>");
-        } else {
-            status = wxT("<img src=\"$(InstallPath)/images/plugin_not_ok.png\" > </img>");
-        }
-        status.Replace(wxT("$(InstallPath)"), ManagerST::Get()->GetStartupDirectory());
-
-        content << wxT("<td ALIGN=\"LEFT\" ><font size=\"2\" face=\"Verdana\">") << status << wxT("</font></td>");
-        content << wxT("</tr>");
-
-        content << wxT("</table><html><body>");
-
-        m_htmlWinDesc->SetPage(content);
-        m_htmlWinDesc->Refresh();
+        m_richTextCtrl->BeginBold();
+        m_richTextCtrl->WriteText(_("Description:"));
+        m_richTextCtrl->EndBold();
+        m_richTextCtrl->Newline();
+        m_richTextCtrl->WriteText(info.GetDescription());
     }
+    m_richTextCtrl->Thaw();
 }
 
 void PluginMgrDlg::OnCheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_checkListPluginsList->GetCount(); ++i) {
-        m_checkListPluginsList->Check(i, true);
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), true);
     }
 }
 
 void PluginMgrDlg::OnCheckAllUI(wxUpdateUIEvent& event)
 {
     bool atLeastOneIsUnChecked = false;
-    for(size_t i = 0; i < m_checkListPluginsList->GetCount(); ++i) {
-        if(!m_checkListPluginsList->IsChecked(i)) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(!m_dvListCtrl->IsItemChecked(item)) {
             atLeastOneIsUnChecked = true;
             break;
         }
@@ -192,19 +158,21 @@ void PluginMgrDlg::OnCheckAllUI(wxUpdateUIEvent& event)
 
 void PluginMgrDlg::OnUncheckAll(wxCommandEvent& event)
 {
-    for(size_t i = 0; i < m_checkListPluginsList->GetCount(); ++i) {
-        m_checkListPluginsList->Check(i, false);
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        m_dvListCtrl->SetItemChecked(m_dvListCtrl->RowToItem(i), false);
     }
 }
 
 void PluginMgrDlg::OnUncheckAllUI(wxUpdateUIEvent& event)
 {
     bool atLeastOneIsChecked = false;
-    for(size_t i = 0; i < m_checkListPluginsList->GetCount(); ++i) {
-        if(m_checkListPluginsList->IsChecked(i)) {
+    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+        wxDataViewItem item = m_dvListCtrl->RowToItem(i);
+        if(m_dvListCtrl->IsItemChecked(item)) {
             atLeastOneIsChecked = true;
             break;
         }
     }
     event.Enable(atLeastOneIsChecked);
+
 }

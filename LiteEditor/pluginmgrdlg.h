@@ -36,8 +36,9 @@ protected:
     virtual void OnCheckAllUI(wxUpdateUIEvent& event);
     virtual void OnUncheckAll(wxCommandEvent& event);
     virtual void OnUncheckAllUI(wxUpdateUIEvent& event);
+    void WritePropertyLine(const wxString& label, const wxString& text);
     void Initialize();
-    void OnItemSelected(wxCommandEvent& event);
+    void OnItemSelected(wxDataViewEvent& event);
     void OnButtonOK(wxCommandEvent& event);
     void CreateInfoPage(unsigned int index);
 

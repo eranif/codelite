@@ -112,7 +112,7 @@ if ( APPLE )
   set(WX_COMPONENTS "std aui propgrid ribbon")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 else ( APPLE )
-  set(WX_COMPONENTS "std aui propgrid stc ribbon")
+  set(WX_COMPONENTS "std aui propgrid stc ribbon richtext")
 endif()
 
 if (WITH_WXPATH)

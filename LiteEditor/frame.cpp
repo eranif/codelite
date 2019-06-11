@@ -1162,7 +1162,7 @@ void clMainFrame::CreateGUIControls()
     RegisterDockWindow(XRCID("output_pane"), wxT("Output View"));
 
     long show_nav = EditorConfigST::Get()->GetInteger(wxT("ShowNavBar"), 0);
-    if(!show_nav) { m_mainBook->ShowNavBar(false); }
+    m_mainBook->ShowNavBar(show_nav ? true : false);
 
     if(!BuildSettingsConfigST::Get()->Load(wxT("2.1"))) {
         CL_ERROR("Could not locate build configuration! CodeLite installation is broken this might cause unwanted "

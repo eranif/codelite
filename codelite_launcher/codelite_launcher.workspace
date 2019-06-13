@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="codelite_launcher" Database="./codelite_launcher.tags">
+<CodeLite_Workspace Name="codelite_launcher" Database="./codelite_launcher.tags" Version="10.0.0">
   <Project Name="codelite_launcher" Path="codelite_launcher.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">

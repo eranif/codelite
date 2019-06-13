@@ -36,37 +36,6 @@ bool Process(wxCmdLineParser& parser)
         return false;
     }
 
-    // Kill the process
-    //	if (wxProcess::Exists(process_id)) {
-    //
-    //		//Okay, then let's close parent.exe
-    //		int killError = wxProcess::Kill(process_id, wxSIGTERM);
-    //		if (killError) {
-    //			if (killError == wxKILL_BAD_SIGNAL) {
-    //				wxPrintf(wxT("wxProcess::Kill Error: no such signal\n"));
-    //				return true;
-    //			}
-    //			if (killError == wxKILL_ACCESS_DENIED) {
-    //				wxPrintf(wxT("wxProcess::Kill Error: permission denied\n"));
-    //				return true;
-    //			}
-    //			if (killError == wxKILL_NO_PROCESS) {
-    //				wxPrintf(wxT("wxProcess::Kill Error: no such process\n"));
-    //				return true;
-    //			}
-    //			if (killError == wxKILL_ERROR) {
-    //				wxPrintf(wxT("An Error occurred attempting to close parent.exe, the helper will now attempt to forcefully
-    //close %s\n"), exe_name.c_str()); 				int killError2 = wxProcess::Kill(process_id, wxSIGKILL);
-    //				if (killError2) {
-    //					wxPrintf(wxT("The Helper could not close %s\n"), exe_name.c_str());
-    //					return true;
-    //				}
-    //			}
-    //		}
-    //	} else {
-    //		wxPrintf(wxT("Error: process %d does not exist\n"), process_id);
-    //	}
-
     // Now let's open the parent
     wxProcess proc;
     wxSleep(3);

@@ -414,13 +414,13 @@ void SubversionView::DoAddUnVersionedFiles(const wxArrayString& files)
 
 void SubversionView::DoAddChangedFiles(const wxString& status, const wxArrayString& files)
 {
-    std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
+    for(const wxString& filepath : files) {
         wxFileName fn(DoGetCurRepoPath() + wxFileName::GetPathSeparator() + filepath);
         wxVector<wxVariant> cols;
         cols.push_back(status);
-        cols.push_back(::MakeBitmapIndexText(fn.GetFullName(), GetImageIndex(fn)));
+        cols.push_back(::MakeBitmapIndexText(filepath, GetImageIndex(fn)));
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new SvnTreeData(SvnTreeData::SvnNodeTypeFile, filepath));
-    });
+    }
 }
 
 int SubversionView::DoGetIconIndex(const wxString& filename)

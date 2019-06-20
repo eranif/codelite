@@ -3036,18 +3036,7 @@ void Manager::DbgRestoreWatches()
 void Manager::DoRestartCodeLite()
 {
     wxString restartCodeLiteCommand;
-#if 0
-    // the codelite_launcher application is located where the codelite executable is
-    // to properly shoutdown codelite. We first need to close the codelite_indexer process
-    restartCodeLiteCommand << wxT("\"") << m_codeliteLauncher.GetFullPath() << wxT("\" ") << wxT(" --name=\"")
-                           << clStandardPaths::Get().GetExecutablePath() << wxT("\"");
-
-    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
-    clMainFrame::Get()->GetEventHandler()->ProcessEvent(event);
-
-    wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_NOHIDE);
-
-#elif defined(__WXGTK__) || defined(__WXMSW__)
+#if defined(__WXGTK__) || defined(__WXMSW__)
     // The Shell is our friend
     restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
 

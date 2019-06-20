@@ -56,7 +56,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 {
     Hide();
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    
+
     // initialize the file-type hash
     m_fileTypeHash["class"] = BitmapLoader::kClass;
     m_fileTypeHash["struct"] = BitmapLoader::kStruct;
@@ -302,18 +302,19 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     if(event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_NUMPAD_UP ||
        event.GetKeyCode() == WXK_NUMPAD_DOWN) {
         event.Skip(false);
-        bool down = (event.GetKeyCode() == WXK_DOWN || event.GetKeyCode() == WXK_NUMPAD_DOWN);
-        wxDataViewItem selection = m_dataview->GetSelection();
-        if(!selection.IsOk()) {
-            // No selection, select the first
-            DoSelectItem(m_dataview->RowToItem(0));
+
+        if(GetDataview()->GetSelectedItemsCount() == 0) {
+            // Just select the first entry
+            DoSelectItem(GetDataview()->RowToItem(0));
         } else {
-            int curIndex = m_dataview->ItemToRow(selection);
-            if(curIndex != wxNOT_FOUND) {
-                down ? ++curIndex : --curIndex;
-                DoSelectItem(m_dataview->RowToItem(curIndex));
-            }
+            // fire char hook event to the DV control
+            // so it will handle the keyboard movement itself
+            wxKeyEvent charHook = event;
+            charHook.SetEventObject(m_dataview);
+            charHook.SetEventType(wxEVT_CHAR_HOOK);
+            GetDataview()->GetEventHandler()->ProcessEvent(charHook);
         }
+        
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
@@ -328,8 +329,9 @@ bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false
 void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
     CHECK_ITEM_RET(item);
-    m_dataview->Select(item);
-    m_dataview->EnsureVisible(item);
+    GetDataview()->Select(item);
+    GetDataview()->EnsureVisible(item);
+    GetDataview()->Refresh();
 }
 
 void OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,

@@ -26,8 +26,8 @@
 #include "named_pipe_server.h"
 #ifndef __WXMSW__
 # include <sys/types.h>
-# include <sys/unistd.h>
 # include <sys/socket.h>
+# include <unistd.h>
 #endif
 clNamedPipeServer::clNamedPipeServer(const char* pipePath)
 		: clNamedPipe(pipePath)

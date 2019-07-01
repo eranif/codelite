@@ -32,7 +32,7 @@ extern int ExecuteProcessWIN(const std::string& commandline);
 #include <sys/wait.h>
 #include <sys/file.h>
 #include <sys/stat.h>
-#include <sys/stat.h>
+#include <fcntl.h>
 
 void WriteContent( const std::string& logfile, const std::string& filename, const std::string& flags )
 {

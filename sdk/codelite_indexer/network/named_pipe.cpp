@@ -27,9 +27,9 @@
 
 #ifndef __WXMSW__
 #  include <sys/types.h>
-#  include <sys/unistd.h>
 #  include <sys/socket.h>
 #  include <sys/time.h>
+#  include <unistd.h>
 #endif
 
 #ifdef __WXMSW__

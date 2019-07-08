@@ -377,22 +377,41 @@ clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
 {
     if(!item->GetParent()) { return nullptr; }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    clRowEntry::Vec_t::const_iterator iter =
-        std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
-    // If we got a match, move to the next item
-    if(iter != children.end()) { ++iter; }
-    return ((iter == children.end()) ? nullptr : (*iter));
+    if(children.empty()) { return nullptr; }
+    size_t where = -1;
+    for(size_t i = 0; i < children.size(); ++i) {
+        if(item == children[i]) {
+            where = i;
+            break;
+        }
+    }
+
+    // if we couldnt find 'item' in the children list or if it's the last child
+    // return nullptr
+    if((where == (size_t)-1) || (where == (children.size() - 1))) { return nullptr; }
+    ++where;
+    return children[where];
 }
 
 clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
 {
     if(!item->GetParent()) { return nullptr; }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    clRowEntry::Vec_t::const_iterator iter =
-        std::find_if(children.begin(), children.end(), [&](clRowEntry* sibling) { return (sibling == item); });
-    // If we got a match, move to the next item
-    if((iter != children.end()) && (iter != children.begin())) { --iter; }
-    return ((iter == children.end()) ? nullptr : (*iter));
+    if(children.empty()) { return nullptr; }
+    size_t where = -1;
+    for(size_t i = 0; i < children.size(); ++i) {
+        if(item == children[i]) {
+            where = i;
+            break;
+        }
+    }
+
+    // if we couldnt find item in the children list or if it's the first child
+    // we return nullptr
+    if((where == (size_t)-1) || (where == (size_t)0)) { return nullptr; }
+
+    --where;
+    return children[where];
 }
 
 void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)

@@ -920,7 +920,7 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
     } else {
         e.Check(false);
     }
-    
+
     m_sizerFlags.DoUpdateUI(m_pgMgrSizerFlags->GetGrid(), e); // This will do updateui for the alignment tools
 }
 
@@ -1173,8 +1173,8 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
             insertionItem = m_treeControls->GetPrevSibling(beforeItem);
 
             if(insertionItem.IsOk() == false) {
-                item = m_treeControls->AppendItem(parent, wrapper->GetName(), imgId, imgId,
-                                                   new GUICraftItemData(wrapper));
+                item =
+                    m_treeControls->AppendItem(parent, wrapper->GetName(), imgId, imgId, new GUICraftItemData(wrapper));
                 if(itemToSelect.IsOk() == false) itemToSelect = item;
 
             } else {
@@ -1372,11 +1372,9 @@ void GUICraftMainPanel::OnDelete(wxCommandEvent& e)
         m_treeControls->DeleteChildren(m_treeControls->GetSelection());
         m_treeControls->Delete(m_treeControls->GetSelection());
         if(newSel.IsOk()) { m_treeControls->SelectItem(newSel); }
-        DoRefresh(eventType);
-
-        m_treeControls
-            ->SetFocus(); // Without this, focus will unexpectedly appear elsewhere, e.g. on a propertygrid style
-
+        CallAfter(GUICraftMainPanel::DoRefresh, eventType);
+        m_treeControls->CallAfter(&clTreeCtrl::SetFocus); // Without this, focus will unexpectedly appear elsewhere,
+                                                          // e.g. on a propertygrid style
         wxcEditManager::Get().PushState("deletion");
     }
 }

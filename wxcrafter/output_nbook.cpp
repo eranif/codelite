@@ -44,9 +44,11 @@ void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* h
     wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
     wxCrafter::MakeAbsToProject(headerFile);
     wxString cppPrefix;
+    cppPrefix << "// clang-format off\n";
     cppPrefix << wxT("#include \"") << headerFile.GetFullName() << wxT("\"\n");
-    cppPrefix << projectIncludes << wxT("\n\n");
-
+    cppPrefix << projectIncludes << wxT("\n");
+    cppPrefix << "// clang-format on\n\n";
+    
     header.Prepend(prefix);
     cpp.Prepend(cppPrefix);
 

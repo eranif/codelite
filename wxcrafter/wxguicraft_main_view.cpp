@@ -3041,8 +3041,9 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         prefix << autoGenComment;
         prefix << wxT("#ifndef ") << blockGuard << wxT("\n");
         prefix << wxT("#define ") << blockGuard << wxT("\n\n");
+        prefix << "// clang-format off\n";
         prefix << wxCrafter::Join(headers, wxT("\n")) << wxT("\n");
-
+        
         // wxPersistence support
         if(wxcSettings::Get().IsLicensed()) {
             prefix << wxCrafter::WX29_BLOCK_START();
@@ -3052,7 +3053,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
             prefix << "#include <wx/persist/treebook.h>\n";
             prefix << "#endif\n";
         }
-
+        
         prefix << "\n";
         prefix << "#ifdef WXC_FROM_DIP\n";
         prefix << "#undef WXC_FROM_DIP\n";
@@ -3070,7 +3071,8 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
             projectIncludes << wxT("#include ") << wxCrafter::AddQuotes(includes.Item(i)) << wxT("\n");
         }
         prefix << projectIncludes;
-
+        prefix << "// clang-format on\n";
+        
         baseHeader.Prepend(prefix);
         baseHeader.Append(wxT("#endif\n"));
 

@@ -1372,7 +1372,7 @@ void GUICraftMainPanel::OnDelete(wxCommandEvent& e)
         m_treeControls->DeleteChildren(m_treeControls->GetSelection());
         m_treeControls->Delete(m_treeControls->GetSelection());
         if(newSel.IsOk()) { m_treeControls->SelectItem(newSel); }
-        CallAfter(GUICraftMainPanel::DoRefresh, eventType);
+        CallAfter(&GUICraftMainPanel::DoRefresh, eventType);
         m_treeControls->CallAfter(&clTreeCtrl::SetFocus); // Without this, focus will unexpectedly appear elsewhere,
                                                           // e.g. on a propertygrid style
         wxcEditManager::Get().PushState("deletion");

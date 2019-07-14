@@ -2,8 +2,8 @@
 
 clConsoleQTerminal::clConsoleQTerminal()
 {
-    SetTerminalCommand("/usr/bin/qterminal -w %WD% -e %COMMAND%");
-    SetEmptyTerminalCommand("/usr/bin/qterminal -w %WD%");
+    SetTerminalCommand("qterminal -w %WD% -e %COMMAND%");
+    SetEmptyTerminalCommand("qterminal -w %WD%");
 }
 
 clConsoleQTerminal::~clConsoleQTerminal() {}

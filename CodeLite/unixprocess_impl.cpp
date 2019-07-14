@@ -377,14 +377,21 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
                                    const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxString newCmd = cmd;
+    const char *sudo_path;
+
     if((flags & IProcessCreateAsSuperuser)) {
-        if(wxFileName::Exists("/usr/bin/sudo")) {
-            newCmd.Prepend("/usr/bin/sudo --askpass ");
+        sudo_path = "/usr/bin/sudo";
+        if(!wxFileName::Exists(sudo_path)) {
+            sudo_path = "/usr/local/bin/sudo";
+        }
+        if(wxFileName::Exists(sudo_path)) {
+            newCmd.Prepend(sudo_path);
+            newCmd.Prepend(" --askpass ");
             clDEBUG1() << "Executing command:" << newCmd << clEndl;
 
         } else {
             clWARNING() << "Unable to run command: '" << cmd
-                        << "' as superuser: /usr/bin/sudo: no such file or directory" << clEndl;
+                        << "' as superuser: sudo: no such file or directory" << clEndl;
         }
     } else {
         clDEBUG1() << "Executing command:" << newCmd << clEndl;

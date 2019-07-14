@@ -115,13 +115,8 @@ GitPlugin::GitPlugin(IManager* manager)
     : IPlugin(manager)
     , m_colourTrackedFile(wxT("DARK GREEN"))
     , m_colourDiffFile(wxT("MAROON"))
-#ifdef __WXGTK__
-    , m_pathGITExecutable(wxT("/usr/bin/git"))
-    , m_pathGITKExecutable(wxT("/usr/bin/gitk"))
-#else
     , m_pathGITExecutable(wxT("git"))
     , m_pathGITKExecutable(wxT("gitk"))
-#endif
     , m_bActionRequiresTreUpdate(false)
     , m_process(NULL)
     , m_eventHandler(NULL)

@@ -2,8 +2,8 @@
 
 clConsoleMateTerminal::clConsoleMateTerminal()
 {
-    SetTerminalCommand("/usr/bin/mate-terminal --working-directory=%WD% -e '%COMMAND%'");
-    SetEmptyTerminalCommand("/usr/bin/mate-terminal --working-directory=%WD%");
+    SetTerminalCommand("mate-terminal --working-directory=%WD% -e '%COMMAND%'");
+    SetEmptyTerminalCommand("mate-terminal --working-directory=%WD%");
 }
 
 clConsoleMateTerminal::~clConsoleMateTerminal()

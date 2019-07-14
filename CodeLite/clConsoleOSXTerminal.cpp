@@ -30,7 +30,7 @@ wxString clConsoleOSXTerminal::PrepareCommand()
     wxFileName scriptPath = PrepareExecScript();
 
     if(IsTerminalNeeded()) {
-        commandToExecute << "/usr/bin/open -n -a " << GetTerminalApp();
+        commandToExecute << "open -n -a " << GetTerminalApp();
     }
 
     if(!GetCommand().IsEmpty()) {

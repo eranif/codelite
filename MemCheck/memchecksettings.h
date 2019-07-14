@@ -40,7 +40,7 @@
 //////////////////////////////////////////////////////////////
 
 #define CONFIG_ITEM_NAME_VALGRIND "Valgrind"
-#define VALGRIND_BINARY "/usr/bin/valgrind"
+#define VALGRIND_BINARY "valgrind"
 #define VALGRIND_OUTPUT_IN_PRIVATE_FOLDER true
 #define VALGRIND_OUTPUT_FILE ""
 #define VALGRIND_MANDATORY_OPTIONS "--tool=memcheck --xml=yes --fullpath-after= --gen-suppressions=all"

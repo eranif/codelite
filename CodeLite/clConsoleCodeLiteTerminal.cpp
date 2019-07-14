@@ -146,7 +146,7 @@ wxString clConsoleCodeLiteTerminal::GetBinary() const
 #ifdef __WXOSX__
     wxString cmd = codeliteTerminal.GetPath();
     cmd = WrapWithQuotesIfNeeded(cmd);
-    cmd.Prepend("/usr/bin/open ");
+    cmd.Prepend("open ");
     cmd << " --args ";
     return cmd;
 #else

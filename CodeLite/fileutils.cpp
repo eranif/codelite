@@ -161,7 +161,7 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     int rc = system("chmod +x /tmp/codelite-lldb-helper.sh");
     wxUnusedVar(rc);
 
-    command << "/usr/bin/open -a " << appname << " /tmp/codelite-lldb-helper.sh";
+    command << "open -a " << appname << " /tmp/codelite-lldb-helper.sh";
     clDEBUG() << "Executing: " << command;
     long res = ::wxExecute(command);
     if(res == 0) {

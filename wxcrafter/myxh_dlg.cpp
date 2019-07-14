@@ -34,7 +34,9 @@ MyWxDialogXmlHandler::MyWxDialogXmlHandler()
     XRC_ADD_STYLE(wxTHICK_FRAME);
     XRC_ADD_STYLE(wxRESIZE_BOX);
     XRC_ADD_STYLE(wxDIALOG_MODELESS);
+#ifdef wxNO_3D
     XRC_ADD_STYLE(wxNO_3D);
+#endif
 #endif // WXWIN_COMPATIBILITY_2_6
 
     AddWindowStyles();

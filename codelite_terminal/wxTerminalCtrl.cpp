@@ -94,7 +94,7 @@ void wxTerminalCtrl::PostCreate()
         shell << " /C " << m_startupCommand;
     }
 #else
-    shell = "/bin/bash";
+    shell = "/bin/sh";
     if(!m_startupCommand.IsEmpty()) { shell << " -c '" << m_startupCommand << "'"; }
 #endif
     m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput, m_workingDirectory);

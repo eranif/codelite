@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 upload=$1
 if [ "${upload}" == "--upload" ]; then
     cd /cygdrive/c/src/codelite/InnoSetup/output

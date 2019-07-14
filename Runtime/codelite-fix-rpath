@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 install_dir=$1
 wx_libs=`ls -l ${install_dir}/libwx*.so|awk '{print $9;}'|xargs readlink|xargs readlink`
 for lib in ${wx_libs}

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ## Convert SVG files into PNG 
 ## A CodeLite script

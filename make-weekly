@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Keep the current folder
 curdir=`pwd`

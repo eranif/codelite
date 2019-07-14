@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # apt-cyg: install tool for Cygwin similar to debian apt-get
 #
 # The MIT License (MIT)

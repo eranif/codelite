@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 file=codelite-logo.svg
 filename=codelite-logo

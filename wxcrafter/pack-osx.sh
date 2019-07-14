@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 PWD=`pwd`
 base_name=`basename $PWD`
 echo $base_name

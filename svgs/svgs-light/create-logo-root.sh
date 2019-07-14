@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 filename=codelite-logo-root
 
 mkdir -p ../../bitmaps-light/osx/icon.iconset

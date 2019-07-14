@@ -22,7 +22,7 @@ wxFileName clConsoleBash::PrepareExecScript() const
 
     if(!GetCommand().IsEmpty()) {
         wxString fileContent;
-        fileContent << "#!/bin/bash\n";
+        fileContent << "#!/bin/sh\n";
         fileContent << "command=\"" << GetCommand() << "\"\n";
         wxString cdCommand;
 #ifdef __WXOSX__

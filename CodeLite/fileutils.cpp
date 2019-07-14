@@ -157,7 +157,7 @@ void FileUtils::OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxS
     tmpfile << "/tmp/terminal.tty." << ::wxGetProcessId();
     wxFileName helperScript("/tmp", "codelite-lldb-helper.sh");
     wxString fileContent;
-    fileContent << "#!/bin/bash\n";
+    fileContent << "#!/bin/sh\n";
     fileContent << "tty > " << tmpfile << "\n";
     fileContent << "sleep 12345";
     FileUtils::WriteFileContent(helperScript, fileContent);

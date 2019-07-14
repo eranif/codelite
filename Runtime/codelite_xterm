@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/sh 
 
 ## A wrapper script around the xterm (or other terminal) utility 
 ## which allows codelite to export LD_LIBRARY_PATH into the terminal shell
@@ -16,16 +16,16 @@ program_title=$1
 if [ "$program_title" = "" ]; then
 	if [ "${LD_LIBRARY_PATH}" = "" ]; then
 		## LD_LIBRARY_PATH is not defined OR empty
-		## Run the terminal without the bash wrapper
+		## Run the terminal without the sh wrapper
 		${terminal} -T "codelite's shell" 2> /dev/null
 	fi
 else
 	if [ "${LD_LIBRARY_PATH}" = "" ]; then
 		## LD_LIBRARY_PATH is not defined OR empty
-		## Run the terminal without the bash wrapper
+		## Run the terminal without the sh wrapper
 		${terminal} $3 -T "$program_title" -e $2 2> /dev/null
 	else
-		${terminal} $3 -T "$program_title" -e /bin/bash -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH "$@" 2> /dev/null
+		${terminal} $3 -T "$program_title" -e /bin/sh -c 'export LD_LIBRARY_PATH=$0;shift;$@' $LD_LIBRARY_PATH "$@" 2> /dev/null
 	fi
 fi
 

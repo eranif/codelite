@@ -126,7 +126,7 @@ wxString clConsoleGnomeTerminal::PrepareCommand()
     if(hasCommand) {
         wxFileName scriptPath = PrepareExecScript();
         wxString rowCommand;
-        rowCommand << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";
+        rowCommand << "/bin/sh -f \"" << scriptPath.GetFullPath() << "\"";
         commandToExecute.Replace("%COMMAND%", rowCommand);
     }
     return commandToExecute;

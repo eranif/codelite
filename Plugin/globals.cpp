@@ -1951,9 +1951,15 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
     ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
-    if(as_superuser && wxFileName::Exists("/usr/bin/sudo") && wxFileName::Exists(sudoAskpass)) {
+    const char *sudo_path;
+
+    sudo_path = "/usr/bin/sudo";
+    if(!wxFileName::Exists(sudo_path)) {
+        sudo_path = "/usr/local/bin/sudo";
+    }
+    if(as_superuser && wxFileName::Exists(sudo_path) && wxFileName::Exists(sudoAskpass)) {
         wxString cmd;
-        cmd << "/usr/bin/sudo --askpass kill -" << (int)signo << " ";
+        cmd << sudo_path << " --askpass kill -" << (int)signo << " ";
         if(kill_whole_group) { cmd << "-"; }
         cmd << processID;
         int rc = system(cmd.mb_str(wxConvUTF8).data());

@@ -2,8 +2,8 @@
 
 clConsoleKonsole::clConsoleKonsole()
 {
-    SetTerminalCommand("/usr/bin/konsole --separate --workdir %WD% -e '%COMMAND%'");
-    SetEmptyTerminalCommand("/usr/bin/konsole --separate --workdir %WD%");
+    SetTerminalCommand("konsole --separate --workdir %WD% -e '%COMMAND%'");
+    SetEmptyTerminalCommand("konsole --separate --workdir %WD%");
 }
 
 clConsoleKonsole::~clConsoleKonsole() {}

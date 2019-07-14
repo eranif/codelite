@@ -329,6 +329,9 @@ wxString wxFormBuilder::GetWxFBPath()
         }
     }
 #endif
+    if(fbpath.IsEmpty()) {
+        fbpath = wxT("wxformbuilder");
+    }
     return fbpath;
 }
 

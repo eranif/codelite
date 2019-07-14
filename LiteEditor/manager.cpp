@@ -3060,7 +3060,7 @@ void Manager::DoRestartCodeLite()
     bundlePath.RemoveLastDir(); // Contents
     wxString bundlePathStr = bundlePath.GetPath();
     ::WrapWithQuotes(bundlePathStr);
-    restartCodeLiteCommand << "sleep 2 && /usr/bin/open " << bundlePathStr;
+    restartCodeLiteCommand << "sleep 2 && open " << bundlePathStr;
     ::WrapInShell(restartCodeLiteCommand);
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);

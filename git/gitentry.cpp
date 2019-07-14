@@ -34,16 +34,8 @@
 
 const wxEventType wxEVT_GIT_CONFIG_CHANGED = ::wxNewEventType();
 
-#ifdef __WXMSW__
 #define GIT_EXE "git"
 #define GITK_EXE "gitk"
-#elif defined(__WXMAC__)
-#define GIT_EXE "git"
-#define GITK_EXE "gitk"
-#else
-#define GIT_EXE "/usr/bin/git"
-#define GITK_EXE "/usr/bin/gitk"
-#endif
 
 GitEntry::GitEntry()
     : clConfigItem("git-settings")

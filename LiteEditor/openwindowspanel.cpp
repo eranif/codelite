@@ -311,7 +311,7 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
     CHECK_ITEM_RET(item);
     TabClientData* data = reinterpret_cast<TabClientData*>(m_dvListCtrl->GetItemData(item));
     if(data->IsFile()) {
-        m_mgr->OpenFile(data->tab.filename.GetFullPath());
+        m_mgr->OpenFile(data->tab.filename.GetFullPath(), wxEmptyString, wxNOT_FOUND, OF_None);
     } else {
         wxWindow* page = m_mgr->FindPage(data->tab.text);
         if(page) { m_mgr->SelectPage(page); }

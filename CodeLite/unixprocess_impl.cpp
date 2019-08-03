@@ -50,6 +50,10 @@
 #include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#elif defined(__NetBSD__)
+#include <util.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 #else
 #include <pty.h>
 #include <utmp.h>

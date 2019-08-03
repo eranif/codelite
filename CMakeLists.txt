@@ -67,7 +67,7 @@ if(NOT SQLITE3_FOUND)
 endif()
 
 set( IS_FREEBSD 0 )
-set( IS_NETBSD 1 )
+set( IS_NETBSD 0 )
 set( BUILD_WXC 0 )
 set( CL_COPY_WX_LIBS 0 )
 set( WITH_SFTP 1 )

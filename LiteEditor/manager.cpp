@@ -52,7 +52,6 @@
 
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
-#include "NewProjectWizard.h"
 #include "WSImporter.h"
 #include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
@@ -107,6 +106,7 @@
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "ServiceProviderManager.h"
+#include "NewProjectDialog.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -3050,7 +3050,7 @@ void Manager::DoRestartCodeLite()
 
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-    
+
     ::wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
 #else // OSX
 
@@ -3496,11 +3496,15 @@ void Manager::ShowNewProjectWizard(const wxString& workspaceFolder)
     newProjectEvent.SetEventObject(mainFrame);
     if(EventNotifier::Get()->ProcessEvent(newProjectEvent)) { return; }
 
-    NewProjectWizard wiz(mainFrame, newProjectEvent.GetTemplates());
-    if(wiz.RunWizard(wiz.GetFirstPage())) {
+    NewProjectDialog dlg(mainFrame);
+    if(dlg.ShowModal() == wxID_OK) {
 
-        ProjectData data = wiz.GetProjectData();
-
+        ProjectData data = dlg.GetProjectData();
+        // Ensure that the project directory exists
+        if(!wxFileName::DirExists(data.m_path)) {
+            wxFileName::Mkdir(data.m_path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        }
+        
         // Try the plugins first
         clNewProjectEvent finishEvent(wxEVT_NEW_PROJECT_WIZARD_FINISHED);
         finishEvent.SetEventObject(mainFrame);

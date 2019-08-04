@@ -410,8 +410,6 @@
       <File Name="NewVirtualFolderDlg.h"/>
       <File Name="NewVirtualFolderDlg.cpp"/>
       <File Name="depend_dlg_page.wxcp"/>
-      <File Name="NewProjectWizard.h"/>
-      <File Name="NewProjectWizard.cpp"/>
       <File Name="new_workspace_dlg.wxcp"/>
       <File Name="SelectDropTargetDlg.h"/>
       <File Name="SelectDropTargetDlg.cpp"/>

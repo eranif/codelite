@@ -472,6 +472,8 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="NewProjectDialog.cpp"/>
+      <File Name="NewProjectDialog.h"/>
       <File Name="clAboutDialog.cpp"/>
       <File Name="clAboutDialog.h"/>
       <File Name="nameanddescdlg.h"/>
@@ -610,10 +612,12 @@
   <Dependencies Name="WinDebug_29"/>
   <Dependencies Name="WinRelease_29"/>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="NewProjectDialogBase.wxcp"/>
     <File Name="DiffUI.wxcp"/>
     <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="NewProjectDialogBase_plugin_bitmaps.cpp"/>
       <File Name="DiffUI_plugin_bitmaps.cpp"/>
       <File Name="clResizableTooltipBase_plugin_bitmaps.cpp"/>
       <File Name="clAboutDialogBase_plugin_bitmaps.cpp"/>
@@ -633,6 +637,8 @@
       <File Name="GotoAnythingBaseUI_plugin_bitmaps.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="NewProjectDialogBase.cpp"/>
+      <File Name="NewProjectDialogBase.h"/>
       <File Name="DiffUI.cpp"/>
       <File Name="DiffUI.h"/>
       <File Name="clResizableTooltipBase.cpp"/>

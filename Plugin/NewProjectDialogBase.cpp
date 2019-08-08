@@ -37,7 +37,7 @@ NewProjectDialogBase::NewProjectDialogBase(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer10->Add(m_staticText12, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, -1)), 0);
     m_textCtrlName->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));

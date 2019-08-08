@@ -2,9 +2,11 @@
 #include <globals.h>
 #include "clWorkspaceManager.h"
 #include <wx/arrstr.h>
+#include <unordered_set>
 #include "build_settings_config.h"
 #include "debuggermanager.h"
 #include "buildmanager.h"
+#include "wxStringHash.h"
 
 NewProjectDialog::NewProjectDialog(wxWindow* parent)
     : NewProjectDialogBase(parent)
@@ -17,11 +19,15 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     }
 
     // Populate the project type choices
+    std::unordered_set<wxString> S;
     for(auto& p : m_list) {
-        __project_data d;
-        d.project = p;
-        m_projects.push_back(d);
-        m_choiceType->Append(p->GetName(), (void*)&(m_projects[m_projects.size() - 1]));
+        if(S.count(p->GetName()) == 0) {
+            S.insert(p->GetName());
+        } else {
+            continue;
+        }
+        int where = m_choiceType->Append(p->GetName());
+        m_projectsMap.insert({ where, p });
     }
 
     if(!m_choiceType->IsEmpty()) { m_choiceType->SetSelection(0); }
@@ -71,6 +77,7 @@ ProjectData NewProjectDialog::GetProjectData() const
 {
     int sel = m_choiceType->GetSelection();
     if(sel == wxNOT_FOUND) { return ProjectData(); }
+    if(m_projectsMap.count(sel) == 0) { return ProjectData(); }
 
     ProjectData data;
     data.m_builderName = m_choiceBuild->GetStringSelection();
@@ -79,6 +86,6 @@ ProjectData NewProjectDialog::GetProjectData() const
     data.m_debuggerType = m_choiceDebugger->GetStringSelection();
     data.m_path = m_dirPicker->GetPath();
     data.m_sourceTemplate = "C++ Project";
-    data.m_srcProject = ((__project_data*)m_choiceType->GetClientData(sel))->project;
+    data.m_srcProject = m_projectsMap.find(sel)->second;
     return data;
 }

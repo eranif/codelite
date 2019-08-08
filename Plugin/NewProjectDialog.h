@@ -6,23 +6,20 @@
 #include <vector>
 #include "project.h"
 #include <codelite_exports.h>
-
-struct __project_data {
-    ProjectPtr project;
-};
+#include <unordered_map>
 
 class WXDLLIMPEXP_SDK NewProjectDialog : public NewProjectDialogBase
 {
 protected:
     std::list<ProjectPtr> m_list;
     ProjectData m_projectData;
-    std::vector<__project_data> m_projects;
+    std::unordered_map<int, ProjectPtr> m_projectsMap;
 
 public:
     NewProjectDialog(wxWindow* parent);
     virtual ~NewProjectDialog();
     ProjectData GetProjectData() const;
-    
+
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };

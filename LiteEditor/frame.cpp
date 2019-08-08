@@ -4211,6 +4211,11 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 {
+    if(ManagerST::Get()->GetRetagInProgress()) {
+        clDEBUG() << "A workspace parsing is already taking place, request is ignored";
+        return;
+    }
+    
     // See if any of the plugins want to handle this event by itself
     bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
     wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());

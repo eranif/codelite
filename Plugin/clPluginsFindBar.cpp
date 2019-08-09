@@ -46,6 +46,7 @@
 #include <wx/xrc/xmlres.h>
 #include "clSystemSettings.h"
 #include "clThemeUpdater.h"
+#include <wx/stattext.h>
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5

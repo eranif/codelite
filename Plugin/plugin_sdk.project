@@ -472,6 +472,11 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="clPluginsFindBar.cpp"/>
+      <File Name="clPluginsFindBar.h"/>
+      <File Name="quickfindbarbase.wxcp"/>
+      <File Name="quickfindbarbase.h"/>
+      <File Name="quickfindbarbase.cpp"/>
       <File Name="NewProjectDialog.cpp"/>
       <File Name="NewProjectDialog.h"/>
       <File Name="clAboutDialog.cpp"/>
@@ -617,6 +622,7 @@
     <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="quickfindbarbase_bitmaps.cpp"/>
       <File Name="NewProjectDialogBase_plugin_bitmaps.cpp"/>
       <File Name="DiffUI_plugin_bitmaps.cpp"/>
       <File Name="clResizableTooltipBase_plugin_bitmaps.cpp"/>

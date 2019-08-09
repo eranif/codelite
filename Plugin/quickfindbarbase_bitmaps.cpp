@@ -31,7 +31,7 @@ static unsigned char xml_res_file_0[] = {
 114,32,71,101,110,101,114,97,116,105,111,110,32,105,115,32,79,78,32,45,
 45,62,10,60,47,114,101,115,111,117,114,99,101,62,10};
 
-void wxC9D6CInitBitmapResources()
+void wxCrafteryhjh4ZInitBitmapResources()
 {
 
     // Check for memory FS. If not present, load the handler:
@@ -44,6 +44,6 @@ void wxC9D6CInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxcrafter_plugin_bitmaps.cpp$C__src_codelite_Plugin_wxcrafter_plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/quickfindbarbase_bitmaps.cpp$C__src_codelite_Plugin_quickfindbarbase_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/quickfindbarbase_bitmaps.cpp$C__src_codelite_Plugin_quickfindbarbase_bitmaps.xrc"));
 }

@@ -35,7 +35,9 @@
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 #include "frame.h"
+#include "clThemeUpdater.h"
 
+class clThemeUpdater;
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
 EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle)
@@ -44,7 +46,8 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
 {
     m_editor->Reparent(m_mainPanel);
     m_mainPanel->GetSizer()->Add(editor, 1, wxEXPAND);
-
+    clThemeUpdater::Get().RegisterWindow(m_mainPanel);
+    
     // Notebook::RemovePage hides the detached tab
     if(!editor->IsShown()) { editor->Show(); }
 
@@ -54,7 +57,7 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_mainPanel->GetSizer()->Add(m_findBar, 0, wxEXPAND | wxALL, 0);
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-
+    
     m_toolbar->SetMiniToolBar(false);
     m_toolbar->AddTool(XRCID("file-save"), _("Save"), clGetManager()->GetStdIcons()->LoadBitmap("file_save"));
     m_toolbar->AddTool(XRCID("file-close"), _("Close"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));

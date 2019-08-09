@@ -7,6 +7,7 @@
 #ifndef _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_WXCRAFTER_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -18,6 +19,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
+#include "clThemedSplitterWindow.h"
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
 #include <wx/treectrl.h>
@@ -47,6 +49,7 @@
 #endif
 
 #include "codelite_exports.h"
+// clang-format on
 
 class WXDLLIMPEXP_SDK EditDlgBase : public wxDialog
 {
@@ -69,7 +72,7 @@ public:
 class WXDLLIMPEXP_SDK DiffSideBySidePanelBase : public wxPanel
 {
 protected:
-    wxSplitterWindow* m_splitter;
+    clThemedSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLeft;
     wxTextCtrl* m_textCtrlLeftFile;
     wxButton* m_button290;
@@ -108,7 +111,7 @@ public:
     wxPanel* GetPanelOverviewR() { return m_panelOverviewR; }
     wxStaticText* GetStaticTextRight() { return m_staticTextRight; }
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
-    wxSplitterWindow* GetSplitter() { return m_splitter; }
+    clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }
     DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                             const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
@@ -234,7 +237,6 @@ protected:
     clThemedButton* m_buttonBookmarks;
 
 protected:
-    virtual void OnEditorSize(wxSizeEvent& event) { event.Skip(); }
     virtual void OnButtonScope(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonActions(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonBookmarks(wxCommandEvent& event) { event.Skip(); }

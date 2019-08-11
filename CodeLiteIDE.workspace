@@ -147,7 +147,7 @@
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
       <Project Name="EOSWiki" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -211,7 +211,7 @@
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
       <Project Name="EOSWiki" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="CMake_Debug"/>

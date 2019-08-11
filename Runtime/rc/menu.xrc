@@ -708,6 +708,10 @@
             <object class="wxMenuItem" name="wxID_ABOUT">
                 <label>&amp;About...</label>
             </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="wxID_REPORT_BUG">
+                <label>&amp;Report an issue...</label>
+            </object>
         </object>
     </object>
     <object class="wxMenu" name="find_in_files_right_click_menu">

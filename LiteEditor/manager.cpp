@@ -2353,6 +2353,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
     case DBG_RECV_SIGNAL_SIGTRAP:        // DebugBreak()
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
     case DBG_RECV_SIGNAL_SIGABRT:        // assert() ?
+    case DBG_RECV_SIGNAL_SIGPIPE:
     case DBG_RECV_SIGNAL_SIGSEGV: {      // program received signal sigsegv
 
         // Clear the 'Locals' view
@@ -2366,15 +2367,15 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         bool showDialog(true);
         if(reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS) {
             signame = wxT("EXC_BAD_ACCESS");
-            showDialog = true;
 
         } else if(reason == DBG_RECV_SIGNAL_SIGABRT) {
             signame = wxT("SIGABRT");
-            showDialog = true;
 
         } else if(reason == DBG_RECV_SIGNAL_SIGTRAP) {
             signame = wxT("SIGTRAP");
             showDialog = !userTriggered;
+        } else if(reason == DBG_RECV_SIGNAL_SIGPIPE) {
+            signame = "SIGPIPE";
         }
 
         DebugMessage(_("Program Received signal ") + signame + wxT("\n"));

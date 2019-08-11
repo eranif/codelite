@@ -453,7 +453,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
 
         } else if(signame == wxT("SIGTRAP")) {
             UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP, func);
-
+        } else if(signame == "SIGPIPE") {
+            UpdateGotControl(DBG_RECV_SIGNAL_SIGPIPE, func);
         } else {
             // default
             UpdateGotControl(DBG_RECV_SIGNAL, func);

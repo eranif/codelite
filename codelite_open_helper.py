@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 # Helper to open files in codelite, so we don't need to fire up an expensive codelite process
 #

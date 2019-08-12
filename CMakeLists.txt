@@ -496,6 +496,29 @@ if ( MAKE_DEB )
     INCLUDE(CPack)
 endif( MAKE_DEB )
 
+if ( MAKE_RPM )
+    message("-- Generating rpm target")
+    message("-- CPACK_PACKAGE_ARCHITECTURE amd64")
+    if (GTK_VERSION EQUAL 3)
+        set(GTKNAME "gtk3")
+    else()
+        set(GTKNAME "gtk2")
+    endif()
+    set(CPACK_RPM_PACKAGE_AUTOREQ 0)
+    set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
+            "/usr/share/icons;/usr/share/locale/;/usr/share/locale/cs;/usr/share/locale/cs/LC_MESSAGES;/usr/share/locale/ru_RU;/usr/share/locale/ru_RU/LC_MESSAGES;/usr/share/locale/zh_CN;/usr/share/locale/zh_CN/LC_MESSAGES;/usr/share/man;/usr/share/icons/hicolor;/usr/share/icons/hicolor/128x128;/usr/share/icons/hicolor/128x128/apps;/usr/share/icons/hicolor/256x256;/usr/share/icons/hicolor/256x256/apps;/usr/share/icons/hicolor/32x32;/usr/share/icons/hicolor/32x32/apps;/usr/share/icons/hicolor/64x64;/usr/share/icons/hicolor/64x64/apps;/usr/share/applications")
+    set(CPACK_RPM_PACKAGE_REQUIRES          "gcc, g++, git, sqlite, libssh, gtk2, cmake")
+    set(CPACK_GENERATOR                     "RPM")
+    set(CPACK_RPM_PACKAGE_NAME              "CodeLite")
+    set(CPACK_RPM_FILE_NAME                 "CodeLite-13.0.1-x86_64.rpm")
+    set(CPACK_RPM_PACKAGE_VERSION           "13.0.1-${GTKNAME}")
+    set(CPACK_PACKAGE_CONTACT               "Eran Ifrah <eran.ifrah@gmail.com>")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "C/C++ IDE (Integrated Development Environment)")
+    set(CPACK_PACKAGE_VENDOR                "The CodeLite Team")
+    set(CPACK_STRIP_FILES TRUE)
+    INCLUDE(CPack)
+endif( MAKE_RPM )
+
 ############################################
 ## SFTP support
 ############################################

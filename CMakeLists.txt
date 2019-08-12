@@ -205,6 +205,11 @@ endif()
 if(ENABLE_SFTP MATCHES 0)
     set( WITH_SFTP 0 )
 endif (ENABLE_SFTP MATCHES 0)
+
+if(MAKE_RPM_SLIM MATCHES 1)
+    set( WITH_SFTP 0 )
+endif()
+
 unset(ENABLE_SFTP CACHE)
 
 if ( WITH_SFTP )

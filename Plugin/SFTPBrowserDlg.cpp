@@ -90,7 +90,8 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
     m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH Account Manager"),
                        clGetManager()->GetStdIcons()->LoadBitmap("folder-users"));
-
+    m_toolbar->Realize();
+    
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnCdUp, this, XRCID("ID_CD_UP"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnCdUpUI, this, XRCID("ID_CD_UP"));
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnSSHAccountManager, this, XRCID("ID_SSH_ACCOUNT_MANAGER"));

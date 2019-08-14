@@ -7,6 +7,7 @@
 #ifndef _CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_SFTP_UI_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -24,6 +25,7 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -41,6 +43,7 @@
 #endif
 
 #include "codelite_exports.h"
+// clang-format on
 
 class WXDLLIMPEXP_SDK SSHAccountManagerDlgBase : public wxDialog
 {
@@ -125,19 +128,13 @@ public:
 
 class WXDLLIMPEXP_SDK SFTPBrowserBaseDlg : public wxDialog
 {
-public:
-    enum {
-        ID_SSH_ACCOUNT_MANAGER = 1001,
-        ID_CD_UP = 1002,
-    };
-
 protected:
     wxStaticText* m_staticText66;
     wxTextCtrl* m_textCtrlRemoteFolder;
     wxButton* m_buttonRefresh;
     wxStaticText* m_staticText82;
     wxChoice* m_choiceAccount;
-    wxToolBar* m_toolbar;
+    clToolBar* m_toolbar;
     clThemedListCtrl* m_dataview;
     wxTextCtrl* m_textCtrlInlineSearch;
     wxButton* m_button59;
@@ -147,9 +144,6 @@ protected:
     virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCdUp(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCdUpUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSSHAccountManager(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
@@ -163,7 +157,7 @@ public:
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }
     wxStaticText* GetStaticText82() { return m_staticText82; }
     wxChoice* GetChoiceAccount() { return m_choiceAccount; }
-    wxToolBar* GetToolbar() { return m_toolbar; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedListCtrl* GetDataview() { return m_dataview; }
     wxTextCtrl* GetTextCtrlInlineSearch() { return m_textCtrlInlineSearch; }
     wxButton* GetButton59() { return m_button59; }

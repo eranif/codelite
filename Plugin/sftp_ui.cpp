@@ -343,18 +343,10 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     gridBagSizer80->Add(m_choiceAccount, wxGBPosition(0, 1), wxGBSpan(1, 2), wxALL | wxEXPAND, WXC_FROM_DIP(5));
     gridBagSizer80->AddGrowableCol(1);
     m_toolbar =
-        new wxToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
+        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer62->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_toolbar->AddTool(ID_CD_UP, _("Parent folder"), wxXmlResource::Get()->LoadBitmap(wxT("16-up")), wxNullBitmap,
-                       wxITEM_NORMAL, _("Parent folder"), _("Parent folder"), NULL);
-
-    m_toolbar->AddTool(ID_SSH_ACCOUNT_MANAGER, _("Open SSH Account Manager..."),
-                       wxXmlResource::Get()->LoadBitmap(wxT("16-folder-users")), wxNullBitmap, wxITEM_NORMAL,
-                       _("Open SSH Account Manager..."), _("Open SSH Account Manager..."), NULL);
-    m_toolbar->Realize();
 
     m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)),
                                       wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_THEME);
@@ -414,10 +406,6 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     m_buttonRefresh->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh), NULL,
                              this);
     m_buttonRefresh->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
-    this->Connect(ID_CD_UP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnCdUp), NULL, this);
-    this->Connect(ID_CD_UP, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnCdUpUI), NULL, this);
-    this->Connect(ID_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(SFTPBrowserBaseDlg::OnSSHAccountManager), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
                         wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
     m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
@@ -437,11 +425,6 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_buttonRefresh->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnRefresh),
                                 NULL, this);
     m_buttonRefresh->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnRefreshUI), NULL, this);
-    this->Disconnect(ID_CD_UP, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SFTPBrowserBaseDlg::OnCdUp), NULL,
-                     this);
-    this->Disconnect(ID_CD_UP, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnCdUpUI), NULL, this);
-    this->Disconnect(ID_SSH_ACCOUNT_MANAGER, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(SFTPBrowserBaseDlg::OnSSHAccountManager), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
                            wxDataViewEventHandler(SFTPBrowserBaseDlg::OnItemSelected), NULL, this);
     m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,

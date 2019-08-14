@@ -83,10 +83,17 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     settings.Load();
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-    for(; iter != accounts.end(); ++iter) {
-        m_choiceAccount->Append(iter->GetAccountName());
+    for(const auto& account : accounts) {
+        m_choiceAccount->Append(account.GetAccountName());
     }
+
+    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
+    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH Account Manager"),
+                       clGetManager()->GetStdIcons()->LoadBitmap("folder-users"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnCdUp, this, XRCID("ID_CD_UP"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnCdUpUI, this, XRCID("ID_CD_UP"));
+    m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnSSHAccountManager, this, XRCID("ID_SSH_ACCOUNT_MANAGER"));
 
     if(!m_choiceAccount->IsEmpty()) { m_choiceAccount->SetSelection(0); }
     SetName("SFTPBrowserDlg");

@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resource xmlns="http://www.wxwindows.org/wxxrc">
+    <object class="wxMenuBar" name="diff_menu_bar">
+        <label>&amp;File</label>
+        <style>wxMENU_TEAROFF</style>
+        <object class="wxMenu" name="wxID_ANY">
+            <label>&amp;File</label>
+            <object class="wxMenuItem" name="wxID_SAVE">
+                <label>&amp;Save changes\tCtrl-S</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="wxID_CLOSE"/>
+        </object>
+        <object class="wxMenu" name="edit_menuitem">
+            <label>&amp;Edit</label>
+            <style>wxMENU_TEAROFF</style>
+            <label>&amp;Edit</label>
+            <object class="wxMenuItem" name="wxID_FIND">
+                <label>&amp;Find\tCtrl-F</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_NEXT">
+                <label>&amp;Next change\tCtrl-DOWN</label>
+            </object>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_PREV">
+                <label>&amp;Previous change\tCtrl-UP</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_RIGHT">
+                <label>&amp;Copy active change from Left to Right\tCtrl-RIGHT</label>
+            </object>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_LEFT">
+                <label>&amp;Copy active change from Right to Left\tCtrl-LEFT</label>
+            </object>
+            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_ALL_LEFT_TO_RIGHT">
+                <label>&amp;Copy entire file from Left to Right\tCtrl-Shift-RIGHT</label>
+            </object>
+            <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT">
+                <label>&amp;Copy entire file from Right to Left\tCtrl-Shift-LEFT</label>
+            </object>
+        </object>
+    </object>
     <object class="wxMenuBar" name="main_menu">
         <object class="wxMenu" name="file_tool_or_menuitem">
             <label>&amp;File</label>
@@ -1112,6 +1153,8 @@
 
 
 
+    
+    
     
     
     <object class="wxMenu" name="file_explorer_menu">

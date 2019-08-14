@@ -121,7 +121,7 @@ protected:
     bool IsDeleteRightOnExit() const { return m_flags & kDeleteRightOnExit; }
     bool IsOriginSourceControl() const { return m_flags & kOriginSourceControl; }
 
-protected:
+public:
     virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
     virtual void OnHorizontal(wxCommandEvent& event);
     virtual void OnHorizontalUI(wxUpdateUIEvent& event);

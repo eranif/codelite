@@ -87,11 +87,11 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
 
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
     m_toolbar = new clToolBar(this);
-    m_toolbar->SetMiniToolBar(false);
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_REFRESH"), _("Refresh"), bmps->LoadBitmap("debugger_restart"));
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SAVE"), _("Save"), bmps->LoadBitmap("file_save"));
+    m_toolbar->SetMiniToolBar(true);
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), bmps->LoadBitmap("debugger_restart"));
+    m_toolbar->AddTool(wxID_SAVE, _("Save"), bmps->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_FIND"), _("Find"), bmps->LoadBitmap("find"));
+    m_toolbar->AddTool(wxID_FIND, _("Find"), bmps->LoadBitmap("find"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_NEXT"), _("Next Diff"), bmps->LoadBitmap("next"));
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_PREV"), _("Previous Diff"), bmps->LoadBitmap("up"));
@@ -104,16 +104,16 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), bmps->LoadBitmap("cog"), "", wxITEM_DROPDOWN);
     m_toolbar->Realize();
-    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND | wxALL, 5);
     GetSizer()->Add(m_findBar, 0, wxEXPAND);
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, XRCID("ID_DIFF_TOOL_REFRESH"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, XRCID("ID_DIFF_TOOL_REFRESH"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, wxID_REFRESH);
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnFind, this, XRCID("ID_DIFF_TOOL_FIND"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnFind, this, wxID_FIND);
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnSaveChanges, this, XRCID("ID_DIFF_TOOL_SAVE"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnSaveChangesUI, this, XRCID("ID_DIFF_TOOL_SAVE"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnSaveChanges, this, wxID_SAVE);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnSaveChangesUI, this, wxID_SAVE);
 
     m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnNextDiffSequence, this, XRCID("ID_DIFF_TOOL_NEXT"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnNextDiffUI, this, XRCID("ID_DIFF_TOOL_NEXT"));
@@ -385,11 +385,11 @@ void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
     ctrl->MarkerSetBackground(PLACE_HOLDER_MARKER, grey);
     ctrl->MarkerSetAlpha(PLACE_HOLDER_MARKER, 50);
 
-    ctrl->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_VLINE);
+    ctrl->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
     ctrl->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
     ctrl->MarkerSetForeground(MARKER_SEQUENCE, sideMarker);
 
-    ctrl->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
+    ctrl->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_FULLRECT);
     ctrl->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
 }
 

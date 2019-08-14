@@ -52,8 +52,7 @@ clEditorTipWindow::clEditorTipWindow(wxWindow* parent)
     , m_highlighIndex(0)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    IEditor* editor = dynamic_cast<IEditor*>(GetParent());
-    m_font = DrawingUtils::GetBestFixedFont(editor);
+    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForSyle(0);
     Hide();
     EventNotifier::Get()->Connect(wxEVT_CMD_COLOURS_FONTS_UPDATED,
                                   clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
@@ -282,8 +281,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_parentBgColour = parentBgColour;
 
     // update the font to the current editor
-    IEditor* editor = dynamic_cast<IEditor*>(GetParent());
-    m_font = DrawingUtils::GetBestFixedFont(editor);
+    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForSyle(0);
 
     DoAdjustPosition();
     if(!IsActive()) {
@@ -393,7 +391,7 @@ void clEditorTipWindow::OnEditoConfigChanged(clCommandEvent& e)
 {
     e.Skip();
     // the lexers were modified by the user, reload the font
-    m_font = EditorConfigST::Get()->GetLexer("C++")->GetFontForSyle(wxSTC_STYLE_CALLTIP);
+    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForSyle(0);
     Refresh();
 }
 

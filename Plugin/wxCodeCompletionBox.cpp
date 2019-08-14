@@ -21,6 +21,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include <wx/display.h>
+#include "ColoursAndFontsManager.h"
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -42,7 +43,8 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Use the active editor's font (if any)
     IEditor* editor = clGetManager()->GetActiveEditor();
-    m_ccFont = DrawingUtils::GetBestFixedFont(editor);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    m_ccFont = lexer->GetFontForSyle(0);
     SetCursor(wxCURSOR_HAND);
 
     // Set the default bitmap list

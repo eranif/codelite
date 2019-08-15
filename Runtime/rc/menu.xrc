@@ -20,24 +20,24 @@
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_NEXT">
-                <label>&amp;Next change\tCtrl-DOWN</label>
+                <label>&amp;Next change\tAlt-DOWN</label>
             </object>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_PREV">
-                <label>&amp;Previous change\tCtrl-UP</label>
+                <label>&amp;Previous change\tAlt-UP</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_RIGHT">
-                <label>&amp;Copy active change from Left to Right\tCtrl-RIGHT</label>
+                <label>&amp;Copy active change from Left to Right\tAlt-RIGHT</label>
             </object>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_LEFT">
-                <label>&amp;Copy active change from Right to Left\tCtrl-LEFT</label>
+                <label>&amp;Copy active change from Right to Left\tAlt-LEFT</label>
             </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_ALL_LEFT_TO_RIGHT">
-                <label>&amp;Copy entire file from Left to Right\tCtrl-Shift-RIGHT</label>
+                <label>&amp;Copy entire file from Left to Right\tCtrl-Alt-RIGHT</label>
             </object>
             <object class="wxMenuItem" name="ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT">
-                <label>&amp;Copy entire file from Right to Left\tCtrl-Shift-LEFT</label>
+                <label>&amp;Copy entire file from Right to Left\tCtrl-Alt-LEFT</label>
             </object>
         </object>
     </object>

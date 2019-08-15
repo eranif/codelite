@@ -28,7 +28,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
     }
     CreateMenuBar();
     SetIcons(b);
-    ::clSetTLWindowBestSizeAndPosition(this);
+    CallAfter(&clDiffFrame::Maximize, true);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent)
@@ -49,7 +49,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
     }
     CreateMenuBar();
     SetIcons(b);
-    ::clSetTLWindowBestSizeAndPosition(this);
+    CallAfter(&clDiffFrame::Maximize, true);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile)
@@ -72,7 +72,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
     }
     CreateMenuBar();
     SetIcons(b);
-    ::clSetTLWindowBestSizeAndPosition(this);
+    CallAfter(&clDiffFrame::Maximize, true);
 }
 
 clDiffFrame::~clDiffFrame() {}

@@ -301,12 +301,12 @@ void clSSH::Login()
             LoginPassword();
 
         } catch(clException& e2) {
-            clDEBUG() << "LoginPassword failed:" << e.What();
+            clDEBUG() << "LoginPassword failed:" << e2.What();
             try {
                 LoginInteractiveKBD();
                 
             } catch(clException& e3) {
-                clDEBUG() << "LoginInteractiveKBD failed:" << e.What();
+                clDEBUG() << "LoginInteractiveKBD failed:" << e3.What();
                 throw;
             }
         }

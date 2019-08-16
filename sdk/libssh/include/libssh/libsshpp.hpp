@@ -194,6 +194,62 @@ public:
     ssh_throw(ret);
     return ret;
   }
+
+  /**
+   * @brief Authenticate through the "keyboard-interactive" method.
+   *
+   * @param[in] username The username to authenticate. You can specify NULL if
+   *                     ssh_option_set_username() has been used. You cannot
+   *                     try two different logins in a row.
+   *
+   * @param[in] submethods Undocumented. Set it to NULL.
+   *
+   * @throws SshException on error
+   *
+   * @returns SSH_AUTH_SUCCESS, SSH_AUTH_PARTIAL, SSH_AUTH_DENIED,
+   *          SSH_AUTH_ERROR, SSH_AUTH_INFO, SSH_AUTH_AGAIN
+   *
+   * @see ssh_userauth_kbdint
+   */
+  int userauthKbdint(const char* username, const char* submethods){
+    int ret = ssh_userauth_kbdint(c_session, username, submethods);
+    ssh_throw(ret);
+    return ret;
+  }
+
+  /** @brief Get the number of prompts (questions) the server has given.
+   * @returns The number of prompts.
+   * @see ssh_userauth_kbdint_getnprompts
+   */
+  int userauthKbdintGetNPrompts(){
+    return ssh_userauth_kbdint_getnprompts(c_session);
+  }
+
+  /**
+   * @brief Set the answer for a question from a message block.
+   *
+   * @param[in] index The index number of the prompt.
+   * @param[in] answer The answer to give to the server. The answer MUST be
+   *                   encoded UTF-8. It is up to the server how to interpret
+   *                   the value and validate it. However, if you read the
+   *                   answer in some other encoding, you MUST convert it to
+   *                   UTF-8.
+   *
+   * @throws SshException on error
+   *
+   * @returns 0 on success, < 0 on error
+   *
+   * @see ssh_userauth_kbdint_setanswer
+   */
+  int userauthKbdintSetAnswer(unsigned int index, const char *answer)
+  {
+    int ret = ssh_userauth_kbdint_setanswer(c_session, index, answer);
+    ssh_throw(ret);
+    return ret;
+  }
+
+
+
   /** @brief Authenticates using the password method.
    * @param[in] password password to use for authentication
    * @throws SshException on error
@@ -228,8 +284,7 @@ public:
     ssh_throw(ret);
     return ret;
   }
-  int userauthPrivatekeyFile(const char *filename,
-      const char *passphrase);
+
   /** @brief Returns the available authentication methods from the server
    * @throws SshException on error
    * @returns Bitfield of available methods.
@@ -280,9 +335,12 @@ public:
    * @see ssh_get_issue_banner
    */
   std::string getIssueBanner(){
-    char *banner=ssh_get_issue_banner(c_session);
-    std::string ret= std::string(banner);
-    ::free(banner);
+    char *banner = ssh_get_issue_banner(c_session);
+    std::string ret = "";
+    if (banner != NULL) {
+      ret = std::string(banner);
+      ::free(banner);
+    }
     return ret;
   }
   /** @brief returns the OpenSSH version (server) if possible
@@ -303,12 +361,12 @@ public:
    * @throws SshException on error
    * @returns Integer value depending on the knowledge of the
    * server key
-   * @see ssh_is_server_known
+   * @see ssh_session_update_known_hosts
    */
   int isServerKnown(){
-    int ret=ssh_is_server_known(c_session);
-    ssh_throw(ret);
-    return ret;
+    int state = ssh_session_is_known_server(c_session);
+    ssh_throw(state);
+    return state;
   }
   void log(int priority, const char *format, ...){
     char buffer[1024];
@@ -349,7 +407,7 @@ public:
    * @see ssh_write_knownhost
    */
   int writeKnownhost(){
-    int ret = ssh_write_knownhost(c_session);
+    int ret = ssh_session_update_known_hosts(c_session);
     ssh_throw(ret);
     return ret;
   }
@@ -378,11 +436,14 @@ public:
     return_throwable;
   }
 
-private:
-  ssh_session c_session;
   ssh_session getCSession(){
     return c_session;
   }
+
+protected:
+  ssh_session c_session;
+
+private:
   /* No copy constructor, no = operator */
   Session(const Session &);
   Session& operator=(const Session &);
@@ -395,9 +456,9 @@ private:
 class Channel {
   friend class Session;
 public:
-  Channel(Session &session){
-    channel=ssh_channel_new(session.getCSession());
-    this->session=&session;
+  Channel(Session &ssh_session){
+    channel = ssh_channel_new(ssh_session.getCSession());
+    this->session = &ssh_session;
   }
   ~Channel(){
     ssh_channel_free(channel);
@@ -481,12 +542,12 @@ public:
     ssh_throw(err);
     return err;
   }
-  int read(void *dest, size_t count, bool is_stderr){
+  int read(void *dest, size_t count){
     int err;
     /* handle int overflow */
     if(count > 0x7fffffff)
       count = 0x7fffffff;
-    err=ssh_channel_read_timeout(channel,dest,count,is_stderr,-1);
+    err=ssh_channel_read_timeout(channel,dest,count,false,-1);
     ssh_throw(err);
     return err;
   }
@@ -584,16 +645,24 @@ public:
     ssh_throw(ret);
     return ret;
   }
-private:
+
   ssh_session getCSession(){
     return session->getCSession();
   }
-  Channel (Session &session, ssh_channel c_channel){
-    this->channel=c_channel;
-    this->session=&session;
+
+  ssh_channel getCChannel() {
+    return channel;
   }
+
+protected:
   Session *session;
   ssh_channel channel;
+
+private:
+  Channel (Session &ssh_session, ssh_channel c_channel){
+    this->channel=c_channel;
+    this->session = &ssh_session;
+  }
   /* No copy and no = operator */
   Channel(const Channel &);
   Channel &operator=(const Channel &);

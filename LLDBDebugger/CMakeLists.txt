@@ -18,8 +18,8 @@ endif()
 
 if (WITH_LLDB MATCHES 1)
     if ( APPLE )
-        set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/unix/lib/liblldb.3.5.0.dylib )
-        set ( LIBLLDB_INCLUDE ${CL_SRC_ROOT}/sdk/lldb/unix/include )
+        set ( LIBLLDB ${CL_SRC_ROOT}/sdk/lldb/osx/lib/liblldb.dylib )
+        set ( LIBLLDB_INCLUDE ${CL_SRC_ROOT}/sdk/lldb/osx/include )
         set ( BUILD_LLDB 1 )
         set ( LIBLLDB_INSTALL_NEEDED 1 )
         ## update search path to include C++11 headers

@@ -61,7 +61,12 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
             knownBuilders.Add(builderName);
         }
         m_choiceBuild->Append(knownBuilders);
-        if(!m_choiceBuild->IsEmpty()) { m_choiceBuild->SetSelection(0); }
+        int where = m_choiceBuild->FindString("Default");
+        if(where != wxNOT_FOUND) {
+            m_choiceBuild->SetSelection(where);
+        } else if(!m_choiceBuild->IsEmpty()) {
+            m_choiceBuild->SetSelection(0);
+        }
     }
     CenterOnParent();
 }

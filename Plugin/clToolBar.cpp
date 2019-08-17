@@ -77,6 +77,7 @@ clToolBar::~clToolBar()
 
 void clToolBar::OnPaint(wxPaintEvent& event)
 {
+    wxUnusedVar(event);
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
     wxGCDC gcdc(dc);
@@ -125,6 +126,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 }
 void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup)
 {
+    wxUnusedVar(isLastGroup);
     wxRect clientRect = GetClientRect();
 
     // Calculate the group size
@@ -302,10 +304,15 @@ void clToolBar::OnMotion(wxMouseEvent& event)
     if(refreshNeeded) { Refresh(); }
 }
 
-void clToolBar::OnEnterWindow(wxMouseEvent& event) { OnMotion(event); }
+void clToolBar::OnEnterWindow(wxMouseEvent& event)
+{
+    wxUnusedVar(event);
+    OnMotion(event);
+}
 
 void clToolBar::OnLeaveWindow(wxMouseEvent& event)
 {
+    wxUnusedVar(event);
     if(!m_popupShown) {
         for(size_t i = 0; i < m_buttons.size(); ++i) {
             m_buttons[i]->ClearRenderFlags();
@@ -484,6 +491,7 @@ void clToolBar::DoShowOverflowMenu()
         menu.Append(XRCID("customise_toolbar"), _("Customise..."));
         menu.Bind(wxEVT_MENU,
                   [&](wxCommandEvent& event) {
+                      wxUnusedVar(event);
                       wxCommandEvent evtCustomise(wxEVT_TOOLBAR_CUSTOMISE);
                       evtCustomise.SetEventObject(this);
                       GetEventHandler()->AddPendingEvent(evtCustomise);
@@ -603,9 +611,9 @@ void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const w
     }
 }
 
-int clToolBar::GetXSpacer() const { return HasFlag(kMiniToolBar) ? 5 : 10; }
+int clToolBar::GetXSpacer() const { return HasFlag(kMiniToolBar) ? 3 : 6; }
 
-int clToolBar::GetYSpacer() const { return HasFlag(kMiniToolBar) ? 5 : 10; }
+int clToolBar::GetYSpacer() const { return HasFlag(kMiniToolBar) ? 4 : 8; }
 
 void clToolBar::OnColoursChanged(clCommandEvent& event)
 {

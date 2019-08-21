@@ -34,8 +34,8 @@
 
 class WXDLLIMPEXP_SDK clZipReader
 {
-    wxFileInputStream *m_file;
-    wxZipInputStream *m_zip;
+    wxFileInputStream *m_file = nullptr;
+    wxZipInputStream *m_zip = nullptr;
     
 public:
     clZipReader(const wxFileName& zipfile);
@@ -47,6 +47,11 @@ public:
      * @param directory the target directory
      */
     void Extract(const wxString &filename, const wxString &directory);
+
+    /**
+     * @brief extract the entire content of a zip archive into a directory
+     */
+    void ExtractAll(const wxString &directory);
     
     /**
      * @brief close the zip archive

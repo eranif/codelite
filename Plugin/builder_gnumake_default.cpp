@@ -57,9 +57,9 @@ static wxString MakeDir(const wxString& path)
 
 #ifdef __WXMSW__
     fixedPath.Replace("/", "\\"); // mkdir does not accept /
-    d << "if not exist " << q << fixedPath << q << " mkdir " << q << fixedPath << q << "";
+    d << "@if not exist " << q << fixedPath << q << " mkdir " << q << fixedPath << q << "";
 #else
-    d << "mkdir -p " << q << fixedPath << q << "";
+    d << "@mkdir -p " << q << fixedPath << q << "";
 #endif
     return d;
 }
@@ -1026,10 +1026,11 @@ void BuilderGnuMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldCo
     bldConf->GetPostBuildCommands(cmds);
 
     // Loop over the commands and replace any macros
-//    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
-//        cmd.SetCommand(
-//            MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(), bldConf->GetName()));
-//    });
+    //    std::for_each(cmds.begin(), cmds.end(), [&](BuildCommand& cmd) {
+    //        cmd.SetCommand(
+    //            MacroManager::Instance()->Expand(cmd.GetCommand(), clGetManager(), proj->GetName(),
+    //            bldConf->GetName()));
+    //    });
 
     text << wxT("\n");
     text << wxT("PostBuild:\n");
@@ -1433,8 +1434,8 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxStrin
 
     wxString relPath = fn.GetPath(true, wxPATH_UNIX);
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName()
-           << cmp->GetObjectSuffix();
+    target << GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
+           << fn.GetFullName() << cmp->GetObjectSuffix();
 
     target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
     cmd = GetProjectMakeCommand(proj, confToBuild, target, kIncludePreBuild);
@@ -1471,8 +1472,8 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project, const wxS
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << bldConf->GetIntermediateDirectory() << wxT("/") << objNamePrefix << fn.GetFullName()
-           << cmp->GetPreprocessSuffix();
+    target << GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
+           << fn.GetFullName() << cmp->GetPreprocessSuffix();
 
     target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
     cmd = GetProjectMakeCommand(proj, confToBuild, target, kIncludePreBuild);

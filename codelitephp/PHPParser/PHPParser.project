@@ -311,9 +311,7 @@ php_expr_lexer.cpp: php_expr.l
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\lib$(ProjectName)-dbg.a" ..\..\lib\gcc_lib</Command>
-      </PostBuild>
+      <PostBuild/>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>

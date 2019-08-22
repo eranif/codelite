@@ -237,8 +237,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options="$(shell wx-config  --libs std,stc,propgrid --unicode=yes)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/lib/gcc_lib"/>
-        <LibraryPath Value="$(WorkspacePath)/sdk/lldb/win64/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -257,7 +256,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\LLDBDebugger-dbg.dll" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

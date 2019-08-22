@@ -148,7 +148,8 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">if not exist ..\Runtime\debuggers mkdir ..\Runtime\debuggers</Command>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName)-dbg.dll" ..\Runtime\debuggers</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime\debuggers</Command>
+        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

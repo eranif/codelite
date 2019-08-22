@@ -373,8 +373,7 @@
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
       <Linker Options="$(shell wx-config  --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
-        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
-        <LibraryPath Value="../lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -394,7 +393,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy $(IntermediateDirectory)\PHP-dbg.dll ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

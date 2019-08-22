@@ -83,6 +83,7 @@ Source: "{#CODELITE_ROOT}\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: re
 
 ;; ------- Bin Utils ------------------
 Source: "{#MSYS2_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MSYS2_DIR}\mkdir.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\cp.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\ls.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\mv.exe"; DestDir: "{app}"; Flags: ignoreversion;

@@ -22,8 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#ifndef BUILDER_GNUMAKE_H
-#define BUILDER_GNUMAKE_H
+#ifndef BUILDER_GNUMAKE_DEFAULT_H
+#define BUILDER_GNUMAKE_DEFAULT_H
 
 #include "builder.h"
 #include "codelite_exports.h"
@@ -35,7 +35,7 @@
  * Build using a generated (Gnu) Makefile - this is made as a traditional multistep build :
  *  sources -> (preprocess) -> compile -> link -> exec/lib.
  */
-class WXDLLIMPEXP_SDK BuilderGNUMakeClassic : public Builder
+class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
     size_t m_objectChunks;
     Project::FilesMap_t* m_projectFilesMetadata;
@@ -49,9 +49,9 @@ protected:
     };
 
 public:
-    BuilderGNUMakeClassic();
-    BuilderGNUMakeClassic(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGNUMakeClassic();
+    BuilderGnuMake();
+    BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
+    virtual ~BuilderGnuMake();
 
     // Implement the Builder Interface
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
@@ -108,4 +108,4 @@ private:
     wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
     wxString DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath = "");
 };
-#endif // BUILDER_GNUMAKE_H
+#endif // BUILDER_GNUMAKE_DEFAULT_H

@@ -62,7 +62,7 @@ static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 #endif
 
 BuilderGnuMakeOneStep::BuilderGnuMakeOneStep()
-    : BuilderGnuMake(wxT("GNU makefile onestep build"), wxT("make"), wxT("-f"))
+    : BuilderGNUMakeClassic(wxT("GNU makefile onestep build"), wxT("make"), wxT("-f"))
 {
 }
 
@@ -71,9 +71,9 @@ BuilderGnuMakeOneStep::~BuilderGnuMakeOneStep() {}
 void BuilderGnuMakeOneStep::CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text)
 {
     // create a list of Sources
-    BuilderGnuMake::CreateSrcList(proj, confToBuild, text);
+    BuilderGNUMakeClassic::CreateSrcList(proj, confToBuild, text);
     // create a list of objects
-    BuilderGnuMake::CreateObjectList(proj, confToBuild, text);
+    BuilderGNUMakeClassic::CreateObjectList(proj, confToBuild, text);
 }
 
 void BuilderGnuMakeOneStep::CreateLinkTargets(

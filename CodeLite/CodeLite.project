@@ -689,8 +689,7 @@ XmlLexer.cpp: XMLLexer.l
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\libcodeliteu.dll" ..\Runtime</Command>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\libcodeliteu.dll" ..\lib\gcc_lib</Command>
+        <Command Enabled="yes">copy "$(OutputFile)"  ..\..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

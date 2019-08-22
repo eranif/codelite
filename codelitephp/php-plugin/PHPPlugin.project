@@ -456,7 +456,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy $(IntermediateDirectory)\*.dll ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(OutputFile)"  ..\..\Runtime\plugins</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

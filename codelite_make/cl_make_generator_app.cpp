@@ -9,6 +9,8 @@
 #include <build_settings_config.h>
 #include <algorithm>
 
+#include <builder_gnumake_default.h>
+
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
 static const wxCmdLineEntryDesc g_cmdDesc[] = {

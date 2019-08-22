@@ -187,7 +187,7 @@
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs std,stc --debug=no)" Required="yes">
         <LibraryPath Value="../lib"/>
-        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="PHPParser"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -282,7 +282,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc )" Required="yes">
         <LibraryPath Value="../lib"/>
-        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="PHPParser-dbg"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="libcodeliteud.dll"/>
@@ -336,7 +336,7 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config --libs std,stc --debug=no)" Required="yes">
         <LibraryPath Value="../lib"/>
-        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="PHPParser"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libcodeliteu.dll"/>

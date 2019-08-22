@@ -27,7 +27,7 @@
         <IncludePath Value="../Interfaces"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs) " Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="codeliteud"/>
         <Library Value="plugin_sdkud"/>
       </Linker>

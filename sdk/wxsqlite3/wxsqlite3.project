@@ -99,11 +99,11 @@
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
-        <LibraryPath Value="../../lib/gcc_lib/"/>
+        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3ud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/libwxsqlite3ud.dll" IntermediateDirectory="./WinDbg_29" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -145,7 +145,7 @@
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs  --unicode=yes);" Required="yes">
-        <LibraryPath Value="../../lib/gcc_lib/"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
@@ -161,8 +161,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy $(IntermediateDirectory)\libwxsqlite3ud.dll  ..\..\Runtime</Command>
-        <Command Enabled="yes">copy $(IntermediateDirectory)\libwxsqlite3ud.dll  ..\..\lib\gcc_lib</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -192,7 +191,7 @@
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
-        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
@@ -238,11 +237,11 @@
         <IncludePath Value="./sqlite3/include"/>
       </Compiler>
       <Linker Options=" $(shell wx-config --libs --debug=no --unicode=yes);" Required="yes">
-        <LibraryPath Value="../../lib/gcc_lib"/>
+        <LibraryPath Value="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libsqlite3.a"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="../../lib/gcc_lib/libwxsqlite3u.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/libwxsqlite3u.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

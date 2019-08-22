@@ -55,7 +55,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options="$(shell wx-config  --libs --unicode=yes)" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteud.dll"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
@@ -147,7 +147,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -197,7 +197,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libwxsqlite3u.dll"/>

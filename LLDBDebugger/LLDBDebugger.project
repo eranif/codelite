@@ -297,8 +297,7 @@
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
       <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,propgrid --unicode=yes)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/lib/gcc_lib"/>
-        <LibraryPath Value="$(WorkspacePath)/sdk/lldb/win64/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -356,7 +355,7 @@
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
       <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,propgrid --unicode=yes)" Required="yes">
-        <LibraryPath Value="../lib/gcc_lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>

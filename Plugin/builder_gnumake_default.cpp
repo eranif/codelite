@@ -91,19 +91,11 @@ static wxString GetOutputFolder(ProjectPtr proj, BuildConfigPtr bldConf)
     wxString imd = workspacePathRelativeToProject.GetPath(false, wxPATH_UNIX) << "/build-$(ConfigurationName)/";
 
     wxString type = bldConf->GetProjectType();
-#ifdef __WXMSW__
-    if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
-        imd << "bin";
-    } else {
-        imd << "lib";
-    }
-#else
     if(type == PROJECT_TYPE_EXECUTABLE) {
         imd << "bin";
     } else {
         imd << "lib";
     }
-#endif
     imd.Replace(" ", "\\ ");
     return imd;
 }
@@ -1139,7 +1131,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     ::WrapWithQuotes(outputFile);
 
     text << "ProjectName            :=" << projectName << "\n";
-    text << "ConfigurationName      :=" << name << "\n";
+    text << "ConfigurationName      :=" << clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() << "\n";
+    text << "WorkspaceConfiguration := $(ConfigurationName)\n";
     text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
     text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
     text << "IntermediateDirectory  :=" << GetIntermediatePath(proj, workspacepath) << "\n";

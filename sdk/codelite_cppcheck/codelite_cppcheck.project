@@ -278,7 +278,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\$(ProjectName).exe" ..\..\Runtime\codelite_cppcheck.exe</Command>
+        <Command Enabled="yes">copy "$(OutputFile).exe" ..\..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

@@ -169,7 +169,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\makedir.exe" ..\Runtime</Command>
+        <Command Enabled="yes">copy "$(OutputFile).exe" ..\Runtime</Command>
+        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

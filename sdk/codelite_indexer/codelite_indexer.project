@@ -136,6 +136,12 @@
   <Dependencies Name="ReleaseDebug_Win"/>
   <Dependencies Name="Release_Unix"/>
   <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Debug_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
+  <Dependencies Name="Release_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -421,7 +427,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite_indexer.exe" ..\..\Runtime\codelite_indexer.exe</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -445,10 +451,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Win">
-    <Project Name="indexer_client"/>
-  </Dependencies>
-  <Dependencies Name="Release_Win">
-    <Project Name="indexer_client"/>
-  </Dependencies>
 </CodeLite_Project>

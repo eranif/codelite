@@ -37,7 +37,7 @@ Release files placed in ./Release directory
       </Compiler>
       <Linker Options="" Required="no"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Release" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Release" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger/>
       <PreBuild/>
       <PostBuild/>
@@ -62,7 +62,7 @@ Release files placed in ./Release directory
       </Compiler>
       <Linker Options="" Required="no"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Turbo" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="$(ProjectPath)/Turbo" Command="echo" CommandArguments="Generated file is a library - need app" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Debugger/>
       <PreBuild/>
       <PostBuild/>

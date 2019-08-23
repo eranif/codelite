@@ -22,7 +22,7 @@
 #include <wx/dirctrl.h>
 #include <wx/filepicker.h>
 #include <wx/gbsizer.h>
-#include <wx/grid.h>
+//#include <wx/grid.h>
 #include <wx/listbook.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>

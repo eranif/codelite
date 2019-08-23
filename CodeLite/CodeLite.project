@@ -732,9 +732,10 @@ XmlLexer.cpp: XMLLexer.l
       </Compiler>
       <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
-        <LibraryPath Value="../sdk/libssh/lib"/>
+        <LibraryPath Value="../sdk/libssh/lib32"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libssh"/>
+        <Library Value="ws2_32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/libcodeliteu.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>

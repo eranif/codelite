@@ -41,7 +41,7 @@ wxDEFINE_EVENT(wxEVT_TREE_CHOICE, wxTreeEvent);
 
 static void MSWSetNativeTheme(wxWindow* win)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && defined(_WIN64)
     SetWindowTheme((HWND)win->GetHWND(), wxT("Explorer"), NULL);
 #endif
 }

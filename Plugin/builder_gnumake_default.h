@@ -106,6 +106,6 @@ private:
     wxString GetProjectMakeCommand(ProjectPtr proj, const wxString& confToBuild, const wxString& target, size_t flags);
     wxString DoGetCompilerMacro(const wxString& filename);
     wxString DoGetTargetPrefix(const wxFileName& filename, const wxString& cwd, CompilerPtr cmp);
-    wxString DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath = "");
+    wxString GetRelinkMarkerForProject(const wxString& projectName) const;
 };
 #endif // BUILDER_GNUMAKE_DEFAULT_H

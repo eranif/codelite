@@ -64,7 +64,7 @@ static wxString MakeDir(const wxString& path)
     return d;
 }
 
-static wxString GetIntermediatePath(ProjectPtr proj, const wxString& workspacepath)
+static wxString GetIntermediateFolder(ProjectPtr proj, const wxString& workspacepath)
 {
     // Build the intermediate folder path
     // {WorkspacePath}/{Project Path Relative}
@@ -299,8 +299,7 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
 
             } else {
                 // generate the dependency project makefile
-                wxString dep_file = DoGetMarkerFileDir(wxT(""));
-                dep_file << wxFileName::GetPathSeparator() << dependProj->GetName();
+                wxString dep_file = GetRelinkMarkerForProject(dependProj->GetName());
                 depsProjs.Add(dep_file);
 
                 GenerateMakefile(dependProj, projectSelConf, confToBuild.IsEmpty() ? force : true, wxArrayString());
@@ -583,7 +582,7 @@ void BuilderGnuMake::CreateMakeDirsTarget(ProjectPtr proj, BuildConfigPtr bldCon
                                           wxString& text)
 {
     wxString workspacepath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
-    wxString imd = GetIntermediatePath(proj, workspacepath);
+    wxString imd = GetIntermediateFolder(proj, workspacepath);
     wxString outputDir = GetOutputFolder(proj, bldConf);
 
     text << "\n";
@@ -675,7 +674,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString& confToBui
     int numOfObjectsInCurrentChunk = 0;
     wxString curChunk;
 
-    wxString imd = GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath());
+    wxString imd = GetIntermediateFolder(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath());
     // We break the list of files into a seriese of objects variables
     // each variable contains up to 100 files.
     // This is needed because on MSW, the ECHO command can not handle over 8K bytes
@@ -769,7 +768,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
     wxArrayString subDirs;
 
     wxString cwd = proj->GetFileName().GetPath();
-    wxString imd = GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) + "/";
+    wxString imd = GetIntermediateFolder(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) + "/";
     for(size_t i = 0; i < abs_files.size(); i++) {
         // is this file interests the compiler?
         if(cmp->GetCmpFileType(abs_files.at(i).GetExt().Lower(), ft)) {
@@ -926,7 +925,7 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldC
         depsRules << wxT("\t@echo stam > ") << wxT("\"") << fn.GetFullPath() << wxT("\"\n");
         depsRules << wxT("\n\n");
     }
-    wxString imd = GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath());
+    wxString imd = GetIntermediateFolder(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath());
     if(type == PROJECT_TYPE_EXECUTABLE || type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         text << wxT("all: MakeIntermediateDirs ");
         text << wxT("$(OutputFile)\n\n");
@@ -1004,8 +1003,7 @@ void BuilderGnuMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf,
     // If a link occurred, mark this project as "rebuilt" so the parent project will
     // know that a re-link is required
     if(bldConf->IsLinkerRequired() && markRebuilt) {
-        text << "\t" << MakeDir(DoGetMarkerFileDir(wxEmptyString)) << "\n";
-        text << "\t@echo rebuilt > " << DoGetMarkerFileDir(projName) << "\n";
+        text << "\t@echo rebuilt > " << GetRelinkMarkerForProject(projName) << "\n";
     }
 }
 
@@ -1106,8 +1104,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     wxString cmpType = bldConf->GetCompilerType();
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
-    wxString objectsFileName(proj->GetFileName().GetPath());
-    objectsFileName << PATH_SEP << proj->GetName() << wxT(".txt");
+    wxString objectsFileName;
+    objectsFileName << "$(IntermediateDirectory)/ObjectsList.txt";
 
     text << wxT("## ") << name << wxT("\n");
 
@@ -1135,8 +1133,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "WorkspaceConfiguration := $(ConfigurationName)\n";
     text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
     text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
-    text << "IntermediateDirectory  :=" << GetIntermediatePath(proj, workspacepath) << "\n";
-    text << "OutDir                 :=" << GetIntermediatePath(proj, workspacepath) << "\n";
+    text << "IntermediateDirectory  :=" << GetIntermediateFolder(proj, workspacepath) << "\n";
+    text << "OutDir                 :=" << GetIntermediateFolder(proj, workspacepath) << "\n";
     text << "CurrentFileName        :=\n";
     text << "CurrentFilePath        :=\n";
     text << "CurrentFileFullPath    :=\n";
@@ -1160,12 +1158,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "ObjectSwitch           :=" << cmp->GetSwitch("Object") << "\n";
     text << "ArchiveOutputSwitch    :=" << cmp->GetSwitch("ArchiveOutput") << "\n";
     text << "PreprocessOnlySwitch   :=" << cmp->GetSwitch("PreprocessOnly") << "\n";
-
-    wxFileName fnObjectsFileName(objectsFileName);
-    fnObjectsFileName.MakeRelativeTo(proj->GetFileName().GetPath());
-
-    text << wxT("ObjectsFileList        :=\"") << fnObjectsFileName.GetFullPath() << wxT("\"\n");
-    text << wxT("PCHCompileFlags        :=") << bldConf->GetPchCompileFlags() << wxT("\n");
+    text << "ObjectsFileList        :=" << objectsFileName << "\n";
+    text << "PCHCompileFlags        :=" << bldConf->GetPchCompileFlags() << wxT("\n");
 
     wxString buildOpts = bldConf->GetCompileOptions();
     buildOpts.Replace(wxT(";"), wxT(" "));
@@ -1427,7 +1421,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString& project, const wxStrin
 
     wxString relPath = fn.GetPath(true, wxPATH_UNIX);
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
+    target << GetIntermediateFolder(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
            << fn.GetFullName() << cmp->GetObjectSuffix();
 
     target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
@@ -1465,7 +1459,7 @@ wxString BuilderGnuMake::GetPreprocessFileCmd(const wxString& project, const wxS
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
 
     wxString objNamePrefix = DoGetTargetPrefix(fn, proj->GetFileName().GetPath(), cmp);
-    target << GetIntermediatePath(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
+    target << GetIntermediateFolder(proj, clCxxWorkspaceST::Get()->GetFileName().GetPath()) << wxT("/") << objNamePrefix
            << fn.GetFullName() << cmp->GetPreprocessSuffix();
 
     target = ExpandAllVariables(target, clCxxWorkspaceST::Get(), proj->GetName(), confToBuild, wxEmptyString);
@@ -1737,33 +1731,9 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
     return ret;
 }
 
-wxString BuilderGnuMake::DoGetMarkerFileDir(const wxString& projname, const wxString& projectPath)
+wxString BuilderGnuMake::GetRelinkMarkerForProject(const wxString& projectName) const
 {
-    BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
-    wxString workspaceSelConf = matrix->GetSelectedConfigurationName();
-
-    workspaceSelConf = NormalizeConfigName(workspaceSelConf);
-    workspaceSelConf.MakeLower();
-
-    wxString path;
-    if(projname.IsEmpty()) {
-        path << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf;
-
-    } else {
-        path << clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath() << "/" << wxT(".build-") << workspaceSelConf
-             << "/" << projname;
-    }
-
-    if(projectPath.IsEmpty() == false) {
-        wxFileName fn(path);
-        fn.MakeRelativeTo(projectPath);
-        path = fn.GetFullPath(wxPATH_UNIX);
-    }
-
-    if(!projname.IsEmpty())
-        return "\"" + path + "\"";
-    else
-        return path;
+    return "$(IntermediateDirectory)/" + projectName + ".relink";
 }
 
 bool BuilderGnuMake::HasPostbuildCommands(BuildConfigPtr bldConf) const

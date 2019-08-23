@@ -481,7 +481,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
     <Configuration Name="Win_x86_Release" CompilerType="GCC (i686)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2;-Winvalid-pch" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release_32.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>

@@ -711,8 +711,7 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
-</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -722,13 +721,15 @@ XmlLexer.cpp: XMLLexer.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x86_Release" CompilerType="GCC (i686)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release_32.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
         <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="../sdk/websocketpp"/>
+        <IncludePath Value="../sdk/asio-1.12.1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
@@ -769,7 +770,8 @@ XmlLexer.cpp: XMLLexer.l
 CxxLexer.cpp: CxxScanner.l
 	flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
-	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l</CustomPreBuild>
+	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

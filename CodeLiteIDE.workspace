@@ -84,7 +84,7 @@
   </VirtualDirectory>
   <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
       <Environment>WXWIN=C:\src\wxWidgets32
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
@@ -403,7 +403,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
       <Project Name="EOSWiki" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>

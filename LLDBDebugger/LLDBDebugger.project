@@ -358,6 +358,7 @@
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
+        <Library Value="libLLDBProtocol.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ConfigurationName)/LLDBDebugger.dll" IntermediateDirectory="$(ConfigurationName)" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ConfigurationName)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

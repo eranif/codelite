@@ -139,11 +139,11 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\Docker.dll"; DestDir: "{app}\plugins";
 Source: "{#CODELITE_ROOT}\Runtime\plugins\LanguageServer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\EOSWiki.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
-Source: "{#CODELITE_ROOT}\build-Win_x64_Release\lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\build-Win_x64_Release\lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\build-Win_x64_Release\lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\build-Win_x64_Release\lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\build-Win_x64_Release\lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libzlib.dll"; DestDir: "{app}\"; DestName: "libzlib.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; 

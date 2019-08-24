@@ -5,42 +5,45 @@
 
 #include "cl_ssh.h"
 #include "codelite_exports.h"
+#include <wx/msgqueue.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_WRITE_ERROR, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_READ_OUTPUT, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_CLOSED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_CHANNEL_PTY, clCommandEvent);
 
 class clJoinableThread;
-class WXDLLIMPEXP_CL clSSHChannel
+class WXDLLIMPEXP_CL clSSHChannel : public wxEvtHandler
 {
-    clSSH::Ptr_t m_ssh;
-    SSHChannel_t m_channel;
-    clJoinableThread* m_readerThread;
-
 public:
     typedef wxSharedPtr<clSSHChannel> Ptr_t;
+    enum eChannelType {
+        kInterativeMode,
+        kRemoteCommand,
+    };
+	
+protected:
+    clSSH::Ptr_t m_ssh;
+    SSHChannel_t m_channel = nullptr;
+    clJoinableThread* m_thread = nullptr;
+    wxMessageQueue<wxString> m_Queue;
+    wxEvtHandler* m_owner = nullptr;
+	eChannelType m_type = kRemoteCommand;
 
 protected:
     wxString BuildError(const wxString& prefix) const;
-    /**
-     * @brief read data from the channel.
-     * @return true on success, false on timeout
-     * @throw clException on error
-     */
-    bool DoRead(wxString& output, int timeout_ms = -1);
+    void DoWrite(const wxString& buffer);
+
+    void OnReadError(clCommandEvent& event);
+    void OnWriteError(clCommandEvent& event);
+    void OnReadOutput(clCommandEvent& event);
+    void OnChannelClosed(clCommandEvent& event);
+    void OnChannelPty(clCommandEvent& event);
 
 public:
-    clSSHChannel(clSSH::Ptr_t ssh);
+    clSSHChannel(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type, wxEvtHandler* owner);
     virtual ~clSSHChannel();
-
-    /**
-     * @brief read all data from the channel
-     * @param output
-     * @param timeout_ms
-     * @return true on success, false on timeout
-     * @throw clException on error
-     */
-    bool ReadAll(wxString& output, int timeout_ms = -1);
 
     /**
      * @brief is the channel opened?
@@ -62,7 +65,14 @@ public:
      * @brief execute remote command
      * The reply will be returned to 'sink' object in form of events
      */
-    void Execute(const wxString& command, wxEvtHandler* sink);
+    void Execute(const wxString& command);
+
+    /**
+     * @brief write message to the channel
+     */
+    void Write(const wxString& message);
+	
+	bool IsInteractive() const { return m_type == kInterativeMode; }
 };
 #endif
 #endif // CLSSHCHANNEL_H

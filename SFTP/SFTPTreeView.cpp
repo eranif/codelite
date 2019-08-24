@@ -1012,7 +1012,7 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
 
     try {
         if(m_channel && m_channel->IsOpen()) { m_channel->Close(); }
-        m_channel.reset(new clSSHChannel(m_sftp->GetSsh()));
+        m_channel.reset(new clSSHChannel(m_sftp->GetSsh(), clSSHChannel::kRemoteCommand, m_plugin->GetOutputPane()));
         m_channel->Open();
 
         // Prepare the UI for new search
@@ -1024,7 +1024,7 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
         GrepData gd = grep.GetData();
         wxString command = gd.GetGrepCommand(remoteFolder);
         m_plugin->GetOutputPane()->AddSearchText(wxString() << "Running command: " << command);
-        m_channel->Execute(command, m_plugin->GetOutputPane());
+        m_channel->Execute(command);
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);

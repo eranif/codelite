@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/tokenzr.h>
+#include <wx/dirdlg.h>
 #include "pluginmanager.h"
 #include "pp_include.h"
 #include "pptable.h"

@@ -60,6 +60,7 @@ protected:
     void OnExecuteRemoteCommand(clCommandEvent& event);
     void OnChannelReadError(clCommandEvent& event);
     void OnChannelRead(clCommandEvent& event);
+    void OnChannelPty(clCommandEvent& event);
     void OnChannelClosed(clCommandEvent& event);
 #endif
     void OnExitWhenDone(clCommandEvent& event);

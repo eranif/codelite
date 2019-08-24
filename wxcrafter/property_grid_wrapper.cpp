@@ -138,6 +138,7 @@ wxString PropertyGridWrapper::CppCtorCode() const
             cppCode << propName << "->SetAttribute(wxPG_FILE_WILDCARD, "
                     << wxCrafter::WXT(PropertyString(PROP_PG_WILDCARD)) << ");\n";
             cppCode << "#endif // !defined(__WXOSX__) && !defined(_WIN64)\n";
+            cppCode << propName << "->SetAttribute(\"ShowFullPath\", 1);\n";
         }
 
     } else if(proptype == "wxPropertyCategory") {

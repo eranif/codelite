@@ -371,7 +371,7 @@ wxString CodeFormatter::RunCommand(const wxString& command)
     clDEBUG() << "CodeFormatter running: " << command << clEndl;
 
     IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
-    // CHECK_PTR_RET_FALSE(process);
+    if(!process) { return "Failed to execute:\n" + command; }
 
     wxString output;
     process->WaitForTerminate(output);

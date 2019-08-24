@@ -31,7 +31,7 @@
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu
 </Environment>
@@ -47,7 +47,7 @@ WXCFG=gcc_dll\mswu
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x86_Release" Selected="yes">
       <Environment>WXWIN=C:\src\wxWidgets32
 WXCFG=gcc_dll\mswu
 </Environment>

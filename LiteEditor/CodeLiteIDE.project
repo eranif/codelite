@@ -164,8 +164,6 @@
       <File Name="close_all_dlg.h"/>
       <File Name="free_text_dialog.h"/>
       <File Name="free_text_dialog.cpp"/>
-      <File Name="add_option_dialog.cpp"/>
-      <File Name="add_option_dialog.h"/>
       <File Name="findreplacedlg.h"/>
       <File Name="findreplacedlg.cpp"/>
       <File Name="findinfilesdlg.h"/>
@@ -808,8 +806,13 @@
     <Project Name="wxFormBuilder"/>
   </Dependencies>
   <VirtualDirectory Name="wxcrafter">
+    <File Name="AddOptionsDialog.cpp"/>
+    <File Name="AddOptionsDialog.h"/>
+    <File Name="AddOptionsDialogBase.wxcp"/>
     <File Name="wxcrafter.wxcp"/>
     <VirtualDirectory Name="base">
+      <File Name="AddOptionsDialogBase.cpp"/>
+      <File Name="AddOptionsDialogBase.h"/>
       <File Name="wxcrafter.h"/>
       <File Name="wxcrafter.cpp"/>
       <File Name="dvtemplatesmodel.cpp"/>
@@ -848,6 +851,7 @@
       <File Name="ConfigManagerBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
+      <File Name="AddOptionsDialogBase_liteeditor_bitmaps.cpp"/>
       <File Name="tabgroupbasedlgs_liteeditor_bitmaps.cpp"/>
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>
       <File Name="editorsettingslocalbase_formbuilder_bitmaps.cpp"/>

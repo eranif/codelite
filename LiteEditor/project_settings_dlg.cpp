@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "add_option_dialog.h"
+#include "AddOptionsDialog.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
 #include "configuration_manager_dlg.h"
@@ -498,7 +498,7 @@ void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->Se
 
 bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 {
-    AddOptionDlg dlg(NULL, ctrl->GetValue());
+    AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), ctrl->GetValue());
     if(dlg.ShowModal() == wxID_OK) {
         ctrl->SetValue(dlg.GetValue());
         return true;
@@ -508,7 +508,7 @@ bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 
 bool IProjectSettingsPage::PopupAddOptionDlg(wxString& value)
 {
-    AddOptionDlg dlg(NULL, value);
+    AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), value);
     if(dlg.ShowModal() == wxID_OK) {
         value.Clear();
         value << dlg.GetValue();

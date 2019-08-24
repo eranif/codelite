@@ -33,7 +33,7 @@
 #include "windowattrmanager.h"
 #include "macros.h"
 #include "wx/tokenzr.h"
-#include "add_option_dialog.h"
+#include "AddOptionsDialog.h"
 #include "globals.h"
 #include "includepathlocator.h"
 #include <build_settings_config.h>

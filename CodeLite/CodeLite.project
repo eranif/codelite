@@ -293,6 +293,8 @@
     <File Name="crawler_include.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="AsyncProcess">
+    <File Name="SSHRemoteProcess.cpp"/>
+    <File Name="SSHRemoteProcess.hpp"/>
     <File Name="MyCreatePipe.h"/>
     <File Name="MyCreatePipe.cpp"/>
     <File Name="UnixProcess.h"/>

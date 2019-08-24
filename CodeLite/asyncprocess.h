@@ -60,7 +60,7 @@ public:
  * @file i_process.h
  * @brief
  */
-class WXDLLIMPEXP_CL IProcess
+class WXDLLIMPEXP_CL IProcess : public wxEvtHandler
 {
 protected:
     wxEvtHandler* m_parent;

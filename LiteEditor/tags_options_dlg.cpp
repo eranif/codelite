@@ -44,7 +44,7 @@
 #include "clSingleChoiceDialog.h"
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
-
+#include "cl_config.h"
 //---------------------------------------------------------
 
 CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data)
@@ -67,7 +67,8 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     WindowAttrManager::Load(this);
 
     // Set default values
-
+	bool genJsonFile = clConfig::Get().Read("GenerateCompileCommands", false);
+	
     //------------------------------------------------------------------
     // Display and behavior
     //------------------------------------------------------------------
@@ -82,7 +83,8 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     m_checkBoxKeepFunctionSignature->SetValue(m_data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
     m_spinCtrlNumberOfCCItems->ChangeValue(::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
     m_textCtrlFileSpec->ChangeValue(m_data.GetFileSpec());
-
+	this->m_checkBoxGenCompileCommandsJSON->SetValue(genJsonFile);
+	
     //------------------------------------------------------------------
     // Colouring
     //------------------------------------------------------------------
@@ -134,7 +136,8 @@ void CodeCompletionSettingsDialog::CopyData()
     SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
     m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
     m_data.SetFileSpec(m_textCtrlFileSpec->GetValue());
-
+	clConfig::Get().Write("GenerateCompileCommands", this->m_checkBoxGenCompileCommandsJSON->IsChecked());
+	
     //----------------------------------------------------
     // Colouring
     //----------------------------------------------------
@@ -161,6 +164,7 @@ void CodeCompletionSettingsDialog::CopyData()
     m_data.SetTokens(m_textPrep->GetValue());
     m_data.SetTypes(m_textTypes->GetValue());
     m_data.SetMacrosFiles(m_textCtrlFilesList->GetValue());
+	
 }
 
 void CodeCompletionSettingsDialog::SetFlag(CodeCompletionOpts flag, bool set)

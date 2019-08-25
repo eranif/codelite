@@ -1399,14 +1399,15 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
     return cmpOption;
 }
 
-void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths)
+void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths, bool compile_flags_only)
 {
     BuildConfigPtr buildConf = GetBuildConfiguration();
     wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
     wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
 
     CreateCompileFlags(compilersGlobalPaths);
-
+	if(compile_flags_only) { return; }
+	
     wxString workingDirectory = m_fileName.GetPath();
     std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
         const wxString& fullpath = vt.second->GetFilename();
@@ -1913,7 +1914,10 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
 
     // Add the target flag
     if(cmp) { GetExtraFlags(compile_flags_content, buildConf->GetCompiler()); }
-
+	
+	// Handle h files as C++ headers
+	//compile_flags_content << "-x c++-header\n";
+	
     // Write the file content
     wxFileName compile_flags(GetFileName());
     compile_flags.SetFullName("compile_flags.txt");

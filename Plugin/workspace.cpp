@@ -1004,7 +1004,7 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
     return fn_tags;
 }
 
-cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
+cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool compile_flags_only) const
 {
     // Build the global compiler paths, we will need this later on...
     wxStringMap_t compilersGlobalPaths;
@@ -1026,47 +1026,48 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
     if(activeProject) {
         BuildConfigPtr buildConf = activeProject->GetBuildConfiguration();
         if(buildConf && buildConf->IsCustomBuild()) {
-            // Using custom build
-            wxString buildWorkingDirectory = MacroManager::Instance()->Expand(
-                buildConf->GetCustomBuildWorkingDir(), NULL, activeProject->GetName(), buildConf->GetName());
-            wxFileName fnWorkingDirectory(buildWorkingDirectory, "compile_commands.json");
-            if(fnWorkingDirectory.FileExists()) {
-
-                JSON root(fnWorkingDirectory);
-                if(root.isOk()) {
-                    JSON newFile(cJSON_Array);
-                    JSONItem newArr = newFile.toElement();
-                    JSONItem arr = root.toElement();
-                    int size = arr.arraySize();
-                    for(int i = 0; i < size; ++i) {
-                        JSONItem file = arr.arrayItem(i);
-                        wxString command = file.namedObject("command").toString();
-                        wxString file_name = file.namedObject("file").toString();
-                        wxString directory = file.namedObject("directory").toString();
-
-                        std::vector<wxString> files;
-                        files.push_back(file_name);
-
-                        wxFileName headerFile(file_name);
-                        headerFile.SetExt("h");
-                        if(headerFile.FileExists()) { files.push_back(headerFile.GetFullPath()); }
-                        
-                        // Create two entries: header & cpp (if the header exists)
-                        for(const wxString& filename : files) {
-                            JSONItem fileItem = JSONItem::createObject();
-                            fileItem.addProperty("file", filename).addProperty("directory", directory);
-
-                            // Fix the build command
-                            CompilerCommandLineParser cclp(command, directory);
-                            cclp.MakeAbsolute(directory);
-                            fileItem.addProperty("command",
-                                                 wxString() << "clang " << cclp.GetCompileLine() << " -c " << filename);
-                            newArr.arrayAppend(fileItem);
-                        }
-                    }
-                    return newFile.release();
-                }
-            }
+            //    // Using custom build
+            //    wxString buildWorkingDirectory = MacroManager::Instance()->Expand(
+            //        buildConf->GetCustomBuildWorkingDir(), NULL, activeProject->GetName(), buildConf->GetName());
+            //    wxFileName fnWorkingDirectory(buildWorkingDirectory, "compile_commands.json");
+            //    if(fnWorkingDirectory.FileExists()) {
+            //        JSON root(fnWorkingDirectory);
+            //        if(root.isOk()) {
+            //            JSON newFile(cJSON_Array);
+            //            JSONItem newArr = newFile.toElement();
+            //            JSONItem arr = root.toElement();
+            //            int size = arr.arraySize();
+            //            for(int i = 0; i < size; ++i) {
+            //                JSONItem file = arr.arrayItem(i);
+            //                wxString command = file.namedObject("command").toString();
+            //                wxString file_name = file.namedObject("file").toString();
+            //                wxString directory = file.namedObject("directory").toString();
+            //
+            //                std::vector<wxString> files;
+            //                files.push_back(file_name);
+            //
+            //                wxFileName headerFile(file_name);
+            //                headerFile.SetExt("h");
+            //                if(headerFile.FileExists()) { files.push_back(headerFile.GetFullPath()); }
+            //
+            //                // Create two entries: header & cpp (if the header exists)
+            //                for(const wxString& filename : files) {
+            //                    JSONItem fileItem = JSONItem::createObject();
+            //                    fileItem.addProperty("file", filename).addProperty("directory", directory);
+            //
+            //                    // Fix the build command
+            //                    CompilerCommandLineParser cclp(command, directory);
+            //                    cclp.MakeAbsolute(directory);
+            //                    fileItem.addProperty("command",
+            //                                         wxString() << "clang " << cclp.GetCompileLine() << " -c " <<
+            //                                         filename);
+            //                    newArr.arrayAppend(fileItem);
+            //                }
+            //            }
+            //            return newFile.release();
+            //        }
+            //    }
+            return nullptr;
         }
     }
 
@@ -1076,10 +1077,10 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
         BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
         if(buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
            buildConf->IsCompilerRequired()) {
-            iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths);
+            iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, compile_flags_only);
         }
     }
-    return compile_commands.release();
+    return compile_flags_only ? nullptr : compile_commands.release();
 }
 
 ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }

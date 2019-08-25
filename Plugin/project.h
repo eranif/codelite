@@ -825,7 +825,7 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths);
+    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths, bool compile_flags_only);
 
     /**
      * @brief create compile_flags.txt file for this project

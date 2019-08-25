@@ -7,6 +7,7 @@
 #ifndef _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
 #define _CODELITE_FORMBUILDER_TAGS_OPTIONS_BASE_DLG_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -46,6 +47,7 @@
 #endif
 
 #include "tags_options_data.h"
+// clang-format on
 
 class TagsOptionsBaseDlg : public wxDialog
 {
@@ -65,6 +67,7 @@ protected:
     wxCheckBox* m_checkBoxretagWorkspaceOnStartup;
     wxCheckBox* m_checkDisableParseOnSave;
     wxCheckBox* m_checkBoxDeepUsingNamespaceResolving;
+    wxCheckBox* m_checkBoxGenCompileCommandsJSON;
     wxPanel* m_paneColouring;
     wxPropertyGridManager* m_pgMgrColouring;
     wxPGProperty* m_pgPropTrackPreProcessors;
@@ -122,6 +125,7 @@ public:
     wxCheckBox* GetCheckBoxretagWorkspaceOnStartup() { return m_checkBoxretagWorkspaceOnStartup; }
     wxCheckBox* GetCheckDisableParseOnSave() { return m_checkDisableParseOnSave; }
     wxCheckBox* GetCheckBoxDeepUsingNamespaceResolving() { return m_checkBoxDeepUsingNamespaceResolving; }
+    wxCheckBox* GetCheckBoxGenCompileCommandsJSON() { return m_checkBoxGenCompileCommandsJSON; }
     wxPanel* GetPaneDisplayAndBehavior() { return m_paneDisplayAndBehavior; }
     wxPropertyGridManager* GetPgMgrColouring() { return m_pgMgrColouring; }
     wxPanel* GetPaneColouring() { return m_paneColouring; }

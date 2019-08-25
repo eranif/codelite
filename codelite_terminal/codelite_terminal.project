@@ -276,7 +276,9 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../Plugin"/>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">

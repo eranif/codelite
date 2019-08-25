@@ -21,6 +21,7 @@ protected:
     eCommandType m_commandType;
     wxString m_buildSettingsXml;
     bool m_generateCompileCommands;
+	bool m_generateCompilerFlags = false;
 
 protected:
     bool DoParseCommandLine(wxCmdLineParser& parser);

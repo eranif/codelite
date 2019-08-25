@@ -155,6 +155,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer127->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, WXC_FROM_DIP(5));
 
+    m_checkBoxGenCompileCommandsJSON =
+        new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Generate compile_commans.json file"), wxDefaultPosition,
+                       wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
+    m_checkBoxGenCompileCommandsJSON->SetValue(false);
+
+    flexGridSizer127->Add(m_checkBoxGenCompileCommandsJSON, 0, wxALL, WXC_FROM_DIP(5));
+
     m_paneColouring = new wxPanel(m_notebook87, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook87, wxSize(-1, -1)),
                                   wxTAB_TRAVERSAL);
     m_notebook87->AddPage(m_paneColouring, _("Colouring"), false);

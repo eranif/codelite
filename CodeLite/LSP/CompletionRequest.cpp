@@ -17,14 +17,26 @@ LSP::CompletionRequest::~CompletionRequest() {}
 void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
-    if(!result.isOk()) { return; }
+    if(!result.isOk()) { 
+		clWARNING() << "LSP::CompletionRequest::OnResponse(): invalid 'result' object";
+		return; 
+	}
 
     // We now accept the 'items' array
     JSONItem items = result.namedObject("items");
-    if(!items.isOk() || !items.isArray()) { return; }
-
+    if(!items.isOk()) { 
+		clWARNING() << "LSP::CompletionRequest::OnResponse(): invalid 'items' object";
+		return; 
+	}
+	
+	if(!items.isArray()) {
+		clWARNING() << "LSP::CompletionRequest::OnResponse(): items is not of type array";
+		return; 
+	}
+	
     CompletionItem::Vec_t completions;
     const int itemsCount = items.arraySize();
+	clDEBUG() << "Read" << itemsCount << "completion items";
     for(int i = 0; i < itemsCount; ++i) {
         CompletionItem::Ptr_t completionItem(new CompletionItem());
         completionItem->FromJSON(items.arrayItem(i));

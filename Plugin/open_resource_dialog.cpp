@@ -384,8 +384,7 @@ void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& ev
 
 void OpenResourceDialog::OnEnter(wxCommandEvent& event)
 {
-    event.Skip();
-    EndModal(wxID_OK);
+    CallAfter(&OpenResourceDialog::EndModal, wxID_OK);
 }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }

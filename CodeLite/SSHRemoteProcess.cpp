@@ -1,4 +1,5 @@
 #include "SSHRemoteProcess.hpp"
+#if USE_SFTP
 #include "file_logger.h"
 
 bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer)
@@ -64,3 +65,4 @@ IProcess* SSHRemoteProcess::Create(clSSH::Ptr_t ssh, const wxString& command, bo
         return NULL;
     }
 }
+#endif

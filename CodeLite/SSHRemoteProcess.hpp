@@ -1,6 +1,7 @@
 #ifndef SSHREMOTEPROCESS_HPP
 #define SSHREMOTEPROCESS_HPP
 
+#if USE_SFTP
 #include "asyncprocess.h" // Base class: IProcess
 #include "cl_ssh.h"
 #include "codelite_exports.h"
@@ -28,5 +29,5 @@ public:
     virtual bool WriteRaw(const wxString& buff);
     virtual bool WriteToConsole(const wxString& buff);
 };
-
+#endif
 #endif // SSHREMOTEPROCESS_HPP

@@ -90,20 +90,23 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 #ifdef __WXOSX__
     clientRect.Inflate(1);
 #endif
-
+	
+	wxColour tbBgColour;
     if(m_useCustomBgColour) {
         dc.SetBrush(m_bgColour);
         dc.SetPen(m_bgColour);
         dc.DrawRectangle(clientRect);
         clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
         dc.DrawRectangle(clientRect);
+		tbBgColour = m_bgColour;
     } else {
         DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
         clientRect.SetWidth(clientRect.GetWidth() - CL_TOOL_BAR_CHEVRON_SIZE);
         DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
+		tbBgColour = DrawingUtils::GetMenuBarBgColour(HasFlag(kMiniToolBar));
     }
-
-    // Prepare for drawings
+	
+	// Prepare for drawings
     std::vector<ToolVect_t> groups;
     PrepareForDrawings(gcdc, groups, clientRect);
 
@@ -123,7 +126,12 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect);
         m_chevronRect = chevronRect;
     }
+	
+	tbBgColour = tbBgColour.ChangeLightness(DrawingUtils::IsDark(tbBgColour) ? 60 : 60);
+	gcdc.SetPen(tbBgColour);
+	gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());
 }
+
 void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup)
 {
     wxUnusedVar(isLastGroup);

@@ -97,7 +97,9 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 
     // draw the background using the parent background colour
     dc.SetBrush(bgColour);
-    dc.SetPen(penColour);
+	
+	wxColour borderColour = penColour.ChangeLightness(DrawingUtils::IsDark(bgColour) ? 140 : 60);
+    dc.SetPen(borderColour);
     dc.DrawRectangle(rr);
     dc.SetFont(m_font);
 

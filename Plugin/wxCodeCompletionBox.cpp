@@ -305,7 +305,7 @@ void wxCodeCompletionBox::OnPaint(wxPaintEvent& event)
     DoDrawTopScrollButton(dc);
 
     // Redraw the box border
-    dc.SetPen(m_penColour);
+    dc.SetPen(m_penColour.ChangeLightness(DrawingUtils::IsDark(m_bgColour) ? 130 : 70));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(GetClientRect());
 }

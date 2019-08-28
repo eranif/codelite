@@ -31,54 +31,49 @@
 
 class MyClientData : public wxTreeItemData
 {
+public:
+    enum eFileType {
+        kFile,
+        kFolder,
+        kSymlink,
+    };
+
+protected:
     wxString m_path;
-    bool     m_initialized;
-    bool     m_isFolder;
+    bool m_initialized = false;
+    eFileType m_type = kFile;
 
 public:
     typedef std::vector<MyClientData*> Vector_t;
 
 public:
-    MyClientData(const wxString &path)
-        : m_path(path)
-        , m_initialized(false)
-        , m_isFolder(false) {
-        while (m_path.Replace("//", "/")) {}
-        while (m_path.Replace("\\\\", "\\")) {}
+    MyClientData(const wxString& path)
+		: m_path(path)
+    {
+        while(m_path.Replace("//", "/")) {}
+        while(m_path.Replace("\\\\", "\\")) {}
+		
     }
 
     virtual ~MyClientData() {}
-    
-    wxString GetBasename() const {
-        return GetFullPath().BeforeLast('/');
-    }
-    wxString GetFullName() const {
-        return GetFullPath().AfterLast('/');
-    }
-    void SetFullName( const wxString &fullname ) {
+
+    wxString GetBasename() const { return GetFullPath().BeforeLast('/'); }
+    wxString GetFullName() const { return GetFullPath().AfterLast('/'); }
+    void SetFullName(const wxString& fullname)
+    {
         wxString base = GetBasename();
         base << "/" << fullname;
-        m_path.swap( base );
+        m_path.swap(base);
     }
-    
-    void SetInitialized(bool initialized) {
-        this->m_initialized = initialized;
-    }
-    bool IsInitialized() const {
-        return m_initialized;
-    }
-    void SetPath(const wxString& path) {
-        this->m_path = path;
-    }
-    const wxString& GetFullPath() const {
-        return m_path;
-    }
-    void SetIsFolder(bool isFolder) {
-        this->m_isFolder = isFolder;
-    }
-    bool IsFolder() const {
-        return m_isFolder;
-    }
+
+    void SetInitialized(bool initialized) { this->m_initialized = initialized; }
+    bool IsInitialized() const { return m_initialized; }
+    void SetPath(const wxString& path) { this->m_path = path; }
+    const wxString& GetFullPath() const { return m_path; }
+    void SetType(MyClientData::eFileType type) { this->m_type = type; }
+    bool IsFolder() const { return m_type == kFolder; }
+    bool IsSymlink() const { return m_type == kSymlink; }
+    bool IsFile() const { return m_type == kFile; }
 };
 
 #endif // SFTPITEMCOMPARATOR_H

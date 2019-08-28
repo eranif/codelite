@@ -2065,7 +2065,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="codelite-dbg.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="no" DebugArguments="-b . --no-plugins" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="Default" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=../sdk/clang/lib;$(WXWIN)\lib\gcc_dll;$(PATH)]]>
@@ -2189,7 +2189,7 @@ resources.cpp: resources.xrc
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" UseSeparateDebugArgs="yes" DebugArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="codelite.exe" IntermediateDirectory="$(ConfigurationName)" Command=".\codelite.exe" CommandArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" UseSeparateDebugArgs="yes" DebugArguments="-b . -d C:\Users\Eran\AppData\Roaming\CodeLite-Debug" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="Default" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$WXWIN\lib\gcc_dll;../sdk/clang/lib;../sdk/libssh/lib;$(PATH)]]>
@@ -2217,7 +2217,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2335,8 +2336,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

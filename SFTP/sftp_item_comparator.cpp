@@ -38,18 +38,18 @@ int SFTPItemComparator::Compare(wxTreeListCtrl* treelist, unsigned column, wxTre
     // get the item data
     MyClientData *cdOne = dynamic_cast<MyClientData *>(treelist->GetItemData(first));
     MyClientData *cdTwo = dynamic_cast<MyClientData *>(treelist->GetItemData(second));
-    
+
     if ( column != 0 )
         return 0;
-    
+
     if ( !cdOne || !cdTwo )
         return 0;
-    
+
     if ( cdOne->IsFolder() && !cdTwo->IsFolder())
         return -1;
-        
+
     else if ( !cdOne->IsFolder() && cdTwo->IsFolder() )
         return 1;
-    else 
+    else
         return cdOne->GetFullName() > cdTwo->GetFullName();
 }*/

@@ -170,7 +170,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     m_treeCtrl->DeleteAllItems();
     // add the root item
     MyClientData* cd = new MyClientData(initialFolder);
-    cd->SetIsFolder(true);
+    cd->SetType(MyClientData::kFolder);
 
     wxTreeItemId root =
         m_treeCtrl->AddRoot(initialFolder, m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
@@ -192,7 +192,8 @@ void SFTPTreeView::OnItemActivated(wxTreeEvent& event)
         } else {
             m_treeCtrl->CallAfter(&clThemedTreeCtrl::Expand, item);
         }
-
+    } else if(cd->IsSymlink()) {
+        // TODO: what should we do here !?
     } else {
         DoOpenFile(cd->GetFullPath());
     }
@@ -284,7 +285,9 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         int imgIdx = wxNOT_FOUND;
         if(attr->IsFolder()) {
             imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
-
+        } else if(attr->IsSymlink()) {
+            // TODO: use a special icon for indicating that a file is a symlink
+            imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
         } else {
             imgIdx = m_bmpLoader->GetMimeImageId(attr->GetName());
         }
@@ -296,7 +299,13 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         while(path.Replace("//", "/")) {}
 
         MyClientData* childClientData = new MyClientData(path);
-        childClientData->SetIsFolder(attr->IsFolder());
+        if(attr->IsFolder()) {
+            childClientData->SetType(MyClientData::kFolder);
+        } else if(attr->IsSymlink()) {
+            childClientData->SetType(MyClientData::kSymlink);
+        } else {
+            childClientData->SetType(MyClientData::kFile);
+        }
 
         wxTreeItemId child = m_treeCtrl->AppendItem(item, attr->GetName(), imgIdx, imgIdx, childClientData);
         // if its type folder, add a fake child item
@@ -499,7 +508,7 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
         MyClientData* newFile = new MyClientData(path);
-        newFile->SetIsFolder(false);
+        newFile->SetType(MyClientData::kFile);
         newFile->SetInitialized(false);
 
         wxTreeItemId child = m_treeCtrl->AppendItem(
@@ -520,7 +529,7 @@ wxTreeItemId SFTPTreeView::DoAddFolder(const wxTreeItemId& parent, const wxStrin
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
         MyClientData* newCd = new MyClientData(path);
-        newCd->SetIsFolder(true);
+        newCd->SetType(MyClientData::kFolder);
         newCd->SetInitialized(false);
 
         wxTreeItemId child = m_treeCtrl->AppendItem(

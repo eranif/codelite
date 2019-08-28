@@ -362,8 +362,8 @@ void SFTPBrowserDlg::ClearView()
 void SFTPBrowserDlg::DoBrowse()
 {
     wxBusyInfo wait("Please wait, connecting...", this);
+    wxBusyCursor bc;
     wxTheApp->Yield();
-    
     DoCloseSession();
     wxString accountName = m_choiceAccount->GetStringSelection();
 

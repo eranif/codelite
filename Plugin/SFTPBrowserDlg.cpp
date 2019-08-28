@@ -122,16 +122,19 @@ void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
     clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
     try {
         wxString message;
-        ssh->Connect();
-        if(!ssh->AuthenticateServer(message)) {
-            if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
-                ssh->AcceptServerAuthentication();
+        {
+			wxBusyCursor bc;
+            ssh->Connect();
+            if(!ssh->AuthenticateServer(message)) {
+                if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
+                    ssh->AcceptServerAuthentication();
+                }
             }
-        }
 
-        ssh->Login();
-        m_sftp.reset(new clSFTP(ssh));
-        m_sftp->Initialize();
+            ssh->Login();
+            m_sftp.reset(new clSFTP(ssh));
+            m_sftp->Initialize();
+        }
 
         DoDisplayEntriesForPath();
 
@@ -145,13 +148,13 @@ void SFTPBrowserDlg::OnRefreshUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
 {
-	wxBusyCursor bc;
+    wxBusyCursor bc;
     try {
         wxString folder;
         SFTPAttribute::List_t attributes;
         if(path.IsEmpty()) {
             folder = m_textCtrlRemoteFolder->GetValue();
-			if(folder.IsEmpty()) { folder = "/"; }
+            if(folder.IsEmpty()) { folder = "/"; }
             attributes = m_sftp->List(folder, m_flags, m_filter);
 
         } else if(path == "..") {

@@ -88,13 +88,13 @@ void SFTPAttribute::DoConstruct()
 wxString SFTPAttribute::GetTypeAsString() const
 {
     if(IsSymlink()) {
-		if(IsFolder()) {
-			return " -> " + GetSymlinkPath();
-		} else if(IsFile()) {
-			return " -> " + GetSymlinkPath();
-		} else { 
-			return "Symlink";
-		}
+        if(IsFolder()) {
+            return " -> " + GetSymlinkPath();
+        } else if(IsFile()) {
+            return " -> " + GetSymlinkPath();
+        } else {
+            return "Symlink";
+        }
     } else {
         if(IsSpecial()) {
             return "Special";

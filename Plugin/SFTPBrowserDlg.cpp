@@ -35,6 +35,7 @@
 #include "windowattrmanager.h"
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
+#include <wx/busyinfo.h>
 
 // ================================================================================
 // ================================================================================
@@ -106,42 +107,8 @@ SFTPBrowserDlg::~SFTPBrowserDlg() {}
 
 void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
 {
-    DoCloseSession();
-    wxString accountName = m_choiceAccount->GetStringSelection();
-
-    SFTPSettings settings;
-    settings.Load();
-
-    SSHAccountInfo account;
-    if(!settings.GetAccount(accountName, account)) {
-        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK,
-                       this);
-        return;
-    }
-
-    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
-    try {
-        wxString message;
-        {
-			wxBusyCursor bc;
-            ssh->Connect();
-            if(!ssh->AuthenticateServer(message)) {
-                if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
-                    ssh->AcceptServerAuthentication();
-                }
-            }
-
-            ssh->Login();
-            m_sftp.reset(new clSFTP(ssh));
-            m_sftp->Initialize();
-        }
-
-        DoDisplayEntriesForPath();
-
-    } catch(clException& e) {
-        ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
-        DoCloseSession();
-    }
+    wxUnusedVar(event);
+    CallAfter(&SFTPBrowserDlg::DoBrowse);
 }
 
 void SFTPBrowserDlg::OnRefreshUI(wxUpdateUIEvent& event) { event.Enable(true); }
@@ -390,6 +357,46 @@ void SFTPBrowserDlg::ClearView()
         wxDELETE(cd);
     }
     m_dataview->DeleteAllItems();
+}
+
+void SFTPBrowserDlg::DoBrowse()
+{
+    wxBusyInfo wait("Please wait, connecting...", this);
+    wxTheApp->Yield();
+    
+    DoCloseSession();
+    wxString accountName = m_choiceAccount->GetStringSelection();
+
+    SFTPSettings settings;
+    settings.Load();
+
+    SSHAccountInfo account;
+    if(!settings.GetAccount(accountName, account)) {
+        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK,
+                       this);
+        return;
+    }
+
+    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
+    try {
+        wxString message;
+        ssh->Connect();
+        if(!ssh->AuthenticateServer(message)) {
+            if(::wxMessageBox(message, "SSH", wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
+                ssh->AcceptServerAuthentication();
+            }
+        }
+
+        ssh->Login();
+        m_sftp.reset(new clSFTP(ssh));
+        m_sftp->Initialize();
+
+        DoDisplayEntriesForPath();
+
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
+        DoCloseSession();
+    }
 }
 
 #endif // USE_SFTP

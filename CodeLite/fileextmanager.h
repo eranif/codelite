@@ -71,10 +71,10 @@ public:
         TypeXRC,
         TypeSQL,
         TypeFolder,
-        TypeFolderExpanded, // For UI purposes only
-        TypeProjectActive,  // For UI purposes only
-        TypeProjectExpanded, // For UI purposes only
-        TypeWorkspaceFolder, // For UI purposes only
+        TypeFolderExpanded,          // For UI purposes only
+        TypeProjectActive,           // For UI purposes only
+        TypeProjectExpanded,         // For UI purposes only
+        TypeWorkspaceFolder,         // For UI purposes only
         TypeWorkspaceFolderExpanded, // For UI purposes only
         TypeWorkspacePHP,
         TypeWorkspaceDocker,
@@ -88,12 +88,24 @@ public:
         TypeDockerfile,
         TypeYAML,
         TypeDatabase,
+        TypeFileSymlink,
+        TypeFolderSymlink,
+        TypeFolderSymlinkExpanded, // For UI purposes only
         TypeLast,
     };
 
 public:
     static FileType GetType(const wxString& filename, FileExtManager::FileType defaultType = FileExtManager::TypeOther);
     static void Init();
+
+    static bool IsSymlinkFolder(const wxString& filename);
+    static bool IsSymlinkFolder(const wxFileName& filename) { return IsSymlinkFolder(filename.GetFullPath()); }
+
+    static bool IsSymlinkFile(const wxString& filename);
+    static bool IsSymlinkFile(const wxFileName& filename) { return IsSymlinkFile(filename.GetFullPath()); }
+	
+	static bool IsSymlink(const wxString& filename) { return IsSymlinkFolder(filename) || IsSymlinkFile(filename); }
+    static bool IsSymlink(const wxFileName& filename) { return IsSymlinkFolder(filename) || IsSymlinkFile(filename); }
 
     /**
      * @brief return true if the file is a C/C++ file

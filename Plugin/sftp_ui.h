@@ -21,11 +21,11 @@
 #include <wx/infobar.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/gbsizer.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
+#include <wx/panel.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -129,12 +129,13 @@ public:
 class WXDLLIMPEXP_SDK SFTPBrowserBaseDlg : public wxDialog
 {
 protected:
+    wxPanel* m_panel149;
+    clToolBar* m_toolbar;
+    wxStaticText* m_staticText82;
+    wxChoice* m_choiceAccount;
     wxStaticText* m_staticText66;
     wxTextCtrl* m_textCtrlRemoteFolder;
     wxButton* m_buttonRefresh;
-    wxStaticText* m_staticText82;
-    wxChoice* m_choiceAccount;
-    clToolBar* m_toolbar;
     clThemedListCtrl* m_dataview;
     wxTextCtrl* m_textCtrlInlineSearch;
     wxButton* m_button59;
@@ -152,16 +153,17 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
+    wxStaticText* GetStaticText82() { return m_staticText82; }
+    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
     wxStaticText* GetStaticText66() { return m_staticText66; }
     wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }
-    wxStaticText* GetStaticText82() { return m_staticText82; }
-    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
-    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedListCtrl* GetDataview() { return m_dataview; }
     wxTextCtrl* GetTextCtrlInlineSearch() { return m_textCtrlInlineSearch; }
     wxButton* GetButton59() { return m_button59; }
     wxButton* GetButton61() { return m_button61; }
+    wxPanel* GetPanel149() { return m_panel149; }
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

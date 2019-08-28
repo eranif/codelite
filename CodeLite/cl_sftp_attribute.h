@@ -44,6 +44,7 @@ class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
     size_t m_size;
     SFTPAttribute_t m_attributes;
     size_t m_permissions;
+    wxString m_symlinkPath; // incase this file represents a symlink, this member will hold the target path
 
 public:
     typedef SmartPtr<SFTPAttribute> Ptr_t;
@@ -86,6 +87,20 @@ public:
     bool IsSpecial() const { return m_flags & TYPE_SEPCIAL; }
     void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
     size_t GetPermissions() const { return m_permissions; }
+
+    void SetSymlinkPath(const wxString& symlinkPath) { this->m_symlinkPath = symlinkPath; }
+    const wxString& GetSymlinkPath() const { return m_symlinkPath; }
+
+    void SetFile()
+    {
+        m_flags &= ~TYPE_FOLDER;
+        m_flags |= TYPE_REGULAR_FILE;
+    }
+    void SetFolder()
+    {
+        m_flags &= ~TYPE_REGULAR_FILE;
+        m_flags |= TYPE_FOLDER;
+    }
 };
 #endif
 #endif // SFTPATTRIBUTE_H

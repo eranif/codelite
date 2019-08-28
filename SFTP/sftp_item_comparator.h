@@ -33,26 +33,26 @@ class MyClientData : public wxTreeItemData
 {
 public:
     enum eFileType {
-        kFile,
-        kFolder,
-        kSymlink,
+        kFile = (1 << 0),
+        kFolder = (1 << 1),
+        kSymlink = (1 << 2),
     };
 
 protected:
     wxString m_path;
+    wxString m_symlinkTarget;
     bool m_initialized = false;
-    eFileType m_type = kFile;
+    size_t m_flags = kFile;
 
 public:
     typedef std::vector<MyClientData*> Vector_t;
 
 public:
     MyClientData(const wxString& path)
-		: m_path(path)
+        : m_path(path)
     {
         while(m_path.Replace("//", "/")) {}
         while(m_path.Replace("\\\\", "\\")) {}
-		
     }
 
     virtual ~MyClientData() {}
@@ -70,10 +70,22 @@ public:
     bool IsInitialized() const { return m_initialized; }
     void SetPath(const wxString& path) { this->m_path = path; }
     const wxString& GetFullPath() const { return m_path; }
-    void SetType(MyClientData::eFileType type) { this->m_type = type; }
-    bool IsFolder() const { return m_type == kFolder; }
-    bool IsSymlink() const { return m_type == kSymlink; }
-    bool IsFile() const { return m_type == kFile; }
+    void SetFolder()
+    {
+        this->m_flags &= ~kFile;
+        this->m_flags |= kFolder;
+    }
+    void SetFile()
+    {
+        this->m_flags &= ~kFolder;
+        this->m_flags |= kFile;
+    }
+    void SetSymlink() { this->m_flags |= kSymlink; }
+    bool IsSymlink() const { return this->m_flags & kSymlink; }
+    bool IsFile() const { return this->m_flags & kFile; }
+    bool IsFolder() const { return this->m_flags & kFolder; }
+    void SetSymlinkTarget(const wxString& path) { this->m_symlinkTarget = path; }
+    const wxString& GetSymlinkTarget() const { return m_symlinkTarget; }
 };
 
 #endif // SFTPITEMCOMPARATOR_H

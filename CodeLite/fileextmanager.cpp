@@ -302,3 +302,15 @@ FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& 
     if(iter == m_map.end()) return TypeOther;
     return iter->second;
 }
+
+bool FileExtManager::IsSymlinkFile(const wxString& filename)
+{
+    return wxFileName::Exists(filename, wxFILE_EXISTS_NO_FOLLOW | wxFILE_EXISTS_SYMLINK) &&
+           wxFileName::FileExists(filename);
+}
+
+bool FileExtManager::IsSymlinkFolder(const wxString& filename)
+{
+    return wxFileName::Exists(filename, wxFILE_EXISTS_NO_FOLLOW | wxFILE_EXISTS_SYMLINK) &&
+           wxFileName::DirExists(filename);
+}

@@ -30,7 +30,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
 
     boxSizer2->Add(boxSizer10, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)),
                                         wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -303,55 +303,64 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer62);
 
-    wxGridBagSizer* gridBagSizer80 = new wxGridBagSizer(0, 0);
+    m_panel149 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer62->Add(gridBagSizer80, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer62->Add(m_panel149, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText66 =
-        new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
+    m_panel149->SetSizer(boxSizer151);
 
-    gridBagSizer80->Add(m_staticText66, wxGBPosition(1, 0), wxGBSpan(1, 1),
-                        wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    m_toolbar = new clToolBar(m_panel149, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(-1, -1)),
+                              wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    m_textCtrlRemoteFolder = new wxTextCtrl(this, wxID_ANY, wxT("/"), wxDefaultPosition,
-                                            wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    boxSizer151->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer147 = new wxFlexGridSizer(0, 5, 0, 0);
+    flexGridSizer147->SetFlexibleDirection(wxBOTH);
+    flexGridSizer147->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer147->AddGrowableCol(1);
+    flexGridSizer147->AddGrowableCol(3);
+
+    boxSizer151->Add(flexGridSizer147, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText82 = new wxStaticText(m_panel149, wxID_ANY, _("Account:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
+
+    flexGridSizer147->Add(m_staticText82, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL,
+                          WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceAccountArr;
+    m_choiceAccount = new wxChoice(m_panel149, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(-1, -1)),
+                                   m_choiceAccountArr, 0);
+
+    flexGridSizer147->Add(m_choiceAccount, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText66 = new wxStaticText(m_panel149, wxID_ANY, _("Path:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
+
+    flexGridSizer147->Add(m_staticText66, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL,
+                          WXC_FROM_DIP(5));
+
+    m_textCtrlRemoteFolder = new wxTextCtrl(m_panel149, wxID_ANY, wxT("/"), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panel149, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlRemoteFolder->SetToolTip(_("Set the remote folder to browse and click on the 'Refresh' button"));
     m_textCtrlRemoteFolder->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlRemoteFolder->SetHint(wxT(""));
 #endif
 
-    gridBagSizer80->Add(m_textCtrlRemoteFolder, wxGBPosition(1, 1), wxGBSpan(1, 1),
-                        wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer147->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_buttonRefresh =
-        new wxButton(this, wxID_REFRESH, _("Connect..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonRefresh = new wxButton(m_panel149, wxID_REFRESH, _("Browse..."), wxDefaultPosition,
+                                   wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
 
-    gridBagSizer80->Add(m_buttonRefresh, wxGBPosition(1, 2), wxGBSpan(1, 1), wxALL | wxALIGN_CENTER_VERTICAL,
-                        WXC_FROM_DIP(5));
+    flexGridSizer147->Add(m_buttonRefresh, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticText82 =
-        new wxStaticText(this, wxID_ANY, _("Account:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_dataview = new clThemedListCtrl(m_panel149, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(500, 300)),
+                                      wxDV_ROW_LINES | wxDV_SINGLE);
 
-    gridBagSizer80->Add(m_staticText82, wxGBPosition(0, 0), wxGBSpan(1, 1),
-                        wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceAccountArr;
-    m_choiceAccount =
-        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceAccountArr, 0);
-
-    gridBagSizer80->Add(m_choiceAccount, wxGBPosition(0, 1), wxGBSpan(1, 2), wxALL | wxEXPAND, WXC_FROM_DIP(5));
-    gridBagSizer80->AddGrowableCol(1);
-    m_toolbar =
-        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer62->Add(m_toolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)),
-                                      wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_THEME);
-
-    boxSizer62->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer151->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dataview->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                      wxDATAVIEW_COL_RESIZABLE);
@@ -361,10 +370,10 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
                                  wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer62->Add(boxSizer94, 0, wxEXPAND | wxRESERVE_SPACE_EVEN_IF_HIDDEN, WXC_FROM_DIP(5));
+    boxSizer151->Add(boxSizer94, 0, wxEXPAND | wxRESERVE_SPACE_EVEN_IF_HIDDEN, WXC_FROM_DIP(5));
 
-    m_textCtrlInlineSearch = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
-                                            wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlInlineSearch = new wxTextCtrl(m_panel149, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panel149, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlInlineSearch->Hide();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlInlineSearch->SetHint(wxT(""));
@@ -374,14 +383,16 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer62->Add(boxSizer57, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer151->Add(boxSizer57, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
-    m_button59 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button59 =
+        new wxButton(m_panel149, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
     m_button59->SetDefault();
 
     boxSizer57->Add(m_button59, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button61 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button61 = new wxButton(m_panel149, wxID_CANCEL, _("&Cancel"), wxDefaultPosition,
+                              wxDLG_UNIT(m_panel149, wxSize(-1, -1)), 0);
 
     boxSizer57->Add(m_button61, 0, wxALL, WXC_FROM_DIP(5));
 

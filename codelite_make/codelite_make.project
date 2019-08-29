@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="codelite_make" InternalType="Console" Version="10.0.0">
+<CodeLite_Project Name="codelite_make" InternalType="Console" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00010001N0015Win_x64_Release000000000000]]>
@@ -61,7 +61,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Debug" Command="C:/src/codelite/codelite_make/Debug/codelite-make.exe" CommandArguments="--workspace=C:\src\codelite\CodeLiteIDE.workspace --json --verbose --config=Win_x64_Release" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--workspace=C:\src\codelite\CodeLiteIDE.workspace --json --verbose --config=Win_x64_Release" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$(WorkspacePath)\..\lib\gcc_lib;$PATH]]>
@@ -104,7 +104,7 @@
         <LibraryPath Value="Debug"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/build-debug/bin/codelite-make" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/devl/codelite/CodeLiteIDE.workspace --verbose --json --config=CMake_Debug --settings=/home/eran/.codelite/config/build_settings.xml" WorkingDirectory="/home/eran/devl/codelite" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/devl/codelite/CodeLiteIDE.workspace --verbose --json --config=CMake_Debug --settings=/home/eran/.codelite/config/build_settings.xml" WorkingDirectory="/home/eran/devl/codelite" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -153,7 +153,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -203,7 +203,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="$(ConfigurationName)" Command="/home/eran/root/bin/codelite-make" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/Documents/HelloWorld/HelloWorld.workspace --config=Debug --json --versbose" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/Documents/HelloWorld/HelloWorld.workspace --config=Debug --json --versbose" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -253,7 +253,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/codelite-make" IntermediateDirectory="$(ConfigurationName)" Command="/home/eran/root/bin/codelite-make" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/Documents/HelloWorld/HelloWorld.workspace --config=Debug --json --versbose" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/Documents/HelloWorld/HelloWorld.workspace --config=Debug --json --versbose" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

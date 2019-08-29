@@ -2213,10 +2213,12 @@ void Project::UpgradeBuildSystem()
             outputFileName = outputFileName.AfterLast('/');
             bldConf->SetOutputFileName(outputFileName);
 
-            // 3. Set the executable to run/debug
-            wxString command;
-            command << "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
-            bldConf->SetCommand(command);
+            if(bldConf->GetProjectType() == PROJECT_TYPE_EXECUTABLE) {
+                // 3. Set the executable to run/debug
+                wxString command;
+                command << "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
+                bldConf->SetCommand(command);
+            }
         }
         bldConf = settings->GetNextBuildConfiguration(c);
     }

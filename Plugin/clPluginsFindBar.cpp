@@ -76,7 +76,9 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
     event.SetEventObject(FocusedControl);
     wxPostEvent(destination, event);
 }
-
+#ifdef __WXMSW__
+extern void MSWSetWindowDarkTheme(wxWindow*, bool);
+#endif
 clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     : QuickFindBarBase(parent, id)
     , m_sci(NULL)
@@ -181,6 +183,9 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
+#ifdef __WXMSW__
+    MSWSetWindowDarkTheme(this, true);
+#endif
 }
 
 clPluginsFindBar::~clPluginsFindBar()

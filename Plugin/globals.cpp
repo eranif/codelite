@@ -94,6 +94,50 @@
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
+#ifdef __WXMSW__
+
+typedef BOOL(WINAPI* ADMFA)(BOOL allow);                    // AllowDarkModeForApp
+typedef BOOL(WINAPI* ADMFW)(HWND window, BOOL allow);       // AllowDarkModeForWindow
+typedef void(WINAPI* FMT)();                                // FlushMenuThemes
+typedef HRESULT(WINAPI* DSWA)(HWND, DWORD, LPCVOID, DWORD); // DwmSetWindowAttribute
+
+BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
+{
+    if(!IsWindow(hwnd)) return TRUE;
+
+    const BOOL is_darktheme = (BOOL)lparam;
+    const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
+
+    if(huxtheme) {
+        const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
+        if(_AllowDarkModeForWindow) _AllowDarkModeForWindow(hwnd, is_darktheme);
+    }
+    InvalidateRect(hwnd, nullptr, TRUE);
+    return TRUE;
+}
+
+void WXDLLIMPEXP_SDK MSWSetWindowDarkTheme(wxWindow* win, bool b)
+{
+    const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
+    if(huxtheme) {
+        SetWindowTheme(win->GetHandle(), L"DarkMode_Explorer", NULL);
+        const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
+        const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
+        if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
+            _AllowDarkModeForApp(b);
+            _AllowDarkModeForWindow(win->GetHandle(), b);
+            EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, b);
+
+            const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
+
+            if(_FlushMenuThemes) _FlushMenuThemes();
+            InvalidateRect(win->GetHandle(), nullptr, FALSE); // HACK
+        }
+    }
+}
+
+#endif
+
 // --------------------------------------------------------
 // Internal handler to handle queuing requests...
 // --------------------------------------------------------

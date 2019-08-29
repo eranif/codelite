@@ -713,6 +713,10 @@ END_EVENT_TABLE()
 clMainFrame* clMainFrame::m_theFrame = NULL;
 bool clMainFrame::m_initCompleted = false;
 
+#ifdef __WXMSW__
+extern void MSWSetWindowDarkTheme(wxWindow*, bool);
+#endif
+
 clMainFrame::clMainFrame(wxWindow* pParent,
     wxWindowID id,
     const wxString& title,
@@ -736,7 +740,7 @@ clMainFrame::clMainFrame(wxWindow* pParent,
     if(!wxFrame::Create(pParent, id, title, pos, size, style)) {
         return;
     }
-
+    
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
     // accelerator for the menu bar.  We don't want that.  There is
@@ -3404,6 +3408,9 @@ void clMainFrame::CompleteInitialization()
         // regardless of the answer, dont bug the user again
         clConfig::Get().Write("ColoursAdjusted", true);
     }
+#ifdef __WXMSW__
+    MSWSetWindowDarkTheme(this, true);
+#endif
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)

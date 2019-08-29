@@ -40,6 +40,9 @@
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 
+#ifdef __WXMSW__
+extern void MSWSetWindowDarkTheme(wxWindow*, bool);
+#endif
 NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     : NewClassBaseDlg(parent)
     , m_selectedItem(wxNOT_FOUND)
@@ -91,6 +94,9 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
     GetSizer()->Fit(this);
     CentreOnParent();
+#ifdef __WXMSW__
+    MSWSetWindowDarkTheme(this, true);
+#endif
 }
 
 NewClassDlg::~NewClassDlg() { DoSaveOptions(); }

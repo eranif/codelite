@@ -329,16 +329,16 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
 
+    m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition,
+                                                          wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer505->Add(m_configChangeCtrl, 0, wxTOP | wxEXPAND, WXC_FROM_DIP(2));
+
     m_toolbar580 = new clToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
                                  wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar580->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer505->Add(m_toolbar580, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition,
-                                                          wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    boxSizer505->Add(m_configChangeCtrl, 0, wxTOP | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_toolbar580, 0, wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitter = new clThemedSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition,
                                             wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)), wxSP_LIVE_UPDATE);

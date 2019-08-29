@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="LLDBApp" InternalType="Console" Version="10.0.0">
+<CodeLite_Project Name="LLDBApp" InternalType="Console" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -72,7 +72,7 @@
         <Library Value="LLDBProtocolD.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(WorkspacePath)/Runtime/codelite-lldb" IntermediateDirectory="./Release" Command="$(WorkspacePath)/Runtime/codelite-lldb" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-lldb" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -122,7 +122,7 @@
         <Library Value="LLDBProtocol.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(WorkspacePath)/Runtime/codelite-lldb" IntermediateDirectory="./Release" Command="$(WorkspacePath)/Runtime/codelite-lldb" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-lldb" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -172,7 +172,7 @@
         <Library Value="LLDBProtocol.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(WorkspacePath)/Runtime/codelite-lldb" IntermediateDirectory="./Release" Command="$(WorkspacePath)/Runtime/codelite-lldb" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-lldb" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-t 127.0.0.1:13610" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

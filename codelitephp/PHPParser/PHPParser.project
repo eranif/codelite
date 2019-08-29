@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="PHPParser" InternalType="Console" Version="10.0.0">
+<CodeLite_Project Name="PHPParser" InternalType="Console" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00060001N0005Debug0000000000000001N0010Debug_Unix0000000000000001N0007Release0000000000000001N0012Release_Unix0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
@@ -131,7 +131,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="/home/eran/devl/codelite/build-debug/bin/PHPUnitTests" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/codelite/codelitephp/PHPParserUnitTests" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="/home/eran/devl/codelite/codelitephp/PHPParserUnitTests" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -195,7 +195,7 @@ php_expr_lexer.cpp: php_expr.l
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no);-Os" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -234,7 +234,7 @@ php_expr_lexer.cpp: php_expr.l
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="Default">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
@@ -298,7 +298,7 @@ php_expr_lexer.cpp: php_expr.l
       </Compiler>
       <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName)-dbg.a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName)-dbg.a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -347,7 +347,7 @@ php_expr_lexer.cpp: php_expr.l
       </Compiler>
       <Linker Options="$(shell wx-config --libs --debug=no);-Os" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="$(ConfigurationName)" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>

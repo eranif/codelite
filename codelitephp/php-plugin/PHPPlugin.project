@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Project Name="PHPPlugin" Version="10.0.0">
+<CodeLite_Project Name="PHPPlugin" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00070001N0010Debug_Unix0000000000000001N0012Release_Unix0000000000000001N0015WinDebugUnicode0000000000000001N0017WinReleaseUnicode0000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -257,7 +257,7 @@
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.so" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins PHP" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="PHP.so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--with-plugins PHP" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -322,7 +322,7 @@
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.so" IntermediateDirectory="./Debug" Command="/home/eran/root/bin/codelite" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="PHP.so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -380,7 +380,7 @@
         <Library Value="libPHPParser-dbg.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP-dbg.dll" IntermediateDirectory="$(ConfigurationName)" Command="C:/src/codelite/Runtime/codelite-dbg.exe" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="PHP-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
@@ -443,7 +443,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="PHP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
@@ -503,7 +503,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ConfigurationName)/PHP.dll" IntermediateDirectory="$(ConfigurationName)" Command="./codelite.exe" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="PHP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>

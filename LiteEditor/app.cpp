@@ -293,7 +293,7 @@ bool CodeLiteApp::OnInit()
 
 #endif
     wxSocketBase::Initialize();
-    
+
     // Redirect all error messages to stderr
     wxLog::SetActiveTarget(new wxLogStderr());
 
@@ -478,8 +478,11 @@ bool CodeLiteApp::OnInit()
         homeDir = ::wxGetCwd();
 #endif
     }
-    wxFileName fnHomdDir(homeDir + wxT("/"));
-
+    wxFileName fnHomdDir(homeDir, "");
+    
+    // Set the standard path with the new data dir
+    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
+    
     // try to locate the menu/rc.xrc file
     wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
     if(!fn.FileExists()) {
@@ -533,9 +536,9 @@ bool CodeLiteApp::OnInit()
         wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
 #endif
-    
+
     clSystemSettings::Get(); // Initialise the custom settings _before_ we start constructing the main frame
-    
+
     Manager* mgr = ManagerST::Get();
     EditorConfig* cfg = EditorConfigST::Get();
     cfg->SetInstallDir(mgr->GetInstallDir());
@@ -652,7 +655,7 @@ bool CodeLiteApp::OnInit()
     // Merge the user settings with any new settings
     ColoursAndFontsManager::Get().ImportLexersFile(wxFileName(clStandardPaths::Get().GetLexersDir(), "lexers.json"),
                                                    false);
-    
+
     // Create the main application window
     clMainFrame::Initialize((parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());
     m_pMainFrame = clMainFrame::Get();

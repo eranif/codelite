@@ -333,7 +333,10 @@ private:
     wxArrayString DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions);
 
     clProjectFolder::Ptr_t GetRootFolder();
-
+    
+    /// Upgrade the project settings to match the new builder system
+    void UpgradeBuildSystem();
+    
 public:
     /**
      * @brief return list of files that are excluded from *any* build configuration
@@ -357,9 +360,9 @@ public:
     clCxxWorkspace* GetWorkspace();
 
     /**
-     * @brief return the XML version
+     * @brief return the project version as a number
      */
-    wxString GetVersion() const;
+    long GetVersionNumber() const;
 
     /**
      * @brief return true if this project has children (virtual folders or files)

@@ -653,7 +653,7 @@ bool clCxxWorkspace::SaveXmlFile()
     // Set the workspace XML version
     wxString version;
     if(!m_doc.GetRoot()->GetAttribute("Version", &version)) {
-        m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+        m_doc.GetRoot()->AddAttribute("Version", DEFAULT_CURRENT_WORKSPACE_VERSION_STR);
     }
 
     bool ok = m_doc.Save(m_fileName.GetFullPath());

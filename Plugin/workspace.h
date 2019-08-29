@@ -41,7 +41,10 @@
 #include "codelite_exports.h"
 #include "wxStringHash.h"
 
-#define WORKSPACE_XML_VERSION "10.0.0"
+#define CURRENT_WORKSPACE_VERSION 11000
+#define CURRENT_WORKSPACE_VERSION_STR wxString("11000")
+#define DEFAULT_CURRENT_WORKSPACE_VERSION 10000
+#define DEFAULT_CURRENT_WORKSPACE_VERSION_STR wxString("10000")
 
 /*!
  * \brief

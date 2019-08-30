@@ -28,7 +28,7 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
     }
     CreateMenuBar();
     SetIcons(b);
-    CallAfter(&clDiffFrame::Maximize, true);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent)

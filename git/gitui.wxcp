@@ -2319,7 +2319,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"800,600"
+									"m_value":	"600,400"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -2882,7 +2882,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Size:",
-																					"m_value":	"250,-1"
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Minimum Size:",
@@ -3154,7 +3154,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	"-1,250"
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
@@ -3619,7 +3619,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Enable Window Persistency:",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
@@ -3716,7 +3716,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"800,600"
+									"m_value":	"600,400"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -5828,11 +5828,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Size:",
-																					"m_value":	"-1,200"
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Minimum Size:",
-																					"m_value":	"-1,200"
+																					"m_value":	"-1,-1"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Name:",

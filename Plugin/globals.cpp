@@ -81,6 +81,7 @@
 #include "StringUtils.h"
 #include "windowattrmanager.h"
 #include "ColoursAndFontsManager.h"
+#include <wx/app.h>
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -114,8 +115,8 @@ BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
         if(_AllowDarkModeForWindow) {
             _AllowDarkModeForWindow(hwnd, is_darktheme);
             SetWindowTheme(hwnd, is_darktheme ? L"DarkMode_Explorer" : L"Explorer", NULL);
-            //const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
-            //if(_FlushMenuThemes) _FlushMenuThemes();
+            // const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
+            // if(_FlushMenuThemes) _FlushMenuThemes();
         }
     }
     InvalidateRect(hwnd, nullptr, TRUE);
@@ -2175,27 +2176,37 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
 
 void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 {
-    //if(!win || !win->GetParent()) { return; }
-    //wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
-    //wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
-    //
-    //if(!tlw || !parentTlw) { return; }
-    //
-    //wxRect frameSize = parentTlw->GetSize();
-    //frameSize.Deflate(100);
-    //tlw->SetSizeHints(frameSize.GetSize());
-    //tlw->SetSize(frameSize.GetSize());
-    //tlw->CenterOnParent();
-    //
-    //// If the parent is maximized, maximize this window as well
-    //if(parentTlw->IsMaximized()) {
-    //    if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
-    //}
+    if(!win || !win->GetParent()) { return; }
+    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
+    wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
+
+    if(!tlw || !parentTlw) { return; }
+
+    wxRect frameSize = parentTlw->GetSize();
+    frameSize.Deflate(100);
+    tlw->SetMinSize(frameSize.GetSize());
+    tlw->SetSize(frameSize.GetSize());
+    tlw->GetSizer()->Fit(win);
+    tlw->CentreOnParent();
+
+    // If the parent is maximized, maximize this window as well
+    if(parentTlw->IsMaximized()) {
+        if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
+    }
 }
 
 void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
-    //if(!win) { return; }
-    //WindowAttrManager::Load(win);
-    //if(win->GetParent()) { win->CentreOnParent(); }
+    if(!win) { return; }
+    wxWindow* parent = win->GetParent();
+    if(!parent) { parent = wxTheApp->GetTopWindow(); }
+    if(parent) {
+        wxSize parentSize = win->GetParent()->GetSize();
+        parentSize.SetWidth((parentSize.GetWidth() / 3) * 2);
+        parentSize.SetHeight((parentSize.GetWidth() / 3) * 2);
+        win->SetMinSize(parentSize);
+        win->SetSize(parentSize);
+        win->GetSizer()->Fit(win);
+        win->CentreOnParent();
+    }
 }

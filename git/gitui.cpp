@@ -239,7 +239,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
 
-    m_splitterMain = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(800, 600)),
+    m_splitterMain = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 400)),
                                                 wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitterMain->SetSashGravity(0.5);
     m_splitterMain->SetMinimumPaneSize(150);
@@ -281,7 +281,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
     m_panel2->SetSizer(bSizer9);
 
-    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(250, -1)),
+    m_stcDiff = new wxStyledTextCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)),
                                      wxBORDER_NONE);
     // Configure the fold margin
     m_stcDiff->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -333,7 +333,7 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcCommitMessage = new wxStyledTextCtrl(m_panel4, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_panel4, wxSize(-1, 250)), wxBORDER_NONE);
+                                              wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxBORDER_NONE);
     m_stcCommitMessage->SetFocus();
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -436,7 +436,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
 
-    m_splitter174 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(800, 600)),
+    m_splitter174 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 400)),
                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter174->SetSashGravity(0.7);
     m_splitter174->SetMinimumPaneSize(150);
@@ -637,7 +637,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stcCommitMessage = new wxStyledTextCtrl(m_splitterPage194, wxID_ANY, wxDefaultPosition,
-                                              wxDLG_UNIT(m_splitterPage194, wxSize(-1, 200)), wxBORDER_THEME);
+                                              wxDLG_UNIT(m_splitterPage194, wxSize(-1, -1)), wxBORDER_THEME);
     // Configure the fold margin
     m_stcCommitMessage->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommitMessage->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -674,7 +674,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     m_stcCommitMessage->SetKeyWords(4, wxT(""));
 
     boxSizer218->Add(m_stcCommitMessage, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-    m_stcCommitMessage->SetMinSize(wxSize(-1, 200));
 
     SetName(wxT("GitCommitListDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -684,6 +683,13 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     } else {
         CentreOnScreen(wxBOTH);
     }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(GitCommitListDlgBase::OnClose), NULL, this);
     m_searchCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER,

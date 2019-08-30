@@ -148,7 +148,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release" Selected="yes">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -403,7 +403,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
       <Project Name="EOSWiki" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>

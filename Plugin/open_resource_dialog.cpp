@@ -132,6 +132,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     ::clSetDialogBestSizeAndPosition(this);
 }
 
+
 OpenResourceDialog::~OpenResourceDialog()
 {
     m_timer->Stop();

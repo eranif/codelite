@@ -2188,25 +2188,27 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     tlw->SetSize(frameSize.GetSize());
     tlw->GetSizer()->Fit(win);
     tlw->CentreOnParent();
-
-//    // If the parent is maximized, maximize this window as well
-//    if(parentTlw->IsMaximized()) {
-//        if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
-//    }
 }
 
-void clSetDialogBestSizeAndPosition(wxDialog* win)
+static void DoSetDialogSize(wxDialog* win, double factor)
 {
     if(!win) { return; }
     wxWindow* parent = win->GetParent();
     if(!parent) { parent = wxTheApp->GetTopWindow(); }
     if(parent) {
         wxSize parentSize = parent->GetSize();
-        parentSize.SetWidth((parentSize.GetWidth() / 3) * 2);
-        parentSize.SetHeight((parentSize.GetWidth() / 3) * 2);
+
+        double dlgWidth = (double)parentSize.GetWidth() * factor;
+        double dlgHeight = (double)parentSize.GetHeight() * factor;
+        parentSize.SetWidth(dlgWidth);
+        parentSize.SetHeight(dlgHeight);
         win->SetMinSize(parentSize);
         win->SetSize(parentSize);
         win->GetSizer()->Fit(win);
         win->CentreOnParent();
     }
 }
+
+void clSetDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.66); }
+
+void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.5); }

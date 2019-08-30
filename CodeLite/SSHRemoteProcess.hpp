@@ -9,14 +9,27 @@
 
 class WXDLLIMPEXP_CL SSHRemoteProcess : public IProcess
 {
-	clSSHChannel::Ptr_t m_channel;
-	
+    clSSHChannel::Ptr_t m_channel;
+    wxEvtHandler* m_owner = nullptr;
+    wxString m_pty;
+
 public:
-    SSHRemoteProcess(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type);
+    SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type);
     virtual ~SSHRemoteProcess();
-	
-	static IProcess* Create(clSSH::Ptr_t ssh, const wxString& command, bool interactive);
-	
+
+    static IProcess* Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, bool interactive);
+
+    wxEvtHandler* GetOwner() { return m_owner; }
+
+    void SetPty(const wxString& pty) { this->m_pty = pty; }
+    const wxString& GetPty() const { return m_pty; }
+
+protected:
+    void OnError(clCommandEvent& event);
+    void OnTerminate(clCommandEvent& event);
+    void OnOutput(clCommandEvent& event);
+    void OnPty(clCommandEvent& event);
+
 public:
     virtual void Cleanup();
     virtual void Detach();

@@ -1,5 +1,7 @@
 #include "SSHRemoteProcess.hpp"
 #if USE_SFTP
+#include "cl_command_event.h"
+#include "processreaderthread.h"
 #include "file_logger.h"
 
 bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer)
@@ -17,10 +19,16 @@ bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer)
     return true;
 }
 
-SSHRemoteProcess::SSHRemoteProcess(clSSH::Ptr_t ssh, clSSHChannel::eChannelType type)
+SSHRemoteProcess::SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type)
     : IProcess(NULL)
+    , m_owner(owner)
 {
     m_channel.reset(new clSSHChannel(ssh, type, this));
+    Bind(wxEVT_SSH_CHANNEL_PTY, &SSHRemoteProcess::OnPty, this);
+    Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SSHRemoteProcess::OnError, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SSHRemoteProcess::OnError, this);
+    Bind(wxEVT_SSH_CHANNEL_CLOSED, &SSHRemoteProcess::OnTerminate, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SSHRemoteProcess::OnOutput, this);
 }
 
 SSHRemoteProcess::~SSHRemoteProcess() {}
@@ -54,15 +62,43 @@ bool SSHRemoteProcess::WriteRaw(const wxString& buff) { return do_ssh_write(m_ch
 
 bool SSHRemoteProcess::WriteToConsole(const wxString& buff) { return do_ssh_write(m_channel, buff); }
 
-IProcess* SSHRemoteProcess::Create(clSSH::Ptr_t ssh, const wxString& command, bool interactive)
+IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, bool interactive)
 {
     try {
-        SSHRemoteProcess* process =
-            new SSHRemoteProcess(ssh, interactive ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand);
+        SSHRemoteProcess* process = new SSHRemoteProcess(
+            owner, ssh, interactive ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand);
         if(!command.IsEmpty()) { process->Write(command); }
         return process;
     } catch(clException& e) {
         return NULL;
     }
 }
+
+void SSHRemoteProcess::OnError(clCommandEvent& event)
+{
+    wxString msg = event.GetString(); // contains the error message
+    clDEBUG() << "ssh error:" << msg;
+    // Convert it to
+    clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
+    GetOwner()->AddPendingEvent(e);
+    Terminate();
+}
+
+void SSHRemoteProcess::OnTerminate(clCommandEvent& event)
+{
+    clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
+    GetOwner()->AddPendingEvent(e);
+    Terminate();
+}
+
+void SSHRemoteProcess::OnOutput(clCommandEvent& event)
+{
+    clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+    e.SetOutput(event.GetString());
+    e.SetEventObject(this);
+    GetOwner()->AddPendingEvent(e);
+}
+
+void SSHRemoteProcess::OnPty(clCommandEvent& event) { SetPty(event.GetString()); }
+
 #endif

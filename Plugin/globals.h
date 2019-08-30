@@ -632,4 +632,9 @@ WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
  * @param win
  */
 WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog* win);
+
+/**
+ * @brief similar to clSetDialogBestSizeAndPosition but use a smaller default size
+ */
+WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog* win);
 #endif // GLOBALS_H

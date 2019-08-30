@@ -1038,3 +1038,10 @@ wxColour ColoursAndFontsManager::GetBackgroundColourFromLexer(LexerConf::Ptr_t l
     }
     return bgColour;
 }
+
+bool ColoursAndFontsManager::IsDarkTheme() const
+{
+    LexerConf::Ptr_t lexer = GetLexer("text");
+    if(!lexer) { return false; }
+    return lexer->IsDark();
+}

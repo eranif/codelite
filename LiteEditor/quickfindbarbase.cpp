@@ -38,7 +38,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     mainSizer->Add(flexGridSizer107, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     m_textCtrlFind = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxTE_RICH | wxTE_PROCESS_ENTER);
+                                    wxTE_PROCESS_ENTER);
     m_textCtrlFind->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlFind->SetHint(wxT(""));
@@ -63,7 +63,7 @@ QuickFindBarBase::QuickFindBarBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer107->Add(m_buttonFindAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_textCtrlReplace = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                       wxTE_RICH | wxTE_PROCESS_ENTER);
+                                       wxTE_PROCESS_ENTER);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlReplace->SetHint(wxT(""));
 #endif

@@ -305,6 +305,12 @@ WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString& zipPath, const wxString&
 WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = wxT("Explorer"));
 
 /**
+ * @brief under Windows 10 and later, enable dark mode controls (where it is implemented)
+ * based on the selected editor theme. This is dont recursievly on win
+ */
+WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
+
+/**
  * @brief make relative only if a subpath of reference_path (or is reference_path itself)
  * @brief also, make normalise first, and abolish any symlink
  * @param fn wxFileName to alter

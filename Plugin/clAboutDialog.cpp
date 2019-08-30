@@ -38,8 +38,7 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
     credits << _("Scott Dolim") << "\n";
     m_stcCredits->SetText(credits);
     m_stcCredits->SetReadOnly(true);
-    CentreOnParent();
-    GetSizer()->Fit(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 clAboutDialog::~clAboutDialog() {}

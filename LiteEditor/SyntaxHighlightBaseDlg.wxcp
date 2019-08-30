@@ -166,7 +166,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"-1,-1"
+									"m_value":	"600,400"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -4910,7 +4910,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Enable Window Persistency:",
-					"m_value":	true
+					"m_value":	false
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
@@ -5121,7 +5121,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	"-1,-1"
+											"m_value":	"300,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",

@@ -25,7 +25,7 @@ AdvancedDlgBase::AdvancedDlgBase(wxWindow* parent, wxWindowID id, const wxString
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 400)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     mainSizer->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

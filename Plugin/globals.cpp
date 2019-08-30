@@ -2175,27 +2175,27 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
 
 void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 {
-    if(!win || !win->GetParent()) { return; }
-    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
-    wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
-
-    if(!tlw || !parentTlw) { return; }
-
-    wxRect frameSize = parentTlw->GetSize();
-    frameSize.Deflate(100);
-    tlw->SetSizeHints(frameSize.GetSize());
-    tlw->SetSize(frameSize.GetSize());
-    tlw->CenterOnParent();
-
-    // If the parent is maximized, maximize this window as well
-    if(parentTlw->IsMaximized()) {
-        if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
-    }
+    //if(!win || !win->GetParent()) { return; }
+    //wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
+    //wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
+    //
+    //if(!tlw || !parentTlw) { return; }
+    //
+    //wxRect frameSize = parentTlw->GetSize();
+    //frameSize.Deflate(100);
+    //tlw->SetSizeHints(frameSize.GetSize());
+    //tlw->SetSize(frameSize.GetSize());
+    //tlw->CenterOnParent();
+    //
+    //// If the parent is maximized, maximize this window as well
+    //if(parentTlw->IsMaximized()) {
+    //    if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
+    //}
 }
 
 void clSetDialogBestSizeAndPosition(wxDialog* win)
 {
-    if(!win) { return; }
-    WindowAttrManager::Load(win);
-    if(win->GetParent()) { win->CentreOnParent(); }
+    //if(!win) { return; }
+    //WindowAttrManager::Load(win);
+    //if(win->GetParent()) { win->CentreOnParent(); }
 }

@@ -48,6 +48,7 @@
 #include <wx/persist.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/wupdlock.h>
 
 PreferencesDialog::PreferencesDialog(wxWindow* parent)
     : OptionsBaseDlg2(parent)
@@ -61,7 +62,7 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     GetSizer()->Fit(this);
     GetSizer()->Layout();
     CenterOnParent();
-    ::clSetDialogBestSizeAndPosition(this);
+    //::clSetDialogBestSizeAndPosition(this);
 }
 
 PreferencesDialog::~PreferencesDialog() {}

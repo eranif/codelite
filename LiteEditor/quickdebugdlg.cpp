@@ -40,7 +40,7 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     GetSizer()->Fit(this);
     Initialize();
     SetName("QuickDebugDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 QuickDebugDlg::~QuickDebugDlg() {}
@@ -51,28 +51,20 @@ void QuickDebugDlg::Initialize()
     EditorConfigST::Get()->ReadObject(wxT("QuickDebugDlg"), &info);
 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
-    if(m_choiceDebuggers->GetCount()) {
-        m_choiceDebuggers->SetSelection(0);
-    }
+    if(m_choiceDebuggers->GetCount()) { m_choiceDebuggers->SetSelection(0); }
     if(m_choiceDebuggers->GetCount() > (unsigned int)info.GetSelectedDbg()) {
         m_choiceDebuggers->SetSelection(info.GetSelectedDbg());
     }
 
     m_ExeFilepath->Append(info.GetExeFilepaths());
-    if(m_ExeFilepath->GetCount() > 0) {
-        m_ExeFilepath->SetSelection(0);
-    }
+    if(m_ExeFilepath->GetCount() > 0) { m_ExeFilepath->SetSelection(0); }
 
     wxArrayString wds = info.GetWds();
     wxString homeDir = wxStandardPaths::Get().GetUserConfigDir();
-    if(wds.Index(homeDir) == wxNOT_FOUND) {
-        wds.Add(homeDir);
-    }
+    if(wds.Index(homeDir) == wxNOT_FOUND) { wds.Add(homeDir); }
 
     m_WD->Append(wds);
-    if(m_WD->GetCount() > 0) {
-        m_WD->SetSelection(0);
-    }
+    if(m_WD->GetCount() > 0) { m_WD->SetSelection(0); }
     m_textCtrlArgs->ChangeValue(info.GetArguments());
 
     wxString startupCmds;
@@ -150,9 +142,7 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString ans, path(GetWorkingDirectory());
-    if(!wxFileName::DirExists(path)) {
-        path = wxStandardPaths::Get().GetUserConfigDir();
-    }
+    if(!wxFileName::DirExists(path)) { path = wxStandardPaths::Get().GetUserConfigDir(); }
 
     ans = wxDirSelector(_("Select working directory:"), path);
     if(!ans.empty()) {

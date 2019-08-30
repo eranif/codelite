@@ -79,16 +79,9 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
     LoadValues(m_configName);
 
     m_treebook->SetFocus();
-    GetSizer()->Fit(this);
 
-    wxSize sz = GetSize();
     CentreOnParent();
     SetName("ProjectSettingsDlg");
-    WindowAttrManager::Load(this);
-
-    // Make sure that all the controls are visible
-    wxSize newSize = GetSize();
-    if(newSize.x <= sz.x && newSize.y <= sz.y) { GetSizer()->Fit(this); }
 
     EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED,
                                   wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
@@ -97,13 +90,8 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
 
     // No effects plz
     m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
-
     ShowHideDisabledMessage();
-    if(!wxPersistenceManager::Get().Find(m_treebook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_treebook);
-    }
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 void ProjectSettingsDlg::DoClearDialog()

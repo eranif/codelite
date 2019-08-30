@@ -119,7 +119,7 @@ void clCustomScrollBar::UpdateDrag(const wxPoint& pt)
             m_thumbRect.SetX(0);
         }
     }
-    wxPanel::Refresh();
+    wxPanel::Update();
 
     int pos = GetPositionFromPoint(m_thumbRect.GetTopLeft());
     if(m_thumbPosition != pos) {

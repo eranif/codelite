@@ -54,7 +54,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_needRefresh(false)
     , m_lineNumber(wxNOT_FOUND)
 {
-    Hide();
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
     // initialize the file-type hash
@@ -88,9 +87,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
-
-    SetMinClientSize(wxSize(600, 400));
-    GetSizer()->Fit(this);
 
     SetName("OpenResourceDialog");
     WindowAttrManager::Load(this);
@@ -128,7 +124,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
     m_checkBoxFiles->SetValue(showFiles);
     m_checkBoxShowSymbols->SetValue(showSymbols);
-    CentreOnParent();
     ::clSetDialogBestSizeAndPosition(this);
 }
 

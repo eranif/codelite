@@ -89,11 +89,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	"QuickFindBar"
+					"m_value":	"clPluginsFindBar"
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	"quickfindbar"
+					"m_value":	"clPluginsFindBar"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
@@ -234,7 +234,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxTE_RICH", "wxTE_PROCESS_ENTER"],
+									"m_styles":	["wxTE_PROCESS_ENTER"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
 											"type":	"winid",
@@ -669,7 +669,7 @@
 									"border":	2,
 									"gbSpan":	"1,1",
 									"gbPosition":	"0,0",
-									"m_styles":	["wxTE_RICH", "wxTE_PROCESS_ENTER"],
+									"m_styles":	["wxTE_PROCESS_ENTER"],
 									"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 									"m_properties":	[{
 											"type":	"winid",

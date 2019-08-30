@@ -3,6 +3,7 @@
 #include "event_notifier.h"
 #include "clSystemSettings.h"
 #include <algorithm>
+#include "globals.h"
 
 clThemeUpdater::clThemeUpdater()
 {

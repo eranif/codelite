@@ -474,6 +474,8 @@
       <File Name="clEditorBar.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Dialogs">
+      <File Name="quickfindbar.cpp"/>
+      <File Name="quickfindbar.h"/>
       <File Name="clPluginsFindBar.cpp"/>
       <File Name="clPluginsFindBar.h"/>
       <File Name="quickfindbarbase.wxcp"/>

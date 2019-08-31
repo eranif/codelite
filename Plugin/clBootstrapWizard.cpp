@@ -80,7 +80,7 @@ public:
     }
 };
 
-#define DARK_THEME "Tomorrow Night"
+#define DARK_THEME "Retta light"
 #define LIGHT_THEME "Atom One Light"
 
 const wxString sampleText = "class Demo {\n"

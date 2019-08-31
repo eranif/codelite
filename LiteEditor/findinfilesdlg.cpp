@@ -275,12 +275,12 @@ SearchData FindInFilesDialog::DoGetSearchData()
     wxArrayString uniqueFiles;
     // Unique files may contain up to files.size() elements
     uniqueFiles.Alloc(files.size());
-    std::for_each(files.begin(), files.end(), [&](const wxString& file) {
+    for(const wxString& file : files) {
         if(filesSet.count(file) == 0) {
             filesSet.insert(file);
             uniqueFiles.Add(file);
         }
-    });
+    }
 
     // Release unused memory
     uniqueFiles.Shrink();

@@ -599,6 +599,7 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
         }
     });
     files.swap(tmpFiles);
+    files.Sort([](const wxString& f1, const wxString& f2) -> int { return f1.CmpNoCase(f2); });
 }
 
 static SearchThread* gs_SearchThread = NULL;

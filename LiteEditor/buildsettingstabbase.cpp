@@ -6,56 +6,58 @@
 
 #include "buildsettingstabbase.h"
 
-
 // Declare the bitmap loading function
 extern void wxCraftertNJGa9InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCraftertNJGa9InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer1->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
-    CAT_COLOURS_AND_FONTS = m_pgMgr->Append(  new wxPropertyCategory( _("Colours and Fonts") ) );
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    bSizer1->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CAT_COLOURS_AND_FONTS = m_pgMgr->Append(new wxPropertyCategory(_("Colours and Fonts")));
     CAT_COLOURS_AND_FONTS->SetHelpString(wxT(""));
-    
-    m_pgPropFont = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxStringProperty( _("Font"), wxPG_LABEL, wxT("")) );
-    m_pgPropFont->SetHelpString(_("Select the font to use in the build output tab"));
-    m_pgPropFont->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropErrorColour = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxSystemColourProperty( _("Error colour"), wxPG_LABEL, wxColour(wxT("rgb(255,0,0)"))) );
+
+    m_pgPropErrorColour =
+        m_pgMgr->AppendIn(CAT_COLOURS_AND_FONTS,
+                          new wxSystemColourProperty(_("Error colour"), wxPG_LABEL, wxColour(wxT("rgb(255,0,0)"))));
     m_pgPropErrorColour->SetHelpString(_("Use this colour to highlight build error messages"));
-    
-    m_pgPropWarningColour = m_pgMgr->AppendIn( CAT_COLOURS_AND_FONTS,  new wxSystemColourProperty( _("Warnings colour"), wxPG_LABEL, wxColour(wxT("rgb(128,128,0)"))) );
+
+    m_pgPropWarningColour =
+        m_pgMgr->AppendIn(CAT_COLOURS_AND_FONTS, new wxSystemColourProperty(_("Warnings colour"), wxPG_LABEL,
+                                                                            wxColour(wxT("rgb(128,128,0)"))));
     m_pgPropWarningColour->SetHelpString(_("Use this colour to highlight build warning messages"));
-    
-    CAT_GENERAL = m_pgMgr->Append(  new wxPropertyCategory( _("General") ) );
+
+    CAT_GENERAL = m_pgMgr->Append(new wxPropertyCategory(_("General")));
     CAT_GENERAL->SetHelpString(wxT(""));
-    
-    m_pgPropJumpWarnings = m_pgMgr->AppendIn( CAT_GENERAL,  new wxBoolProperty( _("Skip warnings"), wxPG_LABEL, 1) );
+
+    m_pgPropJumpWarnings = m_pgMgr->AppendIn(CAT_GENERAL, new wxBoolProperty(_("Skip warnings"), wxPG_LABEL, 1));
     m_pgPropJumpWarnings->SetHelpString(_("When using the menu to jump to errors, skip warnings"));
-    
-    m_pgPropAutoHideBuildPane = m_pgMgr->AppendIn( CAT_GENERAL,  new wxBoolProperty( _("Auto hide build pane"), wxPG_LABEL, 1) );
-    m_pgPropAutoHideBuildPane->SetHelpString(_("Automatically hide the build pane when there are neither errors nor warnings"));
-    
+
+    m_pgPropAutoHideBuildPane =
+        m_pgMgr->AppendIn(CAT_GENERAL, new wxBoolProperty(_("Auto hide build pane"), wxPG_LABEL, 1));
+    m_pgPropAutoHideBuildPane->SetHelpString(
+        _("Automatically hide the build pane when there are neither errors nor warnings"));
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("When build starts"));
@@ -64,9 +66,10 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(0);
     m_pgMgrIntArr.Add(1);
     m_pgMgrIntArr.Add(2);
-    m_pgPropAutoShowBuildPane = m_pgMgr->AppendIn( CAT_GENERAL,  new wxEnumProperty( _("Auto show build pane"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
+    m_pgPropAutoShowBuildPane = m_pgMgr->AppendIn(
+        CAT_GENERAL, new wxEnumProperty(_("Auto show build pane"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropAutoShowBuildPane->SetHelpString(_("Select when to show the build pane"));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("The first error"));
@@ -75,33 +78,35 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgMgrIntArr.Add(0);
     m_pgMgrIntArr.Add(1);
     m_pgMgrIntArr.Add(2);
-    m_pgPropAutoScroll = m_pgMgr->AppendIn( CAT_GENERAL,  new wxEnumProperty( _("When build ends scroll to..."), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 1) );
+    m_pgPropAutoScroll = m_pgMgr->AppendIn(
+        CAT_GENERAL, new wxEnumProperty(_("When build ends scroll to..."), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 1));
     m_pgPropAutoScroll->SetHelpString(_("After build finishes, if showing the build pane scroll to..."));
-    
-    CAT_MARKERS = m_pgMgr->Append(  new wxPropertyCategory( _("Build error indicators") ) );
+
+    CAT_MARKERS = m_pgMgr->Append(new wxPropertyCategory(_("Build error indicators")));
     CAT_MARKERS->SetHelpString(wxT(""));
-    
-    m_pgPropUseMarkers = m_pgMgr->AppendIn( CAT_MARKERS,  new wxBoolProperty( _("Use markers"), wxPG_LABEL, 1) );
-    m_pgPropUseMarkers->SetHelpString(_("Mark the line that contains the build error with a red marker on the left margin"));
-    
-    m_pgPropUseAnnotations = m_pgMgr->AppendIn( CAT_MARKERS,  new wxBoolProperty( _("Use annotations"), wxPG_LABEL, 1) );
-    m_pgPropUseAnnotations->SetHelpString(_("If checked, any errors or warnings will be displayed in the editor alongside the failing code."));
-    
+
+    m_pgPropUseMarkers = m_pgMgr->AppendIn(CAT_MARKERS, new wxBoolProperty(_("Use markers"), wxPG_LABEL, 1));
+    m_pgPropUseMarkers->SetHelpString(
+        _("Mark the line that contains the build error with a red marker on the left margin"));
+
+    m_pgPropUseAnnotations = m_pgMgr->AppendIn(CAT_MARKERS, new wxBoolProperty(_("Use annotations"), wxPG_LABEL, 1));
+    m_pgPropUseAnnotations->SetHelpString(
+        _("If checked, any errors or warnings will be displayed in the editor alongside the failing code."));
+
     SetName(wxT("BuildTabSettingsBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
-    }
-    CentreOnParent(wxBOTH);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
-    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
-    
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked),
+                     NULL, this);
+    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL,
+                     this);
 }
 
 BuildTabSettingsBase::~BuildTabSettingsBase()
 {
-    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL, this);
-    
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(BuildTabSettingsBase::OnAppearanceChanged), NULL,
+                        this);
 }

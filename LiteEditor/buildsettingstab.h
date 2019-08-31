@@ -37,7 +37,7 @@ public:
 
     void SetIsModified(bool isModified) { this->m_isModified = isModified; }
     bool IsModified() const { return m_isModified; }
-    
+
     void SelectFont();
     void Save();
     void OnUpdateUI(wxUpdateUIEvent& event);

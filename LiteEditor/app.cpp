@@ -480,8 +480,8 @@ bool CodeLiteApp::OnInit()
     }
     wxFileName fnHomdDir(homeDir, "");
     
-    // Set the standard path with the new data dir
-    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
+//    // Set the standard path with the new data dir
+//    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
     
     // try to locate the menu/rc.xrc file
     wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));

@@ -110,6 +110,7 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
 
     m_checkBoxSepFolder->SetValue(checked);
     CenterOnParent();
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 NewProjectDialog::~NewProjectDialog()

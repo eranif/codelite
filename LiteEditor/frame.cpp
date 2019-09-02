@@ -82,6 +82,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "clFileSystemWorkspace.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -3177,7 +3178,13 @@ void clMainFrame::CompleteInitialization()
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-
+    
+    // Register the file system workspace type
+    clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
+    
+    // Create a new file system workspace instance
+    clFileSystemWorkspace::Get();
+    
     // Populate the list of core toolbars before we start loading
     // the plugins
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();

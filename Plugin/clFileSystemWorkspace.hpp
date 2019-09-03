@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "clFileSystemEvent.h"
 #include "macros.h"
+#include "asyncprocess.h"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -21,6 +22,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     wxArrayString m_compileFlags;
     wxString m_fileExtensions;
     bool m_fileScanNeeded = false;
+    IProcess* m_buildProcess = nullptr;
 
     // Workspace settings
     size_t m_flags = 0;
@@ -30,7 +32,9 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
 protected:
     void CacheFiles();
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
-
+    wxString GetTargetCommand(const wxString& target) const;
+    void DoPrintBuildMessage(const wxString& message);
+    
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -43,6 +47,8 @@ protected:
     void OnScanCompleted(clFileSystemEvent& event);
     void OnParseWorkspace(wxCommandEvent& event);
     void OnParseThreadScanIncludeCompleted(wxCommandEvent& event);
+    void OnBuildProcessTerminated(clProcessEvent& event);
+    void OnBuildProcessOutput(clProcessEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
@@ -119,7 +125,7 @@ public:
         this->m_fileExtensions = fileExtensions;
         m_fileScanNeeded = true; // require a new file caching
     }
-    
+
     const wxString& GetFileExtensions() const { return m_fileExtensions; }
 };
 

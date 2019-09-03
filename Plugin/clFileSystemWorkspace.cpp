@@ -16,6 +16,8 @@
 #include "compiler_command_line_parser.h"
 #include <wxStringHash.h>
 #include <wx/tokenzr.h>
+#include "shell_command.h"
+#include "processreaderthread.h"
 
 #define WSP_FILE_NAME "CodeLiteFS.workspace"
 
@@ -36,6 +38,11 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         Bind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
+
+        // Build events
+        EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
+        Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
+        Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
     }
 }
 
@@ -51,6 +58,11 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         Unbind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
+
+        // Build events
+        EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
+        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
+        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
     }
 }
 
@@ -108,7 +120,23 @@ void clFileSystemWorkspace::CacheFiles()
     thr.detach();
 }
 
-void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event) { event.Skip(); }
+void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        event.Skip(false);
+        if(m_buildProcess) { return; }
+        m_buildProcess = ::CreateAsyncProcess(this, GetTargetCommand(event.GetKind()), IProcessCreateDefault,
+                                              GetFileName().GetPath());
+        if(!m_buildProcess) {
+            clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+            EventNotifier::Get()->AddPendingEvent(e);
+        } else {
+            clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+            EventNotifier::Get()->AddPendingEvent(e);
+        }
+    }
+}
 
 void clFileSystemWorkspace::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
@@ -435,4 +463,31 @@ wxString clFileSystemWorkspace::CompileFlagsAsString(const wxArrayString& arr) c
         if(!l.IsEmpty()) { s << l << "\n"; }
     }
     return s.Trim();
+}
+
+wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
+{
+    if(m_buildTargets.count(target)) { return m_buildTargets.find(target)->second; }
+    return wxEmptyString;
+}
+
+void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
+{
+    wxDELETE(m_buildProcess);
+    DoPrintBuildMessage(event.GetOutput());
+    
+    clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    EventNotifier::Get()->AddPendingEvent(e);
+}
+
+void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
+{
+    DoPrintBuildMessage(event.GetOutput());
+}
+
+void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
+{
+    clCommandEvent e(wxEVT_SHELL_COMMAND_ADDLINE);
+    e.SetString(message);
+    EventNotifier::Get()->AddPendingEvent(e);
 }

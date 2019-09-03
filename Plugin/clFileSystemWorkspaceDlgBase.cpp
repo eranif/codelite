@@ -238,6 +238,7 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
     flexGridSizer56->SetFlexibleDirection(wxBOTH);
     flexGridSizer56->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer56->AddGrowableCol(1);
+    flexGridSizer56->AddGrowableRow(1);
 
     boxSizer48->Add(flexGridSizer56, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -257,14 +258,45 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_staticText62 =
         new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer56->Add(m_staticText62, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer56->Add(m_staticText62, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    m_textCtrlValue = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlValue->SetHint(wxT(""));
-#endif
+    m_textCtrlValue = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlValue->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlValue->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlValue->SetMarginSensitive(4, true);
+    m_textCtrlValue->SetMarginWidth(4, 0);
 
-    flexGridSizer56->Add(m_textCtrlValue, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    // Configure the tracker margin
+    m_textCtrlValue->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlValue->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlValue->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlValue->SetMarginWidth(2, 0);
+    m_textCtrlValue->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlValue->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlValue->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlValue->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlValue->SetMarginMask(3, 0);
+    m_textCtrlValue->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlValue->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlValue->StyleClearAll();
+    m_textCtrlValue->SetWrapMode(2);
+    m_textCtrlValue->SetIndentationGuides(0);
+    m_textCtrlValue->SetKeyWords(0, wxT(""));
+    m_textCtrlValue->SetKeyWords(1, wxT(""));
+    m_textCtrlValue->SetKeyWords(2, wxT(""));
+    m_textCtrlValue->SetKeyWords(3, wxT(""));
+    m_textCtrlValue->SetKeyWords(4, wxT(""));
+
+    flexGridSizer56->Add(m_textCtrlValue, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stdBtnSizer50 = new wxStdDialogButtonSizer();
 

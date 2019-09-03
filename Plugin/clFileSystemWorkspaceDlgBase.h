@@ -95,7 +95,7 @@ protected:
     wxStaticText* m_staticText58;
     wxTextCtrl* m_textCtrlaName;
     wxStaticText* m_staticText62;
-    wxTextCtrl* m_textCtrlValue;
+    wxStyledTextCtrl* m_textCtrlValue;
     wxStdDialogButtonSizer* m_stdBtnSizer50;
     wxButton* m_button52;
     wxButton* m_button54;
@@ -107,7 +107,7 @@ public:
     wxStaticText* GetStaticText58() { return m_staticText58; }
     wxTextCtrl* GetTextCtrlaName() { return m_textCtrlaName; }
     wxStaticText* GetStaticText62() { return m_staticText62; }
-    wxTextCtrl* GetTextCtrlValue() { return m_textCtrlValue; }
+    wxStyledTextCtrl* GetTextCtrlValue() { return m_textCtrlValue; }
     BuildTargetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

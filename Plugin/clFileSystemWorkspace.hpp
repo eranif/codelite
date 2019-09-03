@@ -7,23 +7,29 @@
 #include <vector>
 #include "cl_command_event.h"
 #include <unordered_map>
+#include "clFileSystemEvent.h"
+#include "macros.h"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
 {
-    std::vector<wxString> m_files;
+    std::vector<wxFileName> m_files;
     wxFileName m_filename;
     bool m_isLoaded = false;
     bool m_showWelcomePage = false;
     bool m_dummy = true;
-    
+    wxArrayString m_compileFlags;
+    wxString m_fileExtensions;
+    bool m_fileScanNeeded = false;
+
     // Workspace settings
     size_t m_flags = 0;
-    std::unordered_map<wxString, wxString> m_buildTargets;
+    wxStringMap_t m_buildTargets;
     clFileSystemWorkspaceView* m_view = nullptr;
 
 protected:
     void CacheFiles();
+    wxString CompileFlagsAsString(const wxArrayString& arr) const;
 
     //===--------------------------
     // Event handlers
@@ -34,14 +40,16 @@ protected:
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
-    void RestoreSession();
+    void OnScanCompleted(clFileSystemEvent& event);
+    void OnParseWorkspace(wxCommandEvent& event);
+    void OnParseThreadScanIncludeCompleted(wxCommandEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
-    void Save();
     void DoOpen();
     void DoClose();
     void DoClear();
+    void RestoreSession();
 
 public:
     ///===--------------------------
@@ -60,19 +68,60 @@ public:
 
     clFileSystemWorkspace(bool dummy);
     virtual ~clFileSystemWorkspace();
-    
+
     static clFileSystemWorkspace& Get();
-    
+
     ///===--------------------------
     /// Specific API
     ///===--------------------------
     clFileSystemWorkspaceView* GetView() { return m_view; }
-    
+
     /**
      * @brief create an empty workspace at a given folder
      * @param folder
      */
     void New(const wxString& folder);
+
+    /**
+     * @brief close the workspace
+     */
+    void Close();
+
+    /**
+     * @brief save the workspace settings
+     */
+    void Save();
+
+    /**
+     * @brief parse the workspace
+     */
+    void Parse(bool fullParse);
+
+    /**
+     * @brief is this workspace opened?
+     */
+    bool IsOpen() const { return m_isLoaded; }
+
+    /**
+     * @brief return the compile flags strings
+     */
+    wxString GetCompileFlags() const;
+    /**
+     * @brief update the compile flags string
+     */
+    void SetCompileFlags(const wxString& compile_flags);
+
+    void SetBuildTargets(const wxStringMap_t& buildTargets) { this->m_buildTargets = buildTargets; }
+    const wxStringMap_t& GetBuildTargets() const { return m_buildTargets; }
+
+    void SetFileExtensions(const wxString& fileExtensions)
+    {
+        this->m_fileExtensions = fileExtensions;
+        m_fileScanNeeded = true; // require a new file caching
+    }
+    
+    const wxString& GetFileExtensions() const { return m_fileExtensions; }
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 #endif // CLFILESYSTEMWORKSPACE_HPP

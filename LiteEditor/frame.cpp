@@ -2664,9 +2664,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
     wxUnusedVar(event);
-    if(ManagerST::Get()->IsWorkspaceOpen() == false) return;
-
-    if(activeEditor->GetProject().IsEmpty()) return;
+    if(!ManagerST::Get()->IsWorkspaceOpen() && !clFileSystemWorkspace::Get().IsOpen()) return;
 
     QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor), activeEditor->GetFileName().GetFullPath(), wxID_ANY,
                         wxT(""), wxDefaultPosition, wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
@@ -3178,13 +3176,13 @@ void clMainFrame::CompleteInitialization()
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-    
+
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
-    
+
     // Create a new file system workspace instance
     clFileSystemWorkspace::Get();
-    
+
     // Populate the list of core toolbars before we start loading
     // the plugins
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
@@ -4735,13 +4733,14 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
 
-    // See whether we got a custom workspace open in one of the plugins
-    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
-    e.SetEventObject(this);
-    e.SetAnswer(false);
-    EventNotifier::Get()->ProcessEvent(e);
-
-    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.IsAnswer());
+    //    // See whether we got a custom workspace open in one of the plugins
+    //    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    //    e.SetEventObject(this);
+    //    e.SetAnswer(false);
+    //    EventNotifier::Get()->ProcessEvent(e);
+    //
+    //    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) ||
+    //    e.IsAnswer());
 }
 
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)

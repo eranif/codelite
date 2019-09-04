@@ -3,3 +3,5 @@
     2.1 Executable to run / debug
     2.2 Build output syntax style (GCC etc)
 3. Double click on an entry in the targets list should open it for edit
+4. Apply environment variables before executing the build
+5. Allow the user to set environment variables in the workspace configuration

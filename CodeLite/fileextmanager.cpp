@@ -241,8 +241,12 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
                     return TypeWorkspaceNodeJS;
                 } else if(root.toElement().hasNamedObject("Docker")) {
                     return TypeWorkspaceDocker;
-                } else {
+                } else if(root.toElement().namedObject("workspace_type").toString() == "File System Workspace") {
+                    return TypeWorkspaceFileSystem;
+                } else if(root.toElement().namedObject("metadata").namedObject("type").toString() == "php") {
                     return TypeWorkspacePHP;
+                } else {
+                    return TypeWorkspace;
                 }
             }
         } else {

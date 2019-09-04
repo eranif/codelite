@@ -77,6 +77,7 @@ public:
         TypeWorkspaceFolder,         // For UI purposes only
         TypeWorkspaceFolderExpanded, // For UI purposes only
         TypeWorkspacePHP,
+        TypeWorkspaceFileSystem,
         TypeWorkspaceDocker,
         TypeWorkspaceNodeJS,
         TypeWorkspacePHPTags,

@@ -10,11 +10,9 @@ public:
     virtual ~clFileSystemWorkspaceDlg();
 
 protected:
-    virtual void OnDelete(wxCommandEvent& event);
-    virtual void OnDeleteUI(wxUpdateUIEvent& event);
-    virtual void OnEditTarget(wxCommandEvent& event);
-    virtual void OnEditTargetUI(wxUpdateUIEvent& event);
-    virtual void OnNewTarget(wxCommandEvent& event);
+    virtual void OnDeleteConfig(wxCommandEvent& event);
+    virtual void OnDeleteConfigUI(wxUpdateUIEvent& event);
+    virtual void OnNewConfig(wxCommandEvent& event);
     virtual void OnOK(wxCommandEvent& event);
 };
 #endif // CLFILESYSTEMWORKSPACEDLG_H

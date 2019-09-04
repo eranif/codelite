@@ -1,0 +1,5 @@
+1. Enable the 'Stop' build button 
+2. Add in the 'General' tab
+    2.1 Executable to run / debug
+    2.2 Build output syntax style (GCC etc)
+3. Double click on an entry in the targets list should open it for edit

@@ -45,6 +45,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="FileSystemWorkspace">
+    <File Name="FSConfigPage.cpp"/>
+    <File Name="FSConfigPage.h"/>
+    <File Name="clFileSystemWorkspaceConfig.cpp"/>
+    <File Name="clFileSystemWorkspaceConfig.hpp"/>
     <File Name="BuildTargetDlg.cpp"/>
     <File Name="BuildTargetDlg.h"/>
     <File Name="clFileSystemWorkspaceDlg.cpp"/>

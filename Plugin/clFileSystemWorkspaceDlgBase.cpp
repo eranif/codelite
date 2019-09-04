@@ -25,10 +25,217 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
 
+    wxBoxSizer* boxSizer97 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer2->Add(boxSizer97, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_notebook = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+
+    boxSizer97->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer99 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer97->Add(boxSizer99, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonNew = new wxButton(this, wxID_NEW, _("New"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer99->Add(m_buttonNew, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonDelete =
+        new wxButton(this, wxID_DELETE, _("Delete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer99->Add(m_buttonDelete, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer4 = new wxStdDialogButtonSizer();
+
+    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer4->AddButton(m_buttonOK);
+
+    m_button12 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer4->AddButton(m_button12);
+    m_stdBtnSizer4->Realize();
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook);
+    }
+#endif
+
+    SetName(wxT("clFileSystemWorkspaceDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewConfig),
+                         NULL, this);
+    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfig), NULL, this);
+    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfigUI),
+                            NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK), NULL,
+                        this);
+}
+
+clFileSystemWorkspaceDlgBase::~clFileSystemWorkspaceDlgBase()
+{
+    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewConfig), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                               wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfig), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteConfigUI),
+                               NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK),
+                           NULL, this);
+}
+
+BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCB09InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer48);
+
+    wxFlexGridSizer* flexGridSizer56 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer56->SetFlexibleDirection(wxBOTH);
+    flexGridSizer56->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer56->AddGrowableCol(1);
+    flexGridSizer56->AddGrowableRow(1);
+
+    boxSizer48->Add(flexGridSizer56, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText58 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer56->Add(m_staticText58, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlaName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
+    m_textCtrlaName->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlaName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer56->Add(m_textCtrlaName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText62 =
+        new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer56->Add(m_staticText62, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
+
+    m_textCtrlValue = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlValue->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlValue->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlValue->SetMarginSensitive(4, true);
+    m_textCtrlValue->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlValue->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlValue->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlValue->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlValue->SetMarginWidth(2, 0);
+    m_textCtrlValue->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlValue->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlValue->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlValue->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlValue->SetMarginMask(3, 0);
+    m_textCtrlValue->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlValue->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlValue->StyleClearAll();
+    m_textCtrlValue->SetWrapMode(2);
+    m_textCtrlValue->SetIndentationGuides(0);
+    m_textCtrlValue->SetKeyWords(0, wxT(""));
+    m_textCtrlValue->SetKeyWords(1, wxT(""));
+    m_textCtrlValue->SetKeyWords(2, wxT(""));
+    m_textCtrlValue->SetKeyWords(3, wxT(""));
+    m_textCtrlValue->SetKeyWords(4, wxT(""));
+
+    flexGridSizer56->Add(m_textCtrlValue, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer50 = new wxStdDialogButtonSizer();
+
+    boxSizer48->Add(m_stdBtnSizer50, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button52 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer50->AddButton(m_button52);
+
+    m_button54 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button54->SetDefault();
+    m_stdBtnSizer50->AddButton(m_button54);
+    m_stdBtnSizer50->Realize();
+
+    SetName(wxT("BuildTargetDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_button54->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
+}
+
+BuildTargetDlgBase::~BuildTargetDlgBase()
+{
+    m_button54->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
+}
+
+FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCB09InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer76);
+
     m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer2->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer76->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelGeneral =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -154,182 +361,28 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
 
     boxSizer22->Add(m_stcCCFlags, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stdBtnSizer4 = new wxStdDialogButtonSizer();
-
-    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_buttonOK->SetDefault();
-    m_stdBtnSizer4->AddButton(m_buttonOK);
-
-    m_button12 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer4->AddButton(m_button12);
-    m_stdBtnSizer4->Realize();
-
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_notebook);
-    }
-#endif
-
-    SetName(wxT("clFileSystemWorkspaceDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetName(wxT("FSConfigPageBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewTarget),
-                         NULL, this);
-    m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                          wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnEditTarget), NULL, this);
-    m_buttonEdit->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnEditTargetUI), NULL,
+    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
+                         this);
+    m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,
                           this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDelete),
-                            NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteUI), NULL,
+    m_buttonEdit->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEditTargetUI), NULL, this);
+    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                             this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK), NULL,
-                        this);
+    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
 }
 
-clFileSystemWorkspaceDlgBase::~clFileSystemWorkspaceDlgBase()
+FSConfigPageBase::~FSConfigPageBase()
 {
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnNewTarget), NULL, this);
-    m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnEditTarget), NULL, this);
-    m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnEditTargetUI),
-                             NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnDelete), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFileSystemWorkspaceDlgBase::OnDeleteUI), NULL,
+    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
+                            this);
+    m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,
+                             this);
+    m_buttonEdit->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEditTargetUI), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                                this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clFileSystemWorkspaceDlgBase::OnOK),
-                           NULL, this);
-}
-
-BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxCB09InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer48);
-
-    wxFlexGridSizer* flexGridSizer56 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer56->SetFlexibleDirection(wxBOTH);
-    flexGridSizer56->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer56->AddGrowableCol(1);
-    flexGridSizer56->AddGrowableRow(1);
-
-    boxSizer48->Add(flexGridSizer56, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText58 =
-        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer56->Add(m_staticText58, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlaName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
-    m_textCtrlaName->SetFocus();
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlaName->SetHint(wxT(""));
-#endif
-
-    flexGridSizer56->Add(m_textCtrlaName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText62 =
-        new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer56->Add(m_staticText62, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
-
-    m_textCtrlValue = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_textCtrlValue->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlValue->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_textCtrlValue->SetMarginSensitive(4, true);
-    m_textCtrlValue->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_textCtrlValue->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_textCtrlValue->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_textCtrlValue->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_textCtrlValue->SetMarginWidth(2, 0);
-    m_textCtrlValue->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_textCtrlValue->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_textCtrlValue->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_textCtrlValue->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_textCtrlValue->SetMarginMask(3, 0);
-    m_textCtrlValue->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_textCtrlValue->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_textCtrlValue->StyleClearAll();
-    m_textCtrlValue->SetWrapMode(2);
-    m_textCtrlValue->SetIndentationGuides(0);
-    m_textCtrlValue->SetKeyWords(0, wxT(""));
-    m_textCtrlValue->SetKeyWords(1, wxT(""));
-    m_textCtrlValue->SetKeyWords(2, wxT(""));
-    m_textCtrlValue->SetKeyWords(3, wxT(""));
-    m_textCtrlValue->SetKeyWords(4, wxT(""));
-
-    flexGridSizer56->Add(m_textCtrlValue, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_stdBtnSizer50 = new wxStdDialogButtonSizer();
-
-    boxSizer48->Add(m_stdBtnSizer50, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_button52 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer50->AddButton(m_button52);
-
-    m_button54 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button54->SetDefault();
-    m_stdBtnSizer50->AddButton(m_button54);
-    m_stdBtnSizer50->Realize();
-
-    SetName(wxT("BuildTargetDlgBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
-    if(GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
-    // Connect events
-    m_button54->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
-}
-
-BuildTargetDlgBase::~BuildTargetDlgBase()
-{
-    m_button54->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildTargetDlgBase::OnOK_UI), NULL, this);
+    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
 }

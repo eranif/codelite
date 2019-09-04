@@ -10,6 +10,7 @@
 #include "clFileSystemEvent.h"
 #include "macros.h"
 #include "asyncprocess.h"
+#include "clFileSystemWorkspaceConfig.hpp"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -19,14 +20,8 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     bool m_isLoaded = false;
     bool m_showWelcomePage = false;
     bool m_dummy = true;
-    wxArrayString m_compileFlags;
-    wxString m_fileExtensions;
-    bool m_fileScanNeeded = false;
     IProcess* m_buildProcess = nullptr;
-
-    // Workspace settings
-    size_t m_flags = 0;
-    wxStringMap_t m_buildTargets;
+    clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
 
 protected:
@@ -97,7 +92,7 @@ public:
     /**
      * @brief save the workspace settings
      */
-    void Save();
+    void Save(bool parse);
 
     /**
      * @brief parse the workspace
@@ -108,27 +103,12 @@ public:
      * @brief is this workspace opened?
      */
     bool IsOpen() const { return m_isLoaded; }
-
-    /**
-     * @brief return the compile flags strings
-     */
-    wxString GetCompileFlags() const;
-    /**
-     * @brief update the compile flags string
-     */
-    void SetCompileFlags(const wxString& compile_flags);
-
-    void SetBuildTargets(const wxStringMap_t& buildTargets) { this->m_buildTargets = buildTargets; }
-    const wxStringMap_t& GetBuildTargets() const { return m_buildTargets; }
-
-    void SetFileExtensions(const wxString& fileExtensions)
-    {
-        this->m_fileExtensions = fileExtensions;
-        m_fileScanNeeded = true; // require a new file caching
-    }
-
-    const wxString& GetFileExtensions() const { return m_fileExtensions; }
+    
+    void UpdateParserPaths();
     const std::vector<wxFileName>& GetFiles() const { return m_files; }
+    
+    const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
+    clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);

@@ -15,15 +15,16 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/imaglist.h>
+#include <wx/choicebk.h>
+#include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
+#include <wx/stc/stc.h>
+#include <wx/panel.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
-#include <wx/button.h>
-#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -45,43 +46,23 @@
 class clFileSystemWorkspaceDlgBase : public wxDialog
 {
 protected:
-    wxNotebook* m_notebook;
-    wxPanel* m_panelGeneral;
-    wxStaticText* m_staticText35;
-    wxTextCtrl* m_textCtrlFileExt;
-    wxPanel* m_panelBuild;
-    clThemedListCtrl* m_dvListCtrlTargets;
+    wxChoicebook* m_notebook;
     wxButton* m_buttonNew;
-    wxButton* m_buttonEdit;
     wxButton* m_buttonDelete;
-    wxPanel* m_panelCodeCompletion;
-    wxStaticText* m_staticText26;
-    wxStyledTextCtrl* m_stcCCFlags;
     wxStdDialogButtonSizer* m_stdBtnSizer4;
     wxButton* m_buttonOK;
     wxButton* m_button12;
 
 protected:
-    virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnNewConfig(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteConfig(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteConfigUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText35() { return m_staticText35; }
-    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
-    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
-    clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
+    wxChoicebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
-    wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    wxPanel* GetPanelBuild() { return m_panelBuild; }
-    wxStaticText* GetStaticText26() { return m_staticText26; }
-    wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
-    wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
-    wxNotebook* GetNotebook() { return m_notebook; }
     clFileSystemWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                  const wxString& title = _("Workspace Settings"),
                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
@@ -112,6 +93,47 @@ public:
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~BuildTargetDlgBase();
+};
+
+class FSConfigPageBase : public wxPanel
+{
+protected:
+    wxNotebook* m_notebook;
+    wxPanel* m_panelGeneral;
+    wxStaticText* m_staticText35;
+    wxTextCtrl* m_textCtrlFileExt;
+    wxPanel* m_panelBuild;
+    clThemedListCtrl* m_dvListCtrlTargets;
+    wxButton* m_buttonNew;
+    wxButton* m_buttonEdit;
+    wxButton* m_buttonDelete;
+    wxPanel* m_panelCodeCompletion;
+    wxStaticText* m_staticText26;
+    wxStyledTextCtrl* m_stcCCFlags;
+
+protected:
+    virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText35() { return m_staticText35; }
+    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
+    clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    wxPanel* GetPanelBuild() { return m_panelBuild; }
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
+    wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
+    wxNotebook* GetNotebook() { return m_notebook; }
+    FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~FSConfigPageBase();
 };
 
 #endif

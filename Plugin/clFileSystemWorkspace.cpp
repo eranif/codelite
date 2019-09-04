@@ -152,7 +152,7 @@ void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
     wxFileName workspaceFile(event.GetFileName());
 
     // Test that this is our workspace
-    if(Load(workspaceFile)) {
+    if((workspaceFile.GetFullName() == WSP_FILE_NAME) && Load(workspaceFile)) {
         event.Skip(false);
         DoOpen();
 

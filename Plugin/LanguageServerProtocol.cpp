@@ -101,6 +101,8 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
         return "css";
     case FileExtManager::TypeCMake:
         return "cmake";
+    case FileExtManager::TypeLua:
+        return "lua";
     default:
         return "";
     }

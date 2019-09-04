@@ -88,6 +88,7 @@ public:
         TypeDockerfile,
         TypeYAML,
         TypeDatabase,
+        TypeLua,
         TypeLast,
     };
 

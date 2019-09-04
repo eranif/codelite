@@ -49,6 +49,7 @@ protected:
     void OnParseThreadScanIncludeCompleted(wxCommandEvent& event);
     void OnBuildProcessTerminated(clProcessEvent& event);
     void OnBuildProcessOutput(clProcessEvent& event);
+    void OnSaveSession(clCommandEvent& event);
 
 protected:
     bool Load(const wxFileName& file);

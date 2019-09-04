@@ -38,6 +38,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_FS_SCAN_COMPLETED, &clFileSystemWorkspace::OnScanCompleted, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
+        EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
         Bind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
 
         // Build events
@@ -54,6 +55,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &clFileSystemWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clFileSystemWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Unbind(wxEVT_FS_SCAN_COMPLETED, &clFileSystemWorkspace::OnScanCompleted, this);
+        EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
 
         // parsing event
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
@@ -223,7 +225,7 @@ void clFileSystemWorkspace::Save()
 
 void clFileSystemWorkspace::RestoreSession()
 {
-    // Restore any session
+    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
 }
 
 void clFileSystemWorkspace::DoOpen()
@@ -476,19 +478,25 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 {
     wxDELETE(m_buildProcess);
     DoPrintBuildMessage(event.GetOutput());
-    
+
     clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
     EventNotifier::Get()->AddPendingEvent(e);
 }
 
-void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
-{
-    DoPrintBuildMessage(event.GetOutput());
-}
+void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event) { DoPrintBuildMessage(event.GetOutput()); }
 
 void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
 {
     clCommandEvent e(wxEVT_SHELL_COMMAND_ADDLINE);
     e.SetString(message);
     EventNotifier::Get()->AddPendingEvent(e);
+}
+
+void clFileSystemWorkspace::OnSaveSession(clCommandEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        event.Skip(false);
+        clGetManager()->StoreWorkspaceSession(m_filename);
+    }
 }

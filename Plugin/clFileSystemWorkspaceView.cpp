@@ -5,6 +5,7 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include "clFileSystemWorkspaceDlg.h"
+#include "clToolBar.h"
 
 clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -14,6 +15,9 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     SetNewFileTemplate("Untitled.cpp", wxStrlen("Untitled"));
     SetViewName(viewName);
 
+    GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), clGetManager()->GetStdIcons()->LoadBitmap("cog"), "",
+                          wxITEM_NORMAL);
+    GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     // Hide hidden folders and files
     m_options &= ~kShowHiddenFiles;
     m_options &= ~kShowHiddenFolders;

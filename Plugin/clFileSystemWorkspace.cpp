@@ -20,11 +20,12 @@
 #include "processreaderthread.h"
 
 #define WSP_FILE_NAME "CodeLiteFS.workspace"
+#define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h"
 
 wxDEFINE_EVENT(wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
     : m_dummy(dummy)
-    , m_fileExtensions("*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h")
+    , m_fileExtensions(DEFAULT_FILE_EXTENSIONS)
 {
     SetWorkspaceType("File System Workspace");
     if(!dummy) {
@@ -302,7 +303,7 @@ void clFileSystemWorkspace::DoClear()
     m_buildTargets.clear();
     m_flags = 0;
     m_compileFlags.clear();
-    m_fileExtensions.clear();
+    m_fileExtensions = DEFAULT_FILE_EXTENSIONS;
     m_fileScanNeeded = false;
 }
 

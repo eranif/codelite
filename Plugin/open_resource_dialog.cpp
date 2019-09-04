@@ -43,6 +43,7 @@
 #include <wx/imaglist.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clFileSystemWorkspace.hpp"
 
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
@@ -107,6 +108,11 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
                 });
             }
         }
+    } else if(clFileSystemWorkspace::Get().IsOpen()) {
+        const std::vector<wxFileName>& files = clFileSystemWorkspace::Get().GetFiles();
+        for(const wxFileName& fn : files) {
+            m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
+        }
     }
 
     wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
@@ -126,7 +132,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_checkBoxShowSymbols->SetValue(showSymbols);
     ::clSetDialogBestSizeAndPosition(this);
 }
-
 
 OpenResourceDialog::~OpenResourceDialog()
 {
@@ -310,7 +315,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
             charHook.SetEventType(wxEVT_CHAR_HOOK);
             GetDataview()->GetEventHandler()->ProcessEvent(charHook);
         }
-        
+
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
@@ -378,10 +383,7 @@ bool OpenResourceDialog::MatchesFilter(const wxString& name)
 void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 
-void OpenResourceDialog::OnEnter(wxCommandEvent& event)
-{
-    CallAfter(&OpenResourceDialog::EndModal, wxID_OK);
-}
+void OpenResourceDialog::OnEnter(wxCommandEvent& event) { CallAfter(&OpenResourceDialog::EndModal, wxID_OK); }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 

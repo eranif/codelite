@@ -34,7 +34,7 @@ protected:
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
-    
+
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -127,6 +127,7 @@ public:
     }
 
     const wxString& GetFileExtensions() const { return m_fileExtensions; }
+    const std::vector<wxFileName>& GetFiles() const { return m_files; }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);

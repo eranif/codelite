@@ -25,14 +25,14 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
-    
+
 protected:
     void CacheFiles();
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
     clEnvList_t GetEnvList();
-    
+
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -52,6 +52,8 @@ protected:
     void OnBuildProcessTerminated(clProcessEvent& event);
     void OnBuildProcessOutput(clProcessEvent& event);
     void OnSaveSession(clCommandEvent& event);
+    void OnQuickDebugDlgShowing(clDebugEvent& event);
+    void OnQuickDebugDlgDismissed(clDebugEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
@@ -59,7 +61,8 @@ protected:
     void DoClose();
     void DoClear();
     void RestoreSession();
-
+    clFileSystemWorkspaceConfig::Ptr_t GetConfig();
+    
 public:
     ///===--------------------------
     /// IWorkspace interface
@@ -110,16 +113,16 @@ public:
      * @brief is this workspace opened?
      */
     bool IsOpen() const { return m_isLoaded; }
-    
+
     void UpdateParserPaths();
     const std::vector<wxFileName>& GetFiles() const { return m_files; }
-    
+
     const wxString& GetName() const { return m_settings.GetName(); }
     void SetName(const wxString& name) { m_settings.SetName(name); }
-    
+
     const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
     clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
-    
+
     /**
      * @brief initialise the workspace (Create GUI etc)
      * This function does nothing if the workspace was already initialised

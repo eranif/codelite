@@ -62,6 +62,10 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
+        // Debug events
+        EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing, this);
+        EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed,
+                                   this);
     }
 }
 
@@ -83,7 +87,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
         EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
-        
+
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
 
@@ -91,6 +95,12 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
+
+        // Debug events
+        EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing,
+                                     this);
+        EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK,
+                                     &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
     }
 }
 
@@ -601,3 +611,21 @@ void clFileSystemWorkspace::OnStopBuild(clBuildEvent& event)
     CHECK_EVENT(event);
     if(m_buildProcess) { m_buildProcess->Terminate(); }
 }
+
+void clFileSystemWorkspace::OnQuickDebugDlgShowing(clDebugEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+    event.SetArguments(GetConfig()->GetArgs());
+    event.SetExecutableName(GetConfig()->GetExecutable());
+}
+
+void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+    GetConfig()->SetExecutable(event.GetExecutableName());
+    GetConfig()->SetArgs(event.GetArguments());
+}
+
+clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() { return GetSettings().GetSelectedConfig(); }

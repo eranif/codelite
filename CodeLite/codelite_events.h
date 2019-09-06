@@ -282,6 +282,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEve
 // Instruct the debugger to update the memory
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_SET_MEMORY, clDebugEvent);
 
+// Quick debug dialog is showing. The handler can set some parameters
+// such as the debugger to use, exe to debug etc
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_SHOWING, clDebugEvent);
+
+// Quick debug dialog is dismissed. Use this event to persist any setting the user might have
+// updated in the UI
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, clDebugEvent);
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events

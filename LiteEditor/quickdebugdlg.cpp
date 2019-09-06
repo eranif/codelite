@@ -33,6 +33,8 @@
 #include "debuggermanager.h"
 #include "globals.h"
 #include "quickdebugdlg.h"
+#include "event_notifier.h"
+#include "codelite_events.h"
 
 QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     : QuickDebugBase(parent)
@@ -40,6 +42,16 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     GetSizer()->Fit(this);
     Initialize();
     SetName("QuickDebugDlg");
+
+    // Let the plugins override the values
+    clDebugEvent eventShowing(wxEVT_QUICK_DEBUG_DLG_SHOWING);
+    if(EventNotifier::Get()->ProcessEvent(eventShowing)) {
+        if(!eventShowing.GetExecutableName().IsEmpty()) {
+            m_ExeFilepath->ChangeValue(eventShowing.GetExecutableName());
+        }
+        if(!eventShowing.GetArguments().IsEmpty()) { m_textCtrlArgs->ChangeValue(eventShowing.GetArguments()); }
+        if(!eventShowing.GetWorkingDirectory().IsEmpty()) { m_WD->SetValue(eventShowing.GetWorkingDirectory()); }
+    }
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -111,6 +123,12 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     info.SetAlternateDebuggerExec(m_textCtrlDebuggerExec->GetValue());
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
+    // Let the plugins persist the data
+    clDebugEvent eventDismissed(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK);
+    eventDismissed.SetExecutableName(m_ExeFilepath->GetValue());
+    eventDismissed.SetArguments(m_textCtrlArgs->GetValue());
+    eventDismissed.SetWorkingDirectory(m_WD->GetValue());
+    EventNotifier::Get()->ProcessEvent(eventDismissed);
     EndModal(wxID_OK);
 }
 

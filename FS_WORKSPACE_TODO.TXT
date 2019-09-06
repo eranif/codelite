@@ -1,3 +1,2 @@
-2. Add in the 'General' tab
-    2.1 Executable to run / debug
-
+- Custom targets should be placed in the build button drop down menus
+- Support 'Workspace -> New Workspace' flow

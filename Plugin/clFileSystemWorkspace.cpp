@@ -55,6 +55,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
         EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
+        EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &clFileSystemWorkspace::OnCustomTargetMenu,
+                                   this);
 
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
@@ -87,6 +89,8 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
         EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
+        EventNotifier::Get()->Unbind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING,
+                                     &clFileSystemWorkspace::OnCustomTargetMenu, this);
 
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
@@ -472,10 +476,10 @@ void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& ev
 void clFileSystemWorkspace::UpdateParserPaths()
 {
     if(!GetConfig()) { return; }
-    
+
     // Update the parser paths
     wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());
-    
+
     // Expand any macros
     for(wxString& path : uniquePaths) {
         path = MacroManager::Instance()->Expand(path, nullptr, "", "");
@@ -643,3 +647,10 @@ void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() { return GetSettings().GetSelectedConfig(); }
+
+void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+
+}

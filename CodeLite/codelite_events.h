@@ -860,4 +860,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_MARKER_CHANGED, clCommandEvent);
 // Use: event.GetInt() to get the button ID clicked
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_INFO_BAR_BUTTON, clCommandEvent);
 
+// User clicked on the drop down menu of the build button
+// A plugin can change the content of the drop down menu and bind then to his custom actions
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, clContextMenuEvent);
+
 #endif // CODELITE_EVENTS_H

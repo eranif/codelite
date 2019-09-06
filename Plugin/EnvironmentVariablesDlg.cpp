@@ -13,6 +13,7 @@
 #include "event_notifier.h"
 #include "codelite_events.h"
 #include <wx/textdlg.h>
+#include "globals.h"
 
 // EnvironmentVariablesDlg* EnvironmentVariablesDlg::m_dlg = nullptr;
 
@@ -59,6 +60,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
             ctrl->EmptyUndoBuffer();
         }
     }
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 EnvironmentVariablesDlg::~EnvironmentVariablesDlg() {}

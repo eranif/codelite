@@ -557,7 +557,7 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
 
     if(m_execProcess) { return; }
 
-    clFileSystemWorkspaceConfig::Ptr_t conf = GetSettings().GetSelectedConfig();
+    clFileSystemWorkspaceConfig::Ptr_t conf = GetConfig();
     wxString exe = conf->GetExecutable();
     wxString args = conf->GetArgs();
 
@@ -579,8 +579,17 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
 clEnvList_t clFileSystemWorkspace::GetEnvList()
 {
     clEnvList_t envList;
-    if(!GetSettings().GetSelectedConfig()) { return envList; }
-    wxString envstr = GetSettings().GetSelectedConfig()->GetEnvironment();
+    if(!GetConfig()) { return envList; }
+    wxString envstr;
+    EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
+    EnvMap envMap =  env.GetVariables(env.GetActiveSet(), false, "", "");
+    
+    // Add the global variables
+    envstr += envMap.String();
+    envstr += "\n";
+    envstr += GetConfig()->GetEnvironment();
+    
+    // Append the workspace environment
     envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
     envList = FileUtils::CreateEnvironment(envstr);
     return envList;

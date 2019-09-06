@@ -23,7 +23,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
 
     m_stcCCFlags->SetText(m_config->GetCompileFlagsAsString());
     m_textCtrlFileExt->ChangeValue(m_config->GetFileExtensions());
-    m_filePickerExe->SetPath(m_config->GetExecutable().GetFullPath());
+    m_filePickerExe->SetPath(m_config->GetExecutable());
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
     const wxStringMap_t& targets = m_config->GetBuildTargets();

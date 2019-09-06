@@ -17,7 +17,7 @@ protected:
     wxArrayString m_compileFlags;
     wxString m_fileExtensions;
     wxString m_name;
-    wxFileName m_executable;
+    wxString m_executable;
     wxString m_args;
     wxString m_environment;
     wxString m_compiler;
@@ -40,10 +40,10 @@ public:
     const wxString& GetName() const { return m_name; }
     void SetArgs(const wxString& args) { this->m_args = args; }
     void SetEnvironment(const wxString& environment) { this->m_environment = environment; }
-    void SetExecutable(const wxFileName& executable) { this->m_executable = executable; }
+    void SetExecutable(const wxString& executable) { this->m_executable = executable; }
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetEnvironment() const { return m_environment; }
-    const wxFileName& GetExecutable() const { return m_executable; }
+    const wxString& GetExecutable() const { return m_executable; }
     wxArrayString GetSearchPaths(const wxFileName& workspaceFile) const;
 
     void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }

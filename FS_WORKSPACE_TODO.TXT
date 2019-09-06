@@ -1,6 +1,3 @@
-1. Enable the 'Stop' build button 
 2. Add in the 'General' tab
     2.1 Executable to run / debug
-4. Apply environment variables before executing the build
-5. Allow the user to set environment variables in the workspace configuration
 

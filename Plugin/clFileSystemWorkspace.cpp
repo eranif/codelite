@@ -24,6 +24,18 @@
 #include "macromanager.h"
 #include "fileutils.h"
 
+#define CHECK_ACTIVE_CONFIG() \
+    if(!GetSettings().GetSelectedConfig()) { return; }
+
+#define CHECK_EVENT(e)     \
+    {                      \
+        if(!IsOpen()) {    \
+            e.Skip();      \
+            return;        \
+        }                  \
+        event.Skip(false); \
+    }
+
 wxDEFINE_EVENT(wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
     : m_dummy(dummy)
@@ -41,8 +53,15 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
 
         // Build events
         EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
+        EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
+        EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
+
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
+        // Exec events
+        EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
     }
 }
 
@@ -62,8 +81,16 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
 
         // Build events
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
+        EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
+        EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
+        
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
+
+        // Exec events
+        EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &clFileSystemWorkspace::OnStopExecute, this);
     }
 }
 
@@ -149,9 +176,7 @@ void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event)
         cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
 
         // Build the environment to use
-        wxString envstr = GetSettings().GetSelectedConfig()->GetEnvironment();
-        envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
-        clEnvList_t envList = FileUtils::CreateEnvironment(envstr);
+        clEnvList_t envList = GetEnvList();
 
         // Start the process with the environemt
         m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
@@ -285,6 +310,9 @@ void clFileSystemWorkspace::DoClose()
 
     m_isLoaded = false;
     m_showWelcomePage = true;
+
+    wxDELETE(m_execProcess);
+    wxDELETE(m_buildProcess);
 }
 
 void clFileSystemWorkspace::DoClear()
@@ -467,14 +495,27 @@ wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 
 void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 {
-    wxDELETE(m_buildProcess);
-    DoPrintBuildMessage(event.GetOutput());
+    if(event.GetProcess() == m_buildProcess) {
+        wxDELETE(m_buildProcess);
+        DoPrintBuildMessage(event.GetOutput());
 
-    clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-    EventNotifier::Get()->AddPendingEvent(e);
+        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+
+    } else {
+        wxDELETE(m_execProcess);
+    }
 }
 
-void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event) { DoPrintBuildMessage(event.GetOutput()); }
+void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
+{
+    if(event.GetProcess() == m_buildProcess) {
+        DoPrintBuildMessage(event.GetOutput());
+
+    } else if(event.GetProcess() == m_execProcess) {
+        clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
+    }
+}
 
 void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
 {
@@ -497,4 +538,66 @@ void clFileSystemWorkspace::Initialise()
     if(m_initialized) { return; }
     m_view = new clFileSystemWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
+}
+
+void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+
+    if(m_execProcess) { return; }
+
+    clFileSystemWorkspaceConfig::Ptr_t conf = GetSettings().GetSelectedConfig();
+    wxString exe = conf->GetExecutable();
+    wxString args = conf->GetArgs();
+
+    // Expand variables
+    exe = MacroManager::Instance()->Expand(exe, nullptr, wxEmptyString);
+    args = MacroManager::Instance()->Expand(args, nullptr, wxEmptyString);
+    ::WrapInShell(exe);
+
+    // Execute the executable
+    wxString command;
+    command << exe;
+    if(!args.empty()) { command << " " << args; }
+
+    clEnvList_t envList = GetEnvList();
+    m_execProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
+                                         GetFileName().GetPath(), &envList);
+}
+
+clEnvList_t clFileSystemWorkspace::GetEnvList()
+{
+    clEnvList_t envList;
+    if(!GetSettings().GetSelectedConfig()) { return envList; }
+    wxString envstr = GetSettings().GetSelectedConfig()->GetEnvironment();
+    envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
+    envList = FileUtils::CreateEnvironment(envstr);
+    return envList;
+}
+
+void clFileSystemWorkspace::OnIsBuildInProgress(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+    event.SetIsRunning(m_buildProcess != nullptr);
+}
+
+void clFileSystemWorkspace::OnIsProgramRunning(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_ACTIVE_CONFIG();
+    event.SetAnswer(m_execProcess != nullptr);
+}
+
+void clFileSystemWorkspace::OnStopExecute(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    if(m_execProcess) { m_execProcess->Terminate(); }
+}
+
+void clFileSystemWorkspace::OnStopBuild(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    if(m_buildProcess) { m_buildProcess->Terminate(); }
 }

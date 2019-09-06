@@ -21,6 +21,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     bool m_showWelcomePage = false;
     bool m_dummy = true;
     IProcess* m_buildProcess = nullptr;
+    IProcess* m_execProcess = nullptr;
     clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
@@ -30,13 +31,18 @@ protected:
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
+    clEnvList_t GetEnvList();
     
     //===--------------------------
     // Event handlers
     //===--------------------------
     void OnBuildStarting(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);
-
+    void OnIsBuildInProgress(clBuildEvent& event);
+    void OnStopBuild(clBuildEvent& event);
+    void OnExecute(clExecuteEvent& event);
+    void OnStopExecute(clExecuteEvent& event);
+    void OnIsProgramRunning(clExecuteEvent& event);
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);

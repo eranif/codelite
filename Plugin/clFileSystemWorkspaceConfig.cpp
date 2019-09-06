@@ -17,7 +17,7 @@ JSONItem clFileSystemWorkspaceConfig::ToJSON() const
     item.addProperty("flags", m_flags);
     item.addProperty("compile_flags", m_compileFlags);
     item.addProperty("file_extensions", m_fileExtensions);
-    item.addProperty("executable", m_executable.GetFullPath());
+    item.addProperty("executable", m_executable);
     item.addProperty("arguments", m_args);
     item.addProperty("environment", m_environment);
     item.addProperty("compiler", m_compiler);

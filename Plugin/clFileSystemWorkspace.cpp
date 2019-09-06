@@ -471,12 +471,17 @@ void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& ev
 
 void clFileSystemWorkspace::UpdateParserPaths()
 {
-    clFileSystemWorkspaceConfig::Ptr_t conf = m_settings.GetSelectedConfig();
-    if(!conf) { return; }
+    if(!GetConfig()) { return; }
+    
     // Update the parser paths
-    wxArrayString uniquePaths = conf->GetSearchPaths(GetFileName());
+    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());
+    
+    // Expand any macros
+    for(wxString& path : uniquePaths) {
+        path = MacroManager::Instance()->Expand(path, nullptr, "", "");
+    }
     ParseThreadST::Get()->SetSearchPaths(uniquePaths, {});
-    clDEBUG() << "[" << conf->GetName() << "]"
+    clDEBUG() << "[" << GetConfig()->GetName() << "]"
               << "Parser paths are now set to:" << uniquePaths;
 }
 
@@ -582,13 +587,13 @@ clEnvList_t clFileSystemWorkspace::GetEnvList()
     if(!GetConfig()) { return envList; }
     wxString envstr;
     EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
-    EnvMap envMap =  env.GetVariables(env.GetActiveSet(), false, "", "");
-    
+    EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, "", "");
+
     // Add the global variables
     envstr += envMap.String();
     envstr += "\n";
     envstr += GetConfig()->GetEnvironment();
-    
+
     // Append the workspace environment
     envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
     envList = FileUtils::CreateEnvironment(envstr);

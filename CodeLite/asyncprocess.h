@@ -31,6 +31,7 @@
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
+#include <vector>
 
 enum IProcessCreateFlags {
     IProcessCreateDefault = (1 << 0),           // Default: create process with no console window
@@ -150,6 +151,8 @@ public:
     bool IsRedirect() const { return !(m_flags & IProcessNoRedirect); }
 };
 
+typedef std::vector<std::pair<wxString, wxString> > clEnvList_t;
+
 // Help method
 /**
  * @brief start process
@@ -161,7 +164,8 @@ public:
  */
 WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd,
                                             size_t flags = IProcessCreateDefault,
-                                            const wxString& workingDir = wxEmptyString);
+                                            const wxString& workingDir = wxEmptyString,
+                                            const clEnvList_t* env = nullptr);
 
 /**
  * @brief create synchronus process
@@ -171,7 +175,8 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString
  * @return IPorcess handle on succcess
  */
 WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = IProcessCreateDefault,
-                                           const wxString& workingDir = wxEmptyString);
+                                           const wxString& workingDir = wxEmptyString,
+                                           const clEnvList_t* env = nullptr);
 
 /**
  * @brief start process
@@ -184,6 +189,7 @@ WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = I
  */
 WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd,
                                               size_t flags = IProcessCreateDefault,
-                                              const wxString& workingDir = wxEmptyString);
+                                              const wxString& workingDir = wxEmptyString,
+                                              const clEnvList_t* env = nullptr);
 
 #endif // I_PROCESS_H

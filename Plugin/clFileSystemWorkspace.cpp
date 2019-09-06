@@ -20,6 +20,9 @@
 #include "processreaderthread.h"
 #include "clFilesCollector.h"
 #include <wx/msgdlg.h>
+#include "environmentconfig.h"
+#include "macromanager.h"
+#include "fileutils.h"
 
 wxDEFINE_EVENT(wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
@@ -129,8 +132,29 @@ void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event)
     if(IsOpen()) {
         event.Skip(false);
         if(m_buildProcess) { return; }
-        m_buildProcess = ::CreateAsyncProcess(this, GetTargetCommand(event.GetKind()), IProcessCreateDefault,
-                                              GetFileName().GetPath());
+        if(!GetSettings().GetSelectedConfig()) {
+            ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
+                             "settings and add one"),
+                           "CodeLite", wxICON_WARNING | wxCENTER);
+            return;
+        }
+
+        wxString cmd = GetTargetCommand(event.GetKind());
+        if(cmd.IsEmpty()) {
+            ::wxMessageBox(_("Dont know how to run '") + event.GetKind() + "'", "CodeLite", wxICON_WARNING | wxCENTER);
+            return;
+        }
+
+        // Replace all workspace macros from the command
+        cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
+
+        // Build the environment to use
+        wxString envstr = GetSettings().GetSelectedConfig()->GetEnvironment();
+        envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
+        clEnvList_t envList = FileUtils::CreateEnvironment(envstr);
+
+        // Start the process with the environemt
+        m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
         if(!m_buildProcess) {
             clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
             EventNotifier::Get()->AddPendingEvent(e);
@@ -433,7 +457,11 @@ wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 {
     if(!m_settings.GetSelectedConfig()) { return wxEmptyString; }
     const wxStringMap_t& M = m_settings.GetSelectedConfig()->GetBuildTargets();
-    if(M.count(target)) { return M.find(target)->second; }
+    if(M.count(target)) {
+        wxString cmd = M.find(target)->second;
+        ::WrapInShell(cmd);
+        return cmd;
+    }
     return wxEmptyString;
 }
 

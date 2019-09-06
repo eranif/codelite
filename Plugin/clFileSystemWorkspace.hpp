@@ -30,7 +30,7 @@ protected:
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
-
+    
     //===--------------------------
     // Event handlers
     //===--------------------------

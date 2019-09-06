@@ -16,7 +16,6 @@ xcopy %RUNTIME_DIR%\config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite
 xcopy %RUNTIME_DIR%\debuggers\*.dll "%TARGET_DIR%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\images\* "%TARGET_DIR%\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\lexers\*.json "%TARGET_DIR%\CodeLite\lexers\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %LIB_DIR%\plugins\*.dll "%TARGET_DIR%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %CODELITE_SRC_DIR%\SpellChecker\dics\* "%TARGET_DIR%\CodeLite\dics\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %LIB_DIR%\lib*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\plugins\resources\*.* "%TARGET_DIR%\CodeLite\plugins\resources\" /E /I /H /Y /EXCLUDE:excludes
@@ -37,6 +36,7 @@ xcopy %LIB_DIR%\libdatabaselayersqlite*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y
 xcopy %LIB_DIR%\libwxshapeframework*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 IF EXIST %RUNTIME_DIR%\wxgui.zip ( copy wxgui.zip "%TARGET_DIR%\CodeLite\" )
 IF EXIST %RUNTIME_DIR%\PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
+xcopy %LIB_DIR%\*.dll "%TARGET_DIR%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%WXWIN%" == "" GOTO OTHERS
 xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes

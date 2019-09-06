@@ -7,12 +7,16 @@ class FSConfigPage : public FSConfigPageBase
 {
     clFileSystemWorkspaceConfig::Ptr_t m_config;
 
+protected:
+    void DoTargetActivated();
+
 public:
     FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config);
     virtual ~FSConfigPage();
     void Save();
 
 protected:
+    virtual void OnTargetActivated(wxDataViewEvent& event);
     virtual void OnDelete(wxCommandEvent& event);
     virtual void OnDeleteUI(wxUpdateUIEvent& event);
     virtual void OnEditTarget(wxCommandEvent& event);

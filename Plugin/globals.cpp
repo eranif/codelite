@@ -82,6 +82,7 @@
 #include "windowattrmanager.h"
 #include "ColoursAndFontsManager.h"
 #include <wx/app.h>
+#include "clFileSystemWorkspace.hpp"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -2143,6 +2144,8 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 static void DoSetDialogSize(wxDialog* win, double factor)
 {
     if(!win) { return; }
+    if(factor <= 0.0) { factor = 1.0; }
+
     wxWindow* parent = win->GetParent();
     if(!parent) { parent = wxTheApp->GetTopWindow(); }
     if(parent) {
@@ -2162,3 +2165,7 @@ static void DoSetDialogSize(wxDialog* win, double factor)
 void clSetDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.66); }
 
 void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.5); }
+
+void clSetDialogSizeAndPosition(wxDialog* win, double ratio) { DoSetDialogSize(win, ratio); }
+
+bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }

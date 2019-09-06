@@ -232,7 +232,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer76);
 
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     boxSizer76->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -263,12 +264,56 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Executable:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText109, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerExe = new wxFilePickerCtrl(m_panelGeneral, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"),
+                                           wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                           wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
+    m_filePickerExe->SetToolTip(_("The executable to use for debugging / executing"));
+
+    flexGridSizer33->Add(m_filePickerExe, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText113 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Arguments:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText113, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlArgs = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                    wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlArgs->SetToolTip(_("Program arguments"));
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlArgs->SetHint(wxT(""));
+#endif
+
+    flexGridSizer33->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_panelBuild =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelBuild, _("Build"), false);
 
     wxBoxSizer* boxSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panelBuild->SetSizer(boxSizer30);
+
+    wxFlexGridSizer* flexGridSizer123 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer123->SetFlexibleDirection(wxBOTH);
+    flexGridSizer123->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer123->AddGrowableCol(1);
+
+    boxSizer30->Add(flexGridSizer123, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText125 = new wxStaticText(m_panelBuild, wxID_ANY, _("Output syntax:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)), 0);
+
+    flexGridSizer123->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceCompilerArr;
+    m_choiceCompiler = new wxChoice(m_panelBuild, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)),
+                                    m_choiceCompilerArr, 0);
+
+    flexGridSizer123->Add(m_choiceCompiler, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -361,10 +406,62 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer22->Add(m_stcCCFlags, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_panel107 =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panel107, _("Environment"), false);
+
+    wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
+    m_panel107->SetSizer(boxSizer117);
+
+    m_staticText119 = new wxStaticText(m_panel107, wxID_ANY, _("Environment variables:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel107, wxSize(-1, -1)), 0);
+
+    boxSizer117->Add(m_staticText119, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stcEnv = new wxStyledTextCtrl(m_panel107, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel107, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stcEnv->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcEnv->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcEnv->SetMarginSensitive(4, true);
+    m_stcEnv->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcEnv->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcEnv->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcEnv->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcEnv->SetMarginWidth(2, 0);
+    m_stcEnv->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcEnv->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcEnv->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcEnv->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcEnv->SetMarginMask(3, 0);
+    m_stcEnv->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcEnv->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcEnv->StyleClearAll();
+    m_stcEnv->SetWrapMode(1);
+    m_stcEnv->SetIndentationGuides(0);
+    m_stcEnv->SetKeyWords(0, wxT(""));
+    m_stcEnv->SetKeyWords(1, wxT(""));
+    m_stcEnv->SetKeyWords(2, wxT(""));
+    m_stcEnv->SetKeyWords(3, wxT(""));
+    m_stcEnv->SetKeyWords(4, wxT(""));
+
+    boxSizer117->Add(m_stcEnv, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("FSConfigPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
+    m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                 wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
                          this);
     m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,
@@ -377,6 +474,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
 FSConfigPageBase::~FSConfigPageBase()
 {
+    m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                    wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
     m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
                             this);
     m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditTarget), NULL,

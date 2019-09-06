@@ -115,7 +115,7 @@ static bool IsHeader(const wxString& ext)
 #define VALIDATE_PROJECT_FALSE(ctrl) \
     if(ctrl.GetProject().IsEmpty()) { return false; }
 
-#define IS_CXX_WORKSPACE_OPENED() (ManagerST::Get()->IsWorkspaceOpen() || clFileSystemWorkspace::Get().IsOpen())
+#define IS_CXX_WORKSPACE_OPENED() (::clIsCxxWorkspaceOpened())
 
 #define VALIDATE_WORKSPACE() \
     if(!IS_CXX_WORKSPACE_OPENED()) { return; }

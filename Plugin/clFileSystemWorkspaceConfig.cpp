@@ -1,6 +1,8 @@
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "ctags_manager.h"
 #include "compiler_command_line_parser.h"
+#include "build_settings_config.h"
+#include "ICompilerLocator.h"
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
@@ -15,6 +17,10 @@ JSONItem clFileSystemWorkspaceConfig::ToJSON() const
     item.addProperty("flags", m_flags);
     item.addProperty("compile_flags", m_compileFlags);
     item.addProperty("file_extensions", m_fileExtensions);
+    item.addProperty("executable", m_executable.GetFullPath());
+    item.addProperty("arguments", m_args);
+    item.addProperty("environment", m_environment);
+    item.addProperty("compiler", m_compiler);
     JSONItem arrTargets = JSONItem::createArray("targets");
     item.append(arrTargets);
 
@@ -33,6 +39,10 @@ void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
     m_flags = json.namedObject("flags").toSize_t(m_flags);
     m_compileFlags = json.namedObject("compile_flags").toArrayString();
     m_fileExtensions = json.namedObject("file_extensions").toString(m_fileExtensions);
+    m_executable = json.namedObject("executable").toString();
+    m_args = json.namedObject("arguments").toString();
+    m_environment = json.namedObject("environment").toString();
+    m_compiler = json.namedObject("compiler").toString(m_compiler);
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
@@ -48,6 +58,8 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
 {
     m_buildTargets.insert({ "build", "" });
     m_buildTargets.insert({ "clean", "" });
+    CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
+    if(compiler) { m_compiler = compiler->GetName(); }
 }
 
 wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile) const
@@ -104,8 +116,9 @@ clFileSystemWorkspaceSettings::~clFileSystemWorkspaceSettings() {}
 
 JSONItem clFileSystemWorkspaceSettings::ToJSON(JSONItem& item) const
 {
-    item.addProperty("workspace_type", "File System Workspace");
+    item.addProperty("workspace_type", WORKSPACE_TYPE);
     item.addProperty("selected_config", m_selectedConfig);
+    item.addProperty("name", m_name);
     JSONItem configs = JSONItem::createArray("configs");
     item.append(configs);
     for(const auto& config : m_configsMap) {
@@ -118,6 +131,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_workspaceType = json.namedObject("workspace_type").toString(WORKSPACE_TYPE);
     m_selectedConfig = json.namedObject("selected_config").toString();
+    m_name = json.namedObject("name").toString();
     JSONItem arrConfigs = json.namedObject("configs");
     int nCount = arrConfigs.arraySize();
 
@@ -198,6 +212,7 @@ void clFileSystemWorkspaceSettings::Clear()
 {
     m_configsMap.clear();
     m_selectedConfig.clear();
+    m_name.clear();
     AddConfig("Debug");
 }
 
@@ -206,4 +221,11 @@ bool clFileSystemWorkspaceSettings::SetSelectedConfig(const wxString& name)
     if(m_configsMap.count(name) == 0) { return false; }
     m_selectedConfig = name;
     return true;
+}
+
+bool clFileSystemWorkspaceSettings::IsOk(const wxFileName& filename)
+{
+    JSON root(filename);
+    if(!root.isOk()) { return false; }
+    return root.toElement().namedObject("workspace_type").toString() == WORKSPACE_TYPE;
 }

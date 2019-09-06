@@ -33,6 +33,7 @@
 #include "globals.h"
 #include "clWorkspaceManager.h"
 #include "IWorkspace.h"
+#include "clFileSystemWorkspace.hpp"
 
 MacroManager::MacroManager() {}
 
@@ -136,26 +137,40 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                                 const wxString& confToBuild)
 {
     wxString expandedString(expression);
-    clCxxWorkspace* workspace = clCxxWorkspaceST::Get();
+    clCxxWorkspace* workspace = nullptr;
     // IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
 
     if(!manager) { manager = clGetManager(); }
+
+    wxString wspName;
+    wxString wspConfig;
+    wxString wspPath;
+
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        wspName = clCxxWorkspaceST::Get()->GetName();
+        wspConfig = clCxxWorkspaceST::Get()->GetSelectedConfig()
+                        ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName()
+                        : wxString();
+
+        wspPath = clCxxWorkspaceST::Get()->GetFileName().GetPath();
+        workspace = clCxxWorkspaceST::Get();
+    } else if(clFileSystemWorkspace::Get().IsOpen()) {
+        wspName = clFileSystemWorkspace::Get().GetName();
+        wspConfig = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()
+                        ? clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetName()
+                        : wxString();
+        wspPath = clFileSystemWorkspace::Get().GetFileName().GetPath();
+    }
 
     size_t retries = 0;
     wxString dummyname, dummfullname;
     while((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(expandedString);
+        expandedString.Replace(wxT("$(WorkspaceName)"), wspName);
+        expandedString.Replace("$(WorkspaceConfiguration)", wspConfig);
+        expandedString.Replace("$(WorkspacePath)", wspPath);
         if(workspace) {
-            expandedString.Replace(wxT("$(WorkspaceName)"), workspace->GetName());
-            // Support the new $(WorkspaceConfiguration) macro
-            WorkspaceConfigurationPtr wspConfig = workspace->GetSelectedConfig();
-            if(wspConfig) {
-                expandedString.Replace("$(WorkspaceConfiguration)", wspConfig->GetName());
-            } else {
-                expandedString.Replace("$(WorkspaceConfiguration)", "");
-            }
-
             ProjectPtr proj = workspace->GetProject(project);
             if(proj) {
                 wxString prjBuildWd;

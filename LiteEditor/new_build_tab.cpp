@@ -55,6 +55,8 @@
 #include <wx/fdrepdlg.h>
 #include <wx/regex.h>
 #include <wx/settings.h>
+#include "clFileSystemWorkspace.hpp"
+#include "clFileSystemWorkspaceConfig.hpp"
 
 #define IS_VALID_LINE(lineNumber) ((lineNumber >= 0 && lineNumber < m_view->GetLineCount()))
 #ifdef __WXMSW__
@@ -281,6 +283,9 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
         buildEvent.SetProjectName(bed->GetProjectName());
         buildEvent.SetConfigurationName(bed->GetConfiguration());
         EventNotifier::Get()->AddPendingEvent(buildEvent);
+    } else if(clFileSystemWorkspace::Get().IsOpen() && clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()) {
+        const wxString& cmpname = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetCompiler();
+        m_cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
     }
 }
 
@@ -437,16 +442,14 @@ void NewBuildTab::MarkEditor(clEditor* editor)
         if(!text.IsEmpty()) {
             if(bli && (bli->GetSeverity() == SV_ERROR || bli->GetSeverity() == SV_WARNING)) {
                 const auto annotationIter = annotations.lower_bound(bli->GetLineNumber());
-                if ((annotationIter == annotations.end()) || (annotationIter->first != bli->GetLineNumber()))
-                {
+                if((annotationIter == annotations.end()) || (annotationIter->first != bli->GetLineNumber())) {
                     // insert new one
                     AnnotationInfo info;
                     info.line = bli->GetLineNumber();
                     info.severity = bli->GetSeverity();
                     info.text.emplace(std::move(text));
                     annotations.emplace_hint(annotationIter, bli->GetLineNumber(), std::move(info));
-                }
-                else {
+                } else {
                     // we already have an error on this line, concatenate the message
                     AnnotationInfo& info = annotationIter->second;
                     info.text.emplace(std::move(text));
@@ -463,9 +466,8 @@ void NewBuildTab::MarkEditor(clEditor* editor)
     AnnotationInfoByLineMap_t::iterator annIter = annotations.begin();
     for(; annIter != annotations.end(); ++annIter) {
         wxString concatText;
-        for (auto &text : annIter->second.text) {
-            if (!concatText.IsEmpty())
-                concatText << "\n";
+        for(auto& text : annIter->second.text) {
+            if(!concatText.IsEmpty()) concatText << "\n";
             concatText << text;
         }
 
@@ -871,7 +873,7 @@ void NewBuildTab::InitView(const wxString& theme)
         m_view->StyleSetBackground(i, defaultStyle.GetBgColour());
         m_view->StyleSetFont(i, defaultFont);
     }
-    
+
     bool is_dark = DrawingUtils::IsDark(props[0].GetBgColour());
     wxColour textColour = props[0].GetFgColour();
     wxColour infoMsgColour = textColour.ChangeLightness(is_dark ? 50 : 150);

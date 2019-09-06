@@ -23,7 +23,8 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     IProcess* m_buildProcess = nullptr;
     clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
-
+    bool m_initialized = false;
+    
 protected:
     void CacheFiles();
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
@@ -107,8 +108,17 @@ public:
     void UpdateParserPaths();
     const std::vector<wxFileName>& GetFiles() const { return m_files; }
     
+    const wxString& GetName() const { return m_settings.GetName(); }
+    void SetName(const wxString& name) { m_settings.SetName(name); }
+    
     const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
     clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
+    
+    /**
+     * @brief initialise the workspace (Create GUI etc)
+     * This function does nothing if the workspace was already initialised
+     */
+    void Initialise();
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);

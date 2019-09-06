@@ -3,13 +3,17 @@
 #include <wx/tokenzr.h>
 #include "BuildTargetDlg.h"
 #include "macros.h"
+#include "build_settings_config.h"
 
 FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config)
     : FSConfigPageBase(parent)
 {
     m_config = config;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_stcCCFlags); }
+    if(lexer) {
+        lexer->Apply(m_stcCCFlags);
+        lexer->Apply(m_stcEnv);
+    }
 
     m_dvListCtrlTargets->SetSortFunction([](clRowEntry* a, clRowEntry* b) {
         const wxString& cellA = a->GetLabel(0);
@@ -19,11 +23,18 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
 
     m_stcCCFlags->SetText(m_config->GetCompileFlagsAsString());
     m_textCtrlFileExt->ChangeValue(m_config->GetFileExtensions());
+    m_filePickerExe->SetPath(m_config->GetExecutable().GetFullPath());
+    m_textCtrlArgs->ChangeValue(m_config->GetArgs());
+    m_stcEnv->SetText(m_config->GetEnvironment());
     const wxStringMap_t& targets = m_config->GetBuildTargets();
     for(const auto& vt : targets) {
         wxDataViewItem item = m_dvListCtrlTargets->AppendItem(vt.first);
         m_dvListCtrlTargets->SetItemText(item, vt.second, 1);
     }
+    
+    wxArrayString compilers = BuildSettingsConfigST::Get()->GetAllCompilersNames();
+    m_choiceCompiler->Append(compilers);
+    m_choiceCompiler->SetStringSelection(m_config->GetCompiler());
 }
 
 FSConfigPage::~FSConfigPage() {}
@@ -50,15 +61,8 @@ void FSConfigPage::OnDeleteUI(wxUpdateUIEvent& event)
 
 void FSConfigPage::OnEditTarget(wxCommandEvent& event)
 {
-    wxDataViewItem item = m_dvListCtrlTargets->GetSelection();
-    CHECK_ITEM_RET(item);
-
-    BuildTargetDlg dlg(::wxGetTopLevelParent(this), m_dvListCtrlTargets->GetItemText(item, 0),
-                       m_dvListCtrlTargets->GetItemText(item, 1));
-    if(dlg.ShowModal() == wxID_OK) {
-        m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetName(), 0);
-        m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetCommand(), 1);
-    }
+    wxUnusedVar(event);
+    DoTargetActivated();
 }
 
 void FSConfigPage::OnEditTargetUI(wxUpdateUIEvent& event)
@@ -88,4 +92,27 @@ void FSConfigPage::Save()
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());
+    m_config->SetExecutable(m_filePickerExe->GetPath());
+    m_config->SetEnvironment(m_stcEnv->GetText());
+    m_config->SetArgs(m_textCtrlArgs->GetValue());
+    m_config->SetCompiler(m_choiceCompiler->GetStringSelection());
+}
+
+void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)
+{
+    wxUnusedVar(event);
+    DoTargetActivated();
+}
+
+void FSConfigPage::DoTargetActivated()
+{
+    wxDataViewItem item = m_dvListCtrlTargets->GetSelection();
+    CHECK_ITEM_RET(item);
+
+    BuildTargetDlg dlg(::wxGetTopLevelParent(this), m_dvListCtrlTargets->GetItemText(item, 0),
+                       m_dvListCtrlTargets->GetItemText(item, 1));
+    if(dlg.ShowModal() == wxID_OK) {
+        m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetName(), 0);
+        m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetCommand(), 1);
+    }
 }

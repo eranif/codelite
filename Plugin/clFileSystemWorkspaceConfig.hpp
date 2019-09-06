@@ -17,6 +17,10 @@ protected:
     wxArrayString m_compileFlags;
     wxString m_fileExtensions;
     wxString m_name;
+    wxFileName m_executable;
+    wxString m_args;
+    wxString m_environment;
+    wxString m_compiler;
 
 public:
     JSONItem ToJSON() const;
@@ -34,9 +38,16 @@ public:
     const wxString& GetFileExtensions() const { return m_fileExtensions; }
     size_t GetFlags() const { return m_flags; }
     const wxString& GetName() const { return m_name; }
-
+    void SetArgs(const wxString& args) { this->m_args = args; }
+    void SetEnvironment(const wxString& environment) { this->m_environment = environment; }
+    void SetExecutable(const wxFileName& executable) { this->m_executable = executable; }
+    const wxString& GetArgs() const { return m_args; }
+    const wxString& GetEnvironment() const { return m_environment; }
+    const wxFileName& GetExecutable() const { return m_executable; }
     wxArrayString GetSearchPaths(const wxFileName& workspaceFile) const;
 
+    void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }
+    const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();
     ~clFileSystemWorkspaceConfig() {}
 
@@ -50,6 +61,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings
     std::map<wxString, clFileSystemWorkspaceConfig::Ptr_t> m_configsMap;
     wxString m_selectedConfig;
     wxString m_workspaceType;
+    wxString m_name;
 
 protected:
     JSONItem ToJSON(JSONItem& item) const;
@@ -68,7 +80,14 @@ public:
     clFileSystemWorkspaceConfig::Ptr_t GetSelectedConfig() const;
     clFileSystemWorkspaceConfig::Ptr_t GetConfig(const wxString& name) const;
     const std::map<wxString, clFileSystemWorkspaceConfig::Ptr_t>& GetConfigsMap() const { return m_configsMap; }
+    const wxString& GetName() const { return m_name; }
+    void SetName(const wxString& name) { this->m_name = name; }
     void Clear();
+
+    /**
+     * @brief check if the file is a valid workspace
+     */
+    static bool IsOk(const wxFileName& filename);
 };
 
 #endif // CLFILESYSTEMWORKSPACECONFIG_HPP

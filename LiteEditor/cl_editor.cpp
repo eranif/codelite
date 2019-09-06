@@ -1430,7 +1430,7 @@ bool clEditor::SaveFile()
         // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
         m_deltas->OnFileSaved();
 
-        if(clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen()) {
+        if(::clIsCxxWorkspaceOpened()) {
 
             // clear cached file, this function does nothing if the file is not cached
             TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());

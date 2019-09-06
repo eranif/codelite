@@ -23,6 +23,9 @@
 #include <wx/panel.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
+#include <wx/filepicker.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
@@ -102,7 +105,13 @@ protected:
     wxPanel* m_panelGeneral;
     wxStaticText* m_staticText35;
     wxTextCtrl* m_textCtrlFileExt;
+    wxStaticText* m_staticText109;
+    wxFilePickerCtrl* m_filePickerExe;
+    wxStaticText* m_staticText113;
+    wxTextCtrl* m_textCtrlArgs;
     wxPanel* m_panelBuild;
+    wxStaticText* m_staticText125;
+    wxChoice* m_choiceCompiler;
     clThemedListCtrl* m_dvListCtrlTargets;
     wxButton* m_buttonNew;
     wxButton* m_buttonEdit;
@@ -110,8 +119,12 @@ protected:
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
+    wxPanel* m_panel107;
+    wxStaticText* m_staticText119;
+    wxStyledTextCtrl* m_stcEnv;
 
 protected:
+    virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -121,7 +134,13 @@ protected:
 public:
     wxStaticText* GetStaticText35() { return m_staticText35; }
     wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    wxStaticText* GetStaticText109() { return m_staticText109; }
+    wxFilePickerCtrl* GetFilePickerExe() { return m_filePickerExe; }
+    wxStaticText* GetStaticText113() { return m_staticText113; }
+    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
+    wxStaticText* GetStaticText125() { return m_staticText125; }
+    wxChoice* GetChoiceCompiler() { return m_choiceCompiler; }
     clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonEdit() { return m_buttonEdit; }
@@ -130,6 +149,9 @@ public:
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
     wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
+    wxStaticText* GetStaticText119() { return m_staticText119; }
+    wxStyledTextCtrl* GetStcEnv() { return m_stcEnv; }
+    wxPanel* GetPanel107() { return m_panel107; }
     wxNotebook* GetNotebook() { return m_notebook; }
     FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);

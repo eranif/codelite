@@ -2664,7 +2664,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
     wxUnusedVar(event);
-    if(!ManagerST::Get()->IsWorkspaceOpen() && !clFileSystemWorkspace::Get().IsOpen()) return;
+    if(!::clIsCxxWorkspaceOpened()) { return; }
 
     QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor), activeEditor->GetFileName().GetFullPath(), wxID_ANY,
                         wxT(""), wxDefaultPosition, wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
@@ -3181,7 +3181,7 @@ void clMainFrame::CompleteInitialization()
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
 
     // Create a new file system workspace instance
-    clFileSystemWorkspace::Get();
+    clFileSystemWorkspace::Get().Initialise();
 
     // Populate the list of core toolbars before we start loading
     // the plugins

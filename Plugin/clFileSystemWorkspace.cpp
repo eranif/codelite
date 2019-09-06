@@ -18,8 +18,8 @@
 #include <wx/tokenzr.h>
 #include "shell_command.h"
 #include "processreaderthread.h"
-
-#define WSP_FILE_NAME "CodeLiteFS.workspace"
+#include "clFilesCollector.h"
+#include <wx/msgdlg.h>
 
 wxDEFINE_EVENT(wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
 clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
@@ -27,9 +27,6 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
 {
     SetWorkspaceType("File System Workspace");
     if(!dummy) {
-        m_view = new clFileSystemWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
-        clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
-
         EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &clFileSystemWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &clFileSystemWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clFileSystemWorkspace::OnAllEditorsClosed, this);
@@ -152,7 +149,7 @@ void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
     wxFileName workspaceFile(event.GetFileName());
 
     // Test that this is our workspace
-    if((workspaceFile.GetFullName() == WSP_FILE_NAME) && Load(workspaceFile)) {
+    if(m_settings.IsOk(workspaceFile) && Load(workspaceFile)) {
         event.Skip(false);
         DoOpen();
 
@@ -174,7 +171,9 @@ bool clFileSystemWorkspace::Load(const wxFileName& file)
 {
     if(m_isLoaded) { return true; }
     m_filename = file;
-    return m_settings.Load(m_filename);
+    bool loadOk = m_settings.Load(m_filename);
+    if(loadOk && m_settings.GetName().empty()) { m_settings.SetName(m_filename.GetName()); }
+    return loadOk;
 }
 
 void clFileSystemWorkspace::Save(bool parse)
@@ -194,7 +193,7 @@ void clFileSystemWorkspace::RestoreSession()
 void clFileSystemWorkspace::DoOpen()
 {
     // Create the symbols db file
-    wxFileName fnFolder(GetFileName().GetPath(), WSP_FILE_NAME);
+    wxFileName fnFolder(GetFileName());
     fnFolder.SetExt("db");
     fnFolder.AppendDir(".codelite");
     fnFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -291,8 +290,21 @@ clFileSystemWorkspace& clFileSystemWorkspace::Get()
 
 void clFileSystemWorkspace::New(const wxString& folder)
 {
-    // Create an empty workspace
-    wxFileName fn(folder, WSP_FILE_NAME);
+    wxFileName fn(folder, "");
+    if(fn.GetDirCount() == 0) {
+        ::wxMessageBox(_("Unable to create a workspace on the root folder"), "CodeLite", wxICON_ERROR | wxCENTER);
+        return;
+    }
+    // Check to see if any workspace already exists in this folder
+    clFilesScanner fs;
+    clFilesScanner::EntryData::Vec_t results;
+    fs.ScanNoRecurse(folder, results, "*.workspace");
+    for(const auto& f : results) {
+        if(clFileSystemWorkspaceSettings::IsOk(f.fullpath)) {
+            fn = f.fullpath;
+            break;
+        }
+    }
 
     // If an workspace is opened and it is the same one as this, dont do nothing
     if(m_isLoaded && (GetFileName() == fn)) { return; }
@@ -300,15 +312,25 @@ void clFileSystemWorkspace::New(const wxString& folder)
     // Call close here, it does nothing if a workspace is not opened
     DoClose();
     DoClear();
-
-    if(!fn.FileExists()) {
-        // Creates an empty workspace file
-        m_filename = fn;
-        Save(false);
+    if(fn.GetFullName().IsEmpty()) {
+        wxString name = ::clGetTextFromUser(_("Workspace Name"), _("Name"), fn.GetDirs().Last());
+        if(name.IsEmpty()) { return; }
+        fn.SetName(name);
     }
 
+    fn.SetExt("workspace");
+    SetName(fn.GetName());
+
+    // Creates an empty workspace file
+    m_filename = fn;
+    if(!fn.FileExists()) { Save(false); }
+
     // and load it
-    if(Load(m_filename)) { DoOpen(); }
+    if(Load(m_filename)) {
+        DoOpen();
+    } else {
+        m_filename.Clear();
+    }
 }
 
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
@@ -440,4 +462,11 @@ void clFileSystemWorkspace::OnSaveSession(clCommandEvent& event)
         event.Skip(false);
         clGetManager()->StoreWorkspaceSession(m_filename);
     }
+}
+
+void clFileSystemWorkspace::Initialise()
+{
+    if(m_initialized) { return; }
+    m_view = new clFileSystemWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
+    clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
 }

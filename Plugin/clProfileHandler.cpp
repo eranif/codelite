@@ -36,7 +36,7 @@ void clProfileHandler::OnWorkspaceClosed(wxCommandEvent& e)
 void clProfileHandler::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
-    if(clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen()) {
+    if(::clIsCxxWorkspaceOpened()) {
         // we just opened a C++ workspace, restore all C++ related tabs
         HandleOutputTabs(true);
         HandleWorkspaceTabs(true);

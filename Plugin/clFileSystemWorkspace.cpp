@@ -23,6 +23,7 @@
 #include "environmentconfig.h"
 #include "macromanager.h"
 #include "fileutils.h"
+#include <wx/xrc/xmlres.h>
 
 #define CHECK_ACTIVE_CONFIG() \
     if(!GetSettings().GetSelectedConfig()) { return; }
@@ -172,35 +173,7 @@ void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event)
     event.Skip();
     if(IsOpen()) {
         event.Skip(false);
-        if(m_buildProcess) { return; }
-        if(!GetSettings().GetSelectedConfig()) {
-            ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
-                             "settings and add one"),
-                           "CodeLite", wxICON_WARNING | wxCENTER);
-            return;
-        }
-
-        wxString cmd = GetTargetCommand(event.GetKind());
-        if(cmd.IsEmpty()) {
-            ::wxMessageBox(_("Dont know how to run '") + event.GetKind() + "'", "CodeLite", wxICON_WARNING | wxCENTER);
-            return;
-        }
-
-        // Replace all workspace macros from the command
-        cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
-
-        // Build the environment to use
-        clEnvList_t envList = GetEnvList();
-
-        // Start the process with the environemt
-        m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
-        if(!m_buildProcess) {
-            clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-            EventNotifier::Get()->AddPendingEvent(e);
-        } else {
-            clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
-            EventNotifier::Get()->AddPendingEvent(e);
-        }
+        DoBuild(event.GetKind());
     }
 }
 
@@ -648,9 +621,65 @@ void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() { return GetSettings().GetSelectedConfig(); }
 
+void clFileSystemWorkspace::OnMenuCustomTarget(wxCommandEvent& event)
+{
+    if(m_buildTargetMenuIdToName.count(event.GetId()) == 0) { return; }
+    const wxString& target = m_buildTargetMenuIdToName.find(event.GetId())->second;
+    if(GetConfig()->GetBuildTargets().count(target) == 0) { return; }
+    DoBuild(target);
+    m_buildTargetMenuIdToName.clear();
+}
+
 void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
+    wxMenu* menu = event.GetMenu();
+    wxArrayString arrTargets;
+    const wxStringMap_t& targets = GetConfig()->GetBuildTargets();
+    // Copy the targets to std::map to get a sorted results
+    std::map<wxString, wxString> M;
+    M.insert(targets.begin(), targets.end());
+    m_buildTargetMenuIdToName.clear();
 
+    for(const auto& vt : M) {
+        const wxString& name = vt.first;
+        int menuId = wxXmlResource::GetXRCID(vt.first);
+        menu->Append(menuId, name, name, wxITEM_NORMAL);
+        menu->Bind(wxEVT_MENU, &clFileSystemWorkspace::OnMenuCustomTarget, this, menuId);
+        m_buildTargetMenuIdToName.insert({ menuId, name });
+    }
+}
+
+void clFileSystemWorkspace::DoBuild(const wxString& target)
+{
+    if(m_buildProcess) { return; }
+    if(!GetSettings().GetSelectedConfig()) {
+        ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
+                         "settings and add one"),
+                       "CodeLite", wxICON_WARNING | wxCENTER);
+        return;
+    }
+
+    wxString cmd = GetTargetCommand(target);
+    if(cmd.IsEmpty()) {
+        ::wxMessageBox(_("Dont know how to run '") + target + "'", "CodeLite", wxICON_WARNING | wxCENTER);
+        return;
+    }
+
+    // Replace all workspace macros from the command
+    cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
+
+    // Build the environment to use
+    clEnvList_t envList = GetEnvList();
+
+    // Start the process with the environemt
+    m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
+    if(!m_buildProcess) {
+        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    } else {
+        clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    }
 }

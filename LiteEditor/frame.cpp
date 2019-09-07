@@ -4993,7 +4993,14 @@ void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
     clToolBar* toolbar = dynamic_cast<clToolBar*>(e.GetEventObject());
     CHECK_PTR_RET(toolbar);
     wxMenu menu;
-    DoCreateBuildDropDownMenu(&menu);
+
+    // let the plugins build a different menu
+    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
+    evt.SetEventObject(toolbar);
+    evt.SetMenu(&menu);
+    if(!EventNotifier::Get()->ProcessEvent(evt)) { DoCreateBuildDropDownMenu(&menu); }
+    
+    // show the menu
     toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
 }
 

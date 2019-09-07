@@ -25,6 +25,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
+    std::unordered_map<int, wxString> m_buildTargetMenuIdToName;
 
 protected:
     void CacheFiles();
@@ -55,6 +56,7 @@ protected:
     void OnQuickDebugDlgShowing(clDebugEvent& event);
     void OnQuickDebugDlgDismissed(clDebugEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
+    void OnMenuCustomTarget(wxCommandEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
@@ -62,8 +64,9 @@ protected:
     void DoClose();
     void DoClear();
     void RestoreSession();
+    void DoBuild(const wxString& target);
     clFileSystemWorkspaceConfig::Ptr_t GetConfig();
-    
+
 public:
     ///===--------------------------
     /// IWorkspace interface

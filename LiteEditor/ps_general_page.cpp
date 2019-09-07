@@ -35,8 +35,8 @@
 #include <algorithm>
 #include "buildmanager.h"
 
-PSGeneralPage::PSGeneralPage(
-    wxWindow* parent, const wxString& projectName, const wxString& conf, ProjectSettingsDlg* dlg)
+PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf,
+                             ProjectSettingsDlg* dlg)
     : PSGeneralPageBase(parent)
     , m_dlg(dlg)
     , m_projectName(projectName)
@@ -72,9 +72,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropProjectType->SetChoices(choices);
 
     int sel = choices.Index(buildConf->GetProjectType());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropProjectType->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropProjectType->SetChoiceSelection(sel); }
 
     // Builders
     wxPGChoices builders;
@@ -84,12 +82,10 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropMakeGenerator->SetChoices(builders);
     m_pgPropMakeGeneratorArgs->SetValue(buildConf->GetBuildSystemArguments());
     m_pgPropMakeGenerator->SetExpanded(false);
-    
+
     sel = builders.Index(buildConf->GetBuildSystem());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropMakeGenerator->SetChoiceSelection(sel);
-    }
-    
+    if(sel != wxNOT_FOUND) { m_pgPropMakeGenerator->SetChoiceSelection(sel); }
+
     // Compilers
     choices.Clear();
     wxString cmpType = buildConf->GetCompilerType();
@@ -101,9 +97,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     }
     m_pgPropCompiler->SetChoices(choices);
     sel = choices.Index(buildConf->GetCompiler()->GetName());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropCompiler->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropCompiler->SetChoiceSelection(sel); }
 
     // Debuggers
     choices.Clear();
@@ -112,9 +106,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     choices.Add(dbgs);
     m_pgPropDebugger->SetChoices(choices);
     sel = choices.Index(buildConf->GetDebuggerType());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropDebugger->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropDebugger->SetChoiceSelection(sel); }
     m_pgPropUseSeparateDebuggerArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
     m_dlg->SetIsProjectEnabled(buildConf->IsProjectEnabled());
 }
@@ -145,14 +137,39 @@ void PSGeneralPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr136->GetGrid()->GetIterator();
     for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
-            iter.GetProperty()->SetValueToUnspecified();
-        }
+        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) { iter.GetProperty()->SetValueToUnspecified(); }
     }
     m_checkBoxEnabled->SetValue(true);
 }
 
-void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
+void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
+{
+    m_dlg->SetIsDirty(true);
+    if(event.GetProperty() == m_pgPropMakeGenerator) {
+        wxString newGenerator = event.GetProperty()->GetValueAsString();
+        if(newGenerator == "CodeLite Make Generator") {
+            // Prompt the user to update the output file path
+            if(::wxMessageBox(_("This makefile generator uses custom output paths for the binaries\nWould you like "
+                                "CodeLite to adjust the paths ?"),
+                              "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                              ::wxGetTopLevelParent(this)) == wxYES) {
+                // Update the outout file name (strip any paths from it)
+                wxString outputFileName = m_pgPropOutputFile->GetValueAsString();
+                outputFileName.Replace("\\", "/");
+                while(outputFileName.Replace("//", "/")) {}
+                outputFileName = outputFileName.AfterLast('/');
+                m_pgPropOutputFile->SetValue(outputFileName);
+
+                // If the project is of type executable, replace the command to execute
+                if(m_pgPropProjectType->GetValueAsString() == PROJECT_TYPE_EXECUTABLE) {
+                    wxString command;
+                    command << "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
+                    m_pgPropProgram->SetValue(command);
+                }
+            }
+        }
+    }
+}
 
 bool PSGeneralPage::GetPropertyAsBool(wxPGProperty* prop) const
 {

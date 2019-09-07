@@ -530,7 +530,17 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
 
         // Update the build system
         bldConf->SetBuildSystem(data.m_builderName);
-
+        if(data.m_builderName == "Default") {
+            bldConf->SetIntermediateDirectory("$(ConfigurationName)");
+            bldConf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
+            bldConf->SetCommand("$(OutputFile)");
+            bldConf->SetWorkingDirectory("");
+        } else if(data.m_builderName == "CodeLite Make Generator") {
+            bldConf->SetIntermediateDirectory("");
+            bldConf->SetOutputFileName("$(ProjectName)");
+            bldConf->SetCommand("$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)");
+            bldConf->SetWorkingDirectory("$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib");
+        }
         // Set the output file name
         if(!outputfile.IsEmpty()) {
             bldConf->SetOutputFileName(wxEmptyString);
@@ -2354,7 +2364,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
     case DBG_RECV_SIGNAL_EXC_BAD_ACCESS: // SIGSEGV on Mac
     case DBG_RECV_SIGNAL_SIGABRT:        // assert() ?
     case DBG_RECV_SIGNAL_SIGPIPE:
-    case DBG_RECV_SIGNAL_SIGSEGV: {      // program received signal sigsegv
+    case DBG_RECV_SIGNAL_SIGSEGV: { // program received signal sigsegv
 
         // Clear the 'Locals' view
         clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Clear();
@@ -3502,10 +3512,8 @@ void Manager::ShowNewProjectWizard(const wxString& workspaceFolder)
 
         ProjectData data = dlg.GetProjectData();
         // Ensure that the project directory exists
-        if(!wxFileName::DirExists(data.m_path)) {
-            wxFileName::Mkdir(data.m_path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        }
-        
+        if(!wxFileName::DirExists(data.m_path)) { wxFileName::Mkdir(data.m_path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL); }
+
         // Try the plugins first
         clNewProjectEvent finishEvent(wxEVT_NEW_PROJECT_WIZARD_FINISHED);
         finishEvent.SetEventObject(mainFrame);

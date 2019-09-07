@@ -137,8 +137,10 @@ bool Project::Load(const wxString& path)
     bool saveNeeded = false;
     if(GetVersionNumber() < CURRENT_WORKSPACE_VERSION) {
         saveNeeded = true;
+#if 0
         // upgrade the build configurations to support the new Default build system
         UpgradeBuildSystem();
+#endif
     }
 
     // Make sure that the project version matches the latest version

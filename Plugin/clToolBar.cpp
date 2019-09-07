@@ -29,8 +29,8 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     m_bgColour = DrawingUtils::GetPanelBgColour();
     m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
     if(m_useCustomBgColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
-    
-    SetGroupSpacing(80);
+
+    SetGroupSpacing(50);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetMiniToolBar(true);
 
@@ -90,7 +90,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 #ifdef __WXOSX__
     clientRect.Inflate(1);
 #endif
-	
+
 	wxColour tbBgColour;
     if(m_useCustomBgColour) {
         dc.SetBrush(m_bgColour);
@@ -105,7 +105,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         DrawingUtils::FillMenuBarBgColour(gcdc, clientRect, HasFlag(kMiniToolBar));
 		tbBgColour = DrawingUtils::GetMenuBarBgColour(HasFlag(kMiniToolBar));
     }
-	
+
 	// Prepare for drawings
     std::vector<ToolVect_t> groups;
     PrepareForDrawings(gcdc, groups, clientRect);
@@ -126,7 +126,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         DrawingUtils::DrawDropDownArrow(this, gcdc, chevronRect);
         m_chevronRect = chevronRect;
     }
-	
+
 	tbBgColour = tbBgColour.ChangeLightness(DrawingUtils::IsDark(tbBgColour) ? 50 : 200);
 	gcdc.SetPen(tbBgColour);
 	gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());

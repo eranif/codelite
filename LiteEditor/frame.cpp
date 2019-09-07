@@ -1328,7 +1328,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     }
 
     m_toolbar = new clToolBar(this, wxID_ANY);
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
+    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
@@ -4999,7 +4999,7 @@ void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
     evt.SetEventObject(toolbar);
     evt.SetMenu(&menu);
     if(!EventNotifier::Get()->ProcessEvent(evt)) { DoCreateBuildDropDownMenu(&menu); }
-    
+
     // show the menu
     toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
 }
@@ -5176,7 +5176,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     ShowOrHideCaptions();
 
     // As the toolbar is showing, refresh in case the group spacing was changed
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 80));
+    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->Realize();
 
     clEditor::Vec_t editors;

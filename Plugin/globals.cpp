@@ -97,7 +97,7 @@
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && defined(_WIN64)
 BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 {
     if(!IsWindow(hwnd)) return TRUE;
@@ -110,7 +110,7 @@ BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && defined(_WIN64)
     if(!win) { return; }
     bool b = ColoursAndFontsManager::Get().IsDarkTheme();
     SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explore", NULL);

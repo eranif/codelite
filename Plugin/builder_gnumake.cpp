@@ -73,7 +73,7 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = 
 }
 
 BuilderGNUMakeClassic::BuilderGNUMakeClassic()
-    : Builder("Classic (DEPRECATED)")
+    : Builder("Default")
     , m_objectChunks(1)
     , m_projectFilesMetadata(nullptr)
 {

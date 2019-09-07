@@ -101,7 +101,7 @@ static wxString GetOutputFolder(ProjectPtr proj, BuildConfigPtr bldConf)
 }
 
 BuilderGnuMake::BuilderGnuMake()
-    : Builder("Default")
+    : Builder("CodeLite Make Generator")
     , m_objectChunks(1)
     , m_projectFilesMetadata(nullptr)
 {

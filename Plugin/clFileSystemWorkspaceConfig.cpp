@@ -229,3 +229,12 @@ bool clFileSystemWorkspaceSettings::IsOk(const wxFileName& filename)
     if(!root.isOk()) { return false; }
     return root.toElement().namedObject("workspace_type").toString() == WORKSPACE_TYPE;
 }
+
+wxArrayString clFileSystemWorkspaceSettings::GetConfigs() const
+{
+    wxArrayString arr;
+    for(const auto& vt : m_configsMap) {
+        arr.Add(vt.first);
+    }
+    return arr;
+}

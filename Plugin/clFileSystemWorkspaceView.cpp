@@ -6,6 +6,7 @@
 #include "codelite_events.h"
 #include "clFileSystemWorkspaceDlg.h"
 #include "clToolBar.h"
+#include "clThemedButton.h"
 
 clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -18,6 +19,14 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), clGetManager()->GetStdIcons()->LoadBitmap("cog"), "",
                           wxITEM_NORMAL);
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
+    GetToolBar()->AddSeparator();
+
+    m_buttonConfigs = new clThemedButton(this, wxID_ANY, wxEmptyString);
+    m_buttonConfigs->SetHasDropDownMenu(true);
+    m_buttonConfigs->Bind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
+    GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND);
+    GetToolBar()->Realize();
+
     // Hide hidden folders and files
     m_options &= ~kShowHiddenFiles;
     m_options &= ~kShowHiddenFolders;
@@ -28,6 +37,7 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
+    m_buttonConfigs->Unbind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
 }
 
 void clFileSystemWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -62,4 +72,24 @@ void clFileSystemWorkspaceView::OnSettings(wxCommandEvent& event)
 {
     clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
+}
+
+void clFileSystemWorkspaceView::UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig)
+{
+    m_configs = configs;
+    m_buttonConfigs->SetText(selectedConfig);
+}
+
+void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
+{
+    wxMenu menu;
+    for(const wxString& config : m_configs) {
+        int menuItemid = wxXmlResource::GetXRCID(config);
+        menu.Append(menuItemid, config, config, wxITEM_NORMAL);
+        menu.Bind(wxEVT_MENU, [=](wxCommandEvent& menuEvent) {
+            m_buttonConfigs->SetText(config);
+            clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
+        }, menuItemid);
+    }
+    m_buttonConfigs->ShowMenu(menu);
 }

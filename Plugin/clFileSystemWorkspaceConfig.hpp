@@ -80,6 +80,7 @@ public:
     clFileSystemWorkspaceConfig::Ptr_t GetSelectedConfig() const;
     clFileSystemWorkspaceConfig::Ptr_t GetConfig(const wxString& name) const;
     const std::map<wxString, clFileSystemWorkspaceConfig::Ptr_t>& GetConfigsMap() const { return m_configsMap; }
+    wxArrayString GetConfigs() const;
     const wxString& GetName() const { return m_name; }
     void SetName(const wxString& name) { this->m_name = name; }
     void Clear();

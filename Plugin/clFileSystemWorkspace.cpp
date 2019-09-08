@@ -219,7 +219,7 @@ void clFileSystemWorkspace::Save(bool parse)
 {
     if(!m_filename.IsOk()) { return; }
     m_settings.Save(m_filename);
-
+    GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
     // trigger a file scan
     if(parse) { CacheFiles(); }
 }
@@ -249,6 +249,9 @@ void clFileSystemWorkspace::DoOpen()
     wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(GetFileName().GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
+
+    // Update the build configurations button
+    GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
 
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
@@ -303,6 +306,8 @@ void clFileSystemWorkspace::DoClose()
 
     wxDELETE(m_execProcess);
     wxDELETE(m_buildProcess);
+
+    GetView()->UpdateConfigs({}, wxString());
 }
 
 void clFileSystemWorkspace::DoClear()
@@ -330,10 +335,7 @@ clFileSystemWorkspace& clFileSystemWorkspace::Get()
     return wsp;
 }
 
-void clFileSystemWorkspace::New(const wxString& folder)
-{
-    DoCreate("", folder, true);
-}
+void clFileSystemWorkspace::New(const wxString& folder) { DoCreate("", folder, true); }
 
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 {

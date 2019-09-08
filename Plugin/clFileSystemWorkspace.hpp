@@ -44,6 +44,7 @@ protected:
     void OnExecute(clExecuteEvent& event);
     void OnStopExecute(clExecuteEvent& event);
     void OnIsProgramRunning(clExecuteEvent& event);
+    void OnNewWorkspace(clCommandEvent& event);
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
@@ -63,6 +64,7 @@ protected:
     void DoOpen();
     void DoClose();
     void DoClear();
+    void DoCreate(const wxString& name, const wxString& path, bool loadIfExists);
     void RestoreSession();
     void DoBuild(const wxString& target);
     clFileSystemWorkspaceConfig::Ptr_t GetConfig();

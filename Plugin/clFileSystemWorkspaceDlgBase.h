@@ -158,4 +158,31 @@ public:
     virtual ~FSConfigPageBase();
 };
 
+class NewFileSystemWorkspaceDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText141;
+    wxDirPickerCtrl* m_dirPickerPath;
+    wxStaticText* m_staticText145;
+    wxTextCtrl* m_textCtrlName;
+    wxStdDialogButtonSizer* m_stdBtnSizer133;
+    wxButton* m_buttonOK;
+    wxButton* m_button137;
+
+protected:
+    virtual void OnDirSelected(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText141() { return m_staticText141; }
+    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
+    wxStaticText* GetStaticText145() { return m_staticText145; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                     const wxString& title = _("Create workspace"),
+                                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~NewFileSystemWorkspaceDialogBase();
+};
+
 #endif

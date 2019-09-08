@@ -485,3 +485,91 @@ FSConfigPageBase::~FSConfigPageBase()
                                this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
 }
+
+NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id,
+                                                                   const wxString& title, const wxPoint& pos,
+                                                                   const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCB09InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer131);
+
+    wxFlexGridSizer* flexGridSizer139 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer139->SetFlexibleDirection(wxBOTH);
+    flexGridSizer139->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer139->AddGrowableCol(1);
+
+    boxSizer131->Add(flexGridSizer139, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText141 =
+        new wxStaticText(this, wxID_ANY, _("Workspace path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer139->Add(m_staticText141, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_dirPickerPath = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(300, -1)),
+                                          wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
+    m_dirPickerPath->SetFocus();
+
+    flexGridSizer139->Add(m_dirPickerPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText145 =
+        new wxStaticText(this, wxID_ANY, _("Workspace name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer139->Add(m_staticText145, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer139->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer133 = new wxStdDialogButtonSizer();
+
+    boxSizer131->Add(m_stdBtnSizer133, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer133->AddButton(m_buttonOK);
+
+    m_button137 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer133->AddButton(m_button137);
+    m_stdBtnSizer133->Realize();
+
+    SetName(wxT("NewFileSystemWorkspaceDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_dirPickerPath->Connect(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                             wxFileDirPickerEventHandler(NewFileSystemWorkspaceDialogBase::OnDirSelected), NULL, this);
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFileSystemWorkspaceDialogBase::OnOKUI), NULL, this);
+}
+
+NewFileSystemWorkspaceDialogBase::~NewFileSystemWorkspaceDialogBase()
+{
+    m_dirPickerPath->Disconnect(wxEVT_COMMAND_DIRPICKER_CHANGED,
+                                wxFileDirPickerEventHandler(NewFileSystemWorkspaceDialogBase::OnDirSelected), NULL,
+                                this);
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFileSystemWorkspaceDialogBase::OnOKUI), NULL,
+                           this);
+}

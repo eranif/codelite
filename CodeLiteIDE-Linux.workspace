@@ -1,6 +1,6 @@
 {
  "workspace_type": "File System Workspace",
- "selected_config": "Debug",
+ "selected_config": "Release",
  "name": "CodeLiteIDE-Linux",
  "configs": [{
    "name": "Debug",
@@ -11,7 +11,7 @@
    "arguments": "",
    "environment": "",
    "compiler": "GCC (x86_64)",
-   "targets": [["clean", "cd build-debug && make -j16 clean"], ["build", "cd build-debug && make -j16"], ["install", "cd build-debug && make -j16 install"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"]]
+   "targets": [["clean", "cd build-debug && make -j16 clean"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j16"], ["install", "cd build-debug && make -j16 install"]]
   }, {
    "name": "Release",
    "flags": 0,

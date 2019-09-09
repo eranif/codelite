@@ -21,11 +21,19 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
 
+    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    GetToolBar()->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+                          _("Run Active Project"));
+    GetToolBar()->AddTool(XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build"),
+                          _("Build Active Project"), wxITEM_DROPDOWN);
+    GetToolBar()->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop"),
+                          _("Stop Current Build"));
+    GetToolBar()->Realize();
+
     m_buttonConfigs = new clThemedButton(this, wxID_ANY, wxEmptyString);
     m_buttonConfigs->SetHasDropDownMenu(true);
     m_buttonConfigs->Bind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
     GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND);
-    GetToolBar()->Realize();
 
     // Hide hidden folders and files
     m_options &= ~kShowHiddenFiles;
@@ -86,10 +94,13 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
     for(const wxString& config : m_configs) {
         int menuItemid = wxXmlResource::GetXRCID(config);
         menu.Append(menuItemid, config, config, wxITEM_NORMAL);
-        menu.Bind(wxEVT_MENU, [=](wxCommandEvent& menuEvent) {
-            m_buttonConfigs->SetText(config);
-            clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
-        }, menuItemid);
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& menuEvent) {
+                m_buttonConfigs->SetText(config);
+                clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
+            },
+            menuItemid);
     }
     m_buttonConfigs->ShowMenu(menu);
 }

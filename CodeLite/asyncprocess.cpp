@@ -34,50 +34,10 @@ class IProcess;
 #include "unixprocess_impl.h"
 #endif
 
-// Helper class for applying the environment before launching the process
-class __Env
-{
-    const clEnvList_t* m_env = nullptr;
-    wxStringMap_t m_oldEnv;
-
-public:
-    __Env(const clEnvList_t* env)
-        : m_env(env)
-    {
-        if(m_env) {
-            for(const auto& p : (*m_env)) {
-                const wxString& name = p.first;
-                const wxString& value = p.second;
-
-                wxString oldValue;
-                // If an environment variable with this name already exists, keep its old value
-                // as we want to restore it later
-                if(::wxGetEnv(name, &oldValue)) { m_oldEnv.insert({ name, oldValue }); }
-                // set the new value
-                ::wxSetEnv(name, value);
-            }
-        }
-    }
-    ~__Env()
-    {
-        if(m_env) {
-            for(const auto& p : (*m_env)) {
-                const wxString& name = p.first;
-                if(m_oldEnv.count(name)) {
-                    ::wxSetEnv(name, m_oldEnv[name]);
-                } else {
-                    ::wxUnsetEnv(name);
-                }
-            }
-        }
-        m_oldEnv.clear();
-    }
-};
-
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
                              const clEnvList_t* env)
 {
-    __Env e(env);
+    clEnvironment e(env);
 #ifdef __WXMSW__
     wxString errMsg;
     return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir);
@@ -89,7 +49,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t f
 IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd, size_t flags,
                                const wxString& workingDir, const clEnvList_t* env)
 {
-    __Env e(env);
+    clEnvironment e(env);
 #ifdef __WXMSW__
     wxString errMsg;
     return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir, cb);
@@ -100,7 +60,7 @@ IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const
 
 IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& workingDir, const clEnvList_t* env)
 {
-    __Env e(env);
+    clEnvironment e(env);
 #ifdef __WXMSW__
     wxString errMsg;
     return WinProcessImpl::Execute(NULL, cmd, errMsg, flags | IProcessCreateSync, workingDir);

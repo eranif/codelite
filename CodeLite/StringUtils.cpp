@@ -1,4 +1,5 @@
 #include "StringUtils.h"
+#include <vector>
 
 std::string StringUtils::ToStdString(const wxString& str)
 {
@@ -75,4 +76,160 @@ void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbu
     } else {
         modbuffer.Clear();
     }
+}
+
+#define ARGV_STATE_NORMAL 0
+#define ARGV_STATE_DQUOTE 1
+#define ARGV_STATE_SQUOTE 2
+#define ARGV_STATE_ESCAPE 3
+#define ARGV_STATE_BACKTICK 4
+#define PUSH_CURTOKEN()          \
+    {                            \
+        if(!curstr.empty()) {    \
+            A.push_back(curstr); \
+            curstr.clear();      \
+        }                        \
+    }
+
+#define CHANGE_STATE(new_state) \
+    {                           \
+        prev_state = state;     \
+        state = new_state;      \
+    }
+
+#define RESTORE_STATE()                 \
+    {                                   \
+        state = prev_state;             \
+        prev_state = ARGV_STATE_NORMAL; \
+    }
+
+char** StringUtils::BuildArgv(const wxString& str, int& argc)
+{
+    std::vector<wxString> A;
+    int state = ARGV_STATE_NORMAL;
+    int prev_state = ARGV_STATE_NORMAL;
+    wxString curstr;
+    for(wxChar ch : str) {
+        switch(state) {
+        case ARGV_STATE_NORMAL: {
+            switch(ch) {
+            case ' ':
+            case '\t':
+                PUSH_CURTOKEN();
+                break;
+            case '\'':
+                PUSH_CURTOKEN();
+                CHANGE_STATE(ARGV_STATE_SQUOTE);
+                curstr << ch;
+                break;
+            case '"':
+                PUSH_CURTOKEN();
+                CHANGE_STATE(ARGV_STATE_DQUOTE);
+                curstr << ch;
+                break;
+            case '`':
+                PUSH_CURTOKEN();
+                CHANGE_STATE(ARGV_STATE_BACKTICK);
+                curstr << ch;
+                break;
+            default:
+                curstr << ch;
+                break;
+            }
+        } break;
+        case ARGV_STATE_ESCAPE: {
+            switch(ch) {
+            case 'n':
+                curstr << "\n";
+                RESTORE_STATE();
+                break;
+            case 'b':
+                curstr << "\b";
+                RESTORE_STATE();
+                break;
+            case 't':
+                curstr << "\t";
+                RESTORE_STATE();
+                break;
+            case 'r':
+                curstr << "\r";
+                RESTORE_STATE();
+                break;
+            case 'v':
+                curstr << "\v";
+                RESTORE_STATE();
+                break;
+            default:
+                curstr << ch;
+                RESTORE_STATE();
+                break;
+            }
+        } break;
+        case ARGV_STATE_DQUOTE: {
+            switch(ch) {
+            case '\\':
+                CHANGE_STATE(ARGV_STATE_ESCAPE);
+                break;
+            case '"':
+                curstr << ch;
+                PUSH_CURTOKEN();
+                RESTORE_STATE();
+                break;
+            default:
+                curstr << ch;
+                break;
+            }
+        } break;
+        case ARGV_STATE_SQUOTE: {
+            switch(ch) {
+            case '\\':
+                CHANGE_STATE(ARGV_STATE_ESCAPE);
+                break;
+            case '\'':
+                curstr << ch;
+                PUSH_CURTOKEN();
+                RESTORE_STATE();
+                break;
+            default:
+                curstr << ch;
+                break;
+            }
+        } break;
+        case ARGV_STATE_BACKTICK: {
+            switch(ch) {
+            case '\\':
+                CHANGE_STATE(ARGV_STATE_ESCAPE);
+                break;
+            case '`':
+                curstr << ch;
+                PUSH_CURTOKEN();
+                RESTORE_STATE();
+                break;
+            default:
+                curstr << ch;
+                break;
+            }
+        } break;
+        }
+    }
+
+    if(!curstr.IsEmpty()) { A.push_back(curstr); }
+
+    if(A.empty()) { return nullptr; }
+
+    char** argv = new char*[A.size() + 1];
+    argv[A.size()] = NULL;
+    for(size_t i = 0; i < A.size(); ++i) {
+        argv[i] = strdup(A[i].mb_str(wxConvUTF8).data());
+    }
+    argc = (int)A.size();
+    return argv;
+}
+
+void StringUtils::FreeArgv(char** argv, int argc)
+{
+    for(int i = 0; i < argc; ++i) {
+        free(argv[i]);
+    }
+    delete[] argv;
 }

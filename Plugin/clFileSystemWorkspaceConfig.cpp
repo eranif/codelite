@@ -73,7 +73,8 @@ wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& work
         if(!l.IsEmpty()) { strCompileFlags << l << " "; }
     }
     strCompileFlags.Trim();
-
+    
+    // Incase we got backticks, we need to apply the environment
     CompilerCommandLineParser cclp(strCompileFlags, workspaceFile.GetPath());
     searchPaths.insert(searchPaths.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
 

@@ -25,6 +25,7 @@
 #include "fileutils.h"
 #include <wx/xrc/xmlres.h>
 #include "NewFileSystemWorkspaceDialog.h"
+#include "asyncprocess.h"
 
 #define CHECK_ACTIVE_CONFIG() \
     if(!GetSettings().GetSelectedConfig()) { return; }
@@ -414,6 +415,10 @@ void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& ev
 void clFileSystemWorkspace::UpdateParserPaths()
 {
     if(!GetConfig()) { return; }
+
+    // Apply the environment (incase there are backtick, we spawn a helper process)
+    const clEnvList_t envlist = GetEnvList();
+    clEnvironment env(&envlist);
 
     // Update the parser paths
     wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());

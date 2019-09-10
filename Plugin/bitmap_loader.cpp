@@ -190,7 +190,7 @@ void BitmapLoader::initialize()
     if(DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
         fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
     }
-    
+
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
@@ -266,6 +266,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-js", bitmap_size), FileExtManager::TypeJS);
         m_mimeBitmaps.AddBitmap(LoadBitmap("cxx-workspace", bitmap_size), FileExtManager::TypeWorkspace);
         m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace", bitmap_size), FileExtManager::TypeWorkspacePHP);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow", bitmap_size), FileExtManager::TypeWorkspaceFileSystem);
         m_mimeBitmaps.AddBitmap(LoadBitmap("docker", bitmap_size), FileExtManager::TypeWorkspaceDocker);
         m_mimeBitmaps.AddBitmap(LoadBitmap("nodejs-workspace", bitmap_size), FileExtManager::TypeWorkspaceNodeJS);
         m_mimeBitmaps.AddBitmap(LoadBitmap("project", bitmap_size), FileExtManager::TypeProject);
@@ -287,6 +288,10 @@ void BitmapLoader::CreateMimeList()
                                 FileExtManager::TypeWorkspaceFolderExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", bitmap_size),
                                 FileExtManager::TypeWorkspaceFolder);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened-symlink", bitmap_size),
+                                FileExtManager::TypeFolderSymlinkExpanded);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-symlink", bitmap_size), FileExtManager::TypeFolderSymlink);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt-symlink", bitmap_size), FileExtManager::TypeFileSymlink);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);

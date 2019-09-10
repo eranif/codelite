@@ -37,6 +37,7 @@
 #include <wx/log.h>
 #include <fstream>
 #include "StringUtils.h"
+#include "asyncprocess.h"
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
@@ -624,4 +625,19 @@ bool FileUtils::IsDirectory(const wxString& filename)
     if(wxLstat(filename, &buff) != 0) { return false; }
     return S_ISDIR(buff.st_mode);
 #endif
+}
+
+clEnvList_t FileUtils::CreateEnvironment(const wxString& envstr)
+{
+    wxArrayString arr = ::wxStringTokenize(envstr, "\r\n", wxTOKEN_STRTOK);
+    clEnvList_t L;
+    for(wxString& line : arr) {
+        line.Trim().Trim(false);
+        if(line.Index('=') == wxString::npos) { continue; }
+        if(line.StartsWith("#")) { continue; }
+        wxString name = line.BeforeFirst('=');
+        wxString value = line.AfterFirst('=');
+        L.push_back({ name, value });
+    }
+    return L;
 }

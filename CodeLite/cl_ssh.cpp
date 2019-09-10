@@ -29,6 +29,7 @@
 #include <wx/textdlg.h>
 #include <wx/thread.h>
 #include <wx/translation.h>
+#include "file_logger.h"
 #ifdef __WXMSW__
 #include "wx/msw/winundef.h"
 #endif
@@ -295,11 +296,19 @@ void clSSH::Login()
         LoginPublicKey();
 
     } catch(clException& e) {
+        clDEBUG() << "LoginPublicKey failed:" << e.What();
         try {
             LoginPassword();
 
         } catch(clException& e2) {
-            LoginInteractiveKBD();
+            clDEBUG() << "LoginPassword failed:" << e2.What();
+            try {
+                LoginInteractiveKBD();
+                
+            } catch(clException& e3) {
+                clDEBUG() << "LoginInteractiveKBD failed:" << e3.What();
+                throw;
+            }
         }
     }
 }

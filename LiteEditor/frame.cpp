@@ -25,6 +25,8 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilersFoundDlg.h"
+#include "DebuggerToolBar.h"
+#include "ServiceProviderManager.h"
 #include "WelcomePage.h"
 #include "app.h"
 #include "autoversion.h"
@@ -36,8 +38,10 @@
 #include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
 #include "clGotoAnythingManager.h"
+#include "clInfoBar.h"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
+#include "clThemeUpdater.h"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -50,9 +54,11 @@
 #include "cl_unredo.h"
 #include "code_completion_manager.h"
 #include "console_frame.h"
+#include "context_cpp.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "findusagetab.h"
 #include "includepathlocator.h"
 #include "localstable.h"
 #include "manage_perspective_dlg.h"
@@ -61,6 +67,7 @@
 #include "precompiled_header.h"
 #include "quickfindbar.h"
 #include "refactorengine.h"
+#include "renamesymboldlg.h"
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
 #include "theme_handler_helper.h"
@@ -68,20 +75,14 @@
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
 #include <algorithm>
+#include <cpptoken.h>
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>
 #include <wx/richmsgdlg.h>
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "DebuggerToolBar.h"
-#include "clThemeUpdater.h"
-#include "clInfoBar.h"
-#include "findusagetab.h"
-#include "context_cpp.h"
-#include "renamesymboldlg.h"
-#include <cpptoken.h>
-#include "ServiceProviderManager.h"
+#include "clFileSystemWorkspace.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -589,6 +590,7 @@ EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
 // Help menu
 //-------------------------------------------------------
 EVT_MENU(wxID_ABOUT, clMainFrame::OnAbout)
+EVT_MENU(XRCID("wxID_REPORT_BUG"), clMainFrame::OnReportIssue)
 EVT_MENU(XRCID("check_for_update"), clMainFrame::OnCheckForUpdate)
 EVT_MENU(XRCID("run_setup_wizard"), clMainFrame::OnRunSetupWizard)
 
@@ -1326,7 +1328,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     }
 
     m_toolbar = new clToolBar(this, wxID_ANY);
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 20));
+    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
@@ -2662,9 +2664,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     if(EventNotifier::Get()->ProcessEvent(evt)) return;
 
     wxUnusedVar(event);
-    if(ManagerST::Get()->IsWorkspaceOpen() == false) return;
-
-    if(activeEditor->GetProject().IsEmpty()) return;
+    if(!::clIsCxxWorkspaceOpened()) { return; }
 
     QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor), activeEditor->GetFileName().GetFullPath(), wxID_ANY,
                         wxT(""), wxDefaultPosition, wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
@@ -3177,6 +3177,12 @@ void clMainFrame::CompleteInitialization()
     wxWindowUpdateLocker locker(this);
 #endif
 
+    // Register the file system workspace type
+    clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
+
+    // Create a new file system workspace instance
+    clFileSystemWorkspace::Get().Initialise();
+
     // Populate the list of core toolbars before we start loading
     // the plugins
     wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
@@ -3273,6 +3279,7 @@ void clMainFrame::CompleteInitialization()
         // regardless of the answer, dont bug the user again
         clConfig::Get().Write("ColoursAdjusted", true);
     }
+    MSWSetWindowDarkTheme(this);
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
@@ -4211,15 +4218,20 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 
 void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
 {
+    if(ManagerST::Get()->GetRetagInProgress()) {
+        clDEBUG() << "A workspace parsing is already taking place, request is ignored";
+        return;
+    }
+
     // See if any of the plugins want to handle this event by itself
     bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
     wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
     e.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(e)) return;
-    
+
     // Update the parser paths with the global ones
     ManagerST::Get()->UpdateParserPaths(false);
-    
+
     TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
     if(event.GetId() == XRCID("retag_workspace"))
         type = TagsManager::Retag_Quick;
@@ -4657,10 +4669,10 @@ void clMainFrame::SetAUIManagerFlags()
         break;
     }
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-//#if defined(__WXGTK__) && !defined(__WXGTK3__) 
+    //#if defined(__WXGTK__) && !defined(__WXGTK3__)
     // GTK2, remove live-resize flag
-    //auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
-//#endif
+    // auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
+    //#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 
@@ -4721,13 +4733,14 @@ void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
 
-    // See whether we got a custom workspace open in one of the plugins
-    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
-    e.SetEventObject(this);
-    e.SetAnswer(false);
-    EventNotifier::Get()->ProcessEvent(e);
-
-    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) || e.IsAnswer());
+    //    // See whether we got a custom workspace open in one of the plugins
+    //    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
+    //    e.SetEventObject(this);
+    //    e.SetAnswer(false);
+    //    EventNotifier::Get()->ProcessEvent(e);
+    //
+    //    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) ||
+    //    e.IsAnswer());
 }
 
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
@@ -4980,7 +4993,14 @@ void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
     clToolBar* toolbar = dynamic_cast<clToolBar*>(e.GetEventObject());
     CHECK_PTR_RET(toolbar);
     wxMenu menu;
-    DoCreateBuildDropDownMenu(&menu);
+
+    // let the plugins build a different menu
+    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
+    evt.SetEventObject(toolbar);
+    evt.SetMenu(&menu);
+    if(!EventNotifier::Get()->ProcessEvent(evt)) { DoCreateBuildDropDownMenu(&menu); }
+
+    // show the menu
     toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
 }
 
@@ -5156,7 +5176,7 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     ShowOrHideCaptions();
 
     // As the toolbar is showing, refresh in case the group spacing was changed
-    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 30));
+    m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->Realize();
 
     clEditor::Vec_t editors;
@@ -5607,7 +5627,7 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
     int curPos = stc->GetCurrentPos();
     int start = stc->WordStartPosition(stc->GetCurrentPos(), true);
     if(curPos < start) return;
-    
+
     clCodeCompletionEvent ccEvent(wxEVT_CC_WORD_COMPLETE);
     ccEvent.SetEditor(editor);
     ccEvent.SetEventObject(this);
@@ -5784,4 +5804,10 @@ void clMainFrame::OnRenameSymbol(clRefactoringEvent& e)
         dlg.GetMatches(matches);
         if(!matches.empty() && dlg.GetWord() != e.GetString()) { ContextCpp::ReplaceInFiles(dlg.GetWord(), matches); }
     }
+}
+
+void clMainFrame::OnReportIssue(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ::wxLaunchDefaultBrowser("https://github.com/eranif/codelite/issues");
 }

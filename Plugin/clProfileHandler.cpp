@@ -6,6 +6,7 @@
 #include "Notebook.h"
 #include <algorithm>
 #include "imanager.h"
+#include "clFileSystemWorkspace.hpp"
 
 clProfileHandler::clProfileHandler()
 {
@@ -35,7 +36,7 @@ void clProfileHandler::OnWorkspaceClosed(wxCommandEvent& e)
 void clProfileHandler::OnWorkspaceLoaded(wxCommandEvent& e)
 {
     e.Skip();
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if(::clIsCxxWorkspaceOpened()) {
         // we just opened a C++ workspace, restore all C++ related tabs
         HandleOutputTabs(true);
         HandleWorkspaceTabs(true);

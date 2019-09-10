@@ -64,9 +64,8 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
 
     Connect(wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED, wxCommandEventHandler(QuickOutlineDlg::OnItemSelected), NULL, this);
     mainSizer->Add(m_treeOutline, 1, wxEXPAND);
-    
-    m_treeOutline->SetSizeHints(wxDLG_UNIT(this, wxSize(200, 200)));
     SetName("QuickOutlineDlg");
+    GetSizer()->Fit(this);
     Layout();
     CallAfter(&QuickOutlineDlg::DoParseActiveBuffer);
     ::clSetDialogBestSizeAndPosition(this);

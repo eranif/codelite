@@ -34,6 +34,7 @@
 #include "setters_getters_dlg.h"
 #include "windowattrmanager.h"
 #include "wx/tokenzr.h"
+#include "globals.h"
 
 //----------------------------------------------------
 
@@ -46,8 +47,8 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     m_checkBoxForamtFileWhenDone->SetValue(m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone);
     m_checkBoxReturnSelf->SetValue(m_settings.GetFlags() & SettersGetterData::SettersReturnReferenceToSelf);
     SetName("SettersGettersDlg");
-    WindowAttrManager::Load(this);
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 bool SettersGettersDlg::Init(const std::vector<TagEntryPtr>& tags, const wxFileName& file, int lineno)

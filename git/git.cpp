@@ -2218,8 +2218,8 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     DiffSideBySidePanel::FileInfo l(tmpFilePath, _("HEAD version"), true);
     l.deleteOnExit = true;
     DiffSideBySidePanel::FileInfo r(fnWorkingCopy.GetFullPath(), _("Working copy"), false);
-    clDiffFrame diffView(EventNotifier::Get()->TopFrame(), l, r, true);
-    diffView.ShowModal();
+    clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
+    diffView->Show();
 }
 
 void GitPlugin::OnRebase(wxCommandEvent& e)

@@ -540,7 +540,8 @@ void CompilerMainPage::SavePatterns()
 void CompilerMainPage::InitializeTools()
 {
     // Clear the values
-    wxPropertyGridConstIterator iter = m_pgMgrTools->GetGrid()->GetIterator();
+    const wxPropertyGrid* pgrid = m_pgMgrTools->GetGrid();
+    wxPropertyGridConstIterator iter = pgrid->GetIterator();
     for(; !iter.AtEnd(); ++iter) {
         wxPGProperty* prop = iter.GetProperty();
         prop->SetValue("");

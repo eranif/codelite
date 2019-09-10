@@ -180,6 +180,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
+    MSWSetWindowDarkTheme(this);
 }
 
 QuickFindBar::~QuickFindBar()

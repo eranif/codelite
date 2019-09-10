@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "add_option_dialog.h"
+#include "AddOptionsDialog.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
 #include "configuration_manager_dlg.h"
@@ -79,16 +79,9 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
     LoadValues(m_configName);
 
     m_treebook->SetFocus();
-    GetSizer()->Fit(this);
 
-    wxSize sz = GetSize();
     CentreOnParent();
     SetName("ProjectSettingsDlg");
-    WindowAttrManager::Load(this);
-
-    // Make sure that all the controls are visible
-    wxSize newSize = GetSize();
-    if(newSize.x <= sz.x && newSize.y <= sz.y) { GetSizer()->Fit(this); }
 
     EventNotifier::Get()->Connect(wxEVT_PROJECT_TREEITEM_CLICKED,
                                   wxCommandEventHandler(ProjectSettingsDlg::OnProjectSelected), NULL, this);
@@ -97,13 +90,8 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
 
     // No effects plz
     m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
-
     ShowHideDisabledMessage();
-    if(!wxPersistenceManager::Get().Find(m_treebook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_treebook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_treebook);
-    }
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 void ProjectSettingsDlg::DoClearDialog()
@@ -498,7 +486,7 @@ void GlobalSettingsPanel::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->Se
 
 bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 {
-    AddOptionDlg dlg(NULL, ctrl->GetValue());
+    AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), ctrl->GetValue());
     if(dlg.ShowModal() == wxID_OK) {
         ctrl->SetValue(dlg.GetValue());
         return true;
@@ -508,7 +496,7 @@ bool IProjectSettingsPage::PopupAddOptionDlg(wxTextCtrl* ctrl)
 
 bool IProjectSettingsPage::PopupAddOptionDlg(wxString& value)
 {
-    AddOptionDlg dlg(NULL, value);
+    AddOptionsDialog dlg(EventNotifier::Get()->TopFrame(), value);
     if(dlg.ShowModal() == wxID_OK) {
         value.Clear();
         value << dlg.GetValue();

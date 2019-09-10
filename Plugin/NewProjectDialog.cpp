@@ -7,6 +7,27 @@
 #include "debuggermanager.h"
 #include "buildmanager.h"
 #include "wxStringHash.h"
+#include "cl_config.h"
+
+#define CONFIG_LAST_SELECTED_CATEGORY "NewProject/LastCategory"
+#define CONFIG_LAST_SELECTED_TYPE "NewProject/LastType"
+#define CONFIG_USE_SEPARATE_FOLDER "NewProjectDialog/UseSeparateFolder"
+#define CONFIG_LAST_COMPILER "NewProjectDialog/LastCompiler"
+#define CONFIG_LAST_DEBUGGER "NewProjectDialog/LastDebugger"
+#define CONFIG_LAST_BUILD_SYSTEM "NewProjectDialog/LastBuildSystem"
+
+static bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxString& defaultValue)
+{
+    int match = wxNOT_FOUND;
+    choice->Clear();
+    for(const wxString& v : values) {
+        int where = choice->Append(v);
+        if(v == defaultValue) { match = where; }
+    }
+
+    if(match != wxNOT_FOUND) { choice->SetSelection(match); }
+    return (match != wxNOT_FOUND);
+}
 
 NewProjectDialog::NewProjectDialog(wxWindow* parent)
     : NewProjectDialogBase(parent)
@@ -18,19 +39,46 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
         m_dirPicker->SetPath(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
     }
 
+    wxString lastBuildSystem = "Default";
+    wxString lastCategory;
+    wxString lastType;
+    wxString lastCompiler;
+    wxString lastDebugger;
+
+    lastBuildSystem = clConfig::Get().Read(CONFIG_LAST_BUILD_SYSTEM, lastBuildSystem);
+    lastCategory = clConfig::Get().Read(CONFIG_LAST_SELECTED_CATEGORY, lastCategory);
+    lastType = clConfig::Get().Read(CONFIG_LAST_SELECTED_TYPE, lastType);
+    lastCompiler = clConfig::Get().Read(CONFIG_LAST_COMPILER, lastCompiler);
+    lastDebugger = clConfig::Get().Read(CONFIG_LAST_DEBUGGER, lastDebugger);
+    bool checked = clConfig::Get().Read(CONFIG_USE_SEPARATE_FOLDER, true);
+
     // Populate the project type choices
     std::unordered_set<wxString> S;
-    for(auto& p : m_list) {
-        if(S.count(p->GetName()) == 0) {
-            S.insert(p->GetName());
+    wxArrayString categories;
+    for(const auto& proj : m_list) {
+        if(S.count(proj->GetName()) == 0) {
+            S.insert(proj->GetName());
         } else {
             continue;
         }
-        int where = m_choiceType->Append(p->GetName());
-        m_projectsMap.insert({ where, p });
+
+        m_projectsMap.insert({ proj->GetName(), proj });
+        wxString internalType = proj->GetProjectInternalType();
+        if(internalType.IsEmpty()) { internalType = "General"; }
+
+        if(m_categories.count(internalType) == 0) {
+            m_categories.insert({ internalType, wxArrayString() });
+            categories.Add(internalType);
+        }
+        wxArrayString& arr = m_categories[internalType];
+        arr.Add(proj->GetName());
     }
 
-    if(!m_choiceType->IsEmpty()) { m_choiceType->SetSelection(0); }
+    if(SetChoiceOptions(m_choiceCategory, categories, lastCategory)) {
+        // Load all the projects belong to this category
+        wxArrayString types = GetProjectsTypesForCategory(lastCategory);
+        SetChoiceOptions(m_choiceType, types, lastType);
+    }
 
     // list of compilers
     wxArrayString compilerChoices;
@@ -42,41 +90,56 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
         compilerChoices.Add(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
-    m_choiceCompiler->Append(compilerChoices);
-    if(!compilerChoices.IsEmpty()) { m_choiceCompiler->SetSelection(0); }
+
+    SetChoiceOptions(m_choiceCompiler, compilerChoices, lastCompiler);
 
     // Get list of debuggers
     wxArrayString debuggerChoices;
     wxArrayString knownDebuggers = DebuggerMgr::Get().GetAvailableDebuggers();
     debuggerChoices.insert(debuggerChoices.end(), knownDebuggers.begin(), knownDebuggers.end());
-    m_choiceDebugger->Append(debuggerChoices);
-    if(!m_choiceDebugger->IsEmpty()) { m_choiceDebugger->SetSelection(0); }
+    SetChoiceOptions(m_choiceDebugger, debuggerChoices, lastDebugger);
 
     // build system
-    {
-        std::list<wxString> builders;
-        wxArrayString knownBuilders;
-        BuildManagerST::Get()->GetBuilders(builders);
-        for(const wxString& builderName : builders) {
-            knownBuilders.Add(builderName);
-        }
-        m_choiceBuild->Append(knownBuilders);
-        if(!m_choiceBuild->IsEmpty()) { m_choiceBuild->SetSelection(0); }
+    std::list<wxString> builders;
+    wxArrayString knownBuilders;
+    BuildManagerST::Get()->GetBuilders(builders);
+    for(const wxString& builderName : builders) {
+        knownBuilders.Add(builderName);
     }
+    SetChoiceOptions(m_choiceBuild, knownBuilders, lastBuildSystem);
+
+    m_checkBoxSepFolder->SetValue(checked);
     CenterOnParent();
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-NewProjectDialog::~NewProjectDialog() {}
+NewProjectDialog::~NewProjectDialog()
+{
+    clConfig::Get().Write(CONFIG_LAST_SELECTED_CATEGORY, m_choiceCategory->GetStringSelection());
+    clConfig::Get().Write(CONFIG_LAST_SELECTED_TYPE, m_choiceType->GetStringSelection());
+    clConfig::Get().Write(CONFIG_LAST_COMPILER, m_choiceCompiler->GetStringSelection());
+    clConfig::Get().Write(CONFIG_LAST_BUILD_SYSTEM, m_choiceBuild->GetStringSelection());
+    clConfig::Get().Write(CONFIG_LAST_DEBUGGER, m_choiceDebugger->GetStringSelection());
+    clConfig::Get().Write(CONFIG_USE_SEPARATE_FOLDER, m_checkBoxSepFolder->IsChecked());
+}
+
+wxArrayString NewProjectDialog::GetProjectsTypesForCategory(const wxString& category)
+{
+    if(m_categories.count(category) == 0) { return wxArrayString(); }
+    const wxArrayString& projects = m_categories[category];
+    return projects;
+}
 
 void NewProjectDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_textCtrlName->IsEmpty() && !m_dirPicker->GetPath().IsEmpty());
+    event.Enable(!m_textCtrlName->IsEmpty() && !m_dirPicker->GetPath().IsEmpty() &&
+                 m_choiceCategory->GetSelection() != wxNOT_FOUND && m_choiceType->GetSelection() != wxNOT_FOUND);
 }
 
 ProjectData NewProjectDialog::GetProjectData() const
 {
-    int sel = m_choiceType->GetSelection();
-    if(sel == wxNOT_FOUND) { return ProjectData(); }
+    wxString sel = m_choiceType->GetStringSelection();
+    if(sel.IsEmpty()) { return ProjectData(); }
     if(m_projectsMap.count(sel) == 0) { return ProjectData(); }
 
     ProjectData data;
@@ -84,8 +147,23 @@ ProjectData NewProjectDialog::GetProjectData() const
     data.m_cmpType = m_choiceCompiler->GetStringSelection();
     data.m_name = m_textCtrlName->GetValue();
     data.m_debuggerType = m_choiceDebugger->GetStringSelection();
-    data.m_path = m_dirPicker->GetPath();
+
+    wxFileName path(m_dirPicker->GetPath(), "");
+    if(m_checkBoxSepFolder->IsChecked()) { path.AppendDir(data.m_name); }
+    data.m_path = path.GetPath();
     data.m_sourceTemplate = "C++ Project";
     data.m_srcProject = m_projectsMap.find(sel)->second;
     return data;
+}
+
+void NewProjectDialog::OnPathSelected(wxFileDirPickerEvent& event) { wxUnusedVar(event); }
+
+void NewProjectDialog::OnNameTyped(wxCommandEvent& event) { wxUnusedVar(event); }
+
+void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
+{
+    wxString sel = m_choiceCategory->GetStringSelection();
+    if(sel.IsEmpty()) { return; }
+    wxArrayString a = GetProjectsTypesForCategory(sel);
+    SetChoiceOptions(m_choiceType, a, wxEmptyString);
 }

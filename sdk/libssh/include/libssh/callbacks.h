@@ -125,6 +125,18 @@ typedef ssh_channel (*ssh_channel_open_request_x11_callback) (ssh_session sessio
       const char * originator_address, int originator_port, void *userdata);
 
 /**
+ * @brief Handles an SSH new channel open "auth-agent" request. This happens when the server
+ * sends back an "auth-agent" connection attempt. This is a client-side API
+ * @param session current session handler
+ * @param userdata Userdata to be passed to the callback function.
+ * @returns a valid ssh_channel handle if the request is to be allowed
+ * @returns NULL if the request should not be allowed
+ * @warning The channel pointer returned by this callback must be closed by the application.
+ */
+typedef ssh_channel (*ssh_channel_open_request_auth_agent_callback) (ssh_session session,
+      void *userdata);
+
+/**
  * The structure to replace libssh functions with appropriate callbacks.
  */
 struct ssh_callbacks_struct {
@@ -154,6 +166,9 @@ struct ssh_callbacks_struct {
   /** This function will be called when an incoming X11 request is received.
    */
   ssh_channel_open_request_x11_callback channel_open_request_x11_function;
+  /** This function will be called when an incoming "auth-agent" request is received.
+   */
+  ssh_channel_open_request_auth_agent_callback channel_open_request_auth_agent_function;
 };
 typedef struct ssh_callbacks_struct *ssh_callbacks;
 
@@ -420,6 +435,69 @@ typedef struct ssh_socket_callbacks_struct *ssh_socket_callbacks;
   ((p)-> c != NULL) \
   )
 
+/**
+ * @internal
+ *
+ * @brief Iterate through a list of callback structures
+ *
+ * This tests for their validity and executes them. The userdata argument is
+ * automatically passed through.
+ *
+ * @param list     list of callbacks
+ *
+ * @param cbtype   type of the callback
+ *
+ * @param c        callback name
+ *
+ * @param va_args parameters to be passed
+ */
+#define ssh_callbacks_execute_list(list, cbtype, c, ...)      \
+    do {                                                      \
+        struct ssh_iterator *i = ssh_list_get_iterator(list); \
+        cbtype cb;                                            \
+        while (i != NULL){                                    \
+            cb = ssh_iterator_value(cbtype, i);               \
+            if (ssh_callbacks_exists(cb, c))                  \
+                cb-> c (__VA_ARGS__, cb->userdata);           \
+            i = i->next;                                      \
+        }                                                     \
+    } while(0)
+
+/**
+ * @internal
+ *
+ * @brief iterate through a list of callback structures.
+ *
+ * This tests for their validity and give control back to the calling code to
+ * execute them. Caller can decide to break the loop or continue executing the
+ * callbacks with different parameters
+ *
+ * @code
+ * ssh_callbacks_iterate(channel->callbacks, ssh_channel_callbacks,
+ *                     channel_eof_function){
+ *     rc = ssh_callbacks_iterate_exec(session, channel);
+ *     if (rc != SSH_OK){
+ *         break;
+ *     }
+ * }
+ * ssh_callbacks_iterate_end();
+ * @endcode
+ */
+#define ssh_callbacks_iterate(_cb_list, _cb_type, _cb_name)           \
+    do {                                                              \
+        struct ssh_iterator *_cb_i = ssh_list_get_iterator(_cb_list); \
+        _cb_type _cb;                                                 \
+        for (; _cb_i != NULL; _cb_i = _cb_i->next) {                  \
+            _cb = ssh_iterator_value(_cb_type, _cb_i);                \
+            if (ssh_callbacks_exists(_cb, _cb_name))
+
+#define ssh_callbacks_iterate_exec(_cb_name, ...) \
+                _cb->_cb_name(__VA_ARGS__, _cb->userdata)
+
+#define ssh_callbacks_iterate_end() \
+        }                           \
+    } while(0)
+
 /** @brief Prototype for a packet callback, to be called when a new packet arrives
  * @param session The current session of the packet
  * @param type packet type (see ssh2.h)
@@ -679,6 +757,22 @@ typedef int (*ssh_channel_subsystem_request_callback) (ssh_session session,
                                             const char *subsystem,
                                             void *userdata);
 
+/**
+ * @brief SSH channel write will not block (flow control).
+ *
+ * @param channel the channel
+ *
+ * @param[in] bytes size of the remote window in bytes. Writing as much data
+ *            will not block.
+ *
+ * @param[in] userdata Userdata to be passed to the callback function.
+ *
+ * @returns 0 default return value (other return codes may be added in future).
+ */
+typedef int (*ssh_channel_write_wontblock_callback) (ssh_session session,
+                                                     ssh_channel channel,
+                                                     size_t bytes,
+                                                     void *userdata);
 
 struct ssh_channel_callbacks_struct {
   /** DON'T SET THIS use ssh_callbacks_init() instead. */
@@ -743,6 +837,10 @@ struct ssh_channel_callbacks_struct {
    * (like sftp).
    */
   ssh_channel_subsystem_request_callback channel_subsystem_request_function;
+  /** This function will be called when the channel write is guaranteed
+   * not to block.
+   */
+  ssh_channel_write_wontblock_callback channel_write_wontblock_function;
 };
 
 typedef struct ssh_channel_callbacks_struct *ssh_channel_callbacks;
@@ -756,7 +854,7 @@ typedef struct ssh_channel_callbacks_struct *ssh_channel_callbacks;
  * @code
  * struct ssh_channel_callbacks_struct cb = {
  *   .userdata = data,
- *   .channel_data = my_channel_data_function
+ *   .channel_data_function = my_channel_data_function
  * };
  * ssh_callbacks_init(&cb);
  * ssh_set_channel_callbacks(channel, &cb);
@@ -767,9 +865,45 @@ typedef struct ssh_channel_callbacks_struct *ssh_channel_callbacks;
  * @param  cb           The callback structure itself.
  *
  * @return SSH_OK on success, SSH_ERROR on error.
+ * @warning this function will not replace existing callbacks but set the
+ *          new one atop of them.
  */
 LIBSSH_API int ssh_set_channel_callbacks(ssh_channel channel,
                                          ssh_channel_callbacks cb);
+
+/**
+ * @brief Add channel callback functions
+ *
+ * This function will add channel callback functions to the channel callback
+ * list.
+ * Callbacks missing from a callback structure will be probed in the next
+ * on the list.
+ *
+ * @param  channel      The channel to set the callback structure.
+ *
+ * @param  cb           The callback structure itself.
+ *
+ * @return SSH_OK on success, SSH_ERROR on error.
+ *
+ * @see ssh_set_channel_callbacks
+ */
+LIBSSH_API int ssh_add_channel_callbacks(ssh_channel channel,
+                                         ssh_channel_callbacks cb);
+
+/**
+ * @brief Remove a channel callback.
+ *
+ * The channel has been added with ssh_add_channel_callbacks or
+ * ssh_set_channel_callbacks in this case.
+ *
+ * @param channel  The channel to remove the callback structure from.
+ *
+ * @param cb       The callback structure to remove
+ *
+ * @returns SSH_OK on success, SSH_ERROR on error.
+ */
+LIBSSH_API int ssh_remove_channel_callbacks(ssh_channel channel,
+                                            ssh_channel_callbacks cb);
 
 /** @} */
 
@@ -810,9 +944,20 @@ LIBSSH_API int ssh_threads_set_callbacks(struct ssh_threads_callbacks_struct
     *cb);
 
 /**
- * @brief returns a pointer on the pthread threads callbacks, to be used with
+ * @brief Returns a pointer to the appropriate callbacks structure for the
+ * environment, to be used with ssh_threads_set_callbacks.
+ *
+ * @returns A pointer to a ssh_threads_callbacks_struct to be used with
  * ssh_threads_set_callbacks.
- * @warning you have to link with the library ssh_threads.
+ *
+ * @see ssh_threads_set_callbacks
+ */
+LIBSSH_API struct ssh_threads_callbacks_struct *ssh_threads_get_default(void);
+
+/**
+ * @brief Returns a pointer on the pthread threads callbacks, to be used with
+ * ssh_threads_set_callbacks.
+ *
  * @see ssh_threads_set_callbacks
  */
 LIBSSH_API struct ssh_threads_callbacks_struct *ssh_threads_get_pthread(void);

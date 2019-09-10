@@ -45,7 +45,17 @@ enum ssh_bind_options_e {
   SSH_BIND_OPTIONS_BANNER,
   SSH_BIND_OPTIONS_LOG_VERBOSITY,
   SSH_BIND_OPTIONS_LOG_VERBOSITY_STR,
-  SSH_BIND_OPTIONS_ECDSAKEY
+  SSH_BIND_OPTIONS_ECDSAKEY,
+  SSH_BIND_OPTIONS_IMPORT_KEY,
+  SSH_BIND_OPTIONS_KEY_EXCHANGE,
+  SSH_BIND_OPTIONS_CIPHERS_C_S,
+  SSH_BIND_OPTIONS_CIPHERS_S_C,
+  SSH_BIND_OPTIONS_HMAC_C_S,
+  SSH_BIND_OPTIONS_HMAC_S_C,
+  SSH_BIND_OPTIONS_CONFIG_DIR,
+  SSH_BIND_OPTIONS_PUBKEY_ACCEPTED_KEY_TYPES,
+  SSH_BIND_OPTIONS_HOSTKEY_ALGORITHMS,
+  SSH_BIND_OPTIONS_PROCESS_CONFIG,
 };
 
 typedef struct ssh_bind_struct* ssh_bind;
@@ -83,6 +93,9 @@ LIBSSH_API ssh_bind ssh_bind_new(void);
 
 LIBSSH_API int ssh_bind_options_set(ssh_bind sshbind,
     enum ssh_bind_options_e type, const void *value);
+
+LIBSSH_API int ssh_bind_options_parse_config(ssh_bind sshbind,
+    const char *filename);
 
 /**
  * @brief Start listening to the socket.
@@ -187,12 +200,47 @@ LIBSSH_API ssh_gssapi_creds ssh_gssapi_get_creds(ssh_session session);
 LIBSSH_API int ssh_handle_key_exchange(ssh_session session);
 
 /**
+ * @brief Initialize the set of key exchange, hostkey, ciphers, MACs, and
+ *        compression algorithms for the given ssh_session.
+ *
+ * The selection of algorithms and keys used are determined by the
+ * options that are currently set in the given ssh_session structure.
+ * May only be called before the initial key exchange has begun.
+ *
+ * @param session  The session structure to initialize.
+ *
+ * @see ssh_handle_key_exchange
+ * @see ssh_options_set
+ *
+ * @return SSH_OK if initialization succeeds.
+ */
+
+LIBSSH_API int ssh_server_init_kex(ssh_session session);
+
+/**
  * @brief Free a ssh servers bind.
  *
  * @param  ssh_bind_o     The ssh server bind to free.
  */
 LIBSSH_API void ssh_bind_free(ssh_bind ssh_bind_o);
 
+/**
+ * @brief Set the acceptable authentication methods to be sent to the client.
+ *
+ *
+ * @param[in]  session  The server session
+ *
+ * @param[in]  auth_methods The authentication methods we will support, which
+ *                          can be bitwise-or'd.
+ *
+ *                          Supported methods are:
+ *
+ *                          SSH_AUTH_METHOD_PASSWORD
+ *                          SSH_AUTH_METHOD_PUBLICKEY
+ *                          SSH_AUTH_METHOD_HOSTBASED
+ *                          SSH_AUTH_METHOD_INTERACTIVE
+ *                          SSH_AUTH_METHOD_GSSAPI_MIC
+ */
 LIBSSH_API void ssh_set_auth_methods(ssh_session session, int auth_methods);
 
 /**********************************************************
@@ -316,9 +364,6 @@ LIBSSH_API int ssh_channel_request_send_exit_signal(ssh_channel channel,
                                                 int core,
                                                 const char *errmsg,
                                                 const char *lang);
-LIBSSH_API int ssh_channel_write_stderr(ssh_channel channel,
-                                                const void *data,
-                                                uint32_t len);
 
 LIBSSH_API int ssh_send_keepalive(ssh_session session);
 

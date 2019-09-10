@@ -25,24 +25,8 @@ static size_t xml_res_size_0 = 0;
 static unsigned char xml_res_file_0[] = {
 };
 
-static size_t xml_res_size_1 = 0;
+static size_t xml_res_size_1 = 246;
 static unsigned char xml_res_file_1[] = {
-};
-
-static size_t xml_res_size_2 = 0;
-static unsigned char xml_res_file_2[] = {
-};
-
-static size_t xml_res_size_3 = 0;
-static unsigned char xml_res_file_3[] = {
-};
-
-static size_t xml_res_size_4 = 0;
-static unsigned char xml_res_file_4[] = {
-};
-
-static size_t xml_res_size_5 = 696;
-static unsigned char xml_res_file_5[] = {
 60,63,120,109,108,32,118,101,114,115,105,111,110,61,34,49,46,48,34,32,101,
 110,99,111,100,105,110,103,61,34,85,84,70,45,56,34,63,62,10,60,114,101,
 115,111,117,114,99,101,32,120,109,108,110,115,61,34,104,116,116,112,58,
@@ -54,30 +38,8 @@ static unsigned char xml_res_file_5[] = {
 110,101,99,116,101,100,34,62,115,102,116,112,95,117,105,95,115,102,116,
 112,95,98,105,116,109,97,112,115,46,99,112,112,36,46,46,95,98,105,116,109,
 97,112,115,95,49,54,45,99,111,110,110,101,99,116,101,100,46,112,110,103,
-60,47,111,98,106,101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,
-108,97,115,115,61,34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,
-61,34,49,54,45,102,111,108,100,101,114,45,117,115,101,114,115,34,62,115,
-102,116,112,95,117,105,95,115,102,116,112,95,98,105,116,109,97,112,115,
-46,99,112,112,36,46,46,95,98,105,116,109,97,112,115,95,49,54,45,102,111,
-108,100,101,114,45,117,115,101,114,115,46,112,110,103,60,47,111,98,106,
-101,99,116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,
-34,119,120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,49,54,45,114,
-101,109,111,116,101,45,102,111,108,100,101,114,34,62,115,102,116,112,95,
-117,105,95,115,102,116,112,95,98,105,116,109,97,112,115,46,99,112,112,36,
-46,46,95,98,105,116,109,97,112,115,95,49,54,45,114,101,109,111,116,101,
-45,102,111,108,100,101,114,46,112,110,103,60,47,111,98,106,101,99,116,62,
-10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,120,66,
-105,116,109,97,112,34,32,110,97,109,101,61,34,49,54,45,114,101,109,111,
-116,101,45,102,111,108,100,101,114,64,50,120,34,62,115,102,116,112,95,117,
-105,95,115,102,116,112,95,98,105,116,109,97,112,115,46,99,112,112,36,46,
-46,95,98,105,116,109,97,112,115,95,49,54,45,114,101,109,111,116,101,45,
-102,111,108,100,101,114,64,50,120,46,112,110,103,60,47,111,98,106,101,99,
-116,62,10,32,32,60,111,98,106,101,99,116,32,99,108,97,115,115,61,34,119,
-120,66,105,116,109,97,112,34,32,110,97,109,101,61,34,49,54,45,117,112,34,
-62,115,102,116,112,95,117,105,95,115,102,116,112,95,98,105,116,109,97,112,
-115,46,99,112,112,36,46,46,95,98,105,116,109,97,112,115,95,49,54,45,117,
-112,46,112,110,103,60,47,111,98,106,101,99,116,62,10,60,47,114,101,115,
-111,117,114,99,101,62,10};
+60,47,111,98,106,101,99,116,62,10,60,47,114,101,115,111,117,114,99,101,
+62,10};
 
 void wxCE8CInitBitmapResources()
 {
@@ -93,10 +55,6 @@ void wxCE8CInitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$.._bitmaps_16-connected.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$.._bitmaps_16-folder-users.png"), xml_res_file_1, xml_res_size_1, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$.._bitmaps_16-remote-folder.png"), xml_res_file_2, xml_res_size_2, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$.._bitmaps_16-remote-folder@2x.png"), xml_res_file_3, xml_res_size_3, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$.._bitmaps_16-up.png"), xml_res_file_4, xml_res_size_4, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$C__src_codelite_Plugin_sftp_ui_sftp_bitmaps.xrc"), xml_res_file_5, xml_res_size_5, wxT("text/xml"));
+    XRC_ADD_FILE(wxT("XRC_resource/sftp_ui_sftp_bitmaps.cpp$C__src_codelite_Plugin_sftp_ui_sftp_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
     wxXmlResource::Get()->Load(wxT("memory:XRC_resource/sftp_ui_sftp_bitmaps.cpp$C__src_codelite_Plugin_sftp_ui_sftp_bitmaps.xrc"));
 }

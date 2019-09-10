@@ -187,6 +187,11 @@ public:
      * @brief add new lexer (replace an existing one if exists)
      */
     void AddLexer(LexerConf::Ptr_t lexer);
+    
+    /**
+     * @brief return true if the current theme is dark
+     */
+    bool IsDarkTheme() const;
 };
 
 #endif // LEXERCONFMANAGER_H

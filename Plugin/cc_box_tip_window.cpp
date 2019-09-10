@@ -42,6 +42,7 @@
 #include <wx/tokenzr.h>
 #include <wx/display.h>
 #include <wx/dcgraph.h>
+#include "ColoursAndFontsManager.h"
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -116,8 +117,9 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxMemoryDC memDC(bmp);
     wxGCDC gcdc(memDC);
     wxSize size;
-    m_commentFont = DrawingUtils::GetBestFixedFont(editor);
-    m_codeFont = DrawingUtils::GetBestFixedFont(editor);
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    m_commentFont = lexer->GetFontForSyle(0);
+    m_codeFont = m_commentFont;
     gcdc.SetFont(m_commentFont);
 
     wxString codePart, commentPart;

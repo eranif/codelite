@@ -418,6 +418,7 @@ protected:
     void OnCompleteWordRefreshList(wxCommandEvent& event);
     void OnFunctionCalltip(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnReportIssue(wxCommandEvent& event);
     void OnCheckForUpdate(wxCommandEvent& e);
     void OnRunSetupWizard(wxCommandEvent& e);
     void OnFileNew(wxCommandEvent& event);

@@ -31,6 +31,7 @@
 #include "wxcrafter_plugin.h"
 #include <vector>
 #include <wx/filename.h>
+#include "clPluginsFindBar.h"
 
 class clToolBar;
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
@@ -94,7 +95,8 @@ protected:
     DiffConfig m_config;
     bool m_storeFilepaths;
     clToolBar* m_toolbar;
-    
+    clPluginsFindBar* m_findBar = nullptr;
+
 protected:
     virtual void OnBrowseLeftFile(wxCommandEvent& event);
     virtual void OnBrowseRightFile(wxCommandEvent& event);
@@ -119,7 +121,7 @@ protected:
     bool IsDeleteRightOnExit() const { return m_flags & kDeleteRightOnExit; }
     bool IsOriginSourceControl() const { return m_flags & kOriginSourceControl; }
 
-protected:
+public:
     virtual void OnRefreshDiffUI(wxUpdateUIEvent& event);
     virtual void OnHorizontal(wxCommandEvent& event);
     virtual void OnHorizontalUI(wxUpdateUIEvent& event);
@@ -128,6 +130,7 @@ protected:
     virtual void OnCopyFileFromRight(wxCommandEvent& event);
     virtual void OnCopyFileLeftToRight(wxCommandEvent& event);
     virtual void OnSaveChanges(wxCommandEvent& event);
+    virtual void OnFind(wxCommandEvent& event);
     virtual void OnSaveChangesUI(wxUpdateUIEvent& event);
     virtual void OnCopyLeftToRight(wxCommandEvent& event);
     virtual void OnCopyRightToLeft(wxCommandEvent& event);

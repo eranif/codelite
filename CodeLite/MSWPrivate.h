@@ -17,9 +17,4 @@ namespace std {
 }
 #endif
 
-#if defined(_WIN32) && !defined(_WIN64)
-#define fileno(fp) (fp->_file)
-#define strdup _strdup
-#endif
-
 #endif // MSWPRIVATE_H

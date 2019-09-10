@@ -63,8 +63,6 @@ JSON::JSON(const wxFileName& filename)
     wxString content;
     if(!FileUtils::ReadFileContent(filename, content)) { return; }
     _json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
-
-    if(!_json) { _json = cJSON_CreateObject(); }
 }
 
 JSON::~JSON()

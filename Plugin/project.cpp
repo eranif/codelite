@@ -82,7 +82,7 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Project"));
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddProperty(wxT("Name"), name);
-    m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+    XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
 
     wxXmlNode* descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Description"));
     XmlUtils::SetNodeContent(descNode, description);
@@ -119,8 +119,6 @@ bool Project::Load(const wxString& path)
 {
     if(!m_doc.Load(path)) { return false; }
 
-    // ConvertToUnixFormat(m_doc.GetRoot());
-
     // Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
     // and then set them back
     std::map<wxString, wxString> pluginsData;
@@ -136,6 +134,23 @@ bool Project::Load(const wxString& path)
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
 
     DoUpdateProjectSettings();
+    bool saveNeeded = false;
+    if(GetVersionNumber() < CURRENT_WORKSPACE_VERSION) {
+        saveNeeded = true;
+#if 0
+        // upgrade the build configurations to support the new Default build system
+        UpgradeBuildSystem();
+#endif
+    }
+
+    // Make sure that the project version matches the latest version
+    XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
+
+    if(saveNeeded) {
+        // This call is required to actually change the in-memory builders into wxXmlNode
+        SetSettings(GetSettings());
+        return SaveXmlFile();
+    }
     return true;
 }
 
@@ -317,7 +332,7 @@ bool Project::SaveXmlFile()
     // Set the workspace XML version
     wxString version;
     if(!m_doc.GetRoot()->GetAttribute("Version", &version)) {
-        m_doc.GetRoot()->AddAttribute("Version", WORKSPACE_XML_VERSION);
+        XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
     }
 
     bool ok = m_doc.Save(sos);
@@ -453,7 +468,8 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
 
     // update the 'Name' property
     XmlUtils::UpdateProperty(doc.GetRoot(), wxT("Name"), new_name);
-    XmlUtils::UpdateProperty(doc.GetRoot(), "Version", WORKSPACE_XML_VERSION);
+    XmlUtils::UpdateProperty(doc.GetRoot(), "Version",
+                             m_doc.GetRoot()->GetAttribute("Version", DEFAULT_CURRENT_WORKSPACE_VERSION_STR));
 
     // set description
     wxXmlNode* descNode(NULL);
@@ -1399,13 +1415,15 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
     return cmpOption;
 }
 
-void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths)
+void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths,
+                                        bool compile_flags_only)
 {
     BuildConfigPtr buildConf = GetBuildConfiguration();
     wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
     wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
 
     CreateCompileFlags(compilersGlobalPaths);
+    if(compile_flags_only) { return; }
 
     wxString workingDirectory = m_fileName.GetPath();
     std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
@@ -1673,12 +1691,6 @@ void Project::GetUnresolvedMacros(const wxString& configName, wxArrayString& var
 
 void Project::ClearIncludePathCache() { m_cachedIncludePaths.clear(); }
 
-wxString Project::GetVersion() const
-{
-    if(!m_doc.IsOk() || m_doc.GetRoot()) return wxEmptyString;
-    return m_doc.GetRoot()->GetAttribute("Version");
-}
-
 wxArrayString Project::GetCxxUnPreProcessors(bool clearCache)
 {
     BuildConfigPtr buildConf = GetBuildConfiguration();
@@ -1913,6 +1925,9 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
 
     // Add the target flag
     if(cmp) { GetExtraFlags(compile_flags_content, buildConf->GetCompiler()); }
+
+    // Handle h files as C++ headers
+    // compile_flags_content << "-x c++-header\n";
 
     // Write the file content
     wxFileName compile_flags(GetFileName());
@@ -2166,4 +2181,49 @@ void clProjectFile::SetExcludeConfigs(Project* project, const wxArrayString& exc
     } else {
         project->m_excludeFiles.insert(GetFilename());
     }
+}
+
+long Project::GetVersionNumber() const
+{
+    if(!m_doc.IsOk()) { return DEFAULT_CURRENT_WORKSPACE_VERSION; } // return the old version number
+    wxString versionAttribute = m_doc.GetRoot()->GetAttribute("Version");
+    long nVersion;
+    if(versionAttribute.IsEmpty() || !versionAttribute.ToCLong(&nVersion)) { return DEFAULT_CURRENT_WORKSPACE_VERSION; }
+    return nVersion;
+}
+
+void Project::UpgradeBuildSystem()
+{
+#if 0
+    ProjectSettingsPtr settings = GetSettings();
+    if(!settings) { return; }
+    
+    ProjectSettingsCookie c;
+    BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(c);
+    while(bldConf) {
+        BuilderPtr builder = bldConf->GetBuilder();
+        if(builder->GetName() == "CodeLite Make Generator") {
+            // requires upgrade
+            // 1. Clear the intermediate folder value
+            bldConf->SetIntermediateDirectory("");
+    
+            // 2. Update the output file name.
+            // Since the paths are not hardcoded, we just need the file name ommit any other
+            // path
+            wxString outputFileName = bldConf->GetOutputFileName();
+            outputFileName.Replace("\\", "/");
+            while(outputFileName.Replace("//", "/")) {}
+            outputFileName = outputFileName.AfterLast('/');
+            bldConf->SetOutputFileName(outputFileName);
+    
+            if(bldConf->GetProjectType() == PROJECT_TYPE_EXECUTABLE) {
+                // 3. Set the executable to run/debug
+                wxString command;
+                command << "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
+                bldConf->SetCommand(command);
+            }
+        }
+        bldConf = settings->GetNextBuildConfiguration(c);
+    }
+#endif
 }

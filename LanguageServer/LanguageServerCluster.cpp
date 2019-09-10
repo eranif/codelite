@@ -13,6 +13,7 @@
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
 #include "CompileCommandsGenerator.h"
+#include "macromanager.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -197,7 +198,11 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         lspCommand.Add(entry.GetExepath());
 
         if(!entry.GetArgs().IsEmpty()) {
-            wxArrayString args = ::wxStringTokenize(entry.GetArgs(), " ", wxTOKEN_STRTOK);
+            wxString entryArgs = entry.GetArgs();
+            wxString project;
+            if(clCxxWorkspaceST::Get()->IsOpen()) { project = clCxxWorkspaceST::Get()->GetActiveProjectName(); }
+            entryArgs = MacroManager::Instance()->Expand(entryArgs, clGetManager(), project);
+            wxArrayString args = ::wxStringTokenize(entryArgs, " ", wxTOKEN_STRTOK);
             lspCommand.insert(lspCommand.end(), args.begin(), args.end());
         }
 
@@ -248,7 +253,7 @@ void LanguageServerCluster::StartAll()
 {
     // create a new list
     ClearAllDiagnostics();
-    
+
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;

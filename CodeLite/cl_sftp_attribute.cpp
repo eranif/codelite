@@ -35,10 +35,7 @@ SFTPAttribute::SFTPAttribute(SFTPAttribute_t attr)
     Assign(attr);
 }
 
-SFTPAttribute::~SFTPAttribute()
-{
-    DoClear();
-}
+SFTPAttribute::~SFTPAttribute() { DoClear(); }
 
 void SFTPAttribute::Assign(SFTPAttribute_t attr)
 {
@@ -49,9 +46,7 @@ void SFTPAttribute::Assign(SFTPAttribute_t attr)
 
 void SFTPAttribute::DoClear()
 {
-    if ( m_attributes ) {
-        sftp_attributes_free( m_attributes );
-    }
+    if(m_attributes) { sftp_attributes_free(m_attributes); }
     m_attributes = NULL;
     m_name.Clear();
     m_flags = 0;
@@ -61,15 +56,14 @@ void SFTPAttribute::DoClear()
 
 void SFTPAttribute::DoConstruct()
 {
-    if ( !m_attributes )
-        return;
+    if(!m_attributes) return;
 
     m_name = m_attributes->name;
     m_size = m_attributes->size;
     m_permissions = m_attributes->permissions;
     m_flags = 0;
 
-    switch ( m_attributes->type ) {
+    switch(m_attributes->type) {
     case SSH_FILEXFER_TYPE_DIRECTORY:
         m_flags |= TYPE_FOLDER;
         break;
@@ -93,25 +87,33 @@ void SFTPAttribute::DoConstruct()
 
 wxString SFTPAttribute::GetTypeAsString() const
 {
-    if ( IsSpecial() ) {
-        return "Special";
-    } else if ( IsFolder() ) {
-        return "Folder";
-    } else if ( IsSymlink() ) {
-        return "Symlink";
-    } else if ( IsFile() ) {
-        return "File";
+    if(IsSymlink()) {
+        if(IsFolder()) {
+            return " -> " + GetSymlinkPath();
+        } else if(IsFile()) {
+            return " -> " + GetSymlinkPath();
+        } else {
+            return "Symlink";
+        }
     } else {
-        return "Unknown";
+        if(IsSpecial()) {
+            return "Special";
+        } else if(IsFolder()) {
+            return "Folder";
+        } else if(IsFile()) {
+            return "File";
+        } else {
+            return "Unknown";
+        }
     }
 }
 
 bool SFTPAttribute::Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two)
 {
-    if ( one->IsFolder() && !two->IsFolder() ) {
+    if(one->IsFolder() && !two->IsFolder()) {
         return true;
 
-    } else if ( !one->IsFolder() && two->IsFolder() ) {
+    } else if(!one->IsFolder() && two->IsFolder()) {
         return false;
 
     } else {
@@ -120,4 +122,3 @@ bool SFTPAttribute::Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two)
 }
 
 #endif // USE_SFTP
-

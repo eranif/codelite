@@ -10,7 +10,7 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
     if(initialSelection >= 0 && initialSelection < (int)options.size()) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(initialSelection));
     }
-    CenterOnParent();
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 clSingleChoiceDialog::~clSingleChoiceDialog() {}

@@ -79,6 +79,7 @@
 #include <wx/file.h>
 #include <wx/progdlg.h>
 #include <wx/regex.h>
+#include "clFileSystemWorkspace.hpp"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -114,11 +115,16 @@ static bool IsHeader(const wxString& ext)
 #define VALIDATE_PROJECT_FALSE(ctrl) \
     if(ctrl.GetProject().IsEmpty()) { return false; }
 
+#define IS_CXX_WORKSPACE_OPENED() (::clIsCxxWorkspaceOpened())
+
 #define VALIDATE_WORKSPACE() \
-    if(ManagerST::Get()->IsWorkspaceOpen() == false) { return; }
+    if(!IS_CXX_WORKSPACE_OPENED()) { return; }
 
 #define VALIDATE_WORKSPACE_FALSE() \
-    if(!ManagerST::Get()->IsWorkspaceOpen()) { return false; }
+    if(!IS_CXX_WORKSPACE_OPENED()) { return false; }
+
+#define VALIDATE_WORKSPACE_NULL() \
+    if(!IS_CXX_WORKSPACE_OPENED()) { return NULL; }
 
 struct SFileSort {
     bool operator()(const wxFileName& one, const wxFileName& two)
@@ -802,8 +808,8 @@ struct ContextCpp_ClientData : public wxClientData {
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
 {
     CHECK_JS_RETURN_NULL();
-    if(!ManagerST::Get()->IsWorkspaceOpen()) return NULL;
-
+    VALIDATE_WORKSPACE_NULL();
+    
     clEditor& rCtrl = GetCtrl();
 
     //	Make sure we are not on a comment section
@@ -1311,7 +1317,7 @@ void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)
         return;
     }
 
-    bool workspaceOpen = ManagerST::Get()->IsWorkspaceOpen();
+    bool workspaceOpen = IS_CXX_WORKSPACE_OPENED();
     bool projectAvailable = (GetCtrl().GetProjectName().IsEmpty() == false);
 
     if(event.GetId() == XRCID("insert_doxy_comment")) {

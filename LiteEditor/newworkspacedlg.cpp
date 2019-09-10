@@ -43,9 +43,7 @@ NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
     m_comboBoxPath->Append(history);
 
     m_textCtrlWorkspaceName->SetFocus();
-    CentreOnParent();
-    SetName("NewWorkspaceDlg");
-    WindowAttrManager::Load(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 NewWorkspaceDlg::~NewWorkspaceDlg()
@@ -103,9 +101,7 @@ void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
             int answer = ::wxMessageBox(wxString() << _("The selected project path '") << dir
                                                    << _("'\nContains some invalid characters\nContinue anyways?"),
                                         "CodeLite", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
-            if(answer != wxYES) {
-                return;
-            }
+            if(answer != wxYES) { return; }
         }
 
         // Use SetValue to ensure that an TEXT_UPDATE event is fired

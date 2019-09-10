@@ -9,6 +9,8 @@
 #include <build_settings_config.h>
 #include <algorithm>
 
+#include <builder_gnumake_default.h>
+
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
 static const wxCmdLineEntryDesc g_cmdDesc[] = {
@@ -26,10 +28,11 @@ static const wxCmdLineEntryDesc g_cmdDesc[] = {
     { wxCMD_LINE_SWITCH, "j", "json",
       "Generate compile_commands.json for this workspace and exit. If not specified, compile_commands.json is "
       "generated as part of the build process" },
+    { wxCMD_LINE_SWITCH, "f", "compile-flags", "Generate compile_flags.txt for this workspace and exit" },
     { wxCMD_LINE_SWITCH, "e", "execute", "Instead of printing the command line, execute it" },
     { wxCMD_LINE_OPTION, "s", "settings",
       "The full path of the build_settings.xml file.\n"
-      "By default, CodeLite-make will load the compiler definitions from\n"
+      "By default, codelite-make will load the compiler definitions from\n"
       "%appdata%\\CodeLite\\config\\build_settings.xml (or the equivalent path on\n"
       "Unix systems). Passing -s|--settings will override the default search\n"
       "location",
@@ -115,7 +118,7 @@ bool clMakeGeneratorApp::OnInit()
     // First, generate the compile_commands.json
     DoGenerateCompileCommands();
 
-    if(this->m_generateCompileCommands) {
+    if(this->m_generateCompileCommands || this->m_generateCompilerFlags) {
         // If the --json flag was passed, exit now
         Bye();
     } else {
@@ -204,6 +207,7 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
 
     parser.Found("s", &m_buildSettingsXml);
     m_generateCompileCommands = (parser.FoundSwitch("j") == wxCMD_SWITCH_ON);
+    m_generateCompilerFlags = (parser.FoundSwitch("f") == wxCMD_SWITCH_ON);
 
     wxString command;
     if(parser.Found("d", &command)) {
@@ -273,10 +277,16 @@ void clMakeGeneratorApp::DoGenerateCompileCommands()
     wxFileName fn(clCxxWorkspaceST::Get()->GetFileName());
     fn.SetFullName("compile_commands.json");
 
-    Info(wxString() << "-- Generating: " << fn.GetFullPath());
-    JSON json(clCxxWorkspaceST::Get()->CreateCompileCommandsJSON());
-    // Save the file
-    json.save(fn);
+    if(m_generateCompileCommands) {
+        Info(wxString() << "-- Generating: " << fn.GetFullPath());
+    } else {
+        Info(wxString() << "-- Generating: compile_flags.txt files...");
+    }
+    JSON json(clCxxWorkspaceST::Get()->CreateCompileCommandsJSON(!m_generateCompileCommands));
+    if(json.isOk()) {
+        // Save the file
+        json.save(fn);
+    }
 }
 
 void clMakeGeneratorApp::Bye()

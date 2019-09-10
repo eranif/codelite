@@ -32,32 +32,36 @@
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
-      <Environment/>
+      <Environment>WXWIN=C:\src\wxWidgets
+WXCFG=gcc_dll\mswu
+</Environment>
       <Project Name="build_all" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_launcher" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_make" ConfigName="Win_x64_Release"/>
-      <Project Name="codelite_terminal" ConfigName="Release"/>
+      <Project Name="codelite_terminal" ConfigName="Win_x64_Release"/>
       <Project Name="codelitegcc" ConfigName="Win_x64_Release"/>
       <Project Name="le_exec" ConfigName="Win_x64_Release"/>
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
-      <Environment/>
-      <Project Name="build_all" ConfigName="Release"/>
-      <Project Name="codelite_cppcheck" ConfigName="Release"/>
-      <Project Name="codelite_echo" ConfigName="Release"/>
-      <Project Name="codelite_indexer" ConfigName="Release"/>
-      <Project Name="codelite_launcher" ConfigName="Release"/>
-      <Project Name="codelite_make" ConfigName="Release"/>
-      <Project Name="codelite_terminal" ConfigName="Release"/>
-      <Project Name="codelitegcc" ConfigName="Release"/>
-      <Project Name="le_exec" ConfigName="Release"/>
-      <Project Name="makedir" ConfigName="Release"/>
-      <Project Name="wx-config" ConfigName="Release"/>
+      <Environment>WXWIN=C:\src\wxWidgets32
+WXCFG=gcc_dll\mswu
+</Environment>
+      <Project Name="build_all" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_indexer" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_launcher" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_make" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_terminal" ConfigName="Win_x86_Release"/>
+      <Project Name="codelitegcc" ConfigName="Win_x86_Release"/>
+      <Project Name="le_exec" ConfigName="Win_x86_Release"/>
+      <Project Name="makedir" ConfigName="Win_x86_Release"/>
+      <Project Name="wx-config" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

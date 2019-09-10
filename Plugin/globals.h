@@ -305,6 +305,12 @@ WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString& zipPath, const wxString&
 WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = wxT("Explorer"));
 
 /**
+ * @brief under Windows 10 and later, enable dark mode controls (where it is implemented)
+ * based on the selected editor theme. This is dont recursievly on win
+ */
+WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
+
+/**
  * @brief make relative only if a subpath of reference_path (or is reference_path itself)
  * @brief also, make normalise first, and abolish any symlink
  * @param fn wxFileName to alter
@@ -626,4 +632,21 @@ WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
  * @param win
  */
 WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog* win);
+
+/**
+ * @brief similar to clSetDialogBestSizeAndPosition but use a smaller default size
+ */
+WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog* win);
+
+/**
+ * @brief set a dialog size and position. Ratio is the size of the dialog compared to its parent
+ * ration <= 0.0 the same size as the parent
+ */
+WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog* win, double ratio);
+
+/**
+ * @brief return true if a C++ workspace is opened
+ */
+WXDLLIMPEXP_SDK bool clIsCxxWorkspaceOpened();
+
 #endif // GLOBALS_H

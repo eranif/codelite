@@ -31,9 +31,9 @@
 #include <wx/statbmp.h>
 #include <wx/commandlinkbutton.h>
 #include <wx/simplebook.h>
+#include "clConfigurationSelectionCtrl.h"
 #include <wx/toolbar.h>
 #include "clToolBar.h"
-#include "clConfigurationSelectionCtrl.h"
 #include "clThemedSplitterWindow.h"
 #include <wx/treectrl.h>
 #include "fileview.h"
@@ -184,8 +184,8 @@ class WorkspaceTabBase : public wxPanel
 protected:
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
-    clToolBar* m_toolbar580;
     clConfigurationSelectionCtrl* m_configChangeCtrl;
+    clToolBar* m_toolbar580;
     clThemedSplitterWindow* m_splitter;
     wxPanel* m_splitterPagePinnedProjects;
     clThemedListCtrl* m_dvListCtrlPinnedProjects;
@@ -197,8 +197,8 @@ protected:
     virtual void OnPinnedCxxProjectSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar580() { return m_toolbar580; }
     clConfigurationSelectionCtrl* GetConfigChangeCtrl() { return m_configChangeCtrl; }
+    clToolBar* GetToolbar580() { return m_toolbar580; }
     clThemedListCtrl* GetDvListCtrlPinnedProjects() { return m_dvListCtrlPinnedProjects; }
     wxPanel* GetSplitterPagePinnedProjects() { return m_splitterPagePinnedProjects; }
     FileViewTree* GetFileView() { return m_fileView; }

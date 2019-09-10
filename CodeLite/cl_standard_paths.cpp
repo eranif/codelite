@@ -103,6 +103,8 @@ wxString clStandardPaths::GetPluginsDirectory() const
 
 wxString clStandardPaths::GetDataDir() const
 {
+    if(!m_dataDir.IsEmpty()) { return m_dataDir; }
+    
 #ifdef USE_POSIX_LAYOUT
     wxFileName path(wxStandardPaths::Get().GetDataDir() + wxT(INSTALL_DIR), "");
     return path.GetPath();

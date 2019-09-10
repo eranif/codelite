@@ -26,11 +26,12 @@
 #ifndef CLSOCKETBASE_H
 #define CLSOCKETBASE_H
 
+#include <sys/param.h>
 #include <string>
 #include <wx/msgqueue.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
-#ifdef __WXOSX__
+#if defined(__WXOSX__) || defined(BSD)
 #include <sys/errno.h>
 #endif
 #include "codelite_exports.h"

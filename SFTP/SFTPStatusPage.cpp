@@ -49,6 +49,7 @@ SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     m_stcSearch->SetReadOnly(true);
 
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPStatusPage::OnFindError, this);
+    Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SFTPStatusPage::OnFindError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPStatusPage::OnFindOutput, this);
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
     m_styler.Reset(new SFTPGrepStyler(m_stcSearch));
@@ -59,6 +60,7 @@ SFTPStatusPage::~SFTPStatusPage()
 {
     m_stcSearch->Unbind(wxEVT_STC_HOTSPOT_CLICK, &SFTPStatusPage::OnHotspotClicked, this);
     Unbind(wxEVT_SSH_CHANNEL_READ_ERROR, &SFTPStatusPage::OnFindError, this);
+    Unbind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SFTPStatusPage::OnFindError, this);
     Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SFTPStatusPage::OnFindOutput, this);
     Unbind(wxEVT_SSH_CHANNEL_CLOSED, &SFTPStatusPage::OnFindFinished, this);
 

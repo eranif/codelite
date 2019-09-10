@@ -680,7 +680,11 @@ bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 
     if(parts.IsEmpty()) {
         // we found our file!
-        SelectItem(closestItem);
+        if(GetTreeCtrl()->IsSelected(closestItem)) {
+            GetTreeCtrl()->EnsureVisible(closestItem);
+        } else {
+            SelectItem(closestItem);
+        }
         return true;
     }
     return false;

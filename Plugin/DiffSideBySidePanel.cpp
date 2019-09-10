@@ -40,7 +40,8 @@
 #include <wx/msgdlg.h>
 #include "clToolBar.h"
 #include "ColoursAndFontsManager.h"
-
+#include <clPluginsFindBar.h>
+#include "clThemeUpdater.h"
 #define RED_MARKER 5
 #define GREEN_MARKER 6
 #define PLACE_HOLDER_MARKER 7
@@ -56,17 +57,41 @@
 
 DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     : DiffSideBySidePanelBase(parent)
-    , m_darkTheme(DrawingUtils::IsThemeDark())
+    , m_darkTheme(false)
     , m_flags(0)
     , m_storeFilepaths(true)
 {
     m_config.Load();
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        m_darkTheme = lexer->IsDark();
+        lexer->Apply(m_stcLeft);
+        lexer->Apply(m_stcRight);
+    }
+    clThemeUpdater::Get().RegisterWindow(this);
+
+    m_findBar = new clPluginsFindBar(this);
+    m_findBar->SetEditor(m_stcLeft);
+    m_findBar->Show(false);
+
+    // Changing the focus, updates the find bar managed editor
+    m_stcLeft->Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& event) {
+        event.Skip();
+        m_findBar->SetEditor(m_stcLeft);
+    });
+
+    m_stcRight->Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& event) {
+        event.Skip();
+        m_findBar->SetEditor(m_stcRight);
+    });
 
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
     m_toolbar = new clToolBar(this);
-    m_toolbar->SetMiniToolBar(false);
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_REFRESH"), _("Refresh"), bmps->LoadBitmap("debugger_restart"));
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SAVE"), _("Save"), bmps->LoadBitmap("file_save"));
+    m_toolbar->SetMiniToolBar(true);
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), bmps->LoadBitmap("debugger_restart"));
+    m_toolbar->AddTool(wxID_SAVE, _("Save"), bmps->LoadBitmap("file_save"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(wxID_FIND, _("Find"), bmps->LoadBitmap("find"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_NEXT"), _("Next Diff"), bmps->LoadBitmap("next"));
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_PREV"), _("Previous Diff"), bmps->LoadBitmap("up"));
@@ -75,17 +100,20 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_LEFT"), _("Copy Left"), bmps->LoadBitmap("back"));
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_COPY_ALL"), _("Copy All"), bmps->LoadBitmap("copy"), "", wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_VIEW"), _("View Type"), bmps->LoadBitmap("find"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_VIEW"), _("View Type"), bmps->LoadBitmap("monitor"), "", wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_DIFF_TOOL_SETTINGS"), _("Preferences"), bmps->LoadBitmap("cog"), "", wxITEM_DROPDOWN);
     m_toolbar->Realize();
-    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND | wxALL, 5);
+    GetSizer()->Add(m_findBar, 0, wxEXPAND);
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, XRCID("ID_DIFF_TOOL_REFRESH"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, XRCID("ID_DIFF_TOOL_REFRESH"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnRefreshDiff, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnRefreshDiffUI, this, wxID_REFRESH);
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnSaveChanges, this, XRCID("ID_DIFF_TOOL_SAVE"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnSaveChangesUI, this, XRCID("ID_DIFF_TOOL_SAVE"));
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnFind, this, wxID_FIND);
+
+    m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnSaveChanges, this, wxID_SAVE);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnSaveChangesUI, this, wxID_SAVE);
 
     m_toolbar->Bind(wxEVT_TOOL, &DiffSideBySidePanel::OnNextDiffSequence, this, XRCID("ID_DIFF_TOOL_NEXT"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnNextDiffUI, this, XRCID("ID_DIFF_TOOL_NEXT"));
@@ -120,11 +148,6 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     Connect(ID_COPY_RIGHT_TO_LEFT_AND_MOVE, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(DiffSideBySidePanel::OnMenuCopyRight2Left));
     CallAfter(&DiffSideBySidePanel::DoLayout);
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        lexer->Apply(m_stcLeft);
-        lexer->Apply(m_stcRight);
-    }
     CentreOnParent();
 }
 
@@ -347,7 +370,7 @@ void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
         red = "RED";
         green = "GREEN";
         grey = "LIGHT GREY";
-        sideMarker = "BLUE";
+        sideMarker = "PURPLE";
     }
 
     ctrl->MarkerDefine(GREEN_MARKER, wxSTC_MARK_BACKGROUND);
@@ -364,8 +387,9 @@ void DiffSideBySidePanel::DefineMarkers(wxStyledTextCtrl* ctrl)
 
     ctrl->MarkerDefine(MARKER_SEQUENCE, wxSTC_MARK_FULLRECT);
     ctrl->MarkerSetBackground(MARKER_SEQUENCE, sideMarker);
+    ctrl->MarkerSetForeground(MARKER_SEQUENCE, sideMarker);
 
-    ctrl->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_VLINE);
+    ctrl->MarkerDefine(MARKER_SEQUENCE_VERTICAL, wxSTC_MARK_FULLRECT);
     ctrl->MarkerSetBackground(MARKER_SEQUENCE_VERTICAL, sideMarker);
 }
 
@@ -1107,4 +1131,17 @@ void DiffSideBySidePanel::OnPreferences(wxCommandEvent& event)
     menu.Bind(wxEVT_MENU, &DiffSideBySidePanel::OnShowOverviewBarClicked, this,
               XRCID("ID_DIFF_TOOL_SHOW_OVERVIEW_BAR"));
     m_toolbar->ShowMenuForButton(XRCID("ID_DIFF_TOOL_SETTINGS"), &menu);
+}
+
+void DiffSideBySidePanel::OnFind(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxWindow* win = wxWindow::FindFocus();
+    wxStyledTextCtrl* editor = dynamic_cast<wxStyledTextCtrl*>(win);
+    if(!editor) { editor = m_stcLeft; }
+    m_findBar->SetEditor(editor);
+    if(!m_findBar->IsShown()) {
+        m_findBar->Show(editor->GetSelectedText(), false);
+        GetSizer()->Layout();
+    }
 }

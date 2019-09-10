@@ -28,11 +28,14 @@
 
 // A proxy to the right PCH file
 // we need to so we will get a different flags compiled per file
+#if !defined(_WIN64)
+#   include "../PCH/precompiled_header_release_32.h"
+#else
 #ifdef NDEBUG
 #    include "../PCH/precompiled_header_release.h"
 #else
 #    include "../PCH/precompiled_header_dbg.h"
 #endif
-
+#endif
 #endif
 

@@ -31,21 +31,20 @@
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const wxString& fileName)
     : MoveFuncImplBaseDlg(parent)
 {
     m_filePicker->SetPath(fileName);
     LexerConf::Ptr_t lexerCpp = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(lexerCpp) {
-        lexerCpp->Apply(m_preview, true);
-    }
-    
+    if(lexerCpp) { lexerCpp->Apply(m_preview, true); }
+
     // Format the source code before using it
     clSourceFormatEvent event(wxEVT_FORMAT_STRING);
     event.SetInputString(text);
     event.SetFileName(wxFileName(fileName).GetFullName());
-    
+
     EventNotifier::Get()->ProcessEvent(event);
     if(!event.GetFormattedString().IsEmpty()) {
         m_preview->SetText(event.GetFormattedString());
@@ -53,7 +52,7 @@ MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const w
         m_preview->SetText(text);
     }
     m_preview->CallAfter(&wxStyledTextCtrl::SetFocus);
-    CentreOnParent();
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 void MoveFuncImplDlg::SetText(const wxString& text) { m_preview->SetText(text); }
@@ -75,8 +74,8 @@ void MoveFuncImplDlg::OnButtonOK(wxCommandEvent& e)
     wxUnusedVar(e);
     // make sure that the file exist
     if(!wxFileName::FileExists(m_filePicker->GetPath())) {
-        wxMessageBox(
-            _("File: ") + m_filePicker->GetPath() + _(" does not exist"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("File: ") + m_filePicker->GetPath() + _(" does not exist"), _("CodeLite"),
+                     wxICON_WARNING | wxOK);
         return;
     }
     EndModal(wxID_OK);

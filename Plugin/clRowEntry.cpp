@@ -847,6 +847,7 @@ int clRowEntry::GetCheckBoxWidth(wxWindow* win)
 
 void clRowEntry::SetChoice(bool b, size_t col)
 {
+    wxUnusedVar(b);
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) { return; }
     cell.SetType(clCellValue::kTypeChoice);

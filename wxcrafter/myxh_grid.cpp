@@ -16,8 +16,17 @@
 #pragma hdrstop
 #endif
 
-#include "myxh_grid.h"
+#ifdef wxOVERRIDE
+#undef wxOVERRIDE
+#define wxOVERRIDE
+#endif
+
 #include "wx/grid.h"
+
+#undef wxOVERRIDE
+#define wxOVERRIDE override
+
+#include "myxh_grid.h"
 #include <wx/xml/xml.h>
 
 MyWxGridXmlHandler::MyWxGridXmlHandler()

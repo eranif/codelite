@@ -27,11 +27,13 @@
 #include "builder_gnumake.h"
 #include "builder_gnumake_onestep.h"
 #include "builder_NMake.h"
+#include "builder_gnumake_default.h"
 
 BuildManager::BuildManager()
 {
     // register all builders here
     AddBuilder(new BuilderGnuMake());
+    AddBuilder(new BuilderGNUMakeClassic());
     AddBuilder(new BuilderGnuMakeOneStep());
 #ifdef __WXMSW__
     AddBuilder(new BuilderNMake());
@@ -42,9 +44,7 @@ BuildManager::~BuildManager() { m_builders.clear(); }
 
 void BuildManager::AddBuilder(BuilderPtr builder)
 {
-    if(!builder) {
-        return;
-    }
+    if(!builder) { return; }
 
     m_builders[builder->GetName()] = builder;
 }
@@ -53,9 +53,7 @@ void BuildManager::RemoveBuilder(const wxString& name)
 {
 
     std::map<wxString, BuilderPtr>::iterator iter = m_builders.find(name);
-    if(iter != m_builders.end()) {
-        m_builders.erase(iter);
-    }
+    if(iter != m_builders.end()) { m_builders.erase(iter); }
 }
 
 void BuildManager::GetBuilders(std::list<wxString>& list)
@@ -70,9 +68,7 @@ BuilderPtr BuildManager::GetBuilder(const wxString& name)
 {
     std::map<wxString, BuilderPtr>::iterator iter = m_builders.begin();
     for(; iter != m_builders.end(); iter++) {
-        if(iter->first == name) {
-            return iter->second;
-        }
+        if(iter->first == name) { return iter->second; }
     }
 
     // return the default builder

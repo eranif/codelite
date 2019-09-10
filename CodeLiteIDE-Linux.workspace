@@ -1,0 +1,26 @@
+{
+ "workspace_type": "File System Workspace",
+ "selected_config": "Release",
+ "name": "CodeLiteIDE-Linux",
+ "configs": [{
+   "name": "Debug",
+   "flags": 0,
+   "compile_flags": [],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+   "executable": "$HOME/root/bin/codelite",
+   "arguments": "",
+   "environment": "",
+   "compiler": "GCC (x86_64)",
+   "targets": [["clean", "cd build-debug && make -j16 clean"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j16"], ["install", "cd build-debug && make -j16 install"]]
+  }, {
+   "name": "Release",
+   "flags": 0,
+   "compile_flags": [],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+   "executable": "",
+   "arguments": "",
+   "environment": "",
+   "compiler": "GCC (x86_64)",
+   "targets": [["clean", "cd  build-release && make -j16 clean"], ["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1"], ["build", "cd  build-release && make -j16"]]
+  }]
+}

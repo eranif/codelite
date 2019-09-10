@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="codelitelib" Version="10.0.0" InternalType="Library">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0013Debug_Windows000000000000]]>
+    </Plugin>
+  </Plugins>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/codelite-cli</Topleveldir>
+  </Reconciliation>
+  <VirtualDirectory Name="wxsqlite3">
+    <File Name="sqlite3.h"/>
+    <File Name="sqlite3.c"/>
+    <File Name="../sdk/wxsqlite3/src/wxsqlite3.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="codelite_indexer">
+    <VirtualDirectory Name="network">
+      <File Name="../sdk/codelite_indexer/network/np_connections_server.h"/>
+      <File Name="../sdk/codelite_indexer/network/np_connections_server.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe_server.h"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe_server.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe_client.h"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe_client.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe.h"/>
+      <File Name="../sdk/codelite_indexer/network/named_pipe.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/clindexerprotocol.h"/>
+      <File Name="../sdk/codelite_indexer/network/clindexerprotocol.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/cl_indexer_request.h"/>
+      <File Name="../sdk/codelite_indexer/network/cl_indexer_request.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.h"/>
+      <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.cpp"/>
+      <File Name="../sdk/codelite_indexer/network/cl_indexer_macros.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="libCodeLite">
+    <File Name="../CodeLite/UnixProcess.h"/>
+    <File Name="../CodeLite/UnixProcess.cpp"/>
+    <File Name="../CodeLite/StringUtils.h"/>
+    <File Name="../CodeLite/StringUtils.cpp"/>
+    <File Name="../CodeLite/ServiceProviderManager.h"/>
+    <File Name="../CodeLite/ServiceProviderManager.cpp"/>
+    <File Name="../CodeLite/ServiceProvider.h"/>
+    <File Name="../CodeLite/ServiceProvider.cpp"/>
+    <File Name="../CodeLite/MyCreatePipe.h"/>
+    <File Name="../CodeLite/MyCreatePipe.cpp"/>
+    <File Name="../CodeLite/JSON.h"/>
+    <File Name="../CodeLite/JSON.cpp"/>
+    <File Name="../CodeLite/compile_flags.txt"/>
+    <File Name="../CodeLite/clSSHChannel.h"/>
+    <File Name="../CodeLite/clSSHChannel.cpp"/>
+    <File Name="../CodeLite/clConsoleXfce4Terminal.h"/>
+    <File Name="../CodeLite/clConsoleXfce4Terminal.cpp"/>
+    <File Name="../CodeLite/clConsoleRXVTerminal.h"/>
+    <File Name="../CodeLite/clConsoleRXVTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleQTerminal.h"/>
+    <File Name="../CodeLite/clConsoleQTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleOSXTerminal.h"/>
+    <File Name="../CodeLite/clConsoleOSXTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleMateTerminal.h"/>
+    <File Name="../CodeLite/clConsoleMateTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleLXTerminal.h"/>
+    <File Name="../CodeLite/clConsoleLXTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleKonsole.h"/>
+    <File Name="../CodeLite/clConsoleKonsole.cpp"/>
+    <File Name="../CodeLite/clConsoleGnomeTerminal.h"/>
+    <File Name="../CodeLite/clConsoleGnomeTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleCodeLiteTerminal.h"/>
+    <File Name="../CodeLite/clConsoleCodeLiteTerminal.cpp"/>
+    <File Name="../CodeLite/clConsoleCMD.h"/>
+    <File Name="../CodeLite/clConsoleCMD.cpp"/>
+    <File Name="../CodeLite/clConsoleBash.h"/>
+    <File Name="../CodeLite/clConsoleBash.cpp"/>
+    <File Name="../CodeLite/clConsoleBase.h"/>
+    <File Name="../CodeLite/clConsoleBase.cpp"/>
+    <File Name="../CodeLite/ChildProcess.h"/>
+    <File Name="../CodeLite/ChildProcess.cpp"/>
+    <File Name="../CodeLite/clJoinableThread.h"/>
+    <File Name="../CodeLite/clJoinableThread.cpp"/>
+    <File Name="../CodeLite/search_thread.h"/>
+    <File Name="../CodeLite/search_thread.cpp"/>
+    <VirtualDirectory Name="SocketAPI">
+      <File Name="../CodeLite/SocketAPI/clSocketServer.h"/>
+      <File Name="../CodeLite/SocketAPI/clSocketServer.cpp"/>
+      <File Name="../CodeLite/SocketAPI/clSocketClientAsync.h"/>
+      <File Name="../CodeLite/SocketAPI/clSocketClientAsync.cpp"/>
+      <File Name="../CodeLite/SocketAPI/clSocketClient.h"/>
+      <File Name="../CodeLite/SocketAPI/clSocketClient.cpp"/>
+      <File Name="../CodeLite/SocketAPI/clSocketBase.h"/>
+      <File Name="../CodeLite/SocketAPI/clSocketBase.cpp"/>
+      <File Name="../CodeLite/SocketAPI/clConnectionString.h"/>
+      <File Name="../CodeLite/SocketAPI/clConnectionString.cpp"/>
+    </VirtualDirectory>
+    <File Name="../CodeLite/ZombieReaperPOSIX.h"/>
+    <File Name="../CodeLite/ZombieReaperPOSIX.cpp"/>
+    <File Name="../CodeLite/y.tab.h"/>
+    <File Name="../CodeLite/xor_string.h"/>
+    <File Name="../CodeLite/xor_string.cpp"/>
+    <File Name="../CodeLite/XMLLexerTokens.h"/>
+    <File Name="../CodeLite/XMLLexerAPI.h"/>
+    <File Name="../CodeLite/XMLLexer.l"/>
+    <File Name="../CodeLite/XmlLexer.cpp"/>
+    <File Name="../CodeLite/wxStringHash.h"/>
+    <File Name="../CodeLite/wxCodeCompletionBoxEntry.h"/>
+    <File Name="../CodeLite/wx_xml_compatibility.h"/>
+    <File Name="../CodeLite/wx_ordered_map.h"/>
+    <File Name="../CodeLite/worker_thread.h"/>
+    <File Name="../CodeLite/worker_thread.cpp"/>
+    <File Name="../CodeLite/winprocess_impl.h"/>
+    <File Name="../CodeLite/winprocess_impl.cpp"/>
+    <File Name="../CodeLite/winprocess.h"/>
+    <File Name="../CodeLite/winprocess.cpp"/>
+    <File Name="../CodeLite/variable.h"/>
+    <File Name="../CodeLite/variable.cpp"/>
+    <File Name="../CodeLite/var_parser.cpp"/>
+    <File Name="../CodeLite/unixprocess_impl.h"/>
+    <File Name="../CodeLite/unixprocess_impl.cpp"/>
+    <File Name="../CodeLite/typedef_parser.cpp"/>
+    <File Name="../CodeLite/tree_node.h"/>
+    <File Name="../CodeLite/tree.h"/>
+    <File Name="../CodeLite/tokenizer.h"/>
+    <File Name="../CodeLite/tokenizer.cpp"/>
+    <File Name="../CodeLite/TerminalEmulatorUIBase.h"/>
+    <File Name="../CodeLite/TerminalEmulatorUIBase.cpp"/>
+    <File Name="../CodeLite/TerminalEmulatorUI_codelite_bitmaps.cpp"/>
+    <File Name="../CodeLite/TerminalEmulatorUI.wxcp"/>
+    <File Name="../CodeLite/TerminalEmulatorUI.h"/>
+    <File Name="../CodeLite/TerminalEmulatorUI.cpp"/>
+    <File Name="../CodeLite/TerminalEmulatorFrame.h"/>
+    <File Name="../CodeLite/TerminalEmulatorFrame.cpp"/>
+    <File Name="../CodeLite/TerminalEmulator.h"/>
+    <File Name="../CodeLite/TerminalEmulator.cpp"/>
+    <File Name="../CodeLite/tags_storage_sqlite3.h"/>
+    <File Name="../CodeLite/tags_storage_sqlite3.cpp"/>
+    <File Name="../CodeLite/tags_options_data.h"/>
+    <File Name="../CodeLite/tags_options_data.cpp"/>
+    <File Name="../CodeLite/tag_tree.h"/>
+    <File Name="../CodeLite/tag_tree.cpp"/>
+    <File Name="../CodeLite/stringaccessor.h"/>
+    <File Name="../CodeLite/stringaccessor.cpp"/>
+    <File Name="../CodeLite/StdToWX.h"/>
+    <File Name="../CodeLite/StdToWX.cpp"/>
+    <File Name="../CodeLite/smart_ptr.h"/>
+    <File Name="../CodeLite/singleton.h"/>
+    <File Name="../CodeLite/setters_getters_data.h"/>
+    <File Name="../CodeLite/setters_getters_data.cpp"/>
+    <File Name="../CodeLite/serialized_object.h"/>
+    <File Name="../CodeLite/scope_parser.cpp"/>
+    <File Name="../CodeLite/scope_optimizer.h"/>
+    <File Name="../CodeLite/scope_optimizer.cpp"/>
+    <File Name="../CodeLite/refactorengine.h"/>
+    <File Name="../CodeLite/refactorengine.cpp"/>
+    <File Name="../CodeLite/readtags.h"/>
+    <File Name="../CodeLite/readtags.cpp"/>
+    <File Name="../CodeLite/progress_dialog.h"/>
+    <File Name="../CodeLite/progress_dialog.cpp"/>
+    <File Name="../CodeLite/procutils.h"/>
+    <File Name="../CodeLite/procutils.cpp"/>
+    <File Name="../CodeLite/processreaderthread.h"/>
+    <File Name="../CodeLite/processreaderthread.cpp"/>
+    <File Name="../CodeLite/precompiled_header.h"/>
+    <File Name="../CodeLite/pptable.h"/>
+    <File Name="../CodeLite/pptable.cpp"/>
+    <File Name="../CodeLite/pp_lexer.h"/>
+    <File Name="../CodeLite/pp_lexer.cpp"/>
+    <File Name="../CodeLite/pp_include.h"/>
+    <File Name="../CodeLite/pp.y"/>
+    <File Name="../CodeLite/pp.l"/>
+    <File Name="../CodeLite/pp.cpp"/>
+    <File Name="../CodeLite/PHPSourceFile.h"/>
+    <File Name="../CodeLite/PHPSourceFile.cpp"/>
+    <File Name="../CodeLite/PHPScannerTokens.h"/>
+    <File Name="../CodeLite/PHPLookupTable.h"/>
+    <File Name="../CodeLite/PHPLookupTable.cpp"/>
+    <File Name="../CodeLite/PhpLexerAPI.h"/>
+    <File Name="../CodeLite/PhpLexer.l"/>
+    <File Name="../CodeLite/PhpLexer.cpp"/>
+    <File Name="../CodeLite/PHPIndex.h"/>
+    <File Name="../CodeLite/PHPIndex.cpp"/>
+    <File Name="../CodeLite/PHPExpression.h"/>
+    <File Name="../CodeLite/PHPExpression.cpp"/>
+    <File Name="../CodeLite/PHPEntityVisitor.h"/>
+    <File Name="../CodeLite/PHPEntityVisitor.cpp"/>
+    <File Name="../CodeLite/PHPEntityVariable.h"/>
+    <File Name="../CodeLite/PHPEntityVariable.cpp"/>
+    <File Name="../CodeLite/PHPEntityNamespace.h"/>
+    <File Name="../CodeLite/PHPEntityNamespace.cpp"/>
+    <File Name="../CodeLite/PHPEntityKeyword.h"/>
+    <File Name="../CodeLite/PHPEntityKeyword.cpp"/>
+    <File Name="../CodeLite/PHPEntityFunctionAlias.h"/>
+    <File Name="../CodeLite/PHPEntityFunctionAlias.cpp"/>
+    <File Name="../CodeLite/PHPEntityFunction.h"/>
+    <File Name="../CodeLite/PHPEntityFunction.cpp"/>
+    <File Name="../CodeLite/PHPEntityClass.h"/>
+    <File Name="../CodeLite/PHPEntityClass.cpp"/>
+    <File Name="../CodeLite/PHPEntityBase.h"/>
+    <File Name="../CodeLite/PHPEntityBase.cpp"/>
+    <File Name="../CodeLite/PHPDocVisitor.h"/>
+    <File Name="../CodeLite/PHPDocVisitor.cpp"/>
+    <File Name="../CodeLite/PHPDocVar.h"/>
+    <File Name="../CodeLite/PHPDocVar.cpp"/>
+    <File Name="../CodeLite/PHPDocProperty.h"/>
+    <File Name="../CodeLite/PHPDocProperty.cpp"/>
+    <File Name="../CodeLite/PHPDocParam.h"/>
+    <File Name="../CodeLite/PHPDocParam.cpp"/>
+    <File Name="../CodeLite/PHPDocComment.h"/>
+    <File Name="../CodeLite/PHPDocComment.cpp"/>
+    <File Name="../CodeLite/performance.h"/>
+    <File Name="../CodeLite/performance.cpp"/>
+    <File Name="../CodeLite/parsedtoken.h"/>
+    <File Name="../CodeLite/parsedtoken.cpp"/>
+    <File Name="../CodeLite/parse_thread.h"/>
+    <File Name="../CodeLite/parse_thread.cpp"/>
+    <File Name="../CodeLite/MSWPrivate.h"/>
+    <File Name="../CodeLite/macros.h"/>
+    <File Name="../CodeLite/libCodeLite.txt"/>
+    <File Name="../CodeLite/libCodeLite.mk"/>
+    <File Name="../CodeLite/lex.yy.cpp"/>
+    <File Name="../CodeLite/language.h"/>
+    <File Name="../CodeLite/language.cpp"/>
+    <File Name="../CodeLite/JSLexerTokens.h"/>
+    <File Name="../CodeLite/JSLexerAPI.h"/>
+    <File Name="../CodeLite/JSLexer.l"/>
+    <File Name="../CodeLite/JSLexer.cpp"/>
+    <File Name="../CodeLite/istorage.h"/>
+    <File Name="../CodeLite/include_finder.h"/>
+    <File Name="../CodeLite/include_finder.cpp"/>
+    <File Name="../CodeLite/function.h"/>
+    <File Name="../CodeLite/function.cpp"/>
+    <File Name="../CodeLite/FlexLexer.h"/>
+    <File Name="../CodeLite/fileutils.h"/>
+    <File Name="../CodeLite/fileutils.cpp"/>
+    <File Name="../CodeLite/fileextmanager.h"/>
+    <File Name="../CodeLite/fileextmanager.cpp"/>
+    <File Name="../CodeLite/fileentry.h"/>
+    <File Name="../CodeLite/fileentry.cpp"/>
+    <File Name="../CodeLite/file_logger.h"/>
+    <File Name="../CodeLite/file_logger.cpp"/>
+    <File Name="../CodeLite/fc_fileopener.h"/>
+    <File Name="../CodeLite/fc_fileopener.cpp"/>
+    <File Name="../CodeLite/extdbdata.h"/>
+    <File Name="../CodeLite/expression_result.h"/>
+    <File Name="../CodeLite/expression_result.cpp"/>
+    <File Name="../CodeLite/event_notifier.h"/>
+    <File Name="../CodeLite/event_notifier.cpp"/>
+    <File Name="../CodeLite/entry.h"/>
+    <File Name="../CodeLite/entry.cpp"/>
+    <File Name="../CodeLite/DoxySMain.page"/>
+    <File Name="../CodeLite/dirtraverser.h"/>
+    <File Name="../CodeLite/dirtraverser.cpp"/>
+    <File Name="../CodeLite/dirsaver.h"/>
+    <File Name="../CodeLite/CxxVariableScanner.h"/>
+    <File Name="../CodeLite/CxxVariableScanner.cpp"/>
+    <File Name="../CodeLite/CxxVariable.h"/>
+    <File Name="../CodeLite/CxxVariable.cpp"/>
+    <File Name="../CodeLite/CxxUsingNamespaceCollector.h"/>
+    <File Name="../CodeLite/CxxUsingNamespaceCollector.cpp"/>
+    <File Name="../CodeLite/CxxTokenizer.h"/>
+    <File Name="../CodeLite/CxxTokenizer.cpp"/>
+    <File Name="../CodeLite/CxxTemplateFunction.h"/>
+    <File Name="../CodeLite/CxxTemplateFunction.cpp"/>
+    <File Name="../CodeLite/CxxScannerTokens.h"/>
+    <File Name="../CodeLite/CxxScannerBase.h"/>
+    <File Name="../CodeLite/CxxScannerBase.cpp"/>
+    <File Name="../CodeLite/CxxScanner.l"/>
+    <File Name="../CodeLite/CxxPreProcessorScanner.h"/>
+    <File Name="../CodeLite/CxxPreProcessorScanner.cpp"/>
+    <File Name="../CodeLite/CxxPreProcessorExpression.h"/>
+    <File Name="../CodeLite/CxxPreProcessorExpression.cpp"/>
+    <File Name="../CodeLite/CxxPreProcessorCache.h"/>
+    <File Name="../CodeLite/CxxPreProcessorCache.cpp"/>
+    <File Name="../CodeLite/CxxPreProcessor.h"/>
+    <File Name="../CodeLite/CxxPreProcessor.cpp"/>
+    <File Name="../CodeLite/CxxLexerAPI.h"/>
+    <File Name="../CodeLite/CxxLexer.cpp"/>
+    <File Name="../CodeLite/ctags_manager.h"/>
+    <File Name="../CodeLite/ctags_manager.cpp"/>
+    <File Name="../CodeLite/crawler_lexer.cpp"/>
+    <File Name="../CodeLite/crawler_include.h"/>
+    <File Name="../CodeLite/crawler.l"/>
+    <File Name="../CodeLite/cppwordscanner.h"/>
+    <File Name="../CodeLite/cppwordscanner.cpp"/>
+    <File Name="../CodeLite/cpptoken.h"/>
+    <File Name="../CodeLite/cpptoken.cpp"/>
+    <File Name="../CodeLite/cpp5.l"/>
+    <File Name="../CodeLite/cpp_scanner.h"/>
+    <File Name="../CodeLite/cpp_scanner.cpp"/>
+    <File Name="../CodeLite/cpp_lexer.h"/>
+    <File Name="../CodeLite/cpp_lexer.cpp"/>
+    <File Name="../CodeLite/cpp_func_parser.cpp"/>
+    <File Name="../CodeLite/cpp_expr_parser.cpp"/>
+    <File Name="../CodeLite/cpp_expr_lexer.cpp"/>
+    <File Name="../CodeLite/cpp_comment_creator.h"/>
+    <File Name="../CodeLite/cpp_comment_creator.cpp"/>
+    <File Name="../CodeLite/compiler_command_line_parser.h"/>
+    <File Name="../CodeLite/compiler_command_line_parser.cpp"/>
+    <File Name="../CodeLite/commentconfigdata.h"/>
+    <File Name="../CodeLite/commentconfigdata.cpp"/>
+    <File Name="../CodeLite/comment_parser.h"/>
+    <File Name="../CodeLite/comment_parser.cpp"/>
+    <File Name="../CodeLite/comment_creator.h"/>
+    <File Name="../CodeLite/comment.h"/>
+    <File Name="../CodeLite/comment.cpp"/>
+    <File Name="../CodeLite/codelite_exports.h"/>
+    <File Name="../CodeLite/codelite_events.h"/>
+    <File Name="../CodeLite/codelite_events.cpp"/>
+    <File Name="../CodeLite/CodeLite.project"/>
+    <File Name="../CodeLite/code_completion_api.h"/>
+    <File Name="../CodeLite/CMakeLists.txt"/>
+    <File Name="../CodeLite/clSFTPEvent.h"/>
+    <File Name="../CodeLite/clSFTPEvent.cpp"/>
+    <File Name="../CodeLite/clprogressdlgbase.h"/>
+    <File Name="../CodeLite/clprogressdlgbase.fbp"/>
+    <File Name="../CodeLite/clprogressdlgbase.cpp"/>
+    <File Name="../CodeLite/clJSONObjectParser.y"/>
+    <File Name="../CodeLite/clJSONObjectParser.hpp"/>
+    <File Name="../CodeLite/clIniFile.h"/>
+    <File Name="../CodeLite/clIniFile.cpp"/>
+    <File Name="../CodeLite/clGotoEntry.h"/>
+    <File Name="../CodeLite/clGotoEntry.cpp"/>
+    <File Name="../CodeLite/clFontHelper.h"/>
+    <File Name="../CodeLite/clFontHelper.cpp"/>
+    <File Name="../CodeLite/clFileSystemWatcher.h"/>
+    <File Name="../CodeLite/clFileSystemWatcher.cpp"/>
+    <File Name="../CodeLite/clFileSystemEvent.h"/>
+    <File Name="../CodeLite/clFileSystemEvent.cpp"/>
+    <File Name="../CodeLite/clFilesCollector.h"/>
+    <File Name="../CodeLite/clFilesCollector.cpp"/>
+    <File Name="../CodeLite/clEditorConfig.h"/>
+    <File Name="../CodeLite/clEditorConfig.cpp"/>
+    <File Name="../CodeLite/clCxxFileCacheSymbols.h"/>
+    <File Name="../CodeLite/clCxxFileCacheSymbols.cpp"/>
+    <File Name="../CodeLite/clCommandProcessor.h"/>
+    <File Name="../CodeLite/clCommandProcessor.cpp"/>
+    <File Name="../CodeLite/clcommandlineparser.h"/>
+    <File Name="../CodeLite/clcommandlineparser.cpp"/>
+    <File Name="../CodeLite/clBitmap.h"/>
+    <File Name="../CodeLite/clBitmap.cpp"/>
+    <File Name="../CodeLite/clAnagram.h"/>
+    <File Name="../CodeLite/clAnagram.cpp"/>
+    <File Name="../CodeLite/cl_typedef.h"/>
+    <File Name="../CodeLite/cl_standard_paths.h"/>
+    <File Name="../CodeLite/cl_standard_paths.cpp"/>
+    <File Name="../CodeLite/cl_ssh.h"/>
+    <File Name="../CodeLite/cl_ssh.cpp"/>
+    <File Name="../CodeLite/cl_sftp_attribute.h"/>
+    <File Name="../CodeLite/cl_sftp_attribute.cpp"/>
+    <File Name="../CodeLite/cl_sftp.h"/>
+    <File Name="../CodeLite/cl_sftp.cpp"/>
+    <File Name="../CodeLite/cl_process.h"/>
+    <File Name="../CodeLite/cl_process.cpp"/>
+    <File Name="../CodeLite/cl_exception.h"/>
+    <File Name="../CodeLite/cl_defs.h"/>
+    <File Name="../CodeLite/cl_config.h"/>
+    <File Name="../CodeLite/cl_config.cpp"/>
+    <File Name="../CodeLite/cl_command_event.h"/>
+    <File Name="../CodeLite/cl_command_event.cpp"/>
+    <File Name="../CodeLite/cl_calltip.h"/>
+    <File Name="../CodeLite/cl_calltip.cpp"/>
+    <File Name="../CodeLite/cJSON.h"/>
+    <File Name="../CodeLite/cJSON.cpp"/>
+    <File Name="../CodeLite/CIncludeStatementCollector.h"/>
+    <File Name="../CodeLite/CIncludeStatementCollector.cpp"/>
+    <File Name="../CodeLite/browse_record.h"/>
+    <File Name="../CodeLite/asyncprocess.h"/>
+    <File Name="../CodeLite/asyncprocess.cpp"/>
+    <File Name="../CodeLite/archive.h"/>
+    <File Name="../CodeLite/archive.cpp"/>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Static Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Debug_Windows" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g -Wall;$(shell wx-config --cflags )" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="$(CL_HOME)/CodeLite"/>
+        <IncludePath Value="$(CL_HOME)/sdk/wxsqlite3/include"/>
+        <IncludePath Value="$(CL_HOME)/sdk/codelite_indexer/network"/>
+        <Preprocessor Value="wxUSE_GUI=0"/>
+      </Compiler>
+      <Linker Options="-O0" Required="yes">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="Debug"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(WorkspacePath)/lib/libcodelitelib.a" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/lib$(ProjectName).a" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Debug_Windows"/>
+  <Dependencies Name="Release"/>
+</CodeLite_Project>

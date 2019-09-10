@@ -50,6 +50,10 @@
 #include <libutil.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#elif defined(__NetBSD__)
+#include <util.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 #else
 #include <pty.h>
 #include <utmp.h>
@@ -252,7 +256,9 @@ static void RemoveTerminalColoring(char* buffer)
     StringUtils::StripTerminalColouring(cinput, coutout);
 
     // coutout is ALWAYS <= cinput, so we can safely copy the content to the buffer
-    strcpy(buffer, coutout.c_str());
+    if(coutout.length() < cinput.length()) {
+        strcpy(buffer, coutout.c_str());
+    }
 }
 
 UnixProcessImpl::UnixProcessImpl(wxEvtHandler* parent)

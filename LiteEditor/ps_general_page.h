@@ -41,9 +41,29 @@ class ProjectSettingsDlg;
 /** Implementing PSGeneralPageBase */
 class PSGeneralPage : public PSGeneralPageBase, public IProjectSettingsPage
 {
-    ProjectSettingsDlg *m_dlg;
-    wxString            m_projectName;
-    wxString            m_configName;
+    ProjectSettingsDlg* m_dlg;
+    wxString m_projectName;
+    wxString m_configName;
+
+protected:
+    enum eFieldType {
+        kFT_OutputFile,
+        kFT_IntermediateFolder,
+        kFT_WorkingDirectory,
+        kFT_Command,
+    };
+
+    enum eBuildSystem {
+        kBS_Default,
+        kBS_CodeLiteMakeGenerator,
+        kBS_Other,
+    };
+
+    enum eProjectType {
+        kPT_Executable,
+        kPT_DynamicLibrary,
+        kPT_StatisLibrary,
+    };
 
 protected:
     virtual void OnCustomEditorClicked(wxCommandEvent& event);
@@ -52,22 +72,22 @@ protected:
 
     wxString GetPropertyAsString(wxPGProperty* prop) const;
     bool GetPropertyAsBool(wxPGProperty* prop) const;
+    wxString GetValueFor(eFieldType fieldType) const;
+    PSGeneralPage::eBuildSystem GetBuildSystemType() const;
+    eProjectType GetProjectType() const;
 
 protected:
     // Handlers for PSGeneralPageBase events.
-    void OnProjectCustumBuildUI( wxUpdateUIEvent& event );
+    void OnProjectCustumBuildUI(wxUpdateUIEvent& event);
 
 public:
-
     /** Constructor */
-    PSGeneralPage( wxWindow* parent, const wxString &projectName, const wxString &conf, ProjectSettingsDlg *dlg );
+    PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf, ProjectSettingsDlg* dlg);
     //// end generated class members
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr);
     virtual void Load(BuildConfigPtr buildConf);
     virtual void Clear();
-    wxString GetCompiler() const {
-        return m_pgPropCompiler->GetValueAsString();
-    }
+    wxString GetCompiler() const { return m_pgPropCompiler->GetValueAsString(); }
 };
 
 #endif // __ps_general_page__

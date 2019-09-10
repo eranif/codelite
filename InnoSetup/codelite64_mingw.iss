@@ -5,7 +5,7 @@
 AppName=CodeLite
 AppVerName=CodeLite
 AppPublisher=Eran Ifrah
-AppVersion=13.0.1
+AppVersion=13.0.3
 AppPublisherURL=http://codelite.org
 AppSupportURL=http://codelite.org
 AppUpdatesURL=http://codelite.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\CodeLite
 DefaultGroupName=CodeLite
 LicenseFile=license.txt
 OutputDir=output
-OutputBaseFilename=codelite-amd64-13.0.1
+OutputBaseFilename=codelite-amd64-13.0.3
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico
@@ -83,6 +83,7 @@ Source: "{#CODELITE_ROOT}\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: re
 
 ;; ------- Bin Utils ------------------
 Source: "{#MSYS2_DIR}\rm.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#MSYS2_DIR}\mkdir.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\cp.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\ls.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#MSYS2_DIR}\mv.exe"; DestDir: "{app}"; Flags: ignoreversion;
@@ -138,13 +139,13 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\Docker.dll"; DestDir: "{app}\plugins";
 Source: "{#CODELITE_ROOT}\Runtime\plugins\LanguageServer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\EOSWiki.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
-Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\lib\gcc_lib\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\lib\gcc_lib\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\lib\gcc_lib\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\lib\gcc_lib\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh64.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\zlib64.dll"; DestDir: "{app}\"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\Runtime\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
+Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libzlib.dll"; DestDir: "{app}\"; DestName: "libzlib.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 

@@ -80,6 +80,9 @@
 #include <wx/zipstrm.h>
 #include "StringUtils.h"
 #include "windowattrmanager.h"
+#include "ColoursAndFontsManager.h"
+#include <wx/app.h>
+#include "clFileSystemWorkspace.hpp"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -93,6 +96,29 @@
 
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
+
+#if defined(__WXMSW__) && defined(_WIN64)
+BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
+{
+    if(!IsWindow(hwnd)) return TRUE;
+    const BOOL is_darktheme = (BOOL)lparam;
+    SetWindowTheme(hwnd, is_darktheme ? L"DarkMode_Explorer" : L"Explorer", NULL);
+    InvalidateRect(hwnd, nullptr, TRUE);
+    return TRUE;
+}
+#endif
+
+void MSWSetWindowDarkTheme(wxWindow* win)
+{
+#if defined(__WXMSW__) && defined(_WIN64)
+    if(!win) { return; }
+    bool b = ColoursAndFontsManager::Get().IsDarkTheme();
+    SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explore", NULL);
+    EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, (BOOL)b);
+#else
+    wxUnusedVar(win);
+#endif
+}
 
 // --------------------------------------------------------
 // Internal handler to handle queuing requests...
@@ -1025,7 +1051,7 @@ bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const
 
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 {
-#ifdef __WXMSW__
+#if defined(__WXMSW__) && defined(_WIN64)
     SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
 #endif
 }
@@ -2109,19 +2135,43 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 
     wxRect frameSize = parentTlw->GetSize();
     frameSize.Deflate(100);
-    tlw->SetSizeHints(frameSize.GetSize());
+    tlw->SetMinSize(frameSize.GetSize());
     tlw->SetSize(frameSize.GetSize());
-    tlw->CenterOnParent();
-
-    // If the parent is maximized, maximize this window as well
-    if(parentTlw->IsMaximized()) {
-        if(dynamic_cast<wxFrame*>(win)) { tlw->Maximize(); }
-    }
+    tlw->GetSizer()->Fit(win);
+    tlw->CentreOnParent();
 }
 
-void clSetDialogBestSizeAndPosition(wxDialog* win)
+static void DoSetDialogSize(wxDialog* win, double factor)
 {
+#if 0
+    wxUnusedVar(win);
+    wxUnusedVar(factor);
+#else
     if(!win) { return; }
-    WindowAttrManager::Load(win);
-    if(win->GetParent()) { win->CentreOnParent(); }
+    if(factor <= 0.0) { factor = 1.0; }
+
+    wxWindow* parent = win->GetParent();
+    if(!parent) { parent = wxTheApp->GetTopWindow(); }
+    if(parent) {
+        wxSize parentSize = parent->GetSize();
+
+        double dlgWidth = (double)parentSize.GetWidth() * factor;
+        double dlgHeight = (double)parentSize.GetHeight() * factor;
+        parentSize.SetWidth(dlgWidth);
+        parentSize.SetHeight(dlgHeight);
+        win->SetMinSize(parentSize);
+        win->SetSize(parentSize);
+        //win->GetSizer()->Fit(win);
+        win->GetSizer()->Layout();
+        win->CentreOnParent();
+    }
+#endif
 }
+
+void clSetDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.66); }
+
+void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.5); }
+
+void clSetDialogSizeAndPosition(wxDialog* win, double ratio) { DoSetDialogSize(win, ratio); }
+
+bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }

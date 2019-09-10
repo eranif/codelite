@@ -56,6 +56,7 @@
 #include "file_logger.h"
 #include "SFTPGrep.h"
 #include "SFTPStatusPage.h"
+#include <wx/utils.h>
 
 static const int ID_NEW = ::wxNewId();
 static const int ID_RENAME = ::wxNewId();
@@ -170,7 +171,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     m_treeCtrl->DeleteAllItems();
     // add the root item
     MyClientData* cd = new MyClientData(initialFolder);
-    cd->SetIsFolder(true);
+    cd->SetFolder();
 
     wxTreeItemId root =
         m_treeCtrl->AddRoot(initialFolder, m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
@@ -192,9 +193,8 @@ void SFTPTreeView::OnItemActivated(wxTreeEvent& event)
         } else {
             m_treeCtrl->CallAfter(&clThemedTreeCtrl::Expand, item);
         }
-
     } else {
-        DoOpenFile(cd->GetFullPath());
+        DoOpenFile(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath());
     }
 }
 
@@ -251,6 +251,7 @@ void SFTPTreeView::DoCloseSession()
 
 bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
 {
+    wxBusyCursor bc;
     MyClientData* cd = GetItemData(item);
     CHECK_PTR_RET_FALSE(cd);
 
@@ -260,7 +261,8 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
     // get list of files and populate the tree
     SFTPAttribute::List_t attributes;
     try {
-        attributes = m_sftp->List(cd->GetFullPath(), clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
+        attributes = m_sftp->List(cd->IsSymlink() ? cd->GetSymlinkTarget() : cd->GetFullPath(),
+                                  clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
@@ -274,6 +276,7 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
     cd->SetInitialized(true);
 
     int nNumOfRealChildren = 0;
+
     SFTPAttribute::List_t::iterator iter = attributes.begin();
     for(; iter != attributes.end(); ++iter) {
         SFTPAttribute::Ptr_t attr = (*iter);
@@ -282,11 +285,22 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         ++nNumOfRealChildren;
         // determine the icon index
         int imgIdx = wxNOT_FOUND;
+        int expandImgIDx = wxNOT_FOUND;
         if(attr->IsFolder()) {
             imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
-
-        } else {
+            expandImgIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+        } else if(attr->IsFile()) {
             imgIdx = m_bmpLoader->GetMimeImageId(attr->GetName());
+        }
+
+        if(attr->IsSymlink()) {
+            if(attr->IsFile()) {
+                imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFileSymlink);
+
+            } else {
+                imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderSymlink);
+                expandImgIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded);
+            }
         }
 
         if(imgIdx == wxNOT_FOUND) { imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText); }
@@ -296,9 +310,18 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         while(path.Replace("//", "/")) {}
 
         MyClientData* childClientData = new MyClientData(path);
-        childClientData->SetIsFolder(attr->IsFolder());
+        if(attr->IsFolder()) {
+            childClientData->SetFolder();
+        } else if(attr->IsFile()) {
+            childClientData->SetFile();
+        }
 
-        wxTreeItemId child = m_treeCtrl->AppendItem(item, attr->GetName(), imgIdx, imgIdx, childClientData);
+        if(attr->IsSymlink()) {
+            childClientData->SetSymlink();
+            childClientData->SetSymlinkTarget(attr->GetSymlinkPath());
+        }
+
+        wxTreeItemId child = m_treeCtrl->AppendItem(item, attr->GetName(), imgIdx, expandImgIDx, childClientData);
         // if its type folder, add a fake child item
         if(attr->IsFolder()) { m_treeCtrl->AppendItem(child, "<dummy>"); }
     }
@@ -499,7 +522,7 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
         MyClientData* newFile = new MyClientData(path);
-        newFile->SetIsFolder(false);
+        newFile->SetFile();
         newFile->SetInitialized(false);
 
         wxTreeItemId child = m_treeCtrl->AppendItem(
@@ -520,7 +543,7 @@ wxTreeItemId SFTPTreeView::DoAddFolder(const wxTreeItemId& parent, const wxStrin
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
         MyClientData* newCd = new MyClientData(path);
-        newCd->SetIsFolder(true);
+        newCd->SetFolder();
         newCd->SetInitialized(false);
 
         wxTreeItemId child = m_treeCtrl->AppendItem(
@@ -1012,7 +1035,7 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
 
     try {
         if(m_channel && m_channel->IsOpen()) { m_channel->Close(); }
-        m_channel.reset(new clSSHChannel(m_sftp->GetSsh()));
+        m_channel.reset(new clSSHChannel(m_sftp->GetSsh(), clSSHChannel::kRemoteCommand, m_plugin->GetOutputPane()));
         m_channel->Open();
 
         // Prepare the UI for new search
@@ -1024,7 +1047,7 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
         GrepData gd = grep.GetData();
         wxString command = gd.GetGrepCommand(remoteFolder);
         m_plugin->GetOutputPane()->AddSearchText(wxString() << "Running command: " << command);
-        m_channel->Execute(command, m_plugin->GetOutputPane());
+        m_channel->Execute(command);
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);

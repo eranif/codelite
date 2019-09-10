@@ -35,7 +35,7 @@
  * Build using a generated (Gnu) Makefile - this is made as a traditional multistep build :
  *  sources -> (preprocess) -> compile -> link -> exec/lib.
  */
-class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
+class WXDLLIMPEXP_SDK BuilderGNUMakeClassic : public Builder
 {
     size_t m_objectChunks;
     Project::FilesMap_t* m_projectFilesMetadata;
@@ -49,9 +49,9 @@ protected:
     };
 
 public:
-    BuilderGnuMake();
-    BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGnuMake();
+    BuilderGNUMakeClassic();
+    BuilderGNUMakeClassic(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
+    virtual ~BuilderGNUMakeClassic();
 
     // Implement the Builder Interface
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,

@@ -75,6 +75,7 @@ void NodeJSWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 
             // Remove the 'close' menu item
             menu->Remove(closeItem);
+            wxDELETE(closeItem);
         }
 
         // Add project related items

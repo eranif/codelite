@@ -85,27 +85,30 @@ void ThemeHandler::OnColoursChanged(clCommandEvent& e)
 void ThemeHandler::UpdateColours()
 {
     // Collect all toolbars
-    std::queue<wxWindow*> q;
-    q.push(clMainFrame::Get());
+    //std::queue<wxWindow*> q;
+    //q.push(clMainFrame::Get());
 
-    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    wxColour fgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    //wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    //wxColour fgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
 
-    while(!q.empty()) {
-        wxWindow* w = q.front();
-        q.pop();
-        if(IS_TYPEOF(wxPanel, w) || IS_TYPEOF(wxStaticText, w) || IS_TYPEOF(wxCheckBox, w)) {
-            // w->SetBackgroundStyle(wxBG_STYLE_PAINT);
-            // w->SetBackgroundColour(bgColour);
-            // w->SetForegroundColour(fgColour);
-            // w->Refresh();
-        }
-        wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
-        while(iter) {
-            q.push(iter->GetData());
-            iter = iter->GetNext();
-        }
-    }
+    MSWSetWindowDarkTheme(clMainFrame::Get());
+
+    //while(!q.empty()) {
+    //    wxWindow* w = q.front();
+    //    q.pop();
+    //    if(IS_TYPEOF(wxStaticText, w)) {
+    //        wxStaticText* st = IS_TYPEOF(wxStaticText, w);
+    //        st->SetBackgroundStyle(wxBG_STYLE_PAINT);
+    //        st->SetBackgroundColour(bgColour);
+    //        st->SetForegroundColour(fgColour);
+    //        st->Refresh();
+    //    }
+    //    wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
+    //    while(iter) {
+    //        q.push(iter->GetData());
+    //        iter = iter->GetNext();
+    //    }
+    //}
 }
 
 void ThemeHandler::UpdateNotebookColours(wxWindow* parent) { m_helper->UpdateNotebookColours(parent); }

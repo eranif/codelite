@@ -35,8 +35,16 @@
 #include <algorithm>
 #include "buildmanager.h"
 
-PSGeneralPage::PSGeneralPage(
-    wxWindow* parent, const wxString& projectName, const wxString& conf, ProjectSettingsDlg* dlg)
+#ifdef __WXMSW__
+#define DYNAMIC_LIB_EXT "dll"
+#elif defined(__WXGTK__)
+#define DYNAMIC_LIB_EXT "so"
+#else
+#define DYNAMIC_LIB_EXT "dylib"
+#endif
+
+PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf,
+                             ProjectSettingsDlg* dlg)
     : PSGeneralPageBase(parent)
     , m_dlg(dlg)
     , m_projectName(projectName)
@@ -72,9 +80,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropProjectType->SetChoices(choices);
 
     int sel = choices.Index(buildConf->GetProjectType());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropProjectType->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropProjectType->SetChoiceSelection(sel); }
 
     // Builders
     wxPGChoices builders;
@@ -84,12 +90,10 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     m_pgPropMakeGenerator->SetChoices(builders);
     m_pgPropMakeGeneratorArgs->SetValue(buildConf->GetBuildSystemArguments());
     m_pgPropMakeGenerator->SetExpanded(false);
-    
+
     sel = builders.Index(buildConf->GetBuildSystem());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropMakeGenerator->SetChoiceSelection(sel);
-    }
-    
+    if(sel != wxNOT_FOUND) { m_pgPropMakeGenerator->SetChoiceSelection(sel); }
+
     // Compilers
     choices.Clear();
     wxString cmpType = buildConf->GetCompilerType();
@@ -101,9 +105,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     }
     m_pgPropCompiler->SetChoices(choices);
     sel = choices.Index(buildConf->GetCompiler()->GetName());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropCompiler->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropCompiler->SetChoiceSelection(sel); }
 
     // Debuggers
     choices.Clear();
@@ -112,9 +114,7 @@ void PSGeneralPage::Load(BuildConfigPtr buildConf)
     choices.Add(dbgs);
     m_pgPropDebugger->SetChoices(choices);
     sel = choices.Index(buildConf->GetDebuggerType());
-    if(sel != wxNOT_FOUND) {
-        m_pgPropDebugger->SetChoiceSelection(sel);
-    }
+    if(sel != wxNOT_FOUND) { m_pgPropDebugger->SetChoiceSelection(sel); }
     m_pgPropUseSeparateDebuggerArgs->SetValue(buildConf->GetUseSeparateDebugArgs());
     m_dlg->SetIsProjectEnabled(buildConf->IsProjectEnabled());
 }
@@ -145,14 +145,103 @@ void PSGeneralPage::Clear()
 {
     wxPropertyGridIterator iter = m_pgMgr136->GetGrid()->GetIterator();
     for(; !iter.AtEnd(); ++iter) {
-        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) {
-            iter.GetProperty()->SetValueToUnspecified();
-        }
+        if(iter.GetProperty() && !iter.GetProperty()->IsCategory()) { iter.GetProperty()->SetValueToUnspecified(); }
     }
     m_checkBoxEnabled->SetValue(true);
 }
 
-void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event) { m_dlg->SetIsDirty(true); }
+void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
+{
+    m_dlg->SetIsDirty(true);
+
+    if(event.GetProperty() == m_pgPropMakeGenerator) {
+        wxString dlgmsg;
+        dlgmsg = _("Adjust settings to fit this generator?");
+        eBuildSystem buildSystem = GetBuildSystemType();
+        if((buildSystem == kBS_CodeLiteMakeGenerator) || (buildSystem == kBS_Default)) {
+            if(::wxMessageBox(dlgmsg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                              ::wxGetTopLevelParent(this)) != wxYES) {
+                return;
+            }
+            // Update the settings
+            eProjectType projectType = GetProjectType();
+            m_pgPropOutputFile->SetValue(GetValueFor(kFT_OutputFile));
+            m_pgPropIntermediateFolder->SetValue(GetValueFor(kFT_IntermediateFolder));
+            m_pgPropWorkingDirectory->SetValue(GetValueFor(kFT_WorkingDirectory));
+            if(projectType == kPT_Executable) { m_pgPropProgram->SetValue(GetValueFor(kFT_Command)); }
+        }
+    }
+}
+
+wxString PSGeneralPage::GetValueFor(eFieldType fieldType) const
+{
+    eBuildSystem buildSystem = GetBuildSystemType();
+    eProjectType projectType = GetProjectType();
+    if(buildSystem == kBS_CodeLiteMakeGenerator) {
+        switch(fieldType) {
+        case kFT_OutputFile: {
+            switch(projectType) {
+            case kPT_Executable:
+                return "$(ProjectName)";
+            case kPT_DynamicLibrary:
+                return "lib$(ProjectName).a";
+            default:
+                return (wxString() << "lib$(ProjectName)." << DYNAMIC_LIB_EXT);
+            }
+        }
+        case kFT_IntermediateFolder:
+            return "";
+        case kFT_WorkingDirectory:
+            return "$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"; // for any dll that this workspace generates
+        case kFT_Command:
+            return "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
+        }
+    } else if(buildSystem == kBS_Default) {
+        switch(fieldType) {
+        case kFT_OutputFile: {
+            switch(projectType) {
+            case kPT_Executable:
+                return "$(IntermediateDirectory)/$(ProjectName)";
+            case kPT_DynamicLibrary:
+                return "$(IntermediateDirectory)/lib$(ProjectName).a";
+            default:
+                return (wxString() << "$(IntermediateDirectory)/lib$(ProjectName)." << DYNAMIC_LIB_EXT);
+            }
+        }
+        case kFT_IntermediateFolder:
+            return "$(ConfigurationName)";
+        case kFT_WorkingDirectory:
+            return wxEmptyString;
+        case kFT_Command:
+            return "$(OutputFile)";
+        }
+    }
+    return "";
+}
+
+PSGeneralPage::eProjectType PSGeneralPage::GetProjectType() const
+{
+    wxString projtype = m_pgPropProjectType->GetValueAsString();
+    if(projtype == PROJECT_TYPE_EXECUTABLE) {
+        return kPT_Executable;
+    } else if(projtype == PROJECT_TYPE_STATIC_LIBRARY) {
+        return kPT_StatisLibrary;
+    } else {
+        return kPT_DynamicLibrary;
+    }
+}
+
+PSGeneralPage::eBuildSystem PSGeneralPage::GetBuildSystemType() const
+{
+    wxString generatorName = m_pgPropMakeGenerator->GetValueAsString();
+    if(generatorName == "CodeLite Make Generator") {
+        return kBS_CodeLiteMakeGenerator;
+    } else if(generatorName == "Default") {
+        return kBS_Default;
+    } else {
+        return kBS_Other;
+    }
+}
 
 bool PSGeneralPage::GetPropertyAsBool(wxPGProperty* prop) const
 {

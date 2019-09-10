@@ -282,6 +282,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEve
 // Instruct the debugger to update the memory
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_SET_MEMORY, clDebugEvent);
 
+// Quick debug dialog is showing. The handler can set some parameters
+// such as the debugger to use, exe to debug etc
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_SHOWING, clDebugEvent);
+
+// Quick debug dialog is dismissed. Use this event to persist any setting the user might have
+// updated in the UI
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, clDebugEvent);
+
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events
@@ -851,5 +859,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_MARKER_CHANGED, clCommandEvent);
 // User click a button in the info bar
 // Use: event.GetInt() to get the button ID clicked
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_INFO_BAR_BUTTON, clCommandEvent);
+
+// User clicked on the drop down menu of the build button
+// A plugin can change the content of the drop down menu and bind then to his custom actions
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, clContextMenuEvent);
 
 #endif // CODELITE_EVENTS_H

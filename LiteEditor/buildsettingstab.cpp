@@ -42,7 +42,7 @@ BuildTabSetting::BuildTabSetting(wxWindow* parent)
     BuildTabSettingsData options;
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
     m_pgPropJumpWarnings->SetValue(options.GetSkipWarnings());
-    
+
     wxVariant errorColour, warningColour;
     errorColour << wxColour(options.GetErrorColour());
     warningColour << wxColour(options.GetWarnColour());
@@ -50,9 +50,6 @@ BuildTabSetting::BuildTabSetting(wxWindow* parent)
     m_pgPropErrorColour->SetValue(errorColour);
     m_pgPropWarningColour->SetValue(warningColour);
 
-    const wxFont& font = options.GetBuildFont();
-    m_pgPropFont->SetValue(clFontHelper::ToString(font));
-    
     m_pgPropAutoShowBuildPane->SetValueFromInt(options.GetShowBuildPane());
     m_pgPropAutoHideBuildPane->SetValue((bool)options.GetAutoHide());
     m_pgPropAutoScroll->SetValueFromInt(options.GetBuildPaneScrollDestination());
@@ -73,20 +70,15 @@ void BuildTabSetting::Save()
 
     options.SetErrorColour(errorColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
     options.SetWarnColour(warningColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
-    options.SetBuildFont(clFontHelper::FromString(m_pgPropFont->GetValue().GetString()));
     options.SetSkipWarnings(m_pgPropJumpWarnings->GetValue().GetBool());
     options.SetShowBuildPane(m_pgPropAutoShowBuildPane->GetValue().GetInteger());
     options.SetAutoHide(m_pgPropAutoHideBuildPane->GetValue().GetBool());
     options.SetBuildPaneScrollDestination(m_pgPropAutoScroll->GetValue().GetInteger());
-    
+
     int flag(BuildTabSettingsData::EWS_NoMarkers);
-    if(m_pgPropUseMarkers->GetValue().GetBool()) {
-        flag |= BuildTabSettingsData::EWS_Bookmarks;
-    }
-    
-    if(m_pgPropUseAnnotations->GetValue().GetBool()) {
-        flag |= BuildTabSettingsData::EWS_Annotate;
-    }
+    if(m_pgPropUseMarkers->GetValue().GetBool()) { flag |= BuildTabSettingsData::EWS_Bookmarks; }
+
+    if(m_pgPropUseAnnotations->GetValue().GetBool()) { flag |= BuildTabSettingsData::EWS_Annotate; }
 
     options.SetErrorWarningStyle(flag);
     EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
@@ -99,21 +91,9 @@ void BuildTabSetting::OnCustomButtonClicked(wxCommandEvent& event)
 {
     wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
     CHECK_PTR_RET(prop);
-
-    if(prop == m_pgPropFont) {
-        CallAfter(&BuildTabSetting::SelectFont);
-    }
 }
 
-void BuildTabSetting::SelectFont()
-{
-    wxFontDialog dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
-        const wxFontData& fntdata = dlg.GetFontData();
-        wxFont font = fntdata.GetChosenFont();
-        m_pgPropFont->SetValue(clFontHelper::ToString(font));
-    }
-}
+void BuildTabSetting::SelectFont() {}
 void BuildTabSetting::OnAppearanceChanged(wxPropertyGridEvent& event)
 {
     event.Skip();

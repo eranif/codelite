@@ -31,54 +31,61 @@
 
 class MyClientData : public wxTreeItemData
 {
+public:
+    enum eFileType {
+        kFile = (1 << 0),
+        kFolder = (1 << 1),
+        kSymlink = (1 << 2),
+    };
+
+protected:
     wxString m_path;
-    bool     m_initialized;
-    bool     m_isFolder;
+    wxString m_symlinkTarget;
+    bool m_initialized = false;
+    size_t m_flags = kFile;
 
 public:
     typedef std::vector<MyClientData*> Vector_t;
 
 public:
-    MyClientData(const wxString &path)
+    MyClientData(const wxString& path)
         : m_path(path)
-        , m_initialized(false)
-        , m_isFolder(false) {
-        while (m_path.Replace("//", "/")) {}
-        while (m_path.Replace("\\\\", "\\")) {}
+    {
+        while(m_path.Replace("//", "/")) {}
+        while(m_path.Replace("\\\\", "\\")) {}
     }
 
     virtual ~MyClientData() {}
-    
-    wxString GetBasename() const {
-        return GetFullPath().BeforeLast('/');
-    }
-    wxString GetFullName() const {
-        return GetFullPath().AfterLast('/');
-    }
-    void SetFullName( const wxString &fullname ) {
+
+    wxString GetBasename() const { return GetFullPath().BeforeLast('/'); }
+    wxString GetFullName() const { return GetFullPath().AfterLast('/'); }
+    void SetFullName(const wxString& fullname)
+    {
         wxString base = GetBasename();
         base << "/" << fullname;
-        m_path.swap( base );
+        m_path.swap(base);
     }
-    
-    void SetInitialized(bool initialized) {
-        this->m_initialized = initialized;
+
+    void SetInitialized(bool initialized) { this->m_initialized = initialized; }
+    bool IsInitialized() const { return m_initialized; }
+    void SetPath(const wxString& path) { this->m_path = path; }
+    const wxString& GetFullPath() const { return m_path; }
+    void SetFolder()
+    {
+        this->m_flags &= ~kFile;
+        this->m_flags |= kFolder;
     }
-    bool IsInitialized() const {
-        return m_initialized;
+    void SetFile()
+    {
+        this->m_flags &= ~kFolder;
+        this->m_flags |= kFile;
     }
-    void SetPath(const wxString& path) {
-        this->m_path = path;
-    }
-    const wxString& GetFullPath() const {
-        return m_path;
-    }
-    void SetIsFolder(bool isFolder) {
-        this->m_isFolder = isFolder;
-    }
-    bool IsFolder() const {
-        return m_isFolder;
-    }
+    void SetSymlink() { this->m_flags |= kSymlink; }
+    bool IsSymlink() const { return this->m_flags & kSymlink; }
+    bool IsFile() const { return this->m_flags & kFile; }
+    bool IsFolder() const { return this->m_flags & kFolder; }
+    void SetSymlinkTarget(const wxString& path) { this->m_symlinkTarget = path; }
+    const wxString& GetSymlinkTarget() const { return m_symlinkTarget; }
 };
 
 #endif // SFTPITEMCOMPARATOR_H

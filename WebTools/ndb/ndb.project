@@ -40,7 +40,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="$(WorkspacePath)/$(WorkspaceConfiguration)/$(ProjectName)" CommandArguments="/home/eran/Documents/TestJS/test.js" UseSeparateDebugArgs="no" DebugArguments="/home/eran/Documents/TestJS/test.js" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="Default"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[NDB_NODEJS_PATH=/usr/bin/nodejs
 CL_HOME=/home/eran/devl/codelite
@@ -87,7 +87,7 @@ LD_LIBRARY_PATH=/home/eran/devl/codelite/build-release/lib:$LD_LIBRARY_PATH]]>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="$(WorkspacePath)/$(IntermediateDirectory)/$(ProjectName)" CommandArguments="C:\Users\PC\Documents\CodeLite\NODEJS\TestDebug\Tester.js" UseSeparateDebugArgs="no" DebugArguments="C:\Users\PC\Documents\CodeLite\NODEJS\TestDebug\Tester.js" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="Default"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[NDB_NODEJS_PATH=D:\software\NodeJS_x64\node.exe
 CL_HOME=C:\src\codelite

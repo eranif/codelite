@@ -82,6 +82,7 @@
 #include "imanager.h"
 #include "bitmap_loader.h"
 #include "ServiceProviderManager.h"
+#include "clFileSystemWorkspace.hpp"
 //#include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -329,6 +330,8 @@ clEditor::clEditor(wxWindow* parent)
 #else
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
 #endif
+
+    MSWSetWindowDarkTheme(this);
 
     Bind(wxEVT_STC_CHARADDED, &clEditor::OnCharAdded, this);
     Bind(wxEVT_STC_MARGINCLICK, &clEditor::OnMarginClick, this);
@@ -764,7 +767,7 @@ void clEditor::SetProperties()
     wxColour breakpointColour = wxColour("#FF5733");
     wxColour disabledColour = breakpointColour.ChangeLightness(165);
     wxColour defaultBgColour = StyleGetBackground(0); // Default style background colour
-    
+
     MarkerDefine(smt_breakpoint, wxSTC_MARK_CIRCLE);
     this->MarkerSetBackground(smt_breakpoint, breakpointColour);
     this->MarkerSetForeground(smt_breakpoint, breakpointColour);
@@ -788,7 +791,7 @@ void clEditor::SetProperties()
     MarkerDefine(smt_cond_bp, wxSTC_MARK_CHARACTER + 63); // ?
     this->MarkerSetForeground(smt_cond_bp, breakpointColour);
     this->MarkerSetBackground(smt_cond_bp, defaultBgColour);
-    
+
     MarkerDefine(smt_cond_bp_disabled, wxSTC_MARK_CHARACTER + 63); // ?
     this->MarkerSetForeground(smt_cond_bp_disabled, disabledColour);
     this->MarkerSetBackground(smt_cond_bp_disabled, defaultBgColour);
@@ -1427,17 +1430,17 @@ bool clEditor::SaveFile()
         // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
         m_deltas->OnFileSaved();
 
-        wxString projName = GetProjectName();
-        if(projName.Trim().Trim(false).IsEmpty()) return true;
+        if(::clIsCxxWorkspaceOpened()) {
 
-        // clear cached file, this function does nothing if the file is not cached
-        TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
+            // clear cached file, this function does nothing if the file is not cached
+            TagsManagerST::Get()->ClearCachedFile(GetFileName().GetFullPath());
 
-        //
-        if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) { return true; }
+            //
+            if(ManagerST::Get()->IsShutdownInProgress() || ManagerST::Get()->IsWorkspaceClosing()) { return true; }
 
-        if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) { return true; }
-        m_context->RetagFile();
+            if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISABLE_AUTO_PARSING) { return true; }
+            m_context->RetagFile();
+        }
     }
     return true;
 }

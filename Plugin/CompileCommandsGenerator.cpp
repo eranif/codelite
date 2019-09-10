@@ -16,6 +16,7 @@
 #include "CompileFlagsTxt.h"
 #include "CompileCommandsJSON.h"
 #include "wxmd5.h"
+#include "cl_config.h"
 
 wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 
@@ -43,6 +44,9 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 
     static std::unordered_map<wxString, CheckSum_t> m_checksumCache;
 
+    bool generateCompileCommands = false;
+    generateCompileCommands = clConfig::Get().Read(wxString("GenerateCompileCommands"), generateCompileCommands);
+
     // Process the compile_flags.txt files starting from the "compile_commands.json" root folder
     // Notify about completion
     std::thread thr(
@@ -66,6 +70,7 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
             m_checksumCache.erase(compile_commands);
             m_checksumCache.insert({ compile_commands, ck });
 
+            // Process compile_flags.txt files
             clFilesScanner scanner;
             wxArrayString includePaths;
             wxStringSet_t includeSet;
@@ -78,15 +83,16 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
                 }
             }
 
-            CompileCommandsJSON compileCommands(compile_commands);
-            const wxArrayString& paths = compileCommands.GetIncludes();
-            for(const wxString& path : paths) {
-                if(includeSet.count(path) == 0) {
-                    includeSet.insert(path);
-                    includePaths.Add(path);
+            if(generateCompileCommands) {
+                CompileCommandsJSON compileCommands(compile_commands);
+                const wxArrayString& paths = compileCommands.GetIncludes();
+                for(const wxString& path : paths) {
+                    if(includeSet.count(path) == 0) {
+                        includeSet.insert(path);
+                        includePaths.Add(path);
+                    }
                 }
             }
-
             clDEBUG() << "wxEVT_COMPILE_COMMANDS_JSON_GENERATED paths:\n" << includePaths;
 
             // Notify about it
@@ -128,7 +134,20 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     wxString configName =
         clCxxWorkspaceST::Get()->GetSelectedConfig() ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() : "";
-    command << " --workspace=" << workspaceFile << " --verbose --json --config=" << configName;
+
+    bool generateCompileCommands = false;
+    generateCompileCommands = clConfig::Get().Read(wxString("GenerateCompileCommands"), generateCompileCommands);
+
+    command << " --workspace=" << workspaceFile << " --verbose";
+
+    // if we are required to generate compile_commands.json, pass the --json flags
+    // not passing it means only compile_flags.txt files are generated
+    if(generateCompileCommands) {
+        command << " --json ";
+    } else {
+        command << " --compile-flags ";
+    }
+    command << " --config=" << configName;
 
     // since we might be activated with a different settings directory
     // pass the build_settings.xml to codelite-make

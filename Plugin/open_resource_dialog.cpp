@@ -43,6 +43,7 @@
 #include <wx/imaglist.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#include "clFileSystemWorkspace.hpp"
 
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
@@ -54,7 +55,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_needRefresh(false)
     , m_lineNumber(wxNOT_FOUND)
 {
-    Hide();
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
     // initialize the file-type hash
@@ -89,30 +89,34 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
 
-    SetMinClientSize(wxSize(600, 400));
-    GetSizer()->Fit(this);
-
     SetName("OpenResourceDialog");
     WindowAttrManager::Load(this);
 
     // load all files from the workspace
-    if(m_manager->IsWorkspaceOpen()) {
-        wxArrayString projects;
-        m_manager->GetWorkspace()->GetProjectList(projects);
+    if(::clIsCxxWorkspaceOpened()) {
+        if(m_manager->IsWorkspaceOpen()) {
+            wxArrayString projects;
+            m_manager->GetWorkspace()->GetProjectList(projects);
 
-        for(size_t i = 0; i < projects.GetCount(); i++) {
-            ProjectPtr p = m_manager->GetWorkspace()->GetProject(projects.Item(i));
-            if(p) {
-                const Project::FilesMap_t& files = p->GetFiles();
-                // convert std::vector to wxArrayString
-                std::for_each(files.begin(), files.end(), [&](const Project::FilesMap_t::value_type& vt) {
-                    wxFileName fn(vt.second->GetFilename());
-                    m_files.insert(std::make_pair(fn.GetFullName(), fn.GetFullPath()));
-                });
+            for(size_t i = 0; i < projects.GetCount(); i++) {
+                ProjectPtr p = m_manager->GetWorkspace()->GetProject(projects.Item(i));
+                if(p) {
+                    const Project::FilesMap_t& files = p->GetFiles();
+                    // convert std::vector to wxArrayString
+                    std::for_each(files.begin(), files.end(), [&](const Project::FilesMap_t::value_type& vt) {
+                        wxFileName fn(vt.second->GetFilename());
+                        m_files.insert(std::make_pair(fn.GetFullName(), fn.GetFullPath()));
+                    });
+                }
+            }
+        } else if(clFileSystemWorkspace::Get().IsOpen()) {
+            const std::vector<wxFileName>& files = clFileSystemWorkspace::Get().GetFiles();
+            for(const wxFileName& fn : files) {
+                m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
             }
         }
     }
-
+    
     wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
@@ -128,7 +132,6 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     bool showSymbols = clConfig::Get().Read("OpenResourceDialog/ShowSymbols", true);
     m_checkBoxFiles->SetValue(showFiles);
     m_checkBoxShowSymbols->SetValue(showSymbols);
-    CentreOnParent();
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -314,7 +317,7 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
             charHook.SetEventType(wxEVT_CHAR_HOOK);
             GetDataview()->GetEventHandler()->ProcessEvent(charHook);
         }
-        
+
         // Set the focus back to the text control
         m_textCtrlResourceName->CallAfter(&wxTextCtrl::SetFocus);
     }
@@ -382,11 +385,7 @@ bool OpenResourceDialog::MatchesFilter(const wxString& name)
 void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 
-void OpenResourceDialog::OnEnter(wxCommandEvent& event)
-{
-    event.Skip();
-    EndModal(wxID_OK);
-}
+void OpenResourceDialog::OnEnter(wxCommandEvent& event) { CallAfter(&OpenResourceDialog::EndModal, wxID_OK); }
 
 void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 

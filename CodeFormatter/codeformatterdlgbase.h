@@ -7,6 +7,7 @@
 #ifndef _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 #define _CODELITE_CODEFORMATTER_CODEFORMATTERDLG_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -46,6 +47,7 @@
 
 #include "formatoptions.h"
 #include "PHPFormatterBuffer.h"
+// clang-format on
 
 class CodeFormatterBaseDlg : public wxDialog
 {
@@ -136,239 +138,244 @@ protected:
 protected:
     virtual void UpdatePreviewUI(wxNotebookEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnFormatOnSave(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnCustomAstyleFlags(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnOK(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnApplyUI(wxUpdateUIEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnApply(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
     virtual void OnHelp(wxCommandEvent& event)
     {
-        event.Skip();
+	event.Skip();
     }
 
 public:
     wxCheckBox* GetCheckBoxFormatOnSave()
     {
-        return m_checkBoxFormatOnSave;
+	return m_checkBoxFormatOnSave;
     }
     wxStaticText* GetStaticText115()
     {
-        return m_staticText115;
+	return m_staticText115;
     }
     wxChoice* GetChoiceCxxEngine()
     {
-        return m_choiceCxxEngine;
+	return m_choiceCxxEngine;
     }
     wxStaticText* GetStaticText198()
     {
-        return m_staticText198;
+	return m_staticText198;
     }
     wxChoice* GetChoicePhpFormatter()
     {
-        return m_choicePhpFormatter;
+	return m_choicePhpFormatter;
     }
     wxPanel* GetPanelGeneral()
     {
-        return m_panelGeneral;
+	return m_panelGeneral;
     }
     wxPropertyGridManager* GetPgMgrClang()
     {
-        return m_pgMgrClang;
+	return m_pgMgrClang;
     }
     wxPanel* GetSplitterPage169()
     {
-        return m_splitterPage169;
+	return m_splitterPage169;
     }
     wxStyledTextCtrl* GetTextCtrlPreview_Clang()
     {
-        return m_textCtrlPreview_Clang;
+	return m_textCtrlPreview_Clang;
     }
     wxPanel* GetSplitterPage173()
     {
-        return m_splitterPage173;
+	return m_splitterPage173;
     }
     wxSplitterWindow* GetSplitter165()
     {
-        return m_splitter165;
+	return m_splitter165;
     }
     wxPanel* GetPanelClangFormat()
     {
-        return m_panelClangFormat;
+	return m_panelClangFormat;
     }
     wxPropertyGridManager* GetPgMgrAstyle()
     {
-        return m_pgMgrAstyle;
+	return m_pgMgrAstyle;
     }
     wxStaticText* GetStaticText59()
     {
-        return m_staticText59;
+	return m_staticText59;
     }
     wxStaticText* GetStaticText3()
     {
-        return m_staticText3;
+	return m_staticText3;
     }
     wxTextCtrl* GetTextCtrlUserFlags()
     {
-        return m_textCtrlUserFlags;
+	return m_textCtrlUserFlags;
     }
     wxPanel* GetSplitterPage149()
     {
-        return m_splitterPage149;
+	return m_splitterPage149;
     }
     wxStyledTextCtrl* GetTextCtrlPreview()
     {
-        return m_textCtrlPreview;
+	return m_textCtrlPreview;
     }
     wxPanel* GetSplitterPage153()
     {
-        return m_splitterPage153;
+	return m_splitterPage153;
     }
     wxSplitterWindow* GetSplitter145()
     {
-        return m_splitter145;
+	return m_splitter145;
     }
     wxPanel* GetPanelAstyle()
     {
-        return m_panelAstyle;
+	return m_panelAstyle;
     }
     wxNotebook* GetNotebookCxx()
     {
-        return m_notebookCxx;
+	return m_notebookCxx;
     }
     wxPanel* GetPanelCxx()
     {
-        return m_panelCxx;
+	return m_panelCxx;
     }
     wxPropertyGridManager* GetPgMgrPhp()
     {
-        return m_pgMgrPhp;
+	return m_pgMgrPhp;
     }
     wxPanel* GetSplitterPage123()
     {
-        return m_splitterPage123;
+	return m_splitterPage123;
     }
     wxStyledTextCtrl* GetStcPhpPreview()
     {
-        return m_stcPhpPreview;
+	return m_stcPhpPreview;
     }
     wxPanel* GetSplitterPage127()
     {
-        return m_splitterPage127;
+	return m_splitterPage127;
     }
     wxSplitterWindow* GetSplitter119()
     {
-        return m_splitter119;
+	return m_splitter119;
     }
     wxPanel* GetPanelBuiltIn()
     {
-        return m_panelBuiltIn;
+	return m_panelBuiltIn;
     }
     wxPropertyGridManager* GetPgMgrPHPCsFixer()
     {
-        return m_pgMgrPHPCsFixer;
+	return m_pgMgrPHPCsFixer;
     }
     wxPanel* GetSplitterPage169419()
     {
-        return m_splitterPage169419;
+	return m_splitterPage169419;
     }
     wxStyledTextCtrl* GetTextCtrlPreview_PhpCSFixer()
     {
-        return m_textCtrlPreview_PhpCSFixer;
+	return m_textCtrlPreview_PhpCSFixer;
     }
     wxPanel* GetSplitterPage1731328()
     {
-        return m_splitterPage1731328;
+	return m_splitterPage1731328;
     }
     wxSplitterWindow* GetSplitter165318()
     {
-        return m_splitter165318;
+	return m_splitter165318;
     }
     wxPanel* GetPanelPhpCSFixer()
     {
-        return m_panelPhpCSFixer;
+	return m_panelPhpCSFixer;
     }
     wxPropertyGridManager* GetPgMgrPhpcbf()
     {
-        return m_pgMgrPhpcbf;
+	return m_pgMgrPhpcbf;
     }
     wxPanel* GetSplitterPage1694()
     {
-        return m_splitterPage1694;
+	return m_splitterPage1694;
     }
     wxStyledTextCtrl* GetTextCtrlPreview_Phpcbf()
     {
-        return m_textCtrlPreview_Phpcbf;
+	return m_textCtrlPreview_Phpcbf;
     }
     wxPanel* GetSplitterPage17313()
     {
-        return m_splitterPage17313;
+	return m_splitterPage17313;
     }
     wxSplitterWindow* GetSplitter1653()
     {
-        return m_splitter1653;
+	return m_splitter1653;
     }
     wxPanel* GetPanelPhpcbf()
     {
-        return m_panelPhpcbf;
+	return m_panelPhpcbf;
     }
     wxNotebook* GetNotebookPhp()
     {
-        return m_notebookPhp;
+	return m_notebookPhp;
     }
     wxPanel* GetPanelPhp()
     {
-        return m_panelPhp;
+	return m_panelPhp;
     }
     wxNotebook* GetNotebook()
     {
-        return m_notebook;
+	return m_notebook;
     }
-    CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Source Code Formatter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CodeFormatterBaseDlg(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxString& title = _("Source Code Formatter Options"),
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CodeFormatterBaseDlg();
 };
 

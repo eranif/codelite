@@ -7,6 +7,7 @@
 #ifndef _CODELITE_GIT_GITUI_BASE_CLASSES_H
 #define _CODELITE_GIT_GITUI_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -63,6 +64,8 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
+
 class GitSettingsDlgBase : public wxDialog
 {
 protected:
@@ -118,7 +121,7 @@ public:
     wxPanel* GetPanel236() { return m_panel236; }
     wxTreebook* GetTreebook230() { return m_treebook230; }
     GitSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git settings..."),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitSettingsDlgBase();
 };
@@ -377,7 +380,7 @@ public:
     wxStaticText* GetStaticText24() { return m_staticText24; }
     wxDirPickerCtrl* GetDirPickerTargetDir() { return m_dirPickerTargetDir; }
     gitCloneDlgBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("git clone.."),
-                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, -1),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~gitCloneDlgBaseClass();
 };
@@ -397,7 +400,7 @@ protected:
 public:
     GitCommitEditor* GetEditor() { return m_editor; }
     GitFileDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("File diff"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~GitFileDiffDlgBase();
 };
@@ -557,6 +560,7 @@ public:
 class GitResetDlgBase : public wxDialog
 {
 protected:
+    wxPanel* m_panel759;
     wxStaticText* m_staticText585;
     wxStaticText* m_staticText581;
     clToolBar* m_clToolbarAltered;
@@ -577,6 +581,7 @@ public:
     wxStaticText* GetStaticText5815() { return m_staticText5815; }
     clToolBar* GetClToolbarAdded() { return m_clToolbarAdded; }
     wxCheckListBox* GetCheckListBoxNew() { return m_checkListBoxNew; }
+    wxPanel* GetPanel759() { return m_panel759; }
     GitResetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Git Reset Files"),
                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);

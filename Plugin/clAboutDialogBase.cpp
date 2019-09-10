@@ -25,7 +25,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
 
-    m_notebook8 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook8 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
     m_notebook8->SetName(wxT("m_notebook8"));
 
     boxSizer2->Add(m_notebook8, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

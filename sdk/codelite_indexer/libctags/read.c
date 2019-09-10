@@ -605,6 +605,9 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 #if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__)
 	if(location < 0)
 		return 0;
+#elif defined(__NetBSD__)
+	if(location._pos < 0)
+		return 0;
 #else
 	if(location.__pos < 0)
 		return 0;
@@ -619,6 +622,8 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 
 #if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__)
 	sizeToRead = endPos - location;
+#elif defined(__NetBSD__)
+	sizeToRead = endPos._pos - location._pos;
 #else
 	sizeToRead = endPos.__pos - location.__pos;
 #endif

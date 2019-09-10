@@ -35,7 +35,7 @@
 #include <wx/txtstrm.h>
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGnuMake
+class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGNUMakeClassic
 {
 public:
     BuilderGnuMakeOneStep();

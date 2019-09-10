@@ -42,11 +42,13 @@
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
 #include "globals.h"
+#include <wx/wupdlock.h>
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     : FindInFilesDialogBase(parent, wxID_ANY)
     , m_data(data)
 {
+    wxWindowUpdateLocker locker(this);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) { lexer->Apply(m_stcPaths); }
     m_stcPaths->SetEOLMode(wxSTC_EOL_LF);
@@ -273,12 +275,12 @@ SearchData FindInFilesDialog::DoGetSearchData()
     wxArrayString uniqueFiles;
     // Unique files may contain up to files.size() elements
     uniqueFiles.Alloc(files.size());
-    std::for_each(files.begin(), files.end(), [&](const wxString& file) {
+    for(const wxString& file : files) {
         if(filesSet.count(file) == 0) {
             filesSet.insert(file);
             uniqueFiles.Add(file);
         }
-    });
+    }
 
     // Release unused memory
     uniqueFiles.Shrink();
@@ -300,9 +302,9 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     // There is a bug in OSX that prevents popup menu from being displayed from dialogs
     // so we use an alternative way
     FindInFilesLocationsDlg dlg(this, GetPathsAsArray());
-    if(dlg.ShowModal() == wxID_OK) { 
+    if(dlg.ShowModal() == wxID_OK) {
         wxString paths = wxJoin(dlg.GetLocations(), '\n');
-        DoSetSearchPaths(paths); 
+        DoSetSearchPaths(paths);
     }
 #else
     // Show a popup menu

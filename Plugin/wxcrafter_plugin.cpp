@@ -116,8 +116,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer13->Add(boxSizer314, 1, wxEXPAND, WXC_FROM_DIP(0));
 
-    m_splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                      wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT | wxSP_3DSASH);
+    m_splitter = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                            wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT | wxSP_3DSASH);
     m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
 
@@ -154,7 +154,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     boxSizer111->Add(boxSizer310, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(500, 300)), 0);
+                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(500, 300)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcLeft->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -197,9 +197,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer310->Add(m_panelOverviewL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_staticTextLeft =
-        new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition,
-                         wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_THEME);
+    m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition,
+                                        wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_NONE);
 
     boxSizer111->Add(m_staticTextLeft, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(2));
 
@@ -233,7 +232,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
     boxSizer113->Add(boxSizer307, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     m_stcRight = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
+                                      wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcRight->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcRight->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -278,7 +277,7 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     m_staticTextRight =
         new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition,
-                         wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_THEME);
+                         wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_NONE);
 
     boxSizer113->Add(m_staticTextRight, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(2));
 
@@ -734,7 +733,6 @@ clEditorBarBase::clEditorBarBase(wxWindow* parent, wxWindowID id, const wxPoint&
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    this->Connect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
     m_buttonScope->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clEditorBarBase::OnButtonScope), NULL,
                            this);
     m_buttonFilePath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clEditorBarBase::OnButtonActions),
@@ -745,7 +743,6 @@ clEditorBarBase::clEditorBarBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
 clEditorBarBase::~clEditorBarBase()
 {
-    this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(clEditorBarBase::OnEditorSize), NULL, this);
     m_buttonScope->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clEditorBarBase::OnButtonScope), NULL,
                               this);
     m_buttonFilePath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(clEditorBarBase::OnButtonActions),

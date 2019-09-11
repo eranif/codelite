@@ -11,8 +11,13 @@
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 {
+public:
+    enum {
+        kGenerateCompileFlags = (1 << 0),
+    };
+
 protected:
-    size_t m_flags = 0;
+    size_t m_flags = kGenerateCompileFlags;
     wxStringMap_t m_buildTargets;
     wxArrayString m_compileFlags;
     wxString m_fileExtensions;
@@ -44,13 +49,22 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetEnvironment() const { return m_environment; }
     const wxString& GetExecutable() const { return m_executable; }
-    wxArrayString GetSearchPaths(const wxFileName& workspaceFile) const;
+    wxArrayString GetSearchPaths(const wxFileName& workspaceFile, wxString& compile_flags_txt) const;
 
     void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }
     const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();
     ~clFileSystemWorkspaceConfig() {}
 
+    bool ShouldCreateCompileFlags() const { return m_flags & kGenerateCompileFlags; }
+    void SetCreateCompileFlags(bool b)
+    {
+        if(b) {
+            m_flags |= kGenerateCompileFlags;
+        } else {
+            m_flags &= ~kGenerateCompileFlags;
+        }
+    }
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
 };
 

@@ -406,6 +406,13 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer22->Add(m_stcCCFlags, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_checkBoxCreateCompileFlags =
+        new wxCheckBox(m_panelCodeCompletion, wxID_ANY, _("Save this content into compile_flags.txt file"),
+                       wxDefaultPosition, wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
+    m_checkBoxCreateCompileFlags->SetValue(true);
+
+    boxSizer22->Add(m_checkBoxCreateCompileFlags, 0, wxALL, WXC_FROM_DIP(5));
+
     m_panel107 =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panel107, _("Environment"), false);

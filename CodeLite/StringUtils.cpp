@@ -118,17 +118,14 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 PUSH_CURTOKEN();
                 break;
             case '\'':
-                PUSH_CURTOKEN();
                 CHANGE_STATE(ARGV_STATE_SQUOTE);
                 curstr << ch;
                 break;
             case '"':
-                PUSH_CURTOKEN();
                 CHANGE_STATE(ARGV_STATE_DQUOTE);
                 curstr << ch;
                 break;
             case '`':
-                PUSH_CURTOKEN();
                 CHANGE_STATE(ARGV_STATE_BACKTICK);
                 curstr << ch;
                 break;
@@ -172,7 +169,6 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 break;
             case '"':
                 curstr << ch;
-                PUSH_CURTOKEN();
                 RESTORE_STATE();
                 break;
             default:
@@ -187,7 +183,6 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 break;
             case '\'':
                 curstr << ch;
-                PUSH_CURTOKEN();
                 RESTORE_STATE();
                 break;
             default:
@@ -202,7 +197,6 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 break;
             case '`':
                 curstr << ch;
-                PUSH_CURTOKEN();
                 RESTORE_STATE();
                 break;
             default:

@@ -26,6 +26,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_filePickerExe->SetPath(m_config->GetExecutable());
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
+    m_checkBoxCreateCompileFlags->SetValue(m_config->ShouldCreateCompileFlags());
     const wxStringMap_t& targets = m_config->GetBuildTargets();
     for(const auto& vt : targets) {
         wxDataViewItem item = m_dvListCtrlTargets->AppendItem(vt.first);
@@ -88,7 +89,8 @@ void FSConfigPage::Save()
         wxString command = m_dvListCtrlTargets->GetItemText(item, 1);
         targets.insert({ name, command });
     }
-
+    
+    m_config->SetCreateCompileFlags(m_checkBoxCreateCompileFlags->IsChecked());
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());

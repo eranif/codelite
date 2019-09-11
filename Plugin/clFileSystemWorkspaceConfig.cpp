@@ -62,7 +62,8 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     if(compiler) { m_compiler = compiler->GetName(); }
 }
 
-wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile) const
+wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile,
+                                                          wxString& compile_flags_txt) const
 {
     // Update the parser search paths (the default compiler paths)
     wxArrayString searchPaths = TagsManagerST::Get()->GetCtagsOptions().GetParserSearchPaths();
@@ -73,10 +74,31 @@ wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& work
         if(!l.IsEmpty()) { strCompileFlags << l << " "; }
     }
     strCompileFlags.Trim();
-    
+
     // Incase we got backticks, we need to apply the environment
     CompilerCommandLineParser cclp(strCompileFlags, workspaceFile.GetPath());
     searchPaths.insert(searchPaths.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
+
+    wxArrayString options;
+    if(ShouldCreateCompileFlags()) {
+        // Create the compile_flags.txt file content
+        options.insert(options.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
+
+        // Add the compiler paths
+        CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler(GetCompiler());
+        if(compiler) {
+            wxArrayString compilerPaths = compiler->GetDefaultIncludePaths();
+            for(wxString& compilerPath : compilerPaths) {
+                compilerPath.Prepend("-I");
+            }
+            options.insert(options.end(), compilerPaths.begin(), compilerPaths.end());
+        }
+        options.insert(options.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
+
+        for(const wxString& opt : options) {
+            compile_flags_txt << opt << "\n";
+        }
+    }
 
     wxArrayString uniquePaths;
     std::unordered_set<wxString> S;

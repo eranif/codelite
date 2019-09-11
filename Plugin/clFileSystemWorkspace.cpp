@@ -26,6 +26,7 @@
 #include <wx/xrc/xmlres.h>
 #include "NewFileSystemWorkspaceDialog.h"
 #include "asyncprocess.h"
+#include "CompileCommandsGenerator.h"
 
 #define CHECK_ACTIVE_CONFIG() \
     if(!GetSettings().GetSelectedConfig()) { return; }
@@ -421,12 +422,26 @@ void clFileSystemWorkspace::UpdateParserPaths()
     clEnvironment env(&envlist);
 
     // Update the parser paths
-    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());
+    wxString compile_flags_txt;
+    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName(), compile_flags_txt);
 
     // Expand any macros
     for(wxString& path : uniquePaths) {
         path = MacroManager::Instance()->Expand(path, nullptr, "", "");
     }
+
+    if(!compile_flags_txt.empty()) {
+        compile_flags_txt = MacroManager::Instance()->Expand(compile_flags_txt, nullptr, "", "");
+        wxFileName fnCompileFlags(GetFileName());
+        fnCompileFlags.SetFullName("compile_flags.txt");
+        FileUtils::WriteFileContent(fnCompileFlags, compile_flags_txt, wxConvUTF8);
+
+        // Fire JSON Generated event
+        clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+        EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
+        clDEBUG() << "File:" << fnCompileFlags << "generated";
+    }
+    
     ParseThreadST::Get()->SetSearchPaths(uniquePaths, {});
     clDEBUG() << "[" << GetConfig()->GetName() << "]"
               << "Parser paths are now set to:" << uniquePaths;

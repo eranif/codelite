@@ -28,6 +28,7 @@
 #include <wx/arrstr.h>
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
+#include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -119,6 +120,7 @@ protected:
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
+    wxCheckBox* m_checkBoxCreateCompileFlags;
     wxPanel* m_panel107;
     wxStaticText* m_staticText119;
     wxStyledTextCtrl* m_stcEnv;
@@ -148,6 +150,7 @@ public:
     wxPanel* GetPanelBuild() { return m_panelBuild; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
+    wxCheckBox* GetCheckBoxCreateCompileFlags() { return m_checkBoxCreateCompileFlags; }
     wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
     wxStaticText* GetStaticText119() { return m_staticText119; }
     wxStyledTextCtrl* GetStcEnv() { return m_stcEnv; }

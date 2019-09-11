@@ -99,6 +99,7 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
             [=](wxCommandEvent& menuEvent) {
                 m_buttonConfigs->SetText(config);
                 clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
+                clFileSystemWorkspace::Get().Save(true);
             },
             menuItemid);
     }

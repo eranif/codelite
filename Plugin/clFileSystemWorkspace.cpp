@@ -221,6 +221,12 @@ void clFileSystemWorkspace::Save(bool parse)
 {
     if(!m_filename.IsOk()) { return; }
     m_settings.Save(m_filename);
+    
+    clCommandEvent eventFileSave(wxEVT_FILE_SAVED);
+    eventFileSave.SetFileName(m_filename.GetFullPath());
+    eventFileSave.SetString(m_filename.GetFullPath());
+    EventNotifier::Get()->AddPendingEvent(eventFileSave);
+    
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
     // trigger a file scan
     if(parse) { CacheFiles(); }

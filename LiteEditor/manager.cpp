@@ -535,12 +535,20 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
             bldConf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
             bldConf->SetCommand("$(OutputFile)");
             bldConf->SetWorkingDirectory("");
+            
         } else if(data.m_builderName == "CodeLite Make Generator") {
             bldConf->SetIntermediateDirectory("");
             bldConf->SetOutputFileName("$(ProjectName)");
             bldConf->SetCommand("$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)");
             bldConf->SetWorkingDirectory("$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib");
+            
+        } else if(data.m_builderName == "CMake") {
+            bldConf->SetIntermediateDirectory("");
+            bldConf->SetOutputFileName("$(ProjectName)");
+            bldConf->SetCommand("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)");
+            bldConf->SetWorkingDirectory("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output");
         }
+        
         // Set the output file name
         if(!outputfile.IsEmpty()) {
             bldConf->SetOutputFileName(wxEmptyString);

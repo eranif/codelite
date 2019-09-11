@@ -157,19 +157,16 @@ void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
     if(event.GetProperty() == m_pgPropMakeGenerator) {
         wxString dlgmsg;
         dlgmsg = _("Adjust settings to fit this generator?");
-        eBuildSystem buildSystem = GetBuildSystemType();
-        if((buildSystem == kBS_CodeLiteMakeGenerator) || (buildSystem == kBS_Default)) {
-            if(::wxMessageBox(dlgmsg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
-                              ::wxGetTopLevelParent(this)) != wxYES) {
-                return;
-            }
-            // Update the settings
-            eProjectType projectType = GetProjectType();
-            m_pgPropOutputFile->SetValue(GetValueFor(kFT_OutputFile));
-            m_pgPropIntermediateFolder->SetValue(GetValueFor(kFT_IntermediateFolder));
-            m_pgPropWorkingDirectory->SetValue(GetValueFor(kFT_WorkingDirectory));
-            if(projectType == kPT_Executable) { m_pgPropProgram->SetValue(GetValueFor(kFT_Command)); }
+        if(::wxMessageBox(dlgmsg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                          ::wxGetTopLevelParent(this)) != wxYES) {
+            return;
         }
+        // Update the settings
+        m_pgPropOutputFile->SetValue(GetValueFor(kFT_OutputFile));
+        m_pgPropIntermediateFolder->SetValue(GetValueFor(kFT_IntermediateFolder));
+        m_pgPropWorkingDirectory->SetValue(GetValueFor(kFT_WorkingDirectory));
+        eProjectType projectType = GetProjectType();
+        if(projectType == kPT_Executable) { m_pgPropProgram->SetValue(GetValueFor(kFT_Command)); }
     }
 }
 
@@ -196,7 +193,26 @@ wxString PSGeneralPage::GetValueFor(eFieldType fieldType) const
         case kFT_Command:
             return "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
         }
-    } else if(buildSystem == kBS_Default) {
+    } else if(buildSystem == kBS_CMake) {
+        switch(fieldType) {
+        case kFT_OutputFile: {
+            switch(projectType) {
+            case kPT_Executable:
+                return "$(ProjectName)";
+            case kPT_DynamicLibrary:
+                return "lib$(ProjectName).a";
+            default:
+                return (wxString() << "lib$(ProjectName)." << DYNAMIC_LIB_EXT);
+            }
+        }
+        case kFT_IntermediateFolder:
+            return wxEmptyString;
+        case kFT_WorkingDirectory:
+            return "$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output";
+        case kFT_Command:
+            return "$(OutputFile)";
+        }
+    } else { // All other generators are based on the Default generator
         switch(fieldType) {
         case kFT_OutputFile: {
             switch(projectType) {
@@ -238,6 +254,8 @@ PSGeneralPage::eBuildSystem PSGeneralPage::GetBuildSystemType() const
         return kBS_CodeLiteMakeGenerator;
     } else if(generatorName == "Default") {
         return kBS_Default;
+    } else if(generatorName == "CMake") {
+        return kBS_CMake;
     } else {
         return kBS_Other;
     }

@@ -530,25 +530,24 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
 
         // Update the build system
         bldConf->SetBuildSystem(data.m_builderName);
-        if(data.m_builderName == "Default") {
-            bldConf->SetIntermediateDirectory("$(ConfigurationName)");
-            bldConf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
-            bldConf->SetCommand("$(OutputFile)");
-            bldConf->SetWorkingDirectory("");
-            
-        } else if(data.m_builderName == "CodeLite Make Generator") {
+        if(data.m_builderName == "CodeLite Make Generator") {
             bldConf->SetIntermediateDirectory("");
             bldConf->SetOutputFileName("$(ProjectName)");
             bldConf->SetCommand("$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)");
             bldConf->SetWorkingDirectory("$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib");
-            
+
         } else if(data.m_builderName == "CMake") {
             bldConf->SetIntermediateDirectory("");
             bldConf->SetOutputFileName("$(ProjectName)");
             bldConf->SetCommand("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)");
             bldConf->SetWorkingDirectory("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output");
+        } else { // All other generators are based on the "Default" one
+            bldConf->SetIntermediateDirectory("$(ConfigurationName)");
+            bldConf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
+            bldConf->SetCommand("$(OutputFile)");
+            bldConf->SetWorkingDirectory("");
         }
-        
+
         // Set the output file name
         if(!outputfile.IsEmpty()) {
             bldConf->SetOutputFileName(wxEmptyString);

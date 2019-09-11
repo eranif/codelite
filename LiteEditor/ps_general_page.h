@@ -56,6 +56,7 @@ protected:
     enum eBuildSystem {
         kBS_Default,
         kBS_CodeLiteMakeGenerator,
+        kBS_CMake, // via plugin
         kBS_Other,
     };
 

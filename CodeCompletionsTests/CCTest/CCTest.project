@@ -60,6 +60,7 @@
     
     
     
+    
     <File Name="tests/test_wxarraystr.h"/>
     <File Name="tests/test_auto_ptr.h"/>
     <File Name="tests/test_shared_ptr.h"/>
@@ -100,10 +101,6 @@
     <File Name="tester.h"/>
     <File Name="tester.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="Debug">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -355,4 +352,11 @@ PATH=../../$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib;$(WXWIN)/lib/gcc
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="CMake_Debug"/>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
+  <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Release_Unix"/>
 </CodeLite_Project>

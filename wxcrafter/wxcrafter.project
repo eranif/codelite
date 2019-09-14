@@ -641,19 +641,6 @@
     <File Name="Info.plist"/>
     <File Name="resources/DialogTemplate.wxcp"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Release_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Debug_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -1198,4 +1185,22 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="CMake_Debug_Application"/>
+  <Dependencies Name="CMake_Debug_Plugin"/>
+  <Dependencies Name="CMake_Release_Application"/>
+  <Dependencies Name="CMake_Release_Plugin"/>
+  <Dependencies Name="Debug_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Release_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Unix"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="wxcLib"/>
+  </Dependencies>
 </CodeLite_Project>

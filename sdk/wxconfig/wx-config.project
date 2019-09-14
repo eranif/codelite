@@ -40,9 +40,6 @@
   <VirtualDirectory Name="src">
     <File Name="wx-config-win.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -219,4 +216,8 @@ WXWIN=D:\src\wxWidgets_x64]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

@@ -257,4 +257,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Release_WX28"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

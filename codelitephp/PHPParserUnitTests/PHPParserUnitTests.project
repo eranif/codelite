@@ -104,18 +104,6 @@
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>
   </Dependencies>
-  <Dependencies Name="Debug_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Release">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
-  <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -377,4 +365,16 @@ PATH=C:\src\codelite\lib\gcc_lib;$WXWIN\lib\gcc_dll;$PATH]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
+  <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

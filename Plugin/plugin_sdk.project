@@ -795,17 +795,6 @@
     <File Name="clJSCTags.h"/>
     <File Name="jsctags.zip"/>
   </VirtualDirectory>
-  <Dependencies Name="Custom"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="wxshapeframework"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -1118,4 +1107,16 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="CMake_Debug"/>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

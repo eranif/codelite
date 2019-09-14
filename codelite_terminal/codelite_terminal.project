@@ -73,8 +73,10 @@
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Debug_Linux"/>
+  <Dependencies Name="Debug_Linux_GTK3"/>
   <Dependencies Name="Release"/>
   <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -282,7 +284,7 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/../build-$(WorkspaceConfiguration)/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
       </Linker>
@@ -331,12 +333,12 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
         <Preprocessor Value="_WIN32_WINNT=0x0501"/>
       </Compiler>
       <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/../build-$(WorkspaceConfiguration)/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="codelite-terminal" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--exit --wait --cmd &quot;ls -l&quot;" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-terminal" IntermediateDirectory="" Command="$(WorkspacePath)/$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--exit --wait --cmd &quot;ls -l&quot;" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

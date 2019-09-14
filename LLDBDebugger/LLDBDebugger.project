@@ -87,15 +87,6 @@
       <File Name="UI_lldbdebugger_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="LLDBProtocol"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="LLDBProtocol"/>
-  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -397,4 +388,13 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="LLDBProtocol"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="LLDBProtocol"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

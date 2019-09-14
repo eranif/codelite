@@ -94,10 +94,6 @@
     <File Name="PHPFormatterBuffer.cpp"/>
     <File Name="PHPFormatterBuffer.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -309,4 +305,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

@@ -69,10 +69,6 @@
     <File Name="license.myspell"/>
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -253,4 +249,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
 </CodeLite_Project>

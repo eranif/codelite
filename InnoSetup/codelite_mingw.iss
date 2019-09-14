@@ -39,10 +39,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#CODELITE_ROOT}\Runtime32\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\Runtime\wx-config.exe"; DestDir: "{app}";
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\Runtime\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion; 
 
 ;; ---- wxWidgets DLLs
@@ -66,7 +73,6 @@ Source: "{#MINGW_DIR}\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversi
 
 ;; ---- Binaries needed by CodeLite
 Source: "{#CODELITE_ROOT}\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\wx-config.exe"; DestDir: "{app}"; 
 
 ;; ---------- Configuration files can be copied from the 64 bit version
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.xml.default"; DestDir: "{app}\config";
@@ -78,7 +84,6 @@ Source: "{#CODELITE_ROOT}\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversi
 Source: "{#CODELITE_ROOT}\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\php.sample"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\sdk\codelite_cppcheck\cfg\*.cfg"; DestDir: "{app}\config\cppcheck"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\templates\*"; DestDir: "{app}\templates"; Flags: recursesubdirs ; 
 Source: "{#CODELITE_ROOT}\SpellChecker\dics\*"; DestDir: "{app}\dics"; Flags: recursesubdirs ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\resources\*"; DestDir: "{app}\plugins\resources\"; Flags: ignoreversion ; 
@@ -140,13 +145,6 @@ Source: "{#CODELITE_ROOT}\Runtime32\libwxshapeframeworku.dll"; DestDir: "{app}";
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib32\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\libssh\lib32\libzlib.dll"; DestDir: "{app}\"; DestName: "libzlib.dll"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\sdk\clang\lib\clang-format-64.exe"; DestDir: "{app}\"; DestName: "codelite-clang-format.exe"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\*.zip"; DestDir: "{app}"; Flags: ignoreversion ; 

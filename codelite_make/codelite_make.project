@@ -36,6 +36,7 @@
   <Dependencies Name="Debug_Linux"/>
   <Dependencies Name="Release"/>
   <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -197,7 +198,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/../build-$(WorkspaceConfiguration)/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -247,7 +248,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/../build-$(WorkspaceConfiguration)/lib"/>
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libwxsqlite3u.dll"/>

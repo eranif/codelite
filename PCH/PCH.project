@@ -43,12 +43,6 @@
     <File Name="precompiled_header_dbg.h"/>
     <File Name="precompiled_header_release.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="DebugUnicode"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="ReleaseUnicode"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -333,4 +327,11 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="DebugUnicode"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="ReleaseUnicode"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

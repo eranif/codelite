@@ -9,12 +9,6 @@
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Tests"/>
-  <Dependencies Name="Debug">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -160,4 +154,11 @@ CODELITE_DIR=C:\src\codelite]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

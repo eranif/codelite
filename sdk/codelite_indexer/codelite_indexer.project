@@ -113,7 +113,6 @@
     <File Name="libctags/vstring.h"/>
     <File Name="libctags/config.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Release"/>
   <Dependencies Name="Debug"/>
   <VirtualDirectory Name="network">
     <File Name="network/named_pipe.cpp"/>
@@ -132,16 +131,6 @@
     <File Name="network/clindexerprotocol.h"/>
     <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix"/>
-  <Dependencies Name="ReleaseDebug_Win"/>
-  <Dependencies Name="Release_Unix"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Debug_Win">
-    <Project Name="indexer_client"/>
-  </Dependencies>
-  <Dependencies Name="Release_Win">
-    <Project Name="indexer_client"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -494,4 +483,16 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug_Unix"/>
+  <Dependencies Name="Debug_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="ReleaseDebug_Win"/>
+  <Dependencies Name="Release_Unix"/>
+  <Dependencies Name="Release_Win">
+    <Project Name="indexer_client"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

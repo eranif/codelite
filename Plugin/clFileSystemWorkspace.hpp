@@ -58,6 +58,7 @@ protected:
     void OnQuickDebugDlgDismissed(clDebugEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnMenuCustomTarget(wxCommandEvent& event);
+    void OnFileSaved(clCommandEvent& event);
 
 protected:
     bool Load(const wxFileName& file);

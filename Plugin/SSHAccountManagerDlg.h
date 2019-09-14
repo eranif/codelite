@@ -36,6 +36,7 @@ public:
     virtual ~SSHAccountManagerDlg();
 
 protected:
+    virtual void OnOK(wxCommandEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnEditAccountUI(wxUpdateUIEvent& event);
     virtual void OnDeleteAccountUI(wxUpdateUIEvent& event);

@@ -354,7 +354,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer153 = new wxBoxSizer(wxVERTICAL);
     m_panelRemote->SetSizer(boxSizer153);
 
-    wxFlexGridSizer* flexGridSizer155 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer155 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer155->SetFlexibleDirection(wxBOTH);
     flexGridSizer155->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer155->AddGrowableCol(1);
@@ -369,6 +369,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer155->Add(m_checkBoxEnableRemote, 0, wxALL, WXC_FROM_DIP(5));
 
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     m_staticText161 = new wxStaticText(m_panelRemote, wxID_ANY, _("SSH Account:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
 
@@ -378,7 +380,9 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_choiceSSHAccount = new wxChoice(m_panelRemote, wxID_ANY, wxDefaultPosition,
                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), m_choiceSSHAccountArr, 0);
 
-    flexGridSizer155->Add(m_choiceSSHAccount, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer155->Add(m_choiceSSHAccount, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText165 = new wxStaticText(m_panelRemote, wxID_ANY, _("Remote folder:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
@@ -392,6 +396,12 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 #endif
 
     flexGridSizer155->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button169 = new wxButton(m_panelRemote, wxID_ANY, _("..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button169->SetToolTip(_("Browse for folder"));
+
+    flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_TOP, WXC_FROM_DIP(5));
 
     m_panelCodeCompletion =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -411,8 +421,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_stcCCFlags = new wxStyledTextCtrl(m_panelCodeCompletion, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
     m_stcCCFlags->SetToolTip(_("Place your build flags one-per-line here.\nFor "
-                               "example:\n\n-I/home/eran/include\n-I/home/eran/wx/include\n-DSOME=1\n\nThese flags "
-                               "will be used by CodeLite for better\ncode completion"));
+                               "example:\n\n-I/home/eran/include\n-I/home/eran/wx/include\n-DSOME=1\n`wx-config "
+                               "--cflags`\n\nThese flags will be used by CodeLite for better\ncode completion"));
     m_stcCCFlags->SetFocus();
     // Configure the fold margin
     m_stcCCFlags->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
@@ -452,9 +462,11 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer22->Add(m_stcCCFlags, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxCreateCompileFlags =
-        new wxCheckBox(m_panelCodeCompletion, wxID_ANY, _("Save this content into compile_flags.txt file"),
+        new wxCheckBox(m_panelCodeCompletion, wxID_ANY, _("Use this content to create a compile_flags.txt file"),
                        wxDefaultPosition, wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
     m_checkBoxCreateCompileFlags->SetValue(true);
+    m_checkBoxCreateCompileFlags->SetToolTip(
+        _("Use this content to create a compile_flags.txt file\nThis is useful when using clangd for code completion"));
 
     boxSizer22->Add(m_checkBoxCreateCompileFlags, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -509,7 +521,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer117->Add(m_stcEnv, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("FSConfigPageBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
@@ -522,6 +534,15 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                             this);
     m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_choiceSSHAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
+                                this);
+    m_choiceSSHAccount->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                wxCommandEventHandler(FSConfigPageBase::OnSSHAccountChoice), NULL, this);
+    m_textCtrlRemoteFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
+                                    this);
+    m_button169->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
+    m_button169->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
+                         this);
 }
 
 FSConfigPageBase::~FSConfigPageBase()
@@ -536,6 +557,15 @@ FSConfigPageBase::~FSConfigPageBase()
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                                this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_choiceSSHAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
+                                   this);
+    m_choiceSSHAccount->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                   wxCommandEventHandler(FSConfigPageBase::OnSSHAccountChoice), NULL, this);
+    m_textCtrlRemoteFolder->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI),
+                                       NULL, this);
+    m_button169->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
+    m_button169->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
+                            this);
 }
 
 NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id,

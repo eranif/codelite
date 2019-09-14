@@ -14,6 +14,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 public:
     enum {
         kGenerateCompileFlags = (1 << 0),
+        kEnableRemoteSync = (1 << 1),
     };
 
 protected:
@@ -26,8 +27,11 @@ protected:
     wxString m_args;
     wxString m_environment;
     wxString m_compiler;
+    wxString m_remoteFolder;
+    wxString m_remoteAccount;
 
 public:
+    typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
     JSONItem ToJSON() const;
     void FromJSON(const JSONItem& json);
 
@@ -50,7 +54,15 @@ public:
     const wxString& GetEnvironment() const { return m_environment; }
     const wxString& GetExecutable() const { return m_executable; }
     wxArrayString GetSearchPaths(const wxFileName& workspaceFile, wxString& compile_flags_txt) const;
-
+    bool IsRemoteEnabled() const { return m_flags & kEnableRemoteSync; }
+    void SetRemoteEnabled(bool b)
+    {
+        if(b) {
+            m_flags |= kEnableRemoteSync;
+        } else {
+            m_flags &= ~kEnableRemoteSync;
+        }
+    }
     void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }
     const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();
@@ -65,7 +77,11 @@ public:
             m_flags &= ~kGenerateCompileFlags;
         }
     }
-    typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
+    void SetRemoteFolder(const wxString& remoteFolder) { this->m_remoteFolder = remoteFolder; }
+    const wxString& GetRemoteFolder() const { return m_remoteFolder; }
+    void SetRemoteAccount(const wxString& remoteAccount) { this->m_remoteAccount = remoteAccount; }
+    const wxString& GetRemoteAccount() const { return m_remoteAccount; }
+    clFileSystemWorkspaceConfig::Ptr_t Clone() const;
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

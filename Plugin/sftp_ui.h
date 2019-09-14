@@ -62,6 +62,7 @@ protected:
     virtual void OnDeleteAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEditAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEditAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }

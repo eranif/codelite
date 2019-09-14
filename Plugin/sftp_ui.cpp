@@ -102,6 +102,7 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
                           this);
     m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnEditAccount),
                           NULL, this);
+    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnOK), NULL, this);
 }
 
 SSHAccountManagerDlgBase::~SSHAccountManagerDlgBase()
@@ -118,6 +119,8 @@ SSHAccountManagerDlgBase::~SSHAccountManagerDlgBase()
                              this);
     m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                              wxCommandEventHandler(SSHAccountManagerDlgBase::OnEditAccount), NULL, this);
+    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SSHAccountManagerDlgBase::OnOK), NULL,
+                          this);
 }
 
 AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,

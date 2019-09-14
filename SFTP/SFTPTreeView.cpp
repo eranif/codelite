@@ -206,11 +206,7 @@ void SFTPTreeView::OnItemExpanding(wxTreeEvent& event)
 void SFTPTreeView::OnOpenAccountManager(wxCommandEvent& event)
 {
     SSHAccountManagerDlg dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
-        SFTPSettings settings;
-        settings.Load().SetAccounts(dlg.GetAccounts());
-        settings.Save();
-    }
+    dlg.ShowModal();
 }
 
 void SFTPTreeView::DoCloseSession()

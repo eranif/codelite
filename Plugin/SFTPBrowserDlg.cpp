@@ -319,12 +319,9 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 {
     SSHAccountManagerDlg dlg(this);
     if(dlg.ShowModal() == wxID_OK) {
-
-        SFTPSettings settings;
-        settings.Load().SetAccounts(dlg.GetAccounts());
-        settings.Save();
-
         // Update the selections at the top
+        SFTPSettings settings;
+        settings.Load();
         wxString curselection = m_choiceAccount->GetStringSelection();
 
         m_choiceAccount->Clear();

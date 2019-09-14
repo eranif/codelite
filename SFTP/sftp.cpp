@@ -250,13 +250,7 @@ void SFTP::OnAccountManager(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     SSHAccountManagerDlg dlg(wxTheApp->GetTopWindow());
-    if(dlg.ShowModal() == wxID_OK) {
-
-        SFTPSettings settings;
-        settings.Load();
-        settings.SetAccounts(dlg.GetAccounts());
-        settings.Save();
-    }
+    dlg.ShowModal();
 }
 
 void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)

@@ -21,6 +21,8 @@ JSONItem clFileSystemWorkspaceConfig::ToJSON() const
     item.addProperty("arguments", m_args);
     item.addProperty("environment", m_environment);
     item.addProperty("compiler", m_compiler);
+    item.addProperty("remoteFolder", m_remoteFolder);
+    item.addProperty("remoteAccount", m_remoteAccount);
     JSONItem arrTargets = JSONItem::createArray("targets");
     item.append(arrTargets);
 
@@ -43,6 +45,8 @@ void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
     m_args = json.namedObject("arguments").toString();
     m_environment = json.namedObject("environment").toString();
     m_compiler = json.namedObject("compiler").toString(m_compiler);
+    m_remoteFolder = json.namedObject("remoteFolder").toString();
+    m_remoteAccount = json.namedObject("remoteAccount").toString();
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
@@ -125,6 +129,11 @@ wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 void clFileSystemWorkspaceConfig::SetCompileFlags(const wxString& compileFlags)
 {
     m_compileFlags = ::wxStringTokenize(compileFlags, "\r\n", wxTOKEN_STRTOK);
+}
+
+clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
+{
+    return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
 }
 
 ///===-------------------------------------

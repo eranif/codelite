@@ -140,4 +140,11 @@ void SSHAccountManagerDlg::DoEditAccount(const wxDataViewItem& item)
         }
     }
 }
+void SSHAccountManagerDlg::OnOK(wxCommandEvent& event)
+{
+    SFTPSettings settings;
+    settings.Load().SetAccounts(GetAccounts());
+    settings.Save();
+    EndModal(wxID_OK);
+}
 #endif // USE_SFTP

@@ -123,6 +123,7 @@ protected:
     wxChoice* m_choiceSSHAccount;
     wxStaticText* m_staticText165;
     wxTextCtrl* m_textCtrlRemoteFolder;
+    wxButton* m_button169;
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
@@ -138,6 +139,9 @@ protected:
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSSHAccountChoice(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSSHBrowse(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText109() { return m_staticText109; }
@@ -159,6 +163,7 @@ public:
     wxChoice* GetChoiceSSHAccount() { return m_choiceSSHAccount; }
     wxStaticText* GetStaticText165() { return m_staticText165; }
     wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    wxButton* GetButton169() { return m_button169; }
     wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
@@ -169,7 +174,7 @@ public:
     wxPanel* GetPanelEnv() { return m_panelEnv; }
     wxNotebook* GetNotebook() { return m_notebook; }
     FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~FSConfigPageBase();
 };
 

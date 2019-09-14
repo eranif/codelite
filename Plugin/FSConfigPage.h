@@ -8,7 +8,13 @@ class FSConfigPage : public FSConfigPageBase
     clFileSystemWorkspaceConfig::Ptr_t m_config;
 
 protected:
+    virtual void OnSSHAccountChoice(wxCommandEvent& event);
+    virtual void OnSSHBrowse(wxCommandEvent& event);
+    virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event);
+
+protected:
     void DoTargetActivated();
+    void DoUpdateSSHAcounts();
 
 public:
     FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config);

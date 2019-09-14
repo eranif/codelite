@@ -27,6 +27,7 @@
 #include "NewFileSystemWorkspaceDialog.h"
 #include "asyncprocess.h"
 #include "CompileCommandsGenerator.h"
+#include "clSFTPEvent.h"
 
 #define CHECK_ACTIVE_CONFIG() \
     if(!GetSettings().GetSelectedConfig()) { return; }
@@ -73,6 +74,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_SHOWING, &clFileSystemWorkspace::OnQuickDebugDlgShowing, this);
         EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, &clFileSystemWorkspace::OnQuickDebugDlgDismissed,
                                    this);
+
+        EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
     }
 }
 
@@ -111,6 +114,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
                                      this);
         EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK,
                                      &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
+        EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
     }
 }
 
@@ -221,12 +225,12 @@ void clFileSystemWorkspace::Save(bool parse)
 {
     if(!m_filename.IsOk()) { return; }
     m_settings.Save(m_filename);
-    
+
     clCommandEvent eventFileSave(wxEVT_FILE_SAVED);
     eventFileSave.SetFileName(m_filename.GetFullPath());
     eventFileSave.SetString(m_filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(eventFileSave);
-    
+
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
     // trigger a file scan
     if(parse) { CacheFiles(); }
@@ -447,7 +451,7 @@ void clFileSystemWorkspace::UpdateParserPaths()
         EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
         clDEBUG() << "File:" << fnCompileFlags << "generated";
     }
-    
+
     ParseThreadST::Get()->SetSearchPaths(uniquePaths, {});
     clDEBUG() << "[" << GetConfig()->GetName() << "]"
               << "Parser paths are now set to:" << uniquePaths;
@@ -734,5 +738,35 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
         DoOpen();
     } else {
         m_filename.Clear();
+    }
+}
+
+void clFileSystemWorkspace::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    CHECK_ACTIVE_CONFIG();
+
+    if(GetConfig()->IsRemoteEnabled()) {
+        const wxString& filename = event.GetFileName();
+        const wxString& account = GetConfig()->GetRemoteAccount();
+        const wxString& remotePath = GetConfig()->GetRemoteFolder();
+        
+        wxString remoteFilePath;
+        
+        // Make the local file path relative to the workspace location
+        wxFileName fnLocalFile(event.GetFileName());
+        fnLocalFile.MakeRelativeTo(GetFileName().GetPath());
+        
+        remoteFilePath = fnLocalFile.GetFullPath(wxPATH_UNIX);
+        remoteFilePath.Prepend(remotePath + "/");
+        wxFileName fnRemoteFile(remoteFilePath);
+        
+        
+        // Build the remote filename
+        clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
+        eventSave.SetAccount(account);
+        eventSave.SetLocalFile(filename);
+        eventSave.SetRemoteFile(fnRemoteFile.GetFullPath(wxPATH_UNIX));
+        EventNotifier::Get()->QueueEvent(eventSave.Clone());
     }
 }

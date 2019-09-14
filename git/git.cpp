@@ -1530,27 +1530,43 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         return;
     }
 
-    if(ga.action == gitListAll || ga.action == gitListModified || ga.action == gitResetRepo) {
+    switch(ga.action) {
+    case gitPush: {
+        clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_PUSHED);
+        evt.SetSourceControlName("git");
+        EventNotifier::Get()->QueueEvent(evt.Clone());
+    } break;
+    case gitListAll:
+    case gitListModified:
+    case gitResetRepo: {
         if(ga.action == gitListAll && m_bActionRequiresTreUpdate) {
-            if(m_commandOutput.Lower().Contains(_("created"))) UpdateFileTree();
+            if(m_commandOutput.Lower().Contains(_("created"))) { UpdateFileTree(); }
         }
         m_bActionRequiresTreUpdate = false;
         FinishGitListAction(ga);
-
-    } else if(ga.action == gitStatus) {
+        if(ga.action == gitResetRepo) {
+            // Reload files if needed
+            EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
+            // We also want to post reset event here
+            clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_RESET_FILES);
+            evt.SetSourceControlName("git");
+            EventNotifier::Get()->QueueEvent(evt.Clone());
+        }
+    } break;
+    case gitStatus: {
         m_console->UpdateTreeView(m_commandOutput);
         FinishGitListAction(ga);
-
-    } else if(ga.action == gitListRemotes) {
+    } break;
+    case gitListRemotes: {
         wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
         m_remotes = gitList;
-
-    } else if(ga.action == gitDiffFile) {
+    } break;
+    case gitDiffFile: {
 
         // Show the diff in the diff-viewer
         DoShowDiffViewer(m_commandOutput, ga.arguments);
-
-    } else if(ga.action == gitDiffRepoCommit) {
+    } break;
+    case gitDiffRepoCommit: {
         wxString commitArgs;
         DoShowCommitDialog(m_commandOutput, commitArgs);
         if(!commitArgs.IsEmpty()) {
@@ -1558,37 +1574,48 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             m_gitActionQueue.push_back(ga);
             AddDefaultActions();
         }
-
-    } else if(ga.action == gitBlame) {
+    } break;
+    case gitBlame: {
         if(!m_gitBlameDlg) { m_gitBlameDlg = new GitBlameDlg(m_topWindow, this); }
         m_gitBlameDlg->SetBlame(m_commandOutput, ga.arguments);
         m_gitBlameDlg->Show();
         m_gitBlameDlg->SetFocus();
-
-    } else if(ga.action == gitRevlist) {
+    } break;
+    case gitRevlist: {
         if(m_gitBlameDlg) { m_gitBlameDlg->OnRevListOutput(m_commandOutput, ga.arguments); }
-
-    } else if(ga.action == gitDiffRepoShow) {
+    } break;
+    case gitDiffRepoShow: {
         // This is now dealt with by GitDiffDlg itself
         //        GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
         //        dlg.SetDiff(m_commandOutput);
         //        dlg.ShowModal();
-
-    } else if(ga.action == gitResetFile || ga.action == gitApplyPatch) {
+    } break;
+    case gitResetFile:
+    case gitApplyPatch: {
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
 
         gitAction newAction;
         newAction.action = gitListModified;
         m_gitActionQueue.push_back(newAction);
 
-    } else if(ga.action == gitBranchCurrent) {
+        if(ga.action == gitResetFile) {
+            // We also want to post reset event here
+            clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_RESET_FILES);
+            evt.SetSourceControlName("git");
+            EventNotifier::Get()->QueueEvent(evt.Clone());
+        }
+
+    } break;
+    case gitBranchCurrent:
         GetCurrentBranchAction(ga);
-
-    } else if(ga.action == gitBranchList || ga.action == gitBranchListRemote) {
+        break;
+    case gitBranchList:
+    case gitBranchListRemote: {
         ListBranchAction(ga);
-
-    } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote || ga.action == gitPull ||
-              ga.action == gitResetRepo) {
+    } break;
+    case gitBranchSwitch:
+    case gitBranchSwitchRemote:
+    case gitPull: {
         if(ga.action == gitPull) {
             if(m_commandOutput.Contains(wxT("Already"))) {
                 // do nothing
@@ -1629,7 +1656,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                     EventNotifier::Get()->AddPendingEvent(fsEvent);
                 }
             }
-
         } else if(ga.action == gitBranchSwitch || ga.action == gitBranchSwitchRemote) {
             // update the tree
             gitAction ga(gitListAll, wxT(""));
@@ -1637,11 +1663,15 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             ga.action = gitListModified;
             m_gitActionQueue.push_back(ga);
         }
-
+        
+        clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_PULLED);
+        evt.SetSourceControlName("git");
+        EventNotifier::Get()->QueueEvent(evt.Clone());
+        
         // Reload files if needed
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
-
-    } else if(ga.action == gitCommitList) {
+    } break;
+    case gitCommitList: {
         if(m_commitListDlg) {
             m_commitListDlg->SetCommitList(m_commandOutput);
         } else {
@@ -1649,14 +1679,26 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             m_commitListDlg->SetCommitList(m_commandOutput);
         }
         m_commitListDlg->Show();
-
-    } else if(ga.action == gitRevertCommit) {
+    } break;
+    case gitCommit: {
+        clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY);
+        evt.SetSourceControlName("git");
+        EventNotifier::Get()->QueueEvent(evt.Clone());
+    } break;
+    case gitRevertCommit: {
+        // We also want to post reset event here
+        clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_RESET_FILES);
+        evt.SetSourceControlName("git");
+        EventNotifier::Get()->QueueEvent(evt.Clone());
         AddDefaultActions();
+    } break;
+    default:
+        break;
     }
 
     if(ga.action == gitResetRepo || ga.action == gitResetFile) {
         // Reload externally modified files
-        CL_DEBUG("Git: posting a 'reload externally modified files' event");
+        clDEBUG() << "Git: posting a 'reload externally modified files' event";
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
 
@@ -1668,7 +1710,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     int statLoc;
     ::waitpid(-1, &statLoc, WNOHANG);
 #endif
-
     ProcessGitActionQueue();
 }
 

@@ -232,8 +232,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer76);
 
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                wxNB_FIXEDWIDTH | wxBK_DEFAULT);
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     boxSizer76->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -248,21 +247,6 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer33->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer33->AddGrowableCol(1);
     m_panelGeneral->SetSizer(flexGridSizer33);
-
-    m_staticText35 = new wxStaticText(m_panelGeneral, wxID_ANY, _("File extensions:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_staticText35->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
-
-    flexGridSizer33->Add(m_staticText35, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlFileExt = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_textCtrlFileExt->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFileExt->SetHint(wxT(""));
-#endif
-
-    flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Executable:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
@@ -289,6 +273,21 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 #endif
 
     flexGridSizer33->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText35 = new wxStaticText(m_panelGeneral, wxID_ANY, _("File extensions:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText35->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
+
+    flexGridSizer33->Add(m_staticText35, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFileExt = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlFileExt->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFileExt->SetHint(wxT(""));
+#endif
+
+    flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelBuild =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -347,6 +346,52 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
                                   wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)), 0);
 
     boxSizer40->Add(m_buttonDelete, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelRemote =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelRemote, _("Remote"), false);
+
+    wxBoxSizer* boxSizer153 = new wxBoxSizer(wxVERTICAL);
+    m_panelRemote->SetSizer(boxSizer153);
+
+    wxFlexGridSizer* flexGridSizer155 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer155->SetFlexibleDirection(wxBOTH);
+    flexGridSizer155->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer155->AddGrowableCol(1);
+
+    boxSizer153->Add(flexGridSizer155, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxEnableRemote = new wxCheckBox(m_panelRemote, wxID_ANY, _("Enable remote development"), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+    m_checkBoxEnableRemote->SetValue(false);
+
+    flexGridSizer155->Add(m_checkBoxEnableRemote, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText161 = new wxStaticText(m_panelRemote, wxID_ANY, _("SSH Account:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+
+    flexGridSizer155->Add(m_staticText161, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceSSHAccountArr;
+    m_choiceSSHAccount = new wxChoice(m_panelRemote, wxID_ANY, wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), m_choiceSSHAccountArr, 0);
+
+    flexGridSizer155->Add(m_choiceSSHAccount, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText165 = new wxStaticText(m_panelRemote, wxID_ANY, _("Remote folder:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+
+    flexGridSizer155->Add(m_staticText165, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlRemoteFolder = new wxTextCtrl(m_panelRemote, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlRemoteFolder->SetHint(wxT(""));
+#endif
+
+    flexGridSizer155->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelCodeCompletion =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -413,19 +458,19 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer22->Add(m_checkBoxCreateCompileFlags, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_panel107 =
+    m_panelEnv =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panel107, _("Environment"), false);
+    m_notebook->AddPage(m_panelEnv, _("Environment"), false);
 
     wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
-    m_panel107->SetSizer(boxSizer117);
+    m_panelEnv->SetSizer(boxSizer117);
 
-    m_staticText119 = new wxStaticText(m_panel107, wxID_ANY, _("Environment variables:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel107, wxSize(-1, -1)), 0);
+    m_staticText119 = new wxStaticText(m_panelEnv, wxID_ANY, _("Environment variables:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
 
     boxSizer117->Add(m_staticText119, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcEnv = new wxStyledTextCtrl(m_panel107, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel107, wxSize(-1, -1)), 0);
+    m_stcEnv = new wxStyledTextCtrl(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcEnv->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcEnv->SetMarginMask(4, wxSTC_MASK_FOLDERS);

@@ -138,7 +138,7 @@ void FSConfigPage::OnSSHBrowse(wxCommandEvent& event)
     wxUnusedVar(event);
     SFTPBrowserDlg dlg(GetParent(), _("Choose folder"), "", clSFTP::SFTP_BROWSE_FOLDERS);
     dlg.Initialize(m_choiceSSHAccount->GetStringSelection(), m_textCtrlRemoteFolder->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {}
+    if(dlg.ShowModal() == wxID_OK) { m_textCtrlRemoteFolder->ChangeValue(dlg.GetPath()); }
 }
 
 void FSConfigPage::OnSSHAccountChoice(wxCommandEvent& event)

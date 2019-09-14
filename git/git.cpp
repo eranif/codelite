@@ -1663,11 +1663,11 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
             ga.action = gitListModified;
             m_gitActionQueue.push_back(ga);
         }
-        
+
         clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_PULLED);
         evt.SetSourceControlName("git");
         EventNotifier::Get()->QueueEvent(evt.Clone());
-        
+
         // Reload files if needed
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     } break;
@@ -2352,7 +2352,9 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
         DirSaver ds;
         IEditor* editor = m_mgr->GetActiveEditor();
         if(editor) { ::wxSetWorkingDirectory(editor->GetFileName().GetPath()); }
+#ifndef __WXMSW__
         ::WrapInShell(bashcommand);
+#endif
         ::wxExecute(bashcommand);
     } else {
         ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING | wxOK | wxCENTER);

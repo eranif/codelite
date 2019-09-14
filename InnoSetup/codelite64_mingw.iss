@@ -30,7 +30,7 @@ UninstallDisplayIcon={app}\codelite.exe,0
 #define WXWIN "C:\src\wxWidgets"
 #define MSYS2_DIR "C:\Program Files\Git\usr\bin"
 #define MINGW_DIR "C:\compilers\mingw64\bin"
-#define BUILD_BIN_DIR "C:\src\codelite\build-Win_x64_Release"
+#define BUILD_BIN_DIR "C:\src\codelite\build-Win_x64_Release\bin"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -40,17 +40,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#BUILD_BIN_DIR}\Runtime\wx-config.exe"; DestDir: "{app}";
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#BUILD_BIN_DIR}\Runtime\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#BUILD_BIN_DIR}\Runtime\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
-Source: "{#BUILD_BIN_DIR}\Runtime\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "{#BUILD_BIN_DIR}\wx-config.exe"; DestDir: "{app}";
+Source: "{#BUILD_BIN_DIR}\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\le_exec.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
+Source: "{#BUILD_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 
 ;; ---- wxWidgets DLLs
 Source: "{#WXWIN}\lib\gcc_dll\wxbase313u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;

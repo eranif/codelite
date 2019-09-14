@@ -218,6 +218,25 @@ public:
 typedef void (wxEvtHandler::*clCommandEventFunction)(clCommandEvent&);
 #define clCommandEventHandler(func) wxEVENT_HANDLER_CAST(clCommandEventFunction, func)
 
+/// Source control event
+class WXDLLIMPEXP_CL clSourceControlEvent : public clCommandEvent
+{
+protected:
+    wxString m_sourceControlName;
+
+public:
+    clSourceControlEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clSourceControlEvent(const clSourceControlEvent& event);
+    clSourceControlEvent& operator=(const clSourceControlEvent& src);
+    virtual ~clSourceControlEvent();
+    virtual wxEvent* Clone() const;
+    void SetSourceControlName(const wxString& sourceControlName) { this->m_sourceControlName = sourceControlName; }
+    const wxString& GetSourceControlName() const { return m_sourceControlName; }
+};
+
+typedef void (wxEvtHandler::*clSourceControlEventFunction)(clSourceControlEvent&);
+#define clSourceControlEventHandler(func) wxEVENT_HANDLER_CAST(clSourceControlEventFunction, func)
+
 /// a clCodeCompletionEvent
 class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
 {
@@ -253,7 +272,7 @@ public:
 
     const LSP::CompletionItem::eTriggerKind& GetTriggerKind() const { return m_triggerKind; }
     void SetTriggerKind(const LSP::CompletionItem::eTriggerKind& triggerKind) { this->m_triggerKind = triggerKind; }
-    
+
     /**
      * @brief return the Editor object
      */

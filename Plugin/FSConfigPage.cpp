@@ -4,9 +4,12 @@
 #include "BuildTargetDlg.h"
 #include "macros.h"
 #include "build_settings_config.h"
+
+#if USE_SFTP
 #include "sftp_settings.h"
 #include "SFTPBrowserDlg.h"
 #include "SSHAccountManagerDlg.h"
+#endif
 
 #define OPEN_SSH_ACCOUNT_MANAGER "-- Open SSH Account Manager --"
 
@@ -131,28 +134,40 @@ void FSConfigPage::DoTargetActivated()
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetCommand(), 1);
     }
 }
-void FSConfigPage::OnRemoteEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnableRemote->IsChecked()); }
+void FSConfigPage::OnRemoteEnabledUI(wxUpdateUIEvent& event)
+{
+#if USE_SFTP
+    event.Enable(m_checkBoxEnableRemote->IsChecked());
+#else
+    event.Enable(false);
+#endif
+}
 
 void FSConfigPage::OnSSHBrowse(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+#if USE_SFTP
     SFTPBrowserDlg dlg(GetParent(), _("Choose folder"), "", clSFTP::SFTP_BROWSE_FOLDERS);
     dlg.Initialize(m_choiceSSHAccount->GetStringSelection(), m_textCtrlRemoteFolder->GetValue());
     if(dlg.ShowModal() == wxID_OK) { m_textCtrlRemoteFolder->ChangeValue(dlg.GetPath()); }
+#endif
 }
 
 void FSConfigPage::OnSSHAccountChoice(wxCommandEvent& event)
 {
+#if USE_SFTP
     wxString s = m_choiceSSHAccount->GetStringSelection();
     if(s == OPEN_SSH_ACCOUNT_MANAGER) {
         SSHAccountManagerDlg dlg(GetParent());
         dlg.ShowModal();
         CallAfter(&FSConfigPage::DoUpdateSSHAcounts);
     }
+#endif
 }
 
 void FSConfigPage::DoUpdateSSHAcounts()
 {
+#if USE_SFTP
     m_choiceSSHAccount->Clear();
     // Load the SSH accounts
     SFTPSettings settings;
@@ -170,4 +185,5 @@ void FSConfigPage::DoUpdateSSHAcounts()
         m_choiceSSHAccount->SetSelection(0);
     }
     m_choiceSSHAccount->Append(OPEN_SSH_ACCOUNT_MANAGER);
+#endif
 }

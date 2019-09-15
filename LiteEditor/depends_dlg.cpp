@@ -33,8 +33,8 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-DependenciesDlg::DependenciesDlg(
-    wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos, wxSize size, int style)
+DependenciesDlg::DependenciesDlg(wxWindow* parent, const wxString& projectName, int id, wxString title, wxPoint pos,
+                                 wxSize size, int style)
     : wxDialog(parent, id, title, pos, size, style)
     , m_projectName(projectName)
 {
@@ -64,11 +64,8 @@ DependenciesDlg::DependenciesDlg(
     this->Layout();
 
     m_book->GetChoiceCtrl()->SetFocus();
-    Centre();
     Init();
-
-    SetName("DependenciesDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 DependenciesDlg::~DependenciesDlg() {}
@@ -94,9 +91,7 @@ void DependenciesDlg::OnButtonOK(wxCommandEvent& event)
     wxUnusedVar(event);
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         DependenciesPage* page = dynamic_cast<DependenciesPage*>(m_book->GetPage(i));
-        if(page) {
-            page->Save();
-        }
+        if(page) { page->Save(); }
     }
     EndModal(wxID_OK);
 }
@@ -112,11 +107,9 @@ void DependenciesDlg::DoSelectProject()
     wxArrayString projects;
     ManagerST::Get()->GetProjectList(projects);
     int sel = projects.Index(m_projectName);
-    if(sel != wxNOT_FOUND) {
-        m_book->ChangeSelection(sel);
-    }
-    
-    //clProjectDependecySorter sorter;
-    //wxArrayString buildOrder;
-    //sorter.GetProjectBuildOrder(m_projectName, "Win_x64_Release", buildOrder);;
+    if(sel != wxNOT_FOUND) { m_book->ChangeSelection(sel); }
+
+    // clProjectDependecySorter sorter;
+    // wxArrayString buildOrder;
+    // sorter.GetProjectBuildOrder(m_projectName, "Win_x64_Release", buildOrder);;
 }

@@ -107,6 +107,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "ServiceProviderManager.h"
 #include "NewProjectDialog.h"
+#include "clFileSystemWorkspace.hpp"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -762,23 +763,50 @@ void Manager::GetWorkspaceFiles(wxArrayString& files)
     getFilesEevet.SetClientData(&files);
     if(EventNotifier::Get()->ProcessEvent(getFilesEevet)) { return; }
 
-    if(!IsWorkspaceOpen()) { return; }
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        const auto& V = clFileSystemWorkspace::Get().GetFiles();
+        if(V.empty()) { return; }
+        files.Alloc(V.size());
+        for(const auto& f : V) {
+            files.Add(f.GetFullPath());
+        }
+        return;
+    } else {
+        if(!IsWorkspaceOpen()) { return; }
 
-    wxArrayString projects;
-    GetProjectList(projects);
+        wxArrayString projects;
+        GetProjectList(projects);
 
-    for(size_t i = 0; i < projects.GetCount(); i++) {
-        GetProjectFiles(projects.Item(i), files);
+        for(size_t i = 0; i < projects.GetCount(); i++) {
+            GetProjectFiles(projects.Item(i), files);
+        }
     }
 }
 
 void Manager::GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath)
 {
-    wxArrayString projects;
-    GetProjectList(projects);
-    for(size_t i = 0; i < projects.GetCount(); i++) {
-        ProjectPtr p = GetProject(projects.Item(i));
-        p->GetFilesAsVectorOfFileName(files, absPath);
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        const auto& V = clFileSystemWorkspace::Get().GetFiles();
+        if(V.empty()) { return; }
+        files.reserve(V.size());
+        if(absPath) {
+            files.insert(files.end(), V.begin(), V.end());
+        } else {
+            const wxFileName& fnWorkspace = clFileSystemWorkspace::Get().GetFileName();
+            wxString path = fnWorkspace.GetPath();
+            for(const auto& f : V) {
+                wxFileName fn(f);
+                fn.MakeRelativeTo(path);
+                files.push_back(fn);
+            }
+        }
+    } else {
+        wxArrayString projects;
+        GetProjectList(projects);
+        for(size_t i = 0; i < projects.GetCount(); i++) {
+            ProjectPtr p = GetProject(projects.Item(i));
+            p->GetFilesAsVectorOfFileName(files, absPath);
+        }
     }
 }
 

@@ -24,6 +24,7 @@ SSHRemoteProcess::SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHC
     , m_owner(owner)
 {
     m_channel.reset(new clSSHChannel(ssh, type, this));
+    m_channel->Open(); // may throw
     Bind(wxEVT_SSH_CHANNEL_PTY, &SSHRemoteProcess::OnPty, this);
     Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SSHRemoteProcess::OnError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SSHRemoteProcess::OnError, this);

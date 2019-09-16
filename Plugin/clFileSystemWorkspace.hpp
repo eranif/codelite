@@ -11,6 +11,7 @@
 #include "macros.h"
 #include "asyncprocess.h"
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clRemoteBuilder.hpp"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -26,6 +27,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
     std::unordered_map<int, wxString> m_buildTargetMenuIdToName;
+    clRemoteBuilder::Ptr_t m_remoteBuilder;
 
 protected:
     void CacheFiles();
@@ -68,7 +70,7 @@ protected:
     void DoCreate(const wxString& name, const wxString& path, bool loadIfExists);
     void RestoreSession();
     void DoBuild(const wxString& target);
-    clFileSystemWorkspaceConfig::Ptr_t GetConfig();
+    clFileSystemWorkspaceConfig::Ptr_t GetConfig() const;
 
 public:
     ///===--------------------------

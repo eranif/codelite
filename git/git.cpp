@@ -1717,6 +1717,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
+    clDEBUG1() << "[git]" << output;
     gitAction ga;
     if(!m_gitActionQueue.empty()) { ga = m_gitActionQueue.front(); }
 
@@ -1763,7 +1764,8 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
                     m_gitActionQueue.push_back(act);
                 }
             }
-        } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for")) {
+        } else if(tmpOutput.EndsWith("password:") || tmpOutput.Contains("password for") ||
+                  tmpOutput.Contains("authentication failed")) {
 
             // Password is required
             wxString pass = ::wxGetPasswordFromUser(output);

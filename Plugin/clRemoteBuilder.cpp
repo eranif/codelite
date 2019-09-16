@@ -1,0 +1,87 @@
+#include "clRemoteBuilder.hpp"
+#include "globals.h"
+#include "imanager.h"
+#include "processreaderthread.h"
+#include "file_logger.h"
+#include <wx/msgdlg.h>
+
+#if USE_SFTP
+#include "sftp_settings.h"
+#include "SSHRemoteProcess.hpp"
+#endif
+
+clRemoteBuilder::clRemoteBuilder()
+{
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteBuilder::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteBuilder::OnProcessTerminated, this);
+}
+
+clRemoteBuilder::~clRemoteBuilder()
+{
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteBuilder::OnProcessOutput, this);
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteBuilder::OnProcessTerminated, this);
+    wxDELETE(m_remoteProcess);
+}
+
+bool clRemoteBuilder::IsRunning() const { return m_remoteProcess != nullptr; }
+
+void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command, const wxString& workingDirectory)
+{
+#if USE_SFTP
+    if(m_remoteProcess) { return; }
+    SFTPSettings settings;
+    settings.Load();
+    SSHAccountInfo account;
+    if(!settings.GetAccount(sshAccount, account)) {
+        ::wxMessageBox(wxString() << _("Could not find SSH account: ") << sshAccount, "CodeLite",
+                       wxICON_WARNING | wxCENTER);
+        return;
+    }
+    try {
+        if(m_ssh) { m_ssh->Close(); }
+        m_ssh.reset(new clSSH());
+
+        // Establish SSH connection and launch the build
+        m_ssh->SetUsername(account.GetUsername());
+        m_ssh->SetPassword(account.GetPassword());
+        m_ssh->SetHost(account.GetHost());
+        m_ssh->SetPort(account.GetPort());
+        m_ssh->Connect();
+        m_ssh->Login();
+
+    } catch(clException& e) {
+        clERROR() << e.What();
+        return;
+    }
+
+    // SSH is connected
+
+    // Prepare the command
+    wxString cmd;
+    cmd << "/bin/sh -c 'cd " << workingDirectory << " && " << command << "'";
+    clGetManager()->ClearOutputTab(kOutputTab_Build);
+    clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
+    clGetManager()->AppendOutputTabText(
+        kOutputTab_Build, wxString() << "Remote build started using ssh aacount: " << account.GetAccountName() << "\n");
+    m_remoteProcess = SSHRemoteProcess::Create(this, m_ssh, cmd, false);
+
+#else
+    wxUnusedVar(sshAccount);
+    wxUnusedVar(command);
+    wxUnusedVar(workingDirectory);
+#endif
+}
+
+void clRemoteBuilder::OnProcessOutput(clProcessEvent& event)
+{
+    clGetManager()->AppendOutputTabText(kOutputTab_Build, event.GetOutput());
+}
+
+void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
+{
+    clGetManager()->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
+    wxDELETE(m_remoteProcess);
+#if USE_SFTP
+    m_ssh.reset(nullptr);
+#endif
+}

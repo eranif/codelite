@@ -470,11 +470,11 @@ wxString clFileSystemWorkspace::CompileFlagsAsString(const wxArrayString& arr) c
 
 wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 {
-    if(!m_settings.GetSelectedConfig()) { return wxEmptyString; }
+    if(!GetConfig()) { return wxEmptyString; }
     const wxStringMap_t& M = m_settings.GetSelectedConfig()->GetBuildTargets();
     if(M.count(target)) {
         wxString cmd = M.find(target)->second;
-        ::WrapInShell(cmd);
+        if(!GetConfig()->IsRemoteEnabled()) { ::WrapInShell(cmd); }
         return cmd;
     }
     return wxEmptyString;
@@ -614,7 +614,10 @@ void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
     GetConfig()->SetArgs(event.GetArguments());
 }
 
-clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() { return GetSettings().GetSelectedConfig(); }
+clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() const
+{
+    return GetSettings().GetSelectedConfig();
+}
 
 void clFileSystemWorkspace::OnMenuCustomTarget(wxCommandEvent& event)
 {
@@ -648,8 +651,7 @@ void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
 
 void clFileSystemWorkspace::DoBuild(const wxString& target)
 {
-    if(m_buildProcess) { return; }
-    if(!GetSettings().GetSelectedConfig()) {
+    if(!GetConfig()) {
         ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
                          "settings and add one"),
                        "CodeLite", wxICON_WARNING | wxCENTER);
@@ -662,20 +664,28 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         return;
     }
 
-    // Replace all workspace macros from the command
-    cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
-
-    // Build the environment to use
-    clEnvList_t envList = GetEnvList();
-
-    // Start the process with the environemt
-    m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
-    if(!m_buildProcess) {
-        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-        EventNotifier::Get()->AddPendingEvent(e);
+    if(GetConfig()->IsRemoteEnabled()) {
+        // Launch a remote build process
+        if(m_remoteBuilder && m_remoteBuilder->IsRunning()) { return; }
+        m_remoteBuilder.reset(new clRemoteBuilder());
+        m_remoteBuilder->Build(GetConfig()->GetRemoteAccount(), cmd, GetConfig()->GetRemoteFolder());
     } else {
-        clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
-        EventNotifier::Get()->AddPendingEvent(e);
+        if(m_buildProcess) { return; }
+        // Replace all workspace macros from the command
+        cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
+
+        // Build the environment to use
+        clEnvList_t envList = GetEnvList();
+
+        // Start the process with the environemt
+        m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
+        if(!m_buildProcess) {
+            clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+            EventNotifier::Get()->AddPendingEvent(e);
+        } else {
+            clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+            EventNotifier::Get()->AddPendingEvent(e);
+        }
     }
 }
 
@@ -750,18 +760,17 @@ void clFileSystemWorkspace::OnFileSaved(clCommandEvent& event)
         const wxString& filename = event.GetFileName();
         const wxString& account = GetConfig()->GetRemoteAccount();
         const wxString& remotePath = GetConfig()->GetRemoteFolder();
-        
+
         wxString remoteFilePath;
-        
+
         // Make the local file path relative to the workspace location
         wxFileName fnLocalFile(event.GetFileName());
         fnLocalFile.MakeRelativeTo(GetFileName().GetPath());
-        
+
         remoteFilePath = fnLocalFile.GetFullPath(wxPATH_UNIX);
         remoteFilePath.Prepend(remotePath + "/");
         wxFileName fnRemoteFile(remoteFilePath);
-        
-        
+
         // Build the remote filename
         clSFTPEvent eventSave(wxEVT_SFTP_SAVE_FILE);
         eventSave.SetAccount(account);

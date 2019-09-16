@@ -104,6 +104,8 @@ clSSH::clSSH()
     , m_timer(NULL)
     , m_owner(NULL)
 {
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
 }
 
 clSSH::~clSSH() { Close(); }

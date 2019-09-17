@@ -64,7 +64,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     cmd << "/bin/sh -c 'cd " << workingDirectory << " && " << command << "'";
     clGetManager()->ClearOutputTab(kOutputTab_Build);
     clGetManager()->AppendOutputTabText(
-        kOutputTab_Build, wxString() << "Remote build started using ssh aacount: " << account.GetAccountName() << "\n");
+        kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
     m_remoteProcess = SSHRemoteProcess::Create(this, m_ssh, cmd, false);
 

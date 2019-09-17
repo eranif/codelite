@@ -4,6 +4,7 @@
 #include "processreaderthread.h"
 #include "file_logger.h"
 #include <wx/msgdlg.h>
+#include <wx/msgdlg.h>
 
 #if USE_SFTP
 #include "sftp_settings.h"
@@ -51,6 +52,8 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
 
     } catch(clException& e) {
         clERROR() << e.What();
+        ::wxMessageBox(wxString() << _("Failed to start remote build\n") << e.What(), "CodeLite",
+                       wxICON_ERROR | wxCENTRE);
         return;
     }
 
@@ -60,9 +63,9 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     wxString cmd;
     cmd << "/bin/sh -c 'cd " << workingDirectory << " && " << command << "'";
     clGetManager()->ClearOutputTab(kOutputTab_Build);
-    clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh aacount: " << account.GetAccountName() << "\n");
+    clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
     m_remoteProcess = SSHRemoteProcess::Create(this, m_ssh, cmd, false);
 
 #else

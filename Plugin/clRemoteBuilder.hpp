@@ -32,6 +32,7 @@ public:
 
     bool IsRunning() const;
     void Build(const wxString& sshAccount, const wxString& command, const wxString& workingDirectory);
+    void Stop();
 };
 
 #endif // CLREMOTEBUILDER_HPP

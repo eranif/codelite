@@ -88,3 +88,5 @@ void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
     m_ssh.reset(nullptr);
 #endif
 }
+
+void clRemoteBuilder::Stop() { m_remoteProcess->Terminate(); }

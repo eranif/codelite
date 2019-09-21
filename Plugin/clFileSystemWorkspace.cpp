@@ -582,7 +582,7 @@ void clFileSystemWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
-    event.SetIsRunning(m_buildProcess != nullptr);
+    event.SetIsRunning(m_buildProcess != nullptr || (m_remoteBuilder && m_remoteBuilder->IsRunning()));
 }
 
 void clFileSystemWorkspace::OnIsProgramRunning(clExecuteEvent& event)
@@ -601,7 +601,11 @@ void clFileSystemWorkspace::OnStopExecute(clExecuteEvent& event)
 void clFileSystemWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_buildProcess) { m_buildProcess->Terminate(); }
+    if(m_buildProcess) {
+        m_buildProcess->Terminate();
+    } else if(m_remoteBuilder && m_remoteBuilder->IsRunning()) {
+        m_remoteBuilder->Stop();
+    }
 }
 
 void clFileSystemWorkspace::OnQuickDebugDlgShowing(clDebugEvent& event)

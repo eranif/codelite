@@ -5,6 +5,7 @@
 #include "macros.h"
 #include <vector>
 #include <wx/string.h>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_CL clFilesScanner
 {
@@ -37,7 +38,11 @@ public:
      */
     size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "*",
                 const wxString& excludeFilespec = "", const wxStringSet_t& excludeFolders = wxStringSet_t());
-
+    /**
+     * @brief same as above, but accepts the ignore directories list in a spec format
+     */
+    size_t Scan(const wxString& rootFolder, std::vector<wxFileName>& filesOutput, const wxString& filespec,
+                const wxString& excludeFilespec, const wxString& excludeFoldersSpec);
     /**
      * @brief scan folder for files and folders. This function does not recurse into folders. Everything that matches
      * "matchSpec" will get collected.

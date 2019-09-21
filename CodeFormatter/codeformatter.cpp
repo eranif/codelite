@@ -50,8 +50,11 @@
 #include <wx/filename.h>
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "clFilesCollector.h"
+#include <thread>
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
+FormatOptions CodeFormatter::m_options;
 
 extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
                                     void(STDCALL* fpError)(int, const char*), char*(STDCALL* fpAlloc)(unsigned long));
@@ -647,22 +650,24 @@ void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
 void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clGetManager()->SetStatusMessage(_("Code Formatter: scanning for files..."));
+    std::thread thr(
+        [=](const wxString& rootFolder, CodeFormatter* formatter) {
+            clFilesScanner fs;
+            std::vector<wxFileName> files;
+            fs.Scan(rootFolder, files, "*", "*.o;*.obj;*.dll;*.a;*.exe;*.dylib;*.db", "build-*;.codelite;.git;.svn");
 
-    wxArrayString files;
-    wxDir::GetAllFiles(m_selectedFolder, &files);
-
-    if(files.IsEmpty()) return;
-
-    std::vector<wxFileName> filesToFormat;
-
-    for(size_t i = 0; i < files.GetCount(); ++i) {
-        FormatterEngine engine = FindFormatter(files.Item(i));
-        if(engine == kFormatEngineNone) { continue; }
-
-        filesToFormat.push_back(files.Item(i));
-    }
-
-    BatchFormat(filesToFormat);
+            std::vector<wxFileName> arrfiles;
+            arrfiles.reserve(files.size());
+            for(const wxFileName& f : files) {
+                FormatterEngine engine = FindFormatter(f);
+                if(engine == kFormatEngineNone) { continue; }
+                arrfiles.push_back(f);
+            }
+            formatter->CallAfter(&CodeFormatter::OnScanFilesCompleted, arrfiles);
+        },
+        m_selectedFolder, this);
+    thr.detach();
 }
 
 void CodeFormatter::OnFormatProject(wxCommandEvent& event)
@@ -734,3 +739,5 @@ void CodeFormatter::OnPhpSettingsChanged(clCommandEvent& event)
     event.Skip();
     m_optionsPhp.Load();
 }
+
+void CodeFormatter::OnScanFilesCompleted(const std::vector<wxFileName>& files) { BatchFormat(files, false); }

@@ -42,7 +42,7 @@ enum FormatterEngine {
 
 class CodeFormatter : public IPlugin
 {
-    FormatOptions m_options;
+    static FormatOptions m_options;
     PhpOptions m_optionsPhp;
 
 protected:
@@ -54,21 +54,15 @@ protected:
 private:
     void DoFormatFile(const wxFileName& fileName, const FormatterEngine& engine);
     void DoFormatFileAsString(const wxFileName& fileName, const FormatterEngine& engine);
-    void DoFormatString(wxString& content, const wxFileName& fileName, const FormatterEngine& engine, int& cursorPosition);
-    void DoFormatSelection(IEditor* editor,
-                           wxString& content,
-                           const FormatterEngine& engine,
-                           int& cursorPosition,
-                           const int& selStart,
-                           const int& selEnd);
+    void DoFormatString(wxString& content, const wxFileName& fileName, const FormatterEngine& engine,
+                        int& cursorPosition);
+    void DoFormatSelection(IEditor* editor, wxString& content, const FormatterEngine& engine, int& cursorPosition,
+                           const int& selStart, const int& selEnd);
     void DoFormatEditor(IEditor* editor, int selStart = wxNOT_FOUND, int selEnd = wxNOT_FOUND);
     void DoFormatWithTempFile(const wxFileName& fileName, wxString& content, const FormatterEngine& engine);
-    void OverwriteEditorText(IEditor*& editor,
-        const wxString& content,
-        const int& cursorPosition = 0,
-        const int& selStart = wxNOT_FOUND,
-        const int& selEnd = wxNOT_FOUND);
-    FormatterEngine FindFormatter(const wxFileName& fileName);
+    void OverwriteEditorText(IEditor*& editor, const wxString& content, const int& cursorPosition = 0,
+                             const int& selStart = wxNOT_FOUND, const int& selEnd = wxNOT_FOUND);
+    static FormatterEngine FindFormatter(const wxFileName& fileName);
     bool CanFormatSelection(const FormatterEngine& engine);
     bool CanFormatString(const FormatterEngine& engine);
     bool CanFormatFile(const FormatterEngine& engine);
@@ -77,15 +71,13 @@ private:
     void DoFormatWithBuildInPhp(wxString& content);
     void DoFormatWithPhpCsFixer(const wxFileName& fileName);
     void DoFormatWithClang(const wxFileName& fileName);
-    void DoFormatWithClang(wxString& content,
-        const wxFileName& fileName,
-        int& cursorPosition,
-        const int& selStart = wxNOT_FOUND,
-        const int& selEnd = wxNOT_FOUND);
+    void DoFormatWithClang(wxString& content, const wxFileName& fileName, int& cursorPosition,
+                           const int& selStart = wxNOT_FOUND, const int& selEnd = wxNOT_FOUND);
     void DoFormatWithAstyle(wxString& content, const bool& appendEOL = true);
     void DoFormatWithWxXmlDocument(const wxFileName& fileName);
 
     void OnPhpSettingsChanged(clCommandEvent& event);
+    void OnScanFilesCompleted(const std::vector<wxFileName>& files);
 
 public:
     wxString RunCommand(const wxString& command);

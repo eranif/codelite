@@ -5,7 +5,7 @@
  "configs": [{
    "name": "Debug",
    "flags": 1,
-   "compile_flags": ["`wx-config --cflags`"],
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces"],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
    "executable": "$HOME/root/bin/codelite",
    "arguments": "",
@@ -17,7 +17,7 @@
   }, {
    "name": "Release",
    "flags": 1,
-   "compile_flags": ["`wx-config --cflags`"],
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces"],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
    "executable": "/usr/bin/codelite",
    "arguments": "",

@@ -612,16 +612,17 @@ void clFileSystemWorkspace::OnQuickDebugDlgShowing(clDebugEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
-    event.SetArguments(GetConfig()->GetArgs());
-    event.SetExecutableName(GetConfig()->GetExecutable());
+    
+    wxString args = MacroManager::Instance()->Expand(GetConfig()->GetArgs(), NULL, "", "");
+    wxString exec = MacroManager::Instance()->Expand(GetConfig()->GetExecutable(), NULL, "", "");
+    event.SetArguments(args);
+    event.SetExecutableName(exec);
 }
 
 void clFileSystemWorkspace::OnQuickDebugDlgDismissed(clDebugEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
-    GetConfig()->SetExecutable(event.GetExecutableName());
-    GetConfig()->SetArgs(event.GetArguments());
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() const

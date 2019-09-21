@@ -61,6 +61,7 @@ protected:
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnMenuCustomTarget(wxCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
+    void OnSourceControlPulled(clSourceControlEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
@@ -70,6 +71,7 @@ protected:
     void DoCreate(const wxString& name, const wxString& path, bool loadIfExists);
     void RestoreSession();
     void DoBuild(const wxString& target);
+    void ParseWorkspace();
     clFileSystemWorkspaceConfig::Ptr_t GetConfig() const;
 
 public:

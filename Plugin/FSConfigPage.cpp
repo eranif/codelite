@@ -187,3 +187,11 @@ void FSConfigPage::DoUpdateSSHAcounts()
     m_choiceSSHAccount->Append(OPEN_SSH_ACCOUNT_MANAGER);
 #endif
 }
+void FSConfigPage::OnEnableRemoteUI(wxUpdateUIEvent& event)
+{
+#if USE_SFTP
+    event.Enable(true);
+#else
+    event.Enable(false);
+#endif
+}

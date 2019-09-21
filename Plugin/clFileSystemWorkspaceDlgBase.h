@@ -139,6 +139,7 @@ protected:
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEnableRemoteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSSHAccountChoice(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSSHBrowse(wxCommandEvent& event) { event.Skip(); }

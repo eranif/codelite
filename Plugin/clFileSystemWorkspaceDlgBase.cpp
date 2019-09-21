@@ -534,6 +534,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                             this);
     m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_checkBoxEnableRemote->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI), NULL,
+                                    this);
     m_choiceSSHAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
                                 this);
     m_choiceSSHAccount->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
@@ -557,6 +559,8 @@ FSConfigPageBase::~FSConfigPageBase()
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                                this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_checkBoxEnableRemote->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI),
+                                       NULL, this);
     m_choiceSSHAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
                                    this);
     m_choiceSSHAccount->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,

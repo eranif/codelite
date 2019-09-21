@@ -105,3 +105,9 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
     }
     m_buttonConfigs->ShowMenu(menu);
 }
+
+void clFileSystemWorkspaceView::OnRefresh(wxCommandEvent& event)
+{
+    clTreeCtrlPanel::OnRefresh(event);
+    clFileSystemWorkspace::Get().FileSystemUpdated();
+}

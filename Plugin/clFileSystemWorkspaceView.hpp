@@ -18,7 +18,8 @@ protected:
     void OnCloseFolder(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnShowConfigsMenu(wxCommandEvent& event);
-
+    void OnRefresh(wxCommandEvent& event);
+    
 public:
     clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName);
     virtual ~clFileSystemWorkspaceView();

@@ -57,7 +57,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
         Bind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
-        
+
         // Build events
         EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
@@ -95,7 +95,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         Unbind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
-        
+
         // Build events
         EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &clFileSystemWorkspace::OnBuildStarting, this);
         EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &clFileSystemWorkspace::OnIsBuildInProgress, this);
@@ -156,8 +156,11 @@ bool clFileSystemWorkspace::IsBuildSupported() const { return true; }
 
 bool clFileSystemWorkspace::IsProjectSupported() const { return false; }
 
-void clFileSystemWorkspace::CacheFiles()
+void clFileSystemWorkspace::CacheFiles(bool force)
 {
+    // should we force a rescan of the files?
+    if(force) { m_files.clear(); }
+    // sanity
     if(!m_files.empty()) { m_files.clear(); }
     std::thread thr(
         [=](const wxString& rootFolder) {
@@ -353,6 +356,7 @@ void clFileSystemWorkspace::New(const wxString& folder) { DoCreate("", folder, t
 
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 {
+    clDEBUG() << "FSW: CacheFiles completed. Found" << event.GetPaths().size() << "files";
     m_files.clear();
     m_files.reserve(event.GetPaths().size());
     for(const wxString& filename : event.GetPaths()) {
@@ -785,16 +789,18 @@ void clFileSystemWorkspace::OnFileSaved(clCommandEvent& event)
 void clFileSystemWorkspace::OnSourceControlPulled(clSourceControlEvent& event)
 {
     event.Skip();
-    clDEBUG() << "Source control" << event.GetSourceControlName() << " pulled.";
+    clDEBUG() << "Source control '" << event.GetSourceControlName() << "' pulled.";
     clDEBUG() << "Refreshing tree + re-parsing";
     GetView()->RefreshTree();
-    
-    // Trigger a quick parse event
-    ParseWorkspace();
+
+    // Re-Cache the files and trigger a workspace parse
+    CacheFiles(true);
 }
 
-void clFileSystemWorkspace::ParseWorkspace()
+void clFileSystemWorkspace::TriggerQuickParse()
 {
     wxCommandEvent eventParse(wxEVT_MENU, XRCID("retag_workspace"));
     EventNotifier::Get()->TopFrame()->GetEventHandler()->QueueEvent(eventParse.Clone());
 }
+
+void clFileSystemWorkspace::FileSystemUpdated() { CacheFiles(true); }

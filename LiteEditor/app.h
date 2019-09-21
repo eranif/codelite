@@ -52,6 +52,9 @@ protected:
     wxString m_exeToDebug;
     wxString m_debuggerArgs;
     wxString m_debuggerWorkingDirectory;
+    bool m_restartCodeLite = false;
+    wxString m_restartCommand;
+    wxString m_restartWD;
 
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);
@@ -88,6 +91,15 @@ public:
     const wxString& GetDebuggerArgs() const { return m_debuggerArgs; }
     const wxString& GetDebuggerWorkingDirectory() const { return m_debuggerWorkingDirectory; }
     const wxString& GetExeToDebug() const { return m_exeToDebug; }
+
+    void SetRestartCodeLite(bool restartCodeLite) { this->m_restartCodeLite = restartCodeLite; }
+    void SetRestartCommand(const wxString& restartCommand, const wxString& workingDirectory)
+    {
+        this->m_restartCommand = restartCommand;
+        this->m_restartWD = workingDirectory;
+    }
+    bool IsRestartCodeLite() const { return m_restartCodeLite; }
+    const wxString& GetRestartCommand() const { return m_restartCommand; }
 
 protected:
     virtual bool OnInit();

@@ -108,6 +108,7 @@
 #include "ServiceProviderManager.h"
 #include "NewProjectDialog.h"
 #include "clFileSystemWorkspace.hpp"
+#include "app.h"
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -3082,6 +3083,9 @@ void Manager::DbgRestoreWatches()
 void Manager::DoRestartCodeLite()
 {
     wxString restartCodeLiteCommand;
+    wxString workingDirectory;
+    CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxTheApp);
+    
 #if defined(__WXGTK__) || defined(__WXMSW__)
     // The Shell is our friend
     restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
@@ -3092,12 +3096,8 @@ void Manager::DoRestartCodeLite()
         ::WrapWithQuotes(cmdArg);
         restartCodeLiteCommand << wxT(" ") << cmdArg;
     }
-    wxSetWorkingDirectory(GetOriginalCwd());
-
-    wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-
-    ::wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
+    workingDirectory = GetOriginalCwd();
+    
 #else // OSX
 
     // on OSX, we use the open command
@@ -3108,11 +3108,12 @@ void Manager::DoRestartCodeLite()
     ::WrapWithQuotes(bundlePathStr);
     restartCodeLiteCommand << "sleep 2 && /usr/bin/open " << bundlePathStr;
     ::WrapInShell(restartCodeLiteCommand);
+#endif
+
     wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, wxID_EXIT);
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-    clSYSTEM() << "Restarting CodeLite:" << restartCodeLiteCommand;
-    wxExecute(restartCodeLiteCommand, wxEXEC_ASYNC | wxEXEC_NOHIDE | wxEXEC_MAKE_GROUP_LEADER);
-#endif
+    app->SetRestartCodeLite(true);
+    app->SetRestartCommand(restartCodeLiteCommand, workingDirectory);
 }
 
 void Manager::SetCodeLiteLauncherPath(const wxString& path) { m_codeliteLauncher = path; }

@@ -138,15 +138,16 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImport, this, XRCID("import_zip"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnRestoreDefaults, this, XRCID("revert_changes"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImportEclipseTheme, this, XRCID("import_eclipse_theme"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN,
-                    [&](wxCommandEvent& e) {
-                        wxMenu m;
-                        m.Append(XRCID("load_eclipse_theme_website"), _("Load Eclipse Themes WebSite.."));
-                        m.Bind(wxEVT_MENU, &SyntaxHighlightDlg::OnLoadEclipseThemeWebsite, this,
-                               XRCID("load_eclipse_theme_website"));
-                        m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
-                    },
-                    XRCID("import_eclipse_theme"));
+    m_toolbar->Bind(
+        wxEVT_TOOL_DROPDOWN,
+        [&](wxCommandEvent& e) {
+            wxMenu m;
+            m.Append(XRCID("load_eclipse_theme_website"), _("Load Eclipse Themes WebSite.."));
+            m.Bind(wxEVT_MENU, &SyntaxHighlightDlg::OnLoadEclipseThemeWebsite, this,
+                   XRCID("load_eclipse_theme_website"));
+            m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
+        },
+        XRCID("import_eclipse_theme"));
 
     // Theme handling
     wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -263,7 +264,13 @@ void SyntaxHighlightDlg::SaveChanges()
         // Set the theme, it will update the global theme as well
         ColoursAndFontsManager::Get().SetTheme(m_choiceGlobalTheme->GetStringSelection());
         m_globalThemeChanged = false;
-
+        
+        // Match the active tab colour with the selected theme
+        LexerConf::Ptr_t cppLexer = ColoursAndFontsManager::Get().GetLexer("c++");
+        if(cppLexer) {
+            clConfig::Get().Write("ActiveTabMarkerColour", wxColour(cppLexer->GetProperty(wxSTC_C_WORD).GetFgColour()));
+        }
+        
         m_lexer = ColoursAndFontsManager::Get().GetLexer(m_lexer->GetName());
         CallAfter(&SyntaxHighlightDlg::LoadLexer, m_lexer->GetThemeName());
     }

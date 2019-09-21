@@ -479,10 +479,10 @@ bool CodeLiteApp::OnInit()
 #endif
     }
     wxFileName fnHomdDir(homeDir, "");
-    
-//    // Set the standard path with the new data dir
-//    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
-    
+
+    //    // Set the standard path with the new data dir
+    //    clStandardPaths::Get().SetDataDir(fnHomdDir.GetPath());
+
     // try to locate the menu/rc.xrc file
     wxFileName fn(homeDir + wxT("/rc"), wxT("menu.xrc"));
     if(!fn.FileExists()) {
@@ -694,9 +694,19 @@ bool CodeLiteApp::OnInit()
 
 int CodeLiteApp::OnExit()
 {
-    CL_DEBUG(wxT("Bye"));
+    clDEBUG() << "Bye";
     EditorConfigST::Free();
     ConfFileLocator::Release();
+
+    // flush any saved changes to the configuration file
+    clConfig::Get().Save();
+
+    if(IsRestartCodeLite()) {
+        // Execute new CodeLite instance
+        clSYSTEM() << "Restarting CodeLite:" << GetRestartCommand();
+        if(!this->m_restartWD.empty()) { ::wxSetWorkingDirectory(this->m_restartWD); }
+        wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
+    }
     return 0;
 }
 

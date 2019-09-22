@@ -168,9 +168,9 @@ wxString clStandardPaths::GetTempDir() const
     if(once) {
         wxString username = __get_user_name();
 #if defined(__WXGTK__) || defined(__WXOSX__)
-        tmpdir << "/tmp/CodeLite." << username;
+        tmpdir << "/tmp/CodeLite." << username << ".";
 #else
-        tmpdir << wxStandardPaths::Get().GetTempDir() << "\\CodeLite." << username;
+        tmpdir << wxStandardPaths::Get().GetTempDir() << "\\CodeLite." << username << ".";
 #endif
         tmpdir << wxDateTime::Now().GetTicks();
         // Create the temp folder

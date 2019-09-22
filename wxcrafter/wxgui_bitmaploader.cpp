@@ -17,7 +17,7 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
         zipFile << wxStandardPaths::Get().GetDataDir() << wxFileName::GetPathSeparator() << skin << wxT(".zip");
         clZipReader zip(zipFile);
 
-        wxFileName extractactionDir(wxStandardPaths::Get().GetTempDir(), "");
+        wxFileName extractactionDir(clStandardPaths::Get().GetTempDir(), "");
         extractactionDir.AppendDir("CodeLite.wxCrafter.Tmp");
         zip.ExtractAll(extractactionDir.GetPath());
 
@@ -47,8 +47,6 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
                 }
             }
         }
-        // Remove the temp folder
-        extractactionDir.Rmdir(wxPATH_RMDIR_RECURSIVE);
     }
 }
 

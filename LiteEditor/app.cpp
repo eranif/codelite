@@ -707,6 +707,9 @@ int CodeLiteApp::OnExit()
         if(!this->m_restartWD.empty()) { ::wxSetWorkingDirectory(this->m_restartWD); }
         wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
     }
+    
+    // Delete the temp folder
+    wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
     return 0;
 }
 

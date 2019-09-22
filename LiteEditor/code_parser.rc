@@ -49,7 +49,7 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "CompanyName",      "Eran Ifrah"
             VALUE "Developer",        "Eran Ifrah"
             VALUE "FileDescription",  "CodeLite, an Open Source cross platform C,C++,PHP and Node.js IDE"
-            VALUE "FileVersion",      "13.0.3"
+            VALUE "FileVersion",      "13.0.4"
             VALUE "InternalName",     "CodeLite"
             VALUE "LegalCopyright",   "Copyright (C) 2007-2019 Eran Ifrah"
             VALUE "LegalTrademarks",  "All rights reserved."
@@ -57,9 +57,9 @@ FILESUBTYPE      VFT2_UNKNOWN { // not used
             VALUE "PrivateBuild",     ""
             VALUE "ProductName",      "CodeLite"
 #if WIN64
-            VALUE "ProductVersion",   "13.0.3 (64BIT)"
+            VALUE "ProductVersion",   "13.0.4 (64BIT)"
 #else
-            VALUE "ProductVersion",   "13.0.3 (32BIT)"
+            VALUE "ProductVersion",   "13.0.4 (32BIT)"
 #endif
             VALUE "SpecialBuild",     ""
             VALUE "Support",          "https://forums.codelite.org"

@@ -4,6 +4,8 @@
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <clZipReader.h>
+#include "clFilesCollector.h"
 
 std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 std::map<wxString, wxString> wxCrafter::ResourceLoader::m_files;
@@ -13,34 +15,40 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
     if(m_bitmaps.empty()) {
         wxString zipFile;
         zipFile << wxStandardPaths::Get().GetDataDir() << wxFileName::GetPathSeparator() << skin << wxT(".zip");
+        clZipReader zip(zipFile);
 
-        wxArrayString files;
-        ListZipFiles(zipFile, files);
+        wxFileName extractactionDir(wxStandardPaths::Get().GetTempDir(), "");
+        extractactionDir.AppendDir("CodeLite.wxCrafter.Tmp");
+        zip.ExtractAll(extractactionDir.GetPath());
 
-        for(size_t i = 0; i < files.GetCount(); i++) {
+        clFilesScanner scanner;
+        clFilesScanner::EntryData::Vec_t files;
+        size_t filesCount = scanner.ScanNoRecurse(extractactionDir.GetPath(), files, "*");
+        if(filesCount == 0) { return; }
 
-            wxString bitmapFile;
-            if(ExtractFileFromZip(zipFile, wxFileName(files.Item(i)).GetFullName(),
-                                  wxStandardPaths::Get().GetUserDataDir(), bitmapFile)) {
+        // Loop over the files
+        for(const auto& entry : files) {
+            if(entry.flags & clFilesScanner::kIsFile) {
+                // A file was found, check if a bitmap or other file
                 wxBitmap bmp;
-                if(bmp.LoadFile(bitmapFile, wxBITMAP_TYPE_PNG)) {
-                    m_bitmaps[wxFileName(files.Item(i)).GetName()] = bmp;
+                if(bmp.LoadFile(entry.fullpath, wxBITMAP_TYPE_PNG)) {
+                    m_bitmaps[wxFileName(entry.fullpath).GetName()] = bmp;
 
                 } else {
                     // Simple file
-                    wxFFile fp(bitmapFile, wxT("r+b"));
+                    wxFFile fp(entry.fullpath, wxT("r+b"));
                     if(fp.IsOpened()) {
                         wxString fileContent;
                         if(fp.ReadAll(&fileContent, wxConvUTF8)) {
-                            wxFileName fn(files.Item(i));
-                            m_files.insert(std::make_pair(fn.GetFullName(), fileContent));
+                            wxFileName fn(entry.fullpath);
+                            m_files.insert({ fn.GetFullName(), fileContent });
                         }
                     }
                 }
-
-                ::wxRemoveFile(bitmapFile);
             }
         }
+        // Remove the temp folder
+        extractactionDir.Rmdir(wxPATH_RMDIR_RECURSIVE);
     }
 }
 

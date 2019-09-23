@@ -38,7 +38,11 @@ void* WorkerThread::Entry()
         // Did we get a request to terminate?
         if(TestDestroy()) break;
         ThreadRequest* request = NULL;
-        if(m_queue.ReceiveTimeout(500, request) == wxMSGQUEUE_NO_ERROR) {
+        if(m_queue.Receive(request) == wxMSGQUEUE_NO_ERROR) {
+            if(request == nullptr) { 
+                // this dummy message was sent to tell us to exit
+                break;
+            }
             // Call user's implementation for processing request
             ProcessRequest(request);
             wxDELETE(request);
@@ -57,6 +61,8 @@ void WorkerThread::Stop()
 {
     // Notify the thread to exit and
     // wait for it
+    m_queue.Post(nullptr); // Make sure that the thread wakes up
+    
     if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 

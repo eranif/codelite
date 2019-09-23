@@ -132,7 +132,7 @@ void FileLogger::Flush()
 {
     if(m_buffer.IsEmpty()) { return; }
     if(!m_fp) { m_fp = wxFopen(m_logfile, wxT("a+")); }
-    
+
     if(m_fp) {
         wxFprintf(m_fp, "%s\n", m_buffer);
         fclose(m_fp);
@@ -143,38 +143,42 @@ void FileLogger::Flush()
 
 wxString FileLogger::Prefix(int verbosity)
 {
-    wxString prefix;
-    timeval tim;
-    gettimeofday(&tim, NULL);
-    int ms = (int)tim.tv_usec / 1000.0;
+    if(verbosity <= m_verbosity) {
+        wxString prefix;
+        timeval tim;
+        gettimeofday(&tim, NULL);
+        int ms = (int)tim.tv_usec / 1000.0;
 
-    wxString msStr = wxString::Format(wxT("%03d"), ms);
-    prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
-    switch(verbosity) {
-    case System:
-        prefix << wxT(" SYS]");
-        break;
+        wxString msStr = wxString::Format(wxT("%03d"), ms);
+        prefix << wxT("[") << wxDateTime::Now().FormatISOTime() << wxT(":") << msStr;
+        switch(verbosity) {
+        case System:
+            prefix << wxT(" SYS]");
+            break;
 
-    case Error:
-        prefix << wxT(" ERR]");
-        break;
+        case Error:
+            prefix << wxT(" ERR]");
+            break;
 
-    case Warning:
-        prefix << wxT(" WRN]");
-        break;
+        case Warning:
+            prefix << wxT(" WRN]");
+            break;
 
-    case Dbg:
-        prefix << wxT(" DBG]");
-        break;
+        case Dbg:
+            prefix << wxT(" DBG]");
+            break;
 
-    case Developer:
-        prefix << wxT(" DVL]");
-        break;
+        case Developer:
+            prefix << wxT(" DVL]");
+            break;
+        }
+
+        wxString thread_name = GetCurrentThreadName();
+        if(!thread_name.IsEmpty()) { prefix << " [" << thread_name << "]"; }
+        return prefix;
+    } else {
+        return wxEmptyString;
     }
-
-    wxString thread_name = GetCurrentThreadName();
-    if(!thread_name.IsEmpty()) { prefix << " [" << thread_name << "]"; }
-    return prefix;
 }
 
 wxString FileLogger::GetCurrentThreadName()

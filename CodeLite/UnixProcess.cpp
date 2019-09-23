@@ -78,19 +78,22 @@ bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
     int ms = timeoutMilliseconds % 1000;
 
     struct timeval tv = { seconds, ms * 1000 }; //  10 milliseconds timeout
-    int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
-    if(rc > 0) {
-        memset(buff, 0, sizeof(buff));
-        if(read(fd, buff, (sizeof(buff) - 1)) > 0) {
-            content.append(buff);
+    do {
+        int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
+        if(rc > 0) {
+            int len = read(fd, buff, (sizeof(buff) - 1));
+            if(len > 0) {
+                content.append(buff, len);
+            } else {
+                break;
+            }
+        } else if(rc == 0) {
+            // timeout
             return true;
         }
-    } else if(rc == 0) {
-        // timeout
-        return true;
-    }
+    } while (tv.tv_sec > 0 || tv.tv_usec > 0);
     // error
-    return false;
+    return content.length() > 0;
 }
 
 bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& shutdown)

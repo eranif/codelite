@@ -73,6 +73,8 @@ LSP::ResponseMessage::ResponseMessage(wxString& message)
     if(headersSize == wxNOT_FOUND) { return; }
 
     if(headers.count(HEADER_CONTENT_LENGTH) == 0) { return; }
+    if (message.Length() < wxAtoi(headers[HEADER_CONTENT_LENGTH]) + headersSize) {return;}
+    
 	int msglen = FindCompleteMessage(message, headersSize);
 	if(msglen == wxNOT_FOUND) { return; }
 	

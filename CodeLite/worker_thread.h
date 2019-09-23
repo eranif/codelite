@@ -30,6 +30,9 @@
 #include "wx/event.h"
 #include "codelite_exports.h"
 #include <wx/msgqueue.h>
+#include <queue>
+#include <condition_variable>
+#include <mutex>
 
 /**
  * Base class for thread requests,
@@ -49,7 +52,9 @@ class WXDLLIMPEXP_CL WorkerThread : public wxThread
 {
 protected:
     wxEvtHandler* m_notifiedWindow;
-    wxMessageQueue<ThreadRequest*> m_queue;
+    std::mutex m_mutex;
+    std::condition_variable m_cv;
+    std::queue<ThreadRequest*> m_Q;
 
 public:
     /**
@@ -79,6 +84,11 @@ public:
      */
     void Add(ThreadRequest* request);
 
+    /**
+     * @brief clear the request queue
+     */
+    void ClearQueue();
+    
     /**
      * Set the window to be notified when a change was done
      * between current source file tree and the actual tree.

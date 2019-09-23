@@ -106,5 +106,5 @@ void PHPParserThread::Clear()
 {
     ms_goingDown = true;
     // Clear the queue
-    Instance()->m_queue.Clear();
+    Instance()->ClearQueue();
 }

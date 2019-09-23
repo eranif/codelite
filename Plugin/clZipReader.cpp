@@ -2,12 +2,16 @@
 #include "macros.h"
 #include <wx/ffile.h>
 #include <wx/wfstream.h>
+#include "file_logger.h"
 
 clZipReader::clZipReader(const wxFileName& zipfile)
 {
     // Read the entire content into memory
-    wxFFile fp(zipfile.GetFullPath(), "r+b");
-    if(!fp.IsOpened()) { return; }
+    wxFFile fp(zipfile.GetFullPath(), "rb");
+    if(!fp.IsOpened()) {
+        clERROR() << "Failed to open file:" << zipfile << "." << strerror(errno);
+        return;
+    }
     wxFileOffset size = fp.Length();
 
     // increase the buffer size to match the file size

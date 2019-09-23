@@ -19,34 +19,30 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 
         wxFileName extractactionDir(clStandardPaths::Get().GetTempDir(), "");
         extractactionDir.AppendDir("CodeLite.wxCrafter.Tmp");
-        zip.ExtractAll(extractactionDir.GetPath());
 
-        clFilesScanner scanner;
-        clFilesScanner::EntryData::Vec_t files;
-        size_t filesCount = scanner.ScanNoRecurse(extractactionDir.GetPath(), files, "*");
-        if(filesCount == 0) { return; }
+        std::unordered_map<wxString, clZipReader::Entry> entries;
+        zip.ExtractAll(entries);
+        if(entries.empty()) { return; }
 
         // Loop over the files
-        for(const auto& entry : files) {
-            if(entry.flags & clFilesScanner::kIsFile) {
-                // A file was found, check if a bitmap or other file
-                wxBitmap bmp;
-                if(bmp.LoadFile(entry.fullpath, wxBITMAP_TYPE_PNG)) {
-                    m_bitmaps[wxFileName(entry.fullpath).GetName()] = bmp;
-
+        for(const auto& entry : entries) {
+            wxString name = wxFileName(entry.first).GetName();
+            clZipReader::Entry d = entry.second;
+            if(d.len && d.buffer) {
+                wxMemoryInputStream is(d.buffer, d.len);
+                wxImage img(is, wxBITMAP_TYPE_PNG);
+                wxBitmap bmp(img);
+                if(bmp.IsOk()) {
+                    m_bitmaps[name] = bmp;
                 } else {
-                    // Simple file
-                    wxFFile fp(entry.fullpath, wxT("r+b"));
-                    if(fp.IsOpened()) {
-                        wxString fileContent;
-                        if(fp.ReadAll(&fileContent, wxConvUTF8)) {
-                            wxFileName fn(entry.fullpath);
-                            m_files.insert({ fn.GetFullName(), fileContent });
-                        }
-                    }
+                    wxString fileContent((const char*)d.buffer, d.len);
+                    m_files.insert({ name, fileContent });
                 }
+                // release the memory
+                free(d.buffer);
             }
         }
+        entries.clear();
     }
 }
 

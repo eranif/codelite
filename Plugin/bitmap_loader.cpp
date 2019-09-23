@@ -207,7 +207,7 @@ void BitmapLoader::initialize()
         tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
         // Extract all images into this folder
-        zip.Extract("*", tmpFolder.GetPath());
+        zip.ExtractAll(tmpFolder.GetPath());
 
         // Load all the files into wxBitmap
         wxArrayString files;

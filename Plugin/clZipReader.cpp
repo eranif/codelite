@@ -3,6 +3,7 @@
 #include <wx/ffile.h>
 #include <wx/wfstream.h>
 #include "file_logger.h"
+#include <cstdlib>
 
 clZipReader::clZipReader(const wxFileName& zipfile)
 {
@@ -84,5 +85,29 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
             m_zip->Read(out);
             out.Close();
         }
+    }
+}
+
+void clZipReader::ExtractAll(std::unordered_map<wxString, Entry>& buffers)
+{
+    // Incase the entry name has a directory prefix, remove it
+    if(!m_zip) { return; }
+    wxZipEntry* entry(NULL);
+
+    entry = m_zip->GetNextEntry();
+    while(entry) {
+        if(!entry->IsDir()) {
+            wxMemoryOutputStream out;
+            if(out.IsOk()) {
+                m_zip->Read(out);
+                Entry e;
+                e.len = out.GetLength();
+                e.buffer = malloc(e.len);
+                out.CopyTo(e.buffer, e.len);
+                buffers.insert({ entry->GetName(), e });
+            }
+        }
+        wxDELETE(entry);
+        entry = m_zip->GetNextEntry();
     }
 }

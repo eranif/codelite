@@ -32,13 +32,21 @@
 #include <wx/stream.h>
 #include <wx/filename.h>
 #include <wx/buffer.h>
+#include "wxStringHash.h"
+#include <unordered_map>
 
 class WXDLLIMPEXP_SDK clZipReader
 {
     wxMemoryBuffer m_mb;
     wxInputStream* m_file = nullptr;
     wxZipInputStream* m_zip = nullptr;
-
+    
+public:
+    struct Entry {
+        void* buffer = nullptr;
+        size_t len = 0;
+    };
+    
 protected:
     void DoExtractEntry(wxZipEntry* entry, const wxString& directory);
 
@@ -57,7 +65,12 @@ public:
      * @brief extract the entire content of a zip archive into a directory
      */
     void ExtractAll(const wxString& directory);
-
+    
+    /**
+     * @brief extract all zip entries and constract a map of name:memory-output-stream ptr
+     */
+    void ExtractAll(std::unordered_map<wxString, Entry>& buffers);
+    
     /**
      * @brief close the zip archive
      */

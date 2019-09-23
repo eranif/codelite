@@ -39,31 +39,26 @@ wxCriticalSection FileLogger::m_cs;
 
 FileLogger::FileLogger(int requestedVerbo)
     : _requestedLogLevel(requestedVerbo)
-    , m_fp(NULL)
+    , m_fp(nullptr)
 {
-    m_fp = wxFopen(m_logfile, wxT("a+"));
 }
 
 FileLogger::~FileLogger()
 {
-    if(m_fp) {
-        // flush any content that remain
-        Flush();
-        fclose(m_fp);
-        m_fp = NULL;
-    }
+    // flush any content that remain
+    Flush();
 }
 
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
-    if(msg.IsEmpty()) return;
-    if((m_verbosity >= verbosity) && m_fp) {
+    if(msg.IsEmpty()) { return; }
+    if((m_verbosity >= verbosity)) {
         wxString formattedMsg = Prefix(verbosity);
         formattedMsg << " " << msg;
         formattedMsg.Trim().Trim(false);
         formattedMsg << wxT("\n");
-        wxFprintf(m_fp, wxT("%s"), formattedMsg.c_str());
-        fflush(m_fp);
+        if(!m_buffer.empty() && (m_buffer.Last() != '\n')) { m_buffer << "\n"; }
+        m_buffer << formattedMsg;
     }
 }
 
@@ -136,9 +131,12 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 void FileLogger::Flush()
 {
     if(m_buffer.IsEmpty()) { return; }
+    if(!m_fp) { m_fp = wxFopen(m_logfile, wxT("a+")); }
+    
     if(m_fp) {
         wxFprintf(m_fp, "%s\n", m_buffer);
-        fflush(m_fp);
+        fclose(m_fp);
+        m_fp = nullptr;
     }
     m_buffer.Clear();
 }

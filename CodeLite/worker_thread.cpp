@@ -38,7 +38,7 @@ void* WorkerThread::Entry()
         // Did we get a request to terminate?
         if(TestDestroy()) break;
         ThreadRequest* request = NULL;
-        if(m_queue.ReceiveTimeout(50, request) == wxMSGQUEUE_NO_ERROR) {
+        if(m_queue.ReceiveTimeout(500, request) == wxMSGQUEUE_NO_ERROR) {
             // Call user's implementation for processing request
             ProcessRequest(request);
             wxDELETE(request);

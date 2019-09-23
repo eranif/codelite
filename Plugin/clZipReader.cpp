@@ -1,10 +1,23 @@
 #include "clZipReader.h"
 #include "macros.h"
+#include <wx/ffile.h>
+#include <wx/wfstream.h>
 
 clZipReader::clZipReader(const wxFileName& zipfile)
-    : m_file(new wxFileInputStream(zipfile.GetFullPath()))
-    , m_zip(new wxZipInputStream(*m_file))
 {
+    // Read the entire content into memory
+    wxFFile fp(zipfile.GetFullPath(), "r+b");
+    if(!fp.IsOpened()) { return; }
+    wxFileOffset size = fp.Length();
+
+    // increase the buffer size to match the file size
+    m_mb.SetBufSize(size);
+    fp.Read(m_mb.GetWriteBuf(size), size);
+    // update the data length
+    m_mb.SetDataLen(size);
+    fp.Close();
+    m_file = new wxMemoryInputStream(m_mb.GetData(), m_mb.GetDataLen());
+    m_zip = new wxZipInputStream(*m_file);
 }
 
 clZipReader::~clZipReader() { Close(); }
@@ -18,33 +31,11 @@ void clZipReader::Close()
 
 void clZipReader::Extract(const wxString& filename, const wxString& directory)
 {
+    if(!m_zip) { return; }
     wxZipEntry* entry(NULL);
     entry = m_zip->GetNextEntry();
     while(entry) {
-        if(::wxMatchWild(filename, entry->GetName())) {
-            // Incase the entry name has a directory prefix, remove it
-            wxString fullpath;
-            fullpath << directory << "/" << entry->GetName();
-
-            // Change to posix style
-            fullpath.Replace("\\", "/");
-            // Remove any duplicate double slashes
-            while(fullpath.Replace("//", "/")) {}
-
-            if(entry->IsDir()) {
-                // a folder
-                wxFileName::Mkdir(fullpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            } else {
-                wxFileName outfile(fullpath);
-                // ensure that the path to the file exists
-                outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-                wxFFileOutputStream out(outfile.GetFullPath());
-                if(out.IsOk()) {
-                    m_zip->Read(out);
-                    out.Close();
-                }
-            }
-        }
+        if(::wxMatchWild(filename, entry->GetName())) { DoExtractEntry(entry, directory); }
         wxDELETE(entry);
         entry = m_zip->GetNextEntry();
     }
@@ -52,36 +43,42 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
 
 void clZipReader::ExtractAll(const wxString& directory)
 {
+    if(!m_zip) { return; }
+
     wxZipEntry* entry(NULL);
     wxString basedir = directory;
     if(basedir.IsEmpty()) { basedir = "."; }
 
     entry = m_zip->GetNextEntry();
     while(entry) {
-        // Prepend the basedir to the entry name
-        wxString fullpath;
-        fullpath << basedir << "/" << entry->GetName();
-
-        // Change to posix style
-        fullpath.Replace("\\", "/");
-
-        // Remove any duplicate double slashes
-        while(fullpath.Replace("//", "/")) {}
-
-        if(entry->IsDir()) {
-            // a folder
-            wxFileName::Mkdir(fullpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        } else {
-            wxFileName outfile(fullpath);
-            // ensure that the path to the file exists
-            outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            wxFFileOutputStream out(outfile.GetFullPath());
-            if(out.IsOk()) {
-                m_zip->Read(out);
-                out.Close();
-            }
-        }
+        DoExtractEntry(entry, directory);
         wxDELETE(entry);
         entry = m_zip->GetNextEntry();
+    }
+}
+
+void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
+{
+    // Incase the entry name has a directory prefix, remove it
+    wxString fullpath;
+    fullpath << directory << "/" << entry->GetName();
+
+    // Change to posix style
+    fullpath.Replace("\\", "/");
+    // Remove any duplicate double slashes
+    while(fullpath.Replace("//", "/")) {}
+
+    if(entry->IsDir()) {
+        // a folder
+        wxFileName::Mkdir(fullpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    } else {
+        wxFileName outfile(fullpath);
+        // ensure that the path to the file exists
+        outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        wxFFileOutputStream out(outfile.GetFullPath());
+        if(out.IsOk()) {
+            m_zip->Read(out);
+            out.Close();
+        }
     }
 }

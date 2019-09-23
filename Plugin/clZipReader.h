@@ -28,31 +28,36 @@
 
 #include "codelite_exports.h"
 #include <wx/zipstrm.h>
-#include <wx/wfstream.h>
+#include <wx/mstream.h>
 #include <wx/stream.h>
 #include <wx/filename.h>
+#include <wx/buffer.h>
 
 class WXDLLIMPEXP_SDK clZipReader
 {
-    wxFileInputStream *m_file = nullptr;
-    wxZipInputStream *m_zip = nullptr;
-    
+    wxMemoryBuffer m_mb;
+    wxInputStream* m_file = nullptr;
+    wxZipInputStream* m_zip = nullptr;
+
+protected:
+    void DoExtractEntry(wxZipEntry* entry, const wxString& directory);
+
 public:
     clZipReader(const wxFileName& zipfile);
     ~clZipReader();
-    
+
     /**
      * @brief extract filename into 'path' (directory)
      * @param filename file name to extract. Wildcards ('*'/'?') can be used here
      * @param directory the target directory
      */
-    void Extract(const wxString &filename, const wxString &directory);
+    void Extract(const wxString& filename, const wxString& directory);
 
     /**
      * @brief extract the entire content of a zip archive into a directory
      */
-    void ExtractAll(const wxString &directory);
-    
+    void ExtractAll(const wxString& directory);
+
     /**
      * @brief close the zip archive
      */

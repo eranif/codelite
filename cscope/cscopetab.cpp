@@ -39,6 +39,7 @@
 #include <wx/imaglist.h>
 #include <wx/log.h>
 #include <wx/treectrl.h>
+#include <clFileSystemWorkspace.hpp>
 
 CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     : CscopeTabBase(parent)
@@ -206,8 +207,8 @@ void CscopeTab::AddFile(const wxString& filename)
 
 void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
 {
-    CHECK_PTR_RET(clCxxWorkspaceST::Get()->IsOpen());
-
+    if(!IsWorkspaceOpen()) { return; }
+    
     int clickedLine;
     int style = m_styler->HitTest(e, clickedLine);
     if(style == clFindResultsStyler::LEX_FIF_FILE || style == clFindResultsStyler::LEX_FIF_HEADER) {
@@ -217,7 +218,7 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
         // Open the match
         std::map<int, CscopeEntryData>::const_iterator iter = m_matchesInStc.find(clickedLine);
         if(iter != m_matchesInStc.end()) {
-            wxString wsp_path = clCxxWorkspaceST::Get()->GetPrivateFolder();
+            wxString wsp_path = GetWorkingDirectory();
             wxFileName fn(iter->second.GetFile());
             if(!fn.MakeAbsolute(wsp_path)) {
                 clLogMessage(wxT("CScope: failed to convert file to absolute path"));
@@ -237,4 +238,22 @@ void CscopeTab::CenterEditorLine(int lineno)
 {
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor) { editor->CenterLine(lineno); }
+}
+
+wxString CscopeTab::GetWorkingDirectory() const
+{
+    if(!IsWorkspaceOpen()) { return wxEmptyString; }
+
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        wxFileName fn = clFileSystemWorkspace::Get().GetFileName();
+        fn.AppendDir(".codelite");
+        return fn.GetPath();
+    } else {
+        return clCxxWorkspaceST::Get()->GetPrivateFolder();
+    }
+}
+
+bool CscopeTab::IsWorkspaceOpen() const
+{
+    return clFileSystemWorkspace::Get().IsOpen() || clCxxWorkspaceST::Get()->IsOpen();
 }

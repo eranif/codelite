@@ -46,6 +46,8 @@
 #include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
+#include "clFileSystemWorkspace.hpp"
+#include <fileutils.h>
 
 static Cscope* thePlugin = NULL;
 
@@ -115,7 +117,7 @@ void Cscope::CreateToolBar(clToolBar* toolbar)
     // Sample code that adds single button to the toolbar
     // and associates an image to it
     BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
-    
+
     // use the large icons set
     toolbar->AddSpacer();
     toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
@@ -124,7 +126,7 @@ void Cscope::CreateToolBar(clToolBar* toolbar)
                      bitmapLoader->LoadBitmap("step_in", size), _("Find functions calling this function"));
     toolbar->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"),
                      bitmapLoader->LoadBitmap("step_out", size), _("Find functions called by this function"));
-                     
+
     // Command events
     m_topWindow->Connect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(Cscope::OnFindGlobalDefinition), NULL, (wxEvtHandler*)this);
@@ -303,42 +305,50 @@ wxString Cscope::DoCreateListFile(bool force)
     CScopeConfData settings;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
 
-    // create temporary file and save the file there
-    wxString privateFolder = clCxxWorkspaceST::Get()->GetPrivateFolder();
+    wxArrayString tmpfiles;
+    wxString privateFolder = GetWorkingDirectory();
     wxFileName list_file(privateFolder, "cscope_file.list");
-    if(force || settings.GetRebuildOption() || !list_file.FileExists()) {
-        wxArrayString projects;
-        m_mgr->GetWorkspace()->GetProjectList(projects);
-        wxString err_msg;
+    bool createFileList = force || settings.GetRebuildOption() || !list_file.FileExists();
+    if(createFileList) {
         std::vector<wxFileName> files;
-        wxArrayString tmpfiles;
-        m_cscopeWin->SetMessage(_("Creating file list..."), 5);
-
-        if(settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
-            m_mgr->GetWorkspace()->GetWorkspaceFiles(tmpfiles);
+        if(clFileSystemWorkspace::Get().IsOpen()) {
+            const std::vector<wxFileName>& all_files = clFileSystemWorkspace::Get().GetFiles();
+            if(!all_files.empty()) {
+                files.reserve(all_files.size());
+                for(wxFileName fn : all_files) {
+                    wxString ext = fn.GetExt();
+                    if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) { continue; }
+                    fn.MakeRelativeTo(privateFolder);
+                    files.push_back(fn);
+                }
+            }
         } else {
-            // SCOPE_ACTIVE_PROJECT
-            ProjectPtr proj = m_mgr->GetWorkspace()->GetActiveProject();
-            if(proj) { proj->GetFilesAsStringArray(tmpfiles); }
-        }
+            wxArrayString projects;
+            m_mgr->GetWorkspace()->GetProjectList(projects);
+            wxString err_msg;
+            m_cscopeWin->SetMessage(_("Creating file list..."), 5);
 
-        // iterate over the files and convert them to be relative path
-        // Also remove any .exe files (one of which managed to crash cscope),
-        // and files without an ext, which may be binaries and are unlikely to be .c or .h files in disguise; and .xpm
-        // and .png too
-        for(size_t i = 0; i < tmpfiles.size(); i++) {
-            wxFileName fn(tmpfiles.Item(i));
-            wxString ext = fn.GetExt();
-            if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) { continue; }
-            fn.MakeRelativeTo(privateFolder);
-            files.push_back(fn);
-        }
-
-        // create temporary file and save the file there
-        wxFFile file(list_file.GetFullPath(), wxT("w+b"));
-        if(!file.IsOpened()) {
-            clDEBUG() << "Failed to open temporary file:" << list_file;
-            return wxEmptyString;
+            if(settings.GetScanScope() == SCOPE_ENTIRE_WORKSPACE) {
+                m_mgr->GetWorkspace()->GetWorkspaceFiles(tmpfiles);
+            } else {
+                // SCOPE_ACTIVE_PROJECT
+                ProjectPtr proj = m_mgr->GetWorkspace()->GetActiveProject();
+                if(proj) { proj->GetFilesAsStringArray(tmpfiles); }
+            }
+            // iterate over the files and convert them to be relative path
+            // Also remove any .exe files (one of which managed to crash cscope),
+            // and files without an ext, which may be binaries and are unlikely to be .c or .h files in disguise; and
+            // .xpm and .png too
+            if(!tmpfiles.empty()) {
+                files.reserve(tmpfiles.size());
+                for(const wxString& filepath : tmpfiles) {
+                    wxFileName fn(filepath);
+                    wxString ext = fn.GetExt();
+                    if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) { continue; }
+                    fn.MakeRelativeTo(privateFolder);
+                    files.push_back(fn);
+                }
+            }
         }
 
         // write the content of the files into the tempfile
@@ -347,10 +357,7 @@ wxString Cscope::DoCreateListFile(bool force)
             wxFileName fn(files.at(i));
             content << fn.GetFullPath(wxPATH_UNIX) << wxT("\n");
         }
-
-        file.Write(content);
-        file.Flush();
-        file.Close();
+        FileUtils::WriteFileContent(list_file, content, wxConvUTF8);
     }
 
     return list_file.GetFullPath();
@@ -397,7 +404,7 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
     req->SetCmd(command);
     req->SetEndMsg(endMsg);
     req->SetFindWhat(findWhat);
-    req->SetWorkingDir(clCxxWorkspaceST::Get()->GetPrivateFolder());
+    req->SetWorkingDir(GetWorkingDirectory());
 
     CScopeThreadST::Get()->Add(req);
 }
@@ -510,7 +517,7 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
 void Cscope::OnCreateDB(wxCommandEvent& e)
 {
     // sanity
-    if(m_mgr->IsWorkspaceOpen() == false) { return; }
+    if(!m_mgr->IsWorkspaceOpen() && !clFileSystemWorkspace::Get().IsOpen()) { return; }
 
     m_cscopeWin->Clear();
     wxString list_file = DoCreateListFile(true);
@@ -583,13 +590,13 @@ void Cscope::OnCscopeUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
     bool isEditor = m_mgr->GetActiveEditor() ? true : false;
-    e.Enable(m_mgr->IsWorkspaceOpen() && isEditor);
+    e.Enable((m_mgr->IsWorkspaceOpen() || clFileSystemWorkspace::Get().IsOpen()) && isEditor);
 }
 
 void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
-    e.Enable(m_mgr->IsWorkspaceOpen());
+    e.Enable(m_mgr->IsWorkspaceOpen() || clFileSystemWorkspace::Get().IsOpen());
 }
 
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
@@ -644,4 +651,22 @@ void Cscope::OnEditorContentMenu(clContextMenuEvent& event)
     if(FileExtManager::IsCxxFile(editor->GetFileName())) {
         event.GetMenu()->Append(wxID_ANY, _("CScope"), CreateEditorPopMenu());
     }
+}
+
+wxString Cscope::GetWorkingDirectory() const
+{
+    if(!IsWorkspaceOpen()) { return wxEmptyString; }
+    
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        wxFileName fn = clFileSystemWorkspace::Get().GetFileName();
+        fn.AppendDir(".codelite");
+        return fn.GetPath();
+    } else {
+        return clCxxWorkspaceST::Get()->GetPrivateFolder();
+    }
+}
+
+bool Cscope::IsWorkspaceOpen() const
+{
+    return clFileSystemWorkspace::Get().IsOpen() || clCxxWorkspaceST::Get()->IsOpen();
 }

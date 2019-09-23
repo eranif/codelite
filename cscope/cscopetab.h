@@ -78,6 +78,8 @@ protected:
     void AddMatch(int line, const wxString& pattern);
     void AddFile(const wxString& filename);
     void CenterEditorLine(int lineno);
+    wxString GetWorkingDirectory() const;
+    bool IsWorkspaceOpen() const;
 
 public:
     /** Constructor */

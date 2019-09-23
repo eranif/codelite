@@ -60,7 +60,9 @@ protected:
     void DoCscopeCommand(const wxString& command, const wxString& findWhat, const wxString& endMsg);
     void DoFindSymbol(const wxString& word);
     wxString GetSearchPattern() const;
-
+    wxString GetWorkingDirectory() const;
+    bool IsWorkspaceOpen() const;
+    
     // Event handlers
     //------------------------------------------
     void OnFindSymbol(wxCommandEvent& e);

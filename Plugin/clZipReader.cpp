@@ -9,7 +9,7 @@ clZipReader::clZipReader(const wxFileName& zipfile)
     // Read the entire content into memory
     wxFFile fp(zipfile.GetFullPath(), "rb");
     if(!fp.IsOpened()) {
-        clERROR() << "Failed to open file:" << zipfile << "." << strerror(errno);
+        clERROR() << "Failed to open file:" << zipfile;
         return;
     }
     wxFileOffset size = fp.Length();

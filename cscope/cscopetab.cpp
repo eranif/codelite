@@ -174,7 +174,7 @@ void CscopeTab::OnCreateDB(wxCommandEvent& e)
 void CscopeTab::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 {
     CHECK_CL_SHUTDOWN();
-    e.Enable(m_mgr->IsWorkspaceOpen());
+    e.Enable(IsWorkspaceOpen());
 }
 
 void CscopeTab::OnThemeChanged(wxCommandEvent& e)

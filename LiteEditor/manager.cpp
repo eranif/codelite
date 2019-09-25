@@ -3196,6 +3196,8 @@ void Manager::UpdateParserPaths(bool notify)
     wxBusyCursor bc;
 
     // If we have an opened workspace, get its search paths
+    wxArrayString searchPaths;
+    wxArrayString excludePaths;
     if(IsWorkspaceOpen()) {
         wxArrayString projects;
         clCxxWorkspaceST::Get()->GetProjectList(projects);
@@ -3203,14 +3205,15 @@ void Manager::UpdateParserPaths(bool notify)
             ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(projects.Item(i));
             if(pProj) {
                 wxArrayString compilerIncPaths = pProj->GetIncludePaths();
-                ParseThreadST::Get()->AddPaths(compilerIncPaths, {});
+                searchPaths.insert(searchPaths.end(), compilerIncPaths.begin(), compilerIncPaths.end());
             }
         }
 
         // get the workspace search paths and append them to the current paths
         wxArrayString localInc, localExc;
         clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetParserPaths(localInc, localExc);
-        ParseThreadST::Get()->AddPaths(localInc, localExc);
+        searchPaths.insert(searchPaths.end(), localInc.begin(), localInc.end());
+        excludePaths.insert(excludePaths.end(), localExc.begin(), localExc.end());
 
         // get the build configuration specific paths and add them as well
         BuildConfigPtr buildConf = GetCurrentBuildConf();
@@ -3223,7 +3226,7 @@ void Manager::UpdateParserPaths(bool notify)
                 projectPath =
                     MacroManager::Instance()->Expand(projectPath, PluginManager::Get(), GetActiveProjectName());
             }
-            ParseThreadST::Get()->AddPaths(projectInc, {});
+            searchPaths.insert(searchPaths.end(), projectInc.begin(), projectInc.end());
         }
     }
 
@@ -3231,12 +3234,17 @@ void Manager::UpdateParserPaths(bool notify)
     const TagsOptionsData& tod = clMainFrame::Get()->GetTagsOptions();
     const wxArrayString& globalInc = tod.GetParserSearchPaths();
     const wxArrayString& globalExc = tod.GetParserExcludePaths();
-    ParseThreadST::Get()->AddPaths(globalInc, globalExc);
+    
+    searchPaths.insert(searchPaths.end(), globalInc.begin(), globalInc.end());
+    excludePaths.insert(excludePaths.end(), globalExc.begin(), globalExc.end());
+        
+    ParseThreadST::Get()->SetSearchPaths(searchPaths, excludePaths);
 
     {
         wxArrayString inc, exc;
         ParseThreadST::Get()->GetSearchPaths(inc, exc);
         clDEBUG() << "Parser paths are now set to:" << inc;
+        clDEBUG() << "Parser exclude paths are now set to:" << exc;
     }
 }
 

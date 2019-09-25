@@ -363,7 +363,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
              << wxT(" --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
     req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
 
-    clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;
+    //clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;
     // connect to the indexer
     if(!client.connect()) {
         clWARNING() << "Failed to connect to indexer process. Indexer ID:" << wxGetProcessId() << clEndl;
@@ -378,7 +378,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 
     // read the reply
     clIndexerReply reply;
-    clDEBUG1() << "SourceToTags: reading indexer reply" << clEndl;
+    //clDEBUG1() << "SourceToTags: reading indexer reply" << clEndl;
     try {
         std::string errmsg;
         if(!clIndexerProtocol::ReadReply(&client, reply, errmsg)) {
@@ -392,7 +392,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         return;
     }
 
-    clDEBUG1() << "SourceToTags: [" << reply.getTags() << "]" << clEndl;
+    //clDEBUG1() << "SourceToTags: [" << reply.getTags() << "]" << clEndl;
 
     // convert the data into wxString
     if(m_encoding == wxFONTENCODING_DEFAULT || m_encoding == wxFONTENCODING_SYSTEM)
@@ -401,7 +401,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         tags = wxString(reply.getTags().c_str(), wxCSConv(m_encoding));
     if(tags.empty()) { tags = wxString::From8BitData(reply.getTags().c_str()); }
 
-    clDEBUG1() << "Tags:\n" << tags << clEndl;
+    //clDEBUG1() << "Tags:\n" << tags << clEndl;
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)

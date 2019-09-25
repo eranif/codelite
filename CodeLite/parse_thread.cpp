@@ -43,6 +43,9 @@
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 #include "fileextmanager.h"
+#include <unordered_set>
+#include "wxStringHash.h"
+#include <functional>
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -107,20 +110,33 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     ParseRequest* req = (ParseRequest*)request;
     FileLogger::RegisterThread(wxThread::GetCurrentId(), "C++ Parser Thread");
 
+    // Exclude all files found in the exclude folders
+    wxArrayString inc, exc;
+    GetSearchPaths(inc, exc);
+
+    std::function<bool(const wxString&)> fnIsExcluded = [&](const wxString& file_path) -> bool {
+        for(const wxString& dirpath : exc) {
+            if(file_path.StartsWith(dirpath)) {
+                clDEBUG1() << "Excluding file" << file_path;
+                return true;
+            }
+        }
+        return false;
+    };
+
     // Filter non C++ files
     if(!req->_workspaceFiles.empty()) {
         std::vector<std::string> filtered_list;
         filtered_list.reserve(req->_workspaceFiles.size());
         for(std::string& filename : req->_workspaceFiles) {
-            if(FileExtManager::IsCxxFile(wxString() << filename)) { filtered_list.push_back(std::move(filename)); }
+            wxString f = filename;
+            if(FileExtManager::IsCxxFile(f) && !fnIsExcluded(f)) { filtered_list.push_back(std::move(filename)); }
         }
         req->_workspaceFiles.swap(filtered_list);
     }
 
-    wxArrayString inc, exc;
-    GetSearchPaths(inc, exc);
-
-    clDEBUG1() << "include paths:\n" << inc;
+    clDEBUG1() << "include paths:" << inc;
+    clDEBUG1() << "exclude paths:" << exc;
 
     switch(req->getType()) {
     case ParseRequest::PR_PARSEINCLUDES:
@@ -499,17 +515,16 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSe
     wxArrayString searchPaths, excludePaths, filteredFileList;
     GetSearchPaths(searchPaths, excludePaths);
 
-    DEBUG_MESSAGE(
-        wxString::Format(wxT("Initial workspace files count is %u"), (unsigned int)req->_workspaceFiles.size()));
+    if(!req->_workspaceFiles.empty()) { filteredFileList.Alloc(req->_workspaceFiles.size()); }
 
-    for(size_t i = 0; i < req->_workspaceFiles.size(); i++) {
+    for(size_t i = 0; i < req->_workspaceFiles.size(); ++i) {
         wxString name(req->_workspaceFiles.at(i).c_str(), wxConvUTF8);
         wxFileName fn(name);
         fn.MakeAbsolute();
-
-        if(TagsManagerST::Get()->IsBinaryFile(fn.GetFullPath())) continue;
-
-        filteredFileList.Add(fn.GetFullPath());
+        fn.Normalize();
+        wxString fullpath = fn.GetFullPath();
+        if(TagsManagerST::Get()->IsBinaryFile(fullpath)) continue;
+        filteredFileList.Add(fullpath);
     }
 
     wxArrayString arrFiles;
@@ -524,13 +539,13 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSe
 
         for(size_t i = 0; i < searchPaths.GetCount(); i++) {
             const wxCharBuffer path = _C(searchPaths.Item(i));
-            DEBUG_MESSAGE(wxString::Format(wxT("ParseThread: Using Search Path: %s "), searchPaths.Item(i).c_str()));
+            clDEBUG1() << "Using include path:" << searchPaths.Item(i);
             fcFileOpener::Get()->AddSearchPath(path.data());
         }
 
         for(size_t i = 0; i < excludePaths.GetCount(); i++) {
             const wxCharBuffer path = _C(excludePaths.Item(i));
-            DEBUG_MESSAGE(wxString::Format(wxT("ParseThread: Using Exclude Path: %s "), excludePaths.Item(i).c_str()));
+            clDEBUG1() << "Using exclude path:" << excludePaths.Item(i);
             fcFileOpener::Get()->AddExcludePath(path.data());
         }
 
@@ -745,7 +760,7 @@ void ParseThread::AddPaths(const wxArrayString& inc, const wxArrayString& exc)
         m_searchPaths.swap(tmp);
         std::sort(m_searchPaths.begin(), m_searchPaths.end());
     }
-    
+
     {
         wxStringSet_t unique;
         wxArrayString tmp;

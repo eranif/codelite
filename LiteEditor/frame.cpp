@@ -1649,7 +1649,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
     // Prompt before exit, but not if we're coming from the Setup Wizard
-    //if(!GetAndResetNoSavePerspectivePrompt()) {
+    // if(!GetAndResetNoSavePerspectivePrompt()) {
     //    wxStandardID ans =
     //        PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit",
     //                                               "Save and Exit", "Exit without saving", "Don't Exit");
@@ -1667,7 +1667,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     //        }
     //    }
     //}
-    
+
     SaveLayoutAndSession();
     SaveGeneralSettings();
 
@@ -2088,40 +2088,14 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     CodeCompletionSettingsDialog dlg(this, m_tagsOptionsData);
     if(dlg.ShowModal() == wxID_OK) {
         m_tagsOptionsData = dlg.GetData();
-
+        
+        // Before we update anything, keep the old values
+        wxArrayString oldInc, oldExc;
+        ParseThreadST::Get()->GetSearchPaths(oldInc, oldExc);
+                
         // writes the content into the ctags.replacements file (used by
         // codelite_indexer)
         m_tagsOptionsData.SyncData();
-
-        wxArrayString pathsAfter = m_tagsOptionsData.GetParserSearchPaths();
-        wxArrayString removedPaths;
-
-        // Compare the paths
-        for(size_t i = 0; i < pathsBefore.GetCount(); i++) {
-            int where = pathsAfter.Index(pathsBefore.Item(i));
-            if(where == wxNOT_FOUND) {
-                removedPaths.Add(pathsBefore.Item(i));
-            } else {
-                pathsAfter.RemoveAt((size_t)where);
-            }
-        }
-
-        if(removedPaths.IsEmpty() == false) {
-            wxWindowDisabler disableAll;
-            wxBusyInfo info(_T("Updating tags database, please wait..."), this);
-            wxTheApp->Yield();
-
-            // Remove all tags from the database which starts with the paths which were
-            // removed from the parser include path
-            ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
-            db->Begin();
-            for(size_t i = 0; i < removedPaths.GetCount(); i++) {
-                db->DeleteByFilePrefix(wxFileName(), removedPaths.Item(i));
-                db->DeleteFromFilesByPrefix(wxFileName(), removedPaths.Item(i));
-                wxTheApp->Yield();
-            }
-            db->Commit();
-        }
 
         newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
         caseSensitive = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
@@ -2135,19 +2109,27 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         // We use this method 'UpdateParserPaths' since it will also update the parser
         // thread with any workspace search/exclude paths related
         ManagerST::Get()->UpdateParserPaths(false);
-
+        
+        // Get the new values
+        wxArrayString newInc, newExc;
+        ParseThreadST::Get()->GetSearchPaths(newInc, newExc);
         TagsManagerST::Get()->GetDatabase()->SetMaxWorkspaceTagToColour(m_tagsOptionsData.GetMaxItemToColour());
 
         // do we need to colourise?
         if((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
             GetMainBook()->UpdateColours();
         }
-
-        if(pathsAfter.IsEmpty() == false) {
-            // a retagg is needed
-            wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+        
+        if(newExc != oldExc) {
+            // The exclude list was updated, a full reparse is needed
+            wxCommandEvent e(wxEVT_MENU, XRCID("full_retag_workspace"));
+            AddPendingEvent(e);
+        } else if(newInc != oldInc) {
+            // When new include paths were added, an incremental parse is enough
+            wxCommandEvent e(wxEVT_MENU, XRCID("retag_workspace"));
             AddPendingEvent(e);
         }
+        
         // Update the pre-processor dimming feature
         CodeCompletionManager::Get().RefreshPreProcessorColouring();
     }

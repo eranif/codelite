@@ -318,6 +318,8 @@ bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
         return str == "<" || str == "</";
     } else if(GetCtrl().GetLexer() == wxSTC_LEX_CSS) {
         return str == ":";
+    } else if(GetCtrl().GetLexer() == wxSTC_LEX_PYTHON) {
+        return str == ".";
     } else {
         return (m_completionTriggerStrings.count(str) > 0);
     }

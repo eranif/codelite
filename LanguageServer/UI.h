@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LANGUAGESERVER_UI_BASE_CLASSES_H
 #define _CODELITE_LANGUAGESERVER_UI_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -21,6 +22,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
+#include <wx/stc/stc.h>
 #include <wx/filepicker.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
@@ -40,6 +42,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class LanguageServerSettingsDlgBase : public wxDialog
 {
@@ -81,9 +85,7 @@ protected:
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
-    wxFilePickerCtrl* m_filePickerExe;
-    wxStaticText* m_staticText537;
-    wxTextCtrl* m_textCtrlArgs;
+    wxStyledTextCtrl* m_stcCommand;
     wxStaticText* m_staticText579;
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
@@ -103,9 +105,7 @@ public:
     wxStaticText* GetStaticText453() { return m_staticText453; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
-    wxFilePickerCtrl* GetFilePickerExe() { return m_filePickerExe; }
-    wxStaticText* GetStaticText537() { return m_staticText537; }
-    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
+    wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }

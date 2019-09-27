@@ -20,6 +20,7 @@ class LanguageServerEntry
     int m_priority = 50;
     wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
+    wxString m_command;
 
 public:
     // use 'map' to keep the items sorted by name
@@ -39,6 +40,9 @@ public:
 
     const wxStringSet_t& GetUnimplementedMethods() const { return m_unimplementedMethods; }
 
+    void SetCommand(const wxString& command) { this->m_command = command; }
+    const wxString& GetCommand() const { return m_command; }
+
     /**
      * @brief add unimplemented method to this LSP
      * @param methodName
@@ -51,24 +55,12 @@ public:
         return *this;
     }
     bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
-    LanguageServerEntry& SetArgs(const wxString& args)
-    {
-        this->m_args = args;
-        return *this;
-    }
-    LanguageServerEntry& SetExepath(const wxString& exepath)
-    {
-        this->m_exepath = exepath;
-        return *this;
-    }
     LanguageServerEntry& SetConnectionString(const wxString& connectionString)
     {
         this->m_connectionString = connectionString;
         return *this;
     }
     const wxString& GetConnectionString() const { return m_connectionString; }
-    const wxString& GetArgs() const { return m_args; }
-    const wxString& GetExepath() const { return m_exepath; }
     LanguageServerEntry& SetPriority(int priority)
     {
         this->m_priority = priority;

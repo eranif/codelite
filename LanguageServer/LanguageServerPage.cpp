@@ -4,14 +4,16 @@
 #include "LanguageServerProtocol.h"
 #include "globals.h"
 #include <wx/choicdlg.h>
+#include "ColoursAndFontsManager.h"
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
 {
+    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lex) { lex->Apply(m_stcCommand); }
     m_textCtrlName->SetValue(data.GetName());
     m_dirPickerWorkingDir->SetPath(data.GetWorkingDirectory());
-    m_filePickerExe->SetPath(data.GetExepath());
-    m_textCtrlArgs->SetValue(data.GetArgs());
+    m_stcCommand->SetText(data.GetCommand());
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
     wxString languages = wxJoin(langs, ';');
@@ -32,8 +34,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
 {
     LanguageServerEntry d;
     d.SetName(m_textCtrlName->GetValue());
-    d.SetArgs(m_textCtrlArgs->GetValue());
-    d.SetExepath(m_filePickerExe->GetPath());
+    d.SetCommand(m_stcCommand->GetText().Trim().Trim(false));
     d.SetWorkingDirectory(m_dirPickerWorkingDir->GetPath());
     d.SetLanguages(GetLanguages());
     d.SetEnabled(m_checkBoxEnabled->IsChecked());

@@ -227,3 +227,15 @@ void StringUtils::FreeArgv(char** argv, int argc)
     }
     delete[] argv;
 }
+
+wxArrayString StringUtils::BuildArgv(const wxString& str)
+{
+    int argc = 0;
+    char** argv = BuildArgv(str, argc);
+    wxArrayString arrArgv;
+    for(int i = 0; i < argc; ++i) {
+        arrArgv.Add(argv[i]);
+    }
+    FreeArgv(argv, argc);
+    return arrArgv;
+}

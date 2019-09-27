@@ -14,6 +14,7 @@
 #include "cl_calltip.h"
 #include "CompileCommandsGenerator.h"
 #include "macromanager.h"
+#include "StringUtils.h"
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -195,17 +196,13 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
 
         wxArrayString lspCommand;
-        lspCommand.Add(entry.GetExepath());
-
-        if(!entry.GetArgs().IsEmpty()) {
-            wxString entryArgs = entry.GetArgs();
-            wxString project;
-            if(clCxxWorkspaceST::Get()->IsOpen()) { project = clCxxWorkspaceST::Get()->GetActiveProjectName(); }
-            entryArgs = MacroManager::Instance()->Expand(entryArgs, clGetManager(), project);
-            wxArrayString args = ::wxStringTokenize(entryArgs, " ", wxTOKEN_STRTOK);
-            lspCommand.insert(lspCommand.end(), args.begin(), args.end());
-        }
-
+        wxString command = entry.GetCommand();
+        
+        wxString project;
+        if(clCxxWorkspaceST::Get()->IsOpen()) { project = clCxxWorkspaceST::Get()->GetActiveProjectName(); }
+        command = MacroManager::Instance()->Expand(command, clGetManager(), project);
+        lspCommand = StringUtils::BuildArgv(command);
+        
         wxString rootDir;
         if(clWorkspaceManager::Get().GetWorkspace()) {
             rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();

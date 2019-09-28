@@ -38,6 +38,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     m_tags = tags;
     // Clear the impl array
     m_implArr.Clear();
+    m_implArr.reserve(tags.size());
     for(size_t i = 0; i < m_tags.size(); ++i) {
         wxVector<wxVariant> cols;
         cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));

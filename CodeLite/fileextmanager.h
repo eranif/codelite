@@ -92,6 +92,8 @@ public:
         TypeFileSymlink,
         TypeFolderSymlink,
         TypeFolderSymlinkExpanded, // For UI purposes only
+        TypeLua,
+        TypeRust,
         TypeLast,
     };
 

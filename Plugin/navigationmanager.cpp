@@ -70,11 +70,14 @@ void NavMgr::AddJump(const BrowseRecord& from, const BrowseRecord& to)
     }
     if(ValidLocation(to)) {
         // only add if there's an actual jump
-        if((!m_jumps.empty()) &&
-           (!((m_jumps[m_cur].filename == to.filename) && (m_jumps[m_cur].lineno == to.lineno)))) {
-            m_cur++;
-            m_jumps.resize(m_cur);
-            m_jumps.push_back(to);
+        if (!m_jumps.empty()) {
+            if (!((m_jumps[m_cur].filename == to.filename) && (m_jumps[m_cur].lineno == to.lineno))) {
+                m_cur++;
+                m_jumps.resize(m_cur);
+                m_jumps.push_back(to);
+            } else if (m_jumps[m_cur].position != to.position) {
+                m_jumps[m_cur] = to;
+            }
         }
     }
 }

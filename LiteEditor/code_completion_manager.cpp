@@ -282,7 +282,7 @@ bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
         if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
-        editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
+        editor->FindAndSelectV(tag->GetPattern(), tag->GetName(),  editor->PosFromLine(tag->GetLine() - 1));
         return true;
     }
     return false;
@@ -297,7 +297,7 @@ bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
         if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
-        if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName())) {
+        if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), NavMgr::Get())) {
             editor->SetCaretAt(editor->PosFromLine(tag->GetLine() - 1));
             editor->CenterLineIfNeeded(tag->GetLine() - 1);
         }

@@ -355,7 +355,7 @@ void MainBook::RestoreSession(SessionEntry& session)
     for(size_t i = 0; i < vTabInfoArr.size(); i++) {
         const TabInfo& ti = vTabInfoArr[i];
         m_reloadingDoRaise = (i == vTabInfoArr.size() - 1); // Raise() when opening only the last editor
-        clEditor* editor = OpenFile(ti.GetFileName());
+        clEditor* editor = OpenFile(ti.GetFileName(), wxEmptyString, wxNOT_FOUND, wxNOT_FOUND, OF_None);
         if(!editor) {
             if(i < sel) {
                 // have to adjust selected tab number because couldn't open tab

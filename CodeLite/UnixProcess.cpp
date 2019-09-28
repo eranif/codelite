@@ -66,11 +66,12 @@ UnixProcess::~UnixProcess()
     Stop();
     Wait();
 }
-
+#define CHUNK_SIZE 1024
+#define MAX_BUFF_SIZE (1024 * 2048)
 bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
 {
     fd_set rset;
-    char buff[1024];
+    char buff[CHUNK_SIZE];
     FD_ZERO(&rset);
     FD_SET(fd, &rset);
 
@@ -78,16 +79,15 @@ bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
     int ms = timeoutMilliseconds % 1000;
 
     struct timeval tv = { seconds, ms * 1000 }; //  10 milliseconds timeout
-    while (true) {
+    while(true) {
         int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
         if(rc > 0) {
             int len = read(fd, buff, (sizeof(buff) - 1));
             if(len > 0) {
                 buff[len] = 0;
                 content.append(buff);
-                if (content.length() >= 2048 * 1024) {
-                    return true;
-                }
+                if(content.length() >= MAX_BUFF_SIZE) { return true; }
+                // clear the tv struct so next select() call will return immediately
                 tv.tv_usec = 0;
                 tv.tv_sec = 0;
                 FD_ZERO(&rset);

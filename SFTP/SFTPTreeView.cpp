@@ -76,7 +76,10 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 {
     m_bmpLoader = clGetManager()->GetStdIcons();
     m_treeCtrl->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
-
+    m_timer = new wxTimer(this);
+    Bind(wxEVT_TIMER, &SFTPTreeView::OnKeepAliveTimer, this, m_timer->GetId());
+    m_timer->Start(30000); // every 30 seconds send a hearbeat
+    
     std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
                                                                                  const wxTreeItemId& itemB) {
         MyClientData* a = static_cast<MyClientData*>(GetItemData(itemA));
@@ -161,6 +164,7 @@ SFTPTreeView::~SFTPTreeView()
     m_treeCtrl->Disconnect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
                            NULL, this);
     Unbind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
+    Unbind(wxEVT_TIMER, &SFTPTreeView::OnKeepAliveTimer, this, m_timer->GetId());
 }
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }
@@ -1047,5 +1051,19 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
 
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK | wxCENTER);
+    }
+}
+
+void SFTPTreeView::OnKeepAliveTimer(wxTimerEvent& event)
+{
+    wxUnusedVar(event);
+    if(IsConnected()) {
+        // Perform a minimal operation to keep our session alive
+        try {
+            m_sftp->Stat(".");
+            clDEBUG1() << "SFTP: Heartbeat successfully sent!";
+        } catch(clException& e) {
+            clGetManager()->SetStatusMessage(_("SFTP: session closed by the server"));
+        }
     }
 }

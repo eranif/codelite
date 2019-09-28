@@ -34,6 +34,7 @@
 #include "ssh_account_info.h"
 #include <vector>
 #include "clSSHChannel.h"
+#include <wx/timer.h>
 
 class MyClientData;
 class SFTP;
@@ -49,6 +50,7 @@ class SFTPTreeView : public SFTPTreeViewBase
     SFTP* m_plugin;
     wxString m_commandOutput;
     SFTPSessionInfoList m_sessions;
+    wxTimer* m_timer = nullptr;
 
 public:
     enum {
@@ -93,6 +95,7 @@ protected:
     void OnFileDropped(clCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& evt);
     void OnRemoteFind(wxCommandEvent& event);
+    void OnKeepAliveTimer(wxTimerEvent& event);
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);

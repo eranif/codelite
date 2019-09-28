@@ -73,6 +73,11 @@ public:
     void Write(const wxString& message);
 	
 	bool IsInteractive() const { return m_type == kInterativeMode; }
+    
+    /**
+     * @brief Send a signal to remote process 
+     */
+    void SendSignal(wxSignal sig);
 };
 #endif
 #endif // CLSSHCHANNEL_H

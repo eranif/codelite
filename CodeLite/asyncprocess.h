@@ -33,6 +33,7 @@
 #include <wx/string.h>
 #include <vector>
 #include "macros.h"
+#include <wx/utils.h>
 
 typedef std::vector<std::pair<wxString, wxString> > clEnvList_t;
 enum IProcessCreateFlags {
@@ -187,6 +188,11 @@ public:
     void SetHardKill(bool hardKill) { this->m_hardKill = hardKill; }
     bool GetHardKill() const { return m_hardKill; }
     IProcessCallback* GetCallback() { return m_callback; }
+    
+    /**
+     * @brief send signal to the process
+     */
+    virtual void Signal(wxSignal sig) = 0;
 
     /**
      * @brief do we have process redirect enabled?

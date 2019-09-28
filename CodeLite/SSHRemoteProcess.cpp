@@ -3,6 +3,7 @@
 #include "cl_command_event.h"
 #include "processreaderthread.h"
 #include "file_logger.h"
+#include <wx/utils.h>
 
 bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer)
 {
@@ -38,8 +39,14 @@ void SSHRemoteProcess::Cleanup() { Detach(); }
 
 void SSHRemoteProcess::Detach()
 {
-    m_channel->Close();
-    m_channel.reset(nullptr);
+    try {
+        m_channel->SendSignal(wxSIGTERM);
+        m_channel->Close();
+        m_channel.reset(nullptr);
+
+    } catch(clException& e) {
+        clWARNING() << "SSHRemoteProcess::Detach:" << e.What();
+    }
 }
 
 bool SSHRemoteProcess::IsAlive() { return m_channel->IsOpen(); }
@@ -99,5 +106,14 @@ void SSHRemoteProcess::OnOutput(clCommandEvent& event)
 }
 
 void SSHRemoteProcess::OnPty(clCommandEvent& event) { SetPty(event.GetString()); }
+
+void SSHRemoteProcess::Signal(wxSignal sig)
+{
+    try {
+        m_channel->SendSignal(sig);
+    } catch(clException& e) {
+        clWARNING() << "SSHRemoteProcess::Signal():" << e.What();
+    }
+}
 
 #endif

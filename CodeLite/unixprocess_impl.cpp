@@ -537,4 +537,9 @@ void UnixProcessImpl::Detach()
     m_thr = NULL;
 }
 
+void UnixProcessImpl::Signal(wxSignal sig)
+{
+   wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN);
+}
+
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

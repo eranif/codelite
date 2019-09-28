@@ -574,4 +574,6 @@ void WinProcessImpl::Detach()
     m_thr = NULL;
 }
 
+void WinProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN); }
+
 #endif //__WXMSW__

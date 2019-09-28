@@ -288,4 +288,52 @@ void clSSHChannel::OnReadOutput(clCommandEvent& event) { m_owner->AddPendingEven
 void clSSHChannel::OnChannelClosed(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
 
 void clSSHChannel::OnChannelPty(clCommandEvent& event) { m_owner->AddPendingEvent(event); }
+
+void clSSHChannel::SendSignal(wxSignal sig)
+{
+    if(!m_ssh) { throw clException("ssh session is not opened"); }
+    if(!m_channel) { throw clException("ssh channel is not opened"); }
+
+    const char* prefix = nullptr;
+    switch(sig) {
+    case wxSIGABRT:
+        prefix = "ABRT";
+        break;
+    case wxSIGALRM:
+        prefix = "ALRM";
+        break;
+    case wxSIGFPE:
+        prefix = "FPE";
+        break;
+    case wxSIGHUP:
+        prefix = "HUP";
+        break;
+    case wxSIGILL:
+        prefix = "ILL";
+        break;
+    case wxSIGINT:
+        prefix = "INT";
+        break;
+    case wxSIGKILL:
+        prefix = "KILL";
+        break;
+    case wxSIGPIPE:
+        prefix = "PIPE";
+        break;
+    case wxSIGQUIT:
+        prefix = "QUIT";
+        break;
+    case wxSIGSEGV:
+        prefix = "SEGV";
+        break;
+    case wxSIGTERM:
+        prefix = "TERM";
+        break;
+    default:
+        break;
+    }
+    if(!prefix) { throw clException("Requested to send an unknown signal"); }
+    int rc = ssh_channel_request_send_signal(m_channel, prefix);
+    if(rc != SSH_OK) { throw clException(BuildError("Failed to send signal")); }
+}
 #endif

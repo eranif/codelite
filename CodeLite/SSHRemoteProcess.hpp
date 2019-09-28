@@ -31,6 +31,7 @@ protected:
     void OnPty(clCommandEvent& event);
 
 public:
+    virtual void Signal(wxSignal sig);
     virtual void Cleanup();
     virtual void Detach();
     virtual bool IsAlive();

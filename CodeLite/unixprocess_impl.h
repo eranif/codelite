@@ -72,6 +72,7 @@ public:
     virtual void Terminate();
     virtual bool WriteToConsole(const wxString& buff);
     virtual void Detach();
+    virtual void Signal(wxSignal sig);
 };
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)
 #endif // __unixprocessimpl__

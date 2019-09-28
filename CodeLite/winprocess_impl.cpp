@@ -492,22 +492,26 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
     dwTimeout = 1000;
     SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
-
-    BOOL bRes = ReadFile(pipe, m_buffer, 65536, &dwRead, NULL);
-    if(bRes) {
-        wxString tmpBuff;
-        // Success read
-        m_buffer[dwRead / sizeof(char)] = 0;
-        tmpBuff = wxString(m_buffer, wxConvUTF8);
-        if(tmpBuff.IsEmpty() && dwRead > 0) {
-            // conversion failed
-            tmpBuff = wxString::From8BitData(m_buffer);
+    
+    bool read_something = false;
+    while(true) {
+        BOOL bRes = ReadFile(pipe, m_buffer, 65536, &dwRead, NULL);
+        if(bRes) {
+            wxString tmpBuff;
+            // Success read
+            m_buffer[dwRead / sizeof(char)] = 0;
+            tmpBuff = wxString(m_buffer, wxConvUTF8);
+            if(tmpBuff.IsEmpty() && dwRead > 0) {
+                // conversion failed
+                tmpBuff = wxString::From8BitData(m_buffer);
+            }
+            buff << tmpBuff;
+            read_something = true;
+            continue;
         }
-        buff << tmpBuff;
-        return true;
+        break;
     }
-
-    return false;
+    return read_something;
 }
 
 void WinProcessImpl::Terminate()

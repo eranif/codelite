@@ -119,7 +119,7 @@ protected:
      */
     void SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column);
 
-    void DoStart();
+    bool DoStart();
 
     /**
      * @brief add message to the outgoing queue
@@ -164,13 +164,13 @@ public:
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
      */
-    void Start(const wxArrayString& lspCommand, const wxString& connectionString, const wxString& workingDirectory,
+    bool Start(const wxArrayString& lspCommand, const wxString& connectionString, const wxString& workingDirectory,
                const wxString& rootFolder, const wxArrayString& languages, size_t flags);
 
     /**
      * @brief same as above, but reuse the current parameters
      */
-    void Start();
+    bool Start();
 
     /**
      * @brief is the LSP running?

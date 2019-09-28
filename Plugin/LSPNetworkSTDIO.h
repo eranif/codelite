@@ -24,6 +24,9 @@ protected:
     
 public:
     virtual void Close();
+    /**
+     * @brief open the LSP process. Throws clException on error
+     */
     virtual void Open(const LSPStartupInfo& info);
     virtual void Send(const std::string& data);
     virtual bool IsConnected() const;

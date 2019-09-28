@@ -29,6 +29,7 @@
 #include "LSP/Request.h"
 #include "LSPNetworkSocketClient.h"
 #include "LSP/SignatureHelpRequest.h"
+#include "cl_exception.h"
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
@@ -128,10 +129,10 @@ void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
     ProcessQueue();
 }
 
-void LanguageServerProtocol::DoStart()
+bool LanguageServerProtocol::DoStart()
 {
     DoClear();
-    if(m_lspCommand.IsEmpty()) { return; }
+    if(m_lspCommand.IsEmpty()) { return false; }
 
     clDEBUG() << GetLogPrefix() << "Starting...";
     clDEBUG() << GetLogPrefix() << "Command:" << m_lspCommand;
@@ -144,14 +145,20 @@ void LanguageServerProtocol::DoStart()
     info.SetWorkingDirectory(m_workingDirectory);
     info.SetConnectioString(m_connectionString);
     info.SetFlags(m_createFlags);
-    m_network->Open(info);
+    try {
+        m_network->Open(info);
+        return true;
+    } catch(clException& e) {
+        clWARNING() << e.What();
+        return false;
+    }
 }
 
-void LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& connectionString,
+bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& connectionString,
                                    const wxString& workingDirectory, const wxString& rootFolder,
                                    const wxArrayString& languages, size_t flags)
 {
-    if(IsRunning()) { return; }
+    if(IsRunning()) { return true; }
     DoClear();
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
@@ -160,13 +167,13 @@ void LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxStri
     m_rootFolder = rootFolder;
     m_connectionString = connectionString;
     m_createFlags = flags;
-    DoStart();
+    return DoStart();
 }
 
-void LanguageServerProtocol::Start()
+bool LanguageServerProtocol::Start()
 {
-    if(IsRunning()) { return; }
-    DoStart();
+    if(IsRunning()) { return true; }
+    return DoStart();
 }
 
 void LanguageServerProtocol::DoClear()

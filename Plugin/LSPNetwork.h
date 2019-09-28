@@ -53,6 +53,7 @@ public:
 
     /**
      * @brief open connection to the LSP server
+     * @throws this method throws a clException incase an error occured
      */
     virtual void Open(const LSPStartupInfo& info) = 0;
 

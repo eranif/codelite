@@ -135,32 +135,66 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             }
         } break;
         case ARGV_STATE_ESCAPE: {
-            switch(ch) {
-            case 'n':
-                curstr << "\n";
-                RESTORE_STATE();
-                break;
-            case 'b':
-                curstr << "\b";
-                RESTORE_STATE();
-                break;
-            case 't':
-                curstr << "\t";
-                RESTORE_STATE();
-                break;
-            case 'r':
-                curstr << "\r";
-                RESTORE_STATE();
-                break;
-            case 'v':
-                curstr << "\v";
-                RESTORE_STATE();
-                break;
-            default:
-                curstr << ch;
-                RESTORE_STATE();
-                break;
+            if(prev_state == ARGV_STATE_DQUOTE) {
+                switch(ch) {
+                case '"':
+                    curstr << "\"";
+                    RESTORE_STATE();
+                    break;
+                default:
+                    curstr << "\\" << ch;
+                    RESTORE_STATE();
+                    break;
+                }
+            } else if(prev_state == ARGV_STATE_BACKTICK) {
+                switch(ch) {
+                case '`':
+                    curstr << "`";
+                    RESTORE_STATE();
+                    break;
+                default:
+                    curstr << "\\" << ch;
+                    RESTORE_STATE();
+                    break;
+                }
+            } else { // single quote
+                switch(ch) {
+                case '\'':
+                    curstr << "'";
+                    RESTORE_STATE();
+                    break;
+                default:
+                    curstr << "\\" << ch;
+                    RESTORE_STATE();
+                    break;
+                }
             }
+            //switch(ch) {
+            //case 'n':
+            //    curstr << "\n";
+            //    RESTORE_STATE();
+            //    break;
+            //case 'b':
+            //    curstr << "\b";
+            //    RESTORE_STATE();
+            //    break;
+            //case 't':
+            //    curstr << "\t";
+            //    RESTORE_STATE();
+            //    break;
+            //case 'r':
+            //    curstr << "\r";
+            //    RESTORE_STATE();
+            //    break;
+            //case 'v':
+            //    curstr << "\v";
+            //    RESTORE_STATE();
+            //    break;
+            //default:
+            //    curstr << "\\" << ch;
+            //    RESTORE_STATE();
+            //    break;
+            //}
         } break;
         case ARGV_STATE_DQUOTE: {
             switch(ch) {
@@ -237,5 +271,9 @@ wxArrayString StringUtils::BuildArgv(const wxString& str)
         arrArgv.Add(argv[i]);
     }
     FreeArgv(argv, argc);
+
+    for(wxString& s : arrArgv) {
+        if((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) { s.RemoveLast().Remove(0, 1); }
+    }
     return arrArgv;
 }

@@ -3,6 +3,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "processreaderthread.h"
+#include "cl_exception.h"
 
 #if !USE_IPROCESS
 #include "UnixProcess.h"
@@ -13,17 +14,21 @@ ChildProcess::ChildProcess() {}
 ChildProcess::~ChildProcess()
 {
 #if USE_IPROCESS
-    m_process->Detach();
+    if(m_process) { m_process->Detach(); }
     wxDELETE(m_process);
 #else
-    m_childProcess->Detach();
+    if(m_childProcess) { m_childProcess->Detach(); }
     wxDELETE(m_childProcess);
 #endif
 }
 
 static wxString& wrap_with_quotes(wxString& str)
 {
-    if(str.Contains(" ")) { str.Prepend("\"").Append("\""); }
+    if(str.Contains(" ")) {
+        // since we are going to convert this into a string, we need to escape all backslashes
+        str.Replace("\\", "\\\\");
+        str.Prepend("\"").Append("\"");
+    }
     return str;
 }
 
@@ -44,6 +49,7 @@ void ChildProcess::Start(const wxArrayString& args)
 
     // Launch the process
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent);
+    if(!m_process) { throw clException(wxString() << "Failed to execute process: " << command); };
 #else
     m_childProcess = new UnixProcess(this, args);
 #endif
@@ -53,9 +59,19 @@ void ChildProcess::Write(const wxString& message) { Write(FileUtils::ToStdString
 
 void ChildProcess::Write(const std::string& message)
 {
+    if(!IsOk()) { return; }
 #if USE_IPROCESS
     m_process->WriteRaw(message);
 #else
     m_childProcess->Write(FileUtils::ToStdString(message));
+#endif
+}
+
+bool ChildProcess::IsOk() const
+{
+#if USE_IPROCESS
+    return m_process != nullptr;
+#else
+    return m_childProcess != nullptr;
 #endif
 }

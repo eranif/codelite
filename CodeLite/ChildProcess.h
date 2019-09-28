@@ -28,6 +28,7 @@ public:
     void Start(const wxArrayString& args);
     void Write(const wxString& message);
     void Write(const std::string& message);
+    bool IsOk() const;
 };
 
 #endif // CHILDPROCESS_H

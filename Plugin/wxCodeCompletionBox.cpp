@@ -26,7 +26,7 @@
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
 static int SCROLLBAR_WIDTH = 12;
-static int BOX_WIDTH = 400 + SCROLLBAR_WIDTH;
+static int BOX_WIDTH = 800 + SCROLLBAR_WIDTH;
 
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
 
@@ -106,7 +106,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
         memDC.SelectObject(bmp);
         wxGCDC gcdc(memDC);
         gcdc.SetFont(m_ccFont);
-        wxString sampleString('X', 50);
+        wxString sampleString('X', 70);
         wxSize sz = gcdc.GetTextExtent(sampleString);
         BOX_WIDTH = sz.GetWidth() + SCROLLBAR_WIDTH;
     }

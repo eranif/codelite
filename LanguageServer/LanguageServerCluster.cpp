@@ -283,7 +283,9 @@ void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& ta
 void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
+    clGetManager()->SetStatusMessage(_("Restarting Language Servers..."));
     this->Reload(); // restart the servers
+    clGetManager()->SetStatusMessage(_("Ready"));
 }
 
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)

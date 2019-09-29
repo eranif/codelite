@@ -454,7 +454,7 @@ void clFileSystemWorkspace::UpdateParserPaths()
 
         // Fire JSON Generated event
         clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-        EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
+        EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
         clDEBUG() << "File:" << fnCompileFlags << "generated";
     }
 

@@ -732,9 +732,9 @@ void ParseThread::ProcessSourceToTags(ParseRequest* req)
 
 void ParseThread::AddPaths(const wxArrayString& inc, const wxArrayString& exc)
 {
-    // remove all duplicates
+    // Remove all duplicates
     wxCriticalSectionLocker locker(m_cs);
-    {
+    if(!inc.IsEmpty()) {
         wxStringSet_t unique;
         wxArrayString tmp;
         for(const wxString& path : inc) {
@@ -761,7 +761,7 @@ void ParseThread::AddPaths(const wxArrayString& inc, const wxArrayString& exc)
         std::sort(m_searchPaths.begin(), m_searchPaths.end());
     }
 
-    {
+    if(!exc.IsEmpty()) {
         wxStringSet_t unique;
         wxArrayString tmp;
         for(const wxString& path : exc) {

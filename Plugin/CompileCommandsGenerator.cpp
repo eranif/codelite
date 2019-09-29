@@ -63,6 +63,10 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
             clDEBUG() << "Old checksum is:" << oldCk;
             if(ck == oldCk) {
                 clDEBUG() << "No changes detected in file:" << compile_commands << "processing is ignored";
+                // We fire this event with empty content. This ensures that
+                // a LSP restart will take place
+                clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+                EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
                 return;
             }
 
@@ -97,10 +101,11 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 
             // Notify about it
             clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-            eventCompileCommandsGenerated.SetFileName(compile_commands); // compile_commands.json
-            eventCompileCommandsGenerated.SetStrings(
-                includePaths); // include paths found and gathered from all the compile_flags.txt files scanned
-            EventNotifier::Get()->AddPendingEvent(eventCompileCommandsGenerated);
+            // compile_commands.json
+            eventCompileCommandsGenerated.SetFileName(compile_commands); 
+            // include paths found and gathered from all the compile_flags.txt files scanned
+            eventCompileCommandsGenerated.SetStrings(includePaths);
+            EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
         },
         m_outputFile.GetFullPath());
     thr.detach();

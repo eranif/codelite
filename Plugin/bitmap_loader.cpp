@@ -193,43 +193,56 @@ void BitmapLoader::initialize()
 
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
-        wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
+        // wxFileName tmpFolder(clStandardPaths::Get().GetTempDir(), "");
+        //
+        //// Make sure we append the user name to the temporary user folder
+        //// this way, multiple CodeLite instances from different users can extract the
+        //// bitmaps to /tmp
+        // wxString bitmapFolder = "codelite-bitmaps";
+        // bitmapFolder << "." << clGetUserName();
+        //
+        // tmpFolder.AppendDir(bitmapFolder);
+        // if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
+        //
+        // tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
-        // Make sure we append the user name to the temporary user folder
-        // this way, multiple CodeLite instances from different users can extract the
-        // bitmaps to /tmp
-        wxString bitmapFolder = "codelite-bitmaps";
-        bitmapFolder << "." << clGetUserName();
+        // Extract all images into this memory
+        std::unordered_map<wxString, clZipReader::Entry> buffers;
+        zip.ExtractAll(buffers);
 
-        tmpFolder.AppendDir(bitmapFolder);
-        if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
-
-        tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-
-        // Extract all images into this folder
-        zip.ExtractAll(tmpFolder.GetPath());
-
-        // Load all the files into wxBitmap
-        wxArrayString files;
-        wxDir::GetAllFiles(tmpFolder.GetPath(), &files, "*.png");
-
-        for(size_t i = 0; i < files.size(); ++i) {
-            wxFileName pngFile(files.Item(i));
-            wxString fullpath = pngFile.GetFullPath();
-#ifndef __WXGTK__
-            if(pngFile.GetFullName().Contains("@2x")) {
-                // No need to load the hi-res images manually,
-                // this is done by wxWidgets
-                continue;
+        std::function<bool(const wxString&, void**, size_t&)> fnGetHiResVersion = [&](const wxString& name,
+                                                                                      void** ppData, size_t& nLen) {
+            wxString key;
+            key << name << ".png";
+            if(buffers.count(key)) {
+                *ppData = buffers[key].buffer;
+                nLen = buffers[key].len;
+                return true;
             }
-#endif
-            clBitmap bmp;
-            if(bmp.LoadFile(fullpath, wxBITMAP_TYPE_PNG)) {
-                clDEBUG1() << "Adding new image:" << pngFile.GetName() << clEndl;
-                m_toolbarsBitmaps.erase(pngFile.GetName());
-                m_toolbarsBitmaps.insert({ pngFile.GetName(), bmp });
+            return false;
+        };
+
+        for(const auto& entry : buffers) {
+            if(!entry.first.ends_with(".png")) { continue; }
+
+            wxString name = wxFileName(entry.first).GetName();
+            clZipReader::Entry d = entry.second;
+            if(d.len && d.buffer) {
+                wxMemoryInputStream is(d.buffer, d.len);
+                clBitmap bmp;
+                if(bmp.LoadPNGFromMemory(name, is, fnGetHiResVersion)) {
+                    clDEBUG1() << "Adding new image:" << name;
+                    m_toolbarsBitmaps.erase(name);
+                    m_toolbarsBitmaps.insert({ name, bmp });
+                }
             }
         }
+
+        // Free the memory
+        for(const auto& entry : buffers) {
+            if(entry.second.buffer && entry.second.len) { free(entry.second.buffer); }
+        }
+        buffers.clear();
     }
 
     // Create the mime-list

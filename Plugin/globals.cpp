@@ -2012,7 +2012,7 @@ bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArraySt
     mergedPaths.swap(paths);
 
     for(size_t i = 0; i < paths.size(); ++i) {
-        wxString curpath = paths.Item(i);
+        const wxString& curpath = paths.Item(i);
         wxFileName fnPath(curpath, name);
         if(fnPath.FileExists()) {
             exepath = fnPath;
@@ -2161,7 +2161,7 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         parentSize.SetHeight(dlgHeight);
         win->SetMinSize(parentSize);
         win->SetSize(parentSize);
-        //win->GetSizer()->Fit(win);
+        // win->GetSizer()->Fit(win);
         win->GetSizer()->Layout();
         win->CentreOnParent();
     }

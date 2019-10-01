@@ -164,7 +164,9 @@ SFTPTreeView::~SFTPTreeView()
     m_treeCtrl->Disconnect(ID_REFRESH_FOLDER, wxEVT_MENU, wxCommandEventHandler(SFTPTreeView::OnMenuRefreshFolder),
                            NULL, this);
     Unbind(wxEVT_DND_FILE_DROPPED, &SFTPTreeView::OnFileDropped, this);
+    m_timer->Stop();
     Unbind(wxEVT_TIMER, &SFTPTreeView::OnKeepAliveTimer, this, m_timer->GetId());
+    wxDELETE(m_timer);
 }
 
 void SFTPTreeView::OnDisconnect(wxCommandEvent& event) { DoCloseSession(); }

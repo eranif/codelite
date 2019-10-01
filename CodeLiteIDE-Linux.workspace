@@ -1,30 +1,30 @@
 {
  "workspace_type": "File System Workspace",
- "selected_config": "Release",
+ "selected_config": "Debug",
  "name": "CodeLiteIDE-Linux",
  "configs": [{
    "name": "Debug",
    "flags": 1,
-   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces"],
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces", "-I$(WorkspacePath)/CodeLite", "-I$(WorkspacePath)/Plugin"],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
    "executable": "$HOME/root/bin/codelite",
    "arguments": "",
    "environment": "",
-   "compiler": "GCC (x86_64)",
+   "compiler": "",
    "remoteFolder": "",
-   "remoteAccount": "eran@127.0.0.1",
-   "targets": [["build", "cd build-debug && make -j16"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["install", "cd build-debug && make -j16 install"], ["clean", "cd build-debug && make -j16 clean"]]
+   "remoteAccount": "",
+   "targets": [["install", "cd build-debug && make -j16 install"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j16"], ["clean", "cd build-debug && make -j16 clean"]]
   }, {
    "name": "Release",
    "flags": 1,
-   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces"],
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces", "-I$(WorkspacePath)/CodeLite", "-I$(WorkspacePath)/Plugin"],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
    "executable": "/usr/bin/codelite",
    "arguments": "",
    "environment": "",
-   "compiler": "GCC (x86_64)",
+   "compiler": "",
    "remoteFolder": "",
-   "remoteAccount": "eran@127.0.0.1",
+   "remoteAccount": "",
    "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1"], ["build", "cd  build-release && make -j16"], ["clean", "cd  build-release && make -j16 clean"]]
   }]
 }

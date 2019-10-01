@@ -223,7 +223,7 @@ void BitmapLoader::initialize()
         };
 
         for(const auto& entry : buffers) {
-            if(!entry.first.ends_with(".png")) { continue; }
+            if(!entry.first.EndsWith(".png")) { continue; }
 
             wxString name = wxFileName(entry.first).GetName();
             clZipReader::Entry d = entry.second;

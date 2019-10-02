@@ -4,11 +4,12 @@
 #include <wx/wfstream.h>
 #include "file_logger.h"
 #include <cstdlib>
+#include <wx/file.h>
 
 clZipReader::clZipReader(const wxFileName& zipfile)
 {
     // Read the entire content into memory
-    wxFFile fp(zipfile.GetFullPath(), "rb");
+    wxFile fp(zipfile.GetFullPath(), wxFile::read);
     if(!fp.IsOpened()) {
         clERROR() << "Failed to open file:" << zipfile;
         return;
@@ -80,7 +81,7 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
         wxFileName outfile(fullpath);
         // ensure that the path to the file exists
         outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        wxFFileOutputStream out(outfile.GetFullPath());
+        wxFileOutputStream out(outfile.GetFullPath());
         if(out.IsOk()) {
             m_zip->Read(out);
             out.Close();

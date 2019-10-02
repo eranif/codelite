@@ -154,9 +154,6 @@ public:
     int GetImageIndex(int type) { return GetMimeImageId(type); }
 
 protected:
-    void doLoadManifest();
-    void doLoadBitmaps();
-    wxBitmap doLoadBitmap(const wxString& filepath);
     void CreateMimeList();
 
 private:

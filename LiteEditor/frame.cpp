@@ -83,6 +83,7 @@
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 #include "clFileSystemWorkspace.hpp"
+#include <array>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -2088,11 +2089,11 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     CodeCompletionSettingsDialog dlg(this, m_tagsOptionsData);
     if(dlg.ShowModal() == wxID_OK) {
         m_tagsOptionsData = dlg.GetData();
-        
+
         // Before we update anything, keep the old values
         wxArrayString oldInc, oldExc;
         ParseThreadST::Get()->GetSearchPaths(oldInc, oldExc);
-                
+
         // writes the content into the ctags.replacements file (used by
         // codelite_indexer)
         m_tagsOptionsData.SyncData();
@@ -2109,7 +2110,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         // We use this method 'UpdateParserPaths' since it will also update the parser
         // thread with any workspace search/exclude paths related
         ManagerST::Get()->UpdateParserPaths(false);
-        
+
         // Get the new values
         wxArrayString newInc, newExc;
         ParseThreadST::Get()->GetSearchPaths(newInc, newExc);
@@ -2119,7 +2120,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
         if((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
             GetMainBook()->UpdateColours();
         }
-        
+
         if(newExc != oldExc) {
             // The exclude list was updated, a full reparse is needed
             wxCommandEvent e(wxEVT_MENU, XRCID("full_retag_workspace"));
@@ -2129,7 +2130,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
             wxCommandEvent e(wxEVT_MENU, XRCID("retag_workspace"));
             AddPendingEvent(e);
         }
-        
+
         // Update the pre-processor dimming feature
         CodeCompletionManager::Get().RefreshPreProcessorColouring();
     }
@@ -5393,44 +5394,18 @@ void clMainFrame::InitializeLogo()
 {
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
 
-    wxString baseLogoName = "-codelite-logo";
+    wxString baseLogoName = "codelite-logo";
 #ifdef __WXGTK__
     if(getuid() == 0) {
         // ROOT_INFO_LUID
-        baseLogoName = "-codelite-logo-root";
+        baseLogoName = "codelite-logo-root";
     }
 #endif
 
     wxIconBundle app_icons;
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("16" + baseLogoName);
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("32" + baseLogoName);
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("64" + baseLogoName);
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("128" + baseLogoName);
-        wxIcon icn;
-        icn.CopyFromBitmap(iconBmp);
-        app_icons.AddIcon(icn);
-    }
-    {
-        wxBitmap iconBmp = bmpLoader.LoadBitmap("256" + baseLogoName);
+    std::array<int, 5> sizes = { 16, 32, 64, 128, 256 };
+    for(int size : sizes) {
+        wxBitmap iconBmp = bmpLoader.LoadBitmap(baseLogoName, size);
         wxIcon icn;
         icn.CopyFromBitmap(iconBmp);
         app_icons.AddIcon(icn);

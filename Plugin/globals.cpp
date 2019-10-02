@@ -1017,38 +1017,6 @@ bool IsCppKeyword(const wxString& word)
     return words.count(word) != 0;
 }
 
-bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir,
-                        wxString& targetFileName)
-{
-    wxZipEntry* entry(NULL);
-    wxFFileInputStream in(zipPath);
-    wxZipInputStream zip(in);
-
-    wxString lowerCaseName(filename);
-    lowerCaseName.MakeLower();
-
-    entry = zip.GetNextEntry();
-    while(entry) {
-        wxString name = entry->GetName();
-        name.MakeLower();
-        name.Replace(wxT("\\"), wxT("/"));
-
-        if(name == lowerCaseName) {
-            name.Replace(wxT("/"), wxT("_"));
-            targetFileName = wxString::Format(wxT("%s/%s"), targetDir.c_str(), name.c_str());
-            wxFFileOutputStream out(targetFileName);
-            zip.Read(out);
-            out.Close();
-            delete entry;
-            return true;
-        }
-
-        delete entry;
-        entry = zip.GetNextEntry();
-    }
-    return false;
-}
-
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 {
 #if defined(__WXMSW__) && defined(_WIN64)

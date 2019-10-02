@@ -27,9 +27,6 @@ wxString GetColumnText(wxListCtrl* list, long index, long column);
 long AppendListCtrlRow(wxListCtrl* list);
 
 bool ReadFileContent(const wxString& fileName, wxString& content);
-bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir,
-                        wxString& targetFileName);
-void ListZipFiles(const wxString& zipPath, wxArrayString& files);
 }; // namespace wxCrafter
 
 #endif // __GLOBALS__H__

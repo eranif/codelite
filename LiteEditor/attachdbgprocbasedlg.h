@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_ATTACHDBGPROCBASEDLG_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_ATTACHDBGPROCBASEDLG_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -36,6 +37,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class AttachDbgProcBaseDlg : public wxDialog
 {
@@ -67,7 +69,10 @@ public:
     wxButton* GetButtonOk() { return m_buttonOk; }
     wxButton* GetButton2() { return m_button2; }
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }
-    AttachDbgProcBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Attach debugger to process:"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    AttachDbgProcBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+                         const wxString& title = _("Attach debugger to process:"),
+                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AttachDbgProcBaseDlg();
 };
 

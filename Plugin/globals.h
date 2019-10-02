@@ -288,17 +288,6 @@ WXDLLIMPEXP_SDK wxString clGetUserName();
 WXDLLIMPEXP_SDK void GetProjectTemplateList(std::list<ProjectPtr>& list);
 
 /**
- * @brief extract file from Zip and place it under targetDir
- * @param zipPath path to the Zip file (fullpath)
- * @param filename the file name to search in the archive
- * @param targetDir where to place the extracted file
- * @param targetFileName the path of the file that was actually extracted
- * @return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool ExtractFileFromZip(const wxString& zipPath, const wxString& filename, const wxString& targetDir,
-                                        wxString& targetFileName);
-
-/**
  * @brief set the native Windows theme for the application
  * @param win [input]
  */

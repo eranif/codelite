@@ -642,50 +642,36 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     m_infobarLicense->AddButton(wxID_CLOSE, _("Close"));
 
-    m_panel10 = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(150, -1)),
+    m_panel10 = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)),
                             wxTAB_TRAVERSAL);
     m_mainSplitter->SplitVertically(m_panelDesigner, m_panel10, -1);
 
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     m_panel10->SetSizer(bSizer12);
 
-    m_secondarySash =
-        new wxSplitterWindow(m_panel10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel10, wxSize(-1, -1)),
-                             wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH | wxTAB_TRAVERSAL);
-    m_secondarySash->SetSashGravity(0.5);
-    m_secondarySash->SetMinimumPaneSize(50);
+    m_notebook2 = new wxNotebook(m_panel10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel10, wxSize(-1, -1)), 0);
+    m_notebook2->SetName(wxT("m_notebook2"));
 
-    bSizer12->Add(m_secondarySash, 1, wxEXPAND, WXC_FROM_DIP(5));
+    bSizer12->Add(m_notebook2, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_panel14 = new wxPanel(m_secondarySash, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_secondarySash, wxSize(150, 100)),
-                            wxTAB_TRAVERSAL);
+    m_pageProps =
+        new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook2->AddPage(m_pageProps, _("Properties"), true);
 
-    wxBoxSizer* bSizer29 = new wxBoxSizer(wxVERTICAL);
-    m_panel14->SetSizer(bSizer29);
+    wxBoxSizer* boxSizer317 = new wxBoxSizer(wxVERTICAL);
+    m_pageProps->SetSizer(boxSizer317);
 
     m_panelProperties =
-        new wxPanel(m_panel14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+        new wxPanel(m_pageProps, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_pageProps, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    bSizer29->Add(m_panelProperties, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer317->Add(m_panelProperties, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     wxBoxSizer* bSizer19 = new wxBoxSizer(wxVERTICAL);
     m_panelProperties->SetSizer(bSizer19);
 
-    m_panel15 = new wxPanel(m_secondarySash, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_secondarySash, wxSize(150, -1)),
-                            wxTAB_TRAVERSAL);
-    m_secondarySash->SplitHorizontally(m_panel14, m_panel15, 0);
-
-    wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
-    m_panel15->SetSizer(bSizer16);
-
-    m_notebook2 = new wxNotebook(m_panel15, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
-    m_notebook2->SetName(wxT("m_notebook2"));
-
-    bSizer16->Add(m_notebook2, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
     m_panelStyles =
         new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook2->AddPage(m_panelStyles, _("Styles"), true);
+    m_notebook2->AddPage(m_panelStyles, _("Styles"), false);
 
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
     m_panelStyles->SetSizer(bSizer11);

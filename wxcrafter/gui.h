@@ -7,44 +7,45 @@
 #ifndef _CODELITE_WXCRAFTER_GUI_BASE_CLASSES_H
 #define _CODELITE_WXCRAFTER_GUI_BASE_CLASSES_H
 
-#include "clToolBar.h"
-#include "designer_panel.h"
-#include "output_nbook.h"
-#include <map>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/aui/auibar.h>
-#include <wx/bitmap.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/choice.h>
-#include <wx/commandlinkbutton.h>
-#include <wx/dialog.h>
+// clang-format off
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/frame.h>
-#include <wx/icon.h>
 #include <wx/iconbndl.h>
-#include <wx/imaglist.h>
-#include <wx/infobar.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
+#include <wx/panel.h>
+#include <wx/splitter.h>
+#include <wx/statusbr.h>
 #include <wx/menu.h>
 #include <wx/notebook.h>
-#include <wx/panel.h>
+#include "output_nbook.h"
+#include <wx/imaglist.h>
 #include <wx/pen.h>
-#include <wx/propgrid/manager.h>
+#include <wx/aui/auibar.h>
+#include <map>
 #include <wx/scrolwin.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/splitter.h>
-#include <wx/statbox.h>
-#include <wx/stattext.h>
-#include <wx/statusbr.h>
+#include "designer_panel.h"
 #include <wx/stc/stc.h>
-#include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/infobar.h>
+#include <wx/propgrid/manager.h>
+#include <wx/dialog.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
+#include <wx/bitmap.h>
+#include <wx/icon.h>
+#include <wx/commandlinkbutton.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -56,6 +57,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class MainFrameBase : public wxFrame
 {
@@ -194,11 +197,9 @@ protected:
     wxStyledTextCtrl* m_textCtrlXrc;
     wxInfoBar* m_infobarLicense;
     wxPanel* m_panel10;
-    wxSplitterWindow* m_secondarySash;
-    wxPanel* m_panel14;
-    wxPanel* m_panelProperties;
-    wxPanel* m_panel15;
     wxNotebook* m_notebook2;
+    wxPanel* m_pageProps;
+    wxPanel* m_panelProperties;
     wxPanel* m_panelStyles;
     wxPropertyGridManager* m_pgMgrStyles;
     wxPanel* m_panelSizerFlags;
@@ -233,7 +234,7 @@ public:
     wxInfoBar* GetInfobarLicense() { return m_infobarLicense; }
     wxPanel* GetPanelDesigner() { return m_panelDesigner; }
     wxPanel* GetPanelProperties() { return m_panelProperties; }
-    wxPanel* GetPanel14() { return m_panel14; }
+    wxPanel* GetPageProps() { return m_pageProps; }
     wxPropertyGridManager* GetPgMgrStyles() { return m_pgMgrStyles; }
     wxPanel* GetPanelStyles() { return m_panelStyles; }
     wxPropertyGridManager* GetPgMgrSizerFlags() { return m_pgMgrSizerFlags; }
@@ -241,8 +242,6 @@ public:
     wxPropertyGridManager* GetPgMgrAuiProperties() { return m_pgMgrAuiProperties; }
     wxPanel* GetPanelAuiPaneInfo() { return m_panelAuiPaneInfo; }
     wxNotebook* GetNotebook2() { return m_notebook2; }
-    wxPanel* GetPanel15() { return m_panel15; }
-    wxSplitterWindow* GetSecondarySash() { return m_secondarySash; }
     wxPanel* GetPanel10() { return m_panel10; }
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
     wxPanel* GetPanelRightSidebar() { return m_panelRightSidebar; }

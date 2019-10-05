@@ -22,8 +22,7 @@ PropertiesListView::PropertiesListView(wxWindow* win)
     SetSizer(sz);
 
     m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                        wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxNO_BORDER |
-                                            wxPG_DESCRIPTION | wxPG_NO_INTERNAL_BORDER);
+                                        wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION);
     m_pg = m_pgMgr->GetGrid();
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PropertiesListView::OnCellChanged), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGING, wxPropertyGridEventHandler(PropertiesListView::OnCellChanging), NULL, this);

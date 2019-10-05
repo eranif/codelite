@@ -288,9 +288,6 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     int sashPos = wxcSettings::Get().GetSashPosition();
     if(sashPos != wxNOT_FOUND) m_mainSplitter->SetSashPosition(sashPos);
 
-    int secondarySashPos = wxcSettings::Get().GetSecondarySashPos();
-    if(secondarySashPos != wxNOT_FOUND) m_secondarySash->SetSashPosition(secondarySashPos);
-
     // Use codelite's coloring settings
     LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer("C++");
     if(cppLexer) {
@@ -322,7 +319,6 @@ GUICraftMainPanel::~GUICraftMainPanel()
     wxDELETE(m_clipboardItem);
 
     wxcSettings::Get().SetSashPosition(m_mainSplitter->GetSashPosition());
-    wxcSettings::Get().SetSecondarySashPos(m_secondarySash->GetSashPosition());
     wxcSettings::Get().Save();
 
     EventNotifier::Get()->Disconnect(wxEVT_PROPERTIES_MODIFIED,

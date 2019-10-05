@@ -116,7 +116,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
             }
         }
     }
-    
+
     wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
@@ -179,8 +179,6 @@ void OpenResourceDialog::DoPopulateList()
     if(name.IsEmpty()) { return; }
 
     Clear();
-
-    wxWindowUpdateLocker locker(m_dataview);
 
     // First add the workspace files
     long nLineNumber;
@@ -272,11 +270,10 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 void OpenResourceDialog::Clear()
 {
     // list control does not own the client data, we need to free it ourselves
-    for(size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
-        OpenResourceDialogItemData* cd = GetItemData(m_dataview->RowToItem(i));
+    m_dataview->DeleteAllItems([](wxUIntPtr ptr) {
+        OpenResourceDialogItemData* cd = reinterpret_cast<OpenResourceDialogItemData*>(ptr);
         wxDELETE(cd);
-    }
-    m_dataview->DeleteAllItems();
+    });
     m_userFilters.Clear();
 }
 
@@ -357,7 +354,7 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
 
     // If there is only 1 item in the resource window then highlight it.
     // This allows the user to hit ENTER immediately after to open the item, nice shortcut.
-    if(m_dataview->GetItemCount() == 1) { DoSelectItem(m_dataview->RowToItem(0)); }
+    if(m_dataview && m_dataview->GetItemCount() == 1) { DoSelectItem(m_dataview->RowToItem(0)); }
 }
 
 int OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)

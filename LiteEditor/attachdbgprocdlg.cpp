@@ -50,9 +50,7 @@ AttachDbgProcDlg::AttachDbgProcDlg(wxWindow* parent)
     wxArrayString choices = DebuggerMgr::Get().GetAvailableDebuggers();
     m_choiceDebugger->Append(choices);
 
-    if(choices.IsEmpty() == false) {
-        m_choiceDebugger->SetSelection(0);
-    }
+    if(choices.IsEmpty() == false) { m_choiceDebugger->SetSelection(0); }
 
     wxString filter = clConfig::Get().Read("AttachDebuggerDialog/Filter", wxString());
     m_textCtrlFilter->ChangeValue(filter);
@@ -77,15 +75,20 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
     for(size_t i = 0; i < proclist.size(); ++i) {
 
         // Use case in-sensitive match for the filter
-        wxString entryName(proclist.at(i).name);
+        wxString processName;
+        wxString processID;
+
+        const ProcessEntry& processEntry = proclist.at(i);
+
+        processName << processEntry.name;
+        processID << processEntry.pid;
 
         // Append only processes that matches the filter string
-        if(filter.IsEmpty() || FileUtils::FuzzyMatch(filter, entryName)) {
-            const ProcessEntry& entry = proclist.at(i);
-            if(entry.pid == (long)wxGetProcessId()) continue;
+        if(filter.IsEmpty() || FileUtils::FuzzyMatch(filter, processName) || FileUtils::FuzzyMatch(filter, processID)) {
+            if(processEntry.pid == (long)wxGetProcessId()) continue;
             wxVector<wxVariant> cols;
-            cols.push_back(wxString() << entry.pid);
-            cols.push_back(entry.name);
+            cols.push_back(wxString() << processEntry.pid);
+            cols.push_back(processEntry.name);
             m_dvListCtrl->AppendItem(cols);
         }
     }
@@ -93,29 +96,21 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
 
 wxString AttachDbgProcDlg::GetExeName() const
 {
-    wxVariant v;
-    int sel = m_dvListCtrl->GetSelectedRow();
-    if(sel != wxNOT_FOUND) {
-        m_dvListCtrl->GetValue(v, sel, 1);
-        return v.GetString();
-    }
-    return wxEmptyString;
+    wxDataViewItem item = m_dvListCtrl->GetSelection();
+    CHECK_ITEM_RET_EMPTY_STRING(item);
+    return m_dvListCtrl->GetItemText(item, 1);
 }
 
 wxString AttachDbgProcDlg::GetProcessId() const
 {
-    wxVariant v;
-    int sel = m_dvListCtrl->GetSelectedRow();
-    if(sel != wxNOT_FOUND) {
-        m_dvListCtrl->GetValue(v, sel, 0);
-        return v.GetString();
-    }
-    return wxEmptyString;
+    wxDataViewItem item = m_dvListCtrl->GetSelection();
+    CHECK_ITEM_RET_EMPTY_STRING(item);
+    return m_dvListCtrl->GetItemText(item, 0);
 }
 
 void AttachDbgProcDlg::OnBtnAttachUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_dvListCtrl->GetSelectedRow() != wxNOT_FOUND);
+    event.Enable(m_dvListCtrl->GetSelectedItemsCount() == 1);
 }
 
 AttachDbgProcDlg::~AttachDbgProcDlg()
@@ -139,8 +134,6 @@ void AttachDbgProcDlg::OnRefresh(wxCommandEvent& event)
 }
 void AttachDbgProcDlg::OnEnter(wxCommandEvent& event)
 {
-    if(!GetProcessId().IsEmpty()) {
-        EndModal(wxID_OK);
-    }
+    if(!GetProcessId().IsEmpty()) { EndModal(wxID_OK); }
 }
 void AttachDbgProcDlg::OnItemActivated(wxDataViewEvent& event) { EndModal(wxID_OK); }

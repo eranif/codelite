@@ -20,6 +20,7 @@
 #include <wx/arrstr.h>
 #include <wx/textctrl.h>
 #include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -47,7 +48,7 @@ protected:
     wxStaticText* m_staticText31;
     wxTextCtrl* m_textCtrlFilter;
     wxStaticText* m_staticText4;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
     wxButton* m_buttonOk;
     wxButton* m_button2;
     wxButton* m_buttonRefresh;
@@ -65,7 +66,7 @@ public:
     wxStaticText* GetStaticText31() { return m_staticText31; }
     wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxButton* GetButtonOk() { return m_buttonOk; }
     wxButton* GetButton2() { return m_button2; }
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }

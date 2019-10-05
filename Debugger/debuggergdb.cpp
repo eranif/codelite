@@ -764,7 +764,7 @@ void DbgGdb::Poke()
             DbgCmdHandlerAsyncCmd cmd(m_observer, this);
             cmd.ProcessOutput(curline);
         } else {
-            // Unknow format, just log it
+            // Unknown format, just log it
             if(m_info.enableDebugLog && !FilterMessage(curline)) { m_observer->UpdateAddLine(curline); }
         }
     }

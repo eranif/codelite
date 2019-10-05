@@ -97,7 +97,6 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
     FILE* fp = fopen(cfile, "rb");
     if(!fp) {
         // Nothing to be done
-        clERROR() << "Failed to open file:" << fn << "." << strerror(errno);
         return false;
     }
 

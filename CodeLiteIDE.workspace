@@ -465,7 +465,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
@@ -539,7 +539,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>

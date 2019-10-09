@@ -21,6 +21,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1               #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                               #
 ##      -DUSE_AUI_NOTEBOOK=1|0                     // use custom Notebook or wxWidgets's wxAuiNotebook (default is 0)                                           #
+##      -DWITH_WX_CONFIG=<path>                    // Specify a particular wxWidgets wx-config command to use.                                                  #
 ##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
 ##      -DENABLE_SFTP=1|0                          // When set to 1 codelite is built with SFTP support. Default is build _with_ SFTP support                   #
@@ -121,7 +122,11 @@ if (WITH_WXPATH)
 endif()
 unset(WITH_WXPATH CACHE)
 
-set( CL_WX_CONFIG wx-config )
+if (WITH_WX_CONFIG)
+    set( CL_WX_CONFIG ${WITH_WX_CONFIG} )
+else (WITH_WX_CONFIG)
+    set( CL_WX_CONFIG wx-config )
+endif()
 
 if (UNIX OR MINGW)
     execute_process(COMMAND which ${CL_WX_CONFIG} OUTPUT_VARIABLE WX_TOOL OUTPUT_STRIP_TRAILING_WHITESPACE)

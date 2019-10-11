@@ -388,7 +388,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
 
         BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
         if(!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested buid configuration"), "LLDB Debugger",
+            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"), "LLDB Debugger",
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }

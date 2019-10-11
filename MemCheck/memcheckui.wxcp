@@ -5926,7 +5926,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."
+                   "m_value": "It is used internally by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -6001,7 +6001,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."
+                   "m_value": "It is used internally by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",
@@ -6137,7 +6137,7 @@
             }, {
              "type": "string",
              "m_label": "Label:",
-             "m_value": "Supression"
+             "m_value": "Suppression"
             }, {
              "type": "bitmapPicker",
              "m_label": "Bitmap File:",
@@ -6241,7 +6241,7 @@
                   }, {
                    "type": "multi-string",
                    "m_label": "Tooltip:",
-                   "m_value": "This file is located in workspace private folder.\\nIf you don't like this option, you have to add at leas one file to list below."
+                   "m_value": "This file is located in workspace private folder.\\nIf you don't like this option, you have to add at least one file to list below."
                   }, {
                    "type": "colour",
                    "m_label": "Bg Colour:",

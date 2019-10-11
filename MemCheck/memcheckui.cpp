@@ -705,17 +705,17 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     m_checkBoxOutputInPrivateFolder = new wxCheckBox(m_panel669, wxID_ANY, _("Use log file in workspace private folder."), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), 0);
     m_checkBoxOutputInPrivateFolder->SetValue(false);
-    m_checkBoxOutputInPrivateFolder->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
+    m_checkBoxOutputInPrivateFolder->SetToolTip(_("It is used internally by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
     staticBoxSizer432->Add(m_checkBoxOutputInPrivateFolder, 0, wxALL, WXC_FROM_DIP(5));
     
     m_filePickerValgrindOutputFile = new wxFilePickerCtrl(m_panel669, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxDLG_UNIT(m_panel669, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_OPEN);
-    m_filePickerValgrindOutputFile->SetToolTip(_("It is used intenaly by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
+    m_filePickerValgrindOutputFile->SetToolTip(_("It is used internally by this plugin. Valgrind outputs to this file and afterwards the plugin processes this file and shows result."));
     
     staticBoxSizer432->Add(m_filePickerValgrindOutputFile, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_panel671 = new wxPanel(m_treebook251, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_treebook251, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    m_treebook251->InsertSubPage(1, m_panel671, _("Supression"), false, wxNOT_FOUND);
+    m_treebook251->InsertSubPage(1, m_panel671, _("Suppression"), false, wxNOT_FOUND);
     
     wxBoxSizer* boxSizer675 = new wxBoxSizer(wxVERTICAL);
     m_panel671->SetSizer(boxSizer675);
@@ -726,7 +726,7 @@ MemCheckSettingsDialogBase::MemCheckSettingsDialogBase(wxWindow* parent, wxWindo
     
     m_checkBoxSuppFileInPrivateFolder = new wxCheckBox(m_panel671, wxID_ANY, _("Use workspace specific supp file as default."), wxDefaultPosition, wxDLG_UNIT(m_panel671, wxSize(-1,-1)), 0);
     m_checkBoxSuppFileInPrivateFolder->SetValue(false);
-    m_checkBoxSuppFileInPrivateFolder->SetToolTip(_("This file is located in workspace private folder.\nIf you don't like this option, you have to add at leas one file to list below."));
+    m_checkBoxSuppFileInPrivateFolder->SetToolTip(_("This file is located in workspace private folder.\nIf you don't like this option, you have to add at least one file to list below."));
     
     staticBoxSizer437->Add(m_checkBoxSuppFileInPrivateFolder, 0, wxALL, WXC_FROM_DIP(5));
     

@@ -26,7 +26,7 @@ clTabRendererGTK3::clTabRendererGTK3()
     smallCurveWidth = 0;
     overlapWidth = 0;
     verticalOverlapWidth = 0;
-    xSpacer = 15;
+    //xSpacer = 15;
 }
 
 clTabRendererGTK3::~clTabRendererGTK3() {}

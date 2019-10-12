@@ -241,7 +241,7 @@ clTabRenderer::clTabRenderer(const wxString& name)
     , smallCurveWidth(0)
     , overlapWidth(0)
     , verticalOverlapWidth(0)
-    , xSpacer(10)
+    , xSpacer(20)
     , m_name(name)
 {
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;

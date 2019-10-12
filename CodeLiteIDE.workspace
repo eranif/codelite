@@ -56,7 +56,7 @@
     <Project Name="wxcrafter" Path="wxcrafter/wxcrafter.project" Active="No"/>
     <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project" Active="No"/>
     <Project Name="LanguageServer" Path="LanguageServer/LanguageServer.project" Active="No"/>
-    <Project Name="EOSWiki" Path="EOSWiki/EOSWiki.project"/>
+    <Project Name="EOSWiki" Path="EOSWiki/EOSWiki.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
@@ -84,16 +84,16 @@
   </VirtualDirectory>
   <Project Name="codelite_vim" Path="codelite_vim/codelite_vim.project" Active="No"/>
   <VirtualDirectory Name="Utils">
-    <Project Name="codelite_launcher" Path="codelite_launcher/codelite_launcher.project"/>
-    <Project Name="codelite_make" Path="codelite_make/codelite_make.project"/>
-    <Project Name="codelite_terminal" Path="codelite_terminal/codelite_terminal.project"/>
-    <Project Name="le_exec" Path="le_exec/le_exec.project"/>
-    <Project Name="makedir" Path="TestDir/makedir.project"/>
-    <Project Name="codelite_indexer" Path="sdk/codelite_indexer/codelite_indexer.project"/>
-    <Project Name="codelitegcc" Path="codelitegcc/codelitegcc.project"/>
-    <Project Name="wx-config" Path="sdk/wxconfig/wx-config.project"/>
-    <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project"/>
-    <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project"/>
+    <Project Name="codelite_launcher" Path="codelite_launcher/codelite_launcher.project" Active="No"/>
+    <Project Name="codelite_make" Path="codelite_make/codelite_make.project" Active="No"/>
+    <Project Name="codelite_terminal" Path="codelite_terminal/codelite_terminal.project" Active="No"/>
+    <Project Name="le_exec" Path="le_exec/le_exec.project" Active="No"/>
+    <Project Name="makedir" Path="TestDir/makedir.project" Active="No"/>
+    <Project Name="codelite_indexer" Path="sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
+    <Project Name="codelitegcc" Path="codelitegcc/codelitegcc.project" Active="No"/>
+    <Project Name="wx-config" Path="sdk/wxconfig/wx-config.project" Active="No"/>
+    <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
+    <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">

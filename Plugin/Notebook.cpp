@@ -735,7 +735,8 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     if(tabHit == wxNOT_FOUND || realPos == wxNOT_FOUND) {
         if(!curtip.IsEmpty()) { SetToolTip(""); }
     } else {
-        wxString pagetip = m_tabs.at(realPos)->GetTooltip();
+        clTabInfo::Ptr_t tabInfo = m_tabs.at(realPos);
+        const wxString& pagetip = tabInfo->GetTooltip().empty() ? tabInfo->GetLabel() : tabInfo->GetTooltip();
         if(pagetip != curtip) { SetToolTip(pagetip); }
     }
 
@@ -1054,13 +1055,14 @@ void clTabCtrl::DoShowTabList()
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, tab->GetLabel(), "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
-        menu.Bind(wxEVT_MENU,
-                  [=](wxCommandEvent& event) {
-                      Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
-                      int newSelection = book->GetPageIndex(tab_label);
-                      if(newSelection != curselection) { book->SetSelection(newSelection); }
-                  },
-                  pageMenuID);
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& event) {
+                Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
+                int newSelection = book->GetPageIndex(tab_label);
+                if(newSelection != curselection) { book->SetSelection(newSelection); }
+            },
+            pageMenuID);
         pageMenuID++;
     }
 

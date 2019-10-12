@@ -129,6 +129,9 @@ std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 {
     if(!IsInitialized()) { return; }
+    if(request->As<LSP::CompletionRequest>()) {
+        m_lastCompletionRequestId = request->As<LSP::CompletionRequest>()->GetId();
+    }
     m_Queue.Push(request);
     ProcessQueue();
 }
@@ -187,7 +190,7 @@ void LanguageServerProtocol::DoClear()
     m_state = kUnInitialized;
     m_initializeRequestID = wxNOT_FOUND;
     m_Queue.Clear();
-
+    m_lastCompletionRequestId = wxNOT_FOUND;
     // Destory the current connection
     m_network->Close();
 }
@@ -562,6 +565,12 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         IEditor* editor = clGetManager()->GetActiveEditor();
                         if(editor) {
                             LSP::Request* preq = msg_ptr->As<LSP::Request>();
+                            if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
+                                clDEBUG() << "Received a response for completion message ID#" << preq->GetId()
+                                          << ". However, a newer completion request with ID#"
+                                          << m_lastCompletionRequestId << "was already sent. Dropping response";
+                                return;
+                            }
                             // let the originating request to handle it
                             const wxFileName& filename = editor->GetFileName();
                             size_t line = editor->GetCurrentLine();

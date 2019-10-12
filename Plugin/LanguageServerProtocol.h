@@ -65,6 +65,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     size_t m_createFlags = 0;
     wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
+    int m_lastCompletionRequestId = wxNOT_FOUND;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;

@@ -32,6 +32,8 @@
 #include "cl_standard_paths.h"
 #include "cl_config.h"
 #include "clWorkspaceManager.h"
+#include <wx/sstream.h>
+#include "fileutils.h"
 
 // Session entry
 SessionEntry::SessionEntry() {}
@@ -45,7 +47,7 @@ void SessionEntry::DeSerialize(Archive& arch)
     arch.Read(wxT("m_workspaceName"), m_workspaceName);
     arch.Read(wxT("m_breakpoints"), (SerializedObject*)&m_breakpoints);
     arch.Read(wxT("m_findInFilesMask"), m_findInFilesMask);
-    
+
     arch.Read(wxT("TabInfoArray"), m_vTabInfoArr);
     // initialize tab info array from m_tabs if in config file wasn't yet tab info array
     if(m_vTabInfoArr.size() == 0 && m_tabs.GetCount() > 0) {
@@ -121,26 +123,20 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
 
     } else {
         wxFileName sessionFileName(name);
-        if(suffix != "tabgroup") {
-            sessionFileName.AppendDir(".codelite");
-        }
+        if(suffix != "tabgroup") { sessionFileName.AppendDir(".codelite"); }
         sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
         return sessionFileName;
     }
 }
 
-bool SessionManager::GetSession(const wxString& workspaceFile,
-                                SessionEntry& session,
-                                const wxString& suffix,
+bool SessionManager::GetSession(const wxString& workspaceFile, SessionEntry& session, const wxString& suffix,
                                 const wxChar* Tag)
 {
-    if(!m_doc.GetRoot()) {
-        return false;
-    }
+    if(!m_doc.GetRoot()) { return false; }
 
     wxFileName sessionFileName = GetSessionFileName(workspaceFile, suffix);
     wxXmlDocument doc;
-    
+
     if(sessionFileName.FileExists()) {
         if(!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk()) return false;
     } else {
@@ -157,14 +153,10 @@ bool SessionManager::GetSession(const wxString& workspaceFile,
     return true;
 }
 
-bool SessionManager::Save(const wxString& name,
-                          SessionEntry& session,
-                          const wxString& suffix /*=wxT("")*/,
+bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxString& suffix /*=wxT("")*/,
                           const wxChar* Tag /*=sessionTag*/)
 {
-    if(!m_doc.GetRoot()) {
-        return false;
-    }
+    if(!m_doc.GetRoot()) { return false; }
 
     if(name.empty()) return false;
 
@@ -179,15 +171,16 @@ bool SessionManager::Save(const wxString& name,
     doc.SetRoot(child);
 
     // If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
+    wxString content;
+    wxStringOutputStream sos(&content);
+    if(!doc.Save(sos)) { return false; }
     const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
-    return doc.Save(sessionFileName.GetFullPath());
+    return FileUtils::WriteFileContent(sessionFileName, content);
 }
 
 void SessionManager::SetLastSession(const wxString& name)
 {
-    if(!m_doc.GetRoot()) {
-        return;
-    }
+    if(!m_doc.GetRoot()) { return; }
     // first delete the old entry
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
@@ -204,15 +197,15 @@ void SessionManager::SetLastSession(const wxString& name)
     m_doc.GetRoot()->AddChild(child);
     XmlUtils::SetNodeContent(child, name);
 
-    // save changes
-    m_doc.Save(m_fileName.GetFullPath());
+    wxString content;
+    wxStringOutputStream sos(&content);
+    if(!m_doc.Save(sos)) { return; }
+    FileUtils::WriteFileContent(m_fileName, content);
 }
 
 wxString SessionManager::GetLastSession()
 {
-    if(!m_doc.GetRoot()) {
-        return defaultSessionName;
-    }
+    if(!m_doc.GetRoot()) { return defaultSessionName; }
     // try to locate the 'LastSession' entry
     // if it does not exist or it exist with value empty return 'Default'
     // otherwise, return its content
@@ -247,9 +240,7 @@ wxString SessionManager::GetFindInFilesMaskForCurrentWorkspace()
     if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
         wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
         SessionEntry s;
-        if(GetSession(fn.GetFullPath(), s)) {
-            return s.GetFindInFilesMask();
-        }
+        if(GetSession(fn.GetFullPath(), s)) { return s.GetFindInFilesMask(); }
     }
     return "";
 }

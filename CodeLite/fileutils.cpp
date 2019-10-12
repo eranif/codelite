@@ -547,7 +547,7 @@ unsigned int FileUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 // This is readlink on steroids: it also makes-absolute, and dereferences any symlinked dirs in the path
 wxString FileUtils::RealPath(const wxString& filepath)
 {
-#if defined(__WXGTK__)
+#if defined(__WXGTK__) || defined(__WXOSX__)
     if(!filepath.empty()) {
         wxStructStat stbuff;
         if((::wxLstat(filepath, &stbuff) != 0) || !S_ISLNK(stbuff.st_mode)) { return filepath; }

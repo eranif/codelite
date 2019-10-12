@@ -1385,23 +1385,38 @@ wxString Manager::GetProjectNameByFile(wxString& fullPathFileName, bool caseSens
     wxArrayString projects;
     GetProjectList(projects);
 
-    // On gtk either fullPathFileName or the 'matching' project filename (or both) may be (or their paths contain)
-    // symlinks
-    wxString linkDestination = CLRealPath(fullPathFileName);
+    std::vector<ProjectPtr> vProjects;
+    vProjects.reserve(projects.size());
+    
+    // Attempt 1:
+    // Assume that the file is a real file
+    wxString linkDestination = fullPathFileName;
     for(size_t i = 0; i < projects.GetCount(); i++) {
         ProjectPtr proj = GetProject(projects.Item(i));
+        vProjects.push_back(proj); // keep the project, incase we will need it in the second iteration
         // The second call copes with the searched-for file being a symlink
         if(proj->IsFileExist(fullPathFileName) || proj->IsFileExist(linkDestination)) { return proj->GetName(); }
-#if defined(__WXGTK__)
-        wxString fileNameInProject; // Try again, checking if the _project_ filePath is a symlink
-        if(proj->IsFileExist(fullPathFileName, fileNameInProject)) {
-            fullPathFileName = fileNameInProject; // Hopefully the calling function will now use this
-            return proj->GetName();
-        }
-#endif
-        // TODO:: add support for case insensitive search in project
     }
 
+#if defined(__WXGTK__) || defined(__WXOSX__)
+    // Attempt 2:
+    // assume symlinks are involved
+
+    // On gtk/macOS either fullPathFileName or the 'matching' project filename (or both) may be (or their paths contain)
+    // symlinks
+    linkDestination = FileUtils::RealPath(fullPathFileName);
+    if(linkDestination != fullPathFileName) {
+        for(auto& proj : vProjects) {
+            // The second call copes with the searched-for file being a symlink
+            if(proj->IsFileExist(fullPathFileName) || proj->IsFileExist(linkDestination)) { return proj->GetName(); }
+            wxString fileNameInProject; // Try again, checking if the _project_ filePath is a symlink
+            if(proj->IsFileExist(fullPathFileName, fileNameInProject)) {
+                fullPathFileName = fileNameInProject; // Hopefully the calling function will now use this
+                return proj->GetName();
+            }
+        }
+    }
+#endif
     return wxEmptyString;
 }
 
@@ -3085,7 +3100,7 @@ void Manager::DoRestartCodeLite()
     wxString restartCodeLiteCommand;
     wxString workingDirectory;
     CodeLiteApp* app = dynamic_cast<CodeLiteApp*>(wxTheApp);
-    
+
 #if defined(__WXGTK__) || defined(__WXMSW__)
     // The Shell is our friend
     restartCodeLiteCommand << clStandardPaths::Get().GetExecutablePath();
@@ -3097,7 +3112,7 @@ void Manager::DoRestartCodeLite()
         restartCodeLiteCommand << wxT(" ") << cmdArg;
     }
     workingDirectory = GetOriginalCwd();
-    
+
 #else // OSX
 
     // on OSX, we use the open command
@@ -3234,10 +3249,10 @@ void Manager::UpdateParserPaths(bool notify)
     const TagsOptionsData& tod = clMainFrame::Get()->GetTagsOptions();
     const wxArrayString& globalInc = tod.GetParserSearchPaths();
     const wxArrayString& globalExc = tod.GetParserExcludePaths();
-    
+
     searchPaths.insert(searchPaths.end(), globalInc.begin(), globalInc.end());
     excludePaths.insert(excludePaths.end(), globalExc.begin(), globalExc.end());
-        
+
     ParseThreadST::Get()->SetSearchPaths(searchPaths, excludePaths);
 
     {

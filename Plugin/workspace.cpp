@@ -48,6 +48,7 @@
 #include "localworkspace.h"
 #include "compiler_command_line_parser.h"
 #include "fileutils.h"
+#include <wx/sstream.h>
 
 clCxxWorkspace::clCxxWorkspace()
     : m_saveOnExit(true)
@@ -656,7 +657,11 @@ bool clCxxWorkspace::SaveXmlFile()
         m_doc.GetRoot()->AddAttribute("Version", DEFAULT_CURRENT_WORKSPACE_VERSION_STR);
     }
 
-    bool ok = m_doc.Save(m_fileName.GetFullPath());
+    wxString content;
+    wxStringOutputStream sos(&content);
+    m_doc.Save(sos);
+
+    bool ok = FileUtils::WriteFileContent(m_fileName, content);
     SetWorkspaceLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent(m_fileName.GetFullPath());
     DoUpdateBuildMatrix();

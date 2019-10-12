@@ -38,6 +38,7 @@
 #include <fstream>
 #include "StringUtils.h"
 #include "asyncprocess.h"
+#include <wx/file.h>
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
@@ -83,11 +84,12 @@ void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command,
 
 bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
 {
-    wxFFile file(fn.GetFullPath(), wxT("w+b"));
-    if(!file.IsOpened()) { return false; }
-
-    if(!file.Write(content, conv)) { return false; }
-    return true;
+    wxFile file(fn.GetFullPath(), wxFile::write);
+    if(file.IsOpened()) {
+        return file.Write(content, conv);
+    } else {
+        return false;
+    }
 }
 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)

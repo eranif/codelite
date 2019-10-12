@@ -336,19 +336,11 @@ bool Project::SaveXmlFile()
     }
 
     bool ok = m_doc.Save(sos);
-
-    wxFFile file(m_fileName.GetFullPath(), wxT("w+b"));
-    if(!file.IsOpened()) {
-        ok = false;
-
-    } else {
-        file.Write(projectXml);
-        file.Close();
-    }
-
+    
+    // Write the file content
+    ok = FileUtils::WriteFileContent(m_fileName, projectXml);
     SetProjectLastModifiedTime(GetFileLastModifiedTime());
     EventNotifier::Get()->PostFileSavedEvent(m_fileName.GetFullPath());
-
     DoUpdateProjectSettings();
     return ok;
 }

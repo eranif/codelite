@@ -1192,18 +1192,7 @@ wxFileName wxReadLink(const wxFileName& filename)
 wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: it also makes-absolute, and dereferences
                                               // any symlinked dirs in the path
 {
-#if defined(__WXGTK__)
-    if(!filepath.empty()) {
-        char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
-        if(buf != NULL) {
-            wxString result(buf, wxConvUTF8);
-            free(buf);
-            return result;
-        }
-    }
-#endif
-
-    return filepath;
+    return FileUtils::RealPath(filepath);
 }
 
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
@@ -1945,12 +1934,10 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
     ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
-    const char *sudo_path;
+    const char* sudo_path;
 
     sudo_path = "/usr/bin/sudo";
-    if(!wxFileName::Exists(sudo_path)) {
-        sudo_path = "/usr/local/bin/sudo";
-    }
+    if(!wxFileName::Exists(sudo_path)) { sudo_path = "/usr/local/bin/sudo"; }
     if(as_superuser && wxFileName::Exists(sudo_path) && wxFileName::Exists(sudoAskpass)) {
         wxString cmd;
         cmd << sudo_path << " --askpass kill -" << (int)signo << " ";

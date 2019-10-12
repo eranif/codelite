@@ -50,6 +50,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #endif
+#include <wx/filename.h>
 
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
@@ -548,6 +549,8 @@ wxString FileUtils::RealPath(const wxString& filepath)
 {
 #if defined(__WXGTK__)
     if(!filepath.empty()) {
+        wxStructStat stbuff;
+        if((::wxLstat(filepath, &stbuff) != 0) || !S_ISLNK(stbuff.st_mode)) { return filepath; }
         char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
         if(buf != NULL) {
             wxString result(buf, wxConvUTF8);

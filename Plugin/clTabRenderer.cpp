@@ -22,7 +22,7 @@
 #include "drawingutils.h"
 #endif
 
-#define X_BUTTON_SIZE 14
+static int X_BUTTON_SIZE = 10;
 
 clTabColours::clTabColours() { InitDarkColours(); }
 
@@ -140,6 +140,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
+    static bool once = true;
+    if(m_tabCtrl && once) {
+        X_BUTTON_SIZE = m_tabCtrl->FromDIP(X_BUTTON_SIZE);
+        once = false;
+    }
+    
     wxFont font = clTabRenderer::GetTabFont(true);
     dc.SetFont(font);
 
@@ -349,7 +355,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(size_t tabStyle)
         RegisterRenderer(new clTabRendererClassic());
         RegisterRenderer(new clTabRendererCurved());
     }
-    
+
     wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
     wxString name = tab.Upper();
     if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {

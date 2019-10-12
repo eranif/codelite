@@ -27,13 +27,13 @@
 #include "manager.h"
 #include "cl_config.h"
 #include <algorithm>
+#include "globals.h"
 
 PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
     : PluginMgrDlgBase(parent)
 {
     this->Initialize();
-    SetName("PluginMgrDlg");
-    WindowAttrManager::Load(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 PluginMgrDlg::~PluginMgrDlg() {}

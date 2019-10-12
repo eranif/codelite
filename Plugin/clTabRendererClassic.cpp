@@ -14,7 +14,7 @@
     dc.DrawLine(__p1, __p2);
 
 clTabRendererClassic::clTabRendererClassic()
-    : clTabRenderer("DEFAULT")
+    : clTabRenderer("MINIMAL")
 {
     bottomAreaHeight = 0;
     smallCurveWidth = 0;
@@ -66,52 +66,35 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
 void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                                 const clTabColours& colors, size_t style, eButtonState buttonState)
 {
-    const int tabRaius = 1.5;
+    const int tabRaius = 0;
 
     clTabColours colours = colors;
-    if(DrawingUtils::IsDark(colours.activeTabBgColour)) {
+    bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
+    if(isDark) {
         InitDarkColours(colours, colours.activeTabBgColour);
     } else {
         InitLightColours(colours, colours.activeTabBgColour);
     }
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
-    wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
+    wxColour penColour(bgColour);
+
+    if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
+
     wxFont font = GetTabFont(false);
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 
-    if(style & kNotebook_BottomTabs) {
-        // Bottom tabs
-        wxRect tabRect = tabInfo.GetRect();
-        tabRect.SetHeight(tabRect.GetHeight() + tabRaius);
-        tabRect.SetY(tabRect.GetY() - tabRaius);
-        {
-            dc.SetPen(penColour);
-            dc.SetBrush(bgColour);
-            dc.DrawRoundedRectangle(tabRect, tabRaius);
-        }
-        {
-            tabRect.Deflate(1); // The inner border
-            dc.SetPen(tabInfo.IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-            dc.SetBrush(bgColour);
-            dc.DrawRoundedRectangle(tabRect, tabRaius);
-        }
-    } else {
-        // Default tabs (placed at the top)
-        wxRect tabRect = tabInfo.GetRect();
-        tabRect.SetHeight(tabRect.GetHeight() + tabRaius);
-        {
-            dc.SetPen(penColour);
-            dc.SetBrush(bgColour);
-            dc.DrawRoundedRectangle(tabRect, tabRaius);
-        }
-        {
-            tabRect.Deflate(1); // The inner border
-            dc.SetPen(tabInfo.IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
-            dc.SetBrush(bgColour);
-            dc.DrawRoundedRectangle(tabRect, tabRaius);
-        }
+    // Draw the tab rectangle
+    wxRect tabRect = tabInfo.GetRect();
+    tabRect.SetHeight(tabRect.GetHeight() + tabRaius);
+    tabRect.SetY(tabRect.GetY() - tabRaius);
+    tabRect.Inflate(1);
+
+    {
+        dc.SetPen(penColour);
+        dc.SetBrush(bgColour);
+        dc.DrawRoundedRectangle(tabRect, tabRaius);
     }
 
     // Draw bitmap
@@ -120,7 +103,21 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
                                                                                          : tabInfo.GetBitmap();
         dc.DrawBitmap(bmp, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
     }
-    fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
+    
+    wxRect rr = tabInfo.m_rect;
+    wxString label = tabInfo.m_label;
+    bool bVerticalTabs = IS_VERTICAL_TABS(style);
+    if(bVerticalTabs) {
+        // Check that the text can fit into the tab label
+        int textEndCoord = tabInfo.m_textX + tabInfo.m_textWidth;
+        int tabEndCoord = tabInfo.GetRect().GetRightTop().x;
+        if((textEndCoord + clTabRenderer::GetMarkerWidth()) > tabEndCoord) {
+            int newSize = tabEndCoord - tabInfo.m_textX;
+            DrawingUtils::TruncateText(tabInfo.m_label, newSize, dc, label);
+        }
+    }
+    
+    fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
         DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
@@ -153,17 +150,8 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
                                               const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
-    clTabColours c = colours;
-    if(DrawingUtils::IsDark(c.activeTabBgColour)) {
-        InitDarkColours(c, c.activeTabBgColour);
-    } else {
-        InitLightColours(c, c.activeTabBgColour);
-    }
-
-    dc.SetPen(c.activeTabPenColour);
-    if(style & kNotebook_BottomTabs) {
-        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-    } else {
-        dc.DrawLine(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
-    }
+    wxUnusedVar(dc);
+    wxUnusedVar(clientRect);
+    wxUnusedVar(colours);
+    wxUnusedVar(style);
 }

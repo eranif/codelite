@@ -13,6 +13,7 @@ public:
               size_t style, eButtonState buttonState);
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style);
+    clTabRenderer* New() const { return new clTabRendererCurved(); }
 };
 #endif
 #endif // CLTABRENDERERCURVED_H

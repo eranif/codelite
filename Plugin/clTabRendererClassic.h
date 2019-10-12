@@ -18,5 +18,6 @@ public:
     void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
                             size_t style);
+    clTabRenderer* New() const { return new clTabRendererClassic(); }
 };
 #endif // CLTABRENDERERCLASSIC_H

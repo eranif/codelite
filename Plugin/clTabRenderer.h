@@ -26,6 +26,7 @@
 #include <wx/colour.h>
 #include <wx/dc.h>
 #include <wx/sharedptr.h>
+#include "wxStringHash.h"
 
 #define CHEVRON_SIZE 20
 
@@ -198,11 +199,14 @@ public:
     int xSpacer;
     int ySpacer;
     wxString m_name;
-
+    static std::unordered_map<wxString, clTabRenderer*> ms_Renderes;
+    
 protected:
     void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
     void DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style);
     void DrawMarkerLine(wxDC& dc, const wxPoint& p1, const wxPoint& p2, wxDirection direction);
+    static void RegisterRenderer(clTabRenderer* renderer);
+    static clTabRenderer* Create(const wxString& name);
     
 public:
     clTabRenderer(const wxString& name);
@@ -262,5 +266,6 @@ public:
     static int GetMarkerWidth();
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
+    virtual clTabRenderer* New() const = 0;
 };
 #endif // CLTABRENDERER_H

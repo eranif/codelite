@@ -16,6 +16,7 @@ public:
     void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void AdjustColours(clTabColours& colours, size_t style);
+    clTabRenderer* New() const { return new clTabRendererGTK3(); }
 };
 
 #endif // CLTABRENDERERGTK3_H

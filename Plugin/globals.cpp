@@ -364,7 +364,7 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
 {
     wxLogNull noLog;
     content.Clear();
-    wxFFile file(fileName, wxT("rb"));
+    wxFile file(fileName, wxFile::read);
 
     const wxCharBuffer name = _C(fileName);
     if(file.IsOpened()) {
@@ -372,7 +372,9 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
         // If we got a BOM pointer, test to see whether the file is BOM file
         if(bom && IsBOMFile(name.data())) { return ReadBOMFile(name.data(), content, *bom); }
 
-        if(encoding == wxFONTENCODING_DEFAULT) encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+        if(encoding == wxFONTENCODING_DEFAULT) {
+            encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
+        }
 
         // first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
         if(encoding != wxFONTENCODING_UTF8) {

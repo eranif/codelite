@@ -11,12 +11,10 @@ set WXCFG=gcc_dll/mswu
 
 :: Build the 64 bit version
 call :ColorText 0A "Building CodeLite for x86_64"
-echo ...
 call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\compilers\mingw64\bin
 
 :: Build the 32 bit version
 call :ColorText 0A "Building CodeLite for i686"
-echo echo ...
 call :MAKE_WEEKLY Win_x86_Release codelite_mingw.iss C:\src\wxWidgets32 C:\compilers\mingw64-i686\mingw32\bin
 
 cd %CL_SRC_DIR%

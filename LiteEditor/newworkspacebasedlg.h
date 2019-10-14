@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_NEW_WORKSPACE_DLG_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_NEW_WORKSPACE_DLG_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_NEW_WORKSPACE_DLG_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_NEW_WORKSPACE_DLG_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -14,12 +15,13 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/infobar.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/button.h>
+#include <wx/textctrl.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
@@ -29,15 +31,27 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
+
 class NewWorkspaceBase : public wxDialog
 {
 protected:
+    wxInfoBar* m_infobar;
     wxPanel* m_panelWorkspace;
-    wxStaticText* m_staticText1;
-    wxTextCtrl* m_textCtrlWorkspaceName;
     wxStaticText* m_staticText3;
     wxComboBox* m_comboBoxPath;
     wxButton* m_buttonWorkspaceDirPicker;
+    wxStaticText* m_staticText1;
+    wxTextCtrl* m_textCtrlWorkspaceName;
     wxStaticText* m_staticTextWorkspaceFileName;
     wxCheckBox* m_checkBoxCreateSeparateDir;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
@@ -47,19 +61,23 @@ protected:
 protected:
     virtual void OnWorkspacePathUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWorkspaceDirPicker(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnWorkspaceNameUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonCreate(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText1() { return m_staticText1; }
-    wxTextCtrl* GetTextCtrlWorkspaceName() { return m_textCtrlWorkspaceName; }
+    wxInfoBar* GetInfobar() { return m_infobar; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxComboBox* GetComboBoxPath() { return m_comboBoxPath; }
     wxButton* GetButtonWorkspaceDirPicker() { return m_buttonWorkspaceDirPicker; }
+    wxStaticText* GetStaticText1() { return m_staticText1; }
+    wxTextCtrl* GetTextCtrlWorkspaceName() { return m_textCtrlWorkspaceName; }
     wxStaticText* GetStaticTextWorkspaceFileName() { return m_staticTextWorkspaceFileName; }
     wxCheckBox* GetCheckBoxCreateSeparateDir() { return m_checkBoxCreateSeparateDir; }
     wxPanel* GetPanelWorkspace() { return m_panelWorkspace; }
-    NewWorkspaceBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewWorkspaceBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Workspace"),
+                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewWorkspaceBase();
 };
 

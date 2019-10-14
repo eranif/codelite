@@ -64,31 +64,14 @@ NewWorkspaceDlg::~NewWorkspaceDlg()
 
 void NewWorkspaceDlg::OnWorkspacePathUpdated(wxCommandEvent& event)
 {
-    // update the static text control with the actual path
-
-    wxString workspacePath;
-    workspacePath << m_comboBoxPath->GetValue();
-
-    workspacePath = workspacePath.Trim().Trim(false);
-
-    wxString tmpSep(wxFileName::GetPathSeparator());
-    if(!workspacePath.EndsWith(tmpSep) && workspacePath.IsEmpty() == false) {
-        workspacePath << wxFileName::GetPathSeparator();
+    wxUnusedVar(event);
+    // set the workspace name to the last directory part
+    // but only if the user did not set the name manually
+    if(!m_manualNameTyped) {
+        wxFileName fnPath(m_comboBoxPath->GetValue(), "");
+        if(fnPath.GetDirCount()) { m_textCtrlWorkspaceName->ChangeValue(fnPath.GetDirs().Last()); }
     }
-
-    if(m_textCtrlWorkspaceName->GetValue().Trim().Trim(false).IsEmpty()) {
-        m_staticTextWorkspaceFileName->SetLabel(wxEmptyString);
-        return;
-    }
-
-    if(m_checkBoxCreateSeparateDir->IsChecked()) {
-        workspacePath << m_textCtrlWorkspaceName->GetValue();
-        workspacePath << wxFileName::GetPathSeparator();
-    }
-
-    workspacePath << m_textCtrlWorkspaceName->GetValue();
-    workspacePath << wxT(".workspace");
-    m_staticTextWorkspaceFileName->SetLabel(workspacePath);
+    DoUpdateFilePath();
 }
 
 void NewWorkspaceDlg::OnWorkspaceDirPicker(wxCommandEvent& event)
@@ -126,4 +109,50 @@ void NewWorkspaceDlg::OnButtonCreate(wxCommandEvent& event)
     }
     EndModal(wxID_OK);
 }
-void NewWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlWorkspaceName->IsEmpty()); }
+void NewWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
+{
+    wxFileName fnWspFile(m_staticTextWorkspaceFileName->GetLabel());
+    event.Enable(fnWspFile.IsOk() && !fnWspFile.FileExists());
+}
+
+void NewWorkspaceDlg::OnWorkspaceNameUpdated(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoUpdateFilePath();
+    m_manualNameTyped = true;
+}
+
+void NewWorkspaceDlg::DoUpdateFilePath()
+{
+    // update the static text control with the actual path
+    wxString workspacePath;
+    workspacePath << m_comboBoxPath->GetValue();
+
+    workspacePath = workspacePath.Trim().Trim(false);
+
+    wxString tmpSep(wxFileName::GetPathSeparator());
+    if(!workspacePath.EndsWith(tmpSep) && workspacePath.IsEmpty() == false) {
+        workspacePath << wxFileName::GetPathSeparator();
+    }
+
+    if(m_textCtrlWorkspaceName->GetValue().Trim().Trim(false).IsEmpty()) {
+        m_staticTextWorkspaceFileName->SetLabel(wxEmptyString);
+        return;
+    }
+
+    if(m_checkBoxCreateSeparateDir->IsChecked()) {
+        workspacePath << m_textCtrlWorkspaceName->GetValue();
+        workspacePath << wxFileName::GetPathSeparator();
+    }
+
+    workspacePath << m_textCtrlWorkspaceName->GetValue();
+    workspacePath << wxT(".workspace");
+    m_staticTextWorkspaceFileName->SetLabel(workspacePath);
+
+    if(wxFileName::FileExists(workspacePath)) {
+        m_infobar->ShowMessage(_("A workspace file with this name already exists"), wxICON_WARNING);
+    } else {
+        m_infobar->Hide();
+    }
+    SendSizeEvent();
+}

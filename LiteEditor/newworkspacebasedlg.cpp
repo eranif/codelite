@@ -6,106 +6,120 @@
 
 #include "newworkspacebasedlg.h"
 
-
 // Declare the bitmap loading function
 extern void wxCE428InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                   const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCE428InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
-    m_panelWorkspace = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(400,-1), wxTAB_TRAVERSAL);
-    
-    bSizer1->Add(m_panelWorkspace, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_infobar = new wxInfoBar(this, wxID_ANY);
+    m_infobar->SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+
+    bSizer1->Add(m_infobar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelWorkspace =
+        new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), wxTAB_TRAVERSAL);
+
+    bSizer1->Add(m_panelWorkspace, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panelWorkspace->SetSizer(bSizer2);
-    
+
     wxFlexGridSizer* flexGridSizer9 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer9->SetFlexibleDirection( wxBOTH );
-    flexGridSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer9->SetFlexibleDirection(wxBOTH);
+    flexGridSizer9->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer9->AddGrowableCol(1);
-    
-    bSizer2->Add(flexGridSizer9, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText1 = new wxStaticText(m_panelWorkspace, wxID_ANY, _("Workspace Name:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer9->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlWorkspaceName = new wxTextCtrl(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlWorkspaceName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlWorkspaceName->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer9->Add(m_textCtrlWorkspaceName, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText3 = new wxStaticText(m_panelWorkspace, wxID_ANY, _("Workspace Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    flexGridSizer9->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    bSizer2->Add(flexGridSizer9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText3 = new wxStaticText(m_panelWorkspace, wxID_ANY, _("Workspace Path:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
+
+    flexGridSizer9->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
-    
-    flexGridSizer9->Add(bSizer3, 0, wxEXPAND, 5);
-    
+
+    flexGridSizer9->Add(bSizer3, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_comboBoxPathArr;
-    m_comboBoxPath = new wxComboBox(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), m_comboBoxPathArr, 0);
-    #if wxVERSION_NUMBER >= 3000
+    m_comboBoxPath = new wxComboBox(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition,
+                                    wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), m_comboBoxPathArr, 0);
+#if wxVERSION_NUMBER >= 3000
     m_comboBoxPath->SetHint(wxT(""));
-    #endif
-    
-    bSizer3->Add(m_comboBoxPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonWorkspaceDirPicker = new wxButton(m_panelWorkspace, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
+#endif
+
+    bSizer3->Add(m_comboBoxPath, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonWorkspaceDirPicker = new wxButton(m_panelWorkspace, wxID_ANY, _("..."), wxDefaultPosition,
+                                              wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), wxBU_EXACTFIT);
     m_buttonWorkspaceDirPicker->SetDefault();
     m_buttonWorkspaceDirPicker->SetToolTip(_("Browse for folder"));
-    
-    bSizer3->Add(m_buttonWorkspaceDirPicker, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxStaticBoxSizer* sbSizer1 = new wxStaticBoxSizer( new wxStaticBox(m_panelWorkspace, wxID_ANY, _("Generated File:")), wxVERTICAL);
-    
-    bSizer2->Add(sbSizer1, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticTextWorkspaceFileName = new wxStaticText(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    sbSizer1->Add(m_staticTextWorkspaceFileName, 0, wxALL|wxEXPAND, 5);
-    
-    bSizer2->Add(0, 0, 1, wxALL, 5);
-    
-    m_checkBoxCreateSeparateDir = new wxCheckBox(m_panelWorkspace, wxID_ANY, _("Create the workspace under a separate directory"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer3->Add(m_buttonWorkspaceDirPicker, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText1 = new wxStaticText(m_panelWorkspace, wxID_ANY, _("Workspace Name:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
+
+    flexGridSizer9->Add(m_staticText1, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlWorkspaceName = new wxTextCtrl(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition,
+                                             wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
+    m_textCtrlWorkspaceName->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlWorkspaceName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer9->Add(m_textCtrlWorkspaceName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* sbSizer1 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panelWorkspace, wxID_ANY, _("Generated File:")), wxVERTICAL);
+
+    bSizer2->Add(sbSizer1, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticTextWorkspaceFileName = new wxStaticText(m_panelWorkspace, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                     wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
+
+    sbSizer1->Add(m_staticTextWorkspaceFileName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    bSizer2->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxCreateSeparateDir =
+        new wxCheckBox(m_panelWorkspace, wxID_ANY, _("Create the workspace under a separate directory"),
+                       wxDefaultPosition, wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
     m_checkBoxCreateSeparateDir->SetValue(true);
-    
-    bSizer2->Add(m_checkBoxCreateSeparateDir, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer2->Add(m_checkBoxCreateSeparateDir, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
-    
-    bSizer2->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonOK = new wxButton(m_panelWorkspace, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer2->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOK = new wxButton(m_panelWorkspace, wxID_OK, wxT(""), wxDefaultPosition,
+                              wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
-    
-    m_buttonCancel = new wxButton(m_panelWorkspace, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonCancel = new wxButton(m_panelWorkspace, wxID_CANCEL, wxT(""), wxDefaultPosition,
+                                  wxDLG_UNIT(m_panelWorkspace, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_buttonCancel);
     m_stdBtnSizer2->Realize();
-    
+
     SetName(wxT("NewWorkspaceBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
@@ -119,22 +133,30 @@ NewWorkspaceBase::NewWorkspaceBase(wxWindow* parent, wxWindowID id, const wxStri
     }
 #endif
     // Connect events
-    m_textCtrlWorkspaceName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_comboBoxPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_buttonWorkspaceDirPicker->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
-    m_checkBoxCreateSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL, this);
+    m_comboBoxPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated),
+                            NULL, this);
+    m_buttonWorkspaceDirPicker->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                        wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
+    m_textCtrlWorkspaceName->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceNameUpdated), NULL, this);
+    m_checkBoxCreateSeparateDir->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                         wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
+    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL,
+                        this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewWorkspaceBase::OnOKUI), NULL, this);
-    
 }
 
 NewWorkspaceBase::~NewWorkspaceBase()
 {
-    m_textCtrlWorkspaceName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_comboBoxPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_buttonWorkspaceDirPicker->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
-    m_checkBoxCreateSeparateDir->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL, this);
+    m_comboBoxPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                               wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
+    m_buttonWorkspaceDirPicker->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                           wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceDirPicker), NULL, this);
+    m_textCtrlWorkspaceName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                        wxCommandEventHandler(NewWorkspaceBase::OnWorkspaceNameUpdated), NULL, this);
+    m_checkBoxCreateSeparateDir->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnWorkspacePathUpdated), NULL, this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewWorkspaceBase::OnButtonCreate), NULL,
+                           this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewWorkspaceBase::OnOKUI), NULL, this);
-    
 }

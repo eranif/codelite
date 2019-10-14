@@ -36,10 +36,12 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
 
     // If we have a workspace, set the project path in the workspace path
     if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        m_dirPicker->SetPath(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
+        const wxFileName& fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
+        m_dirPicker->SetPath(fn.GetPath());
+        m_textCtrlName->ChangeValue(fn.GetDirs().Last());
     }
 
-    wxString lastBuildSystem = "Default";
+    wxString lastBuildSystem = "CodeLite Make Generator";
     wxString lastCategory;
     wxString lastType;
     wxString lastCompiler;
@@ -156,9 +158,20 @@ ProjectData NewProjectDialog::GetProjectData() const
     return data;
 }
 
-void NewProjectDialog::OnPathSelected(wxFileDirPickerEvent& event) { wxUnusedVar(event); }
+void NewProjectDialog::OnPathSelected(wxFileDirPickerEvent& event)
+{
+    wxUnusedVar(event);
+    if(!m_userTypeName) {
+        wxFileName path(m_dirPicker->GetPath(), "");
+        if(path.GetDirCount()) { m_textCtrlName->ChangeValue(path.GetDirs().Last()); }
+    }
+}
 
-void NewProjectDialog::OnNameTyped(wxCommandEvent& event) { wxUnusedVar(event); }
+void NewProjectDialog::OnNameTyped(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_userTypeName = true;
+}
 
 void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
 {

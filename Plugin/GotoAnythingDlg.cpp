@@ -19,10 +19,10 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
 {
     DoPopulate(m_allEntries);
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
-    WindowAttrManager::Load(this);
     
     m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
     m_dvListCtrl->SetBitmaps(&m_bitmaps);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 GotoAnythingDlg::~GotoAnythingDlg()

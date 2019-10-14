@@ -62,11 +62,10 @@ protected:
     bool ShouldShowScrollBar() const;
     void DoInitialize();
 
-    
     /**
      * @brief return true row from a position
      */
-    virtual wxTreeItemId GetRow(const wxPoint& pt) const { return wxTreeItemId(); }
+    virtual wxTreeItemId GetRow(const wxPoint& WXUNUSED(pt)) const { return wxTreeItemId(); }
 
 public:
     clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

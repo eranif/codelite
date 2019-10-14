@@ -12,6 +12,7 @@ clChoice::~clChoice() { Unbind(wxEVT_BUTTON, &clChoice::OnClick, this); }
 bool clChoice::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                       const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
 {
+    wxUnusedVar(style);
     m_choices.insert(m_choices.end(), choices.begin(), choices.end());
     wxString initialValue;
     if(!choices.IsEmpty()) {
@@ -28,6 +29,7 @@ bool clChoice::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 clChoice::clChoice(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                    const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
 {
+    wxUnusedVar(style);
     Create(parent, id, pos, size, choices, 0, validator, name);
 }
 

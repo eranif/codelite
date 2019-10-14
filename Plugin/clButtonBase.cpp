@@ -21,6 +21,8 @@ clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& labe
     : wxControl(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)
     , m_buttonStyle(style)
 {
+    wxUnusedVar(name);
+    wxUnusedVar(validator);
     SetText(label);
     Initialise();
 }
@@ -28,6 +30,8 @@ clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& labe
 bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
                           const wxSize& size, long style, const wxValidator& validator, const wxString& name)
 {
+    wxUnusedVar(name);
+    wxUnusedVar(validator);
     m_buttonStyle = style;
     SetText(label);
     if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) { return false; }
@@ -71,6 +75,7 @@ void clButtonBase::UnBindEvents()
 
 void clButtonBase::OnPaint(wxPaintEvent& event)
 {
+    wxUnusedVar(event);
     wxAutoBufferedPaintDC abdc(this);
     wxGCDC dc(abdc);
     PrepareDC(dc);
@@ -239,9 +244,9 @@ void clButtonBase::Render(wxDC& dc)
         wxString fixedText;
         DrawingUtils::TruncateText(GetText(), textBoundingRect.GetWidth(), dc, fixedText);
 
-        //dc.SetPen(*wxBLUE);
-        //dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        //dc.DrawRectangle(textBoundingRect);
+        // dc.SetPen(*wxBLUE);
+        // dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        // dc.DrawRectangle(textBoundingRect);
 
         dc.DrawLabel(fixedText, textBoundingRect, wxALIGN_CENTRE);
         dc.DestroyClippingRegion();
@@ -254,9 +259,9 @@ void clButtonBase::Render(wxDC& dc)
         wxRect r(0, 0, arrowWidth, arrowHeight);
         r = r.CenterIn(arrowRect);
 
-        //dc.SetPen(*wxRED);
-        //dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        //dc.DrawRectangle(arrowRect);
+        // dc.SetPen(*wxRED);
+        // dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        // dc.DrawRectangle(arrowRect);
 
         wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
         dc.SetPen(wxPen(dropDownColour, 3));
@@ -414,7 +419,7 @@ void clButtonBase::ShowMenu(wxMenu& menu)
 {
     SetPressed();
     Refresh();
-    
+
     wxPoint menuPos = GetClientRect().GetBottomLeft();
 #ifdef __WXOSX__
     menuPos.y += 5;

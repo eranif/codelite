@@ -177,6 +177,26 @@ public:
      * @brief display a string selection menu for a given cell. The selection string is set as the cell text
      */
     void ShowStringSelectionMenu(const wxDataViewItem& item, const wxArrayString& choices, size_t col = 0);
+
+    /**
+     * @brief Returns index of the selected row or wxNOT_FOUND.
+     */
+    int GetSelectedRow() const;
+
+    /**
+     * @brief Selects given row.
+     */
+    void SelectRow(size_t row);
+    
+    /**
+     * @brief Unselects given row
+     */
+    void UnselectRow(size_t row);
+    
+    /**
+     * @brief Returns true if row is selected
+     */
+    bool IsRowSelected(size_t row) const;
 };
 
 // Helper class passing bitmap index + text

@@ -20,6 +20,9 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     DoPopulate(m_allEntries);
     CallAfter(&GotoAnythingDlg::UpdateLastSearch);
     WindowAttrManager::Load(this);
+    
+    m_bitmaps.push_back(clGetManager()->GetStdIcons()->LoadBitmap("placeholder"));
+    m_dvListCtrl->SetBitmaps(&m_bitmaps);
 }
 
 GotoAnythingDlg::~GotoAnythingDlg()
@@ -36,7 +39,7 @@ void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
     } else if(event.GetKeyCode() == WXK_DOWN) {
         event.Skip(false);
         int row = m_dvListCtrl->GetSelectedRow();
-        if((row + 1) < m_dvListCtrl->GetItemCount()) {
+        if((size_t)(row + 1) < m_dvListCtrl->GetItemCount()) {
             row++;
             DoSelectItem(m_dvListCtrl->RowToItem(row));
         }
@@ -59,11 +62,10 @@ void GotoAnythingDlg::OnEnter(wxCommandEvent& event)
 void GotoAnythingDlg::DoPopulate(const std::vector<clGotoEntry>& entries, const std::vector<int>& indexes)
 {
     m_dvListCtrl->DeleteAllItems();
-    static wxBitmap placeHolderBmp = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
     for(size_t i = 0; i < entries.size(); ++i) {
         const clGotoEntry& entry = entries[i];
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeIconText(entry.GetDesc(), entry.GetBitmap().IsOk() ? entry.GetBitmap() : placeHolderBmp));
+        cols.push_back(::MakeBitmapIndexText(entry.GetDesc(), 0));
         cols.push_back(entry.GetKeyboardShortcut());
         m_dvListCtrl->AppendItem(cols, indexes.empty() ? i : indexes[i]);
     }

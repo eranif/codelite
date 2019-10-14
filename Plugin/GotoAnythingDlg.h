@@ -5,6 +5,8 @@
 #include "clGotoAnythingManager.h"
 #include "codelite_exports.h"
 #include <vector>
+#include "bitmap_loader.h"
+#include "clThemedListCtrl.h"
 
 // class WXDLLIMPEXP_SDK GotoAnythingItemData
 // {
@@ -21,7 +23,8 @@ class WXDLLIMPEXP_SDK GotoAnythingDlg : public GotoAnythingBaseDlg
 {
     const std::vector<clGotoEntry>& m_allEntries;
     wxString m_currentFilter;
-
+    clThemedListCtrl::BitmapVec_t m_bitmaps;
+    
 protected:
     virtual void OnItemActivated(wxDataViewEvent& event);
     // GotoAnythingItemData* GetSelectedItemData();

@@ -60,6 +60,7 @@ void clCustomScrollBar::UpdateScroll(int thumbSize, int range, int pageSize, int
 
 void clCustomScrollBar::OnPaint(wxPaintEvent& e)
 {
+    wxUnusedVar(e);
     wxAutoBufferedPaintDC bdc(this);
     wxGCDC dc(bdc);
 

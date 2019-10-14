@@ -504,3 +504,31 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
         }
     }
 }
+
+int clDataViewListCtrl::GetSelectedRow() const
+{
+    wxDataViewItem sel = GetSelection();
+    if(!sel.IsOk()) { return wxNOT_FOUND; }
+    return ItemToRow(sel);
+}
+
+void clDataViewListCtrl::SelectRow(size_t row)
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) { return; }
+    Select(item);
+}
+
+void clDataViewListCtrl::UnselectRow(size_t row)
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) { return; }
+    clTreeCtrl::SelectItem(TREE_ITEM(item), false);
+}
+
+bool clDataViewListCtrl::IsRowSelected(size_t row) const
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) { return false; }
+    return IsSelected(TREE_ITEM(item));
+}

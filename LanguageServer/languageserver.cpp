@@ -9,6 +9,7 @@
 #include "LanguageServerSettingsDlg.h"
 #include "cl_standard_paths.h"
 #include "CompileCommandsGenerator.h"
+#include <wx/app.h>
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -40,6 +41,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // Load the configuration
     LanguageServerConfig::Get().Load();
     m_servers.reset(new LanguageServerCluster());
+    
+    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -54,12 +57,12 @@ void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     menu->Append(XRCID("language-server-settings"), _("Settings"));
-    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     pluginsMenu->Append(wxID_ANY, _("Language Server"), menu);
 }
 
 void LanguageServerPlugin::UnPlug()
 {
+    wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
 }

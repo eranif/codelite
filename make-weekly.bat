@@ -1,73 +1,53 @@
-::
-:: Usage (64 bit):
-::
-:: make-weekly --upload --with-php
-:: make-weekly --upload
-:: make-weekly
-::
-:: Usage (32 bit):
-:: make-weekly --upload X86
-:: make-weekly --no-upload X86
-::
-@echo OFF
-IF "%2"=="32" GOTO MAKE_X86
-IF "%2"=="--with-php" GOTO MAKE_AMD64_PHP
-GOTO MAKE_AMD64
+@echo off
 
-:MAKE_AMD64
-:: 64 bit version
-set PATH=C:\Program Files\CodeLite;D:\software\Inno Setup 5;%PATH%
+:: Global environment variables
+set CL_SRC_DIR=C:\src\codelite
+set PATH=C:\Program Files\CodeLite;C:\Program Files (x86)\Inno Setup 6;%PATH%
 set WXCFG=gcc_dll/mswu
-set WXWIN=D:\src\wx-src
-set CL_CONFIG_NAME=Win_x64_Release
-set WXC_CONFIG_NAME=Win_x64_Release
-set UTILS_CONFIG_NAME=Win_x64_Release
-set ISCC_FILE=codelite64_mingw.iss
-set CYGWIN_BIN=D:\cygwin64\bin
-GOTO COMMON
 
-:MAKE_AMD64_PHP
-:: 64 bit version
-set PATH=C:\Program Files\CodeLite;D:\software\Inno Setup 5;%PATH%
-set WXCFG=gcc_dll/mswu
-set WXWIN=D:\src\wx-src
-set CL_CONFIG_NAME=Win_x64_Release_PHP
-set WXC_CONFIG_NAME=Win_x64_Release
-set UTILS_CONFIG_NAME=Win_x64_Release
-set ISCC_FILE=codelite64_php_mingw.iss
-set CYGWIN_BIN=D:\cygwin64\bin
-GOTO COMMON
+:: Build the 64 bit version
+call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\compilers\mingw64\bin
 
-:MAKE_X86
-set PATH=C:\Program Files (x86)\CodeLite;C:\Program Files (x86)\Inno Setup 5;%PATH%
-set WXCFG=gcc_dll/mswu
-set WXWIN=C:/src/wxWidgets.git
-set CL_CONFIG_NAME=Win_x86_Release
-set WXC_CONFIG_NAME=Win_x64_Release
-set UTILS_CONFIG_NAME=Win_x64_Release
-set ISCC_FILE=codelite_mingw.iss
-set CYGWIN_BIN=C:\cygwin\bin
-GOTO COMMON
+:: Build the 32 bit version
+call :MAKE_WEEKLY Win_x86_Release codelite_mingw.iss C:\src\wxWidgets32 C:\compilers\mingw64-i686\mingw32\bin
 
-:COMMON
-echo Building CodeLite (%CL_CONFIG_NAME%)
-cd C:\src\codelite
-codelite-make.exe --workspace=LiteEditor.workspace --project=CodeLiteIDE --config=%CL_CONFIG_NAME% --execute
+cd %CL_SRC_DIR%
 
-echo Building wxCrafter (%WXC_CONFIG_NAME%)
-cd C:\src\codelite\wxcrafter
-codelite-make.exe --workspace=wxcrafter.workspace --project=wxcrafter --config=%WXC_CONFIG_NAME% --execute
+exit 0
 
-echo Building Utils (%UTILS_CONFIG_NAME%)
-cd C:\src\codelite\codelite_utils
-codelite-make.exe  --workspace=codelite_utils.workspace --project=build_all --config=%UTILS_CONFIG_NAME% --execute
-
-echo "Packaging..."
-cd C:\src\codelite\InnoSetup
-iscc %ISCC_FILE%
-
-cd C:\src\codelite\InnoSetup\output
-%CYGWIN_BIN%\bash.exe --login /cygdrive/c/src/codelite/InnoSetup/output/finalize-upload.sh "%1"
-cd C:\src\codelite
-
-:: pause
+:: MAKE_WEEKLY method:
+:: This function accepts 4 parameters:
+:: @param configuration name
+:: @param InnoSetup file name
+:: @param wxWidgets directory 
+:: @param the BIN folder for the compiler. We add this to the %PATH% environment variable
+:MAKE_WEEKLY
+    set CONFIG_NAME=%~1
+    set ISCC_FILE=%~2
+    set WXWIN=%~3
+    set COMPILER_PATH=%~4
+    set PATH=%WXWIN%\lib\gcc_dll;%COMPILER_PATH%;%PATH%
+    cd %CL_SRC_DIR%
+    
+    codelite-make.exe --workspace=CodeLiteIDE.workspace --config=%CONFIG_NAME% --project=CodeLiteIDE > build.command
+    set /p BUILD_COMMAND=<build.command
+    del /Q build.command
+    
+    :: Execute the command
+    echo Building CodeLite %CONFIG_NAME%...
+    %BUILD_COMMAND%
+    
+    echo Packging CodeLite...
+    cd %CL_SRC_DIR%\InnoSetup
+    if exist installer.txt del /Q installer.txt
+    iscc %ISCC_FILE% > installer.txt
+    
+    set INSTALLER_NAME=""
+    FOR /f %%L IN (installer.txt) DO set INSTALLER_NAME=%%L
+    
+    echo Installer file: %INSTALLER_NAME%
+    cd %CL_SRC_DIR%
+    
+    echo Uploading CodeLite (config: %CONFIG_NAME%)
+    scp %INSTALLER_NAME% root@codelite.org:/var/www/html/downloads/codelite/wip
+    exit /B 0

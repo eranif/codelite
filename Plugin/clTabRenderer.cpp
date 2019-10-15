@@ -146,7 +146,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
         once = false;
     }
     
-    wxFont font = clTabRenderer::GetTabFont(true);
+    wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
 
     wxSize sz = dc.GetTextExtent(m_label);

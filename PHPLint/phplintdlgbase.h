@@ -56,8 +56,6 @@ protected:
     wxPanel* m_panelPhpstan;
     wxStaticText* m_staticText3;
     wxFilePickerCtrl* m_filePickerPhpstanPhar;
-    wxStaticText* m_staticText4;
-    wxFilePickerCtrl* m_filePickerPhpstanConfig;
     wxStdDialogButtonSizer* m_stdBtnSizer;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
@@ -78,8 +76,6 @@ public:
     wxPanel* GetPanelPhpmd() { return m_panelPhpmd; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     wxFilePickerCtrl* GetFilePickerPhpstanPhar() { return m_filePickerPhpstanPhar; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxFilePickerCtrl* GetFilePickerPhpstanConfig() { return m_filePickerPhpstanConfig; }
     wxPanel* GetPanelPhpstan() { return m_panelPhpstan; }
     wxNotebook* GetNotebook() { return m_notebook; }
     PHPLintBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("PHP Linter Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);

@@ -1677,10 +1677,6 @@
                  "m_label": "Style:",
                  "m_value": ""
                 }, {
-                 "type": "multi-string",
-                 "m_label": "Label:",
-                 "m_value": "Phpstan-config:"
-                }, {
                  "type": "string",
                  "m_label": "Wrap:",
                  "m_value": "-1"
@@ -1707,10 +1703,6 @@
                  "type": "string",
                  "m_label": "Minimum Size:",
                  "m_value": "-1,-1"
-                }, {
-                 "type": "string",
-                 "m_label": "Name:",
-                 "m_value": "m_filePickerPhpstanConfig"
                 }, {
                  "type": "multi-string",
                  "m_label": "Tooltip:",

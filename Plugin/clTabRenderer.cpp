@@ -142,10 +142,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
 
     static bool once = true;
     if(m_tabCtrl && once) {
+#if wxCHECK_VERSION(3, 1, 0)
         X_BUTTON_SIZE = m_tabCtrl->FromDIP(X_BUTTON_SIZE);
+#endif
         once = false;
     }
-    
+
     wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
 

@@ -13,7 +13,7 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     if(lexer) {
         lexer->Apply(m_stcIncludePaths);
     }
-    
+
     PHPConfigurationData data;
     data.Load();
 

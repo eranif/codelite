@@ -140,12 +140,14 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
+#if wxVERSION_NUMBER >= 3100
     static bool once = true;
     if(m_tabCtrl && once) {
         X_BUTTON_SIZE = m_tabCtrl->FromDIP(X_BUTTON_SIZE);
         once = false;
     }
-    
+#endif
+
     wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
 

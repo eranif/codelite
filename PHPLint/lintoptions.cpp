@@ -21,6 +21,11 @@ LintOptions::LintOptions()
                                    wxFileName::GetPathSeparator() + "php.conf";
 
         // If the file does not exist, create a new one
+        wxString buf;
+        if(FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
+            FileUtils::WriteFileContent(newConfigFile, "{}");
+        }
+        
         if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
 
         // Save it

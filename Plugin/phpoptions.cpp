@@ -30,6 +30,11 @@ PhpOptions::PhpOptions()
         m_errorReporting = oldJson.namedObject("m_errorReporting").toString(m_errorReporting);
 
         // Save it
+        wxString buf;
+        if(FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
+            FileUtils::WriteFileContent(newConfigFile, "{}");
+        }
+
         if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
 
         JSON newRoot(newConfigFile);

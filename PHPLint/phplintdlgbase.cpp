@@ -131,15 +131,6 @@ PHPLintBaseDlg::PHPLintBaseDlg(wxWindow* parent, wxWindowID id, const wxString& 
     
     flexGridSizer3->Add(m_filePickerPhpstanPhar, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
-    m_staticText4 = new wxStaticText(m_panelPhpstan, wxID_ANY, _("Phpstan-config:"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), 0);
-    
-    flexGridSizer3->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_filePickerPhpstanConfig = new wxFilePickerCtrl(m_panelPhpstan, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*.neon"), wxDefaultPosition, wxDLG_UNIT(m_panelPhpstan, wxSize(-1,-1)), wxFLP_USE_TEXTCTRL|wxFLP_SMALL);
-    m_filePickerPhpstanConfig->SetToolTip(_("Select the neon rules file to use with Phpstan"));
-    
-    flexGridSizer3->Add(m_filePickerPhpstanConfig, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
     wxBoxSizer* bSizerButtons = new wxBoxSizer(wxHORIZONTAL);
     
     bSizerMain->Add(bSizerButtons, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));

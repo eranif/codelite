@@ -197,7 +197,8 @@ void PHPLint::QueuePhpstanCommand(const wxString& phpPath, const wxString& file)
     wxString phpstanPath = phpstan.GetFullPath();
     ::WrapWithQuotes(phpstanPath);
 
-    m_queue.push_back(phpPath + " " + phpstanPath + " analyze --errorFormat=checkstyle --no-progress " + file);
+    m_queue.push_back(phpPath + " " + phpstanPath + " analyze -c " + wxGetCwd() +
+                      "/phpstan.neon --error-format=checkstyle --no-progress " + file);
 }
 
 void PHPLint::DoProcessQueue()
@@ -279,6 +280,11 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
 
     // Find the editor
     wxString filename = file->GetAttribute("name");
+    if(!filename.StartsWith("/")) {
+        // relative path
+        filename.Prepend(wxGetCwd() + "/");
+    }
+
     clDEBUG() << "PHPLint: searching editor for file:" << filename << clEndl;
     IEditor* editor = m_mgr->FindEditor(filename);
     CHECK_PTR_RET(editor);

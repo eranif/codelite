@@ -5,8 +5,8 @@
 
 class LintOptions : public clConfigItem
 {
-    bool m_lintOnFileLoad;
-    bool m_lintOnFileSave;
+    bool m_lintOnFileLoad = true;
+    bool m_lintOnFileSave = true;
     wxString m_phpcsPhar;
     wxString m_phpmdPhar;
     wxString m_phpmdRules;

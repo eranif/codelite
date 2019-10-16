@@ -1,12 +1,13 @@
 #include "cl_standard_paths.h"
 #include "lintoptions.h"
+#include "fileutils.h"
 #ifndef __WXMSW__
 #include "globals.h"
 #endif
 
 LintOptions::LintOptions()
     : clConfigItem("phplint")
-    , m_lintOnFileLoad(false)
+    , m_lintOnFileLoad(true)
     , m_lintOnFileSave(true)
     , m_phpcsPhar("")
     , m_phpmdPhar("")
@@ -19,16 +20,14 @@ LintOptions::LintOptions()
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                    wxFileName::GetPathSeparator() + "php.conf";
 
-        // first time, copy the values from the old settings
-        JSON root(oldConfigFile);
-        JSONItem oldJson = root.toElement().namedObject("PHPConfigurationData");
-        size_t m_flags = oldJson.namedObject("m_flags").toSize_t(m_flags) & (1 << 1);
-        m_lintOnFileSave = m_flags & (1 << 1);
+        // If the file does not exist, create a new one
+        if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
 
         // Save it
         JSON newRoot(newConfigFile);
         JSONItem e = JSONItem::createObject(GetName());
         e.addProperty("lintOnFileSave", m_lintOnFileSave);
+        e.addProperty("lintOnFileLoad", m_lintOnFileLoad);
         newRoot.toElement().append(e);
         newRoot.save(newConfigFile);
     }

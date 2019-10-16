@@ -4,6 +4,7 @@
 #include "cl_standard_paths.h"
 #include <wx/filename.h>
 #include "globals.h"
+#include "fileutils.h"
 
 PhpOptions::PhpOptions()
     : clConfigItem("PHPConfigurationData")
@@ -11,19 +12,25 @@ PhpOptions::PhpOptions()
     , m_errorReporting("E_ALL & ~E_NOTICE")
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-        wxFileName::GetPathSeparator() + "php-general.conf";
+                               wxFileName::GetPathSeparator() + "php-general.conf";
     if(!newConfigFile.FileExists()) {
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
-            wxFileName::GetPathSeparator() + "php.conf";
+                                   wxFileName::GetPathSeparator() + "php.conf";
         // first time, copy the values from the old settings
         JSON root(oldConfigFile);
         JSONItem oldJson = root.toElement().namedObject("PHPConfigurationData");
 
         m_phpExe = oldJson.namedObject("m_phpExe").toString();
+        if(m_phpExe.empty()) {
+            wxFileName fnPHP;
+            if(::clFindExecutable("php", fnPHP)) { m_phpExe = fnPHP.GetFullPath(); }
+        }
+
         m_includePaths = oldJson.namedObject("m_includePaths").toArrayString();
-        m_errorReporting = oldJson.namedObject("m_errorReporting").toString();
+        m_errorReporting = oldJson.namedObject("m_errorReporting").toString(m_errorReporting);
 
         // Save it
+        if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
 
         JSON newRoot(newConfigFile);
         JSONItem e = JSONItem::createObject(GetName());
@@ -40,7 +47,7 @@ PhpOptions::~PhpOptions() {}
 void PhpOptions::FromJSON(const JSONItem& json)
 {
     m_phpExe = json.namedObject("m_phpExe").toString(m_phpExe);
-    if (m_phpExe.IsEmpty()) {
+    if(m_phpExe.IsEmpty()) {
         wxFileName phpExe;
         clFindExecutable("php", phpExe);
         m_phpExe = phpExe.GetFullPath();

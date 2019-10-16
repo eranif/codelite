@@ -5,6 +5,7 @@
 #include <event_notifier.h>
 #include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
+#include "globals.h"
 
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
@@ -26,8 +27,7 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     strPort << data.GetXdebugPort();
     m_textCtrlXDebugPort->ChangeValue(strPort);
     m_textCtrlHost->ChangeValue(data.GetXdebugHost());
-    SetName("PHPSettingsDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 PHPSettingsDlg::~PHPSettingsDlg() {}

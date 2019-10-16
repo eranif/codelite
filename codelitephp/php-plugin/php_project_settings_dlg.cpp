@@ -51,9 +51,8 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
 
     SetDirty(false);
     GetSizer()->Fit(this);
-    SetName("PHPProjectSettingsDlg");
-    WindowAttrManager::Load(this);
-
+    ::clSetDialogBestSizeAndPosition(this);
+    
     m_dvListCtrlFileMapping->Bind(
         wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);
     m_dvListCtrlFileMapping->Bind(

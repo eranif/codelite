@@ -75,8 +75,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatte
         m_notebook->SetSelection(0); // General
     }
 	m_pgPropClangFormatExePath->SetAttribute("ShowFullPath", 1);
-    SetName("CodeFormatterDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 void CodeFormatterDlg::InitDialog()

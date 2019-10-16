@@ -280,7 +280,7 @@ void PHPLint::ProcessXML(const wxString& lintOutput)
 
     // Find the editor
     wxString filename = file->GetAttribute("name");
-    if(!filename.StartsWith("/")) {
+    if(!wxFileName(filename).IsAbsolute()) {
         // relative path
         filename.Prepend(wxGetCwd() + "/");
     }

@@ -116,6 +116,11 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
         once = true;
     }
     style = (style & ~wxWINDOW_STYLE_MASK); // filter out wxWindow styles
+
+#if CL_BUILD
+    style |= kNotebook_DynamicColours;
+#endif
+
     Bind(wxEVT_SIZE, &Notebook::OnSize, this);
     Bind(wxEVT_SIZING, &Notebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);

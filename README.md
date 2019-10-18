@@ -1,7 +1,9 @@
+[![CircleCI](https://circleci.com/gh/eranif/codelite.svg?style=svg)](https://circleci.com/gh/eranif/codelite)
+[![Join the chat at https://gitter.im/eranif/codelite](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eranif/codelite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+
 What is CodeLite?
 ====
-Circele CI build status: [![CircleCI](https://circleci.com/gh/eranif/codelite.svg?style=svg)](https://circleci.com/gh/eranif/codelite)
-[![Join the chat at https://gitter.im/eranif/codelite](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/eranif/codelite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [CodeLite][1] is a free, open source, cross platform IDE specialized in C, C++, PHP and JavaScript (mainly for backend developers using Node.js) programming languages, which runs best on all major platforms (Windows, macOS and Linux).
 

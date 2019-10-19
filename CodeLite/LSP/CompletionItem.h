@@ -2,9 +2,9 @@
 #define COMPLETIONITEM_H
 
 #include "LSP/JSONObject.h"
+#include "LSP/basic_types.h"
 #include <vector>
 #include <wx/sharedptr.h>
-#include "LSP/basic_types.h"
 
 namespace LSP
 {
@@ -18,6 +18,7 @@ class WXDLLIMPEXP_CL CompletionItem : public Serializable
     wxString m_insertText;
     wxString m_insertTextFormat;
     wxSharedPtr<LSP::TextEdit> m_textEdit;
+    std::vector<wxSharedPtr<TextEdit>> m_vAdditionalText;
 
 public:
     enum eTriggerKind {
@@ -81,6 +82,7 @@ public:
     bool HasTextEdit() const { return m_textEdit != nullptr; }
     void SetInsertTextFormat(const wxString& insertTextFormat) { this->m_insertTextFormat = insertTextFormat; }
     const wxString& GetInsertTextFormat() const { return m_insertTextFormat; }
+    const std::vector<wxSharedPtr<TextEdit>>& GetAdditionalText() const { return m_vAdditionalText; }
 };
 
 }; // namespace LSP

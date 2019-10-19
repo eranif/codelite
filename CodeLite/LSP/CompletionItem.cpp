@@ -1,4 +1,5 @@
 #include "CompletionItem.h"
+#include "JSON.h"
 
 LSP::CompletionItem::CompletionItem() {}
 
@@ -15,13 +16,23 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     m_filterText = json.namedObject("filterText").toString();
     m_insertText = json.namedObject("insertText").toString();
     m_insertTextFormat = json.namedObject("insertTextFormat").toString();
-    
+    m_vAdditionalText.clear();
+    if(json.hasNamedObject("additionalTextEdits")) {
+        JSONItem additionalTextEdits = json.namedObject("additionalTextEdits");
+        int count = additionalTextEdits.arraySize();
+        for(int i = 0; i < count; ++i) {
+            wxSharedPtr<TextEdit> edit(new TextEdit());
+            edit->FromJSON(additionalTextEdits.arrayItem(i));
+            m_vAdditionalText.push_back(edit);
+        }
+    }
+
     m_insertText.Trim().Trim(false);
     m_label.Trim().Trim(false);
     m_detail.Trim().Trim(false);
     m_documentation.Trim().Trim(false);
-    if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) { 
+    if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) {
         m_textEdit.reset(new LSP::TextEdit());
-        m_textEdit->FromJSON(json.namedObject("textEdit")); 
+        m_textEdit->FromJSON(json.namedObject("textEdit"));
     }
 }

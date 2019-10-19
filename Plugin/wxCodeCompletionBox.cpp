@@ -1,3 +1,4 @@
+#include "ColoursAndFontsManager.h"
 #include "CxxTemplateFunction.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
@@ -14,14 +15,11 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/display.h>
 #include <wx/font.h>
 #include <wx/stc/stc.h>
-#include <wx/dcgraph.h>
-#include "ieditor.h"
-#include "imanager.h"
-#include <wx/display.h>
-#include "ColoursAndFontsManager.h"
 
 static int LINES_PER_PAGE = 8;
 static int Y_SPACER = 2;
@@ -899,7 +897,19 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
             entry->SetIsSnippet(true);
         } else if(ch == L'•') {
             // this completion entry triggers an #include insertion
-            entry->SetTriggerInclude(true);
+            entry->SetTriggerInclude(!completion->GetAdditionalText().empty());
+            if(entry->IsTriggerInclude()) {
+                const auto& v = completion->GetAdditionalText();
+                comment = v[0]->GetNewText();
+                comment.Trim().Trim(false);
+                if(comment.Contains("\"")) {
+                    comment = comment.AfterFirst('"');
+                    comment.Prepend("\"");
+                } else if(comment.Contains("<")) {
+                    comment = comment.AfterFirst('<');
+                    comment.Prepend("<");
+                }
+            }
         }
 
         entry->SetImgIndex(imgIndex);

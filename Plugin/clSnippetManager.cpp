@@ -15,7 +15,7 @@ void clSnippetManager::Insert(wxStyledTextCtrl* ctrl, const wxString& snippet)
 {
     if(!ctrl) { return; }
     int curpos = wxNOT_FOUND;
-    if(ctrl->GetSelectionEmpty()) {
+    if(ctrl->GetSelectedText.empty()) {
         curpos = ctrl->GetCurrentPos();
     } else {
         curpos = std::min(ctrl->GetSelectionStart(), ctrl->GetSelectionEnd());

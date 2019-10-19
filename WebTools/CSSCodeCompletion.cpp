@@ -4,7 +4,7 @@
 #include <wx/stc/stc.h>
 #include "wxCodeCompletionBox.h"
 #include <wx/xrc/xmlres.h>
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 #include "JSON.h"
 #include <wx/tokenzr.h>

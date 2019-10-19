@@ -27,7 +27,7 @@
 #define WXCODECOMPLETIONBOX_H
 
 #include "wxCodeCompletionBoxBase.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include <wx/arrstr.h>
 #include <wx/sharedptr.h>
 #include <vector>

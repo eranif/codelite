@@ -886,7 +886,17 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
             // According to the spec: if textEdit exists, we ignore 'insertText'
             insertText = completion->GetTextEdit()->GetNewText();
         }
+
         entry->SetInsertText(insertText);
+        // Handle special cases
+        if(text.StartsWith("include <")) {
+            // include statement
+            entry->SetInsertText("include <|>");
+            entry->SetIsSnippet(true);
+        } else if(text.StartsWith("include \"")) {
+            entry->SetInsertText("include \"|\"");
+            entry->SetIsSnippet(true);
+        }
         entry->SetImgIndex(imgIndex);
         entry->SetComment(comment);
         entry->SetIsFunction(completion->GetKind() == LSP::CompletionItem::kKindConstructor ||

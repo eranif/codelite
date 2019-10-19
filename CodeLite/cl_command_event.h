@@ -30,7 +30,7 @@
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
 #include "entry.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>

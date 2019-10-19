@@ -159,6 +159,8 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="clSnippetManager.cpp"/>
+    <File Name="clSnippetManager.hpp"/>
     <VirtualDirectory Name="clangd">
       <File Name="CompileFlagsTxt.cpp"/>
       <File Name="CompileFlagsTxt.h"/>

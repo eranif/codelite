@@ -11,7 +11,7 @@
 #include "JSON.h"
 #include "macros.h"
 #include "navigationmanager.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
 #include <wx/app.h>

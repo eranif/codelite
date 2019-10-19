@@ -51,8 +51,6 @@ void PluginMgrDlg::Initialize()
 
     // Clear the list
     m_dvListCtrl->DeleteAllItems();
-
-    PluginInfo::PluginMap_t::const_iterator iter = pluginsMap.begin();
     for(const auto& vt : pluginsMap) {
         const PluginInfo& info = vt.second;
         wxVector<wxVariant> cols;

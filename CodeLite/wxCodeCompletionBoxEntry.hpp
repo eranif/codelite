@@ -128,8 +128,8 @@ public:
     void SetIsTemplateFunction(bool isTemplateFunction) { EnableFlag(isTemplateFunction, kIsTemplateFunction); }
     bool IsTemplateFunction() const { return HasFlag(kIsTemplateFunction); }
     
-    //void SetIsFunction(bool isFunction) { EnableFlag(isFunction, kIsFunction); }
-    //bool IsFunction() const { return HasFlag(kIsFunction); }
+    void SetIsSnippet(bool isSnippet) { EnableFlag(isSnippet, kIsSnippet); }
+    bool IsSnippet() const { return HasFlag(kIsSnippet); }
     
     void SetSignature(const wxString& signature) { this->m_signature = signature; }
     const wxString& GetSignature() const { return m_signature; }

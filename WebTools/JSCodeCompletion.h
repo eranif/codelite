@@ -30,7 +30,7 @@
 #include <wx/event.h>
 #include "smart_ptr.h"
 #include "clTernServer.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include "cl_calltip.h"
 #include "clJSCTags.h"
 #include "ServiceProvider.h"

@@ -48,7 +48,7 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     if(!completions.empty()) {
         LSPEvent event(wxEVT_LSP_COMPLETION_READY);
         event.SetCompletions(completions);
-        owner->AddPendingEvent(event);
+        owner->QueueEvent(event.Clone());
     }
 }
 

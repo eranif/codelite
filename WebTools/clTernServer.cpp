@@ -14,7 +14,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "processreaderthread.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/regex.h>

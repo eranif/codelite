@@ -29,7 +29,7 @@
 #include "wx/event.h" // Base class: wxEvtHandler
 #include <wx/filename.h>
 #include <wx/arrstr.h>
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include "clTernWorkerThread.h"
 #include "cl_calltip.h"
 #include "JSON.h"

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/stc/stc.h>
+#include "clSnippetManager.hpp"
 
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
@@ -128,8 +129,7 @@ int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
         if((ch >= 97 && ch <= 122)       // a-z
            || (ch >= 65 && ch <= 90)     // A-Z
            || (ch == '_') || (ch == '$') // _ or $ (for PHP)
-           || (ch >= '0' && ch <= '9')
-           || (includeNekudotaiim && (ch == ':'))) {
+           || (ch >= '0' && ch <= '9') || (includeNekudotaiim && (ch == ':'))) {
             continue;
         }
         ++from;
@@ -143,6 +143,7 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     IManager* manager = ::clGetManager();
     IEditor* editor = manager->GetActiveEditor();
     wxString entryText = match->GetInsertText();
+    wxString entryLabel = match->GetText();
     if(editor) {
         wxStyledTextCtrl* ctrl = editor->GetCtrl();
         bool addParens(false);
@@ -173,8 +174,10 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
                 moveCaretRight = true;
             }
         }
-
-        if(match->IsFunction()) {
+        if(match->IsSnippet()) {
+            clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
+            
+        } else if(match->IsFunction()) {
             // a function like
             wxString textToInsert = entryText.BeforeFirst('(');
 

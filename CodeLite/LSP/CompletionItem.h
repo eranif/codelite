@@ -16,6 +16,7 @@ class WXDLLIMPEXP_CL CompletionItem : public Serializable
     wxString m_documentation;
     wxString m_filterText;
     wxString m_insertText;
+    wxString m_insertTextFormat;
     wxSharedPtr<LSP::TextEdit> m_textEdit;
 
 public:
@@ -78,6 +79,8 @@ public:
     const wxString& GetLabel() const { return m_label; }
     wxSharedPtr<LSP::TextEdit> GetTextEdit() { return m_textEdit; }
     bool HasTextEdit() const { return m_textEdit != nullptr; }
+    void SetInsertTextFormat(const wxString& insertTextFormat) { this->m_insertTextFormat = insertTextFormat; }
+    const wxString& GetInsertTextFormat() const { return m_insertTextFormat; }
 };
 
 }; // namespace LSP

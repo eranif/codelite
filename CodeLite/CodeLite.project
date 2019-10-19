@@ -191,6 +191,7 @@
     <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
+    <File Name="wxCodeCompletionBoxEntry.hpp"/>
     <File Name="y.tab.h"/>
     <File Name="cl_process.h"/>
     <File Name="cpp_scanner.h"/>
@@ -234,7 +235,6 @@
     <File Name="StdToWX.cpp"/>
     <File Name="codelite_events.h"/>
     <File Name="codelite_events.cpp"/>
-    <File Name="wxCodeCompletionBoxEntry.h"/>
     <File Name="wxStringHash.h"/>
     <File Name="MSWPrivate.h"/>
   </VirtualDirectory>

@@ -31,7 +31,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
-#include "wxCodeCompletionBoxEntry.h"
+#include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
 #include <wx/app.h>

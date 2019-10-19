@@ -39,6 +39,15 @@
 class wxStyledTextCtrl;
 class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
 {
+public:
+    enum eFlags {
+        kIsFunction = (1 << 0),
+        kIsTemplate = (1 << 1),
+        kIsSnippet = (1 << 2),
+        kIsTemplateFunction = (1 << 3),
+    };
+
+protected:
     wxString m_text;
     wxString m_comment;
     wxString m_insertText;
@@ -50,9 +59,20 @@ class WXDLLIMPEXP_CL wxCodeCompletionBoxEntry
     TagEntryPtr m_tag; // Internal
     int m_weight;
     wxBitmap m_alternateBitmap;
-    bool m_isFunction = false;
-    bool m_isTemplateFunction = false;
     wxString m_signature; // when IsFunction() is true
+    size_t m_flags = 0;
+
+protected:
+    void EnableFlag(bool b, eFlags f)
+    {
+        if(b) {
+            this->m_flags |= f;
+        } else {
+            this->m_flags &= ~f;
+        }
+    }
+
+    bool HasFlag(eFlags f) const { return this->m_flags & f; }
 
 public:
     typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
@@ -102,14 +122,18 @@ public:
     const LSP::Range& GetInsertRange() const { return m_insertRage; }
     const wxString& GetInsertText() const { return m_insertText; }
 
-    void SetIsFunction(bool isFunction) { this->m_isFunction = isFunction; }
-    bool IsFunction() const { return m_isFunction; }
+    void SetIsFunction(bool isFunction) { EnableFlag(isFunction, kIsFunction); }
+    bool IsFunction() const { return HasFlag(kIsFunction); }
 
-    void SetIsTemplateFunction(bool isTemplateFunction) { this->m_isTemplateFunction = isTemplateFunction; }
-    bool IsTemplateFunction() const { return m_isTemplateFunction; }
+    void SetIsTemplateFunction(bool isTemplateFunction) { EnableFlag(isTemplateFunction, kIsTemplateFunction); }
+    bool IsTemplateFunction() const { return HasFlag(kIsTemplateFunction); }
+    
+    //void SetIsFunction(bool isFunction) { EnableFlag(isFunction, kIsFunction); }
+    //bool IsFunction() const { return HasFlag(kIsFunction); }
+    
     void SetSignature(const wxString& signature) { this->m_signature = signature; }
     const wxString& GetSignature() const { return m_signature; }
-    
+
     /**
      * @brief return the associated tag (might be null)
      */

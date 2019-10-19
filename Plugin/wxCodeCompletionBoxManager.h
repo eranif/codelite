@@ -48,7 +48,8 @@ protected:
     void DestroyCurrent();
     void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match);
     void InsertSelectionTemplateFunction(const wxString& selection);
-
+    void ShowAddIncludeDialog(const wxString& include);
+    
     // Handle the current editor events
     void OnStcModified(wxStyledTextEvent& event);
     void OnStcCharAdded(wxStyledTextEvent& event);

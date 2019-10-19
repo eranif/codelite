@@ -888,6 +888,7 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
         }
 
         entry->SetInsertText(insertText);
+        wxChar ch = text.empty() ? 0 : text[0];
         // Handle special cases
         if(text.StartsWith("include <")) {
             // include statement
@@ -896,7 +897,11 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
         } else if(text.StartsWith("include \"")) {
             entry->SetInsertText("include \"|\"");
             entry->SetIsSnippet(true);
+        } else if(ch == L'•') {
+            // this completion entry triggers an #include insertion
+            entry->SetTriggerInclude(true);
         }
+
         entry->SetImgIndex(imgIndex);
         entry->SetComment(comment);
         entry->SetIsFunction(completion->GetKind() == LSP::CompletionItem::kKindConstructor ||

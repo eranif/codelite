@@ -4,27 +4,28 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_LITEEDITOR_ADDINCLUDEFILE_BASE_CLASSES_H
-#define _CODELITE_LITEEDITOR_ADDINCLUDEFILE_BASE_CLASSES_H
+#ifndef _CODELITE_PLUGIN_ADDINCLUDEFILE_BASE_CLASSES_H
+#define _CODELITE_PLUGIN_ADDINCLUDEFILE_BASE_CLASSES_H
 
-#include "clToolBar.h"
-#include <wx/artprov.h>
-#include <wx/button.h>
+// clang-format off
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/panel.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/stc/stc.h>
-#include <wx/textctrl.h>
 #include <wx/toolbar.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include "clToolBar.h"
+#include <wx/panel.h>
+#include <wx/stc/stc.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -36,6 +37,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class AddIncludeFileDlgBase : public wxDialog
 {

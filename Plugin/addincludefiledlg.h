@@ -26,14 +26,16 @@
 #define __addincludefiledlg__
 
 #include "addincludefiledlgbase.h"
+#include "codelite_exports.h"
 
-class AddIncludeFileDlg : public AddIncludeFileDlgBase
+class WXDLLIMPEXP_SDK AddIncludeFileDlg : public AddIncludeFileDlgBase
 {
     wxString m_fullpath;
     wxString m_text;
     int m_line;
     static wxArrayString m_includePath;
     wxString m_lineToAdd;
+    bool m_isLineToAddProvided = false;
 
 protected:
     void SetAndMarkLine();
@@ -46,7 +48,7 @@ protected:
 
     void OnPreviewKeyDown(wxKeyEvent& event);
     void OnIdle(wxIdleEvent& event);
-    
+
 public:
     /** Constructor */
     AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath, const wxString& text, int lineNo);

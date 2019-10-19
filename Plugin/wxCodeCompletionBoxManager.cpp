@@ -11,6 +11,7 @@
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 #include "clSnippetManager.hpp"
+#include "addincludefiledlg.h"
 
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
@@ -144,113 +145,118 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
     IEditor* editor = manager->GetActiveEditor();
     wxString entryText = match->GetInsertText();
     wxString entryLabel = match->GetText();
-    if(editor) {
-        wxStyledTextCtrl* ctrl = editor->GetCtrl();
-        bool addParens(false);
-        bool moveCaretRight = false;
-        bool moveCaretLeft = false;
-        int start = wxNOT_FOUND, end = wxNOT_FOUND;
-        std::vector<std::pair<int, int> > ranges;
-        if(ctrl->GetSelections() > 1) {
-            for(int i = 0; i < ctrl->GetSelections(); ++i) {
-                int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains(":"));
-                int nEnd = ctrl->GetSelectionNCaret(i);
-                ranges.push_back(std::make_pair(nStart, nEnd));
-            }
-            std::sort(ranges.begin(), ranges.end(), [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) {
-                return e1.first < e2.first;
-            });
-        } else {
-            // Default behviour: remove the partial text from the editor and replace it
-            // with the selection
-            start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains(":"));
-            end = ctrl->GetCurrentPos();
-            ctrl->SetSelection(start, end);
-            wxChar endChar = ctrl->GetCharAt(end);
-            if((ctrl->GetCharAt(end) != '(')) {
-                addParens = true;
-                moveCaretLeft = true;
-            } else if(endChar == '(') {
-                moveCaretRight = true;
-            }
+    if(!editor) { return; }
+
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    bool addParens(false);
+    bool moveCaretRight = false;
+    bool moveCaretLeft = false;
+    int start = wxNOT_FOUND, end = wxNOT_FOUND;
+    std::vector<std::pair<int, int> > ranges;
+    if(ctrl->GetSelections() > 1) {
+        for(int i = 0; i < ctrl->GetSelections(); ++i) {
+            int nStart = GetWordStartPos(ctrl, ctrl->GetSelectionNCaret(i), entryText.Contains(":"));
+            int nEnd = ctrl->GetSelectionNCaret(i);
+            ranges.push_back(std::make_pair(nStart, nEnd));
         }
-        if(match->IsSnippet()) {
-            clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
-            
-        } else if(match->IsFunction()) {
-            // a function like
-            wxString textToInsert = entryText.BeforeFirst('(');
+        std::sort(ranges.begin(), ranges.end(),
+                  [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) { return e1.first < e2.first; });
+    } else {
+        // Default behviour: remove the partial text from the editor and replace it
+        // with the selection
+        start = GetWordStartPos(ctrl, ctrl->GetCurrentPos(), entryText.Contains(":"));
+        end = ctrl->GetCurrentPos();
+        ctrl->SetSelection(start, end);
+        wxChar endChar = ctrl->GetCharAt(end);
+        if((ctrl->GetCharAt(end) != '(')) {
+            addParens = true;
+            moveCaretLeft = true;
+        } else if(endChar == '(') {
+            moveCaretRight = true;
+        }
+    }
+    if(match->IsSnippet()) {
+        clSnippetManager::Get().Insert(editor->GetCtrl(), match->GetInsertText());
 
-            // Build the function signature
-            wxString funcSig = match->GetSignature();
-            bool userProvidedSignature = (match->GetText().Find("(") != wxNOT_FOUND);
-            clDEBUG() << "Inserting selection:" << textToInsert;
-            clDEBUG() << "Signature is:" << funcSig;
+    } else if(match->IsFunction()) {
+        // a function like
+        wxString textToInsert = entryText.BeforeFirst('(');
 
-            // Check if already have an open paren, don't add another
-            if(addParens) { textToInsert << "()"; }
+        // Build the function signature
+        wxString funcSig = match->GetSignature();
+        bool userProvidedSignature = (match->GetText().Find("(") != wxNOT_FOUND);
+        clDEBUG() << "Inserting selection:" << textToInsert;
+        clDEBUG() << "Signature is:" << funcSig;
 
-            if(!ranges.empty()) {
-                // Multiple carets
-                int offset = 0;
-                for(size_t i = 0; i < ranges.size(); ++i) {
-                    int from = ranges.at(i).first;
-                    int to = ranges.at(i).second;
-                    from += offset;
-                    to += offset;
-                    // Once we enter that text into the editor, it will change the original
-                    // offsets (in most cases the entered text is larger than that typed text)
-                    offset += textToInsert.length() - (to - from);
-                    ctrl->Replace(from, to, textToInsert);
-                    ctrl->SetSelectionNStart(i, from + textToInsert.length());
-                    ctrl->SetSelectionNEnd(i, from + textToInsert.length());
-                }
-            } else {
-                ctrl->ReplaceSelection(textToInsert);
-                if(!userProvidedSignature || (!funcSig.IsEmpty() && (funcSig != "()"))) {
+        // Check if already have an open paren, don't add another
+        if(addParens) { textToInsert << "()"; }
 
-                    // Place the caret between the parenthesis
-                    int caretPos(wxNOT_FOUND);
-                    if(moveCaretLeft) {
-                        caretPos = start + textToInsert.length() - 1;
-                    } else if(moveCaretRight) {
-                        // Move the caret one char to the right
-                        caretPos = start + textToInsert.length() + 1;
-                    } else {
-                        caretPos = start + textToInsert.length();
-                    }
-
-                    ctrl->SetCurrentPos(caretPos);
-                    ctrl->SetSelection(caretPos, caretPos);
-
-                    // trigger a code complete for function calltip.
-                    // We do this by simply mimicing the user action of going to the menubar:
-                    // Edit->Display Function Calltip
-                    wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
-                    wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
-                }
+        if(!ranges.empty()) {
+            // Multiple carets
+            int offset = 0;
+            for(size_t i = 0; i < ranges.size(); ++i) {
+                int from = ranges.at(i).first;
+                int to = ranges.at(i).second;
+                from += offset;
+                to += offset;
+                // Once we enter that text into the editor, it will change the original
+                // offsets (in most cases the entered text is larger than that typed text)
+                offset += textToInsert.length() - (to - from);
+                ctrl->Replace(from, to, textToInsert);
+                ctrl->SetSelectionNStart(i, from + textToInsert.length());
+                ctrl->SetSelectionNEnd(i, from + textToInsert.length());
             }
         } else {
-            if(!ranges.empty()) {
-                // Multiple carets
-                int offset = 0;
-                for(size_t i = 0; i < ranges.size(); ++i) {
-                    int from = ranges.at(i).first;
-                    int to = ranges.at(i).second;
-                    from += offset;
-                    to += offset;
-                    // Once we enter that text into the editor, it will change the original
-                    // offsets (in most cases the entered text is larger than that typed text)
-                    offset += entryText.length() - (to - from);
-                    ctrl->Replace(from, to, entryText);
-                    ctrl->SetSelectionNStart(i, from + entryText.length());
-                    ctrl->SetSelectionNEnd(i, from + entryText.length());
+            ctrl->ReplaceSelection(textToInsert);
+            if(!userProvidedSignature || (!funcSig.IsEmpty() && (funcSig != "()"))) {
+
+                // Place the caret between the parenthesis
+                int caretPos(wxNOT_FOUND);
+                if(moveCaretLeft) {
+                    caretPos = start + textToInsert.length() - 1;
+                } else if(moveCaretRight) {
+                    // Move the caret one char to the right
+                    caretPos = start + textToInsert.length() + 1;
+                } else {
+                    caretPos = start + textToInsert.length();
                 }
-            } else {
-                // Default
-                ctrl->ReplaceSelection(entryText);
+
+                ctrl->SetCurrentPos(caretPos);
+                ctrl->SetSelection(caretPos, caretPos);
+
+                // trigger a code complete for function calltip.
+                // We do this by simply mimicing the user action of going to the menubar:
+                // Edit->Display Function Calltip
+                wxCommandEvent event(wxEVT_MENU, XRCID("function_call_tip"));
+                wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
             }
         }
+    } else {
+        if(!ranges.empty()) {
+            // Multiple carets
+            int offset = 0;
+            for(size_t i = 0; i < ranges.size(); ++i) {
+                int from = ranges.at(i).first;
+                int to = ranges.at(i).second;
+                from += offset;
+                to += offset;
+                // Once we enter that text into the editor, it will change the original
+                // offsets (in most cases the entered text is larger than that typed text)
+                offset += entryText.length() - (to - from);
+                ctrl->Replace(from, to, entryText);
+                ctrl->SetSelectionNStart(i, from + entryText.length());
+                ctrl->SetSelectionNEnd(i, from + entryText.length());
+            }
+        } else {
+            // Default
+            ctrl->ReplaceSelection(entryText);
+        }
+    }
+
+    if(match->IsTriggerInclude()) {
+        // The comment for this entry is the name of the include file that we want to add
+        // Tell CodeLite to launch the AddIncludeFile dialog
+        CallAfter(&wxCodeCompletionBoxManager::ShowAddIncludeDialog, match->GetComment());
     }
 }
 
@@ -385,5 +391,21 @@ void wxCodeCompletionBoxManager::DoShowCCBoxLSPItems(const LSP::CompletionItem::
     if(m_box && m_stc) {
         m_box->ShowCompletionBox(m_stc, items);
         DoConnectStcEventHandlers(m_stc);
+    }
+}
+
+void wxCodeCompletionBoxManager::ShowAddIncludeDialog(const wxString& include)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(!editor) { return; }
+    wxStyledTextCtrl* ctrl = editor->GetCtrl();
+    AddIncludeFileDlg dlg(EventNotifier::Get()->TopFrame(), include, ctrl->GetText(), 0);
+    if(dlg.ShowModal() == wxID_OK) {
+        // add the line to the current document
+        wxString lineToAdd = dlg.GetLineToAdd();
+        int line = dlg.GetLine();
+
+        long pos = ctrl->PositionFromLine(line);
+        ctrl->InsertText(pos, lineToAdd + (editor->GetEOL() == wxSTC_EOL_CRLF ? "\r\n" : "\n"));
     }
 }

@@ -38,7 +38,7 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_mainPanel->SetSizer(bSizer9);
 
     m_textCtrlPreview =
-        new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(400, 300)), 0);
+        new wxStyledTextCtrl(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), 0);
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -150,7 +150,6 @@ AddIncludeFileDlgBase::AddIncludeFileDlgBase(wxWindow* parent, wxWindowID id, co
     m_stdBtnSizer23->Realize();
 
     SetName(wxT("AddIncludeFileDlgBase"));
-    SetMinClientSize(wxSize(250, -1));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {

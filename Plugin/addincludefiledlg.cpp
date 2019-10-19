@@ -25,15 +25,14 @@
 #include "addincludefiledlg.h"
 #include "bitmap_loader.h"
 #include "editor_config.h"
-#include "frame.h"
 #include "globals.h"
 #include "lexer_configuration.h"
-#include "manager.h"
 #include "windowattrmanager.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
 #include <algorithm>
 #include <wx/wupdlock.h>
+#include "workspace.h"
 
 wxArrayString AddIncludeFileDlg::m_includePath;
 
@@ -47,6 +46,11 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     , m_text(text)
     , m_line(lineNo)
 {
+    if(m_fullpath.StartsWith("\"") || m_fullpath.StartsWith("<")) {
+        m_lineToAdd = "#include " + m_fullpath;
+        m_isLineToAddProvided = true;
+    }
+
     // Initialise the preview window
     UpdateLineToAdd();
     LexerConf::Ptr_t cppLex = EditorConfigST::Get()->GetLexer("C++");
@@ -73,9 +77,6 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     SetAndMarkLine();
     m_textCtrlPreview->EmptyUndoBuffer();
     m_textCtrlPreview->SetFocus();
-    SetName("AddIncludeFileDlg");
-    WindowAttrManager::Load(this);
-    CentreOnParent();
 
     // Only call OnModified when text was deleted or added
     Bind(wxEVT_IDLE, &AddIncludeFileDlg::OnIdle, this);
@@ -84,16 +85,22 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
     if(firstVisibleLine < 0) { firstVisibleLine = 0; }
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 AddIncludeFileDlg::~AddIncludeFileDlg() {}
 
 void AddIncludeFileDlg::UpdateLineToAdd()
 {
-    wxString line;
+    if(m_isLineToAddProvided) {
+        m_textCtrlFullPath->ChangeValue(m_fullpath);
+        return;
+    }
+    
     wxFileName fn(m_fullpath);
     m_textCtrlFullPath->ChangeValue(fn.GetFullPath());
 
+    wxString line;
     // try to get a match in the include path for this file
     wxString pp = fn.GetFullPath();
     pp.Replace(wxT("\\"), wxT("/"));
@@ -106,7 +113,7 @@ void AddIncludeFileDlg::UpdateLineToAdd()
     if(rest.IsEmpty()) { rest = fn.GetFullName(); }
 
     wxString errMsg;
-    wxString projectName = clMainFrame::Get()->GetMainBook()->GetActiveEditor()->GetProject();
+    wxString projectName = clGetManager()->GetActiveEditor()->GetProjectName();
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
     if(proj) {
         wxArrayString incls = proj->GetIncludePaths();
@@ -124,14 +131,13 @@ void AddIncludeFileDlg::UpdateLineToAdd()
     rest.Replace(wxT("\\"), wxT("/"));
     if(rest.StartsWith(wxT("/"))) { rest.Remove(0, 1); }
 
-    if(!ManagerST::Get()->IsFileInWorkspace(m_fullpath)) {
-        line << wxT("#include <") << rest << wxT(">");
+    wxString workspaceDir = clCxxWorkspaceST::Get()->GetFileName().GetPath();
+    bool isSystemHeader = !m_fullpath.StartsWith(workspaceDir);
 
-    } else {
-        line << wxT("#include \"") << rest << wxT("\"");
-    }
+    wxString delimopen = isSystemHeader ? "<" : "\"";
+    wxString delimclose = isSystemHeader ? ">" : "\"";
+    line << "#include " << delimopen << rest << delimclose;
     m_lineToAdd = line;
-    // m_textCtrlLineToAdd->ChangeValue(line);
 }
 
 void AddIncludeFileDlg::SetAndMarkLine()

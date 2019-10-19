@@ -45,6 +45,7 @@ public:
         kIsTemplate = (1 << 1),
         kIsSnippet = (1 << 2),
         kIsTemplateFunction = (1 << 3),
+        kTriggerInclude = (1 << 4),
     };
 
 protected:
@@ -127,12 +128,15 @@ public:
 
     void SetIsTemplateFunction(bool isTemplateFunction) { EnableFlag(isTemplateFunction, kIsTemplateFunction); }
     bool IsTemplateFunction() const { return HasFlag(kIsTemplateFunction); }
-    
+
     void SetIsSnippet(bool isSnippet) { EnableFlag(isSnippet, kIsSnippet); }
     bool IsSnippet() const { return HasFlag(kIsSnippet); }
-    
+
     void SetSignature(const wxString& signature) { this->m_signature = signature; }
     const wxString& GetSignature() const { return m_signature; }
+    
+    void SetTriggerInclude(bool isTriggerInclude) { EnableFlag(isTriggerInclude, kTriggerInclude); }
+    bool IsTriggerInclude() const { return HasFlag(kTriggerInclude); }
 
     /**
      * @brief return the associated tag (might be null)

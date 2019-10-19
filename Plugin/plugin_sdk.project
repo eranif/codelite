@@ -466,6 +466,11 @@
       <File Name="clGetTextFromUserDialog.h"/>
       <File Name="clGetTextFromUserDialog.cpp"/>
       <VirtualDirectory Name="CodeCompletionBox">
+        <File Name="addincludefiledlgbase.h"/>
+        <File Name="addincludefiledlgbase.cpp"/>
+        <File Name="addincludefiledlg.h"/>
+        <File Name="addincludefiledlg.cpp"/>
+        <File Name="AddIncludeFile.wxcp"/>
         <File Name="wxCodeCompletionBox.cpp"/>
         <File Name="wxCodeCompletionBox.h"/>
         <File Name="wxCodeCompletionBox.wxcp"/>
@@ -645,6 +650,7 @@
     <File Name="clResizableTooltipBase.wxcp"/>
     <File Name="clAboutDialogBase.wxcp"/>
     <VirtualDirectory Name="resources">
+      <File Name="AddIncludeFile_liteeditor_bitmaps.cpp"/>
       <File Name="clFileSystemWorkspaceDlgBase_plugin_bitmaps.cpp"/>
       <File Name="quickfindbarbase_bitmaps.cpp"/>
       <File Name="NewProjectDialogBase_plugin_bitmaps.cpp"/>

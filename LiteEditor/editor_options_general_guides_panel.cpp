@@ -23,9 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "editor_options_general_guides_panel.h"
 #include "globals.h"
 #include <wx/stc/stc.h>
-#include "editor_options_general_guides_panel.h"
+#include "cl_config.h"
 
 EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* parent)
     : EditorOptionsGeneralGuidesPanelBase(parent)
@@ -48,6 +49,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     m_pgPropDebuggerLineColour->SetValue(debuggerLineColour);
     m_pgPropWhitespaceVisibility->SetChoiceSelection(options->GetShowWhitspaces());
     m_pgPropCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
+    m_pgPropLineSpacing->SetValue(clConfig::Get().Read("extra_line_spacing", (int)0));
     
     // EOL
     // Default;Mac (CR);Windows (CRLF);Unix (LF)
@@ -57,9 +59,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     eolOptions.Add("Windows (CRLF)");
     eolOptions.Add("Unix (LF)");
     int eolSel = eolOptions.Index(options->GetEolMode());
-    if(eolSel != wxNOT_FOUND) {
-        m_pgPropEOLMode->SetChoiceSelection(eolSel);
-    }
+    if(eolSel != wxNOT_FOUND) { m_pgPropEOLMode->SetChoiceSelection(eolSel); }
 }
 
 void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
@@ -69,12 +69,12 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
     options->SetHighlightMatchedBraces(m_pgPropHighlightMatchedBrace->GetValue().GetBool());
     options->SetShowIndentationGuidelines(m_pgPropShowIndentGuidelines->GetValue().GetBool());
     options->SetHighlightCaretLine(m_pgPropEnableCaretLine->GetValue().GetBool());
-    
+
     wxColourPropertyValue carteLineColour, debuggerLineColour;
     carteLineColour << m_pgPropCaretLineColour->GetValue();
     debuggerLineColour << m_pgPropDebuggerLineColour->GetValue();
     options->SetCaretLineColour(carteLineColour.m_colour);
-    
+
     wxString eolMode = m_pgPropEOLMode->GetValueAsString();
     options->SetEolMode(eolMode);
     options->SetHideChangeMarkerMargin(m_pgPropHideEditMargin->GetValue().GetBool());
@@ -83,4 +83,5 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
     options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_pgPropHighlightDebuggerMarker->GetValue().GetBool());
     options->SetShowWhitspaces(m_pgPropWhitespaceVisibility->GetValue().GetInteger());
     options->SetCaretLineAlpha(m_pgPropCaretLineAlpha->GetValue().GetInteger());
+    clConfig::Get().Write("extra_line_spacing", (int)m_pgPropLineSpacing->GetValue().GetInteger());
 }

@@ -1,7 +1,7 @@
 #include "EditorOptionsGeneralEdit.h"
-#include "optionsconfig.h"
 #include "editor_config.h"
 #include "globals.h"
+#include "optionsconfig.h"
 
 EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     : EditorOptionsGeneralEditBase(parent)
@@ -18,9 +18,7 @@ EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     m_pgPropCommentsIndented->SetValue(options->GetIndentedComments());
 }
 
-EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit()
-{
-}
+EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit() {}
 
 void EditorOptionsGeneralEdit::OnValueChanged(wxPropertyGridEvent& event)
 {

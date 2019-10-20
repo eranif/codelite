@@ -549,7 +549,9 @@ void clEditor::SetProperties()
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
     CallTipUseStyle(1);
-
+    int lineSpacing = clConfig::Get().Read("extra_line_spacing", (int)0);
+    SetExtraAscent(lineSpacing);
+    SetExtraDescent(lineSpacing);
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
     MarkerEnableHighlight(options->IsHighlightFoldWhenActive());

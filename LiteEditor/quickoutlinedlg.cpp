@@ -46,7 +46,7 @@
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
-    : wxDialog(parent, id, title, pos, size, style | wxRESIZE_BORDER | wxDEFAULT_DIALOG_STYLE)
+    : wxDialog(parent, id, title, pos, size, style | wxDEFAULT_DIALOG_STYLE)
     , m_fileName(fileName)
 {
     wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);

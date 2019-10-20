@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_EDITOR_OPTIONS_GUIDES_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_EDITOR_OPTIONS_GUIDES_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -32,6 +33,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 {
@@ -47,6 +49,7 @@ protected:
     wxPGProperty* m_pgPropWhitespaces;
     wxPGProperty* m_pgPropWhitespaceVisibility;
     wxPGProperty* m_pgPropEOLMode;
+    wxPGProperty* m_pgPropLineSpacing;
     wxPGProperty* m_pgPropCaretLine;
     wxPGProperty* m_pgPropEnableCaretLine;
     wxPGProperty* m_pgPropCaretLineColour;
@@ -56,13 +59,13 @@ protected:
     wxPGProperty* m_pgPropDebuggerLineColour;
 
 protected:
-
 public:
     wxPropertyGridManager* GetPgMgrGeneral() { return m_pgMgrGeneral; }
-    EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                                        long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralGuidesPanelBase();
 };
-
 
 class EditorOptionsGeneralEditBase : public wxPanel
 {
@@ -86,7 +89,8 @@ protected:
 
 public:
     wxPropertyGridManager* GetPgMgrEdit() { return m_pgMgrEdit; }
-    EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                                 const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralEditBase();
 };
 

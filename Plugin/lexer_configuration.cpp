@@ -314,7 +314,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Reset all colours to use the default style colour
     bool defaultFontOK = defaultFont.IsOk();
     if(foundDefaultStyle) {
-        for(int i = 0; i < wxSTC_STYLE_LASTPREDEFINED; ++i) {
+        for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
             ctrl->StyleSetBackground(i, defaultStyle.GetBgColour());
             ctrl->StyleSetForeground(i, defaultStyle.GetFgColour());
             if(defaultFontOK) { ctrl->StyleSetFont(i, defaultFont); }
@@ -436,7 +436,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
         } // switch
     }
-return;
+
     // set the calltip font
     if(!tooltip) {
         wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);

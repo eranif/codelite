@@ -93,8 +93,8 @@
     <Ignorefiles/>
     <Regexes/>
     <Excludepaths>
-      <Path>Win_x64_Release\</Path>
       <Path>Win_x64_Debug\</Path>
+      <Path>Win_x64_Release\</Path>
     </Excludepaths>
     <Extensions>
       <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp;*.iss;*.sh]]>
@@ -693,7 +693,6 @@
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
-    <File Name="quickfindbarbase.fbp"/>
     <File Name="editor_options_codenav.fbp"/>
     <File Name="editor_options_right_margin.fbp"/>
     <File Name="editor_options_guides.fbp"/>

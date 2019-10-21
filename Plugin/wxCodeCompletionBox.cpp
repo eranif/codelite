@@ -726,16 +726,7 @@ void wxCodeCompletionBox::DoDestroyTipWindow()
 void wxCodeCompletionBox::DoShowCompletionBox()
 {
     CHECK_PTR_RET(m_stc);
-
-    // guesstimate a line height
-    wxMemoryDC dc;
-    wxBitmap bmp(1, 1);
-    dc.SelectObject(bmp);
-    wxFont font = m_stc->StyleGetFont(0);
-    dc.SetFont(font);
-    wxSize textSize = dc.GetTextExtent("Tp");
-
-    int lineHeight = textSize.y + 3; // 3 pixels margins
+    int lineHeight = m_stc->TextHeight(m_stc->GetCurrentLine());
     wxRect rect = GetRect();
 
     // determine the box x position

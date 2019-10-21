@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "Markup.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
@@ -35,14 +36,13 @@
 #include <algorithm>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/display.h>
 #include <wx/settings.h>
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>
-#include <wx/display.h>
-#include <wx/dcgraph.h>
-#include "ColoursAndFontsManager.h"
 
 const wxEventType wxEVT_TIP_BTN_CLICKED_UP = wxNewEventType();
 const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
@@ -189,7 +189,17 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     wxSize ccBoxSize = win->GetSize();
     wxSize tipSize = GetSize();
     pt.x += ccBoxSize.x;
+    int lineHeight = 20;
+    wxStyledTextCtrl* stc = nullptr;
+    if(focusEdior) {
+        stc = focusEdior->GetCtrl();
+    } else {
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        if(editor) { stc = editor->GetCtrl(); }
+    }
 
+    if(stc) { lineHeight = stc->TextHeight(stc->GetCurrentLine()); }
+    
     bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     bool vPositioned = false;
@@ -209,8 +219,8 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
             vPositioned = true;
             pt.y -= tipSize.y;
             if(!ccBoxIsAboveCaretLine) {
-                pt.y -= 20; // The CC box is placed under the caret line, but the tip will be placed
-                            // on top of the CC box - use 20 pixels so we don't hide the caret line
+                pt.y -= lineHeight; // The CC box is placed under the caret line, but the tip will be placed
+                                    // on top of the CC box
             }
 
             if(pt.y < 0) {
@@ -218,7 +228,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
                 pt = windowPos;
                 pt.y += ccBoxSize.y + 1;
                 if(ccBoxIsAboveCaretLine) {
-                    pt.y += 20; // dont hide the caret line
+                    pt.y += lineHeight; // dont hide the caret line
                 }
             }
         }

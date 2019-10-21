@@ -41,7 +41,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
     m_splitterH =
         new wxSplitterWindow(m_splitterPage52, wxID_ANY, wxDefaultPosition,
                              wxDLG_UNIT(m_splitterPage52, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME);
-    m_splitterH->SetSashGravity(0.5);
+    m_splitterH->SetSashGravity(0);
     m_splitterH->SetMinimumPaneSize(10);
 
     boxSizer58->Add(m_splitterH, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -65,7 +65,7 @@ SvnCommitDialogBaseClass::SvnCommitDialogBaseClass(wxWindow* parent, wxWindowID 
 
     m_splitterPage14 =
         new wxPanel(m_splitterH, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterH, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitterH->SplitVertically(m_panel1, m_splitterPage14, 0);
+    m_splitterH->SplitVertically(m_panel1, m_splitterPage14, 200);
 
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage14->SetSizer(boxSizer16);

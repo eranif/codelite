@@ -36,8 +36,8 @@
 #include "svn_local_properties.h"
 #include "svnsettingsdata.h"
 #include "windowattrmanager.h"
-#include <wx/tokenzr.h>
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 
 class CommitMessageStringData : public wxClientData
 {
@@ -85,10 +85,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     // These two classes will allow copy / paste etc using the keyboard on the STC classes
     m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
     m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
-
     DoCreateToolbar();
-    SetName("SvnCommitDialog");
-    GetSizer()->Fit(this);
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 
@@ -136,6 +133,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
     if(textLexer) { textLexer->Apply(m_stcMessage); }
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 SvnCommitDialog::~SvnCommitDialog()
@@ -319,12 +317,13 @@ void SvnCommitDialog::OnShowCommitHistoryDropDown(wxCommandEvent& event)
 {
     wxMenu menu;
     menu.Append(XRCID("commit-history-last-message"), _("Insert Last Message"));
-    menu.Bind(wxEVT_MENU,
-              [&](wxCommandEvent& event) {
-                  wxArrayString lastMessages, previews;
-                  m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
-                  if(!lastMessages.empty()) { m_stcMessage->SetText(lastMessages.Item(0)); }
-              },
-              XRCID("commit-history-last-message"));
+    menu.Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& event) {
+            wxArrayString lastMessages, previews;
+            m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
+            if(!lastMessages.empty()) { m_stcMessage->SetText(lastMessages.Item(0)); }
+        },
+        XRCID("commit-history-last-message"));
     m_toolbar->ShowMenuForButton(event.GetId(), &menu);
 }

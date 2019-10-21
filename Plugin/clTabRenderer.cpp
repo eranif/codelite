@@ -258,7 +258,7 @@ clTabRenderer::clTabRenderer(const wxString& name)
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-    if(bold) { f.SetWeight(wxFONTWEIGHT_BOLD); }
+    if(bold || true) { f.SetWeight(wxFONTWEIGHT_BOLD); }
     return f;
 }
 

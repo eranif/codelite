@@ -88,9 +88,7 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
 {
     m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                   wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
-
-    SetName("ReconcileProjectDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 ReconcileProjectDlg::~ReconcileProjectDlg() {}
@@ -202,7 +200,7 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 
                 if(attemptAllocation) {
                     wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
-                    if (virtualFolder.empty() && fn.GetPath().empty()) {
+                    if(virtualFolder.empty() && fn.GetPath().empty()) {
                         virtualFolder = m_projname; // This must be a top-level file
                     }
                     if(!virtualFolder.empty()) {
@@ -331,7 +329,7 @@ void ReconcileProjectDlg::OnAddFile(wxCommandEvent& event)
     if(guessed && !suggestedPath.empty()) {
         selector.SelectPath(m_projname + ':' + suggestedPath);
     } else {
-        selector.SelectPath(m_projname);  // Either a top-level file, or a top-level dir that's not yet in the VDir tree
+        selector.SelectPath(m_projname); // Either a top-level file, or a top-level dir that's not yet in the VDir tree
     }
     selector.SetSuggestedName(suggestedName);
 
@@ -385,7 +383,7 @@ bool ReconcileProjectDlg::GuessNewVirtualDirName(wxString& suggestedPath, wxStri
     wxString pathSegments(fn.GetPath());
     pathSegments.Replace(wxFILE_SEP_PATH, ":");
 
-    if (pathSegments.empty()) { return true; } // This must be a top-level file
+    if(pathSegments.empty()) { return true; } // This must be a top-level file
 
     VirtualDirectoryTree vdTree;
     vdTree.BuildTree(m_projname);
@@ -394,14 +392,15 @@ bool ReconcileProjectDlg::GuessNewVirtualDirName(wxString& suggestedPath, wxStri
         if(!virtualFolder.empty()) {
             suggestedPath = path;
             suggestedPath.Replace(wxFILE_SEP_PATH, ":");
-            suggestedName = pathSegments.Mid(suggestedPath.Len()+1);
+            suggestedName = pathSegments.Mid(suggestedPath.Len() + 1);
             return true;
         }
 
-        path=path.BeforeLast(wxFILE_SEP_PATH);
+        path = path.BeforeLast(wxFILE_SEP_PATH);
     } while(!path.empty());
 
-    suggestedName = pathSegments; // This may be a top-level dir not in the VDir tree. pathSegments holds the likely name
+    suggestedName =
+        pathSegments; // This may be a top-level dir not in the VDir tree. pathSegments holds the likely name
     return false;
 }
 
@@ -615,8 +614,7 @@ ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, con
     m_listCtrlRegexes->AppendColumn("Regex");
     m_listCtrlRegexes->AppendColumn("Virtual Directory");
 
-    SetName("ReconcileProjectFiletypesDlg");
-    WindowAttrManager::Load(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 ReconcileProjectFiletypesDlg::~ReconcileProjectFiletypesDlg() {}

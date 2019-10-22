@@ -414,7 +414,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
                        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxRunAsSuperuser->SetValue(false);
     m_checkBoxRunAsSuperuser->SetToolTip(
-        _("On platforms that supports it, run gdb as superuser.\nThis is done by running gdb with 'sudo'"));
+        _("On platforms that support it, run gdb as superuser.\nThis is done by running gdb with 'sudo'"));
 
     boxSizer86->Add(m_checkBoxRunAsSuperuser, 0, wxALL, WXC_FROM_DIP(5));
 

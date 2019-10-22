@@ -11872,12 +11872,12 @@ msgid ""
 msgstr ""
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:388
-msgid "On platforms that supports it, run gdb as superuser"
+msgid "On platforms that support it, run gdb as superuser"
 msgstr ""
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:390
 msgid ""
-"On platforms that supports it, run gdb as superuser.\n"
+"On platforms that support it, run gdb as superuser.\n"
 "This is done by running gdb with 'sudo'"
 msgstr ""
 

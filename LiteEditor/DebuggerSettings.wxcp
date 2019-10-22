@@ -3191,7 +3191,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"On platforms that supports it, run gdb as superuser.\\nThis is done by running gdb with 'sudo'"
+																					"m_value":	"On platforms that support it, run gdb as superuser.\\nThis is done by running gdb with 'sudo'"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",
@@ -3231,7 +3231,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Label:",
-																					"m_value":	"On platforms that supports it, run gdb as superuser"
+																					"m_value":	"On platforms that support it, run gdb as superuser"
 																				}, {
 																					"type":	"bool",
 																					"m_label":	"Value:",

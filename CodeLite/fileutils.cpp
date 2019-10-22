@@ -551,8 +551,10 @@ wxString FileUtils::RealPath(const wxString& filepath)
 {
 #if defined(__WXGTK__) || defined(__WXOSX__)
     if(!filepath.empty()) {
+#if defined(__FreeBSD__)
         wxStructStat stbuff;
         if((::wxLstat(filepath, &stbuff) != 0) || !S_ISLNK(stbuff.st_mode)) { return filepath; }
+#endif
         char* buf = realpath(filepath.mb_str(wxConvUTF8), NULL);
         if(buf != NULL) {
             wxString result(buf, wxConvUTF8);
@@ -560,7 +562,7 @@ wxString FileUtils::RealPath(const wxString& filepath)
             return result;
         }
     }
-#endif
+#endif // defined(__WXGTK__) || defined(__WXOSX__)
 
     return filepath;
 }

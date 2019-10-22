@@ -2,6 +2,7 @@
 #include "CompilersDetectorManager.h"
 #include "build_settings_config.h"
 #include "clBootstrapWizard.h"
+#include "drawingutils.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
@@ -11,7 +12,6 @@
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
-#include "drawingutils.h"
 #include <wxStringHash.h>
 
 static std::vector<wxString> GetCxxPlugins()
@@ -37,11 +37,28 @@ static std::vector<wxString> GetCxxPlugins()
     return cxxPlugins;
 }
 
+static std::vector<wxString> GetCommonPlugins()
+{
+    static std::vector<wxString> cxxPlugins;
+    if(cxxPlugins.empty()) {
+        cxxPlugins.push_back("AutoSave");
+        cxxPlugins.push_back("Source Code Formatter");
+        cxxPlugins.push_back("CodeLite Vim");
+        cxxPlugins.push_back("Diff Plugin");
+        cxxPlugins.push_back("LanguageServerPlugin");
+        cxxPlugins.push_back("Outline");
+        cxxPlugins.push_back("SFTP");
+        cxxPlugins.push_back("Git");
+        cxxPlugins.push_back("ExternalTools");
+    }
+    return cxxPlugins;
+}
+
 static std::vector<wxString> GetAllPlugins()
 {
     static std::vector<wxString> allPlugins;
     static std::unordered_set<wxString> commonPlugins;
-    if(commonPlugins.empty()) { commonPlugins.insert("Source Code Formatter"); }
+    if(commonPlugins.empty()) { GetCommonPlugins(); }
     if(allPlugins.empty()) {
 
         clConfig conf("plugins.conf");
@@ -229,18 +246,30 @@ bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
         // C/C++ developer
         std::vector<wxString> cxxPlugins = GetCxxPlugins();
         std::vector<wxString> allPlugins = GetAllPlugins();
+        std::vector<wxString> commonPlugins = GetCommonPlugins();
+        
+        // Add the common plugins to the CXX ones
+        cxxPlugins.insert(cxxPlugins.end(), commonPlugins.begin(), commonPlugins.end());
+
         std::vector<wxString> webPlugins;
         std::sort(cxxPlugins.begin(), cxxPlugins.end());
         std::sort(allPlugins.begin(), allPlugins.end());
         std::set_difference(allPlugins.begin(), allPlugins.end(), cxxPlugins.begin(), cxxPlugins.end(),
                             std::back_inserter(webPlugins));
-        plugins.Clear();
-        std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
+        plugins.clear();
+        for(const wxString& plugin : webPlugins) {
+            plugins.Add(plugin);
+        }
         return true;
     } else if(profile == 3) {
         // C/C++ developer for blockchain
         std::vector<wxString> cxxPlugins = GetCxxPlugins();
         std::vector<wxString> allPlugins = GetAllPlugins();
+        std::vector<wxString> commonPlugins = GetCommonPlugins();
+        
+        // Add the common plugins to the CXX ones
+        cxxPlugins.insert(cxxPlugins.end(), commonPlugins.begin(), commonPlugins.end());
+
         std::vector<wxString> webPlugins;
         std::sort(cxxPlugins.begin(), cxxPlugins.end());
         std::sort(allPlugins.begin(), allPlugins.end());

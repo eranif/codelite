@@ -84,6 +84,8 @@ class clSSHChannelInteractiveThread : public clJoinableThread
     wxEvtHandler* m_handler;
     SSHChannel_t m_channel;
     wxMessageQueue<wxString>& m_Queue;
+    char m_buffer[4096];
+    wxRegEx m_reTTY;
 
 public:
     clSSHChannelInteractiveThread(wxEvtHandler* handler, SSHChannel_t channel, wxMessageQueue<wxString>& Q)
@@ -91,54 +93,64 @@ public:
         , m_channel(channel)
         , m_Queue(Q)
     {
+        m_reTTY.Compile("tty=([a-z/0-9]+)");
     }
     virtual ~clSSHChannelInteractiveThread() {}
 
+protected:
+    bool ReadChannel(bool isStderr)
+    {
+        // First, poll the channel
+        m_buffer[0] = 0;
+        int bytes = ssh_channel_read_nonblocking(m_channel, m_buffer, sizeof(m_buffer) - 1, 0);
+        if(bytes == SSH_ERROR) {
+            // an error
+            clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
+            m_handler->QueueEvent(event.Clone());
+            return false;
+        } else if(bytes == 0) {
+            // 0 is a valid output
+            // but we need to check for EOF
+            if(ssh_channel_is_eof(m_channel)) {
+                clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+                m_handler->QueueEvent(event.Clone());
+                return false;
+            } else {
+                // timeout occured
+                return true;
+            }
+        } else {
+            // we read something...
+            m_buffer[bytes] = 0;
+            wxString messageRead(m_buffer, wxConvUTF8);
+
+            // strip colours from the output
+            StringUtils::StripTerminalColouring(messageRead, messageRead);
+
+            if(m_reTTY.IsValid() && m_reTTY.Matches(messageRead)) {
+                wxString wholeMatch = m_reTTY.GetMatch(messageRead, 0);
+                clCommandEvent event(wxEVT_SSH_CHANNEL_PTY);
+                wxString tty = m_reTTY.GetMatch(messageRead, 1);
+                event.SetString(tty);
+                m_handler->QueueEvent(event.Clone());
+            }
+
+            if(!messageRead.IsEmpty()) {
+                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_OUTPUT);
+                event.SetString(messageRead);
+                m_handler->QueueEvent(event.Clone());
+            }
+            return true;
+        }
+    }
+
+public:
     void* Entry()
     {
         char buffer[4096];
         while(!TestDestroy()) {
-            // First, poll the channel
-            memset(buffer, 0, sizeof(buffer));
-            int bytes = ssh_channel_read_nonblocking(m_channel, buffer, sizeof(buffer) - 1, 0);
-            if(bytes == SSH_ERROR) {
-                // an error
-                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
-                m_handler->AddPendingEvent(event);
-                break;
-            } else if(bytes == 0) {
-                // 0 is a valid output
-                // but we need to check for EOF
-                if(ssh_channel_is_eof(m_channel)) {
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
-                    m_handler->AddPendingEvent(event);
-                    break;
-                } else {
-                    // do nothing...
-                }
-            } else {
-                // there is something to read
-                buffer[bytes] = 0;
-                wxString messageRead(buffer, wxConvUTF8);
-
-                // strip colours from the output
-                StringUtils::StripTerminalColouring(messageRead, messageRead);
-
-                wxRegEx reTTY("tty=([a-z/0-9]+)");
-                if(reTTY.Matches(messageRead)) {
-                    wxString wholeMatch = reTTY.GetMatch(messageRead, 0);
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_PTY);
-                    wxString tty = reTTY.GetMatch(messageRead, 1);
-                    event.SetString(tty);
-                    m_handler->AddPendingEvent(event);
-                }
-
-                if(!messageRead.IsEmpty()) {
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_READ_OUTPUT);
-                    event.SetString(messageRead);
-                    m_handler->AddPendingEvent(event);
-                }
-            }
+            if(!ReadChannel(false) || !ReadChannel(true)) { break; }
+            
             // Check if we got something to write
             wxString message;
             bool write_error = false;

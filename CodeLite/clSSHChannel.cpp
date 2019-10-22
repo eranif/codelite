@@ -1,6 +1,6 @@
+#include "StringUtils.h"
 #include "clSSHChannel.h"
 #include <wx/msgqueue.h>
-#include "StringUtils.h"
 #include <wx/regex.h>
 #if USE_SFTP
 #include "clJoinableThread.h"
@@ -21,6 +21,43 @@ class clSSHChannelReader : public clJoinableThread
     wxEvtHandler* m_handler;
     SSHChannel_t m_channel;
 
+protected:
+    bool ReadChannel(bool isStderr)
+    {
+        int nStderr = isStderr ? 1 : 0;
+        int bytes = ssh_channel_poll_timeout(m_channel, 50, nStderr);
+        if(bytes == SSH_ERROR) {
+            // an error
+            clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
+            m_handler->QueueEvent(event.Clone());
+            return false;
+        } else if(bytes == SSH_EOF) {
+            // channel closed
+            clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
+            m_handler->QueueEvent(event.Clone());
+            return false;
+        } else if(bytes == 0) {
+            // timeout
+            return true;
+        } else {
+            // there is something to read
+            char* buffer = new char[bytes + 1];
+            if(ssh_channel_read(m_channel, buffer, bytes, nStderr) != bytes) {
+                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
+                m_handler->QueueEvent(event.Clone());
+                wxDELETEA(buffer);
+                return false;
+            } else {
+                buffer[bytes] = 0;
+                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_OUTPUT);
+                event.SetString(wxString(buffer, wxConvUTF8));
+                m_handler->QueueEvent(event.Clone());
+                wxDELETEA(buffer);
+            }
+        }
+        return true;
+    }
+
 public:
     clSSHChannelReader(wxEvtHandler* handler, SSHChannel_t channel)
         : m_handler(handler)
@@ -33,34 +70,7 @@ public:
     {
         while(!TestDestroy()) {
             // First, poll the channel
-            int bytes = ssh_channel_poll_timeout(m_channel, 500, 0);
-            if(bytes == SSH_ERROR) {
-                // an error
-                clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
-                m_handler->AddPendingEvent(event);
-                break;
-            } else if(bytes == SSH_EOF) {
-                clCommandEvent event(wxEVT_SSH_CHANNEL_CLOSED);
-                m_handler->AddPendingEvent(event);
-                break;
-            } else if(bytes == 0) {
-                continue;
-            } else {
-                // there is something to read
-                char* buffer = new char[bytes + 1];
-                if(ssh_channel_read(m_channel, buffer, bytes, 0) != bytes) {
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_READ_ERROR);
-                    m_handler->AddPendingEvent(event);
-                    wxDELETEA(buffer);
-                    break;
-                } else {
-                    buffer[bytes] = 0;
-                    clCommandEvent event(wxEVT_SSH_CHANNEL_READ_OUTPUT);
-                    event.SetString(wxString(buffer, wxConvUTF8));
-                    m_handler->AddPendingEvent(event);
-                    wxDELETEA(buffer);
-                }
-            }
+            if(!ReadChannel(false) || !ReadChannel(true)) { break; }
         }
         return NULL;
     }

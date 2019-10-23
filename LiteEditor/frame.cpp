@@ -5474,6 +5474,7 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
 
     // Update the various configurations
     clConfig::Get().Write(kConfigShowToolBar, !minimalView);
+    clConfig::Get().Write(kConfigShowMenuBar, !minimalView);
     clConfig::Get().Write("MinimalView", !minimalView); // for next time
 
     // Update the captions settings

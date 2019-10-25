@@ -36,6 +36,7 @@ enum class eButtonState {
     kNormal,
     kPressed,
     kHover,
+    kDisabled,
 };
 
 enum class eButtonKind {

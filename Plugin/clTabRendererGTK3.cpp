@@ -76,9 +76,8 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     }
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
-    if(tabInfo.IsActive() && (style & kNotebook_CloseButtonOnActiveTab)) {
-        // Draw the X button
-        DrawButton(parent, dc, tabInfo, colours, buttonState);
+    if(style & kNotebook_CloseButtonOnActiveTab) {
+        DrawButton(parent, dc, tabInfo, colours, tabInfo.IsActive() ? buttonState : eButtonState::kDisabled);
     }
     if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style | kNotebook_UnderlineActiveTab); }
 }

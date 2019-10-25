@@ -112,7 +112,6 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
         // Add PNG and Bitmap handler
         wxImage::AddHandler(new wxPNGHandler);
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        Notebook_Init_Bitmaps();
         once = true;
     }
     style = (style & ~wxWINDOW_STYLE_MASK); // filter out wxWindow styles
@@ -148,7 +147,11 @@ bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, b
 
 void Notebook::SetStyle(size_t style)
 {
+    size_t oldStyle = m_tabCtrl->GetStyle();
+    bool oldVerticalState = (oldStyle & (kNotebook_RightTabs | kNotebook_LeftTabs));
+    bool newVerticalState = (style & (kNotebook_RightTabs | kNotebook_LeftTabs));
     m_tabCtrl->SetStyle(style);
+    if(oldVerticalState != newVerticalState) { m_tabCtrl->DoSetBestSize(); }
     PositionControls();
     m_tabCtrl->Refresh();
 }
@@ -270,6 +273,12 @@ void clTabCtrl::DoSetBestSize()
     m_nWidth = sz.GetWidth();
 
     if(IsVerticalTabs()) {
+        if(m_style & kNotebook_CloseButtonOnActiveTab) {
+            // add the button width
+            m_nWidth += 5;
+            m_nWidth += clTabRenderer::GetXButtonSize();
+            m_nWidth += 5;
+        }
         SetSizeHints(wxSize(m_nWidth, -1));
         SetSize(m_nWidth, -1);
     } else {
@@ -494,16 +503,17 @@ void clTabCtrl::UpdateVisibleTabs(bool forceReshuffle)
 void clTabCtrl::OnLeftDown(wxMouseEvent& event)
 {
     event.Skip();
+    const wxPoint& evetPos = event.GetPosition();
     m_closeButtonClickedIndex = wxNOT_FOUND;
 
-    if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
+    if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(evetPos)) {
         // we will handle this later in the "Mouse Up" event
         return;
     }
 
     int tabHit, realPos;
     eDirection align;
-    TestPoint(event.GetPosition(), realPos, tabHit, align);
+    TestPoint(evetPos, realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) return;
 
     // Did we hit the active tab?
@@ -518,7 +528,8 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
         // we clicked on the selected index
         clTabInfo::Ptr_t t = m_visibleTabs.at(tabHit);
         wxRect xRect = t->GetCloseButtonRect();
-        if(xRect.Contains(event.GetPosition())) {
+
+        if(xRect.Contains(evetPos)) {
             m_closeButtonClickedIndex = tabHit;
             m_xButtonState = eButtonState::kPressed;
             Refresh();
@@ -748,7 +759,7 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     if(m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
         wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
         if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
-           ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))) {
+            ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))) {
             OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
         }
     }
@@ -833,9 +844,7 @@ void clTabCtrl::SetStyle(size_t style)
         m_colours.InitLightColours();
     }
 
-    for(size_t i = 0; i < m_tabs.size(); ++i) {
-        m_tabs.at(i)->CalculateOffsets(GetStyle());
-    }
+    for(size_t i = 0; i < m_tabs.size(); ++i) { m_tabs.at(i)->CalculateOffsets(GetStyle()); }
 
     GetArt()->AdjustColours(m_colours, GetStyle());
     m_visibleTabs.clear();

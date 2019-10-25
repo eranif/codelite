@@ -479,7 +479,7 @@ wxString clFileSystemWorkspace::CompileFlagsAsString(const wxArrayString& arr) c
 wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 {
     if(!GetConfig()) { return wxEmptyString; }
-    const wxStringMap_t& M = m_settings.GetSelectedConfig()->GetBuildTargets();
+    const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
     if(M.count(target)) {
         wxString cmd = M.find(target)->second;
         if(!GetConfig()->IsRemoteEnabled()) { ::WrapInShell(cmd); }
@@ -647,7 +647,7 @@ void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
     CHECK_ACTIVE_CONFIG();
     wxMenu* menu = event.GetMenu();
     wxArrayString arrTargets;
-    const wxStringMap_t& targets = GetConfig()->GetBuildTargets();
+    const auto& targets = GetConfig()->GetBuildTargets();
     // Copy the targets to std::map to get a sorted results
     std::map<wxString, wxString> M;
     M.insert(targets.begin(), targets.end());

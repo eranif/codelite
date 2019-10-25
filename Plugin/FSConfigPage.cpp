@@ -1,14 +1,14 @@
-#include "FSConfigPage.h"
-#include "ColoursAndFontsManager.h"
-#include <wx/tokenzr.h>
 #include "BuildTargetDlg.h"
-#include "macros.h"
+#include "ColoursAndFontsManager.h"
+#include "FSConfigPage.h"
 #include "build_settings_config.h"
+#include "macros.h"
+#include <wx/tokenzr.h>
 
 #if USE_SFTP
-#include "sftp_settings.h"
 #include "SFTPBrowserDlg.h"
 #include "SSHAccountManagerDlg.h"
+#include "sftp_settings.h"
 #endif
 
 #define OPEN_SSH_ACCOUNT_MANAGER "-- Open SSH Account Manager --"
@@ -35,7 +35,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
     m_checkBoxCreateCompileFlags->SetValue(m_config->ShouldCreateCompileFlags());
-    const wxStringMap_t& targets = m_config->GetBuildTargets();
+    const auto& targets = m_config->GetBuildTargets();
     for(const auto& vt : targets) {
         wxDataViewItem item = m_dvListCtrlTargets->AppendItem(vt.first);
         m_dvListCtrlTargets->SetItemText(item, vt.second, 1);
@@ -95,7 +95,7 @@ void FSConfigPage::OnNewTarget(wxCommandEvent& event)
 
 void FSConfigPage::Save()
 {
-    wxStringMap_t targets;
+    std::map<wxString, wxString> targets;
     for(size_t i = 0; i < m_dvListCtrlTargets->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrlTargets->RowToItem(i);
         wxString name = m_dvListCtrlTargets->GetItemText(item, 0);

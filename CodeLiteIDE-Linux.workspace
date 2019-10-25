@@ -1,6 +1,6 @@
 {
  "workspace_type": "File System Workspace",
- "selected_config": "Debug",
+ "selected_config": "Release",
  "name": "CodeLiteIDE-Linux",
  "configs": [{
    "name": "Debug",
@@ -13,7 +13,7 @@
    "compiler": "",
    "remoteFolder": "",
    "remoteAccount": "eran@127.0.0.1",
-   "targets": [["install", "cd build-debug && make -j8 install"], ["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"]]
+   "targets": [["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"], ["install", "cd build-debug && make -j8 install"]]
   }, {
    "name": "Release",
    "flags": 1,

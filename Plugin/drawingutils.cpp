@@ -611,6 +611,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     case eButtonState::kPressed:
         flags = wxCONTROL_PRESSED;
         break;
+    case eButtonState::kDisabled:
+        flags = wxCONTROL_DISABLED;
+        break;
     default:
         break;
     }

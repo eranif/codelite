@@ -150,6 +150,8 @@ void clButtonBase::Render(wxDC& dc)
     case eButtonState::kPressed:
         bgColour = bgColour.ChangeLightness(isDark ? 70 : 80);
         break;
+    case eButtonState::kDisabled:
+        break;
     }
 
     if(isDark) {

@@ -134,6 +134,7 @@ class WXDLLIMPEXP_SDK clTabInfo
 public:
     clTabCtrl* m_tabCtrl;
     wxString m_label;
+    wxString m_shortLabel;
     wxString m_tooltip;
     wxWindow* m_window;
     wxRect m_rect;
@@ -152,6 +153,7 @@ public:
 public:
     void CalculateOffsets(size_t style);
     void CalculateOffsets(size_t style, wxDC& dc);
+    const wxString& GetBestLabel(size_t style) const;
 
 public:
     typedef wxSharedPtr<clTabInfo> Ptr_t;
@@ -169,6 +171,8 @@ public:
     void SetRect(const wxRect& rect) { this->m_rect = rect; }
     const wxBitmap& GetBitmap() const { return m_bitmap; }
     const wxString& GetLabel() const { return m_label; }
+    const wxString& GetShortLabel() const { return m_shortLabel; }
+    void SetShortLabel(const wxString& shortLabel) { this->m_shortLabel = shortLabel; }
     const wxRect& GetRect() const { return m_rect; }
     wxRect& GetRect() { return m_rect; }
     wxRect GetCloseButtonRect() const;

@@ -103,9 +103,9 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
                                                                                          : tabInfo.GetBitmap();
         dc.DrawBitmap(bmp, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
     }
-    
+
     wxRect rr = tabInfo.m_rect;
-    wxString label = tabInfo.m_label;
+    wxString label = tabInfo.GetBestLabel(style);
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
     if(bVerticalTabs) {
         // Check that the text can fit into the tab label
@@ -113,10 +113,10 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         int tabEndCoord = tabInfo.GetRect().GetRightTop().x;
         if((textEndCoord + clTabRenderer::GetMarkerWidth()) > tabEndCoord) {
             int newSize = tabEndCoord - tabInfo.m_textX;
-            DrawingUtils::TruncateText(tabInfo.m_label, newSize, dc, label);
+            DrawingUtils::TruncateText(label, newSize, dc, label);
         }
     }
-    
+
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(style & kNotebook_CloseButtonOnActiveTab) {
         DrawButton(parent, dc, tabInfo, colours, tabInfo.IsActive() ? buttonState : eButtonState::kDisabled);

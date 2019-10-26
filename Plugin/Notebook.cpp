@@ -129,18 +129,26 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
 Notebook::~Notebook() {}
 
-void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
+void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
+                       const wxString& shortLabel)
 {
     clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bmp));
+    wxString shortl = shortLabel;
+    if(shortl.empty() && !label.empty()) { shortl = label.Mid(0, wxMin(label.Length(), 3)).Upper(); }
+    tab->SetShortLabel(shortl);
     tab->SetActive(selected, GetStyle());
     m_tabCtrl->AddPage(tab);
 }
 
 void Notebook::DoChangeSelection(wxWindow* page) { m_windows->Select(page); }
 
-bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp)
+bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
+                          const wxString& shortLabel)
 {
     clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bmp));
+    wxString shortl = shortLabel;
+    if(shortl.empty() && !label.empty()) { shortl = label.Mid(0, wxMin(label.Length(), 3)).Upper(); }
+    tab->SetShortLabel(shortl);
     tab->SetActive(selected, GetStyle());
     return m_tabCtrl->InsertPage(index, tab);
 }
@@ -265,7 +273,12 @@ void clTabCtrl::DoSetBestSize()
     wxFont font = clTabRenderer::GetTabFont(true);
     gcdc.SetFont(font);
 
-    wxSize sz = gcdc.GetTextExtent("_WORKSPACE_");
+    wxString text;
+    for(clTabInfo::Ptr_t ti : m_tabs) {
+        if(text.length() < ti->GetBestLabel(m_style).length()) { text = ti->GetBestLabel(m_style); }
+    }
+    if(text.empty()) { text = "_WORKSPACE_"; }
+    wxSize sz = gcdc.GetTextExtent(text);
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
     m_nHeight = sz.GetHeight() + (4 * GetArt()->ySpacer);
@@ -273,6 +286,7 @@ void clTabCtrl::DoSetBestSize()
     m_nWidth = sz.GetWidth();
 
     if(IsVerticalTabs()) {
+        m_nWidth += 2 * GetArt()->xSpacer;
         if(m_style & kNotebook_CloseButtonOnActiveTab) {
             // add the button width
             m_nWidth += 5;
@@ -426,9 +440,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
         if(tab->IsActive()) { activeTabInex = i; }
 
-        // send event per tab to get their colours
-        clColourEvent colourEvent(wxEVT_COLOUR_TAB);
-        colourEvent.SetPage(tab->GetWindow());
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
         m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, m_xButtonState);
@@ -759,7 +770,7 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     if(m_dragStartTime.IsValid()) { // If we're tugging on the tab, consider starting D'n'D
         wxTimeSpan diff = wxDateTime::UNow() - m_dragStartTime;
         if(diff.GetMilliseconds() > 100 && // We need to check both x and y distances as tabs may be vertical
-            ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))) {
+           ((abs(m_dragStartPos.x - event.GetX()) > 10) || (abs(m_dragStartPos.y - event.GetY()) > 10))) {
             OnBeginDrag(); // Sufficient time and distance since the LeftDown for a believable D'n'D start
         }
     }

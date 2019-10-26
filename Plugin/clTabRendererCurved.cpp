@@ -26,12 +26,12 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
 {
     const int TOP_SMALL_HEIGHT = 0;
     bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    
+
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    
+
     if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
-    
+
     wxFont font = GetTabFont(false);
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
@@ -141,7 +141,8 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
                                                                                          : tabInfo.GetBitmap();
         dc.DrawBitmap(bmp, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
     }
-    fontDC.DrawText(tabInfo.m_label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
+    const wxString& label = tabInfo.GetBestLabel(style);
+    fontDC.DrawText(label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
     if(style & kNotebook_CloseButtonOnActiveTab) {
         DrawButton(parent, dc, tabInfo, colours, tabInfo.IsActive() ? buttonState : eButtonState::kDisabled);
     }

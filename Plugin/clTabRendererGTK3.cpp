@@ -64,7 +64,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
                                                                                          : tabInfo.GetBitmap();
         dc.DrawBitmap(bmp, tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
     }
-    wxString label = tabInfo.m_label;
+    wxString label = tabInfo.GetBestLabel(style);
     if(bVerticalTabs) {
         // Check that the text can fit into the tab label
         int textEndCoord = tabInfo.m_textX + tabInfo.m_textWidth;

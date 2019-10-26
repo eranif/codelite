@@ -151,7 +151,9 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
 
-    wxSize sz = dc.GetTextExtent(m_label);
+    bool bVerticalTabs = IS_VERTICAL_TABS(style);
+    // On vertical tabs, use the short label
+    wxSize sz = dc.GetTextExtent(GetBestLabel(style));
     wxSize fixedHeight = dc.GetTextExtent("Tp");
     m_height = fixedHeight.GetHeight() + (4 * Y_spacer);
 
@@ -163,8 +165,6 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_width += X_spacer;
     m_width += M_spacer;
     m_width += S_spacer;
-
-    bool bVerticalTabs = IS_VERTICAL_TABS(style);
 
     // x button
     wxRect xrect;
@@ -242,6 +242,15 @@ wxRect clTabInfo::GetCloseButtonRect() const
     return xRect.CenterIn(GetRect(), wxVERTICAL);
 }
 
+const wxString& clTabInfo::GetBestLabel(size_t style) const
+{
+    if((style & (kNotebook_RightTabs | kNotebook_LeftTabs)) && !m_shortLabel.empty()) {
+        return m_shortLabel;
+    } else {
+        return m_label;
+    }
+}
+
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
 
 clTabRenderer::clTabRenderer(const wxString& name)
@@ -251,6 +260,7 @@ clTabRenderer::clTabRenderer(const wxString& name)
     , overlapWidth(0)
     , verticalOverlapWidth(0)
     , xSpacer(20)
+    , ySpacer(5)
     , m_name(name)
 {
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;

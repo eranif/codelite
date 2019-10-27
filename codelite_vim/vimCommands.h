@@ -283,6 +283,7 @@ private:
     COMMAND_PART m_currentCommandPart; /*!< current part of the command */
     VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
     bool m_saveCommand;
+    long m_initialVisualPos;           /*!< initial position of cursor when changing to visual mode*/
     /*~~~~~~~~ COMMAND ~~~~~~~~~*/
     int m_repeat;           /*!< number of repetition for the command */
     wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/

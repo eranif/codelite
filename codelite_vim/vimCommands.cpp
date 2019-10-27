@@ -26,6 +26,7 @@ VimCommand::VimCommand(IManager* m_mgr)
     , m_repeatCommand(false)
     , m_saveCommand(true)
     , m_message_ID(MESSAGES_VIM::NO_ERROR_VIM_MSG)
+    , m_initialVisualPos(0)
 {
     m_ctrl = NULL; /*FIXME: check it*/
     this->m_mgr = m_mgr;
@@ -372,7 +373,7 @@ bool VimCommand::Command_call()
         }
         this->m_saveCommand = false;
     } break;
-    
+
     case COMMANDVI::_0:
         m_ctrl->Home();
         this->m_saveCommand = false;
@@ -595,6 +596,7 @@ bool VimCommand::Command_call()
     case COMMANDVI::v:
         m_currentModus = VIM_MODI::VISUAL_MODUS;
         this->m_tmpbuf.Clear();
+        this->m_initialVisualPos = this->m_ctrl->GetCurrentPos();
         break;
 
     case COMMANDVI::perc: {
@@ -756,7 +758,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    
+
     case COMMANDVI::S: {
         this->m_tmpbuf.Clear();
         int repeat_S = std::max(1, m_repeat);
@@ -866,7 +868,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    
+
     case COMMANDVI::daw:
         m_ctrl->CharRight();
         m_ctrl->WordLeft();
@@ -944,7 +946,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    
+
 
     case COMMANDVI::D:
         this->m_listCopiedStr.push_back(get_text_at_position(kFromPositionToEndLine));
@@ -1006,7 +1008,7 @@ bool VimCommand::Command_call()
         m_ctrl->CharLeft();
         //m_ctrl->CharRight();
     } break;
-    
+
     case COMMANDVI::y0: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
         int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
@@ -1135,14 +1137,14 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    
+
     case COMMANDVI::diesis: {
         m_searchWord = get_text_at_position();
         // m_ctrl->SetCurrentPos( /*FIXME*/ );
         search_word(SEARCH_DIRECTION::BACKWARD, wxSTC_FIND_WHOLEWORD);
         m_message_ID = MESSAGES_VIM::SEARCHING_WORD;
     } break;
-    
+
     case COMMANDVI::diesis_N: {
         m_searchWord = get_text_at_position();
         search_word(SEARCH_DIRECTION::FORWARD, wxSTC_FIND_WHOLEWORD);
@@ -1250,6 +1252,8 @@ bool VimCommand::Command_call_visual_mode()
 
     bool repeat_command = true;
     this->m_saveCommand = true;
+    long anchorPosition = 0;
+    long caretPosition = 0;
     switch(m_commandID) {
         /*======= MOVEMENT ===========*/
 
@@ -1477,19 +1481,39 @@ bool VimCommand::Command_call_visual_mode()
         /*========== DELETE AND COPY =======================*/
 
     case COMMANDVI::d:
-        this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
-        m_ctrl->DeleteBack();        /*? better use Clear()*/
-        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
-        m_currentModus = VIM_MODI::NORMAL_MODUS;
-        break;
-
+    case COMMANDVI::x:
     case COMMANDVI::y:
+        anchorPosition = this->m_ctrl->GetAnchor();
+        caretPosition = this->m_ctrl->GetCurrentPos();
+        /* vim selects under cursor too, only an issue when selecting forward and
+         * deleting or yanking*/
+        if(anchorPosition < caretPosition) {
+            this->m_ctrl->SetCurrentPos(caretPosition + 1);
+        }
+
         this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
         m_currentModus = VIM_MODI::NORMAL_MODUS;
+
+        if(this->m_commandID != COMMANDVI::y) {
+            m_ctrl->DeleteBack();        /*? better use Clear()*/
+        }
         break;
     default:
         break;
+    }
+
+    anchorPosition = this->m_ctrl->GetAnchor();
+    caretPosition = this->m_ctrl->GetCurrentPos();
+    /*Fix issue with scintilla not selecting under the cursor like vim*/
+    if(anchorPosition > caretPosition && anchorPosition == this->m_initialVisualPos) {
+
+        this->m_ctrl->SetAnchor(m_initialVisualPos + 1);
+
+    } else if(anchorPosition <= caretPosition && anchorPosition == this->m_initialVisualPos + 1) {
+
+        this->m_ctrl->SetAnchor(m_initialVisualPos);
+
     }
 
     return repeat_command;
@@ -2068,7 +2092,7 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::de;
             this->m_listCopiedStr.clear();
             break;
-            
+
         case '\"':
             if (m_externalCommand != 'i') break;
             command_complete = true;
@@ -2104,7 +2128,7 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::di60;
             break;
         }
-        
+
         break;
     case 'D':
         possible_command = true;

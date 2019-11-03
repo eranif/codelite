@@ -94,8 +94,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
-    eButtonState m_xButtonState = eButtonState::kNormal;
-
+    
 protected:
     void DoChangeSelection(size_t index);
 

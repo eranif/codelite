@@ -66,8 +66,7 @@ public:
     wxCheckBox* GetCheckBoxFiles() { return m_checkBoxFiles; }
     wxCheckBox* GetCheckBoxShowSymbols() { return m_checkBoxShowSymbols; }
     OpenResourceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Resource"),
-                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                           long style = wxRESIZE_BORDER);
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = 0);
     virtual ~OpenResourceDialogBase();
 };
 

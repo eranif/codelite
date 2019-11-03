@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "clScrolledPanel.h"
+#include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "wx/dc.h"
 #include "wx/settings.h"
@@ -34,7 +35,6 @@
 #include <wx/panel.h>
 #include <wx/renderer.h>
 #include <wx/stc/stc.h>
-#include "clSystemSettings.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -627,34 +627,32 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // Calculate the circle radius:
     wxRect innerRect(rect);
     bool isBgDark = IsDark(bgColouur);
-    wxColour b = bgColouur;
     wxColour xColour = penColour;
+    int penWidth = 2;
     switch(state) {
     case eButtonState::kDisabled:
-        xColour = isBgDark ? bgColouur.ChangeLightness(130) : bgColouur.ChangeLightness(80);
+        xColour = isBgDark ? bgColouur.ChangeLightness(130) : bgColouur.ChangeLightness(70);
         break;
     case eButtonState::kHover:
-        b = b.ChangeLightness(110);
+        penWidth = 4;
+        xColour = *wxRED;
         break;
     case eButtonState::kPressed:
-        b = b.ChangeLightness(70);
-        xColour = b.ChangeLightness(150);
+        penWidth = 4;
+        xColour = wxColour(*wxRED).ChangeLightness(80);
         break;
     default:
         break;
     }
 
-    // Draw the background
-    if((state != eButtonState::kNormal) && (state != eButtonState::kDisabled)) {
-        dc.SetPen(b);
-        dc.SetBrush(b);
-        dc.DrawRoundedRectangle(rect, 2.0);
-    }
-
     // draw the x sign
     innerRect.Deflate(2);
     innerRect = innerRect.CenterIn(rect);
-    dc.SetPen(wxPen(xColour, 2));
+    if(state == eButtonState::kPressed) {
+        innerRect.x += 1;
+        innerRect.y += 1;
+    }
+    dc.SetPen(wxPen(xColour, penWidth));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
     dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
@@ -729,7 +727,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     buttonRect.SetHeight(height);
     buttonRect.SetWidth(sz);
     buttonRect = buttonRect.CenterIn(rect);
-    
+
     wxColour buttonColour = colour;
     if(!buttonColour.IsOk()) {
         // No colour provided, provide one
@@ -886,11 +884,11 @@ wxFont DrawingUtils::GetBestFixedFont(IEditor* editor)
     wxFont defaultFont = DrawingUtils::GetDefaultFixedFont();
     wxFont bestFont = defaultFont;
     wxUnusedVar(editor);
-//    if(editor) {
-//        bestFont = editor->GetCtrl()->StyleGetFont(0);
-//#if defined(__WXGTK__) && defined(__WXGTK3__)
-//        bestFont.SetPointSize(defaultFont.GetPointSize());
-//#endif
-//    }
+    //    if(editor) {
+    //        bestFont = editor->GetCtrl()->StyleGetFont(0);
+    //#if defined(__WXGTK__) && defined(__WXGTK3__)
+    //        bestFont.SetPointSize(defaultFont.GetPointSize());
+    //#endif
+    //    }
     return bestFont;
 }

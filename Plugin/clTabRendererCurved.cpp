@@ -143,9 +143,7 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     }
     const wxString& label = tabInfo.GetBestLabel(style);
     fontDC.DrawText(label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
-    if(style & kNotebook_CloseButtonOnActiveTab) {
-        DrawButton(parent, dc, tabInfo, colours, tabInfo.IsActive() ? buttonState : eButtonState::kDisabled);
-    }
+    if(style & kNotebook_CloseButtonOnActiveTab) { DrawButton(parent, dc, tabInfo, colours, buttonState); }
 }
 
 void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,

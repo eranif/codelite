@@ -19,7 +19,7 @@
 			"border":	0,
 			"gbSpan":	",",
 			"gbPosition":	",",
-			"m_styles":	["wxRESIZE_BORDER"],
+			"m_styles":	[],
 			"m_sizerFlags":	[],
 			"m_properties":	[{
 					"type":	"string",

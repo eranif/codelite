@@ -1,8 +1,11 @@
+#include "JSON.h"
 #include "Notebook.h"
+#include "clSystemSettings.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
-#include "JSON.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
@@ -15,9 +18,6 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "clSystemSettings.h"
 
 #if defined(WXUSINGDLL_CL) || defined(USE_SFTP) || defined(PLUGINS_DIR)
 #define CL_BUILD 1
@@ -442,13 +442,13 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, m_xButtonState);
+        m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, tab->m_xButtonState);
     }
 
     // Redraw the active tab
     if(activeTabInex != wxNOT_FOUND) {
         clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
-        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, m_xButtonState);
+        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
     }
     if(!IsVerticalTabs()) { gcdc.DestroyClippingRegion(); }
     if((GetStyle() & kNotebook_ShowFileListButton)) {
@@ -530,23 +530,22 @@ void clTabCtrl::OnLeftDown(wxMouseEvent& event)
     // Did we hit the active tab?
     bool clickWasOnActiveTab = (GetSelection() == realPos);
 
-    // If the click was not on the active tab, set the clicked
-    // tab as the new selection and leave this function
-    if(!clickWasOnActiveTab) { SetSelection(realPos); }
-
-    // If we clicked on the active and we have a close button - handle it here
-    if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && clickWasOnActiveTab) {
+    if(GetStyle() & kNotebook_CloseButtonOnActiveTab) {
         // we clicked on the selected index
         clTabInfo::Ptr_t t = m_visibleTabs.at(tabHit);
         wxRect xRect = t->GetCloseButtonRect();
 
         if(xRect.Contains(evetPos)) {
             m_closeButtonClickedIndex = tabHit;
-            m_xButtonState = eButtonState::kPressed;
+            t->m_xButtonState = eButtonState::kPressed;
             Refresh();
             return;
         }
     }
+
+    // If the click was not on the active tab, set the clicked
+    // tab as the new selection and leave this function
+    if(!clickWasOnActiveTab) { SetSelection(realPos); }
 
     // We clicked on a tab, so prepare to start DnD operation
     if((m_style & kNotebook_AllowDnD)) {
@@ -719,7 +718,10 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
 
     m_dragStartTime.Set((time_t)-1); // Not considering D'n'D so reset any saved values
     m_dragStartPos = wxPoint();
-    m_xButtonState = eButtonState::kNormal;
+    for(clTabInfo::Ptr_t t : m_tabs) {
+        t->m_xButtonState = t->IsActive() ? eButtonState::kNormal : eButtonState::kDisabled;
+    }
+
     // First check if the chevron was clicked. We do this because the chevron could overlap the buttons drawing
     // area
     if((GetStyle() & kNotebook_ShowFileListButton) && m_chevronRect.Contains(event.GetPosition())) {
@@ -731,7 +733,7 @@ void clTabCtrl::OnLeftUp(wxMouseEvent& event)
         eDirection align;
         TestPoint(event.GetPosition(), realPos, tabHit, align);
         if(tabHit != wxNOT_FOUND) {
-            if((GetStyle() & kNotebook_CloseButtonOnActiveTab) && m_visibleTabs.at(tabHit)->IsActive()) {
+            if((GetStyle() & kNotebook_CloseButtonOnActiveTab)) {
                 // we clicked on the selected index
                 clTabInfo::Ptr_t t = m_visibleTabs.at(tabHit);
                 wxRect xRect = t->GetCloseButtonRect();
@@ -776,19 +778,17 @@ void clTabCtrl::OnMouseMotion(wxMouseEvent& event)
     }
 
     // Refresh if hovering the close button state
-    if((realPos != wxNOT_FOUND) && realPos == GetSelection() && (GetStyle() & kNotebook_CloseButtonOnActiveTab)) {
+    for(clTabInfo::Ptr_t t : m_tabs) {
+        t->m_xButtonState = t->IsActive() ? eButtonState::kNormal : eButtonState::kDisabled;
+    }
+    if((realPos != wxNOT_FOUND) && (GetStyle() & kNotebook_CloseButtonOnActiveTab)) {
         clTabInfo::Ptr_t t = m_tabs[realPos];
         wxRect xRect = t->GetCloseButtonRect();
         if(xRect.Contains(event.GetPosition())) {
-            m_xButtonState = event.LeftIsDown() ? eButtonState::kPressed : eButtonState::kHover;
-        } else {
-            m_xButtonState = eButtonState::kNormal;
+            t->m_xButtonState = event.LeftIsDown() ? eButtonState::kPressed : eButtonState::kHover;
         }
-        Refresh();
-    } else {
-        m_xButtonState = eButtonState::kNormal;
-        Refresh();
     }
+    Refresh();
 }
 
 void clTabCtrl::TestPoint(const wxPoint& pt, int& realPosition, int& tabHit, eDirection& align)
@@ -855,7 +855,9 @@ void clTabCtrl::SetStyle(size_t style)
         m_colours.InitLightColours();
     }
 
-    for(size_t i = 0; i < m_tabs.size(); ++i) { m_tabs.at(i)->CalculateOffsets(GetStyle()); }
+    for(size_t i = 0; i < m_tabs.size(); ++i) {
+        m_tabs.at(i)->CalculateOffsets(GetStyle());
+    }
 
     GetArt()->AdjustColours(m_colours, GetStyle());
     m_visibleTabs.clear();

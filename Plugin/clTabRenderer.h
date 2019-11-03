@@ -149,7 +149,8 @@ public:
     int m_height;
     int m_vTabsWidth;
     int m_textWidth;
-
+    eButtonState m_xButtonState = eButtonState::kNormal;
+    
 public:
     void CalculateOffsets(size_t style);
     void CalculateOffsets(size_t style, wxDC& dc);

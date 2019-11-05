@@ -24,10 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorCLANG.h"
-#include <globals.h>
-#include "procutils.h"
-#include "includepathlocator.h"
 #include "build_settings_config.h"
+#include "includepathlocator.h"
+#include "procutils.h"
+#include <globals.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -45,14 +45,10 @@ bool CompilerLocatorCLANG::Locate()
 
     // POSIX locate
     wxFileName clang("/usr/bin", "clang");
-    wxArrayString suffixes;
-    suffixes.Add("");
-    suffixes.Add("-3.3");
-    suffixes.Add("-3.4");
-    suffixes.Add("-3.5");
-    suffixes.Add("-3.6");
-    for(size_t i = 0; i < suffixes.GetCount(); ++i) {
-        clang.SetFullName("clang" + suffixes.Item(i));
+    const std::vector<wxString> suffixes = { "11", "10", "9", "8", "7", "6", "5", "4", ""};
+
+    for(const wxString& suffix : suffixes) {
+        clang.SetFullName("clang" + (suffix.empty() ? "" : "-" + suffix));
         if(clang.FileExists()) {
             CompilerPtr compiler(new Compiler(NULL));
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
@@ -61,7 +57,7 @@ bool CompilerLocatorCLANG::Locate()
             compiler->SetGenerateDependeciesFile(true);
             m_compilers.push_back(compiler);
             clang.RemoveLastDir();
-            AddTools(compiler, clang.GetPath(), suffixes.Item(i));
+            AddTools(compiler, clang.GetPath(), suffix);
         }
     }
     return true;
@@ -116,16 +112,12 @@ void CompilerLocatorCLANG::MSWLocate()
 #endif
 }
 
-void CompilerLocatorCLANG::AddTool(CompilerPtr compiler,
-                                   const wxString& toolname,
-                                   const wxString& toolpath,
+void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
                                    const wxString& extraArgs)
 {
     wxString tool = toolpath;
     ::WrapWithQuotes(tool);
-    if(!extraArgs.IsEmpty()) {
-        tool << " " << extraArgs;
-    }
+    if(!extraArgs.IsEmpty()) { tool << " " << extraArgs; }
     compiler->SetTool(toolname, tool);
 }
 
@@ -178,9 +170,7 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& instal
     }
 
     wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
-        makeExtraArgs << "-j" << wxThread::GetCPUCount();
-    }
+    if(wxThread::GetCPUCount() > 1) { makeExtraArgs << "-j" << wxThread::GetCPUCount(); }
 
 #ifdef __WXMSW__
     AddTool(compiler, "MAKE", "mingw32-make.exe", makeExtraArgs);
@@ -209,9 +199,7 @@ wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
     wxString version = GetClangVersion(clangBinary);
     wxString fullname;
     fullname << "clang";
-    if(!version.IsEmpty()) {
-        fullname << "( " << version << " )";
-    }
+    if(!version.IsEmpty()) { fullname << "( " << version << " )"; }
     return fullname;
 }
 

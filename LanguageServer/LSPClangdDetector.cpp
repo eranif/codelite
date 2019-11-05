@@ -1,0 +1,52 @@
+#include "CompilerLocatorCLANG.h"
+#include "LSPClangdDetector.hpp"
+#include "globals.h"
+#include <wx/filename.h>
+
+LSPClangdDetector::LSPClangdDetector()
+    : LSPDetector("clangd")
+{
+    SetConnectionString("stdio");
+    SetPriority(90); // clangd should override the default cc engine
+}
+
+LSPClangdDetector::~LSPClangdDetector() {}
+
+bool LSPClangdDetector::Locate()
+{
+    CompilerLocatorCLANG locator;
+    wxFileName fnClangd;
+#if defined(__WXMSW__)
+    fnClangd.SetExt("exe");
+#endif
+
+    bool matchFound = false;
+    if(locator.Locate()) {
+        const std::vector<wxString> suffixes = { "11", "10", "9", "8", "7", "6", "5", "4", "" };
+        const auto& compilers = locator.GetCompilers();
+        if(compilers.empty()) { return false; }
+        for(const auto& compiler : compilers) {
+            wxString cxx = compiler->GetTool("CXX");
+            if(cxx.empty()) { continue; }
+            fnClangd = cxx;
+            // Check for the existence of clangd
+            for(const wxString& suffix : suffixes) {
+                fnClangd.SetName("clang" + (suffix.empty() ? wxString() : wxString("-" + suffix)));
+                if(fnClangd.FileExists()) {
+                    wxString command;
+                    command << fnClangd.GetFullPath();
+                    ::WrapWithQuotes(command);
+                    command << " -limit-results=100 -header-insertion-decorators=0";
+                    SetCommand(command);
+                    // Add support for the languages
+                    GetLangugaes().Add("c");
+                    GetLangugaes().Add("cpp");
+                    matchFound = true;
+                    break;
+                }
+            }
+            if(matchFound) { break; }
+        }
+    }
+    return matchFound;
+}

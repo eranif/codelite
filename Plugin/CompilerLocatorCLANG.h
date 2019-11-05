@@ -27,8 +27,9 @@
 #define COMPILERLOCATORCLANG_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+#include "codelite_exports.h"
 
-class CompilerLocatorCLANG : public ICompilerLocator
+class WXDLLIMPEXP_SDK CompilerLocatorCLANG : public ICompilerLocator
 {
 protected:
     void MSWLocate();

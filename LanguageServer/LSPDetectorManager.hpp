@@ -17,7 +17,7 @@ public:
     /**
      * @brief scan for language servers installed on this machine
      */
-    bool Scan();
+    size_t Scan(std::vector<LSPDetector::Ptr_t>& matchers);
 };
 
 #endif // LSPDETECTORMANAGER_HPP

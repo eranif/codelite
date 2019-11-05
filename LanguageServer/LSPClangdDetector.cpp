@@ -32,7 +32,7 @@ bool LSPClangdDetector::Locate()
             // Check for the existence of clangd
             for(const wxString& suffix : suffixes) {
                 clDEBUG1() << "Trying to locate clangd LSP v" << suffix;
-                fnClangd.SetName("clang" + (suffix.empty() ? wxString() : wxString("-" + suffix)));
+                fnClangd.SetName("clangd" + (suffix.empty() ? wxString() : wxString("-" + suffix)));
                 if(fnClangd.FileExists()) {
                     clDEBUG1() << "==> Found" << fnClangd;
                     wxString command;

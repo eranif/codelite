@@ -1,6 +1,7 @@
 #ifndef LSPDETECTOR_HPP
 #define LSPDETECTOR_HPP
 
+#include "LanguageServerEntry.h"
 #include "wx/arrstr.h"
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -33,6 +34,7 @@ public:
     void SetPriority(int priority) { this->m_priority = priority; }
     int GetPriority() const { return m_priority; }
     virtual bool Locate() = 0;
+    virtual void GetLanguageServerEntry(LanguageServerEntry& entry);
 };
 
 #endif // LSPDETECTOR_HPP

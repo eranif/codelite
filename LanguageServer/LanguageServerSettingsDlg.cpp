@@ -1,21 +1,20 @@
+#include "LSPDetector.hpp"
+#include "LSPDetectorManager.hpp"
+#include "LanguageServerConfig.h"
+#include "LanguageServerEntry.h"
+#include "LanguageServerPage.h"
 #include "LanguageServerSettingsDlg.h"
 #include "NewLanguageServerDlg.h"
-#include "LanguageServerEntry.h"
-#include "LanguageServerConfig.h"
-#include "LanguageServerPage.h"
 #include "globals.h"
+#include <vector>
+#include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
 
 LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
     : LanguageServerSettingsDlgBase(parent)
 {
-    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
-        m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
-    }
-    m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
-    GetSizer()->Fit(this);
-    CentreOnParent();
+    DoInitialize();
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}
@@ -57,7 +56,43 @@ void LanguageServerSettingsDlg::OnDeleteLSP(wxCommandEvent& event)
 }
 
 void LanguageServerSettingsDlg::OnDeleteLSPUI(wxUpdateUIEvent& event) { event.Enable(m_notebook->GetPageCount()); }
-void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event)
+void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(true); }
+
+void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 {
-    event.Enable(true);
+    event.Skip();
+    std::vector<LSPDetector::Ptr_t> matches;
+    if(LSPDetectorManager::Get().Scan(matches)) {
+        // Matches were found, reload the dialog
+        // Prompt the user to select which entries to add
+        wxArrayString options;
+        wxArrayInt selections;
+        for(size_t i = 0; i < matches.size(); ++i) {
+            options.Add(matches[i]->GetName());
+            selections.Add(i);
+        }
+        if((wxGetSelectedChoices(selections, _("Select Language Servers to add"), "CodeLite", options) ==
+            wxNOT_FOUND) ||
+           selections.empty()) {
+            return;
+        }
+        LanguageServerConfig& conf = LanguageServerConfig::Get();
+        for(size_t i = 0; i < selections.size(); ++i) {
+            LanguageServerEntry entry;
+            matches[selections[i]]->GetLanguageServerEntry(entry);
+            conf.AddServer(entry);
+        }
+        conf.Save();
+        DoInitialize();
+    }
+}
+
+void LanguageServerSettingsDlg::DoInitialize()
+{
+    m_notebook->DeleteAllPages();
+    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
+        m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
+    }
+    m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
 }

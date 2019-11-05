@@ -2,6 +2,7 @@
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerEntry.h"
+#include "file_logger.h"
 
 LSPDetectorManager::LSPDetectorManager() { m_detectors.push_back(LSPDetector::Ptr_t(new LSPClangdDetector())); }
 
@@ -17,7 +18,9 @@ bool LSPDetectorManager::Scan()
 {
     bool foundSomething = false;
     for(LSPDetector::Ptr_t detector : m_detectors) {
+        clDEBUG() << "LSP detector: trying" << detector->GetName();
         if(detector->Locate()) {
+            clDEBUG() << "  ==> " << detector->GetName() << "found";
             foundSomething = true;
             // add new LSP
             LanguageServerConfig& conf = LanguageServerConfig::Get();

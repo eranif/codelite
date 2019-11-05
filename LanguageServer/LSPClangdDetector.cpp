@@ -1,5 +1,6 @@
 #include "CompilerLocatorCLANG.h"
 #include "LSPClangdDetector.hpp"
+#include "file_logger.h"
 #include "globals.h"
 #include <wx/filename.h>
 
@@ -20,7 +21,6 @@ bool LSPClangdDetector::Locate()
     fnClangd.SetExt("exe");
 #endif
 
-    bool matchFound = false;
     if(locator.Locate()) {
         const std::vector<wxString> suffixes = { "11", "10", "9", "8", "7", "6", "5", "4", "" };
         const auto& compilers = locator.GetCompilers();
@@ -31,8 +31,10 @@ bool LSPClangdDetector::Locate()
             fnClangd = cxx;
             // Check for the existence of clangd
             for(const wxString& suffix : suffixes) {
+                clDEBUG1() << "Trying to locate clangd LSP v" << suffix;
                 fnClangd.SetName("clang" + (suffix.empty() ? wxString() : wxString("-" + suffix)));
                 if(fnClangd.FileExists()) {
+                    clDEBUG1() << "==> Found" << fnClangd;
                     wxString command;
                     command << fnClangd.GetFullPath();
                     ::WrapWithQuotes(command);
@@ -41,12 +43,11 @@ bool LSPClangdDetector::Locate()
                     // Add support for the languages
                     GetLangugaes().Add("c");
                     GetLangugaes().Add("cpp");
-                    matchFound = true;
-                    break;
+                    // Stop at the first match
+                    return true;
                 }
             }
-            if(matchFound) { break; }
         }
     }
-    return matchFound;
+    return false;
 }

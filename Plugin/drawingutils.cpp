@@ -630,6 +630,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     wxColour xColour = penColour;
     int penWidth = 2;
     switch(state) {
+    case eButtonState::kNormal:
+        xColour = *wxRED;
+        break;
     case eButtonState::kDisabled:
         xColour = isBgDark ? bgColouur.ChangeLightness(130) : bgColouur.ChangeLightness(70);
         break;
@@ -646,7 +649,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     }
 
     // draw the x sign
-    innerRect.Deflate(2);
+    //innerRect.Deflate(2);
     innerRect = innerRect.CenterIn(rect);
     if(state == eButtonState::kPressed) {
         innerRect.x += 1;

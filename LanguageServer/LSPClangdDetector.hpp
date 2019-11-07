@@ -5,11 +5,12 @@
 
 class LSPClangdDetector : public LSPDetector
 {
+protected:
+    virtual bool DoLocate();
+
 public:
     LSPClangdDetector();
     virtual ~LSPClangdDetector();
-    
-    virtual bool Locate();
 };
 
 #endif // LSPCLANGDDETECTOR_HPP

@@ -18,6 +18,10 @@ protected:
 public:
     typedef wxSharedPtr<LSPDetector> Ptr_t;
 
+protected:
+    virtual bool DoLocate() = 0;
+    virtual void DoClear();
+
 public:
     LSPDetector(const wxString& name);
     virtual ~LSPDetector();
@@ -33,7 +37,7 @@ public:
     const wxString& GetConnectionString() const { return m_connectionString; }
     void SetPriority(int priority) { this->m_priority = priority; }
     int GetPriority() const { return m_priority; }
-    virtual bool Locate() = 0;
+    bool Locate();
     virtual void GetLanguageServerEntry(LanguageServerEntry& entry);
 };
 

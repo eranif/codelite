@@ -17,3 +17,18 @@ void LSPDetector::GetLanguageServerEntry(LanguageServerEntry& entry)
     entry.SetPriority(GetPriority());
     entry.SetName(GetName());
 }
+
+bool LSPDetector::Locate()
+{
+    DoClear();
+    return DoLocate();
+}
+
+void LSPDetector::DoClear()
+{
+    m_name.Clear();
+    m_command.Clear();
+    m_langugaes.Clear();
+    m_connectionString.Clear();
+    m_priority = 50;
+}

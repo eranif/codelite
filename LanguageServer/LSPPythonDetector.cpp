@@ -12,7 +12,7 @@ LSPPythonDetector::LSPPythonDetector()
 
 LSPPythonDetector::~LSPPythonDetector() {}
 
-bool LSPPythonDetector::Locate()
+bool LSPPythonDetector::DoLocate()
 {
     clPythonLocator locator;
     if(!locator.Locate()) { return false; }

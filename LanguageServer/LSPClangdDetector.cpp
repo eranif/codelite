@@ -13,7 +13,7 @@ LSPClangdDetector::LSPClangdDetector()
 
 LSPClangdDetector::~LSPClangdDetector() {}
 
-bool LSPClangdDetector::Locate()
+bool LSPClangdDetector::DoLocate()
 {
     CompilerLocatorCLANG locator;
     wxFileName fnClangd;

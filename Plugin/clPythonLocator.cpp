@@ -11,7 +11,7 @@ clPythonLocator::clPythonLocator() {}
 
 clPythonLocator::~clPythonLocator() {}
 
-bool clPythonLocator::Locate()
+bool clPythonLocator::DoLocate()
 {
 #ifdef __WXMSW__
     return MSWLocate();

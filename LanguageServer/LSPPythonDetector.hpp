@@ -9,8 +9,8 @@ public:
     LSPPythonDetector();
     virtual ~LSPPythonDetector();
 
-public:
-    virtual bool Locate();
+protected:
+    virtual bool DoLocate();
 };
 
 #endif // LSPPYTHONDETECTOR_HPP

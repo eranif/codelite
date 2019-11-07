@@ -232,10 +232,10 @@ if ( WITH_SFTP )
             if (UNIX AND NOT APPLE )
                 ## Linux / FreeBSD
                 message("**** NOTICE: Install libssh-dev and try again")
-            else (UNIX AND NOT APPLE )
+            elseif (NOT MINGW )
                 ## OSX
                 message("**** NOTICE: Install libssh and try again (brew install libssh)")
-            endif (UNIX AND NOT APPLE )
+            endif ()
             message(FATAL_ERROR "-- Could not find libssh")
         endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
 

@@ -13,9 +13,9 @@ os_name=`uname -s`
 if [ ${os_name} == "Darwin" ]; then
     echo rm -f $curdir/build-release/codelite.app.tar.gz
     rm -f $curdir/build-release/codelite.app.tar.gz
-    cpu_count=4
+    cpu_count=`sysctl -n hw.physicalcpu`
 else
-    cpu_count=`grep -c ^processor /proc/cpuinfo`
+    cpu_count=`nproc`
 fi
 
 ## parse the command line arguments and over defaults

@@ -14,7 +14,7 @@ More information can be found here:
  - [Official Website][3]
  - [Download Page][4]
  - [Wiki][5]
- 
+
 ----------
 
 Building CodeLite on Linux
@@ -42,12 +42,14 @@ Git clone the sources:
 
 Run CMake and build CodeLite:
 
-    cd codelite
-    mkdir build-release
-    cd build-release
-    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-    make -j
-    sudo make install
+  ```bash
+  cd codelite
+  mkdir build-release
+  cd build-release
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  cmake --build . -j $(nproc)
+  sudo cmake --build . --target install
+  ```
 
 ----------
 
@@ -62,7 +64,7 @@ Prerequisites:
  - Xcode
  - Xcode command-line tools
  - Homebrew.
- 
+
 Preparation:
  - (Optional) Make a separate folder for building if you want to get rid of all except the .app file after building
  - Install Xcode from Mac App Store
@@ -76,7 +78,7 @@ Preparation:
  - Install Git: `brew install git`
  - Install CMake: `brew install cmake`
  - Install wxWidgets: `brew install wxmac --dev --use-llvm`
- 
+
 
 Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
 
@@ -85,20 +87,20 @@ Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
   git clone https://github.com/eranif/codelite.git
   ```
  the above will create the folder `/Users/YOU/codelite`
- 
+
  To build CodeLite:
- 
+
   ```bash
   cd /Users/YOU/codelite
   mkdir build-release
   cd build-release
   cmake .. -DCMAKE_BUILD_TYPE=Release
-  make -j4
-  make install
+  cmake --build . -j $(sysctl -n hw.physicalcpu)
+  cmake --build . --target install
   ```
- 
+
 You should now have an app bundle `/Users/YOU/codelite/build-release/codelite.app`
- 
+
 To launch CodeLite:
 
 `open /Users/YOU/codelite/build-release/codelite.app`

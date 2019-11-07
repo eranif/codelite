@@ -7,6 +7,7 @@
 class WXDLLIMPEXP_SDK clPythonLocator
 {
     wxString m_python;
+    wxString m_pip;
 
 protected:
     bool MSWLocate();
@@ -19,6 +20,9 @@ public:
      * @brief locate python
      */
     bool Locate();
+
+    const wxString& GetPython() const { return m_python; }
+    const wxString& GetPip() const { return m_pip; }
 };
 
 #endif // CLPYTHONLOCATOR_HPP

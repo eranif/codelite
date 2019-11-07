@@ -17,7 +17,9 @@ bool clPythonLocator::Locate()
     return MSWLocate();
 #else
     wxFileName exepath;
+    wxFileName pippath;
     if(::clFindExecutable("python", exepath)) { m_python = exepath.GetFullPath(); }
+    if(::clFindExecutable("pip", pippath)) { m_pip = pippath.GetFullPath(); }
     return exepath.FileExists();
 #endif
 }
@@ -33,6 +35,12 @@ bool clPythonLocator::MSWLocate()
     m_python = regChild.ReadValueString("ExecutablePath");
     if(!m_python.empty()) {
         clDEBUG() << "Python exe located at:" << m_python;
+
+        wxFileName fnPip(m_python);
+        fnPip.AppendDir("Scripts");
+        fnPip.SetName("pip");
+        m_pip = fnPip.GetFullPath();
+        // Try to locate pip
         return true;
     } else {
         clDEBUG() << "No python installation found";

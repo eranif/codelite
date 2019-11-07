@@ -26,7 +26,6 @@ bool LSPDetector::Locate()
 
 void LSPDetector::DoClear()
 {
-    m_name.Clear();
     m_command.Clear();
     m_langugaes.Clear();
     m_connectionString.Clear();

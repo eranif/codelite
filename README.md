@@ -46,7 +46,7 @@ Run CMake and build CodeLite:
     mkdir build-release
     cd build-release
     cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-    make -j4
+    make -j
     sudo make install
 
 ----------

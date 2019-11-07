@@ -27,7 +27,9 @@ static wxSharedPtr<wxRegKey> CreateRegKey(const wxString& key)
 clRegistery::clRegistery(const wxString& key)
     : m_key(key)
 {
+#ifdef __WXMSW__
     m_regKey = CreateRegKey(m_key);
+#endif
 }
 
 clRegistery::~clRegistery() {}

@@ -25,9 +25,9 @@
 #ifndef __newclassdlg__
 #define __newclassdlg__
 
+#include "new_class_dlg_data.h"
 #include "newclassbasedlg.h"
 #include "vector"
-#include "new_class_dlg_data.h"
 
 class IManager;
 
@@ -52,7 +52,7 @@ struct NewClassInfo {
     bool isInline;
     bool hppHeader;
     bool usePragmaOnce;
-    std::vector<ClassParentInfo> parents;
+    ClassParentInfo parents;
 
     NewClassInfo()
         : isSingleton(false)
@@ -76,17 +76,13 @@ class NewClassDlg : public NewClassBaseDlg
     IManager* m_mgr;
     wxString m_basePath;
     NewClassDlgData m_options;
+    wxString m_parentClass;
 
 protected:
     virtual void OnUseLowerCaseFileName(wxCommandEvent& event);
     virtual void OnBlockGuardUI(wxUpdateUIEvent& event);
+    void OnBrowseParentClass(wxCommandEvent& event);
     // Handlers for NewClassBaseDlg events.
-    void OnListItemActivated(wxListEvent& event);
-    void OnListItemSelected(wxListEvent& event);
-    void OnButtonAdd(wxCommandEvent& event);
-    void OnButtonDelete(wxCommandEvent& event);
-    void OnButtonDeleteUI(wxUpdateUIEvent& event);
-    void OnListItemDeSelected(wxListEvent& e);
     void OnButtonOK(wxCommandEvent& e);
     bool ValidateInput();
     void OnTextEnter(wxCommandEvent& e);
@@ -109,7 +105,7 @@ public:
 
     void GetNewClassInfo(NewClassInfo& info);
 
-    void GetInheritance(std::vector<ClassParentInfo>& inheritVec);
+    void GetInheritance(ClassParentInfo& inheritVec);
     bool IsSingleton() { return m_checkBoxSingleton->GetValue(); }
     wxString GetClassName() { return m_textClassName->GetValue(); }
     wxString GetClassNamespace() const { return m_textCtrlNamespace->GetValue(); }

@@ -29,7 +29,6 @@
 #include "imanager.h"
 #include "new_class_dlg_data.h"
 #include "newclassdlg.h"
-#include "newinheritancedlg.h"
 #include "open_resource_dialog.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
@@ -57,11 +56,6 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     m_checkBoxPragmaOnce->SetValue(m_options.GetFlags() & NewClassDlgData::UsePragma);
     m_checkBoxLowercaseFileName->SetValue(m_options.GetFlags() & NewClassDlgData::UseLowerCase);
 
-    // set two columns to our list
-    m_listCtrl1->InsertColumn(0, _("Name"));
-    m_listCtrl1->InsertColumn(1, _("Access"));
-    m_listCtrl1->InsertColumn(2, _("File"));
-
     wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
@@ -88,81 +82,16 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
     GetSizer()->Layout();
     m_textClassName->SetFocus();
-
-    GetSizer()->Fit(this);
-    CentreOnParent();
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 NewClassDlg::~NewClassDlg() { DoSaveOptions(); }
 
-void NewClassDlg::OnListItemActivated(wxListEvent& event)
+void NewClassDlg::GetInheritance(ClassParentInfo& parent)
 {
-    m_selectedItem = event.m_itemIndex;
-    // open the inheritance dialog
-    wxString parentName = GetColumnText(m_listCtrl1, m_selectedItem, 0);
-    wxString access = GetColumnText(m_listCtrl1, m_selectedItem, 1);
-    NewIneritanceDlg* dlg = new NewIneritanceDlg(NULL, m_mgr, parentName, access);
-    if(dlg->ShowModal() == wxID_OK) {
-        // now set the text to this column
-        SetColumnText(m_listCtrl1, m_selectedItem, 0, dlg->GetParentName());
-        SetColumnText(m_listCtrl1, m_selectedItem, 1, dlg->GetAccess());
-
-        SetColumnText(m_listCtrl1, m_selectedItem, 2, dlg->GetFileName());
-
-        m_listCtrl1->Refresh();
-    }
-    dlg->Destroy();
-}
-
-void NewClassDlg::OnListItemSelected(wxListEvent& event) { m_selectedItem = event.m_itemIndex; }
-
-void NewClassDlg::OnButtonAdd(wxCommandEvent& event)
-{
-    NewIneritanceDlg* dlg = new NewIneritanceDlg(this, m_mgr);
-    if(dlg->ShowModal() == wxID_OK) {
-        // add new parent to our class
-        // now set the text to this column
-        long item = AppendListCtrlRow(m_listCtrl1);
-
-        SetColumnText(m_listCtrl1, item, 0, dlg->GetParentName());
-        SetColumnText(m_listCtrl1, item, 1, dlg->GetAccess());
-
-        SetColumnText(m_listCtrl1, item, 2, dlg->GetFileName());
-
-        m_listCtrl1->Refresh();
-    }
-    dlg->Destroy();
-}
-
-void NewClassDlg::OnListItemDeSelected(wxListEvent& e)
-{
-    wxUnusedVar(e);
-    m_selectedItem = wxNOT_FOUND;
-}
-
-void NewClassDlg::OnButtonDelete(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_listCtrl1->DeleteItem(m_selectedItem);
-    m_selectedItem = wxNOT_FOUND;
-}
-
-void NewClassDlg::OnButtonDeleteUI(wxUpdateUIEvent& event) { event.Enable(m_selectedItem != wxNOT_FOUND); }
-
-void NewClassDlg::GetInheritance(std::vector<ClassParentInfo>& inheritVec)
-{
-    long item = -1;
-    for(;;) {
-        item = m_listCtrl1->GetNextItem(item);
-        if(item == -1) break;
-
-        ClassParentInfo info;
-        info.name = GetColumnText(m_listCtrl1, item, 0);
-        info.access = GetColumnText(m_listCtrl1, item, 1);
-        info.fileName = GetColumnText(m_listCtrl1, item, 2);
-
-        inheritVec.push_back(info);
-    }
+    parent.access = "public";
+    parent.fileName = m_parentClass;
+    parent.name = m_textCtrlParentClass->GetValue();
 }
 
 void NewClassDlg::OnButtonOK(wxCommandEvent& e)
@@ -440,4 +369,29 @@ wxString NewClassDlg::CreateFileName() const
 {
     if(m_options.HasFlag(NewClassDlgData::UseLowerCase)) { return m_textClassName->GetValue().Lower(); }
     return m_textClassName->GetValue();
+}
+
+void NewClassDlg::OnBrowseParentClass(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    wxArrayString kinds;
+    kinds.Add(wxT("class"));
+    kinds.Add(wxT("struct"));
+
+    OpenResourceDialog dlg(this, m_mgr, "");
+    if(dlg.ShowModal() == wxID_OK) {
+        std::vector<OpenResourceDialogItemData*> selections = dlg.GetSelections();
+        if(!selections.empty()) {
+            OpenResourceDialogItemData* item = selections[0];
+            wxString fullpathName;
+            if(item->m_scope.empty()) {
+                fullpathName << item->m_name;
+            } else {
+                fullpathName << item->m_scope << "::" << item->m_name;
+            }
+            m_textCtrlParentClass->ChangeValue(fullpathName);
+            m_parentClass = wxFileName(item->m_file).GetFullName();
+        }
+    }
 }

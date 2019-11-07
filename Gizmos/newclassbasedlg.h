@@ -7,6 +7,7 @@
 #ifndef _CODELITE_GIZMOS_NEWCLASSWIZARD_BASE_CLASSES_H
 #define _CODELITE_GIZMOS_NEWCLASSWIZARD_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -17,11 +18,10 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/notebook.h>
+#include <wx/panel.h>
+#include <wx/imaglist.h>
 #include <wx/checkbox.h>
-#include <wx/collpane.h>
-#include <wx/listctrl.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -38,6 +38,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class NewClassBaseDlg : public wxDialog
 {
@@ -45,11 +46,14 @@ protected:
     wxStaticText* m_staticText1;
     wxTextCtrl* m_textClassName;
     wxStaticText* m_staticText9;
-    wxStaticText* m_staticText37;
-    wxTextCtrl* m_textCtrlFileName;
     wxStaticText* m_staticTextNamespace;
     wxTextCtrl* m_textCtrlNamespace;
     wxButton* m_buttonBrowseNamespaces;
+    wxStaticText* m_staticText45;
+    wxTextCtrl* m_textCtrlParentClass;
+    wxButton* m_button49;
+    wxStaticText* m_staticText37;
+    wxTextCtrl* m_textCtrlFileName;
     wxStaticText* m_staticText6;
     wxTextCtrl* m_textCtrlBlockGuard;
     wxStaticText* m_staticText4;
@@ -58,21 +62,18 @@ protected:
     wxStaticText* m_staticText2;
     wxTextCtrl* m_textCtrlGenFilePath;
     wxButton* m_buttonBrowseFolder;
-    wxStaticText* m_staticText8;
-    wxCheckBox* m_checkBoxInline;
+    wxNotebook* m_notebook53;
+    wxPanel* m_panel57;
     wxCheckBox* m_checkBoxHpp;
-    wxCheckBox* m_checkBoxPragmaOnce;
     wxCheckBox* m_checkBoxLowercaseFileName;
-    wxCollapsiblePane* m_collPane2;
-    wxStaticText* m_staticText7;
-    wxListCtrl* m_listCtrl1;
-    wxButton* m_buttonAddInheritance;
-    wxButton* m_buttonDelInheritance;
+    wxCheckBox* m_checkBoxPragmaOnce;
+    wxPanel* m_panel55;
+    wxCheckBox* m_checkBoxVirtualDtor;
     wxCheckBox* m_checkBoxCopyable;
     wxCheckBox* m_checkBoxImplVirtual;
     wxCheckBox* m_checkBoxSingleton;
     wxCheckBox* m_checkBoxImplPureVirtual;
-    wxCheckBox* m_checkBoxVirtualDtor;
+    wxCheckBox* m_checkBoxInline;
     wxStdDialogButtonSizer* m_stdBtnSizer30;
     wxButton* m_button32;
     wxButton* m_button34;
@@ -80,29 +81,27 @@ protected:
 protected:
     virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseNamespace(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseParentClass(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBlockGuardUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBrowseVD(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseFolder(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckInline(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseLowerCaseFileName(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnListItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnListItemDeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnListItemSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnButtonAdd(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonDelete(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCheckImpleAllVirtualFunctions(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckInline(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
     wxTextCtrl* GetTextClassName() { return m_textClassName; }
     wxStaticText* GetStaticText9() { return m_staticText9; }
-    wxStaticText* GetStaticText37() { return m_staticText37; }
-    wxTextCtrl* GetTextCtrlFileName() { return m_textCtrlFileName; }
     wxStaticText* GetStaticTextNamespace() { return m_staticTextNamespace; }
     wxTextCtrl* GetTextCtrlNamespace() { return m_textCtrlNamespace; }
     wxButton* GetButtonBrowseNamespaces() { return m_buttonBrowseNamespaces; }
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxTextCtrl* GetTextCtrlParentClass() { return m_textCtrlParentClass; }
+    wxButton* GetButton49() { return m_button49; }
+    wxStaticText* GetStaticText37() { return m_staticText37; }
+    wxTextCtrl* GetTextCtrlFileName() { return m_textCtrlFileName; }
     wxStaticText* GetStaticText6() { return m_staticText6; }
     wxTextCtrl* GetTextCtrlBlockGuard() { return m_textCtrlBlockGuard; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
@@ -111,49 +110,22 @@ public:
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxTextCtrl* GetTextCtrlGenFilePath() { return m_textCtrlGenFilePath; }
     wxButton* GetButtonBrowseFolder() { return m_buttonBrowseFolder; }
-    wxStaticText* GetStaticText8() { return m_staticText8; }
-    wxCheckBox* GetCheckBoxInline() { return m_checkBoxInline; }
     wxCheckBox* GetCheckBoxHpp() { return m_checkBoxHpp; }
-    wxCheckBox* GetCheckBoxPragmaOnce() { return m_checkBoxPragmaOnce; }
     wxCheckBox* GetCheckBoxLowercaseFileName() { return m_checkBoxLowercaseFileName; }
-    wxStaticText* GetStaticText7() { return m_staticText7; }
-    wxListCtrl* GetListCtrl1() { return m_listCtrl1; }
-    wxButton* GetButtonAddInheritance() { return m_buttonAddInheritance; }
-    wxButton* GetButtonDelInheritance() { return m_buttonDelInheritance; }
+    wxCheckBox* GetCheckBoxPragmaOnce() { return m_checkBoxPragmaOnce; }
+    wxPanel* GetPanel57() { return m_panel57; }
+    wxCheckBox* GetCheckBoxVirtualDtor() { return m_checkBoxVirtualDtor; }
     wxCheckBox* GetCheckBoxCopyable() { return m_checkBoxCopyable; }
     wxCheckBox* GetCheckBoxImplVirtual() { return m_checkBoxImplVirtual; }
     wxCheckBox* GetCheckBoxSingleton() { return m_checkBoxSingleton; }
     wxCheckBox* GetCheckBoxImplPureVirtual() { return m_checkBoxImplPureVirtual; }
-    wxCheckBox* GetCheckBoxVirtualDtor() { return m_checkBoxVirtualDtor; }
-    wxCollapsiblePane* GetCollPane2() { return m_collPane2; }
-    NewClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxCheckBox* GetCheckBoxInline() { return m_checkBoxInline; }
+    wxPanel* GetPanel55() { return m_panel55; }
+    wxNotebook* GetNotebook53() { return m_notebook53; }
+    NewClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Class"),
+                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                    long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewClassBaseDlg();
-};
-
-
-class NewIneritanceBaseDlg : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText20;
-    wxTextCtrl* m_textCtrlInhertiance;
-    wxButton* m_button24;
-    wxStaticText* m_staticText26;
-    wxChoice* m_choiceAccess;
-    wxStdDialogButtonSizer* m_stdBtnSizer14;
-    wxButton* m_button16;
-    wxButton* m_button18;
-
-protected:
-    virtual void OnButtonMore(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText20() { return m_staticText20; }
-    wxTextCtrl* GetTextCtrlInhertiance() { return m_textCtrlInhertiance; }
-    wxButton* GetButton24() { return m_button24; }
-    wxStaticText* GetStaticText26() { return m_staticText26; }
-    wxChoice* GetChoiceAccess() { return m_choiceAccess; }
-    NewIneritanceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("NewIneritanceDlgBase"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
-    virtual ~NewIneritanceBaseDlg();
 };
 
 #endif

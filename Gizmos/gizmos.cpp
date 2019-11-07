@@ -459,17 +459,14 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         closeMethod = wxT(";\n");
 
     // Add include for base classes
-    if(info.parents.empty() == false) {
-        for(size_t i = 0; i < info.parents.size(); i++) {
+    if(!info.parents.name.empty()) {
+        const ClassParentInfo& pi = info.parents;
 
-            const ClassParentInfo& pi = info.parents.at(i);
-
-            // Include the header name only (no paths)
-            wxFileName includeFileName(pi.fileName);
-            if(!pi.fileName.IsEmpty()) {
-                header << wxT("#include \"") << includeFileName.GetFullName() << wxT("\" // Base class: ") << pi.name
-                       << wxT("\n");
-            }
+        // Include the header name only (no paths)
+        wxFileName includeFileName(pi.fileName);
+        if(!pi.fileName.IsEmpty()) {
+            header << wxT("#include \"") << includeFileName.GetFullName() << wxT("\" // Base class: ") << pi.name
+                   << wxT("\n");
         }
         header << wxT("\n");
     }
@@ -479,16 +476,12 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
 
     header << wxT("class ") << info.name;
 
-    if(info.parents.empty() == false) {
+    if(!info.parents.name.empty()) {
         header << wxT(" : ");
-        for(size_t i = 0; i < info.parents.size(); i++) {
-            ClassParentInfo pi = info.parents.at(i);
-            header << pi.access << wxT(" ") << pi.name << wxT(", ");
-        }
-        header = header.BeforeLast(wxT(','));
+        const ClassParentInfo& pi = info.parents;
+        header << pi.access << wxT(" ") << pi.name;
     }
     header << wxT("\n{\n");
-
     if(info.isSingleton) { header << separator << wxT("static ") << info.name << wxT("* ms_instance;\n\n"); }
 
     if(info.isAssingable == false) {
@@ -861,9 +854,8 @@ wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo& info)
     std::vector<TagEntryPtr> tmp_tags;
     std::vector<TagEntryPtr> no_dup_tags;
     std::vector<TagEntryPtr> tags;
-    for(std::vector<TagEntryPtr>::size_type i = 0; i < info.parents.size(); i++) {
-        ClassParentInfo pi = info.parents.at(i);
-
+    if(!info.parents.name.empty()) {
+        const ClassParentInfo& pi = info.parents;
         // Load all prototypes / functions of the parent scope
         m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("prototype"), tmp_tags, false);
         m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("function"), tmp_tags, false);
@@ -904,8 +896,8 @@ wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo& info, const wxS
     std::vector<TagEntryPtr> tmp_tags;
     std::vector<TagEntryPtr> no_dup_tags;
     std::vector<TagEntryPtr> tags;
-    for(std::vector<TagEntryPtr>::size_type i = 0; i < info.parents.size(); i++) {
-        ClassParentInfo pi = info.parents.at(i);
+    if(!info.parents.name.empty()) {
+        const ClassParentInfo& pi = info.parents;
 
         // Load all prototypes / functions of the parent scope
         m_mgr->GetTagsManager()->TagsByScope(pi.name, wxT("prototype"), tmp_tags, false);

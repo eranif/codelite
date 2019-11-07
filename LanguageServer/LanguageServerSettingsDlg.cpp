@@ -62,6 +62,7 @@ void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(tr
 void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 {
     event.Skip();
+    wxBusyCursor bc;
     std::vector<LSPDetector::Ptr_t> matches;
     if(LSPDetectorManager::Get().Scan(matches)) {
         // Matches were found, reload the dialog

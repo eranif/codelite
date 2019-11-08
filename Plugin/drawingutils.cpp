@@ -602,66 +602,52 @@ wxColour DrawingUtils::GetButtonTextColour() { return clSystemSettings::GetColou
 void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
                                const wxColour& bgColouur, eButtonState state)
 {
-#if 0
-    size_t flags = 0;
-    switch(state) {
-    case eButtonState::kHover:
-        flags = wxCONTROL_CURRENT;
-        break;
-    case eButtonState::kPressed:
-        flags = wxCONTROL_PRESSED;
-        break;
-    case eButtonState::kDisabled:
-        flags = wxCONTROL_DISABLED;
-        break;
-    default:
-        break;
-    }
-    wxRendererNative::Get().DrawTitleBarBitmap(win, dc, rect, wxTITLEBAR_BUTTON_CLOSE, flags);
-    if(IsDark(bgColouur)) {
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.SetPen(bgColouur);
-        dc.DrawRectangle(rect);
-    }
-#else
     // Calculate the circle radius:
     wxRect innerRect(rect);
-    bool isBgDark = IsDark(bgColouur);
-    wxColour xColour = penColour;
+    wxColour xColour = *wxWHITE;
+    wxColour buttonBgColour = wxColour("GOLD");
+
     int penWidth = 2;
+    bool drawBackground = true;
     switch(state) {
     case eButtonState::kNormal:
-        xColour = *wxRED;
         break;
     case eButtonState::kDisabled:
-        xColour = isBgDark ? bgColouur.ChangeLightness(130) : bgColouur.ChangeLightness(70);
+        drawBackground = false;
+        xColour = wxColour("GRAY");
         break;
     case eButtonState::kHover:
         penWidth = 4;
-        xColour = *wxRED;
         break;
     case eButtonState::kPressed:
         penWidth = 4;
-        xColour = wxColour(*wxRED).ChangeLightness(80);
+        buttonBgColour = buttonBgColour.ChangeLightness(80);
         break;
     default:
         break;
     }
 
-    // draw the x sign
-    //innerRect.Deflate(2);
-    innerRect = innerRect.CenterIn(rect);
-    if(state == eButtonState::kPressed) {
-        innerRect.x += 1;
-        innerRect.y += 1;
+    if(drawBackground) {
+        dc.SetBrush(buttonBgColour);
+        dc.SetPen(buttonBgColour.ChangeLightness(60));
+        dc.DrawRoundedRectangle(rect, 2.0);
     }
+
+    wxRect xrect(rect);
+#if wxCHECK_VERSION(3, 1, 0)
+    xrect.Deflate(win ? win->FromDIP(4) : 4);
+#else
+    xrect.Deflate(4);
+#endif
+
+    xrect = xrect.CenterIn(rect);
+
     dc.SetPen(wxPen(xColour, penWidth));
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
-    dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
-    dc.DrawPoint(innerRect.GetBottomRight());
-    dc.DrawPoint(innerRect.GetBottomLeft());
-#endif
+    dc.DrawLine(xrect.GetTopLeft(), xrect.GetBottomRight());
+    dc.DrawLine(xrect.GetTopRight(), xrect.GetBottomLeft());
+    dc.DrawPoint(xrect.GetBottomRight());
+    dc.DrawPoint(xrect.GetBottomLeft());
 }
 
 void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,

@@ -407,10 +407,7 @@ wxColour DrawingUtils::GetAUIPaneBGColour() { return GetPanelBgColour(); }
 wxBrush DrawingUtils::GetStippleBrush()
 {
     wxMemoryDC memDC;
-    wxColour bgColour = GetAUIPaneBGColour();
-    // if(clGetManager() && clGetManager()->GetStatusBar() && clGetManager()->GetStatusBar()->GetArt()) {
-    //     bgColour = clGetManager()->GetStatusBar()->GetArt()->GetBgColour();
-    // }
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
     wxColour darkPen = DrawingUtils::LightColour(bgColour, 3.0);

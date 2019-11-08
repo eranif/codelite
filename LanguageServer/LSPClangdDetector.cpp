@@ -7,8 +7,6 @@
 LSPClangdDetector::LSPClangdDetector()
     : LSPDetector("clangd")
 {
-    SetConnectionString("stdio");
-    SetPriority(90); // clangd should override the default cc engine
 }
 
 LSPClangdDetector::~LSPClangdDetector() {}
@@ -43,6 +41,8 @@ bool LSPClangdDetector::DoLocate()
                     // Add support for the languages
                     GetLangugaes().Add("c");
                     GetLangugaes().Add("cpp");
+                    SetConnectionString("stdio");
+                    SetPriority(90); // clangd should override the default cc engine
                     // Stop at the first match
                     return true;
                 }

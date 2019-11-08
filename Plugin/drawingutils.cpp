@@ -602,10 +602,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // Calculate the circle radius:
     wxRect innerRect(rect);
     wxColour xColour = *wxWHITE;
-    wxColour buttonBgColour = wxColour("GOLD");
+    wxColour buttonBgColour = wxColour("#E05A2B"); // Ubuntu orange 90%
 
     int penWidth = 2;
     bool drawBackground = true;
+    int deflateSize = 3;
     switch(state) {
     case eButtonState::kNormal:
         break;
@@ -614,10 +615,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         xColour = wxColour("GRAY");
         break;
     case eButtonState::kHover:
-        penWidth = 4;
+        penWidth = 3;
         break;
     case eButtonState::kPressed:
-        penWidth = 4;
+        penWidth = 3;
+        deflateSize = 4;
         buttonBgColour = buttonBgColour.ChangeLightness(80);
         break;
     default:
@@ -632,9 +634,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
     wxRect xrect(rect);
 #if wxCHECK_VERSION(3, 1, 0)
-    xrect.Deflate(win ? win->FromDIP(4) : 4);
+    xrect.Deflate(win ? win->FromDIP(deflateSize) : deflateSize);
 #else
-    xrect.Deflate(4);
+    xrect.Deflate(deflateSize);
 #endif
 
     xrect = xrect.CenterIn(rect);

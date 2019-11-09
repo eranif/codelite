@@ -100,7 +100,6 @@ clAuiDockArt::~clAuiDockArt()
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
 }
 
-#define AUI_BUTTON_SIZE 12
 void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
                                   wxAuiPaneInfo& pane)
 {

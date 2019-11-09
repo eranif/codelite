@@ -2,6 +2,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/settings.h>
+#include "drawingutils.h"
 
 wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 
@@ -65,14 +66,19 @@ void clCustomScrollBar::OnPaint(wxPaintEvent& e)
     wxGCDC dc(bdc);
 
     wxRect rect = GetClientRect();
-
-    dc.SetBrush(m_colours.GetBgColour());
-    dc.SetPen(m_colours.GetBgColour());
+    
+    bool isDark = DrawingUtils::IsDark(m_colours.GetBgColour());
+    
+    wxColour thumbColour = m_colours.GetBorderColour();
+    wxColour bgColour = thumbColour.ChangeLightness(isDark ? 40 : 160);
+    thumbColour = isDark ? thumbColour.ChangeLightness(110) : thumbColour.ChangeLightness(90);
+    dc.SetBrush(bgColour);
+    dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
 
     if(!m_thumbRect.IsEmpty()) {
-        dc.SetPen(m_colours.GetBorderColour());
-        dc.SetBrush(m_colours.GetBorderColour());
+        dc.SetPen(thumbColour);
+        dc.SetBrush(thumbColour);
         dc.DrawRoundedRectangle(m_thumbRect, SB_RADIUS);
     }
 }

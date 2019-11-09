@@ -605,7 +605,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     wxColour borderColour = buttonBgColour.ChangeLightness(90);
     wxColour xColour = buttonBgColour.ChangeLightness(50);
 
+#ifdef __WXOSX__
     int penWidth = 1;
+#else
+    int penWidth = 2;
+#endif
     bool drawBackground = true;
     int deflateSize = 3;
     switch(state) {

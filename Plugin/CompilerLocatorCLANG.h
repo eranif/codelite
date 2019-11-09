@@ -28,17 +28,20 @@
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
 #include "codelite_exports.h"
+#include "wx/filename.h"
+#include "compiler.h"
 
 class WXDLLIMPEXP_SDK CompilerLocatorCLANG : public ICompilerLocator
 {
 protected:
     void MSWLocate();
     void AddTools(CompilerPtr compiler, const wxString& installFolder, const wxString& suffix = "");
-    void
-    AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs = "");
+    void AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
+                 const wxString& extraArgs = "");
     wxString GetClangVersion(const wxString& clangBinary);
     wxString GetCompilerFullName(const wxString& clangBinary);
     bool ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion);
+    CompilerPtr AddCompiler(wxFileName clang);
 
 public:
     CompilerLocatorCLANG();

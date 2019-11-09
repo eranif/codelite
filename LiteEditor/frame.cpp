@@ -1002,6 +1002,22 @@ void clMainFrame::Initialize(bool loadLastSession)
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
+static int GetBestXButtonSize(wxWindow* win)
+{
+    wxUnusedVar(win);
+    static bool once = true;
+    static int buttonSize = 14;
+    if(once) {
+        once = false;
+        wxBitmap bmp(1, 1);
+        wxMemoryDC dc(bmp);
+        wxGCDC gcdc(dc);
+        gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
+        wxSize sz = gcdc.GetTextExtent("T");
+        buttonSize = wxMax(sz.x, sz.y);
+    }
+    return buttonSize;
+}
 
 void clMainFrame::CreateGUIControls()
 {
@@ -1024,24 +1040,16 @@ void clMainFrame::CreateGUIControls()
     SetAUIManagerFlags();
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-
-    int captionSize = 22;
-    {
-        wxMemoryDC memDC;
-        wxBitmap bmp(1, 1);
-        memDC.SelectObject(bmp);
-        memDC.SetFont(DrawingUtils::GetDefaultGuiFont());
-        wxSize textSize = memDC.GetTextExtent("Tp");
-
-        int extra = 6;
+    
+    // Get the best caption size
+    int captionSize = GetBestXButtonSize(this);
+    int extra = 6;
 #if wxCHECK_VERSION(3, 1, 0)
-        extra = wxWindow::FromDIP(extra);
+    extra = wxWindow::FromDIP(extra);
 #endif
-        captionSize = textSize.y + extra; // 3 pixesl space on each side
-    }
+    captionSize += extra;
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
-
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, DrawingUtils::GetPanelBgColour());
 
@@ -1050,6 +1058,7 @@ void clMainFrame::CreateGUIControls()
     clCxxWorkspaceST::Get()->SetStartupDir(ManagerST::Get()->GetStartupDirectory());
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
     // Load the menubar from XRC and set this frame's menubar to it.

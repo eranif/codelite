@@ -636,11 +636,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     }
 
     wxRect xrect(rect);
-#if wxCHECK_VERSION(3, 1, 0)
-    xrect.Deflate(win ? win->FromDIP(deflateSize) : deflateSize);
-#else
-    xrect.Deflate(deflateSize);
-#endif
+    xrect.Deflate(rect.GetWidth() / 4);
 
     xrect = xrect.CenterIn(rect);
 

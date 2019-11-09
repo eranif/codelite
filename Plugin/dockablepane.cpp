@@ -93,10 +93,12 @@ void DockablePane::ClosePane(wxCommandEvent& e)
 void DockablePane::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
-
+    
+    wxRect rect = GetClientRect();
+    rect.Inflate(1);
     dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
     dc.SetBrush(wxBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-    dc.DrawRectangle(GetClientSize());
+    dc.DrawRectangle(rect);
 }
 
 void DockablePane::SetChildNoReparent(wxWindow* child)

@@ -1,0 +1,30 @@
+{
+ "workspace_type": "File System Workspace",
+ "selected_config": "Release",
+ "name": "CodeLiteIDE-Linux",
+ "configs": [{
+   "name": "Debug",
+   "flags": 1,
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces", "-I$(WorkspacePath)/CodeLite", "-I$(WorkspacePath)/Plugin"],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+   "executable": "$(WorkspacePath)/build-debug/codelite.app/Contents/MacOS/codelite",
+   "arguments": "",
+   "environment": "",
+   "compiler": "GCC",
+   "remoteFolder": "",
+   "remoteAccount": "root@codelite.org",
+   "targets": [["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DWITH_PCH=1"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"]]
+  }, {
+   "name": "Release",
+   "flags": 1,
+   "compile_flags": ["`wx-config --cflags`", "-I$(WorkspacePath)/Interfaces", "-I$(WorkspacePath)/CodeLite", "-I$(WorkspacePath)/Plugin"],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+   "executable": "$(WorkspacePath)/build-release/codelite.app/Contents/MacOS/codelite",
+   "arguments": "",
+   "environment": "",
+   "compiler": "GCC",
+   "remoteFolder": "",
+   "remoteAccount": "root@codelite.org",
+   "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1§"], ["build", "cd  build-release && make -j8 install"], ["clean", "cd  build-release && make -j8 clean"]]
+  }]
+}

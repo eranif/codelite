@@ -18,8 +18,27 @@ bool clPythonLocator::Locate()
 #else
     wxFileName exepath;
     wxFileName pippath;
-    if(::clFindExecutable("python", exepath)) { m_python = exepath.GetFullPath(); }
-    if(::clFindExecutable("pip", pippath)) { m_pip = pippath.GetFullPath(); }
+    // Search for python3 before we search for python2
+    if(::clFindExecutable("python3", exepath)) {
+        m_python = exepath.GetFullPath();
+    } else {
+        // couldn't find python3, try python without suffix
+        if(::clFindExecutable("python", exepath)) {
+            m_python = exepath.GetFullPath();
+        } else {
+            return false;
+        }
+    }
+    if(::clFindExecutable("pip3", pippath)) {
+        m_pip = pippath.GetFullPath();
+    } else {
+        // couldn't find pip3, try python without suffix
+        if(::clFindExecutable("pip", exepath)) {
+            m_pip = pippath.GetFullPath();
+        } else {
+            return false;
+        }
+    }
     return exepath.FileExists();
 #endif
 }

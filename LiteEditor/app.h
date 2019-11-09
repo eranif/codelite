@@ -25,9 +25,9 @@
 #ifndef LITEEDITOR_APP_H
 #define LITEEDITOR_APP_H
 
+#include "clPersistenceManager.h"
 #include "frame.h"
 #include <set>
-#include "clPersistenceManager.h"
 
 class wxSplashScreen;
 class wxSingleInstanceChecker;
@@ -100,6 +100,7 @@ public:
     }
     bool IsRestartCodeLite() const { return m_restartCodeLite; }
     const wxString& GetRestartCommand() const { return m_restartCommand; }
+    int FilterEvent(wxEvent& event);
 
 protected:
     virtual bool OnInit();

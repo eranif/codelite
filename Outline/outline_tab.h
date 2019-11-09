@@ -60,7 +60,6 @@ public:
     OutlineTab(wxWindow* parent, IManager* mgr);
     virtual ~OutlineTab();
     void OnSearchSymbol(wxCommandEvent& event);
-    void OnSearchEnter(wxCommandEvent& event);
     void EditorChanged();
 
     // Event Handlers

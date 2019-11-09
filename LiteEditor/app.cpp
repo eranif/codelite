@@ -31,6 +31,7 @@
 #include "autoversion.h"
 #include "clInitializeDialog.h"
 #include "clKeyboardManager.h"
+#include "clSystemSettings.h"
 #include "cl_config.h"
 #include "cl_registry.h"
 #include "conffilelocator.h"
@@ -41,6 +42,7 @@
 #include "evnvarlist.h"
 #include "exelocator.h"
 #include "file_logger.h"
+#include "fileexplorer.h"
 #include "fileextmanager.h"
 #include "frame.h"
 #include "globals.h"
@@ -51,15 +53,13 @@
 #include "procutils.h"
 #include "singleinstancethreadjob.h"
 #include "stack_walker.h"
+#include "workspace_pane.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 #include <CompilerLocatorMinGW.h>
 #include <wx/imagjpeg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
-#include "fileexplorer.h"
-#include "workspace_pane.h"
-#include "clSystemSettings.h"
 
 //#define __PERFORMANCE
 #include "performance.h"
@@ -707,7 +707,7 @@ int CodeLiteApp::OnExit()
         if(!this->m_restartWD.empty()) { ::wxSetWorkingDirectory(this->m_restartWD); }
         wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
     }
-    
+
     // Delete the temp folder
     wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
     return 0;
@@ -1067,3 +1067,5 @@ void CodeLiteApp::OpenItem(const wxString& path, long lineNumber)
         }
     }
 }
+
+int CodeLiteApp::FilterEvent(wxEvent& event) { return -1; }

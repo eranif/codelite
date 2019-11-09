@@ -38,7 +38,9 @@
 #include "plugin.h"
 #include <imanager.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
+#include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 
 const wxEventType wxEVT_SV_GOTO_DEFINITION = wxNewEventType();
@@ -64,6 +66,10 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     , m_isEnabled(false)
 {
     m_tree = new svSymbolTree(m_panelCxx, m_mgr, wxID_ANY);
+    // Bind the wxID_FIND from the top level window (our main frame)
+    // to this class
+    wxTheApp->GetTopWindow()->GetEventHandler()->Bind(wxEVT_MENU, &OutlineTab::OnSearchSymbol, this, wxID_FIND);
+
     m_sortCxxTreeAlphabetically =
         clConfig::Get().Read("OutlineView/SortCxxAlphabetically", m_sortCxxTreeAlphabetically);
     m_tree->SetSortByLineNumber(!m_sortCxxTreeAlphabetically);
@@ -105,6 +111,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
 OutlineTab::~OutlineTab()
 {
     wxDELETE(m_themeHelper);
+    wxTheApp->GetTopWindow()->GetEventHandler()->Unbind(wxEVT_MENU, &OutlineTab::OnSearchSymbol, this, wxID_FIND);
     m_toolbar->Unbind(wxEVT_TOOL, &OutlineTab::OnSortAlpha, this, wxID_SORT_ASCENDING);
     m_toolbar->Unbind(wxEVT_UPDATE_UI, &OutlineTab::OnSortAlphaUI, this, wxID_SORT_ASCENDING);
     m_tree->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(OutlineTab::OnMenu), NULL, this);
@@ -134,29 +141,27 @@ OutlineTab::~OutlineTab()
 void OutlineTab::OnSearchSymbol(wxCommandEvent& event)
 {
     event.Skip();
+
+    int sel = m_simpleBook->GetSelection();
+    if(sel == wxNOT_FOUND) { return; }
+    wxWindow* win = m_simpleBook->GetPage(sel);
+    if(!win) { return; }
+
+    if(!win->GetScreenRect().Contains(::wxGetMousePosition())) { return; }
+    event.Skip(false);
+
+    wxString text = ::wxGetTextFromUser("Find Symbol:", "Outline");
+    if(text.empty()) { return; }
+
     if(m_simpleBook->GetSelection() == OUTLINE_TAB_PHP) {
         // PHP
-        m_treeCtrlPhp->Select(m_textCtrlSearch->GetValue());
+        m_treeCtrlPhp->Select(text);
 
     } else {
         // C++
-        wxString name = m_textCtrlSearch->GetValue();
+        wxString name = text;
         name.Trim().Trim(false);
         m_tree->SelectItemByName(name);
-    }
-}
-
-void OutlineTab::OnSearchEnter(wxCommandEvent& event)
-{
-    event.Skip();
-    if(m_simpleBook->GetSelection() == OUTLINE_TAB_PHP) {
-        wxTreeItemId selection = m_treeCtrlPhp->GetSelection();
-        if(selection.IsOk()) { m_treeCtrlPhp->ItemSelected(selection, true); }
-
-    } else {
-        wxString name = m_textCtrlSearch->GetValue();
-        name.Trim().Trim(false);
-        if(name.IsEmpty() == false) { m_tree->ActivateSelectedItem(); }
     }
 }
 
@@ -343,17 +348,14 @@ void OutlineTab::EditorChanged()
     if(editor && cxxLexer && FileExtManager::IsCxxFile(editor->GetFileName())) {
         m_tree->BuildTree(editor->GetFileName(), true);
         m_simpleBook->SetSelection(OUTLINE_TAB_CXX);
-        m_textCtrlSearch->Enable(true);
 
     } else if(editor && phpLexer && FileExtManager::IsPHPFile(editor->GetFileName())) {
         m_tree->Clear();
         m_treeCtrlPhp->BuildTree(editor->GetFileName());
         m_simpleBook->SetSelection(OUTLINE_TAB_PHP);
-        m_textCtrlSearch->Enable(true);
 
     } else {
         if(editor) { clDEBUG() << "Could not match an Outline to file:" << editor->GetFileName(); }
         m_simpleBook->SetSelection(OUTLINE_PLACE_HOLDER_PAGE);
-        m_textCtrlSearch->Enable(false);
     }
 }

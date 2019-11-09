@@ -37,6 +37,7 @@
 #include "clBootstrapWizard.h"
 #include "clCustomiseToolBarDlg.h"
 #include "clEditorBar.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clGotoAnythingManager.h"
 #include "clInfoBar.h"
 #include "clMainFrameHelper.h"
@@ -75,6 +76,7 @@
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
 #include <algorithm>
+#include <array>
 #include <cpptoken.h>
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>
@@ -82,8 +84,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "clFileSystemWorkspace.hpp"
-#include <array>
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1030,9 +1030,14 @@ void clMainFrame::CreateGUIControls()
         wxMemoryDC memDC;
         wxBitmap bmp(1, 1);
         memDC.SelectObject(bmp);
-        memDC.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+        memDC.SetFont(DrawingUtils::GetDefaultGuiFont());
         wxSize textSize = memDC.GetTextExtent("Tp");
-        captionSize = textSize.y + 6; // 3 pixesl space on each side
+
+        int extra = 6;
+#if wxCHECK_VERSION(3, 1, 0)
+        extra = wxWindow::FromDIP(extra);
+#endif
+        captionSize = textSize.y + extra; // 3 pixesl space on each side
     }
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);

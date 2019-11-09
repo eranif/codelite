@@ -158,6 +158,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 #if defined(__WXOSX__)
     tmpRect = rect;
+    tmpRect.Inflate(1);
     window->PrepareDC(dc);
 
     // Prepare the colours

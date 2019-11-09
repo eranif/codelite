@@ -103,6 +103,22 @@ void clTabColours::InitLightColours()
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
 
+static void SetBestXButtonSize(wxWindow* win)
+{
+    wxUnusedVar(win);
+    static bool once = true;
+
+    if(once) {
+        once = false;
+        wxBitmap bmp(1, 1);
+        wxMemoryDC dc(bmp);
+        wxGCDC gcdc(dc);
+        gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
+        wxSize sz = gcdc.GetTextExtent("X");
+        X_BUTTON_SIZE = wxMax(sz.x, sz.y);
+    }
+}
+
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
     : m_bitmap(bmp)
     , m_tabCtrl(tabCtrl)
@@ -112,6 +128,7 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxS
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
+    SetBestXButtonSize(tabCtrl);
     CalculateOffsets(style);
     if(m_bitmap.IsOk()) { m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap); }
 }
@@ -129,6 +146,7 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
+    SetBestXButtonSize(tabCtrl);
     CalculateOffsets(0);
 }
 
@@ -141,14 +159,6 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 5;
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
-
-#if wxVERSION_NUMBER >= 3100
-    static bool once = true;
-    if(m_tabCtrl && once) {
-        X_BUTTON_SIZE = m_tabCtrl->FromDIP(X_BUTTON_SIZE);
-        once = false;
-    }
-#endif
 
     wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
@@ -267,7 +277,7 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     , ySpacer(5)
     , m_name(name)
 {
-#if wxCHECK_VERSION(3,1,0)
+#if wxCHECK_VERSION(3, 1, 0)
     xSpacer = parent ? parent->FromDIP(10) : 10;
 #else
     xSpacer = 10;

@@ -445,7 +445,10 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
     }
 }
 
-clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer() { return clTabRenderer::CreateRenderer(m_book->GetStyle()); }
+clTabRenderer::Ptr_t WorkspacePane::GetNotebookRenderer()
+{
+    return clTabRenderer::CreateRenderer(m_book, m_book->GetStyle());
+}
 
 void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
 {
@@ -461,12 +464,12 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
             // Tab is visible, dont show it
             continue;
         }
-        
+
         if(hiddenTabsMenu->GetMenuItemCount() == 0) {
             // we are adding the first menu item
             menu->AppendSeparator();
         }
-        
+
         int tabId = wxXmlResource::GetXRCID(wxString() << "workspace_tab_" << label);
         hiddenTabsMenu->Append(tabId, label);
 
@@ -474,14 +477,15 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
         if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { hiddenTabsMenu->Enable(tabId, false); }
 
         // Bind the event
-        hiddenTabsMenu->Bind(wxEVT_MENU,
-                             // Use lambda by value here so we make a copy
-                             [=](wxCommandEvent& e) {
-                                 clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
-                                 eventShow.SetSelected(true).SetString(label);
-                                 EventNotifier::Get()->AddPendingEvent(eventShow);
-                             },
-                             tabId);
+        hiddenTabsMenu->Bind(
+            wxEVT_MENU,
+            // Use lambda by value here so we make a copy
+            [=](wxCommandEvent& e) {
+                clCommandEvent eventShow(wxEVT_SHOW_WORKSPACE_TAB);
+                eventShow.SetSelected(true).SetString(label);
+                EventNotifier::Get()->AddPendingEvent(eventShow);
+            },
+            tabId);
     }
     if(hiddenTabsMenu->GetMenuItemCount() == 0) {
         wxDELETE(hiddenTabsMenu);

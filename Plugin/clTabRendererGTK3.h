@@ -6,7 +6,7 @@
 class WXDLLIMPEXP_SDK clTabRendererGTK3 : public clTabRenderer
 {
 public:
-    clTabRendererGTK3();
+    clTabRendererGTK3(const wxWindow* parent);
     virtual ~clTabRendererGTK3();
 
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
@@ -16,7 +16,7 @@ public:
     void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void AdjustColours(clTabColours& colours, size_t style);
-    clTabRenderer* New() const { return new clTabRendererGTK3(); }
+    clTabRenderer* New(const wxWindow* parent) const { return new clTabRendererGTK3(parent); }
 };
 
 #endif // CLTABRENDERERGTK3_H

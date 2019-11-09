@@ -14,8 +14,8 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-clTabRendererGTK3::clTabRendererGTK3()
-    : clTabRenderer("GTK3")
+clTabRendererGTK3::clTabRendererGTK3(const wxWindow* parent)
+    : clTabRenderer("GTK3", parent)
 {
 #ifdef __WXGTK__
     bottomAreaHeight = 0;

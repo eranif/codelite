@@ -9,8 +9,8 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-clTabRendererCurved::clTabRendererCurved()
-    : clTabRenderer("TRAPEZOID")
+clTabRendererCurved::clTabRendererCurved(const wxWindow* parent)
+    : clTabRenderer("TRAPEZOID", parent)
 {
     bottomAreaHeight = 5;
     majorCurveWidth = 15;

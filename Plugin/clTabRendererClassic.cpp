@@ -13,8 +13,8 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-clTabRendererClassic::clTabRendererClassic()
-    : clTabRenderer("MINIMAL")
+clTabRendererClassic::clTabRendererClassic(const wxWindow* parent)
+    : clTabRenderer("MINIMAL", parent)
 {
     bottomAreaHeight = 0;
     smallCurveWidth = 0;

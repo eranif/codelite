@@ -237,7 +237,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    m_art = clTabRenderer::CreateRenderer(m_style);
+    m_art = clTabRenderer::CreateRenderer(this, m_style);
     DoSetBestSize();
 
     SetDropTarget(new clTabCtrlDropTarget(this));

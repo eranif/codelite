@@ -12,7 +12,11 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-clTabRendererSquare::clTabRendererSquare() { SetName("DEFAULT"); }
+clTabRendererSquare::clTabRendererSquare(const wxWindow* parent)
+    : clTabRendererClassic(parent)
+{
+    SetName("DEFAULT");
+}
 
 clTabRendererSquare::~clTabRendererSquare() {}
 

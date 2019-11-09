@@ -9,7 +9,7 @@ public:
     static void InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour);
 
 public:
-    clTabRendererClassic();
+    clTabRendererClassic(const wxWindow* parent);
     virtual ~clTabRendererClassic();
     void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
               size_t style, eButtonState buttonState);
@@ -18,6 +18,6 @@ public:
     void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
                             size_t style);
-    clTabRenderer* New() const { return new clTabRendererClassic(); }
+    clTabRenderer* New(const wxWindow* parent) const { return new clTabRendererClassic(parent); }
 };
 #endif // CLTABRENDERERCLASSIC_H

@@ -6,14 +6,14 @@
 class WXDLLIMPEXP_SDK clTabRendererCurved : public clTabRenderer
 {
 public:
-    clTabRendererCurved();
+    clTabRendererCurved(const wxWindow* parent);
     virtual ~clTabRendererCurved();
 
     void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
               size_t style, eButtonState buttonState);
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style);
-    clTabRenderer* New() const { return new clTabRendererCurved(); }
+    clTabRenderer* New(const wxWindow* parent) const { return new clTabRendererCurved(parent); }
 };
 #endif
 #endif // CLTABRENDERERCURVED_H

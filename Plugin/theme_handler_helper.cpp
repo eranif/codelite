@@ -201,7 +201,7 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
     if(!win) { return; }
     if(dynamic_cast<Notebook*>(win)) {
         Notebook* book = dynamic_cast<Notebook*>(win);
-        book->SetArt(clTabRenderer::CreateRenderer(book->GetStyle()));
+        book->SetArt(clTabRenderer::CreateRenderer(book, book->GetStyle()));
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
         wxColour activeTabBgColuor;
         if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }

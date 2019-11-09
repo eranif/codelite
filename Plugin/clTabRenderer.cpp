@@ -258,16 +258,21 @@ const wxString& clTabInfo::GetBestLabel(size_t style) const
 
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
 
-clTabRenderer::clTabRenderer(const wxString& name)
+clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     : bottomAreaHeight(0)
     , majorCurveWidth(0)
     , smallCurveWidth(0)
     , overlapWidth(0)
     , verticalOverlapWidth(0)
-    , xSpacer(20)
     , ySpacer(5)
     , m_name(name)
 {
+#if wxCHECK_VERSION(3,1,0)
+    xSpacer = parent ? parent->FromDIP(10) : 10;
+#else
+    xSpacer = 10;
+#endif
+
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
 }
 
@@ -365,22 +370,22 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
     return bmpHeight;
 }
 
-clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(size_t tabStyle)
+clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t tabStyle)
 {
     if(ms_Renderes.empty()) {
-        RegisterRenderer(new clTabRendererSquare());
-        RegisterRenderer(new clTabRendererGTK3());
-        RegisterRenderer(new clTabRendererClassic());
-        RegisterRenderer(new clTabRendererCurved());
+        RegisterRenderer(new clTabRendererSquare(win));
+        RegisterRenderer(new clTabRendererGTK3(win));
+        RegisterRenderer(new clTabRendererClassic(win));
+        RegisterRenderer(new clTabRendererCurved(win));
     }
 
     wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
     wxString name = tab.Upper();
     if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {
-        return clTabRenderer::Ptr_t(Create("MINIMAL"));
+        return clTabRenderer::Ptr_t(Create(win, "MINIMAL"));
     }
-    clTabRenderer* r = Create(name);
-    if(!r) { r = Create("DEFAULT"); }
+    clTabRenderer* r = Create(win, name);
+    if(!r) { r = Create(win, "DEFAULT"); }
     return clTabRenderer::Ptr_t(r);
 }
 
@@ -529,8 +534,8 @@ void clTabRenderer::RegisterRenderer(clTabRenderer* renderer)
     ms_Renderes.insert({ renderer->GetName(), renderer });
 }
 
-clTabRenderer* clTabRenderer::Create(const wxString& name)
+clTabRenderer* clTabRenderer::Create(const wxWindow* parent, const wxString& name)
 {
     if(ms_Renderes.count(name) == 0) { return nullptr; }
-    return ms_Renderes.find(name)->second->New();
+    return ms_Renderes.find(name)->second->New(parent);
 }

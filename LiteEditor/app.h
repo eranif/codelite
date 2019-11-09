@@ -100,7 +100,6 @@ public:
     }
     bool IsRestartCodeLite() const { return m_restartCodeLite; }
     const wxString& GetRestartCommand() const { return m_restartCommand; }
-    int FilterEvent(wxEvent& event);
 
 protected:
     virtual bool OnInit();

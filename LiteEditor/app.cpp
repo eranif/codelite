@@ -1067,5 +1067,3 @@ void CodeLiteApp::OpenItem(const wxString& path, long lineNumber)
         }
     }
 }
-
-int CodeLiteApp::FilterEvent(wxEvent& event) { return -1; }

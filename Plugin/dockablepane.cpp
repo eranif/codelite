@@ -23,15 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/settings.h>
+#include "Notebook.h"
+#include "clSystemSettings.h"
+#include "dockablepane.h"
+#include "globals.h"
+#include "imanager.h"
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
-#include <wx/xrc/xmlres.h>
-#include "Notebook.h"
+#include <wx/settings.h>
 #include <wx/sizer.h>
-#include "dockablepane.h"
-#include "imanager.h"
-#include "globals.h"
+#include <wx/xrc/xmlres.h>
 
 const wxEventType wxEVT_CMD_NEW_DOCKPANE = XRCID("new_dockpane");
 const wxEventType wxEVT_CMD_DELETE_DOCKPANE = XRCID("delete_dockpane");
@@ -41,9 +42,9 @@ EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
 EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 
-DockablePane::DockablePane(
-    wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat, const wxBitmap& bmp, wxSize size)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
+DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat,
+                           const wxBitmap& bmp, wxSize size)
+    : wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE)
     , m_child(NULL)
     , m_book(book)
     , m_text(title)
@@ -56,12 +57,10 @@ DockablePane::DockablePane(
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
     wxAuiPaneInfo info;
     info.Name(title).Caption(title);
-    if(initialFloat) {
-        info.Float();
-    }
+    if(initialFloat) { info.Float(); }
     clGetManager()->GetDockingManager()->AddPane(this, info);
     clGetManager()->GetDockingManager()->Update();
-    
+
     wxCommandEvent event(wxEVT_CMD_NEW_DOCKPANE);
     event.SetClientData(this);
     parent->GetEventHandler()->AddPendingEvent(event);
@@ -95,9 +94,8 @@ void DockablePane::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
 
-    dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-    dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-
+    dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    dc.SetBrush(wxBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
     dc.DrawRectangle(GetClientSize());
 }
 
@@ -105,9 +103,7 @@ void DockablePane::SetChildNoReparent(wxWindow* child)
 {
     m_child = child;
     wxSizer* sz = GetSizer();
-    if(!m_child->IsShown()) {
-        m_child->Show();
-    }
+    if(!m_child->IsShown()) { m_child->Show(); }
     sz->Add(m_child, 1, wxEXPAND | wxALL, 0);
     sz->Layout();
 }

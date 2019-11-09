@@ -102,6 +102,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     m_toolbar = new clToolBar(m_panelCxx);
     m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
                        wxITEM_CHECK);
+    m_toolbar->AddTool(wxID_FIND, _("Find"), clGetManager()->GetStdIcons()->LoadBitmap("find"), "", wxITEM_NORMAL);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &OutlineTab::OnSortAlpha, this, wxID_SORT_ASCENDING);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &OutlineTab::OnSortAlphaUI, this, wxID_SORT_ASCENDING);

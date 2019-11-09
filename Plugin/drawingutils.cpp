@@ -611,7 +611,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     int penWidth = 2;
 #endif
     bool drawBackground = true;
-    int deflateSize = 3;
+    int deflateSize = 4;
     switch(state) {
     case eButtonState::kNormal:
         break;

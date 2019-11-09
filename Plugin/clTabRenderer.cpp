@@ -114,7 +114,7 @@ static void SetBestXButtonSize(wxWindow* win)
         wxMemoryDC dc(bmp);
         wxGCDC gcdc(dc);
         gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
-        wxSize sz = gcdc.GetTextExtent("X");
+        wxSize sz = gcdc.GetTextExtent("T");
         X_BUTTON_SIZE = wxMax(sz.x, sz.y);
     }
 }

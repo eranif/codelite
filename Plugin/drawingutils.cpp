@@ -602,6 +602,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     // Calculate the circle radius:
     wxRect innerRect(rect);
     wxColour buttonBgColour = wxColour("#E05A2B"); // Ubuntu orange 90%
+    wxColour borderColour = buttonBgColour.ChangeLightness(90);
     wxColour xColour = buttonBgColour.ChangeLightness(50);
 
     int penWidth = 1;
@@ -626,7 +627,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 
     if(drawBackground) {
         dc.SetBrush(buttonBgColour);
-        dc.SetPen(xColour);
+        dc.SetPen(borderColour);
         dc.DrawRoundedRectangle(rect, 1.0);
     }
 

@@ -611,7 +611,6 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     int penWidth = 2;
 #endif
     bool drawBackground = true;
-    int deflateSize = 4;
     switch(state) {
     case eButtonState::kNormal:
         break;
@@ -636,7 +635,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     }
 
     wxRect xrect(rect);
-    xrect.Deflate(rect.GetWidth() / 4);
+    xrect.Deflate(rect.GetWidth() / 3);
 
     xrect = xrect.CenterIn(rect);
 

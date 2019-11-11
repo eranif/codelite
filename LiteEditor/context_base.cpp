@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ServiceProviderManager.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "commentconfigdata.h"
@@ -37,7 +38,6 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
-#include "ServiceProviderManager.h"
 
 // static wxColor GetInactiveColor(const wxColor& col)
 //{
@@ -314,14 +314,19 @@ void ContextBase::AutoAddComment()
 bool ContextBase::IsStringTriggerCodeComplete(const wxString& str) const
 {
     // default behavior is to check if 'str' exists in the m_completionTriggerStrings container
+    if(!m_completionTriggerStrings.empty()) { return m_completionTriggerStrings.count(str) > 0; }
+
     if(GetCtrl().GetLexer() == wxSTC_LEX_XML) {
         return str == "<" || str == "</";
     } else if(GetCtrl().GetLexer() == wxSTC_LEX_CSS) {
         return str == ":";
     } else if(GetCtrl().GetLexer() == wxSTC_LEX_PYTHON) {
         return str == ".";
+    } else if((GetCtrl().GetLexer() == wxSTC_LEX_CPP)) {
+        // This can happen for Java
+        return str == "." || str == "::";
     } else {
-        return (m_completionTriggerStrings.count(str) > 0);
+        return false;
     }
 }
 

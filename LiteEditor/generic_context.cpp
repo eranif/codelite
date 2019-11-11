@@ -59,6 +59,9 @@ void ContextGeneric::ApplySettings()
         if(lexPtr->GetName() == "css") {
             // set the word characters for the CSS lexer
             GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-@");
+        } else if(lexPtr->GetName() == "script") {
+            // script (e.g. bash) should include the $ sign
+            GetCtrl().SetWordChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$");
         }
     } else {
         rCtrl.SetLexer(wxSTC_LEX_NULL);

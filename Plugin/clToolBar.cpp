@@ -92,7 +92,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
 #endif
 
 	wxColour tbBgColour;
-    if(m_useCustomBgColour) {
+    if(m_useCustomBgColour && false) {
         dc.SetBrush(m_bgColour);
         dc.SetPen(m_bgColour);
         dc.DrawRectangle(clientRect);
@@ -127,7 +127,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         m_chevronRect = chevronRect;
     }
 
-	tbBgColour = tbBgColour.ChangeLightness(DrawingUtils::IsDark(tbBgColour) ? 50 : 200);
+	tbBgColour = tbBgColour.ChangeLightness(DrawingUtils::IsDark(tbBgColour) ? 50 : 150);
 	gcdc.SetPen(tbBgColour);
 	gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());
 }
@@ -621,7 +621,7 @@ void clToolBar::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, const w
 
 int clToolBar::GetXSpacer() const { return HasFlag(kMiniToolBar) ? 3 : 8; }
 
-int clToolBar::GetYSpacer() const { return HasFlag(kMiniToolBar) ? 4 : 10; }
+int clToolBar::GetYSpacer() const { return HasFlag(kMiniToolBar) ? 6 : 10; }
 
 void clToolBar::OnColoursChanged(clCommandEvent& event)
 {

@@ -40,23 +40,23 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         wxColour pressBgColour = isdark ? bgColour.ChangeLightness(110) : bgColour.ChangeLightness(70);
         wxRect highlightRect = m_buttonRect;
         highlightRect.Inflate(1);
-        
+
         penColour = isdark ? pressBgColour.ChangeLightness(30) : pressBgColour;
         dc.SetBrush(pressBgColour);
         dc.SetPen(penColour);
         dc.DrawRoundedRectangle(highlightRect, 0);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
-        
+
     } else if(IsEnabled() && IsHover()) {
-        wxColour hoverColour = bgColour;
-        penColour = bgColour;
-        wxRect highlightRect = m_buttonRect;
-        dc.SetBrush(hoverColour);
-        dc.SetPen(penColour);
-        dc.DrawRoundedRectangle(highlightRect, 0);
-        textColour = colours.GetSelItemTextColour();
-        buttonColour = colours.GetSelbuttonColour();
+        // wxColour hoverColour = bgColour;
+        // penColour = bgColour;
+        // wxRect highlightRect = m_buttonRect;
+        // dc.SetBrush(hoverColour);
+        // dc.SetPen(penColour);
+        // dc.DrawRoundedRectangle(highlightRect, 0);
+        // textColour = colours.GetSelItemTextColour();
+        // buttonColour = colours.GetSelbuttonColour();
 
     } else if(!IsEnabled()) {
         // A disabled button
@@ -99,7 +99,7 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
         m_dropDownArrowRect =
             wxRect(xx, m_buttonRect.GetY(), (2 * m_toolbar->GetXSpacer()) + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE,
                    m_buttonRect.GetHeight());
-        if((IsPressed() || IsHover()) && IsEnabled()) {
+        if(IsPressed() && IsEnabled()) {
             dc.DrawLine(wxPoint(xx, m_buttonRect.GetY() + 2),
                         wxPoint(xx, m_buttonRect.GetY() + m_buttonRect.GetHeight() - 2));
         }

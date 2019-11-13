@@ -8,19 +8,19 @@
 #include "clSystemSettings.h"
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_NONE
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE
 #else
-#define LIST_STYLE wxDV_ROW_LINES | wxDV_ENABLE_SEARCH | wxBORDER_NONE
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE
 #endif
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clDataViewListCtrl(parent, id, pos, size, style | LIST_STYLE)
+    : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE) & ~(wxDV_ROW_LINES) )
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
     SetSortFunction(nullptr);
     SetNativeTheme(true);
     ApplyTheme();
-
+    
     // Enable keyboard search
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }

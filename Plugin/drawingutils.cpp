@@ -316,23 +316,29 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar)
 {
-#ifdef __WXMSW__
+#if 1
 
-    wxColour topColour(*wxWHITE);
-    wxColour brushColour(GetMenuBarBgColour(false));
+    wxUnusedVar(miniToolbar);
+    wxRect topRect = rect;
+#ifdef __WXOSX__
+    topRect.Inflat(1);
+#endif
 
-    wxColour bottomColour = brushColour;
-    bottomColour = bottomColour.ChangeLightness(90);
+    topRect.SetHeight((rect.GetHeight() / 4) * 3);
+    wxRect bottomRect = rect;
+    bottomRect.SetTop(topRect.GetBottom());
 
-    dc.SetPen(brushColour);
-    dc.SetBrush(brushColour);
-    dc.DrawRectangle(rect);
+    wxColour topColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    wxColour bottomColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 
     dc.SetPen(topColour);
-    dc.DrawLine(rect.GetTopLeft(), rect.GetTopRight());
+    dc.SetBrush(topColour);
+    dc.DrawRectangle(topRect);
 
-    dc.SetPen(bottomColour);
-    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
+    bottomColour = bottomColour.ChangeLightness(IsDark(topColour) ? 50 : 70);
+    PaintStraightGradientBox(dc, bottomRect, topColour, bottomColour, true);
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    dc.DrawLine(bottomRect.GetBottomLeft(), bottomRect.GetBottomRight());
 
 #elif defined(__WXOSX__)
     wxColour bgColour = GetMenuBarBgColour(false);
@@ -342,16 +348,6 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
 
     wxColour lineColour = bgColour;
     lineColour = lineColour.ChangeLightness(80);
-    dc.SetPen(lineColour);
-    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
-#else
-    wxColour bgColour = GetMenuBarBgColour(miniToolbar);
-    dc.SetPen(bgColour);
-    dc.SetBrush(bgColour);
-    dc.DrawRectangle(rect);
-
-    wxColour lineColour = bgColour;
-    lineColour = lineColour.ChangeLightness(90);
     dc.SetPen(lineColour);
     dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 #endif

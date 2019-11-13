@@ -7,13 +7,13 @@
 wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 
 #ifdef __WXOSX__
-#define SB_WIDTH 12
+static int SB_WIDTH = 10;
 #define SB_RADIUS 0.0
 #elif defined(__WXGTK__)
-#define SB_WIDTH 12
+static int SB_WIDTH = 10;
 #define SB_RADIUS 0.0
 #else
-#define SB_WIDTH 12
+static int SB_WIDTH = 10;
 #define SB_RADIUS 0.0
 #endif
 
@@ -28,6 +28,14 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_LEFT_DOWN, &clCustomScrollBar::OnMouseLeftDown, this);
     Bind(wxEVT_LEFT_UP, &clCustomScrollBar::OnMouseLeftUp, this);
     Bind(wxEVT_MOTION, &clCustomScrollBar::OnMotion, this);
+#if wxCHECK_VERSION(3, 1, 0)
+    static bool once = true;
+    if(once) {
+        once = false;
+        SB_WIDTH = FromDIP(SB_WIDTH);
+    }
+#endif
+
     if(style == wxSB_HORIZONTAL) {
         SetSize(-1, SB_WIDTH);
     } else {
@@ -66,9 +74,9 @@ void clCustomScrollBar::OnPaint(wxPaintEvent& e)
     wxGCDC dc(bdc);
 
     wxRect rect = GetClientRect();
-    
+
     bool isDark = DrawingUtils::IsDark(m_colours.GetBgColour());
-    
+
     wxColour thumbColour = m_colours.GetBorderColour();
     wxColour bgColour = thumbColour.ChangeLightness(isDark ? 40 : 160);
     thumbColour = isDark ? thumbColour.ChangeLightness(110) : thumbColour.ChangeLightness(90);
@@ -236,10 +244,7 @@ void clCustomScrollBar::OnIdle(wxIdleEvent& event)
     }
 }
 
-bool clCustomScrollBar::ShouldShow() const
-{
-    return ((m_thumbSize > 0) && (m_thumbSize < m_range));
-}
+bool clCustomScrollBar::ShouldShow() const { return ((m_thumbSize > 0) && (m_thumbSize < m_range)); }
 
 //=============================================================
 // clScrollEvent

@@ -1,13 +1,13 @@
 #include "NewProjectDialog.h"
-#include <globals.h>
-#include "clWorkspaceManager.h"
-#include <wx/arrstr.h>
-#include <unordered_set>
 #include "build_settings_config.h"
-#include "debuggermanager.h"
 #include "buildmanager.h"
-#include "wxStringHash.h"
+#include "clWorkspaceManager.h"
 #include "cl_config.h"
+#include "debuggermanager.h"
+#include "wxStringHash.h"
+#include <globals.h>
+#include <unordered_set>
+#include <wx/arrstr.h>
 
 #define CONFIG_LAST_SELECTED_CATEGORY "NewProject/LastCategory"
 #define CONFIG_LAST_SELECTED_TYPE "NewProject/LastType"
@@ -134,7 +134,8 @@ wxArrayString NewProjectDialog::GetProjectsTypesForCategory(const wxString& cate
 
 void NewProjectDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_textCtrlName->IsEmpty() && !m_dirPicker->GetPath().IsEmpty() &&
+    bool nameHasSpaces = !m_textCtrlName->GetValue().Contains(" ");
+    event.Enable(!m_textCtrlName->IsEmpty() && !nameHasSpaces && !m_dirPicker->GetPath().IsEmpty() &&
                  m_choiceCategory->GetSelection() != wxNOT_FOUND && m_choiceType->GetSelection() != wxNOT_FOUND);
 }
 

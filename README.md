@@ -113,7 +113,7 @@ Git clone the sources:
     git clone https://github.com/eranif/codelite.git
 
  - Download CodeLite installer for Windows from our [Download Page][8]
- - Download wxWidgets 3.1 installer. Also from our [Download Page][7]
+ - Build wxWidgets 3.1 or later. See build instructions [here][7] installer
  - Open the workspace **CodeLiteIDE.workspace** (located in the CodeLite's folder)
  - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
  - Select the **Win_x64_Release** or **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) and hit **F7**
@@ -129,5 +129,5 @@ Git clone the sources:
   [4]: https://codelite.org/support.php
   [5]: https://wiki.codelite.org/pmwiki.php
   [6]: https://wiki.codelite.org/pmwiki.php/Main/WxWidgets31Binaries
-  [7]: https://codelite.org/support.php
+  [7]: https://wiki.codelite.org/pmwiki.php/Developers/BuildingWxWidgetsWin
   [8]: https://codelite.org/support.php

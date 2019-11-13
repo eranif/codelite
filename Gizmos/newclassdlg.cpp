@@ -82,7 +82,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
     GetSizer()->Layout();
     m_textClassName->SetFocus();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 NewClassDlg::~NewClassDlg() { DoSaveOptions(); }

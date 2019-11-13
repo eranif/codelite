@@ -124,7 +124,7 @@ public:
     wxNotebook* GetNotebook53() { return m_notebook53; }
     NewClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Class"),
                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                    long style = wxDEFAULT_DIALOG_STYLE);
+                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewClassBaseDlg();
 };
 

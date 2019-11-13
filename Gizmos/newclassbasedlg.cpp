@@ -37,7 +37,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(m_staticText1, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), 0);
+    m_textClassName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textClassName->SetToolTip(_("The class name"));
     m_textClassName->SetFocus();
 #if wxVERSION_NUMBER >= 3000

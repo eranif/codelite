@@ -1,12 +1,12 @@
 #ifndef CLTOOLBAR_H
 #define CLTOOLBAR_H
 
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include <unordered_map>
 #include <vector>
 #include <wx/menu.h>
 #include <wx/panel.h>
-#include "cl_command_event.h"
 
 class clToolBarButtonBase;
 class WXDLLIMPEXP_SDK clToolBar : public wxPanel
@@ -21,7 +21,7 @@ private:
     bool m_popupShown = false;
     size_t m_flags = 0;
     wxRect m_chevronRect;
-    int m_groupSpacing = 30;
+    int m_groupSpacing;
     wxColour m_bgColour;
     bool m_useCustomBgColour = false;
 
@@ -95,7 +95,7 @@ public:
     bool IsCustomisationEnabled() const { return HasFlag(kShowCustomiseMenu); }
     void SetMiniToolBar(bool b) { EnableFlag(kMiniToolBar, b); }
     bool IsMiniToolBar() const { return HasFlag(kMiniToolBar); }
-    void SetGroupSpacing(int spacing) { m_groupSpacing = spacing; }
+    void SetGroupSpacing(int spacing);
     int GetGroupSpacing() const { return m_groupSpacing; }
 
     /**

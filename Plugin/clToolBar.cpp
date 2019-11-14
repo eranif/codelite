@@ -11,6 +11,7 @@
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>
@@ -26,6 +27,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     , m_popupShown(false)
     , m_flags(0)
 {
+    SetGroupSpacing(30);
     m_bgColour = DrawingUtils::GetPanelBgColour();
     m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
     if(m_useCustomBgColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
@@ -143,28 +145,6 @@ void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc,
         wxSize buttonSize = button->CalculateSize(gcdc);
         groupWidth += buttonSize.GetWidth();
     });
-
-    //    if(!isLastGroup) {
-    //        wxRect bgRect = wxRect(wxPoint(xx, 0), wxSize(groupWidth, clientRect.GetHeight()));
-    //#ifdef __WXOSX__
-    //        bgRect.SetHeight(bgRect.GetHeight() - 5);
-    //        bgRect = bgRect.CenterIn(clientRect, wxVERTICAL);
-    //#endif
-    //        bgRect.SetWidth(bgRect.GetWidth() + GetGroupSpacing() / 2);
-    //        {
-    //            wxColour lineColour = DrawingUtils::GetMenuBarBgColour(IsMiniToolBar());
-    //            lineColour = lineColour.ChangeLightness(90);
-    //            gcdc.SetPen(lineColour);
-    //            gcdc.DrawLine(bgRect.GetTopRight(), bgRect.GetBottomRight());
-    //        }
-    //        bgRect.SetWidth(bgRect.GetWidth() + 1);
-    //        {
-    //            wxColour lineColour = DrawingUtils::GetMenuBarBgColour(IsMiniToolBar());
-    //            lineColour = lineColour.ChangeLightness(110);
-    //            gcdc.SetPen(lineColour);
-    //            gcdc.DrawLine(bgRect.GetTopRight(), bgRect.GetBottomRight());
-    //        }
-    //    }
 
     // Now draw the buttons
     std::for_each(G.begin(), G.end(), [&](clToolBarButtonBase* button) {
@@ -646,3 +626,5 @@ void clToolBar::OnColoursChanged(clCommandEvent& event)
     if(m_useCustomBgColour) { m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour); }
     Refresh();
 }
+
+void clToolBar::SetGroupSpacing(int spacing) { m_groupSpacing = clGetSize(spacing, this); }

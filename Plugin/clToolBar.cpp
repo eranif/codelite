@@ -127,7 +127,7 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         m_chevronRect = chevronRect;
     }
 
-    tbBgColour = tbBgColour.ChangeLightness(DrawingUtils::IsDark(tbBgColour) ? 50 : 150);
+    tbBgColour = tbBgColour.ChangeLightness(70);
     gcdc.SetPen(tbBgColour);
     gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());
 }

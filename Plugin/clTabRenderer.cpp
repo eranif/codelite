@@ -277,12 +277,7 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     , ySpacer(5)
     , m_name(name)
 {
-#if wxCHECK_VERSION(3, 1, 0)
-    xSpacer = parent ? parent->FromDIP(10) : 10;
-#else
-    xSpacer = 10;
-#endif
-
+    xSpacer = ::clGetSize(10, this);
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
 }
 

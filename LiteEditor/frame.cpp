@@ -1043,10 +1043,7 @@ void clMainFrame::CreateGUIControls()
     
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
-    int extra = 6;
-#if wxCHECK_VERSION(3, 1, 0)
-    extra = wxWindow::FromDIP(extra);
-#endif
+    int extra = ::clGetSize(6, this);
     captionSize += extra;
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);

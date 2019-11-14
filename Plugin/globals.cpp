@@ -22,9 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ColoursAndFontsManager.h"
+#include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
 #include "clDataViewListCtrl.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clGetTextFromUserDialog.h"
 #include "cl_standard_paths.h"
 #include "cpp_scanner.h"
@@ -46,6 +49,7 @@
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "project.h"
+#include "windowattrmanager.h"
 #include "workspace.h"
 #include "wx/app.h"
 #include "wx/ffile.h"
@@ -55,6 +59,7 @@
 #include "wxmd5.h"
 #include <algorithm>
 #include <set>
+#include <wx/app.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
@@ -78,11 +83,6 @@
 #include <wx/wfstream.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/zipstrm.h>
-#include "StringUtils.h"
-#include "windowattrmanager.h"
-#include "ColoursAndFontsManager.h"
-#include <wx/app.h>
-#include "clFileSystemWorkspace.hpp"
 
 #ifdef __WXMSW__
 #include <Uxtheme.h>
@@ -2138,3 +2138,13 @@ void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0
 void clSetDialogSizeAndPosition(wxDialog* win, double ratio) { DoSetDialogSize(win, ratio); }
 
 bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }
+
+int clGetSize(int size, wxWindow* win)
+{
+    if(!win) { return size; }
+#if wxCHECK_VERSION(3, 1, 0)
+    return win->FromDIP(size);
+#else
+    return size;
+#endif
+}

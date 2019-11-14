@@ -277,7 +277,7 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     , ySpacer(5)
     , m_name(name)
 {
-    xSpacer = ::clGetSize(10, this);
+    xSpacer = ::clGetSize(10, parent);
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
 }
 

@@ -552,7 +552,7 @@ WXDLLIMPEXP_SDK int clGetScaledSize(int size);
 /**
  * @brief return the real size for based on Window DIP
  */
-WXDLLIMPEXP_SDK int clGetSize(int size, wxWindow* win);
+WXDLLIMPEXP_SDK int clGetSize(int size, const wxWindow* win);
 
 /**
  * @param signo singal number

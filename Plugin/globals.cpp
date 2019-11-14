@@ -2139,7 +2139,7 @@ void clSetDialogSizeAndPosition(wxDialog* win, double ratio) { DoSetDialogSize(w
 
 bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }
 
-int clGetSize(int size, wxWindow* win)
+int clGetSize(int size, const wxWindow* win)
 {
     if(!win) { return size; }
 #if wxCHECK_VERSION(3, 1, 0)

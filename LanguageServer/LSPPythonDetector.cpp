@@ -48,11 +48,11 @@ bool LSPPythonDetector::DoLocate()
     int port = std::rand();
     port = port % 30000;
     port += 1024;
-    command << " -m pyls --tcp --port " << port << " --host 127.0.0.1";
+    command << " -m pyls";
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("python");
-    SetConnectionString(wxString() << "tcp://127.0.0.1:" << port);
+    SetConnectionString("stdio");
     SetPriority(50);
     return true;
 }

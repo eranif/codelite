@@ -469,10 +469,6 @@
     <File Name="singleinstancethreadjob.h"/>
     <File Name="webupdatethread.cpp"/>
     <File Name="webupdatethread.h"/>
-    <File Name="newversionbasedlg.cpp"/>
-    <File Name="newversionbasedlg.h"/>
-    <File Name="newversiondlg.h"/>
-    <File Name="newversiondlg.cpp"/>
     <File Name="WelcomePage.cpp"/>
     <File Name="WelcomePage.h"/>
     <File Name="autoversion.cpp"/>

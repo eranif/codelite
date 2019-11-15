@@ -133,7 +133,6 @@
 #include "menumanager.h"
 #include "navigationmanager.h"
 #include "new_build_tab.h"
-#include "newversiondlg.h"
 #include "newworkspacedlg.h"
 #include "openwindowspanel.h"
 #include "options_dlg2.h"

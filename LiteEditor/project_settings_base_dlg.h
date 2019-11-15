@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_PROJECT_SETTINGS_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_PROJECT_SETTINGS_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_PROJECT_SETTINGS_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_PROJECT_SETTINGS_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -29,6 +30,8 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/dataview.h>
+#include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
 #include <wx/statline.h>
 #include <wx/statbox.h>
 #include <wx/splitter.h>
@@ -38,6 +41,17 @@
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
 
 class ProjectSettingsBaseDlg : public wxDialog
 {
@@ -66,10 +80,11 @@ public:
     wxTreebook* GetTreebook() { return m_treebook; }
     wxPanel* GetPanelSettings() { return m_panelSettings; }
     wxInfoBar* GetInfobar() { return m_infobar; }
-    ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Project Settings"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ProjectSettingsBaseDlg();
 };
-
 
 class PSGeneralPageBase : public wxPanel
 {
@@ -104,10 +119,10 @@ protected:
 public:
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     wxPropertyGridManager* GetPgMgr136() { return m_pgMgr136; }
-    PSGeneralPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSGeneralPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSGeneralPageBase();
 };
-
 
 class PSCompilerPageBase : public wxPanel
 {
@@ -137,10 +152,10 @@ protected:
 public:
     wxCheckBox* GetCheckCompilerNeeded() { return m_checkCompilerNeeded; }
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    PSCompilerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSCompilerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCompilerPageBase();
 };
-
 
 class PSLinkPageBase : public wxPanel
 {
@@ -164,10 +179,10 @@ protected:
 public:
     wxCheckBox* GetCheckLinkerNeeded() { return m_checkLinkerNeeded; }
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    PSLinkPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSLinkPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSLinkPageBase();
 };
-
 
 class PSDebuggerPageBase : public wxPanel
 {
@@ -183,10 +198,10 @@ protected:
     wxButton* m_button90;
     wxPanel* m_panel71;
     wxStaticText* m_staticText301;
-    wxTextCtrl* m_textCtrlDbgCmds;
+    clThemedSTC* m_textCtrlDbgCmds;
     wxPanel* m_panel74;
     wxStaticText* m_staticText311;
-    wxTextCtrl* m_textCtrlDbgPostConnectCmds;
+    clThemedSTC* m_textCtrlDbgPostConnectCmds;
     wxCheckBox* m_checkBoxDbgRemote;
     wxStaticText* m_staticText31;
     wxTextCtrl* m_textCtrl1DbgHost;
@@ -213,10 +228,10 @@ public:
     wxButton* GetButton90() { return m_button90; }
     wxPanel* GetPanel80() { return m_panel80; }
     wxStaticText* GetStaticText301() { return m_staticText301; }
-    wxTextCtrl* GetTextCtrlDbgCmds() { return m_textCtrlDbgCmds; }
+    clThemedSTC* GetTextCtrlDbgCmds() { return m_textCtrlDbgCmds; }
     wxPanel* GetPanel71() { return m_panel71; }
     wxStaticText* GetStaticText311() { return m_staticText311; }
-    wxTextCtrl* GetTextCtrlDbgPostConnectCmds() { return m_textCtrlDbgPostConnectCmds; }
+    clThemedSTC* GetTextCtrlDbgPostConnectCmds() { return m_textCtrlDbgPostConnectCmds; }
     wxPanel* GetPanel74() { return m_panel74; }
     wxNotebook* GetNotebook67() { return m_notebook67; }
     wxCheckBox* GetCheckBoxDbgRemote() { return m_checkBoxDbgRemote; }
@@ -226,10 +241,10 @@ public:
     wxTextCtrl* GetTextCtrlDbgPort() { return m_textCtrlDbgPort; }
     wxCheckBox* GetCheckBoxDbgRemoteExt() { return m_checkBoxDbgRemoteExt; }
     wxPanel* GetPanelDebugger() { return m_panelDebugger; }
-    PSDebuggerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSDebuggerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSDebuggerPageBase();
 };
-
 
 class PSResourcesPageBase : public wxPanel
 {
@@ -248,10 +263,10 @@ protected:
 
 public:
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    PSResourcesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSResourcesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSResourcesPageBase();
 };
-
 
 class PSEnvironmentBasePage : public wxPanel
 {
@@ -263,7 +278,7 @@ protected:
     wxChoice* m_choiceDbgEnv;
     wxStaticLine* m_staticline12;
     wxStaticText* m_staticText47;
-    wxTextCtrl* m_textCtrlEnvvars;
+    clThemedSTC* m_textCtrlEnvvars;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -276,31 +291,31 @@ public:
     wxChoice* GetChoiceDbgEnv() { return m_choiceDbgEnv; }
     wxStaticLine* GetStaticline12() { return m_staticline12; }
     wxStaticText* GetStaticText47() { return m_staticText47; }
-    wxTextCtrl* GetTextCtrlEnvvars() { return m_textCtrlEnvvars; }
+    clThemedSTC* GetTextCtrlEnvvars() { return m_textCtrlEnvvars; }
     wxPanel* GetPanelEnv() { return m_panelEnv; }
-    PSEnvironmentBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSEnvironmentBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSEnvironmentBasePage();
 };
-
 
 class PSBuildEventsBasePage : public wxPanel
 {
 protected:
     wxPanel* m_preBuildPage;
     wxStaticText* m_staticText11;
-    wxTextCtrl* m_textCtrlBuildEvents;
+    clThemedSTC* m_textCtrlBuildEvents;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText11() { return m_staticText11; }
-    wxTextCtrl* GetTextCtrlBuildEvents() { return m_textCtrlBuildEvents; }
+    clThemedSTC* GetTextCtrlBuildEvents() { return m_textCtrlBuildEvents; }
     wxPanel* GetPreBuildPage() { return m_preBuildPage; }
-    PSBuildEventsBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSBuildEventsBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSBuildEventsBasePage();
 };
-
 
 class PSCustomBuildBasePage : public wxPanel
 {
@@ -340,10 +355,10 @@ public:
     wxButton* GetButtonEditCustomTarget() { return m_buttonEditCustomTarget; }
     wxButton* GetButtonDeleteCustomTarget() { return m_buttonDeleteCustomTarget; }
     wxPanel* GetCustomBuildPage() { return m_customBuildPage; }
-    PSCustomBuildBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSCustomBuildBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCustomBuildBasePage();
 };
-
 
 class GlobalSettingsBasePanel : public wxPanel
 {
@@ -368,10 +383,10 @@ protected:
 
 public:
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~GlobalSettingsBasePanel();
 };
-
 
 class PSCustomMakefileBasePage : public wxPanel
 {
@@ -380,7 +395,7 @@ protected:
     wxStaticText* m_staticText25;
     wxTextCtrl* m_textDeps;
     wxStaticText* m_staticText26;
-    wxTextCtrl* m_textPreBuildRule;
+    clThemedSTC* m_textPreBuildRule;
     wxStaticText* m_staticText24;
 
 protected:
@@ -392,13 +407,13 @@ public:
     wxStaticText* GetStaticText25() { return m_staticText25; }
     wxTextCtrl* GetTextDeps() { return m_textDeps; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
-    wxTextCtrl* GetTextPreBuildRule() { return m_textPreBuildRule; }
+    clThemedSTC* GetTextPreBuildRule() { return m_textPreBuildRule; }
     wxStaticText* GetStaticText24() { return m_staticText24; }
     wxPanel* GetCustomMakefileStep() { return m_customMakefileStep; }
-    PSCustomMakefileBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSCustomMakefileBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCustomMakefileBasePage();
 };
-
 
 class PSCompletionBase : public wxPanel
 {
@@ -406,33 +421,26 @@ protected:
     wxSplitterWindow* m_splitter1;
     wxPanel* m_panel14;
     wxStaticText* m_staticText47;
-    wxTextCtrl* m_textCtrlSearchPaths;
+    clThemedSTC* m_textCtrlSearchPaths;
     wxPanel* m_panel15;
     wxStaticText* m_staticText49;
-    wxTextCtrl* m_textCtrlMacros;
-    wxCheckBox* m_checkBoxC11;
-    wxCheckBox* m_checkBoxC14;
-	wxCheckBox* m_checkBoxC17;
+    clThemedSTC* m_textCtrlMacros;
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText47() { return m_staticText47; }
-    wxTextCtrl* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
+    clThemedSTC* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
     wxPanel* GetPanel14() { return m_panel14; }
     wxStaticText* GetStaticText49() { return m_staticText49; }
-    wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
-    wxCheckBox* GetCheckBoxC11() { return m_checkBoxC11; }
-    wxCheckBox* GetCheckBoxC14() { return m_checkBoxC14; }
-	wxCheckBox* GetCheckBoxC17() { return m_checkBoxC17; }
+    clThemedSTC* GetTextCtrlMacros() { return m_textCtrlMacros; }
     wxPanel* GetPanel15() { return m_panel15; }
     wxSplitterWindow* GetSplitter1() { return m_splitter1; }
-    PSCompletionBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    PSCompletionBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PSCompletionBase();
 };
-
 
 class ProjectCustomBuildTragetDlgBase : public wxDialog
 {
@@ -440,7 +448,7 @@ protected:
     wxStaticText* m_staticTextTargetName;
     wxTextCtrl* m_textCtrlTargetName;
     wxStaticText* m_staticTextCommand;
-    wxTextCtrl* m_textCtrlCommand;
+    clThemedSTC* m_textCtrlCommand;
     wxStdDialogButtonSizer* m_stdBtnSizer120;
     wxButton* m_button122;
     wxButton* m_button124;
@@ -452,8 +460,11 @@ public:
     wxStaticText* GetStaticTextTargetName() { return m_staticTextTargetName; }
     wxTextCtrl* GetTextCtrlTargetName() { return m_textCtrlTargetName; }
     wxStaticText* GetStaticTextCommand() { return m_staticTextCommand; }
-    wxTextCtrl* GetTextCtrlCommand() { return m_textCtrlCommand; }
-    ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clThemedSTC* GetTextCtrlCommand() { return m_textCtrlCommand; }
+    ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                    const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition,
+                                    const wxSize& size = wxSize(-1, -1),
+                                    long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ProjectCustomBuildTragetDlgBase();
 };
 

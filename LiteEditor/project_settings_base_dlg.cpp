@@ -6,85 +6,83 @@
 
 #include "project_settings_base_dlg.h"
 
-
 // Declare the bitmap loading function
 extern void wxCA3F0InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
-    m_panelSettings = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    mainSizer->Add(m_panelSettings, 1, wxEXPAND, 5);
-    
+
+    m_panelSettings = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    mainSizer->Add(m_panelSettings, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* m_sizerSettings = new wxBoxSizer(wxVERTICAL);
     m_panelSettings->SetSizer(m_sizerSettings);
-    
+
     wxBoxSizer* bSizer44 = new wxBoxSizer(wxHORIZONTAL);
-    
-    m_sizerSettings->Add(bSizer44, 0, wxEXPAND, 5);
-    
+
+    m_sizerSettings->Add(bSizer44, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceConfigArr;
-    m_choiceConfig = new wxChoice(m_panelSettings, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceConfigArr, 0);
-    
-    bSizer44->Add(m_choiceConfig, 1, wxALL|wxEXPAND, 5);
-    
-    m_treebook = new wxTreebook(m_panelSettings, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_choiceConfig = new wxChoice(m_panelSettings, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_panelSettings, wxSize(-1, -1)), m_choiceConfigArr, 0);
+
+    bSizer44->Add(m_choiceConfig, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_treebook = new wxTreebook(m_panelSettings, wxID_ANY, wxDefaultPosition,
+                                wxDLG_UNIT(m_panelSettings, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treebook->SetName(wxT("m_treebook"));
-    
-    m_sizerSettings->Add(m_treebook, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_sizerSettings->Add(m_treebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_infobar = new wxInfoBar(this, wxID_ANY);
-    m_infobar->SetSize(wxSize(-1,-1));
+    m_infobar->SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     m_infobar->Hide();
-    
-    mainSizer->Add(m_infobar, 0, wxALL|wxEXPAND, 5);
-    
+
+    mainSizer->Add(m_infobar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer126 = new wxStdDialogButtonSizer();
-    
-    mainSizer->Add(m_stdBtnSizer126, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button_ok = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    mainSizer->Add(m_stdBtnSizer126, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button_ok = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button_ok->SetDefault();
     m_stdBtnSizer126->AddButton(m_button_ok);
-    
-    m_button_apply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button_apply = new wxButton(this, wxID_APPLY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer126->AddButton(m_button_apply);
-    
-    m_button_cancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button_cancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer126->AddButton(m_button_cancel);
-    
-    m_button_help = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button_help = new wxButton(this, wxID_HELP, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer126->AddButton(m_button_help);
     m_stdBtnSizer126->Realize();
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treebook)){
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treebook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_treebook);
     } else {
         wxPersistenceManager::Get().Restore(m_treebook);
     }
-    #endif
-    
+#endif
+
     SetName(wxT("ProjectSettingsBaseDlg"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -98,1176 +96,1582 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_choiceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
-    m_treebook->Connect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
-    m_button_ok->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
-    m_button_apply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
-    m_button_apply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
-    m_button_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
-    m_button_help->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
-    
+    m_choiceConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                            wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
+    m_treebook->Connect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED,
+                        wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
+    m_button_ok->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL,
+                         this);
+    m_button_apply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply),
+                            NULL, this);
+    m_button_apply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL,
+                            this);
+    m_button_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                             wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_button_help->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp),
+                           NULL, this);
 }
 
 ProjectSettingsBaseDlg::~ProjectSettingsBaseDlg()
 {
-    m_choiceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
-    m_treebook->Disconnect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
-    m_button_ok->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK), NULL, this);
-    m_button_apply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
-    m_button_apply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL, this);
-    m_button_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
-    m_button_help->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp), NULL, this);
-    
+    m_choiceConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                               wxCommandEventHandler(ProjectSettingsBaseDlg::OnConfigurationChanged), NULL, this);
+    m_treebook->Disconnect(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED,
+                           wxTreebookEventHandler(ProjectSettingsBaseDlg::OnPageChanged), NULL, this);
+    m_button_ok->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonOK),
+                            NULL, this);
+    m_button_apply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                               wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonApply), NULL, this);
+    m_button_apply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectSettingsBaseDlg::OnButtonApplyUI), NULL,
+                               this);
+    m_button_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonCancel), NULL, this);
+    m_button_help->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(ProjectSettingsBaseDlg::OnButtonHelp),
+                              NULL, this);
 }
 
-PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                     long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer35 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer35);
-    
-    m_checkBoxEnabled = new wxCheckBox(this, wxID_ANY, _("Project enabled"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    m_checkBoxEnabled =
+        new wxCheckBox(this, wxID_ANY, _("Project enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxEnabled->SetValue(true);
-    m_checkBoxEnabled->SetToolTip(_("When unchecked, this project will not be built for the current build configuration"));
-    
-    bSizer35->Add(m_checkBoxEnabled, 0, wxALL, 5);
-    
+    m_checkBoxEnabled->SetToolTip(
+        _("When unchecked, this project will not be built for the current build configuration"));
+
+    bSizer35->Add(m_checkBoxEnabled, 0, wxALL, WXC_FROM_DIP(5));
+
     wxArrayString m_pgMgr136Arr;
     wxUnusedVar(m_pgMgr136Arr);
     wxArrayInt m_pgMgr136IntArr;
     wxUnusedVar(m_pgMgr136IntArr);
-    m_pgMgr136 = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer35->Add(m_pgMgr136, 1, wxALL|wxEXPAND, 5);
-    
-    CATEGORY_GENERAL = m_pgMgr136->Append(  new wxPropertyCategory( _("General") ) );
+    m_pgMgr136 = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                           wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    bSizer35->Add(m_pgMgr136, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CATEGORY_GENERAL = m_pgMgr136->Append(new wxPropertyCategory(_("General")));
     CATEGORY_GENERAL->SetHelpString(wxT(""));
-    
+
     m_pgMgr136Arr.Clear();
     m_pgMgr136IntArr.Clear();
     m_pgMgr136Arr.Add(_("Dynamic Library"));
     m_pgMgr136Arr.Add(_("Static Library"));
     m_pgMgr136Arr.Add(_("Executable"));
-    m_pgPropProjectType = m_pgMgr136->AppendIn( CATEGORY_GENERAL,  new wxEnumProperty( _("Project Type"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropProjectType = m_pgMgr136->AppendIn(
+        CATEGORY_GENERAL, new wxEnumProperty(_("Project Type"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0));
     m_pgPropProjectType->SetHelpString(_("Sets the type of the project"));
-    
-    CATEGORY_BUILD = m_pgMgr136->Append(  new wxPropertyCategory( _("Build") ) );
+
+    CATEGORY_BUILD = m_pgMgr136->Append(new wxPropertyCategory(_("Build")));
     CATEGORY_BUILD->SetHelpString(wxT(""));
-    
+
     m_pgMgr136Arr.Clear();
     m_pgMgr136IntArr.Clear();
-    m_pgPropMakeGenerator = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxEnumProperty( _("Makefile Generator"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
-    m_pgPropMakeGenerator->SetHelpString(_("Select the Makefile generator to use. By default, CodeLite uses its builtin Makefile generator"));
-    
-    m_pgPropMakeGeneratorArgs = m_pgMgr136->AppendIn( m_pgPropMakeGenerator,  new wxLongStringProperty( _("Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropMakeGenerator = m_pgMgr136->AppendIn(
+        CATEGORY_BUILD, new wxEnumProperty(_("Makefile Generator"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0));
+    m_pgPropMakeGenerator->SetHelpString(
+        _("Select the Makefile generator to use. By default, CodeLite uses its builtin Makefile generator"));
+
+    m_pgPropMakeGeneratorArgs =
+        m_pgMgr136->AppendIn(m_pgPropMakeGenerator, new wxLongStringProperty(_("Arguments"), wxPG_LABEL, wxT("")));
     m_pgPropMakeGeneratorArgs->SetHelpString(_("Set the Makefile generator arguments"));
-    m_pgPropMakeGeneratorArgs->SetEditor( wxT("TextCtrlAndButton") );
-    
+    m_pgPropMakeGeneratorArgs->SetEditor(wxT("TextCtrlAndButton"));
+
     m_pgMgr136Arr.Clear();
     m_pgMgr136IntArr.Clear();
-    m_pgPropCompiler = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxEnumProperty( _("Compiler"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
-    m_pgPropCompiler->SetHelpString(_("Select the compiler to use. The compiler controls two aspects of the project:\n- If the project is _not_ a custom build, then this compiler is used for compilation\n- CodeLite uses the compiler definition for parsing the output"));
-    
-    m_pgPropIntermediateFolder = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxStringProperty( _("Intermediate Folder"), wxPG_LABEL, wxT("")) );
-    m_pgPropIntermediateFolder->SetHelpString(_("The name of the folder used for the generated objects during compilation"));
-    
-    m_pgPropOutputFile = m_pgMgr136->AppendIn( CATEGORY_BUILD,  new wxStringProperty( _("Output File"), wxPG_LABEL, wxT("")) );
+    m_pgPropCompiler = m_pgMgr136->AppendIn(
+        CATEGORY_BUILD, new wxEnumProperty(_("Compiler"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0));
+    m_pgPropCompiler->SetHelpString(
+        _("Select the compiler to use. The compiler controls two aspects of the project:\n- If the project is _not_ a "
+          "custom build, then this compiler is used for compilation\n- CodeLite uses the compiler definition for "
+          "parsing the output"));
+
+    m_pgPropIntermediateFolder =
+        m_pgMgr136->AppendIn(CATEGORY_BUILD, new wxStringProperty(_("Intermediate Folder"), wxPG_LABEL, wxT("")));
+    m_pgPropIntermediateFolder->SetHelpString(
+        _("The name of the folder used for the generated objects during compilation"));
+
+    m_pgPropOutputFile =
+        m_pgMgr136->AppendIn(CATEGORY_BUILD, new wxStringProperty(_("Output File"), wxPG_LABEL, wxT("")));
     m_pgPropOutputFile->SetHelpString(_("The name of the output file (e.g. the executable file name)"));
-    
-    CATEGORY_EXECUTION = m_pgMgr136->Append(  new wxPropertyCategory( _("Execution") ) );
+
+    CATEGORY_EXECUTION = m_pgMgr136->Append(new wxPropertyCategory(_("Execution")));
     CATEGORY_EXECUTION->SetHelpString(wxT(""));
-    
-    m_pgPropPause = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("Pause when execution ends"), wxPG_LABEL, 1) );
-    m_pgPropPause->SetHelpString(_("After the execution of the program ends, show a console with the message \"Hit any key to continue...\"\nThis is useful when you wish to view the output printed to stdout before the console terminates"));
-    
-    m_pgPropGUIApp = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxBoolProperty( _("This program is a GUI application"), wxPG_LABEL, 0) );
-    m_pgPropGUIApp->SetHelpString(_("By marking the project as a GUI project, CodeLite will launch the program without any console terminal wrapping the process execution"));
-    
-    m_pgPropProgram = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Executable to Run / Debug"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropPause =
+        m_pgMgr136->AppendIn(CATEGORY_EXECUTION, new wxBoolProperty(_("Pause when execution ends"), wxPG_LABEL, 1));
+    m_pgPropPause->SetHelpString(_(
+        "After the execution of the program ends, show a console with the message \"Hit any key to continue...\"\nThis "
+        "is useful when you wish to view the output printed to stdout before the console terminates"));
+
+    m_pgPropGUIApp = m_pgMgr136->AppendIn(CATEGORY_EXECUTION,
+                                          new wxBoolProperty(_("This program is a GUI application"), wxPG_LABEL, 0));
+    m_pgPropGUIApp->SetHelpString(_("By marking the project as a GUI project, CodeLite will launch the program without "
+                                    "any console terminal wrapping the process execution"));
+
+    m_pgPropProgram = m_pgMgr136->AppendIn(CATEGORY_EXECUTION,
+                                           new wxStringProperty(_("Executable to Run / Debug"), wxPG_LABEL, wxT("")));
     m_pgPropProgram->SetHelpString(_("The executable to run / debug"));
-    m_pgPropProgram->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropWorkingDirectory = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxStringProperty( _("Working Directory"), wxPG_LABEL, wxT("")) );
-    m_pgPropWorkingDirectory->SetHelpString(_("The working directory to set before executing or debugging the program"));
-    m_pgPropWorkingDirectory->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropArgs = m_pgMgr136->AppendIn( CATEGORY_EXECUTION,  new wxLongStringProperty( _("Program Arguments"), wxPG_LABEL, wxT("")) );
+    m_pgPropProgram->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropWorkingDirectory =
+        m_pgMgr136->AppendIn(CATEGORY_EXECUTION, new wxStringProperty(_("Working Directory"), wxPG_LABEL, wxT("")));
+    m_pgPropWorkingDirectory->SetHelpString(
+        _("The working directory to set before executing or debugging the program"));
+    m_pgPropWorkingDirectory->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropArgs =
+        m_pgMgr136->AppendIn(CATEGORY_EXECUTION, new wxLongStringProperty(_("Program Arguments"), wxPG_LABEL, wxT("")));
     m_pgPropArgs->SetHelpString(_("The command line arguments to pass to the program when executing or debugging it"));
-    
-    CATEGORY_DEBUGGER = m_pgMgr136->Append(  new wxPropertyCategory( _("Debugging") ) );
+
+    CATEGORY_DEBUGGER = m_pgMgr136->Append(new wxPropertyCategory(_("Debugging")));
     CATEGORY_DEBUGGER->SetHelpString(wxT(""));
-    
+
     m_pgMgr136Arr.Clear();
     m_pgMgr136IntArr.Clear();
-    m_pgPropDebugger = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxEnumProperty( _("Debugger"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0) );
+    m_pgPropDebugger = m_pgMgr136->AppendIn(
+        CATEGORY_DEBUGGER, new wxEnumProperty(_("Debugger"), wxPG_LABEL, m_pgMgr136Arr, m_pgMgr136IntArr, 0));
     m_pgPropDebugger->SetHelpString(_("Select the debugger type to use for this project"));
-    
-    m_pgPropUseSeparateDebuggerArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxBoolProperty( _("Use separate debugger args"), wxPG_LABEL, 1) );
-    m_pgPropUseSeparateDebuggerArgs->SetHelpString(_("When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"));
-    
-    m_pgPropDebugArgs = m_pgMgr136->AppendIn( CATEGORY_DEBUGGER,  new wxLongStringProperty( _("Debug Program Arguments"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropUseSeparateDebuggerArgs =
+        m_pgMgr136->AppendIn(CATEGORY_DEBUGGER, new wxBoolProperty(_("Use separate debugger args"), wxPG_LABEL, 1));
+    m_pgPropUseSeparateDebuggerArgs->SetHelpString(
+        _("When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"));
+
+    m_pgPropDebugArgs = m_pgMgr136->AppendIn(
+        CATEGORY_DEBUGGER, new wxLongStringProperty(_("Debug Program Arguments"), wxPG_LABEL, wxT("")));
     m_pgPropDebugArgs->SetHelpString(_("Arguments to pass to the debugger"));
-    
+
     SetName(wxT("PSGeneralPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    m_checkBoxEnabled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
+    m_checkBoxEnabled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                               wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
     m_pgMgr136->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
     m_pgMgr136->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_pgMgr136->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr136->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked),
+                        NULL, this);
 }
 
 PSGeneralPageBase::~PSGeneralPageBase()
 {
-    m_checkBoxEnabled->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
+    m_checkBoxEnabled->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                  wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
     m_pgMgr136->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanged), NULL, this);
-    m_pgMgr136->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_pgMgr136->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr136->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL,
+                           this);
+    m_pgMgr136->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
 }
 
-PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                       long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer1761 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1761);
-    
-    m_checkCompilerNeeded = new wxCheckBox(this, wxID_ANY, _("Compiler is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_checkCompilerNeeded = new wxCheckBox(this, wxID_ANY, _("Compiler is not required for this project"),
+                                           wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkCompilerNeeded->SetValue(false);
-    
-    boxSizer1761->Add(m_checkCompilerNeeded, 0, wxALL|wxALIGN_LEFT, 5);
-    
+
+    boxSizer1761->Add(m_checkCompilerNeeded, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    boxSizer1761->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
-    CATEGORY_OPTIONS4 = m_pgMgr->Append(  new wxPropertyCategory( _("Options") ) );
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    boxSizer1761->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CATEGORY_OPTIONS4 = m_pgMgr->Append(new wxPropertyCategory(_("Options")));
     CATEGORY_OPTIONS4->SetHelpString(wxT(""));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Append to global settings"));
     m_pgMgrArr.Add(_("Overwrite global settings"));
     m_pgMgrArr.Add(_("Prepend to global settings"));
-    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxEnumProperty( _("Use with Global Settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the compiler settings defined in the 'Global Settings' with the settings defined on this page"));
-    
-    m_pgPropCppOpts = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("C++ Compiler Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropCppOpts->SetHelpString(_("Additional compiler options to pass to the compiler provided as a semi-colon delimited list"));
-    m_pgPropCppOpts->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropCOpts = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("C Compiler Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropCOpts->SetHelpString(_("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list (used for C files only)"));
-    m_pgPropCOpts->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropAssembler = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Assembler Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropAssembler->SetHelpString(_("Additional assembler options to pass to the assembler provided as a semi-colon delimited list\n(used for .s files only)"));
-    
-    m_pgPropIncludePaths = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Include Paths"), wxPG_LABEL, wxT("")) );
-    m_pgPropIncludePaths->SetHelpString(_("Include path to pass to the compiler (provided as semi-colon delimited list)"));
-    m_pgPropIncludePaths->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropPreProcessors = m_pgMgr->AppendIn( CATEGORY_OPTIONS4,  new wxStringProperty( _("Preprocessors"), wxPG_LABEL, wxT("")) );
-    m_pgPropPreProcessors->SetHelpString(_("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)"));
-    m_pgPropPreProcessors->SetEditor( wxT("TextCtrlAndButton") );
-    
-    CATEGORY_PCH = m_pgMgr->Append(  new wxPropertyCategory( _("Pre Compiled Header") ) );
+    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn(
+        CATEGORY_OPTIONS4, new wxEnumProperty(_("Use with Global Settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(
+        _("Define how CodeLite will merge the compiler settings defined in the 'Global Settings' with the settings "
+          "defined on this page"));
+
+    m_pgPropCppOpts =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS4, new wxStringProperty(_("C++ Compiler Options"), wxPG_LABEL, wxT("")));
+    m_pgPropCppOpts->SetHelpString(
+        _("Additional compiler options to pass to the compiler provided as a semi-colon delimited list"));
+    m_pgPropCppOpts->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropCOpts =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS4, new wxStringProperty(_("C Compiler Options"), wxPG_LABEL, wxT("")));
+    m_pgPropCOpts->SetHelpString(_("Additional C compiler options to pass to the compiler provided as a semi-colon "
+                                   "delimited list (used for C files only)"));
+    m_pgPropCOpts->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropAssembler =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS4, new wxStringProperty(_("Assembler Options"), wxPG_LABEL, wxT("")));
+    m_pgPropAssembler->SetHelpString(_("Additional assembler options to pass to the assembler provided as a semi-colon "
+                                       "delimited list\n(used for .s files only)"));
+
+    m_pgPropIncludePaths =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS4, new wxStringProperty(_("Include Paths"), wxPG_LABEL, wxT("")));
+    m_pgPropIncludePaths->SetHelpString(
+        _("Include path to pass to the compiler (provided as semi-colon delimited list)"));
+    m_pgPropIncludePaths->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropPreProcessors =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS4, new wxStringProperty(_("Preprocessors"), wxPG_LABEL, wxT("")));
+    m_pgPropPreProcessors->SetHelpString(
+        _("macros (\"defines\") to pass to the compiler (provided as semi-colon delimited list)"));
+    m_pgPropPreProcessors->SetEditor(wxT("TextCtrlAndButton"));
+
+    CATEGORY_PCH = m_pgMgr->Append(new wxPropertyCategory(_("Pre Compiled Header")));
     CATEGORY_PCH->SetHelpString(wxT(""));
-    
-    m_pgPropPreCmpHeaderFile = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxStringProperty( _("Header File"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropPreCmpHeaderFile =
+        m_pgMgr->AppendIn(CATEGORY_PCH, new wxStringProperty(_("Header File"), wxPG_LABEL, wxT("")));
     m_pgPropPreCmpHeaderFile->SetHelpString(_("Pre compiled header"));
-    m_pgPropPreCmpHeaderFile->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropIncludePCH = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxBoolProperty( _("Explicitly Include PCH"), wxPG_LABEL, 1) );
-    m_pgPropIncludePCH->SetHelpString(_("Explicitly include the PCH file in the command line using a compiler switch (.e.g -include /path/to/pch)"));
-    
-    m_pgPropPCHCompileLine = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxLongStringProperty( _("PCH Compile Flags"), wxPG_LABEL, wxT("")) );
+    m_pgPropPreCmpHeaderFile->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropIncludePCH =
+        m_pgMgr->AppendIn(CATEGORY_PCH, new wxBoolProperty(_("Explicitly Include PCH"), wxPG_LABEL, 1));
+    m_pgPropIncludePCH->SetHelpString(
+        _("Explicitly include the PCH file in the command line using a compiler switch (.e.g -include /path/to/pch)"));
+
+    m_pgPropPCHCompileLine =
+        m_pgMgr->AppendIn(CATEGORY_PCH, new wxLongStringProperty(_("PCH Compile Flags"), wxPG_LABEL, wxT("")));
     m_pgPropPCHCompileLine->SetHelpString(_("Use separate compilation flags for the PCH file"));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Replace"));
     m_pgMgrArr.Add(_("Append"));
     m_pgMgrIntArr.Add(0);
     m_pgMgrIntArr.Add(1);
-    m_pgPropPCHPolicy = m_pgMgr->AppendIn( CATEGORY_PCH,  new wxEnumProperty( _("PCH Compile Flags Policy"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropPCHPolicy->SetHelpString(_("Set the PCH flags policy to:\n* Append - this means that the flags set in the 'PCH Compile Flags' field will be appended to default flags\n* Replace - the 'PCH Compile Flags' will replace any other flags"));
-    
+    m_pgPropPCHPolicy = m_pgMgr->AppendIn(
+        CATEGORY_PCH, new wxEnumProperty(_("PCH Compile Flags Policy"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
+    m_pgPropPCHPolicy->SetHelpString(
+        _("Set the PCH flags policy to:\n* Append - this means that the flags set in the 'PCH Compile Flags' field "
+          "will be appended to default flags\n* Replace - the 'PCH Compile Flags' will replace any other flags"));
+
     SetName(wxT("PSCompilerPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                   wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL, this);
     m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
-    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked),
+                     NULL, this);
 }
 
 PSCompilerPageBase::~PSCompilerPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkCompilerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL, this);
+    m_checkCompilerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                      wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL,
+                        this);
     m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked),
+                        NULL, this);
 }
 
 PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer37 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer37);
-    
-    m_checkLinkerNeeded = new wxCheckBox(this, wxID_ANY, _("Linker is not required for this project"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_checkLinkerNeeded = new wxCheckBox(this, wxID_ANY, _("Linker is not required for this project"),
+                                         wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkLinkerNeeded->SetValue(false);
-    
-    bSizer37->Add(m_checkLinkerNeeded, 0, wxALL|wxALIGN_LEFT, 5);
-    
+
+    bSizer37->Add(m_checkLinkerNeeded, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer37->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
-    CATEGORY_OPTIONS = m_pgMgr->Append(  new wxPropertyCategory( _("Options") ) );
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    bSizer37->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CATEGORY_OPTIONS = m_pgMgr->Append(new wxPropertyCategory(_("Options")));
     CATEGORY_OPTIONS->SetHelpString(wxT(""));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
-    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxEnumProperty( _("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings defined on this page"));
-    
-    m_pgPropOptions = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Linker Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn(
+        CATEGORY_OPTIONS, new wxEnumProperty(_("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(
+        _("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings "
+          "defined on this page"));
+
+    m_pgPropOptions =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS, new wxStringProperty(_("Linker Options"), wxPG_LABEL, wxT("")));
     m_pgPropOptions->SetHelpString(_("Add additional linker options separated by semi-colon"));
-    m_pgPropOptions->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropLibraryPaths = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Libraries Search Path"), wxPG_LABEL, wxT("")) );
+    m_pgPropOptions->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropLibraryPaths =
+        m_pgMgr->AppendIn(CATEGORY_OPTIONS, new wxStringProperty(_("Libraries Search Path"), wxPG_LABEL, wxT("")));
     m_pgPropLibraryPaths->SetHelpString(_("Add additional library search paths separated by semi-colon"));
-    m_pgPropLibraryPaths->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropLibraries = m_pgMgr->AppendIn( CATEGORY_OPTIONS,  new wxStringProperty( _("Libraries"), wxPG_LABEL, wxT("")) );
+    m_pgPropLibraryPaths->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropLibraries = m_pgMgr->AppendIn(CATEGORY_OPTIONS, new wxStringProperty(_("Libraries"), wxPG_LABEL, wxT("")));
     m_pgPropLibraries->SetHelpString(_("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar"));
-    m_pgPropLibraries->SetEditor( wxT("TextCtrlAndButton") );
-    
+    m_pgPropLibraries->SetEditor(wxT("TextCtrlAndButton"));
+
     SetName(wxT("PSLinkPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkLinkerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
-    m_checkLinkerNeeded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
+    m_checkLinkerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                 wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
+    m_checkLinkerNeeded->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL,
+                                 this);
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL,
+                     this);
     m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSLinkPageBase::OnPropertyChanged), NULL, this);
-    
 }
 
 PSLinkPageBase::~PSLinkPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectEnabledUI), NULL, this);
-    m_checkLinkerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
-    m_checkLinkerNeeded->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked), NULL, this);
+    m_checkLinkerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                    wxCommandEventHandler(PSLinkPageBase::OnCheckLinkerNeeded), NULL, this);
+    m_checkLinkerNeeded->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectCustumBuildUI),
+                                    NULL, this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSLinkPageBase::OnCustomEditorClicked),
+                        NULL, this);
     m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnLinkerNotNeededUI), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSLinkPageBase::OnPropertyChanged), NULL, this);
-    
 }
 
-PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                       long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer38 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer38);
-    
-    m_panelDebugger = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer38->Add(m_panelDebugger, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_panelDebugger = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer38->Add(m_panelDebugger, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer192 = new wxBoxSizer(wxVERTICAL);
     m_panelDebugger->SetSizer(bSizer192);
-    
-    m_staticText321 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Select debugger path. Leave empty to use the default:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer192->Add(m_staticText321, 0, wxALL|wxEXPAND, 5);
-    
+
+    m_staticText321 =
+        new wxStaticText(m_panelDebugger, wxID_ANY, _("Select debugger path. Leave empty to use the default:"),
+                         wxDefaultPosition, wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
+
+    bSizer192->Add(m_staticText321, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer192->Add(boxSizer35, 0, wxEXPAND, 5);
-    
-    m_textCtrlDebuggerPath = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    bSizer192->Add(boxSizer35, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlDebuggerPath = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
     m_textCtrlDebuggerPath->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlDebuggerPath->SetHint(wxT(""));
-    #endif
-    
-    boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_button39 = new wxButton(m_panelDebugger, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer35->Add(m_button39, 0, wxLEFT|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_notebook67 = new wxNotebook(m_panelDebugger, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+#endif
+
+    boxSizer35->Add(m_textCtrlDebuggerPath, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button39 = new wxButton(m_panelDebugger, wxID_ANY, _("..."), wxDefaultPosition,
+                              wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
+
+    boxSizer35->Add(m_button39, 0, wxLEFT | wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_notebook67 = new wxNotebook(m_panelDebugger, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook67->SetName(wxT("m_notebook67"));
-    
-    bSizer192->Add(m_notebook67, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel80 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    bSizer192->Add(m_notebook67, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel80 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook67, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel80, _("Debugger Search Paths"), false);
-    
+
     wxBoxSizer* boxSizer82 = new wxBoxSizer(wxHORIZONTAL);
     m_panel80->SetSizer(boxSizer82);
-    
-    m_dvListCtrlDebuggerSearchPaths = new wxDataViewListCtrl(m_panel80, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_MULTIPLE|wxDV_SINGLE);
-    
-    boxSizer82->Add(m_dvListCtrlDebuggerSearchPaths, 1, wxALL|wxEXPAND, 5);
-    
-    m_dvListCtrlDebuggerSearchPaths->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT);
+
+    m_dvListCtrlDebuggerSearchPaths =
+        new wxDataViewListCtrl(m_panel80, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel80, wxSize(-1, -1)),
+                               wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+
+    boxSizer82->Add(m_dvListCtrlDebuggerSearchPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlDebuggerSearchPaths->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                      wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer84 = new wxBoxSizer(wxVERTICAL);
-    
-    boxSizer82->Add(boxSizer84, 0, wxEXPAND, 5);
-    
-    m_button88 = new wxButton(m_panel80, wxID_ADD, _("&Add.."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer84->Add(m_button88, 0, wxALL|wxEXPAND, 5);
-    
-    m_button90 = new wxButton(m_panel80, wxID_DELETE, _("&Delete..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer84->Add(m_button90, 0, wxALL|wxEXPAND, 5);
-    
-    m_panel71 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    boxSizer82->Add(boxSizer84, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button88 =
+        new wxButton(m_panel80, wxID_ADD, _("&Add.."), wxDefaultPosition, wxDLG_UNIT(m_panel80, wxSize(-1, -1)), 0);
+
+    boxSizer84->Add(m_button88, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button90 = new wxButton(m_panel80, wxID_DELETE, _("&Delete..."), wxDefaultPosition,
+                              wxDLG_UNIT(m_panel80, wxSize(-1, -1)), 0);
+
+    boxSizer84->Add(m_button90, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel71 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook67, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel71, _("Startup Commands"), false);
-    
+
     wxBoxSizer* boxSizer76 = new wxBoxSizer(wxVERTICAL);
     m_panel71->SetSizer(boxSizer76);
-    
-    m_staticText301 = new wxStaticText(m_panel71, wxID_ANY, _("Enter here any commands that should be passed to the debugger on startup:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    boxSizer76->Add(m_staticText301, 0, wxALL, 5);
-    
-    m_textCtrlDbgCmds = new wxTextCtrl(m_panel71, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
-    wxFont m_textCtrlDbgCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
-    m_textCtrlDbgCmds->SetFont(m_textCtrlDbgCmdsFont);
-    
-    boxSizer76->Add(m_textCtrlDbgCmds, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel74 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    m_staticText301 = new wxStaticText(m_panel71, wxID_ANY,
+                                       _("Enter here any commands that should be passed to the debugger on startup:"),
+                                       wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+
+    boxSizer76->Add(m_staticText301, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_textCtrlDbgCmds =
+        new clThemedSTC(m_panel71, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel71, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlDbgCmds->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlDbgCmds->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlDbgCmds->SetMarginSensitive(4, true);
+    m_textCtrlDbgCmds->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlDbgCmds->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlDbgCmds->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlDbgCmds->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlDbgCmds->SetMarginWidth(2, 0);
+    m_textCtrlDbgCmds->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlDbgCmds->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlDbgCmds->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlDbgCmds->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlDbgCmds->SetMarginMask(3, 0);
+    m_textCtrlDbgCmds->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlDbgCmds->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlDbgCmds->StyleClearAll();
+    m_textCtrlDbgCmds->SetWrapMode(0);
+    m_textCtrlDbgCmds->SetIndentationGuides(0);
+    m_textCtrlDbgCmds->SetKeyWords(0, wxT(""));
+    m_textCtrlDbgCmds->SetKeyWords(1, wxT(""));
+    m_textCtrlDbgCmds->SetKeyWords(2, wxT(""));
+    m_textCtrlDbgCmds->SetKeyWords(3, wxT(""));
+    m_textCtrlDbgCmds->SetKeyWords(4, wxT(""));
+
+    boxSizer76->Add(m_textCtrlDbgCmds, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel74 = new wxPanel(m_notebook67, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook67, wxSize(-1, -1)),
+                            wxTAB_TRAVERSAL);
     m_notebook67->AddPage(m_panel74, _("Remote Attach Commands"), false);
-    
+
     wxBoxSizer* boxSizer78 = new wxBoxSizer(wxVERTICAL);
     m_panel74->SetSizer(boxSizer78);
-    
-    m_staticText311 = new wxStaticText(m_panel74, wxID_ANY, _("Enter here any commands that should be passed to the debugger after attaching the remote target:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    boxSizer78->Add(m_staticText311, 0, wxALL|wxEXPAND, 5);
-    
-    m_textCtrlDbgPostConnectCmds = new wxTextCtrl(m_panel74, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
-    wxFont m_textCtrlDbgPostConnectCmdsFont(12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Arial"));
-    m_textCtrlDbgPostConnectCmds->SetFont(m_textCtrlDbgPostConnectCmdsFont);
-    
-    boxSizer78->Add(m_textCtrlDbgPostConnectCmds, 1, wxALL|wxEXPAND, 5);
-    
-    m_checkBoxDbgRemote = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Debugging a remote target"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_staticText311 = new wxStaticText(
+        m_panel74, wxID_ANY,
+        _("Enter here any commands that should be passed to the debugger after attaching the remote target:"),
+        wxDefaultPosition, wxDLG_UNIT(m_panel74, wxSize(-1, -1)), 0);
+
+    boxSizer78->Add(m_staticText311, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlDbgPostConnectCmds =
+        new clThemedSTC(m_panel74, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel74, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlDbgPostConnectCmds->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlDbgPostConnectCmds->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlDbgPostConnectCmds->SetMarginSensitive(4, true);
+    m_textCtrlDbgPostConnectCmds->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlDbgPostConnectCmds->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlDbgPostConnectCmds->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlDbgPostConnectCmds->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlDbgPostConnectCmds->SetMarginWidth(2, 0);
+    m_textCtrlDbgPostConnectCmds->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlDbgPostConnectCmds->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlDbgPostConnectCmds->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlDbgPostConnectCmds->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlDbgPostConnectCmds->SetMarginMask(3, 0);
+    m_textCtrlDbgPostConnectCmds->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlDbgPostConnectCmds->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlDbgPostConnectCmds->StyleClearAll();
+    m_textCtrlDbgPostConnectCmds->SetWrapMode(0);
+    m_textCtrlDbgPostConnectCmds->SetIndentationGuides(0);
+    m_textCtrlDbgPostConnectCmds->SetKeyWords(0, wxT(""));
+    m_textCtrlDbgPostConnectCmds->SetKeyWords(1, wxT(""));
+    m_textCtrlDbgPostConnectCmds->SetKeyWords(2, wxT(""));
+    m_textCtrlDbgPostConnectCmds->SetKeyWords(3, wxT(""));
+    m_textCtrlDbgPostConnectCmds->SetKeyWords(4, wxT(""));
+
+    boxSizer78->Add(m_textCtrlDbgPostConnectCmds, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxDbgRemote = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Debugging a remote target"), wxDefaultPosition,
+                                         wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
     m_checkBoxDbgRemote->SetValue(false);
-    
-    bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
+
+    bSizer192->Add(m_checkBoxDbgRemote, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer61 = new wxFlexGridSizer(1, 5, 0, 0);
-    fgSizer61->SetFlexibleDirection( wxBOTH );
-    fgSizer61->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer61->SetFlexibleDirection(wxBOTH);
+    fgSizer61->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer61->AddGrowableCol(1);
-    
-    bSizer192->Add(fgSizer61, 0, wxEXPAND, 5);
-    
-    m_staticText31 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Host / tty:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer61->Add(m_staticText31, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrl1DbgHost = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    #if wxVERSION_NUMBER >= 3000
+
+    bSizer192->Add(fgSizer61, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText31 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Host / tty:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
+
+    fgSizer61->Add(m_staticText31, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrl1DbgHost = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), wxTE_NO_VSCROLL);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrl1DbgHost->SetHint(wxT(""));
-    #endif
-    
-    fgSizer61->Add(m_textCtrl1DbgHost, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText32 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Port:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer61->Add(m_staticText32, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlDbgPort = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer61->Add(m_textCtrl1DbgHost, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText32 = new wxStaticText(m_panelDebugger, wxID_ANY, _("Port:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
+
+    fgSizer61->Add(m_staticText32, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlDbgPort = new wxTextCtrl(m_panelDebugger, wxID_ANY, wxT(""), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), wxTE_NO_VSCROLL);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlDbgPort->SetHint(wxT(""));
-    #endif
-    
-    fgSizer61->Add(m_textCtrlDbgPort, 0, wxALL, 5);
-    
-    m_checkBoxDbgRemoteExt = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Extended Protocol"), wxDefaultPosition, wxSize(-1,-1), 0);
+#endif
+
+    fgSizer61->Add(m_textCtrlDbgPort, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxDbgRemoteExt = new wxCheckBox(m_panelDebugger, wxID_ANY, _("Extended Protocol"), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelDebugger, wxSize(-1, -1)), 0);
     m_checkBoxDbgRemoteExt->SetValue(false);
-    m_checkBoxDbgRemoteExt->SetToolTip(_("Enable extended mode. In extended mode, the remote server is made persistent.\ni.e. it does not go down after the debug session ends"));
-    
-    fgSizer61->Add(m_checkBoxDbgRemoteExt, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
+    m_checkBoxDbgRemoteExt->SetToolTip(_("Enable extended mode. In extended mode, the remote server is made "
+                                         "persistent.\ni.e. it does not go down after the debug session ends"));
+
+    fgSizer61->Add(m_checkBoxDbgRemoteExt, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     SetName(wxT("PSDebuggerPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnProjectEnabledUI), NULL, this);
-    m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
-    m_dvListCtrlDebuggerSearchPaths->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
-    m_button88->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
-    m_button90->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
-    m_button90->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);
-    m_textCtrlDbgCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPostConnectCmds->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxDbgRemote->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_dvListCtrlDebuggerSearchPaths->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                             wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
+    m_button88->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
+    m_button90->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
+    m_button90->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL,
+                        this);
+    m_checkBoxDbgRemote->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                 wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_staticText31->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrl1DbgHost->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrl1DbgHost->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
+    m_textCtrl1DbgHost->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_textCtrl1DbgHost->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                                this);
     m_staticText32->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrlDbgPort->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPort->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_checkBoxDbgRemoteExt->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_checkBoxDbgRemoteExt->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    
+    m_textCtrlDbgPort->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified),
+                               NULL, this);
+    m_textCtrlDbgPort->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                               this);
+    m_checkBoxDbgRemoteExt->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                                    this);
+    m_checkBoxDbgRemoteExt->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                    wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
 }
 
 PSDebuggerPageBase::~PSDebuggerPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnProjectEnabledUI), NULL, this);
-    m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
-    m_dvListCtrlDebuggerSearchPaths->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
-    m_button88->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
-    m_button90->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
-    m_button90->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL, this);
-    m_textCtrlDbgCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPostConnectCmds->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxDbgRemote->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_staticText31->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrl1DbgHost->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrl1DbgHost->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_staticText32->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_textCtrlDbgPort->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlDbgPort->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
-    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
-    
+    m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
+    m_dvListCtrlDebuggerSearchPaths->Disconnect(
+        wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSDebuggerPageBase::OnItemActivated), NULL, this);
+    m_button88->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(PSDebuggerPageBase::OnAddDebuggerSearchPath), NULL, this);
+    m_button90->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
+    m_button90->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI),
+                           NULL, this);
+    m_checkBoxDbgRemote->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                    wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_staticText31->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                               this);
+    m_textCtrl1DbgHost->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                   wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_textCtrl1DbgHost->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                                   this);
+    m_staticText32->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                               this);
+    m_textCtrlDbgPort->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                  wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
+    m_textCtrlDbgPort->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
+                                  this);
+    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI),
+                                       NULL, this);
+    m_checkBoxDbgRemoteExt->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                       wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
 }
 
-PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                         long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer39 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer39);
-    
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer39->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
-    CATEGORY_RESOURCES = m_pgMgr->Append(  new wxPropertyCategory( _("Resources") ) );
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    bSizer39->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CATEGORY_RESOURCES = m_pgMgr->Append(new wxPropertyCategory(_("Resources")));
     CATEGORY_RESOURCES->SetHelpString(wxT(""));
-    
+
     m_pgMgrArr.Clear();
     m_pgMgrIntArr.Clear();
-    m_pgPropBehaviorWithGlobalSettings = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxEnumProperty( _("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0) );
-    m_pgPropBehaviorWithGlobalSettings->SetHelpString(_("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings defined on this page"));
-    
-    m_pgPropResCmpOptions = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Resource Compiler Options"), wxPG_LABEL, wxT("")) );
+    m_pgPropBehaviorWithGlobalSettings =
+        m_pgMgr->AppendIn(CATEGORY_RESOURCES,
+                          new wxEnumProperty(_("Use with global settings"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
+    m_pgPropBehaviorWithGlobalSettings->SetHelpString(
+        _("Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings "
+          "defined on this page"));
+
+    m_pgPropResCmpOptions = m_pgMgr->AppendIn(
+        CATEGORY_RESOURCES, new wxStringProperty(_("Resource Compiler Options"), wxPG_LABEL, wxT("")));
     m_pgPropResCmpOptions->SetHelpString(_("Resource compiler options provided as semi-colon list"));
-    m_pgPropResCmpOptions->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropResCmpSearchPath = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Additional Search Path"), wxPG_LABEL, wxT("")) );
+    m_pgPropResCmpOptions->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropResCmpSearchPath =
+        m_pgMgr->AppendIn(CATEGORY_RESOURCES, new wxStringProperty(_("Additional Search Path"), wxPG_LABEL, wxT("")));
     m_pgPropResCmpSearchPath->SetHelpString(_("Resource compiler search path, as semi colon list"));
-    m_pgPropResCmpSearchPath->SetEditor( wxT("TextCtrlAndButton") );
-    
+    m_pgPropResCmpSearchPath->SetEditor(wxT("TextCtrlAndButton"));
+
     SetName(wxT("PSResourcesPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnProjectEnabledUI), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSResourcesPageBase::OnValueChanged), NULL, this);
-    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked),
+                     NULL, this);
     m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnResourcesEnabledUI), NULL, this);
-    
 }
 
 PSResourcesPageBase::~PSResourcesPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnProjectEnabledUI), NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSResourcesPageBase::OnValueChanged), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSResourcesPageBase::OnCustomEditorClicked),
+                        NULL, this);
     m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnResourcesEnabledUI), NULL, this);
-    
 }
 
-PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                             long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer44 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer44);
-    
-    m_panelEnv = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer44->Add(m_panelEnv, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_panelEnv = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer44->Add(m_panelEnv, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer34 = new wxBoxSizer(wxVERTICAL);
     m_panelEnv->SetSizer(bSizer34);
-    
+
     wxFlexGridSizer* fgSizer12 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer12->SetFlexibleDirection( wxBOTH );
-    fgSizer12->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer12->SetFlexibleDirection(wxBOTH);
+    fgSizer12->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer12->AddGrowableCol(1);
-    
-    bSizer34->Add(fgSizer12, 0, wxEXPAND, 5);
-    
-    m_staticText44 = new wxStaticText(m_panelEnv, wxID_ANY, _("Environment variable set to use:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer12->Add(m_staticText44, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    bSizer34->Add(fgSizer12, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText44 = new wxStaticText(m_panelEnv, wxID_ANY, _("Environment variable set to use:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+
+    fgSizer12->Add(m_staticText44, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceEnvArr;
-    m_choiceEnv = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceEnvArr, 0);
-    
-    fgSizer12->Add(m_choiceEnv, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText45 = new wxStaticText(m_panelEnv, wxID_ANY, _("Debugger 'PreDefined Types' set to use:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer12->Add(m_staticText45, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+    m_choiceEnv = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)),
+                               m_choiceEnvArr, 0);
+
+    fgSizer12->Add(m_choiceEnv, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText45 = new wxStaticText(m_panelEnv, wxID_ANY, _("Debugger 'PreDefined Types' set to use:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+
+    fgSizer12->Add(m_staticText45, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceDbgEnvArr;
-    m_choiceDbgEnv = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceDbgEnvArr, 0);
-    
-    fgSizer12->Add(m_choiceDbgEnv, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticline12 = new wxStaticLine(m_panelEnv, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer34->Add(m_staticline12, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText47 = new wxStaticText(m_panelEnv, wxID_ANY, _("Additional environment variables:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer34->Add(m_staticText47, 0, wxALL, 5);
-    
-    m_textCtrlEnvvars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    
-    bSizer34->Add(m_textCtrlEnvvars, 1, wxALL|wxEXPAND, 5);
-    
+    m_choiceDbgEnv = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)),
+                                  m_choiceDbgEnvArr, 0);
+
+    fgSizer12->Add(m_choiceDbgEnv, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticline12 = new wxStaticLine(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)),
+                                      wxLI_HORIZONTAL);
+
+    bSizer34->Add(m_staticline12, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText47 = new wxStaticText(m_panelEnv, wxID_ANY, _("Additional environment variables:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+
+    bSizer34->Add(m_staticText47, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_textCtrlEnvvars =
+        new clThemedSTC(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlEnvvars->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlEnvvars->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlEnvvars->SetMarginSensitive(4, true);
+    m_textCtrlEnvvars->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlEnvvars->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlEnvvars->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlEnvvars->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlEnvvars->SetMarginWidth(2, 0);
+    m_textCtrlEnvvars->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlEnvvars->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlEnvvars->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlEnvvars->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlEnvvars->SetMarginMask(3, 0);
+    m_textCtrlEnvvars->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlEnvvars->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlEnvvars->StyleClearAll();
+    m_textCtrlEnvvars->SetWrapMode(0);
+    m_textCtrlEnvvars->SetIndentationGuides(0);
+    m_textCtrlEnvvars->SetKeyWords(0, wxT(""));
+    m_textCtrlEnvvars->SetKeyWords(1, wxT(""));
+    m_textCtrlEnvvars->SetKeyWords(2, wxT(""));
+    m_textCtrlEnvvars->SetKeyWords(3, wxT(""));
+    m_textCtrlEnvvars->SetKeyWords(4, wxT(""));
+
+    bSizer34->Add(m_textCtrlEnvvars, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("PSEnvironmentBasePage"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSEnvironmentBasePage::OnProjectEnabledUI), NULL, this);
-    m_choiceEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    m_choiceDbgEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    m_textCtrlEnvvars->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    
+    m_choiceEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified),
+                         NULL, this);
+    m_choiceDbgEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                            wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
 }
 
 PSEnvironmentBasePage::~PSEnvironmentBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSEnvironmentBasePage::OnProjectEnabledUI), NULL, this);
-    m_choiceEnv->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    m_choiceDbgEnv->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    m_textCtrlEnvvars->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
-    
+    m_choiceEnv->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                            wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
+    m_choiceDbgEnv->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                               wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
 }
 
-PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                             long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer41 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer41);
-    
-    m_preBuildPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer41->Add(m_preBuildPage, 1, wxEXPAND, 5);
-    
+
+    m_preBuildPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer41->Add(m_preBuildPage, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
     m_preBuildPage->SetSizer(bSizer8);
-    
-    m_staticText11 = new wxStaticText(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_staticText11, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
-    
+
+    m_staticText11 = new wxStaticText(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition,
+                                      wxDLG_UNIT(m_preBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer8->Add(m_staticText11, 0, wxLEFT | wxRIGHT | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer9 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer8->Add(bSizer9, 1, wxEXPAND, 5);
-    
-    m_textCtrlBuildEvents = new wxTextCtrl(m_preBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlBuildEventsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlBuildEventsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlBuildEventsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlBuildEventsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlBuildEvents->SetFont(m_textCtrlBuildEventsFont);
-    
-    bSizer9->Add(m_textCtrlBuildEvents, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer8->Add(bSizer9, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlBuildEvents =
+        new clThemedSTC(m_preBuildPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_preBuildPage, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlBuildEvents->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlBuildEvents->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlBuildEvents->SetMarginSensitive(4, true);
+    m_textCtrlBuildEvents->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlBuildEvents->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlBuildEvents->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlBuildEvents->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlBuildEvents->SetMarginWidth(2, 0);
+    m_textCtrlBuildEvents->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlBuildEvents->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlBuildEvents->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlBuildEvents->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlBuildEvents->SetMarginMask(3, 0);
+    m_textCtrlBuildEvents->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlBuildEvents->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlBuildEvents->StyleClearAll();
+    m_textCtrlBuildEvents->SetWrapMode(0);
+    m_textCtrlBuildEvents->SetIndentationGuides(0);
+    m_textCtrlBuildEvents->SetKeyWords(0, wxT(""));
+    m_textCtrlBuildEvents->SetKeyWords(1, wxT(""));
+    m_textCtrlBuildEvents->SetKeyWords(2, wxT(""));
+    m_textCtrlBuildEvents->SetKeyWords(3, wxT(""));
+    m_textCtrlBuildEvents->SetKeyWords(4, wxT(""));
+
+    bSizer9->Add(m_textCtrlBuildEvents, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("PSBuildEventsBasePage"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
-    
 }
 
 PSBuildEventsBasePage::~PSBuildEventsBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
-    
 }
 
-PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                             long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer42 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer42);
-    
-    m_customBuildPage = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer42->Add(m_customBuildPage, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_customBuildPage =
+        new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer42->Add(m_customBuildPage, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer15 = new wxBoxSizer(wxVERTICAL);
     m_customBuildPage->SetSizer(bSizer15);
-    
-    m_checkEnableCustomBuild = new wxCheckBox(m_customBuildPage, wxID_ANY, _("Enable custom build"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_checkEnableCustomBuild = new wxCheckBox(m_customBuildPage, wxID_ANY, _("Enable custom build"), wxDefaultPosition,
+                                              wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
     m_checkEnableCustomBuild->SetValue(false);
-    
-    bSizer15->Add(m_checkEnableCustomBuild, 0, wxALL|wxALIGN_LEFT, 5);
-    
+
+    bSizer15->Add(m_checkEnableCustomBuild, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer15->Add(bSizer23, 0, wxEXPAND, 5);
-    
-    m_staticText33 = new wxStaticText(m_customBuildPage, wxID_ANY, _("Working Directory:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer23->Add(m_staticText33, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlCustomBuildWD = new wxTextCtrl(m_customBuildPage, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    bSizer15->Add(bSizer23, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText33 = new wxStaticText(m_customBuildPage, wxID_ANY, _("Working Directory:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer23->Add(m_staticText33, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlCustomBuildWD = new wxTextCtrl(m_customBuildPage, wxID_ANY, wxT(""), wxDefaultPosition,
+                                             wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlCustomBuildWD->SetHint(wxT(""));
-    #endif
-    
-    bSizer23->Add(m_textCtrlCustomBuildWD, 1, wxALL|wxEXPAND, 5);
-    
-    m_buttonBrowseCustomBuildWD = new wxButton(m_customBuildPage, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer23->Add(m_buttonBrowseCustomBuildWD, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
+#endif
+
+    bSizer23->Add(m_textCtrlCustomBuildWD, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonBrowseCustomBuildWD = new wxButton(m_customBuildPage, wxID_ANY, _("..."), wxDefaultPosition,
+                                               wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer23->Add(m_buttonBrowseCustomBuildWD, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer211 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer15->Add(bSizer211, 1, wxEXPAND, 5);
-    
-    m_dvListCtrlTargets = new wxDataViewListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    bSizer211->Add(m_dvListCtrlTargets, 1, wxALL|wxEXPAND, 5);
-    
-    m_dvListCtrlTargets->AppendTextColumn(_("Target"), wxDATAVIEW_CELL_INERT, 150, wxALIGN_LEFT);
-    m_dvListCtrlTargets->AppendTextColumn(_("Command"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
+
+    bSizer15->Add(bSizer211, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlTargets = new wxDataViewListCtrl(m_customBuildPage, wxID_ANY, wxDefaultPosition,
+                                                 wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)),
+                                                 wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+
+    bSizer211->Add(m_dvListCtrlTargets, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlTargets->AppendTextColumn(_("Target"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(150), wxALIGN_LEFT,
+                                          wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlTargets->AppendTextColumn(_("Command"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(500), wxALIGN_LEFT,
+                                          wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* bSizer221 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer211->Add(bSizer221, 0, wxEXPAND, 5);
-    
-    m_buttonNewCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer221->Add(m_buttonNewCustomTarget, 0, wxALL, 5);
-    
-    m_buttonEditCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer221->Add(m_buttonEditCustomTarget, 0, wxALL, 5);
-    
-    m_buttonDeleteCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer221->Add(m_buttonDeleteCustomTarget, 0, wxALL, 5);
-    
+
+    bSizer211->Add(bSizer221, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonNewCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("New..."), wxDefaultPosition,
+                                           wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer221->Add(m_buttonNewCustomTarget, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonEditCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("Edit..."), wxDefaultPosition,
+                                            wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer221->Add(m_buttonEditCustomTarget, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonDeleteCustomTarget = new wxButton(m_customBuildPage, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                              wxDLG_UNIT(m_customBuildPage, wxSize(-1, -1)), 0);
+
+    bSizer221->Add(m_buttonDeleteCustomTarget, 0, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("PSCustomBuildBasePage"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnProjectEnabledUI), NULL, this);
-    m_checkEnableCustomBuild->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabled), NULL, this);
-    m_checkEnableCustomBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildCBEnabledUI), NULL, this);
-    m_staticText33->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_textCtrlCustomBuildWD->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomBuildBasePage::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCustomBuildWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_buttonBrowseCustomBuildWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
-    m_buttonBrowseCustomBuildWD->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
-    m_dvListCtrlTargets->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI), NULL, this);
-    m_buttonNewCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
-    m_buttonNewCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_buttonEditCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
-    m_buttonEditCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEditTargetUI), NULL, this);
-    m_buttonDeleteCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnDeleteTarget), NULL, this);
-    m_buttonDeleteCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnDeleteTargetUI), NULL, this);
-    
+    m_checkEnableCustomBuild->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                      wxCommandEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabled), NULL, this);
+    m_checkEnableCustomBuild->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildCBEnabledUI), NULL, this);
+    m_staticText33->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI),
+                            NULL, this);
+    m_textCtrlCustomBuildWD->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(PSCustomBuildBasePage::OnCmdEvtVModified), NULL, this);
+    m_textCtrlCustomBuildWD->Connect(wxEVT_UPDATE_UI,
+                                     wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_buttonBrowseCustomBuildWD->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
+    m_buttonBrowseCustomBuildWD->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                 wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
+    m_dvListCtrlTargets->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI), NULL,
+                                 this);
+    m_buttonNewCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                     wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
+    m_buttonNewCustomTarget->Connect(wxEVT_UPDATE_UI,
+                                     wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_buttonEditCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                      wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
+    m_buttonEditCustomTarget->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEditTargetUI),
+                                      NULL, this);
+    m_buttonDeleteCustomTarget->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                        wxCommandEventHandler(PSCustomBuildBasePage::OnDeleteTarget), NULL, this);
+    m_buttonDeleteCustomTarget->Connect(wxEVT_UPDATE_UI,
+                                        wxUpdateUIEventHandler(PSCustomBuildBasePage::OnDeleteTargetUI), NULL, this);
 }
 
 PSCustomBuildBasePage::~PSCustomBuildBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnProjectEnabledUI), NULL, this);
-    m_checkEnableCustomBuild->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabled), NULL, this);
-    m_checkEnableCustomBuild->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildCBEnabledUI), NULL, this);
-    m_staticText33->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_textCtrlCustomBuildWD->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomBuildBasePage::OnCmdEvtVModified), NULL, this);
-    m_textCtrlCustomBuildWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
-    m_buttonBrowseCustomBuildWD->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
-    m_dvListCtrlTargets->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI), NULL, this);
-    m_buttonNewCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
-    m_buttonNewCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
-    m_buttonEditCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
-    m_buttonEditCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEditTargetUI), NULL, this);
-    m_buttonDeleteCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnDeleteTarget), NULL, this);
-    m_buttonDeleteCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnDeleteTargetUI), NULL, this);
-    
+    m_checkEnableCustomBuild->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabled), NULL, this);
+    m_checkEnableCustomBuild->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildCBEnabledUI), NULL, this);
+    m_staticText33->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI),
+                               NULL, this);
+    m_textCtrlCustomBuildWD->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                        wxCommandEventHandler(PSCustomBuildBasePage::OnCmdEvtVModified), NULL, this);
+    m_textCtrlCustomBuildWD->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_buttonBrowseCustomBuildWD->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCustomBuildBasePage::OnBrowseCustomBuildWD), NULL, this);
+    m_buttonBrowseCustomBuildWD->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                    wxDataViewEventHandler(PSCustomBuildBasePage::OnTargetActivated), NULL, this);
+    m_dvListCtrlTargets->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEnableTableUI),
+                                    NULL, this);
+    m_buttonNewCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                        wxCommandEventHandler(PSCustomBuildBasePage::OnNewTarget), NULL, this);
+    m_buttonNewCustomTarget->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnCustomBuildEnabledUI), NULL, this);
+    m_buttonEditCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                         wxCommandEventHandler(PSCustomBuildBasePage::OnEditTarget), NULL, this);
+    m_buttonEditCustomTarget->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnEditTargetUI),
+                                         NULL, this);
+    m_buttonDeleteCustomTarget->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                           wxCommandEventHandler(PSCustomBuildBasePage::OnDeleteTarget), NULL, this);
+    m_buttonDeleteCustomTarget->Disconnect(wxEVT_UPDATE_UI,
+                                           wxUpdateUIEventHandler(PSCustomBuildBasePage::OnDeleteTargetUI), NULL, this);
 }
 
-GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                                                 const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer117 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(bSizer117);
-    
+
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
     wxArrayInt m_pgMgrIntArr;
     wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(400,400), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    bSizer117->Add(m_pgMgr, 1, wxALL|wxEXPAND, 5);
-    
-    CATEGORY_COMPILER = m_pgMgr->Append(  new wxPropertyCategory( _("Compiler") ) );
+    m_pgMgr = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 400)),
+                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    bSizer117->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    CATEGORY_COMPILER = m_pgMgr->Append(new wxPropertyCategory(_("Compiler")));
     CATEGORY_COMPILER->SetHelpString(wxT(""));
-    
-    m_pgPropCppCmpOpts = m_pgMgr->AppendIn( CATEGORY_COMPILER,  new wxStringProperty( _("C++ Compiler Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropCppCmpOpts->SetHelpString(_("Additional compiler options to pass to the compiler provided as a semi-colon delimited list These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropCppCmpOpts->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropCCmpOpts = m_pgMgr->AppendIn( CATEGORY_COMPILER,  new wxStringProperty( _("C Compiler Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropCCmpOpts->SetHelpString(_("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropCCmpOpts->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropIncludePaths = m_pgMgr->AppendIn( CATEGORY_COMPILER,  new wxStringProperty( _("Additional Include Paths"), wxPG_LABEL, wxT("")) );
-    m_pgPropIncludePaths->SetHelpString(_("Compiler search paths for header files. These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropIncludePaths->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropPreProcessors = m_pgMgr->AppendIn( CATEGORY_COMPILER,  new wxStringProperty( _("Preprocessors"), wxPG_LABEL, wxT("")) );
-    m_pgPropPreProcessors->SetHelpString(_("Additional preprocessors definitions provided as a semi-colon delimited list These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropPreProcessors->SetEditor( wxT("TextCtrlAndButton") );
-    
-    CATEGORY_LINKER = m_pgMgr->Append(  new wxPropertyCategory( _("Linker") ) );
+
+    m_pgPropCppCmpOpts =
+        m_pgMgr->AppendIn(CATEGORY_COMPILER, new wxStringProperty(_("C++ Compiler Options"), wxPG_LABEL, wxT("")));
+    m_pgPropCppCmpOpts->SetHelpString(
+        _("Additional compiler options to pass to the compiler provided as a semi-colon delimited list These settings "
+          "are used by _all_ build configurations (e.g. Release and Debug)"));
+    m_pgPropCppCmpOpts->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropCCmpOpts =
+        m_pgMgr->AppendIn(CATEGORY_COMPILER, new wxStringProperty(_("C Compiler Options"), wxPG_LABEL, wxT("")));
+    m_pgPropCCmpOpts->SetHelpString(
+        _("Additional C compiler options to pass to the compiler provided as a semi-colon delimited list These "
+          "settings are used by _all_ build configurations (e.g. Release and Debug)"));
+    m_pgPropCCmpOpts->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropIncludePaths =
+        m_pgMgr->AppendIn(CATEGORY_COMPILER, new wxStringProperty(_("Additional Include Paths"), wxPG_LABEL, wxT("")));
+    m_pgPropIncludePaths->SetHelpString(_("Compiler search paths for header files. These settings are used by _all_ "
+                                          "build configurations (e.g. Release and Debug)"));
+    m_pgPropIncludePaths->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropPreProcessors =
+        m_pgMgr->AppendIn(CATEGORY_COMPILER, new wxStringProperty(_("Preprocessors"), wxPG_LABEL, wxT("")));
+    m_pgPropPreProcessors->SetHelpString(
+        _("Additional preprocessors definitions provided as a semi-colon delimited list These settings are used by "
+          "_all_ build configurations (e.g. Release and Debug)"));
+    m_pgPropPreProcessors->SetEditor(wxT("TextCtrlAndButton"));
+
+    CATEGORY_LINKER = m_pgMgr->Append(new wxPropertyCategory(_("Linker")));
     CATEGORY_LINKER->SetHelpString(wxT(""));
-    
-    m_pgPropOptions = m_pgMgr->AppendIn( CATEGORY_LINKER,  new wxStringProperty( _("Options"), wxPG_LABEL, wxT("")) );
-    m_pgPropOptions->SetHelpString(_("Additional linker options provided as a semi-colon delimited list These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropOptions->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropLibPath = m_pgMgr->AppendIn( CATEGORY_LINKER,  new wxStringProperty( _("Library Path"), wxPG_LABEL, wxT("")) );
-    m_pgPropLibPath->SetHelpString(_("Additional library search path provided as a semi-colon delimited list These settings are used by _all_ build configurations (e.g. Release and Debug)"));
-    m_pgPropLibPath->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropLIbs = m_pgMgr->AppendIn( CATEGORY_LINKER,  new wxStringProperty( _("Libraries"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropOptions = m_pgMgr->AppendIn(CATEGORY_LINKER, new wxStringProperty(_("Options"), wxPG_LABEL, wxT("")));
+    m_pgPropOptions->SetHelpString(_("Additional linker options provided as a semi-colon delimited list These settings "
+                                     "are used by _all_ build configurations (e.g. Release and Debug)"));
+    m_pgPropOptions->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropLibPath = m_pgMgr->AppendIn(CATEGORY_LINKER, new wxStringProperty(_("Library Path"), wxPG_LABEL, wxT("")));
+    m_pgPropLibPath->SetHelpString(_("Additional library search path provided as a semi-colon delimited list These "
+                                     "settings are used by _all_ build configurations (e.g. Release and Debug)"));
+    m_pgPropLibPath->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropLIbs = m_pgMgr->AppendIn(CATEGORY_LINKER, new wxStringProperty(_("Libraries"), wxPG_LABEL, wxT("")));
     m_pgPropLIbs->SetHelpString(_("Enter any extra library names, separated by';' e.g. Foo  or  Foo;Bar"));
-    m_pgPropLIbs->SetEditor( wxT("TextCtrlAndButton") );
-    
-    CATEGORY_RESOURCES = m_pgMgr->Append(  new wxPropertyCategory( _("Resources") ) );
+    m_pgPropLIbs->SetEditor(wxT("TextCtrlAndButton"));
+
+    CATEGORY_RESOURCES = m_pgMgr->Append(new wxPropertyCategory(_("Resources")));
     CATEGORY_RESOURCES->SetHelpString(wxT(""));
-    
-    m_pgPropResCmpOptions = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Resource Compiler Options"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropResCmpOptions = m_pgMgr->AppendIn(
+        CATEGORY_RESOURCES, new wxStringProperty(_("Resource Compiler Options"), wxPG_LABEL, wxT("")));
     m_pgPropResCmpOptions->SetHelpString(_("Resource compiler options provided as semi-colon list"));
-    m_pgPropResCmpOptions->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropResCmpSearchPath = m_pgMgr->AppendIn( CATEGORY_RESOURCES,  new wxStringProperty( _("Additional Search Path"), wxPG_LABEL, wxT("")) );
+    m_pgPropResCmpOptions->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropResCmpSearchPath =
+        m_pgMgr->AppendIn(CATEGORY_RESOURCES, new wxStringProperty(_("Additional Search Path"), wxPG_LABEL, wxT("")));
     m_pgPropResCmpSearchPath->SetHelpString(_("Resource compiler search path, as semi colon list"));
-    m_pgPropResCmpSearchPath->SetEditor( wxT("TextCtrlAndButton") );
-    
+    m_pgPropResCmpSearchPath->SetEditor(wxT("TextCtrlAndButton"));
+
     SetName(wxT("GlobalSettingsBasePanel"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(GlobalSettingsBasePanel::OnValueChanged), NULL, this);
-    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GlobalSettingsBasePanel::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                     wxCommandEventHandler(GlobalSettingsBasePanel::OnCustomEditorClicked), NULL, this);
 }
 
 GlobalSettingsBasePanel::~GlobalSettingsBasePanel()
 {
-    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(GlobalSettingsBasePanel::OnValueChanged), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GlobalSettingsBasePanel::OnCustomEditorClicked), NULL, this);
-    
+    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(GlobalSettingsBasePanel::OnValueChanged), NULL,
+                        this);
+    m_pgMgr->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(GlobalSettingsBasePanel::OnCustomEditorClicked), NULL, this);
 }
 
-PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                                                   const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer43 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer43);
-    
-    m_customMakefileStep = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    bSizer43->Add(m_customMakefileStep, 1, wxALL|wxEXPAND, 5);
-    
+
+    m_customMakefileStep =
+        new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer43->Add(m_customMakefileStep, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer16 = new wxBoxSizer(wxVERTICAL);
     m_customMakefileStep->SetSizer(bSizer16);
-    
+
     wxFlexGridSizer* fgSizer5 = new wxFlexGridSizer(2, 2, 0, 0);
-    fgSizer5->SetFlexibleDirection( wxBOTH );
-    fgSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer5->SetFlexibleDirection(wxBOTH);
+    fgSizer5->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer5->AddGrowableCol(1);
     fgSizer5->AddGrowableRow(1);
-    
-    bSizer16->Add(fgSizer5, 1, wxEXPAND, 5);
-    
-    m_staticText25 = new wxStaticText(m_customMakefileStep, wxID_ANY, _("Dependencies:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer5->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textDeps = new wxTextCtrl(m_customMakefileStep, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_NO_VSCROLL);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    bSizer16->Add(fgSizer5, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText25 = new wxStaticText(m_customMakefileStep, wxID_ANY, _("Dependencies:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_customMakefileStep, wxSize(-1, -1)), 0);
+
+    fgSizer5->Add(m_staticText25, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textDeps = new wxTextCtrl(m_customMakefileStep, wxID_ANY, wxT(""), wxDefaultPosition,
+                                wxDLG_UNIT(m_customMakefileStep, wxSize(-1, -1)), wxTE_NO_VSCROLL);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textDepsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textDepsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textDepsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textDepsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textDeps->SetFont(m_textDepsFont);
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textDeps->SetHint(wxT(""));
-    #endif
-    
-    fgSizer5->Add(m_textDeps, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText26 = new wxStaticText(m_customMakefileStep, wxID_ANY, _("Rule action:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer5->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT, 5);
-    
-    m_textPreBuildRule = new wxTextCtrl(m_customMakefileStep, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE|wxTE_DONTWRAP);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textPreBuildRuleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textPreBuildRuleFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textPreBuildRuleFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textPreBuildRuleFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textPreBuildRule->SetFont(m_textPreBuildRuleFont);
-    
-    fgSizer5->Add(m_textPreBuildRule, 0, wxALL|wxEXPAND, 5);
-    
-    wxStaticBoxSizer* sbSizer2 = new wxStaticBoxSizer( new wxStaticBox(m_customMakefileStep, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    bSizer16->Add(sbSizer2, 0, wxEXPAND, 5);
-    
-    m_staticText24 = new wxStaticText(m_customMakefileStep, wxID_ANY, _("Define here a custom makefile rule to be executed in the pre-build steps.\nSee the wiki for more help"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    sbSizer2->Add(m_staticText24, 0, wxALL, 5);
-    
+#endif
+
+    fgSizer5->Add(m_textDeps, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText26 = new wxStaticText(m_customMakefileStep, wxID_ANY, _("Rule action:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_customMakefileStep, wxSize(-1, -1)), 0);
+
+    fgSizer5->Add(m_staticText26, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_textPreBuildRule = new clThemedSTC(m_customMakefileStep, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_customMakefileStep, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textPreBuildRule->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textPreBuildRule->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textPreBuildRule->SetMarginSensitive(4, true);
+    m_textPreBuildRule->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textPreBuildRule->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textPreBuildRule->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textPreBuildRule->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textPreBuildRule->SetMarginWidth(2, 0);
+    m_textPreBuildRule->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textPreBuildRule->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textPreBuildRule->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textPreBuildRule->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textPreBuildRule->SetMarginMask(3, 0);
+    m_textPreBuildRule->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textPreBuildRule->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textPreBuildRule->StyleClearAll();
+    m_textPreBuildRule->SetWrapMode(0);
+    m_textPreBuildRule->SetIndentationGuides(0);
+    m_textPreBuildRule->SetKeyWords(0, wxT(""));
+    m_textPreBuildRule->SetKeyWords(1, wxT(""));
+    m_textPreBuildRule->SetKeyWords(2, wxT(""));
+    m_textPreBuildRule->SetKeyWords(3, wxT(""));
+    m_textPreBuildRule->SetKeyWords(4, wxT(""));
+
+    fgSizer5->Add(m_textPreBuildRule, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* sbSizer2 =
+        new wxStaticBoxSizer(new wxStaticBox(m_customMakefileStep, wxID_ANY, wxT("")), wxVERTICAL);
+
+    bSizer16->Add(sbSizer2, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText24 = new wxStaticText(
+        m_customMakefileStep, wxID_ANY,
+        _("Define here a custom makefile rule to be executed in the pre-build steps.\nSee the wiki for more help"),
+        wxDefaultPosition, wxDLG_UNIT(m_customMakefileStep, wxSize(-1, -1)), 0);
+
+    sbSizer2->Add(m_staticText24, 0, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("PSCustomMakefileBasePage"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectEnabledUI), NULL, this);
-    m_staticText25->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_textDeps->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified), NULL, this);
-    m_textDeps->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_staticText26->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_textPreBuildRule->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified), NULL, this);
-    m_textPreBuildRule->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_staticText24->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    
+    m_staticText25->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
+                            NULL, this);
+    m_textDeps->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified),
+                        NULL, this);
+    m_textDeps->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL,
+                        this);
+    m_staticText26->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
+                            NULL, this);
+    m_staticText24->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
+                            NULL, this);
 }
 
 PSCustomMakefileBasePage::~PSCustomMakefileBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectEnabledUI), NULL, this);
-    m_staticText25->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_textDeps->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified), NULL, this);
-    m_textDeps->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_staticText26->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_textPreBuildRule->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified), NULL, this);
-    m_textPreBuildRule->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    m_staticText24->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
-    
+    m_staticText25->Disconnect(wxEVT_UPDATE_UI,
+                               wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
+    m_textDeps->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                           wxCommandEventHandler(PSCustomMakefileBasePage::OnCmdEvtVModified), NULL, this);
+    m_textDeps->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
+                           NULL, this);
+    m_staticText26->Disconnect(wxEVT_UPDATE_UI,
+                               wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
+    m_staticText24->Disconnect(wxEVT_UPDATE_UI,
+                               wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
 }
 
 PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer34 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer34);
-    
-    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+
+    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter1->SetSashGravity(0.5);
     m_splitter1->SetMinimumPaneSize(20);
-    
-    bSizer34->Add(m_splitter1, 1, wxEXPAND, 5);
-    
-    m_panel14 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
+
+    bSizer34->Add(m_splitter1, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel14 =
+        new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
     wxBoxSizer* bSizer35 = new wxBoxSizer(wxVERTICAL);
     m_panel14->SetSizer(bSizer35);
-    
-    m_staticText47 = new wxStaticText(m_panel14, wxID_ANY, _("Search paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer35->Add(m_staticText47, 0, wxALL, 5);
-    
-    m_textCtrlSearchPaths = new wxTextCtrl(m_panel14, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlSearchPaths->SetFont(m_textCtrlSearchPathsFont);
-    m_textCtrlSearchPaths->SetFocus();
-    
-    bSizer35->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel15 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+
+    m_staticText47 = new wxStaticText(m_panel14, wxID_ANY, _("Search paths:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
+
+    bSizer35->Add(m_staticText47, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_textCtrlSearchPaths =
+        new clThemedSTC(m_panel14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel14, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlSearchPaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlSearchPaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlSearchPaths->SetMarginSensitive(4, true);
+    m_textCtrlSearchPaths->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlSearchPaths->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlSearchPaths->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlSearchPaths->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlSearchPaths->SetMarginWidth(2, 0);
+    m_textCtrlSearchPaths->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlSearchPaths->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlSearchPaths->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlSearchPaths->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlSearchPaths->SetMarginMask(3, 0);
+    m_textCtrlSearchPaths->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlSearchPaths->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlSearchPaths->StyleClearAll();
+    m_textCtrlSearchPaths->SetWrapMode(0);
+    m_textCtrlSearchPaths->SetIndentationGuides(0);
+    m_textCtrlSearchPaths->SetKeyWords(0, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(1, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(2, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(3, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(4, wxT(""));
+
+    bSizer35->Add(m_textCtrlSearchPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel15 =
+        new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel14, m_panel15, 0);
-    
+
     wxBoxSizer* bSizer36 = new wxBoxSizer(wxVERTICAL);
     m_panel15->SetSizer(bSizer36);
-    
-    m_staticText49 = new wxStaticText(m_panel15, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer36->Add(m_staticText49, 0, wxALL, 5);
-    
-    m_textCtrlMacros = new wxTextCtrl(m_panel15, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlMacros->SetFont(m_textCtrlMacrosFont);
-    
-    bSizer36->Add(m_textCtrlMacros, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
-    
+
+    m_staticText49 = new wxStaticText(m_panel15, wxID_ANY, _("Macros (clang only):"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
+
+    bSizer36->Add(m_staticText49, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_textCtrlMacros =
+        new clThemedSTC(m_panel15, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel15, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlMacros->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlMacros->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlMacros->SetMarginSensitive(4, true);
+    m_textCtrlMacros->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlMacros->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlMacros->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlMacros->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlMacros->SetMarginWidth(2, 0);
+    m_textCtrlMacros->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlMacros->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlMacros->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlMacros->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlMacros->SetMarginMask(3, 0);
+    m_textCtrlMacros->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlMacros->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlMacros->StyleClearAll();
+    m_textCtrlMacros->SetWrapMode(0);
+    m_textCtrlMacros->SetIndentationGuides(0);
+    m_textCtrlMacros->SetKeyWords(0, wxT(""));
+    m_textCtrlMacros->SetKeyWords(1, wxT(""));
+    m_textCtrlMacros->SetKeyWords(2, wxT(""));
+    m_textCtrlMacros->SetKeyWords(3, wxT(""));
+    m_textCtrlMacros->SetKeyWords(4, wxT(""));
+
+    bSizer36->Add(m_textCtrlMacros, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer40 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer36->Add(bSizer40, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_checkBoxC11 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++11 Standard"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxC11->SetValue(false);
-    m_checkBoxC11->SetToolTip(_("If checked, pass -std=c++11 to the clang code completion engine to ensure that all c++11 features are recognized properly"));
-    
-    bSizer40->Add(m_checkBoxC11, 0, wxALL|wxALIGN_LEFT, 5);
-    
-    m_checkBoxC14 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++14 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxC14->SetValue(false);
-    m_checkBoxC14->SetToolTip(_("If checked, pass -std=c++14 to the clang code completion engine to ensure that all c++14 features are recognized properly"));
-    
-    bSizer40->Add(m_checkBoxC14, 0, wxALL, 5);
-	
-	m_checkBoxC17 = new wxCheckBox(m_panel15, wxID_ANY, _("Enable C++17 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxC17->SetValue(false);
-    m_checkBoxC17->SetToolTip(_("If checked, pass -std=c++17 to the clang code completion engine to ensure that all c++17 features are recognized properly"));
-    
-    bSizer40->Add(m_checkBoxC17, 0, wxALL, 5);
-    
+
+    bSizer36->Add(bSizer40, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     SetName(wxT("PSCompletionBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompletionBase::OnProjectEnabledUI), NULL, this);
-    m_textCtrlSearchPaths->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxC11->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxC14->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-	m_checkBoxC17->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    
 }
 
 PSCompletionBase::~PSCompletionBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompletionBase::OnProjectEnabledUI), NULL, this);
-    m_textCtrlSearchPaths->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_textCtrlMacros->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxC11->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxC14->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    m_checkBoxC17->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PSCompletionBase::OnCmdEvtVModified), NULL, this);
-    
 }
 
-ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                                 const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA3F0InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer45 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer45);
-    
+
     wxFlexGridSizer* flexGridSizer53 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer53->SetFlexibleDirection( wxBOTH );
-    flexGridSizer53->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer53->SetFlexibleDirection(wxBOTH);
+    flexGridSizer53->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer53->AddGrowableCol(1);
     flexGridSizer53->AddGrowableRow(1);
-    
-    boxSizer45->Add(flexGridSizer53, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticTextTargetName = new wxStaticText(this, wxID_ANY, _("Target Name:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer53->Add(m_staticTextTargetName, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlTargetName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    boxSizer45->Add(flexGridSizer53, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticTextTargetName =
+        new wxStaticText(this, wxID_ANY, _("Target Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer53->Add(m_staticTextTargetName, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlTargetName =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlTargetName->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer53->Add(m_textCtrlTargetName, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticTextCommand = new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer53->Add(m_staticTextCommand, 0, wxALL|wxALIGN_RIGHT|wxALIGN_TOP, 5);
-    
-    m_textCtrlCommand = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_WORDWRAP|wxTE_RICH2|wxTE_MULTILINE);
-    m_textCtrlCommand->SetFocus();
-    
-    flexGridSizer53->Add(m_textCtrlCommand, 0, wxALL|wxEXPAND, 5);
-    
+#endif
+
+    flexGridSizer53->Add(m_textCtrlTargetName, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticTextCommand =
+        new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer53->Add(m_staticTextCommand, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
+
+    m_textCtrlCommand = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlCommand->SetMarginSensitive(4, true);
+    m_textCtrlCommand->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlCommand->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlCommand->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlCommand->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlCommand->SetMarginWidth(2, 0);
+    m_textCtrlCommand->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlCommand->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlCommand->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlCommand->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlCommand->SetMarginMask(3, 0);
+    m_textCtrlCommand->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlCommand->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlCommand->StyleClearAll();
+    m_textCtrlCommand->SetWrapMode(0);
+    m_textCtrlCommand->SetIndentationGuides(0);
+    m_textCtrlCommand->SetKeyWords(0, wxT(""));
+    m_textCtrlCommand->SetKeyWords(1, wxT(""));
+    m_textCtrlCommand->SetKeyWords(2, wxT(""));
+    m_textCtrlCommand->SetKeyWords(3, wxT(""));
+    m_textCtrlCommand->SetKeyWords(4, wxT(""));
+
+    flexGridSizer53->Add(m_textCtrlCommand, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer120 = new wxStdDialogButtonSizer();
-    
-    boxSizer45->Add(m_stdBtnSizer120, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button122 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    boxSizer45->Add(m_stdBtnSizer120, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button122 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button122->SetDefault();
     m_stdBtnSizer120->AddButton(m_button122);
-    
-    m_button124 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button124 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer120->AddButton(m_button124);
     m_stdBtnSizer120->Realize();
-    
+
     SetName(wxT("ProjectCustomBuildTragetDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1281,12 +1685,12 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
     }
 #endif
     // Connect events
-    m_textCtrlTargetName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
-    
+    m_textCtrlTargetName->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
 }
 
 ProjectCustomBuildTragetDlgBase::~ProjectCustomBuildTragetDlgBase()
 {
-    m_textCtrlTargetName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
-    
+    m_textCtrlTargetName->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
 }

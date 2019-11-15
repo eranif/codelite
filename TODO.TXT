@@ -1,7 +1,7 @@
-LSP:
-====
-Display diagnostic messages
+C++ project:
 
-Project View:
-=============
-Support pinned projects
+- Allow adding to the build menu custom 'Build project XXX'
+- Multiple caret ignores the rule of secondary double/single quote
+- Replace the code completion box custom drawing with clThemedListCtrl
+- LSP: Add Java code completion auto detection ??
+- When passing -d to in the command line, make sure that the folder exists

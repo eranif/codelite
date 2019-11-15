@@ -5,3 +5,5 @@ C++ project:
 - Replace the code completion box custom drawing with clThemedListCtrl
 - LSP: Add Java code completion auto detection ??
 - When passing -d to in the command line, make sure that the folder exists
+- LSP: when first time showing the 'New LSP Dialog', apply the wxSTC colours and style
+- Project settings (C++): hitting ENTER in the environment dialog, dismisses the dialog

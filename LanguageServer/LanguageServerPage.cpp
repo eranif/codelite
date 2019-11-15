@@ -26,6 +26,8 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
     : LanguageServerPageBase(parent)
 {
+    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lex) { lex->Apply(m_stcCommand); }
 }
 
 LanguageServerPage::~LanguageServerPage() {}

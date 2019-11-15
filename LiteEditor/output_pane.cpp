@@ -37,7 +37,6 @@
 #include "replaceinfilespanel.h"
 #include "shelltab.h"
 #include "taskpanel.h"
-#include "wxcl_log_text_ctrl.h"
 #include <algorithm>
 #include <wx/aui/framemanager.h>
 #include <wx/dcbuffer.h>

@@ -31,7 +31,6 @@
 #include "globals.h"
 #include "theme_handler.h"
 #include "workspace_pane.h"
-#include "wxcl_log_text_ctrl.h"
 #include <algorithm>
 #include <wx/aui/framemanager.h>
 #include <wx/image.h>

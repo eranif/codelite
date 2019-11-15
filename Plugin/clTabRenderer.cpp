@@ -384,7 +384,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererCurved(win));
     }
 
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     wxString name = tab.Upper();
     if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {
         return clTabRenderer::Ptr_t(Create(win, "MINIMAL"));

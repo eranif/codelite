@@ -62,7 +62,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
 
     m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
-    wxString selection = clConfig::Get().Read("TabStyle", wxString("GTK3"));
+    wxString selection = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     m_choiceTabStyle->SetStringSelection(selection);
 
     m_checkBoxEditorTabsFollowsTheme->SetValue(options->IsTabColourMatchesTheme());

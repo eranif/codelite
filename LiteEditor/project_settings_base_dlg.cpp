@@ -198,7 +198,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
           "parsing the output"));
 
     m_pgPropIntermediateFolder =
-        m_pgMgr136->AppendIn(CATEGORY_BUILD, new wxStringProperty(_("Intermediate Folder"), wxPG_LABEL, wxT("")));
+        m_pgMgr136->AppendIn(CATEGORY_BUILD, new wxStringProperty(_("Intermediate Directory"), wxPG_LABEL, wxT("")));
     m_pgPropIntermediateFolder->SetHelpString(
         _("The name of the folder used for the generated objects during compilation"));
 

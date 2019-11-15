@@ -1408,7 +1408,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Label:",
-													"m_value":	"Intermediate Folder"
+													"m_value":	"Intermediate Directory"
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",

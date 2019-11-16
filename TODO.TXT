@@ -1,9 +1,6 @@
 C++ project:
 
 - Allow adding to the build menu custom 'Build project XXX'
-- Multiple caret ignores the rule of secondary double/single quote
 - Replace the code completion box custom drawing with clThemedListCtrl
 - LSP: Add Java code completion auto detection ??
 - When passing -d to in the command line, make sure that the folder exists
-- File system workspace: allow starting a debug session without showing the dialog first
-- File system workspace: excute a command, does not pass the arguments

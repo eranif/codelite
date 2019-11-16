@@ -24,12 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ColoursAndFontsManager.h"
+#include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
+#include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "breakpointdlg.h"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
@@ -55,6 +58,7 @@
 #include "findresultstab.h"
 #include "frame.h"
 #include "globals.h"
+#include "imanager.h"
 #include "job.h"
 #include "jobqueue.h"
 #include "lexer_configuration.h"
@@ -79,10 +83,6 @@
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
 #include <wx/wupdlock.h>
-#include "imanager.h"
-#include "bitmap_loader.h"
-#include "ServiceProviderManager.h"
-#include "clFileSystemWorkspace.hpp"
 //#include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -954,8 +954,10 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void clEditor::OnCharAdded(wxStyledTextEvent& event)
 {
+    bool hasSingleCaret = (GetSelections() == 1);
     OptionsConfigPtr options = GetOptions();
     if(m_prevSelectionInfo.IsOk()) {
+        clDEBUG() << "Prev selection is OK";
         if(event.GetKey() == '"' && options->IsWrapSelectionWithQuotes()) {
             DoWrapPrevSelectionWithChars('"', '"');
             return;
@@ -972,9 +974,10 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     }
 
     // reset the flag
+
     m_prevSelectionInfo.Clear();
-    bool addClosingBrace = m_autoAddNormalBraces && (GetSelections() == 1);
-    bool addClosingDoubleQuotes = options->GetAutoCompleteDoubleQuotes() && (GetSelections() == 1);
+    bool addClosingBrace = m_autoAddNormalBraces && hasSingleCaret;
+    bool addClosingDoubleQuotes = options->GetAutoCompleteDoubleQuotes() && hasSingleCaret;
     int pos = GetCurrentPos();
     bool canShowCompletionBox(true);
     // make sure line is visible
@@ -987,29 +990,29 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     //-------------------------------------
     // Smart quotes management
     //-------------------------------------
-    if(addClosingDoubleQuotes && (event.GetKey() == '"' || event.GetKey() == '\'') &&
-       event.GetKey() == GetCharAt(pos)) {
-        CharRight();
-        DeleteBack();
-    } else if(addClosingDoubleQuotes && !wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
-        // add complete quotes; but don't if the next char is alnum,
-        // which is annoying if you're trying to retrofit quotes around a string!
-        // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
-        // that someone is trying to type _don't_ than it's a burning desire to write _don''_
-        if(event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
-            InsertText(pos, wxT("\""));
-            SetIndicatorCurrent(MATCH_INDICATOR);
-            IndicatorFillRange(pos, 1);
-            bJustAddedIndicator = true;
+    if(addClosingDoubleQuotes) {
+        if((event.GetKey() == '"' || event.GetKey() == '\'') && event.GetKey() == GetCharAt(pos)) {
+            CharRight();
+            DeleteBack();
+        } else if(!wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
+            // add complete quotes; but don't if the next char is alnum,
+            // which is annoying if you're trying to retrofit quotes around a string!
+            // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
+            // that someone is trying to type _don't_ than it's a burning desire to write _don''_
+            if(event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
+                InsertText(pos, wxT("\""));
+                SetIndicatorCurrent(MATCH_INDICATOR);
+                IndicatorFillRange(pos, 1);
+                bJustAddedIndicator = true;
 
-        } else if(event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
-            InsertText(pos, wxT("'"));
-            SetIndicatorCurrent(MATCH_INDICATOR);
-            IndicatorFillRange(pos, 1);
-            bJustAddedIndicator = true;
+            } else if(event.GetKey() == wxT('\'') && !m_context->IsCommentOrString(pos)) {
+                InsertText(pos, wxT("'"));
+                SetIndicatorCurrent(MATCH_INDICATOR);
+                IndicatorFillRange(pos, 1);
+                bJustAddedIndicator = true;
+            }
         }
     }
-
     //-------------------------------------
     // Smart quotes management
     //-------------------------------------
@@ -1637,7 +1640,7 @@ void clEditor::UpdateBreakpoints()
     ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(GetFileName().GetFullPath());
 
     // iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
-    std::map<int, std::vector<BreakpointInfo> >::iterator iter = m_breakpointsInfo.begin();
+    std::map<int, std::vector<BreakpointInfo>>::iterator iter = m_breakpointsInfo.begin();
     for(; iter != m_breakpointsInfo.end(); iter++) {
         int handle = iter->first;
         int line = MarkerLineFromHandle(handle);
@@ -2675,7 +2678,7 @@ bool clEditor::HasCompilerMarkers()
     return nFoundLine >= 0;
 }
 
-size_t clEditor::GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector)
+size_t clEditor::GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector)
 {
     int nPos = 0;
     int nFoundLine = LineFromPosition(nPos);
@@ -3251,7 +3254,12 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         for(int i = 0; i < GetSelections(); ++i) {
             int selStart = GetSelectionNStart(i);
             int selEnd = GetSelectionNEnd(i);
-            m_prevSelectionInfo.AddSelection(selStart, selEnd);
+            if(selEnd > selStart) {
+                m_prevSelectionInfo.AddSelection(selStart, selEnd);
+            } else {
+                m_prevSelectionInfo.Clear();
+                break;
+            }
         }
         m_prevSelectionInfo.Sort();
     }
@@ -4692,7 +4700,7 @@ void clEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexe
 void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
     // the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
-    const std::vector<std::pair<int, int> >& matches = highlightOutput->matches;
+    const std::vector<std::pair<int, int>>& matches = highlightOutput->matches;
     SetIndicatorCurrent(MARKER_WORD_HIGHLIGHT);
 
     // clear the old markers
@@ -5012,7 +5020,7 @@ void clEditor::DoWrapPrevSelectionWithChars(wxChar first, wxChar last)
     ClearSelections();
 
     int charsAdded(0);
-    std::vector<std::pair<int, int> > selections;
+    std::vector<std::pair<int, int>> selections;
     for(size_t i = 0; i < m_prevSelectionInfo.GetCount(); ++i) {
         int startPos, endPos;
         m_prevSelectionInfo.At(i, startPos, endPos);

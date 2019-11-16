@@ -24,6 +24,7 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/filepicker.h>
+#include "clThemedSTC.hpp"
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include "clThemedChoice.h"
@@ -105,12 +106,12 @@ class FSConfigPageBase : public wxPanel
 protected:
     wxNotebook* m_notebook;
     wxPanel* m_panelGeneral;
+    wxStaticText* m_staticText35;
+    wxTextCtrl* m_textCtrlFileExt;
     wxStaticText* m_staticText109;
     wxFilePickerCtrl* m_filePickerExe;
     wxStaticText* m_staticText113;
-    wxTextCtrl* m_textCtrlArgs;
-    wxStaticText* m_staticText35;
-    wxTextCtrl* m_textCtrlFileExt;
+    clThemedSTC* m_textCtrlArgs;
     wxStaticText* m_staticText179;
     clThemedChoice* m_choiceDebuggers;
     wxPanel* m_panelBuild;
@@ -148,12 +149,12 @@ protected:
     virtual void OnSSHBrowse(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticText35() { return m_staticText35; }
+    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
     wxStaticText* GetStaticText109() { return m_staticText109; }
     wxFilePickerCtrl* GetFilePickerExe() { return m_filePickerExe; }
     wxStaticText* GetStaticText113() { return m_staticText113; }
-    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
-    wxStaticText* GetStaticText35() { return m_staticText35; }
-    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    clThemedSTC* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxStaticText* GetStaticText179() { return m_staticText179; }
     clThemedChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }

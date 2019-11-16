@@ -1,10 +1,10 @@
+#include "BuildTargetDlg.h"
+#include "ColoursAndFontsManager.h"
+#include "FSConfigPage.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceDlg.h"
 #include "globals.h"
-#include "ColoursAndFontsManager.h"
-#include "clFileSystemWorkspace.hpp"
 #include "macros.h"
-#include "BuildTargetDlg.h"
-#include "FSConfigPage.h"
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 

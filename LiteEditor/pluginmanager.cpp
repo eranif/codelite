@@ -763,6 +763,7 @@ void PluginManager::StoreWorkspaceSession(const wxFileName& workspaceFile)
         SessionEntry session;
         clMainFrame::Get()->GetMainBook()->CreateSession(session);
         session.SetWorkspaceName(workspaceFile.GetFullPath());
+        ManagerST::Get()->GetBreakpointsMgr()->SaveSession(session);
         SessionManager::Get().Save(session.GetWorkspaceName(), session);
     }
 }
@@ -773,6 +774,7 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
     if(SessionManager::Get().GetSession(workspaceFile.GetFullPath(), session)) {
         clMainFrame::Get()->GetMainBook()->RestoreSession(session);
         // Set this session as the 'Last' session
+        ManagerST::Get()->GetBreakpointsMgr()->LoadSession(session);
         SessionManager::Get().SetLastSession(workspaceFile.GetFullPath());
     }
 }
@@ -866,4 +868,9 @@ void PluginManager::DisplayMessage(const wxString& message, int flags,
                                    const std::vector<std::pair<wxWindowID, wxString> >& buttons)
 {
     return clMainFrame::Get()->GetMessageBar()->DisplayMessage(message, flags, buttons);
+}
+
+void PluginManager::GetBreakpoints(std::vector<BreakpointInfo>& bpList)
+{
+    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
 }

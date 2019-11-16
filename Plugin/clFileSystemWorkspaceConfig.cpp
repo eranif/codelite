@@ -3,6 +3,7 @@
 #include "compiler_command_line_parser.h"
 #include "build_settings_config.h"
 #include "ICompilerLocator.h"
+#include "debuggermanager.h"
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
@@ -23,6 +24,7 @@ JSONItem clFileSystemWorkspaceConfig::ToJSON() const
     item.addProperty("compiler", m_compiler);
     item.addProperty("remoteFolder", m_remoteFolder);
     item.addProperty("remoteAccount", m_remoteAccount);
+    item.addProperty("debugger", m_debugger);
     JSONItem arrTargets = JSONItem::createArray("targets");
     item.append(arrTargets);
 
@@ -47,6 +49,8 @@ void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
     m_compiler = json.namedObject("compiler").toString(m_compiler);
     m_remoteFolder = json.namedObject("remoteFolder").toString();
     m_remoteAccount = json.namedObject("remoteAccount").toString();
+    m_debugger = json.namedObject("debugger").toString(m_debugger);
+    
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
@@ -62,6 +66,7 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
 {
     m_buildTargets.insert({ "build", "" });
     m_buildTargets.insert({ "clean", "" });
+    m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
     if(compiler) { m_compiler = compiler->GetName(); }
 }

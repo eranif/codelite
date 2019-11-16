@@ -37,6 +37,7 @@
 #include <set>
 #include <map>
 #include "plugindata.h"
+#include "debugger.h"
 
 class clToolBar;
 class clEditorBar;
@@ -169,7 +170,11 @@ public:
     clWorkspaceView* GetWorkspaceView();
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
-
+    /**
+     * @brief return list of all breakpoints
+     */
+    void GetBreakpoints(std::vector<BreakpointInfo>& bpList);
+    
     /**
      * @brief display message to the user using the info bar
      */

@@ -289,6 +289,17 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText179 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Debugger:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText179, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceDebuggersArr;
+    m_choiceDebuggers = new clThemedChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceDebuggersArr, 0);
+
+    flexGridSizer33->Add(m_choiceDebuggers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_panelBuild =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelBuild, _("Build"), false);
@@ -303,14 +314,16 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer30->Add(flexGridSizer123, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText125 = new wxStaticText(m_panelBuild, wxID_ANY, _("Output syntax:"), wxDefaultPosition,
+    m_staticText125 = new wxStaticText(m_panelBuild, wxID_ANY, _("Tool chain:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)), 0);
+    m_staticText125->SetToolTip(_("Select the toolchain to use"));
 
     flexGridSizer123->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceCompilerArr;
     m_choiceCompiler = new wxChoice(m_panelBuild, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelBuild, wxSize(-1, -1)),
                                     m_choiceCompilerArr, 0);
+    m_choiceCompiler->SetToolTip(_("Select the toolchain to use"));
 
     flexGridSizer123->Add(m_choiceCompiler, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

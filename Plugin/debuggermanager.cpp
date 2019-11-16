@@ -78,7 +78,7 @@ void DebuggerMgr::Free()
     ms_instance = NULL;
 }
 
-bool DebuggerMgr::LoadDebuggers()
+bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
 {
     wxString ext;
 
@@ -162,7 +162,7 @@ bool DebuggerMgr::LoadDebuggers()
 
         // set the environment
         dbg->SetEnvironment(m_env);
-
+        dbg->SetObserver(observer);
         m_debuggers[info.name] = dbg;
 
         // keep the dynamic load library

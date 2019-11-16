@@ -26,20 +26,20 @@
 #ifndef IMANAGER_H
 #define IMANAGER_H
 
-#include "ieditor.h"
-#include "iconfigtool.h"
-#include "wx/treectrl.h"
-#include "project.h"
 #include "Notebook.h"
-#include "optionsconfig.h"
-#include "queuecommand.h"
-#include <wx/aui/framemanager.h>
 #include "bitmap_loader.h"
-#include <vector>
-#include "debugger.h"
 #include "clStatusBar.h"
 #include "clTab.h"
+#include "debugger.h"
+#include "iconfigtool.h"
+#include "ieditor.h"
 #include "navigationmanager.h"
+#include "optionsconfig.h"
+#include "project.h"
+#include "queuecommand.h"
+#include "wx/treectrl.h"
+#include <vector>
+#include <wx/aui/framemanager.h>
 
 class clTreeCtrl;
 class clEditorBar;
@@ -638,7 +638,11 @@ public:
      * @brief display message to the user using the info bar
      */
     virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
-                                const std::vector<std::pair<wxWindowID, wxString> >& buttons = {}) = 0;
+                                const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) = 0;
+    /**
+     * @brief return list of all breakpoints
+     */
+    virtual void GetBreakpoints(std::vector<BreakpointInfo>& bpList) = 0;
 };
 
 #endif // IMANAGER_H

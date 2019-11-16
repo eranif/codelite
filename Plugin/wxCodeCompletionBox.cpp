@@ -49,6 +49,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     m_bitmaps.push_back(bmpLoader->LoadBitmap("class")); // 0
     m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindClass, m_bitmaps.size() - 1 });
+    m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindConstructor, m_bitmaps.size() - 1 });
 
     m_bitmaps.push_back(bmpLoader->LoadBitmap("struct")); // 1
     m_lspCompletionItemImageIndexMap.insert({ LSP::CompletionItem::kKindStruct, m_bitmaps.size() - 1 });
@@ -876,15 +877,19 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
             insertText = completion->GetTextEdit()->GetNewText();
         }
 
+        static wxRegEx reTemplateFunction("([a-zA-Z0-9\\:]+)[ \t]*<.*?>\\(", wxRE_ADVANCED);
         entry->SetInsertText(insertText);
         wxChar ch = text.empty() ? 0 : text[0];
         // Handle special cases
-        if(text.StartsWith("include <")) {
+        if(reTemplateFunction.IsValid() && reTemplateFunction.Matches(text)) {
+            entry->SetInsertText(reTemplateFunction.GetMatch(text, 1) + "<|>");
+            entry->SetIsSnippet(true);
+        } else if(text.StartsWith("include <")) {
             // include statement
-            entry->SetInsertText("include <|>");
+            entry->SetInsertText("include <|");
             entry->SetIsSnippet(true);
         } else if(text.StartsWith("include \"")) {
-            entry->SetInsertText("include \"|\"");
+            entry->SetInsertText("include \"|");
             entry->SetIsSnippet(true);
         } else if(ch == L'•') {
             // this completion entry triggers an #include insertion

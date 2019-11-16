@@ -1039,7 +1039,7 @@ void clMainFrame::CreateGUIControls()
     SetAUIManagerFlags();
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-    
+
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
     int extra = ::clGetSize(6, this);
@@ -3199,7 +3199,7 @@ void clMainFrame::CompleteInitialization()
 #else
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), ManagerST::Get()->GetInstallDir());
 #endif
-    DebuggerMgr::Get().LoadDebuggers();
+    DebuggerMgr::Get().LoadDebuggers(ManagerST::Get());
 
     // Connect some system events
     m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
@@ -3987,17 +3987,7 @@ void clMainFrame::OnQuickDebug(wxCommandEvent& e)
                 eventStarted.SetClientData(&startup_info);
                 EventNotifier::Get()->ProcessEvent(eventStarted);
             }
-
             dbgr->Run(bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments(), wxEmptyString);
-
-            // Now the debugger has been fed the breakpoints, re-Initialise the breakpt view,
-            // so that it uses debugger_ids instead of internal_ids
-            clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-
-            // Layout management
-            ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
-            ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
-
         } else if(!dbgr && !bStartedInDebugMode) {
 
             // Fire an event, maybe a plugin wants to process this
@@ -4084,12 +4074,6 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
                 eventStarted.SetClientData(&startup_info);
                 EventNotifier::Get()->ProcessEvent(eventStarted);
             }
-
-            // Coredump debugging doesn't use breakpoints, but probably we should do this here anyway...
-            clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-
-            ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
-            ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
 
             // Make sure that the debugger pane is visible, and select the stack trace tab
             wxAuiPaneInfo& info = GetDockingManager().GetPane(wxT("Debugger"));
@@ -5313,6 +5297,13 @@ void clMainFrame::OnDebugStarted(clDebugEvent& event)
     event.Skip();
     m_debuggerToolbar->Show();
     m_debuggerToolbar->GetParent()->GetSizer()->Layout();
+
+    if(DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning()) {
+        // One of CodeLite builtin debuggers is running, load the perspective
+        clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+        ManagerST::Get()->GetPerspectiveManager().SavePerspective(NORMAL_LAYOUT);
+        ManagerST::Get()->GetPerspectiveManager().LoadPerspective(DEBUG_LAYOUT);
+    }
 }
 
 void clMainFrame::OnDebugEnded(clDebugEvent& event)

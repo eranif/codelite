@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clDebuggerTerminal.h"
-#include "globals.h"
 #include "file_logger.h"
+#include "globals.h"
 #include "procutils.h"
 
 #ifndef __WXMSW__
-#   include <sys/wait.h>
+#include <sys/wait.h>
 #endif
 
 clDebuggerTerminalPOSIX::clDebuggerTerminalPOSIX()
@@ -37,20 +37,16 @@ clDebuggerTerminalPOSIX::clDebuggerTerminalPOSIX()
 {
 }
 
-clDebuggerTerminalPOSIX::~clDebuggerTerminalPOSIX()
-{
-}
+clDebuggerTerminalPOSIX::~clDebuggerTerminalPOSIX() {}
 
-void clDebuggerTerminalPOSIX::Launch(const wxString &title)
+void clDebuggerTerminalPOSIX::Launch(const wxString& title)
 {
     m_title = title;
     wxString symblink;
     ::LaunchTerminalForDebugger(m_title, symblink, m_tty, m_pid);
     wxUnusedVar(symblink);
 
-    if ( IsValid() ) {
-        CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty);
-    }
+    if(IsValid()) { CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty); }
 }
 
 bool clDebuggerTerminalPOSIX::IsValid() const
@@ -65,7 +61,7 @@ bool clDebuggerTerminalPOSIX::IsValid() const
 void clDebuggerTerminalPOSIX::Clear()
 {
 #ifndef __WXMSW__
-    if ( m_pid != wxNOT_FOUND ) {
+    if(m_pid != wxNOT_FOUND) {
         // konsole and and its descendent qterminal hang on exit
         // That's because we made them call /bin/sleep, which becomes the process stored in m_pid
         // Killing 'sleep' makes other terminals self-close, but not these two
@@ -75,20 +71,19 @@ void clDebuggerTerminalPOSIX::Clear()
         wxString command(wxString::Format("ps -o ppid= -p %i", (int)m_pid));
         wxString result = ProcUtils::SafeExecuteCommand(command);
         long parentID;
-        if (result.Trim().ToLong(&parentID)) {
+        if(result.Trim().ToLong(&parentID)) {
             wxString command(wxString::Format("ps -o command= -p %i", (int)parentID));
             wxString name = ProcUtils::SafeExecuteCommand(command);
-            if (name.Contains("--separate") || name.Contains("qterminal")) {
-                killParent = true; // as it _is_ konsole, which will have been launched with --separate as an option, or qterminal
+            if(name.Contains("--separate") || name.Contains("qterminal")) {
+                killParent = true; // as it _is_ konsole, which will have been launched with --separate as an option, or
+                                   // qterminal
             }
         }
 
         // terminate the process
         ::wxKill(m_pid, wxSIGTERM);
 
-        if (killParent) {
-            ::wxKill(parentID, wxSIGTERM);
-        }
+        if(killParent) { ::wxKill(parentID, wxSIGTERM); }
     }
 #endif
     m_pid = wxNOT_FOUND;
@@ -96,12 +91,12 @@ void clDebuggerTerminalPOSIX::Clear()
     m_title.Clear();
 }
 
-wxString clDebuggerTerminalPOSIX::MakeExeTitle(const wxString &exePath, const wxString &args)
+wxString clDebuggerTerminalPOSIX::MakeExeTitle(const wxString& exePath, const wxString& args)
 {
     return wxString(wxT("Debugging: ")) << exePath << wxT(" ") << args;
 }
 
-wxString clDebuggerTerminalPOSIX::MakeCoreTitle(const wxString &coreFile)
+wxString clDebuggerTerminalPOSIX::MakeCoreTitle(const wxString& coreFile)
 {
     return wxString(wxT("Debugging core: ")) << coreFile;
 }

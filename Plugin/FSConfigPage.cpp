@@ -4,6 +4,7 @@
 #include "build_settings_config.h"
 #include "macros.h"
 #include <wx/tokenzr.h>
+#include "debuggermanager.h"
 
 #if USE_SFTP
 #include "SFTPBrowserDlg.h"
@@ -49,6 +50,8 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
 
     m_checkBoxEnableRemote->SetValue(config->IsRemoteEnabled());
     m_textCtrlRemoteFolder->ChangeValue(config->GetRemoteFolder());
+    m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
+    m_choiceDebuggers->SetStringSelection(config->GetDebugger());
 }
 
 FSConfigPage::~FSConfigPage() {}
@@ -114,6 +117,7 @@ void FSConfigPage::Save()
     m_config->SetRemoteFolder(m_textCtrlRemoteFolder->GetValue());
     m_config->SetRemoteEnabled(m_checkBoxEnableRemote->IsChecked());
     m_config->SetRemoteAccount(m_choiceSSHAccount->GetStringSelection());
+    m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)

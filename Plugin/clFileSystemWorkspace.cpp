@@ -1,33 +1,35 @@
+#include "CompileCommandsGenerator.h"
+#include "JSON.h"
+#include "NewFileSystemWorkspaceDialog.h"
+#include "asyncprocess.h"
+#include "build_settings_config.h"
+#include "clFileSystemEvent.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceView.hpp"
 #include "clFilesCollector.h"
-#include "JSON.h"
+#include "clSFTPEvent.h"
+#include "clWorkspaceManager.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "compiler_command_line_parser.h"
+#include "ctags_manager.h"
+#include "debuggermanager.h"
+#include "editor_config.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "clWorkspaceView.h"
-#include "clWorkspaceManager.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <thread>
-#include "clFileSystemEvent.h"
-#include "ctags_manager.h"
-#include "file_logger.h"
-#include "parse_thread.h"
-#include "compiler_command_line_parser.h"
-#include <wxStringHash.h>
-#include <wx/tokenzr.h>
-#include "shell_command.h"
-#include "processreaderthread.h"
-#include "clFilesCollector.h"
-#include <wx/msgdlg.h>
-#include "environmentconfig.h"
 #include "macromanager.h"
-#include "fileutils.h"
+#include "parse_thread.h"
+#include "processreaderthread.h"
+#include "shell_command.h"
+#include <thread>
+#include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
-#include "NewFileSystemWorkspaceDialog.h"
-#include "asyncprocess.h"
-#include "CompileCommandsGenerator.h"
-#include "clSFTPEvent.h"
+#include <wxStringHash.h>
 
 #define CHECK_ACTIVE_CONFIG() \
     if(!GetSettings().GetSelectedConfig()) { return; }
@@ -77,6 +79,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
                                    this);
 
         EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
+        EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
     }
 }
 
@@ -117,6 +120,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK,
                                      &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
+        EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
     }
 }
 
@@ -542,13 +546,8 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
 
     if(m_execProcess) { return; }
 
-    clFileSystemWorkspaceConfig::Ptr_t conf = GetConfig();
-    wxString exe = conf->GetExecutable();
-    wxString args = conf->GetArgs();
-
-    // Expand variables
-    exe = MacroManager::Instance()->Expand(exe, nullptr, wxEmptyString);
-    args = MacroManager::Instance()->Expand(args, nullptr, wxEmptyString);
+    wxString exe, args;
+    GetExecutable(exe, args);
     ::WrapInShell(exe);
 
     // Execute the executable
@@ -556,6 +555,7 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     command << exe;
     if(!args.empty()) { command << " " << args; }
 
+    clDEBUG() << "clFileSystemWorkspace::OnExecute:" << command;
     clEnvList_t envList = GetEnvList();
     m_execProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
                                          GetFileName().GetPath(), &envList);
@@ -614,7 +614,7 @@ void clFileSystemWorkspace::OnQuickDebugDlgShowing(clDebugEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
-    
+
     wxString args = MacroManager::Instance()->Expand(GetConfig()->GetArgs(), NULL, "", "");
     wxString exec = MacroManager::Instance()->Expand(GetConfig()->GetExecutable(), NULL, "", "");
     event.SetArguments(args);
@@ -811,3 +811,70 @@ void clFileSystemWorkspace::TriggerQuickParse()
 }
 
 void clFileSystemWorkspace::FileSystemUpdated() { CacheFiles(true); }
+
+void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
+{
+    event.Skip(!IsOpen());
+
+    DebuggerMgr::Get().SetActiveDebugger(GetConfig()->GetDebugger());
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if(!dbgr) { return; }
+    // if already running, skip this
+    // the default behaviour is to "continue"
+    if(dbgr->IsRunning()) {
+        event.Skip();
+        return;
+    }
+
+    // Update the debugger information
+    DebuggerInformation dinfo = dbgr->GetDebuggerInformation();
+    dinfo.breakAtWinMain = false;
+    dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+    dbgr->SetDebuggerInformation(dinfo);
+    dbgr->SetIsRemoteDebugging(false);
+
+    // Setup the debug session
+
+    wxString exe, args;
+    GetExecutable(exe, args);
+
+    // Start the debugger
+    DebugSessionInfo si;
+    si.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
+    si.exeName = exe;
+    si.cwd = GetFileName().GetPath();
+    clGetManager()->GetBreakpoints(si.bpList);
+
+    // Start terminal (doesn't do anything under MSW)
+    m_debuggerTerminal.Clear();
+    m_debuggerTerminal.Launch(dbgr->GetName());
+    si.ttyName = m_debuggerTerminal.GetTty();
+    si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+
+    // Get toolchain
+    CompilerPtr cmp = GetCompiler();
+    if(cmp && !cmp->GetTool("Debugger").empty()) { si.debuggerPath = cmp->GetTool("Debugger"); }
+    dbgr->Start(si);
+        
+    // Notify that debug session started
+    // this will ensure that the debug layout is loaded
+    clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+    eventStarted.SetClientData(&si);
+    EventNotifier::Get()->ProcessEvent(eventStarted);
+    // Now run the debuggee
+    dbgr->Run(args, "");
+}
+
+void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args)
+{
+    exe = GetConfig()->GetExecutable();
+    args = GetConfig()->GetArgs();
+
+    exe = MacroManager::Instance()->Expand(exe, nullptr, wxEmptyString);
+    args = MacroManager::Instance()->Expand(args, nullptr, wxEmptyString);
+}
+
+CompilerPtr clFileSystemWorkspace::GetCompiler()
+{
+    return BuildSettingsConfigST::Get()->GetCompiler(GetConfig()->GetCompiler());
+}

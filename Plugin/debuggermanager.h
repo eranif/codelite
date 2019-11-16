@@ -106,7 +106,7 @@ public:
      * which are located udner $(HOME)/.liteeditor/debuggers/ on Linux, and on Windows
      * under C:\Program Files\LiteEditor\debuggers\
      */
-    bool LoadDebuggers();
+    bool LoadDebuggers(IDebuggerObserver* observer);
 
     /**
      * Return list of all available debuggers which were loaded

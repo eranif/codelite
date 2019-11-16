@@ -26,6 +26,7 @@
 #include <wx/filepicker.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include "clThemedChoice.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/checkbox.h>
@@ -110,6 +111,8 @@ protected:
     wxTextCtrl* m_textCtrlArgs;
     wxStaticText* m_staticText35;
     wxTextCtrl* m_textCtrlFileExt;
+    wxStaticText* m_staticText179;
+    clThemedChoice* m_choiceDebuggers;
     wxPanel* m_panelBuild;
     wxStaticText* m_staticText125;
     wxChoice* m_choiceCompiler;
@@ -151,6 +154,8 @@ public:
     wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxStaticText* GetStaticText35() { return m_staticText35; }
     wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    wxStaticText* GetStaticText179() { return m_staticText179; }
+    clThemedChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxStaticText* GetStaticText125() { return m_staticText125; }
     wxChoice* GetChoiceCompiler() { return m_choiceCompiler; }

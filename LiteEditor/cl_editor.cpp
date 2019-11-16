@@ -957,7 +957,6 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     bool hasSingleCaret = (GetSelections() == 1);
     OptionsConfigPtr options = GetOptions();
     if(m_prevSelectionInfo.IsOk()) {
-        clDEBUG() << "Prev selection is OK";
         if(event.GetKey() == '"' && options->IsWrapSelectionWithQuotes()) {
             DoWrapPrevSelectionWithChars('"', '"');
             return;
@@ -5357,9 +5356,12 @@ void clEditor::QuickAddNext()
         SetSelection(start, end);
         SetMainSelection(0);
     }
-
+    
+    // Use the find flags of the quick find bar for this
+    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
+    clMainFrame::Get()->GetMainBook()->ShowQuickBar(true);
     wxString findWhat = GetTextRange(start, end);
-    int where = this->FindText(end, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
+    int where = this->FindText(end, GetLength(), findWhat, searchFlags);
     if(where != wxNOT_FOUND) {
         AddSelection(where + findWhat.length(), where);
         CenterLineIfNeeded(LineFromPos(where));
@@ -5383,8 +5385,13 @@ void clEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
+    
+    // Use the find flags of the quick find bar for this
+    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
+    clMainFrame::Get()->GetMainBook()->ShowQuickBar(true);
+    
     // clWordCharslocker wcl(this);
-    int where = this->FindText(0, GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
+    int where = this->FindText(0, GetLength(), findWhat, searchFlags);
     while(where != wxNOT_FOUND) {
         if(matches == 0) {
             firstMatch = where;
@@ -5396,7 +5403,7 @@ void clEditor::QuickFindAll()
             AddSelection(where + findWhat.length(), where);
         }
         ++matches;
-        where = this->FindText(where + findWhat.length(), GetLength(), findWhat, wxSTC_FIND_MATCHCASE);
+        where = this->FindText(where + findWhat.length(), GetLength(), findWhat, searchFlags);
     }
     wxString message;
     message << _("Found and selected ") << GetSelections() << _(" matches");

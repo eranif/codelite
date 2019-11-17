@@ -26,6 +26,8 @@
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
+#include "clSystemSettings.h"
+#include "clThemeUpdater.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -46,8 +48,6 @@
 #include <wx/textctrl.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-#include "clSystemSettings.h"
-#include "clThemeUpdater.h"
 
 DEFINE_EVENT_TYPE(QUICKFIND_COMMAND_EVENT)
 
@@ -88,11 +88,11 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_highlightMatches(false)
     , m_replaceInSelection(false)
 {
-    //SetBackgroundStyle(wxBG_STYLE_PAINT);
+    // SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Add the 'close' button
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
     clThemeUpdater::Get().RegisterWindow(this);
-    
+
     // Handle Edit events
     m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
     m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
@@ -109,56 +109,63 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
                        wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bmps->LoadBitmap("whole-word"), "", wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("use-regex"), _("Regex"), bmps->LoadBitmap("regular-expression"), "", wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("highlight-matches"), _("Highlight matches"), bmps->LoadBitmap("marker"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("highlight-matches"), _("Highlight matches"), bmps->LoadBitmap("marker"), "",
+                       wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bmps->LoadBitmap("text_selection"), "",
                        wxITEM_CHECK);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &QuickFindBar::OnHide, this, wxID_CLOSE);
-    m_toolbar->Bind(wxEVT_TOOL,
-                    [&](wxCommandEvent& e) {
-                        if(e.IsChecked()) {
-                            m_searchFlags |= wxSTC_FIND_MATCHCASE;
-                        } else {
-                            m_searchFlags &= ~wxSTC_FIND_MATCHCASE;
-                        }
-                    },
-                    XRCID("case-sensitive"));
-    m_toolbar->Bind(wxEVT_TOOL,
-                    [&](wxCommandEvent& e) {
-                        if(e.IsChecked()) {
-                            m_searchFlags |= wxSTC_FIND_WHOLEWORD;
-                        } else {
-                            m_searchFlags &= ~wxSTC_FIND_WHOLEWORD;
-                        }
-                    },
-                    XRCID("whole-word"));
-    m_toolbar->Bind(wxEVT_TOOL,
-                    [&](wxCommandEvent& e) {
-                        if(e.IsChecked()) {
-                            m_searchFlags |= wxSTC_FIND_REGEXP;
-                        } else {
-                            m_searchFlags &= ~wxSTC_FIND_REGEXP;
-                        }
-                    },
-                    XRCID("use-regex"));
-    m_toolbar->Bind(wxEVT_TOOL,
-                    [&](wxCommandEvent& e) {
-                        m_highlightMatches = e.IsChecked();
-                        DoHighlightMatches(m_highlightMatches);
-                    },
-                    XRCID("highlight-matches"));
-    m_toolbar->Bind(wxEVT_TOOL, [&](wxCommandEvent& e) { m_replaceInSelection = e.IsChecked(); },
-                    XRCID("replace-in-selection"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_MATCHCASE); },
-                    XRCID("case-sensitive"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_REGEXP); },
-                    XRCID("use-regex"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_WHOLEWORD); },
-                    XRCID("whole-word"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_highlightMatches); },
-                    XRCID("highlight-matches"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_replaceInSelection); },
-                    XRCID("replace-in-selection"));
+    m_toolbar->Bind(
+        wxEVT_TOOL,
+        [&](wxCommandEvent& e) {
+            if(e.IsChecked()) {
+                m_searchFlags |= wxSTC_FIND_MATCHCASE;
+            } else {
+                m_searchFlags &= ~wxSTC_FIND_MATCHCASE;
+            }
+        },
+        XRCID("case-sensitive"));
+    m_toolbar->Bind(
+        wxEVT_TOOL,
+        [&](wxCommandEvent& e) {
+            if(e.IsChecked()) {
+                m_searchFlags |= wxSTC_FIND_WHOLEWORD;
+            } else {
+                m_searchFlags &= ~wxSTC_FIND_WHOLEWORD;
+            }
+        },
+        XRCID("whole-word"));
+    m_toolbar->Bind(
+        wxEVT_TOOL,
+        [&](wxCommandEvent& e) {
+            if(e.IsChecked()) {
+                m_searchFlags |= wxSTC_FIND_REGEXP;
+            } else {
+                m_searchFlags &= ~wxSTC_FIND_REGEXP;
+            }
+        },
+        XRCID("use-regex"));
+    m_toolbar->Bind(
+        wxEVT_TOOL,
+        [&](wxCommandEvent& e) {
+            m_highlightMatches = e.IsChecked();
+            DoHighlightMatches(m_highlightMatches);
+        },
+        XRCID("highlight-matches"));
+    m_toolbar->Bind(
+        wxEVT_TOOL, [&](wxCommandEvent& e) { m_replaceInSelection = e.IsChecked(); }, XRCID("replace-in-selection"));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_MATCHCASE); },
+        XRCID("case-sensitive"));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_REGEXP); }, XRCID("use-regex"));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_WHOLEWORD); },
+        XRCID("whole-word"));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_highlightMatches); }, XRCID("highlight-matches"));
+    m_toolbar->Bind(
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_replaceInSelection); }, XRCID("replace-in-selection"));
 
     wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
     wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
@@ -176,7 +183,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
-    //Bind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
+    // Bind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
@@ -187,9 +194,9 @@ QuickFindBar::~QuickFindBar()
 {
     // m_findEventsHandler.Reset(nullptr);
     // m_replaceEventsHandler.Reset(nullptr);
-    //Unbind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
+    // Unbind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
     clThemeUpdater::Get().RegisterWindow(this);
-    
+
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
     clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightMatches);
@@ -479,19 +486,18 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
     if(s) {
         // Show or Hide the 'Replace' section as requested
         wxSizer* flexgridsizer = m_textCtrlFind->GetContainingSizer();
-        if (flexgridsizer) {
-            if (showReplace) {
+        if(flexgridsizer) {
+            if(!GetSizer()->IsShown(flexgridsizer)) { GetSizer()->Show(flexgridsizer); }
+            if(showReplace) {
                 flexgridsizer->ShowItems(true);
             } else {
-                for (size_t n=4; n < 7; ++n) {
+                for(size_t n = 4; n < 7; ++n) {
                     flexgridsizer->Hide(n);
                 }
             }
         }
     }
-    if(res) { 
-        GetParent()->GetSizer()->Layout(); 
-    }
+    if(res) { GetParent()->GetSizer()->Layout(); }
 
     m_replaceInSelection = !findWhat.IsEmpty() && findWhat.Contains("\n");
     if(!m_sci) {
@@ -611,7 +617,7 @@ void QuickFindBar::DoSelectAll(bool addMarkers)
     m_sci->ClearSelections();
     m_sci->SearchAnchor();
 
-    std::vector<std::pair<int, int> > matches; // pair of matches selStart+selEnd
+    std::vector<std::pair<int, int>> matches; // pair of matches selStart+selEnd
     int pos = m_sci->SearchNext(flags, find);
     while(pos != wxNOT_FOUND) {
         std::pair<int, int> match;
@@ -862,15 +868,15 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
             DoReplace();
             ++replaced;
         }
-        
+
         wxString message;
-        if (replaced) {
+        if(replaced) {
             message << _("Found and replaced ") << replaced << _(" matches");
         } else {
             message << _("No matches found");
         }
         clGetManager()->SetStatusMessage(message, 5);
-        
+
         m_sci->EndUndoAction();
         m_sci->ClearSelections();
     } else {
@@ -1197,4 +1203,12 @@ void QuickFindBar::OnPaint(wxPaintEvent& e)
     dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.DrawRectangle(GetClientRect());
+}
+
+void QuickFindBar::ShowToolBarOnly()
+{
+    wxPanel::Show();
+    wxSizer* sz = m_textCtrlFind->GetContainingSizer();
+    if(sz && sz != GetSizer()) { GetSizer()->Hide(sz); }
+    GetParent()->GetSizer()->Layout();
 }

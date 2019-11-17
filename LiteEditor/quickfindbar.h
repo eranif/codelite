@@ -149,7 +149,8 @@ public:
     bool Show(const wxString& findWhat, bool showReplace);
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
-
+    void ShowToolBarOnly();
+    
     /**
      * @brief search a stc control for 'findwhat'. Use kSearchForward to indicate searching forward, pass 0
      * for backward.

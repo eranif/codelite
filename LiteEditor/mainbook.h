@@ -155,6 +155,7 @@ public:
     FileHistory& GetRecentlyOpenedFilesClass() { return m_recentFiles; }
     void ShowQuickBarForPlugins();
     void ShowQuickBar(bool s);
+    void ShowQuickBarToolBar(bool s);
     void ShowQuickBar(const wxString& findWhat, bool showReplace);
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);

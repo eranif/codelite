@@ -21,6 +21,7 @@ enum class VIM_MODI {
     NORMAL_MODUS,
     INSERT_MODUS,
     VISUAL_MODUS,
+    VISUAL_LINE_MODUS,
     COMMAND_MODUS,
     SEARCH_MODUS,
     SEARCH_CURR_MODUS,
@@ -248,6 +249,7 @@ public:
     void RepeatIssueCommand(wxString buf);
     bool Command_call();
     bool Command_call_visual_mode();
+    bool command_call_visual_line_mode();
     bool is_cmd_complete();
     void set_current_word(wxString word);
     void set_current_modus(VIM_MODI modus);
@@ -257,7 +259,7 @@ public:
     void set_ctrl(wxStyledTextCtrl* ctrl);
 
 private:
-    /*~~~~~~~~ PRIVAT METHODS ~~~~~~~~~*/
+    /*~~~~~~~~ PRIVATE METHODS ~~~~~~~~~*/
     int getNumRepeat();
     int getNumActions();
     void evidentiate_word();
@@ -283,7 +285,8 @@ private:
     COMMAND_PART m_currentCommandPart; /*!< current part of the command */
     VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
     bool m_saveCommand;
-    long m_initialVisualPos;           /*!< initial position of cursor when changing to visual mode*/
+    int m_initialVisualPos;  /*!< initial position of cursor when changing to visual mode*/
+    int m_initialVisualLine; /*!< initial line which cursor is on when changing to visual line mode*/
     /*~~~~~~~~ COMMAND ~~~~~~~~~*/
     int m_repeat;           /*!< number of repetition for the command */
     wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/

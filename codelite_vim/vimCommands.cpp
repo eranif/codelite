@@ -67,6 +67,7 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
         skip_event = false;
         break;
     case VIM_MODI::VISUAL_MODUS:
+    case VIM_MODI::VISUAL_LINE_MODUS:
         visual_modus(ch);
         skip_event = false;
         break;
@@ -321,6 +322,7 @@ bool VimCommand::Command_call()
 {
 
     if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
+    if(m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) { return command_call_visual_line_mode(); }
 
     bool repeat_command = true;
     this->m_saveCommand = true;
@@ -599,6 +601,18 @@ bool VimCommand::Command_call()
         this->m_initialVisualPos = this->m_ctrl->GetCurrentPos();
         break;
 
+    case COMMANDVI::V: {
+        m_currentModus = VIM_MODI::VISUAL_LINE_MODUS;
+        this->m_tmpbuf.Clear();
+        this->m_initialVisualLine = this->m_ctrl->GetCurrentLine();
+
+        this->m_ctrl->Home();
+        this->m_ctrl->SetAnchor(
+            this->m_ctrl->GetLineEndPosition(this->m_initialVisualLine)
+        );
+
+    } break;
+
     case COMMANDVI::perc: {
         long pos_matching = goToMatchingParentesis(m_ctrl->GetCurrentPos());
         if(pos_matching != -1)
@@ -800,13 +814,13 @@ bool VimCommand::Command_call()
         this->m_listCopiedStr.push_back(wxString(currentChar));
         m_ctrl->CharRight();
         m_ctrl->DeleteBackNotLine();
-    }break;
+    } break;
     case COMMANDVI::X: {
         this->m_tmpbuf.Clear();
         char currentChar = static_cast<char>(this->m_ctrl->GetCharAt(this->m_ctrl->GetCurrentPos() - 1));
         this->m_listCopiedStr.push_back(wxString(currentChar));
         m_ctrl->DeleteBackNotLine();
-    }break;
+    } break;
 
     case COMMANDVI::dw: {
         int repeat_dw = std::max(1, m_actions);
@@ -1182,13 +1196,17 @@ bool VimCommand::Command_call()
             m_ctrl->NewLine();
             m_ctrl->DelLineLeft();
             if (m_listCopiedStr.size() > 0) {
-                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
-                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
-                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                wxString& str = m_listCopiedStr.back();
+                //Causes assert failure to access 'Last()' member of empty string
+                if(!str.IsEmpty()) {
+                    if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                    if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                }
             }
         } else {
             m_ctrl->CharRight();
         }
+        int currentLine = this->m_ctrl->GetCurrentLine();
         int repeat = std::max(1, m_actions) ;
         for(int i = 0; i < repeat; ++i) {
             for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
@@ -1197,7 +1215,9 @@ bool VimCommand::Command_call()
             }
         }
         // FIXME: troppo contorto!
-        if(this->m_newLineCopy) m_ctrl->Home();
+        if(this->m_newLineCopy) {
+            this->m_ctrl->GotoLine(currentLine);
+        }
     } break;
     case COMMANDVI::P: {
         this->m_saveCommand = false;
@@ -1211,6 +1231,7 @@ bool VimCommand::Command_call()
                 if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
             }
         }
+        int currentLine = this->m_ctrl->GetCurrentLine();
         int repeat = std::max(1, m_actions);
         for(int i = 0; i < repeat; ++i) {
             for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
@@ -1219,7 +1240,9 @@ bool VimCommand::Command_call()
             }
         }
         // FIXME: troppo contorto!
-        if(this->m_newLineCopy) m_ctrl->Home();
+        if(this->m_newLineCopy) {
+            this->m_ctrl->GotoLine(currentLine);
+        }
     } break;
     case COMMANDVI::repeat:
         // RepeatCommand( m_ctrl );
@@ -1498,6 +1521,7 @@ bool VimCommand::Command_call_visual_mode()
         this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
         m_currentModus = VIM_MODI::NORMAL_MODUS;
+        this->m_newLineCopy = false;
 
         if(this->m_commandID != COMMANDVI::y) {
             m_ctrl->DeleteBack();        /*? better use Clear()*/
@@ -1518,6 +1542,61 @@ bool VimCommand::Command_call_visual_mode()
 
         this->m_ctrl->SetAnchor(m_initialVisualPos);
 
+    }
+
+    return repeat_command;
+}
+
+bool VimCommand::command_call_visual_line_mode()
+{
+    bool repeat_command = true;
+    this->m_saveCommand = false;
+
+    switch(m_commandID) {
+        /*======= MOVEMENT ===========*/
+
+    case COMMANDVI::j:
+        this->m_ctrl->LineDown();
+        break;
+    case COMMANDVI::k:
+        this->m_ctrl->LineUp();
+        break;
+
+        /*========== DELETE AND COPY =======================*/
+    case COMMANDVI::d:
+    case COMMANDVI::x:
+    case COMMANDVI::y: {
+
+        this->m_listCopiedStr.push_back(this->m_ctrl->GetSelectedText());
+        this->m_currentModus = VIM_MODI::NORMAL_MODUS;
+        repeat_command = false;
+        this->m_newLineCopy = true;
+
+        if(this->m_commandID != COMMANDVI::y) {
+            m_ctrl->DeleteBack();
+            m_ctrl->LineDelete(); //line is left behind
+        }
+        return repeat_command;
+    }
+    default:
+        //do nothing
+        repeat_command = false;
+        return repeat_command;
+    }
+
+    int currentLine = this->m_ctrl->GetCurrentLine();
+
+    if(currentLine > this->m_initialVisualLine) {
+        int newAnchor = this->m_ctrl->PositionFromLine(this->m_initialVisualLine);
+        int newCaretPos = this->m_ctrl->GetLineEndPosition(currentLine);
+
+        this->m_ctrl->GotoPos(newCaretPos);
+        this->m_ctrl->SetAnchor(newAnchor);
+    } else {
+        this->m_ctrl->Home();
+        this->m_ctrl->SetAnchor(
+            this->m_ctrl->GetLineEndPosition(this->m_initialVisualLine)
+        );
     }
 
     return repeat_command;
@@ -1888,6 +1967,12 @@ bool VimCommand::is_cmd_complete()
         command_complete = true;
         m_repeat = 1;
         break;
+    case 'V':
+        possible_command = true;
+        this->m_commandID = COMMANDVI::V;
+        command_complete = true;
+        this->m_repeat = 1;
+        break;
     case '%':
         possible_command = true;
         m_commandID = COMMANDVI::perc;
@@ -2052,10 +2137,10 @@ bool VimCommand::is_cmd_complete()
         possible_command = true;
         switch(m_actionCommand) {
         case '\0':
-            if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
+            if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
+               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::d;
-                this->m_newLineCopy = false;
                 this->m_listCopiedStr.clear();
             } else {
                 command_complete = false;
@@ -2153,7 +2238,7 @@ bool VimCommand::is_cmd_complete()
         break;
     case 'U':
         possible_command = true;
-        /*FIXME: the event m_ctrl+U event does not reach the editor*/
+        /*FIXME: the event ctrl+U event does not reach the editor*/
         if(this->m_modifierKey == wxMOD_CONTROL) {
             command_complete = true;
             m_commandID = COMMANDVI::ctrl_U;
@@ -2166,10 +2251,10 @@ bool VimCommand::is_cmd_complete()
         possible_command = true;
         switch(m_actionCommand) {
         case '\0':
-            if(m_currentModus == VIM_MODI::VISUAL_MODUS) {
+            if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
+               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::y;
-                this->m_newLineCopy = false;
                 this->m_listCopiedStr.clear();
             } else {
                 command_complete = false;

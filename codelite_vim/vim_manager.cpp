@@ -170,6 +170,10 @@ void VimManager::updateMessageModus()
         m_mgr->GetStatusBar()->SetMessage("VISUAL");
         if(status_vim->IsShown()) status_vim->Show(false);
         break;
+    case VIM_MODI::VISUAL_LINE_MODUS:
+        m_mgr->GetStatusBar()->SetMessage("VISUAL LINE");
+        if(status_vim->IsShown()) status_vim->Show(false);
+        break;
     case VIM_MODI::INSERT_MODUS:
         m_mgr->GetStatusBar()->SetMessage("INSERT");
         if(status_vim->IsShown()) status_vim->Show(false);

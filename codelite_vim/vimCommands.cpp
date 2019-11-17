@@ -794,15 +794,19 @@ bool VimCommand::Command_call()
         repeat_command = false;
     } break;
 
-    case COMMANDVI::x:
+    case COMMANDVI::x: {
         this->m_tmpbuf.Clear();
+        char currentChar = static_cast<char>(this->m_ctrl->GetCharAt(this->m_ctrl->GetCurrentPos()));
+        this->m_listCopiedStr.push_back(wxString(currentChar));
         m_ctrl->CharRight();
         m_ctrl->DeleteBackNotLine();
-        break;
-    case COMMANDVI::X:
+    }break;
+    case COMMANDVI::X: {
         this->m_tmpbuf.Clear();
+        char currentChar = static_cast<char>(this->m_ctrl->GetCharAt(this->m_ctrl->GetCurrentPos() - 1));
+        this->m_listCopiedStr.push_back(wxString(currentChar));
         m_ctrl->DeleteBackNotLine();
-        break;
+    }break;
 
     case COMMANDVI::dw: {
         int repeat_dw = std::max(1, m_actions);
@@ -2031,11 +2035,15 @@ bool VimCommand::is_cmd_complete()
         m_currentModus = VIM_MODI::INSERT_MODUS;
         break;
     case 'x':
+        this->m_newLineCopy = false;
+        this->m_listCopiedStr.clear();
         possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::x;
         break;
     case 'X':
+        this->m_newLineCopy = false;
+        this->m_listCopiedStr.clear();
         possible_command = true;
         command_complete = true;
         m_commandID = COMMANDVI::X;

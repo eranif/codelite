@@ -362,7 +362,7 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_FRD_CLOSE, &clEditor::OnFindDialog, this);
     Bind(wxEVT_FRD_CLEARBOOKMARKS, &clEditor::OnFindDialog, this);
     Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
-
+    Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
     DoUpdateOptions();
     PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
@@ -657,11 +657,8 @@ void clEditor::SetProperties()
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
 
-    // Line number margin
-    int pixelWidth = 4 + 5 * TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
-
     // Show number margin according to settings.
-    SetMarginWidth(NUMBER_MARGIN_ID, options->GetDisplayLineNumbers() ? pixelWidth : 0);
+    UpdateLineNumberMarginWidth();
 
     // Show the fold margin
     SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0); // Fold margin
@@ -3057,6 +3054,7 @@ void clEditor::OpenFile()
     // Update the editor properties
     DoUpdateOptions();
     SetProperties();
+    UpdateLineNumberMarginWidth();
     UpdateColours();
     SetEOL();
 
@@ -4356,6 +4354,16 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     bool isUndo = event.GetModificationType() & wxSTC_PERFORMED_UNDO;
     bool isRedo = event.GetModificationType() & wxSTC_PERFORMED_REDO;
 
+    int newLineCount = GetLineCount();
+    if(m_lastLineCount != newLineCount) {
+        int lastWidthCount = log10(m_lastLine) + 2;
+        int newWidthCount = log10(newLineCount) + 2;
+        m_lastLine = newLineCount;
+        if(newWidthCount != lastWidthCount) {
+            UpdateLineNumberMarginWidth();
+        }
+    }
+
     // Remove any code completion annotations if we have some...
     if(m_hasCCAnnotation) {
         CallAfter(&clEditor::AnnotationClearAll);
@@ -4365,7 +4373,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     // Notify about this editor being changed
     clCommandEvent eventMod(wxEVT_EDITOR_MODIFIED);
     eventMod.SetFileName(GetFileName().GetFullPath());
-    EventNotifier::Get()->AddPendingEvent(eventMod);
+    EventNotifier::Get()->QueueEvent(eventMod.Clone());
 
     if((m_autoAddNormalBraces && !m_disableSmartIndent) || GetOptions()->GetAutoCompleteDoubleQuotes()) {
         if((event.GetModificationType() & wxSTC_MOD_BEFOREDELETE) &&
@@ -5356,7 +5364,7 @@ void clEditor::QuickAddNext()
         SetSelection(start, end);
         SetMainSelection(0);
     }
-    
+
     // Use the find flags of the quick find bar for this
     int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
     clMainFrame::Get()->GetMainBook()->ShowQuickBarToolBar(true);
@@ -5386,12 +5394,12 @@ void clEditor::QuickFindAll()
 
     int matches(0);
     int firstMatch(wxNOT_FOUND);
-    
+
     // Use the find flags of the quick find bar for this
     int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
     clMainFrame::Get()->GetMainBook()->ShowQuickBarToolBar(true);
     CallAfter(&clEditor::SetFocus);
-    
+
     // clWordCharslocker wcl(this);
     int where = this->FindText(0, GetLength(), findWhat, searchFlags);
     while(where != wxNOT_FOUND) {
@@ -5628,6 +5636,20 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
         }
     }
     return pos;
+}
+
+void clEditor::UpdateLineNumberMarginWidth()
+{
+    int newLineCount = GetLineCount();
+    int newWidthCount = log10(newLineCount) + 2;
+    SetMarginWidth(NUMBER_MARGIN_ID, newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
+}
+
+void clEditor::OnZoom(wxStyledTextEvent& event)
+{
+    event.Skip();
+    // When zooming, update the line number margin
+    UpdateLineNumberMarginWidth();
 }
 
 // ----------------------------------

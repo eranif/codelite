@@ -25,6 +25,7 @@
 #ifndef LITEEDITOR_EDITOR_H
 #define LITEEDITOR_EDITOR_H
 
+#include "LSP/CompletionItem.h"
 #include "bookmark_manager.h"
 #include "browse_record.h"
 #include "clEditorStateLocker.h"
@@ -47,7 +48,6 @@
 #include <wx/bitmap.h>
 #include <wx/cmndata.h>
 #include <wx/stc/stc.h>
-#include "LSP/CompletionItem.h"
 
 #define DEBUGGER_INDICATOR 11
 #define MATCH_INDICATOR 10
@@ -120,7 +120,7 @@ class clEditor : public wxStyledTextCtrl, public IEditor
 {
 private:
     struct SelectionInfo {
-        std::vector<std::pair<int, int> > selections;
+        std::vector<std::pair<int, int>> selections;
 
         SelectionInfo() {}
 
@@ -230,7 +230,7 @@ protected:
     bool m_hightlightMatchedBraces;
     bool m_autoAddMatchedCurlyBrace;
     bool m_autoAddNormalBraces;
-    std::map<int, std::vector<BreakpointInfo> > m_breakpointsInfo;
+    std::map<int, std::vector<BreakpointInfo>> m_breakpointsInfo;
     bool m_autoAdjustHScrollbarWidth;
     bool m_reloadingFile;
     bool m_disableSmartIndent;
@@ -244,7 +244,7 @@ protected:
     BOM m_fileBom;
     int m_positionToEnsureVisible;
     bool m_preserveSelection;
-    std::vector<std::pair<int, int> > m_savedMarkers;
+    std::vector<std::pair<int, int>> m_savedMarkers;
     bool m_findBookmarksActive;
     std::map<int, wxString> m_compilerMessagesMap;
     CLCommandProcessor m_commandsProcessor;
@@ -519,7 +519,7 @@ public:
     /**
      * @brief return list of bookmarks (active type)
      */
-    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector);
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector);
 
     /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type
@@ -972,6 +972,7 @@ public:
     void PasteLineAbove();
 
 private:
+    void UpdateLineNumberMarginWidth();
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     void DoUpdateOptions();
@@ -1021,6 +1022,7 @@ private:
     void OnCharAdded(wxStyledTextEvent& event);
     void OnMarginClick(wxStyledTextEvent& event);
     void OnChange(wxStyledTextEvent& event);
+    void OnZoom(wxStyledTextEvent& event);
     void OnDwellStart(wxStyledTextEvent& event);
     void OnDwellEnd(wxStyledTextEvent& event);
     void OnCallTipClick(wxStyledTextEvent& event);

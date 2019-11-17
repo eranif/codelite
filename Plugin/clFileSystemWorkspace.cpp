@@ -814,8 +814,14 @@ void clFileSystemWorkspace::FileSystemUpdated() { CacheFiles(true); }
 
 void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 {
-    event.Skip(!IsOpen());
-
+    if(!IsOpen()) {
+        event.Skip();
+        return;
+    }
+    
+    // This is ours to handle. Stop processing it here
+    event.Skip(false);
+    
     DebuggerMgr::Get().SetActiveDebugger(GetConfig()->GetDebugger());
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(!dbgr) { return; }

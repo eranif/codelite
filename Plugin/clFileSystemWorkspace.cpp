@@ -548,17 +548,17 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
 
     wxString exe, args;
     GetExecutable(exe, args);
-    ::WrapInShell(exe);
+    ::WrapWithQuotes(exe);
 
     // Execute the executable
     wxString command;
     command << exe;
     if(!args.empty()) { command << " " << args; }
+    ::WrapInShell(command);
 
     clDEBUG() << "clFileSystemWorkspace::OnExecute:" << command;
     clEnvList_t envList = GetEnvList();
-    m_execProcess = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
-                                         GetFileName().GetPath(), &envList);
+    m_execProcess = ::CreateAsyncProcess(this, command, IProcessCreateConsole, GetFileName().GetPath(), &envList);
 }
 
 clEnvList_t clFileSystemWorkspace::GetEnvList()
@@ -855,7 +855,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     CompilerPtr cmp = GetCompiler();
     if(cmp && !cmp->GetTool("Debugger").empty()) { si.debuggerPath = cmp->GetTool("Debugger"); }
     dbgr->Start(si);
-        
+
     // Notify that debug session started
     // this will ensure that the debug layout is loaded
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);

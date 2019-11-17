@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editorsettingscaret.h"
+#include "cl_config.h"
 #include "editor_config.h"
+#include "editorsettingscaret.h"
 #include "globals.h"
 
 EditorSettingsCaret::EditorSettingsCaret(wxWindow* parent)
@@ -33,7 +34,9 @@ EditorSettingsCaret::EditorSettingsCaret(wxWindow* parent)
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_spinCtrlBlinkPeriod->SetValue(::wxIntToString(options->GetCaretBlinkPeriod()));
-    m_spinCtrlCaretWidth->SetValue(::wxIntToString(options->GetCaretWidth()));
+
+    int caretWidth = clConfig::Get().Read("editor/caret_width", 2);
+    m_spinCtrlCaretWidth->SetValue(wxString() << caretWidth);
     m_checkBoxCaretUseCamelCase->SetValue(options->GetCaretUseCamelCase());
     m_checkBoxScrollBeyondLastLine->SetValue(options->GetScrollBeyondLastLine());
     m_checkBoxAdjustScrollbarSize->SetValue(options->GetAutoAdjustHScrollBarWidth());
@@ -44,7 +47,6 @@ EditorSettingsCaret::EditorSettingsCaret(wxWindow* parent)
 void EditorSettingsCaret::Save(OptionsConfigPtr options)
 {
     options->SetCaretBlinkPeriod(::wxStringToInt(m_spinCtrlBlinkPeriod->GetValue(), 500, 0));
-    options->SetCaretWidth(::wxStringToInt(m_spinCtrlCaretWidth->GetValue(), 1, 1, 10));
     options->SetCaretUseCamelCase(m_checkBoxCaretUseCamelCase->IsChecked());
     options->SetScrollBeyondLastLine(m_checkBoxScrollBeyondLastLine->IsChecked());
     options->SetAutoAdjustHScrollBarWidth(m_checkBoxAdjustScrollbarSize->IsChecked());
@@ -52,18 +54,16 @@ void EditorSettingsCaret::Save(OptionsConfigPtr options)
     size_t flags = options->GetOptions();
     flags &= ~OptionsConfig::Opt_AllowCaretAfterEndOfLine;
 
-    if(m_checkBoxCaretOnVirtualSpace->IsChecked()) {
-        flags |= OptionsConfig::Opt_AllowCaretAfterEndOfLine;
-    }
+    if(m_checkBoxCaretOnVirtualSpace->IsChecked()) { flags |= OptionsConfig::Opt_AllowCaretAfterEndOfLine; }
     if(m_checkBoxBlockCaret->IsChecked()) {
         flags |= OptionsConfig::Opt_UseBlockCaret;
     } else {
         flags &= ~OptionsConfig::Opt_UseBlockCaret;
     }
     options->SetOptions(flags);
+    long nCaretWidth(2);
+    m_spinCtrlCaretWidth->GetValue().ToCLong(&nCaretWidth);
+    clConfig::Get().Write("editor/caret_width", (int)nCaretWidth);
 }
 
-void EditorSettingsCaret::OnCaretWidthUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_checkBoxBlockCaret->IsChecked());
-}
+void EditorSettingsCaret::OnCaretWidthUI(wxUpdateUIEvent& event) { event.Enable(!m_checkBoxBlockCaret->IsChecked()); }

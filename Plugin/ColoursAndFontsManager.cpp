@@ -29,7 +29,7 @@
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
-#define LEXERS_VERSION 5
+#define LEXERS_VERSION 6
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
@@ -700,6 +700,13 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         StyleProperty& indentGuides = lexer->GetProperty(37);
         indentGuides.SetFgColour(defaultProp.GetBgColour());
         indentGuides.SetBgColour(defaultProp.GetBgColour());
+    }
+    
+    if(force || m_lexersVersion < 6) {
+        StyleProperty& caret = lexer->GetProperty(CARET_ATTR_ID);
+        if(lexer->IsDark()) {
+            caret.SetFgColour("rgb(255, 128, 0)");
+        }
     }
 }
 

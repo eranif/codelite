@@ -604,8 +604,11 @@ void clEditor::SetProperties()
     caretEven = 8;
     caretJumps = 0;
     SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-
-    SetCaretWidth(options->GetCaretWidth());
+    
+    // Set the caret width
+    int caretWidth = clConfig::Get().Read("editor/caret_width", 2);
+    caretWidth = ::clGetSize(caretWidth, this);
+    SetCaretWidth(caretWidth);
     SetCaretPeriod(options->GetCaretBlinkPeriod());
     SetMarginLeft(1);
 

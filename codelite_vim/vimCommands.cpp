@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "vimCommands.h"
 
 #include "clMainFrameHelper.h"
@@ -1198,9 +1200,12 @@ bool VimCommand::Command_call()
             if (m_listCopiedStr.size() > 0) {
                 wxString& str = m_listCopiedStr.back();
                 //Causes assert failure to access 'Last()' member of empty string
-                if(!str.IsEmpty()) {
-                    if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
-                    if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                while(!str.IsEmpty()) {
+                    if (str.Last() == '\r' || str.Last() == '\n') {
+                        str.RemoveLast();
+                    } else {
+                        break;
+                    }
                 }
             }
         } else {
@@ -1226,9 +1231,15 @@ bool VimCommand::Command_call()
             m_ctrl->NewLine();
             m_ctrl->LineUp();
             if (m_listCopiedStr.size() > 0) {
-                wxString& str = m_listCopiedStr[m_listCopiedStr.size() - 1];
-                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
-                if (str.Last() == '\r' || str.Last() == '\n') str.RemoveLast();
+                wxString& str = m_listCopiedStr.back();
+                //Causes assert failure to access 'Last()' member of empty string
+                while(!str.IsEmpty()) {
+                    if (str.Last() == '\r' || str.Last() == '\n') {
+                        str.RemoveLast();
+                    } else {
+                        break;
+                    }
+                }
             }
         }
         int currentLine = this->m_ctrl->GetCurrentLine();
@@ -1560,6 +1571,57 @@ bool VimCommand::command_call_visual_line_mode()
         break;
     case COMMANDVI::k:
         this->m_ctrl->LineUp();
+        break;
+
+    case COMMANDVI::H:
+        this->m_ctrl->GotoLine(m_ctrl->GetFirstVisibleLine());
+        break;
+    case COMMANDVI::M: {
+        int medLine = 0;
+        //visible lines also means lines with nothing in them unfortunately
+        int visibleLines = this->m_ctrl->LinesOnScreen();
+        int documentLines = this->m_ctrl->GetLineCount();
+
+        //always round up if half of odd
+        if(documentLines < visibleLines) {
+            double halfLines = std::ceil(static_cast<double>(documentLines)/2);
+            medLine = this->m_ctrl->GetFirstVisibleLine() +
+                static_cast<int>(halfLines);
+        } else {
+            double halfLines = std::ceil(static_cast<double>(visibleLines)/2);
+            medLine = this->m_ctrl->GetFirstVisibleLine() +
+                static_cast<int>(halfLines);
+        }
+
+        this->m_ctrl->GotoLine(medLine - 1); //-1 for zero index param
+    } break;
+    case COMMANDVI::L: {
+        int lastLine = 0;
+        int visibleLines = this->m_ctrl->LinesOnScreen();
+        int documentLines = this->m_ctrl->GetLineCount();
+
+        if(documentLines < visibleLines) {
+            lastLine = this->m_ctrl->GetFirstVisibleLine() + documentLines;
+        } else {
+            lastLine = this->m_ctrl->GetFirstVisibleLine() + visibleLines;
+        }
+
+        this->m_ctrl->GotoLine(lastLine - 1); //-1 for zero index param
+    } break;
+
+    case COMMANDVI::G: /*====== START G =======*/
+        switch(m_repeat) {
+        case 0:
+            this->m_ctrl->DocumentEnd();
+            break;
+        default:
+            this->m_ctrl->GotoLine(m_repeat - 1);
+            break;
+        }
+        break;          /*~~~~~~~ END G ~~~~~~~~*/
+    case COMMANDVI::gg: /*====== START G =======*/
+        this->m_ctrl->DocumentStart();
+        repeat_command = false;
         break;
 
         /*========== DELETE AND COPY =======================*/

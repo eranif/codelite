@@ -47,6 +47,7 @@
 #include "theme_handler.h"
 #include <algorithm>
 #include <imanager.h>
+#include <unordered_map>
 #include <wx/aui/framemanager.h>
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
@@ -865,36 +866,64 @@ bool MainBook::ClosePage(wxWindow* page)
 
 bool MainBook::CloseAllButThis(wxWindow* page)
 {
+    wxBusyCursor bc;
     clEditor::Vec_t editors;
     GetAllEditors(editors, kGetAll_IncludeDetached);
-    
+
+    std::vector<std::pair<wxFileName, bool>> files;
+    std::unordered_map<wxString, clEditor*> M;
+    for(clEditor* editor : editors) {
+        if(editor->IsModified()) {
+            const wxFileName& fn = editor->GetFileName();
+            files.push_back({ fn, true });
+            M[fn.GetFullPath()] = editor;
+        }
+    }
+
+    if(!UserSelectFiles(files, _("Save Modified Files"),
+                        _("Some files are modified.\nChoose the files you would like to save."))) {
+        return false;
+    }
+
+    for(const auto& p : files) {
+        wxString fullpath = p.first.GetFullPath();
+        if(p.second) {
+            M[fullpath]->SaveFile();
+        } else {
+            M[fullpath]->SetSavePoint();
+        }
+    }
+
     for(clEditor* editor : editors) {
         if(editor->GetCtrl() == page) { continue; }
-        ClosePage(editor, true);
+        ClosePage(editor, false);
     }
     return true;
 }
 
 bool MainBook::CloseAll(bool cancellable)
 {
+    wxBusyCursor bc;
     clEditor::Vec_t editors;
     GetAllEditors(editors, kGetAll_IncludeDetached);
 
     // filter list of editors for any that need to be saved
     std::vector<std::pair<wxFileName, bool>> files;
     size_t n = 0;
-    for(size_t i = 0; i < editors.size(); i++) {
+    for(size_t i = 0; i < editors.size(); ++i) {
         if(editors[i]->GetModify()) {
-            files.push_back(std::make_pair(editors[i]->GetFileName(), true));
+            files.push_back({ editors[i]->GetFileName(), true });
             editors[n++] = editors[i];
         }
     }
     editors.resize(n);
 
     if(!UserSelectFiles(files, _("Save Modified Files"),
-                        _("Some files are modified.\nChoose the files you would like to save."), cancellable))
+                        _("Some files are modified.\nChoose the files you would like to save."), cancellable)) {
         return false;
+    }
 
+    // Files selected to be save, we save. The rest we mark as 'unmodified'
     for(size_t i = 0; i < files.size(); i++) {
         if(files[i].second) {
             editors[i]->SaveFile();
@@ -1291,11 +1320,11 @@ void MainBook::ShowTabBar(bool b) { wxUnusedVar(b); }
 
 void MainBook::CloseTabsToTheRight(wxWindow* win)
 {
-    wxString text;
-
+    wxBusyCursor bc;
     // clWindowUpdateLocker locker(this);
 
     // Get list of tabs to close
+    wxString text;
     std::vector<wxWindow*> windows;
     bool currentWinFound(false);
     for(size_t i = 0; i < m_book->GetPageCount(); ++i) {

@@ -3,6 +3,7 @@
 #include "NewFileSystemWorkspaceDialog.h"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
+#include "clConsoleBase.h"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceView.hpp"
@@ -69,6 +70,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
 
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
+        Bind(wxEVT_TERMINAL_EXIT, &clFileSystemWorkspace::OnExecProcessTerminated, this);
+        
         // Exec events
         EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
@@ -108,7 +111,8 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
 
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
-
+        Unbind(wxEVT_TERMINAL_EXIT, &clFileSystemWorkspace::OnExecProcessTerminated, this);
+        
         // Exec events
         EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
@@ -327,7 +331,6 @@ void clFileSystemWorkspace::DoClose()
     m_isLoaded = false;
     m_showWelcomePage = true;
 
-    wxDELETE(m_execProcess);
     wxDELETE(m_buildProcess);
 
     GetView()->UpdateConfigs({}, wxString());
@@ -500,20 +503,12 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 
         clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
-
-    } else {
-        wxDELETE(m_execProcess);
     }
 }
 
 void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
 {
-    if(event.GetProcess() == m_buildProcess) {
-        DoPrintBuildMessage(event.GetOutput());
-
-    } else if(event.GetProcess() == m_execProcess) {
-        clGetManager()->AppendOutputTabText(kOutputTab_Output, event.GetOutput());
-    }
+    if(event.GetProcess() == m_buildProcess) { DoPrintBuildMessage(event.GetOutput()); }
 }
 
 void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
@@ -544,7 +539,7 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
 
-    if(m_execProcess) { return; }
+    if(m_execPID != wxNOT_FOUND) { return; }
 
     wxString exe, args;
     GetExecutable(exe, args);
@@ -554,11 +549,15 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     wxString command;
     command << exe;
     if(!args.empty()) { command << " " << args; }
-    ::WrapInShell(command);
 
     clDEBUG() << "clFileSystemWorkspace::OnExecute:" << command;
     clEnvList_t envList = GetEnvList();
-    m_execProcess = ::CreateAsyncProcess(this, command, IProcessCreateConsole, GetFileName().GetPath(), &envList);
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetAutoTerminate(true);
+    console->SetCommand(command, args);
+    console->SetWaitWhenDone(true);
+    console->SetSink(this);
+    if(console->Start()) { m_execPID = console->GetPid(); }
 }
 
 clEnvList_t clFileSystemWorkspace::GetEnvList()
@@ -591,13 +590,16 @@ void clFileSystemWorkspace::OnIsProgramRunning(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
-    event.SetAnswer(m_execProcess != nullptr);
+    event.SetAnswer(m_execPID != wxNOT_FOUND);
 }
 
 void clFileSystemWorkspace::OnStopExecute(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_execProcess) { m_execProcess->Terminate(); }
+    if(m_execPID != wxNOT_FOUND) {
+        ::clKill(m_execPID, wxSIGTERM);
+        m_execPID = wxNOT_FOUND;
+    }
 }
 
 void clFileSystemWorkspace::OnStopBuild(clBuildEvent& event)
@@ -818,10 +820,10 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
         event.Skip();
         return;
     }
-    
+
     // This is ours to handle. Stop processing it here
     event.Skip(false);
-    
+
     DebuggerMgr::Get().SetActiveDebugger(GetConfig()->GetDebugger());
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     if(!dbgr) { return; }
@@ -883,4 +885,10 @@ void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args)
 CompilerPtr clFileSystemWorkspace::GetCompiler()
 {
     return BuildSettingsConfigST::Get()->GetCompiler(GetConfig()->GetCompiler());
+}
+
+void clFileSystemWorkspace::OnExecProcessTerminated(clProcessEvent& event)
+{
+    event.Skip();
+    m_execPID = wxNOT_FOUND;
 }

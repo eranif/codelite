@@ -10,9 +10,10 @@
    "executable": "$HOME/root/bin/codelite",
    "arguments": "",
    "environment": "",
-   "compiler": "",
+   "compiler": "GCC",
    "remoteFolder": "",
-   "remoteAccount": "eran@127.0.0.1",
+   "remoteAccount": "cloud-desktop",
+   "debugger": "GNU gdb debugger",
    "targets": [["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"], ["install", "cd build-debug && make -j8 install"]]
   }, {
    "name": "Release",
@@ -24,7 +25,8 @@
    "environment": "",
    "compiler": "",
    "remoteFolder": "",
-   "remoteAccount": "eran@127.0.0.1",
+   "remoteAccount": "cloud-desktop",
+   "debugger": "GNU gdb debugger",
    "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1"], ["build", "cd  build-release && make -j16"], ["clean", "cd  build-release && make -j16 clean"]]
   }]
 }

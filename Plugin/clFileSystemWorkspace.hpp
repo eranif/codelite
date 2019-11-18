@@ -14,6 +14,7 @@
 #include "clRemoteBuilder.hpp"
 #include "clDebuggerTerminal.h"
 #include "compiler.h"
+#include "clConsoleBase.h"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -24,13 +25,13 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     bool m_showWelcomePage = false;
     bool m_dummy = true;
     IProcess* m_buildProcess = nullptr;
-    IProcess* m_execProcess = nullptr;
     clFileSystemWorkspaceSettings m_settings;
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
     std::unordered_map<int, wxString> m_buildTargetMenuIdToName;
     clRemoteBuilder::Ptr_t m_remoteBuilder;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
+    int m_execPID = wxNOT_FOUND;
     
 protected:
     void CacheFiles(bool force = false);
@@ -49,6 +50,7 @@ protected:
     //===--------------------------
     // Event handlers
     //===--------------------------
+    void OnExecProcessTerminated(clProcessEvent& event);
     void OnBuildStarting(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     void OnIsBuildInProgress(clBuildEvent& event);

@@ -877,7 +877,7 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
             insertText = completion->GetTextEdit()->GetNewText();
         }
 
-        static wxRegEx reTemplateFunction("([a-zA-Z0-9\\:]+)[ \t]*<.*?>\\(", wxRE_ADVANCED);
+        static wxRegEx reTemplateFunction("([$_a-zA-Z0-9\\:]+)[ \t]*<.*?>\\(", wxRE_ADVANCED);
         entry->SetInsertText(insertText);
         wxChar ch = text.empty() ? 0 : text[0];
         // Handle special cases

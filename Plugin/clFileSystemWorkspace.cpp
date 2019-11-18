@@ -543,18 +543,10 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
 
     wxString exe, args;
     GetExecutable(exe, args);
-    ::WrapWithQuotes(exe);
-
-    // Execute the executable
-    wxString command;
-    command << exe;
-    if(!args.empty()) { command << " " << args; }
-
-    clDEBUG() << "clFileSystemWorkspace::OnExecute:" << command;
     clEnvList_t envList = GetEnvList();
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
     console->SetAutoTerminate(true);
-    console->SetCommand(command, args);
+    console->SetCommand(exe, args);
     console->SetWaitWhenDone(true);
     console->SetSink(this);
     if(console->Start()) { m_execPID = console->GetPid(); }

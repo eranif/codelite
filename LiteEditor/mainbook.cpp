@@ -865,19 +865,14 @@ bool MainBook::ClosePage(wxWindow* page)
 
 bool MainBook::CloseAllButThis(wxWindow* page)
 {
-    wxString text;
-
-    clWindowUpdateLocker locker(this);
-
-    int pos = m_book->GetPageIndex(page);
-    if(pos != wxNOT_FOUND) {
-        text = m_book->GetPageText(pos);
-        m_book->RemovePage(pos);
+    clEditor::Vec_t editors;
+    GetAllEditors(editors, kGetAll_IncludeDetached);
+    
+    for(clEditor* editor : editors) {
+        if(editor->GetCtrl() == page) { continue; }
+        ClosePage(editor, true);
     }
-
-    bool res = CloseAll(true);
-    if(pos != wxNOT_FOUND) { m_book->AddPage(page, text, true); }
-    return res;
+    return true;
 }
 
 bool MainBook::CloseAll(bool cancellable)

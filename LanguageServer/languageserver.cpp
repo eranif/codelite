@@ -58,8 +58,8 @@ void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     menu->Append(XRCID("language-server-settings"), _("Settings"));
+    menu->Append(XRCID("language-server-restart"), _("Restart Language Servers"));
     pluginsMenu->Append(wxID_ANY, _("Language Server"), menu);
-    pluginsMenu->Append(XRCID("language-server-restart"), _("Restart Language Servers"));
 }
 
 void LanguageServerPlugin::UnPlug()

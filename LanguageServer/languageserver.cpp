@@ -1,15 +1,15 @@
-#include "languageserver.h"
-#include <wx/xrc/xmlres.h>
-#include "ieditor.h"
-#include <wx/stc/stc.h>
-#include "event_notifier.h"
-#include <macros.h>
-#include "globals.h"
+#include "CompileCommandsGenerator.h"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
 #include "cl_standard_paths.h"
-#include "CompileCommandsGenerator.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "languageserver.h"
+#include <macros.h>
 #include <wx/app.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -41,8 +41,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     // Load the configuration
     LanguageServerConfig::Get().Load();
     m_servers.reset(new LanguageServerCluster());
-    
+
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
+    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -58,11 +59,13 @@ void LanguageServerPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     menu->Append(XRCID("language-server-settings"), _("Settings"));
     pluginsMenu->Append(wxID_ANY, _("Language Server"), menu);
+    pluginsMenu->Append(XRCID("language-server-restart"), _("Restart Language Servers"));
 }
 
 void LanguageServerPlugin::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
+    wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
 }
@@ -73,6 +76,12 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
     if(dlg.ShowModal() == wxID_OK) {
         // restart all language servers
         dlg.Save();
-        m_servers->Reload();
+        if(m_servers) { m_servers->Reload(); }
     }
+}
+
+void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    if(m_servers) { m_servers->Reload(); }
 }

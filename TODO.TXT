@@ -1,6 +1,7 @@
+- Replace the code completion box custom drawing with clThemedListCtrl
+
 C++ project:
 
 - Allow adding to the build menu custom 'Build project XXX'
-- Replace the code completion box custom drawing with clThemedListCtrl
 - LSP: Add Java code completion auto detection ??
 - When passing -d to in the command line, make sure that the folder exists

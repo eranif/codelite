@@ -14,6 +14,7 @@ class LanguageServerPlugin : public IPlugin
     
 protected:
     void OnSettings(wxCommandEvent& e);
+    void OnRestartLSP(wxCommandEvent& e);
 
 public:
     LanguageServerPlugin(IManager* manager);

@@ -121,10 +121,10 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     boxSizer56->Add(m_staticLine61, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxShowXButton = new wxCheckBox(m_panelTabs, wxID_ANY, _("Show close button on active tab"),
-                                           wxDefaultPosition, wxDLG_UNIT(m_panelTabs, wxSize(-1, -1)), 0);
+    m_checkBoxShowXButton = new wxCheckBox(m_panelTabs, wxID_ANY, _("Show close button on tabs"), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelTabs, wxSize(-1, -1)), 0);
     m_checkBoxShowXButton->SetValue(true);
-    m_checkBoxShowXButton->SetToolTip(_("Show close button on active tab"));
+    m_checkBoxShowXButton->SetToolTip(_("Show close button on tabs"));
 
     boxSizer56->Add(m_checkBoxShowXButton, 0, wxALL, WXC_FROM_DIP(5));
 

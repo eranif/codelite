@@ -10,7 +10,7 @@ jobs:
       - run: apt-get install -y libgtk2.0-dev pkg-config build-essential git cmake libssh-dev libwxbase3.0-dev libsqlite3-dev libwxsqlite3-3.0-dev
       - run: mkdir build-release
       - run: cd build-release && cmake .. -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1
-      - run: cd build-release && cmake --build . --target package -j 4
+      - run: cd build-release && cmake --build . --target package -j $(getconf _NPROCESSORS_ONLN)
       - run: mkdir deb && mv build-release/*.deb deb
       - store_artifacts: {path: ./deb}
 

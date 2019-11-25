@@ -37,6 +37,7 @@
 #include "new_quick_watch_dlg.h"
 #include "precompiled_header.h"
 #include "renamefiledlg.h"
+#include <unordered_set>
 #include <wx/aui/auibook.h>
 
 #include <algorithm>
@@ -52,7 +53,10 @@
 
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
+#include "NewProjectDialog.h"
+#include "ServiceProviderManager.h"
 #include "WSImporter.h"
+#include "app.h"
 #include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
 #include "breakpointdlg.h"
@@ -60,6 +64,7 @@
 #include "buildmanager.h"
 #include "clConsoleBase.h"
 #include "clFileSystemEvent.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clKeyboardManager.h"
 #include "clProfileHandler.h"
 #include "clWorkspaceManager.h"
@@ -105,10 +110,7 @@
 #include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
-#include "ServiceProviderManager.h"
-#include "NewProjectDialog.h"
-#include "clFileSystemWorkspace.hpp"
-#include "app.h"
+#include <unordered_map>
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -1387,7 +1389,7 @@ wxString Manager::GetProjectNameByFile(wxString& fullPathFileName, bool caseSens
 
     std::vector<ProjectPtr> vProjects;
     vProjects.reserve(projects.size());
-    
+
     // Attempt 1:
     // Assume that the file is a real file
     wxString linkDestination = fullPathFileName;
@@ -3252,6 +3254,31 @@ void Manager::UpdateParserPaths(bool notify)
 
     searchPaths.insert(searchPaths.end(), globalInc.begin(), globalInc.end());
     excludePaths.insert(excludePaths.end(), globalExc.begin(), globalExc.end());
+
+    std::unordered_set<wxString> S;
+    wxArrayString tmpArr;
+    tmpArr.Alloc(searchPaths.size());
+    for(wxString& path : searchPaths) {
+        path.Trim();
+        if(path.EndsWith(PATH_SEP)) { path.RemoveLast(); }
+        if(S.count(path) == 0) {
+            S.insert(path);
+            tmpArr.Add(path);
+        }
+    }
+    searchPaths.swap(tmpArr);
+
+    tmpArr.Clear();
+    tmpArr.Alloc(excludePaths.size());
+    for(wxString& path : excludePaths) {
+        path.Trim();
+        if(path.EndsWith(PATH_SEP)) { path.RemoveLast(); }
+        if(S.count(path) == 0) {
+            S.insert(path);
+            tmpArr.Add(path);
+        }
+    }
+    excludePaths.swap(tmpArr);
 
     ParseThreadST::Get()->SetSearchPaths(searchPaths, excludePaths);
 

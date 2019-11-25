@@ -633,6 +633,7 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
     wxString command;
+    clDEBUG() << "Loading compiler built-in search paths...";
 #ifdef __WXMSW__
     if(::clIsCygwinEnvironment()) {
         command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
@@ -642,11 +643,14 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 #else
     command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
 #endif
-
+    
+    clDEBUG() << "Running command:" << command;
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command));
     if(proc) proc->WaitForTerminate(outputStr);
-
+    
+    clDEBUG() << "Output is:" << outputStr;
+    
     wxArrayString arr;
     wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
 

@@ -419,7 +419,10 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
     if(clCxxWorkspaceST::Get()->IsOpen()) { clCxxWorkspaceST::Get()->ClearBacktickCache(); }
     RefreshPreProcessorColouring();
     // Update the compile_flags.txt file
-    if(m_compileCommandsGenerator) { m_compileCommandsGenerator->GenerateCompileCommands(); }
+    if(m_compileCommandsGenerator) { 
+        clDEBUG() << "Workspace configuration changed. Re-Generating compile_flags.txt file";
+        m_compileCommandsGenerator->GenerateCompileCommands(); 
+    }
 }
 
 void CodeCompletionManager::OnFindUsingNamespaceDone(const wxArrayString& usingNamespace, const wxString& filename)

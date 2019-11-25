@@ -319,7 +319,7 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
     wxUnusedVar(miniToolbar);
     wxRect topRect = rect;
 #ifdef __WXOSX__
-    topRect.Inflat(1);
+    topRect.Inflate(1);
 #endif
 
     topRect.SetHeight((rect.GetHeight() / 4) * 3);

@@ -1,22 +1,23 @@
 #include "CompileCommandsGenerator.h"
-#include "processreaderthread.h"
-#include "file_logger.h"
-#include "event_notifier.h"
-#include "workspace.h"
-#include "globals.h"
-#include "environmentconfig.h"
-#include "imanager.h"
-#include <thread>
-#include <macros.h>
-#include "clFilesCollector.h"
-#include "fileutils.h"
+#include "CompileCommandsJSON.h"
+#include "CompileFlagsTxt.h"
 #include "JSON.h"
+#include "clFilesCollector.h"
+#include "cl_config.h"
 #include "clcommandlineparser.h"
 #include "compiler_command_line_parser.h"
-#include "CompileFlagsTxt.h"
-#include "CompileCommandsJSON.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "globals.h"
+#include "imanager.h"
+#include "processreaderthread.h"
+#include "workspace.h"
 #include "wxmd5.h"
-#include "cl_config.h"
+#include <macros.h>
+#include <thread>
+#include "clFileSystemWorkspace.hpp"
 
 wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 
@@ -102,7 +103,7 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
             // Notify about it
             clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
             // compile_commands.json
-            eventCompileCommandsGenerated.SetFileName(compile_commands); 
+            eventCompileCommandsGenerated.SetFileName(compile_commands);
             // include paths found and gathered from all the compile_flags.txt files scanned
             eventCompileCommandsGenerated.SetStrings(includePaths);
             EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
@@ -116,14 +117,14 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     // Kill any previous process running
     if(m_process) { m_process->Detach(); }
     wxDELETE(m_process);
+    
+    if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
+    if(!clCxxWorkspaceST::Get()->GetActiveProject()) { return; }
 
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
 #ifdef __WXMSW__
     codeliteMake.SetExt("exe");
 #endif
-
-    if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
-    if(!clCxxWorkspaceST::Get()->GetActiveProject()) { return; }
 
     if(!codeliteMake.FileExists()) {
         clWARNING() << "Could not find" << codeliteMake;

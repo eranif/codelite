@@ -23,31 +23,30 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "code_completion_manager.h"
-#include "tags_options_data.h"
-#include <vector>
-#include "ctags_manager.h"
-#include "entry.h"
-#include "frame.h"
-#include "compilation_database.h"
-#include "event_notifier.h"
-#include "plugin.h"
-#include "file_logger.h"
-#include "fileextmanager.h"
+#include "ServiceProviderManager.h"
+#include "bitmap_loader.h"
 #include "cl_editor.h"
+#include "code_completion_api.h"
+#include "code_completion_manager.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
-#include "language.h"
-#include "code_completion_api.h"
-#include "parse_thread.h"
-#include "wxCodeCompletionBox.h"
-#include "imanager.h"
+#include "ctags_manager.h"
+#include "entry.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "frame.h"
 #include "globals.h"
-#include "bitmap_loader.h"
+#include "imanager.h"
+#include "language.h"
+#include "manager.h"
+#include "parse_thread.h"
+#include "plugin.h"
+#include "tags_options_data.h"
+#include "wxCodeCompletionBox.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
-#include "manager.h"
-#include "ServiceProviderManager.h"
+#include <vector>
 
 static CodeCompletionManager* ms_CodeCompletionManager = NULL;
 
@@ -282,7 +281,7 @@ bool CodeCompletionManager::DoCtagsGotoImpl(clEditor* editor)
         if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
-        editor->FindAndSelectV(tag->GetPattern(), tag->GetName(),  editor->PosFromLine(tag->GetLine() - 1));
+        editor->FindAndSelectV(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1));
         return true;
     }
     return false;
@@ -297,7 +296,8 @@ bool CodeCompletionManager::DoCtagsGotoDecl(clEditor* editor)
         if(!editor) { return false; }
         // Use the async funtion here. Synchronously usually works but, if the file wasn't loaded, sometimes the
         // EnsureVisible code is called too early and fails
-        if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), NavMgr::Get())) {
+        if(!editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1),
+                                  NavMgr::Get())) {
             editor->SetCaretAt(editor->PosFromLine(tag->GetLine() - 1));
             editor->CenterLineIfNeeded(tag->GetLine() - 1);
         }
@@ -418,6 +418,8 @@ void CodeCompletionManager::OnWorkspaceConfig(wxCommandEvent& event)
     event.Skip();
     if(clCxxWorkspaceST::Get()->IsOpen()) { clCxxWorkspaceST::Get()->ClearBacktickCache(); }
     RefreshPreProcessorColouring();
+    // Update the compile_flags.txt file
+    if(m_compileCommandsGenerator) { m_compileCommandsGenerator->GenerateCompileCommands(); }
 }
 
 void CodeCompletionManager::OnFindUsingNamespaceDone(const wxArrayString& usingNamespace, const wxString& filename)
@@ -563,7 +565,7 @@ void CodeCompletionManager::CompileCommandsFileProcessed(const wxArrayString& in
     }
     if(includePaths.IsEmpty()) { return; }
     ParseThreadST::Get()->AddPaths(includePaths, {});
-    
+
     // Update the parser search paths
     wxArrayString inc, exc;
     ParseThreadST::Get()->GetSearchPaths(inc, exc);

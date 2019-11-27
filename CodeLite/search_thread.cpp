@@ -312,8 +312,10 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
             }
         }
 
+        // Dont search for empty strings
+        if(findString.empty()) { return; }
+        
         if(!data->IsMatchCase()) { findString.MakeLower(); }
-
         while(tkz.HasMoreTokens()) {
 
             // Read the next line

@@ -153,6 +153,7 @@ NewProjectDialogBase::NewProjectDialogBase(wxWindow* parent, wxWindowID id, cons
     m_choiceCategory->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
                               wxCommandEventHandler(NewProjectDialogBase::OnCategoryChanged), NULL, this);
     m_button6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDialogBase::OnOKUI), NULL, this);
+    m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDialogBase::OnOK), NULL, this);
 }
 
 NewProjectDialogBase::~NewProjectDialogBase()
@@ -164,4 +165,5 @@ NewProjectDialogBase::~NewProjectDialogBase()
     m_choiceCategory->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                                  wxCommandEventHandler(NewProjectDialogBase::OnCategoryChanged), NULL, this);
     m_button6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDialogBase::OnOKUI), NULL, this);
+    m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDialogBase::OnOK), NULL, this);
 }

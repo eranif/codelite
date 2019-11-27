@@ -14,6 +14,7 @@
 class WXDLLIMPEXP_SDK NewProjectDialog : public NewProjectDialogBase
 {
 protected:
+    virtual void OnOK(wxCommandEvent& event);
     virtual void OnNameTyped(wxCommandEvent& event);
     virtual void OnPathSelected(wxFileDirPickerEvent& event);
     std::list<ProjectPtr> m_list;

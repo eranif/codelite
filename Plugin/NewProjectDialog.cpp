@@ -8,6 +8,7 @@
 #include <globals.h>
 #include <unordered_set>
 #include <wx/arrstr.h>
+#include <wx/msgdlg.h>
 
 #define CONFIG_LAST_SELECTED_CATEGORY "NewProject/LastCategory"
 #define CONFIG_LAST_SELECTED_TYPE "NewProject/LastType"
@@ -134,8 +135,7 @@ wxArrayString NewProjectDialog::GetProjectsTypesForCategory(const wxString& cate
 
 void NewProjectDialog::OnOKUI(wxUpdateUIEvent& event)
 {
-    bool nameHasSpaces = !m_textCtrlName->GetValue().Contains(" ");
-    event.Enable(!m_textCtrlName->IsEmpty() && !nameHasSpaces && !m_dirPicker->GetPath().IsEmpty() &&
+    event.Enable(!m_textCtrlName->IsEmpty() && !m_dirPicker->GetPath().IsEmpty() &&
                  m_choiceCategory->GetSelection() != wxNOT_FOUND && m_choiceType->GetSelection() != wxNOT_FOUND);
 }
 
@@ -180,4 +180,12 @@ void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
     if(sel.IsEmpty()) { return; }
     wxArrayString a = GetProjectsTypesForCategory(sel);
     SetChoiceOptions(m_choiceType, a, wxEmptyString);
+}
+void NewProjectDialog::OnOK(wxCommandEvent& event)
+{
+    if(m_textCtrlName->GetValue().Contains(" ")) {
+        ::wxMessageBox(_("Project name must not contain spaces"), "CodeLite", wxICON_WARNING);
+        return;
+    }
+    event.Skip();
 }

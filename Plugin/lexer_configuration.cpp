@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "bookmark_manager.h"
+#include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "globals.h"
@@ -32,9 +33,8 @@
 #include "xmlutils.h"
 #include <algorithm>
 #include <wx/settings.h>
-#include <wx/utils.h>
-#include "cl_config.h"
 #include <wx/stc/stc.h>
+#include <wx/utils.h>
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -266,8 +266,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
+#if wxCHECK_VERSION(3, 1, 0)
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
-    
+#endif
+
 #ifndef __WXMSW__
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 #endif
@@ -325,7 +327,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 
     for(const auto& vt : styles) {
         const StyleProperty& sp = vt.second;
-
 
         int size = nDefaultFontSize;
         wxString face = sp.GetFaceName();

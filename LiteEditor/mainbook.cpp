@@ -1607,6 +1607,10 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 
 void MainBook::ShowWelcomePage(bool show)
 {
+    if(!m_welcomePage) { return; }
+    if(show && m_welcomePage->IsShown()) { return; }
+    if(!show && !m_welcomePage->IsShown()) { return; }
+
     wxWindowUpdateLocker locker(this);
     DoShowWindow(m_welcomePage, show);
     DoShowWindow(m_book, !show);

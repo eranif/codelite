@@ -34,6 +34,7 @@
 #include <wx/settings.h>
 #include <wx/utils.h>
 #include "cl_config.h"
+#include <wx/stc/stc.h>
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
@@ -265,7 +266,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 {
     ctrl->SetLexer(GetLexerId());
     ctrl->StyleClearAll();
-
+    ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
+    
 #ifndef __WXMSW__
     ctrl->SetStyleBits(ctrl->GetStyleBitsNeeded());
 #endif

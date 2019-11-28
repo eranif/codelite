@@ -57,7 +57,7 @@ wxString SetDefaultBookmarkColours()
 
 OptionsConfig::OptionsConfig(wxXmlNode* node)
     : m_displayFoldMargin(false)
-    , m_underlineFoldLine(true)
+    , m_underlineFoldLine(false)
     , m_scrollBeyondLastLine(true)
     , m_foldStyle(wxT("Arrows with Background Colour"))
     , m_displayBookmarkMargin(true)

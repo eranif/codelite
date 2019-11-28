@@ -604,7 +604,7 @@ void clEditor::SetProperties()
     caretEven = 8;
     caretJumps = 0;
     SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
-    
+
     // Set the caret width
     int caretWidth = clConfig::Get().Read("editor/caret_width", 2);
     caretWidth = ::clGetSize(caretWidth, this);
@@ -655,7 +655,7 @@ void clEditor::SetProperties()
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
 
     // Set margins' width
-    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? 16 : 0); // Symbol margin
+    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? clGetSize(16, this) : 0); // Symbol margin
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -664,7 +664,7 @@ void clEditor::SetProperties()
     UpdateLineNumberMarginWidth();
 
     // Show the fold margin
-    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? 16 : 0); // Fold margin
+    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? clGetSize(16, this) : 0); // Fold margin
 
     // Mark fold margin & symbols margins as sensetive
     SetMarginSensitive(FOLD_MARGIN_ID, true);
@@ -4362,9 +4362,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
         int lastWidthCount = log10(m_lastLine) + 2;
         int newWidthCount = log10(newLineCount) + 2;
         m_lastLine = newLineCount;
-        if(newWidthCount != lastWidthCount) {
-            UpdateLineNumberMarginWidth();
-        }
+        if(newWidthCount != lastWidthCount) { UpdateLineNumberMarginWidth(); }
     }
 
     // Remove any code completion annotations if we have some...

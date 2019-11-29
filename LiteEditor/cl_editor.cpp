@@ -5657,7 +5657,7 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
 void clEditor::DoToggleFold(int line, const wxString& textTag)
 {
 #if wxCHECK_VERSION(3, 1, 0)
-    ToggleFoldShowText(line, textTag);
+    ToggleFoldShowText(line, GetOptions()->GetUnderlineFoldLine() ? wxString() : textTag);
 #else
     wxUnusedVar(textTag);
     ToggleFold(line);

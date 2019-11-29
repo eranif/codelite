@@ -1008,7 +1008,8 @@ private:
     wxMenu* DoCreateDebuggerWatchMenu(const wxString& word);
 
     wxFontEncoding DetectEncoding(const wxString& filename);
-
+    void DoToggleFold(int line, const wxString& textTag);
+    
     // Line numbers drawings
     void DoUpdateRelativeLineNumbers();
     void DoUpdateLineNumbers();

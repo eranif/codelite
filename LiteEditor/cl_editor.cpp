@@ -983,7 +983,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     bool canShowCompletionBox(true);
     // make sure line is visible
     int curLine = LineFromPosition(pos);
-    if(!GetFoldExpanded(curLine)) { ToggleFoldShowText(curLine, "..."); }
+    if(!GetFoldExpanded(curLine)) { DoToggleFold(curLine, "..."); }
 
     bool bJustAddedIndicator = false;
     int nextChar = SafeGetChar(pos), prevChar = SafeGetChar(pos - 2);
@@ -1373,7 +1373,7 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
     case FOLD_MARGIN_ID:
         // fold margin
         {
-            ToggleFoldShowText(nLine, "...");
+            DoToggleFold(nLine, "...");
 
             int caret_pos = GetCurrentPos();
             if(caret_pos != wxNOT_FOUND) {
@@ -2343,7 +2343,7 @@ void clEditor::ToggleCurrentFold()
 {
     int line = GetCurrentLine();
     if(line >= 0) {
-        ToggleFoldShowText(line, "...");
+        DoToggleFold(line, "...");
         if(GetLineVisible(line) == false) {
             // the caret line is hidden, make sure the caret is visible
             while(line >= 0) {
@@ -2392,7 +2392,7 @@ void clEditor::ToggleAllFoldsInSelection()
     int startline = LineFromPos(selStart);
     int endline = LineFromPos(selEnd);
     if(startline == endline) {
-        ToggleFoldShowText(startline, "..."); // For a single-line selection just toggle
+        DoToggleFold(startline, "..."); // For a single-line selection just toggle
         return;
     }
     if(startline > endline) { wxSwap(startline, endline); }
@@ -2483,7 +2483,7 @@ void clEditor::FoldAll()
         if((level & wxSTC_FOLDLEVELHEADERFLAG) &&
            (expanded ? ((level & wxSTC_FOLDLEVELNUMBERMASK) == (wxSTC_FOLDLEVELBASE + SkipTopFold))
                      : ((level & wxSTC_FOLDLEVELNUMBERMASK) >= wxSTC_FOLDLEVELBASE))) {
-            if(GetFoldExpanded(line) == expanded) ToggleFoldShowText(line, "...");
+            if(GetFoldExpanded(line) == expanded) DoToggleFold(line, "...");
         }
     }
 
@@ -2517,7 +2517,7 @@ void clEditor::ToggleTopmostFoldsInSelection()
     int startline = LineFromPos(selStart);
     int endline = LineFromPos(selEnd);
     if(startline == endline) {
-        ToggleFoldShowText(startline, "..."); // For a single-line selection just toggle
+        DoToggleFold(startline, "..."); // For a single-line selection just toggle
         return;
     }
     if(startline > endline) { wxSwap(startline, endline); }
@@ -2544,7 +2544,7 @@ void clEditor::ToggleTopmostFoldsInSelection()
     for(int line = startline; line < endline; ++line) {
         if(GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
             if((GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK) == toplevel && GetFoldExpanded(line) == expanded) {
-                ToggleFoldShowText(line, "...");
+                DoToggleFold(line, "...");
             }
         }
     }
@@ -5652,6 +5652,16 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
     event.Skip();
     // When zooming, update the line number margin
     UpdateLineNumberMarginWidth();
+}
+
+void clEditor::DoToggleFold(int line, const wxString& textTag)
+{
+#if wxCHECK_VERSION(3, 1, 0)
+    ToggleFoldShowText(line, textTag);
+#else
+    wxUnusedVar(textTag);
+    ToggleFold(line);
+#endif
 }
 
 // ----------------------------------

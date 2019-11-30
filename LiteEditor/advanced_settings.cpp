@@ -29,63 +29,40 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#include "windowattrmanager.h"
-#include "macros.h"
-#include "buildsettingstab.h"
-#include "advanced_settings.h"
-#include "manager.h"
-#include "editor_config.h"
-#include <wx/xrc/xmlres.h>
-#include "build_settings_config.h"
-#include "build_page.h"
-#include "globals.h"
-#include "frame.h"
-#include <wx/textdlg.h>
-#include "advance_settings_base.h"
-#include "NewCompilerDlg.h"
-#include <CompilersDetectorManager.h>
 #include "CompilersFoundDlg.h"
+#include "NewCompilerDlg.h"
+#include "advance_settings_base.h"
+#include "advanced_settings.h"
+#include "build_page.h"
+#include "build_settings_config.h"
+#include "buildsettingstab.h"
+#include "editor_config.h"
+#include "frame.h"
+#include "globals.h"
+#include "macros.h"
+#include "manager.h"
+#include "windowattrmanager.h"
+#include <CompilersDetectorManager.h>
 #include <cl_aui_notebook_art.h>
+#include <wx/textdlg.h>
+#include <wx/xrc/xmlres.h>
 
 ///////////////////////////////////////////////////////////////////////////
-BuildSettingsDialog::BuildSettingsDialog(
-    wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos, wxSize size, int style)
+BuildSettingsDialog::BuildSettingsDialog(wxWindow* parent, size_t selected_page, int id, wxString title, wxPoint pos,
+                                         wxSize size, int style)
     : AdvancedDlgBase(parent)
     , m_rightclickMenu(NULL)
 {
-    // m_compilersMainPanel = new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    //
-    // wxBoxSizer* bSizer5;
-    // bSizer5 = new wxBoxSizer(wxVERTICAL);
-    //
-    // wxBoxSizer* bSizer4;
-    // bSizer4 = new wxBoxSizer(wxHORIZONTAL);
-    //
-    // bSizer5->Add(bSizer4, 0, wxEXPAND, 5);
-    //
     m_compilersPage = new CompilerMainPage(m_notebook);
-    // bSizer5->Add(m_compilersPage, 1, wxALL | wxEXPAND, 5);
-
-    // m_compilersMainPanel->SetSizer(bSizer5);
-    // m_compilersMainPanel->Layout();
-
     m_notebook->AddPage(m_compilersPage, _("Compilers"), true);
     m_buildSettings = new BuildTabSetting(m_notebook);
     m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
 
     m_buildPage = new BuildPage(m_notebook);
     m_notebook->AddPage(m_buildPage, _("Build Systems"), false);
-
     m_rightclickMenu = wxXmlResource::Get()->LoadMenu(wxT("delete_compiler_menu"));
-
     LoadCompilers();
-
-    // center the dialog
-    CentreOnParent();
-    this->Layout();
-
-    SetName("BuildSettingsDialog");
-    WindowAttrManager::Load(this);
+    clSetDialogBestSizeAndPosition(this);
 }
 
 void BuildSettingsDialog::LoadCompilers() { m_compilersPage->LoadCompilers(); }
@@ -109,7 +86,7 @@ void BuildSettingsDialog::OnButtonOKClicked(wxCommandEvent& event)
 
 void BuildSettingsDialog::SaveCompilers()
 {
-    std::map<wxString, std::vector<ICompilerSubPage*> >::iterator iter = m_compilerPagesMap.begin();
+    std::map<wxString, std::vector<ICompilerSubPage*>>::iterator iter = m_compilerPagesMap.begin();
     for(; iter != m_compilerPagesMap.end(); iter++) {
         std::vector<ICompilerSubPage*> items = iter->second;
         wxString cmpname = iter->first;
@@ -223,9 +200,7 @@ void BuildSettingsDialog::OnApply(wxCommandEvent& event)
     clCxxWorkspaceST::Get()->GetProjectList(projects);
     for(size_t i = 0; i < projects.size(); i++) {
         ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
-        if(proj) {
-            proj->SetModified(true);
-        }
+        if(proj) { proj->SetModified(true); }
     }
 }
 
@@ -237,9 +212,7 @@ void BuildSettingsDialog::OnApplyUI(wxUpdateUIEvent& event)
 void BuildSettingsDialog::OnAddExistingCompiler()
 {
     wxString folder = ::wxDirSelector(_("Select the compiler folder"));
-    if(folder.IsEmpty()) {
-        return;
-    }
+    if(folder.IsEmpty()) { return; }
 
     CompilerPtr cmp = m_compilersDetector.Locate(folder);
     if(cmp) {
@@ -248,13 +221,9 @@ void BuildSettingsDialog::OnAddExistingCompiler()
         while(true) {
             wxString name =
                 ::wxGetTextFromUser(_("Set a name to the compiler"), _("New compiler found!"), cmp->GetName());
-            if(name.IsEmpty()) {
-                return;
-            }
+            if(name.IsEmpty()) { return; }
             // Add the compiler
-            if(BuildSettingsConfigST::Get()->IsCompilerExist(name)) {
-                continue;
-            }
+            if(BuildSettingsConfigST::Get()->IsCompilerExist(name)) { continue; }
             cmp->SetName(name);
             break;
         }

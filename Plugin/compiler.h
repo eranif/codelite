@@ -25,13 +25,14 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include "codelite_exports.h"
 #include "configuration_object.h"
 #include "smart_ptr.h"
-#include "codelite_exports.h"
-#include <map>
 #include <list>
-#include <wx/arrstr.h>
+#include <map>
 #include <vector>
+#include <wx/arrstr.h>
+#include <wx/string.h>
 
 /**
  * \ingroup LiteEditor
@@ -69,13 +70,18 @@ public:
         wxString fileNameIndex;
         wxString columnIndex;
     };
-
+    
+    struct LinkLine {
+        wxString lineFromFile;
+        wxString line;
+    };
+    
     enum eRegexType { kRegexVC = 0, kRegexGNU };
     typedef std::list<CmpInfoPattern> CmpListInfoPattern;
 
 private:
-    void
-    AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex, int colIndex = wxNOT_FOUND);
+    void AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex,
+                    int colIndex = wxNOT_FOUND);
     void AddDefaultGnuComplierOptions();
     void AddDefaultGnuLinkerOptions();
 
@@ -101,6 +107,7 @@ protected:
     bool m_isDefault;
     wxString m_installationPath;
     wxArrayString m_compilerBuiltinDefinitions;
+    std::map<wxString, LinkLine> m_linkerLines;
 
 private:
     wxString GetGCCVersion() const;
@@ -139,7 +146,10 @@ public:
 
     void AddCompilerOption(const wxString& name, const wxString& desc);
     void AddLinkerOption(const wxString& name, const wxString& desc);
-
+    
+    wxString GetLinkLine(const wxString& type, bool inputFromFile) const;
+    void SetLinkLine(const wxString& type, const wxString& line, bool inputFromFile);
+    
     /**
      * @brief return list of builtin macros for this compiler instance
      * @return
@@ -182,6 +192,8 @@ public:
     }
 
     const std::map<wxString, Compiler::CmpFileTypeInfo>& GetFileTypes() const { return m_fileTypes; }
+    const std::map<wxString, LinkLine>& GetLinkerLines() const { return m_linkerLines; }
+    void SetLinkerLines(const std::map<wxString, LinkLine>& lines) { m_linkerLines = lines; }
 
     const CmpCmdLineOptions& GetCompilerOptions() const { return m_compilerOptions; }
 

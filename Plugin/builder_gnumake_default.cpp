@@ -967,39 +967,11 @@ void BuilderGnuMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf,
 
         text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
     }
-
-    if(type == PROJECT_TYPE_STATIC_LIBRARY) {
-        // create a static library
-        // In any case add the 'objects_file' target here
-        text << wxT("\t") << wxT("$(AR) $(ArchiveOutputSwitch)$(OutputFile)");
-        if(cmp && cmp->GetReadObjectFilesFromList()) {
-            text << wxT(" @$(ObjectsFileList) $(ArLibs)\n");
-        } else {
-            text << wxT(" $(Objects) $(ArLibs)\n");
-        }
-
-    } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
-        // create a shared library
-        text << wxT("\t") << wxT("$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile)");
-        if(cmp && cmp->GetReadObjectFilesFromList()) {
-            text << wxT(" @$(ObjectsFileList) ");
-        } else {
-            text << wxT(" $(Objects) ");
-        }
-        text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
-
-    } else if(type == PROJECT_TYPE_EXECUTABLE) {
-        // create an executable
-        text << wxT("\t") << wxT("$(LinkerName) $(OutputSwitch)$(OutputFile)");
-        if(cmp && cmp->GetReadObjectFilesFromList()) {
-            text << wxT(" @$(ObjectsFileList) ");
-        } else {
-            text << wxT(" $(Objects) ");
-        }
-        text << wxT("$(LibPath) $(Libs) $(LinkOptions)\n");
-        markRebuilt = false;
-    }
-
+    
+    wxString linkerLine = cmp->GetLinkLine(type, cmp->GetReadObjectFilesFromList());
+    text << "\t" << linkerLine << "\n";
+    markRebuilt = (type != PROJECT_TYPE_EXECUTABLE);
+    
     // If a link occurred, mark this project as "rebuilt" so the parent project will
     // know that a re-link is required
     if(bldConf->IsLinkerRequired() && markRebuilt) {

@@ -127,9 +127,13 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                     ft.kind = CmpFileKindResource;
                 }
                 m_fileTypes[ft.extension] = ft;
-            }
+            } else if(child->GetName() == "LinkLine") {
+                wxString type = XmlUtils::ReadString(child, "ProjectType");
+                wxString line = XmlUtils::ReadString(child, "Pattern");
+                wxString lineFromFile = XmlUtils::ReadString(child, "PatternWithFile");
+                m_linkerLines.insert({ type, { lineFromFile, line } });
 
-            else if(child->GetName() == wxT("Pattern")) {
+            } else if(child->GetName() == wxT("Pattern")) {
                 if(XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")) {
                     // found an error description
                     CmpInfoPattern errPattern;
@@ -335,6 +339,22 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                        "$(ObjectName)$(ObjectSuffix) $(RcIncludePath)");
     }
 
+    // Set linker lines
+    if(m_linkerLines.empty()) {
+        m_linkerLines.insert({ PROJECT_TYPE_STATIC_LIBRARY,
+                               { "$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList)",
+                                 "$(AR) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)" } });
+        m_linkerLines.insert({ PROJECT_TYPE_DYNAMIC_LIBRARY,
+                               { "$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) "
+                                 "$(LibPath) $(Libs) $(LinkOptions)",
+                                 "$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) "
+                                 "$(LinkOptions)" } });
+        m_linkerLines.insert(
+            { PROJECT_TYPE_EXECUTABLE,
+              { "$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)",
+                "$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)" } });
+    }
+
     // Add support for assembler file
     if(m_fileTypes.count("s") == 0) {
         AddCmpFileType("s", CmpFileKindSource,
@@ -387,6 +407,15 @@ wxXmlNode* Compiler::ToXml() const
         strKind << (long)ft.kind;
         child->AddProperty(wxT("Kind"), strKind);
 
+        node->AddChild(child);
+    }
+
+    std::map<wxString, LinkLine>::const_iterator it2 = m_linkerLines.begin();
+    for(; it2 != m_linkerLines.end(); it2++) {
+        wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "LinkLine");
+        child->AddProperty("ProjectType", it2->first);
+        child->AddProperty("Pattern", it2->second.line);
+        child->AddProperty("PatternWithFile", it2->second.lineFromFile);
         node->AddChild(child);
     }
 
@@ -643,14 +672,14 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 #else
     command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
 #endif
-    
+
     clDEBUG() << "Running command:" << command;
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command));
     if(proc) proc->WaitForTerminate(outputStr);
-    
+
     clDEBUG() << "Output is:" << outputStr;
-    
+
     wxArrayString arr;
     wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
 
@@ -734,4 +763,26 @@ const wxArrayString& Compiler::GetBuiltinMacros()
     }
     m_compilerBuiltinDefinitions.swap(definitions);
     return m_compilerBuiltinDefinitions;
+}
+
+wxString Compiler::GetLinkLine(const wxString& type, bool inputFromFile) const
+{
+    wxString customType = type;
+    const auto& iter = m_linkerLines.find(customType);
+    if(iter == m_linkerLines.end()) { return ""; }
+    return inputFromFile ? iter->second.lineFromFile : iter->second.line;
+}
+
+void Compiler::SetLinkLine(const wxString& type, const wxString& line, bool inputFromFile)
+{
+    auto where = m_linkerLines.find(type);
+    if(where == m_linkerLines.end()) {
+        m_linkerLines.insert({ type, { "", "" } });
+        where = m_linkerLines.find(type);
+    }
+    if(inputFromFile) {
+        where->second.lineFromFile = line;
+    } else {
+        where->second.line = line;
+    }
 }

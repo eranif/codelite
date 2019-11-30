@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_COMPILER_PAGE_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_COMPILER_PAGE_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_COMPILER_PAGE_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_COMPILER_PAGE_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -21,11 +22,8 @@
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/panel.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/listbox.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
@@ -33,13 +31,31 @@
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/listctrl.h>
+#include <wx/splitter.h>
+#include "clThemedSplitterWindow.h"
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/checkbox.h>
+#include <wx/stc/stc.h>
+#include "clThemedSTC.hpp"
+#include "clThemedChoice.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
+
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
 
 class CompilerOptionDlgBase : public wxDialog
 {
@@ -53,7 +69,6 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
-
 public:
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxTextCtrl* GetTextCtrl18() { return m_textCtrl18; }
@@ -62,10 +77,11 @@ public:
     wxStaticLine* GetStaticline4() { return m_staticline4; }
     wxButton* GetButtonOK() { return m_buttonOK; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
-    CompilerOptionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CompilerOptionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CompilerOptionDlgBase();
 };
-
 
 class CompilerPatternDlgBase : public wxDialog
 {
@@ -94,10 +110,11 @@ public:
     wxTextCtrl* GetTextLineNumber() { return m_textLineNumber; }
     wxStaticText* GetStaticText235() { return m_staticText235; }
     wxTextCtrl* GetTextColumn() { return m_textColumn; }
-    CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    CompilerPatternDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, -1),
+                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~CompilerPatternDlgBase();
 };
-
 
 class NewCompilerDlgBase : public wxDialog
 {
@@ -118,21 +135,16 @@ public:
     wxTextCtrl* GetTextCtrlCompilerName() { return m_textCtrlCompilerName; }
     wxStaticText* GetStaticText88() { return m_staticText88; }
     wxChoice* GetChoiceCompilers() { return m_choiceCompilers; }
-    NewCompilerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Compiler"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewCompilerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Compiler"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewCompilerDlgBase();
 };
 
-
 class CompilerMainPageBase : public wxPanel
 {
-public:
-    enum {
-        ID_TOOL_COPY_COMPILER = 8501,
-        ID_TOOL_NEW_COMPILER = 8502,
-        ID_TOOL_SCAN_COMPILERS = 8503,
-    };
 protected:
-    wxAuiToolBar* m_auibar241;
+    clToolBar* m_toolbar;
     wxListBox* m_listBoxCompilers;
     wxNotebook* m_auiBook;
     wxPanel* m_panelTools;
@@ -159,7 +171,7 @@ protected:
     wxButton* m_btnAddWarnPattern;
     wxButton* m_btnDelWarnPattern;
     wxButton* m_btnUpdateWarnPattern;
-    wxPanel* m_panelComilerOptions;
+    wxPanel* m_panelCompilerOptions;
     wxStaticText* m_staticText23_O;
     wxListCtrl* m_listCompilerOptions;
     wxButton* m_buttonCompilerOption;
@@ -169,14 +181,20 @@ protected:
     wxListCtrl* m_listLinkerOptions;
     wxButton* m_buttonLinkerOption;
     wxButton* m_buttonDeleteLinkerOption;
+    wxPanel* m_panelTemplates;
+    clThemedSplitterWindow* m_splitter261;
+    wxPanel* m_splitterPageFileTemplates;
+    wxStaticText* m_staticText254;
+    clThemedListCtrl* m_dvListCtrlFileTemplates;
+    wxButton* m_buttonNewFileType;
+    wxButton* m_buttonDeleteFileType;
+    wxPanel* m_splitterPageLinkerTemplates;
+    wxStaticText* m_staticLinkerLine;
+    clThemedListCtrl* m_dvListCtrlLinkType;
+    wxCheckBox* m_checkBoxReadObjectsFromFile;
     wxPanel* m_panelCompilerSwitches;
     wxStaticText* m_staticText8;
     wxListCtrl* m_listSwitches;
-    wxPanel* m_panelFileTypes;
-    wxStaticText* m_staticText23;
-    wxListCtrl* m_listCtrlFileTypes;
-    wxButton* m_buttonNewFileType;
-    wxButton* m_buttonDeleteFileType;
     wxPanel* m_panelAdvanced;
     wxStaticText* m_staticText18;
     wxStaticText* m_staticText141;
@@ -194,12 +212,8 @@ protected:
     wxTextCtrl* m_textPreprocessExtension;
     wxCheckBox* m_checkBoxGenerateDependenciesFiles;
     wxCheckBox* m_checkBoxObjectNameSameAsFileName;
-    wxCheckBox* m_checkBoxReadObjectsFromFile;
 
 protected:
-    virtual void OnAddExistingCompiler(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloneCompiler(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnScanCompilers(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCompilerSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnContextMenu(wxContextMenuEvent& event) { event.Skip(); }
     virtual void OnCustomEditorButtonClicked(wxCommandEvent& event) { event.Skip(); }
@@ -224,19 +238,19 @@ protected:
     virtual void OnLinkerOptionSelected(wxListEvent& event) { event.Skip(); }
     virtual void OnNewLinkerOption(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteLinkerOption(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnFileTypeActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnFileTypeDeSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnFileTypeSelected(wxListEvent& event) { event.Skip(); }
+    virtual void OnFileTypeActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewFileType(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteFileType(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnLinkLineActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnLinkerUseFileInput(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
     virtual void OnCmdModify(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditIncludePaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditLibraryPaths(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxAuiToolBar* GetAuibar241() { return m_auibar241; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxListBox* GetListBoxCompilers() { return m_listBoxCompilers; }
     wxPropertyGridManager* GetPgMgrTools() { return m_pgMgrTools; }
     wxPanel* GetPanelTools() { return m_panelTools; }
@@ -255,20 +269,26 @@ public:
     wxListCtrl* GetListCompilerOptions() { return m_listCompilerOptions; }
     wxButton* GetButtonCompilerOption() { return m_buttonCompilerOption; }
     wxButton* GetButtonDeleteCompilerOption() { return m_buttonDeleteCompilerOption; }
-    wxPanel* GetPanelComilerOptions() { return m_panelComilerOptions; }
+    wxPanel* GetPanelCompilerOptions() { return m_panelCompilerOptions; }
     wxStaticText* GetStaticText23_L() { return m_staticText23_L; }
     wxListCtrl* GetListLinkerOptions() { return m_listLinkerOptions; }
     wxButton* GetButtonLinkerOption() { return m_buttonLinkerOption; }
     wxButton* GetButtonDeleteLinkerOption() { return m_buttonDeleteLinkerOption; }
     wxPanel* GetPanelLinkerOptions() { return m_panelLinkerOptions; }
+    wxStaticText* GetStaticText254() { return m_staticText254; }
+    clThemedListCtrl* GetDvListCtrlFileTemplates() { return m_dvListCtrlFileTemplates; }
+    wxButton* GetButtonNewFileType() { return m_buttonNewFileType; }
+    wxButton* GetButtonDeleteFileType() { return m_buttonDeleteFileType; }
+    wxPanel* GetSplitterPageFileTemplates() { return m_splitterPageFileTemplates; }
+    wxStaticText* GetStaticLinkerLine() { return m_staticLinkerLine; }
+    clThemedListCtrl* GetDvListCtrlLinkType() { return m_dvListCtrlLinkType; }
+    wxCheckBox* GetCheckBoxReadObjectsFromFile() { return m_checkBoxReadObjectsFromFile; }
+    wxPanel* GetSplitterPageLinkerTemplates() { return m_splitterPageLinkerTemplates; }
+    clThemedSplitterWindow* GetSplitter261() { return m_splitter261; }
+    wxPanel* GetPanelTemplates() { return m_panelTemplates; }
     wxStaticText* GetStaticText8() { return m_staticText8; }
     wxListCtrl* GetListSwitches() { return m_listSwitches; }
     wxPanel* GetPanelCompilerSwitches() { return m_panelCompilerSwitches; }
-    wxStaticText* GetStaticText23() { return m_staticText23; }
-    wxListCtrl* GetListCtrlFileTypes() { return m_listCtrlFileTypes; }
-    wxButton* GetButtonNewFileType() { return m_buttonNewFileType; }
-    wxButton* GetButtonDeleteFileType() { return m_buttonDeleteFileType; }
-    wxPanel* GetPanelFileTypes() { return m_panelFileTypes; }
     wxStaticText* GetStaticText18() { return m_staticText18; }
     wxStaticText* GetStaticText141() { return m_staticText141; }
     wxTextCtrl* GetTextCtrlGlobalIncludePath() { return m_textCtrlGlobalIncludePath; }
@@ -285,11 +305,57 @@ public:
     wxTextCtrl* GetTextPreprocessExtension() { return m_textPreprocessExtension; }
     wxCheckBox* GetCheckBoxGenerateDependenciesFiles() { return m_checkBoxGenerateDependenciesFiles; }
     wxCheckBox* GetCheckBoxObjectNameSameAsFileName() { return m_checkBoxObjectNameSameAsFileName; }
-    wxCheckBox* GetCheckBoxReadObjectsFromFile() { return m_checkBoxReadObjectsFromFile; }
     wxPanel* GetPanelAdvanced() { return m_panelAdvanced; }
     wxNotebook* GetAuiBook() { return m_auiBook; }
-    CompilerMainPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    CompilerMainPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~CompilerMainPageBase();
+};
+
+class EditCmpTemplateDialogBase : public wxDialog
+{
+protected:
+    clThemedSTC* m_stc;
+    wxStdDialogButtonSizer* m_stdBtnSizer279;
+    wxButton* m_button281;
+    wxButton* m_button283;
+
+protected:
+public:
+    clThemedSTC* GetStc() { return m_stc; }
+    EditCmpTemplateDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("Edit Compiler Template"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~EditCmpTemplateDialogBase();
+};
+
+class NewFileTemplateDialogBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText301;
+    wxTextCtrl* m_textCtrlExtension;
+    wxStaticText* m_staticText305;
+    clThemedChoice* m_choiceFileType;
+    wxStaticText* m_staticText309;
+    clThemedSTC* m_stc;
+    wxStdDialogButtonSizer* m_stdBtnSizer293;
+    wxButton* m_button295;
+    wxButton* m_button297;
+
+protected:
+public:
+    wxStaticText* GetStaticText301() { return m_staticText301; }
+    wxTextCtrl* GetTextCtrlExtension() { return m_textCtrlExtension; }
+    wxStaticText* GetStaticText305() { return m_staticText305; }
+    clThemedChoice* GetChoiceFileType() { return m_choiceFileType; }
+    wxStaticText* GetStaticText309() { return m_staticText309; }
+    clThemedSTC* GetStc() { return m_stc; }
+    NewFileTemplateDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("New File Type Template"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~NewFileTemplateDialogBase();
 };
 
 #endif

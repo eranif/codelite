@@ -310,12 +310,12 @@
       <File Name="SelectProjectsDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Compiler">
+      <File Name="NewFileTemplateDialog.cpp"/>
+      <File Name="NewFileTemplateDialog.h"/>
+      <File Name="EditCmpTemplateDialog.cpp"/>
+      <File Name="EditCmpTemplateDialog.h"/>
       <File Name="advanced_settings.h"/>
       <File Name="advanced_settings.cpp"/>
-      <File Name="editcmpfileinfodlg.h"/>
-      <File Name="editcmpfileinfobase.cpp"/>
-      <File Name="editcmpfileinfobase.h"/>
-      <File Name="editcmpfileinfodlg.cpp"/>
       <File Name="addoptioncheckdlgbase.h"/>
       <File Name="addoptioncheckdlg.cpp"/>
       <File Name="addoptioncheckdlg.h"/>

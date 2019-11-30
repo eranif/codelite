@@ -6,79 +6,80 @@
 
 #include "compiler_pages.h"
 
-
 // Declare the bitmap loading function
 extern void wxCAD0CInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCAD0CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer23 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer23);
-    
+
     wxFlexGridSizer* fgSizer7 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer7->SetFlexibleDirection( wxBOTH );
-    fgSizer7->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer7->SetFlexibleDirection(wxBOTH);
+    fgSizer7->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer7->AddGrowableCol(1);
-    
-    bSizer23->Add(fgSizer7, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText26 = new wxStaticText(this, wxID_ANY, _("Switch:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer7->Add(m_staticText26, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrl18 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    bSizer23->Add(fgSizer7, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText26 =
+        new wxStaticText(this, wxID_ANY, _("Switch:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer7->Add(m_staticText26, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrl18 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrl18->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrl18, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Help:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer7->Add(m_staticText27, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrl19 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer7->Add(m_textCtrl18, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText27 =
+        new wxStaticText(this, wxID_ANY, _("Help:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer7->Add(m_staticText27, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrl19 = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textCtrl19->SetHint(wxT(""));
-    #endif
-    
-    fgSizer7->Add(m_textCtrl19, 0, wxALL|wxEXPAND, 5);
-    
-    bSizer23->Add(0, 0, 1, wxEXPAND, 5);
-    
-    m_staticline4 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer23->Add(m_staticline4, 0, wxALL|wxEXPAND, 5);
-    
+#endif
+
+    fgSizer7->Add(m_textCtrl19, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    bSizer23->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticline4 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
+
+    bSizer23->Add(m_staticline4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer24 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer23->Add(bSizer24, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer23->Add(bSizer24, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOK = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
-    
-    bSizer24->Add(m_buttonOK, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer24->Add(m_buttonCancel, 0, wxALL, 5);
-    
+
+    bSizer24->Add(m_buttonOK, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonCancel =
+        new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer24->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("CompilerOptionDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
@@ -93,97 +94,101 @@ CompilerOptionDlgBase::CompilerOptionDlgBase(wxWindow* parent, wxWindowID id, co
 #endif
 }
 
-CompilerOptionDlgBase::~CompilerOptionDlgBase()
-{
-}
+CompilerOptionDlgBase::~CompilerOptionDlgBase() {}
 
-CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCAD0CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizerError);
-    
+
     wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer41->SetFlexibleDirection( wxBOTH );
-    fgSizer41->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer41->SetFlexibleDirection(wxBOTH);
+    fgSizer41->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer41->AddGrowableCol(1);
-    
-    bSizerError->Add(fgSizer41, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText5, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textPattern = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizerError->Add(fgSizer41, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText5 =
+        new wxStaticText(this, wxID_ANY, _("Regex Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer41->Add(m_staticText5, 0, wxLEFT | wxRIGHT | wxTOP | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                   WXC_FROM_DIP(5));
+
+    m_textPattern = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textPattern->SetToolTip(_("Compiler regular expression"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textPattern->SetHint(wxT(""));
-    #endif
-    
-    fgSizer41->Add(m_textPattern, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText6, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textFileIndex = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+#endif
+
+    fgSizer41->Add(m_textPattern, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText6 = new wxStaticText(this, wxID_ANY, _("File Index in Pattern:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer41->Add(m_staticText6, 0, wxLEFT | wxRIGHT | wxTOP | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                   WXC_FROM_DIP(5));
+
+    m_textFileIndex = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textFileIndex->SetToolTip(_("The capture index in the regex that holds the file path"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textFileIndex->SetHint(wxT(""));
-    #endif
-    
-    fgSizer41->Add(m_textFileIndex, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText7 = new wxStaticText(this, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer41->Add(m_staticText7, 0, wxLEFT|wxRIGHT|wxTOP|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textLineNumber = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+#endif
+
+    fgSizer41->Add(m_textFileIndex, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText7 = new wxStaticText(this, wxID_ANY, _("Line Number in Pattern:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer41->Add(m_staticText7, 0, wxLEFT | wxRIGHT | wxTOP | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL,
+                   WXC_FROM_DIP(5));
+
+    m_textLineNumber = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textLineNumber->SetToolTip(_("The capture index in the regex that holds the line number"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textLineNumber->SetHint(wxT(""));
-    #endif
-    
-    fgSizer41->Add(m_textLineNumber, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText235 = new wxStaticText(this, wxID_ANY, _("Column Index in Pattern:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer41->Add(m_staticText235, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textColumn = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+#endif
+
+    fgSizer41->Add(m_textLineNumber, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText235 = new wxStaticText(this, wxID_ANY, _("Column Index in Pattern:"), wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer41->Add(m_staticText235, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textColumn = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textColumn->SetToolTip(_("The capture index in the regex that holds the column number"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textColumn->SetHint(wxT(""));
-    #endif
-    
-    fgSizer41->Add(m_textColumn, 0, wxALL|wxEXPAND, 5);
-    
-    bSizerError->Add(0, 0, 1, wxEXPAND, 5);
-    
+#endif
+
+    fgSizer41->Add(m_textColumn, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    bSizerError->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer229 = new wxStdDialogButtonSizer();
-    
-    bSizerError->Add(m_stdBtnSizer229, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_button231 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizerError->Add(m_stdBtnSizer229, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button231 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button231->SetDefault();
     m_stdBtnSizer229->AddButton(m_button231);
-    
-    m_button233 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_button233 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer229->AddButton(m_button233);
     m_stdBtnSizer229->Realize();
-    
+
     SetName(wxT("CompilerPatternDlgBase"));
-    SetSize(500,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(500, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent();
     } else {
@@ -197,74 +202,77 @@ CompilerPatternDlgBase::CompilerPatternDlgBase(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
-    m_button231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
-    
+    m_button231->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL,
+                         this);
 }
 
 CompilerPatternDlgBase::~CompilerPatternDlgBase()
 {
-    m_button231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL, this);
-    
+    m_button231->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerPatternDlgBase::OnSubmit), NULL,
+                            this);
 }
 
-NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCAD0CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer73 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer73);
-    
+
     wxFlexGridSizer* flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer82->SetFlexibleDirection( wxBOTH );
-    flexGridSizer82->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    flexGridSizer82->SetFlexibleDirection(wxBOTH);
+    flexGridSizer82->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer82->AddGrowableCol(1);
-    
-    boxSizer73->Add(flexGridSizer82, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText84 = new wxStaticText(this, wxID_ANY, _("New compiler name:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer82->Add(m_staticText84, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlCompilerName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    boxSizer73->Add(flexGridSizer82, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText84 = new wxStaticText(this, wxID_ANY, _("New compiler name:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer82->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlCompilerName =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlCompilerName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlCompilerName->SetHint(wxT(""));
-    #endif
-    
-    flexGridSizer82->Add(m_textCtrlCompilerName, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText88 = new wxStaticText(this, wxID_ANY, _("Copy settings from:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    flexGridSizer82->Add(m_staticText88, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+#endif
+
+    flexGridSizer82->Add(m_textCtrlCompilerName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText88 = new wxStaticText(this, wxID_ANY, _("Copy settings from:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer82->Add(m_staticText88, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceCompilersArr;
-    m_choiceCompilers = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_choiceCompilersArr, 0);
-    
-    flexGridSizer82->Add(m_choiceCompilers, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
+    m_choiceCompilers =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceCompilersArr, 0);
+
+    flexGridSizer82->Add(m_choiceCompilers, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer75 = new wxStdDialogButtonSizer();
-    
-    boxSizer73->Add(m_stdBtnSizer75, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    boxSizer73->Add(m_stdBtnSizer75, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer75->AddButton(m_buttonCancel);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer75->AddButton(m_buttonOK);
     m_stdBtnSizer75->Realize();
-    
+
     SetName(wxT("NewCompilerDlgBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -279,532 +287,922 @@ NewCompilerDlgBase::NewCompilerDlgBase(wxWindow* parent, wxWindowID id, const wx
 #endif
     // Connect events
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
-    
 }
 
 NewCompilerDlgBase::~NewCompilerDlgBase()
 {
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewCompilerDlgBase::OnOkUI), NULL, this);
-    
 }
 
-CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCAD0CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer114 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer114);
-    
-    m_auibar241 = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxAUI_TB_DEFAULT_STYLE);
-    m_auibar241->SetToolBitmapSize(wxSize(16,16));
-    
-    boxSizer114->Add(m_auibar241, 0, wxEXPAND, 5);
-    
-    m_auibar241->AddTool(ID_TOOL_NEW_COMPILER, _("New"), wxXmlResource::Get()->LoadBitmap(wxT("16-plus")), wxNullBitmap, wxITEM_NORMAL, _("Add an existing compiler"), _("Add an existing compiler"), NULL);
-    
-    m_auibar241->AddTool(ID_TOOL_COPY_COMPILER, _("Copy"), wxXmlResource::Get()->LoadBitmap(wxT("16-copy")), wxNullBitmap, wxITEM_NORMAL, _("Create a new compiler by copying an existing\ncompiler"), _("Create a new compiler by copying an existing\ncompiler"), NULL);
-    
-    m_auibar241->AddTool(ID_TOOL_SCAN_COMPILERS, _("Scan"), wxXmlResource::Get()->LoadBitmap(wxT("16-find_in_files")), wxNullBitmap, wxITEM_NORMAL, _("Scan for compilers on this computer"), _("Scan for compilers on this computer"), NULL);
-    m_auibar241->Realize();
-    
+
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer114->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer114->Add(boxSizer220, 1, wxEXPAND, 5);
-    
+
+    boxSizer114->Add(boxSizer220, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_listBoxCompilersArr;
-    m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_listBoxCompilersArr, wxLB_SORT|wxLB_SINGLE);
-    
-    boxSizer220->Add(m_listBoxCompilers, 0, wxALL|wxEXPAND, 5);
-    
-    m_auiBook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxBK_DEFAULT);
+    m_listBoxCompilers = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)),
+                                       m_listBoxCompilersArr, wxLB_SORT | wxLB_SINGLE);
+
+    boxSizer220->Add(m_listBoxCompilers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_auiBook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_auiBook->SetName(wxT("m_auiBook"));
-    
-    boxSizer220->Add(m_auiBook, 1, wxALL|wxEXPAND, 5);
-    
-    m_panelTools = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    boxSizer220->Add(m_auiBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelTools =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelTools, _("Tools"), true);
-    
+
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     m_panelTools->SetSizer(boxSizer2);
-    
+
     wxArrayString m_pgMgrToolsArr;
     wxUnusedVar(m_pgMgrToolsArr);
     wxArrayInt m_pgMgrToolsIntArr;
     wxUnusedVar(m_pgMgrToolsIntArr);
-    m_pgMgrTools = new wxPropertyGridManager(m_panelTools, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxPG_DESCRIPTION|wxPG_HIDE_MARGIN|wxPG_BOLD_MODIFIED);
-    
-    boxSizer2->Add(m_pgMgrTools, 1, wxALL|wxEXPAND, 5);
-    
-    m_pgProp94 = m_pgMgrTools->Append(  new wxPropertyCategory( _("Tools") ) );
+    m_pgMgrTools =
+        new wxPropertyGridManager(m_panelTools, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelTools, wxSize(-1, -1)),
+                                  wxPG_DESCRIPTION | wxPG_HIDE_MARGIN | wxPG_BOLD_MODIFIED);
+
+    boxSizer2->Add(m_pgMgrTools, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_pgProp94 = m_pgMgrTools->Append(new wxPropertyCategory(_("Tools")));
     m_pgProp94->SetHelpString(wxT(""));
-    
-    m_pgPropCXX = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("C++ Compiler"), wxPG_LABEL, wxT("")) );
-    m_pgPropCXX->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CXX)"));
-    m_pgPropCXX->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropCC = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("C Compiler"), wxPG_LABEL, wxT("")) );
-    m_pgPropCC->SetHelpString(_("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
-    m_pgPropCC->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropAS = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Assembler Name"), wxPG_LABEL, wxT("")) );
+
+    m_pgPropCXX = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("C++ Compiler"), wxPG_LABEL, wxT("")));
+    m_pgPropCXX->SetHelpString(
+        _("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CXX)"));
+    m_pgPropCXX->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropCC = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("C Compiler"), wxPG_LABEL, wxT("")));
+    m_pgPropCC->SetHelpString(
+        _("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
+    m_pgPropCC->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropAS = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Assembler Name"), wxPG_LABEL, wxT("")));
     m_pgPropAS->SetHelpString(_("The assembler tool path. This tool is referred in the Makefile as $(AS)"));
-    m_pgPropAS->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropLD = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Linker"), wxPG_LABEL, wxT("")) );
+    m_pgPropAS->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropLD = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Linker"), wxPG_LABEL, wxT("")));
     m_pgPropLD->SetHelpString(_("The linker tool. Usually similar to the 'C++ Compiler' tool path"));
-    m_pgPropLD->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropSharedObjectLD = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Shared Object Linker"), wxPG_LABEL, wxT("")) );
+    m_pgPropLD->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropSharedObjectLD =
+        m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Shared Object Linker"), wxPG_LABEL, wxT("")));
     m_pgPropSharedObjectLD->SetHelpString(_("The tool to create shared objects"));
-    m_pgPropSharedObjectLD->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropAR = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Archive"), wxPG_LABEL, wxT("")) );
+    m_pgPropSharedObjectLD->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropAR = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Archive"), wxPG_LABEL, wxT("")));
     m_pgPropAR->SetHelpString(_("The static archive tool \"ar\". This tool is referred in the Makefile as $(AR)"));
-    m_pgPropAR->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropResourceCompiler = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Resource Compiler"), wxPG_LABEL, wxT("")) );
+    m_pgPropAR->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropResourceCompiler =
+        m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Resource Compiler"), wxPG_LABEL, wxT("")));
     m_pgPropResourceCompiler->SetHelpString(_("The resource compiler. (Windows only)"));
-    m_pgPropResourceCompiler->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropMAKE = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Make"), wxPG_LABEL, wxT("")) );
-    m_pgPropMAKE->SetHelpString(_("The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"));
-    m_pgPropMAKE->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropMkdir = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("mkdir"), wxPG_LABEL, wxT("")) );
+    m_pgPropResourceCompiler->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropMAKE = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Make"), wxPG_LABEL, wxT("")));
+    m_pgPropMAKE->SetHelpString(
+        _("The Make tool. on Windows / MinGW this is usually mingw32-make.exe while on other OSs its simply 'make'"));
+    m_pgPropMAKE->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropMkdir = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("mkdir"), wxPG_LABEL, wxT("")));
     m_pgPropMkdir->SetHelpString(_("Set the 'mkdir' for your OS.\nLeave it empty to use the default for your OS"));
-    m_pgPropMkdir->SetEditor( wxT("TextCtrlAndButton") );
-    
-    m_pgPropDebugger = m_pgMgrTools->AppendIn( m_pgProp94,  new wxStringProperty( _("Gdb"), wxPG_LABEL, wxT("")) );
-    m_pgPropDebugger->SetHelpString(_("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the global one\nYou can specify one here, or leave this empty to use the default"));
-    m_pgPropDebugger->SetEditor( wxT("TextCtrlAndButton") );
-    m_pgMgrTools->GetGrid()->SetSplitterPosition(150, 0);
-    m_panelPatterns = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+    m_pgPropMkdir->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_pgPropDebugger = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Gdb"), wxPG_LABEL, wxT("")));
+    m_pgPropDebugger->SetHelpString(
+        _("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the "
+          "global one\nYou can specify one here, or leave this empty to use the default"));
+    m_pgPropDebugger->SetEditor(wxT("TextCtrlAndButton"));
+
+    m_panelPatterns =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelPatterns, _("Patterns"), false);
-    
+
     wxBoxSizer* bSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panelPatterns->SetSizer(bSizer14);
-    
+
     wxBoxSizer* bSizerError = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer14->Add(bSizerError, 1, wxEXPAND, 5);
-    
-    m_staticText161 = new wxStaticText(m_panelPatterns, wxID_ANY, _("Compiler Errors Patterns:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizerError->Add(m_staticText161, 0, wxALL, 5);
-    
+
+    bSizer14->Add(bSizerError, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText161 = new wxStaticText(m_panelPatterns, wxID_ANY, _("Compiler Errors Patterns:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
+
+    bSizerError->Add(m_staticText161, 0, wxALL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer25 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizerError->Add(bSizer25, 1, wxEXPAND, 5);
-    
-    m_listErrPatterns = new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    bSizer25->Add(m_listErrPatterns, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizerError->Add(bSizer25, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_listErrPatterns =
+        new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)),
+                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+
+    bSizer25->Add(m_listErrPatterns, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer26 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer25->Add(bSizer26, 0, 0, 5);
-    
-    m_btnAddErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1,-1), 0);
+
+    bSizer25->Add(bSizer26, 0, 0, WXC_FROM_DIP(5));
+
+    m_btnAddErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Add"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnAddErrPattern->SetToolTip(_("Add new error pattern"));
-    
-    bSizer26->Add(m_btnAddErrPattern, 0, wxALL|wxEXPAND, 5);
-    
-    m_btnDelErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer26->Add(m_btnAddErrPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_btnDelErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnDelErrPattern->SetToolTip(_("Delete the selected error pattern"));
-    
-    bSizer26->Add(m_btnDelErrPattern, 0, wxALL|wxEXPAND, 5);
-    
-    m_btnUpdateErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer26->Add(m_btnDelErrPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_btnUpdateErrPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Edit..."), wxDefaultPosition,
+                                         wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnUpdateErrPattern->SetToolTip(_("Edit the selected error pattern"));
-    
-    bSizer26->Add(m_btnUpdateErrPattern, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer26->Add(m_btnUpdateErrPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizerWarnings = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer14->Add(bSizerWarnings, 1, wxEXPAND, 5);
-    
-    m_staticText17 = new wxStaticText(m_panelPatterns, wxID_ANY, _("Compiler Warnings Patterns:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizerWarnings->Add(m_staticText17, 0, wxALL, 5);
-    
+
+    bSizer14->Add(bSizerWarnings, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText17 = new wxStaticText(m_panelPatterns, wxID_ANY, _("Compiler Warnings Patterns:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
+
+    bSizerWarnings->Add(m_staticText17, 0, wxALL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer251 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizerWarnings->Add(bSizer251, 1, wxEXPAND, 5);
-    
-    m_listWarnPatterns = new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    bSizer251->Add(m_listWarnPatterns, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizerWarnings->Add(bSizer251, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_listWarnPatterns =
+        new wxListCtrl(m_panelPatterns, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)),
+                       wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+
+    bSizer251->Add(m_listWarnPatterns, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer261 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer251->Add(bSizer261, 0, 0, 5);
-    
-    m_btnAddWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Add"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer251->Add(bSizer261, 0, 0, WXC_FROM_DIP(5));
+
+    m_btnAddWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Add"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnAddWarnPattern->SetToolTip(_("Add new warning pattern"));
-    
-    bSizer261->Add(m_btnAddWarnPattern, 0, wxALL|wxEXPAND, 5);
-    
-    m_btnDelWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer261->Add(m_btnAddWarnPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_btnDelWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnDelWarnPattern->SetToolTip(_("Delete the selected warning pattern"));
-    
-    bSizer261->Add(m_btnDelWarnPattern, 0, wxALL|wxEXPAND, 5);
-    
-    m_btnUpdateWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer261->Add(m_btnDelWarnPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_btnUpdateWarnPattern = new wxButton(m_panelPatterns, wxID_ANY, _("Edit..."), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelPatterns, wxSize(-1, -1)), 0);
     m_btnUpdateWarnPattern->SetToolTip(_("Edit the selected warning pattern"));
-    
-    bSizer261->Add(m_btnUpdateWarnPattern, 0, wxALL|wxEXPAND, 5);
-    
-    m_panelComilerOptions = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_auiBook->AddPage(m_panelComilerOptions, _("Compiler Options"), false);
-    
+
+    bSizer261->Add(m_btnUpdateWarnPattern, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelCompilerOptions =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_auiBook->AddPage(m_panelCompilerOptions, _("Compiler Options"), false);
+
     wxBoxSizer* bSizer101 = new wxBoxSizer(wxVERTICAL);
-    m_panelComilerOptions->SetSizer(bSizer101);
-    
-    m_staticText23_O = new wxStaticText(m_panelComilerOptions, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer101->Add(m_staticText23_O, 0, wxALL|wxEXPAND, 5);
-    
+    m_panelCompilerOptions->SetSizer(bSizer101);
+
+    m_staticText23_O = new wxStaticText(m_panelCompilerOptions, wxID_ANY, _("Double click on an entry to modify it:"),
+                                        wxDefaultPosition, wxDLG_UNIT(m_panelCompilerOptions, wxSize(-1, -1)), 0);
+
+    bSizer101->Add(m_staticText23_O, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer12_CmpOptions = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer101->Add(bSizer12_CmpOptions, 1, wxEXPAND, 5);
-    
-    m_listCompilerOptions = new wxListCtrl(m_panelComilerOptions, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    bSizer12_CmpOptions->Add(m_listCompilerOptions, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer101->Add(bSizer12_CmpOptions, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_listCompilerOptions = new wxListCtrl(m_panelCompilerOptions, wxID_ANY, wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelCompilerOptions, wxSize(-1, -1)),
+                                           wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+
+    bSizer12_CmpOptions->Add(m_listCompilerOptions, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer_1 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer12_CmpOptions->Add(bSizer_1, 0, wxEXPAND, 5);
-    
-    m_buttonCompilerOption = new wxButton(m_panelComilerOptions, wxID_ANY, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer12_CmpOptions->Add(bSizer_1, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonCompilerOption = new wxButton(m_panelCompilerOptions, wxID_ANY, _("New..."), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelCompilerOptions, wxSize(-1, -1)), 0);
     m_buttonCompilerOption->SetDefault();
-    
-    bSizer_1->Add(m_buttonCompilerOption, 0, wxALL, 5);
-    
-    m_buttonDeleteCompilerOption = new wxButton(m_panelComilerOptions, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer_1->Add(m_buttonDeleteCompilerOption, 0, wxALL, 5);
-    
-    m_panelLinkerOptions = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    bSizer_1->Add(m_buttonCompilerOption, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonDeleteCompilerOption = new wxButton(m_panelCompilerOptions, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                                wxDLG_UNIT(m_panelCompilerOptions, wxSize(-1, -1)), 0);
+
+    bSizer_1->Add(m_buttonDeleteCompilerOption, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_panelLinkerOptions =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelLinkerOptions, _("Linker Options"), false);
-    
+
     wxBoxSizer* bSizer105 = new wxBoxSizer(wxVERTICAL);
     m_panelLinkerOptions->SetSizer(bSizer105);
-    
-    m_staticText23_L = new wxStaticText(m_panelLinkerOptions, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer105->Add(m_staticText23_L, 0, wxALL|wxEXPAND, 5);
-    
+
+    m_staticText23_L = new wxStaticText(m_panelLinkerOptions, wxID_ANY, _("Double click on an entry to modify it:"),
+                                        wxDefaultPosition, wxDLG_UNIT(m_panelLinkerOptions, wxSize(-1, -1)), 0);
+
+    bSizer105->Add(m_staticText23_L, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer123 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer105->Add(bSizer123, 1, wxEXPAND, 5);
-    
-    m_listLinkerOptions = new wxListCtrl(m_panelLinkerOptions, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    bSizer123->Add(m_listLinkerOptions, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer105->Add(bSizer123, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_listLinkerOptions = new wxListCtrl(m_panelLinkerOptions, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_panelLinkerOptions, wxSize(-1, -1)),
+                                         wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+
+    bSizer123->Add(m_listLinkerOptions, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer_2 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer123->Add(bSizer_2, 0, wxEXPAND, 5);
-    
-    m_buttonLinkerOption = new wxButton(m_panelLinkerOptions, wxID_ANY, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer123->Add(bSizer_2, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonLinkerOption = new wxButton(m_panelLinkerOptions, wxID_ANY, _("New..."), wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelLinkerOptions, wxSize(-1, -1)), 0);
     m_buttonLinkerOption->SetDefault();
-    
-    bSizer_2->Add(m_buttonLinkerOption, 0, wxALL, 5);
-    
-    m_buttonDeleteLinkerOption = new wxButton(m_panelLinkerOptions, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer_2->Add(m_buttonDeleteLinkerOption, 0, wxALL, 5);
-    
-    m_panelCompilerSwitches = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    bSizer_2->Add(m_buttonLinkerOption, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonDeleteLinkerOption = new wxButton(m_panelLinkerOptions, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                              wxDLG_UNIT(m_panelLinkerOptions, wxSize(-1, -1)), 0);
+
+    bSizer_2->Add(m_buttonDeleteLinkerOption, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_panelTemplates =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_auiBook->AddPage(m_panelTemplates, _("Templates"), false);
+
+    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
+    m_panelTemplates->SetSizer(bSizer10);
+
+    m_splitter261 =
+        new clThemedSplitterWindow(m_panelTemplates, wxID_ANY, wxDefaultPosition,
+                                   wxDLG_UNIT(m_panelTemplates, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3D);
+    m_splitter261->SetSashGravity(0.5);
+    m_splitter261->SetMinimumPaneSize(10);
+
+    bSizer10->Add(m_splitter261, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_splitterPageFileTemplates = new wxPanel(m_splitter261, wxID_ANY, wxDefaultPosition,
+                                              wxDLG_UNIT(m_splitter261, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer273 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageFileTemplates->SetSizer(boxSizer273);
+
+    m_staticText254 =
+        new wxStaticText(m_splitterPageFileTemplates, wxID_ANY, _("Define the compilation line per per file type"),
+                         wxDefaultPosition, wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), 0);
+
+    boxSizer273->Add(m_staticText254, 0, wxALL, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer257 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer273->Add(boxSizer257, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlFileTemplates =
+        new clThemedListCtrl(m_splitterPageFileTemplates, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer257->Add(m_dvListCtrlFileTemplates, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlFileTemplates->AppendTextColumn(_("Extension"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFileTemplates->AppendTextColumn(_("Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlFileTemplates->AppendTextColumn(_("Template"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                                wxDATAVIEW_COL_RESIZABLE);
+    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer257->Add(bSizer111, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonNewFileType = new wxButton(m_splitterPageFileTemplates, wxID_ANY, _("New..."), wxDefaultPosition,
+                                       wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), 0);
+    m_buttonNewFileType->SetDefault();
+    m_buttonNewFileType->SetToolTip(_("Add new file type"));
+
+    bSizer111->Add(m_buttonNewFileType, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonDeleteFileType = new wxButton(m_splitterPageFileTemplates, wxID_ANY, _("Delete"), wxDefaultPosition,
+                                          wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), 0);
+
+    bSizer111->Add(m_buttonDeleteFileType, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_splitterPageLinkerTemplates = new wxPanel(m_splitter261, wxID_ANY, wxDefaultPosition,
+                                                wxDLG_UNIT(m_splitter261, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter261->SplitHorizontally(m_splitterPageFileTemplates, m_splitterPageLinkerTemplates, 0);
+
+    wxBoxSizer* boxSizer271 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageLinkerTemplates->SetSizer(boxSizer271);
+
+    m_staticLinkerLine =
+        new wxStaticText(m_splitterPageLinkerTemplates, wxID_ANY, _("Defines the linker command per project type"),
+                         wxDefaultPosition, wxDLG_UNIT(m_splitterPageLinkerTemplates, wxSize(-1, -1)), 0);
+
+    boxSizer271->Add(m_staticLinkerLine, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_dvListCtrlLinkType =
+        new clThemedListCtrl(m_splitterPageLinkerTemplates, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPageLinkerTemplates, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer271->Add(m_dvListCtrlLinkType, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlLinkType->AppendTextColumn(_("Project Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlLinkType->AppendTextColumn(_("Template"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    m_checkBoxReadObjectsFromFile =
+        new wxCheckBox(m_splitterPageLinkerTemplates, wxID_ANY, _("Pass object list to the linker via file"),
+                       wxDefaultPosition, wxDLG_UNIT(m_splitterPageLinkerTemplates, wxSize(-1, -1)), 0);
+    m_checkBoxReadObjectsFromFile->SetValue(false);
+
+    boxSizer271->Add(m_checkBoxReadObjectsFromFile, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_panelCompilerSwitches =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelCompilerSwitches, _("Switches"), false);
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     m_panelCompilerSwitches->SetSizer(mainSizer);
-    
-    m_staticText8 = new wxStaticText(m_panelCompilerSwitches, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    mainSizer->Add(m_staticText8, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_listSwitches = new wxListCtrl(m_panelCompilerSwitches, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    mainSizer->Add(m_listSwitches, 1, wxALL|wxEXPAND, 5);
-    
-    m_panelFileTypes = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
-    m_auiBook->AddPage(m_panelFileTypes, _("File Types"), false);
-    
-    wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
-    m_panelFileTypes->SetSizer(bSizer10);
-    
-    m_staticText23 = new wxStaticText(m_panelFileTypes, wxID_ANY, _("Double click on an entry to modify it:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer10->Add(m_staticText23, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer10->Add(bSizer12, 1, wxALL|wxEXPAND, 5);
-    
-    m_listCtrlFileTypes = new wxListCtrl(m_panelFileTypes, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLC_VRULES|wxLC_HRULES|wxLC_SINGLE_SEL|wxLC_REPORT);
-    
-    bSizer12->Add(m_listCtrlFileTypes, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer111 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer12->Add(bSizer111, 0, wxEXPAND, 5);
-    
-    m_buttonNewFileType = new wxButton(m_panelFileTypes, wxID_ANY, _("New..."), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_buttonNewFileType->SetDefault();
-    
-    bSizer111->Add(m_buttonNewFileType, 0, wxALL, 5);
-    
-    m_buttonDeleteFileType = new wxButton(m_panelFileTypes, wxID_ANY, _("Delete"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer111->Add(m_buttonDeleteFileType, 0, wxALL, 5);
-    
-    m_panelAdvanced = new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxTAB_TRAVERSAL);
+
+    m_staticText8 = new wxStaticText(m_panelCompilerSwitches, wxID_ANY, _("Double click on an entry to modify it:"),
+                                     wxDefaultPosition, wxDLG_UNIT(m_panelCompilerSwitches, wxSize(-1, -1)), 0);
+
+    mainSizer->Add(m_staticText8, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_listSwitches = new wxListCtrl(m_panelCompilerSwitches, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_panelCompilerSwitches, wxSize(-1, -1)),
+                                    wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+
+    mainSizer->Add(m_listSwitches, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelAdvanced =
+        new wxPanel(m_auiBook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_auiBook->AddPage(m_panelAdvanced, _("Advanced"), false);
-    
+
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panelAdvanced->SetSizer(bSizer11);
-    
+
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer11->Add(bSizer7, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer11->Add(bSizer7, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer3->SetFlexibleDirection(wxBOTH);
+    fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer3->AddGrowableCol(1);
-    
-    bSizer7->Add(fgSizer3, 0, wxEXPAND, 5);
-    
-    m_staticText18 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Global Paths"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer7->Add(fgSizer3, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText18 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Global Paths"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
     wxFont m_staticText18Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText18Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText18->SetFont(m_staticText18Font);
-    
-    fgSizer3->Add(m_staticText18, 0, wxALL|wxALIGN_RIGHT, 5);
-    
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText141 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Include Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText141, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlGlobalIncludePath = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlGlobalIncludePath->SetToolTip(_("Set here an additional include paths. Each path should be separated with a semi-colon\nNote that usually you don't need to modify this field and it should be left empty"));
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer3->Add(m_staticText18, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText141 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Include Path:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText141, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlGlobalIncludePath = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                 wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+    m_textCtrlGlobalIncludePath->SetToolTip(
+        _("Set here an additional include paths. Each path should be separated with a semi-colon\nNote that usually "
+          "you don't need to modify this field and it should be left empty"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlGlobalIncludePath->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textCtrlGlobalIncludePath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_button67 = new wxButton(m_panelAdvanced, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer3->Add(m_button67, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText16 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Libraries Path:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText16, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlGlobalLibPath = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_textCtrlGlobalLibPath->SetToolTip(_("Set here an additional library search paths. Each path should be separated with a semi-colon\nNote that usually you don't need to modify this field and it should be left empty"));
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer3->Add(m_textCtrlGlobalIncludePath, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button67 = new wxButton(m_panelAdvanced, wxID_ANY, _("Edit..."), wxDefaultPosition,
+                              wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_button67, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText16 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Libraries Path:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText16, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlGlobalLibPath = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition,
+                                             wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+    m_textCtrlGlobalLibPath->SetToolTip(
+        _("Set here an additional library search paths. Each path should be separated with a semi-colon\nNote that "
+          "usually you don't need to modify this field and it should be left empty"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlGlobalLibPath->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textCtrlGlobalLibPath, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_button69 = new wxButton(m_panelAdvanced, wxID_ANY, _("Edit..."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer3->Add(m_button69, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText19 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Misc"), wxDefaultPosition, wxSize(-1, -1), 0);
+#endif
+
+    fgSizer3->Add(m_textCtrlGlobalLibPath, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button69 = new wxButton(m_panelAdvanced, wxID_ANY, _("Edit..."), wxDefaultPosition,
+                              wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_button69, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText19 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Misc"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
     wxFont m_staticText19Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText19Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText19->SetFont(m_staticText19Font);
-    
-    fgSizer3->Add(m_staticText19, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText3 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Objects extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textObjectExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+
+    fgSizer3->Add(m_staticText19, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText3 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Objects extension:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textObjectExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textObjectExtension->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textObjectExtension, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText24 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Depends extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText24, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textDependExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer3->Add(m_textObjectExtension, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText24 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Depends extension:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText24, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textDependExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textDependExtension->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textDependExtension, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText25 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer3->Add(m_staticText25, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textPreprocessExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
+#endif
+
+    fgSizer3->Add(m_textDependExtension, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText25 = new wxStaticText(m_panelAdvanced, wxID_ANY, _("Preprocessed extension:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText25, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textPreprocessExtension = new wxTextCtrl(m_panelAdvanced, wxID_ANY, wxT(""), wxDefaultPosition,
+                                               wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
     m_textPreprocessExtension->SetHint(wxT(""));
-    #endif
-    
-    fgSizer3->Add(m_textPreprocessExtension, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    m_checkBoxGenerateDependenciesFiles = new wxCheckBox(m_panelAdvanced, wxID_ANY, _("Generate dependencies files (*.o.d)"), wxDefaultPosition, wxSize(-1, -1), 0);
+#endif
+
+    fgSizer3->Add(m_textPreprocessExtension, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxGenerateDependenciesFiles =
+        new wxCheckBox(m_panelAdvanced, wxID_ANY, _("Generate dependencies files (*.o.d)"), wxDefaultPosition,
+                       wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
     m_checkBoxGenerateDependenciesFiles->SetValue(false);
-    
-    fgSizer3->Add(m_checkBoxGenerateDependenciesFiles, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
-    m_checkBoxObjectNameSameAsFileName = new wxCheckBox(m_panelAdvanced, wxID_ANY, _("Object name is same as the file name"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    fgSizer3->Add(m_checkBoxGenerateDependenciesFiles, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxObjectNameSameAsFileName =
+        new wxCheckBox(m_panelAdvanced, wxID_ANY, _("Object name is same as the file name"), wxDefaultPosition,
+                       wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
     m_checkBoxObjectNameSameAsFileName->SetValue(false);
-    m_checkBoxObjectNameSameAsFileName->SetToolTip(_("By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\nUncheck this option to make the object name exactly as the file name without any prefixes"));
-    
-    fgSizer3->Add(m_checkBoxObjectNameSameAsFileName, 0, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 1, wxALL, 5);
-    
-    fgSizer3->Add(0, 0, 0, wxALL, 5);
-    
-    m_checkBoxReadObjectsFromFile = new wxCheckBox(m_panelAdvanced, wxID_ANY, _("Pass object list to the linker via file"), wxDefaultPosition, wxSize(-1, -1), 0);
-    m_checkBoxReadObjectsFromFile->SetValue(false);
-    
-    fgSizer3->Add(m_checkBoxReadObjectsFromFile, 0, wxALL, 5);
-    
+    m_checkBoxObjectNameSameAsFileName->SetToolTip(
+        _("By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. "
+          "src/a.cpp will generate object: src_a.o).\nUncheck this option to make the object name exactly as the file "
+          "name without any prefixes"));
+
+    fgSizer3->Add(m_checkBoxObjectNameSameAsFileName, 0, wxALL, WXC_FROM_DIP(5));
+
+    fgSizer3->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("CompilerMainPageBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
-    }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
-    this->Connect(ID_TOOL_NEW_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddExistingCompiler), NULL, this);
-    this->Connect(ID_TOOL_COPY_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCloneCompiler), NULL, this);
-    this->Connect(ID_TOOL_SCAN_COMPILERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnScanCompilers), NULL, this);
-    m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_listBoxCompilers->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
-    m_pgMgrTools->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
-    m_pgMgrTools->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL, this);
-    m_listErrPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
-    m_btnAddErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
-    m_btnDelErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
-    m_btnDelErrPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_btnUpdateErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
-    m_btnUpdateErrPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_listWarnPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
-    m_btnAddWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_btnUpdateWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
-    m_btnUpdateWarnPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
-    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
-    m_buttonCompilerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
-    m_buttonDeleteCompilerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
-    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
-    m_buttonLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
-    m_buttonDeleteLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
-    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
-    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnItemSelected), NULL, this);
-    m_listCtrlFileTypes->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL, this);
-    m_listCtrlFileTypes->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnFileTypeDeSelected), NULL, this);
-    m_listCtrlFileTypes->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnFileTypeSelected), NULL, this);
-    m_buttonNewFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
-    m_buttonDeleteFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
-    m_textCtrlGlobalIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button67->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths), NULL, this);
-    m_textCtrlGlobalLibPath->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button69->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths), NULL, this);
-    m_textObjectExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textDependExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textPreprocessExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxGenerateDependenciesFiles->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxObjectNameSameAsFileName->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxReadObjectsFromFile->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    
+    m_listBoxCompilers->Connect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                                wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
+    m_listBoxCompilers->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu),
+                                NULL, this);
+    m_pgMgrTools->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                          wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_pgMgrTools->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL,
+                          this);
+    m_listErrPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                               wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
+    m_btnAddErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
+    m_btnDelErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
+    m_btnDelErrPattern->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI),
+                                NULL, this);
+    m_btnUpdateErrPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
+    m_btnUpdateErrPattern->Connect(wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
+    m_listWarnPatterns->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
+    m_btnAddWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                 wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
+    m_btnDelWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                 wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
+    m_btnDelWarnPattern->Connect(wxEVT_UPDATE_UI,
+                                 wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
+    m_btnUpdateWarnPattern->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
+    m_btnUpdateWarnPattern->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
+    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
+    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
+                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
+    m_listCompilerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
+                                   wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
+    m_buttonCompilerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
+    m_buttonDeleteCompilerOption->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
+    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
+    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
+                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
+    m_listLinkerOptions->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
+                                 wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
+    m_buttonLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                  wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
+    m_buttonDeleteLinkerOption->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                        wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
+    m_dvListCtrlFileTemplates->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                       wxDataViewEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL, this);
+    m_buttonNewFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                 wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
+    m_buttonDeleteFileType->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
+    m_dvListCtrlLinkType->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                  wxDataViewEventHandler(CompilerMainPageBase::OnLinkLineActivated), NULL, this);
+    m_checkBoxReadObjectsFromFile->Connect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnLinkerUseFileInput), NULL, this);
+    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                            wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
+    m_listSwitches->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnItemSelected),
+                            NULL, this);
+    m_textCtrlGlobalIncludePath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                         wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_button67->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths),
+                        NULL, this);
+    m_textCtrlGlobalLibPath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                     wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_button69->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths),
+                        NULL, this);
+    m_textObjectExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify),
+                                   NULL, this);
+    m_textDependExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify),
+                                   NULL, this);
+    m_textPreprocessExtension->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                       wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_checkBoxGenerateDependenciesFiles->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                                 wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_checkBoxObjectNameSameAsFileName->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                                wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
 }
 
 CompilerMainPageBase::~CompilerMainPageBase()
 {
-    this->Disconnect(ID_TOOL_NEW_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnAddExistingCompiler), NULL, this);
-    this->Disconnect(ID_TOOL_COPY_COMPILER, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCloneCompiler), NULL, this);
-    this->Disconnect(ID_TOOL_SCAN_COMPILERS, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnScanCompilers), NULL, this);
-    m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
-    m_listBoxCompilers->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu), NULL, this);
-    m_pgMgrTools->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
-    m_pgMgrTools->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL, this);
-    m_listErrPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
-    m_btnAddErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
-    m_btnDelErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
-    m_btnDelErrPattern->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_btnUpdateErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
-    m_btnUpdateErrPattern->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
-    m_listWarnPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
-    m_btnAddWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
-    m_btnDelWarnPattern->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_btnUpdateWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
-    m_btnUpdateWarnPattern->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
-    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
-    m_buttonCompilerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
-    m_buttonDeleteCompilerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
-    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
-    m_buttonLinkerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
-    m_buttonDeleteLinkerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
-    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
-    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnItemSelected), NULL, this);
-    m_listCtrlFileTypes->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL, this);
-    m_listCtrlFileTypes->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(CompilerMainPageBase::OnFileTypeDeSelected), NULL, this);
-    m_listCtrlFileTypes->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(CompilerMainPageBase::OnFileTypeSelected), NULL, this);
-    m_buttonNewFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
-    m_buttonDeleteFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
-    m_textCtrlGlobalIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button67->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths), NULL, this);
-    m_textCtrlGlobalLibPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_button69->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths), NULL, this);
-    m_textObjectExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textDependExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_textPreprocessExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxGenerateDependenciesFiles->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxObjectNameSameAsFileName->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    m_checkBoxReadObjectsFromFile->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
-    
+    m_listBoxCompilers->Disconnect(wxEVT_COMMAND_LISTBOX_SELECTED,
+                                   wxCommandEventHandler(CompilerMainPageBase::OnCompilerSelected), NULL, this);
+    m_listBoxCompilers->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(CompilerMainPageBase::OnContextMenu),
+                                   NULL, this);
+    m_pgMgrTools->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                             wxCommandEventHandler(CompilerMainPageBase::OnCustomEditorButtonClicked), NULL, this);
+    m_pgMgrTools->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilerMainPageBase::OnValueChanged), NULL,
+                             this);
+    m_listErrPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                  wxListEventHandler(CompilerMainPageBase::OnErrItemActivated), NULL, this);
+    m_btnAddErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnAddErrPattern), NULL, this);
+    m_btnDelErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                   wxCommandEventHandler(CompilerMainPageBase::OnBtnDelErrPattern), NULL, this);
+    m_btnDelErrPattern->Disconnect(wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
+    m_btnUpdateErrPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                      wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateErrPattern), NULL, this);
+    m_btnUpdateErrPattern->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnErrorPatternSelectedUI), NULL, this);
+    m_listWarnPatterns->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                   wxListEventHandler(CompilerMainPageBase::OnWarnItemActivated), NULL, this);
+    m_btnAddWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnAddWarnPattern), NULL, this);
+    m_btnDelWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnBtnDelWarnPattern), NULL, this);
+    m_btnDelWarnPattern->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
+    m_btnUpdateWarnPattern->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(CompilerMainPageBase::OnBtnUpdateWarnPattern), NULL, this);
+    m_btnUpdateWarnPattern->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilerMainPageBase::OnWarningPatternSelectedUI), NULL, this);
+    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionActivated), NULL, this);
+    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
+                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionDeSelected), NULL, this);
+    m_listCompilerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
+                                      wxListEventHandler(CompilerMainPageBase::OnCompilerOptionSelected), NULL, this);
+    m_buttonCompilerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(CompilerMainPageBase::OnNewCompilerOption), NULL, this);
+    m_buttonDeleteCompilerOption->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteCompilerOption), NULL, this);
+    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionActivated), NULL, this);
+    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
+                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionDeSelected), NULL, this);
+    m_listLinkerOptions->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
+                                    wxListEventHandler(CompilerMainPageBase::OnLinkerOptionSelected), NULL, this);
+    m_buttonLinkerOption->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                     wxCommandEventHandler(CompilerMainPageBase::OnNewLinkerOption), NULL, this);
+    m_buttonDeleteLinkerOption->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnDeleteLinkerOption), NULL, this);
+    m_dvListCtrlFileTemplates->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                          wxDataViewEventHandler(CompilerMainPageBase::OnFileTypeActivated), NULL,
+                                          this);
+    m_buttonNewFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(CompilerMainPageBase::OnNewFileType), NULL, this);
+    m_buttonDeleteFileType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(CompilerMainPageBase::OnDeleteFileType), NULL, this);
+    m_dvListCtrlLinkType->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                     wxDataViewEventHandler(CompilerMainPageBase::OnLinkLineActivated), NULL, this);
+    m_checkBoxReadObjectsFromFile->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnLinkerUseFileInput), NULL, this);
+    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
+                               wxListEventHandler(CompilerMainPageBase::OnItemActivated), NULL, this);
+    m_listSwitches->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
+                               wxListEventHandler(CompilerMainPageBase::OnItemSelected), NULL, this);
+    m_textCtrlGlobalIncludePath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                            wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_button67->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(CompilerMainPageBase::OnEditIncludePaths), NULL, this);
+    m_textCtrlGlobalLibPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                        wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_button69->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(CompilerMainPageBase::OnEditLibraryPaths), NULL, this);
+    m_textObjectExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                      wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_textDependExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                      wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_textPreprocessExtension->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                          wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_checkBoxGenerateDependenciesFiles->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
+    m_checkBoxObjectNameSameAsFileName->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(CompilerMainPageBase::OnCmdModify), NULL, this);
 }
+
+EditCmpTemplateDialogBase::EditCmpTemplateDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                     const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCAD0CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer277 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer277);
+
+    m_stc = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stc->SetFocus();
+    // Configure the fold margin
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(0);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+
+    boxSizer277->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer279 = new wxStdDialogButtonSizer();
+
+    boxSizer277->Add(m_stdBtnSizer279, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button281 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button281->SetDefault();
+    m_stdBtnSizer279->AddButton(m_button281);
+
+    m_button283 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer279->AddButton(m_button283);
+    m_stdBtnSizer279->Realize();
+
+    SetName(wxT("EditCmpTemplateDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+}
+
+EditCmpTemplateDialogBase::~EditCmpTemplateDialogBase() {}
+
+NewFileTemplateDialogBase::NewFileTemplateDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                     const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCAD0CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    this->SetFocus();
+
+    wxBoxSizer* boxSizer291 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer291);
+
+    wxFlexGridSizer* flexGridSizer299 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer299->SetFlexibleDirection(wxBOTH);
+    flexGridSizer299->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer299->AddGrowableCol(1);
+    flexGridSizer299->AddGrowableRow(2);
+
+    boxSizer291->Add(flexGridSizer299, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText301 =
+        new wxStaticText(this, wxID_ANY, _("File extension:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer299->Add(m_staticText301, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlExtension =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlExtension->SetHint(wxT(""));
+#endif
+
+    flexGridSizer299->Add(m_textCtrlExtension, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText305 =
+        new wxStaticText(this, wxID_ANY, _("Type:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer299->Add(m_staticText305, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceFileTypeArr;
+    m_choiceFileTypeArr.Add(wxT("Source"));
+    m_choiceFileTypeArr.Add(wxT("Resource"));
+    m_choiceFileType =
+        new clThemedChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceFileTypeArr, 0);
+    m_choiceFileType->SetSelection(0);
+
+    flexGridSizer299->Add(m_choiceFileType, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText309 =
+        new wxStaticText(this, wxID_ANY, _("Pattern:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer299->Add(m_staticText309, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_stc = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(1);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+
+    flexGridSizer299->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer293 = new wxStdDialogButtonSizer();
+
+    boxSizer291->Add(m_stdBtnSizer293, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button295 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button295->SetDefault();
+    m_stdBtnSizer293->AddButton(m_button295);
+
+    m_button297 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer293->AddButton(m_button297);
+    m_stdBtnSizer293->Realize();
+
+    SetName(wxT("NewFileTemplateDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+}
+
+NewFileTemplateDialogBase::~NewFileTemplateDialogBase() {}

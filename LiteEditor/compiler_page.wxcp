@@ -6260,7 +6260,7 @@
 																						}, {
 																							"type":	"multi-string",
 																							"m_label":	"Label:",
-																							"m_value":	"Define the compilation line per per file type"
+																							"m_value":	"Define the compilation line per file type"
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Wrap:",
@@ -9353,7 +9353,7 @@
 								}, {
 									"type":	"choice",
 									"m_label":	"Wrap Text",
-									"m_selection":	0,
+									"m_selection":	2,
 									"m_options":	["None", "Word", "Char"]
 								}, {
 									"type":	"choice",
@@ -10168,7 +10168,7 @@
 										}, {
 											"type":	"choice",
 											"m_label":	"Wrap Text",
-											"m_selection":	1,
+											"m_selection":	2,
 											"m_options":	["None", "Word", "Char"]
 										}, {
 											"type":	"choice",

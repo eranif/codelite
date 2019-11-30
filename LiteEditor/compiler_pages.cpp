@@ -580,7 +580,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
     m_splitterPageFileTemplates->SetSizer(boxSizer273);
 
     m_staticText254 =
-        new wxStaticText(m_splitterPageFileTemplates, wxID_ANY, _("Define the compilation line per per file type"),
+        new wxStaticText(m_splitterPageFileTemplates, wxID_ANY, _("Define the compilation line per file type"),
                          wxDefaultPosition, wxDLG_UNIT(m_splitterPageFileTemplates, wxSize(-1, -1)), 0);
 
     boxSizer273->Add(m_staticText254, 0, wxALL, WXC_FROM_DIP(5));
@@ -1042,7 +1042,7 @@ EditCmpTemplateDialogBase::EditCmpTemplateDialogBase(wxWindow* parent, wxWindowI
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stc->StyleClearAll();
-    m_stc->SetWrapMode(0);
+    m_stc->SetWrapMode(2);
     m_stc->SetIndentationGuides(0);
     m_stc->SetKeyWords(0, wxT(""));
     m_stc->SetKeyWords(1, wxT(""));
@@ -1166,7 +1166,7 @@ NewFileTemplateDialogBase::NewFileTemplateDialogBase(wxWindow* parent, wxWindowI
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stc->StyleClearAll();
-    m_stc->SetWrapMode(1);
+    m_stc->SetWrapMode(2);
     m_stc->SetIndentationGuides(0);
     m_stc->SetKeyWords(0, wxT(""));
     m_stc->SetKeyWords(1, wxT(""));

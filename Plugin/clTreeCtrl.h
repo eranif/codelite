@@ -385,6 +385,23 @@ public:
      */
     bool IsSelected(const wxTreeItemId& item) const;
 
+    /**
+     * @brief move one line up
+     */
+    void LineUp();
+    /**
+     * @brief move one line down
+     */
+    void LineDown();
+    /**
+     * @brief move page down
+     */
+    void PageDown();
+    /**
+     * @brief move page up
+     */
+    void PageUp();
+
 protected:
     virtual bool DoKeyDown(const wxKeyEvent& event);
     void DoEnsureVisible(const wxTreeItemId& item);

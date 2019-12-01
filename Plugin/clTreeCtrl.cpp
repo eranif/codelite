@@ -1222,3 +1222,11 @@ void clTreeCtrl::SetImageList(wxImageList* images)
     DoBitmapAdded();
     Refresh();
 }
+
+void clTreeCtrl::LineUp() { ScrollRows(1, wxUP); }
+
+void clTreeCtrl::LineDown() { ScrollRows(1, wxDOWN); }
+
+void clTreeCtrl::PageDown() { ScrollRows(GetNumLineCanFitOnScreen(), wxDOWN); }
+
+void clTreeCtrl::PageUp() { ScrollRows(GetNumLineCanFitOnScreen(), wxUP); }

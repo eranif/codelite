@@ -3,6 +3,7 @@
 #include "fileutils.h"
 #include "procutils.h"
 #include "file_logger.h"
+#include <wx/arrstr.h>
 
 clConsoleCodeLiteTerminal::clConsoleCodeLiteTerminal()
 {

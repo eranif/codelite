@@ -2179,7 +2179,7 @@ resources.cpp: resources.xrc
         <Command Enabled="yes"/>
       </PreBuild>
       <PostBuild>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\codelite-dbg.exe" ..\Runtime</Command>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <Target Name="configure --enable-debug">./configure --enable-debug</Target>
@@ -2197,7 +2197,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2254,8 +2255,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

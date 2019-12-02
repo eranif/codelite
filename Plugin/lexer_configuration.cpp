@@ -50,7 +50,7 @@
 #ifdef __WXGTK__
 #define FIX_FONT_SIZE(size, ctrl) clGetSize(size, ctrl)
 #else
-#define FIX_FONT_SIZE(size) size
+#define FIX_FONT_SIZE(size, ctrl) size
 #endif
 
 static bool StringTolBool(const wxString& s)

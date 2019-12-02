@@ -42,7 +42,17 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
 
     m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
-    SetSize(clGetSize(500, this), clGetSize(150, this));
+    
+    // Calculate a suitable completion dialog width
+    {
+        wxMemoryDC memDC;
+        wxBitmap bmp(1, 1);
+        memDC.SelectObject(bmp);
+        wxGCDC gcdc(memDC);
+        gcdc.SetFont(m_ccFont);
+        wxSize textSize = gcdc.GetTextExtent(wxString('X', 70));
+        SetSize(textSize.GetWidth(), (textSize.GetHeight() * 10));
+    }
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();

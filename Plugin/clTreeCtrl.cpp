@@ -739,14 +739,23 @@ bool clTreeCtrl::DoKeyDown(const wxKeyEvent& event)
     wxTreeItemId selectedItem = GetSelection();
     if(!selectedItem.IsOk()) { return true; }
 
+    clRowEntry* row = m_model.ToPtr(selectedItem);
     if(event.GetKeyCode() == WXK_LEFT) {
-        if(m_model.ToPtr(selectedItem)->IsExpanded()) {
+        if(row->IsExpanded()) {
             Collapse(selectedItem);
+            return true;
+        } else if(row->GetParent()) {
+            SelectItem(GetItemParent(selectedItem), true);
             return true;
         }
     } else if(event.GetKeyCode() == WXK_RIGHT) {
-        if(!m_model.ToPtr(selectedItem)->IsExpanded()) {
+        if(!row->IsExpanded()) {
             Expand(selectedItem);
+            return true;
+        } else if(row->GetChildrenCount(false)) {
+            // this item has children, select the first child
+            wxTreeItemIdValue cookie;
+            SelectItem(GetFirstChild(selectedItem, cookie), true);
             return true;
         }
     } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {

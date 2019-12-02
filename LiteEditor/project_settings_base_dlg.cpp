@@ -1039,11 +1039,15 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
+    m_textCtrlBuildEvents->Connect(wxEVT_STC_CHARADDED,
+                                   wxStyledTextEventHandler(PSBuildEventsBasePage::OnBuildEventCharAdded), NULL, this);
 }
 
 PSBuildEventsBasePage::~PSBuildEventsBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
+    m_textCtrlBuildEvents->Disconnect(
+        wxEVT_STC_CHARADDED, wxStyledTextEventHandler(PSBuildEventsBasePage::OnBuildEventCharAdded), NULL, this);
 }
 
 PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

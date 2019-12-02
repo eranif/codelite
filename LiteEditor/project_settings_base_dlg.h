@@ -307,6 +307,7 @@ protected:
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBuildEventCharAdded(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText11() { return m_staticText11; }

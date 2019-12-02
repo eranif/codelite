@@ -42,7 +42,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
 
     m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
-    SetSize(clGetSize(400, this), clGetSize(150, this));
+    SetSize(clGetSize(500, this), clGetSize(150, this));
 
     // Set the default bitmap list
     BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();

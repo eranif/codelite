@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ps_build_events_page.h"
 #include "free_text_dialog.h"
-#include <wx/tokenzr.h>
-#include "macros.h"
 #include "globals.h"
+#include "macros.h"
+#include "ps_build_events_page.h"
+#include <wx/tokenzr.h>
 
 PSBuildEventsPage::PSBuildEventsPage(wxWindow* parent, bool preEvents, ProjectSettingsDlg* dlg)
     : PSBuildEventsBasePage(parent)
@@ -59,19 +59,17 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
     text << _("\nCommands starting with the hash sign ('#'), will not be executed");
     m_staticText11->SetLabel(text);
     BuildCommandList::const_iterator iter = buildCmds.begin();
-    m_textCtrlBuildEvents->Clear();
+    m_textCtrlBuildEvents->ClearAll();
     for(; iter != buildCmds.end(); iter++) {
         wxString cmdText = iter->GetCommand();
         cmdText.Trim().Trim(false);
-        if(iter->GetEnabled() == false && !cmdText.StartsWith(wxT("#"))) {
-            cmdText.Prepend(wxT("#"));
-        }
+        if(iter->GetEnabled() == false && !cmdText.StartsWith(wxT("#"))) { cmdText.Prepend(wxT("#")); }
         cmdText.Append(wxT("\n"));
         m_textCtrlBuildEvents->AppendText(cmdText);
     }
 
-    m_textCtrlBuildEvents->Connect(
-        wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(PSBuildEventsPage::OnCmdEvtVModified), NULL, this);
+    m_textCtrlBuildEvents->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                   wxCommandEventHandler(PSBuildEventsPage::OnCmdEvtVModified), NULL, this);
 }
 
 void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -95,3 +93,8 @@ void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 
 void PSBuildEventsPage::Clear() { m_textCtrlBuildEvents->Clear(); }
 void PSBuildEventsPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }
+void PSBuildEventsPage::OnBuildEventCharAdded(wxStyledTextEvent& event)
+{
+    event.Skip();
+    m_dlg->SetIsDirty(true);
+}

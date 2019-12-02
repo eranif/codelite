@@ -43,6 +43,7 @@ class PSBuildEventsPage : public PSBuildEventsBasePage, public IProjectSettingsP
     ProjectSettingsDlg* m_dlg;
 
 protected:
+    virtual void OnBuildEventCharAdded(wxStyledTextEvent& event);
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     // Handlers for PSBuildEventsBasePage events.
     void OnCmdEvtVModified(wxCommandEvent& event);

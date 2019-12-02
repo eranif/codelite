@@ -7859,7 +7859,14 @@
 															"m_label":	"Keywords Set 5",
 															"m_value":	""
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_STC_CHARADDED",
+															"m_eventClass":	"wxStyledTextEvent",
+															"m_eventHandler":	"wxStyledTextEventHandler",
+															"m_functionNameAndSignature":	"OnBuildEventCharAdded(wxStyledTextEvent& event)",
+															"m_description":	"A char was added",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}]
 										}]

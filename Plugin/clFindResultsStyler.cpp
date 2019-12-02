@@ -30,7 +30,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("text"); }
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
-    wxFont defaultFont = lexer->GetFontForSyle(0);
+    wxFont defaultFont = lexer->GetFontForSyle(0, sci);
 
     for(size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
         sci->StyleSetForeground(i, defaultStyle.GetFgColour());

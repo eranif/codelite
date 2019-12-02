@@ -37,7 +37,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // Use the active editor's font (if any)
     //    IEditor* editor = clGetManager()->GetActiveEditor();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    m_ccFont = lexer->GetFontForSyle(0);
+    m_ccFont = lexer->GetFontForSyle(0, this);
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
 

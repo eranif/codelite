@@ -112,7 +112,7 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding)
     }
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxFont font = EditorConfigST::Get()->GetLexer("text")->GetFontForSyle(0);
+    wxFont font = EditorConfigST::Get()->GetLexer("text")->GetFontForSyle(0, sci);
     sci->StyleSetFont(0, font);
 
     sci->SetIndicatorCurrent(1);

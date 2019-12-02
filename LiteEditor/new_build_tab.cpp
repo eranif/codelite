@@ -763,7 +763,7 @@ wxFont NewBuildTab::DoGetFont() const
 {
     wxFont font = wxNullFont;
     LexerConf::Ptr_t lexerConf = EditorConfigST::Get()->GetLexer("C++");
-    if(lexerConf) { font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT); }
+    if(lexerConf) { font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT, this); }
 
     if(font.IsOk() == false) { font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT); }
 
@@ -867,7 +867,7 @@ void NewBuildTab::InitView(const wxString& theme)
 
     // reset the styles
     m_view->SetLexer(wxSTC_LEX_CONTAINER);
-    wxFont defaultFont = lexText->GetFontForSyle(0);
+    wxFont defaultFont = lexText->GetFontForSyle(0, this);
     for(size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_view->StyleSetForeground(i, defaultStyle.GetFgColour());
         m_view->StyleSetBackground(i, defaultStyle.GetBgColour());

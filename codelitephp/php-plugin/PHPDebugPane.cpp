@@ -157,12 +157,6 @@ XDebugBreakpoint PHPDebugPane::GetBreakpoint(const wxDataViewItem& item) const
 void PHPDebugPane::OnRefreshBreakpointsView(XDebugEvent& e)
 {
     e.Skip();
-    // LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("php");
-    // if(lex) {
-    //     m_dvListCtrlBreakpoints->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
-    //     m_dvListCtrlStackTrace->SetFont(lex->GetFontForSyle(wxSTC_HPHP_DEFAULT));
-    // }
-
     // Load the breakpoints table
     m_dvListCtrlBreakpoints->DeleteAllItems();
     const XDebugBreakpoint::List_t& bps = XDebugManager::Get().GetBreakpointsMgr().GetBreakpoints();

@@ -47,6 +47,12 @@
 #define DEFAULT_FONT_SIZE 12
 #endif
 
+#ifdef __WXGTK__
+#define FIX_FONT_SIZE(size, ctrl) clGetSize(size, ctrl)
+#else
+#define FIX_FONT_SIZE(size) size
+#endif
+
 static bool StringTolBool(const wxString& s)
 {
     bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
@@ -226,7 +232,7 @@ wxXmlNode* LexerConf::ToXml() const
     return node;
 }
 
-wxFont LexerConf::GetFontForSyle(int styleId) const
+wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
 {
     StyleProperty::Map_t::const_iterator iter = m_properties.find(styleId);
     if(iter != m_properties.end()) {
@@ -239,7 +245,7 @@ wxFont LexerConf::GetFontForSyle(int styleId) const
             face = DEFAULT_FACE_NAME;
         }
 
-        wxFontInfo fontInfo = wxFontInfo(fontSize)
+        wxFontInfo fontInfo = wxFontInfo(FIX_FONT_SIZE(fontSize, win))
                                   .Family(wxFONTFAMILY_MODERN)
                                   .Italic(prop.GetItalic())
                                   .Bold(prop.IsBold())
@@ -297,7 +303,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Find the default style
     wxFont defaultFont;
     bool foundDefaultStyle = false;
-    int nDefaultFontSize = DEFAULT_FONT_SIZE;
+    int nDefaultFontSize = FIX_FONT_SIZE(DEFAULT_FONT_SIZE, ctrl);
 
     StyleProperty defaultStyle;
     StyleProperty::Map_t::const_iterator iter = styles.begin();
@@ -307,7 +313,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             defaultStyle = prop;
             wxString fontFace = prop.GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : prop.GetFaceName();
             if(!prop.GetFaceName().IsEmpty()) { nDefaultFontSize = prop.GetFontSize(); }
-            wxFont defaultFont(wxFontInfo(nDefaultFontSize).Family(wxFONTFAMILY_MODERN).FaceName(fontFace));
+            wxFont defaultFont(
+                wxFontInfo(FIX_FONT_SIZE(nDefaultFontSize, ctrl)).Family(wxFONTFAMILY_MODERN).FaceName(fontFace));
             if(prop.IsBold()) { defaultFont.SetWeight(wxFONTWEIGHT_BOLD); }
             if(prop.GetUnderlined()) { defaultFont.SetStyle(wxFONTSTYLE_ITALIC); }
             foundDefaultStyle = true;
@@ -375,7 +382,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 fontSize = nDefaultFontSize;
                 faceName = DEFAULT_FACE_NAME;
             }
-
+            fontSize = FIX_FONT_SIZE(size, ctrl);
             wxFontInfo fontInfo = wxFontInfo(fontSize)
                                       .Family(wxFONTFAMILY_MODERN)
                                       .Italic(italic)

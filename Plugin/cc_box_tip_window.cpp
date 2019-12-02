@@ -118,7 +118,7 @@ void CCBoxTipWindow::DoInitialize(const wxString& tip, size_t numOfTips, bool si
     wxGCDC gcdc(memDC);
     wxSize size;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    m_commentFont = lexer->GetFontForSyle(0);
+    m_commentFont = lexer->GetFontForSyle(0, this);
     m_codeFont = m_commentFont;
     gcdc.SetFont(m_commentFont);
 

@@ -38,11 +38,12 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     //    IEditor* editor = clGetManager()->GetActiveEditor();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     m_ccFont = lexer->GetFontForSyle(0, this);
+    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
 
     m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
-    
+
     // Calculate a suitable completion dialog width
     {
         wxMemoryDC memDC;

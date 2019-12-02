@@ -50,11 +50,23 @@ bool clBitmap::ShouldLoadHiResImages()
     if(!once) {
         once = true;
 #ifdef __WXGTK__
+        // try the environment variable approach first
+        wxString dpiscale = "1.0";
+        if(wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {
+            double scale = 1.0;
+            if(dpiscale.ToDouble(&scale)) {
+                shouldLoad = (scale >= 1.5);
+                return shouldLoad;
+            }
+        }
+
+        // Try the GTK way
         GdkScreen* screen = gdk_screen_get_default();
         if(screen) {
             double res = gdk_screen_get_resolution(screen);
             shouldLoad = ((res / 96.) >= 1.5);
         }
+
 #else
         shouldLoad = ((wxScreenDC().GetPPI().y / 96.) >= 1.5);
 #endif
@@ -67,10 +79,10 @@ bool clBitmap::LoadPNGFromMemory(const wxString& name, wxMemoryInputStream& mis,
 {
     void* pData = NULL;
     size_t nLen = 0;
-    
+
     // we will load the @2x version on demand
     if(name.Contains("@2x")) { return false; }
-    
+
     if(ShouldLoadHiResImages()) {
         wxString hiresName = name + "@2x";
         if(fnGetHiResVersion(hiresName, &pData, nLen)) {

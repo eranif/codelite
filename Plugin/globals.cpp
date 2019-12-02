@@ -2142,6 +2142,16 @@ bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFi
 int clGetSize(int size, const wxWindow* win)
 {
     if(!win) { return size; }
+#ifdef __WXGTK__
+    wxString dpiscale = "1.0";
+    if(wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {
+        double scale = 1.0;
+        if(dpiscale.ToDouble(&scale)) {
+            double scaledSize = scale * size;
+            return scaledSize;
+        }
+    }
+#endif
 #if wxCHECK_VERSION(3, 1, 0)
     return win->FromDIP(size);
 #else

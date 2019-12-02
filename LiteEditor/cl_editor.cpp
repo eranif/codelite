@@ -5500,7 +5500,7 @@ void clEditor::OnMouseWheel(wxMouseEvent& event)
         return;
     } else if(IsCompletionBoxShown()) {
         event.Skip(false);
-        wxCodeCompletionBoxManager::Get().GetCCWindow()->DoMouseScroll(event);
+        //wxCodeCompletionBoxManager::Get().GetCCWindow()->DoMouseScroll(event);
     }
 }
 

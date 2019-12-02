@@ -17,7 +17,7 @@
 // Sorting is applied for top level items (i.e. items whom their direct parent is the root item)
 #define wxTR_SORT_TOP_LEVEL 0x0100
 
-static const int wxTREE_HITTEST_ONDROPDOWNARROW  = 0x2000;
+static const int wxTREE_HITTEST_ONDROPDOWNARROW = 0x2000;
 
 class clScrollBar;
 class WXDLLIMPEXP_SDK clTreeCtrl : public clControlWithItems
@@ -27,7 +27,8 @@ protected:
     bool m_needToClearDefaultHeader = true;
     long m_treeStyle = 0;
     int m_scrollLines = 0;
-    
+    wxFont m_defaultFont = wxNullFont;
+
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
     wxTreeItemId DoGetSiblingVisibleItem(const wxTreeItemId& item, bool next) const;
@@ -50,10 +51,11 @@ private:
 
     void DoInitialize();
     clRowEntry* DoFind(clRowEntry* from, const wxString& what, size_t col, size_t searchFlags, bool next);
-    
+
 protected:
     void UpdateScrollBar();
     void DoAddHeader(const wxString& label, const wxBitmap& bmp, int width = wxCOL_WIDTH_AUTOSIZE);
+    void UpdateLineHeight();
     
 public:
     virtual int GetFirstItemPosition() const;
@@ -64,6 +66,9 @@ public:
     virtual ~clTreeCtrl();
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
+
+    void SetDefaultFont(const wxFont& font);
+    wxFont GetDefaultFont() const;
 
     //===--------------------
     // Search support

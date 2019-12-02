@@ -26,19 +26,18 @@
 #ifndef WXCODECOMPLETIONBOX_H
 #define WXCODECOMPLETIONBOX_H
 
+#include "LSP/CompletionItem.h"
+#include "entry.h"
 #include "wxCodeCompletionBoxBase.h"
 #include "wxCodeCompletionBoxEntry.hpp"
-#include <wx/arrstr.h>
-#include <wx/sharedptr.h>
-#include <vector>
 #include <list>
+#include <vector>
+#include <wx/arrstr.h>
 #include <wx/bitmap.h>
-#include <wx/stc/stc.h>
-#include <wx/font.h>
-#include "entry.h"
 #include <wx/event.h>
-#include <wx/bitmap.h>
-#include "LSP/CompletionItem.h"
+#include <wx/font.h>
+#include <wx/sharedptr.h>
+#include <wx/stc/stc.h>
 #include <wxStringHash.h>
 
 class CCBoxTipWindow;
@@ -60,17 +59,17 @@ public:
     };
 
 protected:
+    virtual void OnSelectionActivated(wxDataViewEvent& event);
+    virtual void OnSelectionChanged(wxDataViewEvent& event);
     wxCodeCompletionBoxEntry::Vec_t m_allEntries;
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     wxCodeCompletionBox::BmpVec_t m_bitmaps;
     static wxCodeCompletionBox::BmpVec_t m_defaultBitmaps;
     std::unordered_map<int, int> m_lspCompletionItemImageIndexMap;
-    int m_index;
     wxString m_displayedTip;
     wxStyledTextCtrl* m_stc;
     wxFont m_ccFont;
     int m_startPos;
-    bool m_useLightColours;
 
     /// When firing the various "clCodeCompletionEvent"s, set the event object
     /// to this member. This help distinguish the real trigger of the code completion
@@ -83,42 +82,19 @@ protected:
     /// The code completion box flags, see above enum for possible values
     size_t m_flags;
 
-    /// Contains the scrollbar rectangle
-    wxRect m_scrollArea;
-    wxRect m_scrollTopRect;
-    wxRect m_scrollBottomRect;
-
-    /// Colours used by this class
-    wxColour m_penColour;
-    wxColour m_bgColour;
-    wxColour m_separatorColour;
-    wxColour m_textColour;
-    wxColour m_selectedTextColour;
-    wxColour m_selectedTextBgColour;
-    wxColour m_alternateRowColour;
-
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
     wxBitmap m_bmpDown;
     wxBitmap m_bmpUpEnabled;
     wxBitmap m_bmpDownEnabled;
-    int m_lineHeight = 0;
 
 protected:
-    void StcKeyDown(wxKeyEvent& event);
-    void StcLeftDown(wxMouseEvent& event);
     void StcModified(wxStyledTextEvent& event);
     void StcCharAdded(wxStyledTextEvent& event);
-
-    // Event handlers
-    void OnLeftDClick(wxMouseEvent& event);
-    void OnMouseScroll(wxMouseEvent& event);
-    void OnEraseBackground(wxEraseEvent& event);
-    void OnPaint(wxPaintEvent& event);
-
+    void StcLeftDown(wxMouseEvent& event);
+    void StcKeyDown(wxKeyEvent& event);
     static void InitializeDefaultBitmaps();
-    void DoPgUp();
-    void DoPgDown();
+    void DoPopulateList();
 
 public:
     /**
@@ -165,13 +141,7 @@ public:
     void SetStartPos(int startPos) { this->m_startPos = startPos; }
     int GetStartPos() const { return m_startPos; }
 
-    void ScrollDown() { DoScrollDown(); }
-    void ScrollUp() { DoScrollUp(); }
-
-    void DoMouseScroll(wxMouseEvent& event);
-
 protected:
-    int GetSingleLineHeight() const;
     /**
      * @brief filter the results based on what the user typed in the editor
      * @return Should we refresh the content of the CC box (based on number of "Exact matches" / "Starts with" found)
@@ -191,13 +161,7 @@ protected:
     void DoDestroyTipWindow();
 
     void DoUpdateList();
-    void DoScrollDown();
-    void DoScrollUp();
     void DoDestroy();
-    void DoDrawBottomScrollButton(wxDC& dc);
-    void DoDrawTopScrollButton(wxDC& dc);
-    bool CanScrollDown();
-    bool CanScrollUp();
     void DoShowCompletionBox();
 };
 #endif // WXCODECOMPLETIONBOX_H

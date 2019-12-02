@@ -35,7 +35,9 @@ private:
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
     bool m_dragging = false;
-
+    bool m_neverShowHScrollbar = false;
+    bool m_neverShowVScrollbar = false;
+    
 protected:
 #if CL_USE_NATIVE_SCROLLBAR
     virtual void OnVScroll(wxScrollEvent& event);
@@ -157,6 +159,11 @@ public:
 
     // Process idle events. Override this in the subclass
     virtual void ProcessIdle() {}
+    
+    /**
+     * @brief should we show the scrollbar?
+     */
+    void SetNeverShowScrollBar(wxOrientation d, bool b);
 };
 
 #endif // CLSCROLLEDPANEL_H

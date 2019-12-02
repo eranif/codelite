@@ -1,5 +1,3 @@
-- Replace the code completion box custom drawing with clThemedListCtrl
-
 C++ project:
 
 - Allow adding to the build menu custom 'Build project XXX'

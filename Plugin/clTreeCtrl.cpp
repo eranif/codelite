@@ -67,12 +67,23 @@ bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, con
     return true;
 }
 
-void clTreeCtrl::DoInitialize()
+void clTreeCtrl::UpdateLineHeight()
 {
-    wxSize textSize = GetTextSize("Tp");
+    wxMemoryDC tmpDC;
+    wxBitmap bmp(1, 1);
+    tmpDC.SelectObject(bmp);
+    wxGCDC gcdc(tmpDC);
+
+    gcdc.SetFont(GetDefaultFont());
+    wxSize textSize = gcdc.GetTextExtent("Tp");
+
     SetLineHeight(clRowEntry::Y_SPACER + textSize.GetHeight() + clRowEntry::Y_SPACER);
     SetIndent(GetLineHeight());
+}
 
+void clTreeCtrl::DoInitialize()
+{
+    UpdateLineHeight();
     Bind(wxEVT_IDLE, &clTreeCtrl::OnIdle, this);
     Bind(wxEVT_PAINT, &clTreeCtrl::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [&](wxEraseEvent& event) { wxUnusedVar(event); });
@@ -149,12 +160,11 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         while(
             (canScrollDown &&
              (items.size() < maxItems)) || // While can move the scroll thumb a bit further down, increase the list size
-            (!canScrollDown &&
-             (items.size() < (maxItems - 1)))) { // the scroll thumb cant be moved further down, so it
-                                                 // makes no sense on hiding the last item (we wont be
-                                                 // able to reach it), so make sure we extend the list
-                                                 // up to max-items -1, this means that the last item is
-                                                 // always fully visible
+            (!canScrollDown && (items.size() < (maxItems - 1)))) { // the scroll thumb cant be moved further down, so it
+                                                                   // makes no sense on hiding the last item (we wont be
+                                                                   // able to reach it), so make sure we extend the list
+                                                                   // up to max-items -1, this means that the last item
+                                                                   // is always fully visible
             firstItem = m_model.GetRowBefore(firstItem, true);
             if(!firstItem) { break; }
             items.insert(items.begin(), firstItem);
@@ -1230,3 +1240,16 @@ void clTreeCtrl::LineDown() { ScrollRows(1, wxDOWN); }
 void clTreeCtrl::PageDown() { ScrollRows(GetNumLineCanFitOnScreen(), wxDOWN); }
 
 void clTreeCtrl::PageUp() { ScrollRows(GetNumLineCanFitOnScreen(), wxUP); }
+
+void clTreeCtrl::SetDefaultFont(const wxFont& font)
+{
+    m_defaultFont = font;
+    UpdateLineHeight();
+    Refresh();
+}
+
+wxFont clTreeCtrl::GetDefaultFont() const
+{
+    if(m_defaultFont.IsOk()) { return m_defaultFont; }
+    return clScrolledPanel::GetDefaultFont();
+}

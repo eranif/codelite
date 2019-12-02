@@ -194,7 +194,7 @@ void clScrolledPanel::OnHCustomScroll(clScrollEvent& event) { ScollToColumn(even
 void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
     // Sanity
-    if(pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) {
+    if(m_neverShowVScrollbar || pageSize <= 0 || position < 0 || thumbSize <= 0 || rangeSize <= 0) {
         m_vsb->Hide();
         return;
     }
@@ -410,7 +410,7 @@ void clScrolledPanel::OnSize(wxSizeEvent& event)
 
 void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSize, int pageSize)
 {
-    if(rangeSize <= 0) {
+    if(rangeSize <= 0 || m_neverShowHScrollbar) {
         m_hsb->Hide();
         return;
     }
@@ -441,4 +441,20 @@ wxRect clScrolledPanel::GetClientArea() const
     if(m_hsb && m_hsb->IsShown()) { r.SetHeight(r.GetHeight() - m_hsb->GetSize().GetHeight()); }
     if(m_vsb && m_vsb->IsShown()) { r.SetWidth(r.GetWidth() - m_vsb->GetSize().GetWidth()); }
     return r;
+}
+
+void clScrolledPanel::SetNeverShowScrollBar(wxOrientation d, bool b)
+{
+    if(d == wxVERTICAL) {
+        m_neverShowVScrollbar = b;
+    } else if(d == wxHORIZONTAL) {
+        m_neverShowHScrollbar = b;
+    }
+    if(m_vsb) {
+        UpdateVScrollBar(m_vsb->GetThumbPosition(), m_vsb->GetThumbSize(), m_vsb->GetRange(), m_vsb->GetPageSize());
+    }
+    if(m_hsb) {
+        UpdateHScrollBar(m_hsb->GetThumbPosition(), m_hsb->GetThumbSize(), m_hsb->GetRange(), m_hsb->GetPageSize());
+    }
+    Refresh();
 }

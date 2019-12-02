@@ -613,7 +613,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -686,7 +686,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -759,7 +759,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -832,7 +832,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="no">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>

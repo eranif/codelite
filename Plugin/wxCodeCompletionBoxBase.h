@@ -15,6 +15,8 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -37,16 +39,16 @@
 class WXDLLIMPEXP_SDK wxCodeCompletionBoxBase : public wxPopupWindow
 {
 protected:
-    wxPanel* m_panelComposite;
-    wxPanel* m_canvas;
+    wxPanel* m_mainPanel;
+    clThemedListCtrl* m_list;
 
 protected:
-    virtual void OnPaint(wxPaintEvent& event) { event.Skip(); }
-    virtual void OnEraseBackground(wxEraseEvent& event) { event.Skip(); }
+    virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnSelectionActivated(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetCanvas() { return m_canvas; }
-    wxPanel* GetPanelComposite() { return m_panelComposite; }
+    clThemedListCtrl* GetList() { return m_list; }
+    wxPanel* GetMainPanel() { return m_mainPanel; }
     wxCodeCompletionBoxBase(wxWindow* parent, long style = wxBORDER_NONE);
     virtual ~wxCodeCompletionBoxBase();
 };

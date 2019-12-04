@@ -12,8 +12,6 @@ public:
     LSPDetectorManager();
     virtual ~LSPDetectorManager();
 
-    static LSPDetectorManager& Get();
-
     /**
      * @brief scan for language servers installed on this machine
      */

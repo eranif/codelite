@@ -64,7 +64,8 @@ void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
     event.Skip();
     wxBusyCursor bc;
     std::vector<LSPDetector::Ptr_t> matches;
-    if(LSPDetectorManager::Get().Scan(matches)) {
+    LSPDetectorManager detector;
+    if(detector.Scan(matches)) {
         // Matches were found, reload the dialog
         // Prompt the user to select which entries to add
         wxArrayString options;

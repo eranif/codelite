@@ -13,12 +13,6 @@ LSPDetectorManager::LSPDetectorManager()
 
 LSPDetectorManager::~LSPDetectorManager() {}
 
-LSPDetectorManager& LSPDetectorManager::Get()
-{
-    static LSPDetectorManager manager;
-    return manager;
-}
-
 size_t LSPDetectorManager::Scan(std::vector<LSPDetector::Ptr_t>& matchers)
 {
     for(LSPDetector::Ptr_t detector : m_detectors) {

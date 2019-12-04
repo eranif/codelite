@@ -5,17 +5,21 @@
 #include "LanguageServerPage.h"
 #include "LanguageServerSettingsDlg.h"
 #include "NewLanguageServerDlg.h"
+#include "clPythonLocator.hpp"
 #include "globals.h"
 #include <vector>
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
-#include "clPythonLocator.hpp"
 
-LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent)
+LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent, bool triggerScan)
     : LanguageServerSettingsDlgBase(parent)
 {
     DoInitialize();
     ::clSetDialogBestSizeAndPosition(this);
+    if(triggerScan) {
+        CallAfter(&LanguageServerSettingsDlg::DoScan);
+        m_checkBoxEnable->SetValue(true);
+    }
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}
@@ -62,6 +66,21 @@ void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(tr
 void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 {
     event.Skip();
+    DoScan();
+}
+
+void LanguageServerSettingsDlg::DoInitialize()
+{
+    m_notebook->DeleteAllPages();
+    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
+        m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
+    }
+    m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
+}
+
+void LanguageServerSettingsDlg::DoScan()
+{
     wxBusyCursor bc;
     std::vector<LSPDetector::Ptr_t> matches;
     LSPDetectorManager detector;
@@ -88,14 +107,4 @@ void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
         conf.Save();
         DoInitialize();
     }
-}
-
-void LanguageServerSettingsDlg::DoInitialize()
-{
-    m_notebook->DeleteAllPages();
-    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
-        m_notebook->AddPage(new LanguageServerPage(m_notebook, vt.second), vt.second.GetName());
-    }
-    m_checkBoxEnable->SetValue(LanguageServerConfig::Get().IsEnabled());
 }

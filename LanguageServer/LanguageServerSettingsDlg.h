@@ -5,7 +5,7 @@
 class LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 {
 public:
-    LanguageServerSettingsDlg(wxWindow* parent);
+    LanguageServerSettingsDlg(wxWindow* parent, bool triggerScan);
     virtual ~LanguageServerSettingsDlg();
     void Save();
 
@@ -16,5 +16,6 @@ protected:
     virtual void OnDeleteLSPUI(wxUpdateUIEvent& event);
     virtual void OnAddServer(wxCommandEvent& event);
     void DoInitialize();
+    void DoScan();
 };
 #endif // LANGUAGESERVERSETTINGSDLG_H

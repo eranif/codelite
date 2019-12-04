@@ -1,21 +1,23 @@
 #ifndef __LanguageServerPlugin__
 #define __LanguageServerPlugin__
 
-#include "plugin.h"
-#include "cl_command_event.h"
+#include "CompileCommandsGenerator.h"
 #include "LanguageServerCluster.h"
 #include "cl_command_event.h"
-#include "CompileCommandsGenerator.h"
+#include "plugin.h"
 
 class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
     IProcess* m_process = nullptr;
-    
+
 protected:
     void OnSettings(wxCommandEvent& e);
     void OnRestartLSP(wxCommandEvent& e);
-
+    void OnInitDone(wxCommandEvent& event);
+    void OnInfoBarButton(clCommandEvent& event);
+    void PromptUserToConfigureLSP();
+    
 public:
     LanguageServerPlugin(IManager* manager);
     virtual ~LanguageServerPlugin();

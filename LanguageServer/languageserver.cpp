@@ -96,7 +96,9 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
     event.Skip();
     // Launch a thread to locate any LSP installed on this machine
     // But do this only if we don't have any LSP defined already
-    if(LanguageServerConfig::Get().GetServers().empty()) {
+    bool autoScan = clConfig::Get().Read("LSPAutoScanOnStartup", true);
+    if(autoScan && LanguageServerConfig::Get().GetServers().empty()) {
+        clConfig::Get().Write("LSPAutoScanOnStartup", false);
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
                 std::vector<LSPDetector::Ptr_t> matches;

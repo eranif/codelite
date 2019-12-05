@@ -274,6 +274,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->StyleClearAll();
 #if wxCHECK_VERSION(3, 1, 0)
     ctrl->FoldDisplayTextSetStyle(wxSTC_FOLDDISPLAYTEXT_BOXED);
+    ctrl->SetIdleStyling(wxSTC_IDLESTYLING_TOVISIBLE);
 #endif
 
 #ifndef __WXMSW__
@@ -284,7 +285,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     bool useDirect2D = clConfig::Get().Read("Editor/UseDirect2D", true);
     ctrl->SetTechnology(useDirect2D ? wxSTC_TECHNOLOGY_DIRECTWRITE : wxSTC_TECHNOLOGY_DEFAULT);
 #endif
-    ctrl->SetIdleStyling(wxSTC_IDLESTYLING_TOVISIBLE);
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool tooltip(false);
 

@@ -364,6 +364,7 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
     OpenEditor(editor);
 }
 
@@ -378,9 +379,12 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     event.Skip();
     // For now, it does the same as 'OnFileLoaded'
     IEditor* editor = clGetManager()->GetActiveEditor();
-    std::string fileContent;
-    editor->GetEditorTextRaw(fileContent);
-    if(editor && ShouldHandleFile(editor)) { SendSaveRequest(editor->GetFileName(), fileContent); }
+    CHECK_PTR_RET(editor);
+    if(ShouldHandleFile(editor)) {
+        std::string fileContent;
+        editor->GetEditorTextRaw(fileContent);
+        SendSaveRequest(editor->GetFileName(), fileContent);
+    }
 }
 
 wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "[" << GetName() << "] "; }
@@ -436,17 +440,17 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     CHECK_COND_RET(ShouldHandleFile(editor));
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxFileName& filename = editor->GetFileName();
-    
+
     std::string text;
     editor->GetEditorTextRaw(text);
-    
+
     if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
         // we already sent this file over, ask for change parse
         SendChangeRequest(filename, text);
     } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
         SendOpenRequest(filename, text, GetLanguageId(filename));
     }
-    
+
     // Now request the for code completion
     SendCodeCompleteRequest(editor->GetFileName(), editor->GetCurrentLine(),
                             editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));

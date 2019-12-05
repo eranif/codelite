@@ -25,7 +25,7 @@
 
 #ifndef ZJSONNODE_H
 #define ZJSONNODE_H
-
+// clang-format off
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <wx/filename.h>
@@ -39,6 +39,7 @@
 #include <wx/font.h>
 #endif
 #include "macros.h"
+// clang-format on
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -46,32 +47,40 @@
 class WXDLLIMPEXP_CL JSONItem
 {
 protected:
-    cJSON* _json;
-    int _type;
-    wxString _name;
+    cJSON* m_json = nullptr;
+    cJSON* m_walker = nullptr;
+    std::string m_name;
+    int m_type = wxNOT_FOUND;
 
     // Values
-    wxVariant _value;
-    cJSON* _walker;
+    std::string m_valueString;
+    double m_valueNumer = 0;
 
 public:
     JSONItem(cJSON* json);
-    JSONItem(const wxString& name, const wxVariant& val, int type);
-
+    JSONItem(const wxString& name, double val);
+    JSONItem(const wxString& name, const std::string& val);
+    JSONItem(const wxString& name, const char* pval, size_t len);
+    JSONItem(const wxString& name, bool val);
     virtual ~JSONItem() {}
 
     // Walkers
     JSONItem firstChild();
     JSONItem nextChild();
 
+    void SetValueNumer(double valueNumer) { this->m_valueNumer = valueNumer; }
+    double GetValueNumer() const { return m_valueNumer; }
+
+    void SetValueString(const std::string& valueString) { this->m_valueString = valueString; }
+    const std::string& GetValueString() const { return m_valueString; }
+
     // Setters
     ////////////////////////////////////////////////
-    void setName(const wxString& _name) { this->_name = _name; }
-    void setType(int _type) { this->_type = _type; }
-    int getType() const { return _type; }
-    const wxString& getName() const { return _name; }
-    const wxVariant& getValue() const { return _value; }
-    void setValue(const wxVariant& _value) { this->_value = _value; }
+    void setName(const wxString& m_name) { this->m_name = m_name; }
+    void setType(int m_type) { this->m_type = m_type; }
+    int getType() const { return m_type; }
+    wxString getName() const { return m_name; }
+
     // Readers
     ////////////////////////////////////////////////
     JSONItem namedObject(const wxString& name) const;
@@ -99,6 +108,7 @@ public:
     int toInt(int defaultVal = -1) const;
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
+    wxFileName toFileName() const;
 
 #if wxUSE_GUI
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
@@ -128,11 +138,14 @@ public:
     void append(const JSONItem& element);
 
     JSONItem& addProperty(const wxString& name, const wxString& value);
+    JSONItem& addProperty(const wxString& name, const std::string& value);
     JSONItem& addProperty(const wxString& name, const wxChar* value);
     JSONItem& addProperty(const wxString& name, int value) { return addProperty(name, (long)value); }
     JSONItem& addProperty(const wxString& name, long value);
     JSONItem& addProperty(const wxString& name, size_t value);
     JSONItem& addProperty(const wxString& name, bool value);
+    JSONItem& addProperty(const wxString& name, const wxFileName& filename);
+
 #if wxUSE_GUI
     JSONItem& addProperty(const wxString& name, const wxSize& sz);
     JSONItem& addProperty(const wxString& name, const wxPoint& pt);
@@ -165,15 +178,15 @@ public:
     void arrayAppend(const JSONItem& element);
     void arrayAppend(const wxString& value);
 
-    bool isOk() const { return _json != NULL; }
-    
+    bool isOk() const { return m_json != NULL; }
+
     /**
      * @brief release the internal pointer
      */
     cJSON* release()
     {
-        cJSON* temp = _json;
-        _json = nullptr;
+        cJSON* temp = m_json;
+        m_json = nullptr;
         return temp;
     }
 };
@@ -184,7 +197,7 @@ public:
 class WXDLLIMPEXP_CL JSON
 {
 protected:
-    cJSON* _json;
+    cJSON* m_json;
     wxString _errorString;
 
 public:
@@ -197,7 +210,7 @@ public:
 
     void save(const wxFileName& fn) const;
     wxString errorString() const;
-    bool isOk() const { return _json != NULL; }
+    bool isOk() const { return m_json != NULL; }
 
     JSONItem toElement() const;
 

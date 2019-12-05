@@ -11,7 +11,7 @@ namespace LSP
 class WXDLLIMPEXP_CL DidOpenTextDocumentRequest : public LSP::Notification
 {
 public:
-    DidOpenTextDocumentRequest(const wxFileName& filename, const wxString& text, const wxString& langugage);
+    DidOpenTextDocumentRequest(const wxFileName& filename, const std::string& text, const wxString& langugage);
     virtual ~DidOpenTextDocumentRequest();
 };
 

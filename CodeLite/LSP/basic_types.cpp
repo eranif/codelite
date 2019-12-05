@@ -1,6 +1,5 @@
-#include "LSP/basic_types.h"
-#include <wx/filesys.h>
 #include "JSON.h"
+#include "LSP/basic_types.h"
 #include <wx/filesys.h>
 
 //===------------------------------------------------
@@ -227,4 +226,14 @@ JSONItem LSP::Diagnostic::ToJSON(const wxString& name) const
     json.append(m_range.ToJSON("range"));
     json.addProperty("message", GetMessage());
     return json;
+}
+
+LSP::TextDocumentContentChangeEvent& LSP::TextDocumentContentChangeEvent::SetText(const std::string& text)
+{
+    this->m_text.clear();
+    if(!text.empty()) {
+        this->m_text.reserve(text.length() + 1); // for the null
+        this->m_text.append(text);
+    }
+    return *this;
 }

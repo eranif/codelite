@@ -147,7 +147,6 @@ protected:
 public:
     void* Entry()
     {
-        char buffer[4096];
         while(!TestDestroy()) {
             if(!ReadChannel(false) || !ReadChannel(true)) { break; }
             

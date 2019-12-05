@@ -27,18 +27,23 @@ std::string LSP::MessageWithParams::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON("");
-    wxString data = json.format(false);
-    data.Trim().Trim(false);
+    char* data = json.FormatRawString(false);
 
-    std::string s = FileUtils::ToStdString(data);
-    size_t len = s.length();
+    std::string s;
+    size_t len = strlen(data);
 
+    // Build the request header
     std::stringstream ss;
-    // Build the request
     ss << "Content-Length: " << len << "\r\n";
     ss << "\r\n";
-    ss << s;
-    return ss.str();
+    s = ss.str();
+    
+    // append the data
+    s.append(data, len);
+    
+    // release the buffer
+    free(data);
+    return s;
 }
 
 LSP::MessageWithParams::Ptr_t LSP::MessageWithParams::MakeRequest(LSP::MessageWithParams* message_ptr)

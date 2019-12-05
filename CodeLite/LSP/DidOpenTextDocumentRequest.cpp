@@ -1,7 +1,7 @@
 #include "DidOpenTextDocumentRequest.h"
 #include "json_rpc_params.h"
 
-LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxFileName& filename, const wxString& text,
+LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxFileName& filename, const std::string& text,
                                                             const wxString& langugage)
 {
     SetMethod("textDocument/didOpen");

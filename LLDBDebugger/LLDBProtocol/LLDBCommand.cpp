@@ -86,7 +86,7 @@ JSONItem LLDBCommand::ToJSON() const
     JSONItem threadIdsArr = JSONItem::createArray("m_threadIds");
     json.append(threadIdsArr);
     for(const auto threadId : m_threadIds) {
-        threadIdsArr.arrayAppend(JSONItem("", threadId, cJSON_Number));
+        threadIdsArr.arrayAppend(JSONItem("", (double)threadId));
     }
 
     json.addProperty("m_expression", m_expression);

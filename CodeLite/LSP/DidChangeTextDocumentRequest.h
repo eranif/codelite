@@ -10,7 +10,7 @@ namespace LSP
 class WXDLLIMPEXP_CL DidChangeTextDocumentRequest : public LSP::Notification
 {
 public:
-    DidChangeTextDocumentRequest(const wxFileName& filename, const wxString& fileContent);
+    DidChangeTextDocumentRequest(const wxFileName& filename, const std::string& fileContent);
     virtual ~DidChangeTextDocumentRequest();
 };
 

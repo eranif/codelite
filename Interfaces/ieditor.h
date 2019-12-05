@@ -37,6 +37,7 @@
 #include <map>
 #include "optionsconfig.h"
 #include "LSP/basic_types.h"
+#include <string>
 
 class wxStyledTextCtrl;
 
@@ -105,6 +106,11 @@ public:
      * \brief return the current editor content
      */
     virtual wxString GetEditorText() = 0;
+    
+    /**
+     * @brief get editor text raw, in an efficient way
+     */
+    virtual size_t GetEditorTextRaw(std::string& content) = 0;
 
     /**
      * \brief sets the current editor's content with 'text'

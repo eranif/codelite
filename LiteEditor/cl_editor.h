@@ -811,6 +811,7 @@ public:
     virtual void SetCodeCompletionAnnotation(const wxString& text, int lineno);
 
     virtual wxString GetEditorText() { return GetText(); }
+    virtual size_t GetEditorTextRaw(std::string& text);
     virtual void SetEditorText(const wxString& text);
     virtual void OpenFile();
     virtual void ReloadFromDisk(bool keepUndoHistory = false);

@@ -3022,6 +3022,7 @@ void clEditor::UpdateLineNumbers()
 
 void clEditor::OpenFile()
 {
+    wxBusyCursor bc;
     wxWindowUpdateLocker locker(this);
     SetReloadingFile(true);
 
@@ -5500,7 +5501,7 @@ void clEditor::OnMouseWheel(wxMouseEvent& event)
         return;
     } else if(IsCompletionBoxShown()) {
         event.Skip(false);
-        //wxCodeCompletionBoxManager::Get().GetCCWindow()->DoMouseScroll(event);
+        // wxCodeCompletionBoxManager::Get().GetCCWindow()->DoMouseScroll(event);
     }
 }
 
@@ -5662,6 +5663,17 @@ void clEditor::DoToggleFold(int line, const wxString& textTag)
     wxUnusedVar(textTag);
     ToggleFold(line);
 #endif
+}
+
+size_t clEditor::GetEditorTextRaw(std::string& text)
+{
+    text.clear();
+    wxCharBuffer cb = GetTextRaw();
+    if(cb.length()) {
+        text.reserve(cb.length() + 1);
+        text.append(cb.data());
+    }
+    return text.length();
 }
 
 // ----------------------------------

@@ -2,9 +2,9 @@
 #define JSONRPC_BASICTYPES_H
 
 #include "JSON.h"
-#include <vector>
 #include "JSONObject.h"
 #include "codelite_exports.h"
+#include <vector>
 #include <wx/sharedptr.h>
 
 namespace LSP
@@ -14,7 +14,7 @@ namespace LSP
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
 {
-    wxString m_text;
+    std::string m_text;
 
 public:
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -26,12 +26,8 @@ public:
     {
     }
     virtual ~TextDocumentContentChangeEvent() {}
-    TextDocumentContentChangeEvent& SetText(const wxString& text)
-    {
-        this->m_text = text;
-        return *this;
-    }
-    const wxString& GetText() const { return m_text; }
+    TextDocumentContentChangeEvent& SetText(const std::string& text);
+    const std::string& GetText() const { return m_text; }
 };
 
 //===----------------------------------------------------------------------------------
@@ -210,14 +206,14 @@ class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
 {
     wxFileName m_uri;
     wxString m_languageId;
-    wxString m_text;
+    std::string m_text;
     int m_version = 1;
 
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 
-    TextDocumentItem(const wxFileName& uri, const wxString& langId, const wxString& text, int version = 1)
+    TextDocumentItem(const wxFileName& uri, const wxString& langId, const std::string& text, int version = 1)
         : m_uri(uri)
         , m_languageId(langId)
         , m_text(text)
@@ -231,7 +227,7 @@ public:
         this->m_languageId = languageId;
         return *this;
     }
-    TextDocumentItem& SetText(const wxString& text)
+    TextDocumentItem& SetText(const std::string& text)
     {
         this->m_text = text;
         return *this;
@@ -247,7 +243,7 @@ public:
         return *this;
     }
     const wxString& GetLanguageId() const { return m_languageId; }
-    const wxString& GetText() const { return m_text; }
+    const std::string& GetText() const { return m_text; }
     const wxFileName& GetUri() const { return m_uri; }
     int GetVersion() const { return m_version; }
 };

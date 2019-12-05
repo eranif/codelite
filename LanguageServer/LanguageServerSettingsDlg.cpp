@@ -13,13 +13,11 @@
 
 LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent, bool triggerScan)
     : LanguageServerSettingsDlgBase(parent)
+    , m_scanOnStartup(triggerScan)
 {
     DoInitialize();
     ::clSetDialogBestSizeAndPosition(this);
-    if(triggerScan) {
-        CallAfter(&LanguageServerSettingsDlg::DoScan);
-        m_checkBoxEnable->SetValue(true);
-    }
+    if(m_scanOnStartup) { CallAfter(&LanguageServerSettingsDlg::DoScan); }
 }
 
 LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}
@@ -106,5 +104,6 @@ void LanguageServerSettingsDlg::DoScan()
         }
         conf.Save();
         DoInitialize();
+        if(m_scanOnStartup) { m_checkBoxEnable->SetValue(true); }
     }
 }

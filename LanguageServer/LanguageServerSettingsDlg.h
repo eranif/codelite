@@ -4,6 +4,8 @@
 
 class LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 {
+    bool m_scanOnStartup = false;
+
 public:
     LanguageServerSettingsDlg(wxWindow* parent, bool triggerScan);
     virtual ~LanguageServerSettingsDlg();

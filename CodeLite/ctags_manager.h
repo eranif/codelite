@@ -871,7 +871,7 @@ public:
      * @param filepath file to examine
      * @return return true if the file is binary
      */
-    bool IsBinaryFile(const wxString& filepath);
+    bool IsBinaryFile(const wxString& filepath, const TagsOptionsData& tod);
 
     /**
      * @brief given an input string 'str', wrap the string so each line will

@@ -30,6 +30,7 @@
 #include "crawler_include.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "fileutils.h"
 #include "istorage.h"
 #include "parse_thread.h"
@@ -37,15 +38,14 @@
 #include "pptable.h"
 #include "precompiled_header.h"
 #include "tags_storage_sqlite3.h"
+#include "wxStringHash.h"
+#include <functional>
 #include <set>
 #include <tags_options_data.h>
+#include <unordered_set>
 #include <wx/ffile.h>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
-#include "fileextmanager.h"
-#include <unordered_set>
-#include "wxStringHash.h"
-#include <functional>
 
 #define DEBUG_MESSAGE(x) CL_DEBUG1(x.c_str())
 
@@ -106,6 +106,9 @@ ParseThread::~ParseThread() {}
 
 void ParseThread::ProcessRequest(ThreadRequest* request)
 {
+    clConfig config("code-completion.conf");
+    config.ReadItem(&m_tod);
+
     // request is delete by the parent WorkerThread after this method is completed
     ParseRequest* req = (ParseRequest*)request;
     FileLogger::RegisterThread(wxThread::GetCurrentId(), "C++ Parser Thread");
@@ -258,7 +261,8 @@ void ParseThread::ProcessSimple(ParseRequest* req)
 
     clDEBUG1() << "Parsing saved file:" << file << clEndl;
     // Skip binary file
-    if(TagsManagerST::Get()->IsBinaryFile(file)) {
+
+    if(TagsManagerST::Get()->IsBinaryFile(file, m_tod)) {
         clDEBUG1() << "File:" << file << "is binady and will be skipped" << clEndl;
         return;
     }
@@ -333,7 +337,7 @@ void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& ar
         const wxCharBuffer cfile = filename.mb_str(wxConvUTF8);
 
         // Skip binary files
-        if(TagsManagerST::Get()->IsBinaryFile(filename)) {
+        if(TagsManagerST::Get()->IsBinaryFile(filename, m_tod)) {
             DEBUG_MESSAGE(wxString::Format(wxT("Skipping binary file %s"), filename.c_str()));
             return;
         }
@@ -456,7 +460,7 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
         wxFileName curFile(wxString(req->_workspaceFiles[i].c_str(), wxConvUTF8));
 
         // Skip binary files
-        if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath())) {
+        if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath(), m_tod)) {
             DEBUG_MESSAGE(wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()));
             continue;
         }
@@ -523,7 +527,7 @@ void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSe
         fn.MakeAbsolute();
         fn.Normalize();
         wxString fullpath = fn.GetFullPath();
-        if(TagsManagerST::Get()->IsBinaryFile(fullpath)) continue;
+        if(TagsManagerST::Get()->IsBinaryFile(fullpath, m_tod)) continue;
         filteredFileList.Add(fullpath);
     }
 
@@ -609,7 +613,7 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
     wxArrayString filesArr;
     for(size_t i = 0; i < files.size(); i++) {
         wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
-        if(TagsManagerST::Get()->IsBinaryFile(filename)) continue;
+        if(TagsManagerST::Get()->IsBinaryFile(filename, m_tod)) continue;
         filesArr.Add(filename);
     }
 
@@ -717,7 +721,7 @@ void ParseThread::ProcessColourRequest(ParseRequest* req)
 void ParseThread::ProcessSourceToTags(ParseRequest* req)
 {
     wxFileName filename(req->getFile());
-    if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath())) { return; }
+    if(TagsManagerST::Get()->IsBinaryFile(filename.GetFullPath(), m_tod)) { return; }
 
     wxString strTags;
     TagsManagerST::Get()->SourceToTags(filename, strTags);

@@ -25,18 +25,19 @@
 #ifndef CODELITE_PARSE_THREAD_H
 #define CODELITE_PARSE_THREAD_H
 
-#include "entry.h"
-#include "singleton.h"
-#include <map>
-#include <vector>
-#include <memory>
-#include <wx/stopwatch.h>
-#include "worker_thread.h"
-#include "procutils.h"
-#include "tag_tree.h"
-#include "istorage.h"
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+#include "entry.h"
+#include "istorage.h"
+#include "procutils.h"
+#include "singleton.h"
+#include "tag_tree.h"
+#include "worker_thread.h"
+#include <map>
+#include <memory>
+#include <vector>
+#include <wx/stopwatch.h>
+#include "tags_options_data.h"
 
 class ITagsStorage;
 
@@ -126,6 +127,7 @@ class WXDLLIMPEXP_CL ParseThread : public WorkerThread
     wxArrayString m_excludePaths;
     bool m_crawlerEnabled;
     wxCriticalSection m_cs;
+    TagsOptionsData m_tod;
 
 public:
     void SetCrawlerEnabeld(bool b);

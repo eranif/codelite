@@ -1270,7 +1270,9 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
 
         // Dont attempt to scan binary files
         // Skip binary files
-        if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i))) { continue; }
+        if(TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i), TagsManagerST::Get()->GetCtagsOptions())) {
+            continue;
+        }
 
         // Scan only C/C++/h files
         switch(FileExtManager::GetType(workspaceFiles.Item(i))) {

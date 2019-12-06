@@ -59,8 +59,8 @@
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/sizer.h>
+#include <wx/xrc/xmlres.h>
 #endif
 #include <wx/log.h>
 #include <wx/stdpaths.h>
@@ -363,7 +363,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
              << wxT(" --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
     req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
 
-    //clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;
+    // clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;
     // connect to the indexer
     if(!client.connect()) {
         clWARNING() << "Failed to connect to indexer process. Indexer ID:" << wxGetProcessId() << clEndl;
@@ -378,7 +378,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
 
     // read the reply
     clIndexerReply reply;
-    //clDEBUG1() << "SourceToTags: reading indexer reply" << clEndl;
+    // clDEBUG1() << "SourceToTags: reading indexer reply" << clEndl;
     try {
         std::string errmsg;
         if(!clIndexerProtocol::ReadReply(&client, reply, errmsg)) {
@@ -392,7 +392,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         return;
     }
 
-    //clDEBUG1() << "SourceToTags: [" << reply.getTags() << "]" << clEndl;
+    // clDEBUG1() << "SourceToTags: [" << reply.getTags() << "]" << clEndl;
 
     // convert the data into wxString
     if(m_encoding == wxFONTENCODING_DEFAULT || m_encoding == wxFONTENCODING_SYSTEM)
@@ -401,7 +401,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags)
         tags = wxString(reply.getTags().c_str(), wxCSConv(m_encoding));
     if(tags.empty()) { tags = wxString::From8BitData(reply.getTags().c_str()); }
 
-    //clDEBUG1() << "Tags:\n" << tags << clEndl;
+    // clDEBUG1() << "Tags:\n" << tags << clEndl;
 }
 
 TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
@@ -1255,7 +1255,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 {
     wxArrayString strFiles;
     strFiles.Alloc(files.size()); // At most files.size() entries
-    
+
     // step 1: remove all non-tags files
     for(size_t i = 0; i < files.size(); i++) {
         if(!IsValidCtagsFile(files.at(i).GetFullPath())) { continue; }
@@ -1270,7 +1270,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
             wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
             frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
         }
-#endif        
+#endif
         return;
     }
 
@@ -2064,7 +2064,7 @@ void TagsManager::TagsByTyperef(const wxString& scopeName, const wxArrayString& 
 }
 
 wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
-                                           std::vector<std::pair<int, int> >* paramLen)
+                                           std::vector<std::pair<int, int>>* paramLen)
 {
     // FIXME: make the standard configurable
     CxxVariableScanner varScanner(sig, eCxxStandard::kCxx03, wxStringTable_t(), true);
@@ -2571,13 +2571,17 @@ void TagsManager::DoParseModifiedText(const wxString& text, std::vector<TagEntry
     }
 }
 
-bool TagsManager::IsBinaryFile(const wxString& filepath)
+bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& tod)
 {
     // If the file is a C++ file, avoid testing the content return false based on the extension
     FileExtManager::FileType type = FileExtManager::GetType(filepath);
     if(type == FileExtManager::TypeHeader || type == FileExtManager::TypeSourceC ||
        type == FileExtManager::TypeSourceCpp)
         return false;
+
+    // If this file matches any of the c++ patterns defined in the configuration
+    // don't consider it as a binary file
+    if(FileUtils::WildMatch(tod.GetFileSpec(), filepath)) { return false; }
 
     // examine the file based on the content of the first 4K (max) bytes
     FILE* fp = fopen(filepath.To8BitData(), "rb");

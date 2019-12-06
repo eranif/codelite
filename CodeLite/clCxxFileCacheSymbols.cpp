@@ -48,7 +48,8 @@ public:
         while(true) {
             wxString filename;
             if(m_queue.ReceiveTimeout(50, filename) == wxMSGQUEUE_NO_ERROR) {
-                if(TagsManagerST::Get()->IsBinaryFile(filename)) { continue; }
+                TagsOptionsData tod;
+                if(TagsManagerST::Get()->IsBinaryFile(filename, tod)) { continue; }
 
                 wxString strTags;
                 TagsManagerST::Get()->SourceToTags(filename, strTags);

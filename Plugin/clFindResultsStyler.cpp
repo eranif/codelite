@@ -3,6 +3,7 @@
 #include "editor_config.h"
 #include "lexer_configuration.h"
 #include "optionsconfig.h"
+#include "globals.h"
 
 clFindResultsStyler::clFindResultsStyler()
     : m_stc(NULL)
@@ -92,7 +93,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);
-    sci->SetMarginWidth(1, 16);
+    sci->SetMarginWidth(1, ::clGetSize(16, sci));
     sci->SetMarginWidth(2, 0);
     sci->SetMarginWidth(3, 0);
     sci->SetMarginWidth(4, 0);

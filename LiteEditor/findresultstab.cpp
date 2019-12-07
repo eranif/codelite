@@ -128,7 +128,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
     FindReplaceData frd;
     frd.SetName("FindInFilesData");
     clConfig::Get().ReadItem(&frd);
-    
+
     // Allocate the 'Find In Files' in an inner block
     // We do this because the 'FindReplaceData' will be updated upon the destruction of the dialog
     {
@@ -161,7 +161,6 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
             eventDismiss.SetPaths(frd.GetSearchPaths());
             EventNotifier::Get()->ProcessEvent(eventDismiss);
         }
-        
     }
     // And we alway store the global find-in-files data (it keeps the 'find-what', 'replace with' fields, etc...)
     clConfig::Get().WriteItem(&frd);

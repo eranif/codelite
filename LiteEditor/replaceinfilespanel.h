@@ -34,7 +34,10 @@ protected:
     wxGauge* m_progress;
     wxStaticText* m_replaceWithText;
     wxArrayString m_filesModified;
-
+    wxBitmap m_bmpChecked;
+    wxBitmap m_bmpUnchecked;
+    bool m_bmpsForDarkTheme = false;
+    
 protected:
     void DoSaveResults(wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin,
                        std::map<int, SearchResult>::iterator end);
@@ -61,6 +64,8 @@ protected:
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~ReplaceInFilesPanel();
+    
+    virtual void SetStyles(wxStyledTextCtrl* sci);
 };
 
 #endif // __replaceinfilespanel__

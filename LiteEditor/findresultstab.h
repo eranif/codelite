@@ -25,16 +25,16 @@
 #ifndef __findresultstab__
 #define __findresultstab__
 
-#include <vector>
-#include <map>
-#include <list>
-#include <wx/stc/stc.h>
 #include "wx/debug.h"
+#include <list>
+#include <map>
+#include <vector>
+#include <wx/stc/stc.h>
 
 #include "Notebook.h"
+#include "findinfilesdlg.h"
 #include "outputtabwindow.h"
 #include "search_thread.h"
-#include "findinfilesdlg.h"
 #include "wx_ordered_map.h"
 #include <wx/aui/auibar.h>
 
@@ -49,8 +49,7 @@ protected:
     std::list<int> m_indicators;
     bool m_searchInProgress;
 
-    struct History
-    {
+    struct History {
         wxString title;
         SearchData searchData;
         wxString text;
@@ -96,7 +95,7 @@ public:
     FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& name);
     ~FindResultsTab();
 
-    void SetStyles(wxStyledTextCtrl* sci);
+    virtual void SetStyles(wxStyledTextCtrl* sci);
     void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasSope = false);
     void ResetStyler();
 

@@ -23,24 +23,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include <vector>
-#include <wx/xrc/xmlres.h>
 #include <wx/progdlg.h>
+#include <wx/xrc/xmlres.h>
 
-#include "editor_config.h"
-#include "globals.h"
-#include "frame.h"
+#include "ColoursAndFontsManager.h"
+#include "clFileSystemEvent.h"
+#include "clStrings.h"
+#include "clThemeUpdater.h"
+#include "clThemedButton.h"
+#include "cl_command_event.h"
 #include "cl_editor.h"
+#include "codelite_events.h"
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "frame.h"
+#include "globals.h"
+#include "macros.h"
 #include "manager.h"
 #include "replaceinfilespanel.h"
-#include "clFileSystemEvent.h"
-#include "event_notifier.h"
-#include "macros.h"
-#include "clStrings.h"
-#include "cl_command_event.h"
-#include "codelite_events.h"
-#include "file_logger.h"
-#include "clThemedButton.h"
-#include "clThemeUpdater.h"
+#include <wx/dcgraph.h>
+#include <wx/dcmemory.h>
+#include <wx/renderer.h>
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
@@ -93,13 +97,6 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mainSizer->Add(vertSizer, 1, wxEXPAND);
 #endif
     mainSizer->Layout();
-
-    m_sci->SetMarginMask(4, 7 << 0x7 | wxSTC_MASK_FOLDERS);
-    DefineMarker(m_sci, 0x7, wxSTC_MARK_SMALLRECT, wxColor(0x00, 0x80, 0x00),
-                 wxColor(0x00, 0xc0, 0x00));                                                           // user selection
-    DefineMarker(m_sci, 0x8, wxSTC_MARK_CIRCLE, wxColor(0x80, 0x00, 0x00), wxColor(0xff, 0x00, 0x00)); // error occurred
-    DefineMarker(m_sci, 0x9, wxSTC_MARK_EMPTY, wxColor(0x00, 0x00, 0x00),
-                 wxColor(0x00, 0x00, 0x00)); // replacement successful
 }
 
 ReplaceInFilesPanel::~ReplaceInFilesPanel() { clThemeUpdater::Get().UnRegisterWindow(this); }
@@ -369,7 +366,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     if(m_matchInfo.empty()) { Clear(); }
 
     // Step 3: Notify user of changes to already opened files, ask to save
-    std::vector<std::pair<wxFileName, bool> > filesToSave;
+    std::vector<std::pair<wxFileName, bool>> filesToSave;
     for(std::set<wxString>::iterator i = updatedEditors.begin(); i != updatedEditors.end(); i++) {
         filesToSave.push_back(std::make_pair(wxFileName(*i), true));
     }
@@ -438,4 +435,64 @@ void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
         MatchInfo_t::const_iterator m = m_matchInfo.find(clickedLine);
         if(m != m_matchInfo.end()) { DoOpenSearchResult(m->second, NULL, m->first); }
     }
+}
+
+static void RenderCheckbox(wxWindow* win, wxDC& dc, const wxColour& bgColour, const wxColour& penColour,
+                           const wxRect& _rect, bool checked)
+{
+    wxRect rect = _rect;
+    dc.SetBrush(bgColour);
+    dc.SetPen(bgColour);
+    dc.DrawRectangle(rect);
+    if(!checked) { return; }
+    
+    if(checked) {
+        wxRect innerRect = rect;
+        innerRect.Deflate(::clGetSize(4, win));
+        dc.SetPen(wxPen(penColour, ::clGetSize(2, win)));
+
+        wxPoint p1, p2, p3;
+        p1.x = innerRect.GetTopLeft().x;
+        p1.y = innerRect.GetTopLeft().y + (innerRect.GetHeight() / 2);
+
+        p2.x = innerRect.GetBottomLeft().x + (innerRect.GetWidth() / 3);
+        p2.y = innerRect.GetBottomLeft().y;
+
+        p3 = innerRect.GetTopRight();
+        dc.DrawLine(p1, p2);
+        dc.DrawLine(p2, p3);
+    }
+}
+
+void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
+{
+    FindResultsTab::SetStyles(sci);
+
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("text"); }
+
+    // render two bitmaps: checked and unchecked
+    int size = ::clGetSize(16, sci);
+    const StyleProperty& styleProperty = lexer->GetProperty(0);
+    wxColour bgColour = styleProperty.GetBgColour();
+    wxColour fgColour = lexer->IsDark() ? *wxYELLOW : *wxBLACK;
+    {
+        wxMemoryDC memDC;
+        m_bmpChecked = wxBitmap(size, size);
+        memDC.SelectObject(m_bmpChecked);
+        wxGCDC gcdc(memDC);
+        wxRect rect(0, 0, size, size);
+        RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, true);
+        memDC.SelectObject(wxNullBitmap); // Apply the changes
+    }
+    //{
+    //    wxMemoryDC memDC;
+    //    m_bmpUnchecked = wxBitmap(size, size);
+    //    memDC.SelectObject(m_bmpUnchecked);
+    //    wxGCDC gcdc(memDC);
+    //    wxRect rect(0, 0, size, size);
+    //    RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, false);
+    //    memDC.SelectObject(wxNullBitmap); // Apply the changes
+    //}
+    sci->MarkerDefineBitmap(7, m_bmpChecked);
 }

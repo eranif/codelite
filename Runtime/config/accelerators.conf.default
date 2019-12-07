@@ -115,6 +115,7 @@ build_workspace|Build|Build Workspace|Ctrl-Shift-B
 rebuild_workspace|Build|Rebuild Workspace|
 clean_workspace|Build|Clean Workspace|
 compile_active_file|Build|Compile Current File|Ctrl-F7
+compile_active_file_project|Build|Compile Current File's Project|Ctrl-Shift-F7
 clean_active_project|Build|Clean Project|
 stop_active_project_build|Build|Stop Build|
 rebuild_active_project|Build|Rebuild Project|

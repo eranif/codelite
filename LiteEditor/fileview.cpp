@@ -117,6 +117,7 @@ EVT_MENU(XRCID("cxx_fileview_open_shell_from_filepath"), FileViewTree::OnOpenShe
 EVT_MENU(XRCID("cxx_fileview_open_file_explorer"), FileViewTree::OnOpenFileExplorerFromFilePath)
 EVT_MENU(XRCID("exclude_from_build"), FileViewTree::OnExcludeFromBuild)
 EVT_MENU(XRCID("preprocess_item"), FileViewTree::OnPreprocessItem)
+EVT_MENU(XRCID("build_file_project"), FileViewTree::OnBuildParentProject)
 EVT_MENU(XRCID("rename_item"), FileViewTree::OnRenameItem)
 EVT_MENU(XRCID("rename_virtual_folder"), FileViewTree::OnRenameVirtualFolder)
 EVT_MENU(XRCID("colour_virtual_folder"), FileViewTree::OnSetBgColourVirtualFolder)
@@ -149,6 +150,7 @@ EVT_UPDATE_UI(XRCID("reconcile_project"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("compile_item"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("exclude_from_build"), FileViewTree::OnExcludeFromBuildUI)
 EVT_UPDATE_UI(XRCID("preprocess_item"), FileViewTree::OnBuildInProgress)
+EVT_UPDATE_UI(XRCID("build_file_project"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("rename_item"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("generate_makefile"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("local_workspace_settings"), FileViewTree::OnBuildInProgress)
@@ -3025,4 +3027,19 @@ void FileViewTree::OnPinProject(wxCommandEvent& event)
         wxString projectName = GetItemText(item);
         clMainFrame::Get()->GetWorkspaceTab()->AddPinnedProject(projectName);
     }
+}
+
+void FileViewTree::OnBuildParentProject(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    wxTreeItemId item = GetSelection();
+    CHECK_ITEM_RET(item);
+    
+    ProjectPtr proj = GetItemProject(item);
+    CHECK_PTR_RET(proj);
+    
+    // Trigger project only build
+    wxCommandEvent eventBuild(wxEVT_CMD_BUILD_PROJECT_ONLY);
+    eventBuild.SetString(proj->GetName());
+    EventNotifier::Get()->QueueEvent(eventBuild.Clone());    
 }

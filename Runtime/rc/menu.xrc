@@ -547,6 +547,9 @@
             <object class="wxMenuItem" name="compile_active_file">
                 <label>&amp;Compile Current File</label>
             </object>
+            <object class="wxMenuItem" name="compile_active_file_project">
+                <label>&amp;Compile Current File's Project</label>
+            </object>
             <object class="wxMenuItem" name="clean_active_project">
                 <label>Cl&amp;ean Project</label>
             </object>
@@ -1088,6 +1091,9 @@
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="compile_item">
             <label>Compile</label>
+        </object>
+        <object class="wxMenuItem" name="build_file_project">
+            <label>Build Project</label>
         </object>
         <object class="wxMenuItem" name="preprocess_item">
             <label>Preprocess</label>

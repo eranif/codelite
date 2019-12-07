@@ -180,6 +180,7 @@ protected:
     virtual void OnOpenFileExplorerFromFilePath(wxCommandEvent& e);
     virtual void OnExcludeFromBuild(wxCommandEvent& e);
     virtual void OnPreprocessItem(wxCommandEvent& e);
+    virtual void OnBuildParentProject(wxCommandEvent& e);
     virtual void OnRenameVirtualFolder(wxCommandEvent& e);
     virtual void OnSetBgColourVirtualFolder(wxCommandEvent& e);
     virtual void OnClearBgColourVirtualFolder(wxCommandEvent& e);

@@ -471,6 +471,7 @@ EVT_MENU(XRCID("build_active_project"), clMainFrame::OnBuildProject)
 EVT_MENU(XRCID("build_active_project_only"), clMainFrame::OnBuildProjectOnly)
 EVT_TOOL_DROPDOWN(XRCID("build_active_project"), clMainFrame::OnShowBuildMenu)
 EVT_MENU(XRCID("compile_active_file"), clMainFrame::OnCompileFile)
+EVT_MENU(XRCID("compile_active_file_project"), clMainFrame::OnCompileFileProject)
 EVT_MENU(XRCID("clean_active_project"), clMainFrame::OnCleanProject)
 EVT_MENU(XRCID("clean_active_project_only"), clMainFrame::OnCleanProjectOnly)
 EVT_MENU(XRCID("stop_active_project_build"), clMainFrame::OnStopBuild)
@@ -485,6 +486,7 @@ EVT_UPDATE_UI(XRCID("execute_no_debug"), clMainFrame::OnExecuteNoDebugUI)
 EVT_UPDATE_UI(XRCID("stop_executed_program"), clMainFrame::OnStopExecutedProgramUI)
 EVT_UPDATE_UI(XRCID("build_active_project"), clMainFrame::OnBuildProjectUI)
 EVT_UPDATE_UI(XRCID("compile_active_file"), clMainFrame::OnCompileFileUI)
+EVT_UPDATE_UI(XRCID("compile_active_file_project"), clMainFrame::OnCompileFileUI)
 EVT_UPDATE_UI(XRCID("clean_active_project"), clMainFrame::OnCleanProjectUI)
 EVT_UPDATE_UI(XRCID("stop_active_project_build"), clMainFrame::OnStopBuildUI)
 EVT_UPDATE_UI(XRCID("rebuild_active_project"), clMainFrame::OnBuildProjectUI)
@@ -3310,6 +3312,27 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
     }
 
     e.Skip();
+}
+
+void clMainFrame::OnCompileFileProject(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    CHECK_COND_RET(clCxxWorkspaceST::Get()->IsOpen());
+    CHECK_COND_RET(!ManagerST::Get()->IsBuildInProgress());
+
+    clEditor* editor = GetMainBook()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    wxString projname = clCxxWorkspaceST::Get()->GetProjectFromFile(editor->GetFileName());
+    CHECK_COND_RET(!projname.IsEmpty());
+    
+    ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projname);
+    CHECK_PTR_RET(p);
+    
+    // Trigger the build
+    wxCommandEvent eventBuild(wxEVT_CMD_BUILD_PROJECT_ONLY);
+    eventBuild.SetString(p->GetName());
+    EventNotifier::Get()->QueueEvent(eventBuild.Clone()); 
 }
 
 void clMainFrame::OnCompileFile(wxCommandEvent& e)

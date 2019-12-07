@@ -645,14 +645,21 @@ void clEditor::SetProperties()
     SetMarginMask(EDIT_TRACKER_MARGIN_ID, 0);
 
     // Separators
+#if wxCHECK_VERSION(3, 1, 0)
+    SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_COLOUR);
+    SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
+    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, clGetSize(1, this));
+    wxColour bgColour = StyleGetBackground(0);
+    SetMarginBackground(SYMBOLS_MARGIN_SEP_ID,
+                        DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
+#else
     SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_FORE);
     SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
-
     // Show the separator margin only if the fold margin is hidden
     // (otherwise the fold margin is the separator)
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID,
                    (GetLexer() == wxSTC_LEX_CPP && FileExtManager::IsCxxFile(GetFileName())) ? 1 : 0);
-
+#endif
     // Fold margin - allow only folder symbols to display
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
 

@@ -445,7 +445,7 @@ static void RenderCheckbox(wxWindow* win, wxDC& dc, const wxColour& bgColour, co
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
     if(!checked) { return; }
-    
+
     if(checked) {
         wxRect innerRect = rect;
         innerRect.Deflate(::clGetSize(4, win));
@@ -474,6 +474,7 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
     // render two bitmaps: checked and unchecked
     int size = ::clGetSize(16, sci);
     const StyleProperty& styleProperty = lexer->GetProperty(0);
+
     wxColour bgColour = styleProperty.GetBgColour();
     wxColour fgColour = lexer->IsDark() ? *wxYELLOW : *wxBLACK;
     {
@@ -485,14 +486,7 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
         RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, true);
         memDC.SelectObject(wxNullBitmap); // Apply the changes
     }
-    //{
-    //    wxMemoryDC memDC;
-    //    m_bmpUnchecked = wxBitmap(size, size);
-    //    memDC.SelectObject(m_bmpUnchecked);
-    //    wxGCDC gcdc(memDC);
-    //    wxRect rect(0, 0, size, size);
-    //    RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, false);
-    //    memDC.SelectObject(wxNullBitmap); // Apply the changes
-    //}
+    sci->SetMarginWidth(3, clGetSize(1, sci)); // separator margin
+    sci->SetMarginBackground(3, lexer->IsDark() ? bgColour.ChangeLightness(130) : bgColour.ChangeLightness(50));
     sci->MarkerDefineBitmap(7, m_bmpChecked);
 }

@@ -1,9 +1,9 @@
 #include "ColoursAndFontsManager.h"
 #include "clFindResultsStyler.h"
 #include "editor_config.h"
+#include "globals.h"
 #include "lexer_configuration.h"
 #include "optionsconfig.h"
-#include "globals.h"
 
 clFindResultsStyler::clFindResultsStyler()
     : m_stc(NULL)
@@ -92,19 +92,25 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 #endif
     sci->IndicatorSetUnder(1, true);
 
-    sci->SetMarginWidth(0, 0);
-    sci->SetMarginWidth(1, ::clGetSize(16, sci));
-    sci->SetMarginWidth(2, 0);
-    sci->SetMarginWidth(3, 0);
+    sci->SetMarginWidth(0, 0);                    // line numbers
+    sci->SetMarginWidth(1, ::clGetSize(16, sci)); // symbols margin
+    sci->SetMarginWidth(2, 0);                    // folding margin
+    sci->SetMarginWidth(3, 0);                    // separator margin
+    sci->SetMarginType(3, wxSTC_MARGIN_FORE);
+    sci->SetMarginMask(3, 0);
+
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
     sci->HideSelection(true);
-
+    sci->SetMarginBackground(3, *wxBLACK);
     // Indentation
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     sci->SetUseTabs(options->GetIndentUsesTabs());
     sci->SetTabWidth(options->GetIndentWidth());
     sci->SetIndent(options->GetIndentWidth());
+    for(int i = 0; i <= wxSTC_MAX_MARGIN; ++i) {
+        sci->SetMarginCursor(i, wxSTC_CURSORARROW);
+    }
     sci->Refresh();
 }
 

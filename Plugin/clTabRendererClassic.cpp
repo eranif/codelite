@@ -82,7 +82,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
 
     wxFont font = GetTabFont(false);
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.markerColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 
     // Draw the tab rectangle

@@ -33,7 +33,7 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
 
     wxFont font = GetTabFont(false);
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
+    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.markerColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
 
     if(style & kNotebook_BottomTabs) {

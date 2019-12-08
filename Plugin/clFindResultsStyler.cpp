@@ -102,13 +102,15 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
     sci->HideSelection(true);
+#if wxCHECK_VERSION(3, 1, 0)
     sci->SetMarginBackground(3, *wxBLACK);
+#endif
     // Indentation
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     sci->SetUseTabs(options->GetIndentUsesTabs());
     sci->SetTabWidth(options->GetIndentWidth());
     sci->SetIndent(options->GetIndentWidth());
-    for(int i = 0; i <= wxSTC_MAX_MARGIN; ++i) {
+    for(int i = 0; i <= 4; ++i) { // there are 5 margins defined from 0 -> 4 (including)
         sci->SetMarginCursor(i, wxSTC_CURSORARROW);
     }
     sci->Refresh();

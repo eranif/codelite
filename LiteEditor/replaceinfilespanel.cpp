@@ -486,7 +486,11 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
         RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, true);
         memDC.SelectObject(wxNullBitmap); // Apply the changes
     }
+#if wxCHECK_VERSION(3, 1, 0)
     sci->SetMarginWidth(3, clGetSize(1, sci)); // separator margin
     sci->SetMarginBackground(3, lexer->IsDark() ? bgColour.ChangeLightness(130) : bgColour.ChangeLightness(50));
+#else
+    sci->SetMarginWidth(3, 0); // separator margin
+#endif
     sci->MarkerDefineBitmap(7, m_bmpChecked);
 }

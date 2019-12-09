@@ -63,7 +63,7 @@ void ChildProcess::Write(const std::string& message)
 #if USE_IPROCESS
     m_process->WriteRaw(message);
 #else
-    m_childProcess->Write(FileUtils::ToStdString(message));
+    m_childProcess->Write(message);
 #endif
 }
 

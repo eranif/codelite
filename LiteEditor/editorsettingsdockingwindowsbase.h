@@ -59,7 +59,6 @@ protected:
     wxChoice* m_choiceOutputTabsOrientation;
     wxStaticLine* m_staticLine61;
     wxCheckBox* m_checkBoxShowXButton;
-    wxCheckBox* m_checkBoxEditorTabsFollowsTheme;
     wxCheckBox* m_checkBoxMouseScrollSwitchTabs;
     wxCheckBox* m_checkBoxSortTabsDropdownAlphabetically;
     wxCheckBox* m_checkBoxEnableTabSwitchingKey;
@@ -109,7 +108,6 @@ public:
     wxChoice* GetChoiceOutputTabsOrientation() { return m_choiceOutputTabsOrientation; }
     wxStaticLine* GetStaticLine61() { return m_staticLine61; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
-    wxCheckBox* GetCheckBoxEditorTabsFollowsTheme() { return m_checkBoxEditorTabsFollowsTheme; }
     wxCheckBox* GetCheckBoxMouseScrollSwitchTabs() { return m_checkBoxMouseScrollSwitchTabs; }
     wxCheckBox* GetCheckBoxSortTabsDropdownAlphabetically() { return m_checkBoxSortTabsDropdownAlphabetically; }
     wxCheckBox* GetCheckBoxEnableTabSwitchingKey() { return m_checkBoxEnableTabSwitchingKey; }

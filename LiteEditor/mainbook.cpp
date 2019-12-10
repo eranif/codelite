@@ -1123,33 +1123,26 @@ void MainBook::DoUpdateNotebookTheme()
 {
     size_t initialStyle = m_book->GetStyle();
     size_t style = m_book->GetStyle();
-    if(EditorConfigST::Get()->GetOptions()->IsTabColourMatchesTheme()) {
-        // Update theme
-        IEditor* editor = GetActiveEditor();
-        if(editor) {
-            wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-            if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
-                style &= ~kNotebook_LightTabs;
-                style |= kNotebook_DarkTabs;
-            } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
-                style &= ~kNotebook_DarkTabs;
-                style |= kNotebook_LightTabs;
-            }
+    
+    // Update colours
+    IEditor* editor = GetActiveEditor();
+    if(editor) {
+        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
+        if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
+            style &= ~kNotebook_LightTabs;
+            style |= kNotebook_DarkTabs;
+        } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
+            style &= ~kNotebook_DarkTabs;
+            style |= kNotebook_LightTabs;
         }
-    } else if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        style &= ~kNotebook_LightTabs;
-        style |= kNotebook_DarkTabs;
-    } else {
-        style &= ~kNotebook_DarkTabs;
-        style |= kNotebook_LightTabs;
     }
-
+    
+    // Close button
     if(!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style &= ~(kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
     } else {
         style |= (kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);
     }
-
     if(initialStyle != style) { m_book->SetStyle(style); }
 }
 

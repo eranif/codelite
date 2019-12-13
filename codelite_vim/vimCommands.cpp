@@ -25,10 +25,16 @@ VimCommand::VimCommand(IManager* m_mgr)
     , m_tmpbuf()
     , m_searchWord()
     , m_newLineCopy(false)
+    , m_visualBlockCopy(false)
     , m_repeatCommand(false)
     , m_saveCommand(true)
     , m_message_ID(MESSAGES_VIM::NO_ERROR_VIM_MSG)
     , m_initialVisualPos(0)
+    , m_visualBlockBeginLine(0)
+    , m_visualBlockEndLine(0)
+    , m_visualBlockBeginCol(0)
+    , m_visualBlockEndCol(0)
+    
 {
     m_ctrl = NULL; /*FIXME: check it*/
     this->m_mgr = m_mgr;
@@ -70,6 +76,7 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
         break;
     case VIM_MODI::VISUAL_MODUS:
     case VIM_MODI::VISUAL_LINE_MODUS:
+    case VIM_MODI::VISUAL_BLOCK_MODUS:
         visual_modus(ch);
         skip_event = false;
         break;
@@ -87,7 +94,43 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
  */
 bool VimCommand::OnEscapeDown()
 {
-
+    if (m_currentModus == VIM_MODI::INSERT_MODUS) {
+        if (m_commandID == COMMANDVI::block_I || m_commandID == COMMANDVI::block_A) {
+            int begin_line = m_visualBlockBeginLine;
+            int end_line = m_visualBlockEndLine;
+            int begin_col = m_visualBlockBeginCol;
+            int end_col = m_visualBlockEndCol;
+            
+            if (end_line < begin_line) {std::swap(end_line, begin_line);}
+            if (begin_col > end_col) {std::swap(begin_col, end_col);}
+            
+            
+            int col = begin_col;
+            if (m_commandID == COMMANDVI::block_A) {col = end_col + 1;}
+            m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, col));
+            for (int line = begin_line; line <= end_line; ) {
+                int pos = m_ctrl->GetCurrentPos();
+                if (line != begin_line) {
+                    m_ctrl->InsertText(pos, m_tmpbuf);
+                    m_ctrl->GotoPos(pos);
+                }
+                if (++line > end_line) {
+                    break;
+                }
+                m_ctrl->LineDown();
+                int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+                while (curCol > col) {
+                    m_ctrl->CharLeft();
+                    --curCol;
+                }
+                while (curCol < col) {
+                    ++curCol;
+                    m_ctrl->AddText(" ");
+                }
+            }
+            m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, col));
+        }
+    }
     m_currentCommandPart = COMMAND_PART::REPEAT_NUM;
     m_currentModus = VIM_MODI::NORMAL_MODUS;
     m_tmpbuf.Clear();
@@ -325,7 +368,8 @@ bool VimCommand::Command_call()
 
     if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
     if(m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) { return command_call_visual_line_mode(); }
-
+    if(m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) { return command_call_visual_block_mode(); }
+    
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
@@ -595,7 +639,41 @@ bool VimCommand::Command_call()
         m_ctrl->NewLine();
         m_ctrl->LineUp();
         break;
-
+    case COMMANDVI::block_I: {
+        m_visualBlockBeginLine = m_ctrl->LineFromPosition(m_initialVisualPos);
+        m_visualBlockEndLine = m_ctrl->LineFromPosition(m_ctrl->GetCurrentPos());
+        m_visualBlockBeginCol = m_ctrl->GetColumn(m_initialVisualPos);
+        m_visualBlockEndCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        
+        int begin_line = m_visualBlockBeginLine;
+        int end_line = m_visualBlockEndLine;
+        int begin_col = m_visualBlockBeginCol;
+        int end_col = m_visualBlockEndCol;
+        
+        if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        if (begin_col > end_col) {std::swap(begin_col, end_col);}
+        m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, begin_col));
+    } break;
+    case COMMANDVI::block_A: {
+        m_visualBlockBeginLine = m_ctrl->LineFromPosition(m_initialVisualPos);
+        m_visualBlockEndLine = m_ctrl->LineFromPosition(m_ctrl->GetCurrentPos());
+        m_visualBlockBeginCol = m_ctrl->GetColumn(m_initialVisualPos);
+        m_visualBlockEndCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        
+        int begin_line = m_visualBlockBeginLine;
+        int end_line = m_visualBlockEndLine;
+        int begin_col = m_visualBlockBeginCol;
+        int end_col = m_visualBlockEndCol;
+        
+        if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        if (begin_col > end_col) {std::swap(begin_col, end_col);}
+        m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, end_col + 1));
+        int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        while (curCol <= end_col) {
+            ++curCol;
+            m_ctrl->AddText(" ");
+        }
+    } break;
     /*=============== VISUAL MODE ===============*/
     case COMMANDVI::v:
         m_currentModus = VIM_MODI::VISUAL_MODUS;
@@ -614,7 +692,13 @@ bool VimCommand::Command_call()
         );
 
     } break;
-
+    
+    case COMMANDVI::ctrl_V: {
+        m_currentModus = VIM_MODI::VISUAL_BLOCK_MODUS;
+        this->m_tmpbuf.Clear();
+        this->m_initialVisualPos = this->m_ctrl->GetCurrentPos();
+    } break;
+    
     case COMMANDVI::perc: {
         long pos_matching = goToMatchingParentesis(m_ctrl->GetCurrentPos());
         if(pos_matching != -1)
@@ -657,7 +741,7 @@ bool VimCommand::Command_call()
         this->m_tmpbuf.Clear();
         m_ctrl->DelLineRight();
         break;
-    case COMMANDVI::cV: {
+    case COMMANDVI::c_caret: {
         this->m_tmpbuf.Clear();
         int pos_init_cV = m_ctrl->GetCurrentPos();
         m_ctrl->Home();
@@ -696,7 +780,7 @@ bool VimCommand::Command_call()
         m_ctrl->WordLeft();
         m_ctrl->DelWordRight();
         break;
-    case COMMANDVI::ci34: {
+    case COMMANDVI::ci_quot: {
         this->m_tmpbuf.Clear();
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
@@ -709,7 +793,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::ci39: {
+    case COMMANDVI::ci_apos: {
         this->m_tmpbuf.Clear();
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
@@ -722,7 +806,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::ci40: {
+    case COMMANDVI::ci_pare: {
         this->m_tmpbuf.Clear();
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
@@ -735,7 +819,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::ci60: {
+    case COMMANDVI::ci_lt: {
         this->m_tmpbuf.Clear();
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
@@ -748,7 +832,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::ci91: {
+    case COMMANDVI::ci_square: {
         this->m_tmpbuf.Clear();
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
@@ -761,7 +845,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::ci123: {
+    case COMMANDVI::ci_curly: {
         this->m_tmpbuf.Clear();
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
@@ -830,6 +914,7 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(get_text_at_position(kFromPosToEndWord));
             if(is_space_following()) m_listCopiedStr.push_back(add_following_spaces());
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
             m_ctrl->DelWordRight();
         }
     } break;
@@ -847,6 +932,7 @@ bool VimCommand::Command_call()
         }
         repeat_command = false;
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::de: {
         int repeat_de = std::max(1, m_actions);
@@ -858,6 +944,7 @@ bool VimCommand::Command_call()
         } // last only the end of the word!
         m_listCopiedStr.push_back(get_text_at_position(kFromPosToEndWord));
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
         m_ctrl->DelWordRightEnd();
     } break;
     case COMMANDVI::dd: {
@@ -874,7 +961,7 @@ bool VimCommand::Command_call()
     case COMMANDVI::d$:
         m_ctrl->DelLineRight();
         break;
-    case COMMANDVI::dV: {
+    case COMMANDVI::d_caret: {
         int pos_init_cV = m_ctrl->GetCurrentPos();
         m_ctrl->Home();
         if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
@@ -888,13 +975,32 @@ bool VimCommand::Command_call()
         }
         break;
     }
-
+    case COMMANDVI::dgg:
+    case COMMANDVI::dG: {
+        int begin_line = m_ctrl->GetCurrentLine();
+        int end_line = std::max(0, m_ctrl->GetLineCount() - 1);
+        if (m_commandID == COMMANDVI::dgg) {
+            end_line = 0;
+        }
+        if (m_actions > 0) {
+            end_line = std::min(m_actions - 1, m_ctrl->GetLineCount() - 1);
+        }
+        if (begin_line > end_line) {std::swap(begin_line, end_line);}
+        
+        m_ctrl->GotoLine(begin_line);
+        for(int i = begin_line; i <= end_line; ++i) {
+            this->m_listCopiedStr.push_back(m_ctrl->GetCurLine());
+            m_ctrl->LineDelete();
+        }
+    } break;
+    
+    
     case COMMANDVI::daw:
         m_ctrl->CharRight();
         m_ctrl->WordLeft();
         m_ctrl->DelWordRight();
         break;
-    case COMMANDVI::di34: {
+    case COMMANDVI::di_quot: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -906,7 +1012,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::di39: {
+    case COMMANDVI::di_apos: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -918,7 +1024,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::di40: {
+    case COMMANDVI::di_pare: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -930,7 +1036,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::di60: {
+    case COMMANDVI::di_lt: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -942,7 +1048,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::di91: {
+    case COMMANDVI::di_square: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -954,7 +1060,7 @@ bool VimCommand::Command_call()
         }
         break;
     }
-    case COMMANDVI::di123: {
+    case COMMANDVI::di_curly: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -986,6 +1092,7 @@ bool VimCommand::Command_call()
         m_ctrl->CharLeft();
         //m_ctrl->CharRight();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::yb: {
         int pos_init_yb = m_ctrl->GetCurrentPos();
@@ -1000,6 +1107,7 @@ bool VimCommand::Command_call()
         m_ctrl->CharLeft();
         //m_ctrl->CharRight();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::ye: {
         int pos_init_ye = m_ctrl->GetCurrentPos();
@@ -1014,6 +1122,7 @@ bool VimCommand::Command_call()
         m_ctrl->CharLeft();
         //m_ctrl->CharRight();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::yy: {
         int position_init_yy = m_ctrl->GetCurrentPos();
@@ -1039,6 +1148,7 @@ bool VimCommand::Command_call()
         m_ctrl->SetCurrentPos(pos_init_yw);
         m_ctrl->CharLeft();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::y$: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
@@ -1050,8 +1160,9 @@ bool VimCommand::Command_call()
         m_ctrl->SetCurrentPos(pos_init_yw);
         m_ctrl->CharLeft();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
     } break;
-    case COMMANDVI::yV: {
+    case COMMANDVI::y_caret: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
         int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->Home();
@@ -1063,8 +1174,29 @@ bool VimCommand::Command_call()
         m_ctrl->SetCurrentPos(pos_init_yw);
         m_ctrl->CharLeft();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
     }
+    case COMMANDVI::ygg:
+    case COMMANDVI::yG: {
+        int pos = m_ctrl->GetCurrentPos();
+        int begin_line = m_ctrl->GetCurrentLine();
+        int end_line = std::max(0, m_ctrl->GetLineCount() - 1);
+        if (m_commandID == COMMANDVI::ygg) {
+            end_line = 0;
+        }
+        if (m_actions > 0) {
+            end_line = std::min(m_actions - 1, m_ctrl->GetLineCount() - 1);
+        }
+        if (begin_line > end_line) {std::swap(begin_line, end_line);}
+        
+        m_ctrl->GotoLine(begin_line);
+        for(int i = begin_line; i <= end_line; ++i) {
+            this->m_listCopiedStr.push_back(m_ctrl->GetCurLine());
+            m_ctrl->LineDown();
+        }
+        m_ctrl->GotoPos(pos);
+    } break;
     case COMMANDVI::yaw: {
         int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->CharRight();
@@ -1077,9 +1209,10 @@ bool VimCommand::Command_call()
         m_ctrl->SetCurrentPos(pos_init_yw);
         m_ctrl->CharLeft();
         m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
     }
-    case COMMANDVI::yi34: {
+    case COMMANDVI::yi_quot: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -1089,10 +1222,11 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
-    case COMMANDVI::yi39: {
+    case COMMANDVI::yi_apos: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -1102,10 +1236,11 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
-    case COMMANDVI::yi40: {
+    case COMMANDVI::yi_pare: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -1115,10 +1250,11 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
-    case COMMANDVI::yi60: {
+    case COMMANDVI::yi_lt: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
@@ -1128,10 +1264,11 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
-    case COMMANDVI::yi91: {
+    case COMMANDVI::yi_square: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -1141,10 +1278,11 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
-    case COMMANDVI::yi123: {
+    case COMMANDVI::yi_curly: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
@@ -1154,6 +1292,7 @@ bool VimCommand::Command_call()
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             repeat_command = false;
             m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
@@ -1192,6 +1331,7 @@ bool VimCommand::Command_call()
 
     /*=============================== PASTE =========================*/
     case COMMANDVI::p: { /*FIXME CharLeft goes the previous line if at position 0!*/
+        bool isLineEnd = false;
         this->m_saveCommand = false;
         if(this->m_newLineCopy) {
             m_ctrl->LineEnd();
@@ -1209,11 +1349,39 @@ bool VimCommand::Command_call()
                 }
             }
         } else {
+            int line = m_ctrl->GetCurrentLine();
             m_ctrl->CharRight();
+            if (m_ctrl->GetCurrentLine() != line) {
+                m_ctrl->CharLeft();
+                isLineEnd = true;
+            }
         }
         int currentLine = this->m_ctrl->GetCurrentLine();
-        int repeat = std::max(1, m_actions) ;
-        for(int i = 0; i < repeat; ++i) {
+        if (m_visualBlockCopy) {
+            int col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+            int startPos = m_ctrl->GetCurrentPos();
+            for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
+                yanked != this->m_listCopiedStr.end();) {
+                int pos = m_ctrl->GetCurrentPos();
+                m_ctrl->AddText(*yanked);
+                m_ctrl->GotoPos(pos);
+                if (++yanked == m_listCopiedStr.end()) {
+                    break;
+                }
+                if (m_ctrl->GetCurrentLine() + 1 == m_ctrl->GetLineCount()) {
+                    m_ctrl->LineEnd();
+                    m_ctrl->NewLine();
+                } else {
+                    m_ctrl->LineDown();
+                }
+                int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+                while (curCol < col) {
+                    curCol++;
+                    m_ctrl->AddText(" ");
+                }
+            }
+            m_ctrl->GotoPos((isLineEnd)? startPos: std::max(0, startPos - 1));
+        } else {
             for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
                 yanked != this->m_listCopiedStr.end(); ++yanked) {
                 m_ctrl->AddText(*yanked);
@@ -1242,9 +1410,33 @@ bool VimCommand::Command_call()
                 }
             }
         }
+        
         int currentLine = this->m_ctrl->GetCurrentLine();
-        int repeat = std::max(1, m_actions);
-        for(int i = 0; i < repeat; ++i) {
+        if (m_visualBlockCopy) {
+            int col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+            int startPos = m_ctrl->GetCurrentPos();
+            for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
+                yanked != this->m_listCopiedStr.end();) {
+                int pos = m_ctrl->GetCurrentPos();
+                m_ctrl->AddText(*yanked);
+                m_ctrl->GotoPos(pos);
+                if (++yanked == m_listCopiedStr.end()) {
+                    break;
+                }
+                if (m_ctrl->GetCurrentLine() + 1 == m_ctrl->GetLineCount()) {
+                    m_ctrl->LineEnd();
+                    m_ctrl->NewLine();
+                } else {
+                    m_ctrl->LineDown();
+                }
+                int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+                while (curCol < col) {
+                    curCol++;
+                    m_ctrl->AddText(" ");
+                }
+            }
+            m_ctrl->GotoPos(startPos);
+        } else {
             for(std::vector<wxString>::iterator yanked = this->m_listCopiedStr.begin();
                 yanked != this->m_listCopiedStr.end(); ++yanked) {
                 m_ctrl->AddText(*yanked);
@@ -1533,6 +1725,7 @@ bool VimCommand::Command_call_visual_mode()
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
         m_currentModus = VIM_MODI::NORMAL_MODUS;
         this->m_newLineCopy = false;
+        m_visualBlockCopy = false;
 
         if(this->m_commandID != COMMANDVI::y) {
             m_ctrl->DeleteBack();        /*? better use Clear()*/
@@ -1633,6 +1826,7 @@ bool VimCommand::command_call_visual_line_mode()
         this->m_currentModus = VIM_MODI::NORMAL_MODUS;
         repeat_command = false;
         this->m_newLineCopy = true;
+        m_visualBlockCopy = false;
 
         if(this->m_commandID != COMMANDVI::y) {
             m_ctrl->DeleteBack();
@@ -1663,6 +1857,342 @@ bool VimCommand::command_call_visual_line_mode()
 
     return repeat_command;
 }
+
+
+bool VimCommand::command_call_visual_block_mode()
+{
+    bool repeat_command = true;
+    this->m_saveCommand = true;
+    switch(m_commandID) {
+    /*======= MOVEMENT ===========*/
+
+    case COMMANDVI::j:
+        m_ctrl->LineDown();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::k:
+        m_ctrl->LineUp();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::h:
+        m_ctrl->CharLeft();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::l:
+        m_ctrl->CharRight();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::H: {
+        int firstLine = m_ctrl->GetFirstVisibleLine();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine > firstLine; --curLine) {
+            m_ctrl->LineUp();
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::M: {
+        int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
+        int curLine = m_ctrl->GetCurrentLine();
+        if (curLine > medLine) {
+            for (; curLine > medLine; --curLine) {
+                m_ctrl->LineUp();
+            }
+        } else if (curLine < medLine) {
+            for (; curLine < medLine; ++curLine) {
+                m_ctrl->LineDown();
+            }
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::L: {
+        int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
+        int curLine = m_ctrl->GetCurrentLine();
+        for (; curLine < lastLine; ++curLine) {
+            m_ctrl->LineDown();
+        }
+        this->m_saveCommand = false;
+    } break;
+
+    case COMMANDVI::_0:
+        m_ctrl->Home();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::_$:
+        m_ctrl->LineEnd();
+        m_ctrl->CharLeft();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::_V:
+        m_ctrl->Home();
+        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
+            m_ctrl->WordRight();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::w:
+        m_ctrl->WordRight();
+        this->m_saveCommand = false;
+        break;
+    case COMMANDVI::W: {
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if(!single_word) {
+            bool next_is_space = is_space_following();
+            while(!next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            m_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::b:
+        m_ctrl->WordLeft();
+        this->m_saveCommand = false;
+        break;
+    /*FIXME*/
+    case COMMANDVI::B: {
+        m_ctrl->WordLeft();
+        bool prev_is_space = is_space_preceding(false, true);
+        while(!prev_is_space) {
+            m_ctrl->WordLeft();
+            prev_is_space = is_space_preceding(false, true);
+        }
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::e: {
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if(pos >= end - 1) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while(m_ctrl->GetCharAt(end + i) == ' ') {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos(end - 1);
+        this->m_saveCommand = false;
+        break;
+    }
+    case COMMANDVI::E: {
+        bool single_word = is_space_following();
+        m_ctrl->WordRight();
+        if(!single_word) {
+            bool next_is_space = is_space_following();
+            while(!next_is_space) {
+                m_ctrl->WordRight();
+                next_is_space = is_space_following();
+            }
+            // m_ctrl->WordRight();
+        }
+        /*FIME - is a sequence of white space rightly jumped?*/
+        this->m_saveCommand = false;
+
+        long pos = m_ctrl->GetCurrentPos();
+        long end = m_ctrl->WordEndPosition(pos, false);
+        if(pos == end - 1) {
+            m_ctrl->WordRight();
+            long i = 1;
+            pos = m_ctrl->GetCurrentPos();
+            end = m_ctrl->WordEndPosition(pos, false);
+            while(m_ctrl->GetCharAt(end + i) == ' ') {
+                i++;
+                end = m_ctrl->WordEndPosition(pos + i, false);
+            }
+        }
+        m_ctrl->GotoPos(end - 1);
+
+        break;
+    }
+    case COMMANDVI::F: {
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
+            if(cur_char == '\n') {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if(eoline != true) m_ctrl->GotoPos(pos - i);
+    } break;
+    case COMMANDVI::f: {
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
+            if(cur_char == '\n') {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if(eoline != true) m_ctrl->GotoPos(pos + i);
+    } break;
+    case COMMANDVI::T: {
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
+            if(cur_char == '\n') {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if(eoline != true) m_ctrl->GotoPos(pos - i + 1);
+    } break;
+    case COMMANDVI::t: {
+        long i = 1;
+        long pos = m_ctrl->GetCurrentPos();
+        bool eoline = false;
+        char cur_char;
+        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
+            if(cur_char == '\n') {
+                eoline = true;
+                break;
+            }
+            ++i;
+        }
+        if(eoline != true) m_ctrl->GotoPos(pos + i - 1);
+    } break;
+    case COMMANDVI::ctrl_D: {
+        int lines = m_ctrl->LinesOnScreen() / 2;
+        m_ctrl->SetFirstVisibleLine(std::min(m_ctrl->GetLineCount(), m_ctrl->GetFirstVisibleLine() + lines));
+        m_ctrl->MoveCaretInsideView();
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::ctrl_U: {
+        int lines = m_ctrl->LinesOnScreen() / 2;
+        m_ctrl->SetFirstVisibleLine(std::max(0, m_ctrl->GetFirstVisibleLine() - lines));
+        m_ctrl->MoveCaretInsideView();
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::G: /*====== START G =======*/
+        this->m_saveCommand = false;
+        switch(m_repeat) {
+        case 0:
+            m_ctrl->DocumentEnd();
+            break;
+        case 1:
+            m_ctrl->DocumentStart();
+            break;
+        default:
+            m_ctrl->GotoLine(m_repeat - 1);
+            break;
+        }
+        break;          /*~~~~~~~ END G ~~~~~~~~*/
+    case COMMANDVI::gg: /*====== START G =======*/
+        this->m_saveCommand = false;
+        if(m_repeat == 0) { m_repeat = 1; }
+        m_ctrl->GotoLine(m_repeat - 1);
+        repeat_command = false;
+        break;
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    
+    case COMMANDVI::r: {
+        int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
+        int end_line = m_ctrl->GetCurrentLine();
+        int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
+        int end_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        
+        for (int line = begin_line; line <= end_line; ++line) {
+            int start = m_ctrl->FindColumn(line, begin_col);
+            int end = m_ctrl->FindColumn(line, end_col);
+            if (start > end) {std::swap(start, end);}
+            if (m_ctrl->GetCharAt(end) == '\r' || m_ctrl->GetCharAt(end) == '\n') {--end;}
+            if (end >= start) {
+                wxString str(m_actionCommand, end - start + 1);
+                m_ctrl->Replace(start, end + 1, str);
+            }
+        }
+        m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, begin_col));
+        
+        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
+    } break;
+    
+    /*========== DELETE AND COPY =======================*/
+
+    case COMMANDVI::d:
+    case COMMANDVI::x:
+    case COMMANDVI::y: {
+        int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
+        int end_line = m_ctrl->GetCurrentLine();
+        int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
+        int end_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        
+        for (int line = begin_line; line <= end_line; ++line) {
+            int start = m_ctrl->FindColumn(line, begin_col);
+            int end = m_ctrl->FindColumn(line, end_col);
+            if (start > end) {std::swap(start, end);}
+            wxString str = m_ctrl->GetTextRange(start, end + 1);
+            while(!str.IsEmpty()) {
+                if (str.Last() == '\r' || str.Last() == '\n') {
+                    str.RemoveLast();
+                } else {
+                    break;
+                }
+            }
+            m_listCopiedStr.push_back(str);
+        }
+        
+        if(this->m_commandID != COMMANDVI::y) {
+            for (int line = end_line; line >= begin_line; --line) {
+                int start = m_ctrl->FindColumn(line, begin_col);
+                int end = m_ctrl->FindColumn(line, end_col);
+                if (start > end) {std::swap(start, end);}
+                m_ctrl->DeleteRange(start, end - start + 1);
+            }
+        }
+        
+        
+        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
+        this->m_newLineCopy = false;
+        m_visualBlockCopy = true;
+
+    }break;
+    default:
+        break;
+    }
+    
+    m_ctrl->SetIndicatorCurrent(VISUAL_BLOCK_INDICATOR);
+    m_ctrl->IndicatorClearRange(0, m_ctrl->GetLength());
+    
+    if (m_currentModus != VIM_MODI::VISUAL_BLOCK_MODUS) {
+        return repeat_command;
+    }
+    
+    int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
+    int end_line = m_ctrl->GetCurrentLine();
+    int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
+    int end_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+    if (end_line < begin_line) {std::swap(end_line, begin_line);}
+    begin_line = std::max(begin_line, m_ctrl->GetFirstVisibleLine());
+    end_line = std::min(end_line, m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen());
+        
+    for (int line = begin_line; line <= end_line; ++line) {
+        int start = m_ctrl->FindColumn(line, begin_col);
+        int end = m_ctrl->FindColumn(line, end_col);
+        if (start > end) {std::swap(start, end);}
+        m_ctrl->IndicatorFillRange(start, end - start + 1);
+    }
+    
+    return repeat_command;
+}
+
 
 wxString VimCommand::get_text_at_position(VimCommand::eTypeTextSearch typeTextToSearch)
 {
@@ -1853,6 +2383,7 @@ bool VimCommand::is_cmd_complete()
 
     bool command_complete = false;
     bool possible_command = false;
+    VIM_MODI currentModus = m_currentModus;
     switch(m_baseCommand) {
 
         /*========================== MOVEMENT =========================*/
@@ -1985,7 +2516,11 @@ bool VimCommand::is_cmd_complete()
             break;
         case 'I':
             possible_command = true;
-            m_commandID = COMMANDVI::I;
+            if (m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
+                m_commandID = COMMANDVI::block_I;
+            } else {
+                m_commandID = COMMANDVI::I;
+            }
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
             m_repeat = 1;
@@ -2000,7 +2535,11 @@ bool VimCommand::is_cmd_complete()
             break;
         case 'A':
             possible_command = true;
-            m_commandID = COMMANDVI::A;
+            if (m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
+                m_commandID = COMMANDVI::block_A;
+            } else {
+                m_commandID = COMMANDVI::A;
+            }
             m_currentModus = VIM_MODI::INSERT_MODUS;
             command_complete = true;
             m_repeat = 1;
@@ -2031,7 +2570,12 @@ bool VimCommand::is_cmd_complete()
         break;
     case 'V':
         possible_command = true;
-        this->m_commandID = COMMANDVI::V;
+        if(this->m_modifierKey == wxMOD_CONTROL) {
+            this->m_commandID = COMMANDVI::ctrl_V;
+        } else {
+            this->m_commandID = COMMANDVI::V;
+        }
+        
         command_complete = true;
         this->m_repeat = 1;
         break;
@@ -2091,7 +2635,7 @@ bool VimCommand::is_cmd_complete()
             break;
         case '^':
             command_complete = true;
-            m_commandID = COMMANDVI::cV;
+            m_commandID = COMMANDVI::c_caret;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '$':
@@ -2129,41 +2673,41 @@ bool VimCommand::is_cmd_complete()
         case '\"':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci34;
+            m_commandID = COMMANDVI::ci_quot;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '\'':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci39;
+            m_commandID = COMMANDVI::ci_apos;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '{':
         case '}':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci123;
+            m_commandID = COMMANDVI::ci_curly;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '[':
         case ']':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci91;
+            m_commandID = COMMANDVI::ci_square;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '(':
         case ')':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci40;
+            m_commandID = COMMANDVI::ci_pare;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case '<':
         case '>':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::ci60;
+            m_commandID = COMMANDVI::ci_lt;
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         }
@@ -2183,6 +2727,7 @@ bool VimCommand::is_cmd_complete()
         break;
     case 'x':
         this->m_newLineCopy = false;
+        m_visualBlockCopy = false;
         this->m_listCopiedStr.clear();
         possible_command = true;
         command_complete = true;
@@ -2190,6 +2735,7 @@ bool VimCommand::is_cmd_complete()
         break;
     case 'X':
         this->m_newLineCopy = false;
+        m_visualBlockCopy = false;
         this->m_listCopiedStr.clear();
         possible_command = true;
         command_complete = true;
@@ -2200,7 +2746,8 @@ bool VimCommand::is_cmd_complete()
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
-               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) {
+               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS ||
+               m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::d;
                 this->m_listCopiedStr.clear();
@@ -2209,13 +2756,14 @@ bool VimCommand::is_cmd_complete()
             }
             break;
         case '0':
+            if (m_actions != 0) break;
             command_complete = true;
             m_commandID = COMMANDVI::d0;
             this->m_listCopiedStr.clear();
             break;
         case '^':
             command_complete = true;
-            m_commandID = COMMANDVI::dV;
+            m_commandID = COMMANDVI::d_caret;
             break;
         case '$':
             command_complete = true;
@@ -2236,6 +2784,7 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::dd;
             this->m_listCopiedStr.clear();
             this->m_newLineCopy = true;
+            m_visualBlockCopy = false;
             break;
         case 'b':
             command_complete = true;
@@ -2247,40 +2796,52 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::de;
             this->m_listCopiedStr.clear();
             break;
-
+        case 'G':
+            command_complete = true;
+            m_commandID = COMMANDVI::dG;
+            this->m_listCopiedStr.clear();
+            this->m_newLineCopy = true;
+            break;
+        case 'g':
+            if (m_externalCommand != 'g') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::dgg;
+            this->m_listCopiedStr.clear();
+            this->m_newLineCopy = true;
+            break;
         case '\"':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di34;
+            m_commandID = COMMANDVI::di_quot;
             break;
         case '\'':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di39;
+            m_commandID = COMMANDVI::di_apos;
             break;
         case '{':
         case '}':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di123;
+            m_commandID = COMMANDVI::di_curly;
             break;
         case '[':
         case ']':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di91;
+            m_commandID = COMMANDVI::di_square;
             break;
         case '(':
         case ')':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di40;
+            m_commandID = COMMANDVI::di_pare;
             break;
         case '<':
         case '>':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::di60;
+            m_commandID = COMMANDVI::di_lt;
             break;
         }
 
@@ -2314,7 +2875,8 @@ bool VimCommand::is_cmd_complete()
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
-               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) {
+               m_currentModus == VIM_MODI::VISUAL_LINE_MODUS ||
+               m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
                 command_complete = true;
                 m_commandID = COMMANDVI::y;
                 this->m_listCopiedStr.clear();
@@ -2343,21 +2905,24 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::yy;
             this->m_listCopiedStr.clear();
             this->m_newLineCopy = true;
+            m_visualBlockCopy = false;
             break;
         case 'e':
             command_complete = true;
             m_commandID = COMMANDVI::ye;
             this->m_listCopiedStr.clear();
             this->m_newLineCopy = true;
+            m_visualBlockCopy = false;
             break;
         case '0':
+            if (m_actions != 0) break;
             command_complete = true;
             m_commandID = COMMANDVI::y0;
             this->m_listCopiedStr.clear();
             break;
         case '^':
             command_complete = true;
-            m_commandID = COMMANDVI::yV;
+            m_commandID = COMMANDVI::y_caret;
             this->m_listCopiedStr.clear();
             break;
         case '$':
@@ -2365,44 +2930,57 @@ bool VimCommand::is_cmd_complete()
             m_commandID = COMMANDVI::y$;
             this->m_listCopiedStr.clear();
             break;
+        case 'G':
+            command_complete = true;
+            m_commandID = COMMANDVI::yG;
+            this->m_listCopiedStr.clear();
+            this->m_newLineCopy = true;
+            break;
+        case 'g':
+            if (m_externalCommand != 'g') break;
+            command_complete = true;
+            m_commandID = COMMANDVI::ygg;
+            this->m_listCopiedStr.clear();
+            this->m_newLineCopy = true;
+            break;
         case '\"':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi34;
+            m_commandID = COMMANDVI::yi_quot;
             this->m_listCopiedStr.clear();
             break;
         case '\'':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi39;
+            m_commandID = COMMANDVI::yi_apos;
             this->m_listCopiedStr.clear();
             break;
         case '{':
         case '}':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi123;
+            m_commandID = COMMANDVI::yi_curly;
             this->m_listCopiedStr.clear();
             break;
         case '[':
         case ']':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi91;
+            m_commandID = COMMANDVI::yi_square;
             this->m_listCopiedStr.clear();
             break;
         case '(':
         case ')':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi40;
+            m_commandID = COMMANDVI::yi_pare;
             this->m_listCopiedStr.clear();
             break;
         case '<':
         case '>':
             if (m_externalCommand != 'i') break;
             command_complete = true;
-            m_commandID = COMMANDVI::yi60;
+            m_commandID = COMMANDVI::yi_lt;
             this->m_listCopiedStr.clear();
             break;
         }
@@ -2478,6 +3056,11 @@ bool VimCommand::is_cmd_complete()
         m_commandID = COMMANDVI::NO_COMMAND;
     }
 
+    if (currentModus == VIM_MODI::VISUAL_BLOCK_MODUS &&
+        m_currentModus != VIM_MODI::VISUAL_BLOCK_MODUS) {
+        m_ctrl->SetIndicatorCurrent(VISUAL_BLOCK_INDICATOR);
+        m_ctrl->IndicatorClearRange(0, m_ctrl->GetLength());
+    }
     return command_complete;
 }
 
@@ -2517,13 +3100,25 @@ void VimCommand::RepeatIssueCommand(wxString buf)
     m_ctrl->EndUndoAction();
 }
 
-void VimCommand::set_ctrl(wxStyledTextCtrl* ctrl) { m_ctrl = ctrl; }
+void VimCommand::set_ctrl(wxStyledTextCtrl* ctrl)
+{
+    m_ctrl = ctrl;
+    if (m_ctrl) {
+        m_ctrl->IndicatorSetUnder(VISUAL_BLOCK_INDICATOR, false);
+        m_ctrl->IndicatorSetForeground(VISUAL_BLOCK_INDICATOR, "RED");
+        m_ctrl->IndicatorSetAlpha(VISUAL_BLOCK_INDICATOR, 150);
+        m_ctrl->IndicatorSetStyle(VISUAL_BLOCK_INDICATOR, wxSTC_INDIC_BOX);
+    }
+}
 
 bool VimCommand::DeleteLastCommandChar()
 {
-    if(m_currentModus == VIM_MODI::COMMAND_MODUS || m_currentModus == VIM_MODI::SEARCH_MODUS) {
+    if(m_currentModus == VIM_MODI::COMMAND_MODUS ||
+        m_currentModus == VIM_MODI::SEARCH_MODUS) {
         m_tmpbuf.RemoveLast();
         return true;
+    } else if (m_currentModus == VIM_MODI::INSERT_MODUS) {
+        m_tmpbuf.RemoveLast();
     }
     return false;
 }

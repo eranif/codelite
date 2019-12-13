@@ -7,6 +7,8 @@
 #include <wx/stc/stc.h>
 //#include <wx/chartype.h>
 
+#define VISUAL_BLOCK_INDICATOR 13
+
 enum class COMMAND_PART {
     REPEAT_NUM,
     FIRST_CMD,
@@ -22,6 +24,7 @@ enum class VIM_MODI {
     INSERT_MODUS,
     VISUAL_MODUS,
     VISUAL_LINE_MODUS,
+    VISUAL_BLOCK_MODUS,
     COMMAND_MODUS,
     SEARCH_MODUS,
     SEARCH_CURR_MODUS,
@@ -67,8 +70,10 @@ enum class COMMANDVI {
     gg,
     i,
     I,
+    block_I,
     a,
     A,
+    block_A,
     o,
     O,
     perc,
@@ -79,15 +84,15 @@ enum class COMMANDVI {
     cb,
     ce,
     c0,
-    cV, /*c^*/
+    c_caret, /*c^*/
     c$,
     caw,
-    ci34, /*ci"*/
-    ci39, /*ci'*/
-    ci40, /*ci(*/
-    ci91, /*ci[*/
-    ci60, /*ci<*/
-    ci123,/*ci{*/
+    ci_quot, /*ci"*/
+    ci_apos, /*ci'*/
+    ci_pare, /*ci(*/
+    ci_square, /*ci[*/
+    ci_lt, /*ci<*/
+    ci_curly,/*ci{*/
     C,
     cc,
     S,
@@ -100,14 +105,16 @@ enum class COMMANDVI {
     de,
     d0,
     d$,
-    dV, /*d^*/
+    d_caret, /*d^*/
     daw,
-    di34, /*di"*/
-    di39, /*di'*/
-    di40, /*di(*/
-    di91, /*di[*/
-    di60, /*di<*/
-    di123,/*di{*/
+    di_quot, /*di"*/
+    di_apos, /*di'*/
+    di_pare, /*di(*/
+    di_square, /*di[*/
+    di_lt, /*di<*/
+    di_curly,/*di{*/
+    dG,
+    dgg,
     D,
     diesis,
     diesis_N,
@@ -126,17 +133,20 @@ enum class COMMANDVI {
     yb,
     ye,
     y0,
-    yV, /*y^*/
+    y_caret, /*y^*/
     y$,
     yaw,
-    yi34, /*yi"*/
-    yi39, /*yi'*/
-    yi40, /*yi(*/
-    yi91, /*yi[*/
-    yi60, /*yi<*/
-    yi123,/*yi{*/
+    yi_quot, /*yi"*/
+    yi_apos, /*yi'*/
+    yi_pare, /*yi(*/
+    yi_square, /*yi[*/
+    yi_lt, /*yi<*/
+    yi_curly,/*yi{*/
+    yG,
+    ygg,
     J,
     v,
+    ctrl_V,
     V
 };
 
@@ -250,6 +260,7 @@ public:
     bool Command_call();
     bool Command_call_visual_mode();
     bool command_call_visual_line_mode();
+    bool command_call_visual_block_mode();
     bool is_cmd_complete();
     void set_current_word(wxString word);
     void set_current_modus(VIM_MODI modus);
@@ -287,6 +298,13 @@ private:
     bool m_saveCommand;
     int m_initialVisualPos;  /*!< initial position of cursor when changing to visual mode*/
     int m_initialVisualLine; /*!< initial line which cursor is on when changing to visual line mode*/
+    
+    /* visual block insert */
+    int m_visualBlockBeginLine;
+    int m_visualBlockEndLine;
+    int m_visualBlockBeginCol;
+    int m_visualBlockEndCol;
+    
     /*~~~~~~~~ COMMAND ~~~~~~~~~*/
     int m_repeat;           /*!< number of repetition for the command */
     wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/
@@ -302,6 +320,7 @@ private:
     wxString m_tmpbuf;
     wxString m_searchWord;
     bool m_newLineCopy; /*!< take track if we copy/pase the complete line (dd,yy)*/
+    bool m_visualBlockCopy;
     std::vector<wxString> m_listCopiedStr;
 
     /*~~~~~~~ EDITOR ~~~~~~~~~*/

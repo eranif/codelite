@@ -85,6 +85,9 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
                 long pos = m_ctrl->GetCurrentPos();
                 m_ctrl->ClearSelections();
                 m_ctrl->GotoPos(pos);
+            } else if (m_currentCommand.get_current_modus() == VIM_MODI::VISUAL_BLOCK_MODUS) {
+                m_ctrl->SetIndicatorCurrent(VISUAL_BLOCK_INDICATOR);
+                m_ctrl->IndicatorClearRange(0, m_ctrl->GetLength());
             }
             skip_event = m_currentCommand.OnEscapeDown();
             break;
@@ -99,10 +102,15 @@ void VimManager::OnKeyDown(wxKeyEvent& event)
                 m_currentCommand.set_current_word(get_current_word());
                 m_currentCommand.set_current_modus(VIM_MODI::NORMAL_MODUS);
             }
+            skip_event = true;
             if (modifier_key == wxMOD_CONTROL && (ch == 'U' || ch == 'D')) {
                 OnCharEvt(event);
+            } else if (modifier_key == wxMOD_CONTROL && (ch == 'V')) {
+                OnCharEvt(event);
+                if (m_currentCommand.get_current_modus() != VIM_MODI::INSERT_MODUS) {
+                    skip_event = false;
+                }
             }
-            skip_event = true;
             break;
         }
 
@@ -174,6 +182,10 @@ void VimManager::updateMessageModus()
         m_mgr->GetStatusBar()->SetMessage("VISUAL LINE");
         if(status_vim->IsShown()) status_vim->Show(false);
         break;
+    case VIM_MODI::VISUAL_BLOCK_MODUS:
+        m_mgr->GetStatusBar()->SetMessage("VISUAL BLOCK");
+        if(status_vim->IsShown()) status_vim->Show(false);
+        break;
     case VIM_MODI::INSERT_MODUS:
         m_mgr->GetStatusBar()->SetMessage("INSERT");
         if(status_vim->IsShown()) status_vim->Show(false);
@@ -220,6 +232,7 @@ void VimManager::updateCarret()
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         break;
     case VIM_MODI::VISUAL_MODUS:
+    case VIM_MODI::VISUAL_BLOCK_MODUS:
         m_ctrl->SetCaretStyle(m_caretBlockStyle);
         break;
     case VIM_MODI::INSERT_MODUS:

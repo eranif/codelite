@@ -40,7 +40,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
     
     m_ccFont = lexer->GetFontForSyle(0, this);
-    m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
+    //m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
 

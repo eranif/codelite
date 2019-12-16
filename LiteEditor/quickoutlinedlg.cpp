@@ -173,7 +173,7 @@ void QuickOutlineDlg::DoFindNext()
     wxTreeItemId focusedItem = m_treeOutline->GetFocusedItem();
     CHECK_ITEM_RET(focusedItem);
 
-    wxTreeItemId nextItem = m_treeOutline->GetNextVisible(focusedItem);
+    wxTreeItemId nextItem = m_treeOutline->GetNextItem(focusedItem);
     if(!nextItem.IsOk()) { nextItem = focusedItem; }
 
     wxTreeItemId item = m_treeOutline->FindNext(nextItem, find_what, 0, wxTR_SEARCH_DEFAULT);
@@ -195,7 +195,7 @@ void QuickOutlineDlg::DoFindPrev()
     wxTreeItemId focusedItem = m_treeOutline->GetFocusedItem();
     CHECK_ITEM_RET(focusedItem);
 
-    wxTreeItemId prevItem = m_treeOutline->GetPrevVisible(focusedItem);
+    wxTreeItemId prevItem = m_treeOutline->GetPrevItem(focusedItem);
     if(!prevItem.IsOk()) { prevItem = focusedItem; }
 
     wxTreeItemId item = m_treeOutline->FindPrev(prevItem, find_what, 0, wxTR_SEARCH_DEFAULT);

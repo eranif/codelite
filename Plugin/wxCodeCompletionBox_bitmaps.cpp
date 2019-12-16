@@ -44,6 +44,6 @@ void wxC9ED9AInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/wxCodeCompletionBox_bitmaps.cpp$C__src_codelite_Plugin_wxCodeCompletionBox_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxCodeCompletionBox_bitmaps.cpp$C__src_codelite_Plugin_wxCodeCompletionBox_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/wxCodeCompletionBox_bitmaps.cpp$_home_ANT.AMAZON.COM_eifrah_devl_codelite_Plugin_wxCodeCompletionBox_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/wxCodeCompletionBox_bitmaps.cpp$_home_ANT.AMAZON.COM_eifrah_devl_codelite_Plugin_wxCodeCompletionBox_bitmaps.xrc"));
 }

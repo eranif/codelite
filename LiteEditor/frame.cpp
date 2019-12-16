@@ -1801,10 +1801,11 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
         if(editor->GetModify()) {
             // Ask user if he really wants to lose all changes
             wxString msg;
-            msg << editor->GetFileName().GetFullName() << _(" has been modified, reload file anyway?");
-            wxRichMessageDialog dlg(::wxGetTopLevelParent(editor), msg, _("Reload File"),
-                                    wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxICON_WARNING);
-            if(dlg.ShowModal() != wxID_YES) { return; }
+            msg << _("File '") << editor->GetFileName().GetFullName() << _("' is modified\nContinue with reload?");
+            if(::wxMessageBox(msg, _("Reload File"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) !=
+               wxYES) {
+                return;
+            }
         }
         editor->ReloadFromDisk(true);
     }
@@ -3322,17 +3323,17 @@ void clMainFrame::OnCompileFileProject(wxCommandEvent& e)
 
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     wxString projname = clCxxWorkspaceST::Get()->GetProjectFromFile(editor->GetFileName());
     CHECK_COND_RET(!projname.IsEmpty());
-    
+
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projname);
     CHECK_PTR_RET(p);
-    
+
     // Trigger the build
     wxCommandEvent eventBuild(wxEVT_CMD_BUILD_PROJECT_ONLY);
     eventBuild.SetString(p->GetName());
-    EventNotifier::Get()->QueueEvent(eventBuild.Clone()); 
+    EventNotifier::Get()->QueueEvent(eventBuild.Clone());
 }
 
 void clMainFrame::OnCompileFile(wxCommandEvent& e)

@@ -37,6 +37,8 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // Use the active editor's font (if any)
     //    IEditor* editor = clGetManager()->GetActiveEditor();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    
     m_ccFont = lexer->GetFontForSyle(0, this);
     m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetDefaultFont(m_ccFont);

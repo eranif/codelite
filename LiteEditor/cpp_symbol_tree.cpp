@@ -55,7 +55,7 @@ bool CppSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool noti
     // holds the key for searching the its corresponding
     // node in the m_tree data structure
     //-----------------------------------------------------
-    if(item.IsOk() == false) return false;
+    if(!item.IsOk()) { return false; }
 
     MyTreeItemData* itemData = static_cast<MyTreeItemData*>(GetItemData(item));
     if(!itemData) {
@@ -89,4 +89,10 @@ void CppSymbolTree::OnItemActivated(wxTreeEvent& event) { DoItemActivated(event.
 void CppSymbolTree::FindAndSelect(clEditor* editor, wxString& pattern, const wxString& name)
 {
     editor->FindAndSelectV(pattern, name);
+}
+
+void CppSymbolTree::ItemActivated()
+{
+    wxCommandEvent dummy;
+    DoItemActivated(GetFocusedItem(), dummy, true);
 }

@@ -25,8 +25,8 @@
 #ifndef LITEEDITOR_CPP_SYMBOL_TREE_H
 #define LITEEDITOR_CPP_SYMBOL_TREE_H
 
-#include "symbol_tree.h"
 #include "stack"
+#include "symbol_tree.h"
 
 extern const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED;
 
@@ -39,14 +39,16 @@ public:
     CppSymbolTree();
 
     /// Nothing special here, just call our parent constructor
-    CppSymbolTree(wxWindow* parent,
-                  const wxWindowID id,
-                  const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize,
-                  long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
+    CppSymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT | wxTR_HAS_BUTTONS);
 
     /// destructor
     virtual ~CppSymbolTree(){};
+    
+    /**
+     * @brief emulate user activated the selected item
+     */
+    void ItemActivated();
 
 protected:
     virtual void OnItemActivated(wxTreeEvent& event);

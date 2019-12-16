@@ -28,10 +28,11 @@
 
 #include <wx/wx.h>
 
+#include "wx/timer.h"
 #include <wx/statline.h>
 #include <wx/treectrl.h>
-#include "wx/timer.h"
 
+class wxTextCtrl;
 class CppSymbolTree;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,21 +45,20 @@ class QuickOutlineDlg : public wxDialog
 protected:
     wxStaticLine* m_staticline1;
     CppSymbolTree* m_treeOutline;
+    wxTextCtrl* m_searchCtrl = nullptr;
+    void DoFindNext();
+    void DoFindPrev();
 
 protected:
-    void OnCharHook(wxKeyEvent& e);
     void OnTextEntered(wxCommandEvent& e);
     void OnItemSelected(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
+    void OnSearchEnter(wxCommandEvent& e);
     void DoParseActiveBuffer();
-    
+
 public:
-    QuickOutlineDlg(wxWindow* parent,
-                    const wxString& fileName,
-                    int id = wxID_ANY,
-                    wxString title = wxEmptyString,
-                    wxPoint pos = wxDefaultPosition,
-                    wxSize size = wxSize(371, 386),
+    QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id = wxID_ANY, wxString title = wxEmptyString,
+                    wxPoint pos = wxDefaultPosition, wxSize size = wxSize(371, 386),
                     int style = wxDEFAULT_DIALOG_STYLE);
     virtual ~QuickOutlineDlg();
 };

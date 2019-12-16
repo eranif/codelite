@@ -31,29 +31,30 @@
 #include "ServiceProvider.h"
 
 class AbbreviationPlugin;
-class AbbreviationServiceProvider : public ServiceProvider
-{
-    AbbreviationPlugin* m_plugin = nullptr;
-
-protected:
-    void OnWordComplete(clCodeCompletionEvent& event);
-
-public:
-    AbbreviationServiceProvider(AbbreviationPlugin* plugin);
-    virtual ~AbbreviationServiceProvider();
-};
+//class AbbreviationServiceProvider : public ServiceProvider
+//{
+//    AbbreviationPlugin* m_plugin = nullptr;
+//
+//protected:
+//    void OnWordComplete(clCodeCompletionEvent& event);
+//
+//public:
+//    AbbreviationServiceProvider(AbbreviationPlugin* plugin);
+//    virtual ~AbbreviationServiceProvider();
+//};
 
 class AbbreviationPlugin : public IPlugin
 {
     wxEvtHandler* m_topWindow;
     clConfig m_config;
-    AbbreviationServiceProvider* m_helper = nullptr;
+    //AbbreviationServiceProvider* m_helper = nullptr;
 
     friend class AbbreviationServiceProvider;
 
 protected:
     void OnSettings(wxCommandEvent& e);
-    void AddAbbreviations(clCodeCompletionEvent& e);
+    void OnShowAbbvreviations(wxCommandEvent& e);
+    void GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& entries, const wxString& filter);
     void OnAbbrevSelected(clCodeCompletionEvent& e);
     void InitDefaults();
     bool InsertExpansion(const wxString& abbreviation);

@@ -188,7 +188,6 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
         m_currentTags.insert(m_currentTags.end(), tags.begin(), tags.end());
     }
 
-    wxWindowUpdateLocker locker(this);
     Clear();
     m_fileName = fileName;
 

@@ -161,6 +161,7 @@
 
 // from auto-generated file svninfo.cpp:
 static wxStopWatch gStopWatch;
+static QuickOutlineDlg* gOutlineDialog = nullptr;
 
 // from iconsextra.cpp:
 extern char* cubes_xpm[];
@@ -855,6 +856,10 @@ clMainFrame::~clMainFrame(void)
 {
     wxDELETE(m_singleInstanceThread);
     wxDELETE(m_webUpdate);
+    if(gOutlineDialog) {
+        gOutlineDialog->Destroy();
+        gOutlineDialog = nullptr;
+    }
 
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
@@ -2663,10 +2668,12 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     wxUnusedVar(event);
     if(!::clIsCxxWorkspaceOpened()) { return; }
 
-    QuickOutlineDlg dlg(::wxGetTopLevelParent(activeEditor), activeEditor->GetFileName().GetFullPath(), wxID_ANY,
-                        wxT(""), wxDefaultPosition, wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
-
-    dlg.ShowModal();
+    // Show outline dialog
+    if(gOutlineDialog == nullptr) {
+        gOutlineDialog = new QuickOutlineDlg(::wxGetTopLevelParent(activeEditor), wxID_ANY, wxDefaultPosition,
+                                             wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
+    }
+    if(gOutlineDialog->ParseActiveBuffer()) { gOutlineDialog->ShowModal(); }
     activeEditor->SetActive();
 }
 

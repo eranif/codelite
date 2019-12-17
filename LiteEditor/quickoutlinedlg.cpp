@@ -23,18 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifdef WX_PRECOMP
-
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#else
-#include <wx/wx.h>
-#endif // WX_PRECOMP
-
 #include "cl_editor.h"
 #include "cpp_symbol_tree.h"
 #include "drawingutils.h"
@@ -44,14 +32,16 @@
 #include "quickoutlinedlg.h"
 #include "windowattrmanager.h"
 
-QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int id, wxString title, wxPoint pos,
-                                 wxSize size, int style)
-    : wxDialog(parent, id, title, pos, size, wxRESIZE_BORDER)
-    , m_fileName(fileName)
+QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, int id, wxPoint pos, wxSize size, int style)
+    : wxDialog(parent, id, wxEmptyString, pos, size, wxRESIZE_BORDER)
 {
+    const wxColour& bgColour = DrawingUtils::GetColours().GetBgColour();
+    SetBackgroundColour(bgColour);
     wxBoxSizer* dialogSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(dialogSizer);
     wxPanel* mainPanel = new wxPanel(this);
+    mainPanel->SetBackgroundColour(bgColour);
+
     dialogSizer->Add(mainPanel, 1, wxEXPAND);
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     mainPanel->SetSizer(mainSizer);
@@ -69,12 +59,11 @@ QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, const wxString& fileName, int
     m_searchCtrl->Bind(wxEVT_TEXT, &QuickOutlineDlg::OnTextEntered, this);
     m_searchCtrl->Bind(wxEVT_KEY_DOWN, &QuickOutlineDlg::OnKeyDown, this);
     m_searchCtrl->Bind(wxEVT_TEXT_ENTER, &QuickOutlineDlg::OnSearchEnter, this);
-    mainSizer->Add(m_searchCtrl, 0, wxEXPAND);
     mainSizer->Add(m_treeOutline, 1, wxEXPAND);
+    mainSizer->Insert(0, m_searchCtrl, 0, wxEXPAND);
     SetName("QuickOutlineDlg");
     GetSizer()->Fit(this);
     Layout();
-    CallAfter(&QuickOutlineDlg::DoParseActiveBuffer);
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -83,7 +72,7 @@ QuickOutlineDlg::~QuickOutlineDlg() { m_treeOutline->Unbind(wxEVT_KEY_DOWN, &Qui
 void QuickOutlineDlg::OnItemSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    Close();
+    DoHide();
 }
 
 void QuickOutlineDlg::OnTextEntered(wxCommandEvent& e)
@@ -96,7 +85,7 @@ void QuickOutlineDlg::OnSearchEnter(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     m_treeOutline->ItemActivated();
-    Close();
+    DoHide();
 }
 
 void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
@@ -126,24 +115,21 @@ void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
             e.Skip(false);
         } else if(e.GetKeyCode() == WXK_ESCAPE) {
             if(m_searchCtrl->GetValue().IsEmpty()) {
-                Close();
+                DoHide();
             } else {
                 m_treeOutline->ClearAllHighlights();
                 m_searchCtrl->ChangeValue("");
             }
         }
     } else {
-        if(e.GetKeyCode() == WXK_ESCAPE) { Close(); }
+        if(e.GetKeyCode() == WXK_ESCAPE) { DoHide(); }
     }
 }
 
-void QuickOutlineDlg::DoParseActiveBuffer()
+bool QuickOutlineDlg::ParseActiveBuffer()
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor) {
-        Close();
-        return;
-    }
+    if(!editor) { return false; }
 
     wxString filename = editor->GetFileName().GetFullPath();
     TagEntryPtrVector_t tags;
@@ -153,15 +139,13 @@ void QuickOutlineDlg::DoParseActiveBuffer()
         TagsManagerST::Get()->GetFileCache()->Update(editor->GetFileName(), tags);
     }
 
-    if(tags.empty()) {
-        Close();
-        return;
-    }
-    m_treeOutline->BuildTree(m_fileName, tags);
+    if(tags.empty()) { return false; }
+    m_treeOutline->BuildTree(filename, tags);
     m_treeOutline->ExpandAll();
     wxTreeItemId selectItem = m_treeOutline->GetNextItem(m_treeOutline->GetRootItem());
     m_treeOutline->SelectItem(selectItem);
     m_searchCtrl->CallAfter(&wxTextCtrl::SetFocus);
+    return true;
 }
 
 void QuickOutlineDlg::DoFindNext()
@@ -206,4 +190,11 @@ void QuickOutlineDlg::DoFindPrev()
         m_treeOutline->HighlightText(item, true);
         m_treeOutline->EnsureVisible(item);
     }
+}
+
+void QuickOutlineDlg::DoHide()
+{
+    Hide();
+    m_searchCtrl->Clear();
+    m_treeOutline->DeleteAllItems();
 }

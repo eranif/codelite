@@ -22,24 +22,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "debuggergdb.h"
-#include <wx/msgdlg.h>
-#include "processreaderthread.h"
-#include "event_notifier.h"
 #include "asyncprocess.h"
-#include <wx/ffile.h>
-#include "exelocator.h"
-#include "environmentconfig.h"
-#include "dirkeeper.h"
 #include "dbgcmd.h"
-#include "wx/regex.h"
+#include "debuggergdb.h"
 #include "debuggerobserver.h"
-#include "wx/filename.h"
-#include "procutils.h"
-#include "wx/tokenzr.h"
-#include <algorithm>
+#include "dirkeeper.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "exelocator.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "processreaderthread.h"
+#include "procutils.h"
+#include "wx/filename.h"
+#include "wx/regex.h"
+#include "wx/tokenzr.h"
+#include <algorithm>
+#include <wx/ffile.h>
+#include <wx/msgdlg.h>
 
 #ifdef __WXMSW__
 #include "windows.h"
@@ -67,8 +67,8 @@ static BOOL SigHandler(DWORD CtrlType)
 
 #endif
 
-#include <sys/types.h>
 #include <signal.h>
+#include <sys/types.h>
 
 #if 0
 #define DBG_LOG 1
@@ -1118,7 +1118,8 @@ DbgCmdCLIHandler* DbgGdb::GetCliHandler() { return m_cliHandler; }
 bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
     wxString cmd;
-    cmd << wxT("-var-list-children ") << name;
+    cmd << "-var-list-children " << name;
+    if(m_info.maxDisplayElements > 0) { cmd << " " << 0 << " " << m_info.maxDisplayElements; }
     return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name, userReason));
 }
 
@@ -1167,7 +1168,7 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
         lines.Item(0).Prepend(m_gdbOutputIncompleteLine);
         m_gdbOutputIncompleteLine.Clear();
     }
-    
+
     // If the last line is in-complete, remove it from the array and keep it for next iteration
     if(!bufferRead.EndsWith(wxT("\n"))) {
         m_gdbOutputIncompleteLine = lines.Last();

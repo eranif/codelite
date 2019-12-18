@@ -123,7 +123,7 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
 
 void DisplayVariableDlg::AddItems(const wxString& varname, const VariableObjChildren& children)
 {
-    std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2Item.find(varname);
+    auto iter = m_gdbId2Item.find(varname);
     if(iter != m_gdbId2Item.end()) {
         wxTreeItemId item = iter->second;
         DoAddChildren(item, children);
@@ -146,7 +146,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
     }
 
     for(size_t i = 0; i < children.size(); i++) {
-        VariableObjChild ch = children.at(i);
+        const VariableObjChild& ch = children[i];
 
         // Dont use ch.isAFake here since it will also returns true of inheritance
         if(ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected")) {
@@ -180,7 +180,7 @@ void DisplayVariableDlg::OnBtnCancel(wxCommandEvent& e)
 void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& value)
 {
     wxTreeItemId nodeId;
-    std::map<wxString, wxTreeItemId>::iterator iter = m_gdbId2ItemLeaf.find(varname);
+    auto iter = m_gdbId2ItemLeaf.find(varname);
     if(iter != m_gdbId2ItemLeaf.end()) {
         wxTreeItemId item = iter->second;
         if(item.IsOk()) {

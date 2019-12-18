@@ -410,7 +410,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer86->Add(m_raiseOnBpHit, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxRunAsSuperuser =
-        new wxCheckBox(m_panelGeneral, wxID_ANY, _("On platforms that supports it, run gdb as superuser"),
+        new wxCheckBox(m_panelGeneral, wxID_ANY, _("On platforms that support it, run gdb as superuser"),
                        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxRunAsSuperuser->SetValue(false);
     m_checkBoxRunAsSuperuser->SetToolTip(
@@ -454,31 +454,51 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer85 = new wxBoxSizer(wxVERTICAL);
     m_panelDisplay->SetSizer(boxSizer85);
 
+    wxFlexGridSizer* flexGridSizer102 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer102->SetFlexibleDirection(wxBOTH);
+    flexGridSizer102->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer102->AddGrowableCol(1);
+
+    boxSizer85->Add(flexGridSizer102, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText2 = new wxStaticText(m_panelDisplay, wxID_ANY, _("Max string size:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+    m_staticText2->SetToolTip(_("For no limit, set it to 0"));
+
+    flexGridSizer102->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_spinCtrlStringSize = new wxSpinCtrl(m_panelDisplay, wxID_ANY, wxT("200"), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+    m_spinCtrlStringSize->SetToolTip(_("For no limit, set it to 0"));
+    m_spinCtrlStringSize->SetRange(0, 10000);
+    m_spinCtrlStringSize->SetValue(200);
+
+    flexGridSizer102->Add(m_spinCtrlStringSize, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText104 = new wxStaticText(m_panelDisplay, wxID_ANY, _("Max number of elements:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+
+    flexGridSizer102->Add(m_staticText104, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_spinCtrlMaxElements = new wxSpinCtrl(m_panelDisplay, wxID_ANY, wxT("100"), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+    m_spinCtrlMaxElements->SetToolTip(_("For no limit, set it to 0"));
+    m_spinCtrlMaxElements->SetRange(0, 1000);
+    m_spinCtrlMaxElements->SetValue(100);
+
+    flexGridSizer102->Add(m_spinCtrlMaxElements, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer21 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer21->SetFlexibleDirection(wxBOTH);
     fgSizer21->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
 
     boxSizer85->Add(fgSizer21, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText2 = new wxStaticText(m_panelDisplay, wxID_ANY, _("Number of elements to display for arrays / strings:"),
-                                     wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
-    m_staticText2->SetToolTip(_("For no limit, set it to 0"));
-
-    fgSizer21->Add(m_staticText2, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_spinCtrlNumElements = new wxSpinCtrl(m_panelDisplay, wxID_ANY, wxT("200"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
-    m_spinCtrlNumElements->SetToolTip(_("For no limit, set it to 0"));
-    m_spinCtrlNumElements->SetRange(0, 10000);
-    m_spinCtrlNumElements->SetValue(200);
-
-    fgSizer21->Add(m_spinCtrlNumElements, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
     m_checkBoxExpandLocals = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Use 'PreDefined types for the 'Locals' view"),
                                             wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxExpandLocals->SetValue(false);
 
-    fgSizer21->Add(m_checkBoxExpandLocals, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    fgSizer21->Add(m_checkBoxExpandLocals, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
     fgSizer21->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -486,7 +506,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
                                             wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxCharArrAsPtr->SetValue(false);
 
-    fgSizer21->Add(m_checkBoxCharArrAsPtr, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    fgSizer21->Add(m_checkBoxCharArrAsPtr, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     fgSizer21->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -496,7 +516,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     m_checkBoxUsePrettyPrinting->SetToolTip(
         _("If ticked, examining the contents of e.g. std::string, wxString, wxArrayString will be much easier"));
 
-    fgSizer21->Add(m_checkBoxUsePrettyPrinting, 0, wxALL, WXC_FROM_DIP(5));
+    fgSizer21->Add(m_checkBoxUsePrettyPrinting, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
     fgSizer21->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -507,7 +527,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
         _("When displaying a pointer to an object, identify the actual (derived) type of the object rather than the "
           "declared type, using the virtual function table."));
 
-    fgSizer21->Add(m_checkBoxPrintObjectOn, 0, wxALL, WXC_FROM_DIP(5));
+    fgSizer21->Add(m_checkBoxPrintObjectOn, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
     SetName(wxT("DbgPageGeneralBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

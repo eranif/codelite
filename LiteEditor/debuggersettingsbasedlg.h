@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_DEBUGGERSETTINGS_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -50,6 +51,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class DebuggerSettingsBaseDlg : public wxDialog
 {
@@ -160,7 +163,9 @@ protected:
     wxCheckBox* m_checkBoxAutoExpand;
     wxPanel* m_panelDisplay;
     wxStaticText* m_staticText2;
-    wxSpinCtrl* m_spinCtrlNumElements;
+    wxSpinCtrl* m_spinCtrlStringSize;
+    wxStaticText* m_staticText104;
+    wxSpinCtrl* m_spinCtrlMaxElements;
     wxCheckBox* m_checkBoxExpandLocals;
     wxCheckBox* m_checkBoxCharArrAsPtr;
     wxCheckBox* m_checkBoxUsePrettyPrinting;
@@ -186,7 +191,9 @@ public:
     wxCheckBox* GetCheckBoxAutoExpand() { return m_checkBoxAutoExpand; }
     wxPanel* GetPanelTooltip() { return m_panelTooltip; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxSpinCtrl* GetSpinCtrlNumElements() { return m_spinCtrlNumElements; }
+    wxSpinCtrl* GetSpinCtrlStringSize() { return m_spinCtrlStringSize; }
+    wxStaticText* GetStaticText104() { return m_staticText104; }
+    wxSpinCtrl* GetSpinCtrlMaxElements() { return m_spinCtrlMaxElements; }
     wxCheckBox* GetCheckBoxExpandLocals() { return m_checkBoxExpandLocals; }
     wxCheckBox* GetCheckBoxCharArrAsPtr() { return m_checkBoxCharArrAsPtr; }
     wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }

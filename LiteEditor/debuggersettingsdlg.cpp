@@ -102,7 +102,8 @@ DebuggerPage::DebuggerPage(wxWindow* parent, wxString title)
         m_checkBoxEnablePendingBreakpoints->SetValue(info.enablePendingBreakpoints);
         m_checkBreakAtWinMain->SetValue(info.breakAtWinMain);
         m_catchThrow->SetValue(info.catchThrow);
-        m_spinCtrlNumElements->SetValue(info.maxDisplayStringSize);
+        m_spinCtrlStringSize->SetValue(info.maxDisplayStringSize);
+        m_spinCtrlMaxElements->SetValue(info.maxDisplayElements);
         m_showTooltipsRequiresControl->SetValue(info.showTooltipsOnlyWithControlKeyIsDown);
         m_checkBoxAutoExpand->SetValue(info.autoExpandTipItems);
         m_checkBoxExpandLocals->SetValue(info.resolveLocals);
@@ -309,7 +310,8 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             info.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
             info.catchThrow = page->m_catchThrow->IsChecked();
             info.showTooltipsOnlyWithControlKeyIsDown = page->m_showTooltipsRequiresControl->IsChecked();
-            info.maxDisplayStringSize = page->m_spinCtrlNumElements->GetValue();
+            info.maxDisplayStringSize = page->m_spinCtrlStringSize->GetValue();
+            info.maxDisplayElements = page->m_spinCtrlMaxElements->GetValue();
             info.resolveLocals = page->m_checkBoxExpandLocals->IsChecked();
             info.autoExpandTipItems = page->m_checkBoxAutoExpand->IsChecked();
             info.applyBreakpointsAfterProgramStarted = page->m_checkBoxSetBreakpointsAfterMain->IsChecked();

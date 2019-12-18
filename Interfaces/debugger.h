@@ -28,13 +28,13 @@
 #include "archive.h"
 #include "serialized_object.h"
 
-#include "wx/string.h"
+#include "cl_standard_paths.h"
+#include "macros.h"
+#include "vector"
 #include "wx/arrstr.h"
 #include "wx/event.h"
-#include "vector"
-#include "macros.h"
+#include "wx/string.h"
 #include <wx/stdpaths.h>
-#include "cl_standard_paths.h"
 
 enum DebuggerCommands {
     DBG_PAUSE = 0,
@@ -299,11 +299,12 @@ public:
     bool operator==(const BreakpointInfo& BI)
     {
         return ((origin == BI.origin) && (what == BI.what) && (at == BI.at) && (file == BI.file) &&
-            (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
-            (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
-            (ignore_number == BI.ignore_number) && (conditions == BI.conditions) && (commandlist == BI.commandlist) &&
-            (is_temp == BI.is_temp) && (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
-            (!function_name.IsEmpty() ? (regex == BI.regex) : true));
+                (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
+                (bp_type == BI.bp_type) && (watchpt_data == BI.watchpt_data) && (is_enabled == BI.is_enabled) &&
+                (ignore_number == BI.ignore_number) && (conditions == BI.conditions) &&
+                (commandlist == BI.commandlist) && (is_temp == BI.is_temp) &&
+                (bp_type == BP_type_watchpt ? (watchpoint_type == BI.watchpoint_type) : true) &&
+                (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
 
     bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
@@ -433,7 +434,8 @@ public:
     bool showTooltipsOnlyWithControlKeyIsDown;
     bool debugAsserts;
     wxString startupCommands;
-    int maxDisplayStringSize;
+    int maxDisplayStringSize = 200;
+    int maxDisplayElements = 100;
     bool resolveLocals;
     bool autoExpandTipItems;
     bool applyBreakpointsAfterProgramStarted;
@@ -459,7 +461,6 @@ public:
         , showTooltipsOnlyWithControlKeyIsDown(false)
         , debugAsserts(false)
         , startupCommands(wxEmptyString)
-        , maxDisplayStringSize(200)
         , resolveLocals(true)
         , autoExpandTipItems(true)
         , applyBreakpointsAfterProgramStarted(false)
@@ -489,6 +490,7 @@ public:
         arch.Write(wxT("debugAsserts"), debugAsserts);
         arch.WriteCData(wxT("startupCommands"), startupCommands);
         arch.Write(wxT("maxDisplayStringSize"), maxDisplayStringSize);
+        arch.Write("maxDisplayElements", maxDisplayElements);
         arch.Write(wxT("resolveLocals"), resolveLocals);
         arch.Write(wxT("autoExpandTipItems"), autoExpandTipItems);
         arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
@@ -522,6 +524,7 @@ public:
         startupCommands.Trim();
 
         arch.Read(wxT("maxDisplayStringSize"), maxDisplayStringSize);
+        arch.Read(wxT("maxDisplayElements"), maxDisplayElements);
         arch.Read(wxT("resolveLocals"), resolveLocals);
         arch.Read(wxT("autoExpandTipItems"), autoExpandTipItems);
         arch.Read(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);

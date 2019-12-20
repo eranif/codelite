@@ -109,7 +109,8 @@ bool VimCommand::OnEscapeDown()
             if (m_commandID == COMMANDVI::block_A) {col = end_col + 1;}
             int start_pos = m_ctrl->FindColumn(begin_line, col);
             wxString text = m_tmpbuf;
-            if (m_ctrl->GetCurrentLine() == begin_line) {
+            if (m_ctrl->GetCurrentLine() == begin_line &&
+                m_ctrl->GetColumn(m_ctrl->GetCurrentPos()) >= col) {
                 text = m_ctrl->GetTextRange(start_pos, m_ctrl->GetCurrentPos());
             }
             m_ctrl->GotoPos(start_pos);

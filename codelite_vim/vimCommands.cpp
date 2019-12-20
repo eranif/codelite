@@ -108,34 +108,37 @@ bool VimCommand::OnEscapeDown()
             int col = begin_col;
             if (m_commandID == COMMANDVI::block_A) {col = end_col + 1;}
             int start_pos = m_ctrl->FindColumn(begin_line, col);
-            wxString text = m_tmpbuf;
             if (m_ctrl->GetCurrentLine() == begin_line &&
-                m_ctrl->GetColumn(m_ctrl->GetCurrentPos()) >= col) {
-                text = m_ctrl->GetTextRange(start_pos, m_ctrl->GetCurrentPos());
-            }
-            m_ctrl->GotoPos(start_pos);
-            
-            for (int line = begin_line; line <= end_line && !text.empty(); ) {
+                m_ctrl->GetColumn(m_ctrl->GetCurrentPos()) > col) {
+                    
                 int pos = m_ctrl->GetCurrentPos();
-                if (line != begin_line) {
+                wxString text = m_ctrl->GetTextRange(start_pos, pos);
+                m_ctrl->DeleteRange(start_pos, pos - start_pos);
+                
+                m_ctrl->BeginUndoAction();
+                m_ctrl->GotoPos(start_pos);
+                
+                for (int line = begin_line; line <= end_line && !text.empty(); ) {
+                    pos = m_ctrl->GetCurrentPos();
                     m_ctrl->InsertText(pos, text);
                     m_ctrl->GotoPos(pos);
+                    if (++line > end_line) {
+                        break;
+                    }
+                    m_ctrl->LineDown();
+                    int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+                    while (curCol > col) {
+                        m_ctrl->CharLeft();
+                        --curCol;
+                    }
+                    while (curCol < col) {
+                        ++curCol;
+                        m_ctrl->AddText(" ");
+                    }
                 }
-                if (++line > end_line) {
-                    break;
-                }
-                m_ctrl->LineDown();
-                int curCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
-                while (curCol > col) {
-                    m_ctrl->CharLeft();
-                    --curCol;
-                }
-                while (curCol < col) {
-                    ++curCol;
-                    m_ctrl->AddText(" ");
-                }
+                m_ctrl->GotoPos(start_pos);
+                m_ctrl->EndUndoAction();
             }
-            m_ctrl->GotoPos(start_pos);
         }
     }
     m_currentCommandPart = COMMAND_PART::REPEAT_NUM;
@@ -647,7 +650,6 @@ bool VimCommand::Command_call()
         m_ctrl->LineUp();
         break;
     case COMMANDVI::block_I: {
-        m_tmpbuf.Clear();
         m_visualBlockBeginLine = m_ctrl->LineFromPosition(m_initialVisualPos);
         m_visualBlockEndLine = m_ctrl->LineFromPosition(m_ctrl->GetCurrentPos());
         m_visualBlockBeginCol = m_ctrl->GetColumn(m_initialVisualPos);
@@ -663,7 +665,6 @@ bool VimCommand::Command_call()
         m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, begin_col));
     } break;
     case COMMANDVI::block_A: {
-        m_tmpbuf.Clear();
         m_visualBlockBeginLine = m_ctrl->LineFromPosition(m_initialVisualPos);
         m_visualBlockEndLine = m_ctrl->LineFromPosition(m_ctrl->GetCurrentPos());
         m_visualBlockBeginCol = m_ctrl->GetColumn(m_initialVisualPos);
@@ -3126,8 +3127,6 @@ bool VimCommand::DeleteLastCommandChar()
         m_currentModus == VIM_MODI::SEARCH_MODUS) {
         m_tmpbuf.RemoveLast();
         return true;
-    } else if (m_currentModus == VIM_MODI::INSERT_MODUS) {
-        m_tmpbuf.RemoveLast();
     }
     return false;
 }

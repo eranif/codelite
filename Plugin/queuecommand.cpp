@@ -47,7 +47,7 @@ QueueCommand::QueueCommand(int kind)
     if ( clCxxWorkspaceST::Get()->IsOpen() ) {
         m_project = clCxxWorkspaceST::Get()->GetActiveProjectName();
         BuildConfigPtr buildPtr = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, "");
-        wxASSERT_MSG( buildPtr, "No active project" );
+        wxCHECK_RET( buildPtr, "No active project" );
         
         // If a 'Build' or 'Clean' kinds where requested 
         // and the project build configuration is Custom build

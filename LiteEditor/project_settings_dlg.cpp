@@ -163,6 +163,7 @@ void ProjectSettingsDlg::OnButtonApply(wxCommandEvent& event)
 void ProjectSettingsDlg::SaveValues()
 {
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    wxCHECK_RET(projSettingsPtr, "Project settings not found");
     BuildConfigPtr buildConf = projSettingsPtr->GetBuildConfiguration(m_configName);
     if(!buildConf) { return; }
 
@@ -191,6 +192,7 @@ void ProjectSettingsDlg::LoadValues(const wxString& configName)
     PluginManager::Get()->HookProjectSettingsTab(m_treebook, m_projectName, configName);
     BuildConfigPtr buildConf;
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    wxCHECK_RET(projSettingsPtr, "Project settings not found");
     buildConf = projSettingsPtr->GetBuildConfiguration(configName);
     if(!buildConf) { return; }
 
@@ -307,6 +309,7 @@ void ProjectSettingsDlg::DoGetAllBuildConfigs()
     m_choiceConfig->Clear();
     wxArrayString configs;
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    wxCHECK_RET(projSettingsPtr, "Project settings not found");
     ProjectSettingsCookie cookie;
     BuildConfigPtr conf = projSettingsPtr->GetFirstBuildConfiguration(cookie);
     while(conf) {
@@ -414,6 +417,7 @@ void GlobalSettingsPanel::Clear()
 void GlobalSettingsPanel::Load(BuildConfigPtr buildConf)
 {
     ProjectSettingsPtr projSettingsPtr = ManagerST::Get()->GetProjectSettings(m_projectName);
+    wxCHECK_RET(projSettingsPtr, "Project settings not found");
     BuildConfigCommonPtr globalSettings = projSettingsPtr->GetGlobalSettings();
     if(!globalSettings) {
         Clear();

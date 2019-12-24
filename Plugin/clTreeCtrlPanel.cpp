@@ -1,5 +1,6 @@
 #include "clFileOrFolderDropTarget.h"
 #include "clFileSystemEvent.h"
+#include "clToolBar.h"
 #include "clTreeCtrlPanel.h"
 #include "clTreeCtrlPanelDefaultPage.h"
 #include "clWorkspaceView.h"
@@ -21,14 +22,11 @@
 #include <wx/richmsgdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-#include "clToolBar.h"
 
 clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     : clTreeCtrlPanelBase(parent)
-    , m_config(NULL)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
-    , m_options(kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor)
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
     m_bmpLoader = clGetManager()->GetStdIcons();
@@ -240,6 +238,10 @@ void clTreeCtrlPanel::DoExpandItem(const wxTreeItemId& parent, bool expand)
         } else {
             // make sure we don't add the same file twice
             if(!(m_options & kShowHiddenFiles) && FileUtils::IsHidden(fullpath)) {
+                cont = dir.GetNext(&filename);
+                continue;
+            } else if(!m_excludeFilePatterns.empty() && FileUtils::WildMatch(m_excludeFilePatterns, fullpath)) {
+                // exclude this file?
                 cont = dir.GetNext(&filename);
                 continue;
             }
@@ -866,7 +868,7 @@ void clTreeCtrlPanel::OnRefresh(wxCommandEvent& event)
         }
     } else {
         // Close the selected folders
-        std::vector<std::pair<wxString, bool> > topFolders;
+        std::vector<std::pair<wxString, bool>> topFolders;
         for(size_t i = 0; i < items.GetCount(); ++i) {
             topFolders.push_back(std::make_pair(paths.Item(i), GetTreeCtrl()->IsExpanded(items.Item(i))));
             DoCloseFolder(items.Item(i));

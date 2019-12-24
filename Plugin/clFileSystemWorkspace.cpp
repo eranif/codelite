@@ -71,7 +71,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
         Bind(wxEVT_TERMINAL_EXIT, &clFileSystemWorkspace::OnExecProcessTerminated, this);
-        
+
         // Exec events
         EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
@@ -112,7 +112,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
         Unbind(wxEVT_TERMINAL_EXIT, &clFileSystemWorkspace::OnExecProcessTerminated, this);
-        
+
         // Exec events
         EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &clFileSystemWorkspace::OnExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &clFileSystemWorkspace::OnIsProgramRunning, this);
@@ -246,6 +246,8 @@ void clFileSystemWorkspace::Save(bool parse)
     eventFileSave.SetString(m_filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(eventFileSave);
 
+    GetView()->SetExcludeFilePatterns(
+        GetSettings().GetSelectedConfig() ? GetSettings().GetSelectedConfig()->GetExcludeFilesPattern() : "");
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
     // trigger a file scan
     if(parse) { CacheFiles(); }
@@ -266,8 +268,14 @@ void clFileSystemWorkspace::DoOpen()
 
     // Init the view
     GetView()->Clear();
+    
+    // Update the view exclude patterns
+    auto selectedConf = GetSettings().GetSelectedConfig();
+    if(selectedConf) { GetView()->SetExcludeFilePatterns(selectedConf->GetExcludeFilesPattern()); }
+    
+    // And now load the main folder
     GetView()->AddFolder(GetFileName().GetPath());
-
+    
     // Notify CodeLite that this workspace is opened
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);

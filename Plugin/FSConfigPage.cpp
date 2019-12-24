@@ -2,9 +2,9 @@
 #include "ColoursAndFontsManager.h"
 #include "FSConfigPage.h"
 #include "build_settings_config.h"
+#include "debuggermanager.h"
 #include "macros.h"
 #include <wx/tokenzr.h>
-#include "debuggermanager.h"
 
 #if USE_SFTP
 #include "SFTPBrowserDlg.h"
@@ -52,6 +52,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_textCtrlRemoteFolder->ChangeValue(config->GetRemoteFolder());
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
     m_choiceDebuggers->SetStringSelection(config->GetDebugger());
+    m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
 }
 
 FSConfigPage::~FSConfigPage() {}
@@ -118,6 +119,7 @@ void FSConfigPage::Save()
     m_config->SetRemoteEnabled(m_checkBoxEnableRemote->IsChecked());
     m_config->SetRemoteAccount(m_choiceSSHAccount->GetStringSelection());
     m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
+    m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)

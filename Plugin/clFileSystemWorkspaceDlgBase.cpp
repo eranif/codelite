@@ -246,23 +246,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer33->SetFlexibleDirection(wxBOTH);
     flexGridSizer33->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer33->AddGrowableCol(1);
-    flexGridSizer33->AddGrowableRow(2);
+    flexGridSizer33->AddGrowableRow(1);
     m_panelGeneral->SetSizer(flexGridSizer33);
-
-    m_staticText35 = new wxStaticText(m_panelGeneral, wxID_ANY, _("File extensions:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_staticText35->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
-
-    flexGridSizer33->Add(m_staticText35, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlFileExt = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_textCtrlFileExt->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFileExt->SetHint(wxT(""));
-#endif
-
-    flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Executable:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
@@ -330,6 +315,35 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceDebuggersArr, 0);
 
     flexGridSizer33->Add(m_choiceDebuggers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText35 = new wxStaticText(m_panelGeneral, wxID_ANY, _("File extensions:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_staticText35->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
+
+    flexGridSizer33->Add(m_staticText35, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFileExt = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlFileExt->SetToolTip(_("Set the file extensions to be parsed in this\nworkspace"));
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFileExt->SetHint(wxT(""));
+#endif
+
+    flexGridSizer33->Add(m_textCtrlFileExt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText187 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Exclude files:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText187, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlExcludeFiles = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlExcludeFiles->SetToolTip(_("Files matching this pattern will not be\ndisplayed in the tree view"));
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlExcludeFiles->SetHint(wxT(""));
+#endif
+
+    flexGridSizer33->Add(m_textCtrlExcludeFiles, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelBuild =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);

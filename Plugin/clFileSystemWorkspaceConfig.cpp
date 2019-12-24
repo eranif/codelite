@@ -1,12 +1,24 @@
-#include "clFileSystemWorkspaceConfig.hpp"
-#include "ctags_manager.h"
-#include "compiler_command_line_parser.h"
-#include "build_settings_config.h"
 #include "ICompilerLocator.h"
+#include "build_settings_config.h"
+#include "clFileSystemWorkspaceConfig.hpp"
+#include "compiler_command_line_parser.h"
+#include "ctags_manager.h"
 #include "debuggermanager.h"
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
+#define DEFAULT_EXCLUDE_FILE_PATTERN "*.o;*.pyc;*.obj;*.workspace;*.o.d"
+
+clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
+    : m_fileExtensions(DEFAULT_FILE_EXTENSIONS)
+    , m_excludeFilesPattern(DEFAULT_EXCLUDE_FILE_PATTERN)
+{
+    m_buildTargets.insert({ "build", "" });
+    m_buildTargets.insert({ "clean", "" });
+    m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
+    CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
+    if(compiler) { m_compiler = compiler->GetName(); }
+}
 
 ///===-------------------------------------
 /// A single workspace configuration
@@ -25,6 +37,7 @@ JSONItem clFileSystemWorkspaceConfig::ToJSON() const
     item.addProperty("remoteFolder", m_remoteFolder);
     item.addProperty("remoteAccount", m_remoteAccount);
     item.addProperty("debugger", m_debugger);
+    item.addProperty("excludeFilesPattern", m_excludeFilesPattern);
     JSONItem arrTargets = JSONItem::createArray("targets");
     item.append(arrTargets);
 
@@ -50,7 +63,7 @@ void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
     m_remoteFolder = json.namedObject("remoteFolder").toString();
     m_remoteAccount = json.namedObject("remoteAccount").toString();
     m_debugger = json.namedObject("debugger").toString(m_debugger);
-    
+    m_excludeFilesPattern = json.namedObject("excludeFilesPattern").toString(m_excludeFilesPattern);
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
@@ -59,16 +72,6 @@ void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
         if(target.arraySize() != 2) { continue; }
         m_buildTargets.insert({ target.arrayItem(0).toString(), target.arrayItem(1).toString() });
     }
-}
-
-clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
-    : m_fileExtensions(DEFAULT_FILE_EXTENSIONS)
-{
-    m_buildTargets.insert({ "build", "" });
-    m_buildTargets.insert({ "clean", "" });
-    m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
-    CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
-    if(compiler) { m_compiler = compiler->GetName(); }
 }
 
 wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile,

@@ -30,12 +30,18 @@ protected:
     wxString m_remoteFolder;
     wxString m_remoteAccount;
     wxString m_debugger;
+    wxString m_excludeFilesPattern;
 
 public:
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
     JSONItem ToJSON() const;
     void FromJSON(const JSONItem& json);
 
+    void SetExcludeFilesPattern(const wxString& excludeFilesPattern)
+    {
+        this->m_excludeFilesPattern = excludeFilesPattern;
+    }
+    const wxString& GetExcludeFilesPattern() const { return m_excludeFilesPattern; }
     void SetBuildTargets(const std::map<wxString, wxString>& buildTargets) { this->m_buildTargets = buildTargets; }
     void SetCompileFlags(const wxArrayString& compileFlags) { this->m_compileFlags = compileFlags; }
     void SetCompileFlags(const wxString& compileFlags);

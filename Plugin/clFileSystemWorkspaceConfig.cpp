@@ -7,7 +7,7 @@
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
-#define DEFAULT_EXCLUDE_FILE_PATTERN "*.o;*.pyc;*.obj;*.workspace;*.o.d"
+#define DEFAULT_EXCLUDE_FILE_PATTERN "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project"
 
 clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     : m_fileExtensions(DEFAULT_FILE_EXTENSIONS)

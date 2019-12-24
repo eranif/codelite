@@ -22,26 +22,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/tokenzr.h>
-#include "context_manager.h"
-#include "context_cpp.h"
-#include "context_diff.h"
-#include "context_base.h"
-#include "context_html.h"
-#include "ContextPhp.h"
-#include "generic_context.h"
-#include "editor_config.h"
 #include "ColoursAndFontsManager.h"
 #include "ContextJavaScript.h"
+#include "ContextPhp.h"
+#include "ContextPython.hpp"
+#include "context_base.h"
+#include "context_cpp.h"
+#include "context_diff.h"
+#include "context_html.h"
+#include "context_manager.h"
+#include "editor_config.h"
+#include "generic_context.h"
+#include <wx/tokenzr.h>
 
-ContextManager::ContextManager()
-{
-    Initialize();
-}
+ContextManager::ContextManager() { Initialize(); }
 
-ContextManager::~ContextManager()
-{
-}
+ContextManager::~ContextManager() {}
 
 ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexerName)
 {
@@ -49,9 +45,7 @@ ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexe
     wxString lex_name = lexerName;
     lex_name.MakeLower();
     std::map<wxString, ContextBasePtr>::iterator iter = m_contextPool.find(lex_name);
-    if(iter == m_contextPool.end()) {
-        return m_contextPool["text"]->NewInstance(parent);
-    }
+    if(iter == m_contextPool.end()) { return m_contextPool["text"]->NewInstance(parent); }
 
     return iter->second->NewInstance((clEditor*)parent);
 }
@@ -77,6 +71,7 @@ void ContextManager::Initialize()
     m_contextPool["html"] = new ContextHtml();
     m_contextPool["php"] = new ContextPhp();
     m_contextPool["javascript"] = new ContextJavaScript();
+    m_contextPool["python"] = new ContextPython();
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();

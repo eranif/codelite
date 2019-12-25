@@ -25,6 +25,10 @@
 
 #if USE_SFTP
 
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+
 #include <wx/string.h>
 #include <wx/textdlg.h>
 #include <wx/thread.h>
@@ -139,7 +143,6 @@ bool clSSH::AuthenticateServer(wxString& message)
     char* hexa = NULL;
 
     message.Clear();
-    state = ssh_is_server_known(m_session);
 
 #if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 1)
     int hlen = 0;
@@ -148,11 +151,12 @@ bool clSSH::AuthenticateServer(wxString& message)
 #else
     size_t hlen = 0;
     ssh_key key = NULL;
-    ssh_get_publickey(m_session, &key);
+    ssh_get_server_publickey(m_session, &key);
     ssh_get_publickey_hash(key, SSH_PUBLICKEY_HASH_SHA1, &hash, &hlen);
     if(hlen == 0) { throw clException("Unable to obtain server public key!"); }
 #endif
 
+    state = ssh_session_is_known_server(m_session);
     switch(state) {
     case SSH_SERVER_KNOWN_OK:
         free(hash);
@@ -195,7 +199,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 void clSSH::AcceptServerAuthentication()
 {
     if(!m_session) { throw clException("NULL SSH session"); }
-    ssh_write_knownhost(m_session);
+    ssh_session_update_known_hosts(m_session);
 }
 
 #define THROW_OR_FALSE(msg)                  \

@@ -30,6 +30,7 @@
 #include <wx/thread.h>
 #include <wx/translation.h>
 #include "file_logger.h"
+#include "StringUtils.h"
 #ifdef __WXMSW__
 #include "wx/msw/winundef.h"
 #endif
@@ -117,10 +118,12 @@ void clSSH::Connect(int seconds)
 
     ssh_set_blocking(m_session, 0);
     int verbosity = SSH_LOG_NOLOG;
-    ssh_options_set(m_session, SSH_OPTIONS_HOST, m_host.mb_str(wxConvUTF8).data());
+    std::string host = StringUtils::ToStdString(m_host);
+    std::string user = StringUtils::ToStdString(GetUsername());
+    ssh_options_set(m_session, SSH_OPTIONS_HOST, host.c_str());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT, &m_port);
-    ssh_options_set(m_session, SSH_OPTIONS_USER, GetUsername().mb_str().data());
+    ssh_options_set(m_session, SSH_OPTIONS_USER, user.c_str());
 
     // Connect the session
     int retries = seconds * 100;
@@ -262,7 +265,7 @@ bool clSSH::LoginPublicKey(bool throwExc)
     if(!m_session) { THROW_OR_FALSE("NULL SSH session"); }
 
     int rc;
-    rc = ssh_userauth_autopubkey(m_session, NULL);
+    rc = ssh_userauth_publickey_auto(m_session, nullptr, nullptr);
     if(rc != SSH_AUTH_SUCCESS) { THROW_OR_FALSE(wxString() << _("Public Key error: ") << ssh_get_error(m_session)); }
     return true;
 }
@@ -290,7 +293,10 @@ void clSSH::Login()
 
     rc = ssh_userauth_none(m_session, NULL);
     if(rc == SSH_AUTH_SUCCESS) { return; }
-
+    
+    std::string username = StringUtils::ToStdString(GetUsername());
+    ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
+    
     // Try the following 3 methods in order
     // if non succeeded, this function will throw an exception
 

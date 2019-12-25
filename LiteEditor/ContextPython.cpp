@@ -21,16 +21,16 @@ ContextPython::ContextPython(clEditor* container)
     container->SetWordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"));
     m_completionTriggerStrings.insert(".");
     SetName("python");
-    wxTheApp->Bind(wxEVT_MENU, &ContextPython::OnCommentSelection, this, XRCID("comment_selection"));
-    wxTheApp->Bind(wxEVT_MENU, &ContextPython::OnCommentLine, this, XRCID("comment_line"));
+    Bind(wxEVT_MENU, &ContextPython::OnCommentSelection, this, XRCID("comment_selection"));
+    Bind(wxEVT_MENU, &ContextPython::OnCommentLine, this, XRCID("comment_line"));
     m_eventsBound = true;
 }
 
 ContextPython::~ContextPython()
 {
     if(m_eventsBound) {
-        wxTheApp->Unbind(wxEVT_MENU, &ContextPython::OnCommentSelection, this, XRCID("comment_selection"));
-        wxTheApp->Unbind(wxEVT_MENU, &ContextPython::OnCommentLine, this, XRCID("comment_line"));
+        Unbind(wxEVT_MENU, &ContextPython::OnCommentSelection, this, XRCID("comment_selection"));
+        Unbind(wxEVT_MENU, &ContextPython::OnCommentLine, this, XRCID("comment_line"));
     }
 }
 

@@ -206,7 +206,9 @@ if(NOT APPLE)
         endforeach()
 
         file(GLOB wxfilepaths ${WX_LIBS_ALL})
-        install(FILES ${wxfilepaths} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
+        file(GLOB libssh_lib_list "${LIBSSH_LIB}*")
+        message("-- will copy ${libssh_lib_list}")
+        install(FILES ${wxfilepaths} ${libssh_lib_list} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
         #install(CODE "set(INSTALL_DIR \"${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite\")")
         #install(FILES ${CL_SRC_ROOT}/Runtime/codelite-fix-rpath DESTINATION 
         #        ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite 

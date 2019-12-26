@@ -63,7 +63,7 @@ void clDockerWorkspaceSettings::Clear()
 
 clDockerBuildableFile::Ptr_t clDockerWorkspaceSettings::GetFileInfo(const wxFileName& file) const
 {
-    if(m_files.count(file.GetFullPath()) == 0) { return clDockerBuildableFile::Ptr_t(); }
+    if(m_files.count(file.GetFullPath()) == 0) { return clDockerBuildableFile::Ptr_t(new clDockerBuildableFile()); }
     return m_files.find(file.GetFullPath())->second;
 }
 

@@ -58,22 +58,19 @@ clDockerBuildableFile::Ptr_t clDockerBuildableFile::New(eDockerFileType type)
 wxString clDockerBuildableFile::GetBuildBaseCommand() const
 {
     wxString cmd = GetDockerExe();
-    if(cmd.IsEmpty()) { return ""; }
+    ::WrapWithQuotes(cmd);
     cmd << " build";
     return cmd;
 }
 
-wxString clDockerBuildableFile::GetRunBaseCommand() const
+void clDockerBuildableFile::GetRunBaseCommand(wxString& docker, wxString& args) const
 {
-    wxString cmd = GetDockerExe();
-    if(cmd.IsEmpty()) { return ""; }
-
+    docker = GetDockerExe();
     if(GetType() == eDockerFileType::kDockerfile) {
-        cmd << " run";
-    } else if(GetType() == eDockerFileType::kDockerCompose) {
-        cmd << " up";
+        args = "run";
+    } else /* if(GetType() == eDockerFileType::kDockerCompose)*/ {
+        args = "up";
     }
-    return cmd;
 }
 
 wxString clDockerBuildableFile::GetDockerExe() const
@@ -93,10 +90,9 @@ wxString clDockerBuildableFile::GetDockerExe() const
 
     if(!dockerCommand.FileExists()) {
         clGetManager()->SetStatusMessage(
-            _("Can't find docker executable\nPlease install docker and let me know where it is"), 3);
+            _("Can't find docker executable. Please install docker and let me know where it is"), 3);
         return "";
     }
     wxString exepath = dockerCommand.GetFullPath();
-    ::WrapWithQuotes(exepath);
     return exepath;
 }

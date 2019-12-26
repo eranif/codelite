@@ -22,16 +22,19 @@ clDockerSettings::clDockerSettings()
         }
     }
 #endif
-    ::clFindExecutable("docker", m_docker, hints);
-    ::clFindExecutable("docker-compose", m_dockerCompose, hints);
+    if(!::clFindExecutable("docker", m_docker, hints)) { m_docker = "docker"; }
+    if(!::clFindExecutable("docker-compose", m_dockerCompose, hints)) { m_dockerCompose = "docker-compose"; }
 }
 
 clDockerSettings::~clDockerSettings() {}
 
 void clDockerSettings::FromJSON(const JSONItem& json)
 {
-    m_docker = json.namedObject("docker").toString(m_docker.GetFullPath());
-    m_dockerCompose = json.namedObject("docker-compose").toString(m_dockerCompose.GetFullPath());
+    wxString v;
+    v = json.namedObject("docker").toString();
+    if(!v.empty()) { m_docker = v; }
+    v = json.namedObject("docker-compose").toString();
+    if(!v.empty()) { m_dockerCompose = v; }
     m_flags = json.namedObject("flags").toSize_t(m_flags);
 }
 

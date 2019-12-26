@@ -1,11 +1,13 @@
 #include "DockerOutputPane.h"
 #include "asyncprocess.h"
+#include "clConsoleBase.h"
 #include "clDockerDriver.h"
 #include "clDockerEvents.h"
 #include "clDockerSettings.h"
 #include "clDockerWorkspace.h"
 #include "docker.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
@@ -265,23 +267,18 @@ void clDockerDriver::Build(const wxFileName& filepath, const clDockerWorkspaceSe
 {
     if(IsRunning()) return;
     clDockerBuildableFile::Ptr_t info = settings.GetFileInfo(filepath);
-    if(!info) {
-        wxMessageBox(wxString() << _("Don't know how to build '") << filepath.GetFullPath() << "'\n"
-                                << _("Please set the 'Build' options for this file"),
-                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        return;
-    }
-
     wxString command = info->GetBuildBaseCommand();
-    if(command.IsEmpty()) { return; }
-
     clGetManager()->ShowOutputPane(_("Docker"));
 
     wxString buildOptions = info->GetBuildOptions();
     buildOptions.Trim().Trim(false);
 
-    command << " " << buildOptions;
+    // Since we are building from the Dockerfile directory
+    // we simply pass "."
+    command << " . " << buildOptions;
     ::WrapInShell(command);
+    clDEBUG() << "Docker build:" << command;
+
     m_plugin->GetTerminal()->Clear();
     m_plugin->GetTerminal()->SelectTab("Output");
     m_plugin->GetTerminal()->AddOutputTextWithEOL(command);
@@ -291,18 +288,22 @@ void clDockerDriver::Build(const wxFileName& filepath, const clDockerWorkspaceSe
 void clDockerDriver::Run(const wxFileName& filepath, const clDockerWorkspaceSettings& settings)
 {
     clDockerBuildableFile::Ptr_t info = settings.GetFileInfo(filepath);
-    if(!info) {
-        wxMessageBox(wxString() << _("Don't know how to execute '") << filepath.GetFullPath() << "'\n"
-                                << _("Please set the 'Run' options for this file"),
-                     "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
-        return;
-    }
-
-    wxString command = info->GetRunBaseCommand();
-    if(command.IsEmpty()) { return; }
-
+    
+    // get the base command (docker exe + run/up)
+    wxString command, args;
+    info->GetRunBaseCommand(command, args);
+    
+    // get user defined options
     wxString runOptions = info->GetRunOptions();
     runOptions.Trim().Trim(false);
-    command << " " << runOptions;
-    FileUtils::OpenTerminal(filepath.GetPath(), command, true);
+    if(!runOptions.empty()) { args << " " << runOptions; }
+    clDEBUG() << "Docker run:" << command << " " << args;
+    
+    // Open terminal, and execute the command
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    console->SetTerminalNeeded(true);
+    console->SetAutoTerminate(true);
+    console->SetWaitWhenDone(true);
+    console->SetCommand(command, args);
+    console->Start();
 }

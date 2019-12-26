@@ -212,7 +212,8 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
 
     boxSizer102->Add(m_staticText106, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_stcBuild = new wxStyledTextCtrl(m_panel98, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel98, wxSize(-1, -1)), 0);
+    m_stcBuild = new wxStyledTextCtrl(m_panel98, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel98, wxSize(-1, -1)),
+                                      wxBORDER_NONE);
     m_stcBuild->SetToolTip(
         _("Set here the build options to pass to the\n'docker build' command.\nFor example:\n'-t my_container .'"));
     m_stcBuild->SetFocus();
@@ -254,7 +255,7 @@ DockerfileSettingsDlgBase::DockerfileSettingsDlgBase(wxWindow* parent, wxWindowI
     boxSizer102->Add(m_stcBuild, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel100 = new wxPanel(m_notebook96, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook96, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
+                             wxTAB_TRAVERSAL | wxBORDER_NONE);
     m_notebook96->AddPage(m_panel100, _("Run"), false);
 
     wxBoxSizer* boxSizer104 = new wxBoxSizer(wxVERTICAL);

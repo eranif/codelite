@@ -856,7 +856,7 @@ void WrapInShell(wxString& cmd)
     }
     cmd = command;
 #else
-    command << wxT("/bin/sh -c '");
+    command << wxT("/bin/bash -c '");
     // escape any single quoutes
     cmd.Replace("'", "\\'");
     command << cmd << wxT("'");

@@ -171,7 +171,7 @@ void FileExtManager::Init()
 
         // Initialize regexes:
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript));
-        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/sh", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/python", TypePython));

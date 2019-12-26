@@ -216,7 +216,7 @@ void clDockerDriver::AttachTerminal(const wxArrayString& names)
 
     for(size_t i = 0; i < names.size(); ++i) {
         wxString message;
-        command << " exec -i " << names.Item(i) << " /bin/sh -i";
+        command << " exec -i " << names.Item(i) << " /bin/bash -i";
         FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetFileName().GetPath(), command);
     }
 }

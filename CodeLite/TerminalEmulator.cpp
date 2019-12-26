@@ -131,7 +131,7 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
 
 #else
     wxString tmpCmd = commandToRun;
-    command << "/bin/sh -c '";
+    command << "/bin/bash -c '";
     // escape any single quoutes
     tmpCmd.Replace("'", "\\'");
     command << tmpCmd << "'";

@@ -52,7 +52,7 @@
 #endif
 
 #include <signal.h>
-#define SHELL_PREFIX wxT("/bin/sh -c ")
+#define SHELL_PREFIX wxT("/bin/bash -c ")
 #define SHELL_WRAPPER wxT("'")
 #endif
 

@@ -61,7 +61,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
 
     // Prepare the command
     wxString cmd;
-    cmd << "/bin/sh -c 'cd " << workingDirectory << " && " << command << "'";
+    cmd << "/bin/bash -c 'cd " << workingDirectory << " && " << command << "'";
     clGetManager()->ClearOutputTab(kOutputTab_Build);
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");

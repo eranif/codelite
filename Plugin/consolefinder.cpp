@@ -106,7 +106,7 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
         // by seaching the output of "ps x -o tty,pid,command" command.
         // The output of ps looks like:
         // TT       PID   COMMAND
-        // pts/0    13342 /bin/sh ./run.sh
+        // pts/0    13342 /bin/bash ./run.sh
         // pts/0    13343 /home/pecanpecan/devel/trunk/src/devel/codeblocks
         // pts/0    13361 /usr/bin/gdb -nx -fullname -quiet -args ./conio
         // pts/0    13362 xterm -font -*-*-*-*-*-*-20-*-*-*-*-*-*-* -T Program Console -e sleep 93343

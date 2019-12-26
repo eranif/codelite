@@ -53,7 +53,7 @@ bool clConsoleGnomeTerminal::FindProcessByCommand(const wxString& name, wxString
 
 clConsoleGnomeTerminal::clConsoleGnomeTerminal()
 {
-    SetTerminalCommand("gnome-terminal --working-directory=%WD% -e '%COMMAND%'");
+    SetTerminalCommand("gnome-terminal --working-directory=%WD% -- '%COMMAND%'");
     SetEmptyTerminalCommand("gnome-terminal --working-directory=%WD%");
 }
 
@@ -126,7 +126,7 @@ wxString clConsoleGnomeTerminal::PrepareCommand()
     if(hasCommand) {
         wxFileName scriptPath = PrepareExecScript();
         wxString rowCommand;
-        rowCommand << "/bin/sh -f \"" << scriptPath.GetFullPath() << "\"";
+        rowCommand << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";
         commandToExecute.Replace("%COMMAND%", rowCommand);
     }
     return commandToExecute;

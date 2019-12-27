@@ -17,7 +17,8 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void OnInfoBarButton(clCommandEvent& event);
     void PromptUserToConfigureLSP();
-    
+    void OnEditorContextMenu(clContextMenuEvent& event);
+
 public:
     LanguageServerPlugin(IManager* manager);
     virtual ~LanguageServerPlugin();

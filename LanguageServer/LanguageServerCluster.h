@@ -19,8 +19,6 @@ public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
 
 protected:
-    LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
-    LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     void RestartServer(const wxString& name);
     void StartServer(const LanguageServerEntry& entry);
 
@@ -50,8 +48,9 @@ protected:
 public:
     LanguageServerCluster();
     virtual ~LanguageServerCluster();
-
     void Reload();
+    LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
+    LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
 };
 
 #endif // LANGUAGESERVERCLUSTER_H

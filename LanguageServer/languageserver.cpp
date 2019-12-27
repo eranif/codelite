@@ -45,6 +45,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_servers.reset(new LanguageServerCluster());
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &LanguageServerPlugin::OnInfoBarButton, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
 }
@@ -71,6 +72,7 @@ void LanguageServerPlugin::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_INFO_BAR_BUTTON, &LanguageServerPlugin::OnInfoBarButton, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
 }
@@ -132,4 +134,25 @@ void LanguageServerPlugin::OnInfoBarButton(clCommandEvent& event)
             if(m_servers) { m_servers->Reload(); }
         }
     }
+}
+
+void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    CHECK_COND_RET(m_servers);
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForFile(editor->GetFileName());
+    CHECK_PTR_RET(lsp);
+
+    auto langs = lsp->GetSupportedLanguages();
+
+    // CXX, C and PHP have their own context menus, dont add ours as well
+    if(langs.count("cpp") || langs.count("c") || langs.count("php")) { return; }
+    // TODO :: add here
+    // Goto definition
+    // Goto implementation
+    // menu entries
 }

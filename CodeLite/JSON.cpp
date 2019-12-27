@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include "StringUtils.h"
 
 JSON::JSON(const wxString& text)
     : m_json(NULL)
@@ -76,7 +77,7 @@ JSON::~JSON()
 void JSON::save(const wxFileName& fn) const
 {
     if(!isOk()) {
-        FileUtils::WriteFileContent(fn, "[]");
+        FileUtils::WriteFileContent(fn, "{}");
     } else {
         FileUtils::WriteFileContent(fn, toElement().format(), wxConvUTF8);
     }
@@ -308,9 +309,9 @@ wxString JSONItem::format(bool formatted) const
     if(!m_json) { return wxT(""); }
 
     char* p = formatted ? cJSON_Print(m_json) : cJSON_PrintUnformatted(m_json);
-    wxString output(p, wxConvUTF8);
+    wxString s(p, wxConvISO8859_1);
     free(p);
-    return output;
+    return s;
 }
 
 int JSONItem::toInt(int defaultVal) const

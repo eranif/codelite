@@ -24,11 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #if USE_SFTP
-
-#ifdef __WXMSW__
-#include <winsock2.h>
-#endif
-
 #include <wx/string.h>
 #include <wx/textdlg.h>
 #include <wx/thread.h>

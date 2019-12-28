@@ -18,6 +18,7 @@ protected:
     void OnInfoBarButton(clCommandEvent& event);
     void PromptUserToConfigureLSP();
     void OnEditorContextMenu(clContextMenuEvent& event);
+    void OnMenuFindSymbol(wxCommandEvent& event);
 
 public:
     LanguageServerPlugin(IManager* manager);

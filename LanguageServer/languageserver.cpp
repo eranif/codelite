@@ -12,6 +12,7 @@
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+#include "ServiceProviderManager.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
@@ -148,11 +149,31 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     CHECK_PTR_RET(lsp);
 
     auto langs = lsp->GetSupportedLanguages();
-
+    
+    static wxString cppfile = "file.cpp";
+    static wxString phpfile = "file.php";
     // CXX, C and PHP have their own context menus, dont add ours as well
-    if(langs.count("cpp") || langs.count("c") || langs.count("php")) { return; }
+    if(lsp->CanHandle(cppfile) || lsp->CanHandle(phpfile)) { return; }
+    
     // TODO :: add here
     // Goto definition
     // Goto implementation
     // menu entries
+    wxMenu *menu = event.GetMenu();
+    menu->PrependSeparator();
+    menu->Prepend(XRCID("lsp_find_symbol"), _("Find Symbol"));
+    
+    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
+}
+
+void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    
+    clCodeCompletionEvent findEvent(wxEVT_CC_FIND_SYMBOL);
+    findEvent.SetEventObject(editor->GetCtrl());
+    findEvent.SetEditor(editor->GetCtrl());
+    findEvent.SetPosition(editor->GetCurrentPosition());
+    ServiceProviderManager::Get().ProcessEvent(findEvent);
 }

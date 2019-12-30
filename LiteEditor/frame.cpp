@@ -4257,10 +4257,10 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
     wxUnusedVar(e);
 
     if(IsFullScreen()) {
-        ShowFullScreen(false);
+        DoFullscreen(false);
 
     } else {
-        ShowFullScreen(true);
+        DoFullscreen(true);
 
         // Re-apply the menu accelerators
         ManagerST::Get()->UpdateMenuAccelerators();
@@ -5802,4 +5802,7 @@ void clMainFrame::OnReportIssue(wxCommandEvent& event)
     ::wxLaunchDefaultBrowser("https://github.com/eranif/codelite/issues");
 }
 
-void clMainFrame::DoFullscreen(bool b) { ShowFullScreen(b); }
+void clMainFrame::DoFullscreen(bool b)
+{
+    ShowFullScreen(b, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
+}

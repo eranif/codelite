@@ -29,6 +29,7 @@
 #include "Notebook.h"
 #include "ZombieReaperPOSIX.h"
 #include "clDockingManager.h"
+#include "clInfoBar.h"
 #include "clMainFrameHelper.h"
 #include "clStatusBar.h"
 #include "cl_command_event.h"
@@ -40,6 +41,7 @@
 #include "mainbook.h"
 #include "output_pane.h"
 #include "parse_thread.h"
+#include "refactorengine.h"
 #include "tags_options_dlg.h"
 #include "theme_handler.h"
 #include "wx/aui/aui.h"
@@ -51,12 +53,10 @@
 #include <wx/cmndata.h>
 #include <wx/dcbuffer.h>
 #include <wx/html/htmlwin.h>
+#include <wx/infobar.h>
+#include <wx/minifram.h>
 #include <wx/process.h>
 #include <wx/splash.h>
-#include <wx/minifram.h>
-#include <wx/infobar.h>
-#include "clInfoBar.h"
-#include "refactorengine.h"
 
 // forward decls
 class DebuggerToolBar;
@@ -148,14 +148,15 @@ protected:
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show, bool update = true);
     void InitializeLogo();
-    
+    void DoFullscreen(bool b);
+
 public:
     virtual void Raise();
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
-    
+
     clInfoBar* GetMessageBar() { return m_infoBar; }
-    
+
     /**
      * @brief goto anything..
      */

@@ -27,7 +27,6 @@
 GeneralInfo::GeneralInfo()
     : m_frameSize(800, 600)
     , m_framePos(30, 30)
-    , m_flags(CL_SHOW_WELCOME_PAGE | CL_USE_EOL_LF | CL_SHOW_SPLASH | CL_MAXIMIZE_FRAME)
 {
 }
 

@@ -151,7 +151,11 @@ bool clSSH::AuthenticateServer(wxString& message)
     if(hlen == 0) { throw clException("Unable to obtain server public key!"); }
 #endif
 
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0, 8, 0)
     state = ssh_session_is_known_server(m_session);
+#else
+    state = ssh_is_server_known(m_session);
+#endif
     switch(state) {
     case SSH_SERVER_KNOWN_OK:
         free(hash);
@@ -194,7 +198,11 @@ bool clSSH::AuthenticateServer(wxString& message)
 void clSSH::AcceptServerAuthentication()
 {
     if(!m_session) { throw clException("NULL SSH session"); }
+#if LIBSSH_VERSION_INT >= SSH_VERSION_INT(0, 8, 0)
     ssh_session_update_known_hosts(m_session);
+#else
+    ssh_write_knownhost(m_session);
+#endif
 }
 
 #define THROW_OR_FALSE(msg)                  \

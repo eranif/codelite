@@ -40,6 +40,7 @@
 #include <wx/tokenzr.h>
 #include "clSystemSettings.h"
 #include <wx/msgdlg.h>
+#include "clFilesCollector.h"
 
 std::unordered_map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::unordered_map<wxString, wxString> BitmapLoader::m_manifest;
@@ -98,7 +99,30 @@ void BitmapLoader::initialize()
     if(DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
         fnNewZip.SetFullName("codelite-bitmaps-dark.zip");
     }
-
+#ifdef __WXOSX__
+    if(fnNewZip.FileExists()) {
+        clZipReader zip(fnNewZip);
+        wxFileName tmpdir("/tmp", "");
+        tmpdir.AppendDir("codelite-bitmaps");
+        tmpdir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        zip.ExtractAll(tmpdir.GetPath());
+        clFilesScanner scanner;
+        std::vector<wxFileName> V;
+        scanner.Scan(tmpdir.GetPath(), V, "*.png", wxEmptyString, wxEmptyString);
+        for(const wxFileName& fn : V) {
+            // the @2x are loaded on demand
+            if(fn.GetFullName().Contains("@2x")) { continue; }
+            wxString name = fn.GetName();
+            wxBitmap bmp;
+            if(bmp.LoadFile(fn.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+                m_toolbarsBitmaps.erase(name);
+                m_toolbarsBitmaps.insert({name, bmp});
+            }
+            
+        }
+        tmpdir.Rmdir(wxPATH_RMDIR_FULL);
+    }
+#else
     if(fnNewZip.FileExists()) {
         clZipReader zip(fnNewZip);
         // Extract all images into this memory
@@ -139,7 +163,7 @@ void BitmapLoader::initialize()
         }
         buffers.clear();
     }
-
+#endif
     // Create the mime-list
     CreateMimeList();
 }

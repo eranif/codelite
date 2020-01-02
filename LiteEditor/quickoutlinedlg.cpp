@@ -194,6 +194,7 @@ void QuickOutlineDlg::DoFindPrev()
 
 void QuickOutlineDlg::DoHide()
 {
+    EndModal(wxID_OK);
     Hide();
     m_searchCtrl->Clear();
     m_treeOutline->DeleteAllItems();

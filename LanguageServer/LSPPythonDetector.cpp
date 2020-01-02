@@ -42,12 +42,6 @@ bool LSPPythonDetector::DoLocate()
     command << pythonExe;
     ::WrapWithQuotes(command);
 
-    // Generate random port number
-    std::srand(time(0));
-
-    int port = std::rand();
-    port = port % 30000;
-    port += 1024;
     command << " -m pyls";
     SetCommand(command);
     // Add support for the languages

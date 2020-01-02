@@ -13,6 +13,8 @@
    "compiler": "GCC",
    "remoteFolder": "",
    "remoteAccount": "root@codelite.org",
+   "debugger": "GNU gdb debugger",
+   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
    "targets": [["Run CMake - Debug", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DWITH_PCH=1"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"]]
   }, {
    "name": "Release",
@@ -25,6 +27,8 @@
    "compiler": "GCC",
    "remoteFolder": "",
    "remoteAccount": "root@codelite.org",
-   "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1§"], ["build", "cd  build-release && make -j8 install"], ["clean", "cd  build-release && make -j8 clean"]]
+   "debugger": "GNU gdb debugger",
+   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+   "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DWITH_PCH=1Â§"], ["build", "cd  build-release && make -j8 install"], ["clean", "cd  build-release && make -j8 clean"]]
   }]
 }

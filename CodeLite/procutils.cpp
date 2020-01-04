@@ -64,10 +64,11 @@ static wxString WrapWithShell(const wxString& cmd)
         command << cmd;
     }
 #else
+    wxString tmpcmd = cmd;
     command << wxT("/bin/sh -c '");
     // escape any single quoutes
-    cmd.Replace("'", "\\'");
-    command << cmd << wxT("'");
+    tmpcmd.Replace("'", "\\'");
+    command << tmpcmd << wxT("'");
 #endif
     return command;
 }

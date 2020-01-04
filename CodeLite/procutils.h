@@ -25,18 +25,18 @@
 #ifndef PROCUTILS_H
 #define PROCUTILS_H
 
-#include <wx/string.h>
-#include <wx/arrstr.h>
+#include "codelite_exports.h"
 #include <map>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/process.h>
-#include "codelite_exports.h"
+#include <wx/string.h>
 
 #ifdef __WXMSW__
 #include <windows.h>
 //#include <devpropdef.h>
-#include <SetupAPI.h>
 #include <Psapi.h>
+#include <SetupAPI.h>
 #include <tlhelp32.h>
 #include <wx/msw/winundef.h>
 #endif
@@ -46,33 +46,41 @@ struct ProcessEntry {
     long pid;
 };
 
+typedef std::vector<ProcessEntry> PidVec_t;
+
 class WXDLLIMPEXP_CL ProcUtils
 {
 public:
     ProcUtils();
     ~ProcUtils();
 
-    static void GetProcTree(std::map<unsigned long, bool> &parentsMap, long pid);
-    static void ExecuteCommand(const wxString &command, wxArrayString &output, long flags = wxEXEC_NODISABLE| wxEXEC_SYNC);
-    static void ExecuteInteractiveCommand(const wxString &command);
+    static void GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid);
+    static void ExecuteCommand(const wxString& command, wxArrayString& output,
+                               long flags = wxEXEC_NODISABLE | wxEXEC_SYNC);
+    static void ExecuteInteractiveCommand(const wxString& command);
     static wxString GetProcessNameByPid(long pid);
-    static void GetProcessList(std::vector<ProcessEntry> &proclist);
-    static void GetChildren(long pid, std::vector<long> &children);
+    static void GetProcessList(std::vector<ProcessEntry>& proclist);
+    static void GetChildren(long pid, std::vector<long>& children);
     static bool Shell(const wxString& programConsoleCommand);
-    static bool Locate(const wxString &name, wxString &where);
+    static bool Locate(const wxString& name, wxString& where);
     
+    /**
+     * @brief the equivalent of 'ps ax|grep <name>'
+     */
+    static PidVec_t PS(const wxString& name);
+
     /**
      * \brief a safe function that executes 'command' and returns its output. This function
      * is safed to be called from secondary thread (hence, SafeExecuteCommand)
      * \param command
      * \param output
      */
-    static void SafeExecuteCommand(const wxString &command, wxArrayString &output);
-    
+    static void SafeExecuteCommand(const wxString& command, wxArrayString& output);
+
     /**
      * @brief execute a command and return its output as plain string
      */
-    static wxString SafeExecuteCommand(const wxString &command);
+    static wxString SafeExecuteCommand(const wxString& command);
 };
 
 #endif // PROCUTILS_H

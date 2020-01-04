@@ -23,18 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "JSON.h"
 #include "SFTPBrowserDlg.h"
 #include "SFTPSettingsDialog.h"
 #include "SFTPStatusPage.h"
 #include "SFTPTreeView.h"
 #include "SSHAccountManagerDlg.h"
+#include "clFilesCollector.h"
 #include "cl_command_event.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "JSON.h"
+#include "globals.h"
+#include "procutils.h"
 #include "sftp.h"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
@@ -44,7 +47,6 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
-#include <algorithm>
 
 static SFTP* thePlugin = NULL;
 const wxEventType wxEVT_SFTP_OPEN_SSH_ACCOUNT_MANAGER = ::wxNewEventType();
@@ -148,6 +150,8 @@ SFTP::SFTP(IManager* manager)
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
     SFTPWorkerThread::Instance()->Start();
+
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &SFTP::OnInitDone, this);
 }
 
 SFTP::~SFTP() {}
@@ -239,7 +243,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &SFTP::OnInitDone, this);
     m_tabToggler.reset(NULL);
 
     // Delete the temporary files
@@ -586,4 +590,58 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
         SFTPWorkerThread::Instance()->Add(req);
         AddRemoteFile(remoteFile);
     }
+}
+
+void SFTP::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    wxFileName sshAgent;
+    if(!::clFindExecutable("ssh-agent", sshAgent)) { return; }
+    clDEBUG() << "Found ssh-agent:" << sshAgent;
+
+    // Check if an instance of ssh-agent is already running
+    PidVec_t P = ProcUtils::PS("ssh-agent");
+#ifdef __WXMSW__
+    if(P.empty()) {
+        clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
+        ::wxExecute(sshAgent.GetFullPath());
+    } else {
+        clDEBUG() << "Found ssh-agent running at pid:" << P.begin()->pid;
+    }
+#else
+    if(P.empty()) { ::wxExecute(sshAgent.GetFullPath()); }
+    // Check for ssh-agent again
+    P = ProcUtils::PS("ssh-agent");
+    if(P.empty()) { return; }
+
+    // search for all the /tmp/ssh-.../agent.PID files
+    // if we find one that matches _one_ of ssh-agent processes we found earlier
+    // set the environment variables and return
+    clFilesScanner scanner;
+    std::vector<wxFileName> filesOutput;
+    std::unordered_map<long, wxFileName> M;
+    if(scanner.Scan("/tmp", filesOutput, "agent.*", wxEmptyString, wxEmptyString)) {
+        for(const wxFileName& fn : filesOutput) {
+            long nPid = wxNOT_FOUND;
+            wxString ext = fn.GetExt();
+            if(ext.ToCLong(&nPid)) { M.insert({ nPid, fn }); }
+        }
+    }
+
+    for(const ProcessEntry& ps : P) {
+        if(M.count(ps.pid)) {
+            // we got a match
+            // build the enrionment variables and set them
+            wxString SSH_AUTH_SOCK;
+            wxString SSH_AGENT_PID;
+            SSH_AGENT_PID << ps.pid;
+            SSH_AUTH_SOCK = M[ps.pid].GetFullPath();
+            ::wxSetEnv("SSH_AGENT_PID", SSH_AGENT_PID);
+            ::wxSetEnv("SSH_AUTH_SOCK", SSH_AUTH_SOCK);
+            clDEBUG() << "SSH_AUTH_SOCK is set to:" << SSH_AUTH_SOCK;
+            clDEBUG() << "SSH_AGENT_PID is set to:" << SSH_AGENT_PID;
+            return;
+        }
+    }
+#endif
 }

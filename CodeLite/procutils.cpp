@@ -22,9 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "wx/tokenzr.h"
+#include "asyncprocess.h"
+#include "fileutils.h"
 #include "procutils.h"
 #include "winprocess.h"
+#include "wx/tokenzr.h"
 
 #include <stdio.h>
 #ifdef __WXMSW__
@@ -41,21 +43,38 @@
 #endif
 
 #ifdef __FreeBSD__
-#include <kvm.h>
 #include <fcntl.h>
+#include <kvm.h>
+#include <paths.h>
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <sys/user.h>
-#include <paths.h>
 #endif
 
-ProcUtils::ProcUtils()
+static wxString WrapWithShell(const wxString& cmd)
 {
+    wxString command;
+#ifdef __WXMSW__
+    wxChar* shell = wxGetenv(wxT("COMSPEC"));
+    if(!shell) shell = (wxChar*)wxT("CMD.EXE");
+    command << shell << wxT(" /C ");
+    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
+        command << "\"" << cmd << "\"";
+    } else {
+        command << cmd;
+    }
+#else
+    command << wxT("/bin/sh -c '");
+    // escape any single quoutes
+    cmd.Replace("'", "\\'");
+    command << cmd << wxT("'");
+#endif
+    return command;
 }
 
-ProcUtils::~ProcUtils()
-{
-}
+ProcUtils::ProcUtils() {}
+
+ProcUtils::~ProcUtils() {}
 
 void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
 {
@@ -65,19 +84,13 @@ void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
-        return;
-    }
+    if(!GetVersionEx(&osver)) { return; }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
-        return;
-    }
+    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) { return; }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
-        return;
-    }
+    if(!hProcessSnap) { return; }
 
     // Fill in the size of the structure before using it.
     PROCESSENTRY32 pe;
@@ -113,6 +126,61 @@ void ProcUtils::GetProcTree(std::map<unsigned long, bool>& parentsMap, long pid)
 #endif
 }
 
+PidVec_t ProcUtils::PS(const wxString& name)
+{
+    PidVec_t V;
+    wxString command;
+    size_t IMGNAME_COL = 0;
+    size_t PID_COL = 0;
+    size_t MIN_COLUMNS_NUMBER = 0;
+
+#ifdef __WXMSW__
+    command << "tasklist";
+    IMGNAME_COL = 0;
+    PID_COL = 1;
+    MIN_COLUMNS_NUMBER = 2;
+#else
+    command << "ps ax";
+    IMGNAME_COL = 4;
+    PID_COL = 0;
+    MIN_COLUMNS_NUMBER = 5;
+#endif
+    command = WrapWithShell(command);
+
+    wxString processOutput;
+    IProcess::Ptr_t p(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
+    if(p) { p->WaitForTerminate(processOutput); }
+
+    // Search for a match
+
+    // tasklist example output:
+    //
+    // Image Name                     PID Session Name        Session#    Mem Usage
+    //========================= ======== ================ =========== ============
+    // wininit.exe                   1000 Services                   0      2,320 K
+    // csrss.exe                     1008 Console                    1      3,860 K
+
+    // ps ax example output:
+    //
+    //   PID    TTY      STAT   TIME COMMAND
+    //    52    ?        S      0:00 dbus-launch --autolaunch 811d5cdefd9d461891b6596cca7a6233 --binary-syntax
+    //  2920    ?        Ss     0:00 ssh-agent
+
+    wxArrayString lines = ::wxStringTokenize(processOutput, "\n", wxTOKEN_STRTOK);
+    for(wxString& line : lines) {
+        line.Trim().Trim(false);
+        wxArrayString parts = ::wxStringTokenize(line, " \t", wxTOKEN_STRTOK);
+        if(parts.size() < MIN_COLUMNS_NUMBER) { continue; }
+        wxString& imageName = parts.Item(IMGNAME_COL);
+        wxString& pid = parts.Item(PID_COL);
+        if(FileUtils::FuzzyMatch(name, imageName)) {
+            long nPid = -1;
+            if(pid.ToCLong(&nPid)) { V.push_back({ imageName, nPid }); }
+        }
+    }
+    return V;
+}
+
 wxString ProcUtils::GetProcessNameByPid(long pid)
 {
 #ifdef __WXMSW__
@@ -123,9 +191,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 
     //  Take a snapshot of all modules in the specified process.
     hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, (DWORD)pid);
-    if(hModuleSnap == INVALID_HANDLE_VALUE) {
-        return wxEmptyString;
-    }
+    if(hModuleSnap == INVALID_HANDLE_VALUE) { return wxEmptyString; }
 
     //  Set the size of the structure before using it.
     me32.dwSize = sizeof(MODULEENTRY32);
@@ -201,10 +267,7 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
 #endif
 }
 
-void ProcUtils::ExecuteInteractiveCommand(const wxString& command)
-{
-    wxShell(command);
-}
+void ProcUtils::ExecuteInteractiveCommand(const wxString& command) { wxShell(command); }
 
 void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
 {
@@ -214,19 +277,13 @@ void ProcUtils::GetProcessList(std::vector<ProcessEntry>& proclist)
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
-        return;
-    }
+    if(!GetVersionEx(&osver)) { return; }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
-        return;
-    }
+    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) { return; }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
-        return;
-    }
+    if(!hProcessSnap) { return; }
 
     // Fill in the size of the structure before using it.
     PROCESSENTRY32 pe;
@@ -310,19 +367,13 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     // Check to see if were running under Windows95 or
     // Windows NT.
     osver.dwOSVersionInfoSize = sizeof(osver);
-    if(!GetVersionEx(&osver)) {
-        return;
-    }
+    if(!GetVersionEx(&osver)) { return; }
 
-    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) {
-        return;
-    }
+    if(osver.dwPlatformId != VER_PLATFORM_WIN32_NT) { return; }
 
     // get child processes of this node
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(!hProcessSnap) {
-        return;
-    }
+    if(!hProcessSnap) { return; }
 
     // Fill in the size of the structure before using it.
     PROCESSENTRY32 pe;
@@ -340,9 +391,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
     // loop over all processes and collect all the processes their parent
     // pid matches PID
     do {
-        if((long)pe.th32ParentProcessID == pid) {
-            proclist.push_back((long)pe.th32ProcessID);
-        }
+        if((long)pe.th32ParentProcessID == pid) { proclist.push_back((long)pe.th32ProcessID); }
     } while(Process32Next(hProcessSnap, &pe));
     CloseHandle(hProcessSnap);
 
@@ -388,9 +437,7 @@ void ProcUtils::GetChildren(long pid, std::vector<long>& proclist)
         // get the process Parent ID
         wxString sppid = line.AfterFirst(wxT(' '));
         sppid.ToLong(&lppid);
-        if(lppid == pid) {
-            proclist.push_back(lpid);
-        }
+        if(lppid == pid) { proclist.push_back(lpid); }
     }
 #endif
 }
@@ -400,9 +447,7 @@ bool ProcUtils::Shell(const wxString& programConsoleCommand)
     wxString cmd;
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell) {
-        shell = (wxChar*)wxT("CMD.EXE");
-    }
+    if(!shell) { shell = (wxChar*)wxT("CMD.EXE"); }
 
     // just the shell
     cmd = shell;
@@ -468,9 +513,7 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
     if(output.IsEmpty() == false) {
         wxString interstingLine = output.Item(0);
 
-        if(interstingLine.Trim().Trim(false).IsEmpty()) {
-            return false;
-        }
+        if(interstingLine.Trim().Trim(false).IsEmpty()) { return false; }
 
         if(!interstingLine.StartsWith(wxT("which: no "))) {
             where = output.Item(0);
@@ -486,9 +529,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
 #ifdef __WXMSW__
     wxString errMsg;
     WinProcess* proc = WinProcess::Execute(command, errMsg);
-    if(!proc) {
-        return;
-    }
+    if(!proc) { return; }
 
     // wait for the process to terminate
     wxString tmpbuf;
@@ -547,8 +588,6 @@ wxString ProcUtils::SafeExecuteCommand(const wxString& command)
         strOut << arr.Item(i) << "\n";
     }
 
-    if(!strOut.IsEmpty()) {
-        strOut.RemoveLast();
-    }
+    if(!strOut.IsEmpty()) { strOut.RemoveLast(); }
     return strOut;
 }

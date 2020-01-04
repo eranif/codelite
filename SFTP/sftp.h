@@ -98,7 +98,7 @@ protected:
     void OnFileDeleted(clFileSystemEvent& e);
     void OnEditorClosed(wxCommandEvent& e);
     void MSWInitiateConnection();
-
+    void OnInitDone(wxCommandEvent& event);
     void DoFileSaved(const wxString& filename);
 
     bool IsWorkspaceOpened() const { return m_workspaceFile.IsOk(); }

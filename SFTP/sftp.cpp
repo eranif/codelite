@@ -31,6 +31,7 @@
 #include "SSHAccountManagerDlg.h"
 #include "clFilesCollector.h"
 #include "cl_command_event.h"
+#include "cl_standard_paths.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"
@@ -203,6 +204,13 @@ bool SFTP::IsPaneDetached(const wxString& name) const
 
 void SFTP::UnPlug()
 {
+#ifdef __WXGTK__
+    if(m_sshAgentPID != wxNOT_FOUND) {
+        wxKill(m_sshAgentPID, wxSIGTERM);
+        clDEBUG() << "Terminated ssh-agent:" << m_sshAgentPID;
+        m_sshAgentPID = wxNOT_FOUND;
+    }
+#endif
     // Find our page and release it
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); ++i) {
@@ -600,8 +608,8 @@ void SFTP::OnInitDone(wxCommandEvent& event)
     clDEBUG() << "Found ssh-agent:" << sshAgent;
 
     // Check if an instance of ssh-agent is already running
-    PidVec_t P = ProcUtils::PS("ssh-agent");
 #ifdef __WXMSW__
+    PidVec_t P = ProcUtils::PS("ssh-agent");
     if(P.empty()) {
         clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
         ::wxExecute(sshAgent.GetFullPath());
@@ -609,39 +617,29 @@ void SFTP::OnInitDone(wxCommandEvent& event)
         clDEBUG() << "Found ssh-agent running at pid:" << P.begin()->pid;
     }
 #else
-    if(P.empty()) { ::wxExecute(sshAgent.GetFullPath()); }
-    // Check for ssh-agent again
-    P = ProcUtils::PS("ssh-agent");
-    if(P.empty()) { return; }
+    wxFileName fnSocketPath(clStandardPaths::Get().GetUserDataDir(), "ssh-agent.");
+    fnSocketPath.AppendDir("tmp");
+    fnSocketPath.SetFullName(fnSocketPath.GetFullName() + (wxString() << ::wxGetProcessId()));
+    fnSocketPath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    wxString socketPath = fnSocketPath.GetFullPath();
+    ::WrapWithQuotes(socketPath);
 
-    // search for all the /tmp/ssh-.../agent.PID files
-    // if we find one that matches _one_ of ssh-agent processes we found earlier
-    // set the environment variables and return
-    clFilesScanner scanner;
-    std::vector<wxFileName> filesOutput;
-    std::unordered_map<long, wxFileName> M;
-    if(scanner.Scan("/tmp", filesOutput, "agent.*", wxEmptyString, wxEmptyString)) {
-        for(const wxFileName& fn : filesOutput) {
-            long nPid = wxNOT_FOUND;
-            wxString ext = fn.GetExt();
-            if(ext.ToCLong(&nPid)) { M.insert({ nPid, fn }); }
-        }
-    }
+    wxString command = sshAgent.GetFullPath();
+    ::WrapWithQuotes(command);
+    command << " -D -a " << socketPath;
 
-    for(const ProcessEntry& ps : P) {
-        if(M.count(ps.pid)) {
-            // we got a match
-            // build the enrionment variables and set them
-            wxString SSH_AUTH_SOCK;
-            wxString SSH_AGENT_PID;
-            SSH_AGENT_PID << ps.pid;
-            SSH_AUTH_SOCK = M[ps.pid].GetFullPath();
-            ::wxSetEnv("SSH_AGENT_PID", SSH_AGENT_PID);
-            ::wxSetEnv("SSH_AUTH_SOCK", SSH_AUTH_SOCK);
-            clDEBUG() << "SSH_AUTH_SOCK is set to:" << SSH_AUTH_SOCK;
-            clDEBUG() << "SSH_AGENT_PID is set to:" << SSH_AGENT_PID;
-            return;
-        }
+    m_sshAgentPID = ::wxExecute(command);
+    clDEBUG() << "Starting ssh-agent:" << command << ". pid:" << m_sshAgentPID;
+    // Call it on the next event loop, this will give the ssh-agent time to start
+    if(m_sshAgentPID != wxNOT_FOUND) {
+        wxString SSH_AUTH_SOCK;
+        wxString SSH_AGENT_PID;
+        SSH_AGENT_PID << m_sshAgentPID;
+        SSH_AUTH_SOCK = fnSocketPath.GetFullPath();
+        ::wxSetEnv("SSH_AUTH_SOCK", SSH_AUTH_SOCK);
+        ::wxSetEnv("SSH_AGENT_PID", SSH_AGENT_PID);
+        clDEBUG() << "SSH_AUTH_SOCK is set to:" << SSH_AUTH_SOCK;
+        clDEBUG() << "SSH_AGENT_PID is set to:" << SSH_AGENT_PID;
     }
 #endif
 }

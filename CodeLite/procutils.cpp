@@ -64,7 +64,6 @@ static wxString WrapWithShell(const wxString& cmd)
         command << cmd;
     }
 #else
-    wxString tmpcmd = cmd;
     command << wxT("/bin/sh -c '");
     wxString tmpcmd = cmd;
     // escape any single quoutes

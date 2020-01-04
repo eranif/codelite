@@ -1,12 +1,12 @@
 #ifndef LANGUAGESERVERENTRY_H
 #define LANGUAGESERVERENTRY_H
 
+#include "LSPNetwork.h"
+#include "cl_config.h"
+#include <map>
 #include <vector>
 #include <wx/string.h>
-#include "cl_config.h"
 #include <wxStringHash.h>
-#include "LSPNetwork.h"
-#include <map>
 
 class LanguageServerEntry
 {
@@ -21,6 +21,7 @@ class LanguageServerEntry
     wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
     wxString m_command;
+    bool m_autoRestart = true;
 
 public:
     // use 'map' to keep the items sorted by name
@@ -92,6 +93,8 @@ public:
     }
     const wxString& GetName() const { return m_name; }
     eNetworkType GetNetType() const;
+    void SetAutoRestart(bool autoRestart) { this->m_autoRestart = autoRestart; }
+    bool IsAutoRestart() const { return m_autoRestart; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

@@ -74,10 +74,12 @@ public:
     wxButton* GetButtonScan() { return m_buttonScan; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Language Server Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                  const wxString& title = _("Language Server Settings"),
+                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };
-
 
 class LanguageServerPageBase : public wxPanel
 {
@@ -87,6 +89,7 @@ protected:
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
     wxStyledTextCtrl* m_stcCommand;
+    wxCheckBox* m_checkBoxAutoRestart;
     wxStaticText* m_staticText579;
     wxDirPickerCtrl* m_dirPickerWorkingDir;
     wxStaticText* m_staticText6311;
@@ -99,6 +102,7 @@ protected:
     wxCheckBox* m_checkBoxDiagnostics;
 
 protected:
+    virtual void OnCommandUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSuggestLanguages(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -107,6 +111,7 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
+    wxCheckBox* GetCheckBoxAutoRestart() { return m_checkBoxAutoRestart; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
@@ -117,10 +122,10 @@ public:
     wxStaticText* GetStaticText125() { return m_staticText125; }
     wxSlider* GetSliderPriority() { return m_sliderPriority; }
     wxCheckBox* GetCheckBoxDiagnostics() { return m_checkBoxDiagnostics; }
-    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();
 };
-
 
 class NewLanguageServerDlgBase : public wxDialog
 {
@@ -133,7 +138,10 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                             const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(-1, -1),
+                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewLanguageServerDlgBase();
 };
 

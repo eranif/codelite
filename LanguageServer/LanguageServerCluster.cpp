@@ -1,20 +1,20 @@
+#include "CompileCommandsGenerator.h"
 #include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
-#include <algorithm>
-#include "codelite_events.h"
-#include "event_notifier.h"
-#include "ieditor.h"
-#include <wx/stc/stc.h>
-#include "globals.h"
-#include "imanager.h"
-#include "file_logger.h"
-#include "wxCodeCompletionBoxManager.h"
-#include "cl_standard_paths.h"
+#include "StringUtils.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
-#include "CompileCommandsGenerator.h"
+#include "cl_standard_paths.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
 #include "macromanager.h"
-#include "StringUtils.h"
+#include "wxCodeCompletionBoxManager.h"
+#include <algorithm>
+#include <wx/stc/stc.h>
 
 LanguageServerCluster::LanguageServerCluster()
 {
@@ -180,6 +180,11 @@ void LanguageServerCluster::RestartServer(const wxString& name)
 
 void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
+    if(!entry.IsAutoRestart()) {
+        clDEBUG() << "LSP server:" << entry.GetName() << "is not marked as auto-start. Skipped";
+        return;
+    }
+
     if(entry.IsEnabled()) {
         if(!entry.IsValid()) {
             clWARNING() << "LSP Server" << entry.GetName()
@@ -197,12 +202,12 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
         wxArrayString lspCommand;
         wxString command = entry.GetCommand();
-        
+
         wxString project;
         if(clCxxWorkspaceST::Get()->IsOpen()) { project = clCxxWorkspaceST::Get()->GetActiveProjectName(); }
         command = MacroManager::Instance()->Expand(command, clGetManager(), project);
         lspCommand = StringUtils::BuildArgv(command);
-        
+
         wxString rootDir;
         if(clWorkspaceManager::Get().GetWorkspace()) {
             rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
@@ -254,7 +259,7 @@ void LanguageServerCluster::StartAll()
     const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
     for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
         const LanguageServerEntry& entry = vt.second;
-        StartServer(entry);
+        if(entry.IsAutoRestart()) { StartServer(entry); }
     }
 }
 

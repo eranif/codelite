@@ -20,6 +20,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
     m_disaplayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_disaplayDiagnostics); // defaults to true
+    m_autoRestart = json.namedObject("autoRestart").toBool(m_autoRestart);
     
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
@@ -50,6 +51,8 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("priority", m_priority);
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
+    json.addProperty("autoRestart", m_autoRestart);
+    
     wxArrayString methods;
     methods.Alloc(m_unimplementedMethods.size());
     for(const wxString& methodName : m_unimplementedMethods) {

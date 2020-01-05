@@ -12,7 +12,8 @@ class WXDLLIMPEXP_CL ResponseError : public Message
 {
     int m_errorCode = wxNOT_FOUND;
     wxString m_message;
-
+    IPathConverter::Ptr_t m_pathConverter;
+    
 public:
     enum eErrorCodes {
         kErrorCodeParseError = -32700,
@@ -29,11 +30,12 @@ public:
     };
 
 public:
-    ResponseError(const wxString& message);
+    ResponseError(const wxString& message, IPathConverter::Ptr_t pathConverter);
     ResponseError();
     virtual ~ResponseError();
-    void FromJSON(const JSONItem& json);
-    virtual std::string ToString() const;
+    void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual std::string ToString(IPathConverter::Ptr_t pathConverter) const;
     void SetErrorCode(int errorCode) { this->m_errorCode = errorCode; }
     void SetMessage(const wxString& message) { this->m_message = message; }
     int GetErrorCode() const { return m_errorCode; }

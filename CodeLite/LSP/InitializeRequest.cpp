@@ -10,9 +10,9 @@ LSP::InitializeRequest::InitializeRequest(const wxString& rootUri)
 
 LSP::InitializeRequest::~InitializeRequest() {}
 
-JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
+JSONItem LSP::InitializeRequest::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
-    JSONItem json = Request::ToJSON(name);
+    JSONItem json = Request::ToJSON(name, pathConverter);
 
     // add the 'params'
     JSONItem params = JSONItem::createObject("params");
@@ -33,8 +33,10 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     return json;
 }
 
-void LSP::InitializeRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::InitializeRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
+                                        IPathConverter::Ptr_t pathConverter)
 {
     wxUnusedVar(response);
     wxUnusedVar(owner);
+    wxUnusedVar(pathConverter);
 }

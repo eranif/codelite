@@ -1,6 +1,7 @@
 #ifndef LSP_REQUEST_H
 #define LSP_REQUEST_H
 
+#include "IPathConverter.hpp"
 #include "LSP/MessageWithParams.h"
 #include <wx/filename.h>
 
@@ -18,8 +19,8 @@ public:
     void SetId(int id) { this->m_id = id; }
     int GetId() const { return m_id; }
 
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
 
     /**
      * @brief is this request position dependant? (i.e. the response should be diplsayed where the request was
@@ -44,10 +45,12 @@ public:
      * @brief this method will get called by the protocol for handling the response.
      * Override it in the various requests
      */
-    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) 
+    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
+                            IPathConverter::Ptr_t pathConverter)
     {
         wxUnusedVar(response);
         wxUnusedVar(owner);
+        wxUnusedVar(pathConverter);
     }
 };
 }; // namespace LSP

@@ -2,11 +2,11 @@
 #define REQUESTMESSAGE_H
 
 #include "LSP/Message.h" // Base class: LSP::Message
+#include "LSP/ResponseMessage.h"
 #include "LSP/basic_types.h"
 #include "json_rpc_params.h"
-#include <wx/sharedptr.h>
 #include <wx/event.h>
-#include "LSP/ResponseMessage.h"
+#include <wx/sharedptr.h>
 
 namespace LSP
 {
@@ -25,9 +25,9 @@ protected:
 public:
     MessageWithParams();
     virtual ~MessageWithParams();
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
-    virtual std::string ToString() const;
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual std::string ToString(IPathConverter::Ptr_t pathConverter) const;
 
     void SetMethod(const wxString& method) { this->m_method = method; }
     const wxString& GetMethod() const { return m_method; }

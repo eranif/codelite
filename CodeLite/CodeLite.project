@@ -45,6 +45,7 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/IPathConverter.hpp"/>
     <File Name="LSP/SignatureHelpRequest.cpp"/>
     <File Name="LSP/SignatureHelpRequest.h"/>
     <File Name="LSP/GotoImplementationRequest.cpp"/>

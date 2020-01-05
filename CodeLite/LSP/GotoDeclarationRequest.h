@@ -1,9 +1,9 @@
 #ifndef GOTO_DECLARATION_REQUEST_H
 #define GOTO_DECLARATION_REQUEST_H
 
-#include <wx/filename.h>
-#include "basic_types.h"
 #include "LSP/Request.h"
+#include "basic_types.h"
+#include <wx/filename.h>
 
 namespace LSP
 {
@@ -22,7 +22,7 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxFileName& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner, IPathConverter::Ptr_t pathConverter);
     bool IsPositionDependantRequest() const { return true; }
     bool IsValidAt(const wxFileName& filename, size_t line, size_t col) const;
 };

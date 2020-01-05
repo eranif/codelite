@@ -2,9 +2,9 @@
 #define RESPONSEMESSAGE_H
 
 #include "LSP/Message.h"
-#include <wx/sharedptr.h>
-#include <macros.h>
 #include "LSP/basic_types.h"
+#include <macros.h>
+#include <wx/sharedptr.h>
 
 namespace LSP
 {
@@ -14,6 +14,7 @@ class WXDLLIMPEXP_CL ResponseMessage : public LSP::Message
     int m_id = wxNOT_FOUND;
     wxSharedPtr<JSON> m_json;
     wxString m_jsonMessage;
+    IPathConverter::Ptr_t m_pathConverter;
 
 protected:
     /**
@@ -22,12 +23,12 @@ protected:
     int ReadHeaders(const wxString& message, wxStringMap_t& headers);
 
 public:
-    ResponseMessage(wxString& message);
+    ResponseMessage(wxString& message, IPathConverter::Ptr_t pathConverter);
     virtual ~ResponseMessage();
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
 
-    virtual std::string ToString() const;
+    virtual std::string ToString(IPathConverter::Ptr_t pathConverter) const;
     ResponseMessage& SetId(int id)
     {
         this->m_id = id;
@@ -43,15 +44,15 @@ public:
      * @brief is this a "textDocument/publishDiagnostics" message?
      */
     bool IsPushDiagnostics() const { return Get("method").toString() == "textDocument/publishDiagnostics"; }
-    
+
     /**
      * @brief return list of diagnostics
      */
-    std::vector<LSP::Diagnostic> GetDiagnostics() const;
+    std::vector<LSP::Diagnostic> GetDiagnostics(IPathConverter::Ptr_t pathConverter) const;
     /**
      * @brief return the URI diagnostics
      */
-    wxString GetDiagnosticsUri() const;
+    wxString GetDiagnosticsUri(IPathConverter::Ptr_t pathConverter) const;
 };
 }; // namespace LSP
 

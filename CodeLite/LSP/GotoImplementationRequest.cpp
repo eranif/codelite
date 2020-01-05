@@ -12,15 +12,16 @@ LSP::GotoImplementationRequest::GotoImplementationRequest(const wxFileName& file
 
 LSP::GotoImplementationRequest::~GotoImplementationRequest() {}
 
-void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
+                                                IPathConverter::Ptr_t pathConverter)
 {
     JSONItem result = response.Get("result");
     if(!result.isOk()) { return; }
     LSP::Location loc;
     if(result.isArray()) {
-        loc.FromJSON(result.arrayItem(0));
+        loc.FromJSON(result.arrayItem(0), pathConverter);
     } else {
-        loc.FromJSON(result);
+        loc.FromJSON(result, pathConverter);
     }
 
     // We send the same event for declaraion as we do for definition

@@ -25,8 +25,8 @@ public:
     }
     int GetProcessId() const { return m_processId; }
     const wxString& GetRootUri() const { return m_rootUri; }
-    JSONItem ToJSON(const wxString& name) const;
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner, IPathConverter::Ptr_t pathConverter);
     bool IsPositionDependantRequest() const { return false; }
 };
 };     // namespace LSP

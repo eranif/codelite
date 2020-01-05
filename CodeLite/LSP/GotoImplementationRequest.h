@@ -1,6 +1,7 @@
 #ifndef GOTOIMPLEMENTATIONREQUEST_H
 #define GOTOIMPLEMENTATIONREQUEST_H
 
+#include "IPathConverter.hpp"
 #include "LSP/Request.h"
 #include <wx/filename.h>
 
@@ -15,7 +16,7 @@ class WXDLLIMPEXP_CL GotoImplementationRequest : public Request
 public:
     GotoImplementationRequest(const wxFileName& filename, size_t line, size_t column);
     virtual ~GotoImplementationRequest();
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner, IPathConverter::Ptr_t pathConverter);
     bool IsPositionDependantRequest() const { return true; }
     bool IsValidAt(const wxFileName& filename, size_t line, size_t col) const;
 };

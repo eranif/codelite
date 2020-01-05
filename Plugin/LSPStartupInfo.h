@@ -1,9 +1,9 @@
 #ifndef LSP_STARTUPINFO_H
 #define LSP_STARTUPINFO_H
 
-#include <wx/string.h>
 #include "codelite_exports.h"
 #include <wx/arrstr.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK LSPStartupInfo
 {
@@ -11,6 +11,7 @@ public:
     enum eFlags {
         kShowConsole = (1 << 0),
         kUseTcp = (1 << 1),
+        kAutoStart = (1 << 2),
     };
 
 protected:

@@ -1,21 +1,22 @@
 #ifndef LANGUAG_ESERVER_PROTOCOL_H
 #define LANGUAG_ESERVER_PROTOCOL_H
 
-#include "codelite_exports.h"
+#include "LSP/IPathConverter.hpp"
+#include "LSP/MessageWithParams.h"
+#include "LSPNetwork.h"
+#include "ServiceProvider.h"
+#include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
-#include <wxStringHash.h>
-#include <wx/sharedptr.h>
+#include "codelite_exports.h"
 #include "macros.h"
 #include <map>
 #include <queue>
 #include <string>
-#include "LSP/MessageWithParams.h"
 #include <unordered_map>
-#include "SocketAPI/clSocketClientAsync.h"
-#include "LSPNetwork.h"
 #include <wx/filename.h>
-#include "ServiceProvider.h"
+#include <wx/sharedptr.h>
+#include <wxStringHash.h>
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -55,6 +56,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxString m_outputBuffer;
     wxString m_rootFolder;
     wxString m_connectionString;
+    IPathConverter::Ptr_t m_pathConverter;
 
     // initialization
     eState m_state = kUnInitialized;
@@ -128,7 +130,8 @@ protected:
     void QueueMessage(LSP::MessageWithParams::Ptr_t request);
 
 public:
-    LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
+    LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
+                           IPathConverter::Ptr_t pathConverter);
     virtual ~LanguageServerProtocol();
 
     LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
@@ -137,6 +140,8 @@ public:
         return *this;
     }
     bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
+    void SetPathConverter(IPathConverter::Ptr_t pathConverter) { this->m_pathConverter = pathConverter; }
+    IPathConverter::Ptr_t GetPathConverter() const { return m_pathConverter; }
     LanguageServerProtocol& SetName(const wxString& name)
     {
         this->m_name = name;

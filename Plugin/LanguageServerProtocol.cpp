@@ -30,10 +30,12 @@
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
 
-LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
+LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
+                                               IPathConverter::Ptr_t pathConverter)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
     , m_name(name)
     , m_owner(owner)
+    , m_pathConverter(pathConverter)
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
@@ -470,7 +472,7 @@ void LanguageServerProtocol::ProcessQueue()
     }
 
     // Write the message length as string of 10 bytes
-    m_network->Send(req->ToString());
+    m_network->Send(req->ToString(m_pathConverter));
     m_Queue.SetWaitingReponse(true);
     m_Queue.Pop();
     if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
@@ -546,14 +548,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 
     while(true) {
         // Did we get a complete message?
-        LSP::ResponseMessage res(m_outputBuffer);
+        LSP::ResponseMessage res(m_outputBuffer, m_pathConverter);
         if(res.IsOk()) {
             if(IsInitialized()) {
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
                     clDEBUG() << GetLogPrefix() << "received an error message";
-                    LSP::ResponseError errMsg(res.GetMessageString());
+                    LSP::ResponseError errMsg(res.GetMessageString(), m_pathConverter);
                     switch(errMsg.GetErrorCode()) {
                     case LSP::ResponseError::kErrorCodeInternalError:
                     case LSP::ResponseError::kErrorCodeInvalidRequest: {
@@ -607,14 +609,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                                !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG() << "Response is no longer valid. Discarding its result";
                             } else {
-                                preq->OnResponse(res, m_owner);
+                                preq->OnResponse(res, m_owner, m_pathConverter);
                             }
                         }
 
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
                         clDEBUG() << GetLogPrefix() << "Received diagnostic message";
-                        wxFileName fn(wxFileSystem::URLToFileName(res.GetDiagnosticsUri()));
+                        wxFileName fn(wxFileSystem::URLToFileName(res.GetDiagnosticsUri(m_pathConverter)));
                         fn.Normalize();
 #ifndef __WXOSX__
                         // Don't show this message on macOS as it appears in the middle of the screen...
@@ -622,7 +624,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             wxString() << GetLogPrefix() << "parsing of file: " << fn.GetFullName() << " is completed",
                             1);
 #endif
-                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
+                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics(m_pathConverter);
                         if(!diags.empty() && IsDisaplayDiagnostics()) {
                             // report the diagnostics
                             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);

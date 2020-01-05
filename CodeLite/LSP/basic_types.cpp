@@ -1,5 +1,6 @@
 #include "JSON.h"
 #include "LSP/basic_types.h"
+#include "file_logger.h"
 #include <wx/filesys.h>
 
 //===------------------------------------------------
@@ -14,19 +15,13 @@ namespace LSP
 void TextDocumentIdentifier::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
     wxString uri = json.namedObject("uri").toString();
-    if(pathConverter) {
-        m_filename = pathConverter->ConvertFrom(uri);
-    } else {
-        m_filename = wxFileSystem::URLToFileName(uri);
-    }
+    m_filename = pathConverter->ConvertFrom(uri);
 }
 
 JSONItem TextDocumentIdentifier::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    wxFileName url =
-        pathConverter ? pathConverter->ConvertTo(m_filename.GetFullPath()) : wxFileSystem::FileNameToURL(m_filename);
-    json.addProperty("uri", wxFileSystem::FileNameToURL(m_filename));
+    json.addProperty("uri", pathConverter->ConvertTo(m_filename.GetFullPath()));
     return json;
 }
 
@@ -68,7 +63,7 @@ JSONItem Position::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConver
 //===----------------------------------------------------------------------------------
 void TextDocumentItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_uri = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
+    m_uri = pathConverter->ConvertFrom(json.namedObject("uri").toString());
     m_uri.Normalize();
     m_languageId = json.namedObject("languageId").toString();
     m_version = json.namedObject("version").toInt();
@@ -78,7 +73,7 @@ void TextDocumentItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t path
 JSONItem TextDocumentItem::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", wxFileSystem::FileNameToURL(GetUri()))
+    json.addProperty("uri", pathConverter->ConvertTo(GetUri().GetFullPath()))
         .addProperty("languageId", GetLanguageId())
         .addProperty("version", GetVersion())
         .addProperty("text", GetText());
@@ -115,7 +110,7 @@ JSONItem Range::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter
 
 void Location::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    wxFileName fn = wxFileSystem::URLToFileName(json.namedObject("uri").toString());
+    wxFileName fn = pathConverter->ConvertFrom(json.namedObject("uri").toString());
     fn.Normalize();
     m_uri = fn.GetFullPath();
     m_range.FromJSON(json.namedObject("range"), pathConverter);
@@ -124,7 +119,7 @@ void Location::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverte
 JSONItem Location::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", wxFileSystem::FileNameToURL(m_uri));
+    json.addProperty("uri", pathConverter->ConvertTo(m_uri));
     json.append(m_range.ToJSON("range", pathConverter));
     return json;
 }

@@ -81,8 +81,6 @@ bool LanguageServerEntry::IsValid() const
 
     wxFileName exePath(m_exepath);
     if(exePath.IsAbsolute() && !exePath.FileExists()) { return false; }
-    wxFileName wd(m_workingDirectory, "");
-    if(wd.IsAbsolute() && !wd.DirExists()) { return false; }
     return true;
 }
 

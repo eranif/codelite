@@ -14,7 +14,6 @@ public:
 protected:
     size_t m_flags = 0;
     LanguageServerEntry::Map_t m_servers;
-    wxString m_nodejs;
 
 private:
     LanguageServerConfig();
@@ -63,12 +62,6 @@ public:
      * @brief delete an existing server by name
      */
     void RemoveServer(const wxString& name);
-    LanguageServerConfig& SetNodejs(const wxString& nodejs)
-    {
-        this->m_nodejs = nodejs;
-        return *this;
-    }
-    const wxString& GetNodejs() const { return m_nodejs; }
 };
 
 #endif // LANGUAGESERVERCONFIG_H

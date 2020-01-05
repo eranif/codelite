@@ -34,33 +34,10 @@
 #include "plugin.h"
 #include "remote_file_info.h"
 #include "sftp_workspace_settings.h"
+#include <SFTPClientData.hpp>
 
 class SFTPStatusPage;
 class SFTPTreeView;
-
-class SFTPClientData : public wxClientData
-{
-    wxString localPath;
-    wxString remotePath;
-    size_t permissions;
-    int lineNumber = wxNOT_FOUND;
-
-public:
-    SFTPClientData()
-        : permissions(0)
-    {
-    }
-    virtual ~SFTPClientData() {}
-
-    void SetLocalPath(const wxString& localPath) { this->localPath = localPath; }
-    void SetRemotePath(const wxString& remotePath) { this->remotePath = remotePath; }
-    const wxString& GetLocalPath() const { return localPath; }
-    const wxString& GetRemotePath() const { return remotePath; }
-    void SetPermissions(size_t permissions) { this->permissions = permissions; }
-    size_t GetPermissions() const { return permissions; }
-    void SetLineNumber(int lineNumber) { this->lineNumber = lineNumber; }
-    int GetLineNumber() const { return lineNumber; }
-};
 
 class SFTP : public IPlugin
 {

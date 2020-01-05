@@ -23,7 +23,6 @@
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/stc/stc.h>
-#include <wx/filepicker.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/slider.h>
@@ -91,7 +90,8 @@ protected:
     wxStyledTextCtrl* m_stcCommand;
     wxCheckBox* m_checkBoxAutoRestart;
     wxStaticText* m_staticText579;
-    wxDirPickerCtrl* m_dirPickerWorkingDir;
+    wxTextCtrl* m_textCtrlWD;
+    wxButton* m_button1153;
     wxStaticText* m_staticText6311;
     wxTextCtrl* m_textCtrlLanguages;
     wxButton* m_button115;
@@ -103,6 +103,7 @@ protected:
 
 protected:
     virtual void OnCommandUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowseWD(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSuggestLanguages(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -113,7 +114,8 @@ public:
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
     wxCheckBox* GetCheckBoxAutoRestart() { return m_checkBoxAutoRestart; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
-    wxDirPickerCtrl* GetDirPickerWorkingDir() { return m_dirPickerWorkingDir; }
+    wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
+    wxButton* GetButton1153() { return m_button1153; }
     wxStaticText* GetStaticText6311() { return m_staticText6311; }
     wxTextCtrl* GetTextCtrlLanguages() { return m_textCtrlLanguages; }
     wxButton* GetButton115() { return m_button115; }

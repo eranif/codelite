@@ -222,11 +222,22 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_staticText579, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_dirPickerWorkingDir = new wxDirPickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition,
-                                                wxDLG_UNIT(this, wxSize(-1, -1)),
-                                                wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
+    wxBoxSizer* boxSizer1131 = new wxBoxSizer(wxHORIZONTAL);
 
-    flexGridSizer432->Add(m_dirPickerWorkingDir, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer432->Add(boxSizer1131, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlWD = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlWD->SetHint(wxT(""));
+#endif
+
+    boxSizer1131->Add(m_textCtrlWD, 1, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button1153 =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button1153->SetToolTip(_("Browse..."));
+
+    boxSizer1131->Add(m_button1153, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText6311 =
         new wxStaticText(this, wxID_ANY, _("Languages:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -300,6 +311,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     if(GetSizer()) { GetSizer()->Fit(this); }
     // Connect events
     m_stcCommand->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
+    m_button1153->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD), NULL,
+                          this);
     m_button115->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                          wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
 }
@@ -307,6 +320,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 LanguageServerPageBase::~LanguageServerPageBase()
 {
     m_stcCommand->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
+    m_button1153->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD),
+                             NULL, this);
     m_button115->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                             wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
 }

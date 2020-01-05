@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <macros.h>
 #include <wx/choicdlg.h>
+#include <wx/dirdlg.h>
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
@@ -12,7 +13,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     if(lex) { lex->Apply(m_stcCommand); }
     m_textCtrlName->SetValue(data.GetName());
-    m_dirPickerWorkingDir->SetPath(data.GetWorkingDirectory());
+    m_textCtrlWD->SetValue(data.GetWorkingDirectory());
     m_stcCommand->SetText(data.GetCommand());
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
@@ -38,7 +39,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
     LanguageServerEntry d;
     d.SetName(m_textCtrlName->GetValue());
     d.SetCommand(m_stcCommand->GetText().Trim().Trim(false));
-    d.SetWorkingDirectory(m_dirPickerWorkingDir->GetPath());
+    d.SetWorkingDirectory(m_textCtrlWD->GetValue());
     d.SetLanguages(GetLanguages());
     d.SetEnabled(m_checkBoxEnabled->IsChecked());
     d.SetConnectionString(m_comboBoxConnection->GetValue());
@@ -78,4 +79,12 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
 void LanguageServerPage::OnCommandUI(wxUpdateUIEvent& event)
 {
     m_stcCommand->Enable(m_checkBoxAutoRestart->IsChecked());
+}
+void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString path(m_textCtrlWD->GetValue());
+    wxString new_path =
+        wxDirSelector(_("Select a working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
+    if(new_path.IsEmpty() == false) { m_textCtrlWD->SetValue(new_path); }
 }

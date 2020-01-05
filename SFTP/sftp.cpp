@@ -640,6 +640,11 @@ void SFTP::OnInitDone(wxCommandEvent& event)
         ::wxSetEnv("SSH_AGENT_PID", SSH_AGENT_PID);
         clDEBUG() << "SSH_AUTH_SOCK is set to:" << SSH_AUTH_SOCK;
         clDEBUG() << "SSH_AGENT_PID is set to:" << SSH_AGENT_PID;
+        // Run ssh-add
     }
 #endif
+    
+    // Execute ssh-add
+    sshAgent.SetFullName("ssh-add");
+    ::wxExecute(sshAgent.GetFullPath());
 }

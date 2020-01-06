@@ -269,6 +269,9 @@ protected:
     wxColour m_selTextColour;
     wxColour m_selTextBgColour;
 
+protected:
+    void DoRestoreStateAndDelete(clEditorStateLocker* locker);
+
 public:
     static bool m_ccShowPrivateMembers;
     static bool m_ccShowItemsComments;
@@ -1010,7 +1013,7 @@ private:
 
     wxFontEncoding DetectEncoding(const wxString& filename);
     void DoToggleFold(int line, const wxString& textTag);
-    
+
     // Line numbers drawings
     void DoUpdateRelativeLineNumbers();
     void DoUpdateLineNumbers();

@@ -208,14 +208,6 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer432->Add(m_stcCommand, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    flexGridSizer432->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxAutoRestart = new wxCheckBox(this, wxID_ANY, _("Use the command to start the server"), wxDefaultPosition,
-                                           wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxAutoRestart->SetValue(true);
-
-    flexGridSizer432->Add(m_checkBoxAutoRestart, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticText579 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_staticText579->SetToolTip(_("Set the language server working directory"));

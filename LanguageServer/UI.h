@@ -88,7 +88,6 @@ protected:
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
     wxStyledTextCtrl* m_stcCommand;
-    wxCheckBox* m_checkBoxAutoRestart;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
     wxButton* m_button1153;
@@ -112,7 +111,6 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
-    wxCheckBox* GetCheckBoxAutoRestart() { return m_checkBoxAutoRestart; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
     wxButton* GetButton1153() { return m_button1153; }

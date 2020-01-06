@@ -140,7 +140,6 @@ void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 bool LanguageServerProtocol::DoStart()
 {
     DoClear();
-    if(m_lspCommand.IsEmpty()) { return false; }
 
     clDEBUG() << GetLogPrefix() << "Starting...";
     clDEBUG() << GetLogPrefix() << "Command:" << m_lspCommand;

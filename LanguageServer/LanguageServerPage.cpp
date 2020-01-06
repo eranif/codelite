@@ -22,7 +22,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     this->m_comboBoxConnection->SetValue(data.GetConnectionString());
     m_checkBoxDiagnostics->SetValue(data.IsDisaplayDiagnostics());
     m_sliderPriority->SetValue(data.GetPriority());
-    m_checkBoxAutoRestart->SetValue(data.IsAutoRestart());
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
@@ -45,7 +44,6 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetConnectionString(m_comboBoxConnection->GetValue());
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
-    d.SetAutoRestart(m_checkBoxAutoRestart->IsChecked());
     return d;
 }
 
@@ -76,10 +74,7 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
     }
     m_textCtrlLanguages->ChangeValue(newText);
 }
-void LanguageServerPage::OnCommandUI(wxUpdateUIEvent& event)
-{
-    m_stcCommand->Enable(m_checkBoxAutoRestart->IsChecked());
-}
+void LanguageServerPage::OnCommandUI(wxUpdateUIEvent& event) { event.Enable(true); }
 void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
 {
     wxUnusedVar(event);

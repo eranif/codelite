@@ -3043,7 +3043,7 @@ void clEditor::OpenFile()
     }
 
     // State locker (on dtor it restores: bookmarks, current line, breakpoints and folds)
-    clEditorStateLocker *stateLocker = new clEditorStateLocker(GetCtrl());
+    clEditorStateLocker stateLocker(GetCtrl());
 
     int lineNumber = GetCurrentLine();
     m_mgr->GetStatusBar()->SetMessage(_("Loading file..."));
@@ -3088,10 +3088,6 @@ void clEditor::OpenFile()
     SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
     SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
     m_mgr->GetStatusBar()->SetMessage(_("Ready"));
-    
-    // it's time to restore the state
-    // we need to do this on the next event loop
-    CallAfter(&clEditor::DoRestoreStateAndDelete, stateLocker);
 }
 
 void clEditor::SetEditorText(const wxString& text)
@@ -5544,6 +5540,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     }
 
     clEditorStateLocker stateLocker(GetCtrl());
+
     wxString text;
 
     // Read the file we currently support:
@@ -5552,6 +5549,8 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
 
     SetText(text);
+    Colourise(0, wxNOT_FOUND);
+    
     m_modifyTime = GetFileLastModifiedTime();
     SetSavePoint();
 
@@ -5561,8 +5560,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     }
 
     SetReloadingFile(false);
-    Colourise(0, wxNOT_FOUND);
-    
+
     // Notify about file-reload
     clCommandEvent e(wxEVT_FILE_LOADED);
     e.SetFileName(GetFileName().GetFullPath());
@@ -5685,11 +5683,6 @@ size_t clEditor::GetEditorTextRaw(std::string& text)
         text.append(cb.data());
     }
     return text.length();
-}
-
-void clEditor::DoRestoreStateAndDelete(clEditorStateLocker* locker)
-{
-    wxDELETE(locker);
 }
 
 // ----------------------------------

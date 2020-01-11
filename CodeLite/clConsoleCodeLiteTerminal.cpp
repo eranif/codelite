@@ -4,6 +4,7 @@
 #include "procutils.h"
 #include "file_logger.h"
 #include <wx/arrstr.h>
+#include <wx/tokenzr.h>
 
 clConsoleCodeLiteTerminal::clConsoleCodeLiteTerminal()
 {

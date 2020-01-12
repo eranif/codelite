@@ -2120,7 +2120,7 @@ bool VimCommand::command_call_visual_block_mode()
             int start = m_ctrl->FindColumn(line, begin_col);
             int end = m_ctrl->FindColumn(line, end_col);
             if (start > end) {std::swap(start, end);}
-            if (m_ctrl->GetCharAt(end) == '\r' || m_ctrl->GetCharAt(end) == '\n') {--end;}
+            while (end > 0 && (m_ctrl->GetCharAt(end) == '\r' || m_ctrl->GetCharAt(end) == '\n')) {--end;}
             if (end >= start) {
                 wxString str(m_actionCommand, end - start + 1);
                 m_ctrl->Replace(start, end + 1, str);
@@ -2163,7 +2163,10 @@ bool VimCommand::command_call_visual_block_mode()
                 int start = m_ctrl->FindColumn(line, begin_col);
                 int end = m_ctrl->FindColumn(line, end_col);
                 if (start > end) {std::swap(start, end);}
-                m_ctrl->DeleteRange(start, end - start + 1);
+                while (end > 0 && (m_ctrl->GetCharAt(end) == '\r' || m_ctrl->GetCharAt(end) == '\n')) {--end;}
+                if (end >= start) {
+                    m_ctrl->DeleteRange(start, end - start + 1);
+                }
             }
         }
         

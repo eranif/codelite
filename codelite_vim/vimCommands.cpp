@@ -95,7 +95,9 @@ bool VimCommand::OnNewKeyDown(wxChar ch, int modifier)
 bool VimCommand::OnEscapeDown()
 {
     if (m_currentModus == VIM_MODI::INSERT_MODUS) {
-        if (m_commandID == COMMANDVI::block_I || m_commandID == COMMANDVI::block_A) {
+        if (m_commandID == COMMANDVI::block_I ||
+                m_commandID == COMMANDVI::block_A ||
+                m_commandID == COMMANDVI::block_c) {
             int begin_line = m_visualBlockBeginLine;
             int end_line = m_visualBlockEndLine;
             int begin_col = m_visualBlockBeginCol;
@@ -2133,15 +2135,22 @@ bool VimCommand::command_call_visual_block_mode()
     } break;
     
     /*========== DELETE AND COPY =======================*/
-
+    case COMMANDVI::block_c:
     case COMMANDVI::d:
     case COMMANDVI::x:
     case COMMANDVI::y: {
-        int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
-        int end_line = m_ctrl->GetCurrentLine();
-        int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
-        int end_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        
+        m_visualBlockBeginLine = m_ctrl->LineFromPosition(m_initialVisualPos);
+        m_visualBlockEndLine = m_ctrl->LineFromPosition(m_ctrl->GetCurrentPos());
+        m_visualBlockBeginCol = m_ctrl->GetColumn(m_initialVisualPos);
+        m_visualBlockEndCol = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+            
+        int begin_line = m_visualBlockBeginLine;
+        int end_line = m_visualBlockEndLine;
+        int begin_col = m_visualBlockBeginCol;
+        int end_col = m_visualBlockEndCol;
         if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        if (begin_col > end_col) {std::swap(begin_col, end_col);}
         
         for (int line = begin_line; line <= end_line; ++line) {
             int start = m_ctrl->FindColumn(line, begin_col);
@@ -2169,10 +2178,15 @@ bool VimCommand::command_call_visual_block_mode()
                 }
             }
         }
+        m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, begin_col));
+        if(this->m_commandID == COMMANDVI::block_c) {
+            m_currentModus = VIM_MODI::INSERT_MODUS;
+        } else {
+            m_currentModus = VIM_MODI::NORMAL_MODUS;
+        }
         
         
         this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
-        m_currentModus = VIM_MODI::NORMAL_MODUS;
         this->m_newLineCopy = false;
         m_visualBlockCopy = true;
 
@@ -2639,7 +2653,12 @@ bool VimCommand::is_cmd_complete()
         possible_command = true;
         switch(m_actionCommand) {
         case '\0':
-            command_complete = false;
+            if (m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
+                command_complete = true;
+                m_commandID = COMMANDVI::block_c;
+            } else {
+                command_complete = false;
+            }
             break;
         case '0':
             command_complete = true;

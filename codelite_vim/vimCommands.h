@@ -74,6 +74,7 @@ enum class COMMANDVI {
     a,
     A,
     block_A,
+    block_c,
     o,
     O,
     perc,

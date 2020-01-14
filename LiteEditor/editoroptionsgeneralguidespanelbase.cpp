@@ -158,12 +158,15 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
     m_pgPropSmartCurly->SetHelpString(_("When user types '{', automatically insert the closing brace"));
 
     m_pgPropSmartParentheses =
-        m_pgMgrEdit->AppendIn(m_pgProp8, new wxBoolProperty(_("Smart square brackets / Parentheses"), wxPG_LABEL, 1));
+        m_pgMgrEdit->AppendIn(m_pgProp8, new wxBoolProperty(_("Smart brackets / parentheses"), wxPG_LABEL, 1));
     m_pgPropSmartParentheses->SetHelpString(
-        _("When user types '[' or '(' automatically insert the closing bracket.\nIn addition, if a user types ']' or "
-          "')' next to ']' or ')' just move the caret one position to the right"));
+        _("When typing ']' or ')' next to a ']' or ')'\nMove the caret one position to the right\n"));
 
-    m_pgPropSmartQuotes = m_pgMgrEdit->AppendIn(m_pgProp8, new wxBoolProperty(_("Smart quotes"), wxPG_LABEL, 1));
+    m_pgPropAutoCompleteParen = m_pgMgrEdit->AppendIn(
+        m_pgProp8, new wxBoolProperty(_("Auto complete closing bracket and parentheses"), wxPG_LABEL, 0));
+    m_pgPropAutoCompleteParen->SetHelpString(wxT(""));
+
+    m_pgPropSmartQuotes = m_pgMgrEdit->AppendIn(m_pgProp8, new wxBoolProperty(_("Smart quotes"), wxPG_LABEL, 0));
     m_pgPropSmartQuotes->SetHelpString(
         _("When typing \" or ', automatically add another one to the right, unless one already exists (in this case, "
           "simply move the caret one position to the right)"));

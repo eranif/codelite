@@ -559,6 +559,7 @@ void clEditor::SetProperties()
     m_hightlightMatchedBraces = options->GetHighlightMatchedBraces();
     m_autoAddMatchedCurlyBrace = options->GetAutoAddMatchedCurlyBraces();
     m_autoAddNormalBraces = options->GetAutoAddMatchedNormalBraces();
+    m_smartParen = options->IsSmartParen();
     m_autoAdjustHScrollbarWidth = options->GetAutoAdjustHScrollBarWidth();
     m_disableSmartIndent = options->GetDisableSmartIndent();
     m_disableSemicolonShift = options->GetDisableSemicolonShift();
@@ -1028,7 +1029,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         CharRight();
         DeleteBack();
 
-    } else if(addClosingBrace && (event.GetKey() == ')' || event.GetKey() == ']') && event.GetKey() == GetCharAt(pos)) {
+    } else if(m_smartParen && (event.GetKey() == ')' || event.GetKey() == ']') && event.GetKey() == GetCharAt(pos)) {
         // disable the auto brace adding when inside comment or string
         if(!m_context->IsCommentOrString(pos)) {
             CharRight();

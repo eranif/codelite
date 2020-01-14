@@ -230,6 +230,7 @@ protected:
     bool m_hightlightMatchedBraces;
     bool m_autoAddMatchedCurlyBrace;
     bool m_autoAddNormalBraces;
+    bool m_smartParen = true;
     std::map<int, std::vector<BreakpointInfo>> m_breakpointsInfo;
     bool m_autoAdjustHScrollbarWidth;
     bool m_reloadingFile;

@@ -45,11 +45,11 @@ wxString SetDefaultBookmarkColours()
     const wxString arr[] = { "#FF0080", "#0000FF", "#FF0000", "#00FF00", "#FFFF00" };
     wxString output;
     for(size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
-	if(n < sizeof(arr) / sizeof(wxString)) {
-	    output << arr[n] << ';';
-	} else {
-	    output << "#FF0080" << ';';
-	}
+        if(n < sizeof(arr) / sizeof(wxString)) {
+            output << arr[n] << ';';
+        } else {
+            output << "#FF0080" << ';';
+        }
     }
 
     return output;
@@ -129,136 +129,132 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_indentedComments(false)
     , m_nbTabHeight(nbTabHt_Tall)
     , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
+    , m_smartParen(true)
 {
     m_debuggerMarkerLine = DrawingUtils::LightColour("LIME GREEN", 8.0);
     m_mswTheme = false;
     // set the default font name to be wxFONTENCODING_UTF8
     SetFileFontEncoding(wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8));
     if(node) {
-	SetFileFontEncoding(
-	    XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
+        SetFileFontEncoding(
+            XmlUtils::ReadString(node, wxT("FileFontEncoding"), wxFontMapper::GetEncodingName(wxFONTENCODING_UTF8)));
 
-	m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"), m_displayFoldMargin);
-	m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"), m_underlineFoldLine);
-	m_foldStyle = XmlUtils::ReadString(node, wxT("FoldStyle"), m_foldStyle);
-	m_displayBookmarkMargin = XmlUtils::ReadBool(node, wxT("DisplayBookmarkMargin"), m_displayBookmarkMargin);
-	m_bookmarkShape = XmlUtils::ReadString(node, wxT("BookmarkShape"), m_bookmarkShape);
-	m_bookmarkBgColours =
-	    XmlUtils::ReadString(node, wxT("BookmarkBgColours"), ""); // No default; we'll deal with this later
-	m_bookmarkFgColours = XmlUtils::ReadString(node, wxT("BookmarkFgColours"), "");
-	m_bookmarkLabels = XmlUtils::ReadString(node, wxT("BookmarkLabels"), defaultBookmarkLabels);
-	m_clearHighlitWordsOnFind = XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlitWordsOnFind);
-	m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
-	m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
-	m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
-	m_highlightCurLineNumber = XmlUtils::ReadBool(node, wxT("HighlightCurLineNumber"), m_highlightCurLineNumber);
-	m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
-	m_caretLineColour =
-	    XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
-	m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), m_indentUsesTabs);
-	m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
-	m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
-	m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
-	m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
-	m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
-	m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
-	m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
-	m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), m_edgeMode);
-	m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), m_edgeColumn);
-	m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
-	m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
-	m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
-	m_autoAdjustHScrollBarWidth =
-	    XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
-	m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
-	m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
-	m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
-	m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
-	m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
-	m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
-	m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
-	m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
-	m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
-	m_hideOutputPaneNotIfSearch = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSearch"));
-	m_hideOutputPaneNotIfReplace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReplace"));
-	m_hideOutputPaneNotIfReferences = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReferences"));
-	m_hideOutputPaneNotIfOutput = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfOutput"));
-	m_hideOutputPaneNotIfTrace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfTrace"));
-	m_hideOutputPaneNotIfTasks = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfTasks"));
-	m_hideOutputPaneNotIfBuildQ = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuildQ"));
-	m_hideOutputPaneNotIfCppCheck = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfCppCheck"));
-	m_hideOutputPaneNotIfSvn = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSvn"));
-	m_hideOutputPaneNotIfCscope = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfCscope"));
-	m_hideOutputPaneNotIfGit = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfGit"));
-	m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
-	m_hideOutputPaneNotIfMemCheck = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfMemCheck"));
-	m_findBarAtBottom = XmlUtils::ReadBool(node, wxT("FindBarAtBottom"), m_findBarAtBottom);
-	m_showReplaceBar = XmlUtils::ReadBool(node, wxT("ShowReplaceBar"), m_showReplaceBar);
-	m_disableSmartIndent = XmlUtils::ReadBool(node, wxT("DisableSmartIndent"), m_disableSmartIndent);
-	m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
-	m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
-	m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
-	m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(
-	    node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
-	m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
-	m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
-	m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
-	m_dockingStyle = XmlUtils::ReadLong(node, wxT("m_dockingStyle"), m_dockingStyle);
-	m_nbTabHeight = XmlUtils::ReadLong(node, wxT("m_nbTabHeight"), m_nbTabHeight);
-	m_mswTheme = XmlUtils::ReadBool(node, wxT("m_mswTheme"), m_mswTheme);
-	m_preferredLocale = XmlUtils::ReadString(node, wxT("m_preferredLocale"), m_preferredLocale);
-	m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
-	m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
-	m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
-	m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
-	m_debuggerMarkerLine = XmlUtils::ReadString(
-	    node, wxT("m_debuggerMarkerLine"), m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
-	m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
+        m_displayFoldMargin = XmlUtils::ReadBool(node, wxT("DisplayFoldMargin"), m_displayFoldMargin);
+        m_underlineFoldLine = XmlUtils::ReadBool(node, wxT("UnderlineFoldedLine"), m_underlineFoldLine);
+        m_foldStyle = XmlUtils::ReadString(node, wxT("FoldStyle"), m_foldStyle);
+        m_displayBookmarkMargin = XmlUtils::ReadBool(node, wxT("DisplayBookmarkMargin"), m_displayBookmarkMargin);
+        m_bookmarkShape = XmlUtils::ReadString(node, wxT("BookmarkShape"), m_bookmarkShape);
+        m_bookmarkBgColours =
+            XmlUtils::ReadString(node, wxT("BookmarkBgColours"), ""); // No default; we'll deal with this later
+        m_bookmarkFgColours = XmlUtils::ReadString(node, wxT("BookmarkFgColours"), "");
+        m_bookmarkLabels = XmlUtils::ReadString(node, wxT("BookmarkLabels"), defaultBookmarkLabels);
+        m_clearHighlitWordsOnFind = XmlUtils::ReadBool(node, wxT("ClearHighlitWordsOnFind"), m_clearHighlitWordsOnFind);
+        m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
+        m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
+        m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
+        m_highlightCurLineNumber = XmlUtils::ReadBool(node, wxT("HighlightCurLineNumber"), m_highlightCurLineNumber);
+        m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
+        m_caretLineColour =
+            XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
+        m_indentUsesTabs = XmlUtils::ReadBool(node, wxT("IndentUsesTabs"), m_indentUsesTabs);
+        m_indentWidth = XmlUtils::ReadLong(node, wxT("IndentWidth"), m_indentWidth);
+        m_tabWidth = XmlUtils::ReadLong(node, wxT("TabWidth"), m_tabWidth);
+        m_iconsSize = XmlUtils::ReadLong(node, wxT("ToolbarIconSize"), m_iconsSize);
+        m_showWhitspaces = XmlUtils::ReadLong(node, wxT("ShowWhitespaces"), m_showWhitspaces);
+        m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
+        m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
+        m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
+        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), m_edgeMode);
+        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), m_edgeColumn);
+        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
+        m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
+        m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
+        m_autoAdjustHScrollBarWidth =
+            XmlUtils::ReadBool(node, wxT("AutoAdjustHScrollBarWidth"), m_autoAdjustHScrollBarWidth);
+        m_caretBlinkPeriod = XmlUtils::ReadLong(node, wxT("CaretBlinkPeriod"), m_caretBlinkPeriod);
+        m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
+        m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
+        m_smartParen = XmlUtils::ReadBool(node, wxT("SmartParen"), m_smartParen);
+        m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
+        m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
+        m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
+        m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
+        m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
+        m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
+        m_hideOutputPaneNotIfSearch = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSearch"));
+        m_hideOutputPaneNotIfReplace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReplace"));
+        m_hideOutputPaneNotIfReferences = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfReferences"));
+        m_hideOutputPaneNotIfOutput = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfOutput"));
+        m_hideOutputPaneNotIfTrace = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfTrace"));
+        m_hideOutputPaneNotIfTasks = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfTasks"));
+        m_hideOutputPaneNotIfBuildQ = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuildQ"));
+        m_hideOutputPaneNotIfCppCheck = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfCppCheck"));
+        m_hideOutputPaneNotIfSvn = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfSvn"));
+        m_hideOutputPaneNotIfCscope = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfCscope"));
+        m_hideOutputPaneNotIfGit = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfGit"));
+        m_hideOutputPaneNotIfDebug = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfDebug"));
+        m_hideOutputPaneNotIfMemCheck = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfMemCheck"));
+        m_findBarAtBottom = XmlUtils::ReadBool(node, wxT("FindBarAtBottom"), m_findBarAtBottom);
+        m_showReplaceBar = XmlUtils::ReadBool(node, wxT("ShowReplaceBar"), m_showReplaceBar);
+        m_disableSmartIndent = XmlUtils::ReadBool(node, wxT("DisableSmartIndent"), m_disableSmartIndent);
+        m_disableSemicolonShift = XmlUtils::ReadBool(node, wxT("DisableSemicolonShift"), m_disableSemicolonShift);
+        m_caretLineAlpha = XmlUtils::ReadLong(node, wxT("CaretLineAlpha"), m_caretLineAlpha);
+        m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
+        m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(node, wxT("DontOverrideSearchStringWithSelection"),
+                                                                     m_dontOverrideSearchStringWithSelection);
+        m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
+        m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
+        m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
+        m_dockingStyle = XmlUtils::ReadLong(node, wxT("m_dockingStyle"), m_dockingStyle);
+        m_nbTabHeight = XmlUtils::ReadLong(node, wxT("m_nbTabHeight"), m_nbTabHeight);
+        m_mswTheme = XmlUtils::ReadBool(node, wxT("m_mswTheme"), m_mswTheme);
+        m_preferredLocale = XmlUtils::ReadString(node, wxT("m_preferredLocale"), m_preferredLocale);
+        m_useLocale = XmlUtils::ReadBool(node, wxT("m_useLocale"), m_useLocale);
+        m_trimOnlyModifiedLines = XmlUtils::ReadBool(node, wxT("m_trimOnlyModifiedLines"), m_trimOnlyModifiedLines);
+        m_options = XmlUtils::ReadLong(node, wxT("m_options"), m_options);
+        m_options2 = XmlUtils::ReadLong(node, wxT("m_options2"), m_options2);
+        m_debuggerMarkerLine = XmlUtils::ReadString(node, wxT("m_debuggerMarkerLine"),
+                                                    m_debuggerMarkerLine.GetAsString(wxC2S_HTML_SYNTAX));
+        m_indentedComments = XmlUtils::ReadBool(node, wxT("IndentedComments"), m_indentedComments);
 
-	// These hacks will likely be changed in the future. If so, we'll be able to remove the #include
-	// "editor_config.h" too
-	long trim = EditorConfigST::Get()->GetInteger(wxT("EditorTrimEmptyLines"), 0);
-	m_TrimLine = (trim > 0);
+        // These hacks will likely be changed in the future. If so, we'll be able to remove the #include
+        // "editor_config.h" too
+        long trim = EditorConfigST::Get()->GetInteger(wxT("EditorTrimEmptyLines"), 0);
+        m_TrimLine = (trim > 0);
 
-	long appendLf = EditorConfigST::Get()->GetInteger(wxT("EditorAppendLf"), 0);
-	m_AppendLF = (appendLf > 0);
+        long appendLf = EditorConfigST::Get()->GetInteger(wxT("EditorAppendLf"), 0);
+        m_AppendLF = (appendLf > 0);
 
-	long dontTrimCaretLine = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0);
-	m_dontTrimCaretLine = (dontTrimCaretLine > 0);
+        long dontTrimCaretLine = EditorConfigST::Get()->GetInteger(wxT("DontTrimCaretLine"), 0);
+        m_dontTrimCaretLine = (dontTrimCaretLine > 0);
 
-	m_outputTabsDirection =
-	    (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
-	m_workspaceTabsDirection =
-	    (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
+        m_outputTabsDirection =
+            (wxDirection)XmlUtils::ReadLong(node, "OutputTabsDirection", (int)m_outputTabsDirection);
+        m_workspaceTabsDirection =
+            (wxDirection)XmlUtils::ReadLong(node, "WorkspaceTabsDirection", (int)m_workspaceTabsDirection);
 #ifdef __WXOSX__
-	if(m_workspaceTabsDirection == wxLEFT) {
-	    m_workspaceTabsDirection = wxTOP;
-	}
-	if(m_workspaceTabsDirection == wxRIGHT) {
-	    m_workspaceTabsDirection = wxBOTTOM;
-	}
+        if(m_workspaceTabsDirection == wxLEFT) { m_workspaceTabsDirection = wxTOP; }
+        if(m_workspaceTabsDirection == wxRIGHT) { m_workspaceTabsDirection = wxBOTTOM; }
 #endif
 
-	m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
+        m_webSearchPrefix = XmlUtils::ReadString(node, wxT("m_webSearchPrefix"), m_webSearchPrefix);
     }
 
     // Transitional calls. These checks are relevant for 2 years i.e. until the beginning of 2016
     if(m_bookmarkFgColours.empty()) {
-	// This must be the first time with multiple BMs, so rescue any old user-set value
-	m_bookmarkFgColours = SetDefaultBookmarkColours();
-	wxString oldcolour = XmlUtils::ReadString(node, "BookmarkFgColour", "#FF0080");
-	SetBookmarkFgColour(oldcolour, 0);
+        // This must be the first time with multiple BMs, so rescue any old user-set value
+        m_bookmarkFgColours = SetDefaultBookmarkColours();
+        wxString oldcolour = XmlUtils::ReadString(node, "BookmarkFgColour", "#FF0080");
+        SetBookmarkFgColour(oldcolour, 0);
     }
     if(m_bookmarkBgColours.empty()) {
-	m_bookmarkBgColours = SetDefaultBookmarkColours();
-	wxString oldcolour = XmlUtils::ReadString(node, "BookmarkBgColour", "#FF0080");
-	SetBookmarkBgColour(oldcolour, 0);
+        m_bookmarkBgColours = SetDefaultBookmarkColours();
+        wxString oldcolour = XmlUtils::ReadString(node, "BookmarkBgColour", "#FF0080");
+        SetBookmarkBgColour(oldcolour, 0);
     }
 }
 
-OptionsConfig::~OptionsConfig(void)
-{
-}
+OptionsConfig::~OptionsConfig(void) {}
 
 wxXmlNode* OptionsConfig::ToXml() const
 {
@@ -324,6 +320,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("WorkspaceTabsDirection"), wxString() << (int)m_workspaceTabsDirection);
     n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
     n->AddProperty(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
+    n->AddProperty(wxT("SmartParen"), BoolToString(m_smartParen));
 
     wxString tmp;
     tmp << m_indentWidth;
@@ -384,24 +381,22 @@ void OptionsConfig::SetFileFontEncoding(const wxString& strFileFontEncoding)
 {
     this->m_fileFontEncoding = wxFontMapper::Get()->CharsetToEncoding(strFileFontEncoding, false);
 
-    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) {
-	this->m_fileFontEncoding = wxFONTENCODING_UTF8;
-    }
+    if(wxFONTENCODING_SYSTEM == this->m_fileFontEncoding) { this->m_fileFontEncoding = wxFONTENCODING_UTF8; }
 }
 
 wxString OptionsConfig::GetEOLAsString() const
 {
     if(GetEolMode() == wxT("Unix (LF)")) {
-	return "\n";
+        return "\n";
 
     } else if(GetEolMode() == wxT("Mac (CR)")) {
-	return "\r";
+        return "\r";
 
     } else if(GetEolMode() == wxT("Windows (CRLF)")) {
-	return "\r\n";
+        return "\r\n";
 
     } else {
-	return "\n";
+        return "\n";
     }
 }
 
@@ -409,9 +404,7 @@ wxColour OptionsConfig::GetBookmarkFgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
-    if(index < arr.GetCount()) {
-	return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -420,8 +413,8 @@ void OptionsConfig::SetBookmarkFgColour(wxColour c, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkFgColours, ';');
     if(index < arr.GetCount()) {
-	arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
-	m_bookmarkFgColours = wxJoin(arr, ';');
+        arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
+        m_bookmarkFgColours = wxJoin(arr, ';');
     }
 }
 
@@ -429,9 +422,7 @@ wxColour OptionsConfig::GetBookmarkBgColour(size_t index) const
 {
     wxColour col;
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
-    if(index < arr.GetCount()) {
-	return wxColour(arr.Item(index));
-    }
+    if(index < arr.GetCount()) { return wxColour(arr.Item(index)); }
 
     return col;
 }
@@ -440,17 +431,15 @@ void OptionsConfig::SetBookmarkBgColour(wxColour c, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkBgColours, ';');
     if(index < arr.GetCount()) {
-	arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
-	m_bookmarkBgColours = wxJoin(arr, ';');
+        arr.Item(index) = c.GetAsString(wxC2S_HTML_SYNTAX);
+        m_bookmarkBgColours = wxJoin(arr, ';');
     }
 }
 
 wxString OptionsConfig::GetBookmarkLabel(size_t index) const
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
-    if(index < arr.GetCount()) {
-	return arr.Item(index);
-    }
+    if(index < arr.GetCount()) { return arr.Item(index); }
 
     return "";
 }
@@ -459,40 +448,30 @@ void OptionsConfig::SetBookmarkLabel(const wxString& label, size_t index)
 {
     wxArrayString arr = wxSplit(m_bookmarkLabels, ';');
     if(index < arr.GetCount()) {
-	arr.Item(index) = label;
-	m_bookmarkLabels = wxJoin(arr, ';');
+        arr.Item(index) = label;
+        m_bookmarkLabels = wxJoin(arr, ';');
     }
 }
 
 void OptionsConfig::UpdateFromEditorConfig(const clEditorConfigSection& section)
 {
-    if(section.IsInsertFinalNewlineSet()) {
-	this->SetAppendLF(section.IsInsertFinalNewline());
-    }
+    if(section.IsInsertFinalNewlineSet()) { this->SetAppendLF(section.IsInsertFinalNewline()); }
     if(section.IsSetEndOfLineSet()) {
-	// Convert .editorconfig to CodeLite strings
-	wxString eolMode = "Unix (LF)"; // default
-	if(section.GetEndOfLine() == "crlf") {
-	    eolMode = "Windows (CRLF)";
-	} else if(section.GetEndOfLine() == "cr") {
-	    eolMode = "Mac (CR)";
-	}
-	this->SetEolMode(eolMode);
+        // Convert .editorconfig to CodeLite strings
+        wxString eolMode = "Unix (LF)"; // default
+        if(section.GetEndOfLine() == "crlf") {
+            eolMode = "Windows (CRLF)";
+        } else if(section.GetEndOfLine() == "cr") {
+            eolMode = "Mac (CR)";
+        }
+        this->SetEolMode(eolMode);
     }
-    if(section.IsTabWidthSet()) {
-	this->SetTabWidth(section.GetTabWidth());
-    }
-    if(section.IsIndentStyleSet()) {
-	this->SetIndentUsesTabs(section.GetIndentStyle() == "tab");
-    }
-    if(section.IsTabWidthSet()) {
-	this->SetTabWidth(section.GetTabWidth());
-    }
-    if(section.IsIndentSizeSet()) {
-	this->SetIndentWidth(section.GetIndentSize());
-    }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentStyleSet()) { this->SetIndentUsesTabs(section.GetIndentStyle() == "tab"); }
+    if(section.IsTabWidthSet()) { this->SetTabWidth(section.GetTabWidth()); }
+    if(section.IsIndentSizeSet()) { this->SetIndentWidth(section.GetIndentSize()); }
     if(section.IsCharsetSet()) {
-	// TODO: fix the locale here
+        // TODO: fix the locale here
     }
 }
 

@@ -160,6 +160,7 @@ protected:
     bool m_indentedComments;
     int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
     wxString m_webSearchPrefix;
+    bool m_smartParen = true;
 
 public:
     // Helpers
@@ -203,6 +204,9 @@ public:
     //-------------------------------------
     // Setters/Getters
     //-------------------------------------
+
+    void SetSmartParen(bool smartParen) { this->m_smartParen = smartParen; }
+    bool IsSmartParen() const { return m_smartParen; }
     void SetTabColourMatchesTheme(bool b) { EnableOption(Opt_TabColourPersistent, !b); }
     bool IsTabColourMatchesTheme() const;
     void SetTabColourDark(bool b) { EnableOption(Opt_TabColourDark, b); }
@@ -236,7 +240,10 @@ public:
     bool GetCaretUseCamelCase() const { return m_caretUseCamelCase; }
     void SetDontAutoFoldResults(bool dontAutoFoldResults) { this->m_dontAutoFoldResults = dontAutoFoldResults; }
     bool GetDontAutoFoldResults() const { return m_dontAutoFoldResults; }
-    void SetDontOverrideSearchStringWithSelection(bool dontOverrideSearchStringWithSelection) { m_dontOverrideSearchStringWithSelection = dontOverrideSearchStringWithSelection; }
+    void SetDontOverrideSearchStringWithSelection(bool dontOverrideSearchStringWithSelection)
+    {
+        m_dontOverrideSearchStringWithSelection = dontOverrideSearchStringWithSelection;
+    }
     bool GetDontOverrideSearchStringWithSelection() const { return m_dontOverrideSearchStringWithSelection; }
     void SetShowDebugOnRun(bool showDebugOnRun) { this->m_showDebugOnRun = showDebugOnRun; }
     bool GetShowDebugOnRun() const { return m_showDebugOnRun; }
@@ -441,7 +448,10 @@ public:
     const int& GetCaretBlinkPeriod() const { return m_caretBlinkPeriod; }
     const int& GetCaretWidth() const { return m_caretWidth; }
 
-    void SetCopyLineEmptySelection(const bool copyLineEmptySelection) { m_copyLineEmptySelection = copyLineEmptySelection; }
+    void SetCopyLineEmptySelection(const bool copyLineEmptySelection)
+    {
+        m_copyLineEmptySelection = copyLineEmptySelection;
+    }
     bool GetCopyLineEmptySelection() const { return m_copyLineEmptySelection; }
 
     void SetProgramConsoleCommand(const wxString& programConsoleCommand)

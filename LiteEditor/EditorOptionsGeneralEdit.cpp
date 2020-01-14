@@ -9,7 +9,10 @@ EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrEdit->GetGrid());
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_pgPropSmartCurly->SetValue(options->GetAutoAddMatchedCurlyBraces());
-    m_pgPropSmartParentheses->SetValue(options->GetAutoAddMatchedNormalBraces());
+    // SmartParen: move one char to the right
+    m_pgPropSmartParentheses->SetValue(options->IsSmartParen());
+    // Auto complete closing paren
+    m_pgPropAutoCompleteParen->SetValue(options->GetAutoAddMatchedNormalBraces());
     m_pgPropSmartQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
     m_pgPropCopyLineEmptySelection->SetValue(options->GetCopyLineEmptySelection());
     m_pgPropWrapBrackets->SetValue(options->IsWrapSelectionBrackets());
@@ -28,7 +31,8 @@ void EditorOptionsGeneralEdit::OnValueChanged(wxPropertyGridEvent& event)
 void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)
 {
     options->SetAutoAddMatchedCurlyBraces(m_pgPropSmartCurly->GetValue().GetBool());
-    options->SetAutoAddMatchedNormalBraces(m_pgPropSmartParentheses->GetValue().GetBool());
+    options->SetAutoAddMatchedNormalBraces(m_pgPropAutoCompleteParen->GetValue().GetBool());
+    options->SetSmartParen(m_pgPropSmartParentheses->GetValue().GetBool());
     options->SetAutoCompleteDoubleQuotes(m_pgPropSmartQuotes->GetValue().GetBool());
     options->SetCopyLineEmptySelection(m_pgPropCopyLineEmptySelection->GetValue().GetBool());
     options->SetWrapSelectionBrackets(m_pgPropWrapBrackets->GetValue().GetBool());

@@ -110,7 +110,11 @@ void WindowStack::DoSelect(wxWindow* win)
     win->Show();
     m_activeWin = win;
     // Hide the rest
+#ifdef __WXGTK3__
+    DoHideNoActiveWindows();
+#else
     CallAfter(&WindowStack::DoHideNoActiveWindows);
+#endif
 }
 
 void WindowStack::OnSize(wxSizeEvent& e)

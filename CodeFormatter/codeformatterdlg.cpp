@@ -22,9 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "codeformatter.h"
 #include "ColoursAndFontsManager.h"
 #include "clSTCLineKeeper.h"
+#include "codeformatter.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "fileextmanager.h"
@@ -74,7 +74,8 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatte
     } else {
         m_notebook->SetSelection(0); // General
     }
-	m_pgPropClangFormatExePath->SetAttribute("ShowFullPath", 1);
+    m_pgPropClangFormatExePath->SetAttribute("ShowFullPath", 1);
+    m_filePickerPHPCsFixerPhar->SetAttribute("ShowFullPath", 1);
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -338,9 +339,7 @@ void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
     clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
-    if(m_pgPropClangUseFile->GetValue().GetBool()) {
-        clangOptions |= kClangFormatFile;
-    }
+    if(m_pgPropClangUseFile->GetValue().GetBool()) { clangOptions |= kClangFormatFile; }
 
     m_options.SetClangFormatOptions(clangOptions);
     m_options.SetClangBreakBeforeBrace(m_pgPropClangBraceBreakStyle->GetValue().GetInteger());
@@ -376,9 +375,7 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
     m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString().Trim().Trim(false));
     size_t phpcsfixerSettings(0);
-    if(m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) {
-        phpcsfixerSettings |= kPHPFixserFormatFile;
-    }
+    if(m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) { phpcsfixerSettings |= kPHPFixserFormatFile; }
     m_options.SetPHPCSFixerPharSettings(phpcsfixerSettings);
     size_t phpcsfixerOptions(0);
     phpcsfixerOptions |= m_pgPropPHPCsFixerStandard->GetValue().GetInteger();
@@ -408,9 +405,7 @@ void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     m_options.SetPhpcbfStandard(m_pgPropPhpcbfStandard->GetValueAsString());
     size_t phpcbfOptions(0);
     phpcbfOptions |= m_pgPropPhpcbfOptions->GetValue().GetInteger();
-    if(m_pgPropPhpcbfUseFile->GetValue().GetBool()) {
-        phpcbfOptions |= kPhpbcfFormatFile;
-    }
+    if(m_pgPropPhpcbfUseFile->GetValue().GetBool()) { phpcbfOptions |= kPhpbcfFormatFile; }
     m_options.SetPhpcbfOptions(phpcbfOptions);
 
     CallAfter(&CodeFormatterDlg::UpdatePreview);

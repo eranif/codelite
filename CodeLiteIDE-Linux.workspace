@@ -1,6 +1,6 @@
 {
  "workspace_type": "File System Workspace",
- "selected_config": "Debug",
+ "selected_config": "Release",
  "name": "CodeLiteIDE-Linux",
  "configs": [{
    "name": "Debug",

@@ -1,5 +1,5 @@
-#include "Process.hpp"
-#include "StringUtils.hpp"
+#include "dap/Process.hpp"
+#include "dap/StringUtils.hpp"
 #include "dap/dap.hpp"
 #include <cstdio>
 #include <cstdlib>
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     dap::BreakpointEvent bpEvent;
     dap::ProcessEvent procEvent;
     dap::InitializeRequest initReq;
-
+	
     stoppedEvent.reason = "Breakpoint Hit";
     stoppedEvent.text = "User hit breakpoint";
 

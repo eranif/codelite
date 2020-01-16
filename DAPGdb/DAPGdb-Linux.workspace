@@ -1,0 +1,20 @@
+{
+ "workspace_type": "File System Workspace",
+ "selected_config": "Debug",
+ "name": "DAPGdb-Linux",
+ "configs": [{
+   "name": "Debug",
+   "flags": 1,
+   "compile_flags": ["-I.", "-Idap", "-std=c++11"],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
+   "executable": "",
+   "arguments": "",
+   "environment": "",
+   "compiler": "GCC 8.1",
+   "remoteFolder": "",
+   "remoteAccount": "dev-cloud",
+   "debugger": "GNU gdb debugger",
+   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+   "targets": [["build", "cd build-debug && make -j8"], ["clean", "cd build-debug && make clean"], ["cmake", "mkdir -p build-debug && cd build-debug && cmake .. -DCMAKE_BUILD_TYPE=Debug"]]
+  }]
+}

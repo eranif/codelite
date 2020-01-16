@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="DAPGdb" Database="" Version="10000">
-  <Project Name="DAPGdb" Path="DAPGdb/DAPGdb.project" Active="Yes"/>
+  <Project Name="DAPGdb" Path="DAPGdb.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>

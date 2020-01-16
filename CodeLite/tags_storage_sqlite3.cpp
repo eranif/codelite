@@ -349,6 +349,7 @@ wxSQLite3ResultSet TagsStorageSQLite::Query(const wxString& sql, const wxFileNam
         return m_db->ExecuteQuery(sql);
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "Query error:" << sql << "." << e.GetMessage();
+        if(e.GetMessage().Contains("disk I/O error")) { ReOpenDatabase(); }
     }
     return wxSQLite3ResultSet();
 }
@@ -1371,7 +1372,7 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kin
 
 bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>& tags)
 {
-    std::unordered_map<wxString, std::vector<TagEntryPtr> >::iterator iter = m_cache.find(key);
+    std::unordered_map<wxString, std::vector<TagEntryPtr>>::iterator iter = m_cache.find(key);
     if(iter != m_cache.end()) {
         // Append the results to the output tags
         tags.insert(tags.end(), iter->second.begin(), iter->second.end());
@@ -1605,7 +1606,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
                    "'struct','typedef')";
 
         // Split the input vector into arrays of up to 500 elements each
-        std::vector<std::vector<wxString> > v;
+        std::vector<std::vector<wxString>> v;
         int chunks = (symbols.size() / 250) + 1;
         int offset = 0;
         int left = symbols.size();
@@ -1680,4 +1681,33 @@ void TagsStorageSQLite::GetTagsByPartName(const wxArrayString& parts, std::vecto
     } catch(wxSQLite3Exception& e) {
         clWARNING() << sql << ":" << e.GetMessage() << clEndl;
     }
+}
+
+void TagsStorageSQLite::ReOpenDatabase()
+{
+    // Did we get a file name to use?
+    if(!m_fileName.IsOk()) return;
+
+    clDEBUG() << "ReOpenDatabase called for file:" << m_fileName;
+    // Close database first
+    clDEBUG() << "Closing database first";
+    try {
+        if(m_db) {
+            m_db->Close();
+            delete m_db;
+            m_db = nullptr;
+        }
+    } catch(...) {
+    }
+
+    clDEBUG() << "Open is called for file:" << m_fileName;
+    try {
+        // First time we open the db
+        m_db->Open(m_fileName.GetFullPath());
+        m_db->SetBusyTimeout(10);
+        CreateSchema();
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "Failed to reopen file:" << m_fileName.GetFullPath() << "." << e.GetMessage();
+    }
+    clDEBUG() << "Database reopened successfully";
 }

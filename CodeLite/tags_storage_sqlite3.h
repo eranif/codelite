@@ -25,15 +25,15 @@
 #ifndef CODELITE_TAGS_DATABASE_H
 #define CODELITE_TAGS_DATABASE_H
 
-#include "tag_tree.h"
+#include "codelite_exports.h"
 #include "entry.h"
-#include <wx/filename.h>
-#include <unordered_map>
 #include "fileentry.h"
 #include "istorage.h"
-#include <wx/wxsqlite3.h>
-#include "codelite_exports.h"
+#include "tag_tree.h"
 #include "wxStringHash.h"
+#include <unordered_map>
+#include <wx/filename.h>
+#include <wx/wxsqlite3.h>
 
 /**
  * TagsDatabase is a wrapper around wxSQLite3 database with tags specific functions.
@@ -92,7 +92,7 @@
 
 class TagsStorageSQLiteCache
 {
-    std::unordered_map<wxString, std::vector<TagEntryPtr> > m_cache;
+    std::unordered_map<wxString, std::vector<TagEntryPtr>> m_cache;
 
 protected:
     bool DoGet(const wxString& key, std::vector<TagEntryPtr>& tags);
@@ -190,6 +190,11 @@ public:
      * @param fileName Database file name
      */
     void OpenDatabase(const wxFileName& fileName);
+
+    /**
+     * @brief reopen the database. If it is already opened - close it before
+     */
+    void ReOpenDatabase();
 
     long LastRowId() const;
     /**
@@ -496,11 +501,11 @@ public:
     virtual int InsertFileEntry(const wxString& filename, int timestamp);
 
     /**
-    * @brief update file entry using file name as key
-    * @param filename
-    * @param timestamp new timestamp
-    * @return
-    */
+     * @brief update file entry using file name as key
+     * @param filename
+     * @param timestamp new timestamp
+     * @return
+     */
     virtual int UpdateFileEntry(const wxString& filename, int timestamp);
 
     /**

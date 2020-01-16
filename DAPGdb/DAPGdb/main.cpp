@@ -16,6 +16,7 @@ int main(int argc, char** argv)
     dap::ContinuedEvent contEvent;
     dap::BreakpointEvent bpEvent;
     dap::ProcessEvent procEvent;
+    dap::InitializeRequest initReq;
 
     stoppedEvent.reason = "Breakpoint Hit";
     stoppedEvent.text = "User hit breakpoint";
@@ -26,5 +27,6 @@ int main(int argc, char** argv)
     cout << contEvent.To().Format() << endl;
     cout << bpEvent.To().Format() << endl;
     cout << procEvent.To().Format() << endl;
+    cout << initReq.To().Format() << endl;
     return 0;
 }

@@ -328,4 +328,48 @@ void ProcessEvent::From(const JSONItem& json)
     pointerSize = body.property("pointerSize").toInt();
 }
 
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem InitializeRequestArguments::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add("clientID", clientID);
+    json.add("clientName", clientName);
+    json.add("adapterID", adapterID);
+    json.add("locale", locale);
+    json.add("linesStartAt1", linesStartAt1);
+    json.add("columnsStartAt1", columnsStartAt1);
+    json.add("pathFormat", pathFormat);
+    return json;
+}
+
+void InitializeRequestArguments::From(const JSONItem& json)
+{
+    clientID = json.property("clientID").toString();
+    clientName = json.property("clientName").toString();
+    adapterID = json.property("adapterID").toString();
+    locale = json.property("locale").toString();
+    linesStartAt1 = json.property("linesStartAt1").toBool();
+    columnsStartAt1 = json.property("columnsStartAt1").toBool();
+    pathFormat = json.property("pathFormat").toString();
+}
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem InitializeRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    json.append(arguments.To("arguments"));
+    return json;
+}
+
+void InitializeRequest::From(const JSONItem& json)
+{
+    Request::From(json);
+    arguments.From(json.property("arguments"));
+}
+
 }; // namespace dap

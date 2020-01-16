@@ -279,6 +279,52 @@ struct ProcessEvent : public Event {
     virtual JSONItem To(const string& name = "") const;
     virtual void From(const JSONItem& json);
 };
+
+struct InitializeRequestArguments : public Any {
+    /**
+     * The ID of the (frontend) client using this adapter.
+     */
+    string clientID;
+    /**
+     * The human readable name of the (frontend) client using this adapter.
+     */
+    string clientName;
+    /**
+     * The ID of the debug adapter.
+     */
+    string adapterID;
+    /**
+     * The ISO-639 locale of the (frontend) client using this adapter, e.g. en-US or de-CH.
+     */
+    string locale = "en-US";
+    bool linesStartAt1 = true;
+    bool columnsStartAt1 = true;
+    /**
+     * Determines in what format paths are specified. The default is 'path', which is the native format.
+     * Values: 'path', 'uri', etc.
+     */
+    string pathFormat = "path";
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// The ‘initialize’ request is sent as the first request from the client to the debug adapter in order to configure it
+/// with client capabilities and to retrieve capabilities from the debug adapter.  Until the debug adapter has responded
+/// to with an ‘initialize’ response, the client must not send any additional requests or events to the debug adapter. In
+/// addition the debug adapter is not allowed to send any requests or events to the client until it has responded with an
+/// ‘initialize’ response.  The ‘initialize’ request may only be sent once.
+/// <->
+struct InitializeRequest : public Request {
+    InitializeRequestArguments arguments;
+    InitializeRequest() { command = "initialize"; }
+    virtual ~InitializeRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+// -------------------------------------------------------------
+// Requests
+// -------------------------------------------------------------
 }; // namespace dap
 
 #endif // PROTOCOLMESSAGE_HPP

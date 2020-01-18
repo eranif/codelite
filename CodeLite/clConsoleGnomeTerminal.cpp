@@ -53,7 +53,7 @@ bool clConsoleGnomeTerminal::FindProcessByCommand(const wxString& name, wxString
 
 clConsoleGnomeTerminal::clConsoleGnomeTerminal()
 {
-    SetTerminalCommand("gnome-terminal --working-directory=%WD% -- '%COMMAND%'");
+    SetTerminalCommand("gnome-terminal --working-directory=%WD% -e '%COMMAND%'");
     SetEmptyTerminalCommand("gnome-terminal --working-directory=%WD%");
 }
 

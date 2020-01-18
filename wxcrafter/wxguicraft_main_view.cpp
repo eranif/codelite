@@ -1154,6 +1154,9 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 
     m_treeControls->SetItemText(m_treeControls->GetRootItem(), rootText);
     wxcWidget::SetObjCounter(wxcProjectMetadata::Get().GetObjCounter());
+
+    // Expand the top level root item
+    if(rootItem.IsOk() && m_treeControls->ItemHasChildren(rootItem)) { m_treeControls->Expand(rootItem); }
 }
 
 void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapper, const wxTreeItemId& parent,
@@ -3039,7 +3042,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         prefix << wxT("#define ") << blockGuard << wxT("\n\n");
         prefix << "// clang-format off\n";
         prefix << wxCrafter::Join(headers, wxT("\n")) << wxT("\n");
-        
+
         // wxPersistence support
         if(wxcSettings::Get().IsLicensed()) {
             prefix << wxCrafter::WX29_BLOCK_START();
@@ -3049,7 +3052,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
             prefix << "#include <wx/persist/treebook.h>\n";
             prefix << "#endif\n";
         }
-        
+
         prefix << "\n";
         prefix << "#ifdef WXC_FROM_DIP\n";
         prefix << "#undef WXC_FROM_DIP\n";
@@ -3068,7 +3071,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         }
         prefix << projectIncludes;
         prefix << "// clang-format on\n";
-        
+
         baseHeader.Prepend(prefix);
         baseHeader.Append(wxT("#endif\n"));
 

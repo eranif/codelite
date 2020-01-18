@@ -4,8 +4,9 @@
 #include "json.hpp"
 #include <memory>
 #include <string>
+#include <vector>
 
-/// Implementation of Debug Adapter Protocol (DAP)
+/// C++ Implementation of Debug Adapter Protocol (DAP)
 /// The Debug Adapter Protocol defines the protocol used between an editor or IDE and a debugger or runtime
 /// The implementation is based on the specifications described here:
 /// https://microsoft.github.io/debug-adapter-protocol/specification
@@ -41,7 +42,6 @@ struct ProtocolMessage : public Any {
 /// ->
 struct Request : public ProtocolMessage {
     string command;
-    Any::Ptr_t arguments;
 
     Request() { type = "request"; }
     virtual ~Request() = 0; // force to abstract class
@@ -209,7 +209,15 @@ struct OutputEvent : public Event {
 /// A Source is a descriptor for source code. It is returned from the debug adapter as part of a StackFrame and it is
 /// used by clients when specifying breakpoints
 struct Source : public Any {
+    /**
+     * The short name of the source. Every source returned from the debug adapter has a name. When sending a source to
+     * the debug adapter this name is optional.
+     */
     string name;
+    /**
+     * The path of the source to be shown in the UI. It is only used to locate and load the content of the source if no
+     * sourceReference is specified (or its value is 0).
+     */
     string path;
     virtual JSONItem To(const string& name = "") const;
     virtual void From(const JSONItem& json);
@@ -374,10 +382,101 @@ struct LaunchRequest : public Request {
     virtual JSONItem To(const string& name = "") const;
     virtual void From(const JSONItem& json);
 };
-
 /// Response to 'launch' request. This is just an acknowledgement, so no body field is required.
 /// <-
 typedef EmptyAckResponse LaunchResponse;
+
+/// The 'disconnect' request is sent from the client to the debug adapter in order to stop debugging. It asks the debug
+/// adapter to disconnect from the debuggee and to terminate the debug adapter. If the debuggee has been started with
+/// the 'launch' request, the 'disconnect' request terminates the debuggee. If the 'attach' request was used to connect
+/// to the debuggee, 'disconnect' does not terminate the debuggee. This behavior can be controlled with the
+/// 'terminateDebuggee' argument (if supported by the debug adapter).
+struct DisconnectRequest : public Request {
+    bool restart = false;
+    bool terminateDebuggee = true;
+    DisconnectRequest() { command = "disconnect"; }
+    virtual ~DisconnectRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+typedef EmptyAckResponse DisconnectResponse;
+
+struct BreakpointLocationsArguments : public Any {
+    Source source;
+    int line = -1;
+    int column = -1;
+    int endLine = -1;
+    int endColumn = -1;
+    BreakpointLocationsArguments() {}
+    virtual ~BreakpointLocationsArguments() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Properties of a breakpoint location returned from the 'breakpointLocations' request.
+struct BreakpointLocation : public Any {
+    int line = -1;
+    int column = -1;
+    int endLine = -1;
+    int endColumn = -1;
+    BreakpointLocation() {}
+    virtual ~BreakpointLocation() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Response to 'breakpointLocations request.
+/// Contains possible locations for source breakpoints.
+struct BreakpointLocationsResponse : public Response {
+    vector<BreakpointLocation> breakpoints;
+    BreakpointLocationsResponse() {}
+    virtual ~BreakpointLocationsResponse() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// The 'breakpointLocations' request returns all possible locations for source breakpoints in a given range.
+struct BreakpointLocationsRequest : public Request {
+    BreakpointLocationsArguments arguments;
+    BreakpointLocationsRequest() { command = "breakpointLocations"; }
+    virtual ~BreakpointLocationsRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Properties of a breakpoint or logpoint passed to the setBreakpoints request.
+struct SourceBreakpoint : public Any {
+    int line = -1;
+    /**
+     * An optional expression for conditional breakpoints.
+     */
+    string condition;
+    SourceBreakpoint() {}
+    virtual ~SourceBreakpoint() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Properties of a breakpoint or logpoint passed to the setBreakpoints request.
+struct SetBreakpointsArguments : public Any {
+    Source source;
+    vector<SourceBreakpoint> breakpoints;
+    SetBreakpointsArguments() {}
+    virtual ~SetBreakpointsArguments() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Sets multiple breakpoints for a single source and clears all previous breakpoints in that source. To clear all
+/// breakpoint for a source, specify an empty array. When a breakpoint is hit, a 'stopped' event (with reason
+/// 'breakpoint') is generated.
+struct SetBreakpointsRequest : public Request {
+    SetBreakpointsArguments arguments;
+    SetBreakpointsRequest() { command = "setBreakpoints"; }
+    virtual ~SetBreakpointsRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
 }; // namespace dap
 
 #endif // PROTOCOLMESSAGE_HPP

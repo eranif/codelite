@@ -30,7 +30,6 @@ JSONItem Request::To(const string& name) const
 {
     JSONItem json = ProtocolMessage::To(name);
     json.add("command", command);
-    if(arguments) { json.add("arguments", arguments->To("")); }
     return json;
 }
 
@@ -48,7 +47,7 @@ JSONItem CancelRequest::To(const string& name) const
 {
     JSONItem json = Request::To(name);
     JSONItem arguments = JSONItem::createObject("arguments");
-    json.append(arguments);
+    json.add(arguments);
     arguments.add("requestId", requestId);
     return json;
 }
@@ -68,7 +67,7 @@ JSONItem Event::To(const string& name) const
 {
     JSONItem json = ProtocolMessage::To(name);
     json.add("event", event);
-    if(body) { json.append(body->To("body")); }
+    if(body) { json.add(body->To("body")); }
     return json;
 }
 
@@ -119,7 +118,7 @@ JSONItem StoppedEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("reason", reason);
     body.add("text", text);
     return json;
@@ -140,7 +139,7 @@ JSONItem ContinuedEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("threadId", threadId);
     body.add("allThreadsContinued", allThreadsContinued);
     return json;
@@ -162,7 +161,7 @@ JSONItem ExitedEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("exitCode", exitCode);
     return json;
 }
@@ -194,7 +193,7 @@ JSONItem ThreadEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("reason", reason);
     body.add("threadId", threadId);
     return json;
@@ -216,7 +215,7 @@ JSONItem OutputEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("category", category);
     body.add("output", output);
     return json;
@@ -258,7 +257,7 @@ JSONItem Breakpoint::To(const string& name) const
     json.add("id", id);
     json.add("verified", verified);
     json.add("message", message);
-    json.append(source.To("source"));
+    json.add(source.To("source"));
     json.add("line", line);
     json.add("column", column);
     json.add("endLine", endLine);
@@ -286,9 +285,9 @@ JSONItem BreakpointEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("reason", reason);
-    body.append(breakpoint.To("breakpoint"));
+    body.add(breakpoint.To("breakpoint"));
     return json;
 }
 
@@ -308,7 +307,7 @@ JSONItem ProcessEvent::To(const string& name) const
 {
     JSONItem json = Event::To(name);
     JSONItem body = JSONItem::createObject("body");
-    json.append(body);
+    json.add(body);
     body.add("name", name);
     body.add("systemProcessId", systemProcessId);
     body.add("isLocalProcess", isLocalProcess);
@@ -362,7 +361,7 @@ void InitializeRequestArguments::From(const JSONItem& json)
 JSONItem InitializeRequest::To(const string& name) const
 {
     JSONItem json = Request::To(name);
-    json.append(arguments.To("arguments"));
+    json.add(arguments.To("arguments"));
     return json;
 }
 
@@ -378,7 +377,7 @@ JSONItem InitializeResponse::To(const string& name) const
 {
     JSONItem json = Response::To(name);
     JSONItem body = json.createObject("body");
-    json.append(body);
+    json.add(body);
     return json;
 }
 
@@ -426,11 +425,190 @@ void LaunchRequestArguments::From(const JSONItem& json) { noDebug = json.propert
 JSONItem LaunchRequest::To(const string& name) const
 {
     JSONItem json = Request::To(name);
-    json.append(arguments.To("arguments"));
+    json.add(arguments.To("arguments"));
     return json;
 }
 
 void LaunchRequest::From(const JSONItem& json)
+{
+    Request::From(json);
+    arguments.From(json.property("arguments"));
+}
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem DisconnectRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    JSONItem arguments = json.createObject("arguments");
+    json.add(arguments);
+    arguments.add("restart", restart);
+    arguments.add("terminateDebuggee", terminateDebuggee);
+    return json;
+}
+
+void DisconnectRequest::From(const JSONItem& json)
+{
+    Request::From(json);
+    JSONItem arguments = json.property("arguments");
+    restart = arguments.property("restart").toBool();
+    terminateDebuggee = arguments.property("terminateDebuggee").toBool(terminateDebuggee);
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem BreakpointLocationsRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    json.add(arguments.To("arguments"));
+    return json;
+}
+
+void BreakpointLocationsRequest::From(const JSONItem& json)
+{
+    Request::From(json);
+    arguments.From(json.property("arguments"));
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem BreakpointLocationsArguments::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add(source.To("source"));
+    json.add("line", line);
+    json.add("column", column);
+    json.add("endLine", endLine);
+    json.add("endColumn", endColumn);
+    return json;
+}
+
+void BreakpointLocationsArguments::From(const JSONItem& json)
+{
+    source.From(json.property("source"));
+    line = json.property("restart").toInt(line);
+    column = json.property("column").toInt(column);
+    column = json.property("column").toInt(column);
+    endColumn = json.property("endColumn").toInt(endColumn);
+}
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem BreakpointLocation::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add("line", line);
+    json.add("column", column);
+    json.add("endLine", endLine);
+    json.add("endColumn", endColumn);
+    return json;
+}
+
+void BreakpointLocation::From(const JSONItem& json)
+{
+    line = json.property("restart").toInt(line);
+    column = json.property("column").toInt(column);
+    column = json.property("column").toInt(column);
+    endColumn = json.property("endColumn").toInt(endColumn);
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem BreakpointLocationsResponse::To(const string& name) const
+{
+    JSONItem json = Response::To(name);
+    JSONItem body = json.createObject("body");
+    JSONItem arr = json.createArray("breakpoints");
+    json.add(body);
+    body.add(arr);
+    for(const auto& b : breakpoints) {
+        arr.arrayAppend(b.To());
+    }
+    return json;
+}
+
+void BreakpointLocationsResponse::From(const JSONItem& json)
+{
+    Response::From(json);
+    JSONItem body = json.property("body");
+    JSONItem arr = body.property("breakpoints");
+    breakpoints.clear();
+    int size = arr.arraySize();
+    for(int i = 0; i < size; ++i) {
+        BreakpointLocation loc;
+        loc.From(arr.arrayItem(i));
+        breakpoints.push_back(loc);
+    }
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem SourceBreakpoint::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add("line", line);
+    json.add("condition", condition);
+    return json;
+}
+
+void SourceBreakpoint::From(const JSONItem& json)
+{
+    line = json.property("line").toInt(line);
+    condition = json.property("condition").toString(condition);
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem SetBreakpointsArguments::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add(source.To("source"));
+
+    JSONItem arr = json.createArray("breakpoints");
+    json.add(arr);
+    for(const auto& sb : breakpoints) {
+        arr.arrayAppend(sb.To());
+    }
+    return json;
+}
+
+void SetBreakpointsArguments::From(const JSONItem& json)
+{
+    source.From(json.property("source"));
+    breakpoints.clear();
+    JSONItem arr = json.property("breakpoints");
+    int size = arr.arraySize();
+    for(int i = 0; i < size; ++i) {
+        SourceBreakpoint sb;
+        sb.From(arr.arrayItem(i));
+        breakpoints.push_back(sb);
+    }
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem SetBreakpointsRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    json.add(arguments.To("arguments"));
+    return json;
+}
+
+void SetBreakpointsRequest::From(const JSONItem& json)
 {
     Request::From(json);
     arguments.From(json.property("arguments"));

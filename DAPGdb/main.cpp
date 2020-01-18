@@ -22,7 +22,28 @@ int main(int argc, char** argv)
     dap::ConfigurationDoneResponse configDoneRespo;
     dap::LaunchRequest launchReq;
     dap::LaunchResponse launchRespo;
-	
+    dap::DisconnectRequest dcReq;
+    dap::DisconnectResponse dcRespo;
+    dap::BreakpointLocationsRequest bpLocReq;
+    dap::BreakpointLocationsResponse bpLocRespo;
+    bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
+    bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
+
+    // Build a setBreakpoint request
+    dap::SetBreakpointsRequest setBreakpointReq;
+    setBreakpointReq.arguments.source.path = "/home/eran/test.cpp";
+    {
+        dap::SourceBreakpoint sb;
+        sb.condition = "i == 0";
+        sb.line = 14;
+        setBreakpointReq.arguments.breakpoints.push_back(sb);
+    }
+    {
+        dap::SourceBreakpoint sb;
+        sb.line = 35;
+        setBreakpointReq.arguments.breakpoints.push_back(sb);
+    }
+
     stoppedEvent.reason = "Breakpoint Hit";
     stoppedEvent.text = "User hit breakpoint";
 
@@ -38,5 +59,10 @@ int main(int argc, char** argv)
     cout << configDoneRespo.To().Format() << endl;
     cout << launchReq.To().Format() << endl;
     cout << launchRespo.To().Format() << endl;
+    cout << dcReq.To().Format() << endl;
+    cout << dcRespo.To().Format() << endl;
+    cout << bpLocReq.To().Format() << endl;
+    cout << bpLocRespo.To().Format() << endl;
+    cout << setBreakpointReq.To().Format() << endl;
     return 0;
 }

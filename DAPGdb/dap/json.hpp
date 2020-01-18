@@ -87,6 +87,11 @@ public:
      */
     void append(const JSONItem& element);
 
+    JSONItem& add(const JSONItem& item)
+    {
+        append(item);
+        return *this;
+    }
     JSONItem& add(const string& name, const string& value);
     JSONItem& add(const string& name, int value) { return add(name, (long)value); }
     JSONItem& add(const string& name, long value);

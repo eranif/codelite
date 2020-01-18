@@ -2815,7 +2815,7 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Minimum Pane Size:",
-													"m_value":	"100"
+													"m_value":	"10"
 												}, {
 													"type":	"string",
 													"m_label":	"Sash Position:",
@@ -2837,7 +2837,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	"400,-1"
+															"m_value":	"-1,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
@@ -4324,7 +4324,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	"-1,-1"
+															"m_value":	"100,-1"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",

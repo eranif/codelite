@@ -371,5 +371,69 @@ void InitializeRequest::From(const JSONItem& json)
     Request::From(json);
     arguments.From(json.property("arguments"));
 }
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+JSONItem InitializeResponse::To(const string& name) const
+{
+    JSONItem json = Response::To(name);
+    JSONItem body = json.createObject("body");
+    json.append(body);
+    return json;
+}
+
+void InitializeResponse::From(const JSONItem& json) { Response::From(json); }
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem ConfigurationDoneRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    return json;
+}
+
+void ConfigurationDoneRequest::From(const JSONItem& json) { Request::From(json); }
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+JSONItem EmptyAckResponse::To(const string& name) const
+{
+    JSONItem json = Response::To(name);
+    return json;
+}
+
+void EmptyAckResponse::From(const JSONItem& json) { Response::From(json); }
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+JSONItem LaunchRequestArguments::To(const string& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.add("noDebug", noDebug);
+    return json;
+}
+
+void LaunchRequestArguments::From(const JSONItem& json) { noDebug = json.property("noDebug").toBool(); }
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem LaunchRequest::To(const string& name) const
+{
+    JSONItem json = Request::To(name);
+    json.append(arguments.To("arguments"));
+    return json;
+}
+
+void LaunchRequest::From(const JSONItem& json)
+{
+    Request::From(json);
+    arguments.From(json.property("arguments"));
+}
 
 }; // namespace dap

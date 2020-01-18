@@ -50,7 +50,7 @@ struct Request : public ProtocolMessage {
     virtual void From(const JSONItem& json);
 };
 
-/// The ‘cancel’ request is used by the frontend to indicate that it is no longer interested in the result produced by a
+/// The 'cancel' request is used by the frontend to indicate that it is no longer interested in the result produced by a
 /// specific request issued earlier.
 /// <->
 struct CancelRequest : public Request {
@@ -99,7 +99,7 @@ struct Response : public ProtocolMessage {
     virtual void From(const JSONItem& json);
 };
 
-/// Response to ‘cancel’ request. This is just an acknowledgement, so no body field is required.
+/// Response to 'cancel' request. This is just an acknowledgement, so no body field is required.
 /// <-
 struct CancelResponse : public Response {
     virtual JSONItem To(const string& name = "") const { return Response::To(name); }
@@ -142,7 +142,7 @@ struct StoppedEvent : public Event {
 
 /// The event indicates that the execution of the debuggee has continued.
 /// Please note: a debug adapter is not expected to send this event in response to a request that implies that execution
-/// continues, e.g. ‘launch’ or ‘continue’.  It is only necessary to send a ‘continued’ event if there was no previous
+/// continues, e.g. 'launch' or 'continue'.  It is only necessary to send a 'continued' event if there was no previous
 /// request that implied this
 struct ContinuedEvent : public Event {
     /**
@@ -308,11 +308,11 @@ struct InitializeRequestArguments : public Any {
     virtual void From(const JSONItem& json);
 };
 
-/// The ‘initialize’ request is sent as the first request from the client to the debug adapter in order to configure it
+/// The 'initialize' request is sent as the first request from the client to the debug adapter in order to configure it
 /// with client capabilities and to retrieve capabilities from the debug adapter.  Until the debug adapter has responded
-/// to with an ‘initialize’ response, the client must not send any additional requests or events to the debug adapter. In
-/// addition the debug adapter is not allowed to send any requests or events to the client until it has responded with an
-/// ‘initialize’ response.  The ‘initialize’ request may only be sent once.
+/// to with an 'initialize' response, the client must not send any additional requests or events to the debug adapter.
+/// In addition the debug adapter is not allowed to send any requests or events to the client until it has responded
+/// with an 'initialize' response.  The 'initialize' request may only be sent once.
 /// <->
 struct InitializeRequest : public Request {
     InitializeRequestArguments arguments;
@@ -322,9 +322,62 @@ struct InitializeRequest : public Request {
     virtual void From(const JSONItem& json);
 };
 
-// -------------------------------------------------------------
-// Requests
-// -------------------------------------------------------------
+/// Response to 'initialize' request.
+/// <-
+struct InitializeResponse : public Response {
+    InitializeResponse() {}
+    virtual ~InitializeResponse() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// The client of the debug protocol must send this request at the end of the sequence of configuration requests (which
+/// was started by the 'initialized' event).
+/// <->
+struct ConfigurationDoneRequest : public Request {
+    ConfigurationDoneRequest() { command = "configurationDone"; }
+    virtual ~ConfigurationDoneRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+struct EmptyAckResponse : public Response {
+    EmptyAckResponse() {}
+    virtual ~EmptyAckResponse() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Response to 'configurationDone' request. This is just an acknowledgement, so no body field is required.
+/// <-
+typedef EmptyAckResponse ConfigurationDoneResponse;
+
+/// Arguments for 'launch' request. Additional attributes are implementation specific.
+struct LaunchRequestArguments : public Any {
+    /**
+     * If noDebug is true the launch request should launch the program without enabling debugging.
+     */
+    bool noDebug = false;
+    LaunchRequestArguments() {}
+    virtual ~LaunchRequestArguments() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// The launch request is sent from the client to the debug adapter to start the debuggee with or without debugging (if
+/// 'noDebug' is true). Since launching is debugger/runtime specific, the arguments for this request are not part of
+/// this specification
+struct LaunchRequest : public Request {
+    LaunchRequestArguments arguments;
+    LaunchRequest() { command = "launch"; }
+    virtual ~LaunchRequest() {}
+    virtual JSONItem To(const string& name = "") const;
+    virtual void From(const JSONItem& json);
+};
+
+/// Response to 'launch' request. This is just an acknowledgement, so no body field is required.
+/// <-
+typedef EmptyAckResponse LaunchResponse;
 }; // namespace dap
 
 #endif // PROTOCOLMESSAGE_HPP

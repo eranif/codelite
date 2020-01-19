@@ -11,6 +11,28 @@
 /// The implementation is based on the specifications described here:
 /// https://microsoft.github.io/debug-adapter-protocol/specification
 
+#define JSON_SERIALIZE()                                \
+    virtual JSONItem To(const string& name = "") const; \
+    virtual void From(const JSONItem& json)
+
+#define REQUEST_CLASS(Type, Command) \
+    Type() { command = Command; }    \
+    virtual ~Type() {}
+
+#define RESPONSE_CLASS(Type) \
+    Type() {}                \
+    virtual ~Type() {}
+
+#define ANY_CLASS(Type) \
+    Type() {}           \
+    virtual ~Type() {}
+
+#define EVENT_CLASS(Type, Command) \
+    Type() { event = Command; }    \
+    virtual ~Type() {}
+
+#define PTR_SIZE (sizeof(void*))
+
 using namespace std;
 namespace dap
 {
@@ -31,11 +53,8 @@ struct ProtocolMessage : public Any {
     int seq = -1;
     string type;
 
-    ProtocolMessage() {}
-    virtual ~ProtocolMessage() {}
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(ProtocolMessage);
+    JSON_SERIALIZE();
 };
 
 /// A client or debug adapter initiated request
@@ -45,23 +64,16 @@ struct Request : public ProtocolMessage {
 
     Request() { type = "request"; }
     virtual ~Request() = 0; // force to abstract class
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    JSON_SERIALIZE();
 };
 
 /// The 'cancel' request is used by the frontend to indicate that it is no longer interested in the result produced by a
 /// specific request issued earlier.
 /// <->
 struct CancelRequest : public Request {
-    string command;
     int requestId = -1;
-
-    CancelRequest() { type = "cancel"; }
-    virtual ~CancelRequest() {}
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(CancelRequest, "cancel");
+    JSON_SERIALIZE();
 };
 
 /// A debug adapter initiated event
@@ -73,8 +85,7 @@ struct Event : public ProtocolMessage {
     Event() { type = "event"; }
     virtual ~Event() = 0; // force to abstract class
 
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    JSON_SERIALIZE();
 };
 
 /// Response for a request
@@ -95,8 +106,7 @@ struct Response : public ProtocolMessage {
 
     Response() { type = "response"; }
     virtual ~Response() = 0; // force to abstract class
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    JSON_SERIALIZE();
 };
 
 /// Response to 'cancel' request. This is just an acknowledgement, so no body field is required.
@@ -110,11 +120,8 @@ struct CancelResponse : public Response {
 /// SetExceptionBreakpointsRequest).
 /// <-
 struct InitializedEvent : public Event {
-    InitializedEvent() { event = "initialized"; }
-    virtual ~InitializedEvent() {}
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(InitializedEvent, "initialized");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that the execution of the debuggee has stopped due to some condition.
@@ -133,11 +140,8 @@ struct StoppedEvent : public Event {
      * the UI.
      */
     string text;
-    StoppedEvent() { event = "stopped"; }
-    virtual ~StoppedEvent() {}
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(StoppedEvent, "stopped");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that the execution of the debuggee has continued.
@@ -153,41 +157,30 @@ struct ContinuedEvent : public Event {
      * If 'allThreadsContinued' is true, a debug adapter can announce that all threads have continued.
      */
     bool allThreadsContinued = true;
-
-    ContinuedEvent() { event = "continued"; }
-    virtual ~ContinuedEvent() {}
-
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(ContinuedEvent, "continued");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that the debuggee has exited and returns its exit code.
 struct ExitedEvent : public Event {
     int exitCode = 0;
-    ExitedEvent() { event = "exited"; }
-    virtual ~ExitedEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(ExitedEvent, "exited");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that debugging of the debuggee has terminated. This does not mean that the debuggee itself has
 /// exited
 struct TerminatedEvent : public Event {
-    TerminatedEvent() { event = "terminated"; }
-    virtual ~TerminatedEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(TerminatedEvent, "terminated");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that a thread has started or exited.
 struct ThreadEvent : public Event {
     string reason;
     int threadId = 0;
-
-    ThreadEvent() { event = "thread"; }
-    virtual ~ThreadEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(ThreadEvent, "thread");
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that a thread has started or exited.
@@ -200,10 +193,8 @@ struct OutputEvent : public Event {
     string category;
     string output;
 
-    OutputEvent() { event = "output"; }
-    virtual ~OutputEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(OutputEvent, "output");
+    JSON_SERIALIZE();
 };
 
 /// A Source is a descriptor for source code. It is returned from the debug adapter as part of a StackFrame and it is
@@ -219,8 +210,8 @@ struct Source : public Any {
      * sourceReference is specified (or its value is 0).
      */
     string path;
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(Source);
+    JSON_SERIALIZE();
 };
 
 /// Information about a Breakpoint created in setBreakpoints or setFunctionBreakpoints.
@@ -233,8 +224,8 @@ struct Breakpoint : public Any {
     int column = -1;
     int endLine = -1;
     int endColumn = -1;
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(Breakpoint);
+    JSON_SERIALIZE();
 };
 
 /// The event indicates that some information about a breakpoint has changed.
@@ -249,14 +240,10 @@ struct BreakpointEvent : public Event {
      * The 'id' attribute is used to find the target breakpoint and the other attributes are used as the new values.
      */
     Breakpoint breakpoint;
-
-    BreakpointEvent() { event = "breakpoint"; }
-    virtual ~BreakpointEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(BreakpointEvent, "breakpoint");
+    JSON_SERIALIZE();
 };
 
-#define PTR_SIZE (sizeof(void*))
 /// The event indicates that the debugger has begun debugging a new process. Either one that it has launched, or one
 /// that it has attached to
 struct ProcessEvent : public Event {
@@ -282,10 +269,8 @@ struct ProcessEvent : public Event {
      */
     string startMethod;
     int pointerSize = PTR_SIZE;
-    ProcessEvent() { event = "process"; }
-    virtual ~ProcessEvent() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    EVENT_CLASS(ProcessEvent, "process");
+    JSON_SERIALIZE();
 };
 
 struct InitializeRequestArguments : public Any {
@@ -312,8 +297,8 @@ struct InitializeRequestArguments : public Any {
      * Values: 'path', 'uri', etc.
      */
     string pathFormat = "path";
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(InitializeRequestArguments);
+    JSON_SERIALIZE();
 };
 
 /// The 'initialize' request is sent as the first request from the client to the debug adapter in order to configure it
@@ -324,36 +309,28 @@ struct InitializeRequestArguments : public Any {
 /// <->
 struct InitializeRequest : public Request {
     InitializeRequestArguments arguments;
-    InitializeRequest() { command = "initialize"; }
-    virtual ~InitializeRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(InitializeRequest, "initialize");
+    JSON_SERIALIZE();
 };
 
 /// Response to 'initialize' request.
 /// <-
 struct InitializeResponse : public Response {
-    InitializeResponse() {}
-    virtual ~InitializeResponse() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    RESPONSE_CLASS(InitializeResponse);
+    JSON_SERIALIZE();
 };
 
 /// The client of the debug protocol must send this request at the end of the sequence of configuration requests (which
 /// was started by the 'initialized' event).
 /// <->
 struct ConfigurationDoneRequest : public Request {
-    ConfigurationDoneRequest() { command = "configurationDone"; }
-    virtual ~ConfigurationDoneRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(ConfigurationDoneRequest, "configurationDone");
+    JSON_SERIALIZE();
 };
 
 struct EmptyAckResponse : public Response {
-    EmptyAckResponse() {}
-    virtual ~EmptyAckResponse() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    RESPONSE_CLASS(EmptyAckResponse);
+    JSON_SERIALIZE();
 };
 
 /// Response to 'configurationDone' request. This is just an acknowledgement, so no body field is required.
@@ -366,10 +343,8 @@ struct LaunchRequestArguments : public Any {
      * If noDebug is true the launch request should launch the program without enabling debugging.
      */
     bool noDebug = false;
-    LaunchRequestArguments() {}
-    virtual ~LaunchRequestArguments() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(LaunchRequestArguments);
+    JSON_SERIALIZE();
 };
 
 /// The launch request is sent from the client to the debug adapter to start the debuggee with or without debugging (if
@@ -377,11 +352,10 @@ struct LaunchRequestArguments : public Any {
 /// this specification
 struct LaunchRequest : public Request {
     LaunchRequestArguments arguments;
-    LaunchRequest() { command = "launch"; }
-    virtual ~LaunchRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(LaunchRequest, "launch");
+    JSON_SERIALIZE();
 };
+
 /// Response to 'launch' request. This is just an acknowledgement, so no body field is required.
 /// <-
 typedef EmptyAckResponse LaunchResponse;
@@ -394,10 +368,8 @@ typedef EmptyAckResponse LaunchResponse;
 struct DisconnectRequest : public Request {
     bool restart = false;
     bool terminateDebuggee = true;
-    DisconnectRequest() { command = "disconnect"; }
-    virtual ~DisconnectRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(DisconnectRequest, "disconnect");
+    JSON_SERIALIZE();
 };
 typedef EmptyAckResponse DisconnectResponse;
 
@@ -407,10 +379,8 @@ struct BreakpointLocationsArguments : public Any {
     int column = -1;
     int endLine = -1;
     int endColumn = -1;
-    BreakpointLocationsArguments() {}
-    virtual ~BreakpointLocationsArguments() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(BreakpointLocationsArguments);
+    JSON_SERIALIZE();
 };
 
 /// Properties of a breakpoint location returned from the 'breakpointLocations' request.
@@ -419,29 +389,23 @@ struct BreakpointLocation : public Any {
     int column = -1;
     int endLine = -1;
     int endColumn = -1;
-    BreakpointLocation() {}
-    virtual ~BreakpointLocation() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    ANY_CLASS(BreakpointLocation);
+    JSON_SERIALIZE();
 };
 
 /// Response to 'breakpointLocations request.
 /// Contains possible locations for source breakpoints.
 struct BreakpointLocationsResponse : public Response {
     vector<BreakpointLocation> breakpoints;
-    BreakpointLocationsResponse() {}
-    virtual ~BreakpointLocationsResponse() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    RESPONSE_CLASS(BreakpointLocationsResponse);
+    JSON_SERIALIZE();
 };
 
 /// The 'breakpointLocations' request returns all possible locations for source breakpoints in a given range.
 struct BreakpointLocationsRequest : public Request {
     BreakpointLocationsArguments arguments;
-    BreakpointLocationsRequest() { command = "breakpointLocations"; }
-    virtual ~BreakpointLocationsRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(BreakpointLocationsRequest, "breakpointLocations");
+    JSON_SERIALIZE();
 };
 
 /// Properties of a breakpoint or logpoint passed to the setBreakpoints request.
@@ -451,20 +415,14 @@ struct SourceBreakpoint : public Any {
      * An optional expression for conditional breakpoints.
      */
     string condition;
-    SourceBreakpoint() {}
-    virtual ~SourceBreakpoint() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    JSON_SERIALIZE();
 };
 
 /// Properties of a breakpoint or logpoint passed to the setBreakpoints request.
 struct SetBreakpointsArguments : public Any {
     Source source;
     vector<SourceBreakpoint> breakpoints;
-    SetBreakpointsArguments() {}
-    virtual ~SetBreakpointsArguments() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    JSON_SERIALIZE();
 };
 
 /// Sets multiple breakpoints for a single source and clears all previous breakpoints in that source. To clear all
@@ -472,10 +430,8 @@ struct SetBreakpointsArguments : public Any {
 /// 'breakpoint') is generated.
 struct SetBreakpointsRequest : public Request {
     SetBreakpointsArguments arguments;
-    SetBreakpointsRequest() { command = "setBreakpoints"; }
-    virtual ~SetBreakpointsRequest() {}
-    virtual JSONItem To(const string& name = "") const;
-    virtual void From(const JSONItem& json);
+    REQUEST_CLASS(SetBreakpointsRequest, "setBreakpoints");
+    JSON_SERIALIZE();
 };
 }; // namespace dap
 

@@ -12,7 +12,7 @@
 #define RESPONSE_FROM() Response::From(json)
 #define EVENT_FROM() Event::From(json)
 #define PROTOCOL_MSG_FROM() ProtocolMessage::From(json)
-#define GET_OBJ(obj) obj.From(json.property(#obj))
+#define READ_OBJ(obj) obj.From(json.property(#obj))
 #define GET_PROP(prop, Type) prop = json.property(#prop).to##Type(prop)
 
 namespace dap
@@ -626,7 +626,7 @@ JSONItem SetBreakpointsRequest::To(const string& name) const
 void SetBreakpointsRequest::From(const JSONItem& json)
 {
     REQUEST_FROM();
-    GET_OBJ(arguments);
+    READ_OBJ(arguments);
 }
 
 }; // namespace dap

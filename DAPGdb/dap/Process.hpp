@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+namespace dap
+{
 enum eProcessCreateFlags {
     IProcessCreateConsole = (1 << 0),
     IProcessCreateWithHiddenConsole = (1 << 1),
@@ -19,7 +21,7 @@ public:
     virtual bool Write(const string& str) = 0;
     virtual bool IsAlive() const = 0;
     virtual void Cleanup() = 0;
-	virtual void Terminate() = 0;
+    virtual void Terminate() = 0;
 };
 /**
  * @brief Create process and return the handle to it
@@ -29,4 +31,6 @@ public:
  * @return pointer to Process object
  */
 Process* ExecuteProcess(const string& cmd, const string& workingDir, size_t flags);
+
+};     // namespace dap
 #endif // PROCESS_H__

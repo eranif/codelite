@@ -8,7 +8,8 @@
 #include <windows.h>
 
 using namespace std;
-
+namespace dap
+{
 static bool CheckIsAlive(HANDLE hProcess)
 {
     DWORD dwExitCode;
@@ -340,5 +341,5 @@ void ProcessMSW::Cleanup()
     m_piProcInfo.hProcess = NULL;
     m_piProcInfo.hThread = NULL;
 }
-
+};     // namespace dap
 #endif //__WXMSW__

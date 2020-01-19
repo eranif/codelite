@@ -1,4 +1,7 @@
+#include "Driver.hpp"
 #include "dap/Process.hpp"
+#include "dap/SocketBase.hpp"
+#include "dap/SocketServer.hpp"
 #include "dap/StringUtils.hpp"
 #include "dap/dap.hpp"
 #include <cstdio>
@@ -9,74 +12,23 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    // Test to see how the various objects are printed
-#if 1
-    dap::CancelRequest cancelRequest;
-    dap::InitializedEvent initEvent;
-    dap::StoppedEvent stoppedEvent;
-    dap::ContinuedEvent contEvent;
-    dap::BreakpointEvent bpEvent;
-    dap::ProcessEvent procEvent;
-    dap::InitializeRequest initReq;
-    dap::InitializeResponse initRespo;
-    dap::ConfigurationDoneRequest configDone;
-    dap::ConfigurationDoneResponse configDoneRespo;
-    dap::LaunchRequest launchReq;
-    launchReq.arguments.debuggee.push_back("C:\\Users\\Eran\\Documents\\AmitTest\\build-Debug\\bin\\AmitTest.exe");
-    launchReq.arguments.debuggee.push_back("arg1");
-    launchReq.arguments.debuggee.push_back("arg2");
-    
-    dap::LaunchResponse launchRespo;
-    dap::DisconnectRequest dcReq;
-    dap::DisconnectResponse dcRespo;
-    dap::BreakpointLocationsRequest bpLocReq;
-    dap::BreakpointLocationsResponse bpLocRespo;
-    bpLocReq.arguments.source.path = "/home/eran/test2.cpp";
-    bpLocReq.arguments.line = 0;
-    bpLocReq.arguments.endLine = 20;
-    bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
-    bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
+    // Open stdin and wait for incoming for the initialize request
+    try {
+        dap::SocketBase::Initialize();
+        dap::SocketServer server;
+        server.Start("tcp://127.0.0.1:3456");
+        dap::SocketBase::Ptr_t conn = server.WaitForNewConnection(100);
+        
+        // Launch the debugger process
+        Driver gdb;
+        gdb.Start("C:\\compilers\\mingw64\\bin\\gdb.exe");
 
-    // Build a setBreakpoint request
-    dap::SetBreakpointsRequest setBreakpointReq;
-    setBreakpointReq.arguments.source.path = "/home/eran/test.cpp";
-    {
-        dap::SourceBreakpoint sb;
-        sb.condition = "i == 0";
-        sb.line = 14;
-        setBreakpointReq.arguments.breakpoints.push_back(sb);
+        // Block the process until gdb terminates
+        gdb.Wait();
+    } catch(dap::SocketException& e) {
+        cerr << e.what() << endl;
+        return -1;
     }
-    {
-        dap::SourceBreakpoint sb;
-        sb.line = 35;
-        setBreakpointReq.arguments.breakpoints.push_back(sb);
-    }
-
-    stoppedEvent.reason = "Breakpoint Hit";
-    stoppedEvent.text = "User hit breakpoint";
-
-    dap::ContinueRequest contReq;
-    dap::ContinueResponse contResponse;
-
-    cout << cancelRequest.To().Format() << endl;
-    cout << initEvent.To().Format() << endl;
-    cout << stoppedEvent.To().Format() << endl;
-    cout << contEvent.To().Format() << endl;
-    cout << bpEvent.To().Format() << endl;
-    cout << procEvent.To().Format() << endl;
-    cout << initReq.To().Format() << endl;
-    cout << initRespo.To().Format() << endl;
-    cout << configDone.To().Format() << endl;
-    cout << configDoneRespo.To().Format() << endl;
-    cout << launchReq.To().Format() << endl;
-    cout << launchRespo.To().Format() << endl;
-    cout << dcReq.To().Format() << endl;
-    cout << dcRespo.To().Format() << endl;
-    cout << bpLocReq.To().Format() << endl;
-    cout << bpLocRespo.To().Format() << endl;
-    cout << setBreakpointReq.To().Format() << endl;
-    cout << contReq.To().Format() << endl;
-    cout << contResponse.To().Format() << endl;
-#endif
+    // We are done
     return 0;
 }

@@ -106,7 +106,7 @@ wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& work
             options.insert(options.end(), compilerPaths.begin(), compilerPaths.end());
         }
         options.insert(options.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
-
+        if(!cclp.GetStandard().empty()) { options.push_back(cclp.GetStandardWithPrefix()); }
         for(const wxString& opt : options) {
             compile_flags_txt << opt << "\n";
         }

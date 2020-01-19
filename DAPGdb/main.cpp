@@ -26,6 +26,9 @@ int main(int argc, char** argv)
     dap::DisconnectResponse dcRespo;
     dap::BreakpointLocationsRequest bpLocReq;
     dap::BreakpointLocationsResponse bpLocRespo;
+    bpLocReq.arguments.source.path = "/home/eran/test2.cpp";
+    bpLocReq.arguments.line = 0;
+    bpLocReq.arguments.endLine = 20;
     bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
     bpLocRespo.breakpoints.push_back(dap::BreakpointLocation());
 

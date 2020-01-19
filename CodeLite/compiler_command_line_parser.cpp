@@ -23,15 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "StringUtils.h"
 #include "compiler_command_line_parser.h"
+#include "procutils.h"
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <wx/string.h>
-#include <wx/filename.h>
 #include <wx/ffile.h>
-#include "procutils.h"
-#include "StringUtils.h"
+#include <wx/filename.h>
+#include <wx/string.h>
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
@@ -134,12 +134,14 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
             }
 
-            // Support for Apple's Framework include paths
+            // std
             else if(opt.StartsWith(wxT("-std"), &rest)) {
                 wxString stds = rest.AfterFirst(wxT('='));
                 stds.Trim().Trim(false);
 
-                if(stds.IsEmpty() == false) { m_standard = stds; }
+                if(!stds.IsEmpty()) { m_standard = stds; }
+                // keep the std as an option as well
+                m_otherOptions.Add(opt);
             } else {
                 m_otherOptions.Add(opt);
             }

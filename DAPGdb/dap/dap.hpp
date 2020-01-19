@@ -343,6 +343,19 @@ struct LaunchRequestArguments : public Any {
      * If noDebug is true the launch request should launch the program without enabling debugging.
      */
     bool noDebug = false;
+    /**
+     * the program launch. debuggee[0] should contain the executable
+     * the other items in the vector are passed to the debuggee
+     */
+    vector<string> debuggee;
+    /**
+     * debugger exeutable path
+     */
+    string debugger;
+    
+    /** stop at main function */
+    bool stopAtMain = false;
+    
     ANY_CLASS(LaunchRequestArguments);
     JSON_SERIALIZE();
 };
@@ -431,6 +444,31 @@ struct SetBreakpointsArguments : public Any {
 struct SetBreakpointsRequest : public Request {
     SetBreakpointsArguments arguments;
     REQUEST_CLASS(SetBreakpointsRequest, "setBreakpoints");
+    JSON_SERIALIZE();
+};
+
+/// Arguments for the continue request
+struct ContinueArguments : public Any {
+    /**
+     * Continue execution for the specified thread (if possible). If the backend cannot continue on a single thread but
+     * will continue on all threads, it should set the 'allThreadsContinued' attribute in the response to true.
+     */
+    int threadId = -1;
+    ANY_CLASS(ContinueArguments);
+    JSON_SERIALIZE();
+};
+
+/// The request starts the debuggee to run again.
+struct ContinueRequest : public Request {
+    ContinueArguments arguments;
+    REQUEST_CLASS(ContinueRequest, "continue");
+    JSON_SERIALIZE();
+};
+
+/// Response to 'continue' request.
+struct ContinueResponse : public Response {
+    bool allThreadsContinued = true;
+    RESPONSE_CLASS(ContinueResponse);
     JSON_SERIALIZE();
 };
 }; // namespace dap

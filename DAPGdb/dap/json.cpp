@@ -143,6 +143,19 @@ bool JSONItem::toBool(bool defaultValue) const
     return m_json->type == cJSON_True;
 }
 
+vector<string> JSONItem::toStringArray(const vector<string>& defaultValue) const
+{
+    if(!m_json) { return defaultValue; }
+    if(m_json->type != cJSON_Array) { return defaultValue; }
+    vector<string> v;
+    int count = cJSON_GetArraySize(m_json);
+    for(int i = 0; i < count; ++i) {
+        cJSON* s = cJSON_GetArrayItem(m_json, i);
+        if(s->type == cJSON_String && s->valuestring) { v.push_back(s->valuestring); }
+    }
+    return v;
+}
+
 string JSONItem::toString(const string& defaultValue) const
 {
     if(!m_json) { return defaultValue; }
@@ -374,6 +387,12 @@ bool JSONItem::isArray() const
     return m_json->type == cJSON_Array;
 }
 
+bool JSONItem::isObject() const
+{
+    if(!m_json) { return false; }
+    return m_json->type == cJSON_Object;
+}
+
 bool JSONItem::isNumber() const
 {
     if(!m_json) { return false; }
@@ -386,4 +405,15 @@ JSONItem JSONItem::detachProperty(const string& name)
     cJSON* j = cJSON_DetachItemFromObject(m_json, name.c_str());
     return JSONItem(j);
 }
+
+JSONItem& JSONItem::add(const string& name, const vector<string>& arr)
+{
+    auto a = createArray(name);
+    add(a);
+    for(const auto& s : arr) {
+        a.arrayAppend(s);
+    }
+    return *this;
+}
+
 }; // namespace dap

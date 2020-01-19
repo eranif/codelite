@@ -10,6 +10,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
     // Test to see how the various objects are printed
+#if 1
     dap::CancelRequest cancelRequest;
     dap::InitializedEvent initEvent;
     dap::StoppedEvent stoppedEvent;
@@ -21,6 +22,10 @@ int main(int argc, char** argv)
     dap::ConfigurationDoneRequest configDone;
     dap::ConfigurationDoneResponse configDoneRespo;
     dap::LaunchRequest launchReq;
+    launchReq.arguments.debuggee.push_back("C:\\Users\\Eran\\Documents\\AmitTest\\build-Debug\\bin\\AmitTest.exe");
+    launchReq.arguments.debuggee.push_back("arg1");
+    launchReq.arguments.debuggee.push_back("arg2");
+    
     dap::LaunchResponse launchRespo;
     dap::DisconnectRequest dcReq;
     dap::DisconnectResponse dcRespo;
@@ -50,6 +55,9 @@ int main(int argc, char** argv)
     stoppedEvent.reason = "Breakpoint Hit";
     stoppedEvent.text = "User hit breakpoint";
 
+    dap::ContinueRequest contReq;
+    dap::ContinueResponse contResponse;
+
     cout << cancelRequest.To().Format() << endl;
     cout << initEvent.To().Format() << endl;
     cout << stoppedEvent.To().Format() << endl;
@@ -67,5 +75,8 @@ int main(int argc, char** argv)
     cout << bpLocReq.To().Format() << endl;
     cout << bpLocRespo.To().Format() << endl;
     cout << setBreakpointReq.To().Format() << endl;
+    cout << contReq.To().Format() << endl;
+    cout << contResponse.To().Format() << endl;
+#endif
     return 0;
 }

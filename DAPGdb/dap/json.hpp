@@ -2,6 +2,8 @@
 #define JSON_HPP
 
 #include "cJSON.hpp"
+#include <vector>
+
 using namespace std;
 namespace dap
 {
@@ -49,6 +51,7 @@ public:
 
     bool toBool(bool defaultValue = false) const;
     string toString(const string& defaultValue = "") const;
+    vector<string> toStringArray(const vector<string>& defaultValue = {}) const;
     JSONItem arrayItem(int pos) const;
 
     // Retuen the object type
@@ -57,6 +60,7 @@ public:
     bool isString() const;
     bool isNumber() const;
     bool isArray() const;
+    bool isObject() const;
 
     string Format(bool formatted = true) const;
     /**
@@ -99,6 +103,7 @@ public:
     JSONItem& add(const string& name, bool value);
     JSONItem& add(const string& name, const JSONItem& element);
     JSONItem& add(const string& name, const char* value);
+    JSONItem& add(const string& name, const vector<string>& arr);
 
     /**
      * @brief delete property by name
@@ -122,6 +127,10 @@ public:
     void arrayAppend(const string& value);
 
     bool isOk() const { return m_json != NULL; }
+
+    template <typename T> JSONItem& operator<<(const pair<string, T>& p) { return add(p.first, p.second); }
+
+    template <typename T> JSONItem& operator<<(const pair<const char*, T>& p) { return add(p.first, p.second); }
 
     /**
      * @brief release the internal pointer

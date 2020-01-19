@@ -15,6 +15,18 @@
 #define READ_OBJ(obj) obj.From(json.property(#obj))
 #define GET_PROP(prop, Type) prop = json.property(#prop).to##Type(prop)
 
+#define ADD_BODY()                             \
+    JSONItem body = json.createObject("body"); \
+    json.add(body)
+#define ADD_BODY_PROP(prop) body.add(#prop, prop)
+#define ADD_ARRAY(Parent, Name)              \
+    JSONItem arr = Parent.createArray(Name); \
+    Parent.add(arr);
+
+#define READ_BODY() JSONItem body = json.property("body")
+
+#define GET_BODY_PROP(prop, Type) prop = body.property(#prop).to##Type()
+
 namespace dap
 {
 
@@ -131,9 +143,9 @@ void InitializedEvent::From(const JSONItem& json) { Event::From(json); }
 
 JSONItem StoppedEvent::To(const string& name) const
 {
-    JSONItem json = Event::To(name);
-    JSONItem body = JSONItem::createObject("body");
-    json.add(body);
+    EVENT_TO();
+    ADD_BODY();
+
     body.add("reason", reason);
     body.add("text", text);
     return json;
@@ -250,16 +262,16 @@ void OutputEvent::From(const JSONItem& json)
 
 JSONItem Source::To(const string& name) const
 {
-    JSONItem json = JSONItem::createObject(name);
-    json.add("name", this->name);
-    json.add("path", path);
+    CREATE_JSON();
+    ADD_PROP(name);
+    ADD_PROP(path);
     return json;
 }
 
 void Source::From(const JSONItem& json)
 {
-    this->name = json.property("name").toString();
-    path = json.property("path").toString();
+    GET_PROP(name, String);
+    GET_PROP(path, String);
 }
 
 // ----------------------------------------
@@ -268,28 +280,28 @@ void Source::From(const JSONItem& json)
 
 JSONItem Breakpoint::To(const string& name) const
 {
-    JSONItem json = JSONItem::createObject(name);
-    json.add("id", id);
-    json.add("verified", verified);
-    json.add("message", message);
-    json.add(source.To("source"));
-    json.add("line", line);
-    json.add("column", column);
-    json.add("endLine", endLine);
-    json.add("endColumn", endColumn);
+    CREATE_JSON();
+    ADD_PROP(id);
+    ADD_PROP(verified);
+    ADD_PROP(message);
+    ADD_PROP(line);
+    ADD_PROP(column);
+    ADD_PROP(endLine);
+    ADD_PROP(endColumn);
+    ADD_OBJ(source);
     return json;
 }
 
 void Breakpoint::From(const JSONItem& json)
 {
-    id = json.property("id").toInt();
-    verified = json.property("verified").toBool();
-    message = json.property("message").toString();
-    source.From(json.property("source"));
-    line = json.property("line").toInt();
-    column = json.property("column").toInt();
-    endLine = json.property("endLine").toInt();
-    endColumn = json.property("endColumn").toInt();
+    GET_PROP(id, Int);
+    GET_PROP(verified, Bool);
+    GET_PROP(message, String);
+    GET_PROP(line, Int);
+    GET_PROP(column, Int);
+    GET_PROP(endLine, Int);
+    GET_PROP(endColumn, Int);
+    READ_OBJ(source);
 }
 
 // ----------------------------------------
@@ -426,12 +438,21 @@ void EmptyAckResponse::From(const JSONItem& json) { Response::From(json); }
 // ----------------------------------------
 JSONItem LaunchRequestArguments::To(const string& name) const
 {
-    JSONItem json = JSONItem::createObject(name);
-    json.add("noDebug", noDebug);
+    CREATE_JSON();
+    ADD_PROP(noDebug);
+    ADD_PROP(debuggee);
+    ADD_PROP(debugger);
+    ADD_PROP(stopAtMain);
     return json;
 }
 
-void LaunchRequestArguments::From(const JSONItem& json) { noDebug = json.property("noDebug").toBool(); }
+void LaunchRequestArguments::From(const JSONItem& json)
+{
+    GET_PROP(noDebug, Bool);
+    GET_PROP(debuggee, StringArray);
+    GET_PROP(debugger, String);
+    GET_PROP(stopAtMain, Bool);
+}
 
 // ----------------------------------------
 // ----------------------------------------
@@ -539,11 +560,10 @@ void BreakpointLocation::From(const JSONItem& json)
 
 JSONItem BreakpointLocationsResponse::To(const string& name) const
 {
-    JSONItem json = Response::To(name);
-    JSONItem body = json.createObject("body");
-    JSONItem arr = json.createArray("breakpoints");
-    json.add(body);
-    body.add(arr);
+    RESPONSE_TO();
+    ADD_BODY();
+    // create arr
+    ADD_ARRAY(body, "breakpoints");
     for(const auto& b : breakpoints) {
         arr.arrayAppend(b.To());
     }
@@ -620,6 +640,8 @@ JSONItem SetBreakpointsRequest::To(const string& name) const
 {
     REQUEST_TO();
     ADD_OBJ(arguments);
+    JSONItem j = json.createObject();
+    j << make_pair("name", 1234);
     return json;
 }
 
@@ -627,6 +649,55 @@ void SetBreakpointsRequest::From(const JSONItem& json)
 {
     REQUEST_FROM();
     READ_OBJ(arguments);
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem ContinueArguments::To(const string& name) const
+{
+    CREATE_JSON();
+    ADD_PROP(threadId);
+    return json;
+}
+
+void ContinueArguments::From(const JSONItem& json) { GET_PROP(threadId, Int); }
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem ContinueRequest::To(const string& name) const
+{
+    REQUEST_TO();
+    ADD_OBJ(arguments);
+    return json;
+}
+
+void ContinueRequest::From(const JSONItem& json)
+{
+    REQUEST_FROM();
+    READ_OBJ(arguments);
+}
+
+// ----------------------------------------
+// ----------------------------------------
+// ----------------------------------------
+
+JSONItem ContinueResponse::To(const string& name) const
+{
+    RESPONSE_TO();
+    ADD_BODY();
+    ADD_BODY_PROP(allThreadsContinued);
+    return json;
+}
+
+void ContinueResponse::From(const JSONItem& json)
+{
+    RESPONSE_FROM();
+    READ_BODY();
+    GET_BODY_PROP(allThreadsContinued, Int);
 }
 
 }; // namespace dap

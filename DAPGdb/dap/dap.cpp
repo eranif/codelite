@@ -1,5 +1,20 @@
 #include "dap.hpp"
 
+#define CREATE_JSON() JSONItem json = JSONItem::createObject(name)
+#define REQUEST_TO() JSONItem json = Request::To(name)
+#define RESPONSE_TO() JSONItem json = Response::To(name)
+#define PROTOCOL_MSG_TO() JSONItem json = ProtocolMessage::To(name)
+#define EVENT_TO() JSONItem json = Event::To(name)
+#define ADD_OBJ(obj) json.add(obj.To(#obj))
+#define ADD_PROP(obj) json.add(#obj, obj)
+
+#define REQUEST_FROM() Request::From(json)
+#define RESPONSE_FROM() Response::From(json)
+#define EVENT_FROM() Event::From(json)
+#define PROTOCOL_MSG_FROM() ProtocolMessage::From(json)
+#define GET_OBJ(obj) obj.From(json.property(#obj))
+#define GET_PROP(prop, Type) prop = json.property(#prop).to##Type(prop)
+
 namespace dap
 {
 
@@ -9,16 +24,16 @@ namespace dap
 
 JSONItem ProtocolMessage::To(const string& name) const
 {
-    JSONItem json = JSONItem::createObject(name);
-    json.add("seq", seq);
-    json.add("type", type);
+    CREATE_JSON();
+    ADD_PROP(seq);
+    ADD_PROP(type);
     return json;
 }
 
 void ProtocolMessage::From(const JSONItem& json)
 {
-    seq = json.property("seq").toInt(-1);
-    type = json.property("type").toString();
+    GET_PROP(seq, Int);
+    GET_PROP(type, String);
 }
 
 // ----------------------------------------
@@ -28,15 +43,15 @@ Request::~Request() {}
 
 JSONItem Request::To(const string& name) const
 {
-    JSONItem json = ProtocolMessage::To(name);
-    json.add("command", command);
+    PROTOCOL_MSG_TO();
+    ADD_PROP(command);
     return json;
 }
 
 void Request::From(const JSONItem& json)
 {
-    ProtocolMessage::From(json);
-    command = json.property("command").toString();
+    PROTOCOL_MSG_FROM();
+    GET_PROP(command, String);
 }
 
 // ----------------------------------------
@@ -603,15 +618,15 @@ void SetBreakpointsArguments::From(const JSONItem& json)
 
 JSONItem SetBreakpointsRequest::To(const string& name) const
 {
-    JSONItem json = Request::To(name);
-    json.add(arguments.To("arguments"));
+    REQUEST_TO();
+    ADD_OBJ(arguments);
     return json;
 }
 
 void SetBreakpointsRequest::From(const JSONItem& json)
 {
-    Request::From(json);
-    arguments.From(json.property("arguments"));
+    REQUEST_FROM();
+    GET_OBJ(arguments);
 }
 
 }; // namespace dap

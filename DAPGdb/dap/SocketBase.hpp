@@ -132,6 +132,8 @@ public:
      */
     int SelectWriteMS(long milliSeconds = -1);
 
+    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<SocketBase*>(this)); }
+
 protected:
     /**
      * @brief

@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "VirtualDirectorySelectorDlg.h"
+#include "clFileSystemWorkspace.hpp"
+#include "clFileSystemWorkspaceView.hpp"
 #include "editor_config.h"
 #include "globals.h"
 #include "imanager.h"
@@ -79,9 +81,18 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     }
 
     DoUpdateGeneratedPath();
-
     GetSizer()->Layout();
     m_textClassName->SetFocus();
+
+    // Check for file system workspace case
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        wxArrayString folders, files;
+        clFileSystemWorkspace::Get().GetView()->GetSelections(folders, files);
+        if(folders.size() == 1) { m_textCtrlGenFilePath->ChangeValue(folders.Item(0)); }
+        m_textCtrlVD->Disable();
+        m_buttonSelectVD->Disable();
+        m_staticTextVD->Disable();
+    }
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
@@ -102,9 +113,6 @@ void NewClassDlg::OnButtonOK(wxCommandEvent& e)
     EndModal(wxID_OK);
 }
 
-/**
- * \brief
- */
 bool NewClassDlg::ValidateInput()
 {
     // validate the class name
@@ -163,7 +171,7 @@ bool NewClassDlg::ValidateInput()
         }
     }
 
-    if(GetVirtualDirectoryPath().IsEmpty()) {
+    if(!clFileSystemWorkspace::Get().IsOpen() && GetVirtualDirectoryPath().IsEmpty()) {
         wxMessageBox(_("Please select a virtual directory"), _("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }

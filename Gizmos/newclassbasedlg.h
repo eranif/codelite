@@ -56,7 +56,7 @@ protected:
     wxTextCtrl* m_textCtrlFileName;
     wxStaticText* m_staticText6;
     wxTextCtrl* m_textCtrlBlockGuard;
-    wxStaticText* m_staticText4;
+    wxStaticText* m_staticTextVD;
     wxTextCtrl* m_textCtrlVD;
     wxButton* m_buttonSelectVD;
     wxStaticText* m_staticText2;
@@ -104,7 +104,7 @@ public:
     wxTextCtrl* GetTextCtrlFileName() { return m_textCtrlFileName; }
     wxStaticText* GetStaticText6() { return m_staticText6; }
     wxTextCtrl* GetTextCtrlBlockGuard() { return m_textCtrlBlockGuard; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxStaticText* GetStaticTextVD() { return m_staticTextVD; }
     wxTextCtrl* GetTextCtrlVD() { return m_textCtrlVD; }
     wxButton* GetButtonSelectVD() { return m_buttonSelectVD; }
     wxStaticText* GetStaticText2() { return m_staticText2; }

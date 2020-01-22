@@ -127,10 +127,10 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Select Virtual Directory:"), wxDefaultPosition,
-                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticTextVD = new wxStaticText(this, wxID_ANY, _("Virtual Directory:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    fgSizer1->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    fgSizer1->Add(m_staticTextVD, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlVD =
         new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
@@ -147,8 +147,8 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(m_buttonSelectVD, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Generated File(s) Path:"), wxDefaultPosition,
-                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText2 =
+        new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     fgSizer1->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 

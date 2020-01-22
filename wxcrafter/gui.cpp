@@ -380,12 +380,12 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
                                           wxDLG_UNIT(m_panelRightSidebar, wxSize(-1, -1)),
                                           wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_mainSplitter->SetSashGravity(1);
-    m_mainSplitter->SetMinimumPaneSize(100);
+    m_mainSplitter->SetMinimumPaneSize(10);
 
     bSizer13->Add(m_mainSplitter, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelDesigner = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_mainSplitter, wxSize(400, -1)), wxTAB_TRAVERSAL);
+                                  wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* bSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panelDesigner->SetSizer(bSizer30);
@@ -642,7 +642,7 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     m_infobarLicense->AddButton(wxID_CLOSE, _("Close"));
 
-    m_panel10 = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)),
+    m_panel10 = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(100, -1)),
                             wxTAB_TRAVERSAL);
     m_mainSplitter->SplitVertically(m_panelDesigner, m_panel10, -1);
 

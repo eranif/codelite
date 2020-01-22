@@ -23,21 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "localstable.h"
-#include <wx/regex.h>
-#include <wx/wupdlock.h>
 #include "debuggerconfigtool.h"
-#include "globals.h"
 #include "debuggermanager.h"
-#include "manager.h"
-#include "new_quick_watch_dlg.h"
-#include <set>
-#include <wx/xrc/xmlres.h>
-#include "frame.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "frame.h"
+#include "globals.h"
+#include "localstable.h"
+#include "manager.h"
+#include "new_quick_watch_dlg.h"
 #include <algorithm>
+#include <set>
+#include <wx/regex.h>
 #include <wx/utils.h>
+#include <wx/wupdlock.h>
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(LocalsTable, DebuggerTreeListCtrlBase)
 EVT_MENU(XRCID("Change_Value"), LocalsTable::OnEditValue)
@@ -53,10 +53,10 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_listTable->AddHeader(_("Name"));
     m_listTable->AddHeader(_("Value"));
     m_listTable->AddHeader(_("Type"));
-    
+
     // Only sort top level items, don't sort their children
     m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
-    
+
     SetSortingFunction();
     m_DBG_USERR = DBG_USERR_LOCALS;
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
@@ -105,7 +105,8 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEventData& event)
             data->_kind = DbgTreeItemData::VariableObject;
 
             // variable object's type name is extracted from the event.m_variableObject.typeName
-            m_listTable->SetItemText(iter->second, event.m_variableObject.typeName, 2);
+            const wxString& localType = event.m_variableObject.typeName;
+            m_listTable->SetItemText(iter->second, localType, 2);
 
             // refresh this item only
             IDebugger* dbgr = DoGetDebugger();
@@ -135,7 +136,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
                 IDebugger* dbgr = DoGetDebugger();
                 if(!dbgr) return;
 
-                VariableObjChild ch = event.m_varObjChildren.at(i);
+                const VariableObjChild& ch = event.m_varObjChildren.at(i);
                 if(ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")) {
                     // not really a node...
                     // ask for information about this node children
@@ -296,16 +297,6 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
         }
 
         if(newVarName.IsEmpty() == false && !newVarName.Contains(wxT("@"))) {
-            // if(newVarName.Contains(wxT("@"))) {
-            //
-            //	// using GDB special array print,
-            //	// we need to delete this variable object and re-create it
-            //	// otherwise its content wont be updated
-            //	int where = itemsNotRemoved.Index(newVarName);
-            //	if(where != wxNOT_FOUND)
-            //		itemsNotRemoved.RemoveAt(where);
-            //}
-
             wxTreeItemId treeItem = DoFindItemByExpression(newVarName);
             if(treeItem.IsOk()) {
                 // an item with this expression already exists, skip it

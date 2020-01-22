@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	61,
+		"m_objCounter":	63,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3999InitBitmapResources",
 		"m_bitmapsFile":	"newclasswizard_gizmos_bitmaps.cpp",
@@ -1354,7 +1354,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_staticText4"
+											"m_value":	"m_staticTextVD"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -1398,7 +1398,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
-											"m_value":	"Select Virtual Directory:"
+											"m_value":	"Virtual Directory:"
 										}, {
 											"type":	"string",
 											"m_label":	"Wrap:",
@@ -1655,7 +1655,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
-											"m_value":	"Generated File(s) Path:"
+											"m_value":	"Path:"
 										}, {
 											"type":	"string",
 											"m_label":	"Wrap:",

@@ -25,10 +25,10 @@
 #ifndef GIZMOS_H
 #define GIZMOS_H
 
-#include "plugin.h"
-#include "vector"
 #include "newclassdlg.h"
 #include "newwxprojectinfo.h"
+#include "plugin.h"
+#include "vector"
 
 class WizardsPlugin : public IPlugin
 {
@@ -36,11 +36,13 @@ class WizardsPlugin : public IPlugin
     wxString DoGetVirtualFuncImpl(const NewClassInfo& info);
     wxString DoGetVirtualFuncDecl(const NewClassInfo& info, const wxString& separator);
     std::vector<wxMenuItem*> m_vdDynItems;
+    wxString m_folderpath;
 
 protected:
     void CreateWxProject(NewWxProjectInfo& info);
     void GizmosRemoveDuplicates(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     void DoPopupButtonMenu(wxPoint pt);
+    void OnFolderContentMenu(clContextMenuEvent& event);
 
 public:
     WizardsPlugin(IManager* manager);

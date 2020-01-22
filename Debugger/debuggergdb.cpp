@@ -596,7 +596,7 @@ bool DbgGdb::QueryFileLine()
     return true;
 }
 
-bool DbgGdb::QueryLocals() { return WriteCommand(wxT("-stack-list-variables 2"), new DbgCmdHandlerLocals(m_observer)); }
+bool DbgGdb::QueryLocals() { return WriteCommand(wxT("-stack-list-variables --skip-unavailable 2"), new DbgCmdHandlerLocals(m_observer)); }
 
 bool DbgGdb::ExecuteCmd(const wxString& cmd)
 {

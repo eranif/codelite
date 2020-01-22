@@ -27,6 +27,7 @@
 #define CLTREECTRLPANEL_H
 
 #include "bitmap_loader.h"
+#include "clFileSystemEvent.h"
 #include "clFileViwerTreeCtrl.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
@@ -61,6 +62,7 @@ protected:
     void RefreshNonTopLevelFolder(const wxTreeItemId& item);
     virtual void OnLinkEditor(wxCommandEvent& event);
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
+    void OnFilesCreated(clFileSystemEvent& event);
 
 public:
     clTreeCtrlPanel(wxWindow* parent);
@@ -90,7 +92,7 @@ public:
      * @brief clear the view (i.e. close all top level folders)
      */
     void Clear();
-    
+
     /**
      * @brief set exclude file pattern. Excluded files will not be shown in the tree
      * @param excludeFilePatterns
@@ -99,9 +101,9 @@ public:
     {
         this->m_excludeFilePatterns = excludeFilePatterns;
     }
-    
+
     const wxString& GetExcludeFilePatterns() const { return m_excludeFilePatterns; }
-    
+
     /**
      * @brief return the configuration tool used for storing information about
      * this tree. Override it to provide a custom configuration tool

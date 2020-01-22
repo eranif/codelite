@@ -2668,10 +2668,8 @@ void GitPlugin::OnFileCreated(clFileSystemEvent& event)
     event.Skip();
     if(IsGitEnabled()) {
         // A file was created on the file system, add it to git if needed
-        const wxString& filepath = event.GetPath();
-        wxArrayString files;
-        files.Add(filepath);
-        DoAddFiles(files);
+        const wxArrayString& paths = event.GetPaths();
+        DoAddFiles(paths);
         RefreshFileListView();
     }
 }

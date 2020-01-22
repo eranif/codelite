@@ -24,7 +24,7 @@
    "executable": "/usr/bin/codelite",
    "arguments": "",
    "environment": "",
-   "compiler": "",
+   "compiler": "Cross GCC ( x86_64-linux-gnu )",
    "remoteFolder": "",
    "remoteAccount": "dev-cloud",
    "debugger": "GNU gdb debugger",

@@ -51,6 +51,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &clTreeCtrlPanel::OnFilesCreated, this);
     m_defaultView = new clTreeCtrlPanelDefaultPage(this);
     GetSizer()->Add(m_defaultView, 1, wxEXPAND);
     GetTreeCtrl()->Hide();
@@ -64,6 +65,7 @@ clTreeCtrlPanel::~clTreeCtrlPanel()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clTreeCtrlPanel::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &clTreeCtrlPanel::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &clTreeCtrlPanel::OnFilesCreated, this);
 }
 
 void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
@@ -408,6 +410,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     clFileSystemEvent fsEvent(wxEVT_FILE_CREATED);
     fsEvent.SetPath(file.GetFullPath());
     fsEvent.SetFileName(file.GetFullName());
+    fsEvent.GetPaths().Add(file.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(fsEvent);
 }
 
@@ -1026,4 +1029,15 @@ void clTreeCtrlPanel::RefreshTree()
 
     GetTreeCtrl()->SortChildren(GetTreeCtrl()->GetRootItem());
     ToggleView();
+}
+
+void clTreeCtrlPanel::OnFilesCreated(clFileSystemEvent& event)
+{
+    event.Skip();
+    wxArrayString files, folders;
+    wxArrayTreeItemIds fileItems, folderItems;
+    GetSelections(folders, folderItems, files, fileItems);
+    for(const auto& item : folderItems) {
+        RefreshNonTopLevelFolder(item);
+    }
 }

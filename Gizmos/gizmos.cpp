@@ -610,7 +610,12 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     for(const auto& file : paths) {
         m_mgr->OpenFile(file);
     }
-
+    
+    // Notify about files created on the file system
+    clFileSystemEvent eventFilesCreated(wxEVT_FILE_CREATED);
+    eventFilesCreated.GetPaths().swap(paths);
+    EventNotifier::Get()->QueueEvent(eventFilesCreated.Clone());
+    
     // Notify codelite to parse the files
     wxCommandEvent parseEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(parseEvent);

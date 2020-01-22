@@ -65,6 +65,10 @@
 #include <wx/utils.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+#if defined(__WXOSX__)
+#include <wx/osx/tooltip.h>
+#endif
+
 
 GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = NULL;
 

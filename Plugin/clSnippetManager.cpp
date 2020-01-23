@@ -20,8 +20,8 @@ void clSnippetManager::Insert(wxStyledTextCtrl* ctrl, const wxString& snippet)
         wxString before = snippet.Mid(0, caret);
         wxString after = snippet.Mid(caret + 1); // Skip the |
         caret = InsertTextSimple(ctrl, before);
-        InsertTextSimple(ctrl, after);
         SetCaretAt(ctrl, caret);
+        InsertTextSimple(ctrl, after);
     } else {
         // No caret, just insert the text
         InsertTextSimple(ctrl, snippet);

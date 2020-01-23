@@ -1,25 +1,27 @@
 #ifndef CLFILESYSTEMWORKSPACE_HPP
 #define CLFILESYSTEMWORKSPACE_HPP
 
-#include "codelite_exports.h"
 #include "IWorkspace.h"
-#include <wx/arrstr.h>
-#include <vector>
-#include "cl_command_event.h"
-#include <unordered_map>
-#include "clFileSystemEvent.h"
-#include "macros.h"
 #include "asyncprocess.h"
+#include "clConsoleBase.h"
+#include "clDebuggerTerminal.h"
+#include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteBuilder.hpp"
-#include "clDebuggerTerminal.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 #include "compiler.h"
-#include "clConsoleBase.h"
+#include "macros.h"
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <wx/arrstr.h>
+#include "clFileCache.hpp"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
 {
-    std::vector<wxFileName> m_files;
+    clFileCache m_files;
     wxFileName m_filename;
     bool m_isLoaded = false;
     bool m_showWelcomePage = false;
@@ -32,7 +34,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clRemoteBuilder::Ptr_t m_remoteBuilder;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     int m_execPID = wxNOT_FOUND;
-    
+
 protected:
     void CacheFiles(bool force = false);
     wxString CompileFlagsAsString(const wxArrayString& arr) const;
@@ -40,13 +42,13 @@ protected:
     void DoPrintBuildMessage(const wxString& message);
     clEnvList_t GetEnvList();
     CompilerPtr GetCompiler();
-    
+
     /**
      * @brief return the executable to run + args
      * this method also expands all macros/env variables
      */
     void GetExecutable(wxString& exe, wxString& args);
-    
+
     //===--------------------------
     // Event handlers
     //===--------------------------
@@ -75,7 +77,8 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void OnSourceControlPulled(clSourceControlEvent& event);
     void OnDebug(clDebugEvent& event);
-    
+    void OnFileSystemUpdated(clFileSystemEvent& event);
+
 protected:
     bool Load(const wxFileName& file);
     void DoOpen();
@@ -139,7 +142,7 @@ public:
     bool IsOpen() const { return m_isLoaded; }
 
     void UpdateParserPaths();
-    const std::vector<wxFileName>& GetFiles() const { return m_files; }
+    const std::vector<wxFileName>& GetFiles() const { return m_files.GetFiles(); }
 
     const wxString& GetName() const { return m_settings.GetName(); }
     void SetName(const wxString& name) { m_settings.SetName(name); }
@@ -152,7 +155,7 @@ public:
      * This function does nothing if the workspace was already initialised
      */
     void Initialise();
-    
+
     /**
      * @brief call this to update the workspace once a file system changes.
      * this method will re-cache the files + parse the workspace

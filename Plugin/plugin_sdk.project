@@ -310,6 +310,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="clFileCache.cpp"/>
+    <File Name="clFileCache.hpp"/>
     <File Name="clThemeUpdater.cpp"/>
     <File Name="clThemeUpdater.h"/>
     <File Name="clGenericSTCStyler.cpp"/>

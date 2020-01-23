@@ -32,8 +32,10 @@
 #include <wx/xrc/xmlres.h>
 #include <wxStringHash.h>
 
-#define CHECK_ACTIVE_CONFIG() \
-    if(!GetSettings().GetSelectedConfig()) { return; }
+#define CHECK_ACTIVE_CONFIG()                \
+    if(!GetSettings().GetSelectedConfig()) { \
+        return;                              \
+    }
 
 #define CHECK_EVENT(e)     \
     {                      \
@@ -83,6 +85,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
 
         EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
         EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
+
+        EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &clFileSystemWorkspace::OnFileSystemUpdated, this);
     }
 }
 
@@ -125,6 +129,8 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
                                      &clFileSystemWorkspace::OnQuickDebugDlgDismissed, this);
         EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clFileSystemWorkspace::OnFileSaved, this);
         EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
+
+        EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &clFileSystemWorkspace::OnFileSystemUpdated, this);
     }
 }
 
@@ -135,7 +141,9 @@ wxFileName clFileSystemWorkspace::GetFileName() const { return m_filename; }
 wxString clFileSystemWorkspace::GetFilesMask() const
 {
     clFileSystemWorkspaceConfig::Ptr_t conf = m_settings.GetSelectedConfig();
-    if(conf) { return conf->GetFileExtensions(); }
+    if(conf) {
+        return conf->GetFileExtensions();
+    }
     return wxEmptyString;
 }
 
@@ -152,7 +160,7 @@ wxString clFileSystemWorkspace::GetProjectFromFile(const wxFileName& filename) c
 void clFileSystemWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
     files.clear();
-    files.Alloc(m_files.size());
+    files.Alloc(m_files.GetSize());
     for(const wxFileName& file : m_files) {
         files.Add(file.GetFullPath());
     }
@@ -167,9 +175,13 @@ bool clFileSystemWorkspace::IsProjectSupported() const { return false; }
 void clFileSystemWorkspace::CacheFiles(bool force)
 {
     // should we force a rescan of the files?
-    if(force) { m_files.clear(); }
+    if(force) {
+        m_files.Clear();
+    }
     // sanity
-    if(!m_files.empty()) { m_files.clear(); }
+    if(!m_files.IsEmpty()) {
+        m_files.Clear();
+    }
     std::thread thr(
         [=](const wxString& rootFolder) {
             clFilesScanner fs;
@@ -229,16 +241,22 @@ void clFileSystemWorkspace::OnCloseWorkspace(clCommandEvent& event)
 
 bool clFileSystemWorkspace::Load(const wxFileName& file)
 {
-    if(m_isLoaded) { return true; }
+    if(m_isLoaded) {
+        return true;
+    }
     m_filename = file;
     bool loadOk = m_settings.Load(m_filename);
-    if(loadOk && m_settings.GetName().empty()) { m_settings.SetName(m_filename.GetName()); }
+    if(loadOk && m_settings.GetName().empty()) {
+        m_settings.SetName(m_filename.GetName());
+    }
     return loadOk;
 }
 
 void clFileSystemWorkspace::Save(bool parse)
 {
-    if(!m_filename.IsOk()) { return; }
+    if(!m_filename.IsOk()) {
+        return;
+    }
     m_settings.Save(m_filename);
 
     clCommandEvent eventFileSave(wxEVT_FILE_SAVED);
@@ -250,12 +268,16 @@ void clFileSystemWorkspace::Save(bool parse)
         GetSettings().GetSelectedConfig() ? GetSettings().GetSelectedConfig()->GetExcludeFilesPattern() : "");
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
     // trigger a file scan
-    if(parse) { CacheFiles(); }
+    if(parse) {
+        CacheFiles();
+    }
 }
 
 void clFileSystemWorkspace::RestoreSession()
 {
-    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
+    if(IsOpen()) {
+        clGetManager()->LoadWorkspaceSession(m_filename);
+    }
 }
 
 void clFileSystemWorkspace::DoOpen()
@@ -268,14 +290,16 @@ void clFileSystemWorkspace::DoOpen()
 
     // Init the view
     GetView()->Clear();
-    
+
     // Update the view exclude patterns
     auto selectedConf = GetSettings().GetSelectedConfig();
-    if(selectedConf) { GetView()->SetExcludeFilePatterns(selectedConf->GetExcludeFilesPattern()); }
-    
+    if(selectedConf) {
+        GetView()->SetExcludeFilePatterns(selectedConf->GetExcludeFilesPattern());
+    }
+
     // And now load the main folder
     GetView()->AddFolder(GetFileName().GetPath());
-    
+
     // Notify CodeLite that this workspace is opened
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
@@ -307,7 +331,8 @@ void clFileSystemWorkspace::DoOpen()
 
 void clFileSystemWorkspace::DoClose()
 {
-    if(!m_isLoaded) return;
+    if(!m_isLoaded)
+        return;
 
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
@@ -374,10 +399,10 @@ void clFileSystemWorkspace::New(const wxString& folder) { DoCreate("", folder, t
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 {
     clDEBUG() << "FSW: CacheFiles completed. Found" << event.GetPaths().size() << "files";
-    m_files.clear();
-    m_files.reserve(event.GetPaths().size());
+    m_files.Clear();
+    m_files.Alloc(event.GetPaths().size());
     for(const wxString& filename : event.GetPaths()) {
-        m_files.push_back(filename);
+        m_files.Add(filename);
     }
     clGetManager()->SetStatusMessage(_("File system scan completed"));
 
@@ -396,17 +421,21 @@ void clFileSystemWorkspace::OnParseWorkspace(wxCommandEvent& event)
 
 void clFileSystemWorkspace::Parse(bool fullParse)
 {
-    if(m_files.empty()) { return; }
+    if(m_files.IsEmpty()) {
+        return;
+    }
 
     // in the case of re-tagging the entire workspace and full re-tagging is enabled
     // it is faster to drop the tables instead of deleting
-    if(fullParse) { TagsManagerST::Get()->GetDatabase()->RecreateDatabase(); }
+    if(fullParse) {
+        TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+    }
 
     UpdateParserPaths();
 
     // Create a parsing request
     ParseRequest* parsingRequest = new ParseRequest(EventNotifier::Get()->TopFrame());
-    parsingRequest->_workspaceFiles.reserve(m_files.size());
+    parsingRequest->_workspaceFiles.reserve(m_files.GetSize());
     // use a deep copy to endure thread safety
     for(const wxFileName& fn : m_files) {
         // filter any non valid coding file
@@ -448,7 +477,9 @@ void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& ev
 
 void clFileSystemWorkspace::UpdateParserPaths()
 {
-    if(!GetConfig()) { return; }
+    if(!GetConfig()) {
+        return;
+    }
 
     // Apply the environment (incase there are backtick, we spawn a helper process)
     const clEnvList_t envlist = GetEnvList();
@@ -486,18 +517,24 @@ wxString clFileSystemWorkspace::CompileFlagsAsString(const wxArrayString& arr) c
 {
     wxString s;
     for(const wxString& l : arr) {
-        if(!l.IsEmpty()) { s << l << "\n"; }
+        if(!l.IsEmpty()) {
+            s << l << "\n";
+        }
     }
     return s.Trim();
 }
 
 wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
 {
-    if(!GetConfig()) { return wxEmptyString; }
+    if(!GetConfig()) {
+        return wxEmptyString;
+    }
     const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
     if(M.count(target)) {
         wxString cmd = M.find(target)->second;
-        if(!GetConfig()->IsRemoteEnabled()) { ::WrapInShell(cmd); }
+        if(!GetConfig()->IsRemoteEnabled()) {
+            ::WrapInShell(cmd);
+        }
         return cmd;
     }
     return wxEmptyString;
@@ -516,7 +553,9 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 
 void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
 {
-    if(event.GetProcess() == m_buildProcess) { DoPrintBuildMessage(event.GetOutput()); }
+    if(event.GetProcess() == m_buildProcess) {
+        DoPrintBuildMessage(event.GetOutput());
+    }
 }
 
 void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
@@ -537,7 +576,9 @@ void clFileSystemWorkspace::OnSaveSession(clCommandEvent& event)
 
 void clFileSystemWorkspace::Initialise()
 {
-    if(m_initialized) { return; }
+    if(m_initialized) {
+        return;
+    }
     m_view = new clFileSystemWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
 }
@@ -547,7 +588,9 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     CHECK_EVENT(event);
     CHECK_ACTIVE_CONFIG();
 
-    if(m_execPID != wxNOT_FOUND) { return; }
+    if(m_execPID != wxNOT_FOUND) {
+        return;
+    }
 
     wxString exe, args;
     GetExecutable(exe, args);
@@ -557,13 +600,17 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     console->SetCommand(exe, args);
     console->SetWaitWhenDone(true);
     console->SetSink(this);
-    if(console->Start()) { m_execPID = console->GetPid(); }
+    if(console->Start()) {
+        m_execPID = console->GetPid();
+    }
 }
 
 clEnvList_t clFileSystemWorkspace::GetEnvList()
 {
     clEnvList_t envList;
-    if(!GetConfig()) { return envList; }
+    if(!GetConfig()) {
+        return envList;
+    }
     wxString envstr;
     EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
     EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, "", "");
@@ -636,9 +683,13 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspace::GetConfig() const
 
 void clFileSystemWorkspace::OnMenuCustomTarget(wxCommandEvent& event)
 {
-    if(m_buildTargetMenuIdToName.count(event.GetId()) == 0) { return; }
+    if(m_buildTargetMenuIdToName.count(event.GetId()) == 0) {
+        return;
+    }
     const wxString& target = m_buildTargetMenuIdToName.find(event.GetId())->second;
-    if(GetConfig()->GetBuildTargets().count(target) == 0) { return; }
+    if(GetConfig()->GetBuildTargets().count(target) == 0) {
+        return;
+    }
     DoBuild(target);
     m_buildTargetMenuIdToName.clear();
 }
@@ -681,11 +732,15 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
 
     if(GetConfig()->IsRemoteEnabled()) {
         // Launch a remote build process
-        if(m_remoteBuilder && m_remoteBuilder->IsRunning()) { return; }
+        if(m_remoteBuilder && m_remoteBuilder->IsRunning()) {
+            return;
+        }
         m_remoteBuilder.reset(new clRemoteBuilder());
         m_remoteBuilder->Build(GetConfig()->GetRemoteAccount(), cmd, GetConfig()->GetRemoteFolder());
     } else {
-        if(m_buildProcess) { return; }
+        if(m_buildProcess) {
+            return;
+        }
         // Replace all workspace macros from the command
         cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
 
@@ -711,7 +766,9 @@ void clFileSystemWorkspace::OnNewWorkspace(clCommandEvent& event)
         event.Skip(false);
         // Prompt the user for folder and name
         NewFileSystemWorkspaceDialog dlg(EventNotifier::Get()->TopFrame());
-        if(dlg.ShowModal() == wxID_OK) { DoCreate(dlg.GetWorkspaceName(), dlg.GetWorkspacePath(), false); }
+        if(dlg.ShowModal() == wxID_OK) {
+            DoCreate(dlg.GetWorkspaceName(), dlg.GetWorkspacePath(), false);
+        }
     }
 }
 
@@ -737,7 +794,9 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
     }
 
     // If an workspace is opened and it is the same one as this, dont do nothing
-    if(m_isLoaded && (GetFileName() == fn)) { return; }
+    if(m_isLoaded && (GetFileName() == fn)) {
+        return;
+    }
 
     // Call close here, it does nothing if a workspace is not opened
     DoClose();
@@ -747,7 +806,9 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
         fn.SetName(name);
     } else if(fn.GetFullName().IsEmpty()) {
         wxString name = ::clGetTextFromUser(_("Workspace Name"), _("Name"), fn.GetDirs().Last());
-        if(name.IsEmpty()) { return; }
+        if(name.IsEmpty()) {
+            return;
+        }
         fn.SetName(name);
     }
 
@@ -756,7 +817,9 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
 
     // Creates an empty workspace file
     m_filename = fn;
-    if(!fn.FileExists()) { Save(false); }
+    if(!fn.FileExists()) {
+        Save(false);
+    }
 
     // and load it
     if(Load(m_filename)) {
@@ -826,7 +889,9 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     DebuggerMgr::Get().SetActiveDebugger(GetConfig()->GetDebugger());
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr) { return; }
+    if(!dbgr) {
+        return;
+    }
     // if already running, skip this
     // the default behaviour is to "continue"
     if(dbgr->IsRunning()) {
@@ -861,7 +926,9 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // Get toolchain
     CompilerPtr cmp = GetCompiler();
-    if(cmp && !cmp->GetTool("Debugger").empty()) { si.debuggerPath = cmp->GetTool("Debugger"); }
+    if(cmp && !cmp->GetTool("Debugger").empty()) {
+        si.debuggerPath = cmp->GetTool("Debugger");
+    }
     dbgr->Start(si);
 
     // Notify that debug session started
@@ -891,4 +958,22 @@ void clFileSystemWorkspace::OnExecProcessTerminated(clProcessEvent& event)
 {
     event.Skip();
     m_execPID = wxNOT_FOUND;
+}
+
+void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)
+{
+    event.Skip();
+    if(IsOpen()) {
+        const wxArrayString& paths = event.GetPaths();
+        if(paths.empty()) {
+            return;
+        }
+
+        for(const wxString& path : paths) {
+            m_files.Add(path);
+        }
+
+        // Parse the newly added files
+        Parse(false);
+    }
 }

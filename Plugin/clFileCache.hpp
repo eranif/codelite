@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_set>
 #include <wx/filename.h>
+#include <wxStringHash.h>
 
 class WXDLLIMPEXP_SDK clFileCache
 {

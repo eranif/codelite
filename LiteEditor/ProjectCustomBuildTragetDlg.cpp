@@ -25,6 +25,7 @@
 
 #include "ProjectCustomBuildTragetDlg.h"
 #include "windowattrmanager.h"
+#include <globals.h>
 
 const wxString ProjectCustomBuildTragetDlg::CUSTOM_TARGET_BUILD               = wxT("Build");
 const wxString ProjectCustomBuildTragetDlg::CUSTOM_TARGET_CLEAN               = wxT("Clean");
@@ -38,7 +39,7 @@ ProjectCustomBuildTragetDlg::ProjectCustomBuildTragetDlg(wxWindow* parent, const
     m_textCtrlCommand->ChangeValue( targetCommand );
     m_textCtrlTargetName->ChangeValue( targetName );
     SetName("ProjectCustomBuildTragetDlg");
-    WindowAttrManager::Load(this);
+    clSetSmallDialogBestSizeAndPosition(this);
 }
 
 ProjectCustomBuildTragetDlg::~ProjectCustomBuildTragetDlg()

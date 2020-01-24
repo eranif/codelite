@@ -30,6 +30,7 @@
 #include <wx/sstream.h>
 #include <list>
 #include <algorithm> // std::find
+#include <globals.h>
 
 AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent,
                                      const wxString& title,
@@ -50,6 +51,8 @@ AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent,
 
     // Update controls
     SetValue(value);
+
+    clSetSmallDialogBestSizeAndPosition(this);
 }
 
 AddOptionCheckDlg::~AddOptionCheckDlg() {}

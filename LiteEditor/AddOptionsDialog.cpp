@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
+#include <globals.h>
 
 AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
     : AddOptionsDialogBase(parent)
@@ -14,6 +15,8 @@ AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
     for(const wxString& line : lines) {
         m_stc->AppendText(line + "\n");
     }
+
+    clSetSmallDialogBestSizeAndPosition(this);
 }
 
 AddOptionsDialog::~AddOptionsDialog() {}

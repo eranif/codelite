@@ -2482,9 +2482,6 @@ void clMainFrame::OnCleanProject(wxCommandEvent& event)
     buildEvent.SetKind("clean");
     if(EventNotifier::Get()->ProcessEvent(buildEvent)) { return; }
 
-    wxString conf, projectName;
-    projectName = ManagerST::Get()->GetActiveProjectName();
-
     QueueCommand buildInfo(QueueCommand::kClean);
     ManagerST::Get()->PushQueueCommand(buildInfo);
     ManagerST::Get()->ProcessCommandQueue();

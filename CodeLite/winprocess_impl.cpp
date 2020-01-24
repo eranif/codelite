@@ -24,16 +24,16 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #ifdef __WXMSW__
+#include "file_logger.h"
+#include "fileutils.h"
 #include "processreaderthread.h"
 #include "procutils.h"
 #include "smart_ptr.h"
 #include "winprocess_impl.h"
+#include <atomic>
 #include <memory>
 #include <wx/filefn.h>
-#include "fileutils.h"
-#include "file_logger.h"
 #include <wx/msgqueue.h>
-#include <atomic>
 
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
@@ -70,7 +70,9 @@ public:
 
     ~ConsoleAttacher()
     {
-        if(isAttached) { FreeConsole(); }
+        if(isAttached) {
+            FreeConsole();
+        }
         isAttached = false;
     }
 };
@@ -79,7 +81,8 @@ static bool CheckIsAlive(HANDLE hProcess)
 {
     DWORD dwExitCode;
     if(GetExitCodeProcess(hProcess, &dwExitCode)) {
-        if(dwExitCode == STILL_ACTIVE) return true;
+        if(dwExitCode == STILL_ACTIVE)
+            return true;
     }
     return false;
 }
@@ -101,8 +104,12 @@ template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hPr
             clERROR() << ">> WriteStdin: (WriteFile) error:" << errorCode;
             return false;
         }
-        if(!CheckIsAlive(hProcess)) { return false; }
-        if(dwWritten == 0) { std::this_thread::sleep_for(std::chrono::milliseconds(10)); }
+        if(!CheckIsAlive(hProcess)) {
+            return false;
+        }
+        if(dwWritten == 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
         bytesLeft -= dwWritten;
         offset += dwWritten;
         ++retryCount;
@@ -166,7 +173,9 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, wxS
     MyDirGuard dg;
 
     wxString wd(workingDir);
-    if(workingDir.IsEmpty()) { wd = wxGetCwd(); }
+    if(workingDir.IsEmpty()) {
+        wd = wxGetCwd();
+    }
     wxSetWorkingDirectory(wd);
 
     // Set the bInheritHandle flag so pipe handles are inherited.
@@ -344,7 +353,9 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, wxS
         }
     }
     prc->SetPid(prc->dwProcessId);
-    if(!(prc->m_flags & IProcessCreateSync)) { prc->StartReaderThread(); }
+    if(!(prc->m_flags & IProcessCreateSync)) {
+        prc->StartReaderThread();
+    }
     prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, prc->hChildStdinWrDup);
     prc->m_writerThread->Start();
     return prc;
@@ -374,21 +385,29 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     buffErr.Clear();
 
     // Sanity
-    if(!IsRedirect()) { return false; }
+    if(!IsRedirect()) {
+        return false;
+    }
 
     // Read data from STDOUT and STDERR
-    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) { le2 = GetLastError(); }
-    if(!DoReadFromPipe(hChildStdoutRdDup, buff)) { le1 = GetLastError(); }
+    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) {
+        le2 = GetLastError();
+    }
+    if(!DoReadFromPipe(hChildStdoutRdDup, buff)) {
+        le1 = GetLastError();
+    }
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
         if(IsAlive()) {
-            wxThread::Sleep(15);
+            wxThread::Sleep(10);
             return true;
         }
     }
     bool success = !buff.IsEmpty() || !buffErr.IsEmpty();
     if(!success) {
         DWORD dwExitCode;
-        if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) { SetProcessExitCode(GetPid(), (int)dwExitCode); }
+        if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
+            SetProcessExitCode(GetPid(), (int)dwExitCode);
+        }
     }
     return success;
 }
@@ -406,7 +425,9 @@ bool WinProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils:
 bool WinProcessImpl::WriteRaw(const std::string& buff)
 {
     // Sanity
-    if(!IsRedirect()) { return false; }
+    if(!IsRedirect()) {
+        return false;
+    }
     m_writerThread->Write(buff);
     return true;
 }
@@ -415,7 +436,8 @@ bool WinProcessImpl::IsAlive()
 {
     DWORD dwExitCode;
     if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
-        if(dwExitCode == STILL_ACTIVE) return true;
+        if(dwExitCode == STILL_ACTIVE)
+            return true;
     }
     return false;
 }
@@ -442,7 +464,9 @@ void WinProcessImpl::Cleanup()
 
         for(const auto& vt : tree) {
             // don't kill ourself
-            if((long)vt.first == GetPid()) { continue; }
+            if((long)vt.first == GetPid()) {
+                continue;
+            }
             wxLogNull NoLog;
             wxKillError rc;
             wxKill(vt.first, wxSIGKILL, &rc);
@@ -486,16 +510,15 @@ bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
     DWORD dwRead;
     DWORD dwMode;
     DWORD dwTimeout;
-    memset(m_buffer, 0, sizeof(m_buffer));
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
     dwTimeout = 1000;
     SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
-    
+
     bool read_something = false;
     while(true) {
-        BOOL bRes = ReadFile(pipe, m_buffer, 65536, &dwRead, NULL);
+        BOOL bRes = ReadFile(pipe, m_buffer, sizeof(m_buffer) - 1, &dwRead, NULL);
         if(bRes) {
             wxString tmpBuff;
             // Success read
@@ -522,7 +545,9 @@ void WinProcessImpl::Terminate()
         ProcUtils::GetProcTree(tree, GetPid());
 
         for(const auto& vt : tree) {
-            if((long)vt.first == GetPid()) { continue; }
+            if((long)vt.first == GetPid()) {
+                continue;
+            }
             wxLogNull NoLOG;
             wxKillError rc;
             wxKill(vt.first, wxSIGKILL, &rc);
@@ -537,14 +562,18 @@ bool WinProcessImpl::WriteToConsole(const wxString& buff)
     pass.Trim().Trim(false);
 
     // To write password, we need to attach to the child process console
-    if(!(m_flags & (IProcessCreateWithHiddenConsole | IProcessCreateConsole))) return false;
+    if(!(m_flags & (IProcessCreateWithHiddenConsole | IProcessCreateConsole)))
+        return false;
 
     ConsoleAttacher ca(GetPid());
-    if(ca.isAttached == false) return false;
+    if(ca.isAttached == false)
+        return false;
 
     HANDLE hStdIn = ::CreateFile(L"CONIN$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                                  OPEN_EXISTING, 0, 0);
-    if(hStdIn == INVALID_HANDLE_VALUE) { return false; }
+    if(hStdIn == INVALID_HANDLE_VALUE) {
+        return false;
+    }
 
     pass += wxT("\r\n");
     SmartPtr<INPUT_RECORD> pKeyEvents(new INPUT_RECORD[pass.Len()]);

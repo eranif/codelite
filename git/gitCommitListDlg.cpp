@@ -51,6 +51,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitCommitListDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitCommitListDlg::OnProcessTerminated, this);
+    Bind(wxEVT_CHAR_HOOK, &GitCommitListDlg::OnCharHook, this);
 
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
     if(lex) { lex->Apply(m_stcDiff, true); }
@@ -70,6 +71,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnRevertCommit), NULL, this);
+
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 
@@ -303,4 +305,14 @@ void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_ski
 void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100);
+}
+
+void GitCommitListDlg::OnBtnClose(wxCommandEvent& event)
+{
+    Destroy();
+}
+
+void GitCommitListDlg::OnCharHook(wxKeyEvent& event) // Needed to catch ESC
+{
+    if (event.GetKeyCode() == WXK_ESCAPE ) { Destroy(); }
 }

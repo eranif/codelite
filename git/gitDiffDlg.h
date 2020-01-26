@@ -70,7 +70,6 @@ protected:
     void OnProcessOutput(clProcessEvent& event);
 
     virtual void OnChoseCommits(wxCommandEvent& event);
-    virtual void OnClose(wxCommandEvent& event);
 };
 
 #endif //__gitDiffDlg__

@@ -97,6 +97,7 @@ protected:
     virtual void OnSettings(wxCommandEvent& event);
     virtual void OnStcblameLeftDclick(wxMouseEvent& event);
     virtual void OnCloseDialog(wxCommandEvent& event);
+    virtual void OnCharHook(wxKeyEvent& event);
     void GetNewCommitBlame(const wxString& commit);
     void ClearLogControls();
     void UpdateLogControls(const wxString& commit);
@@ -104,6 +105,8 @@ protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
     void OnChangeFile(wxCommandEvent& event);
+    
+    void DoCloseDialog();
 
     GitPlugin* m_plugin;
     clEditEventsHandler::Ptr_t m_editEventsHandler;

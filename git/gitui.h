@@ -248,14 +248,12 @@ protected:
     wxRadioBox* m_radioBoxStaged;
     wxCheckBox* m_checkIgnoreSpace;
     wxButton* m_buttonDiffDlg;
-    wxStdDialogButtonSizer* m_sdbSizer1;
-    wxButton* m_button145;
+    wxButton* m_button773;
 
 protected:
     virtual void OnChangeFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOptionsChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoseCommits(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText68() { return m_staticText68; }
@@ -268,6 +266,7 @@ public:
     wxRadioBox* GetRadioBoxStaged() { return m_radioBoxStaged; }
     wxCheckBox* GetCheckIgnoreSpace() { return m_checkIgnoreSpace; }
     wxButton* GetButtonDiffDlg() { return m_buttonDiffDlg; }
+    wxButton* GetButton773() { return m_button773; }
     GitDiffDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Current Diffs"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxCAPTION|wxRESIZE_BORDER|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxCLOSE_BOX);
     virtual ~GitDiffDlgBase();
 };

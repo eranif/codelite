@@ -600,7 +600,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     
     wxBoxSizer* boxSizer769 = new wxBoxSizer(wxVERTICAL);
     
-    bSizer17->Add(boxSizer769, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    bSizer17->Add(boxSizer769, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
     m_buttonClose = new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
@@ -730,14 +730,9 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     
     boxSizer650->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
     
-    m_sdbSizer1 = new wxStdDialogButtonSizer();
+    m_button773 = new wxButton(this, wxID_OK, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
     
-    boxSizer650->Add(m_sdbSizer1, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_button145 = new wxButton(this, wxID_CLOSE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button145->SetDefault();
-    m_sdbSizer1->AddButton(m_button145);
-    m_sdbSizer1->Realize();
+    boxSizer650->Add(m_button773, 0, wxALL|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
     
     SetName(wxT("GitDiffDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
@@ -754,7 +749,6 @@ GitDiffDlgBase::GitDiffDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_radioBoxStaged->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
     m_checkIgnoreSpace->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
     m_buttonDiffDlg->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnChoseCommits), NULL, this);
-    m_button145->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnClose), NULL, this);
     
 }
 
@@ -764,7 +758,6 @@ GitDiffDlgBase::~GitDiffDlgBase()
     m_radioBoxStaged->Disconnect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
     m_checkIgnoreSpace->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnOptionsChanged), NULL, this);
     m_buttonDiffDlg->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnChoseCommits), NULL, this);
-    m_button145->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(GitDiffDlgBase::OnClose), NULL, this);
     
 }
 

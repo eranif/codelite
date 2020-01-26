@@ -167,4 +167,3 @@ void GitDiffDlg::OnProcessTerminated(clProcessEvent& event)
 
 void GitDiffDlg::OnOptionsChanged(wxCommandEvent& event) { CreateDiff(); }
 
-void GitDiffDlg::OnClose(wxCommandEvent& event) { EndModal(wxID_OK); }

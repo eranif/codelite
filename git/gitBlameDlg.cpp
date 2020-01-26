@@ -141,6 +141,7 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitBlameDlg::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitBlameDlg::OnProcessTerminated, this);
+    Bind(wxEVT_CHAR_HOOK, &GitBlameDlg::OnCharHook, this);
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -169,6 +170,11 @@ GitBlameDlg::~GitBlameDlg()
 }
 
 void GitBlameDlg::OnCloseDialog(wxCommandEvent& event)
+{
+    DoCloseDialog();
+}
+
+void GitBlameDlg::DoCloseDialog()
 {
     m_stcBlame->ClearAll();
     m_choiceHistory->Clear();
@@ -471,4 +477,9 @@ void GitBlameDlg::Show()
 {
     ::clSetDialogBestSizeAndPosition(this);
     wxDialog::Show();
+}
+
+void GitBlameDlg::OnCharHook(wxKeyEvent& event)
+{
+    if (event.GetKeyCode() == WXK_ESCAPE ) {  DoCloseDialog(); }
 }

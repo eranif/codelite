@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 771,
+  "m_objCounter": 773,
   "m_includeFiles": [],
   "m_bitmapFunction": "wxCrafterpca4kKInitBitmapResources",
   "m_bitmapsFile": "gitui_git_bitmaps.cpp",
@@ -5940,7 +5940,7 @@
         }]
       }, {
        "m_type": 4401,
-       "proportion": 1,
+       "proportion": 0,
        "border": 5,
        "gbSpan": "1,1",
        "gbPosition": "0,0",
@@ -7108,17 +7108,17 @@
          "m_events": [],
          "m_children": []
         }, {
-         "m_type": 4467,
+         "m_type": 4400,
          "proportion": 0,
          "border": 5,
-         "gbSpan": ",",
-         "gbPosition": ",",
+         "gbSpan": "1,1",
+         "gbPosition": "0,0",
          "m_styles": [],
          "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxALIGN_CENTER_VERTICAL"],
          "m_properties": [{
            "type": "winid",
            "m_label": "ID:",
-           "m_winid": "wxID_ANY"
+           "m_winid": "wxID_OK"
           }, {
            "type": "string",
            "m_label": "Size:",
@@ -7126,11 +7126,11 @@
           }, {
            "type": "string",
            "m_label": "Minimum Size:",
-           "m_value": ""
+           "m_value": "-1,-1"
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_sdbSizer1"
+           "m_value": "m_button773"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -7171,44 +7171,30 @@
            "type": "string",
            "m_label": "Style:",
            "m_value": ""
+          }, {
+           "type": "string",
+           "m_label": "Label:",
+           "m_value": "Close"
+          }, {
+           "type": "bool",
+           "m_label": "Default Button",
+           "m_value": false
+          }, {
+           "type": "bitmapPicker",
+           "m_label": "Bitmap File:",
+           "m_path": ""
+          }, {
+           "type": "choice",
+           "m_label": "Direction",
+           "m_selection": 0,
+           "m_options": ["wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"]
+          }, {
+           "type": "string",
+           "m_label": "Margins:",
+           "m_value": "2,2"
           }],
          "m_events": [],
-         "m_children": [{
-           "m_type": 4468,
-           "proportion": 0,
-           "border": 5,
-           "gbSpan": "1,1",
-           "gbPosition": "0,0",
-           "m_styles": [],
-           "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
-           "m_properties": [{
-             "type": "choice",
-             "m_label": "ID:",
-             "m_selection": 4,
-             "m_options": ["wxID_OK", "wxID_YES", "wxID_SAVE", "wxID_APPLY", "wxID_CLOSE", "wxID_NO", "wxID_CANCEL", "wxID_HELP", "wxID_CONTEXT_HELP"]
-            }, {
-             "type": "string",
-             "m_label": "Name:",
-             "m_value": "m_button145"
-            }, {
-             "type": "multi-string",
-             "m_label": "Tooltip:",
-             "m_value": ""
-            }, {
-             "type": "bool",
-             "m_label": "Default Button",
-             "m_value": true
-            }],
-           "m_events": [{
-             "m_eventName": "wxEVT_COMMAND_BUTTON_CLICKED",
-             "m_eventClass": "wxCommandEvent",
-             "m_eventHandler": "wxCommandEventHandler",
-             "m_functionNameAndSignature": "OnClose(wxCommandEvent& event)",
-             "m_description": "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
-             "m_noBody": false
-            }],
-           "m_children": []
-          }]
+         "m_children": []
         }]
       }]
     }]

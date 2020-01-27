@@ -462,19 +462,7 @@ bool ProcUtils::Shell(const wxString& programConsoleCommand)
     wxString where;
     wxArrayString tokens;
     wxArrayString configuredTerminal;
-    /*if (Locate(wxT("gnome-terminal"), where)) {
-        terminal = where;
-    } else if (Locate(wxT("konsole"), where)) {
-        wxString path = wxGetCwd();
-        terminal << where << wxT(" --workdir \"") << path << wxT("\"");
-    } else if (Locate(wxT("terminal"), where)) {
-        terminal = where;
-    } else if (Locate(wxT("lxterminal"), where)) {
-        terminal = where;
-    } else if (Locate(wxT("xterm"), where)) {
-        terminal = where;
-    }
-    cmd = terminal;*/
+
     terminal = wxT("xterm");
     if(!programConsoleCommand.IsEmpty()) {
         tokens = wxStringTokenize(programConsoleCommand, wxT(" "), wxTOKEN_STRTOK);

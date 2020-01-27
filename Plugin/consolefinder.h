@@ -56,7 +56,6 @@ public:
 
 	bool FindConsole(const wxString &title, wxString &consoleName);
 	void FreeConsole();
-	wxString GetConsoleName();
 
 	void SetConsoleCommand(const wxString& consoleCommand) {
 		this->m_consoleCommand = consoleCommand;

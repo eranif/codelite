@@ -138,35 +138,3 @@ bool ConsoleFinder::FindConsole(const wxString& title, wxString& consoleName)
     return false;
 }
 
-wxString ConsoleFinder::GetConsoleName()
-{
-    wxString cmd;
-#ifdef __WXMSW__
-    cmd = wxGetenv(wxT("COMSPEC"));
-    if(cmd.IsEmpty()) {
-        cmd = wxT("CMD.EXE");
-    }
-#else // non-windows
-    // try to locate the default terminal
-    wxString terminal;
-    wxString where;
-    if(ExeLocator::Locate(wxT("gnome-terminal"), where)) {
-        terminal = wxT("gnome-terminal -e ");
-    } else if(ExeLocator::Locate(wxT("konsole"), where)) {
-        terminal = wxT("konsole");
-    } else if(ExeLocator::Locate(wxT("terminal"), where)) {
-        terminal = wxT("terminal -e");
-    } else if(ExeLocator::Locate(wxT("lxterminal"), where)) {
-        terminal = wxT("lxterminal -e");
-    } else if(ExeLocator::Locate(wxT("xterm"), where)) {
-        terminal = wxT("xterm -e ");
-    }
-
-    if(cmd.IsEmpty()) {
-        cmd = wxT("xterm -e ");
-    }
-
-    cmd = terminal;
-#endif
-    return cmd;
-}

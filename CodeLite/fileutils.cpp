@@ -36,6 +36,7 @@
 #include <wx/ffile.h>
 #include <wx/log.h>
 #include <fstream>
+#include <algorithm>
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include <wx/file.h>

@@ -11,6 +11,7 @@
 #include "clConsoleCodeLiteTerminal.h"
 #include "cl_config.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include <algorithm>
 #include <wx/utils.h>
 
@@ -159,7 +160,9 @@ wxString clConsoleBase::GetSelectedTerminalName()
     wxString terminalName = clConfig::Get().Read("Terminal", wxString());
     if(terminalName.IsEmpty()) {
 #ifdef __WXGTK__
-        terminalName = "gnome-terminal";
+        wxFileName file;
+        terminalName = FileUtils::clFindExecutable("gnome-terminal", file) ?
+            "gnome-terminal" : "codelite-terminal";
 #elif defined(__WXOSX__)
         terminalName = "Terminal";
 #else

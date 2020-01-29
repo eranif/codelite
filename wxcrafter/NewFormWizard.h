@@ -16,6 +16,8 @@ struct NewFormDetails {
 class NewFormWizard : public NewFormWizardBaseClass
 {
 protected:
+    virtual void OnBrowseWxcpFile(wxCommandEvent& event);
+    virtual void OnSelectVDUI(wxUpdateUIEvent& event);
     virtual void OnStandloneAppUI(wxUpdateUIEvent& event);
     virtual void OnInheritedClassNameUI(wxUpdateUIEvent& event);
     virtual void OnFilenameUI(wxUpdateUIEvent& event);

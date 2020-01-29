@@ -1109,8 +1109,10 @@ ToolBoxPanelBaseClass::ToolBoxPanelBaseClass(wxWindow* parent, wxWindowID id, co
     flexGridSizer274->Add(m_bmpButton673, 0, wxALL, WXC_FROM_DIP(3));
 
     SetName(wxT("ToolBoxPanelBaseClass"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_bmpButton85->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
     m_bmpButton83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ToolBoxPanelBaseClass::OnControlUI), NULL, this);
@@ -1470,12 +1472,16 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
 
     boxSizer245->Add(m_choiceWxcp, 1, wxLEFT | wxTOP | wxBOTTOM | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_bmpButton247 =
-        new wxBitmapButton(m_wizardPageGeneratedCode, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("document-new")),
-                           wxDefaultPosition, wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), wxBU_AUTODRAW);
-    m_bmpButton247->SetToolTip(_("Create a new wxcp file"));
+    m_button701 = new wxButton(m_wizardPageGeneratedCode, wxID_ANY, _("+"), wxDefaultPosition,
+                               wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button701->SetToolTip(_("Create a new wxcp file"));
 
-    boxSizer245->Add(m_bmpButton247, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer245->Add(m_button701, 0, wxLEFT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+
+    m_button699 = new wxButton(m_wizardPageGeneratedCode, wxID_ANY, _("..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    boxSizer245->Add(m_button699, 0, wxALL, WXC_FROM_DIP(5));
 
     m_staticText213 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Base class name:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
@@ -1508,8 +1514,8 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer198->Add(m_textCtrlInheritedClassName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText187 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Derived class file name:"),
-                                       wxDefaultPosition, wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
+    m_staticText187 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Sublcass file:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
 
     flexGridSizer198->Add(m_staticText187, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -1550,8 +1556,10 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
     boxSizer208->Add(m_bmpButton210, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("NewFormWizardBaseClass"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1576,10 +1584,10 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
                              this);
     m_choiceWxcp->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
                           this);
-    m_bmpButton247->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject), NULL, this);
-    m_bmpButton247->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                            this);
+    m_button701->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject),
+                         NULL, this);
+    m_button699->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewFormWizardBaseClass::OnBrowseWxcpFile),
+                         NULL, this);
     m_staticText287->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI),
                              NULL, this);
     m_textCtrlInheritedClassName->Connect(
@@ -1591,14 +1599,12 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
                                this);
     m_textCtrFileName->Connect(wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnFilenameFocus), NULL,
                                this);
-    m_staticText206->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                             this);
-    m_textCtrlVirtualFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI),
+    m_staticText206->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL, this);
+    m_textCtrlVirtualFolder->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI),
                                      NULL, this);
     m_bmpButton210->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                             wxCommandEventHandler(NewFormWizardBaseClass::OnSelectVirtualFolder), NULL, this);
-    m_bmpButton210->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                            this);
+    m_bmpButton210->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL, this);
 }
 
 NewFormWizardBaseClass::~NewFormWizardBaseClass()
@@ -1614,10 +1620,10 @@ NewFormWizardBaseClass::~NewFormWizardBaseClass()
                                 this);
     m_choiceWxcp->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
                              this);
-    m_bmpButton247->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject), NULL, this);
-    m_bmpButton247->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
-                               this);
+    m_button701->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(NewFormWizardBaseClass::OnNewWxcpProject), NULL, this);
+    m_button699->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(NewFormWizardBaseClass::OnBrowseWxcpFile), NULL, this);
     m_staticText287->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnInheritedClassNameUI),
                                 NULL, this);
     m_textCtrlInheritedClassName->Disconnect(
@@ -1630,13 +1636,13 @@ NewFormWizardBaseClass::~NewFormWizardBaseClass()
                                   this);
     m_textCtrFileName->Disconnect(wxEVT_SET_FOCUS, wxFocusEventHandler(NewFormWizardBaseClass::OnFilenameFocus), NULL,
                                   this);
-    m_staticText206->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
+    m_staticText206->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL,
                                 this);
-    m_textCtrlVirtualFolder->Disconnect(wxEVT_UPDATE_UI,
-                                        wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL, this);
+    m_textCtrlVirtualFolder->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI),
+                                        NULL, this);
     m_bmpButton210->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                                wxCommandEventHandler(NewFormWizardBaseClass::OnSelectVirtualFolder), NULL, this);
-    m_bmpButton210->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnStandloneAppUI), NULL,
+    m_bmpButton210->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFormWizardBaseClass::OnSelectVDUI), NULL,
                                this);
 }
 
@@ -1663,8 +1669,10 @@ OpenGLCanvasBase::OpenGLCanvasBase(wxWindow* parent, wxWindowID id, const wxPoin
     boxSizer655->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("OpenGLCanvasBase"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_SIZE, wxSizeEventHandler(OpenGLCanvasBase::OnSize), NULL, this);
     this->Connect(wxEVT_MOVE, wxMoveEventHandler(OpenGLCanvasBase::OnMove), NULL, this);
@@ -1685,6 +1693,8 @@ MediaCtrlBase::MediaCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
         wxCE1C8InitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->SetBackgroundColour(wxColour(wxT("rgb(0,0,0)")));
+    this->SetToolTip(_("wxMediaCtrl"));
 
     wxBoxSizer* boxSizer665 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer665);
@@ -1701,8 +1711,10 @@ MediaCtrlBase::MediaCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
     SetBackgroundColour(wxColour(wxT("rgb(0,0,0)")));
     SetName(wxT("MediaCtrlBase"));
-    SetSize(-1, -1);
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 MediaCtrlBase::~MediaCtrlBase() {}

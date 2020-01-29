@@ -7,27 +7,29 @@
 #ifndef _CODELITE_WXCRAFTER_WXCRAFTER_GUI_BASE_CLASSES_H
 #define _CODELITE_WXCRAFTER_WXCRAFTER_GUI_BASE_CLASSES_H
 
-#include <vector>
-#include <wx/arrstr.h>
-#include <wx/artprov.h>
-#include <wx/bmpbuttn.h>
-#include <wx/choice.h>
-#include <wx/imaglist.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
+// clang-format off
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/statbmp.h>
-#include <wx/statline.h>
-#include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/wizard.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/notebook.h>
+#include <wx/imaglist.h>
+#include <wx/bmpbuttn.h>
+#include <wx/statline.h>
+#include <wx/wizard.h>
+#include <vector>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/statbmp.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -41,6 +43,7 @@
 #endif
 
 #include "allocator_mgr.h"
+// clang-format on
 
 class ToolBoxPanelBaseClass : public wxPanel
 {
@@ -350,7 +353,8 @@ protected:
     wxWizardPageSimple* m_wizardPageGeneratedCode;
     wxStaticText* m_staticText244;
     wxChoice* m_choiceWxcp;
-    wxBitmapButton* m_bmpButton247;
+    wxButton* m_button701;
+    wxButton* m_button699;
     wxStaticText* m_staticText213;
     wxTextCtrl* m_textCtrlClassName;
     wxStaticText* m_staticText287;
@@ -368,10 +372,12 @@ protected:
     virtual void OnTitleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnStandloneAppUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnNewWxcpProject(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseWxcpFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInheritedClassNameUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnInheritedNameFocus(wxFocusEvent& event) { event.Skip(); }
     virtual void OnFilenameUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnFilenameFocus(wxFocusEvent& event) { event.Skip(); }
+    virtual void OnSelectVDUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSelectVirtualFolder(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -382,7 +388,8 @@ public:
     wxWizardPageSimple* GetWizardPageFormType() { return m_wizardPageFormType; }
     wxStaticText* GetStaticText244() { return m_staticText244; }
     wxChoice* GetChoiceWxcp() { return m_choiceWxcp; }
-    wxBitmapButton* GetBmpButton247() { return m_bmpButton247; }
+    wxButton* GetButton701() { return m_button701; }
+    wxButton* GetButton699() { return m_button699; }
     wxStaticText* GetStaticText213() { return m_staticText213; }
     wxTextCtrl* GetTextCtrlClassName() { return m_textCtrlClassName; }
     wxStaticText* GetStaticText287() { return m_staticText287; }
@@ -398,7 +405,8 @@ public:
                            const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const
     {
-        if(!m_pages.empty()) return m_pages.at(0);
+        if(!m_pages.empty())
+            return m_pages.at(0);
         return NULL;
     }
     virtual ~NewFormWizardBaseClass();

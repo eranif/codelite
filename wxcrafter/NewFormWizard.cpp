@@ -1,11 +1,14 @@
 #include "NewFormWizard.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "allocator_mgr.h"
+#include "clFileSystemWorkspace.hpp"
 #include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 #include <macros.h>
 #include <project.h>
 #include <workspace.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 
@@ -38,7 +41,8 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
         break;
     }
 
-    if(stringSelection.IsEmpty() == false) m_choiceFormType->SetStringSelection(stringSelection);
+    if(stringSelection.IsEmpty() == false)
+        m_choiceFormType->SetStringSelection(stringSelection);
 
     if(m_mgr) {
         TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
@@ -74,14 +78,20 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     }
 
 #if STANDALONE_BUILD
-    if(wxcProjectMetadata::Get().IsLoaded()) { m_choiceWxcp->Append(wxcProjectMetadata::Get().GetProjectFile()); }
+    if(wxcProjectMetadata::Get().IsLoaded()) {
+        m_choiceWxcp->Append(wxcProjectMetadata::Get().GetProjectFile());
+    }
 #endif
 
-    if(m_choiceWxcp->IsEmpty() == false) { m_choiceWxcp->SetSelection(0); }
+    if(m_choiceWxcp->IsEmpty() == false) {
+        m_choiceWxcp->SetSelection(0);
+    }
 
     wxFileName fnProject(wxcProjectMetadata::Get().GetProjectFile());
     int where = m_choiceWxcp->FindString(fnProject.GetFullPath());
-    if(where != wxNOT_FOUND) { m_choiceWxcp->SetSelection(where); }
+    if(where != wxNOT_FOUND) {
+        m_choiceWxcp->SetSelection(where);
+    }
 }
 
 NewFormWizard::~NewFormWizard() {}
@@ -172,7 +182,7 @@ void NewFormWizard::OnWizardPageChanging(wxWizardEvent& event)
         }
 
 #if !STANDALONE_BUILD
-        if(m_textCtrlVirtualFolder->IsEmpty()) {
+        if(!clFileSystemWorkspace::Get().IsOpen() && m_textCtrlVirtualFolder->IsEmpty()) {
             ::wxMessageBox(_("Please select a virtual folder for the generated code"), wxT("wxCrafter"),
                            wxICON_WARNING | wxCENTER | wxOK);
             event.Veto();
@@ -209,7 +219,8 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
     }
 
     wxString newfile = ::wxGetTextFromUser(msg, wxT("wxCrafter"), defaultValue.GetFullPath());
-    if(newfile.IsEmpty()) return;
+    if(newfile.IsEmpty())
+        return;
 
     wxFileName fn(newfile);
     fn.SetExt(wxT("wxcp"));
@@ -296,3 +307,18 @@ bool NewFormWizard::IsPanel() const { return m_choiceFormType->GetStringSelectio
 bool NewFormWizard::IsPopupWindow() const { return m_choiceFormType->GetStringSelection() == "wxPopupWindow"; }
 
 bool NewFormWizard::IsWizard() const { return m_choiceFormType->GetStringSelection() == "wxWizard"; }
+
+void NewFormWizard::OnSelectVDUI(wxUpdateUIEvent& event) { event.Enable(!clFileSystemWorkspace::Get().IsOpen()); }
+
+void NewFormWizard::OnBrowseWxcpFile(wxCommandEvent& event)
+{
+    wxString path = wxFileSelector(_("Select wxCrafter file"), wxEmptyString, wxEmptyString, "*.wxcp");
+    if(path.empty()) {
+        return;
+    }
+    int where = m_choiceWxcp->FindString(path);
+    if(where == wxNOT_FOUND) {
+        where = m_choiceWxcp->Append(path);
+    }
+    m_choiceWxcp->SetSelection(where);
+}

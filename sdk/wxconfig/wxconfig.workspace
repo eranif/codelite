@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CodeLite_Workspace Name="wxconfig" Database="./wxconfig.tags">
+<CodeLite_Workspace Name="wxconfig" Database="./wxconfig.tags" Version="10000">
   <Project Name="wx-config" Path="wx-config.project" Active="Yes"/>
   <Environment>
     <![CDATA[]]>
   </Environment>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
+      <Environment/>
       <Project Name="wx-config" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
       <Project Name="wx-config" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>

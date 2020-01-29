@@ -257,5 +257,14 @@ public:
      * ...
      */
     static clEnvList_t CreateEnvironment(const wxString& envstr);
+    
+    /**
+     * @brief Check if the file 'name' is findable on the user's system
+     * @param name the name of the file to locate
+     * @param exepath will contain its filepath if successfully located
+     * @param hint extra paths to search
+     * @return true if a filepath was found
+     */
+    static bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint = wxArrayString());
 };
 #endif // FILEUTILS_H

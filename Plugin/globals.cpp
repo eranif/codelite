@@ -1963,50 +1963,7 @@ void clSetEditorFontEncoding(const wxString& encoding)
 
 bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
 {
-    wxString path;
-    if(!::wxGetEnv("PATH", &path)) {
-        clWARNING() << "Could not read environment variable PATH" << clEndl;
-        return false;
-    }
-
-    wxArrayString mergedPaths = hint;
-    wxArrayString paths = ::wxStringTokenize(path, clPATH_SEPARATOR, wxTOKEN_STRTOK);
-    std::for_each(paths.begin(), paths.end(), [&](const wxString& p) { mergedPaths.Add(p); });
-    mergedPaths.swap(paths);
-
-    for(size_t i = 0; i < paths.size(); ++i) {
-        const wxString& curpath = paths.Item(i);
-        wxFileName fnPath(curpath, name);
-        if(fnPath.FileExists()) {
-            exepath = fnPath;
-            return true;
-        }
-#ifdef __WXMSW__
-        wxFileName fullname("", name);
-        // on Windows, an executable can have a list of known extensions defined in the
-        // environment variable PATHEXT. Use this environment variable only if the user did not
-        // provide a fullname (name + ext)
-        wxArrayString exts;
-        if(fullname.GetExt().IsEmpty()) {
-            wxString pathext;
-            ::wxGetEnv("PATHEXT", &pathext);
-            exts = ::wxStringTokenize(pathext, ";", wxTOKEN_STRTOK);
-        } else {
-            exts.Add(fullname.GetExt());
-        }
-
-        for(size_t j = 0; j < exts.size(); ++j) {
-            wxString ext = exts.Item(j).AfterFirst('.'); // remove the . from the extension
-            wxFileName fnFileWithExt(curpath, name);
-            fnFileWithExt.SetExt(ext);
-            if(fnFileWithExt.FileExists()) {
-                exepath = fnFileWithExt;
-                return true;
-            }
-        }
-#endif
-    }
-    return false;
+    return FileUtils::clFindExecutable(name, exepath, hint);
 }
 
 int clFindMenuItemPosition(wxMenu* menu, int menuItemId)

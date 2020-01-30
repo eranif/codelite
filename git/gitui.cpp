@@ -26,7 +26,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
     
-    m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500,300)), wxBK_DEFAULT);
+    m_treebook230 = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300,-1)), wxBK_DEFAULT);
     m_treebook230->SetName(wxT("m_treebook230"));
     
     mainSizer->Add(m_treebook230, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));

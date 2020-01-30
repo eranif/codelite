@@ -481,5 +481,6 @@ void GitBlameDlg::Show()
 
 void GitBlameDlg::OnCharHook(wxKeyEvent& event)
 {
+    event.Skip();
     if (event.GetKeyCode() == WXK_ESCAPE ) {  DoCloseDialog(); }
 }

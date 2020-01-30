@@ -314,5 +314,6 @@ void GitCommitListDlg::OnBtnClose(wxCommandEvent& event)
 
 void GitCommitListDlg::OnCharHook(wxKeyEvent& event) // Needed to catch ESC
 {
+    event.Skip();
     if (event.GetKeyCode() == WXK_ESCAPE ) { Destroy(); }
 }

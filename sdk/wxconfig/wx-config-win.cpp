@@ -713,6 +713,7 @@ public:
 
         po["__LIB_SHLWAPI_p"] = addLib("shlwapi");
         po["__LIB_UXTHEME_p"] = addLib("uxtheme");
+        po["__LIB_OLEACC_p"] = addLib("oleacc"); // NOTE: not being used
 
         if(sho["wxUSE_OLE"])
             po["__LIB_OLE32_p"] = addLib("ole32");
@@ -720,8 +721,6 @@ public:
         if(sho["wxUSE_OLE"])
             po["__LIB_OLEAUT32_p"] = addLib("oleaut32");
 
-        if(sho["wxUSE_OLE"])
-            po["__LIB_OLEACC_p"] = addLib("oleacc"); // NOTE: not being used
 
         if(sho["wxUSE_OLE"])
             po["__LIB_OLE2W32_p"] = addLib("ole2w32"); // NOTE: not being used
@@ -796,6 +795,7 @@ public:
         libs += po["__LIB_RPCRT4_p"] + po["__LIB_ADVAPI32_p"] + po["__LIB_WSOCK32_p"];
         libs += po["__LIB_ODBC32_p"];
         libs += po["__LIB_UXTHEME_p"];
+        libs += po["__LIB_OLEACC_p"];
 
         return libs;
     }

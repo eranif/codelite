@@ -74,11 +74,15 @@ static wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArray
 {
     wxArrayString outArr;
     for(size_t i = 0; i < arr1.size(); ++i) {
-        if(outArr.Index(arr1.Item(i)) == wxNOT_FOUND) { outArr.Add(arr1.Item(i)); }
+        if(outArr.Index(arr1.Item(i)) == wxNOT_FOUND) {
+            outArr.Add(arr1.Item(i));
+        }
     }
 
     for(size_t i = 0; i < arr2.size(); ++i) {
-        if(outArr.Index(arr2.Item(i)) == wxNOT_FOUND) { outArr.Add(arr2.Item(i)); }
+        if(outArr.Index(arr2.Item(i)) == wxNOT_FOUND) {
+            outArr.Add(arr2.Item(i));
+        }
     }
     return outArr;
 }
@@ -156,7 +160,8 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     const wxFileName filename(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE);
 
     // Check for file existance and read any user code from the current CMakeLists.txt file
-    if(!CheckExists(filename)) return false;
+    if(!CheckExists(filename))
+        return false;
 
     // File content
     wxString mainProjectContent;
@@ -170,15 +175,27 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     mainProjectContent << "# This setting is useful for providing JSON file used by CodeLite for code completion\n";
     mainProjectContent << "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n\n";
 
+    // Export common variables into CMake variables
+    {
+        mainProjectContent << "set(CONFIGURATION_NAME \"" << workspace->GetBuildMatrix()->GetSelectedConfigurationName()
+                           << "\")\n";
+        mainProjectContent << "\n";
+    }
+
+    wxFileName fn = workspace->GetFileName();
+    fn.MakeRelativeTo(p->GetFileName().GetPath());
+
+    wxString workspacePath = fn.GetPath(false, wxPATH_UNIX);
+    if(workspacePath.IsEmpty()) {
+        workspacePath = ".";
+    }
+    mainProjectContent << "set(CL_WORKSPACE_DIRECTORY " << workspacePath << ")\n";
+
     // Set the output directory. We want a common location for all projects
     // so we set it under cmake-build-Debug/bin
-    wxFileName fnWorkspace = workspace->GetFileName();
-    fnWorkspace.MakeRelativeTo(p->GetFileName().GetPath());
     wxString outputDir;
-
-    wxFileName workspaceBuildFoler(CMakeBuilder::GetWorkspaceBuildFolder(false), "");
-    outputDir << "${CMAKE_CURRENT_LIST_DIR}/" << fnWorkspace.GetPath() << "/" << workspaceBuildFoler.GetDirs().Last()
-              << "/output";
+    outputDir << "${CMAKE_CURRENT_LIST_DIR}/${CL_WORKSPACE_DIRECTORY}/"
+              << "cmake-build-${CONFIGURATION_NAME}/output";
 
     mainProjectContent << "# Set default locations\n";
     mainProjectContent << "set(CL_OUTPUT_DIRECTORY " << outputDir << ")\n";
@@ -186,13 +203,6 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     mainProjectContent << "set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})\n";
     mainProjectContent << "set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})\n";
     mainProjectContent << "\n";
-
-    // Export common variables into CMake variables
-    {
-        mainProjectContent << "set(CONFIGURATION_NAME \"" << workspace->GetBuildMatrix()->GetSelectedConfigurationName()
-                           << "\")\n";
-        mainProjectContent << "\n";
-    }
 
     // Environment variables
     {
@@ -206,7 +216,9 @@ bool CMakeGenerator::Generate(ProjectPtr p)
             for(wxArrayString::const_iterator it = list.begin(), ite = list.end(); it != ite; ++it) {
                 // Split into name, value pair
                 const wxArrayString pair = wxSplit(*it, '=');
-                if(pair.IsEmpty()) { continue; }
+                if(pair.IsEmpty()) {
+                    continue;
+                }
                 const wxString& name = pair[0];
                 const wxString value = (pair.GetCount() >= 2) ? pair[1] : "";
 
@@ -255,7 +267,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
 
     // Get the project build configuration and compiler
     BuildConfigPtr buildConf = project->GetBuildConfiguration(configName);
-    if(!buildConf) return "";
+    if(!buildConf)
+        return "";
 
     wxArrayString cppSources, cSources, resourceFiles;
     std::for_each(allFiles.begin(), allFiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
@@ -286,23 +299,30 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     }
 
     CompilerPtr compiler = buildConf->GetCompiler();
-    if(!compiler) { return ""; }
+    if(!compiler) {
+        return "";
+    }
 
     wxFileName projectPath = project->GetFileName();
 
     // Output file name
     wxFileName filename(projectDir, CMakePlugin::CMAKELISTS_FILE);
 
-    if(!CheckExists(filename)) return "";
+    if(!CheckExists(filename))
+        return "";
 
     // File content
     wxString content;
-    if(!topProject) { content << Prefix(project); }
+    if(!topProject) {
+        content << Prefix(project);
+    }
 
     if(topProject) {
         // Add the dependencies
         wxArrayString projectsArr = project->GetDependencies(buildConf->GetName());
-        if(!projectsArr.IsEmpty()) { content << "## Add the dependencies\n"; }
+        if(!projectsArr.IsEmpty()) {
+            content << "## Add the dependencies\n";
+        }
 
         for(size_t i = 0; i < projectsArr.GetCount(); ++i) {
             ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(projectsArr.Item(i));
@@ -337,7 +357,9 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             includePath.Replace("$(WorkspacePath)", "${WORKSPACE_PATH}");
             includePath.Replace("$(WorkspaceConfiguration)", "${CONFIGURATION_NAME}");
             includePath.Replace("$(ProjectPath)", projectPathVariableValue);
-            if(includePath.IsEmpty()) { continue; }
+            if(includePath.IsEmpty()) {
+                continue;
+            }
             content << "    " << includes.Item(i) << "\n";
         }
         content << "\n)\n\n";
@@ -374,7 +396,9 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
             for(size_t i = 0; i < defines.GetCount(); ++i) {
                 wxString& pp = defines.Item(i);
                 pp.Trim().Trim(false);
-                if(pp.IsEmpty()) { continue; }
+                if(pp.IsEmpty()) {
+                    continue;
+                }
                 content << "    -D" << pp << "\n";
             }
             content << ")\n\n";
@@ -619,7 +643,9 @@ bool CMakeGenerator::CanGenerate(ProjectPtr project)
     wxArrayString projects = project->GetDependencies(buildConf->GetName());
     for(size_t i = 0; i < projects.size(); ++i) {
         ProjectPtr p = workspace->GetProject(projects.Item(i));
-        if(p) { cmakelistsArr.push_back(wxFileName(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE)); }
+        if(p) {
+            cmakelistsArr.push_back(wxFileName(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE));
+        }
     }
 
     // Read each of the CMakeLists.txt file in the array, and check if we can find our top level comment
@@ -627,7 +653,9 @@ bool CMakeGenerator::CanGenerate(ProjectPtr project)
         const wxFileName& fn = cmakelistsArr.at(i);
         wxString content;
         if(fn.Exists() && FileUtils::ReadFileContent(fn, content)) {
-            if(!content.StartsWith(CODELITE_CMAKE_PREFIX)) { return false; }
+            if(!content.StartsWith(CODELITE_CMAKE_PREFIX)) {
+                return false;
+            }
         }
     }
     return true;
@@ -648,7 +676,9 @@ void CMakeGenerator::ExpandOptions(const wxString& options, wxString& content, w
         if(cmpOption.StartsWith(wxT("$(shell "), &tmp) || cmpOption.StartsWith(wxT("`"), &tmp)) {
             cmpOption.swap(tmp);
             tmp.Clear();
-            if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) { cmpOption.swap(tmp); }
+            if(cmpOption.EndsWith(wxT(")"), &tmp) || cmpOption.EndsWith(wxT("`"), &tmp)) {
+                cmpOption.swap(tmp);
+            }
 
             wxString varname;
             varname << "CL_VAR_" << (++m_counter);
@@ -687,7 +717,9 @@ bool CMakeGenerator::IsCustomCMakeLists(const wxFileName& fn)
     if(fn.FileExists()) {
         wxFileName fn;
         wxString content;
-        if(FileUtils::ReadFileContent(fn, content)) { return !content.StartsWith(CODELITE_CMAKE_PREFIX); }
+        if(FileUtils::ReadFileContent(fn, content)) {
+            return !content.StartsWith(CODELITE_CMAKE_PREFIX);
+        }
     }
     return false;
 }
@@ -725,7 +757,9 @@ void CMakeGenerator::ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& con
             // removeLf = true;
         }
     }
-    if(removeLf) { content.RemoveLast(); }
+    if(removeLf) {
+        content.RemoveLast();
+    }
 }
 
 void CMakeGenerator::AddUserCodeSection(wxString& content, const wxString& sectionPrefix, const wxString& sectionCode)

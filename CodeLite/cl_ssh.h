@@ -28,13 +28,14 @@
 
 #if USE_SFTP
 
-#include <wx/string.h>
-#include <errno.h>
+#include "clSSHAgent.hpp"
+#include "cl_command_event.h"
 #include "cl_exception.h"
 #include "codelite_exports.h"
-#include <wx/sharedptr.h>
+#include <errno.h>
 #include <wx/event.h>
-#include "cl_command_event.h"
+#include <wx/sharedptr.h>
+#include <wx/string.h>
 #include <wx/timer.h>
 
 // We do it this way to avoid exposing the include to ssh/libssh.h to files including this header
@@ -62,16 +63,17 @@ protected:
     SSHChannel_t m_channel;
     wxTimer* m_timer;
     wxEvtHandler* m_owner;
-    
+    clSSHAgent::Ptr_t m_sshAgent;
+
 public:
     typedef wxSharedPtr<clSSH> Ptr_t;
 
 protected:
     void OnCheckRemoteOutut(wxTimerEvent& event);
     void DoCloseChannel();
-    void DoOpenChannel()  ;
-    void DoConnectWithRetries(int retries) ;
-    
+    void DoOpenChannel();
+    void DoConnectWithRetries(int retries);
+
 public:
     clSSH(const wxString& host, const wxString& user, const wxString& pass, int port = 22);
     clSSH();
@@ -79,11 +81,11 @@ public:
 
     bool IsConnected() const { return m_connected; }
     bool IsCommandRunning() const { return m_channel != NULL; }
-    
+
     /**
      * @brief connect to the remote server
      */
-    void Connect(int seconds = 10) ;
+    void Connect(int seconds = 10);
 
     /**
      * @brief authenticate the server
@@ -91,38 +93,38 @@ public:
      * @return true if the server could be authenticated, otherwise return false.
      * In case an error occurs, throw a clException
      */
-    bool AuthenticateServer(wxString& message) ;
+    bool AuthenticateServer(wxString& message);
 
     /**
      * @brief accepts the server authentication and add it to the "known_hosts"
      */
-    void AcceptServerAuthentication() ;
+    void AcceptServerAuthentication();
 
     /**
      * @brief login to the server with the user credentials
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPassword(bool throwExc = true) ;
+    bool LoginPassword(bool throwExc = true);
 
     /**
      * @brief login using public key
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginPublicKey(bool throwExc = true) ;
+    bool LoginPublicKey(bool throwExc = true);
 
     /**
      * @brief login using interactive-keyboard method
      * @return true if we managed to login
      * @throw clException incase something really bad happened
      */
-    bool LoginInteractiveKBD(bool throwExc = true) ;
+    bool LoginInteractiveKBD(bool throwExc = true);
 
     /**
      * @brief try to login using all the methods we support (interactive-kbd, user/pass and public key)
      */
-    void Login() ;
+    void Login();
 
     /**
      * @brief close the SSH session
@@ -133,7 +135,7 @@ public:
     /**
      * @brief execute a remote command and return the output. open the shell if no is opened
      */
-    void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command) ;
+    void ExecuteShellCommand(wxEvtHandler* owner, const wxString& command);
 
     SSHSession_t GetSession() { return m_session; }
 

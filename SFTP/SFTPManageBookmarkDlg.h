@@ -33,6 +33,7 @@ public:
     SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayString& bookmarks);
     virtual ~SFTPManageBookmarkDlg();
     wxArrayString GetBookmarks() const;
+
 protected:
     virtual void OnDelete(wxCommandEvent& event);
     virtual void OnDeleteUI(wxUpdateUIEvent& event);

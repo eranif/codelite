@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "SFTPManageBookmarkDlg.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 
 SFTPManageBookmarkDlg::SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayString& bookmarks)
@@ -31,7 +32,7 @@ SFTPManageBookmarkDlg::SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayStri
 {
     m_listBoxBookmarks->Append(bookmarks);
     SetName("SFTPManageBookmarkDlg");
-    WindowAttrManager::Load(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 SFTPManageBookmarkDlg::~SFTPManageBookmarkDlg() {}
@@ -39,7 +40,8 @@ SFTPManageBookmarkDlg::~SFTPManageBookmarkDlg() {}
 void SFTPManageBookmarkDlg::OnDelete(wxCommandEvent& event)
 {
     int sel = m_listBoxBookmarks->GetSelection();
-    if(sel == wxNOT_FOUND) return;
+    if(sel == wxNOT_FOUND)
+        return;
 
     m_listBoxBookmarks->Delete(sel);
 }

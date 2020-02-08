@@ -70,7 +70,9 @@ const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new SFTP(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new SFTP(manager);
+    }
     return thePlugin;
 }
 
@@ -204,13 +206,6 @@ bool SFTP::IsPaneDetached(const wxString& name) const
 
 void SFTP::UnPlug()
 {
-#ifdef __WXGTK__
-    if(m_sshAgentPID != wxNOT_FOUND) {
-        wxKill(m_sshAgentPID, wxSIGTERM);
-        clDEBUG() << "Terminated ssh-agent:" << m_sshAgentPID;
-        m_sshAgentPID = wxNOT_FOUND;
-    }
-#endif
     // Find our page and release it
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); ++i) {
@@ -357,7 +352,9 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
         SFTPClientData* pcd = new SFTPClientData(cd);
         editor->SetClientData("sftp", pcd);
         // set the line number
-        if(cd.GetLineNumber() != wxNOT_FOUND) { editor->GetCtrl()->GotoLine(cd.GetLineNumber()); }
+        if(cd.GetLineNumber() != wxNOT_FOUND) {
+            editor->GetCtrl()->GotoLine(cd.GetLineNumber());
+        }
     }
 
     // Now that the file was downloaded, update the file permissions
@@ -371,7 +368,9 @@ void SFTP::OpenWithDefaultApp(const wxString& localFileName) { ::wxLaunchDefault
 
 void SFTP::AddRemoteFile(const RemoteFileInfo& remoteFile)
 {
-    if(m_remoteFiles.count(remoteFile.GetLocalFile())) { m_remoteFiles.erase(remoteFile.GetLocalFile()); }
+    if(m_remoteFiles.count(remoteFile.GetLocalFile())) {
+        m_remoteFiles.erase(remoteFile.GetLocalFile());
+    }
     m_remoteFiles.insert(std::make_pair(remoteFile.GetLocalFile(), remoteFile));
 }
 
@@ -401,7 +400,8 @@ void SFTP::MSWInitiateConnection()
     SFTPSettings settings;
     settings.Load();
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    if(accounts.empty()) return;
+    if(accounts.empty())
+        return;
     const SSHAccountInfo& account = accounts.at(0);
     SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account));
 #endif
@@ -416,7 +416,8 @@ void SFTP::OnSettings(wxCommandEvent& e)
 
 void SFTP::DoFileSaved(const wxString& filename)
 {
-    if(filename.IsEmpty()) return;
+    if(filename.IsEmpty())
+        return;
 
     // Check to see if this file is part of a remote files managed by our plugin
     if(m_remoteFiles.count(filename)) {
@@ -431,7 +432,9 @@ void SFTP::DoFileSaved(const wxString& filename)
         // ----------------------------------------------------------------------------------------------
 
         wxString remoteFile = GetRemotePath(filename);
-        if(remoteFile.IsEmpty()) { return; }
+        if(remoteFile.IsEmpty()) {
+            return;
+        }
 
         SFTPSettings settings;
         settings.Load();
@@ -472,7 +475,9 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
     // Convert local paths to remote paths
     wxString remoteFile = GetRemotePath(e.GetPath());
     wxString remoteNew = GetRemotePath(e.GetNewpath());
-    if(remoteFile.IsEmpty() || remoteNew.IsEmpty()) { return; }
+    if(remoteFile.IsEmpty() || remoteNew.IsEmpty()) {
+        return;
+    }
 
     SFTPSettings settings;
     settings.Load();
@@ -549,7 +554,9 @@ void SFTP::OnDeleteFile(clSFTPEvent& e)
 void SFTP::DoFileDeleted(const wxString& filepath)
 {
     wxString remoteFile = GetRemotePath(filepath);
-    if(remoteFile.IsEmpty()) { return; }
+    if(remoteFile.IsEmpty()) {
+        return;
+    }
 
     SFTPSettings settings;
     settings.Load();
@@ -573,7 +580,9 @@ void SFTP::DoFileDeleted(const wxString& filepath)
 
 wxString SFTP::GetRemotePath(const wxString& localpath) const
 {
-    if(!IsCxxWorkspaceMirrorEnabled()) { return ""; }
+    if(!IsCxxWorkspaceMirrorEnabled()) {
+        return "";
+    }
     wxFileName file(localpath);
     file.MakeRelativeTo(m_workspaceFile.GetPath());
     file.MakeAbsolute(wxFileName(m_workspaceSettings.GetRemoteWorkspacePath(), wxPATH_UNIX).GetPath());
@@ -600,51 +609,4 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
     }
 }
 
-void SFTP::OnInitDone(wxCommandEvent& event)
-{
-    event.Skip();
-    wxFileName sshAgent;
-    if(!::clFindExecutable("ssh-agent", sshAgent)) { return; }
-    clDEBUG() << "Found ssh-agent:" << sshAgent;
-
-    // Check if an instance of ssh-agent is already running
-#ifdef __WXMSW__
-    PidVec_t P = ProcUtils::PS("ssh-agent");
-    if(P.empty()) {
-        clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
-        ::wxExecute(sshAgent.GetFullPath());
-    } else {
-        clDEBUG() << "Found ssh-agent running at pid:" << P.begin()->pid;
-    }
-#else
-    wxFileName fnSocketPath(clStandardPaths::Get().GetUserDataDir(), "ssh-agent.");
-    fnSocketPath.AppendDir("tmp");
-    fnSocketPath.SetFullName(fnSocketPath.GetFullName() + (wxString() << ::wxGetProcessId()));
-    fnSocketPath.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    wxString socketPath = fnSocketPath.GetFullPath();
-    ::WrapWithQuotes(socketPath);
-
-    wxString command = sshAgent.GetFullPath();
-    ::WrapWithQuotes(command);
-    command << " -D -a " << socketPath;
-
-    m_sshAgentPID = ::wxExecute(command);
-    clDEBUG() << "Starting ssh-agent:" << command << ". pid:" << m_sshAgentPID;
-    // Call it on the next event loop, this will give the ssh-agent time to start
-    if(m_sshAgentPID != wxNOT_FOUND) {
-        wxString SSH_AUTH_SOCK;
-        wxString SSH_AGENT_PID;
-        SSH_AGENT_PID << m_sshAgentPID;
-        SSH_AUTH_SOCK = fnSocketPath.GetFullPath();
-        ::wxSetEnv("SSH_AUTH_SOCK", SSH_AUTH_SOCK);
-        ::wxSetEnv("SSH_AGENT_PID", SSH_AGENT_PID);
-        clDEBUG() << "SSH_AUTH_SOCK is set to:" << SSH_AUTH_SOCK;
-        clDEBUG() << "SSH_AGENT_PID is set to:" << SSH_AGENT_PID;
-        // Run ssh-add
-    }
-#endif
-    
-    // Execute ssh-add
-    sshAgent.SetFullName("ssh-add");
-    ::wxExecute(sshAgent.GetFullPath());
-}
+void SFTP::OnInitDone(wxCommandEvent& event) { event.Skip(); }

@@ -48,7 +48,7 @@ class SFTP : public IPlugin
     RemoteFileInfo::Map_t m_remoteFiles;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     long m_sshAgentPID = wxNOT_FOUND;
-    
+
 public:
     SFTP(IManager* manager);
     ~SFTP();
@@ -78,7 +78,6 @@ protected:
     void MSWInitiateConnection();
     void OnInitDone(wxCommandEvent& event);
     void DoFileSaved(const wxString& filename);
-    
     bool IsWorkspaceOpened() const { return m_workspaceFile.IsOk(); }
     void DoSaveRemoteFile(const RemoteFileInfo& remoteFile);
     bool IsPaneDetached(const wxString& name) const;

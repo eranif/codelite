@@ -571,7 +571,7 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
     menu.AppendSeparator();
     menu.Append(ID_SFTP_BOOKMARK_SETTINGS, _("Manage bookmarks..."));
 
-    int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_SFTP_BOOKMARK_SETTINGS"), &menu);
+    int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_ADD_BOOKMARK"), &menu);
     if((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
         // A bookmark was selected
         CallAfter(&SFTPTreeView::DoBuildTree, bookmarks.Item(sel - ID_SFTP_BOOKMARK_FIRST));

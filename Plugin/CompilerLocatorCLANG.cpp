@@ -69,6 +69,7 @@ CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
 
 bool CompilerLocatorCLANG::Locate()
 {
+    m_compilers.clear();
     MSWLocate();
 #ifdef __WXOSX__
     {
@@ -93,7 +94,6 @@ bool CompilerLocatorCLANG::Locate()
         }
     }
 
-    m_compilers.clear();
 
     wxStringMap_t map;
     for(const auto& d : outputFiles) {

@@ -140,9 +140,9 @@ void CompilerLocatorCLANG::MSWLocate()
             CompilerPtr compiler(new Compiler(NULL));
             compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
             compiler->SetGenerateDependeciesFile(true);
-            compiler->SetName(wxString() << "clang ( " << llvmVersion << " )");
+            compiler->SetName(wxString() << "CLANG ( " << llvmVersion << " )");
             m_compilers.push_back(compiler);
-            AddTools(compiler, llvmInstallPath);
+            AddTools(compiler, llvmInstallPath + "\\bin");
             break;
         }
     }

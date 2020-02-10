@@ -24,12 +24,24 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ICompilerLocator.h"
+#include "file_logger.h"
+#include "macros.h"
+#include <wx/tokenzr.h>
+#include <wx/utils.h>
 
-ICompilerLocator::ICompilerLocator()
+ICompilerLocator::ICompilerLocator() {}
+
+ICompilerLocator::~ICompilerLocator() {}
+
+wxArrayString ICompilerLocator::GetPaths() const
 {
-}
+    wxString path;
+    if(!::wxGetEnv("PATH", &path)) {
+        clWARNING() << "Could not read environment variable PATH";
+        return {};
+    }
 
-ICompilerLocator::~ICompilerLocator()
-{
+    wxArrayString mergedPaths;
+    wxArrayString paths = ::wxStringTokenize(path, clPATH_SEPARATOR, wxTOKEN_STRTOK);
+    return paths;
 }
-

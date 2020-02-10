@@ -41,7 +41,7 @@ protected:
     wxString GetClangVersion(const wxString& clangBinary);
     wxString GetCompilerFullName(const wxString& clangBinary);
     bool ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion);
-    CompilerPtr AddCompiler(wxFileName clang);
+    CompilerPtr AddCompiler(const wxString& clangFolder, const wxString& suffix);
 
 public:
     CompilerLocatorCLANG();

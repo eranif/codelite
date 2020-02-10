@@ -265,6 +265,6 @@ public:
      * @param hint extra paths to search
      * @return true if a filepath was found
      */
-    static bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint = wxArrayString());
+    static bool FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint = wxArrayString());
 };
 #endif // FILEUTILS_H

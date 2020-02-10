@@ -100,7 +100,8 @@ const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 #if defined(__WXMSW__) && defined(_WIN64)
 BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 {
-    if(!IsWindow(hwnd)) return TRUE;
+    if(!IsWindow(hwnd))
+        return TRUE;
     const BOOL is_darktheme = (BOOL)lparam;
     SetWindowTheme(hwnd, is_darktheme ? L"DarkMode_Explorer" : L"Explorer", NULL);
     InvalidateRect(hwnd, nullptr, TRUE);
@@ -111,7 +112,9 @@ BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
 #if defined(__WXMSW__) && defined(_WIN64)
-    if(!win) { return; }
+    if(!win) {
+        return;
+    }
     bool b = ColoursAndFontsManager::Get().IsDarkTheme();
     SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explore", NULL);
     EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, (BOOL)b);
@@ -258,7 +261,8 @@ static bool IsBOMFile(const char* file_name)
 
             // Read the first 4 bytes (or less)
             size_t size = buff.st_size;
-            if(size > 4) size = 4;
+            if(size > 4)
+                size = 4;
 
             char* buffer = new char[size];
             if(fread(buffer, sizeof(char), size, fp) == size) {
@@ -288,7 +292,8 @@ static bool ReadBOMFile(const char* file_name, wxString& content, BOM& bom)
                 wxFontEncoding encoding(wxFONTENCODING_SYSTEM);
                 size_t bomSize(size);
 
-                if(bomSize > 4) bomSize = 4;
+                if(bomSize > 4)
+                    bomSize = 4;
                 bom.SetData(buffer, bomSize);
                 encoding = bom.Encoding();
 
@@ -299,7 +304,9 @@ static bool ReadBOMFile(const char* file_name, wxString& content, BOM& bom)
                     ptr += bom.Len();
                     content = wxString(ptr, conv);
 
-                    if(content.IsEmpty()) { content = wxString::From8BitData(ptr); }
+                    if(content.IsEmpty()) {
+                        content = wxString::From8BitData(ptr);
+                    }
                 }
             }
             delete[] buffer;
@@ -370,7 +377,9 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
     if(file.IsOpened()) {
 
         // If we got a BOM pointer, test to see whether the file is BOM file
-        if(bom && IsBOMFile(name.data())) { return ReadBOMFile(name.data(), content, *bom); }
+        if(bom && IsBOMFile(name.data())) {
+            return ReadBOMFile(name.data(), content, *bom);
+        }
 
         if(encoding == wxFONTENCODING_DEFAULT) {
             encoding = EditorConfigST::Get()->GetOptions()->GetFileFontEncoding();
@@ -379,7 +388,9 @@ bool ReadFileWithConversion(const wxString& fileName, wxString& content, wxFontE
         // first try the user defined encoding (except for UTF8: the UTF8 builtin appears to be faster)
         if(encoding != wxFONTENCODING_UTF8) {
             wxCSConv fontEncConv(encoding);
-            if(fontEncConv.IsOk()) { file.ReadAll(&content, fontEncConv); }
+            if(fontEncConv.IsOk()) {
+                file.ReadAll(&content, fontEncConv);
+            }
         }
 
         if(content.IsEmpty()) {
@@ -408,7 +419,9 @@ bool RemoveDirectory(const wxString& path)
 
 bool IsValidCppIndetifier(const wxString& id)
 {
-    if(id.IsEmpty()) { return false; }
+    if(id.IsEmpty()) {
+        return false;
+    }
     // first char can be only _A-Za-z
     wxString first(id.Mid(0, 1));
     if(first.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")) != wxString::npos) {
@@ -436,7 +449,9 @@ long AppendListCtrlRow(wxListCtrl* list)
 
 bool IsValidCppFile(const wxString& id)
 {
-    if(id.IsEmpty()) { return false; }
+    if(id.IsEmpty()) {
+        return false;
+    }
 
     // make sure that rest of the id contains only a-zA-Z0-9_
     if(id.find_first_not_of(wxT("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) != wxString::npos) {
@@ -449,7 +464,9 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 {
     wxString project_name(proj->GetName());
     wxString file = filename;
-    if(file.IsEmpty() && editor) { file = editor->GetFileName().GetFullPath(); }
+    if(file.IsEmpty() && editor) {
+        file = editor->GetFileName().GetFullPath();
+    }
     return ExpandAllVariables(expression, clCxxWorkspaceST::Get(), project_name, wxEmptyString, file);
 }
 
@@ -611,7 +628,9 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
         output.Replace(wxT("$(User)"), wxGetUserName());
         output.Replace(wxT("$(Date)"), now.FormatDate());
 
-        if(workspace) { output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir()); }
+        if(workspace) {
+            output.Replace(wxT("$(CodeLitePath)"), workspace->GetStartupDir());
+        }
 
         // call the environment & workspace variables expand function
         output = EnvironmentConfig::Instance()->ExpandVariables(output, true);
@@ -622,7 +641,9 @@ wxString DoExpandAllVariables(const wxString& expression, clCxxWorkspace* worksp
 bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 {
     wxFFile file(fileName, wxT("w+b"));
-    if(!file.IsOpened()) { return false; }
+    if(!file.IsOpened()) {
+        return false;
+    }
 
     // first try the Utf8
     return file.Write(content, wxConvUTF8);
@@ -631,7 +652,9 @@ bool WriteFileUTF8(const wxString& fileName, const wxString& content)
 bool CompareFileWithString(const wxString& filePath, const wxString& str)
 {
     wxString content;
-    if(!ReadFileWithConversion(filePath, content)) { return false; }
+    if(!ReadFileWithConversion(filePath, content)) {
+        return false;
+    }
 
     wxString diskMD5 = wxMD5::GetDigest(content);
     wxString mem_MD5 = wxMD5::GetDigest(str);
@@ -647,10 +670,14 @@ bool CopyDir(const wxString& src, const wxString& target)
 
     // append a slash if there is not one (for easier parsing)
     // because who knows what people will pass to the function.
-    if(to.EndsWith(SLASH) == false) { to << SLASH; }
+    if(to.EndsWith(SLASH) == false) {
+        to << SLASH;
+    }
 
     // for both dirs
-    if(from.EndsWith(SLASH) == false) { from << SLASH; }
+    if(from.EndsWith(SLASH) == false) {
+        from << SLASH;
+    }
 
     // first make sure that the source dir exists
     if(!wxDir::Exists(from)) {
@@ -658,7 +685,9 @@ bool CopyDir(const wxString& src, const wxString& target)
         return false;
     }
 
-    if(!wxDir::Exists(to)) { Mkdir(to); }
+    if(!wxDir::Exists(to)) {
+        Mkdir(to);
+    }
 
     wxDir dir(from);
     wxString filename;
@@ -719,7 +748,9 @@ bool CopyToClipboard(const wxString& text)
 #if wxUSE_CLIPBOARD
     if(wxTheClipboard->Open()) {
         wxTheClipboard->UsePrimarySelection(false);
-        if(!wxTheClipboard->SetData(new wxTextDataObject(text))) { ret = false; }
+        if(!wxTheClipboard->SetData(new wxTextDataObject(text))) {
+            ret = false;
+        }
         wxTheClipboard->Close();
     } else {
         ret = false;
@@ -755,7 +786,9 @@ void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
 
         wxString token = tkz.NextToken();
         token.Trim().Trim(false);
-        if(token.IsEmpty()) { continue; }
+        if(token.IsEmpty()) {
+            continue;
+        }
         arr.Add(token.Trim());
     }
 }
@@ -791,7 +824,9 @@ time_t GetFileModificationTime(const wxString& filename)
 {
     struct stat buff;
     const wxCharBuffer cname = _C(filename);
-    if(stat(cname.data(), &buff) < 0) { return 0; }
+    if(stat(cname.data(), &buff) < 0) {
+        return 0;
+    }
     return buff.st_mtime;
 }
 
@@ -847,7 +882,8 @@ void WrapInShell(wxString& cmd)
     wxString command;
 #ifdef __WXMSW__
     wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell) shell = (wxChar*)wxT("CMD.EXE");
+    if(!shell)
+        shell = (wxChar*)wxT("CMD.EXE");
     command << shell << wxT(" /C ");
     if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
         command << "\"" << cmd << "\"";
@@ -1048,14 +1084,18 @@ wxString StringManager::GetStringSelection() const
     wxString selection;
     // Find which localised string was selected
     int sel = p_control->GetSelection();
-    if(sel != wxNOT_FOUND) { selection = m_unlocalisedStringArray.Item(sel); }
+    if(sel != wxNOT_FOUND) {
+        selection = m_unlocalisedStringArray.Item(sel);
+    }
 
     return selection;
 }
 
 void StringManager::SetStringSelection(const wxString& str, size_t dfault /*= 0*/)
 {
-    if(str.IsEmpty() || m_size == 0) { return; }
+    if(str.IsEmpty() || m_size == 0) {
+        return;
+    }
     int sel = m_unlocalisedStringArray.Index(str);
     if(sel != wxNOT_FOUND) {
         p_control->SetSelection(sel);
@@ -1076,7 +1116,9 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
         // This avoids duplication, and allows us to prepend the current string
         // As a result, the array will be suitable for 'recently-used-strings' situations
         int index = array.Index(str);
-        if(index != wxNOT_FOUND) { array.RemoveAt(index); }
+        if(index != wxNOT_FOUND) {
+            array.RemoveAt(index);
+        }
         array.Insert(str, 0);
     }
 
@@ -1093,7 +1135,9 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
 // Then only 'make relative' if it's a subpath of reference_path (or reference_path itself)
 bool MakeRelativeIfSensible(wxFileName& fn, const wxString& reference_path)
 {
-    if(reference_path.IsEmpty() || !fn.IsOk()) { return false; }
+    if(reference_path.IsEmpty() || !fn.IsOk()) {
+        return false;
+    }
 
 #if defined(__WXGTK__)
     // Normalize() doesn't account for symlinks in wxGTK
@@ -1129,7 +1173,9 @@ wxString wxImplode(const wxArrayString& arr, const wxString& glue)
         str << arr.Item(i) << glue;
     }
 
-    if(str.EndsWith(glue, &tmp)) { str = tmp; }
+    if(str.EndsWith(glue, &tmp)) {
+        str = tmp;
+    }
     return str;
 }
 
@@ -1146,7 +1192,9 @@ wxString wxShellExec(const wxString& cmd, const wxString& projectName)
 
     wxString content;
     wxFFile fp(filename, wxT("r"));
-    if(fp.IsOpened()) { fp.ReadAll(&content); }
+    if(fp.IsOpened()) {
+        fp.ReadAll(&content);
+    }
     fp.Close();
     clRemoveFile(filename);
     return content;
@@ -1160,7 +1208,8 @@ bool wxIsFileSymlink(const wxFileName& filename)
     wxCharBuffer cb = filename.GetFullPath().mb_str(wxConvUTF8).data();
     struct stat stat_buff;
     // use lstat() otherwise, stat() will follow the actual file
-    if(::lstat(cb.data(), &stat_buff) < 0) return false;
+    if(::lstat(cb.data(), &stat_buff) < 0)
+        return false;
     return S_ISLNK(stat_buff.st_mode);
 #endif
 }
@@ -1200,11 +1249,15 @@ wxString CLRealPath(const wxString& filepath) // This is readlink on steroids: i
 int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
 {
     long v;
-    if(!str.ToLong(&v)) { return defval; }
+    if(!str.ToLong(&v)) {
+        return defval;
+    }
 
-    if(minval != -1 && v < minval) return defval;
+    if(minval != -1 && v < minval)
+        return defval;
 
-    if(maxval != -1 && v > maxval) return defval;
+    if(maxval != -1 && v > maxval)
+        return defval;
 
     return v;
 }
@@ -1570,7 +1623,9 @@ wxArrayString SplitString(const wxString& inString, bool trim)
             break;
         case '\\':
             curline << ch;
-            if((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) { inContinuation = true; }
+            if((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
+                inContinuation = true;
+            }
             break;
         default:
             curline << ch;
@@ -1662,7 +1717,8 @@ static wxChar sPreviousChar(wxStyledTextCtrl* ctrl, int pos, int& foundPos, bool
 
             long tmpPos = curpos;
             curpos = ctrl->PositionBefore(curpos);
-            if(curpos == 0 && tmpPos == curpos) break;
+            if(curpos == 0 && tmpPos == curpos)
+                break;
         } else {
             foundPos = curpos;
             return ch;
@@ -1787,7 +1843,8 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
         }
     }
 
-    if(at < 0) at = 0;
+    if(at < 0)
+        at = 0;
     wxString expr = ctrl->GetTextRange(at, pos);
     if(!forCC) {
         // If we do not require the expression for CodeCompletion
@@ -1809,7 +1866,9 @@ wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctrl, bool forCC)
 }
 wxString& WrapWithQuotes(wxString& str)
 {
-    if(str.Contains(" ")) { str.Prepend("\"").Append("\""); }
+    if(str.Contains(" ")) {
+        str.Prepend("\"").Append("\"");
+    }
     return str;
 }
 
@@ -1825,7 +1884,9 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
 
     wxString content;
     wxStringOutputStream sos(&content);
-    if(doc->Save(sos)) { return ::WriteFileUTF8(filename, content); }
+    if(doc->Save(sos)) {
+        return ::WriteFileUTF8(filename, content);
+    }
     return false;
 }
 
@@ -1852,7 +1913,8 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
     int maxPixel = 0;
     int startLine = ctrl->GetFirstVisibleLine();
     int endLine = startLine + ctrl->LinesOnScreen();
-    if(endLine >= (ctrl->GetLineCount() - 1)) endLine--;
+    if(endLine >= (ctrl->GetLineCount() - 1))
+        endLine--;
 
     for(int i = startLine; i <= endLine; i++) {
         int visibleLine = (int)ctrl->DocLineFromVisible(i);      // get actual visible line, folding may offset lines
@@ -1868,7 +1930,8 @@ void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl)
             maxPixel = curLen;
     }
 
-    if(maxPixel == 0) maxPixel++; // make sure maxPixel is valid
+    if(maxPixel == 0)
+        maxPixel++; // make sure maxPixel is valid
 
     int currentLength = ctrl->GetScrollWidth(); // Get current scrollbar size
     if(currentLength != maxPixel) {
@@ -1881,7 +1944,9 @@ wxString clGetTextFromUser(const wxString& title, const wxString& message, const
 {
     clGetTextFromUserDialog dialog(parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message,
                                    initialValue, charsToSelect);
-    if(dialog.ShowModal() == wxID_OK) { return dialog.GetValue(); }
+    if(dialog.ShowModal() == wxID_OK) {
+        return dialog.GetValue();
+    }
     return "";
 }
 
@@ -1912,7 +1977,9 @@ double clGetContentScaleFactor()
         once = true;
 #ifdef __WXGTK__
         GdkScreen* screen = gdk_screen_get_default();
-        if(screen) { res = gdk_screen_get_resolution(screen) / 96.; }
+        if(screen) {
+            res = gdk_screen_get_resolution(screen) / 96.;
+        }
 #else
         res = (wxScreenDC().GetPPI().y / 96.);
 #endif
@@ -1939,11 +2006,15 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
     const char* sudo_path;
 
     sudo_path = "/usr/bin/sudo";
-    if(!wxFileName::Exists(sudo_path)) { sudo_path = "/usr/local/bin/sudo"; }
+    if(!wxFileName::Exists(sudo_path)) {
+        sudo_path = "/usr/local/bin/sudo";
+    }
     if(as_superuser && wxFileName::Exists(sudo_path) && wxFileName::Exists(sudoAskpass)) {
         wxString cmd;
         cmd << sudo_path << " --askpass kill -" << (int)signo << " ";
-        if(kill_whole_group) { cmd << "-"; }
+        if(kill_whole_group) {
+            cmd << "-";
+        }
         cmd << processID;
         int rc = system(cmd.mb_str(wxConvUTF8).data());
         wxUnusedVar(rc);
@@ -1963,17 +2034,20 @@ void clSetEditorFontEncoding(const wxString& encoding)
 
 bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
 {
-    return FileUtils::clFindExecutable(name, exepath, hint);
+    return FileUtils::FindExe(name, exepath, hint);
 }
 
 int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
 {
-    if(!menu) return wxNOT_FOUND;
+    if(!menu)
+        return wxNOT_FOUND;
 
     const wxMenuItemList& list = menu->GetMenuItems();
     wxMenuItemList::const_iterator iter = list.begin();
     for(int pos = 0; iter != list.end(); ++iter, ++pos) {
-        if((*iter)->GetId() == menuItemId) { return pos; }
+        if((*iter)->GetId() == menuItemId) {
+            return pos;
+        }
     }
     return wxNOT_FOUND;
 }
@@ -1996,7 +2070,9 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
     }
     wxString result;
     for(size_t i = 0; i < lines.size(); ++i) {
-        if(!result.IsEmpty()) { result << glue; }
+        if(!result.IsEmpty()) {
+            result << glue;
+        }
         result << lines.Item(i);
     }
     return result;
@@ -2047,11 +2123,15 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
 
 void clSetTLWindowBestSizeAndPosition(wxWindow* win)
 {
-    if(!win || !win->GetParent()) { return; }
+    if(!win || !win->GetParent()) {
+        return;
+    }
     wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
     wxTopLevelWindow* parentTlw = dynamic_cast<wxTopLevelWindow*>(win->GetParent());
 
-    if(!tlw || !parentTlw) { return; }
+    if(!tlw || !parentTlw) {
+        return;
+    }
 
     wxRect frameSize = parentTlw->GetSize();
     frameSize.Deflate(100);
@@ -2067,11 +2147,17 @@ static void DoSetDialogSize(wxDialog* win, double factor)
     wxUnusedVar(win);
     wxUnusedVar(factor);
 #else
-    if(!win) { return; }
-    if(factor <= 0.0) { factor = 1.0; }
+    if(!win) {
+        return;
+    }
+    if(factor <= 0.0) {
+        factor = 1.0;
+    }
 
     wxWindow* parent = win->GetParent();
-    if(!parent) { parent = wxTheApp->GetTopWindow(); }
+    if(!parent) {
+        parent = wxTheApp->GetTopWindow();
+    }
     if(parent) {
         wxSize parentSize = parent->GetSize();
 
@@ -2098,7 +2184,9 @@ bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFi
 
 int clGetSize(int size, const wxWindow* win)
 {
-    if(!win) { return size; }
+    if(!win) {
+        return size;
+    }
 #ifdef __WXGTK__
     wxString dpiscale = "1.0";
     if(wxGetEnv("GDK_DPI_SCALE", &dpiscale)) {

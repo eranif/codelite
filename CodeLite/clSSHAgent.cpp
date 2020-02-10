@@ -22,7 +22,7 @@ clSSHAgent::~clSSHAgent() { Stop(); }
 void clSSHAgent::Start()
 {
     wxFileName sshAgent;
-    if(!FileUtils::clFindExecutable("ssh-agent", sshAgent)) {
+    if(!FileUtils::FindExe("ssh-agent", sshAgent)) {
         clDEBUG() << "Could not find ssh-agent executable";
         return;
     }

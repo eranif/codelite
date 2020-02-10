@@ -123,13 +123,6 @@ protected:
     wxButton* m_buttonNew;
     wxButton* m_buttonEdit;
     wxButton* m_buttonDelete;
-    wxPanel* m_panelRemote;
-    wxCheckBox* m_checkBoxEnableRemote;
-    wxStaticText* m_staticText161;
-    wxChoice* m_choiceSSHAccount;
-    wxStaticText* m_staticText165;
-    wxTextCtrl* m_textCtrlRemoteFolder;
-    wxButton* m_button169;
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
@@ -137,6 +130,13 @@ protected:
     wxPanel* m_panelEnv;
     wxStaticText* m_staticText119;
     wxStyledTextCtrl* m_stcEnv;
+    wxPanel* m_panelRemote;
+    wxCheckBox* m_checkBoxEnableRemote;
+    wxStaticText* m_staticText161;
+    wxChoice* m_choiceSSHAccount;
+    wxStaticText* m_staticText165;
+    wxTextCtrl* m_textCtrlRemoteFolder;
+    wxButton* m_button169;
 
 protected:
     virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
@@ -169,13 +169,6 @@ public:
     wxButton* GetButtonEdit() { return m_buttonEdit; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
     wxPanel* GetPanelBuild() { return m_panelBuild; }
-    wxCheckBox* GetCheckBoxEnableRemote() { return m_checkBoxEnableRemote; }
-    wxStaticText* GetStaticText161() { return m_staticText161; }
-    wxChoice* GetChoiceSSHAccount() { return m_choiceSSHAccount; }
-    wxStaticText* GetStaticText165() { return m_staticText165; }
-    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
-    wxButton* GetButton169() { return m_button169; }
-    wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
     wxCheckBox* GetCheckBoxCreateCompileFlags() { return m_checkBoxCreateCompileFlags; }
@@ -183,6 +176,13 @@ public:
     wxStaticText* GetStaticText119() { return m_staticText119; }
     wxStyledTextCtrl* GetStcEnv() { return m_stcEnv; }
     wxPanel* GetPanelEnv() { return m_panelEnv; }
+    wxCheckBox* GetCheckBoxEnableRemote() { return m_checkBoxEnableRemote; }
+    wxStaticText* GetStaticText161() { return m_staticText161; }
+    wxChoice* GetChoiceSSHAccount() { return m_choiceSSHAccount; }
+    wxStaticText* GetStaticText165() { return m_staticText165; }
+    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    wxButton* GetButton169() { return m_button169; }
+    wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxNotebook* GetNotebook() { return m_notebook; }
     FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);

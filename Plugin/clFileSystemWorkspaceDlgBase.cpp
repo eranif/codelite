@@ -69,7 +69,9 @@ clFileSystemWorkspaceDlgBase::clFileSystemWorkspaceDlgBase(wxWindow* parent, wxW
 
     SetName(wxT("clFileSystemWorkspaceDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -197,7 +199,9 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("BuildTargetDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -405,62 +409,6 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer40->Add(m_buttonDelete, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelRemote =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelRemote, _("Remote"), false);
-
-    wxBoxSizer* boxSizer153 = new wxBoxSizer(wxVERTICAL);
-    m_panelRemote->SetSizer(boxSizer153);
-
-    wxFlexGridSizer* flexGridSizer155 = new wxFlexGridSizer(0, 3, 0, 0);
-    flexGridSizer155->SetFlexibleDirection(wxBOTH);
-    flexGridSizer155->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer155->AddGrowableCol(1);
-
-    boxSizer153->Add(flexGridSizer155, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxEnableRemote = new wxCheckBox(m_panelRemote, wxID_ANY, _("Enable remote development"), wxDefaultPosition,
-                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
-    m_checkBoxEnableRemote->SetValue(false);
-
-    flexGridSizer155->Add(m_checkBoxEnableRemote, 0, wxALL, WXC_FROM_DIP(5));
-
-    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText161 = new wxStaticText(m_panelRemote, wxID_ANY, _("SSH Account:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
-
-    flexGridSizer155->Add(m_staticText161, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    wxArrayString m_choiceSSHAccountArr;
-    m_choiceSSHAccount = new wxChoice(m_panelRemote, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), m_choiceSSHAccountArr, 0);
-
-    flexGridSizer155->Add(m_choiceSSHAccount, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText165 = new wxStaticText(m_panelRemote, wxID_ANY, _("Remote folder:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
-
-    flexGridSizer155->Add(m_staticText165, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlRemoteFolder = new wxTextCtrl(m_panelRemote, wxID_ANY, wxT(""), wxDefaultPosition,
-                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlRemoteFolder->SetHint(wxT(""));
-#endif
-
-    flexGridSizer155->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button169 = new wxButton(m_panelRemote, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), wxBU_EXACTFIT);
-    m_button169->SetToolTip(_("Browse for folder"));
-
-    flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_TOP, WXC_FROM_DIP(5));
-
     m_panelCodeCompletion =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelCodeCompletion, _("Code Completion"), false);
@@ -578,9 +526,67 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer117->Add(m_stcEnv, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_panelRemote =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelRemote, _("Remote"), false);
+
+    wxBoxSizer* boxSizer153 = new wxBoxSizer(wxVERTICAL);
+    m_panelRemote->SetSizer(boxSizer153);
+
+    wxFlexGridSizer* flexGridSizer155 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer155->SetFlexibleDirection(wxBOTH);
+    flexGridSizer155->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer155->AddGrowableCol(1);
+
+    boxSizer153->Add(flexGridSizer155, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxEnableRemote = new wxCheckBox(m_panelRemote, wxID_ANY, _("Enable remote development"), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+    m_checkBoxEnableRemote->SetValue(false);
+
+    flexGridSizer155->Add(m_checkBoxEnableRemote, 0, wxALL, WXC_FROM_DIP(5));
+
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText161 = new wxStaticText(m_panelRemote, wxID_ANY, _("SSH Account:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+
+    flexGridSizer155->Add(m_staticText161, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceSSHAccountArr;
+    m_choiceSSHAccount = new wxChoice(m_panelRemote, wxID_ANY, wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), m_choiceSSHAccountArr, 0);
+
+    flexGridSizer155->Add(m_choiceSSHAccount, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText165 = new wxStaticText(m_panelRemote, wxID_ANY, _("Remote folder:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+
+    flexGridSizer155->Add(m_staticText165, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlRemoteFolder = new wxTextCtrl(m_panelRemote, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlRemoteFolder->SetHint(wxT(""));
+#endif
+
+    flexGridSizer155->Add(m_textCtrlRemoteFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button169 = new wxButton(m_panelRemote, wxID_ANY, _("..."), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button169->SetToolTip(_("Browse for folder"));
+
+    flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_TOP, WXC_FROM_DIP(5));
+
     SetName(wxT("FSConfigPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                  wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
@@ -690,7 +696,9 @@ NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* par
 
     SetName(wxT("NewFileSystemWorkspaceDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

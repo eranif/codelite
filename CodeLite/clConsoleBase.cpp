@@ -165,7 +165,7 @@ wxString clConsoleBase::GetSelectedTerminalName()
     if(terminalName.IsEmpty()) {
 #ifdef __WXGTK__
         wxFileName file;
-        terminalName = FileUtils::FindExecutable("gnome-terminal", file) ? "gnome-terminal" : "codelite-terminal";
+        terminalName = FileUtils::FindExe("gnome-terminal", file) ? "gnome-terminal" : "codelite-terminal";
 #elif defined(__WXOSX__)
         terminalName = "Terminal";
 #else

@@ -1,8 +1,10 @@
 #include "CompilerLocatorCLANG.h"
 #include "LSPClangdDetector.hpp"
+#include "clFilesCollector.h"
 #include "file_logger.h"
 #include "globals.h"
 #include <wx/filename.h>
+#include <wx/regex.h>
 
 LSPClangdDetector::LSPClangdDetector()
     : LSPDetector("clangd")
@@ -20,22 +22,31 @@ bool LSPClangdDetector::DoLocate()
 #endif
 
     if(locator.Locate()) {
-        const std::vector<wxString> suffixes = { "11", "10", "9", "8", "7", "6", "5", "4", "" };
+        static wxRegEx reClangd("clangd([0-9\\-]*)", wxRE_DEFAULT);
         const auto& compilers = locator.GetCompilers();
-        if(compilers.empty()) { return false; }
+        if(compilers.empty()) {
+            return false;
+        }
+
         for(const auto& compiler : compilers) {
-            wxString cxx = compiler->GetTool("CXX");
-            if(cxx.empty()) { continue; }
-            fnClangd = cxx;
-            // Check for the existence of clangd
-            for(const wxString& suffix : suffixes) {
-                clDEBUG1() << "Trying to locate clangd LSP v" << suffix;
-                fnClangd.SetName("clangd" + (suffix.empty() ? wxString() : wxString("-" + suffix)));
-                if(fnClangd.FileExists()) {
-                    clDEBUG1() << "==> Found" << fnClangd;
+            wxFileName cxx = compiler->GetTool("CXX");
+            if(!cxx.IsOk()) {
+                continue;
+            }
+            clFilesScanner scanner;
+            clFilesScanner::EntryData::Vec_t files;
+            if(scanner.ScanNoRecurse(cxx.GetPath(), files, "clangd*")) {
+                // Check for the existence of clangd
+                for(const auto& d : files) {
+                    if(!(d.flags & clFilesScanner::kIsFile)) {
+                        continue;
+                    }
+                    fnClangd = d.fullpath;
+                    clDEBUG() << "==> Found" << fnClangd;
                     wxString command;
                     command << fnClangd.GetFullPath();
                     ::WrapWithQuotes(command);
+
                     command << " -limit-results=100 -header-insertion-decorators=0";
                     SetCommand(command);
                     // Add support for the languages

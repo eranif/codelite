@@ -69,7 +69,6 @@ CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
 
 bool CompilerLocatorCLANG::Locate()
 {
-    m_compilers.clear();
     MSWLocate();
 #ifdef __WXOSX__
     {
@@ -83,8 +82,8 @@ bool CompilerLocatorCLANG::Locate()
     // POSIX locate
     static wxRegEx reClang("clang([0-9\\-]*)", wxRE_DEFAULT);
 
-    // Locate GCC under all the locations under PATH variable
-    // Search the entire path locations and get all files that matches the pattern 'gcc*'
+    // Locate CLANG under all the locations under PATH variable
+    // Search the entire path locations and get all files that matches the pattern 'clang*'
     wxArrayString paths = GetPaths();
     clFilesScanner scanner;
     clFilesScanner::EntryData::Vec_t outputFiles, tmpFiles;
@@ -94,16 +93,27 @@ bool CompilerLocatorCLANG::Locate()
         }
     }
 
+    m_compilers.clear();
+
+    wxStringMap_t map;
     for(const auto& d : outputFiles) {
         if(d.flags & clFilesScanner::kIsFile) {
             wxFileName clang(d.fullpath);
             wxString fullname = clang.GetFullName();
             if(reClang.IsValid() && reClang.Matches(fullname)) {
-                wxFileName clang(d.fullpath);
-                clDEBUG() << "==> Found" << d.fullpath;
-                AddCompiler(clang.GetPath(), reClang.GetMatch(fullname, 1));
+                wxString acceptableName = "clang" + reClang.GetMatch(fullname, 1);
+                if(fullname == acceptableName) {
+                    // keep unique paths only + the suffix
+                    map.insert({ d.fullpath, reClang.GetMatch(fullname, 1) });
+                }
             }
         }
+    }
+
+    for(const auto& vt : map) {
+        wxFileName clang(vt.first);
+        clDEBUG() << "==> Found" << clang.GetFullPath();
+        AddCompiler(clang.GetPath(), vt.second);
     }
     return true;
 }
@@ -236,12 +246,16 @@ wxString CompilerLocatorCLANG::GetClangVersion(const wxString& clangBinary)
 
 wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary)
 {
-    wxString version = GetClangVersion(clangBinary);
     wxString fullname;
+#ifdef __WXMSW__
+    wxString version = GetClangVersion(clangBinary);
     fullname << "clang";
     if(!version.IsEmpty()) {
         fullname << "( " << version << " )";
     }
+#else
+    fullname = wxFileName(clangBinary).GetFullName().Upper();
+#endif
     return fullname;
 }
 

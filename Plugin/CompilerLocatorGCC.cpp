@@ -77,8 +77,6 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
 bool CompilerLocatorGCC::Locate()
 {
     static wxRegEx reGcc("gcc([0-9\\-]*)", wxRE_DEFAULT);
-    // Get list of paths to search for gcc
-
 
     // Locate GCC under all the locations under PATH variable
     // Search the entire path locations and get all files that matches the pattern 'gcc*'
@@ -90,23 +88,31 @@ bool CompilerLocatorGCC::Locate()
             outputFiles.insert(outputFiles.end(), tmpFiles.begin(), tmpFiles.end());
         }
     }
-    
+
     m_compilers.clear();
+    wxStringMap_t map;
     for(const auto& d : outputFiles) {
         if(d.flags & clFilesScanner::kIsFile) {
             wxFileName gcc(d.fullpath);
             wxString fullname = gcc.GetFullName();
             if(reGcc.IsValid() && reGcc.Matches(fullname)) {
-                // add this compiler
-                CompilerPtr compiler(new Compiler(NULL));
-                compiler->SetName(gcc.GetFullName().Upper());
-                compiler->SetGenerateDependeciesFile(true);
-                compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
-                m_compilers.push_back(compiler);
-                wxString suffix = reGcc.GetMatch(fullname, 1);
-                AddTools(compiler, "/usr/bin", suffix);
+                wxString acceptableName = "gcc" + reGcc.GetMatch(fullname, 1);
+                if(fullname == acceptableName) {
+                    // keep unique paths only + the suffix
+                    map.insert({ d.fullpath, reGcc.GetMatch(fullname, 1) });
+                }
             }
         }
+    }
+    for(const auto& vt : map) {
+        // add this compiler
+        wxFileName gcc(vt.first);
+        CompilerPtr compiler(new Compiler(NULL));
+        compiler->SetName(gcc.GetFullName().Upper());
+        compiler->SetGenerateDependeciesFile(true);
+        compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
+        m_compilers.push_back(compiler);
+        AddTools(compiler, "/usr/bin", vt.second);
     }
 
     // XCode GCC is installed under /Applications/Xcode.app/Contents/Developer/usr/bin

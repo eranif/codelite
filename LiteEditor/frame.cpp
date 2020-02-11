@@ -4996,17 +4996,7 @@ void clMainFrame::OnShowBuildMenu(wxCommandEvent& e)
 {
     // Show the build menu
     clToolBar* toolbar = dynamic_cast<clToolBar*>(e.GetEventObject());
-    CHECK_PTR_RET(toolbar);
-    wxMenu menu;
-
-    // let the plugins build a different menu
-    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
-    evt.SetEventObject(toolbar);
-    evt.SetMenu(&menu);
-    if(!EventNotifier::Get()->ProcessEvent(evt)) { DoCreateBuildDropDownMenu(&menu); }
-
-    // show the menu
-    toolbar->ShowMenuForButton(XRCID("build_active_project"), &menu);
+    ShowBuildMenu(toolbar, XRCID("build_active_project"));
 }
 
 void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
@@ -5802,4 +5792,19 @@ void clMainFrame::OnReportIssue(wxCommandEvent& event)
 void clMainFrame::DoFullscreen(bool b)
 {
     ShowFullScreen(b, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
+}
+
+void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
+{
+    CHECK_PTR_RET(toolbar);
+    wxMenu menu;
+
+    // let the plugins build a different menu
+    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
+    evt.SetEventObject(toolbar);
+    evt.SetMenu(&menu);
+    if(!EventNotifier::Get()->ProcessEvent(evt)) { DoCreateBuildDropDownMenu(&menu); }
+
+    // show the menu
+    toolbar->ShowMenuForButton(buttonID, &menu);
 }

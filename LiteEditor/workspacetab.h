@@ -25,10 +25,10 @@
 #ifndef __workspacetab__
 #define __workspacetab__
 
-#include <wx/panel.h>
+#include "cl_command_event.h"
 #include "theme_handler_helper.h"
 #include "wxcrafter.h"
-#include "cl_command_event.h"
+#include <wx/panel.h>
 
 class clWorkspaceView;
 class ProjectSettingsDlg;
@@ -44,6 +44,7 @@ class WorkspaceTab : public WorkspaceTabBase
     wxColour m_bgColour;
     wxArrayString m_cxxPinnedProjects;
     clTreeCtrl::BitmapVec_t m_bitmaps;
+    bool m_buildInProgress = false;
 
 protected:
     virtual void OnPinnedCxxProjectSelected(wxDataViewEvent& event);
@@ -58,7 +59,7 @@ protected:
      */
     void SyncPinnedProjectsView(const wxDataViewItem& item);
     void ShowPinnedProjectMenu(const wxString& project);
-    
+
 protected:
     virtual void OnWorkspaceOpenUI(wxUpdateUIEvent& event);
     virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
@@ -91,6 +92,11 @@ protected:
     void OnConfigChanged(clCommandEvent& e);
     void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
+    void OnBuildStarted(clBuildEvent& event);
+    void OnBuildEnded(clBuildEvent& event);
+    void OnBuildActiveProject(wxCommandEvent& event);
+    void OnBuildActiveProjectDropdown(wxCommandEvent& event);
+
 public:
     WorkspaceTab(wxWindow* parent, const wxString& caption);
     ~WorkspaceTab();
@@ -107,7 +113,7 @@ public:
      */
     clWorkspaceView* GetView() { return m_view; }
     /**
-     * @brief 
+     * @brief
      * @param project
      */
     void AddPinnedProject(const wxString& project);

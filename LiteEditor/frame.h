@@ -385,11 +385,13 @@ private:
     void SetNoSavePerspectivePrompt(bool devProfileChanged) { m_noSavePerspectivePrompt = devProfileChanged; }
 
     void DoShowCaptions(bool show);
-
+    
+    
 public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
     clToolBar* GetMainToolBar() const { return m_toolbar; }
+    void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID);
 
 protected:
     //----------------------------------------------------

@@ -677,7 +677,8 @@ void WorkspaceTab::OnBuildStarted(clBuildEvent& event)
     m_buildInProgress = true;
     auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
     if(button) {
-        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("stop-build"));
+        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("stop"));
+        button->SetLabel(_("Stop Current Build"));
         m_toolbar580->Refresh();
     }
 }
@@ -689,6 +690,7 @@ void WorkspaceTab::OnBuildEnded(clBuildEvent& event)
     auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
     if(button) {
         button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("build"));
+        button->SetLabel(_("Build Active Project"));
         m_toolbar580->Refresh();
     }
 }

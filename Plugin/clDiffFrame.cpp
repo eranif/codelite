@@ -97,10 +97,19 @@ void clDiffFrame::CreateMenuBar()
     Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileFromRight, m_diffView, XRCID("ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT"));
     
     Bind(wxEVT_MENU, &clDiffFrame::OnClose, this, wxID_CLOSE);
+    
+    // Not a menu item, but this is a convenient place to bind ESC to Close()
+    Bind(wxEVT_CHAR_HOOK, &clDiffFrame::OnCharHook, this);
 }
 
 void clDiffFrame::OnClose(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     Close();
+}
+
+void clDiffFrame::OnCharHook(wxKeyEvent& event)
+{
+    event.Skip();
+    if (event.GetKeyCode() == WXK_ESCAPE ) { Close(); }
 }

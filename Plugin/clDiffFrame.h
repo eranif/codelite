@@ -13,6 +13,7 @@ protected:
 protected:
     void CreateMenuBar();
     void OnClose(wxCommandEvent& event);
+    void OnCharHook(wxKeyEvent& event);
 
 public:
     clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& left, const DiffSideBySidePanel::FileInfo& right,

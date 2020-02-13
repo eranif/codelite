@@ -322,7 +322,7 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
     topRect.Inflate(1);
 #endif
 
-    topRect.SetHeight((rect.GetHeight() / 4) * 3);
+    topRect.SetHeight((rect.GetHeight() / 8) * 7);
     wxRect bottomRect = rect;
     bottomRect.SetTop(topRect.GetBottom());
 
@@ -333,7 +333,7 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
     dc.SetBrush(topColour);
     dc.DrawRectangle(topRect);
 
-    bottomColour = bottomColour.ChangeLightness(IsDark(topColour) ? 50 : 70);
+    bottomColour = bottomColour.ChangeLightness(IsDark(topColour) ? 70 : 90);
     PaintStraightGradientBox(dc, bottomRect, topColour, bottomColour, true);
 }
 

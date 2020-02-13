@@ -64,5 +64,7 @@ protected:
     virtual void OnInstallCompilerUI(wxUpdateUIEvent& event);
     virtual void OnScanForCompilers(wxCommandEvent& event);
     virtual void OnThemeSelected(wxCommandEvent& event);
+    
+    void SetSelectedTheme(const wxString& themeName);
 };
 #endif // CLBOOSTRAPWIZARD_H

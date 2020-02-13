@@ -1038,7 +1038,7 @@ wxColour ColoursAndFontsManager::GetBackgroundColourFromLexer(LexerConf::Ptr_t l
     wxColour bgColour;
     if(lexer->IsDark()) {
         bgColour = lexer->GetProperty(0).GetBgColour();
-        bgColour = bgColour.ChangeLightness(105);
+        bgColour = bgColour.ChangeLightness(110);
     } else {
         bgColour = lexer->GetProperty(0).GetBgColour();
         bgColour = bgColour.ChangeLightness(95);

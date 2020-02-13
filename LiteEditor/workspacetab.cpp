@@ -125,7 +125,13 @@ WorkspaceTab::~WorkspaceTab()
                          wxCommandEventHandler(WorkspaceTab::OnConfigurationManager), NULL, this);
     wxTheApp->Disconnect(XRCID("configuration_manager"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(WorkspaceTab::OnProjectSettingsUI), NULL, this);
+
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_BUILD_CONFIG_CHANGED, &WorkspaceTab::OnConfigChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &WorkspaceTab::OnBuildStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &WorkspaceTab::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROGRAM_STARTED, &WorkspaceTab::OnProgramStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROGRAM_TERMINATED, &WorkspaceTab::OnProgramStopped, this);
+
     m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnCollapseAll, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
     m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnCollapseAllUI, this, XRCID("ID_TOOL_COLLAPSE_ALL"));
     m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnLinkEditor, this, XRCID("ID_TOOL_LINK_EDITOR"));
@@ -135,8 +141,7 @@ WorkspaceTab::~WorkspaceTab()
                          XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"));
     m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnGoHome, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
     m_toolbar580->Unbind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &WorkspaceTab::OnBuildStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &WorkspaceTab::OnBuildEnded, this);
+
     m_toolbar580->Unbind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
     m_toolbar580->Unbind(wxEVT_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this,
                          XRCID("ID_BUILD_PROJECT"));
@@ -164,7 +169,7 @@ void WorkspaceTab::CreateGUIControls()
                             "of the selected item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSpacer();
-    m_toolbar580->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), bmps->LoadBitmap("execute"),
                           _("Run Active Project"));
     m_toolbar580->AddTool(XRCID("ID_BUILD_PROJECT"), _("Build Active Project"), bmps->LoadBitmap("build"),
                           _("Build Active Project"), wxITEM_DROPDOWN);
@@ -228,6 +233,9 @@ void WorkspaceTab::ConnectEvents()
     m_toolbar580->Bind(wxEVT_UPDATE_UI, &WorkspaceTab::OnGoHomeUI, this, XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"));
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &WorkspaceTab::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &WorkspaceTab::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_PROGRAM_STARTED, &WorkspaceTab::OnProgramStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_PROGRAM_TERMINATED, &WorkspaceTab::OnProgramStopped, this);
+    m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnExecuteNoDebug, this, XRCID("ID_EXECUTE_NO_DEBUG"));
     m_toolbar580->Bind(wxEVT_TOOL, &WorkspaceTab::OnBuildActiveProject, this, XRCID("ID_BUILD_PROJECT"));
     m_toolbar580->Bind(wxEVT_TOOL_DROPDOWN, &WorkspaceTab::OnBuildActiveProjectDropdown, this,
                        XRCID("ID_BUILD_PROJECT"));
@@ -709,6 +717,20 @@ void WorkspaceTab::OnBuildActiveProject(wxCommandEvent& event)
     }
 }
 
+void WorkspaceTab::OnExecuteNoDebug(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(!m_runInProgress) {
+        wxCommandEvent runEvent(wxEVT_TOOL, XRCID("execute_no_debug"));
+        runEvent.SetEventObject(m_toolbar580);
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(runEvent);
+    } else {
+        wxCommandEvent stopEvent(wxEVT_TOOL, XRCID("stop_executed_program"));
+        stopEvent.SetEventObject(m_toolbar580);
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(stopEvent);
+    }
+}
+
 void WorkspaceTab::OnBuildActiveProjectDropdown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -717,4 +739,28 @@ void WorkspaceTab::OnBuildActiveProjectDropdown(wxCommandEvent& event)
         return;
     }
     clMainFrame::Get()->ShowBuildMenu(m_toolbar580, XRCID("ID_BUILD_PROJECT"));
+}
+
+void WorkspaceTab::OnProgramStarted(clExecuteEvent& event)
+{
+    event.Skip();
+    m_runInProgress = true;
+    auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
+    if(button) {
+        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("stop"));
+        button->SetLabel(_("Stop running program"));
+        m_toolbar580->Refresh();
+    }
+}
+
+void WorkspaceTab::OnProgramStopped(clExecuteEvent& event)
+{
+    event.Skip();
+    m_runInProgress = false;
+    auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
+    if(button) {
+        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("execute"));
+        button->SetLabel(_("Run active project"));
+        m_toolbar580->Refresh();
+    }
 }

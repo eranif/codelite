@@ -45,6 +45,7 @@ class WorkspaceTab : public WorkspaceTabBase
     wxArrayString m_cxxPinnedProjects;
     clTreeCtrl::BitmapVec_t m_bitmaps;
     bool m_buildInProgress = false;
+    bool m_runInProgress = false;
 
 protected:
     virtual void OnPinnedCxxProjectSelected(wxDataViewEvent& event);
@@ -94,7 +95,10 @@ protected:
 
     void OnBuildStarted(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);
+    void OnProgramStarted(clExecuteEvent& event);
+    void OnProgramStopped(clExecuteEvent& event);
     void OnBuildActiveProject(wxCommandEvent& event);
+    void OnExecuteNoDebug(wxCommandEvent& event);
     void OnBuildActiveProjectDropdown(wxCommandEvent& event);
 
 public:

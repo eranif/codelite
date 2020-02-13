@@ -180,6 +180,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_STOP_EXECUTED_PROGRAM, clExec
 // it is mainly used for displaying the 'Stop' button in the toolbar as active/disabled
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_IS_PROGRAM_RUNNING, clExecuteEvent);
 
+// Execution of a program started
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PROGRAM_STARTED, clExecuteEvent);
+
+// Program terminated event
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PROGRAM_TERMINATED, clExecuteEvent);
+
 // ----------------------------------------------------------------------
 // Build Events
 // ----------------------------------------------------------------------

@@ -133,7 +133,12 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
     }
 
     m_themePicker->Clear();
-    m_themePicker->Append({ _("System Default"), _("Dark"), _("Grey"), _("Light") });
+    wxArrayString options;
+    options.Add(_("System Default"));
+    options.Add(_("Dark"));
+    options.Add(_("Grey"));
+    options.Add(_("Light"));
+    m_themePicker->Append(options);
     m_themePicker->SetSelection(0);
 
     m_stc24->SetText(sampleText);

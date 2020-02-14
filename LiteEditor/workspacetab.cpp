@@ -169,10 +169,10 @@ void WorkspaceTab::CreateGUIControls()
                             "of the selected item in the tree"),
                           bmps->LoadBitmap("cog"));
     m_toolbar580->AddSpacer();
-    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), bmps->LoadBitmap("execute"),
-                          _("Run Active Project"));
     m_toolbar580->AddTool(XRCID("ID_BUILD_PROJECT"), _("Build Active Project"), bmps->LoadBitmap("build"),
                           _("Build Active Project"), wxITEM_DROPDOWN);
+    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+                          _("Run Active Project"));
     m_toolbar580->Realize();
 }
 

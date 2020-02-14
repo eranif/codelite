@@ -15,8 +15,8 @@ jobs:
       - run: apt-get install -y libwxbase3.1-0-unofficial3 libwxbase3.1unofficial3-dev libwxgtk3.1-0-unofficial3 libwxgtk3.1unofficial3-dev wx3.1-headers wx-common
       - checkout
       - run: mkdir build-release
-      - run: cd build-release && cmake .. -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1
-      - run: cd build-release && cmake --build . --target package -j 4
+      - run: cd build-release && cmake .. -DCMAKE_BUILD_TYPE=Release -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 && make -j4
+      - run: cd build-release && make package
       - run: mkdir deb && mv build-release/*.deb deb
       - store_artifacts: {path: ./deb}
 

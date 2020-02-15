@@ -18,7 +18,7 @@
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
      id="metadata13"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
      id="defs11" /><sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -33,7 +33,7 @@
      id="namedview9"
      showgrid="false"
      inkscape:zoom="4.72"
-     inkscape:cx="11.228814"
+     inkscape:cx="-25.847457"
      inkscape:cy="16.843221"
      inkscape:window-x="933"
      inkscape:window-y="451"
@@ -46,7 +46,7 @@
      d="M47,8c0,0-27.648,0-29,0  c-1.469,0-2.484-4-4-4H3C1.896,4,1,4.896,1,6v4v30v4c0,1.104,0.896,2,2,2h44c1.104,0,2-0.896,2-2V10C49,8.896,48.104,8,47,8z"
      stroke-miterlimit="10"
      id="path4"
-     style="fill:#cccccc;fill-opacity:1;stroke:#888a85;stroke-opacity:1"
+     style="fill:none;fill-opacity:1;stroke:#1a1a1a;stroke-opacity:1"
      stroke-linecap="round"
      stroke-width="2"
      stroke="#000000"

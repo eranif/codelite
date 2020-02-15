@@ -1,9 +1,9 @@
-#include "CxxUsingNamespaceCollectorThread.h"
-#include "macros.h"
-#include "code_completion_manager.h"
-#include "CxxUsingNamespaceCollector.h"
 #include "CxxPreProcessor.h"
+#include "CxxUsingNamespaceCollector.h"
+#include "CxxUsingNamespaceCollectorThread.h"
+#include "code_completion_manager.h"
 #include "file_logger.h"
+#include "macros.h"
 
 CxxUsingNamespaceCollectorThread::CxxUsingNamespaceCollectorThread()
     : WorkerThread()
@@ -24,16 +24,15 @@ void CxxUsingNamespaceCollectorThread::ProcessRequest(ThreadRequest* request)
         pp.AddIncludePath(req->includePaths.Item(i));
     }
 
-    CL_DEBUG("Collecting 'using namespace' statements for file '%s' started\n", req->filename);
+    clDEBUG1() << "Collecting 'using namespace' statements for file" << req->filename << "started";
     collector.Parse();
-    CL_DEBUG("Collecting 'using namespace' statements for file '%s' completed\n", req->filename);
+    clDEBUG1() << "Collecting 'using namespace' statements for file" << req->filename << "completed";
 
-    CodeCompletionManager::Get().CallAfter(
-        &CodeCompletionManager::OnFindUsingNamespaceDone, collector.GetUsingNamespaces(), req->filename);
+    CodeCompletionManager::Get().CallAfter(&CodeCompletionManager::OnFindUsingNamespaceDone,
+                                           collector.GetUsingNamespaces(), req->filename);
 }
 
-void CxxUsingNamespaceCollectorThread::QueueFile(const wxString& filename,
-                                                 const wxArrayString& searchPaths)
+void CxxUsingNamespaceCollectorThread::QueueFile(const wxString& filename, const wxArrayString& searchPaths)
 {
     CxxUsingNamespaceCollectorThread::Request* req = new CxxUsingNamespaceCollectorThread::Request();
     req->filename = filename;

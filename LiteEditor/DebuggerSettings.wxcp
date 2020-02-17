@@ -1271,7 +1271,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	""
+					"m_value":	"-1,-1"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -1534,7 +1534,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Size:",
-											"m_value":	""
+											"m_value":	"400,-1"
 										}, {
 											"type":	"string",
 											"m_label":	"Minimum Size:",
@@ -1570,7 +1570,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Focused",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
@@ -3504,7 +3504,7 @@
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Value:",
-																			"m_value":	true
+																			"m_value":	false
 																		}],
 																	"m_events":	[],
 																	"m_children":	[]

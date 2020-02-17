@@ -23,17 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "dbgcommanddlg.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 
 DbgCommandDlg::DbgCommandDlg(wxWindow* parent)
     : DbgCommandBaseDlg(parent)
 {
-    Centre();
-    GetSizer()->Fit(this);
-    m_textCtrlName->SetFocus();
-
-    SetName("DbgCommandDlg");
-    WindowAttrManager::Load(this);
+    m_textCtrlName->ChangeValue("");
+    m_textCtrlName->CallAfter(&wxTextCtrl::SetFocus);
+    ::clSetSmallDialogBestSizeAndPosition(this);
+    CentreOnParent();
 }
 
 DbgCommandDlg::~DbgCommandDlg() {}

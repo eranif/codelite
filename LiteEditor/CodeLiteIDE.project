@@ -701,6 +701,7 @@
     <File Name="manageperspectivesbasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
+    <File Name="DbgCommandBaseDlg.wxcp"/>
     <File Name="breakpointsmgr.h"/>
     <File Name="breakpointpropertiesdlg.cpp"/>
     <File Name="breakpointpropertiesdlg.h"/>
@@ -801,6 +802,8 @@
     <File Name="AddOptionsDialogBase.wxcp"/>
     <File Name="wxcrafter.wxcp"/>
     <VirtualDirectory Name="base">
+      <File Name="DbgCommandBaseDlg.cpp"/>
+      <File Name="DbgCommandBaseDlg.h"/>
       <File Name="AddOptionsDialogBase.cpp"/>
       <File Name="AddOptionsDialogBase.h"/>
       <File Name="wxcrafter.h"/>
@@ -841,6 +844,7 @@
       <File Name="ConfigManagerBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
+      <File Name="DbgCommandBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddOptionsDialogBase_liteeditor_bitmaps.cpp"/>
       <File Name="tabgroupbasedlgs_liteeditor_bitmaps.cpp"/>
       <File Name="wxcrafter_liteeditor_bitmaps.cpp"/>

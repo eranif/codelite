@@ -10,7 +10,7 @@
     <wxString Value="" Name="consoleCommand"/>
     <bool Value="0" Name="useRelativeFilePaths"/>
     <bool Value="0" Name="catchThrow"/>
-    <bool Value="1" Name="showTooltips"/>
+    <bool Value="0" Name="showTooltips"/>
     <bool Value="0" Name="debugAsserts"/>
     <int Value="200" Name="maxDisplayStringSize"/>
     <bool Value="0" Name="resolveLocals"/>

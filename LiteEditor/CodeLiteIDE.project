@@ -120,6 +120,8 @@
     <File Name="filehistory.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Dialogs">
+    <File Name="DbgCommandBaseDlg.h"/>
+    <File Name="DbgCommandBaseDlg.cpp"/>
     <VirtualDirectory Name="Debugger">
       <File Name="breakpointdlg.h"/>
       <File Name="breakpointdlg.cpp"/>
@@ -128,8 +130,6 @@
       <File Name="debuggersettingsbasedlg.h"/>
       <File Name="debuggersettingsdlg.cpp"/>
       <File Name="dbgcommanddlg.h"/>
-      <File Name="dbgcommandbasedlg.cpp"/>
-      <File Name="dbgcommandbasedlg.h"/>
       <File Name="dbgcommanddlg.cpp"/>
       <File Name="attachdbgprocdlg.h"/>
       <File Name="attachdbgprocbasedlg.cpp"/>
@@ -802,8 +802,6 @@
     <File Name="AddOptionsDialogBase.wxcp"/>
     <File Name="wxcrafter.wxcp"/>
     <VirtualDirectory Name="base">
-      <File Name="DbgCommandBaseDlg.cpp"/>
-      <File Name="DbgCommandBaseDlg.h"/>
       <File Name="AddOptionsDialogBase.cpp"/>
       <File Name="AddOptionsDialogBase.h"/>
       <File Name="wxcrafter.h"/>

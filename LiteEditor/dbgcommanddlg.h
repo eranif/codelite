@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef __dbgcommanddlg__
 #define __dbgcommanddlg__
-#include "dbgcommandbasedlg.h"
+#include "DbgCommandBaseDlg.h"
 
 class DbgCommandDlg : public DbgCommandBaseDlg
 {

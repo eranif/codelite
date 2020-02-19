@@ -548,6 +548,10 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 
         clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
+        
+        // Notify about build process started
+        clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
+        EventNotifier::Get()->AddPendingEvent(eventStopped);
     }
 }
 
@@ -603,6 +607,10 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     if(console->Start()) {
         m_execPID = console->GetPid();
     }
+
+    // Notify about program execution
+    clExecuteEvent startEvent(wxEVT_PROGRAM_STARTED);
+    EventNotifier::Get()->AddPendingEvent(startEvent);
 }
 
 clEnvList_t clFileSystemWorkspace::GetEnvList()
@@ -755,6 +763,10 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         } else {
             clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
             EventNotifier::Get()->AddPendingEvent(e);
+            
+            // Notify about build process started
+            clBuildEvent eventStart(wxEVT_BUILD_STARTED);
+            EventNotifier::Get()->AddPendingEvent(eventStart);
         }
     }
 }
@@ -958,6 +970,10 @@ void clFileSystemWorkspace::OnExecProcessTerminated(clProcessEvent& event)
 {
     event.Skip();
     m_execPID = wxNOT_FOUND;
+
+    // Notify about program stopped execution
+    clExecuteEvent startEvent(wxEVT_PROGRAM_TERMINATED);
+    EventNotifier::Get()->AddPendingEvent(startEvent);
 }
 
 void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)

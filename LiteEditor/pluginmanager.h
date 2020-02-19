@@ -170,6 +170,8 @@ public:
     clWorkspaceView* GetWorkspaceView();
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
+    void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;
+    
     /**
      * @brief return list of all breakpoints
      */

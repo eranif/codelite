@@ -33,6 +33,7 @@
 #include "cl_config.h"
 #include "wxcrafter_plugin.h"
 #include <imanager.h>
+#include "clEnhancedToolBar.hpp"
 
 class clToolBar;
 class clTreeCtrlPanelDefaultPage;
@@ -54,7 +55,7 @@ protected:
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen = 0;
     int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
-    clToolBar* m_toolbar = nullptr;
+    clEnhancedToolBar* m_toolbar = nullptr;
     wxString m_excludeFilePatterns;
 
 protected:
@@ -71,7 +72,7 @@ public:
     /**
      * @brief getter for the toolbar
      */
-    clToolBar* GetToolBar() { return m_toolbar; }
+    clEnhancedToolBar* GetToolBar() { return m_toolbar; }
 
     /**
      * @brief set the tree options

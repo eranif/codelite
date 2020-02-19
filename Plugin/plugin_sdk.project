@@ -127,6 +127,8 @@
     <File Name="clTreeNodeVisitor.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clToolBar">
+    <File Name="clEnhancedToolBar.cpp"/>
+    <File Name="clEnhancedToolBar.hpp"/>
     <File Name="clToolBarStretchableSpace.h"/>
     <File Name="clToolBarStretchableSpace.cpp"/>
     <File Name="clToolBarSpacer.h"/>

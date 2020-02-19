@@ -1,12 +1,13 @@
-#include "clFileSystemWorkspaceView.hpp"
-#include "globals.h"
 #include "clFileSystemWorkspace.hpp"
-#include "clWorkspaceView.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
 #include "clFileSystemWorkspaceDlg.h"
-#include "clToolBar.h"
+#include "clFileSystemWorkspaceView.hpp"
 #include "clThemedButton.h"
+#include "clToolBar.h"
+#include "clWorkspaceView.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
 
 clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
@@ -22,17 +23,24 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     GetToolBar()->AddSeparator();
 
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
-    GetToolBar()->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), bmps->LoadBitmap("execute"),
-                          _("Run Active Project"));
-    GetToolBar()->AddTool(XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build"),
-                          _("Build Active Project"), wxITEM_DROPDOWN);
-    GetToolBar()->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop"),
-                          _("Stop Current Build"));
+
+    GetToolBar()->Add2StatesTool(
+        XRCID("ID_BUILD_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
+        { XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build") },
+        { XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop") }, wxITEM_DROPDOWN);
+
+    GetToolBar()->Add2StatesTool(
+        XRCID("ID_RUN_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
+        { XRCID("execute_no_debug"), _("Run program"), bmps->LoadBitmap("execute") },
+        { XRCID("stop_executed_program"), _("Stop running program"), bmps->LoadBitmap("stop") }, wxITEM_NORMAL);
+
     GetToolBar()->Realize();
 
     m_buttonConfigs = new clThemedButton(this, wxID_ANY, wxEmptyString);
     m_buttonConfigs->SetHasDropDownMenu(true);
     m_buttonConfigs->Bind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
+    GetToolBar()->Bind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
+                       XRCID("ID_BUILD_BUTTON"));
     GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND);
 
     // Hide hidden folders and files
@@ -40,19 +48,32 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     m_options &= ~kShowHiddenFolders;
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
+
+    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clFileSystemWorkspaceView::OnBuildStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clFileSystemWorkspaceView::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
 }
 
 clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
 {
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTED, &clFileSystemWorkspaceView::OnBuildStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &clFileSystemWorkspaceView::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
     m_buttonConfigs->Unbind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
+    GetToolBar()->Unbind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
+                         XRCID("ID_BUILD_BUTTON"));
 }
 
 void clFileSystemWorkspaceView::OnFolderDropped(clCommandEvent& event)
 {
     // Add only non existent folders to the workspace
     const wxArrayString& folders = event.GetStrings();
-    if(folders.size() != 1) { return; }
+    if(folders.size() != 1) {
+        return;
+    }
 
     clFileSystemWorkspace::Get().New(folders.Item(0));
     ::clGetManager()->GetWorkspaceView()->SelectPage(GetViewName());
@@ -94,14 +115,13 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
     for(const wxString& config : m_configs) {
         int menuItemid = wxXmlResource::GetXRCID(config);
         menu.Append(menuItemid, config, config, wxITEM_NORMAL);
-        menu.Bind(
-            wxEVT_MENU,
-            [=](wxCommandEvent& menuEvent) {
-                m_buttonConfigs->SetText(config);
-                clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
-                clFileSystemWorkspace::Get().Save(true);
-            },
-            menuItemid);
+        menu.Bind(wxEVT_MENU,
+                  [=](wxCommandEvent& menuEvent) {
+                      m_buttonConfigs->SetText(config);
+                      clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
+                      clFileSystemWorkspace::Get().Save(true);
+                  },
+                  menuItemid);
     }
     m_buttonConfigs->ShowMenu(menu);
 }
@@ -110,4 +130,47 @@ void clFileSystemWorkspaceView::OnRefresh(wxCommandEvent& event)
 {
     clTreeCtrlPanel::OnRefresh(event);
     clFileSystemWorkspace::Get().FileSystemUpdated();
+}
+
+void clFileSystemWorkspaceView::OnBuildStarted(clBuildEvent& event)
+{
+    event.Skip();
+    m_buildInProgress = true;
+    clDEBUG() << "Build started";
+    m_toolbar->SetButtonAction(XRCID("ID_BUILD_BUTTON"), XRCID("stop_active_project_build"));
+}
+
+void clFileSystemWorkspaceView::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    m_buildInProgress = false;
+    clDEBUG() << "Build ended";
+    m_toolbar->SetButtonAction(XRCID("ID_BUILD_BUTTON"), XRCID("build_active_project"));
+}
+
+void clFileSystemWorkspaceView::OnProgramStarted(clExecuteEvent& event)
+{
+    event.Skip();
+    m_runInProgress = true;
+    clDEBUG() << "Run started";
+    m_toolbar->SetButtonAction(XRCID("ID_RUN_BUTTON"), XRCID("stop_executed_program"));
+}
+
+void clFileSystemWorkspaceView::OnProgramStopped(clExecuteEvent& event)
+{
+    event.Skip();
+    m_runInProgress = false;
+    clDEBUG() << "Run ended";
+    m_toolbar->SetButtonAction(XRCID("ID_RUN_BUTTON"), XRCID("execute_no_debug"));
+}
+
+void clFileSystemWorkspaceView::OnBuildActiveProjectDropdown(wxCommandEvent& event)
+{
+    clDEBUG() << "OnBuildActiveProjectDropdown called";
+    wxUnusedVar(event);
+    // we dont allow showing the dropdown during build process
+    if(m_buildInProgress) {
+        return;
+    }
+    clGetManager()->ShowBuildMenu(m_toolbar, XRCID("ID_BUILD_BUTTON"));
 }

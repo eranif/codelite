@@ -643,6 +643,11 @@ public:
      * @brief return list of all breakpoints
      */
     virtual void GetBreakpoints(std::vector<BreakpointInfo>& bpList) = 0;
+    
+    /**
+     * @brief build and display the build menu for a toolbar button
+     */
+    virtual void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) = 0;
 };
 
 #endif // IMANAGER_H

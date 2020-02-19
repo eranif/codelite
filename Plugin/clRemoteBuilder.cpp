@@ -1,14 +1,16 @@
 #include "clRemoteBuilder.hpp"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "processreaderthread.h"
-#include "file_logger.h"
-#include <wx/msgdlg.h>
 #include <wx/msgdlg.h>
 
 #if USE_SFTP
-#include "sftp_settings.h"
 #include "SSHRemoteProcess.hpp"
+#include "sftp_settings.h"
 #endif
 
 clRemoteBuilder::clRemoteBuilder()
@@ -29,7 +31,9 @@ bool clRemoteBuilder::IsRunning() const { return m_remoteProcess != nullptr; }
 void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command, const wxString& workingDirectory)
 {
 #if USE_SFTP
-    if(m_remoteProcess) { return; }
+    if(m_remoteProcess) {
+        return;
+    }
     SFTPSettings settings;
     settings.Load();
     SSHAccountInfo account;
@@ -39,7 +43,9 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
         return;
     }
     try {
-        if(m_ssh) { m_ssh->Close(); }
+        if(m_ssh) {
+            m_ssh->Close();
+        }
         m_ssh.reset(new clSSH());
 
         // Establish SSH connection and launch the build
@@ -68,6 +74,9 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
     m_remoteProcess = SSHRemoteProcess::Create(this, m_ssh, cmd, false);
 
+    clBuildEvent eventStart(wxEVT_BUILD_STARTED);
+    EventNotifier::Get()->AddPendingEvent(eventStart);
+
 #else
     wxUnusedVar(sshAccount);
     wxUnusedVar(command);
@@ -84,6 +93,10 @@ void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
 {
     clGetManager()->AppendOutputTabText(kOutputTab_Build, "==== Done ====\n");
     wxDELETE(m_remoteProcess);
+
+    clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
+    EventNotifier::Get()->AddPendingEvent(eventStopped);
+
 #if USE_SFTP
     m_ssh.reset(nullptr);
 #endif

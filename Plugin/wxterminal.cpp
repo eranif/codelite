@@ -100,8 +100,8 @@ wxTerminal::wxTerminal(wxWindow* parent)
         m_textCtrl->MarkerSetBackground(MARKER_ID, lexer->GetProperty(0).GetBgColour());
     }
 
-    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_COPY);
-    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_CUT);
+    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_CUT);
+    wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_COPY);
     wxTheApp->Bind(wxEVT_MENU, &wxTerminal::OnSelectAll, this, wxID_SELECTALL);
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminal::OnReadProcessOutput, this);
@@ -120,8 +120,8 @@ wxTerminal::~wxTerminal()
     Unbind(wxEVT_IDLE, &wxTerminal::OnIdle, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &wxTerminal::OnReadProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxTerminal::OnProcessEnd, this);
-    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_COPY);
-    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_CUT);
+    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCut, this, wxID_CUT);
+    wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnCopy, this, wxID_COPY);
     wxTheApp->Unbind(wxEVT_MENU, &wxTerminal::OnSelectAll, this, wxID_SELECTALL);
 }
 

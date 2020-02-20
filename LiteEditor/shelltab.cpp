@@ -172,6 +172,7 @@ void ShellTab::OnKeyDown(wxKeyEvent& e)
     case wxT('C'):
         if(e.GetModifiers() == wxMOD_CONTROL) {
             OnStopProc(dummy);
+            e.Skip();
         } else {
             e.Skip();
         }

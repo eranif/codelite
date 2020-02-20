@@ -104,6 +104,7 @@ void wxTerminalBase::OnKey(wxKeyEvent& event)
     case 'c':
         if(event.GetModifiers() == wxMOD_RAW_CONTROL) {
             OnCtrlC(event);
+            event.Skip();
         } else {
             event.Skip();
         }

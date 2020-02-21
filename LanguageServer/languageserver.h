@@ -16,7 +16,7 @@ protected:
     void OnRestartLSP(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& event);
     void OnInfoBarButton(clCommandEvent& event);
-    void PromptUserToConfigureLSP();
+    void PromptUserToConfigureLSP(const wxString& languages);
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnMenuFindSymbol(wxCommandEvent& event);
 

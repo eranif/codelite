@@ -2,8 +2,10 @@
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
+#include "ServiceProviderManager.h"
 #include "cl_standard_paths.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "languageserver.h"
@@ -12,14 +14,15 @@
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
-#include "ServiceProviderManager.h"
 
 static LanguageServerPlugin* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new LanguageServerPlugin(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new LanguageServerPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -84,14 +87,18 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
     if(dlg.ShowModal() == wxID_OK) {
         // restart all language servers
         dlg.Save();
-        if(m_servers) { m_servers->Reload(); }
+        if(m_servers) {
+            m_servers->Reload();
+        }
     }
 }
 
 void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(m_servers) { m_servers->Reload(); }
+    if(m_servers) {
+        m_servers->Reload();
+    }
 }
 
 void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
@@ -100,27 +107,38 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
     // Launch a thread to locate any LSP installed on this machine
     // But do this only if we don't have any LSP defined already
     bool autoScan = clConfig::Get().Read("LSPAutoScanOnStartup", true);
+    clDEBUG() << "Should scan for LSP's?" << autoScan;
     if(autoScan && LanguageServerConfig::Get().GetServers().empty()) {
-        clConfig::Get().Write("LSPAutoScanOnStartup", false);
+        clDEBUG() << "Scanning..." << autoScan;
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
                 std::vector<LSPDetector::Ptr_t> matches;
                 LSPDetectorManager detector;
+                wxString languages;
                 if(detector.Scan(matches)) {
                     // Prompt the user to configure LSP
-                    plugin->CallAfter(&LanguageServerPlugin::PromptUserToConfigureLSP);
+                    languages << "[";
+                    for(const auto& match : matches) {
+                        languages << match->GetName() << ", ";
+                    }
+                    languages.RemoveLast().RemoveLast();
+                    languages << "]";
                 }
+                plugin->CallAfter(&LanguageServerPlugin::PromptUserToConfigureLSP, languages);
             },
             this);
         thr.detach();
     }
 }
 
-void LanguageServerPlugin::PromptUserToConfigureLSP()
+void LanguageServerPlugin::PromptUserToConfigureLSP(const wxString& languages)
 {
-    clGetManager()->DisplayMessage(
-        _("CodeLite found Language Servers installed on your machine\nWould you like to configure them now?"),
-        wxICON_QUESTION, { { XRCID("language-server-settings"), _("Yes") }, { wxID_CANCEL, _("No") } });
+    clConfig::Get().Write("LSPAutoScanOnStartup", false);
+    if(!languages.empty()) {
+        clGetManager()->DisplayMessage(
+            _("CodeLite found Language Servers installed on your machine. Would you like to configure them now?"),
+            wxICON_QUESTION, { { XRCID("language-server-settings"), _("Yes") }, { wxID_CANCEL, _("No") } });
+    }
 }
 
 void LanguageServerPlugin::OnInfoBarButton(clCommandEvent& event)
@@ -132,7 +150,9 @@ void LanguageServerPlugin::OnInfoBarButton(clCommandEvent& event)
         if(dlg.ShowModal() == wxID_OK) {
             // restart all language servers
             dlg.Save();
-            if(m_servers) { m_servers->Reload(); }
+            if(m_servers) {
+                m_servers->Reload();
+            }
         }
     }
 }
@@ -149,20 +169,22 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     CHECK_PTR_RET(lsp);
 
     auto langs = lsp->GetSupportedLanguages();
-    
+
     static wxString cppfile = "file.cpp";
     static wxString phpfile = "file.php";
     // CXX, C and PHP have their own context menus, dont add ours as well
-    if(lsp->CanHandle(cppfile) || lsp->CanHandle(phpfile)) { return; }
-    
+    if(lsp->CanHandle(cppfile) || lsp->CanHandle(phpfile)) {
+        return;
+    }
+
     // TODO :: add here
     // Goto definition
     // Goto implementation
     // menu entries
-    wxMenu *menu = event.GetMenu();
+    wxMenu* menu = event.GetMenu();
     menu->PrependSeparator();
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find Symbol"));
-    
+
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
 }
 
@@ -170,7 +192,7 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    
+
     clCodeCompletionEvent findEvent(wxEVT_CC_FIND_SYMBOL);
     findEvent.SetEventObject(editor->GetCtrl());
     findEvent.SetEditor(editor->GetCtrl());

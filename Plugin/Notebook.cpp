@@ -1140,15 +1140,6 @@ void clTabCtrl::DoShowTabList()
         clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
         wxWindow* pWindow = tab->GetWindow();
         wxString label = tab->GetLabel();
-        IEditor* editor = dynamic_cast<IEditor*>(pWindow);
-        if(editor) {
-            wxFileName fn = editor->GetFileName();
-            label = fn.GetFullName();
-            if(fn.GetDirCount()) {
-                label.Prepend(fn.GetDirs().Last() + "/");
-            }
-        }
-
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());

@@ -22,7 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "clThemeUpdater.h"
 #include "clToolBar.h"
+#include "cl_config.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "frame.h"
@@ -35,7 +37,6 @@
 #include "pluginmanager.h"
 #include "quickfindbar.h"
 #include <wx/xrc/xmlres.h>
-#include "clThemeUpdater.h"
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
 EVT_MENU(XRCID("scroll_on_output"), OutputTabWindow::OnOutputScrolls)
@@ -178,6 +179,11 @@ void OutputTabWindow::CreateGUIControls()
     // Create the default scintilla control
     m_sci = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 
+#if defined(__WXMSW__)
+    bool useDirect2D = clConfig::Get().Read("Editor/UseDirect2D", true);
+    m_sci->SetTechnology(useDirect2D ? wxSTC_TECHNOLOGY_DIRECTWRITE : wxSTC_TECHNOLOGY_DEFAULT);
+#endif
+
     // We dont really want to collect undo in the output tabs...
     m_sci->SetUndoCollection(false);
     m_sci->EmptyUndoBuffer();
@@ -226,7 +232,9 @@ void OutputTabWindow::Clear()
 void OutputTabWindow::AppendText(const wxString& text)
 {
     if(m_sci) {
-        if(m_autoAppear && m_sci->GetLength() == 0) { ManagerST::Get()->ShowOutputPane(m_name); }
+        if(m_autoAppear && m_sci->GetLength() == 0) {
+            ManagerST::Get()->ShowOutputPane(m_name);
+        }
 
         //----------------------------------------------
         // enable writing
@@ -276,7 +284,9 @@ void OutputTabWindow::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(m_sci && m_sci
 
 void OutputTabWindow::OnWordWrap(wxCommandEvent& e)
 {
-    if(m_sci) { m_sci->SetWrapMode(e.IsChecked() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE); }
+    if(m_sci) {
+        m_sci->SetWrapMode(e.IsChecked() ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
+    }
 }
 
 void OutputTabWindow::OnWordWrapUI(wxUpdateUIEvent& e)
@@ -299,7 +309,9 @@ void OutputTabWindow::OnCollapseAll(wxCommandEvent& e)
         for(int pass = 0; pass < 2 && !done; pass++) {
             for(int line = 0; line < maxLine; line++) {
                 // Only test fold-header lines, otherwise we get false positives from "=== Searching for..."
-                if(!(m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG)) { continue; }
+                if(!(m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG)) {
+                    continue;
+                }
                 int foldLevel = (m_sci->GetFoldLevel(line) & wxSTC_FOLDLEVELNUMBERMASK);
                 if(foldLevel == 2 && m_sci->GetFoldExpanded(line) == !pass) {
                     m_sci->ToggleFold(line);
@@ -322,7 +334,9 @@ void OutputTabWindow::OnHotspotClicked(wxStyledTextEvent& e) { OnMouseDClick(e);
 
 void OutputTabWindow::OnMarginClick(wxStyledTextEvent& e)
 {
-    if(m_sci && e.GetMargin() == 4) { m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition())); }
+    if(m_sci && e.GetMargin() == 4) {
+        m_sci->ToggleFold(m_sci->LineFromPosition(e.GetPosition()));
+    }
 }
 
 bool OutputTabWindow::IsFocused()
@@ -333,7 +347,9 @@ bool OutputTabWindow::IsFocused()
 
 void OutputTabWindow::OnEditUI(wxUpdateUIEvent& e)
 {
-    if(!IsFocused() || !m_sci) { return; }
+    if(!IsFocused() || !m_sci) {
+        return;
+    }
 
     switch(e.GetId()) {
     case wxID_COPY:
@@ -378,5 +394,7 @@ void OutputTabWindow::OnToggleHoldOpen(wxCommandEvent& e)
 void OutputTabWindow::OnThemeChanged(wxCommandEvent& e)
 {
     e.Skip();
-    if(m_sci) { InitStyle(m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6); }
+    if(m_sci) {
+        InitStyle(m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6);
+    }
 }

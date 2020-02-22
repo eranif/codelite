@@ -43,8 +43,8 @@ AccelTableDlg::AccelTableDlg(wxWindow* parent)
     : AccelTableBaseDlg(parent)
 {
     wxImageList* imageList = new wxImageList(16, 16);
-    imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_down")));
-    imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap(wxT("list-control/16/sort_up")));
+    imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap("list-control/16/sort"));
+    imageList->Add(PluginManager::Get()->GetStdIcons()->LoadBitmap("list-control/16/sort"));
 
     clKeyboardManager::Get()->GetAllAccelerators(m_accelMap);
     PopulateTable("");

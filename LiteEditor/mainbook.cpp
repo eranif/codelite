@@ -635,11 +635,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         int sel = m_book->GetSelection();
 
         // The tab label is the filename + last dir
-        wxString label = fileName.GetFullName();
-        if(fileName.GetDirCount()) {
-            label.Prepend(fileName.GetDirs().Last() + wxFileName::GetPathSeparator());
-        }
-
+        wxString label = CreateLabel(fileName, false);
         if((extra & OF_PlaceNextToCurrent) && (sel != wxNOT_FOUND)) {
             AddPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, sel + 1);
         } else {
@@ -1784,4 +1780,21 @@ void MainBook::ShowQuickBarToolBar(bool s)
     if(m_findBar) {
         m_findBar->ShowToolBarOnly();
     }
+}
+
+void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool modified)
+{
+    SetPageTitle(page, CreateLabel(filename, modified));
+}
+
+wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
+{
+    wxString label = fn.GetFullName();
+    if(fn.GetDirCount()) {
+        label.Prepend(fn.GetDirs().Last() + wxFileName::GetPathSeparator());
+    }
+    if(modified) {
+        label.Prepend("*");
+    }
+    return label;
 }

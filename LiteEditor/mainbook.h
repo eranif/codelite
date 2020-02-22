@@ -103,7 +103,10 @@ private:
     void OnNavigationBarMenuShowing(clContextMenuEvent& e);
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
-
+    /**
+     * @brief return proper tab label for a given filename
+     */
+    wxString CreateLabel(const wxFileName& fn, bool modified) const;
     /**
      * @brief open file and set an alternate content
      */
@@ -241,6 +244,7 @@ public:
 
     wxString GetPageTitle(wxWindow* win) const;
     void SetPageTitle(wxWindow* page, const wxString& name);
+    void SetPageTitle(wxWindow* page, const wxFileName& filename, bool modified);
     long GetBookStyle();
 
     void ApplySettingsChanges();

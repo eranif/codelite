@@ -38,7 +38,7 @@
 
 #ifdef __WXMSW__
 #define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 10
+#define DEFAULT_FONT_SIZE 12
 #elif defined(__WXMAC__)
 #define DEFAULT_FACE_NAME "monaco"
 #define DEFAULT_FONT_SIZE 14

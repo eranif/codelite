@@ -462,7 +462,9 @@ void Manager::CloseWorkspace()
     EnvironmentConfig::Instance()->SetSettings(vars);
     clMainFrame::Get()->SelectBestEnvSet();
 
-    UpdateParserPaths(false);
+    // Clear the parser thread search paths
+    ParseThreadST::Get()->ClearPaths();
+    
     if(!IsShutdownInProgress()) {
         SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
     }

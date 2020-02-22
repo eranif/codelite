@@ -34,6 +34,7 @@ clTabRendererGTK3::~clTabRendererGTK3() {}
 void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                              const clTabColours& colours, size_t style, eButtonState buttonState)
 {
+    bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
     wxColour activeTabBgColour = DrawingUtils::IsDark(colours.tabAreaColour)
@@ -74,7 +75,10 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
             DrawingUtils::TruncateText(tabInfo.m_label, newSize, dc, label);
         }
     }
-    if(tabInfo.IsActive()) { dc.SetTextForeground(colours.markerColour); }
+    if(tabInfo.IsActive()) { 
+        wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
+        dc.SetTextForeground(activeTabTextColour); 
+    }
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(style & kNotebook_CloseButtonOnActiveTab) { DrawButton(parent, dc, tabInfo, colours, buttonState); }
     if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style | kNotebook_UnderlineActiveTab); }

@@ -10,7 +10,7 @@ wxDEFINE_EVENT(wxEVT_CUSTOM_SCROLL, clScrollEvent);
 static int SB_WIDTH = 10;
 #define SB_RADIUS 0.0
 #elif defined(__WXGTK__)
-static int SB_WIDTH = 10;
+static int SB_WIDTH = 16;
 #define SB_RADIUS 0.0
 #else
 static int SB_WIDTH = 10;
@@ -165,7 +165,7 @@ void clCustomScrollBar::OnMouseLeftUp(wxMouseEvent& e)
 void clCustomScrollBar::OnMotion(wxMouseEvent& e)
 {
     e.Skip();
-    if(m_dragging && wxGetMouseState().LeftIsDown()) { CallAfter(&clCustomScrollBar::UpdateDrag, e.GetPosition()); }
+    if(m_dragging && wxGetMouseState().LeftIsDown()) { UpdateDrag(e.GetPosition()); }
 }
 
 void clCustomScrollBar::OnSize(wxSizeEvent& e)

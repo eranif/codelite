@@ -6,7 +6,7 @@
 #include "clCustomScrollBar.h"
 #include "clColours.h"
 
-#if 0 // defined(__WXMSW__)||defined(__WXGTK__)
+#if defined(__WXGTK__)
 #define CL_USE_NATIVE_SCROLLBAR 0
 #define CL_USE_CUSTOM_SCROLLBAR 1
 #else

@@ -471,7 +471,7 @@ IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
 
 wxEvtHandler* PluginManager::GetOutputWindow() { return clMainFrame::Get()->GetOutputPane()->GetOutputWindow(); }
 
-bool PluginManager::SaveAll() { return clMainFrame::Get()->GetMainBook()->SaveAll(true, false); }
+bool PluginManager::SaveAll(bool prompt) { return clMainFrame::Get()->GetMainBook()->SaveAll(prompt, false); }
 
 wxString PluginManager::GetInstallDirectory() const { return ManagerST::Get()->GetInstallDir(); }
 

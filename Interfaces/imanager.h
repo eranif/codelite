@@ -385,7 +385,7 @@ public:
     /**
      * @brief save all modified files
      */
-    virtual bool SaveAll() = 0;
+    virtual bool SaveAll(bool prompt = true) = 0;
 
     /**
      * @brief return the editor's settings object

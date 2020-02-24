@@ -208,7 +208,7 @@ void clFileSystemWorkspace::OnBuildStarting(clBuildEvent& event)
     if(IsOpen()) {
         event.Skip(false);
         // before we start the build, save all modified files
-        clGetManager()->SaveAll();
+        clGetManager()->SaveAll(false);
         DoBuild(event.GetKind());
     }
 }

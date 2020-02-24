@@ -109,7 +109,7 @@ public:
     void ReloadWorkspace();
     IPlugin* GetPlugin(const wxString& pluginName);
     wxEvtHandler* GetOutputWindow();
-    bool SaveAll();
+    bool SaveAll(bool prompt = true);
     wxString GetInstallDirectory() const;
     bool CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName);
     OptionsConfigPtr GetEditorSettings();

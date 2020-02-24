@@ -9,13 +9,16 @@ set CL_SRC_DIR=C:\src\codelite
 set PATH=C:\Program Files\CodeLite;C:\Program Files (x86)\Inno Setup 6;%PATH%
 set WXCFG=gcc_dll/mswu
 
-:: Build the 64 bit version
-call :ColorText 0A "Building CodeLite for x86_64"
-call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\compilers\mingw64\bin
+:: Cleanup before we continue
+del /Q %CL_SRC_DIR%\*.gch
 
 :: Build the 32 bit version
 call :ColorText 0A "Building CodeLite for i686"
 call :MAKE_WEEKLY Win_x86_Release codelite_mingw.iss C:\src\wxWidgets32 C:\compilers\mingw64-i686\mingw32\bin
+
+:: Build the 64 bit version
+call :ColorText 0A "Building CodeLite for x86_64"
+call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\compilers\mingw64\bin
 
 cd %CL_SRC_DIR%
 

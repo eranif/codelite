@@ -27,9 +27,9 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
                                             wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-    m_textCtrlResourceName->SetToolTip(_(
-        "Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of "
-        "choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
+    m_textCtrlResourceName->SetToolTip(_("Type resource name to open.\nYou may use a space delimited list of words to "
+                                         "narrow down the list of choices\ne.g. Typing: 'Open Dialog' will include "
+                                         "results that contain both words \"Open\" _and_ \"Dialog\""));
     m_textCtrlResourceName->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlResourceName->SetHint(wxT(""));
@@ -86,7 +86,9 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("OpenResourceDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

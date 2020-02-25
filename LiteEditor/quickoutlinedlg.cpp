@@ -33,7 +33,7 @@
 #include "windowattrmanager.h"
 
 QuickOutlineDlg::QuickOutlineDlg(wxWindow* parent, int id, wxPoint pos, wxSize size, int style)
-    : wxDialog(parent, id, wxEmptyString, pos, size, wxRESIZE_BORDER)
+    : wxDialog(parent, id, wxEmptyString, pos, size, wxRESIZE_BORDER | wxCAPTION)
 {
     const wxColour& bgColour = DrawingUtils::GetColours().GetBgColour();
     SetBackgroundColour(bgColour);
@@ -122,14 +122,18 @@ void QuickOutlineDlg::OnKeyDown(wxKeyEvent& e)
             }
         }
     } else {
-        if(e.GetKeyCode() == WXK_ESCAPE) { DoHide(); }
+        if(e.GetKeyCode() == WXK_ESCAPE) {
+            DoHide();
+        }
     }
 }
 
 bool QuickOutlineDlg::ParseActiveBuffer()
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor) { return false; }
+    if(!editor) {
+        return false;
+    }
 
     wxString filename = editor->GetFileName().GetFullPath();
     TagEntryPtrVector_t tags;
@@ -139,7 +143,9 @@ bool QuickOutlineDlg::ParseActiveBuffer()
         TagsManagerST::Get()->GetFileCache()->Update(editor->GetFileName(), tags);
     }
 
-    if(tags.empty()) { return false; }
+    if(tags.empty()) {
+        return false;
+    }
     m_treeOutline->BuildTree(filename, tags);
     m_treeOutline->ExpandAll();
     wxTreeItemId selectItem = m_treeOutline->GetNextItem(m_treeOutline->GetRootItem());
@@ -152,17 +158,23 @@ void QuickOutlineDlg::DoFindNext()
 {
     m_treeOutline->ClearAllHighlights();
     wxString find_what = m_searchCtrl->GetValue();
-    if(find_what.empty()) { return; }
+    if(find_what.empty()) {
+        return;
+    }
 
     wxTreeItemId focusedItem = m_treeOutline->GetFocusedItem();
     CHECK_ITEM_RET(focusedItem);
 
     wxTreeItemId nextItem = m_treeOutline->GetNextItem(focusedItem);
-    if(!nextItem.IsOk()) { nextItem = focusedItem; }
+    if(!nextItem.IsOk()) {
+        nextItem = focusedItem;
+    }
 
     wxTreeItemId item = m_treeOutline->FindNext(nextItem, find_what, 0, wxTR_SEARCH_DEFAULT);
     // if we fail to move on, use the current focused item
-    if(!item.IsOk()) { item = m_treeOutline->FindPrev(focusedItem, find_what, 0, wxTR_SEARCH_DEFAULT); }
+    if(!item.IsOk()) {
+        item = m_treeOutline->FindPrev(focusedItem, find_what, 0, wxTR_SEARCH_DEFAULT);
+    }
     if(item.IsOk()) {
         m_treeOutline->SelectItem(item);
         m_treeOutline->HighlightText(item, true);
@@ -174,17 +186,23 @@ void QuickOutlineDlg::DoFindPrev()
 {
     m_treeOutline->ClearAllHighlights();
     wxString find_what = m_searchCtrl->GetValue();
-    if(find_what.empty()) { return; }
+    if(find_what.empty()) {
+        return;
+    }
 
     wxTreeItemId focusedItem = m_treeOutline->GetFocusedItem();
     CHECK_ITEM_RET(focusedItem);
 
     wxTreeItemId prevItem = m_treeOutline->GetPrevItem(focusedItem);
-    if(!prevItem.IsOk()) { prevItem = focusedItem; }
+    if(!prevItem.IsOk()) {
+        prevItem = focusedItem;
+    }
 
     wxTreeItemId item = m_treeOutline->FindPrev(prevItem, find_what, 0, wxTR_SEARCH_DEFAULT);
     // if we fail to move on, use the current focused item
-    if(!item.IsOk()) { item = m_treeOutline->FindPrev(focusedItem, find_what, 0, wxTR_SEARCH_DEFAULT); }
+    if(!item.IsOk()) {
+        item = m_treeOutline->FindPrev(focusedItem, find_what, 0, wxTR_SEARCH_DEFAULT);
+    }
     if(item.IsOk()) {
         m_treeOutline->SelectItem(item);
         m_treeOutline->HighlightText(item, true);

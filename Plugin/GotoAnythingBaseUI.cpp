@@ -32,12 +32,12 @@ GotoAnythingBaseDlg::GotoAnythingBaseDlg(wxWindow* parent, wxWindowID id, const 
     m_textCtrlSearch->SetHint(_("Search..."));
 #endif
 
-    boxSizer2->Add(m_textCtrlSearch, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer2->Add(m_textCtrlSearch, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 100)),
                                         wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer2->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer2->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl->AppendIconTextColumn(_("Matches"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                        wxDATAVIEW_COL_RESIZABLE);

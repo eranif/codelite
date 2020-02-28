@@ -22,8 +22,8 @@ Building CodeLite on Linux
 
 To build CodeLite on your computer you will need these packages:
 
- - wxWidgets 3.1 or later
- - The GTK development package: often called libgtk2.0-dev or wxGTK-devel, or similar
+ - wxWidgets 3.0 or later development packages (or a self-build)
+ - The GTK development packages: often called libgtk-3-dev or gtk3-devel, or similar
  - pkg-config (which usually comes with the GTK dev package)
  - The build-essential package (or the relevant bit of it: G++, Make etc)
  - CMake
@@ -32,9 +32,9 @@ To build CodeLite on your computer you will need these packages:
 You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy...) you can [download wxWidgets from CodeLite's repository][6].
 
 
-On Ubuntu / Debian you can install all of the above (except for wxWidgets 3.0) by typing:
+On Ubuntu / Debian you can install all of the above by typing:
 
-    sudo apt-get install libgtk2.0-dev pkg-config build-essential git cmake libssh-dev libwxbase3.0-dev libsqlite3-dev libwxsqlite3-3.0-dev
+    sudo apt-get install libgtk-3.0-dev pkg-config build-essential git cmake libssh-dev libwxgtk3.0-gtk3-dev libsqlite3-dev
 
 Git clone the sources:
 

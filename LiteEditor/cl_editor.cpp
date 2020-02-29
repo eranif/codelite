@@ -5921,7 +5921,8 @@ void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
     int newWidthCount = log10(newLineCount) + 2;
-    SetMarginWidth(NUMBER_MARGIN_ID, newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
+    SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers()
+        ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X")) : 0);
 }
 
 void clEditor::OnZoom(wxStyledTextEvent& event)

@@ -48,7 +48,7 @@ public:
         Opt_TabStyleTRAPEZOID = (1 << 7),
         Opt_IconSet_Classic = (1 << 8),
         Opt_AutoCompleteDoubleQuotes = (1 << 9),
-        Opt_NavKey_Shift = (1 << 10), // (No longer actively used)
+        Opt_NavKey_Shift = (1 << 31), // (Not actively used for 5 years so it should be safe to change it to 1<<31...)
         Opt_NavKey_Alt = (1 << 11),
         Opt_NavKey_Control = (1 << 12),
         Opt_IconSet_Classic_Dark = (1 << 13),
@@ -69,6 +69,7 @@ public:
         Opt_DisableMouseCtrlZoom = (1 << 28),
         Opt_UseBlockCaret = (1 << 29),
         Opt_TabStyleMinimal = (1 << 30),
+        Opt_TabNoPath = (1 << 10), // 1<<10 was previously the Opt_NavKey_Shift value
     };
 
     enum {
@@ -213,6 +214,8 @@ public:
     bool IsTabColourDark() const;
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
+    void SetTabShowPath(bool b) { EnableOption(Opt_TabNoPath, !b); }
+    bool IsTabShowPath() const { return !HasOption(Opt_TabNoPath); }
     bool IsMouseScrollSwitchTabs() const { return HasOption2(Opt2_MouseScrollSwitchTabs); }
     void SetMouseScrollSwitchTabs(bool b) { EnableOption2(Opt2_MouseScrollSwitchTabs, b); }
     bool IsSortTabsDropdownAlphabetically() const { return HasOption2(Opt2_SortTabsDropdownAlphabetically); }

@@ -59,6 +59,7 @@ protected:
     wxChoice* m_choiceOutputTabsOrientation;
     wxStaticLine* m_staticLine61;
     wxCheckBox* m_checkBoxShowXButton;
+    wxCheckBox* m_checkBoxShowPath;
     wxCheckBox* m_checkBoxMouseScrollSwitchTabs;
     wxCheckBox* m_checkBoxSortTabsDropdownAlphabetically;
     wxCheckBox* m_checkBoxEnableTabSwitchingKey;
@@ -108,6 +109,7 @@ public:
     wxChoice* GetChoiceOutputTabsOrientation() { return m_choiceOutputTabsOrientation; }
     wxStaticLine* GetStaticLine61() { return m_staticLine61; }
     wxCheckBox* GetCheckBoxShowXButton() { return m_checkBoxShowXButton; }
+    wxCheckBox* GetCheckBoxShowPath() { return m_checkBoxShowPath; }
     wxCheckBox* GetCheckBoxMouseScrollSwitchTabs() { return m_checkBoxMouseScrollSwitchTabs; }
     wxCheckBox* GetCheckBoxSortTabsDropdownAlphabetically() { return m_checkBoxSortTabsDropdownAlphabetically; }
     wxCheckBox* GetCheckBoxEnableTabSwitchingKey() { return m_checkBoxEnableTabSwitchingKey; }
@@ -120,10 +122,7 @@ public:
     wxCheckBox* GetCheckBoxNavBarSortDropdown() { return m_checkBoxNavBarSortDropdown; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
-    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection()
-    {
-        return m_checkBoxDontOverrideSearchStringWithSelection;
-    }
+    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection() { return m_checkBoxDontOverrideSearchStringWithSelection; }
     wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfBuild() { return m_checkBoxHideOutputPaneNotIfBuild; }
@@ -143,8 +142,7 @@ public:
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
     wxPanel* GetPanel16() { return m_panel16; }
     wxNotebook* GetNotebook10() { return m_notebook10; }
-    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();
 };
 

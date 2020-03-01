@@ -57,6 +57,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideCaptions->SetValue(!options->IsShowDockingWindowCaption());
     m_checkBoxEnsureCaptionsVisible->SetValue(options->IsEnsureCaptionsVisible());
     m_checkBoxShowXButton->SetValue(options->IsTabHasXButton());
+    m_checkBoxShowPath->SetValue(options->IsTabShowPath());
     m_checkBoxNavBarSortDropdown->SetValue(options->IsSortNavBarDropdown());
     m_checkBoxCustomCaptionColour->SetValue(clConfig::Get().Read("UseCustomCaptionsColour", false));
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
@@ -170,6 +171,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     options->SetCtrlTabEnabled(m_checkBoxEnableTabSwitchingKey->IsChecked());
     options->SetSortNavBarDropdown(m_checkBoxNavBarSortDropdown->IsChecked());
     options->SetTabHasXButton(m_checkBoxShowXButton->IsChecked());
+    options->SetTabShowPath(m_checkBoxShowPath->IsChecked());
     options->SetMouseScrollSwitchTabs(m_checkBoxMouseScrollSwitchTabs->IsChecked());
     options->SetSortTabsDropdownAlphabetically(m_checkBoxSortTabsDropdownAlphabetically->IsChecked());
 

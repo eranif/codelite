@@ -1034,6 +1034,23 @@ void MainBook::ApplySettingsChanges()
     clMainFrame::Get()->ShowOrHideCaptions();
 }
 
+void MainBook::ApplyTabLabelChanges()
+{
+    // We only want to do this if there *is* a change, and it's hard to be sure
+    // by looking.  So store any previous state in:
+    static int previousShowParentPath = -1;
+    
+    if (previousShowParentPath < 0 || EditorConfigST::Get()->GetOptions()->IsTabShowPath() != (bool)previousShowParentPath) {
+        previousShowParentPath = EditorConfigST::Get()->GetOptions()->IsTabShowPath();
+
+        std::vector<clEditor*> editors;
+        GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
+        for(size_t i = 0; i < editors.size(); i++) {
+            SetPageTitle(editors[i], editors[i]->GetFileName(), editors[i]->IsModified());
+        }
+    }
+}
+
 void MainBook::UnHighlightAll()
 {
     std::vector<clEditor*> editors;
@@ -1627,7 +1644,11 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
     editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
 }
 
-void MainBook::OnSettingsChanged(wxCommandEvent& e) { e.Skip(); }
+void MainBook::OnSettingsChanged(wxCommandEvent& e)
+{
+    e.Skip(); 
+    ApplyTabLabelChanges();
+}
 
 clEditor* MainBook::OpenFile(const BrowseRecord& rec)
 {
@@ -1790,7 +1811,7 @@ void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool mod
 wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 {
     wxString label = fn.GetFullName();
-    if(fn.GetDirCount()) {
+    if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
         label.Prepend(fn.GetDirs().Last() + wxFileName::GetPathSeparator());
     }
     if(modified) {

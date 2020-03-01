@@ -248,6 +248,7 @@ public:
     long GetBookStyle();
 
     void ApplySettingsChanges();
+    void ApplyTabLabelChanges();
     void UnHighlightAll();
     void DelAllBreakpointMarkers();
     void SetViewEOL(bool visible);

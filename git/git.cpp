@@ -783,14 +783,14 @@ void GitPlugin::OnPush(wxCommandEvent& e)
 
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Push all local commits?"), "GitPromptBeforePush");
     if(res == wxID_YES) {
-        wxString remote = m_remotes[0];
-        if(m_remotes.GetCount() > 1) {
-            remote = wxGetSingleChoice(_("Select remote to push to."), _("Select remote"), m_remotes, m_topWindow);
-            if(remote.IsEmpty()) {
-                return;
-            }
-        }
-        gitAction ga(gitPush, remote + wxT(" ") + m_currentBranch);
+        // wxString remote = m_remotes[0];
+        // if(m_remotes.GetCount() > 1) {
+        //     remote = wxGetSingleChoice(_("Select remote to push to."), _("Select remote"), m_remotes, m_topWindow);
+        //     if(remote.IsEmpty()) {
+        //         return;
+        //     }
+        // }
+        gitAction ga(gitPush, /*remote + wxT(" ") + m_currentBranch*/ wxEmptyString);
         m_gitActionQueue.push_back(ga);
         m_mgr->ShowOutputPane("Git");
         ProcessGitActionQueue();

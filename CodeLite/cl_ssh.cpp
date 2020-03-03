@@ -106,7 +106,7 @@ bool clSSH::AuthenticateServer(wxString& message)
 
     message.Clear();
 
-#if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 1)
+#if LIBSSH_VERSION_INT < SSH_VERSION_INT(0, 6, 5)
     int hlen = 0;
     hlen = ssh_get_pubkey_hash(m_session, &hash);
     if(hlen < 0) {

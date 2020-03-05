@@ -464,7 +464,7 @@ void Manager::CloseWorkspace()
 
     // Clear the parser thread search paths
     ParseThreadST::Get()->ClearPaths();
-    
+
     if(!IsShutdownInProgress()) {
         SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
     }

@@ -796,7 +796,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Choices:",
-															"m_value":	"Default (Don't change the current settings);Both C/C++ and Web development;C/C++ development;C/C++ development (Blockchain using EOSIO);Web development (PHP, JS etc)"
+															"m_value":	"Default;C/C++ development;Web development (PHP, JS etc);C/C++ development (Blockchain using EOSIO)"
 														}, {
 															"type":	"string",
 															"m_label":	"Selection:",
@@ -804,7 +804,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Major Dimension:",
-															"m_value":	"2"
+															"m_value":	"1"
 														}],
 													"m_events":	[],
 													"m_children":	[]

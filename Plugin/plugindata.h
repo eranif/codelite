@@ -25,10 +25,10 @@
 #ifndef __plugindata__
 #define __plugindata__
 
-#include "codelite_exports.h"
-#include "plugin_version.h"
 #include "JSON.h"
 #include "cl_config.h"
+#include "codelite_exports.h"
+#include "plugin_version.h"
 #include <map>
 #include <set>
 
@@ -83,7 +83,7 @@ public:
 class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
 {
     PluginInfo::PluginMap_t m_plugins;
-    wxArrayString m_disabledPlugins;
+    wxArrayString m_enabledPlugins;
 
 public:
     PluginInfoArray();
@@ -92,11 +92,12 @@ public:
 public:
     void SetPlugins(const PluginInfo::PluginMap_t& plugins) { this->m_plugins = plugins; }
     const PluginInfo::PluginMap_t& GetPlugins() const { return m_plugins; }
-    void AddPlugin(const PluginInfo& plugin);
     bool CanLoad(const PluginInfo& plugin) const;
-    void DisablePugins(const wxArrayString& plugins);
+    void EnablePlugins(const wxArrayString& plugins) { this->m_enabledPlugins = plugins; }
+    void EnablePlugin(const wxString& plugin);
     void DisablePlugin(const wxString& plugin);
-    const wxArrayString& GetDisabledPlugins() const { return m_disabledPlugins; }
+    const wxArrayString& GetEnabledPlugins() const { return m_enabledPlugins; }
+
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 };

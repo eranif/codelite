@@ -43,6 +43,7 @@
 #include "wx/notebook.h"
 #include "wx/toolbar.h"
 #include <wx/app.h>
+#include <wx/menu.h>
 #include <wx/pen.h>
 
 #ifdef _WIN32
@@ -91,7 +92,22 @@ class IPlugin : public wxEvtHandler
 protected:
     wxString m_shortName;
     wxString m_longName;
-    IManager* m_mgr;
+    IManager* m_mgr = nullptr;
+    wxMenu* m_pluginsMenu = nullptr;
+
+protected:
+    /**
+     * @brief delete plugin's menu from the menu bar
+     */
+    void DeletePluginMenu(wxWindowID id)
+    {
+        if(!GetPluginsMenu()) {
+            return;
+        }
+        if(GetPluginsMenu()->FindItem(id)) {
+            GetPluginsMenu()->Delete(id);
+        }
+    }
 
 public:
     IPlugin(IManager* manager)
@@ -103,6 +119,10 @@ public:
     //-----------------------------------------------
     // The interface
     //-----------------------------------------------
+    void SetPluginsMenu(wxMenu* menu) { m_pluginsMenu = menu; }
+    const wxMenu* GetPluginsMenu() const { return m_pluginsMenu; }
+    wxMenu* GetPluginsMenu() { return m_pluginsMenu; }
+
     /**
      * @brief return the plugin's short name
      * @return
@@ -165,7 +185,9 @@ public:
         wxString basePath(pluginsDir + wxT("/resources/"));
 
         bmp.LoadFile(basePath + name, type);
-        if(bmp.IsOk()) { return bmp; }
+        if(bmp.IsOk()) {
+            return bmp;
+        }
         return wxNullBitmap;
     }
 
@@ -196,9 +218,10 @@ public:
     }
 };
 
-#define CHECK_CL_SHUTDOWN()                       \
-    {                                             \
-        if(m_mgr->IsShutdownInProgress()) return; \
+#define CHECK_CL_SHUTDOWN()               \
+    {                                     \
+        if(m_mgr->IsShutdownInProgress()) \
+            return;                       \
     }
 
 // Every dll must contain at least this function

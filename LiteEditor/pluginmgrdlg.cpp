@@ -22,12 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "cl_config.h"
+#include "globals.h"
+#include "manager.h"
+#include "pluginmanager.h"
 #include "pluginmgrdlg.h"
 #include "windowattrmanager.h"
-#include "manager.h"
-#include "cl_config.h"
 #include <algorithm>
-#include "globals.h"
 
 PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
     : PluginMgrDlgBase(parent)
@@ -44,10 +45,10 @@ void PluginMgrDlg::Initialize()
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
 
-    m_initialDisabledPlugins = plugins.GetDisabledPlugins();
-    std::sort(m_initialDisabledPlugins.begin(), m_initialDisabledPlugins.end());
+    m_initialEnabledPlugins = plugins.GetEnabledPlugins();
+    std::sort(m_initialEnabledPlugins.begin(), m_initialEnabledPlugins.end());
 
-    const PluginInfo::PluginMap_t& pluginsMap = plugins.GetPlugins();
+    const PluginInfo::PluginMap_t& pluginsMap = PluginManager::Get()->GetInstalledPlugins();
 
     // Clear the list
     m_dvListCtrl->DeleteAllItems();
@@ -76,17 +77,18 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);
 
-    wxArrayString disabledPlugins;
+    wxArrayString enabledPlugins;
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(!m_dvListCtrl->IsItemChecked(item)) { disabledPlugins.Add(m_dvListCtrl->GetItemText(item)); }
+        if(m_dvListCtrl->IsItemChecked(item)) {
+            enabledPlugins.Add(m_dvListCtrl->GetItemText(item));
+        }
     }
 
-    std::sort(disabledPlugins.begin(), disabledPlugins.end());
-    plugins.DisablePugins(disabledPlugins);
+    std::sort(enabledPlugins.begin(), enabledPlugins.end());
+    plugins.EnablePlugins(enabledPlugins);
     conf.WriteItem(&plugins);
-
-    EndModal(disabledPlugins == m_initialDisabledPlugins ? wxID_CANCEL : wxID_OK);
+    EndModal(enabledPlugins == m_initialEnabledPlugins ? wxID_CANCEL : wxID_OK);
 }
 
 void PluginMgrDlg::WritePropertyLine(const wxString& label, const wxString& text)
@@ -108,7 +110,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
     m_richTextCtrl->SetEditable(true);
     // get the plugin name
     wxString pluginName = m_dvListCtrl->GetItemText(m_dvListCtrl->RowToItem(index));
-    PluginInfo::PluginMap_t::const_iterator iter = plugins.GetPlugins().find(pluginName);
+    auto iter = PluginManager::Get()->GetInstalledPlugins().find(pluginName);
     if(iter != plugins.GetPlugins().end()) {
         const PluginInfo& info = iter->second;
         m_richTextCtrl->BeginBold();
@@ -174,5 +176,4 @@ void PluginMgrDlg::OnUncheckAllUI(wxUpdateUIEvent& event)
         }
     }
     event.Enable(atLeastOneIsChecked);
-
 }

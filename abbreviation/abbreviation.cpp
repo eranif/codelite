@@ -48,7 +48,9 @@ static AbbreviationPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new AbbreviationPlugin(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new AbbreviationPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -102,7 +104,7 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("abbrev_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, wxT("Abbreviation"), menu);
+    pluginsMenu->Append(XRCID("abbreviations_plugin_menu"), wxT("Abbreviation"), menu);
     m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbvreviations, this, XRCID("abbrev_insert"));
 }
@@ -115,7 +117,7 @@ void AbbreviationPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void AbbreviationPlugin::UnPlug()
 {
-    // wxDELETE(m_helper);
+    DeletePluginMenu(XRCID("abbreviations_plugin_menu"));
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     m_topWindow->Unbind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbvreviations, this, XRCID("abbrev_insert"));
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
@@ -211,7 +213,8 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 {
     // get the active editor
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(!editor || abbreviation.IsEmpty()) return false;
+    if(!editor || abbreviation.IsEmpty())
+        return false;
 
     // search for abbreviation that matches str
     // prepate list of abbreviations
@@ -240,11 +243,15 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
         wxString textOrig;
         wxString textLeadingSpaces;
 
-        if(typedWordLen < 0) { typedWordLen = 0; }
+        if(typedWordLen < 0) {
+            typedWordLen = 0;
+        }
 
         // format the text to insert
         bool appendEol(false);
-        if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) { appendEol = true; }
+        if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
+            appendEol = true;
+        }
 
         textOrig = text;
         text.Trim(false);

@@ -144,8 +144,9 @@ void PluginManager::Load()
         return;
     }
 
-    else if(pp == CodeLiteApp::PP_FromList)
+    else if(pp == CodeLiteApp::PP_FromList) {
         allowedPlugins = app->GetAllowedPlugins();
+    }
 
     wxString pluginsDir = clStandardPaths::Get().GetPluginsDirectory();
     if(wxDir::Exists(pluginsDir)) {
@@ -223,6 +224,8 @@ void PluginManager::Load()
             PluginInfo* pluginInfo = pfnGetPluginInfo();
 
             wxString pname = pluginInfo->GetName();
+            m_installedPlugins.insert({ pname, *pluginInfo });
+
             pname.MakeLower().Trim().Trim(false);
 
             // Check the policy
@@ -235,10 +238,6 @@ void PluginManager::Load()
 
             // If the plugin does not exist in the m_pluginsData, assume its the first time we see it
             bool firstTimeLoading = (m_pluginsData.GetPlugins().count(pluginInfo->GetName()) == 0);
-
-            // Add the plugin information
-            m_pluginsData.AddPlugin((*pluginInfo));
-
             if(firstTimeLoading && pluginInfo->HasFlag(PluginInfo::kDisabledByDefault)) {
                 m_pluginsData.DisablePlugin(pluginInfo->GetName());
                 wxDELETE(dl);
@@ -283,9 +282,9 @@ void PluginManager::Load()
         wxMenu* pluginsMenu = NULL;
         wxMenuItem* menuitem = clMainFrame::Get()->GetMenuBar()->FindItem(XRCID("manage_plugins"), &pluginsMenu);
         if(pluginsMenu && menuitem) {
-            std::map<wxString, IPlugin*>::iterator iter = m_plugins.begin();
-            for(; iter != m_plugins.end(); ++iter) {
-                IPlugin* plugin = iter->second;
+            for(auto& vt : m_plugins) {
+                IPlugin* plugin = vt.second;
+                plugin->SetPluginsMenu(pluginsMenu);
                 plugin->CreatePluginMenu(pluginsMenu);
             }
         }

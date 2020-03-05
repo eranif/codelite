@@ -14,67 +14,58 @@
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>
 
-static std::vector<wxString> GetCxxPlugins()
+static const wxArrayString& GetBasePlugins()
 {
-    static std::vector<wxString> cxxPlugins;
+    static wxArrayString basePlugins;
+    if(basePlugins.empty()) {
+        basePlugins.push_back("Source Code Formatter");
+        basePlugins.push_back("EditorConfig");
+        basePlugins.push_back("LanguageServerPlugin");
+        basePlugins.push_back("Outline");
+        basePlugins.push_back("SFTP");
+        basePlugins.push_back("Git");
+        basePlugins.push_back("Word Completion");
+        basePlugins.push_back("Diff Plugin");
+        basePlugins.push_back("SmartCompletion");
+    }
+    return basePlugins;
+}
+
+static const wxArrayString& GetCxxPlugins()
+{
+    static wxArrayString cxxPlugins;
     if(cxxPlugins.empty()) {
-        cxxPlugins.push_back("CMakePlugin");
-        cxxPlugins.push_back("CScope");
-        cxxPlugins.push_back("CallGraph");
-        cxxPlugins.push_back("ContinuousBuild");
-        cxxPlugins.push_back("CppChecker");
+        cxxPlugins.insert(cxxPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
         cxxPlugins.push_back("LLDBDebuggerPlugin");
-#ifdef __WXGTK__
-        cxxPlugins.push_back("MemCheck");
-#endif
-        cxxPlugins.push_back("QMakePlugin");
-        cxxPlugins.push_back("UnitTestPP");
         cxxPlugins.push_back("Wizards");
-        cxxPlugins.push_back("wxFormBuilder");
         cxxPlugins.push_back("wxcrafter");
-        cxxPlugins.push_back("EOSWiki");
     }
     return cxxPlugins;
 }
 
-static std::vector<wxString> GetCommonPlugins()
+static const wxArrayString& GetEOSWikiPlugins()
 {
-    static std::vector<wxString> cxxPlugins;
-    if(cxxPlugins.empty()) {
-        cxxPlugins.push_back("AutoSave");
-        cxxPlugins.push_back("Source Code Formatter");
-        cxxPlugins.push_back("CodeLite Vim");
-        cxxPlugins.push_back("Diff Plugin");
-        cxxPlugins.push_back("LanguageServerPlugin");
-        cxxPlugins.push_back("Outline");
-        cxxPlugins.push_back("SFTP");
-        cxxPlugins.push_back("Git");
-        cxxPlugins.push_back("ExternalTools");
+    static wxArrayString eosPlugins;
+    if(eosPlugins.empty()) {
+        eosPlugins.insert(eosPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
+        eosPlugins.push_back("LLDBDebuggerPlugin");
+        eosPlugins.push_back("Wizards");
+        eosPlugins.push_back("EOSWiki");
     }
-    return cxxPlugins;
+    return eosPlugins;
 }
 
-static std::vector<wxString> GetAllPlugins()
+static const wxArrayString& GetWebPlugins()
 {
-    static std::vector<wxString> allPlugins;
-    static std::unordered_set<wxString> commonPlugins;
-    if(commonPlugins.empty()) {
-        GetCommonPlugins();
+    static wxArrayString webPlugins;
+    if(webPlugins.empty()) {
+        webPlugins.insert(webPlugins.end(), GetBasePlugins().begin(), GetBasePlugins().end());
+        webPlugins.push_back("WebTools");
+        webPlugins.push_back("PHP");
+        webPlugins.push_back("PHPLint");
+        webPlugins.push_back("PHPRefactoring");
     }
-    if(allPlugins.empty()) {
-
-        clConfig conf("plugins.conf");
-        PluginInfoArray plugins;
-        conf.ReadItem(&plugins);
-
-        const PluginInfo::PluginMap_t& pluginsInfo = plugins.GetPlugins();
-        std::for_each(pluginsInfo.begin(), pluginsInfo.end(), [&](const std::pair<wxString, PluginInfo>& item) {
-            if(commonPlugins.count(item.second.GetName()) == 0) {
-                allPlugins.push_back(item.first);
-            }
-        });
-    }
-    return allPlugins;
+    return webPlugins;
 }
 
 class clBootstrapWizardPluginData : public wxClientData
@@ -273,59 +264,17 @@ void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 #endif
 }
 
-bool clBootstrapWizard::GetUnSelectedPlugins(wxArrayString& plugins)
+wxArrayString clBootstrapWizard::GetSelectedPlugins()
 {
     int profile = m_radioBoxProfile->GetSelection();
-    if(profile == 0) {
-        // Default, dont change anything
-        return false;
-    } else if(profile == 1) {
-        // Enable all
-        plugins.Clear();
-        return true;
+    if(profile == 0 || profile == 1) {
+        // Default (C++) dont change anything
+        return GetCxxPlugins();
     } else if(profile == 2) {
-        // C/C++ developer
-        std::vector<wxString> cxxPlugins = GetCxxPlugins();
-        std::vector<wxString> allPlugins = GetAllPlugins();
-        std::vector<wxString> commonPlugins = GetCommonPlugins();
-
-        // Add the common plugins to the CXX ones
-        cxxPlugins.insert(cxxPlugins.end(), commonPlugins.begin(), commonPlugins.end());
-
-        std::vector<wxString> webPlugins;
-        std::sort(cxxPlugins.begin(), cxxPlugins.end());
-        std::sort(allPlugins.begin(), allPlugins.end());
-        std::set_difference(allPlugins.begin(), allPlugins.end(), cxxPlugins.begin(), cxxPlugins.end(),
-                            std::back_inserter(webPlugins));
-        plugins.clear();
-        for(const wxString& plugin : webPlugins) {
-            plugins.Add(plugin);
-        }
-        return true;
-    } else if(profile == 3) {
-        // C/C++ developer for blockchain
-        std::vector<wxString> cxxPlugins = GetCxxPlugins();
-        std::vector<wxString> allPlugins = GetAllPlugins();
-        std::vector<wxString> commonPlugins = GetCommonPlugins();
-
-        // Add the common plugins to the CXX ones
-        cxxPlugins.insert(cxxPlugins.end(), commonPlugins.begin(), commonPlugins.end());
-
-        std::vector<wxString> webPlugins;
-        std::sort(cxxPlugins.begin(), cxxPlugins.end());
-        std::sort(allPlugins.begin(), allPlugins.end());
-        std::set_difference(allPlugins.begin(), allPlugins.end(), cxxPlugins.begin(), cxxPlugins.end(),
-                            std::back_inserter(webPlugins));
-        plugins.Clear();
-        std::for_each(webPlugins.begin(), webPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
-        plugins.Add("wxcrafter");     // we don't want wxC enabled for this profile
-        plugins.Add("wxFormBuilder"); // we don't want wxFB enabled for this profile
-        return true;
+        // web developer
+        return GetWebPlugins();
     } else {
-        // Web developer
-        const std::vector<wxString>& cxxPlugins = GetCxxPlugins();
-        std::for_each(cxxPlugins.begin(), cxxPlugins.end(), [&](const wxString& plugin) { plugins.push_back(plugin); });
-        return true;
+        return GetEOSWikiPlugins();
     }
 }
 
@@ -337,14 +286,12 @@ bool clBootstrapWizard::IsRestartRequired()
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
     event.Skip();
-    wxArrayString pluginsToDisable;
-    if(IsRestartRequired() && GetUnSelectedPlugins(pluginsToDisable)) {
+    if(IsRestartRequired()) {
         // user changed plugins
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;
         conf.ReadItem(&plugins);
-
-        plugins.DisablePugins(pluginsToDisable);
+        plugins.EnablePlugins(GetSelectedPlugins());
         conf.WriteItem(&plugins);
     }
 }

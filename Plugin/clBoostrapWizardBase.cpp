@@ -77,14 +77,13 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
     boxSizer93->Add(boxSizer114, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_radioBoxProfileArr;
-    m_radioBoxProfileArr.Add(_("Default (Don't change the current settings)"));
-    m_radioBoxProfileArr.Add(_("Both C/C++ and Web development"));
+    m_radioBoxProfileArr.Add(_("Default"));
     m_radioBoxProfileArr.Add(_("C/C++ development"));
-    m_radioBoxProfileArr.Add(_("C/C++ development (Blockchain using EOSIO)"));
     m_radioBoxProfileArr.Add(_("Web development (PHP, JS etc)"));
+    m_radioBoxProfileArr.Add(_("C/C++ development (Blockchain using EOSIO)"));
     m_radioBoxProfile =
         new wxRadioBox(m_wizardPagePlugins, wxID_ANY, wxT(""), wxDefaultPosition,
-                       wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1, -1)), m_radioBoxProfileArr, 2, wxRA_SPECIFY_COLS);
+                       wxDLG_UNIT(m_wizardPagePlugins, wxSize(-1, -1)), m_radioBoxProfileArr, 1, wxRA_SPECIFY_COLS);
     m_radioBoxProfile->SetSelection(0);
 
     boxSizer114->Add(m_radioBoxProfile, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -263,7 +262,9 @@ clBoostrapWizardBase::clBoostrapWizardBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("clBoostrapWizardBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

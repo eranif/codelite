@@ -54,6 +54,7 @@ JSONItem PluginInfo::ToJSON() const
 //-------------------------------------------
 // PluginConfig
 //-------------------------------------------
+
 PluginInfoArray::PluginInfoArray()
     : clConfigItem("codelite-plugins")
 {
@@ -61,51 +62,57 @@ PluginInfoArray::PluginInfoArray()
 
 PluginInfoArray::~PluginInfoArray() {}
 
-void PluginInfoArray::DisablePugins(const wxArrayString& plugins) { m_disabledPlugins = plugins; }
-
 bool PluginInfoArray::CanLoad(const PluginInfo& plugin) const
 {
-    if(m_disabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND) {
-        // If the plugin is in the "disabled plugins" list - return false
-        return false;
-    }
-    return true;
+    return m_enabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND;
 }
 
 void PluginInfoArray::FromJSON(const JSONItem& json)
 {
-    m_disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
-    m_plugins.clear();
-    JSONItem arr = json.namedObject("installed-plugins");
-    for(int i = 0; i < arr.arraySize(); ++i) {
-        PluginInfo pi;
-        pi.FromJSON(arr.arrayItem(i));
-        m_plugins.insert(std::make_pair(pi.GetName(), pi));
+    m_enabledPlugins.Clear();
+    if(json.hasNamedObject("enabledPlugins")) {
+        m_enabledPlugins = json.namedObject("enabledPlugins").toArrayString();
+    } else if(json.hasNamedObject("disabledPlugins")) {
+        // first time, merge old settings
+        wxArrayString disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
+        std::unordered_set<wxString> all_plugins;
+        JSONItem arr = json.namedObject("installed-plugins");
+        size_t count = arr.arraySize();
+        for(size_t i = 0; i < count; ++i) {
+            all_plugins.insert(arr.arrayItem(i).namedObject("name").toString());
+        }
+
+        for(const auto& disabledPlugin : disabledPlugins) {
+            if(all_plugins.count(disabledPlugin)) {
+                all_plugins.erase(disabledPlugin);
+            }
+        }
+
+        m_enabledPlugins.reserve(all_plugins.size());
+        for(const auto& enabledPlugin : all_plugins) {
+            m_enabledPlugins.Add(enabledPlugin);
+        }
     }
 }
 
 JSONItem PluginInfoArray::ToJSON() const
 {
     JSONItem el = JSONItem::createObject(GetName());
-    el.addProperty("disabledPlugins", m_disabledPlugins);
-
-    JSONItem arr = JSONItem::createArray("installed-plugins");
-    PluginInfo::PluginMap_t::const_iterator iter = m_plugins.begin();
-    for(; iter != m_plugins.end(); ++iter) {
-        arr.arrayAppend(iter->second.ToJSON());
-    }
-    el.append(arr);
+    el.addProperty("enabledPlugins", m_enabledPlugins);
     return el;
 }
 
-void PluginInfoArray::AddPlugin(const PluginInfo& plugin)
+void PluginInfoArray::EnablePlugin(const wxString& plugin)
 {
-    if(m_plugins.count(plugin.GetName())) m_plugins.erase(plugin.GetName());
-
-    m_plugins.insert(std::make_pair(plugin.GetName(), plugin));
+    if(m_enabledPlugins.Index(plugin) == wxNOT_FOUND) {
+        m_enabledPlugins.Add(plugin);
+    }
 }
 
 void PluginInfoArray::DisablePlugin(const wxString& plugin)
 {
-    if(m_disabledPlugins.Index(plugin) == wxNOT_FOUND) m_disabledPlugins.Add(plugin);
+    int where = m_enabledPlugins.Index(plugin);
+    if(where != wxNOT_FOUND) {
+        m_enabledPlugins.RemoveAt(where);
+    }
 }

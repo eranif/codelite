@@ -25,19 +25,18 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include "plugin.h"
-#include "map"
+#include "debugger.h"
+#include "dynamiclibrary.h"
 #include "list"
+#include "map"
+#include "plugin.h"
+#include "plugindata.h"
+#include "project.h"
 #include "vector"
 #include "wx/string.h"
 #include "wx/treectrl.h"
-#include "dynamiclibrary.h"
-#include "plugindata.h"
-#include "project.h"
-#include <set>
 #include <map>
-#include "plugindata.h"
-#include "debugger.h"
+#include <set>
 
 class clToolBar;
 class clEditorBar;
@@ -58,6 +57,7 @@ class PluginManager : public IManager
     std::set<MenuType> m_menusToBeHooked;
     std::map<wxString, wxString> m_backticks;
     wxAuiManager* m_dockingManager;
+    PluginInfo::PluginMap_t m_installedPlugins;
 
 private:
     PluginManager();
@@ -70,6 +70,11 @@ public:
     virtual void UnLoad();
     virtual void EnableToolbars();
 
+    void SetInstalledPlugins(const PluginInfo::PluginMap_t& installedPlugins)
+    {
+        this->m_installedPlugins = installedPlugins;
+    }
+    const PluginInfo::PluginMap_t& GetInstalledPlugins() const { return m_installedPlugins; }
     /**
      * \brief return a map of all loaded plugins
      */
@@ -171,17 +176,17 @@ public:
     bool IsToolBarShown() const;
     void ShowToolBar(bool show = true);
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;
-    
+
     /**
      * @brief return list of all breakpoints
      */
     void GetBreakpoints(std::vector<BreakpointInfo>& bpList);
-    
+
     /**
      * @brief display message to the user using the info bar
      */
     virtual void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
-                                const std::vector<std::pair<wxWindowID, wxString> >& buttons = {});
+                                const std::vector<std::pair<wxWindowID, wxString>>& buttons = {});
 
     //------------------------------------
     // End of IManager interface

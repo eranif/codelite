@@ -29,7 +29,7 @@
 
 class PluginMgrDlg : public PluginMgrDlgBase
 {
-    wxArrayString m_initialDisabledPlugins;
+    wxArrayString m_initialEnabledPlugins;
 
 protected:
     virtual void OnCheckAll(wxCommandEvent& event);

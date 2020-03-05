@@ -734,7 +734,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
 
     wxString cmd = GetTargetCommand(target);
     if(cmd.IsEmpty()) {
-        ::wxMessageBox(_("Dont know how to run '") + target + "'", "CodeLite", wxICON_WARNING | wxCENTER);
+        ::wxMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_WARNING | wxCENTER);
         return;
     }
 

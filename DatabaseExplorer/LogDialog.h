@@ -26,11 +26,9 @@
 #ifndef LOGDIALOG_H
 #define LOGDIALOG_H
 
+#include "GUI.h" // Base class: _LogDialog
 #include <wx/utils.h> 
 
-#include "GUI.h" // Base class: _LogDialog
-
-/*! \brief Dialog for showing logs. */
 class LogDialog : public _LogDialog {
 
 public:

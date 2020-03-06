@@ -1,4 +1,5 @@
 #include "CxxPreProcessorExpression.h"
+#include <wx/window.h>
 #include <wx/utils.h>
 
 CxxPreProcessorExpression::CxxPreProcessorExpression(bool value)

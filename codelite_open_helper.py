@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #
 # Helper to open files in codelite, so we don't need to fire up an expensive codelite process
 #
@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 if len(sys.argv) == 1:
-    print "usage: codelite_open_helper <filename> ..."
+    print("usage: codelite_open_helper <filename> ...")
     exit(1)
 
 filenames_to_open = sys.argv[1:]
@@ -46,7 +46,7 @@ with pidof_subprocess.stdout as txt:
             found_codelite = True
 pidof_subprocess.terminate()
 if found_codelite:
-    print "Found running codelite process, but could not talk to it, no idea what is wrong"
+    print("Found running codelite process, but could not talk to it, no idea what is wrong")
     exit(1)
 
 # Since we didn't find it, let's just fire up codelite and open the files

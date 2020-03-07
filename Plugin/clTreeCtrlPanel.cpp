@@ -425,7 +425,7 @@ void clTreeCtrlPanel::OnNewFile(wxCommandEvent& event)
     GetTreeCtrl()->SortChildren(item);
     // Open the file in the editor
     clGetManager()->OpenFile(file.GetFullPath());
-    CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
+    SelectItem(newFile);
 
     // Notify about file creation
     clFileSystemEvent fsEvent(wxEVT_FILE_CREATED);
@@ -455,7 +455,7 @@ void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
     // Add it to the tree view
     wxTreeItemId newFile = DoAddFolder(item, file.GetPath());
     GetTreeCtrl()->SortChildren(item);
-    CallAfter(&clTreeCtrlPanel::SelectItem, newFile);
+    SelectItem(newFile);
 
     // Notify about folder creation
     clFileSystemEvent fsEvent(wxEVT_FOLDER_CREATED);

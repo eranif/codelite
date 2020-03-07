@@ -43,6 +43,7 @@
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
+#include <wxStringHash.h>
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     : FindInFilesDialogBase(parent, wxID_ANY)
@@ -74,23 +75,30 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
     m_checkBoxPipeForGrep->SetValue(m_data.GetFlags() & wxFRD_ENABLE_PIPE_SUPPORT);
+
     // Set encoding
-    wxArrayString astrEncodings;
-    wxFontEncoding fontEnc;
-    int selection(0);
+    static wxArrayString astrEncodings;
+    static std::unordered_map<wxString, int> encodingMap;
+    static int selection(0);
 
-    size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
-    for(size_t i = 0; i < iEncCnt; i++) {
-        fontEnc = wxFontMapper::GetEncoding(i);
-        if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
-            continue;
+    if(astrEncodings.empty()) {
+        wxFontEncoding fontEnc;
+        size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
+        astrEncodings.reserve(iEncCnt);
+        for(size_t i = 0; i < iEncCnt; i++) {
+            fontEnc = wxFontMapper::GetEncoding(i);
+            if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+                continue;
+            }
+            wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
+            size_t pos = astrEncodings.Add(encodingName);
+            encodingMap.insert({ encodingName, (int)pos });
+            if(m_data.GetEncoding() == encodingName) {
+                selection = static_cast<int>(pos);
+            }
         }
-        wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
-        size_t pos = astrEncodings.Add(encodingName);
-
-        if(m_data.GetEncoding() == encodingName) {
-            selection = static_cast<int>(pos);
-        }
+    } else {
+        selection = encodingMap.count(m_data.GetEncoding()) ? encodingMap.find(m_data.GetEncoding())->second : 0;
     }
 
     m_choiceEncoding->Append(astrEncodings);
@@ -106,9 +114,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     GetSizer()->Fit(this);
     SetMinSize(GetSize());
 
-    // Load the last size and position, but not on GTK
-    WindowAttrManager::Load(this);
-    CentreOnParent();
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 FindInFilesDialog::~FindInFilesDialog() { BuildFindReplaceData(); }
@@ -127,6 +133,7 @@ void FindInFilesDialog::DoSetFileMask()
 
     // Remove empty entries
     wxArrayString tempMaskArr;
+    tempMaskArr.reserve(fileTypes.size());
     std::for_each(fileTypes.begin(), fileTypes.end(), [&](wxString& item) {
         item.Trim().Trim(false);
         if(!item.IsEmpty()) {

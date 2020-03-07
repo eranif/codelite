@@ -44,6 +44,6 @@ void wxCABC4InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_home_david_devel_git_CODELITE_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$_home_david_devel_git_CODELITE_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$C__src_codelite_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/findinfiles_dlg_formbuilder_bitmaps.cpp$C__src_codelite_formbuilder_findinfiles_dlg_formbuilder_bitmaps.xrc"));
 }

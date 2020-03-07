@@ -148,8 +148,8 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText5, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceEncodingArr;
-    m_choiceEncoding = new wxChoice(m_panelMainPanel, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_panelMainPanel, wxSize(300, -1)), m_choiceEncodingArr, 0);
+    m_choiceEncoding = new clThemedChoice(m_panelMainPanel, wxID_ANY, wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelMainPanel, wxSize(300, -1)), m_choiceEncodingArr, 0);
     m_choiceEncoding->SetToolTip(_("Use this file encoding when scanning files for matches"));
 
     fgSizer41->Add(m_choiceEncoding, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -231,7 +231,9 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("FindInFilesDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -322,7 +324,9 @@ FindInFilesLocationsDlgBase::FindInFilesLocationsDlgBase(wxWindow* parent, wxWin
 
     SetName(wxT("FindInFilesLocationsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

@@ -198,25 +198,37 @@ void clButtonBase::Render(wxDC& dc)
         dc.DrawLine(rr.GetTopLeft(), rr.GetTopRight());
     }
 
-    // Draw the bitmap first
-    int xx = TEXT_SPACER;
+    wxRect bitmap_rect;
+    wxRect text_rect;
+    wxRect arrow_rect;
+
     if(GetBitmap().IsOk()) {
-        wxRect bitmapRect(xx, 0, GetBitmap().GetScaledWidth(), GetBitmap().GetScaledHeight());
+        bitmap_rect.SetX(TEXT_SPACER);
+        bitmap_rect.SetWidth(GetBitmap().GetScaledWidth() + TEXT_SPACER);
+        bitmap_rect.SetHeight(GetBitmap().GetScaledHeight());
+        bitmap_rect.SetY(0);
+    }
+
+    if(HasDropDownMenu()) {
+        arrow_rect.SetWidth((2 * TEXT_SPACER) + rect.GetHeight());
+        arrow_rect.SetX(rect.GetWidth() - arrow_rect.GetWidth());
+        arrow_rect.SetY(0);
+        arrow_rect.SetHeight(rect.GetHeight());
+    }
+
+    if(!GetText().IsEmpty()) {
+        text_rect.SetX(GetBitmap().IsOk() ? bitmap_rect.GetRight() : TEXT_SPACER);
+        text_rect.SetY(0);
+        text_rect.SetRight(HasDropDownMenu() ? arrow_rect.GetLeft() : (rect.GetRight() - TEXT_SPACER));
+        text_rect.SetHeight(rect.GetHeight());
+    }
+
+    // Draw the bitmap first
+    if(GetBitmap().IsOk()) {
+        wxRect bitmapRect = bitmap_rect;
         bitmapRect = bitmapRect.CenterIn(rect, wxVERTICAL);
         dc.DrawBitmap(GetBitmap(), bitmapRect.GetTopLeft());
-        xx += bitmapRect.GetWidth();
-        xx += TEXT_SPACER;
     }
-
-    // Draw the text
-    int textWidth = rect.GetWidth() - (2 * TEXT_SPACER);
-    if(GetBitmap().IsOk()) {
-        // Reduce the space used by the bitmap
-        textWidth -= GetBitmap().GetScaledWidth();
-        textWidth -= TEXT_SPACER;
-    }
-
-    if(HasDropDownMenu()) { textWidth -= rect.GetHeight(); }
 
     // Setup some colours (text and dropdown)
     wxColour textColour = m_colours.GetItemTextColour();
@@ -228,16 +240,8 @@ void clButtonBase::Render(wxDC& dc)
         dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
     }
 
-    wxRect textBoundingRect(xx, 0, textWidth, rect.GetHeight());
-    wxRect arrowRect;
-    if(HasDropDownMenu()) {
-        arrowRect.SetX(textBoundingRect.GetRight() + TEXT_SPACER);
-        arrowRect.SetY(0);
-        arrowRect.SetWidth(rect.GetHeight());
-        arrowRect.SetHeight(rect.GetHeight());
-    }
-
     if(!GetText().IsEmpty()) {
+        wxRect textBoundingRect = text_rect;
         dc.SetFont(DrawingUtils::GetDefaultGuiFont());
         textBoundingRect = textBoundingRect.CenterIn(rect, wxVERTICAL);
         dc.SetTextForeground(textColour);
@@ -245,25 +249,18 @@ void clButtonBase::Render(wxDC& dc)
         // Truncate the text to fit the drawing area
         wxString fixedText;
         DrawingUtils::TruncateText(GetText(), textBoundingRect.GetWidth(), dc, fixedText);
-
-        // dc.SetPen(*wxBLUE);
-        // dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        // dc.DrawRectangle(textBoundingRect);
-
         dc.DrawLabel(fixedText, textBoundingRect, wxALIGN_CENTRE);
         dc.DestroyClippingRegion();
     }
 
     if(HasDropDownMenu()) {
         // Draw an arrow
+        wxRect arrowRect(0, 0, rect.GetHeight(), rect.GetHeight());
+        arrowRect = arrowRect.CenterIn(arrow_rect);
         int arrowHeight = arrowRect.GetHeight() / 4;
         int arrowWidth = arrowRect.GetWidth() / 2;
         wxRect r(0, 0, arrowWidth, arrowHeight);
         r = r.CenterIn(arrowRect);
-
-        // dc.SetPen(*wxRED);
-        // dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        // dc.DrawRectangle(arrowRect);
 
         wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
         dc.SetPen(wxPen(dropDownColour, 3));

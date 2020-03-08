@@ -763,11 +763,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	""
+																	"m_value":	"clThemedComboBox"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	""
+																	"m_value":	"clThemedComboBox.hpp"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",

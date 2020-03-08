@@ -19,6 +19,7 @@
 #include <wx/stattext.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
+#include "clThemedComboBox.hpp"
 #include <wx/stc/stc.h>
 #include <wx/choice.h>
 #include "clThemedChoice.h"
@@ -53,7 +54,7 @@ protected:
     wxStaticText* m_staticText102;
     wxComboBox* m_replaceString;
     wxStaticText* m_staticText3;
-    wxComboBox* m_fileTypes;
+    clThemedComboBox* m_fileTypes;
     wxStaticText* m_staticText2;
     wxStyledTextCtrl* m_stcPaths;
     wxStaticText* m_staticText5;
@@ -83,7 +84,7 @@ public:
     wxStaticText* GetStaticText102() { return m_staticText102; }
     wxComboBox* GetReplaceString() { return m_replaceString; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxComboBox* GetFileTypes() { return m_fileTypes; }
+    clThemedComboBox* GetFileTypes() { return m_fileTypes; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxStyledTextCtrl* GetStcPaths() { return m_stcPaths; }
     wxStaticText* GetStaticText5() { return m_staticText5; }

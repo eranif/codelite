@@ -77,6 +77,10 @@
     <File Name="LanguageServerProtocol.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CustomControls">
+    <File Name="clThemedComboBox.cpp"/>
+    <File Name="clThemedComboBox.hpp"/>
+    <File Name="clComboBox.hpp"/>
+    <File Name="clComboBox.cpp"/>
     <File Name="clThemedSTC.cpp"/>
     <File Name="clThemedSTC.hpp"/>
     <File Name="clThemedChoice.cpp"/>

@@ -1,10 +1,10 @@
 #include "clButtonBase.h"
+#include <wx/anybutton.h>
+#include <wx/buffer.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
-#include <wx/buffer.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
-#include <wx/anybutton.h>
 
 #define TEXT_SPACER 10
 
@@ -34,7 +34,9 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
     wxUnusedVar(validator);
     m_buttonStyle = style;
     SetText(label);
-    if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) { return false; }
+    if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) {
+        return false;
+    }
     Initialise();
     return true;
 }
@@ -94,7 +96,9 @@ void clButtonBase::OnErasebg(wxEraseEvent& event) { wxUnusedVar(event); }
 void clButtonBase::OnLeftDown(wxMouseEvent& event)
 {
     event.Skip();
-    if(!IsEnabled()) { return; }
+    if(!IsEnabled()) {
+        return;
+    }
 
     m_state = eButtonState::kPressed;
     CaptureMouse();
@@ -104,8 +108,12 @@ void clButtonBase::OnLeftDown(wxMouseEvent& event)
 void clButtonBase::OnLeftUp(wxMouseEvent& event)
 {
     event.Skip();
-    if(HasCapture()) { ReleaseMouse(); }
-    if(!IsEnabled()) { return; }
+    if(HasCapture()) {
+        ReleaseMouse();
+    }
+    if(!IsEnabled()) {
+        return;
+    }
 
     wxRect rect = GetClientRect();
     if(rect.Contains(event.GetPosition())) {
@@ -325,7 +333,9 @@ wxSize clButtonBase::GetBestSize() const
     buttonWidth += TEXT_SPACER;
 
     // Drop down arrow width
-    if(HasDropDownMenu()) { buttonWidth += buttonHeight; }
+    if(HasDropDownMenu()) {
+        buttonWidth += buttonHeight;
+    }
     return wxSize(buttonWidth, buttonHeight);
 }
 
@@ -373,7 +383,9 @@ void clButtonBase::OnIdle(wxIdleEvent& event)
 size_t clButtonBase::GetDrawingFlags() const
 {
     size_t flags = 0;
-    if(IsEnabled()) { flags |= kDrawingFlagEnabled; }
+    if(IsEnabled()) {
+        flags |= kDrawingFlagEnabled;
+    }
     return flags;
 }
 
@@ -386,7 +398,9 @@ void clButtonBase::SetText(const wxString& text)
     tmp.Replace("@@", "&");
     m_text = tmp;
     SetSizeHints(GetBestSize());
-    if(GetParent() && GetParent()->GetSizer()) { GetParent()->Layout(); }
+    if(GetParent() && GetParent()->GetSizer()) {
+        GetParent()->Layout();
+    }
     Refresh();
 }
 
@@ -408,21 +422,28 @@ void clButtonBase::SetBitmap(const wxBitmap& bmp)
 {
     m_bitmap = bmp;
     SetSizeHints(GetBestSize());
-    if(GetParent() && GetParent()->GetSizer()) { GetParent()->Layout(); }
+    if(GetParent() && GetParent()->GetSizer()) {
+        GetParent()->Layout();
+    }
     Refresh();
 }
 
 const wxBitmap& clButtonBase::GetBitmap() const { return m_bitmap; }
 
-void clButtonBase::ShowMenu(wxMenu& menu)
+void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
 {
     SetPressed();
     Refresh();
 
-    wxPoint menuPos = GetClientRect().GetBottomLeft();
+    wxPoint menuPos;
+    if(point) {
+        menuPos = *point;
+    } else {
+        menuPos = GetClientRect().GetBottomLeft();
 #ifdef __WXOSX__
-    menuPos.y += 5;
+        menuPos.y += 5;
 #endif
+    }
     PopupMenu(&menu, menuPos);
     SetNormal();
     Refresh();

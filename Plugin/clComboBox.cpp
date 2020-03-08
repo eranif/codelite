@@ -91,7 +91,13 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
                   },
                   item->GetId());
     }
-    m_button->ShowMenu(menu);
+
+    wxPoint menuPos = GetClientRect().GetBottomLeft();
+#ifdef __WXOSX__
+    menuPos.y += 5;
+#endif
+    menuPos = m_button->ScreenToClient(ClientToScreen(menuPos));
+    m_button->ShowMenu(menu, &menuPos);
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 

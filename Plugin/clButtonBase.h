@@ -80,7 +80,7 @@ public:
      * @brief display a menu for the user aligned to the button
      * @param menu
      */
-    void ShowMenu(wxMenu& menu);
+    void ShowMenu(wxMenu& menu, wxPoint* point = nullptr);
 };
 
 #endif // CLBUTTONBASE_H

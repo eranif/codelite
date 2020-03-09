@@ -71,6 +71,7 @@ void clComboBox::DoCreate(const wxString& value)
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_TEXT_ENTER, &clComboBox::OnTextEnter, this);
+    m_textCtrl->Bind(wxEVT_CHAR, &clComboBox::OnNavigationKey, this);
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
@@ -115,7 +116,7 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 
-void clComboBox::SetHint(const wxString& hint) { m_textCtrl->SetHint(hint); }
+void clComboBox::SetHint(const wxString& hint) { wxUnusedVar(hint); }
 
 void clComboBox::SetSelection(size_t sel)
 {
@@ -236,4 +237,13 @@ wxArrayString clComboBox::GetStrings() const
     }
     strings.insert(strings.end(), m_choices.begin(), m_choices.end());
     return strings;
+}
+
+void clComboBox::OnNavigationKey(wxKeyEvent& event)
+{
+    if(event.GetKeyCode() == WXK_TAB) {
+        Navigate(event.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
+    } else {
+        event.Skip();
+    }
 }

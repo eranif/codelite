@@ -23,7 +23,8 @@ protected:
     void OnButtonClicked(wxCommandEvent& event);
     void OnText(wxCommandEvent& event);
     void OnTextEnter(wxCommandEvent& event);
-
+    void OnNavigationKey(wxKeyEvent& event);
+    
 public:
     clComboBox();
     clComboBox(wxWindow* parent, wxWindowID id, const wxString& value = wxEmptyString,

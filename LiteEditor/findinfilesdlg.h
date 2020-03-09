@@ -37,6 +37,8 @@ class FindInFilesDialog : public FindInFilesDialogBase
     bool m_transient = false;
 
 protected:
+    virtual void OnFindEnter(wxCommandEvent& event);
+    virtual void OnReplaceEnter(wxCommandEvent& event);
     wxArrayString GetPathsAsArray() const;
 
 protected:

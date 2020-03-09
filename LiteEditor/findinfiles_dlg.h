@@ -71,6 +71,8 @@ protected:
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
 
 protected:
+    virtual void OnFindEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnReplaceEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindWhatUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }

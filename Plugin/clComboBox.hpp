@@ -18,12 +18,12 @@ class WXDLLIMPEXP_SDK clComboBox : public wxControl
 
 protected:
     void DoCreate(const wxString& value);
+    void DoTextEnter();
 
 protected:
     void OnButtonClicked(wxCommandEvent& event);
     void OnText(wxCommandEvent& event);
-    void OnTextEnter(wxCommandEvent& event);
-    void OnNavigationKey(wxKeyEvent& event);
+    void OnCharHook(wxKeyEvent& event);
     
 public:
     clComboBox();

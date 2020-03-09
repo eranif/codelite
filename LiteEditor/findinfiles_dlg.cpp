@@ -248,6 +248,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     }
 #endif
     // Connect events
+    m_findString->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnFindEnter), NULL,
+                          this);
+    m_replaceString->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnReplaceEnter),
+                             NULL, this);
     m_find->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFind), NULL, this);
     m_find->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnFindWhatUI), NULL, this);
     m_replaceAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnReplace), NULL,
@@ -261,6 +265,10 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
 FindInFilesDialogBase::~FindInFilesDialogBase()
 {
+    m_findString->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnFindEnter), NULL,
+                             this);
+    m_replaceString->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnReplaceEnter),
+                                NULL, this);
     m_find->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFind), NULL, this);
     m_find->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnFindWhatUI), NULL, this);
     m_replaceAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnReplace),

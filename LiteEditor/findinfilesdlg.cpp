@@ -552,3 +552,10 @@ void FindInFilesDialog::SetFileMask(const wxString& mask)
         m_fileTypes->SetSelection(where);
     }
 }
+void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
+{
+    event.Skip();
+    OnFind(event);
+}
+
+void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event) { OnReplace(event); }

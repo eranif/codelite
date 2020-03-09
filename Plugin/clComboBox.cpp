@@ -62,16 +62,14 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
 void clComboBox::DoCreate(const wxString& value)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    m_textCtrl =
-        new wxTextCtrl(this, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER | wxTE_RICH2);
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxTE_RICH2);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND, 0);
     m_button = new clButton(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     m_button->SetHasDropDownMenu(true);
     m_button->SetText(""); // this will force size calculation
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
-    m_textCtrl->Bind(wxEVT_TEXT_ENTER, &clComboBox::OnTextEnter, this);
-    m_textCtrl->Bind(wxEVT_CHAR, &clComboBox::OnNavigationKey, this);
+    m_textCtrl->Bind(wxEVT_CHAR_HOOK, &clComboBox::OnCharHook, this);
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
@@ -142,9 +140,8 @@ void clComboBox::OnText(wxCommandEvent& event)
     m_selection = m_choices.Index(m_textCtrl->GetValue());
 }
 
-void clComboBox::OnTextEnter(wxCommandEvent& event)
+void clComboBox::DoTextEnter()
 {
-    wxUnusedVar(event);
     wxCommandEvent textEvent(wxEVT_TEXT_ENTER);
     textEvent.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(textEvent);
@@ -239,10 +236,12 @@ wxArrayString clComboBox::GetStrings() const
     return strings;
 }
 
-void clComboBox::OnNavigationKey(wxKeyEvent& event)
+void clComboBox::OnCharHook(wxKeyEvent& event)
 {
     if(event.GetKeyCode() == WXK_TAB) {
         Navigate(event.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
+    } else if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
+        DoTextEnter();
     } else {
         event.Skip();
     }

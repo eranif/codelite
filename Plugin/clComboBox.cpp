@@ -9,6 +9,11 @@ clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, c
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
+    m_cbStyle = style & ~wxWINDOW_STYLE_MASK;
+    m_choices.reserve(n);
+    for(size_t i = 0; i < n; ++i) {
+        m_choices.Add(choices[i]);
+    }
     DoCreate(value);
 }
 
@@ -18,6 +23,9 @@ clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, c
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
+    m_cbStyle = style & ~wxWINDOW_STYLE_MASK;
+    m_choices.reserve(choices.size());
+    m_choices = choices;
     DoCreate(value);
 }
 
@@ -63,6 +71,9 @@ void clComboBox::DoCreate(const wxString& value)
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_TEXT_ENTER, &clComboBox::OnTextEnter, this);
+    if(m_cbStyle & wxCB_READONLY) {
+        m_textCtrl->SetEditable(false);
+    }
     GetSizer()->Add(m_button);
     GetSizer()->Fit(this);
 }
@@ -92,12 +103,15 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
                   item->GetId());
     }
 
+#if 0
     wxPoint menuPos = GetClientRect().GetBottomLeft();
 #ifdef __WXOSX__
     menuPos.y += 5;
 #endif
     menuPos = m_button->ScreenToClient(ClientToScreen(menuPos));
-    m_button->ShowMenu(menu, &menuPos);
+#endif
+
+    m_button->ShowMenu(menu, nullptr);
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 
@@ -105,11 +119,17 @@ void clComboBox::SetHint(const wxString& hint) { m_textCtrl->SetHint(hint); }
 
 void clComboBox::SetSelection(size_t sel)
 {
-    if(sel >= m_choices.GetCount()) {
-        return;
+    if(sel == INVALID_SIZE_T) {
+        m_textCtrl->Clear();
+        m_selection = INVALID_SIZE_T;
+    } else {
+        if(sel >= m_choices.GetCount()) {
+            return;
+        }
+        m_selection = sel;
+        // else, selection is a valid index
+        SetValue(m_choices.Item(m_selection));
     }
-    m_selection = sel;
-    SetValue(m_choices.Item(m_selection));
 }
 
 void clComboBox::OnText(wxCommandEvent& event)
@@ -135,7 +155,7 @@ void clComboBox::SetString(size_t n, const wxString& text)
         return;
     }
     m_choices[n] = text;
-    if(GetSelection() == (int)n) {
+    if(GetSelection() == (size_t)n) {
         SetValue(m_choices[n]);
     }
 }
@@ -176,7 +196,7 @@ void clComboBox::Append(const wxArrayString& strings)
     m_choices.insert(m_choices.end(), strings.begin(), strings.end());
 }
 
-int clComboBox::Append(const wxString& text)
+size_t clComboBox::Append(const wxString& text)
 {
     m_choices.Add(text);
     return m_choices.size() - 1;
@@ -185,7 +205,7 @@ int clComboBox::Append(const wxString& text)
 void clComboBox::Clear()
 {
     m_choices.Clear();
-    m_selection = wxNOT_FOUND;
+    m_selection = INVALID_SIZE_T;
     m_textCtrl->ChangeValue(wxEmptyString);
 }
 
@@ -194,16 +214,16 @@ void clComboBox::Delete(size_t index)
     if(index >= m_choices.size()) {
         return;
     }
-    if((int)index <= m_selection) {
+    if(index <= m_selection) {
         // the removed item is _before_ the selected item
         // invalidate the selection
-        m_selection = wxNOT_FOUND;
+        m_selection = INVALID_SIZE_T;
         m_textCtrl->ChangeValue(wxEmptyString);
     }
     m_choices.RemoveAt(index);
 }
 
-int clComboBox::FindString(const wxString& s, bool bCase) const { return m_choices.Index(s, bCase); }
+size_t clComboBox::FindString(const wxString& s, bool bCase) const { return m_choices.Index(s, bCase); }
 
 wxString clComboBox::GetValue() const { return m_textCtrl->GetValue(); }
 
@@ -211,7 +231,7 @@ wxArrayString clComboBox::GetStrings() const
 {
     wxArrayString strings;
     strings.reserve(m_choices.size() + 1);
-    if(GetSelection() == wxNOT_FOUND) {
+    if(GetSelection() == INVALID_SIZE_T) {
         strings.Add(GetValue());
     }
     strings.insert(strings.end(), m_choices.begin(), m_choices.end());

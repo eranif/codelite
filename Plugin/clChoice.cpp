@@ -1,7 +1,7 @@
 #include "clChoice.h"
+#include <unordered_map>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
-#include <unordered_map>
 
 wxDEFINE_EVENT(wxEVT_CHOICE_MENU_SHOWING, wxNotifyEvent);
 
@@ -20,7 +20,9 @@ bool clChoice::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const
         initialValue = m_choices[0];
     }
 
-    if(!clButtonBase::Create(parent, id, initialValue, pos, size, 0, validator, name)) { return false; }
+    if(!clButtonBase::Create(parent, id, initialValue, pos, size, 0, validator, name)) {
+        return false;
+    }
     SetHasDropDownMenu(true);
     Bind(wxEVT_BUTTON, &clChoice::OnClick, this);
     return true;
@@ -37,9 +39,13 @@ int clChoice::FindString(const wxString& s, bool caseSensitive) const
 {
     for(size_t i = 0; i < m_choices.size(); ++i) {
         if(caseSensitive) {
-            if(m_choices[i] == s) { return i; }
+            if(m_choices[i] == s) {
+                return i;
+            }
         } else {
-            if(s.CmpNoCase(m_choices[i]) == 0) { return i; }
+            if(s.CmpNoCase(m_choices[i]) == 0) {
+                return i;
+            }
         }
     }
     return wxNOT_FOUND;
@@ -49,23 +55,31 @@ int clChoice::GetSelection() const { return m_selection; }
 
 wxString clChoice::GetString(size_t index) const
 {
-    if(index >= m_choices.size()) { return ""; }
+    if(index >= m_choices.size()) {
+        return "";
+    }
     return m_choices[index];
 }
 
 void clChoice::SetSelection(size_t index)
 {
-    if(index >= m_choices.size()) { return; }
+    if(index >= m_choices.size()) {
+        return;
+    }
     m_selection = index;
     SetText(m_choices[m_selection]);
 }
 
 void clChoice::SetString(size_t index, const wxString& str)
 {
-    if(index >= m_choices.size()) { return; }
+    if(index >= m_choices.size()) {
+        return;
+    }
     m_choices[index] = str;
     // if we are updating the selected item, refresh the view
-    if(index == (size_t)m_selection) { SetText(m_choices[m_selection]); }
+    if(index == (size_t)m_selection) {
+        SetText(m_choices[m_selection]);
+    }
 }
 
 wxString clChoice::GetStringSelection() const { return GetString((size_t)m_selection); }
@@ -73,7 +87,9 @@ wxString clChoice::GetStringSelection() const { return GetString((size_t)m_selec
 void clChoice::SetStringSelection(const wxString& str)
 {
     int where = FindString(str, true);
-    if(where != wxNOT_FOUND) { SetSelection((size_t)where); }
+    if(where != wxNOT_FOUND) {
+        SetSelection((size_t)where);
+    }
 }
 
 void clChoice::OnClick(wxCommandEvent& event)
@@ -88,8 +104,10 @@ void clChoice::DoShowMenu()
     wxNotifyEvent eventShowing(wxEVT_CHOICE_MENU_SHOWING);
     eventShowing.SetEventObject(this);
     GetEventHandler()->ProcessEvent(eventShowing);
-    if(!eventShowing.IsAllowed()) { return; }
-    
+    if(!eventShowing.IsAllowed()) {
+        return;
+    }
+
     wxMenu menu;
     int selectedIndex = wxNOT_FOUND;
     std::unordered_map<int, int> idToIndex;
@@ -101,14 +119,16 @@ void clChoice::DoShowMenu()
         idToIndex.insert({ menuId, i });
         menu.Bind(wxEVT_MENU,
                   [&](wxCommandEvent& e) {
-                      if(idToIndex.count(e.GetId())) { selectedIndex = idToIndex[e.GetId()]; }
+                      if(idToIndex.count(e.GetId())) {
+                          selectedIndex = idToIndex[e.GetId()];
+                      }
                   },
                   menuId);
     }
 
     // Show the menu
     ShowMenu(menu);
-    
+
     // Update the button label
     if(selectedIndex != wxNOT_FOUND) {
         SetSelection(selectedIndex);
@@ -122,7 +142,9 @@ void clChoice::DoShowMenu()
 
 void clChoice::Render(wxDC& dc)
 {
-    if(m_popupShown) { SetPressed(); }
+    if(m_popupShown) {
+        SetPressed();
+    }
     clButtonBase::Render(dc);
 }
 
@@ -132,7 +154,11 @@ int clChoice::Append(const wxString& str)
     return (m_choices.size() - 1);
 }
 
-void clChoice::Append(const wxArrayString& items) { m_choices.insert(m_choices.end(), items.begin(), items.end()); }
+void clChoice::Append(const wxArrayString& items)
+{
+    m_choices.reserve(m_choices.size() + items.size());
+    m_choices.insert(m_choices.end(), items.begin(), items.end());
+}
 
 void clChoice::Clear()
 {

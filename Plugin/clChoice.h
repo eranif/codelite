@@ -43,6 +43,11 @@ public:
     size_t GetCount() const { return m_choices.size(); }
 
     /**
+     * @brief return true if there are not items in this control
+     */
+    bool IsEmpty() const { return GetCount() == 0; }
+    
+    /**
      * @brief return the selected item index
      * @return
      */
@@ -72,22 +77,22 @@ public:
      * @brief Selects the item with the specified string in the control
      */
     void SetStringSelection(const wxString& str);
-    
+
     /**
      * @brief append string
      */
     int Append(const wxString& str);
-    
+
     /**
      * @brief append items
      */
     void Append(const wxArrayString& items);
-    
+
     /**
      * @brief clear the current control strings
      */
     void Clear();
-    
+
     /**
      * @brief replace the current items in the control
      */

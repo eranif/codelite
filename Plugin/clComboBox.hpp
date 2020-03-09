@@ -6,12 +6,15 @@
 #include <wx/combobox.h>
 #include <wx/control.h>
 
+#define INVALID_SIZE_T static_cast<size_t>(wxNOT_FOUND)
+
 class WXDLLIMPEXP_SDK clComboBox : public wxControl
 {
     wxArrayString m_choices;
     wxTextCtrl* m_textCtrl = nullptr;
     clButton* m_button = nullptr;
-    int m_selection = wxNOT_FOUND;
+    size_t m_selection = INVALID_SIZE_T;
+    size_t m_cbStyle = 0;
 
 protected:
     void DoCreate(const wxString& value);
@@ -70,7 +73,7 @@ public:
     /**
      * @brief Returns the index of the selected item or wxNOT_FOUND if no item is selected.
      */
-    int GetSelection() const { return m_selection; }
+    size_t GetSelection() const { return m_selection; }
 
     /**
      * @brief Changes the text of the specified combobox item.
@@ -101,7 +104,7 @@ public:
 
     void Append(const std::vector<wxString>& strings);
     void Append(const wxArrayString& strings);
-    int Append(const wxString& text);
+    size_t Append(const wxString& text);
     /**
      * @brief Removes all items from the control.
      */
@@ -125,7 +128,7 @@ public:
     /**
      * @brief Finds an item whose label matches the given string.
      */
-    int FindString(const wxString& s, bool bCase = false) const;
+    size_t FindString(const wxString& s, bool bCase = false) const;
     /**
      * @brief Gets the contents of the control.
      */

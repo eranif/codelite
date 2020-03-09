@@ -411,7 +411,6 @@ int FindInFilesDialog::ShowDialog()
         }
     }
 
-    m_findString->SetSelection(-1, -1); // select all
     m_findString->CallAfter(&wxTextCtrl::SetFocus);
     return wxDialog::ShowModal();
 }

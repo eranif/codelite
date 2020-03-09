@@ -50,9 +50,9 @@ class FindInFilesDialogBase : public wxDialog
 protected:
     wxPanel* m_panelMainPanel;
     wxStaticText* m_staticText1;
-    wxComboBox* m_findString;
+    clThemedComboBox* m_findString;
     wxStaticText* m_staticText102;
-    wxComboBox* m_replaceString;
+    clThemedComboBox* m_replaceString;
     wxStaticText* m_staticText3;
     clThemedComboBox* m_fileTypes;
     wxStaticText* m_staticText2;
@@ -80,9 +80,9 @@ protected:
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
-    wxComboBox* GetFindString() { return m_findString; }
+    clThemedComboBox* GetFindString() { return m_findString; }
     wxStaticText* GetStaticText102() { return m_staticText102; }
-    wxComboBox* GetReplaceString() { return m_replaceString; }
+    clThemedComboBox* GetReplaceString() { return m_replaceString; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     clThemedComboBox* GetFileTypes() { return m_fileTypes; }
     wxStaticText* GetStaticText2() { return m_staticText2; }

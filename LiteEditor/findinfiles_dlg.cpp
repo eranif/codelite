@@ -51,8 +51,8 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText1, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_findStringArr;
-    m_findString = new wxComboBox(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
-                                  wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_findStringArr, 0);
+    m_findString = new clThemedComboBox(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_findStringArr, 0);
     m_findString->SetToolTip(_("Find what"));
     m_findString->SetFocus();
 #if wxVERSION_NUMBER >= 3000
@@ -67,8 +67,8 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText102, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_replaceStringArr;
-    m_replaceString = new wxComboBox(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_replaceStringArr, 0);
+    m_replaceString = new clThemedComboBox(m_panelMainPanel, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_replaceStringArr, 0);
 #if wxVERSION_NUMBER >= 3000
     m_replaceString->SetHint(_("Replace with"));
 #endif

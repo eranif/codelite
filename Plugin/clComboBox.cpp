@@ -70,6 +70,8 @@ void clComboBox::DoCreate(const wxString& value)
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_CHAR_HOOK, &clComboBox::OnCharHook, this);
+    Bind(wxEVT_SET_FOCUS, &clComboBox::OnFocus, this);
+
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
@@ -245,4 +247,10 @@ void clComboBox::OnCharHook(wxKeyEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void clComboBox::OnFocus(wxFocusEvent& event)
+{
+    event.Skip();
+    m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }

@@ -44,6 +44,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
     for(size_t i = 0; i < n; ++i) {
         m_choices.push_back(choices[i]);
     }
+    m_cbStyle = style & ~wxWINDOW_STYLE_MASK;
     DoCreate(value);
     return res;
 }
@@ -54,6 +55,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
     wxUnusedVar(validator);
     wxUnusedVar(name);
     bool res = wxControl::Create(parent, id, pos, size, wxNO_BORDER);
+    m_cbStyle = style & ~wxWINDOW_STYLE_MASK;
     m_choices = choices;
     DoCreate(value);
     return res;

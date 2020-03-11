@@ -5,7 +5,7 @@
 clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                        size_t n, const wxString choices[], long style, const wxValidator& validator,
                        const wxString& name)
-    : wxControl(parent, id, pos, size, style)
+    : wxControl(parent, id, pos, size, wxNO_BORDER)
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
@@ -19,7 +19,7 @@ clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, c
 
 clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                        const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
-    : wxControl(parent, id, pos, size, style)
+    : wxControl(parent, id, pos, size, wxNO_BORDER)
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
@@ -39,7 +39,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
-    bool res = wxControl::Create(parent, id, pos, size, style);
+    bool res = wxControl::Create(parent, id, pos, size, wxNO_BORDER);
     m_choices.reserve(n);
     for(size_t i = 0; i < n; ++i) {
         m_choices.push_back(choices[i]);
@@ -53,7 +53,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
 {
     wxUnusedVar(validator);
     wxUnusedVar(name);
-    bool res = wxControl::Create(parent, id, pos, size, style);
+    bool res = wxControl::Create(parent, id, pos, size, wxNO_BORDER);
     m_choices = choices;
     DoCreate(value);
     return res;

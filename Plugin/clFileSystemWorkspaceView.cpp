@@ -48,11 +48,13 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     m_options &= ~kShowHiddenFolders;
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
-
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clFileSystemWorkspaceView::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clFileSystemWorkspaceView::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
 }
 
 clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
@@ -65,6 +67,9 @@ clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
     m_buttonConfigs->Unbind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
     GetToolBar()->Unbind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
                          XRCID("ID_BUILD_BUTTON"));
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
 }
 
 void clFileSystemWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -173,4 +178,25 @@ void clFileSystemWorkspaceView::OnBuildActiveProjectDropdown(wxCommandEvent& eve
         return;
     }
     clGetManager()->ShowBuildMenu(m_toolbar, XRCID("ID_BUILD_BUTTON"));
+}
+
+void clFileSystemWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& event)
+{
+    event.Skip();
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        clConfig::Get().Write("FindInFiles/FS/Mask", event.GetFileMask());
+        clConfig::Get().Write("FindInFiles/FS/LookIn", event.GetPaths());
+    }
+}
+
+void clFileSystemWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
+{
+    event.Skip();
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        // Load the C++ workspace values from the configuration
+        event.SetFileMask(clConfig::Get().Read("FindInFiles/FS/Mask",
+                                               wxString("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;"
+                                                        "*.xml;*.json;*.sql;*.txt;*.plist;CMakeLists.txt;*.rc;*.iss")));
+        event.SetPaths(clConfig::Get().Read("FindInFiles/FS/LookIn", wxString("<Entire Workspace>")));
+    }
 }

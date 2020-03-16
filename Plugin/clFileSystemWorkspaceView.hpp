@@ -26,7 +26,9 @@ protected:
     void OnProgramStarted(clExecuteEvent& event);
     void OnProgramStopped(clExecuteEvent& event);
     void OnBuildActiveProjectDropdown(wxCommandEvent& event);
-
+    void OnFindInFilesDismissed(clFindInFilesEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event);
+    
 protected:
     void DoCreateBuildDropDownMenu(wxMenu* menu);
 

@@ -25,6 +25,7 @@
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
@@ -124,7 +125,8 @@ OpenWindowsPanel::~OpenWindowsPanel()
 }
 
 #define CHECK_WORKSPACE_CLOSING() \
-    if(m_workspaceClosing) return
+    if(m_workspaceClosing)        \
+    return
 
 void OpenWindowsPanel::OnActivePageChanged(wxCommandEvent& e)
 {
@@ -141,7 +143,9 @@ void OpenWindowsPanel::OnActiveEditorChanged(wxCommandEvent& e)
     CHECK_WORKSPACE_CLOSING();
 
     PopulateView();
-    if(m_mgr->GetActiveEditor()) { DoSelectItem(m_mgr->GetActiveEditor()); }
+    if(m_mgr->GetActiveEditor()) {
+        DoSelectItem(m_mgr->GetActiveEditor());
+    }
 }
 
 void OpenWindowsPanel::OnAllEditorsClosed(wxCommandEvent& e)
@@ -158,7 +162,9 @@ void OpenWindowsPanel::OnCloseSelectedFiles(wxCommandEvent& e)
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
 
-    if(items.IsEmpty()) { return; }
+    if(items.IsEmpty()) {
+        return;
+    }
 
     // Close the page, it will be removed from the UI later
     std::vector<wxFileName> files;
@@ -189,7 +195,8 @@ void OpenWindowsPanel::OnSaveSelectedFiles(wxCommandEvent& e)
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
 
-    if(items.IsEmpty()) return;
+    if(items.IsEmpty())
+        return;
 
     for(size_t i = 0; i < items.GetCount(); ++i) {
         DoSaveItem(items.Item(i));
@@ -202,7 +209,9 @@ void OpenWindowsPanel::DoSaveItem(wxDataViewItem item)
     if(data) {
         if(data->IsFile()) {
             IEditor* editor = m_mgr->FindEditor(data->tab.filename.GetFullPath());
-            if(editor) { editor->Save(); }
+            if(editor) {
+                editor->Save();
+            }
         }
     }
 }
@@ -314,7 +323,9 @@ void OpenWindowsPanel::OnTabSelected(wxDataViewEvent& event)
         m_mgr->OpenFile(data->tab.filename.GetFullPath(), wxEmptyString, wxNOT_FOUND, OF_None);
     } else {
         wxWindow* page = m_mgr->FindPage(data->tab.text);
-        if(page) { m_mgr->SelectPage(page); }
+        if(page) {
+            m_mgr->SelectPage(page);
+        }
     }
 }
 
@@ -329,7 +340,9 @@ void OpenWindowsPanel::AppendEditor(const clTab& tab)
     wxVector<wxVariant> cols;
     cols.push_back(value);
     m_dvListCtrl->AppendItem(cols, (wxUIntPtr)data);
-    if(tab.isFile) { m_editors.insert(std::make_pair(tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex))); }
+    if(tab.isFile) {
+        m_editors.insert({ tab.filename.GetFullPath(), m_dvListCtrl->RowToItem(itemIndex) });
+    }
 }
 
 wxString OpenWindowsPanel::GetEditorPath(wxDataViewItem item)
@@ -362,7 +375,8 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
 {
     wxDataViewItemArray items;
     m_dvListCtrl->GetSelections(items);
-    if(items.IsEmpty()) return;
+    if(items.IsEmpty())
+        return;
 
     wxMenu* menu;
     if(items.GetCount() == 1) {
@@ -427,22 +441,27 @@ void OpenWindowsPanel::OnIdle(wxIdleEvent& event)
 void OpenWindowsPanel::OnEditorModified(clCommandEvent& event)
 {
     event.Skip();
-    if(!m_initDone) return;
+    if(!m_initDone)
+        return;
     IEditor* editor = m_mgr->FindEditor(event.GetFileName());
-    if(editor) { DoMarkModify(event.GetFileName(), editor->IsModified()); }
+    if(editor) {
+        DoMarkModify(event.GetFileName(), editor->IsModified());
+    }
 }
 
 void OpenWindowsPanel::OnEditorSaved(clCommandEvent& event)
 {
     event.Skip();
-    if(!m_initDone) return;
+    if(!m_initDone)
+        return;
     DoMarkModify(event.GetFileName(), false);
 }
 
 void OpenWindowsPanel::DoMarkModify(const wxString& filename, bool b)
 {
     std::map<wxString, wxDataViewItem>::iterator iter = m_editors.find(filename);
-    if(iter == m_editors.end()) return;
+    if(iter == m_editors.end())
+        return;
     wxDataViewItem item = iter->second;
 
     wxBitmap bmp;
@@ -458,16 +477,25 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     wxString title;
     wxStyledTextCtrl* editor(NULL);
     if(tab.isFile) {
-        title = tab.filename.GetFullName();
+        const wxFileName& fn = tab.filename;
+        if(fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
+            title = fn.GetDirs().Last() + wxFileName::GetPathSeparator() + fn.GetFullName();
+        } else {
+            title = tab.filename.GetFullName();
+        }
         IEditor* i_editor = clGetManager()->FindEditor(tab.filename.GetFullPath());
-        if(i_editor) { editor = i_editor->GetCtrl(); }
+        if(i_editor) {
+            editor = i_editor->GetCtrl();
+        }
     } else {
         title = tab.text;
     }
 
     FileExtManager::FileType ft = FileExtManager::GetType(title, FileExtManager::TypeText);
     int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(ft);
-    if(editor && editor->GetModify()) { title.Prepend("*"); }
+    if(editor && editor->GetModify()) {
+        title.Prepend("*");
+    }
 
     wxVariant value = ::MakeBitmapIndexText(title, imgId);
     return value;

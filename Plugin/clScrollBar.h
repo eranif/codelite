@@ -7,8 +7,8 @@
 #include "clColours.h"
 
 #if defined(__WXGTK__)
-#define CL_USE_NATIVE_SCROLLBAR 0
-#define CL_USE_CUSTOM_SCROLLBAR 1
+#define CL_USE_NATIVE_SCROLLBAR 1
+#define CL_USE_CUSTOM_SCROLLBAR 0
 #else
 #define CL_USE_NATIVE_SCROLLBAR 1
 #define CL_USE_CUSTOM_SCROLLBAR 0

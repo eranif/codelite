@@ -40,6 +40,19 @@
 #include "clSystemSettings.h"
 
 // --------------------------------------------
+static bool IsRectOK(wxDC& dc, const wxRect& rect)
+{
+    const wxSize dc_size = dc.GetSize();
+
+    if (0 > rect.x ||
+        0 > rect.y ||
+        0 >= rect.width ||
+        0 >= rect.height ||
+        dc_size.GetWidth() < (rect.x + rect.width) ||
+        dc_size.GetHeight() < (rect.y + rect.height))
+            return (false);
+    return (true);
+}
 
 static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 {
@@ -105,6 +118,8 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 {
     wxRect buttonRect = _rect;
 
+    if (!IsRectOK(dc, _rect))
+            return;
     // Make sure that the height and width of the button are equals
     if(buttonRect.GetWidth() != buttonRect.GetHeight()) {
         buttonRect.SetHeight(wxMin(buttonRect.GetHeight(), buttonRect.GetWidth()));
@@ -149,11 +164,10 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
                                wxAuiPaneInfo& pane)
 {
-    wxRect tmpRect(wxPoint(0, 0), rect.GetSize());
+    wxRect tmpRect;
 
-    // Hackishly prevent assertions on linux
-    if(tmpRect.GetHeight() == 0) tmpRect.SetHeight(1);
-    if(tmpRect.GetWidth() == 0) tmpRect.SetWidth(1);
+    if (!IsRectOK(dc, rect))
+            return;
 
 #if defined(__WXOSX__)
     tmpRect = rect;
@@ -195,6 +209,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
 #else
+    tmpRect = rect;
+    tmpRect.SetPosition(wxPoint(0, 0));
     wxBitmap bmp(tmpRect.GetSize());
     {
         wxMemoryDC memDc;
@@ -244,6 +260,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
+    if (!IsRectOK(dc, rect))
+            return;
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(m_bgColour);
@@ -253,6 +271,8 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+    if (!IsRectOK(dc, rect))
+            return;
     dc.SetPen(m_bgColour);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
@@ -260,6 +280,8 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
+    if (!IsRectOK(dc, rect))
+            return;
     wxUnusedVar(window);
     wxUnusedVar(orientation);
     dc.SetPen(*wxTRANSPARENT_PEN);

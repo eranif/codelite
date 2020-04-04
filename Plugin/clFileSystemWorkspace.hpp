@@ -5,6 +5,7 @@
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
 #include "clDebuggerTerminal.h"
+#include "clFileCache.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteBuilder.hpp"
@@ -16,7 +17,6 @@
 #include <unordered_set>
 #include <vector>
 #include <wx/arrstr.h>
-#include "clFileCache.hpp"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -44,10 +44,10 @@ protected:
     CompilerPtr GetCompiler();
 
     /**
-     * @brief return the executable to run + args
+     * @brief return the executable to run + args + working directory
      * this method also expands all macros/env variables
      */
-    void GetExecutable(wxString& exe, wxString& args);
+    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
 
     //===--------------------------
     // Event handlers

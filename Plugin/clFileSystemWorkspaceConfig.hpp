@@ -31,11 +31,18 @@ protected:
     wxString m_remoteAccount;
     wxString m_debugger;
     wxString m_excludeFilesPattern;
+    wxString m_workingDirectory;
 
 public:
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
-    JSONItem ToJSON() const;
-    void FromJSON(const JSONItem& json);
+    /**
+     * @brief return 2 json nodes. The first should be stored in the shared configuration file and the other in the
+     * local configuration file
+     */
+    std::pair<JSONItem, JSONItem> ToJSON() const;
+    void FromJSONOld(const JSONItem& json);
+    void FromLocalJSON(const JSONItem& json);
+    void FromSharedJSON(const JSONItem& json);
 
     void SetExcludeFilesPattern(const wxString& excludeFilesPattern)
     {
@@ -91,6 +98,8 @@ public:
     clFileSystemWorkspaceConfig::Ptr_t Clone() const;
     void SetDebugger(const wxString& debugger) { this->m_debugger = debugger; }
     const wxString& GetDebugger() const { return m_debugger; }
+    void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
+    const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings
@@ -103,8 +112,8 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings
     wxString m_name;
 
 protected:
-    JSONItem ToJSON(JSONItem& item) const;
-    void FromJSON(const JSONItem& json);
+    void ToJSON(JSONItem& shared, JSONItem& local) const;
+    void FromJSON(const JSONItem& shared, const JSONItem& local);
 
 public:
     clFileSystemWorkspaceSettings();

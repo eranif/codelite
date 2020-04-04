@@ -250,7 +250,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer33->SetFlexibleDirection(wxBOTH);
     flexGridSizer33->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer33->AddGrowableCol(1);
-    flexGridSizer33->AddGrowableRow(1);
+    flexGridSizer33->AddGrowableRow(2);
     m_panelGeneral->SetSizer(flexGridSizer33);
 
     m_staticText109 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Executable:"), wxDefaultPosition,
@@ -264,6 +264,17 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_filePickerExe->SetToolTip(_("The executable to use for debugging / executing"));
 
     flexGridSizer33->Add(m_filePickerExe, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText191 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Working directory:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText191, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_dirPickerWD = new wxDirPickerCtrl(m_panelGeneral, wxID_ANY, wxEmptyString, _("Select a folder"),
+                                        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)),
+                                        wxDIRP_SMALL | wxDIRP_DEFAULT_STYLE | wxDIRP_USE_TEXTCTRL);
+
+    flexGridSizer33->Add(m_dirPickerWD, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText113 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Arguments:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
@@ -316,8 +327,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     flexGridSizer33->Add(m_staticText125, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceCompilerArr;
-    m_choiceCompiler = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceCompilerArr, 0);
+    m_choiceCompiler = new clThemedChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceCompilerArr, 0);
     m_choiceCompiler->SetToolTip(_("Select the toolchain to use"));
 
     flexGridSizer33->Add(m_choiceCompiler, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));

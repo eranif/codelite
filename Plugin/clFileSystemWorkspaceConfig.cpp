@@ -4,6 +4,7 @@
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
 #include "debuggermanager.h"
+#include "file_logger.h"
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
@@ -17,61 +18,86 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     m_buildTargets.insert({ "clean", "" });
     m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
-    if(compiler) { m_compiler = compiler->GetName(); }
+    if(compiler) {
+        m_compiler = compiler->GetName();
+    }
 }
 
 ///===-------------------------------------
 /// A single workspace configuration
 ///===-------------------------------------
-JSONItem clFileSystemWorkspaceConfig::ToJSON() const
+std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
 {
-    JSONItem item = JSONItem::createObject();
-    item.addProperty("name", GetName());
-    item.addProperty("flags", m_flags);
-    item.addProperty("compile_flags", m_compileFlags);
-    item.addProperty("file_extensions", m_fileExtensions);
-    item.addProperty("executable", m_executable);
-    item.addProperty("arguments", m_args);
-    item.addProperty("environment", m_environment);
-    item.addProperty("compiler", m_compiler);
-    item.addProperty("remoteFolder", m_remoteFolder);
-    item.addProperty("remoteAccount", m_remoteAccount);
-    item.addProperty("debugger", m_debugger);
-    item.addProperty("excludeFilesPattern", m_excludeFilesPattern);
-    JSONItem arrTargets = JSONItem::createArray("targets");
-    item.append(arrTargets);
+    // we store items in two locations:
+    // local & shared
+    // the local shared is only accessible to the current machine
+    // while the shared can be stored in git or any other source control
+    JSONItem shared = JSONItem::createObject();
+    shared.addProperty("name", GetName());
+    JSONItem arrTargets = shared.AddArray("targets");
 
     for(const auto& vt : m_buildTargets) {
         JSONItem target = JSONItem::createArray();
+        arrTargets.arrayAppend(target);
         target.arrayAppend(vt.first);
         target.arrayAppend(vt.second);
-        arrTargets.arrayAppend(target);
     }
-    return item;
+
+    shared.addProperty("file_extensions", m_fileExtensions);
+    shared.addProperty("excludeFilesPattern", m_excludeFilesPattern);
+    shared.addProperty("debugger", m_debugger);
+
+    // Local items
+    JSONItem local = JSONItem::createObject();
+    local.addProperty("name", GetName());
+    local.addProperty("flags", m_flags);
+    local.addProperty("compile_flags", m_compileFlags);
+    local.addProperty("executable", m_executable);
+    local.addProperty("arguments", m_args);
+    local.addProperty("environment", m_environment);
+    local.addProperty("compiler", m_compiler);
+    local.addProperty("remoteFolder", m_remoteFolder);
+    local.addProperty("remoteAccount", m_remoteAccount);
+    local.addProperty("workingDirectory", m_workingDirectory);
+    return { shared, local };
 }
 
-void clFileSystemWorkspaceConfig::FromJSON(const JSONItem& json)
+void clFileSystemWorkspaceConfig::FromSharedJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();
-    m_flags = json.namedObject("flags").toSize_t(m_flags);
-    m_compileFlags = json.namedObject("compile_flags").toArrayString();
-    m_fileExtensions = json.namedObject("file_extensions").toString(m_fileExtensions);
-    m_executable = json.namedObject("executable").toString();
-    m_args = json.namedObject("arguments").toString();
-    m_environment = json.namedObject("environment").toString();
-    m_compiler = json.namedObject("compiler").toString(m_compiler);
-    m_remoteFolder = json.namedObject("remoteFolder").toString();
-    m_remoteAccount = json.namedObject("remoteAccount").toString();
-    m_debugger = json.namedObject("debugger").toString(m_debugger);
-    m_excludeFilesPattern = json.namedObject("excludeFilesPattern").toString(m_excludeFilesPattern);
     JSONItem arrTargets = json.namedObject("targets");
     int nCount = arrTargets.arraySize();
     m_buildTargets.clear();
     for(int i = 0; i < nCount; ++i) {
         JSONItem target = arrTargets.arrayItem(i);
-        if(target.arraySize() != 2) { continue; }
-        m_buildTargets.insert({ target.arrayItem(0).toString(), target.arrayItem(1).toString() });
+        if(target.arraySize() != 2) {
+            continue;
+        }
+        m_buildTargets.insert({ target[0].toString(), target[1].toString() });
     }
+    m_fileExtensions = json.namedObject("file_extensions").toString(m_fileExtensions);
+    m_excludeFilesPattern = json.namedObject("excludeFilesPattern").toString(m_excludeFilesPattern);
+    m_debugger = json.namedObject("debugger").toString(m_debugger);
+}
+
+void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
+{
+    m_name = json["name"].toString();
+    m_flags = json["flags"].toSize_t(m_flags);
+    m_compileFlags = json["compile_flags"].toArrayString();
+    m_executable = json["executable"].toString();
+    m_args = json["arguments"].toString();
+    m_environment = json["environment"].toString();
+    m_compiler = json["compiler"].toString(m_compiler);
+    m_remoteFolder = json["remoteFolder"].toString();
+    m_remoteAccount = json["remoteAccount"].toString();
+    m_workingDirectory = json["workingDirectory"].toString();
+}
+
+void clFileSystemWorkspaceConfig::FromJSONOld(const JSONItem& json)
+{
+    FromSharedJSON(json);
+    FromLocalJSON(json);
 }
 
 wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile,
@@ -83,7 +109,9 @@ wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& work
     // Read the user added paths
     wxString strCompileFlags;
     for(const wxString& l : m_compileFlags) {
-        if(!l.IsEmpty()) { strCompileFlags << l << " "; }
+        if(!l.IsEmpty()) {
+            strCompileFlags << l << " ";
+        }
     }
     strCompileFlags.Trim();
 
@@ -106,7 +134,9 @@ wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& work
             options.insert(options.end(), compilerPaths.begin(), compilerPaths.end());
         }
         options.insert(options.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
-        if(!cclp.GetStandard().empty()) { options.push_back(cclp.GetStandardWithPrefix()); }
+        if(!cclp.GetStandard().empty()) {
+            options.push_back(cclp.GetStandardWithPrefix());
+        }
         for(const wxString& opt : options) {
             compile_flags_txt << opt << "\n";
         }
@@ -129,7 +159,9 @@ wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 {
     wxString s;
     for(const wxString& l : m_compileFlags) {
-        if(!l.IsEmpty()) { s << l << "\n"; }
+        if(!l.IsEmpty()) {
+            s << l << "\n";
+        }
     }
     return s.Trim();
 }
@@ -154,56 +186,102 @@ clFileSystemWorkspaceSettings::clFileSystemWorkspaceSettings()
 
 clFileSystemWorkspaceSettings::~clFileSystemWorkspaceSettings() {}
 
-JSONItem clFileSystemWorkspaceSettings::ToJSON(JSONItem& item) const
+void clFileSystemWorkspaceSettings::ToJSON(JSONItem& shared, JSONItem& local) const
 {
-    item.addProperty("workspace_type", WORKSPACE_TYPE);
-    item.addProperty("selected_config", m_selectedConfig);
-    item.addProperty("name", m_name);
-    JSONItem configs = JSONItem::createArray("configs");
-    item.append(configs);
-    for(const auto& config : m_configsMap) {
-        configs.arrayAppend(config.second->ToJSON());
+    // add the shared items
+    shared.addProperty("workspace_type", WORKSPACE_TYPE);
+    shared.addProperty("name", m_name);
+
+    // Add the shared items
+    {
+        JSONItem configs = shared.AddArray("configs");
+        for(const auto& config : m_configsMap) {
+            configs.arrayAppend(config.second->ToJSON().first);
+        }
     }
-    return item;
+
+    // add the local items
+    {
+        local.addProperty("selected_config", m_selectedConfig);
+        JSONItem configs = local.AddArray("configs");
+        for(const auto& config : m_configsMap) {
+            configs.arrayAppend(config.second->ToJSON().second);
+        }
+    }
 }
 
-void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& json)
+void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONItem& local)
 {
-    m_workspaceType = json.namedObject("workspace_type").toString(WORKSPACE_TYPE);
-    m_selectedConfig = json.namedObject("selected_config").toString();
-    m_name = json.namedObject("name").toString();
-    JSONItem arrConfigs = json.namedObject("configs");
-    int nCount = arrConfigs.arraySize();
+    // first load the settings from the shared workspace config
+    m_workspaceType = shared.namedObject("workspace_type").toString(WORKSPACE_TYPE);
+    m_name = shared.namedObject("name").toString();
+    // The "selected config" is kept in the local workspace
+    m_selectedConfig = local.namedObject("selected_config").toString();
+    // load the configurations
+    JSONItem localConfigs = shared.namedObject("configs");
+    JSONItem sharedConfigs = local.namedObject("configs");
+    if(sharedConfigs.arraySize() != localConfigs.arraySize()) {
+        clWARNING() << "Local config and shared configs do not match!" << clEndl;
+        return;
+    }
 
+    int nCount = localConfigs.arraySize();
     wxString firstConfig;
     bool selectedConfigFound = false;
     m_configsMap.clear();
-
     for(int i = 0; i < nCount; ++i) {
         clFileSystemWorkspaceConfig::Ptr_t conf(new clFileSystemWorkspaceConfig);
-        conf->FromJSON(arrConfigs.arrayItem(i));
-        if(firstConfig.empty()) { firstConfig = conf->GetName(); }
-        if(!selectedConfigFound && (conf->GetName() == m_selectedConfig)) { selectedConfigFound = true; }
+        conf->FromSharedJSON(localConfigs.arrayItem(i));
+        conf->FromLocalJSON(sharedConfigs.arrayItem(i));
+        if(firstConfig.empty()) {
+            firstConfig = conf->GetName();
+        }
+        if(!selectedConfigFound && (conf->GetName() == m_selectedConfig)) {
+            selectedConfigFound = true;
+        }
         m_configsMap.insert({ conf->GetName(), conf });
     }
 
-    if(!selectedConfigFound && !firstConfig.IsEmpty()) { m_selectedConfig = firstConfig; }
+    if(!selectedConfigFound && !firstConfig.IsEmpty()) {
+        m_selectedConfig = firstConfig;
+    }
 }
 
 bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename)
 {
-    JSON root(cJSON_Object);
-    JSONItem item = root.toElement();
-    ToJSON(item);
-    root.save(filename);
+    // store the
+    wxFileName localWorkspace = filename;
+    localWorkspace.AppendDir(".codelite");
+    localWorkspace.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    JSON root_local(cJSON_Object);
+    JSON root_shared(cJSON_Object);
+
+    JSONItem itemLocal = root_local.toElement();
+    JSONItem itemShared = root_shared.toElement();
+    ToJSON(itemShared, itemLocal);
+    root_shared.save(filename);
+    root_local.save(localWorkspace);
     return true;
 }
 
 bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename)
 {
-    JSON root(filename);
-    if(!root.isOk()) { return false; }
-    FromJSON(root.toElement());
+    wxFileName localWorkspace = filename;
+    localWorkspace.AppendDir(".codelite");
+    JSON root_shared(filename);
+    JSON root_local(localWorkspace);
+    if(!root_local.isOk()) {
+        // old version
+        clDEBUG() << "clFileSystemWorkspaceSettings: no local file found. Loading from shared file" << clEndl;
+        auto iShared = root_shared.toElement();
+        FromJSON(iShared, iShared);
+    } else {
+        clDEBUG() << "clFileSystemWorkspaceSettings: loading settings from:" << filename << "and" << localWorkspace
+                  << clEndl;
+        auto iShared = root_shared.toElement();
+        auto iLocal = root_local.toElement();
+        FromJSON(iShared, iLocal);
+    }
     return true;
 }
 
@@ -216,17 +294,23 @@ bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name)
     clFileSystemWorkspaceConfig::Ptr_t conf(new clFileSystemWorkspaceConfig);
     conf->SetName(name);
     m_configsMap.insert({ name, conf });
-    if(m_configsMap.size() == 1) { m_selectedConfig = conf->GetName(); }
+    if(m_configsMap.size() == 1) {
+        m_selectedConfig = conf->GetName();
+    }
     return true;
 }
 
 bool clFileSystemWorkspaceSettings::DeleteConfig(const wxString& name)
 {
-    if(m_configsMap.count(name) == 0) { return false; }
+    if(m_configsMap.count(name) == 0) {
+        return false;
+    }
     m_configsMap.erase(name);
     if(m_selectedConfig == name) {
         m_selectedConfig.clear();
-        if(!m_configsMap.empty()) { m_selectedConfig = m_configsMap.begin()->second->GetName(); }
+        if(!m_configsMap.empty()) {
+            m_selectedConfig = m_configsMap.begin()->second->GetName();
+        }
     }
     return true;
 }
@@ -234,7 +318,9 @@ bool clFileSystemWorkspaceSettings::DeleteConfig(const wxString& name)
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetSelectedConfig() const
 {
     // sanity
-    if(m_configsMap.empty()) { return clFileSystemWorkspaceConfig::Ptr_t(nullptr); }
+    if(m_configsMap.empty()) {
+        return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
+    }
     if(m_selectedConfig.empty() || (m_configsMap.count(m_selectedConfig) == 0)) {
         return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
     }
@@ -243,8 +329,12 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetSelectedCon
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceSettings::GetConfig(const wxString& name) const
 {
-    if(name.empty()) { return GetSelectedConfig(); }
-    if(m_configsMap.count(name) == 0) { return clFileSystemWorkspaceConfig::Ptr_t(nullptr); }
+    if(name.empty()) {
+        return GetSelectedConfig();
+    }
+    if(m_configsMap.count(name) == 0) {
+        return clFileSystemWorkspaceConfig::Ptr_t(nullptr);
+    }
     return m_configsMap.find(name)->second;
 }
 
@@ -258,7 +348,9 @@ void clFileSystemWorkspaceSettings::Clear()
 
 bool clFileSystemWorkspaceSettings::SetSelectedConfig(const wxString& name)
 {
-    if(m_configsMap.count(name) == 0) { return false; }
+    if(m_configsMap.count(name) == 0) {
+        return false;
+    }
     m_selectedConfig = name;
     return true;
 }
@@ -266,7 +358,9 @@ bool clFileSystemWorkspaceSettings::SetSelectedConfig(const wxString& name)
 bool clFileSystemWorkspaceSettings::IsOk(const wxFileName& filename)
 {
     JSON root(filename);
-    if(!root.isOk()) { return false; }
+    if(!root.isOk()) {
+        return false;
+    }
     return root.toElement().namedObject("workspace_type").toString() == WORKSPACE_TYPE;
 }
 

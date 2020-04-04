@@ -86,6 +86,9 @@ public:
     JSONItem namedObject(const wxString& name) const;
     bool hasNamedObject(const wxString& name) const;
 
+    JSONItem operator[](int index) const;
+    JSONItem operator[](const wxString& name) const;
+
     bool toBool(bool defaultValue = false) const;
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
     wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
@@ -131,6 +134,16 @@ public:
      * @return the newly created array
      */
     static JSONItem createArray(const wxString& name = wxT(""));
+
+    /**
+     * @brief add array to this json and return a referece to the newly added array
+     */
+    JSONItem AddArray(const wxString& name);
+
+    /**
+     * @brief add object to this json and return a referece to the newly added object
+     */
+    JSONItem AddObject(const wxString& name);
 
     /**
      * @brief append new element to this json element

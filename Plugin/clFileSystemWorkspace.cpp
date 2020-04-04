@@ -548,7 +548,7 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
 
         clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
-        
+
         // Notify about build process started
         clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
         EventNotifier::Get()->AddPendingEvent(eventStopped);
@@ -596,12 +596,13 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
         return;
     }
 
-    wxString exe, args;
-    GetExecutable(exe, args);
+    wxString exe, args, wd;
+    GetExecutable(exe, args, wd);
     clEnvList_t envList = GetEnvList();
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
     console->SetAutoTerminate(true);
     console->SetCommand(exe, args);
+    console->SetWorkingDirectory(wd);
     console->SetWaitWhenDone(true);
     console->SetSink(this);
     if(console->Start()) {
@@ -763,7 +764,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         } else {
             clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
             EventNotifier::Get()->AddPendingEvent(e);
-            
+
             // Notify about build process started
             clBuildEvent eventStart(wxEVT_BUILD_STARTED);
             EventNotifier::Get()->AddPendingEvent(eventStart);
@@ -920,14 +921,14 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // Setup the debug session
 
-    wxString exe, args;
-    GetExecutable(exe, args);
+    wxString exe, args, wd;
+    GetExecutable(exe, args, wd);
 
     // Start the debugger
     DebugSessionInfo si;
     si.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
     si.exeName = exe;
-    si.cwd = GetFileName().GetPath();
+    si.cwd = wd;
     clGetManager()->GetBreakpoints(si.bpList);
 
     // Start terminal (doesn't do anything under MSW)
@@ -952,13 +953,15 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     dbgr->Run(args, "");
 }
 
-void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args)
+void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
 {
     exe = GetConfig()->GetExecutable();
     args = GetConfig()->GetArgs();
+    wd = GetConfig()->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : GetConfig()->GetWorkingDirectory();
 
     exe = MacroManager::Instance()->Expand(exe, nullptr, wxEmptyString);
     args = MacroManager::Instance()->Expand(args, nullptr, wxEmptyString);
+    wd = MacroManager::Instance()->Expand(wd, nullptr, wxEmptyString);
 }
 
 CompilerPtr clFileSystemWorkspace::GetCompiler()

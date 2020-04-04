@@ -53,6 +53,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
     m_choiceDebuggers->SetStringSelection(config->GetDebugger());
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
+    m_dirPickerWD->SetPath(config->GetWorkingDirectory());
 }
 
 FSConfigPage::~FSConfigPage() {}
@@ -120,6 +121,7 @@ void FSConfigPage::Save()
     m_config->SetRemoteAccount(m_choiceSSHAccount->GetStringSelection());
     m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
+    m_config->SetWorkingDirectory(m_dirPickerWD->GetPath());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)
@@ -155,7 +157,9 @@ void FSConfigPage::OnSSHBrowse(wxCommandEvent& event)
 #if USE_SFTP
     SFTPBrowserDlg dlg(GetParent(), _("Choose folder"), "", clSFTP::SFTP_BROWSE_FOLDERS);
     dlg.Initialize(m_choiceSSHAccount->GetStringSelection(), m_textCtrlRemoteFolder->GetValue());
-    if(dlg.ShowModal() == wxID_OK) { m_textCtrlRemoteFolder->ChangeValue(dlg.GetPath()); }
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlRemoteFolder->ChangeValue(dlg.GetPath());
+    }
 #endif
 }
 
@@ -183,7 +187,9 @@ void FSConfigPage::DoUpdateSSHAcounts()
     int sel = wxNOT_FOUND;
     for(const auto& v : accounts) {
         int where = m_choiceSSHAccount->Append(v.GetAccountName());
-        if(sel == wxNOT_FOUND && (v.GetAccountName() == selectedAccount)) { sel = where; }
+        if(sel == wxNOT_FOUND && (v.GetAccountName() == selectedAccount)) {
+            sel = where;
+        }
     }
     if(sel != wxNOT_FOUND) {
         m_choiceSSHAccount->SetSelection(sel);

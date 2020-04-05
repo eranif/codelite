@@ -959,6 +959,7 @@ void clTreeCtrl::ScrollToRow(int firstLine)
     UpdateScrollBar();
 #endif
     Refresh();
+    wxSafeYield();
 }
 
 void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
@@ -996,6 +997,7 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
     EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
     Refresh();
     UpdateScrollBar();
+    wxSafeYield();
 }
 
 void clTreeCtrl::SelectChildren(const wxTreeItemId& item)

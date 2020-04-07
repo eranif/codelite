@@ -2053,6 +2053,7 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
     wxStringSet_t macroSet;
     std::vector<wxString> pathsVec;
     wxString compile_flags_content;
+    wxString cxxStandard;
     if(buildConf->IsCustomBuild() && (buildConf->GetBuilder() != "CMake")) {
         // Probably just plain old Makefile build system
         CHECK_PTR_RET(GetWorkspace());
@@ -2090,6 +2091,10 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
             ProcessIncludes(::wxStringTokenize(compilersGlobalPaths.find(cmp->GetName())->second, ";", wxTOKEN_STRTOK),
                             "", pathsSet, pathsVec);
         }
+
+        // Keep the standard
+        cxxStandard = cxxParser.GetStandardWithPrefix();
+
         ProcessMacros(cxxParser.GetMacrosWithPrefix(), macroSet);
         ProcessMacros(cParser.GetMacrosWithPrefix(), macroSet);
     }
@@ -2102,6 +2107,11 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
     // Write the macros
     for(const wxString& macro : macroSet) {
         compile_flags_content << macro << "\n";
+    }
+
+    // Check if standard passed
+    if(!cxxStandard.empty()) {
+        compile_flags_content << cxxStandard << "\n";
     }
 
     // Add the target flag

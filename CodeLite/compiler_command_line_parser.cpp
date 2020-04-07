@@ -85,7 +85,9 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
                 // The include folders are inside the file - read the file and process its content
                 wxFileName fnIncludes(workingDirectory + "/" + opt.Mid(1));
-                if(fnIncludes.Exists()) { AddIncludesFromFile(fnIncludes); }
+                if(fnIncludes.Exists()) {
+                    AddIncludesFromFile(fnIncludes);
+                }
 
             } else if(opt == "-isystem" && (i + 1 < m_argc)) {
 
@@ -139,7 +141,9 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 wxString stds = rest.AfterFirst(wxT('='));
                 stds.Trim().Trim(false);
 
-                if(!stds.IsEmpty()) { m_standard = stds; }
+                if(!stds.IsEmpty()) {
+                    m_standard = stds;
+                }
                 // keep the std as an option as well
                 m_otherOptions.Add(opt);
             } else {
@@ -176,7 +180,8 @@ wxString CompilerCommandLineParser::GetCompileLine() const
 
 wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 {
-    if(m_standard.IsEmpty()) return wxT("");
+    if(m_standard.IsEmpty())
+        return wxT("");
 
     return wxT("-std=") + m_standard;
 }

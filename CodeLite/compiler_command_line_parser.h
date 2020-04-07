@@ -26,11 +26,11 @@
 #ifndef COMMANDLINEPARSER_H
 #define COMMANDLINEPARSER_H
 
-#include <wx/string.h>
+#include "codelite_exports.h"
+#include <set>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
-#include <set>
-#include "codelite_exports.h"
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL CompilerCommandLineParser
 {

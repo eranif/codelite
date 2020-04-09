@@ -109,7 +109,7 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 
     // Sanity
     if(!filename.IsOk() || !filename.FileExists()) {
-        clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
+        //clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
 

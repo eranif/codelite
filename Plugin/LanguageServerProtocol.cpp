@@ -129,7 +129,9 @@ std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
 {
-    if(!IsInitialized()) { return; }
+    if(!IsInitialized()) {
+        return;
+    }
     if(request->As<LSP::CompletionRequest>()) {
         m_lastCompletionRequestId = request->As<LSP::CompletionRequest>()->GetId();
     }
@@ -165,7 +167,9 @@ bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxStri
                                    const wxString& workingDirectory, const wxString& rootFolder,
                                    const wxArrayString& languages, size_t flags)
 {
-    if(IsRunning()) { return true; }
+    if(IsRunning()) {
+        return true;
+    }
     DoClear();
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
@@ -179,7 +183,9 @@ bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxStri
 
 bool LanguageServerProtocol::Start()
 {
-    if(IsRunning()) { return true; }
+    if(IsRunning()) {
+        return true;
+    }
     return DoStart();
 }
 
@@ -207,6 +213,9 @@ bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
 {
     wxString lang = GetLanguageId(fn);
     clDEBUG() << "Language ID for file" << fn << "->" << lang;
+    // for(const auto& lang : m_languages) {
+    //     clDEBUG1() << "    LSP supports language:" << lang << clEndl;
+    // }
     return (m_languages.count(lang) != 0);
 }
 
@@ -231,7 +240,9 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    if(event.IsInsideCommentOrString()) { return; }
+    if(event.IsInsideCommentOrString()) {
+        return;
+    }
     if(CanHandle(editor->GetFileName())) {
         event.Skip(false);
         CodeComplete(editor);
@@ -393,7 +404,9 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
     clDEBUG() << "OpenEditor is called for" << editor->GetFileName();
-    if(!IsInitialized()) { return; }
+    if(!IsInitialized()) {
+        return;
+    }
     if(editor && ShouldHandleFile(editor)) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
@@ -459,7 +472,9 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
 
 void LanguageServerProtocol::ProcessQueue()
 {
-    if(m_Queue.IsEmpty()) { return; }
+    if(m_Queue.IsEmpty()) {
+        return;
+    }
     if(m_Queue.IsWaitingReponse()) {
         clDEBUG() << "LSP is busy, will not send message";
         return;
@@ -474,13 +489,19 @@ void LanguageServerProtocol::ProcessQueue()
     m_network->Send(req->ToString(m_pathConverter));
     m_Queue.SetWaitingReponse(true);
     m_Queue.Pop();
-    if(!req->GetStatusMessage().IsEmpty()) { clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1); }
+    if(!req->GetStatusMessage().IsEmpty()) {
+        clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1);
+    }
 }
 
 void LanguageServerProtocol::CloseEditor(IEditor* editor)
 {
-    if(!IsInitialized()) { return; }
-    if(editor && ShouldHandleFile(editor)) { SendCloseRequest(editor->GetFileName()); }
+    if(!IsInitialized()) {
+        return;
+    }
+    if(editor && ShouldHandleFile(editor)) {
+        SendCloseRequest(editor->GetFileName());
+    }
 }
 
 void LanguageServerProtocol::FindDeclaration(IEditor* editor)
@@ -656,7 +677,9 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                 }
             }
             // A message was consumed from the buffer, see if we got more messages
-            if(!m_outputBuffer.empty()) { continue; }
+            if(!m_outputBuffer.empty()) {
+                continue;
+            }
         }
         break;
     }
@@ -673,7 +696,9 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) { OpenEditor(editor); }
+    if(editor) {
+        OpenEditor(editor);
+    }
 }
 
 void LanguageServerProtocol::FindImplementation(IEditor* editor)
@@ -718,18 +743,24 @@ void LSPRequestMessageQueue::Push(LSP::MessageWithParams::Ptr_t message)
 
     // Messages of type 'Request' require responses from the server
     LSP::Request* req = message->As<LSP::Request>();
-    if(req) { m_pendingReplyMessages.insert({ req->GetId(), message }); }
+    if(req) {
+        m_pendingReplyMessages.insert({ req->GetId(), message });
+    }
 }
 
 void LSPRequestMessageQueue::Pop()
 {
-    if(!m_Queue.empty()) { m_Queue.pop(); }
+    if(!m_Queue.empty()) {
+        m_Queue.pop();
+    }
     SetWaitingReponse(false);
 }
 
 LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::Get()
 {
-    if(m_Queue.empty()) { return LSP::MessageWithParams::Ptr_t(nullptr); }
+    if(m_Queue.empty()) {
+        return LSP::MessageWithParams::Ptr_t(nullptr);
+    }
     return m_Queue.front();
 }
 
@@ -744,8 +775,12 @@ void LSPRequestMessageQueue::Clear()
 
 LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(int msgid)
 {
-    if(m_pendingReplyMessages.empty()) { return LSP::MessageWithParams::Ptr_t(nullptr); }
-    if(m_pendingReplyMessages.count(msgid) == 0) { return LSP::MessageWithParams::Ptr_t(nullptr); }
+    if(m_pendingReplyMessages.empty()) {
+        return LSP::MessageWithParams::Ptr_t(nullptr);
+    }
+    if(m_pendingReplyMessages.count(msgid) == 0) {
+        return LSP::MessageWithParams::Ptr_t(nullptr);
+    }
     LSP::MessageWithParams::Ptr_t msgptr = m_pendingReplyMessages[msgid];
     m_pendingReplyMessages.erase(msgid);
     return msgptr;

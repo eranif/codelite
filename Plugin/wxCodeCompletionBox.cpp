@@ -39,7 +39,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
     m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-    
+
     m_ccFont = lexer->GetFontForSyle(0, this);
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetDefaultFont(m_ccFont);
@@ -128,7 +128,9 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     m_allEntries = entries;
 
     // Keep the start position
-    if(m_startPos == wxNOT_FOUND) { m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true); }
+    if(m_startPos == wxNOT_FOUND) {
+        m_startPos = m_stc->WordStartPosition(m_stc->GetCurrentPos(), true);
+    }
 
     // Fire "Showing" event
     if(!(m_flags & kNoShowingEvent)) {
@@ -143,7 +145,11 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     RemoveDuplicateEntries();
 
     // Filter results based on user input
-    FilterResults();
+    size_t startsWithCount = 0;
+    size_t containsCount = 0;
+    FilterResults(true, startsWithCount, containsCount);
+    wxUnusedVar(containsCount);
+    wxUnusedVar(startsWithCount);
 
     // If we got a single match - insert it
     if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
@@ -236,15 +242,21 @@ void wxCodeCompletionBox::StcModified(wxStyledTextEvent& event)
     DoUpdateList();
 }
 
-bool wxCodeCompletionBox::FilterResults()
+bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCount, size_t& containsCount)
 {
+    containsCount = 0;
+    startsWithCount = 0;
     wxString word = GetFilter();
     if(word.IsEmpty()) {
-        m_entries = m_allEntries;
+        if(updateEntries) {
+            m_entries = m_allEntries;
+        }
         return false;
     }
 
-    m_entries.clear();
+    if(updateEntries) {
+        m_entries.clear();
+    }
     wxString lcFilter = word.Lower();
     // Smart sorting:
     // We preare the list of matches in the following order:
@@ -277,27 +289,33 @@ bool wxCodeCompletionBox::FilterResults()
             containsI.push_back(m_allEntries.at(i));
         }
     }
+    startsWithCount = startsWith.size() + startsWithI.size() + exactMatches.size() + exactMatchesI.size();
+    containsCount = startsWithCount + contains.size() + containsI.size();
 
     // Merge the results
-    m_entries.insert(m_entries.end(), exactMatches.begin(), exactMatches.end());
-    m_entries.insert(m_entries.end(), exactMatchesI.begin(), exactMatchesI.end());
-    m_entries.insert(m_entries.end(), startsWith.begin(), startsWith.end());
-    m_entries.insert(m_entries.end(), startsWithI.begin(), startsWithI.end());
-    m_entries.insert(m_entries.end(), contains.begin(), contains.end());
-    m_entries.insert(m_entries.end(), containsI.begin(), containsI.end());
+    if(updateEntries) {
+        m_entries.insert(m_entries.end(), exactMatches.begin(), exactMatches.end());
+        m_entries.insert(m_entries.end(), exactMatchesI.begin(), exactMatchesI.end());
+        m_entries.insert(m_entries.end(), startsWith.begin(), startsWith.end());
+        m_entries.insert(m_entries.end(), startsWithI.begin(), startsWithI.end());
+        m_entries.insert(m_entries.end(), contains.begin(), contains.end());
+        m_entries.insert(m_entries.end(), containsI.begin(), containsI.end());
+    }
     return exactMatches.empty() && exactMatchesI.empty() && startsWith.empty() && startsWithI.empty();
 }
 
-void wxCodeCompletionBox::InsertSelection()
+void wxCodeCompletionBox::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry)
 {
 
     if(m_stc) {
+        wxCodeCompletionBoxEntry::Ptr_t match = entry;
+        if(match == nullptr) {
+            wxDataViewItem item = m_list->GetSelection();
+            CHECK_PTR_RET(item);
+            size_t index = static_cast<size_t>(m_list->GetItemData(item));
 
-        wxDataViewItem item = m_list->GetSelection();
-        CHECK_PTR_RET(item);
-        size_t index = static_cast<size_t>(m_list->GetItemData(item));
-
-        wxCodeCompletionBoxEntry::Ptr_t match = m_entries[index];
+            match = m_entries[index];
+        }
 
         // Let the owner override the default behavior
         clCodeCompletionEvent e(wxEVT_CCBOX_SELECTION_MADE);
@@ -335,25 +353,41 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
 {
     wxString kind = entry->GetKind();
     wxString access = entry->GetAccess();
-    if(kind == wxT("class")) return 0;
-    if(kind == wxT("struct")) return 1;
-    if(kind == wxT("namespace")) return 2;
-    if(kind == wxT("variable")) return 3;
-    if(kind == wxT("typedef")) return 4;
-    if(kind == wxT("member") && access.Contains(wxT("private"))) return 5;
-    if(kind == wxT("member") && access.Contains(wxT("public"))) return 6;
-    if(kind == wxT("member") && access.Contains(wxT("protected"))) return 7;
+    if(kind == wxT("class"))
+        return 0;
+    if(kind == wxT("struct"))
+        return 1;
+    if(kind == wxT("namespace"))
+        return 2;
+    if(kind == wxT("variable"))
+        return 3;
+    if(kind == wxT("typedef"))
+        return 4;
+    if(kind == wxT("member") && access.Contains(wxT("private")))
+        return 5;
+    if(kind == wxT("member") && access.Contains(wxT("public")))
+        return 6;
+    if(kind == wxT("member") && access.Contains(wxT("protected")))
+        return 7;
     // member with no access? (maybe part of namespace??)
-    if(kind == wxT("member")) return 6;
-    if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("private"))) return 8;
+    if(kind == wxT("member"))
+        return 6;
+    if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("private")))
+        return 8;
     if((kind == wxT("function") || kind == wxT("prototype")) && (access.Contains(wxT("public")) || access.IsEmpty()))
         return 9;
-    if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("protected"))) return 10;
-    if(kind == wxT("macro")) return 11;
-    if(kind == wxT("enum")) return 12;
-    if(kind == wxT("enumerator")) return 13;
-    if(kind == wxT("cpp_keyword")) return 17;
-    if(kind == "cenum") return 18;
+    if((kind == wxT("function") || kind == wxT("prototype")) && access.Contains(wxT("protected")))
+        return 10;
+    if(kind == wxT("macro"))
+        return 11;
+    if(kind == wxT("enum"))
+        return 12;
+    if(kind == wxT("enumerator"))
+        return 13;
+    if(kind == wxT("cpp_keyword"))
+        return 17;
+    if(kind == "cenum")
+        return 18;
     return wxNOT_FOUND;
 }
 
@@ -364,8 +398,20 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEnt
 
 void wxCodeCompletionBox::DoUpdateList()
 {
-    bool refreshList = FilterResults();
+    size_t startsWithCount = 0;
+    size_t containsCount = 0;
+    bool refreshList = FilterResults(true, startsWithCount, containsCount);
+    wxUnusedVar(containsCount);
 
+    // If there a single exact match hide the cc box (we do this inside a timer)
+    if(!m_entries.empty()) {
+        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+        if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
+            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, m_entries[0]);
+            DoDestroy();
+            return;
+        }
+    }
     int curpos = m_stc->GetCurrentPos();
     if(m_entries.empty() || curpos < m_startPos || refreshList) {
         if((m_entries.empty() || refreshList) && (m_flags & kRefreshOnKeyType)) {
@@ -475,7 +521,9 @@ void wxCodeCompletionBox::DoShowCompletionBox()
 
     wxRect screenSize = clGetDisplaySize();
     int displayIndex = wxDisplay::GetFromPoint(pt);
-    if(displayIndex != wxNOT_FOUND) { screenSize = wxDisplay(displayIndex).GetGeometry(); }
+    if(displayIndex != wxNOT_FOUND) {
+        screenSize = wxDisplay(displayIndex).GetGeometry();
+    }
 
     // Check Y axis
     if((pt.y + rect.GetHeight()) > screenSize.GetHeight()) {
@@ -512,7 +560,8 @@ wxBitmap wxCodeCompletionBox::GetBitmap(TagEntryPtr tag)
 {
     InitializeDefaultBitmaps();
     int imgId = GetImageId(tag);
-    if((imgId < 0) || (imgId >= (int)m_defaultBitmaps.size())) return wxNullBitmap;
+    if((imgId < 0) || (imgId >= (int)m_defaultBitmaps.size()))
+        return wxNullBitmap;
     return m_defaultBitmaps.at(imgId);
 }
 
@@ -544,7 +593,8 @@ void wxCodeCompletionBox::InitializeDefaultBitmaps()
 
 wxString wxCodeCompletionBox::GetFilter()
 {
-    if(!m_stc) return "";
+    if(!m_stc)
+        return "";
     int start = m_startPos;
     int end = m_stc->GetCurrentPos();
 
@@ -567,8 +617,12 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
         wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(text, imgIndex);
 
         wxString comment;
-        if(!completion->GetDetail().IsEmpty()) { comment << completion->GetDetail(); }
-        if(!completion->GetDocumentation().IsEmpty()) { comment << "\n" << completion->GetDocumentation(); }
+        if(!completion->GetDetail().IsEmpty()) {
+            comment << completion->GetDetail();
+        }
+        if(!completion->GetDocumentation().IsEmpty()) {
+            comment << "\n" << completion->GetDocumentation();
+        }
 
         // if 'insertText' is provided, use it instead of the label
         wxString insertText;
@@ -649,7 +703,9 @@ void wxCodeCompletionBox::DoPopulateList()
         m_list->AppendItem(cols, (wxUIntPtr)i);
     }
     // Select the first item
-    if(m_list->GetItemCount()) { m_list->Select(m_list->RowToItem(0)); }
+    if(m_list->GetItemCount()) {
+        m_list->Select(m_list->RowToItem(0));
+    }
 }
 
 void wxCodeCompletionBox::OnSelectionActivated(wxDataViewEvent& event)

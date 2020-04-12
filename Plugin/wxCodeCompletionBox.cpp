@@ -333,7 +333,7 @@ void wxCodeCompletionBox::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry)
                     return;
                 }
             }
-            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match);
+            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, match, true);
         }
     }
 }
@@ -407,7 +407,8 @@ void wxCodeCompletionBox::DoUpdateList()
     if(!m_entries.empty()) {
         wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
-            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, m_entries[0]);
+            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, m_entries[0],
+                                                        false);
             DoDestroy();
             return;
         }

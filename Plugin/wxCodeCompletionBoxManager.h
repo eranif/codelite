@@ -46,7 +46,7 @@ private:
 protected:
     void DestroyCCBox();
     void DestroyCurrent();
-    void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match);
+    void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match, bool userTriggered);
     void InsertSelectionTemplateFunction(const wxString& selection);
     void ShowAddIncludeDialog(const wxString& include);
     

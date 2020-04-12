@@ -8,13 +8,13 @@
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #else
-#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #endif
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE) & ~(wxDV_ROW_LINES))
+    : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE))
 {
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
     SetSortFunction(nullptr);

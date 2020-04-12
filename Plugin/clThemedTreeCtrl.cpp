@@ -1,17 +1,17 @@
 #include "ColoursAndFontsManager.h"
+#include "clSystemSettings.h"
 #include "clThemedTreeCtrl.h"
+#include "cl_config.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include <clColours.h>
 #include <wx/settings.h>
-#include "cl_config.h"
-#include "clSystemSettings.h"
-#include "drawingutils.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
 #else
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -24,7 +24,9 @@ clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoin
 
 bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-    if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) { return false; }
+    if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) {
+        return false;
+    }
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
     m_keyboard.reset(new clTreeKeyboardInput(this));
@@ -54,17 +56,17 @@ void clThemedTreeCtrl::ApplyTheme()
     } else {
         colours.InitDefaults();
     }
-    
+
     wxColour baseColour = colours.GetBgColour();
     bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
     if(useCustomColour) {
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
         colours.InitFromColour(baseColour);
     }
-    
+
     // Use alternate line colours for light trees only
-    //EnableStyle(wxTR_ROW_LINES, !DrawingUtils::IsDark(baseColour));
-    
+    // EnableStyle(wxTR_ROW_LINES, !DrawingUtils::IsDark(baseColour));
+
     // Set the built-in search colours
     wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);

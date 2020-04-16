@@ -149,14 +149,14 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     size_t containsCount = 0;
     FilterResults(true, startsWithCount, containsCount);
     wxUnusedVar(containsCount);
-    wxUnusedVar(startsWithCount);
 
     // If we got a single match - insert it
-    if((m_entries.size() == 1) && (m_flags & kInsertSingleMatch)) {
-        // single match
-        InsertSelection();
-        DoDestroy();
-        return;
+    if(m_entries.size() == 1) {
+        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+        if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
+            DoDestroy();
+            return;
+        }
     }
 
     // Let the plugins modify the list of the entries

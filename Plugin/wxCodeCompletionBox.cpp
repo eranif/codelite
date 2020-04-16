@@ -403,16 +403,15 @@ void wxCodeCompletionBox::DoUpdateList()
     bool refreshList = FilterResults(true, startsWithCount, containsCount);
     wxUnusedVar(containsCount);
 
-    // If there a single exact match hide the cc box (we do this inside a timer)
+    // If there a single exact match hide the cc box
     if(!m_entries.empty()) {
         wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
-            wxCodeCompletionBoxManager::Get().CallAfter(&wxCodeCompletionBoxManager::InsertSelection, m_entries[0],
-                                                        false);
             DoDestroy();
             return;
         }
     }
+
     int curpos = m_stc->GetCurrentPos();
     if(m_entries.empty() || curpos < m_startPos || refreshList) {
         if((m_entries.empty() || refreshList) && (m_flags & kRefreshOnKeyType)) {

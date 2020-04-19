@@ -2386,7 +2386,7 @@ void clEditor::FindAndSelectV(const wxString& _pattern, const wxString& name, in
     ClearSelections();
     strings.Add(_pattern);
     strings.Add(name);
-    CallAfter(&clEditor::DoFindAndSelectV, strings, pos);
+    DoFindAndSelectV( strings, pos);
 }
 
 void clEditor::DoFindAndSelectV(const wxArrayString& strings, int pos) // Called with CallAfter()

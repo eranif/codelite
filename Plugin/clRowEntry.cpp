@@ -30,7 +30,7 @@ int clRowEntry::X_SPACER = 4;
 int clRowEntry::Y_SPACER = 0;
 #else
 int clRowEntry::X_SPACER = 5;
-int clRowEntry::Y_SPACER = 0;
+int clRowEntry::Y_SPACER = 2;
 #endif
 
 #ifdef __WXOSX__

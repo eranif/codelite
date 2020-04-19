@@ -10,6 +10,35 @@
 
 namespace LSP
 {
+enum eSymbolKind {
+    kSK_File = 1,
+    kSK_Module = 2,
+    kSK_Namespace = 3,
+    kSK_Package = 4,
+    kSK_Class = 5,
+    kSK_Method = 6,
+    kSK_Property = 7,
+    kSK_Field = 8,
+    kSK_Constructor = 9,
+    kSK_Enum = 10,
+    kSK_Interface = 11,
+    kSK_Function = 12,
+    kSK_Variable = 13,
+    kSK_Constant = 14,
+    kSK_String = 15,
+    kSK_Number = 16,
+    kSK_Boolean = 17,
+    kSK_Array = 18,
+    kSK_Object = 19,
+    kSK_Key = 20,
+    kSK_Null = 21,
+    kSK_EnumMember = 22,
+    kSK_Struct = 23,
+    kSK_Event = 24,
+    kSK_Operator = 25,
+    kSK_TypeParameter = 26,
+};
+
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
 //===----------------------------------------------------------------------------------
@@ -370,5 +399,63 @@ public:
     }
     const wxString& GetMessage() const { return m_message; }
 };
+
+class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
+{
+    /**
+     * The name of this symbol. Will be displayed in the user interface and therefore must not be
+     * an empty string or a string only consisting of white spaces.
+     */
+    wxString name;
+
+    /**
+     * More detail for this symbol, e.g the signature of a function.
+     */
+    wxString detail;
+
+    /**
+     * The kind of this symbol.
+     */
+    eSymbolKind kind;
+
+    /**
+     * The range enclosing this symbol not including leading/trailing whitespace but everything else
+     * like comments. This information is typically used to determine if the clients cursor is
+     * inside the symbol to reveal in the symbol in the UI.
+     */
+    Range range;
+
+    /**
+     * The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
+     * Must be contained by the `range`.
+     */
+    Range selectionRange;
+
+    /**
+     * Children of this symbol, e.g. properties of a class.
+     */
+    std::vector<DocumentSymbol> children;
+
+public:
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+
+    DocumentSymbol() {}
+    virtual ~DocumentSymbol() {}
+    
+    void SetChildren(const std::vector<DocumentSymbol>& children) { this->children = children; }
+    void SetDetail(const wxString& detail) { this->detail = detail; }
+    void SetKind(const eSymbolKind& kind) { this->kind = kind; }
+    void SetName(const wxString& name) { this->name = name; }
+    void SetRange(const Range& range) { this->range = range; }
+    void SetSelectionRange(const Range& selectionRange) { this->selectionRange = selectionRange; }
+    const std::vector<DocumentSymbol>& GetChildren() const { return children; }
+    const wxString& GetDetail() const { return detail; }
+    const eSymbolKind& GetKind() const { return kind; }
+    const wxString& GetName() const { return name; }
+    const Range& GetRange() const { return range; }
+    const Range& GetSelectionRange() const { return selectionRange; }
+};
+
 };     // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

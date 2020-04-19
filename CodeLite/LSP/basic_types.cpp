@@ -242,3 +242,32 @@ LSP::TextDocumentContentChangeEvent& LSP::TextDocumentContentChangeEvent::SetTex
     }
     return *this;
 }
+//===----------------------------------------------------------------------------------
+// DocumentSymbol
+//===----------------------------------------------------------------------------------
+void LSP::DocumentSymbol::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+{
+    name = json["name"].toString();
+    detail = json["detail"].toString();
+    kind = (eSymbolKind)json["kind"].toInt(0);
+    range.FromJSON(json["range"], pathConverter);
+    selectionRange.FromJSON(json["selectionRange"], pathConverter);
+
+    // read the children
+    auto jsonChildren = json["children"];
+    int size = jsonChildren.arraySize();
+    children.clear();
+    children.reserve(size);
+    for(int i = 0; i < size; ++i) {
+        auto child = jsonChildren[i];
+        DocumentSymbol ds;
+        ds.FromJSON(child, pathConverter);
+        children.push_back(ds);
+    }
+}
+
+JSONItem LSP::DocumentSymbol::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+{
+    wxASSERT_MSG(false, "LSP::DocumentSymbol::ToJSON(): is not implemented");
+    return JSONItem(nullptr);
+}

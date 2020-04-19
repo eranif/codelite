@@ -151,7 +151,7 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     wxUnusedVar(containsCount);
 
     // If we got a single match - insert it
-    if(m_entries.size() == 1) {
+    if(m_entries.size() == 1 && (m_flags & kInsertSingleMatch)) {
         wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
         if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
             DoDestroy();
@@ -404,13 +404,13 @@ void wxCodeCompletionBox::DoUpdateList()
     wxUnusedVar(containsCount);
 
     // If there a single exact match hide the cc box
-    if(!m_entries.empty()) {
-        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
-        if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
-            DoDestroy();
-            return;
-        }
-    }
+    // if(!m_entries.empty()) {
+    //     wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+    //     if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
+    //         DoDestroy();
+    //         return;
+    //     }
+    // }
 
     int curpos = m_stc->GetCurrentPos();
     if(m_entries.empty() || curpos < m_startPos || refreshList) {

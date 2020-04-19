@@ -45,6 +45,25 @@ public:
     const Position& GetPosition() const { return m_position; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
+
+//===----------------------------------------------------------------------------------
+// DocumentSymbolParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL DocumentSymbolParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+
+public:
+    DocumentSymbolParams();
+    virtual ~DocumentSymbolParams() {}
+
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+
+    void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+};
+
 //===----------------------------------------------------------------------------------
 // CompletionParams
 //===----------------------------------------------------------------------------------

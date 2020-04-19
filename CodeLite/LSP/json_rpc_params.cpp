@@ -9,8 +9,8 @@ TextDocumentPositionParams::TextDocumentPositionParams() {}
 
 void TextDocumentPositionParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_textDocument.FromJSON(json, pathConverter);
-    m_position.FromJSON(json, pathConverter);
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
+    m_position.FromJSON(json["position"], pathConverter);
 }
 
 JSONItem TextDocumentPositionParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
@@ -28,7 +28,7 @@ DidOpenTextDocumentParams::DidOpenTextDocumentParams() {}
 
 void DidOpenTextDocumentParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_textDocument.FromJSON(json, pathConverter);
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
 }
 
 JSONItem DidOpenTextDocumentParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
@@ -45,7 +45,7 @@ DidCloseTextDocumentParams::DidCloseTextDocumentParams() {}
 
 void DidCloseTextDocumentParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_textDocument.FromJSON(json, pathConverter);
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
 }
 
 JSONItem DidCloseTextDocumentParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
@@ -62,7 +62,7 @@ DidChangeTextDocumentParams::DidChangeTextDocumentParams() {}
 
 void DidChangeTextDocumentParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_textDocument.FromJSON(json, pathConverter);
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
     m_contentChanges.clear();
     if(json.hasNamedObject("contentChanges")) {
         JSONItem arr = json.namedObject("contentChanges");
@@ -94,8 +94,8 @@ DidSaveTextDocumentParams::DidSaveTextDocumentParams() {}
 
 void DidSaveTextDocumentParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_textDocument.FromJSON(json, pathConverter);
-    m_text = json.namedObject("text").toString();
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
+    m_text = json["text"].toString();
 }
 
 JSONItem DidSaveTextDocumentParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
@@ -119,6 +119,23 @@ void CompletionParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t path
 JSONItem CompletionParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = TextDocumentPositionParams::ToJSON(name, pathConverter);
+    return json;
+}
+
+//===----------------------------------------------------------------------------------
+// DocumentSymbolParams
+//===----------------------------------------------------------------------------------
+DocumentSymbolParams::DocumentSymbolParams() {}
+
+void DocumentSymbolParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+{
+    m_textDocument.FromJSON(json["textDocument"], pathConverter);
+}
+
+JSONItem DocumentSymbolParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_textDocument.ToJSON("textDocument", pathConverter));
     return json;
 }
 }; // namespace LSP

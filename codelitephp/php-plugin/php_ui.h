@@ -7,6 +7,7 @@
 #ifndef _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 #define _CODELITEPHP_PHP_PLUGIN_PHP_UI_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -62,6 +63,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class QuickOutlineDlgBase : public wxDialog
 {
@@ -410,7 +413,7 @@ public:
 class EvalPaneBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook257;
+    Notebook* m_notebook257;
     wxPanel* m_panel259;
     wxStyledTextCtrl* m_stcOutput;
     wxTextCtrl* m_textCtrlExpression;
@@ -436,7 +439,7 @@ public:
     wxTextCtrl* GetTextCtrlExpressionXdebug() { return m_textCtrlExpressionXdebug; }
     wxButton* GetButtonSendXdebug() { return m_buttonSendXdebug; }
     wxPanel* GetPanel261() { return m_panel261; }
-    wxNotebook* GetNotebook257() { return m_notebook257; }
+    Notebook* GetNotebook257() { return m_notebook257; }
     EvalPaneBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~EvalPaneBase();
@@ -546,7 +549,8 @@ public:
                             long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const
     {
-        if(!m_pages.empty()) return m_pages.at(0);
+        if(!m_pages.empty())
+            return m_pages.at(0);
         return NULL;
     }
     virtual ~NewPHPProjectWizardBase();
@@ -600,7 +604,8 @@ public:
                              long style = wxDEFAULT_DIALOG_STYLE);
     wxWizardPageSimple* GetFirstPage() const
     {
-        if(!m_pages.empty()) return m_pages.at(0);
+        if(!m_pages.empty())
+            return m_pages.at(0);
         return NULL;
     }
     virtual ~PHPXDebugSetupWizardBase();

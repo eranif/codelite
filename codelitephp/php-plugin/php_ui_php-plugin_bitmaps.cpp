@@ -74,6 +74,6 @@ void wxCF01InitBitmapResources()
     }
 
     XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$.._resources_xdebug-16.png"), xml_res_file_0, xml_res_size_0, wxT("image/png"));
-    XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$_home_eran_devl_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/php_ui_php-plugin_bitmaps.cpp$_home_eran_devl_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/php_ui_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"), xml_res_file_1, xml_res_size_1, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/php_ui_php-plugin_bitmaps.cpp$C__src_codelite_codelitephp_php-plugin_php_ui_php-plugin_bitmaps.xrc"));
 }

@@ -5,53 +5,51 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "TerminalEmulatorUIBase.h"
-#if wxUSE_GUI
 #include "codelite_exports.h"
-
 
 // Declare the bitmap loading function
 extern void wxCB1DAInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                               long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB1DAInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
-    
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), 0);
+
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
-    m_stc->SetMarginType     (4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask     (4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
     m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth    (4, 0);
-    
+    m_stc->SetMarginWidth(4, 0);
+
     // Configure the tracker margin
     m_stc->SetMarginWidth(1, 0);
-    
+
     // Configure the symbol margin
-    m_stc->SetMarginType (2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask (2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_stc->SetMarginWidth(2, 0);
     m_stc->SetMarginSensitive(2, true);
-    
+
     // Configure the line numbers margin
     m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0,0);
-    
+    m_stc->SetMarginWidth(0, 0);
+
     // Configure the line symbol margin
     m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
     m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3,0);
+    m_stc->SetMarginWidth(3, 0);
     // Select the lexer
     m_stc->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
@@ -63,53 +61,58 @@ TerminalEmulatorUIBase::TerminalEmulatorUIBase(wxWindow* parent, wxWindowID id, 
     m_stc->SetKeyWords(2, wxT(""));
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
-    
-    boxSizer2->Add(m_stc, 1, wxALL|wxEXPAND, 2);
-    
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), wxTE_PROCESS_ENTER);
+
+    boxSizer2->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                wxTE_PROCESS_ENTER);
     m_textCtrl->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrl->SetHint(_("Send command to the process"));
-    #endif
-    
-    boxSizer2->Add(m_textCtrl, 0, wxALL|wxEXPAND, 2);
-    
+#endif
+
+    boxSizer2->Add(m_textCtrl, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+
     SetName(wxT("TerminalEmulatorUIBase"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
     // Connect events
-    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL, this);
-    
+    m_textCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL,
+                        this);
 }
 
 TerminalEmulatorUIBase::~TerminalEmulatorUIBase()
 {
-    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL, this);
-    
+    m_textCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(TerminalEmulatorUIBase::OnSendCommand), NULL,
+                           this);
 }
 
-TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                     const wxPoint& pos, const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCB1DAInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer10);
-    
+
     SetName(wxT("TerminalEmulatorFrameBase"));
-    SetSizeHints(500,300);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -119,7 +122,4 @@ TerminalEmulatorFrameBase::TerminalEmulatorFrameBase(wxWindow* parent, wxWindowI
 #endif
 }
 
-TerminalEmulatorFrameBase::~TerminalEmulatorFrameBase()
-{
-}
-#endif // LIBCODELITE_WITH_UI
+TerminalEmulatorFrameBase::~TerminalEmulatorFrameBase() {}

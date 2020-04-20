@@ -32,7 +32,9 @@ QuickOutlineDlgBase::QuickOutlineDlgBase(wxWindow* parent, wxWindowID id, const 
     SetName(wxT("QuickOutlineDlgBase"));
     SetMinClientSize(wxSize(400, 300));
     SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -127,7 +129,9 @@ NewPHPWorkspaceBaseDlg::NewPHPWorkspaceBaseDlg(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("NewPHPWorkspaceBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -226,7 +230,9 @@ NewFileDlgBase::NewFileDlgBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     SetName(wxT("NewFileDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -287,7 +293,9 @@ OpenResourceDlgBase::OpenResourceDlgBase(wxWindow* parent, wxWindowID id, const 
     SetName(wxT("OpenResourceDlgBase"));
     SetMinClientSize(wxSize(400, 300));
     SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -565,7 +573,9 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("PHPSettingsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -957,7 +967,9 @@ PHPProjectSettingsBase::PHPProjectSettingsBase(wxWindow* parent, wxWindowID id, 
     SetName(wxT("PHPProjectSettingsBase"));
     SetMinClientSize(wxSize(600, 500));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1116,7 +1128,9 @@ FileMappingDlgBase::FileMappingDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("FileMappingDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1172,7 +1186,9 @@ PHPWorkspaceViewBase::PHPWorkspaceViewBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("PHPWorkspaceViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(PHPWorkspaceViewBase::OnMenu), NULL, this);
     m_treeCtrlView->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
@@ -1214,7 +1230,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_dvListCtrlStackTrace =
         new clThemedListCtrl(m_panel140, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel140, wxSize(-1, -1)),
-                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+                             wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
 
     boxSizer144->Add(m_dvListCtrlStackTrace, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1241,7 +1257,7 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_dvListCtrlBreakpoints =
         new clThemedListCtrl(m_panel142, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel142, wxSize(-1, -1)),
-                             wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE);
+                             wxDV_ROW_LINES | wxDV_MULTIPLE | wxDV_SINGLE | wxBORDER_NONE);
 
     boxSizer156->Add(m_dvListCtrlBreakpoints, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1255,7 +1271,9 @@ PHPDebugPaneBase::PHPDebugPaneBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("PHPDebugPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(300, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_dvListCtrlStackTrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                     wxDataViewEventHandler(PHPDebugPaneBase::OnCallStackItemActivated), NULL, this);
@@ -1296,7 +1314,9 @@ LocalsViewBase::LocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     SetName(wxT("LocalsViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 LocalsViewBase::~LocalsViewBase() {}
@@ -1314,8 +1334,8 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer255 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer255);
 
-    m_notebook257 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                   wxNB_FIXEDWIDTH | wxBK_DEFAULT);
+    m_notebook257 = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                 wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook257->SetName(wxT("m_notebook257"));
 
     boxSizer255->Add(m_notebook257, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
@@ -1327,8 +1347,8 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxBoxSizer* boxSizer254 = new wxBoxSizer(wxVERTICAL);
     m_panel259->SetSizer(boxSizer254);
 
-    m_stcOutput =
-        new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)), 0);
+    m_stcOutput = new wxStyledTextCtrl(m_panel259, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel259, wxSize(-1, -1)),
+                                       wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -1398,14 +1418,14 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     boxSizer247->Add(m_buttonSend, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(2));
 
     m_panel261 = new wxPanel(m_notebook257, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook257, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
+                             wxTAB_TRAVERSAL | wxBORDER_NONE);
     m_notebook257->AddPage(m_panel261, _("XDebug Console"), false);
 
     wxBoxSizer* boxSizer263 = new wxBoxSizer(wxVERTICAL);
     m_panel261->SetSizer(boxSizer263);
 
-    m_stcOutputXDebug =
-        new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel261, wxSize(-1, -1)), 0);
+    m_stcOutputXDebug = new wxStyledTextCtrl(m_panel261, wxID_ANY, wxDefaultPosition,
+                                             wxDLG_UNIT(m_panel261, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutputXDebug->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutputXDebug->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -1477,7 +1497,9 @@ EvalPaneBase::EvalPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
 
     SetName(wxT("EvalPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_textCtrlExpression->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(EvalPaneBase::OnEnter), NULL, this);
     m_buttonSend->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(EvalPaneBase::OnSend), NULL, this);
@@ -1631,7 +1653,9 @@ PHPDebugStartDlgBase::PHPDebugStartDlgBase(wxWindow* parent, wxWindowID id, cons
     SetName(wxT("PHPDebugStartDlgBase"));
     SetMinClientSize(wxSize(400, 200));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1891,7 +1915,9 @@ NewPHPProjectWizardBase::NewPHPProjectWizardBase(wxWindow* parent, wxWindowID id
     SetName(wxT("NewPHPProjectWizardBase"));
     SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2104,7 +2130,9 @@ PHPXDebugSetupWizardBase::PHPXDebugSetupWizardBase(wxWindow* parent, wxWindowID 
     SetName(wxT("PHPXDebugSetupWizardBase"));
     SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -2196,7 +2224,9 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     SetName(wxT("PHPSettersGettersDialogBase"));
     SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

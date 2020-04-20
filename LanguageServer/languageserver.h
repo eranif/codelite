@@ -15,10 +15,9 @@ protected:
     void OnSettings(wxCommandEvent& e);
     void OnRestartLSP(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& event);
-    void OnInfoBarButton(clCommandEvent& event);
-    void PromptUserToConfigureLSP(const wxString& languages);
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnMenuFindSymbol(wxCommandEvent& event);
+    void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
 
 public:
     LanguageServerPlugin(IManager* manager);

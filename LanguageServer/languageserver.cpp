@@ -48,7 +48,6 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     LanguageServerConfig::Get().Load();
     m_servers.reset(new LanguageServerCluster());
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
-    EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &LanguageServerPlugin::OnInfoBarButton, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
@@ -75,7 +74,6 @@ void LanguageServerPlugin::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Unbind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_INFO_BAR_BUTTON, &LanguageServerPlugin::OnInfoBarButton, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
@@ -106,10 +104,8 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
     event.Skip();
     // Launch a thread to locate any LSP installed on this machine
     // But do this only if we don't have any LSP defined already
-    bool autoScan = clConfig::Get().Read("LSPAutoScanOnStartup", true);
-    clDEBUG() << "Should scan for LSP's?" << autoScan;
-    if(autoScan && LanguageServerConfig::Get().GetServers().empty()) {
-        clDEBUG() << "Scanning..." << autoScan;
+    if(LanguageServerConfig::Get().GetServers().empty()) {
+        clDEBUG() << "Scanning..." << clEndl;
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
                 std::vector<LSPDetector::Ptr_t> matches;
@@ -124,36 +120,10 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
                     languages.RemoveLast().RemoveLast();
                     languages << "]";
                 }
-                plugin->CallAfter(&LanguageServerPlugin::PromptUserToConfigureLSP, languages);
+                plugin->CallAfter(&LanguageServerPlugin::ConfigureLSPs, matches);
             },
             this);
         thr.detach();
-    }
-}
-
-void LanguageServerPlugin::PromptUserToConfigureLSP(const wxString& languages)
-{
-    clConfig::Get().Write("LSPAutoScanOnStartup", false);
-    if(!languages.empty()) {
-        clGetManager()->DisplayMessage(
-            _("CodeLite found Language Servers installed on your machine. Would you like to configure them now?"),
-            wxICON_QUESTION, { { XRCID("language-server-settings"), _("Yes") }, { wxID_CANCEL, _("No") } });
-    }
-}
-
-void LanguageServerPlugin::OnInfoBarButton(clCommandEvent& event)
-{
-    event.Skip();
-    if(event.GetInt() == XRCID("language-server-settings")) {
-        event.Skip(false);
-        LanguageServerSettingsDlg dlg(EventNotifier::Get()->TopFrame(), true);
-        if(dlg.ShowModal() == wxID_OK) {
-            // restart all language servers
-            dlg.Save();
-            if(m_servers) {
-                m_servers->Reload();
-            }
-        }
     }
 }
 
@@ -198,4 +168,26 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
     findEvent.SetEditor(editor->GetCtrl());
     findEvent.SetPosition(editor->GetCurrentPosition());
     ServiceProviderManager::Get().ProcessEvent(findEvent);
+}
+
+void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)
+{
+    if(lsps.empty()) {
+        return;
+    }
+    LanguageServerConfig& config = LanguageServerConfig::Get();
+    if(config.GetServers().empty()) {
+        // Only if the user did not configure LSP before, we configure it for him
+        for(auto lsp : lsps) {
+            LanguageServerEntry entry;
+            lsp->GetLanguageServerEntry(entry);
+            entry.SetEnabled(true);
+            config.AddServer(entry);
+        }
+        config.SetEnabled(true);
+        config.Save();
+        if(m_servers) {
+            m_servers->Reload();
+        }
+    }
 }

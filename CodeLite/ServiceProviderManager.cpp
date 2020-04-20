@@ -1,8 +1,8 @@
 #include "ServiceProviderManager.h"
-#include <algorithm>
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include <algorithm>
 
 ServiceProviderManager::ServiceProviderManager() {}
 
@@ -35,7 +35,9 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
 
 void ServiceProviderManager::Unregister(ServiceProvider* provider)
 {
-    if(this->m_providers.count(provider->GetType()) == 0) { return; }
+    if(this->m_providers.count(provider->GetType()) == 0) {
+        return;
+    }
     ServiceProvider::Vec_t& V = m_providers[provider->GetType()];
 
     // Find our provider and remove it
@@ -43,7 +45,9 @@ void ServiceProviderManager::Unregister(ServiceProvider* provider)
         // Do this in a loop, incase someone registered this provider twice...
         auto where =
             std::find_if(V.begin(), V.end(), [&](ServiceProvider* p) { return p->GetName() == provider->GetName(); });
-        if(where == V.end()) { break; }
+        if(where == V.end()) {
+            break;
+        }
         V.erase(where); // remove it
         clDEBUG() << "Handler:" << provider->GetName() << "Uregisterd. Priority:" << provider->GetPriority()
                   << ". Type:" << (int)provider->GetType();
@@ -66,7 +70,9 @@ bool ServiceProviderManager::ProcessEvent(wxEvent& event)
         // Call our chain
         auto& V = m_providers[type];
         for(ServiceProvider* p : V) {
-            if(p->ProcessEvent(event)) { return true; }
+            if(p->ProcessEvent(event)) {
+                return true;
+            }
         }
         return false;
     }
@@ -88,7 +94,9 @@ void ServiceProviderManager::UnregisterAll() { m_providers.clear(); }
 
 void ServiceProviderManager::Sort(eServiceType type)
 {
-    if(m_providers.count(type) == 0) { return; }
+    if(m_providers.count(type) == 0) {
+        return;
+    }
     clDEBUG() << "sorting providers for type:" << (int)type;
     ServiceProvider::Vec_t& V = m_providers[type];
     std::sort(V.begin(), V.end(),

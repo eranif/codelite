@@ -1,10 +1,10 @@
 #ifndef LSPEVENT_H
 #define LSPEVENT_H
 
-#include "cl_command_event.h"
-#include "LSP/basic_types.h"
-#include "codelite_exports.h"
 #include "LSP/CompletionItem.h"
+#include "LSP/basic_types.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 #include <vector>
 
 class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
@@ -14,6 +14,7 @@ class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
     LSP::CompletionItem::Vec_t m_completions;
     LSP::SignatureHelp m_signatureHelp;
     std::vector<LSP::Diagnostic> m_diagnostics;
+    std::vector<LSP::SymbolInformation> m_symbolsInformation;
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -52,6 +53,12 @@ public:
         return *this;
     }
     const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return m_diagnostics; }
+    void SetSymbolsInformation(const std::vector<LSP::SymbolInformation>& symbolsInformation)
+    {
+        this->m_symbolsInformation = symbolsInformation;
+    }
+    const std::vector<LSP::SymbolInformation>& GetSymbolsInformation() const { return m_symbolsInformation; }
+    std::vector<LSP::SymbolInformation>& GetSymbolsInformation() { return m_symbolsInformation; }
 };
 
 typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
@@ -60,6 +67,7 @@ typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DEFINITION, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_INITIALIZED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_COMPLETION_READY, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);

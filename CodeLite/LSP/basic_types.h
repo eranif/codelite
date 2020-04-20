@@ -442,7 +442,7 @@ public:
 
     DocumentSymbol() {}
     virtual ~DocumentSymbol() {}
-    
+
     void SetChildren(const std::vector<DocumentSymbol>& children) { this->children = children; }
     void SetDetail(const wxString& detail) { this->detail = detail; }
     void SetKind(const eSymbolKind& kind) { this->kind = kind; }
@@ -455,6 +455,56 @@ public:
     const wxString& GetName() const { return name; }
     const Range& GetRange() const { return range; }
     const Range& GetSelectionRange() const { return selectionRange; }
+};
+
+class WXDLLIMPEXP_CL SymbolInformation : public Serializable
+{
+    /**
+     * The name of this symbol.
+     */
+    wxString name;
+
+    /**
+     * The kind of this symbol.
+     */
+    eSymbolKind kind;
+
+    /**
+     * The location of this symbol. The location's range is used by a tool
+     * to reveal the location in the editor. If the symbol is selected in the
+     * tool the range's start information is used to position the cursor. So
+     * the range usually spans more then the actual symbol's name and does
+     * normally include things like visibility modifiers.
+     *
+     * The range doesn't have to denote a node range in the sense of a abstract
+     * syntax tree. It can therefore not be used to re-construct a hierarchy of
+     * the symbols.
+     */
+    Location location;
+
+    /**
+     * The name of the symbol containing this symbol. This information is for
+     * user interface purposes (e.g. to render a qualifier in the user interface
+     * if necessary). It can't be used to re-infer a hierarchy for the document
+     * symbols.
+     */
+    wxString containerName;
+
+public:
+    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+
+    SymbolInformation() {}
+    virtual ~SymbolInformation() {}
+
+    void SetContainerName(const wxString& containerName) { this->containerName = containerName; }
+    void SetKind(const eSymbolKind& kind) { this->kind = kind; }
+    void SetLocation(const Location& location) { this->location = location; }
+    void SetName(const wxString& name) { this->name = name; }
+    const wxString& GetContainerName() const { return containerName; }
+    const eSymbolKind& GetKind() const { return kind; }
+    const Location& GetLocation() const { return location; }
+    const wxString& GetName() const { return name; }
 };
 
 };     // namespace LSP

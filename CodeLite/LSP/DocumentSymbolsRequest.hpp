@@ -9,8 +9,6 @@ namespace LSP
 {
 class WXDLLIMPEXP_CL DocumentSymbolsRequest : public LSP::Request
 {
-    std::vector<DocumentSymbol> m_symbols;
-
 public:
     DocumentSymbolsRequest(const wxFileName& filename);
     virtual ~DocumentSymbolsRequest();

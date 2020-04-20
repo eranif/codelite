@@ -39,10 +39,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "wxmd5.h"
-#include "md5_header.h"
-#include <wx/string.h>
 #include "fileutils.h"
+#include "md5_header.h"
+#include "wxmd5.h"
+#include <wx/string.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -50,7 +50,8 @@
 
 wxMD5::wxMD5() {}
 
-wxMD5::wxMD5(const wxString& szText) { m_szText = szText; }
+wxMD5::wxMD5(const wxString& szText) { m_string = szText.mb_str().data(); }
+wxMD5::wxMD5(const std::string& szText) { m_string = szText; }
 
 wxMD5::~wxMD5() {}
 
@@ -58,12 +59,12 @@ wxMD5::~wxMD5() {}
 // Other Methods
 //////////////////////////////////////////////////////////////////////
 
-void wxMD5::SetText(const wxString& szText) { m_szText = szText; }
+void wxMD5::SetText(const wxString& szText) { m_string = szText.mb_str().data(); }
 
 const wxString wxMD5::GetDigest()
 {
     MD5 context;
-    context.update((unsigned char*)m_szText.mb_str().data(), m_szText.Len());
+    context.update((unsigned char*)m_string.c_str(), m_string.length());
     context.finalize();
 
     wxString md5(context.hex_digest());
@@ -81,10 +82,21 @@ const wxString wxMD5::GetDigest(const wxString& szText)
     return md5.GetDigest();
 }
 
-wxMD5::wxMD5(const wxFileName& filename) { FileUtils::ReadFileContent(filename, m_szText); }
+wxMD5::wxMD5(const wxFileName& filename)
+{
+    wxString fileContent;
+    FileUtils::ReadFileContent(filename, fileContent);
+    m_string = fileContent.mb_str().data();
+}
 
 const wxString wxMD5::GetDigest(const wxFileName& filename)
 {
     wxMD5 md5(filename);
+    return md5.GetDigest();
+}
+
+const wxString wxMD5::GetDigest(const std::string& str)
+{
+    wxMD5 md5(str);
     return md5.GetDigest();
 }

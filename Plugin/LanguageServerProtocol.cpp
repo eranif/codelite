@@ -3,6 +3,7 @@
 #include "LSP/DidCloseTextDocumentRequest.h"
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
+#include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/GotoDeclarationRequest.h"
 #include "LSP/GotoDefinitionRequest.h"
 #include "LSP/GotoImplementationRequest.h"
@@ -25,6 +26,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "processreaderthread.h"
+#include "wxmd5.h"
 #include <iomanip>
 #include <sstream>
 #include <wx/filesys.h>
@@ -47,6 +49,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
     switch(netType) {
@@ -73,6 +76,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
 }
 
@@ -304,7 +308,6 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendChangeRequest(filename, fileContent);
-
     } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
@@ -319,11 +322,16 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
 void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const std::string& fileContent,
                                              const wxString& languageId)
 {
+    if(!IsFileChangedSinceLastParse(filename, fileContent)) {
+        clDEBUG() << GetLogPrefix() << "No changes detected in file:" << filename << clEndl;
+        return;
+    }
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
 #ifndef __WXOSX__
     req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename.GetFullName());
 #endif
+    UpdateFileSent(filename, fileContent);
     QueueMessage(req);
 }
 
@@ -342,11 +350,17 @@ void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
 
 void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const std::string& fileContent)
 {
+    if(!IsFileChangedSinceLastParse(filename, fileContent)) {
+        clDEBUG() << GetLogPrefix() << "No changes detected in file:" << filename << clEndl;
+        return;
+    }
+
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
 #ifndef __WXOSX__
     req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename.GetFullName());
 #endif
+    UpdateFileSent(filename, fileContent);
     QueueMessage(req);
 }
 
@@ -455,13 +469,14 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxFileName& filename = editor->GetFileName();
 
-    std::string text;
-    editor->GetEditorTextRaw(text);
-
     if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
-        // we already sent this file over, ask for change parse
+        std::string text;
+        editor->GetEditorTextRaw(text);
         SendChangeRequest(filename, text);
+
     } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        std::string text;
+        editor->GetEditorTextRaw(text);
         SendOpenRequest(filename, text, GetLanguageId(filename));
     }
 
@@ -732,6 +747,51 @@ void LanguageServerProtocol::FindImplementation(IEditor* editor)
 }
 
 wxString LanguageServerProtocol::GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullPath()); }
+
+void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    // For now, until we implement the UI, disable this
+    return;
+
+    clDEBUG() << "LanguageServerProtocol::OnQuickOutline called" << clEndl;
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+
+    if(CanHandle(editor->GetFileName())) {
+        // this event is ours to handle
+        event.Skip(false);
+        DocumentSymbols(editor);
+    }
+}
+
+void LanguageServerProtocol::DocumentSymbols(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    const wxFileName& filename = editor->GetFileName();
+    LSP::MessageWithParams::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename));
+    QueueMessage(req);
+}
+
+void LanguageServerProtocol::UpdateFileSent(const wxFileName& filename, const std::string& fileContent)
+{
+    wxString checksum = wxMD5::GetDigest(fileContent);
+    m_filesSent.erase(filename.GetFullPath());
+    clDEBUG() << "Caching file:" << filename << "with checksum:" << checksum << clEndl;
+    m_filesSent.insert({ filename.GetFullPath(), checksum });
+}
+
+bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxFileName& filename,
+                                                         const std::string& fileContent) const
+{
+    if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        return true;
+    }
+    wxString checksum = wxMD5::GetDigest(fileContent);
+    return m_filesSent.find(filename.GetFullPath())->second != checksum;
+}
 
 //===------------------------------------------------------------------
 // LSPRequestMessageQueue

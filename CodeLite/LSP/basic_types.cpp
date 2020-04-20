@@ -271,3 +271,20 @@ JSONItem LSP::DocumentSymbol::ToJSON(const wxString& name, IPathConverter::Ptr_t
     wxASSERT_MSG(false, "LSP::DocumentSymbol::ToJSON(): is not implemented");
     return JSONItem(nullptr);
 }
+
+//===----------------------------------------------------------------------------------
+// DocumentSymbol
+//===----------------------------------------------------------------------------------
+void LSP::SymbolInformation::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+{
+    name = json["name"].toString();
+    containerName = json["containerName"].toString();
+    kind = (eSymbolKind)json["kind"].toInt(0);
+    location.FromJSON(json["location"], pathConverter);
+}
+
+JSONItem LSP::SymbolInformation::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+{
+    wxASSERT_MSG(false, "LSP::SymbolInformation::ToJSON(): is not implemented");
+    return JSONItem(nullptr);
+}

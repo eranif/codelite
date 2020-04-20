@@ -51,7 +51,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     LSPNetwork::Ptr_t m_network;
     wxArrayString m_lspCommand;
     wxString m_workingDirectory;
-    wxStringSet_t m_filesSent;
+    wxStringMap_t m_filesSent;
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
     wxString m_rootFolder;
@@ -86,6 +86,7 @@ protected:
     void OnFindSymbolImpl(clCodeCompletionEvent& event);
     void OnFindSymbol(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
+    void OnQuickOutline(clCodeCompletionEvent& event);
 
 protected:
     void DoClear();
@@ -95,6 +96,8 @@ protected:
     void ProcessQueue();
     static wxString GetLanguageId(const wxFileName& fn);
     static wxString GetLanguageId(const wxString& fn);
+    void UpdateFileSent(const wxFileName& filename, const std::string& fileContent);
+    bool IsFileChangedSinceLastParse(const wxFileName& filename, const std::string& fileContent) const;
 
 protected:
     /**
@@ -220,6 +223,11 @@ public:
      * @brief tell the server to close editor
      */
     void CloseEditor(IEditor* editor);
+
+    /**
+     * @brief get list of symbols for the current editor
+     */
+    void DocumentSymbols(IEditor* editor);
 };
 
 #endif // CLLANGUAGESERVER_H

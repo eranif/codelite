@@ -8,6 +8,7 @@
 #include "LSP/GotoDefinitionRequest.h"
 #include "LSP/GotoImplementationRequest.h"
 #include "LSP/InitializeRequest.h"
+#include "LSP/InitializedNotification.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSP/Request.h"
 #include "LSP/ResponseError.h"
@@ -674,16 +675,34 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             m_owner->AddPendingEvent(eventClearDiags);
                         }
                     } else {
-                        clDEBUG() << GetLogPrefix() << "received an unsupported message";
+                        if(res.Has("method") && ((res.Get("method").toString() == "telemetry/event") ||
+                                                 (res.Get("method").toString() == "window/logMessage") ||
+                                                 (res.Get("method").toString() == "window/showMessage"))) {
+                            if(res.Get("params")["Properties"]["stackTrace"].isOk()) {
+                                clDEBUG() << "LSP backtrace" << clEndl;
+                                clDEBUG() << res.Get("params")["Properties"]["stackTrace"].toString() << clEndl;
+                            } else {
+                                clDEBUG() << "received telemetry/log message:" << clEndl;
+                                clDEBUG() << res.Get("params").format() << clEndl;
+                            }
+                        } else {
+                            clDEBUG() << GetLogPrefix() << "received an unsupported message";
+                        }
                     }
                 }
             } else {
                 // we only accept initialization responses here
                 if(res.GetId() == m_initializeRequestID) {
-                    clDEBUG() << GetLogPrefix() << "initialization completed";
-                    m_initializeRequestID = wxNOT_FOUND;
                     m_state = kInitialized;
 
+                    clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << clEndl;
+                    LSP::InitializedNotification::Ptr_t initNotification =
+                        LSP::MessageWithParams::MakeRequest(new LSP::InitializedNotification());
+                    QueueMessage(initNotification);
+
+                    // Send LSP::InitializedNotification to the server
+                    clDEBUG() << GetLogPrefix() << "initialization completed" << clEndl;
+                    m_initializeRequestID = wxNOT_FOUND;
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
                     initEvent.SetServerName(GetName());

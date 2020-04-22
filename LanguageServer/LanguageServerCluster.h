@@ -44,6 +44,7 @@ protected:
     void OnCompileCommandsGenerated(clCommandEvent& event);
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
+    void OnOutlineSymbols(LSPEvent& event);
 
 public:
     LanguageServerCluster();

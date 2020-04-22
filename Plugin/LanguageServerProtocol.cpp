@@ -167,9 +167,9 @@ bool LanguageServerProtocol::DoStart()
     }
 }
 
-bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& connectionString,
-                                   const wxString& workingDirectory, const wxString& rootFolder,
-                                   const wxArrayString& languages, size_t flags)
+bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& initOptions,
+                                   const wxString& connectionString, const wxString& workingDirectory,
+                                   const wxString& rootFolder, const wxArrayString& languages, size_t flags)
 {
     if(IsRunning()) {
         return true;
@@ -182,6 +182,7 @@ bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxStri
     m_rootFolder = rootFolder;
     m_connectionString = connectionString;
     m_createFlags = flags;
+    m_initOptions = initOptions;
     return DoStart();
 }
 
@@ -555,7 +556,7 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     req->As<LSP::InitializeRequest>()->SetRootUri(m_rootFolder);
-
+    req->As<LSP::InitializeRequest>()->SetInitOptions(m_initOptions);
     clDEBUG() << GetLogPrefix() << "Sending initialize request...";
 
     // Temporarly set the state to "kInitialized" so we can send out the "initialize" request

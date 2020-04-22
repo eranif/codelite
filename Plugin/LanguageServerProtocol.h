@@ -50,6 +50,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxEvtHandler* m_owner = nullptr;
     LSPNetwork::Ptr_t m_network;
     wxArrayString m_lspCommand;
+    wxString m_initOptions;
     wxString m_workingDirectory;
     wxStringMap_t m_filesSent;
     wxStringSet_t m_languages;
@@ -169,12 +170,14 @@ public:
     /**
      * @brief start LSP server and connect to it (e.g. clangd)
      * @param lspCommand LSP server command
+     * @param initOptions initialization options to pass to the LSP
      * @param connectionString
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
      */
-    bool Start(const wxArrayString& lspCommand, const wxString& connectionString, const wxString& workingDirectory,
-               const wxString& rootFolder, const wxArrayString& languages, size_t flags);
+    bool Start(const wxArrayString& lspCommand, const wxString& initOptions, const wxString& connectionString,
+               const wxString& workingDirectory, const wxString& rootFolder, const wxArrayString& languages,
+               size_t flags);
 
     /**
      * @brief same as above, but reuse the current parameters

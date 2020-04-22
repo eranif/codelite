@@ -22,10 +22,13 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
+#include <wx/imaglist.h>
 #include <wx/stc/stc.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include <wx/slider.h>
+#include <wx/dataview.h>
+#include "clThemedTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -87,7 +90,11 @@ protected:
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
+    wxNotebook* m_notebook164;
+    wxPanel* m_panel166;
     wxStyledTextCtrl* m_stcCommand;
+    wxPanel* m_panel1661;
+    wxStyledTextCtrl* m_stcInitOptions;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
     wxButton* m_button1153;
@@ -111,6 +118,10 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
+    wxPanel* GetPanel166() { return m_panel166; }
+    wxStyledTextCtrl* GetStcInitOptions() { return m_stcInitOptions; }
+    wxPanel* GetPanel1661() { return m_panel1661; }
+    wxNotebook* GetNotebook164() { return m_notebook164; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
     wxButton* GetButton1153() { return m_button1153; }
@@ -143,6 +154,24 @@ public:
                              const wxSize& size = wxSize(-1, -1),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewLanguageServerDlgBase();
+};
+
+class LSPOutlineViewDlgBase : public wxDialog
+{
+protected:
+    wxPanel* m_panel155;
+    wxTextCtrl* m_textCtrlFilter;
+    clThemedTreeCtrl* m_dvTreeCtrll;
+
+protected:
+public:
+    wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
+    clThemedTreeCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
+    wxPanel* GetPanel155() { return m_panel155; }
+    LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Outline View"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~LSPOutlineViewDlgBase();
 };
 
 #endif

@@ -11,10 +11,14 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     : LanguageServerPageBase(parent)
 {
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lex) { lex->Apply(m_stcCommand); }
+    if(lex) {
+        lex->Apply(m_stcCommand);
+        lex->Apply(m_stcInitOptions);
+    }
     m_textCtrlName->SetValue(data.GetName());
     m_textCtrlWD->SetValue(data.GetWorkingDirectory());
     m_stcCommand->SetText(data.GetCommand());
+    m_stcInitOptions->SetText(data.GetInitOptions());
     m_checkBoxEnabled->SetValue(data.IsEnabled());
     const wxArrayString& langs = data.GetLanguages();
     wxString languages = wxJoin(langs, ';');
@@ -28,7 +32,10 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
     : LanguageServerPageBase(parent)
 {
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lex) { lex->Apply(m_stcCommand); }
+    if(lex) {
+        lex->Apply(m_stcCommand);
+        lex->Apply(m_stcInitOptions);
+    }
 }
 
 LanguageServerPage::~LanguageServerPage() {}
@@ -44,6 +51,7 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetConnectionString(m_comboBoxConnection->GetValue());
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
+    d.SetInitOptions(m_stcInitOptions->GetText().Trim().Trim(false));
     return d;
 }
 
@@ -66,7 +74,9 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
     wxArrayInt selections;
     int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), _("CodeLite"),
                                        arrLang, GetParent());
-    if(count == wxNOT_FOUND) { return; }
+    if(count == wxNOT_FOUND) {
+        return;
+    }
 
     wxString newText;
     for(int sel : selections) {
@@ -81,5 +91,7 @@ void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
     wxString path(m_textCtrlWD->GetValue());
     wxString new_path =
         wxDirSelector(_("Select a working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlWD->SetValue(new_path); }
+    if(new_path.IsEmpty() == false) {
+        m_textCtrlWD->SetValue(new_path);
+    }
 }

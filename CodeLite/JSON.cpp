@@ -697,3 +697,12 @@ JSONItem JSONItem::AddObject(const wxString& name)
     append(json);
     return json;
 }
+
+JSONItem& JSONItem::addProperty(const wxString& name, cJSON* pjson)
+{
+    if(!m_json) {
+        return *this;
+    }
+    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), pjson);
+    return *this;
+}

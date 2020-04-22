@@ -26,6 +26,15 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name, IPathConverter::Pt
     } else {
         params.addProperty("rootUri", wxFileSystem::FileNameToURL(GetRootUri()));
     }
+    if(!m_initOptions.empty()) {
+        // Parse the JSON string and set it as the 'initializationOptions
+        JSON initializationOptions(m_initOptions);
+        if(initializationOptions.isOk()) {
+            cJSON* pjson = initializationOptions.release();
+            json.addProperty(wxString("initializationOptions"), (cJSON*)pjson);
+        }
+    }
+
     JSONItem capabilities = JSONItem::createObject("capabilities");
     params.append(capabilities);
     JSONItem textDocument = JSONItem::createObject("textDocument");

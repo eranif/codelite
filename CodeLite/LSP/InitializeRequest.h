@@ -9,6 +9,7 @@ class WXDLLIMPEXP_CL InitializeRequest : public LSP::Request
 {
     int m_processId = wxNOT_FOUND;
     wxString m_rootUri;
+    wxString m_initOptions;
 
 public:
     InitializeRequest(const wxString& rootUri = "");
@@ -28,6 +29,8 @@ public:
     JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner, IPathConverter::Ptr_t pathConverter);
     bool IsPositionDependantRequest() const { return false; }
+    void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
+    const wxString& GetInitOptions() const { return m_initOptions; }
 };
 };     // namespace LSP
 #endif // INITIALIZEREQUEST_H

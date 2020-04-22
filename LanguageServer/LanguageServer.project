@@ -26,6 +26,8 @@
     <File Name="UI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
+    <File Name="LSPOutlineViewDlg.cpp"/>
+    <File Name="LSPOutlineViewDlg.h"/>
     <File Name="LanguageServerPage.cpp"/>
     <File Name="LanguageServerPage.h"/>
     <File Name="NewLanguageServerDlg.cpp"/>

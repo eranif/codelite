@@ -50,6 +50,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
     Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
 }
 
 void LanguageServerCluster::Reload()
@@ -57,7 +58,9 @@ void LanguageServerCluster::Reload()
     StopAll();
 
     // If we are not enabled, stop here
-    if(!LanguageServerConfig::Get().IsEnabled()) { return; }
+    if(!LanguageServerConfig::Get().IsEnabled()) {
+        return;
+    }
 
     StartAll();
 }
@@ -70,7 +73,9 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxFi
                          return vt.second->CanHandle(filename);
                      });
 
-    if(iter == m_servers.end()) { return LanguageServerProtocol::Ptr_t(nullptr); }
+    if(iter == m_servers.end()) {
+        return LanguageServerProtocol::Ptr_t(nullptr);
+    }
     return iter->second;
 }
 
@@ -84,11 +89,15 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     // Manage the browser (BACK and FORWARD) ourself
     BrowseRecord from;
     IEditor* oldEditor = clGetManager()->GetActiveEditor();
-    if(oldEditor) { from = oldEditor->CreateBrowseRecord(); }
+    if(oldEditor) {
+        from = oldEditor->CreateBrowseRecord();
+    }
     IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
     if(editor) {
         editor->SelectRange(location.GetRange());
-        if(oldEditor) { NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord()); }
+        if(oldEditor) {
+            NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord());
+        }
     }
 }
 
@@ -99,7 +108,9 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
     CHECK_PTR_RET(editor);
 
     LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
-    if(lsp) { lsp->OpenEditor(editor); }
+    if(lsp) {
+        lsp->OpenEditor(editor);
+    }
 }
 
 void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
@@ -113,7 +124,9 @@ void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
     TagEntryPtrVector_t tags;
     LSPSignatureHelpToTagEntries(tags, sighelp);
 
-    if(tags.empty()) { return; }
+    if(tags.empty()) {
+        return;
+    }
     editor->ShowCalltip(new clCallTip(tags));
 }
 
@@ -139,7 +152,9 @@ void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
-    if(!server) { return; }
+    if(!server) {
+        return;
+    }
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -152,7 +167,9 @@ void LanguageServerCluster::OnRestartNeeded(LSPEvent& event) { RestartServer(eve
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxString& name)
 {
-    if(m_servers.count(name) == 0) { return LanguageServerProtocol::Ptr_t(nullptr); }
+    if(m_servers.count(name) == 0) {
+        return LanguageServerProtocol::Ptr_t(nullptr);
+    }
     return m_servers[name];
 }
 
@@ -165,7 +182,9 @@ void LanguageServerCluster::RestartServer(const wxString& name)
         // the service provider manager) the ref count needs to get to 0
         // Hence the inner block
         LanguageServerProtocol::Ptr_t server = GetServerByName(name);
-        if(!server) { return; }
+        if(!server) {
+            return;
+        }
         clDEBUG() << "Restarting LSP server:" << name;
         server->Stop();
 
@@ -174,7 +193,9 @@ void LanguageServerCluster::RestartServer(const wxString& name)
     }
 
     // Create new instance
-    if(LanguageServerConfig::Get().GetServers().count(name) == 0) { return; }
+    if(LanguageServerConfig::Get().GetServers().count(name) == 0) {
+        return;
+    }
     const LanguageServerEntry& entry = LanguageServerConfig::Get().GetServers().at(name);
     StartServer(entry);
 }
@@ -203,7 +224,9 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         wxString command = entry.GetCommand();
 
         wxString project;
-        if(clCxxWorkspaceST::Get()->IsOpen()) { project = clCxxWorkspaceST::Get()->GetActiveProjectName(); }
+        if(clCxxWorkspaceST::Get()->IsOpen()) {
+            project = clCxxWorkspaceST::Get()->GetActiveProjectName();
+        }
         command = MacroManager::Instance()->Expand(command, clGetManager(), project);
         wxArrayString lspCommand;
         lspCommand = StringUtils::BuildArgv(command);
@@ -225,10 +248,12 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
 
         size_t flags = 0;
-        if(entry.IsAutoRestart()) { flags |= LSPStartupInfo::kAutoStart; }
+        if(entry.IsAutoRestart()) {
+            flags |= LSPStartupInfo::kAutoStart;
+        }
 
-        lsp->Start(lspCommand, entry.GetConnectionString(), entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(),
-                   flags);
+        lsp->Start(lspCommand, entry.GetInitOptions(), entry.GetConnectionString(), entry.GetWorkingDirectory(),
+                   rootDir, entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
     }
 }
@@ -272,7 +297,9 @@ void LanguageServerCluster::StartAll()
 
 void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
 {
-    if(sighelp.GetSignatures().empty()) { return; }
+    if(sighelp.GetSignatures().empty()) {
+        return;
+    }
     const LSP::SignatureInformation::Vec_t& sigs = sighelp.GetSignatures();
     for(const LSP::SignatureInformation& si : sigs) {
         TagEntryPtr tag(new TagEntry());
@@ -300,6 +327,8 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
+void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event) { event.Skip(); }
+
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 {
     event.Skip();
@@ -321,7 +350,9 @@ void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
     wxString uri = event.GetLocation().GetUri();
     wxFileName fn(uri);
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
-    if(editor) { editor->DelAllCompilerMarkers(); }
+    if(editor) {
+        editor->DelAllCompilerMarkers();
+    }
 }
 
 void LanguageServerCluster::ClearAllDiagnostics()

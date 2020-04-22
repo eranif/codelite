@@ -25,9 +25,12 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     wxString commandDefault = m_exepath;
     if(!commandDefault.IsEmpty()) {
         ::WrapWithQuotes(commandDefault);
-        if(!m_args.empty()) { commandDefault << " " << m_args; }
+        if(!m_args.empty()) {
+            commandDefault << " " << m_args;
+        }
     }
     m_command = json.namedObject("command").toString(commandDefault);
+    m_initOptions = json["initOptions"].toString();
     m_unimplementedMethods.clear();
     wxArrayString methods = json.namedObject("unimplementedMethods").toArrayString();
     for(const wxString& methodName : methods) {
@@ -48,6 +51,7 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("priority", m_priority);
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
+    json.addProperty("initOptions", m_initOptions);
 
     wxArrayString methods;
     methods.Alloc(m_unimplementedMethods.size());
@@ -73,7 +77,9 @@ eNetworkType LanguageServerEntry::GetNetType() const
 bool LanguageServerEntry::IsValid() const
 {
     bool is_valid = true;
-    if(m_name.IsEmpty()) { return false; }
+    if(m_name.IsEmpty()) {
+        return false;
+    }
     return true;
 }
 

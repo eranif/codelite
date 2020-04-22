@@ -21,6 +21,7 @@ class LanguageServerEntry
     wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
     wxString m_command;
+    wxString m_initOptions;
 
 public:
     // use 'map' to keep the items sorted by name
@@ -93,6 +94,8 @@ public:
     const wxString& GetName() const { return m_name; }
     eNetworkType GetNetType() const;
     bool IsAutoRestart() const;
+    void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
+    const wxString& GetInitOptions() const { return m_initOptions; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

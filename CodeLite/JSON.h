@@ -157,6 +157,7 @@ public:
     JSONItem& addProperty(const wxString& name, long value);
     JSONItem& addProperty(const wxString& name, size_t value);
     JSONItem& addProperty(const wxString& name, bool value);
+    JSONItem& addProperty(const wxString& name, cJSON* pjson);
     JSONItem& addProperty(const wxString& name, const wxFileName& filename);
 
 #if wxUSE_GUI

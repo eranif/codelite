@@ -35,10 +35,12 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name, IPathConverter::Pt
         }
     }
 
-    JSONItem capabilities = JSONItem::createObject("capabilities");
-    params.append(capabilities);
-    JSONItem textDocument = JSONItem::createObject("textDocument");
-    capabilities.append(textDocument);
+    auto docFormat = params.AddObject("capabilities")
+                         .AddObject("textDocument")
+                         .AddObject("completion")
+                         .AddObject("completionItem")
+                         .AddArray("documentationFormat");
+    docFormat.arrayAppend("plaintext");
     return json;
 }
 

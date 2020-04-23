@@ -929,8 +929,9 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     si.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
     si.exeName = exe;
     si.cwd = wd;
+    si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
     clGetManager()->GetBreakpoints(si.bpList);
-
+    
     // Start terminal (doesn't do anything under MSW)
     m_debuggerTerminal.Clear();
     m_debuggerTerminal.Launch(dbgr->GetName());

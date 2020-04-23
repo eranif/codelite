@@ -32,6 +32,7 @@
 #include <sstream>
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
+#include "environmentconfig.h"
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
                                                IPathConverter::Ptr_t pathConverter)
@@ -160,6 +161,7 @@ bool LanguageServerProtocol::DoStart()
     info.SetConnectioString(m_connectionString);
     info.SetFlags(m_createFlags);
     try {
+        EnvSetter env;
         m_network->Open(info);
         return true;
     } catch(clException& e) {

@@ -27,6 +27,7 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     JSONItem items = result.namedObject("items");
     if(!items.isOk()) {
         clWARNING() << "LSP::CompletionRequest::OnResponse(): invalid 'items' object";
+        clWARNING() << result.format() << clEndl;
         return;
     }
 
@@ -41,7 +42,9 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     for(int i = 0; i < itemsCount; ++i) {
         CompletionItem::Ptr_t completionItem(new CompletionItem());
         completionItem->FromJSON(items.arrayItem(i), pathConverter);
-        if(completionItem->GetInsertText().IsEmpty()) { completionItem->SetInsertText(completionItem->GetLabel()); }
+        if(completionItem->GetInsertText().IsEmpty()) {
+            completionItem->SetInsertText(completionItem->GetLabel());
+        }
         completions.push_back(completionItem);
     }
 

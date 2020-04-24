@@ -113,7 +113,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     // Fit the initial size and set it as the default minimum size
     GetSizer()->Fit(this);
     SetMinSize(GetSize());
-
+    CallAfter(&FindInFilesDialog::DoSelectAll);
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
@@ -559,3 +559,8 @@ void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
 }
 
 void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event) { OnReplace(event); }
+
+void FindInFilesDialog::DoSelectAll()
+{
+    m_findString->GetTextCtrl()->SelectAll();
+}

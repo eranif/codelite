@@ -64,7 +64,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
 void clComboBox::DoCreate(const wxString& value)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxTE_RICH2);
+    m_textCtrl = new wxTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND, 0);
     m_button = new clButton(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     m_button->SetHasDropDownMenu(true);

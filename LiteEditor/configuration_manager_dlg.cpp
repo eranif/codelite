@@ -22,13 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "windowattrmanager.h"
 #include "configuration_manager_dlg.h"
-#include "manager.h"
-#include "new_configuration_dlg.h"
 #include "edit_configuration.h"
 #include "edit_workspace_conf_dlg.h"
 #include "macros.h"
+#include "manager.h"
+#include "new_configuration_dlg.h"
+#include "windowattrmanager.h"
 #include <algorithm>
 #include <wx/wupdlock.h>
 
@@ -55,12 +55,16 @@ wxArrayString ConfigurationManagerDlg::GetChoicesForProject(const wxString& proj
 {
     wxArrayString choices;
     ProjectPtr project = ManagerST::Get()->GetProject(projectName);
-    if(!project) { return choices; }
+    if(!project) {
+        return choices;
+    }
 
     // Get the workspace configuration
     wxString projectConfig =
         clCxxWorkspaceST::Get()->GetBuildMatrix()->GetProjectSelectedConf(workspaceConfig, projectName);
-    if(projectConfig.IsEmpty()) { return choices; }
+    if(projectConfig.IsEmpty()) {
+        return choices;
+    }
 
     // Get all configuration of the project
     ProjectSettingsPtr settings = project->GetSettings();
@@ -70,7 +74,9 @@ wxArrayString ConfigurationManagerDlg::GetChoicesForProject(const wxString& proj
         BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
         while(bldConf) {
             choices.Add(bldConf->GetName());
-            if(projectConfig == bldConf->GetName()) { index = counter; }
+            if(projectConfig == bldConf->GetName()) {
+                index = counter;
+            }
             bldConf = settings->GetNextBuildConfiguration(cookie);
             ++counter;
         }
@@ -85,7 +91,9 @@ void ConfigurationManagerDlg::PopulateConfigurations()
 {
     // popuplate the configurations
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) { return; }
+    if(!matrix) {
+        return;
+    }
 
     wxWindowUpdateLocker locker(this);
     m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
@@ -146,9 +154,8 @@ void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent& event)
         OnButtonNew(event);
     } else if(event.GetString() == wxGetTranslation(clCMD_EDIT)) {
         // popup the delete dialog for configurations
-        EditWorkspaceConfDlg* dlg = new EditWorkspaceConfDlg(this);
-        dlg->ShowModal();
-        dlg->Destroy();
+        EditWorkspaceConfDlg dlg(this);
+        dlg.ShowModal();
 
         // once done, restore dialog
         PopulateConfigurations();
@@ -177,8 +184,11 @@ void ConfigurationManagerDlg::OnButtonNew(wxCommandEvent& event)
         wxString value = dlg->GetValue();
         TrimString(value);
         if(value.IsEmpty() == false) {
+            value.Replace(" ", "_"); // using spaces will break the build, replace them with hyphens
             BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-            if(!matrix) { return; }
+            if(!matrix) {
+                return;
+            }
 
             WorkspaceConfigurationPtr conf(new WorkspaceConfiguration(NULL));
             conf->SetName(value);
@@ -226,7 +236,9 @@ void ConfigurationManagerDlg::SaveCurrentSettings()
     m_currentWorkspaceConfiguration = m_currentWorkspaceConfiguration.Trim().Trim(false);
 
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
-    if(!matrix) { return; }
+    if(!matrix) {
+        return;
+    }
 
     matrix->SetSelectedConfigurationName(m_currentWorkspaceConfiguration);
 
@@ -287,7 +299,9 @@ void ConfigurationManagerDlg::OnShowConfigList(wxDataViewEvent& event)
     event.Skip();
     wxDataViewItem item = event.GetItem();
     wxArrayString* choices = reinterpret_cast<wxArrayString*>(m_dvListCtrl->GetItemData(item));
-    if(!choices) { return; }
+    if(!choices) {
+        return;
+    }
 
     m_dvListCtrl->ShowStringSelectionMenu(item, *choices, event.GetColumn());
 }

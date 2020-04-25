@@ -79,7 +79,9 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(bgColour);
 
-    if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
+    if(isDark && !tabInfo.IsActive()) {
+        bgColour = bgColour.ChangeLightness(105);
+    }
 
     wxFont font = GetTabFont(false);
     wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
@@ -119,7 +121,9 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
 
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
-    if(style & kNotebook_CloseButtonOnActiveTab) { DrawButton(parent, dc, tabInfo, colours, buttonState); }
+    if(style & kNotebook_CloseButtonOnActiveTab) {
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
+    }
 }
 
 void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
@@ -151,6 +155,13 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
     wxUnusedVar(parent);
     wxUnusedVar(dc);
     wxUnusedVar(clientRect);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
+    wxColour penColour(colours.activeTabBgColour);
+    dc.SetPen(penColour);
+    if(!IS_VERTICAL_TABS(style)) {
+        if(style & kNotebook_BottomTabs) {
+            DRAW_LINE(clientRect.GetTopLeft(), clientRect.GetTopRight());
+        } else {
+            DRAW_LINE(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
+        }
+    }
 }

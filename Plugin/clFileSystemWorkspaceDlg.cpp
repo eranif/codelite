@@ -15,7 +15,9 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent)
     const auto& configsMap = clFileSystemWorkspace::Get().GetSettings().GetConfigsMap();
     clFileSystemWorkspaceConfig::Ptr_t conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
     wxString selConf;
-    if(conf) { selConf = conf->GetName(); }
+    if(conf) {
+        selConf = conf->GetName();
+    }
     for(const auto& vt : configsMap) {
         FSConfigPage* page = new FSConfigPage(m_notebook, vt.second);
         m_notebook->AddPage(page, vt.second->GetName(), (selConf == vt.first));
@@ -29,7 +31,9 @@ void clFileSystemWorkspaceDlg::OnOK(wxCommandEvent& event)
 {
     for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
         FSConfigPage* page = dynamic_cast<FSConfigPage*>(m_notebook->GetPage(i));
-        if(!page) { continue; }
+        if(!page) {
+            continue;
+        }
         page->Save();
     }
 
@@ -44,7 +48,9 @@ void clFileSystemWorkspaceDlg::OnNewConfig(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString name = ::wxGetTextFromUser(_("Name"), _("New configuration"), "Untitled");
-    if(name.IsEmpty()) { return; }
+    if(name.IsEmpty()) {
+        return;
+    }
     if(clFileSystemWorkspace::Get().GetSettings().AddConfig(name)) {
         clFileSystemWorkspaceConfig::Ptr_t conf = clFileSystemWorkspace::Get().GetSettings().GetConfig(name);
         FSConfigPage* page = new FSConfigPage(m_notebook, conf);
@@ -55,8 +61,12 @@ void clFileSystemWorkspaceDlg::OnNewConfig(wxCommandEvent& event)
 void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
 {
     wxWindowUpdateLocker locker(this);
-    if(m_notebook->GetSelection() == wxNOT_FOUND) { return; }
-    if(m_notebook->GetPageCount() == 1) { return; }
+    if(m_notebook->GetSelection() == wxNOT_FOUND) {
+        return;
+    }
+    if(m_notebook->GetPageCount() == 1) {
+        return;
+    }
     int sel = m_notebook->GetSelection();
     if(clFileSystemWorkspace::Get().GetSettings().DeleteConfig(m_notebook->GetPageText(sel))) {
         m_notebook->DeletePage(sel);

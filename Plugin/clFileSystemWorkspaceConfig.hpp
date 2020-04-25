@@ -15,6 +15,7 @@ public:
     enum {
         kGenerateCompileFlags = (1 << 0),
         kEnableRemoteSync = (1 << 1),
+        kRemoteBuild = (1 << 2),
     };
 
 protected:
@@ -100,6 +101,15 @@ public:
     const wxString& GetDebugger() const { return m_debugger; }
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
+    bool IsRemoteBuild() const { return m_flags & kRemoteBuild; }
+    void SetRemoteBuild(bool b)
+    {
+        if(b) {
+            m_flags |= kRemoteBuild;
+        } else {
+            m_flags &= ~kRemoteBuild;
+        }
+    }
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

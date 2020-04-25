@@ -49,6 +49,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     DoUpdateSSHAcounts();
 
     m_checkBoxEnableRemote->SetValue(config->IsRemoteEnabled());
+    m_checkBoxRemoteBuild->SetValue(config->IsRemoteBuild());
     m_textCtrlRemoteFolder->ChangeValue(config->GetRemoteFolder());
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
     m_choiceDebuggers->SetStringSelection(config->GetDebugger());
@@ -118,6 +119,7 @@ void FSConfigPage::Save()
     m_config->SetCompiler(m_choiceCompiler->GetStringSelection());
     m_config->SetRemoteFolder(m_textCtrlRemoteFolder->GetValue());
     m_config->SetRemoteEnabled(m_checkBoxEnableRemote->IsChecked());
+    m_config->SetRemoteBuild(m_checkBoxRemoteBuild->IsChecked());
     m_config->SetRemoteAccount(m_choiceSSHAccount->GetStringSelection());
     m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());

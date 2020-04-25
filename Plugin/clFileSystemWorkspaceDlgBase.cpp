@@ -586,6 +586,15 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer155->Add(m_button169, 0, wxALL | wxALIGN_TOP, WXC_FROM_DIP(5));
 
+    flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxRemoteBuild = new wxCheckBox(m_panelRemote, wxID_ANY, _("Enable remote build"), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
+    m_checkBoxRemoteBuild->SetValue(false);
+    m_checkBoxRemoteBuild->SetToolTip(_("Execute the build commands on the remote machine"));
+
+    flexGridSizer155->Add(m_checkBoxRemoteBuild, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("FSConfigPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) {
@@ -613,6 +622,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_button169->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
     m_button169->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
                          this);
+    m_checkBoxRemoteBuild->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
+                                   this);
 }
 
 FSConfigPageBase::~FSConfigPageBase()
@@ -638,6 +649,8 @@ FSConfigPageBase::~FSConfigPageBase()
     m_button169->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL, this);
     m_button169->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnSSHBrowse), NULL,
                             this);
+    m_checkBoxRemoteBuild->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI),
+                                      NULL, this);
 }
 
 NewFileSystemWorkspaceDialogBase::NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id,

@@ -139,6 +139,7 @@ protected:
     wxStaticText* m_staticText165;
     wxTextCtrl* m_textCtrlRemoteFolder;
     wxButton* m_button169;
+    wxCheckBox* m_checkBoxRemoteBuild;
 
 protected:
     virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
@@ -186,6 +187,7 @@ public:
     wxStaticText* GetStaticText165() { return m_staticText165; }
     wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
     wxButton* GetButton169() { return m_button169; }
+    wxCheckBox* GetCheckBoxRemoteBuild() { return m_checkBoxRemoteBuild; }
     wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxNotebook* GetNotebook() { return m_notebook; }
     FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

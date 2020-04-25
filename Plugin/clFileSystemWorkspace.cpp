@@ -739,7 +739,8 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         return;
     }
 
-    if(GetConfig()->IsRemoteEnabled()) {
+    // Check that the remote development is enabled AND remote build
+    if(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild()) {
         // Launch a remote build process
         if(m_remoteBuilder && m_remoteBuilder->IsRunning()) {
             return;
@@ -931,7 +932,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     si.cwd = wd;
     si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
     clGetManager()->GetBreakpoints(si.bpList);
-    
+
     // Start terminal (doesn't do anything under MSW)
     m_debuggerTerminal.Clear();
     m_debuggerTerminal.Launch(dbgr->GetName());

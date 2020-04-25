@@ -1089,10 +1089,12 @@ void clMainFrame::CreateGUIControls()
     m_myMenuBar->Set(mb);
     SetMenuBar(mb);
 
-#ifdef __WXGTK__
-    bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
-    GetMenuBar()->Show(showMenuBar);
+#ifdef __WXMSW__
+    hMenu = GetMenu(GetHWND());
 #endif
+
+    bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
+    DoShowMenuBar(showMenuBar);
 
     // Create the status bar
     m_statusBar = new clStatusBar(this, PluginManager::Get());
@@ -5733,9 +5735,7 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
         if(m_frameHelper->IsCaptionsVisible()) {
             DoShowCaptions(false);
         }
-#ifndef __WXOSX__
-        GetMenuBar()->Hide();
-#endif
+        DoShowMenuBar(false);
     } else {
         if(!m_frameHelper->IsToolbarShown()) {
             DoShowToolbars(true, false);
@@ -5743,9 +5743,7 @@ void clMainFrame::OnToggleMinimalView(wxCommandEvent& event)
         if(!m_frameHelper->IsCaptionsVisible()) {
             DoShowCaptions(true);
         }
-#ifndef __WXOSX__
-        GetMenuBar()->Show();
-#endif
+        DoShowMenuBar(true);
     }
 
     // Update the various configurations
@@ -6021,16 +6019,16 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
 
 void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 {
-    bool isShown = GetMenuBar()->IsShown();
-    GetMenuBar()->Show(!isShown);
+    bool currentState = clConfig::Get().Read(kConfigShowMenuBar, true);
+    DoShowMenuBar(!currentState);
     GetSizer()->Layout();
     PostSizeEvent();
-    clConfig::Get().Write(kConfigShowMenuBar, !isShown);
+    clConfig::Get().Write(kConfigShowMenuBar, !currentState);
 }
 
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMSW__)
     event.Check(GetMenuBar()->IsShown());
 #else
     event.Check(true);
@@ -6087,4 +6085,13 @@ void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
 
     // show the menu
     toolbar->ShowMenuForButton(buttonID, &menu);
+}
+
+void clMainFrame::DoShowMenuBar(bool show)
+{
+#ifdef __WXGTK__
+    GetMenuBar()->Show(show);
+#elif defined(__WXMSW__)
+    ::SetMenu(GetHWND(), show ? hMenu : NULL);
+#endif
 }

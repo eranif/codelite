@@ -588,7 +588,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer155->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxRemoteBuild = new wxCheckBox(m_panelRemote, wxID_ANY, _("Enable remote build"), wxDefaultPosition,
+    m_checkBoxRemoteBuild = new wxCheckBox(m_panelRemote, wxID_ANY, _("Use remote build"), wxDefaultPosition,
                                            wxDLG_UNIT(m_panelRemote, wxSize(-1, -1)), 0);
     m_checkBoxRemoteBuild->SetValue(false);
     m_checkBoxRemoteBuild->SetToolTip(_("Execute the build commands on the remote machine"));

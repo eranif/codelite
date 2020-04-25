@@ -4832,7 +4832,7 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Label:",
-																	"m_value":	"Enable remote build"
+																	"m_value":	"Use remote build"
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Value:",

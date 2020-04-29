@@ -125,9 +125,9 @@ class clMainFrame : public wxFrame
 #endif
 
 #ifdef __WXGTK__
-    bool m_isWaylandSession;
+    bool m_isWaylandSession = false;
 #endif
-    
+
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
@@ -154,11 +154,18 @@ protected:
     void DoShowMenuBar(bool show);
 
 public:
-    virtual void Raise();
+    void Raise() override;
+
     static clMainFrame* Get();
     static void Initialize(bool loadLastSession);
 
     clInfoBar* GetMessageBar() { return m_infoBar; }
+
+    /**
+     * @brief return the menu bar
+     * @return
+     */
+    wxMenuBar* GetMenuBar() const override;
 
     /**
      * @brief goto anything..

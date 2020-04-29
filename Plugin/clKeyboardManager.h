@@ -27,15 +27,16 @@
 #define KEYBOARDMANAGER_H
 
 #include "codelite_exports.h"
-#include <list>
-#include <wx/frame.h>
-#include <wx/accel.h>
-#include <vector>
-#include <map>
-#include <wx/menu.h>
-#include <wx/event.h>
 #include "macros.h"
 #include "wxStringHash.h"
+#include <list>
+#include <map>
+#include <vector>
+#include <wx/accel.h>
+#include <wx/event.h>
+#include <wx/frame.h>
+#include <wx/menu.h>
+#include "cl_command_event.h"
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     wxString resourceID;
@@ -91,6 +92,7 @@ struct WXDLLIMPEXP_SDK clKeyboardShortcut {
     typedef std::vector<clKeyboardShortcut> Vec_t;
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
 class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:
@@ -109,7 +111,7 @@ protected:
     void DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels);
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
     MenuItemDataMap_t DoLoadDefaultAccelerators();
-    
+
     clKeyboardManager();
     virtual ~clKeyboardManager();
 
@@ -119,7 +121,7 @@ protected:
 public:
     static void Release();
     static clKeyboardManager* Get();
-    
+
     /**
      * @brief return an array of all unassigned keyboard shortcuts
      */
@@ -150,8 +152,8 @@ public:
      * For example: AddAccelerator("wxID_COPY", "Ctrl-Shift-C", "Copy the current selection");
      * @return true if the action succeeded, false otherwise
      */
-    void AddGlobalAccelerator(
-        const wxString& resourceID, const wxString& keyboardShortcut, const wxString& description);
+    void AddGlobalAccelerator(const wxString& resourceID, const wxString& keyboardShortcut,
+                              const wxString& description);
 
     /**
      * @brief replace all acceleratos with 'accels'

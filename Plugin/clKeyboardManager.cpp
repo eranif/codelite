@@ -1,26 +1,25 @@
-#include "clKeyboardManager.h"
-#include <wx/app.h>
-#include <wx/menu.h>
-#include <wx/xrc/xmlres.h>
-#include "macros.h"
-#include <algorithm>
 #include "clKeyboardBindingConfig.h"
+#include "clKeyboardManager.h"
 #include "cl_standard_paths.h"
-#include "fileutils.h"
-#include "newkeyshortcutdlg.h"
-#include <wx/log.h>
-#include <algorithm>
-#include <wx/tokenzr.h>
-#include <wx/log.h>
-#include "file_logger.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "macros.h"
+#include "newkeyshortcutdlg.h"
 #include <algorithm>
+#include <wx/app.h>
+#include <wx/log.h>
+#include <wx/menu.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
+
+wxDEFINE_EVENT(wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
 
 clKeyboardManager::clKeyboardManager()
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL,
+                                  this);
 
     // A-Z
     for(size_t i = 65; i < 91; ++i) {
@@ -99,8 +98,8 @@ clKeyboardManager::clKeyboardManager()
 clKeyboardManager::~clKeyboardManager()
 {
     Save();
-    EventNotifier::Get()->Disconnect(
-        wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(clKeyboardManager::OnStartupCompleted),
+                                     NULL, this);
 }
 
 static clKeyboardManager* m_mgr = NULL;
@@ -176,15 +175,21 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
 
     // Update menus. If a match is found remove it from the 'accel' table
     wxMenuBar* menuBar = frame->GetMenuBar();
-    if(!menuBar) return;
+    if(!menuBar) {
+        clDEBUG() << "No menu bar found!" << clEndl;
+        return;
+    }
+
     for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
         wxMenu* menu = menuBar->GetMenu(i);
+        clDEBUG() << "clKeyboardManager: updating menu" << menuBar->GetMenuLabel(i) << clEndl;
         DoUpdateMenu(menu, accels, table);
     }
 
     if(!table.empty() || !accels.empty()) {
         wxAcceleratorEntry* entries = new wxAcceleratorEntry[table.size() + accels.size()];
         // append the globals
+        clDEBUG() << "clKeyboardManager: appending global entries" << clEndl;
         for(MenuItemDataIntMap_t::iterator iter = accels.begin(); iter != accels.end(); ++iter) {
             wxString dummyText;
             dummyText << iter->second.action << "\t" << iter->second.accel;
@@ -240,11 +245,13 @@ void clKeyboardManager::Initialize()
 
             // Apply the old settings to the menus
             wxString content;
-            if(!FileUtils::ReadFileContent(fnFileToLoad, content)) return;
+            if(!FileUtils::ReadFileContent(fnFileToLoad, content))
+                return;
             wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
             for(size_t i = 0; i < lines.GetCount(); ++i) {
                 wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
-                if(parts.GetCount() < 3) continue;
+                if(parts.GetCount() < 3)
+                    continue;
                 MenuItemData binding;
                 binding.resourceID = parts.Item(0);
                 binding.parentMenu = parts.Item(1);
@@ -272,7 +279,7 @@ void clKeyboardManager::Initialize()
             m_menuTable.insert(vt);
         }
     });
-    
+
     // Store the correct configuration
     config.SetBindings(m_menuTable, m_globalTable).Save();
 
@@ -350,7 +357,8 @@ int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemDat
 
 bool clKeyboardManager::Exists(const wxString& accel) const
 {
-    if(accel.IsEmpty()) return false;
+    if(accel.IsEmpty())
+        return false;
 
     MenuItemDataMap_t accels;
     GetAllAccelerators(accels);
@@ -364,8 +372,7 @@ bool clKeyboardManager::Exists(const wxString& accel) const
     return false;
 }
 
-void clKeyboardManager::AddGlobalAccelerator(const wxString& resourceID,
-                                             const wxString& keyboardShortcut,
+void clKeyboardManager::AddGlobalAccelerator(const wxString& resourceID, const wxString& keyboardShortcut,
                                              const wxString& description)
 {
     MenuItemData mid;
@@ -426,10 +433,7 @@ wxArrayString clKeyboardManager::GetAllUnasignedKeyboardShortcuts() const
 
     // Remove all duplicate entries
     wxArrayString allUnasigned;
-    std::set_difference(m_allShorcuts.begin(),
-                        m_allShorcuts.end(),
-                        usedShortcuts.begin(),
-                        usedShortcuts.end(),
+    std::set_difference(m_allShorcuts.begin(), m_allShorcuts.end(), usedShortcuts.begin(), usedShortcuts.end(),
                         std::back_inserter(allUnasigned));
     return allUnasigned;
 }
@@ -448,7 +452,8 @@ MenuItemDataMap_t clKeyboardManager::DoLoadDefaultAccelerators()
         wxArrayString lines = ::wxStringTokenize(content, "\r\n", wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines.GetCount(); ++i) {
             wxArrayString parts = ::wxStringTokenize(lines.Item(i), "|", wxTOKEN_RET_EMPTY);
-            if(parts.GetCount() < 3) continue;
+            if(parts.GetCount() < 3)
+                continue;
             MenuItemData binding;
             binding.resourceID = parts.Item(0);
             binding.parentMenu = parts.Item(1);

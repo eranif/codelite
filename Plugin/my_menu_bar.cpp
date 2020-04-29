@@ -33,27 +33,19 @@
 #undef GSocket
 #endif
 
-MyMenuBar::MyMenuBar()
-	: m_mb(NULL)
+MyMenuBar::MyMenuBar(wxMenuBar* mb)
+    : m_mb(mb)
 {
 }
 
 MyMenuBar::~MyMenuBar()
 {
 #if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-	if (m_mb && m_mb->m_widget) {
-		// Release our reference and set m_widget to NULL this is to avoid freeing the widget again in the d-tor of wxWindow
-		m_mb->m_widget = NULL;
-	}
+    if(m_mb && m_mb->m_widget) {
+        // Release our reference and set m_widget to NULL this is to avoid freeing the widget again in the d-tor of
+        // wxWindow
+        m_mb->m_widget = NULL;
+    }
 #endif
-}
-
-void MyMenuBar::Set(wxMenuBar* mb)
-{
-#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-	m_mb = mb;
-#else
-	wxUnusedVar(mb);
-#endif
-
+    m_mb = nullptr;
 }

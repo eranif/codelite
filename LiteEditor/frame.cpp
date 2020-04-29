@@ -80,6 +80,7 @@
 #include <cpptoken.h>
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>
+#include <wx/dcbuffer.h>
 #include <wx/richmsgdlg.h>
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
@@ -1082,14 +1083,28 @@ void clMainFrame::CreateGUIControls()
         view->Remove(item);
     }
 #endif
+
     // Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
-    m_myMenuBar = new MyMenuBar();
-    m_myMenuBar->Set(mb);
-    SetMenuBar(mb);
+    m_myMenuBar = new MyMenuBar(mb);
+    SetMenuBar(m_myMenuBar->GetMenuBar());
 
 #ifdef __WXMSW__
     hMenu = GetMenu(GetHWND());
 #endif
+
+    mb->Bind(wxEVT_PAINT, [mb](wxPaintEvent& event) {
+        wxBufferedPaintDC dc(mb);
+        dc.SetBackground(*wxRED);
+        dc.SetTextForeground(*wxWHITE);
+        dc.DrawRectangle(mb->GetClientRect());
+    });
+
+    mb->Bind(wxEVT_PAINT, [mb](wxPaintEvent& event) {
+        wxBufferedPaintDC dc(mb);
+        dc.SetBackground(*wxRED);
+        dc.SetTextForeground(*wxWHITE);
+        dc.DrawRectangle(mb->GetClientRect());
+    });
 
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(showMenuBar);
@@ -6026,7 +6041,7 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 {
-#if defined(__WXGTK__) || defined(__WXMSW__)
+#if defined(__WXGTK__)
     event.Check(GetMenuBar()->IsShown());
 #else
     event.Check(true);
@@ -6089,7 +6104,11 @@ void clMainFrame::DoShowMenuBar(bool show)
 {
 #ifdef __WXGTK__
     GetMenuBar()->Show(show);
-#elif defined(__WXMSW__)
-    ::SetMenu(GetHWND(), show ? hMenu : NULL);
 #endif
+}
+
+wxMenuBar* clMainFrame::GetMenuBar() const
+{
+    clDEBUG() << "GetMenuBar is called" << clEndl;
+    return wxFrame::GetMenuBar();
 }

@@ -926,30 +926,43 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     GetExecutable(exe, args, wd);
 
     // Start the debugger
-    DebugSessionInfo si;
-    si.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
-    si.exeName = exe;
-    si.cwd = wd;
-    si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
-    clGetManager()->GetBreakpoints(si.bpList);
+    DebugSessionInfo startup_info;
+    clDebuggerBreakpoint::Vec_t bpList;
+    startup_info.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
+    startup_info.exeName = exe;
+    startup_info.cwd = wd;
+    startup_info.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
+    clGetManager()->GetBreakpoints(bpList);
+    startup_info.bpList = bpList;
 
     // Start terminal (doesn't do anything under MSW)
     m_debuggerTerminal.Clear();
     m_debuggerTerminal.Launch(dbgr->GetName());
-    si.ttyName = m_debuggerTerminal.GetTty();
-    si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+    startup_info.ttyName = m_debuggerTerminal.GetTty();
+    startup_info.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+
+    // Fire "starting" event
+    clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+    eventStarting.SetClientData(&startup_info);
+    if(EventNotifier::Get()->ProcessEvent(eventStarting))
+        return;
+
+    // Check if any plugins provided us with new breakpoints
+    if(!eventStarting.GetBreakpoints().empty()) {
+        startup_info.bpList.swap(eventStarting.GetBreakpoints());
+    }
 
     // Get toolchain
     CompilerPtr cmp = GetCompiler();
     if(cmp && !cmp->GetTool("Debugger").empty()) {
-        si.debuggerPath = cmp->GetTool("Debugger");
+        startup_info.debuggerPath = cmp->GetTool("Debugger");
     }
-    dbgr->Start(si);
+    dbgr->Start(startup_info);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-    eventStarted.SetClientData(&si);
+    eventStarted.SetClientData(&startup_info);
     EventNotifier::Get()->ProcessEvent(eventStarted);
     // Now run the debuggee
     dbgr->Run(args, "");

@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "asyncprocess.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 #include "dbgcmd.h"
 #include "debuggergdb.h"
 #include "debuggerobserver.h"
@@ -371,6 +373,17 @@ void DbgGdb::DoCleanup()
 
     // Free allocated console for this session
     m_consoleFinder.FreeConsole();
+
+    // fire 2 events here:
+    // - debugger stopping
+    // - debugger stopped
+    clDebugEvent eventEnding(wxEVT_DEBUG_ENDING);
+    EventNotifier::Get()->AddPendingEvent(eventEnding);
+
+    // Notify about debugger termianted
+    clDebugEvent eventStopped(wxEVT_DEBUG_ENDED);
+    eventStopped.SetDebuggerName(GetName());
+    EventNotifier::Get()->AddPendingEvent(eventStopped);
 }
 
 bool DbgGdb::Stop()

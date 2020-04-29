@@ -226,7 +226,8 @@ Manager::Manager(void)
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
-
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDING, &Manager::OnDebuggerStopping, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &Manager::OnDebuggerStopped, this);
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -252,6 +253,8 @@ Manager::~Manager(void)
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &Manager::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_REFRESH_PANE, &Manager::OnUpdateDebuggerActiveView, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDING, &Manager::OnDebuggerStopping, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &Manager::OnDebuggerStopped, this);
 
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
@@ -2324,21 +2327,22 @@ void Manager::DbgStart(long attachPid)
     }
 }
 
-void Manager::DbgStop()
+void Manager::OnDebuggerStopping(clDebugEvent& event)
 {
-    {
-        IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    event.Skip();
+    clDEBUG() << "Debugger stopping..." << clEndl;
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    // Store the current layout as "Debug" layout
+    GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
+}
 
-        if(dbgr && dbgr->IsRunning()) {
-// If the debugger is running assume that the current perspective is the
-// one that we want to use for our debugging purposes
-#ifndef __WXMAC__
-            GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
-#endif
-        }
-        GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
-    }
-
+void Manager::OnDebuggerStopped(clDebugEvent& event)
+{
+    // Debugger stopped. Cleanup UI layout & store session values
+    event.Skip();
+    clDEBUG() << "Debugger stopped!" << clEndl;
+    // Restore the Normal layout
+    GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     if(m_watchDlg) {
         m_watchDlg->Destroy();
         m_watchDlg = NULL;
@@ -2365,36 +2369,22 @@ void Manager::DbgStop()
 
     // Clear the ascii viewer
     clMainFrame::Get()->GetDebuggerPane()->GetAsciiViewer()->UpdateView(wxT(""), wxT(""));
+
     // update toolbar state
     UpdateStopped();
-
-    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(!dbgr) {
-        return;
-    }
-
     m_dbgCurrentFrameInfo.Clear();
-    if(!dbgr->IsRunning()) {
-        clDebugEvent eventEnd(wxEVT_DEBUG_ENDED);
-        EventNotifier::Get()->ProcessEvent(eventEnd);
-        return;
-    }
+}
 
-    // notify plugins that the debugger is about to be stopped
-    {
-        clDebugEvent eventEnding(wxEVT_DEBUG_ENDING);
-        EventNotifier::Get()->ProcessEvent(eventEnding);
-    }
+void Manager::DbgStop()
+{
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    CHECK_PTR_RET(dbgr);
 
-    if(dbgr->IsRunning())
+    if(dbgr->IsRunning()) {
+        clDEBUG() << "Stopping the debugger... (user request)" << clEndl;
         dbgr->Stop();
-
+    }
     DebuggerMgr::Get().SetActiveDebugger(wxEmptyString);
-    DebugMessage(_("Debug session ended\n"));
-
-    // notify plugins that the debugger stopped
-    clDebugEvent eventEnd(wxEVT_DEBUG_ENDED);
-    EventNotifier::Get()->ProcessEvent(eventEnd);
 }
 
 void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
@@ -2662,8 +2652,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
     }
 
     case DBG_EXITED_NORMALLY:
-        // debugging finished, stop the debugger process
-        DbgStop();
+        // this now handled by the wxEVT_DEBUG_ENDED fired by the debugger
         break;
     default:
         break;

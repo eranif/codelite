@@ -6109,6 +6109,5 @@ void clMainFrame::DoShowMenuBar(bool show)
 
 wxMenuBar* clMainFrame::GetMenuBar() const
 {
-    clDEBUG() << "GetMenuBar is called" << clEndl;
     return wxFrame::GetMenuBar();
 }

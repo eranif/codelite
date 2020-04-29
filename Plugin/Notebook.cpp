@@ -600,7 +600,9 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     clTabInfo::Ptr_t activeTab = GetActiveTabInfo();
     if(activeTab) {
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
-        activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
+        // Only SetFocus if !Wayland, otherwise it hangs; see #2457
+        if (!clIsWaylandSession())
+            activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
     }
 
     Refresh();

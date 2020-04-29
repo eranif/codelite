@@ -2203,3 +2203,16 @@ int clGetSize(int size, const wxWindow* win)
     return size;
 #endif
 }
+
+bool clIsWaylandSession()
+{
+#ifdef __WXGTK__
+    // Try to detect if this is a Wayland session; we have some Wayland-workaround code
+    wxString sesstype("XDG_SESSION_TYPE"), session_type;
+    wxGetEnv(sesstype, &session_type);
+    return  session_type.Lower().Contains("wayland");
+#else
+    return false;
+#endif
+}
+

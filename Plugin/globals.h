@@ -643,4 +643,9 @@ WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog* win, double ratio);
  */
 WXDLLIMPEXP_SDK bool clIsCxxWorkspaceOpened();
 
+/**
+ * @brief return true if this is a Wayland session
+ */
+WXDLLIMPEXP_SDK bool clIsWaylandSession();
+
 #endif // GLOBALS_H

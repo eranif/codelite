@@ -59,9 +59,9 @@ public:
      * \param parent
      * \param bp
      */
-    void EnterBPData(const BreakpointInfo& bp);
+    void EnterBPData(const clDebuggerBreakpoint& bp);
 
-    BreakpointInfo b; // Used to return the amended settings
+    clDebuggerBreakpoint b; // Used to return the amended settings
 };
 
 #endif // __breakptpropertiesdlg__

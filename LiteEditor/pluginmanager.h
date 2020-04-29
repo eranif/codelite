@@ -155,9 +155,9 @@ public:
     IEditor* FindEditor(const wxString& filename) const;
     size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false);
     size_t GetAllTabs(clTab::Vec_t& tabs);
-    size_t GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints);
+    size_t GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints);
     void DeleteAllBreakpoints();
-    void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
+    void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints);
     void LoadPerspective(const wxString& perspectiveName);
     void SavePerspective(const wxString& perspectiveName);
     void ProcessEditEvent(wxCommandEvent& e, IEditor* editor);
@@ -180,7 +180,7 @@ public:
     /**
      * @brief return list of all breakpoints
      */
-    void GetBreakpoints(std::vector<BreakpointInfo>& bpList);
+    void GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList);
 
     /**
      * @brief display message to the user using the info bar

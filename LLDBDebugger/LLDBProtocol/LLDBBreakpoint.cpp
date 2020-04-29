@@ -64,13 +64,13 @@ bool LLDBBreakpoint::SameAs(LLDBBreakpoint::Ptr_t other) const
     }
 }
 
-LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints)
+LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const clDebuggerBreakpoint::Vec_t& breakpoints)
 {
     LLDBBreakpoint::Vec_t bps;
     for(size_t i=0; i<breakpoints.size(); ++i) {
         if ( breakpoints.at(i).bp_type == BP_type_break ) {
             LLDBBreakpoint::Ptr_t bp(new LLDBBreakpoint() );
-            const BreakpointInfo &gdbBp = breakpoints.at(i);
+            const clDebuggerBreakpoint &gdbBp = breakpoints.at(i);
             bp->SetName( gdbBp.function_name );
             bp->SetFilename( gdbBp.file );
             bp->SetLineNumber( gdbBp.lineno );
@@ -81,13 +81,13 @@ LLDBBreakpoint::Vec_t LLDBBreakpoint::FromBreakpointInfoVector(const BreakpointI
     return bps;
 }
 
-BreakpointInfo::Vec_t LLDBBreakpoint::ToBreakpointInfoVector(const LLDBBreakpoint::Vec_t& breakpoints)
+clDebuggerBreakpoint::Vec_t LLDBBreakpoint::ToBreakpointInfoVector(const LLDBBreakpoint::Vec_t& breakpoints)
 {
-    BreakpointInfo::Vec_t bps;
+    clDebuggerBreakpoint::Vec_t bps;
     for(size_t i=0; i<breakpoints.size(); ++i) {
 
         LLDBBreakpoint::Ptr_t bp = breakpoints.at(i);
-        BreakpointInfo gdbBp;
+        clDebuggerBreakpoint gdbBp;
         gdbBp.Create(bp->GetFilename(), bp->GetLineNumber(), ++ s_internalGdbBpId);
         gdbBp.bp_type = BP_type_break;
 

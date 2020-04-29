@@ -189,16 +189,16 @@ public:
 
 class DbgCmdHandlerBp : public DbgCmdHandler
 {
-    const BreakpointInfo m_bp;
-    std::vector<BreakpointInfo>* m_bplist;
+    const clDebuggerBreakpoint m_bp;
+    std::vector<clDebuggerBreakpoint>* m_bplist;
     int m_bpType; // BP_type_break by default
     DbgGdb* m_debugger;
 
 public:
     DbgCmdHandlerBp(IDebuggerObserver* observer,
                     DbgGdb* debugger,
-                    BreakpointInfo bp,
-                    std::vector<BreakpointInfo>* bplist,
+                    clDebuggerBreakpoint bp,
+                    std::vector<clDebuggerBreakpoint>* bplist,
                     int bptype = BP_type_break)
         : DbgCmdHandler(observer)
         , m_bp(bp)
@@ -355,10 +355,10 @@ public:
 // Callback for handling 'set condition' command
 class DbgCmdSetConditionHandler : public DbgCmdHandler
 {
-    BreakpointInfo m_bp;
+    clDebuggerBreakpoint m_bp;
 
 public:
-    DbgCmdSetConditionHandler(IDebuggerObserver* observer, const BreakpointInfo& bp)
+    DbgCmdSetConditionHandler(IDebuggerObserver* observer, const clDebuggerBreakpoint& bp)
         : DbgCmdHandler(observer)
         , m_bp(bp)
     {

@@ -572,7 +572,7 @@ public:
     /**
      * @brief return a vector of all the current breakpoints set by the user
      */
-    virtual size_t GetAllBreakpoints(BreakpointInfo::Vec_t& breakpoints) = 0;
+    virtual size_t GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints) = 0;
 
     /**
      * @brief delete all breakpoints assigned by the user
@@ -583,7 +583,7 @@ public:
      * @brief set breakpoints (override any existing breakpoints)
      * this function also refreshes the editors markers
      */
-    virtual void SetBreakpoints(const BreakpointInfo::Vec_t& breakpoints) = 0;
+    virtual void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) = 0;
 
     /**
      * @brief process a standard edit event ( wxID_COPY, wxID_PASTE etc)
@@ -642,7 +642,7 @@ public:
     /**
      * @brief return list of all breakpoints
      */
-    virtual void GetBreakpoints(std::vector<BreakpointInfo>& bpList) = 0;
+    virtual void GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList) = 0;
     
     /**
      * @brief build and display the build menu for a toolbar button

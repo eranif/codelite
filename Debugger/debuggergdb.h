@@ -60,7 +60,7 @@ class DbgGdb : public wxEvtHandler, public IDebugger
     HandlersMap_t m_handlers;
     long m_debuggeePid;
     ConsoleFinder m_consoleFinder;
-    std::vector<BreakpointInfo> m_bpList;
+    std::vector<clDebuggerBreakpoint> m_bpList;
     DbgCmdCLIHandler* m_cliHandler;
     IProcess* m_gdbProcess;
     wxArrayString m_gdbOutputArr;
@@ -104,7 +104,7 @@ public:
     void SetGoingDown(bool goingDown) { this->m_goingDown = goingDown; }
     bool IsGoingDown() const { return m_goingDown; }
 
-    const std::vector<BreakpointInfo>& GetBpList() const { return m_bpList; }
+    const std::vector<clDebuggerBreakpoint>& GetBpList() const { return m_bpList; }
 
     void SetIsRecording(bool isRecording) { this->m_isRecording = isRecording; }
     bool IsRecording() const { return m_isRecording; }
@@ -118,11 +118,11 @@ public:
     virtual bool Attach(const DebugSessionInfo& si);
     virtual bool Run(const wxString& args, const wxString& comm);
     virtual bool Stop();
-    virtual bool Break(const BreakpointInfo& bp);
+    virtual bool Break(const clDebuggerBreakpoint& bp);
     virtual bool SetEnabledState(double bid, const bool enable);
     virtual bool SetIgnoreLevel(double bid, const int ignorecount);
-    virtual bool SetCondition(const BreakpointInfo& bp);
-    virtual bool SetCommands(const BreakpointInfo& bp);
+    virtual bool SetCondition(const clDebuggerBreakpoint& bp);
+    virtual bool SetCommands(const clDebuggerBreakpoint& bp);
     virtual bool RemoveBreak(double bid);
     virtual bool RemoveAllBreaks();
     virtual bool StepIn();

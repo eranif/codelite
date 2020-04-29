@@ -26,6 +26,8 @@
 #ifndef CLCOMMANDEVENT_H
 #define CLCOMMANDEVENT_H
 
+#include "LSP/CompletionItem.h"
+#include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
@@ -35,7 +37,6 @@
 #include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
-#include "LSP/CompletionItem.h"
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -66,7 +67,8 @@ public:
     {
         // Because GetString() can retrieve the string text only on demand, we
         // need to copy it explicitly.
-        if(m_cmdString.empty()) m_cmdString = event.GetString();
+        if(m_cmdString.empty())
+            m_cmdString = event.GetString();
     }
 
     virtual ~wxCommandEvent() {}
@@ -391,6 +393,7 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_memoryAddress;    // wxEVT_DEBUGGER_SET_MEMORY
     wxString m_memoryBlockValue; // wxEVT_DEBUGGER_SET_MEMORY
     size_t m_memoryBlockSize;    // wxEVT_DEBUGGER_SET_MEMORY
+    clDebuggerBreakpoint::Vec_t m_breakpoints;
 
 public:
     // Special features not available by all the debuggers
@@ -436,6 +439,9 @@ public:
     const wxString& GetMemoryAddress() const { return m_memoryAddress; }
     size_t GetMemoryBlockSize() const { return m_memoryBlockSize; }
     const wxString& GetMemoryBlockValue() const { return m_memoryBlockValue; }
+    void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) { this->m_breakpoints = breakpoints; }
+    const clDebuggerBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
+    clDebuggerBreakpoint::Vec_t& GetBreakpoints() { return m_breakpoints; }
 };
 
 typedef void (wxEvtHandler::*clDebugEventFunction)(clDebugEvent&);

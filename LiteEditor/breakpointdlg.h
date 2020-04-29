@@ -33,7 +33,7 @@
 struct bpd_IDs {
     double debugger_id;
     double internal_id;
-    bpd_IDs(const BreakpointInfo& bp)
+    bpd_IDs(const clDebuggerBreakpoint& bp)
     {
         debugger_id = bp.debugger_id;
         internal_id = bp.internal_id;

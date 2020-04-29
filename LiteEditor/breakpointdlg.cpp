@@ -40,7 +40,7 @@ BreakpointDlg::BreakpointDlg(wxWindow* parent)
 
 void BreakpointDlg::Initialize()
 {
-    std::vector<BreakpointInfo> bps;
+    std::vector<clDebuggerBreakpoint> bps;
     ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bps);
 
     // This does the display stuff
@@ -48,7 +48,7 @@ void BreakpointDlg::Initialize()
 
     // Store the internal and external ids
     m_ids.clear();
-    std::vector<BreakpointInfo>::iterator iter = bps.begin();
+    std::vector<clDebuggerBreakpoint>::iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
         struct bpd_IDs IDs(*iter);
         m_ids.push_back(IDs);
@@ -138,10 +138,10 @@ void BreakpointDlg::OnAdd(wxCommandEvent& e)
     Initialize(); // Make any changes visible
 }
 
-void BreakpointsListctrl::Initialise(std::vector<BreakpointInfo>& bps)
+void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
 {
     DeleteAllItems();
-    std::vector<BreakpointInfo>::iterator iter = bps.begin();
+    std::vector<clDebuggerBreakpoint>::iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
 
         // Store the internal and external ids

@@ -106,7 +106,7 @@ public:
     // DBG_UR_EVALVARIABLEOBJ, DBG_UR_FUNCTIONFINISHED
     wxString                      m_evaluated;        // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
     StackEntryArray               m_stack;            // DBG_UR_UPDATE_STACK_LIST
-    std::vector<BreakpointInfo>   m_bpInfoList;       // DBG_UR_RECONCILE_BPTS
+    std::vector<clDebuggerBreakpoint>   m_bpInfoList;       // DBG_UR_RECONCILE_BPTS
     bool                          m_onlyIfLogging;    // DBG_UR_ADD_LINE
     ThreadEntryArray              m_threads;          // DBG_UR_LISTTHRAEDS
     VariableObjChildren           m_varObjChildren;   // DBG_UR_LISTCHILDREN
@@ -276,7 +276,7 @@ public:
      * @brief Update the breakpoints-manager's info with what the debugger really contains
      * @param vector of breakpoints acquired from -break-list
      */
-    void ReconcileBreakpoints(std::vector<BreakpointInfo>& li) {
+    void ReconcileBreakpoints(std::vector<clDebuggerBreakpoint>& li) {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_RECONCILE_BPTS;
         e.m_bpInfoList = li;

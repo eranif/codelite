@@ -42,7 +42,7 @@
 class wxXmlNode;
 class SerializedObject;
 class TabInfo;
-class BreakpointInfo;
+class clDebuggerBreakpoint;
 
 WX_DECLARE_STRING_HASH_MAP(wxString, StringMap);
 

@@ -390,7 +390,7 @@ void LLDBConnector::DeleteAllBreakpoints()
     }
 }
 
-void LLDBConnector::AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints)
+void LLDBConnector::AddBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints)
 {
     LLDBBreakpoint::Vec_t bps = LLDBBreakpoint::FromBreakpointInfoVector(breakpoints);
     AddBreakpoints(bps);

@@ -25,15 +25,15 @@
 #ifndef BREAKPOINTS_MANAGER_H
 #define BREAKPOINTS_MANAGER_H
 
-#include "list"
-#include "vector"
-#include <set>
-#include "wx/string.h"
-#include "debugger.h"
 #include "cl_editor.h"
+#include "debugger.h"
+#include "list"
 #include "sessionmanager.h"
+#include "vector"
 #include "wx/arrstr.h"
 #include "wx/dragimag.h"
+#include "wx/string.h"
+#include <set>
 
 class myDragImage;
 
@@ -41,9 +41,10 @@ class myDragImage;
 
 class BreakptMgr
 {
-    BreakpointInfoVec_t m_bps;                    // The vector of breakpoints
-    BreakpointInfoVec_t m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept
-                                                  // (often because they're in a plugin)
+    clDebuggerBreakpoint::Vec_t m_bps; // The vector of breakpoints
+    clDebuggerBreakpoint::Vec_t
+        m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept
+                                  // (often because they're in a plugin)
 
     int NextInternalID; // Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 
@@ -53,9 +54,9 @@ class BreakptMgr
 protected:
     // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
     void DoRefreshFileBreakpoints(clEditor* editor);
-    void DoProvideBestBP_Type(
-        clEditor* editor,
-        const std::vector<BreakpointInfo>& li); // Tells the editor which is the most appropriate bp marker to show
+    void DoProvideBestBP_Type(clEditor* editor,
+                              const std::vector<clDebuggerBreakpoint>&
+                                  li); // Tells the editor which is the most appropriate bp marker to show
 
     // Delete all line-type breakpoint markers in all editors
     // Done before refreshing after a delete, lest it was the last bp in a file
@@ -65,17 +66,17 @@ protected:
     /**
      * Return the index of the bp with the passed id, in the vector that will normally be m_bps
      */
-    int FindBreakpointById(double id, const std::vector<BreakpointInfo>& li);
+    int FindBreakpointById(double id, const std::vector<clDebuggerBreakpoint>& li);
 
     /**
      * Can gdb accept this alteration, or will be bp have to be replaced?
      */
-    bool CanThisBreakpointBeUpdated(const BreakpointInfo& bp1, const BreakpointInfo& bp2) const;
+    bool CanThisBreakpointBeUpdated(const clDebuggerBreakpoint& bp1, const clDebuggerBreakpoint& bp2) const;
 
     /**
      * Sets bp.bp_type to the value most appropriate to its contents
      */
-    void SetBestBPType(BreakpointInfo& bp);
+    void SetBestBPType(clDebuggerBreakpoint& bp);
 
     /**
      * Ignore this bp
@@ -90,19 +91,19 @@ protected:
     /**
      * Set this breakpoint's condition to that in bp.condition
      */
-    bool SetBPConditon(const BreakpointInfo& bp);
+    bool SetBPConditon(const clDebuggerBreakpoint& bp);
 
     /**
      * Set this breakpoint's command-list to that in bp.commandlist
      */
-    bool SetBPCommands(const BreakpointInfo& bp);
+    bool SetBPCommands(const clDebuggerBreakpoint& bp);
 
     /**
      * Clear the list of breakpoints
      */
     void Clear() { m_bps.clear(); }
 
-    bool IsDuplicate(const BreakpointInfo& bp, const std::vector<BreakpointInfo>& bpList);
+    bool IsDuplicate(const clDebuggerBreakpoint& bp, const std::vector<clDebuggerBreakpoint>& bpList);
 
     void DoRemoveDuplicateBreakpoints();
 
@@ -125,20 +126,20 @@ public:
 
     /**
      * Refresh all line-type breakpoint markers in all editors
-    */
+     */
     void RefreshBreakpointMarkers();
 
     /**
      * @brief add list of breakpoints to the stored breakpoints list
      * @param bps
      */
-    void SetBreakpoints(const std::vector<BreakpointInfo>& bps);
+    void SetBreakpoints(const std::vector<clDebuggerBreakpoint>& bps);
 
     /**
      * @brief Store list of breakpoints in the pending-breakpoints list
      * @param bps
      */
-    void SetPendingBreakpoints(const std::vector<BreakpointInfo>& bps)
+    void SetPendingBreakpoints(const std::vector<clDebuggerBreakpoint>& bps)
     {
         m_pendingBreakpointsList.clear();
         m_pendingBreakpointsList = bps;
@@ -166,11 +167,8 @@ public:
      * Add a breakpoint to the current debugger at the given line-number/file
      * Depending on the parameters, a temporary/ignored/conditional/commandlist bp can be created
      */
-    bool AddBreakpointByLineno(const wxString& file,
-                               const int lineno,
-                               const wxString& conditions = wxT(""),
-                               bool is_temp = false,
-                               bool is_disabled = false);
+    bool AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions = wxT(""),
+                               bool is_temp = false, bool is_disabled = false);
 
     /**
      * Add a breakpoint using the 'Properties' dialog
@@ -183,7 +181,7 @@ public:
      * all breakpoints will be passed to the debugger
      * once started
      */
-    bool AddBreakpoint(const BreakpointInfo& bp);
+    bool AddBreakpoint(const clDebuggerBreakpoint& bp);
 
     /**
      * Delete break point by id
@@ -212,7 +210,7 @@ public:
      * @brief return list of allmemory breakpoints
      * @param memoryBps
      */
-    void GetAllMemoryBreakpoints(BreakpointInfoVec_t& memoryBps);
+    void GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps);
 
     /**
      * Summon the BreakptProperties dialog for a bp
@@ -227,7 +225,7 @@ public:
     /**
      * return list of breakpoints
      */
-    void GetBreakpoints(std::vector<BreakpointInfo>& li);
+    void GetBreakpoints(clDebuggerBreakpoint::Vec_t& li);
 
     /**
      * When a breakpoint is added, the debugger_id it returns finally arrives here
@@ -238,8 +236,8 @@ public:
     /**
      * @brief return the breakpoint for a given file/line
      */
-    BreakpointInfo& GetBreakpoint(const wxString& fileName, const int lineno);
-    const BreakpointInfo& GetBreakpoint(const wxString& fileName, const int lineno) const;
+    clDebuggerBreakpoint& GetBreakpoint(const wxString& fileName, const int lineno);
+    const clDebuggerBreakpoint& GetBreakpoint(const wxString& fileName, const int lineno) const;
 
     /**
      * Returns a string containing details of any breakpoints on this line
@@ -250,7 +248,7 @@ public:
      * Update the m_bps with what the debugger really contains
      * from vector of breakpoints acquired from -break-list
      */
-    void ReconcileBreakpoints(const std::vector<BreakpointInfo>& li);
+    void ReconcileBreakpoints(const std::vector<clDebuggerBreakpoint>& li);
 
     /**
      * Clears the debugger_ids of all breakpoints.
@@ -302,7 +300,7 @@ public:
     /**
      * The 'drop' bit of breakpoints 'drag'n'drop'
      */
-    void DropBreakpoint(const BreakpointInfo& bp, int newline);
+    void DropBreakpoint(const clDebuggerBreakpoint& bp, int newline);
 
     /**
      * Getter for the myDragImage pointer
@@ -328,12 +326,12 @@ public:
 class myDragImage : public wxDragImage, public wxEvtHandler
 {
     clEditor* editor;
-    BreakpointInfo m_bp;
+    clDebuggerBreakpoint m_bp;
     int m_startx; // The initial x position
     wxCursor oldcursor;
 
 public:
-    myDragImage(clEditor* ed, const wxBitmap& bitmap, const BreakpointInfo& bp);
+    myDragImage(clEditor* ed, const wxBitmap& bitmap, const clDebuggerBreakpoint& bp);
     bool StartDrag();
     void OnMotion(wxMouseEvent& event);
     void OnEndDrag(wxMouseEvent& event);

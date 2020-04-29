@@ -123,6 +123,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="clDebuggerBreakpoint.cpp"/>
+    <File Name="clDebuggerBreakpoint.hpp"/>
     <File Name="StringUtils.cpp"/>
     <File Name="StringUtils.h"/>
     <File Name="ServiceProviderManager.cpp"/>

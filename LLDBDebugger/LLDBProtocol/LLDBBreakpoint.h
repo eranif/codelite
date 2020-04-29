@@ -96,12 +96,12 @@ public:
     /**
      * @brief convert list of gdb breakpoints into LLDBBreakpoint vector
      */
-    static BreakpointInfo::Vec_t ToBreakpointInfoVector(const LLDBBreakpoint::Vec_t& breakpoints);
+    static clDebuggerBreakpoint::Vec_t ToBreakpointInfoVector(const LLDBBreakpoint::Vec_t& breakpoints);
     /**
      * @brief convert list of lldb breakpoints into gdb's breakpoint list
      * @param breakpoints
      */
-    static LLDBBreakpoint::Vec_t FromBreakpointInfoVector(const BreakpointInfo::Vec_t& breakpoints);
+    static LLDBBreakpoint::Vec_t FromBreakpointInfoVector(const clDebuggerBreakpoint::Vec_t& breakpoints);
 
     /**
      * @brief return a string representation for this breakpoint

@@ -231,7 +231,7 @@ protected:
     bool m_autoAddMatchedCurlyBrace;
     bool m_autoAddNormalBraces;
     bool m_smartParen = true;
-    std::map<int, std::vector<BreakpointInfo>> m_breakpointsInfo;
+    std::map<int, std::vector<clDebuggerBreakpoint>> m_breakpointsInfo;
     bool m_autoAdjustHScrollbarWidth;
     bool m_reloadingFile;
     bool m_disableSmartIndent;
@@ -729,7 +729,7 @@ public:
     // breakpoint visualisation
     //--------------------------------
     virtual void SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
-                                     const std::vector<BreakpointInfo>& li);
+                                     const std::vector<clDebuggerBreakpoint>& li);
     virtual void DelAllBreakpointMarkers();
 
     virtual void HighlightLine(int lineno);

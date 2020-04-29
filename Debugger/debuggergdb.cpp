@@ -398,12 +398,12 @@ void DbgGdb::SetBreakpoints()
     for(size_t i = 0; i < m_bpList.size(); i++) {
         // Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of
         // BP_type_tempbreak, ruining switch statments :/
-        BreakpointInfo bpinfo = (BreakpointInfo)m_bpList.at(i);
+        clDebuggerBreakpoint bpinfo = (clDebuggerBreakpoint)m_bpList.at(i);
         Break(bpinfo);
     }
 }
 
-bool DbgGdb::Break(const BreakpointInfo& bp)
+bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
 {
     wxString breakinsertcmd(wxT("-break-insert "));
     if(m_info.enablePendingBreakpoints) {
@@ -537,7 +537,7 @@ bool DbgGdb::SetEnabledState(double bid, const bool enable)
     return WriteCommand(command, NULL);
 }
 
-bool DbgGdb::SetCondition(const BreakpointInfo& bp)
+bool DbgGdb::SetCondition(const clDebuggerBreakpoint& bp)
 {
     if(bp.debugger_id == -1) { // Sanity check
         return false;
@@ -548,7 +548,7 @@ bool DbgGdb::SetCondition(const BreakpointInfo& bp)
     return WriteCommand(command, new DbgCmdSetConditionHandler(m_observer, bp));
 }
 
-bool DbgGdb::SetCommands(const BreakpointInfo& bp)
+bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
 {
     if(bp.debugger_id == -1) { // Sanity check
         return false;
@@ -1403,7 +1403,7 @@ void DbgGdb::GetDebugeePID(const wxString& line)
 
 bool DbgGdb::Jump(wxString filename, int line)
 {
-    BreakpointInfo bp;
+    clDebuggerBreakpoint bp;
     bp.Create(filename, line, -1);
     bp.bp_type = BP_type_tempbreak;
     Break(bp);

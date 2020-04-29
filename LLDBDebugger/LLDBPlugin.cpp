@@ -465,7 +465,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             if(m_connector.Connect(retObj, settings, 5)) {
 
                 // Get list of breakpoints and add them ( we will apply them later on )
-                BreakpointInfo::Vec_t gdbBps;
+                clDebuggerBreakpoint::Vec_t gdbBps;
                 m_mgr->GetAllBreakpoints(gdbBps);
 
                 // remove all breakpoints from previous session
@@ -1021,7 +1021,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
         EnvSetter env;
 
         // Get list of breakpoints and add them ( we will apply them later on )
-        BreakpointInfo::Vec_t gdbBps;
+        clDebuggerBreakpoint::Vec_t gdbBps;
         m_mgr->GetAllBreakpoints(gdbBps);
 
         // remove all breakpoints from previous session

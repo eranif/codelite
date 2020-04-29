@@ -391,8 +391,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
                     m_gdb->SetBreakpoints();
 
                     bool hasBreakOnMain = false;
-                    const std::vector<BreakpointInfo>& bpList = m_gdb->GetBpList();
-                    std::vector<BreakpointInfo>::const_iterator iter = bpList.begin();
+                    const std::vector<clDebuggerBreakpoint>& bpList = m_gdb->GetBpList();
+                    std::vector<clDebuggerBreakpoint>::const_iterator iter = bpList.begin();
                     for(; iter != bpList.end(); ++iter) {
                         wxFileName fn(iter->file);
                         int lineNo = iter->lineno;
@@ -500,7 +500,7 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString& line)
     if(line.StartsWith(wxT("^done"))) {
         // remove this breakpoint from the breakpoint list
         for(size_t i = 0; i < m_bplist->size(); i++) {
-            BreakpointInfo b = m_bplist->at(i);
+            clDebuggerBreakpoint b = m_bplist->at(i);
             if(b == m_bp) {
                 m_bplist->erase(m_bplist->begin() + i);
                 break;
@@ -943,7 +943,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 {
     wxString dbg_output(line);
     dbg_output.Replace("bkpt=", "");
-    std::vector<BreakpointInfo> li;
+    std::vector<clDebuggerBreakpoint> li;
     GdbChildrenInfo info;
     gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), info);
 
@@ -951,7 +951,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
     // Each map represents an information about a breakpoint
     // the way gdb sees it
     for(size_t i = 0; i < info.children.size(); i++) {
-        BreakpointInfo breakpoint;
+        clDebuggerBreakpoint breakpoint;
         std::map<std::string, std::string> attr = info.children.at(i);
         std::map<std::string, std::string>::const_iterator iter;
 
@@ -1024,8 +1024,8 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
     }
 
     // Filter duplicate file:line breakpoints
-    std::vector<BreakpointInfo> uniqueBreakpoints;
-    std::for_each(li.begin(), li.end(), [&](const BreakpointInfo& bp) {
+    std::vector<clDebuggerBreakpoint> uniqueBreakpoints;
+    std::for_each(li.begin(), li.end(), [&](const clDebuggerBreakpoint& bp) {
         if(bp.debugger_id == (long)bp.debugger_id) {
             // real breakpoint ID
             uniqueBreakpoints.push_back(bp);

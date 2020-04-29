@@ -1710,7 +1710,7 @@ void clEditor::UpdateBreakpoints()
     ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(GetFileName().GetFullPath());
 
     // iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
-    std::map<int, std::vector<BreakpointInfo>>::iterator iter = m_breakpointsInfo.begin();
+    std::map<int, std::vector<clDebuggerBreakpoint>>::iterator iter = m_breakpointsInfo.begin();
     for(; iter != m_breakpointsInfo.end(); iter++) {
         int handle = iter->first;
         int line = MarkerLineFromHandle(handle);
@@ -3616,7 +3616,7 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("insert_disabled_breakpoint"), wxString(_("Add a Disabled Breakpoint")));
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
-    BreakpointInfo& bp =
+    clDebuggerBreakpoint& bp =
         ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), GetCurrentLine() + 1);
 
     // What we show depends on whether there's already a bp here (or several)
@@ -3754,7 +3754,7 @@ void clEditor::ToggleBreakpoint(int lineno)
         return;
     }
 
-    const BreakpointInfo& bp =
+    const clDebuggerBreakpoint& bp =
         ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), lineno);
 
     if(bp.IsNull()) {
@@ -3830,7 +3830,7 @@ void clEditor::DelAllCompilerMarkers()
 
 // Maybe one day we'll display multiple bps differently
 void clEditor::SetBreakpointMarker(int lineno, BreakpointType bptype, bool is_disabled,
-                                   const std::vector<BreakpointInfo>& bps)
+                                   const std::vector<clDebuggerBreakpoint>& bps)
 {
     BPtoMarker bpm = GetMarkerForBreakpt(bptype);
     sci_marker_types markertype = is_disabled ? bpm.marker_disabled : bpm.marker;
@@ -5134,7 +5134,7 @@ void clEditor::ToggleBreakpointEnablement()
     int lineno = GetCurrentLine() + 1;
 
     BreakptMgr* bm = ManagerST::Get()->GetBreakpointsMgr();
-    BreakpointInfo bp = bm->GetBreakpoint(GetFileName().GetFullPath(), lineno);
+    clDebuggerBreakpoint bp = bm->GetBreakpoint(GetFileName().GetFullPath(), lineno);
     if(bp.IsNull())
         return;
 

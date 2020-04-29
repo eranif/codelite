@@ -42,9 +42,9 @@ BreakptPropertiesDlg::BreakptPropertiesDlg(wxWindow* parent)
 BreakptPropertiesDlg::~BreakptPropertiesDlg() {}
 
 // Insert the data from an existing breakpoint into the dialog fields
-void BreakptPropertiesDlg::EnterBPData(const BreakpointInfo& bp)
+void BreakptPropertiesDlg::EnterBPData(const clDebuggerBreakpoint& bp)
 {
-    // The class BreakpointInfo& b will become the new bp, so copy the old ids
+    // The class clDebuggerBreakpoint& b will become the new bp, so copy the old ids
     b.debugger_id = bp.debugger_id;
     b.internal_id = bp.internal_id;
 

@@ -158,7 +158,7 @@ public:
      * @brief add list of breakpoints ( do not add apply them just yet)
      * @param breakpoints
      */
-    void AddBreakpoints(const BreakpointInfo::Vec_t& breakpoints);
+    void AddBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints);
 
     /**
      * @brief add a breakpoint to the list (do not apply them yet)

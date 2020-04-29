@@ -71,7 +71,9 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_UPDATE_VIEWS,
                                   clCommandEventHandler(DebuggerDisassemblyTab::OnRefreshView), NULL, this);
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("Assembly");
-    if(lex) { lex->Apply(m_stc, true); }
+    if(lex) {
+        lex->Apply(m_stc, true);
+    }
 }
 
 DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
@@ -98,7 +100,7 @@ void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
     DoClearDisassembleView();
     m_stc->SetReadOnly(false);
 
-    BreakpointInfoVec_t memBps;
+    clDebuggerBreakpoint::Vec_t memBps;
     wxStringSet_t addressSet;
     ManagerST::Get()->GetBreakpointsMgr()->GetAllMemoryBreakpoints(memBps);
     for(size_t i = 0; i < memBps.size(); ++i) {
@@ -114,7 +116,9 @@ void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
             m_stc->AppendText(ded->m_disassembleLines.at(i).m_address + "  " + ded->m_disassembleLines.at(i).m_inst +
                               "\n");
             // restore breakpoints
-            if(addressSet.count(ded->m_disassembleLines.at(i).m_address)) { m_stc->MarkerAdd(i, BREAKPOINT_MARKER); }
+            if(addressSet.count(ded->m_disassembleLines.at(i).m_address)) {
+                m_stc->MarkerAdd(i, BREAKPOINT_MARKER);
+            }
         }
     }
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -174,7 +178,8 @@ void DebuggerDisassemblyTab::DoCentrLine(int line)
     int linesAboveIt = numLinesOnScreen / 2;
 
     line = line - linesAboveIt;
-    if(line < 0) line = 0;
+    if(line < 0)
+        line = 0;
 
     m_stc->SetFirstVisibleLine(line);
     m_stc->ClearSelections();

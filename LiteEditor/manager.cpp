@@ -2184,11 +2184,23 @@ void Manager::DbgStart(long attachPid)
     }
 
     // We can now get all the gathered breakpoints from the manager
-    std::vector<BreakpointInfo> bps;
+    std::vector<clDebuggerBreakpoint> bps;
 
     // since files may have been updated and the breakpoints may have been moved,
     // delete all the information
     GetBreakpointsMgr()->GetBreakpoints(bps);
+
+    // notify plugins that we're about to start debugging
+    clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+    eventStarting.SetClientData(&startup_info);
+    if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
+        return;
+    }
+
+    if(!eventStarting.GetBreakpoints().empty()) {
+        bps.swap(eventStarting.GetBreakpoints());
+    }
+
     // Take the opportunity to store them in the pending array too
     GetBreakpointsMgr()->SetPendingBreakpoints(bps);
 
@@ -2203,15 +2215,6 @@ void Manager::DbgStart(long attachPid)
             return;
         }
 #endif
-    }
-
-    // notify plugins that we're about to start debugging
-    {
-        clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
-        eventStarting.SetClientData(&startup_info);
-        if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
-            return;
-        }
     }
 
     // read

@@ -90,7 +90,37 @@ void clDebuggerBreakpoint::Serialize(Archive& arch)
     arch.Write(wxT("regex"), regex);
     arch.Write(wxT("is_temp"), is_temp);
     arch.Write(wxT("is_enabled"), is_enabled);
-    arch.Write(wxT("ignore_number"), (int)ignore_number);
+    arch.Write(wxT("ignore_number"), ignore_number);
     arch.Write(wxT("conditions"), conditions);
     arch.Write(wxT("origin"), (int)origin);
+}
+
+JSONItem clDebuggerBreakpoint::ToJSON() const
+{
+    auto json = JSONItem::createObject();
+    json.addProperty("file", file);
+    json.addProperty("lineno", lineno);
+    json.addProperty("function_name", function_name);
+    json.addProperty("bp_type", (int)bp_type);
+    json.addProperty("watchpoint_type", (int)watchpoint_type);
+    json.addProperty("watchpt_data", watchpt_data);
+    wxString command_list(commandlist);
+    command_list.Trim(false).Trim(true);
+    json.addProperty("commandlist", command_list);
+    json.addProperty("ignore_number", ignore_number);
+    json.addProperty("conditions", conditions);
+    return json;
+}
+
+void clDebuggerBreakpoint::FromJSON(const JSONItem& json)
+{
+    file = json["file"].toString();
+    lineno = json["lineno"].toInt();
+    function_name = json["function_name"].toString();
+    bp_type = (BreakpointType)json["bp_type"].toInt();
+    watchpoint_type = (WatchpointType)json["watchpoint_type"].toInt();
+    watchpt_data = json["watchpt_data"].toString();
+    commandlist = json["commandlist"].toString();
+    ignore_number = json["ignore_number"].toSize_t();
+    conditions = json["conditions"].toString();
 }

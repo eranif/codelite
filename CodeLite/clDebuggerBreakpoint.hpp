@@ -1,10 +1,11 @@
 #ifndef CLDEBUGGERBREAKPOINT_HPP
 #define CLDEBUGGERBREAKPOINT_HPP
 
+#include "JSON.h"
 #include "codelite_exports.h"
 #include "serialized_object.h"
-#include <wx/string.h>
 #include <vector>
+#include <wx/string.h>
 
 // Breakpoint types. If you add more, clEditor::FillBPtoMarkerArray will also need altering
 enum BreakpointType {
@@ -50,7 +51,7 @@ public:
     double debugger_id = wxNOT_FOUND; // -1 signifies not set
     BreakpointType bp_type =
         BP_type_break; // Is it a plain vanilla breakpoint, or a temporary one, or a watchpoint, or...
-    unsigned int ignore_number =
+    size_t ignore_number =
         0; // 0 means 'not ignored'. >0 is the number of times the bp must be hit before it becomes enabled
     bool is_enabled = true;
     bool is_temp = false;
@@ -97,6 +98,10 @@ public:
     }
 
     bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
+
+    // JSON serialization
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
 protected:
     // SerializedObject interface

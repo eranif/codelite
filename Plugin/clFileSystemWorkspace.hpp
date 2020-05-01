@@ -4,6 +4,7 @@
 #include "IWorkspace.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
+#include "clDebuggerBreakpointStore.hpp"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"
 #include "clFileSystemEvent.h"
@@ -34,6 +35,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clRemoteBuilder::Ptr_t m_remoteBuilder;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     int m_execPID = wxNOT_FOUND;
+    clDebuggerBreakpointStore m_breakpointsStore;
 
 protected:
     void CacheFiles(bool force = false);
@@ -42,6 +44,7 @@ protected:
     void DoPrintBuildMessage(const wxString& message);
     clEnvList_t GetEnvList();
     CompilerPtr GetCompiler();
+    void StoreBreakpoints();
 
     /**
      * @brief return the executable to run + args + working directory

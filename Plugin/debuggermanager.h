@@ -37,7 +37,6 @@
 #include "wx/string.h"
 
 class EnvironmentConfig;
-class BreakptMgr;
 
 // sent when a "QueryLocals" command is completed (only for locals - not for function arguments)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_QUERY_LOCALS, clCommandEvent);

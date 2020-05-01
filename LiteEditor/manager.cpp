@@ -2652,7 +2652,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
     }
 
     case DBG_EXITED_NORMALLY:
-        // this now handled by the wxEVT_DEBUG_ENDED fired by the debugger
+        DbgStop();
         break;
     default:
         break;

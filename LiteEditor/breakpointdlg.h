@@ -27,6 +27,7 @@
 
 #include "breakpointdlgbase.h"
 #include "breakpointsmgr.h"
+#include "cl_command_event.h"
 
 // Since a breakpoint will always have an internal id, but a valid debugger one only when the debugger's running, store
 // both here
@@ -39,8 +40,10 @@ struct bpd_IDs {
         internal_id = bp.internal_id;
     }
     // If the debugger is running, debugger_id will (should) be >0. Otherwise use the internal_id
-    double GetBestId() { return debugger_id == -1 ? internal_id : debugger_id; }
-    wxString GetIdAsString() // Internal IDs start at FIRST_INTERNAL_ID + 1, == 10001
+    double GetBestId() const { return debugger_id == -1 ? internal_id : debugger_id; }
+
+    // Internal IDs start at FIRST_INTERNAL_ID + 1, == 10001
+    wxString GetIdAsString() const
     {
         double id = (GetBestId() > FIRST_INTERNAL_ID ? GetBestId() - FIRST_INTERNAL_ID : GetBestId());
         wxString idstr;
@@ -61,10 +64,11 @@ protected:
     void OnDelete(wxCommandEvent& e);
     void OnDeleteAll(wxCommandEvent& e);
     void OnApplyPending(wxCommandEvent& e);
+    void OnBreakpointsUpdated(clDebugEvent& event);
 
 public:
-    /** Constructor */
     BreakpointDlg(wxWindow* parent);
+    virtual ~BreakpointDlg();
     void Initialize();
 };
 

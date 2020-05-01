@@ -123,6 +123,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="BreakpointInfoArray.cpp"/>
+    <File Name="BreakpointInfoArray.hpp"/>
     <File Name="clDebuggerBreakpointStore.cpp"/>
     <File Name="clDebuggerBreakpointStore.hpp"/>
     <File Name="clDebuggerBreakpoint.cpp"/>

@@ -39,7 +39,7 @@ class myDragImage;
 
 #define FIRST_INTERNAL_ID 10000
 
-class BreakptMgr
+class BreakptMgr : public wxEvtHandler
 {
     clDebuggerBreakpoint::Vec_t m_bps; // The vector of breakpoints
     clDebuggerBreakpoint::Vec_t
@@ -106,17 +106,13 @@ protected:
     bool IsDuplicate(const clDebuggerBreakpoint& bp, const std::vector<clDebuggerBreakpoint>& bpList);
 
     void DoRemoveDuplicateBreakpoints();
+    void OnWorkspaceClosed(wxCommandEvent& event);
 
 public:
     void SetExpectingControl(bool expectingControl) { this->m_expectingControl = expectingControl; }
     bool GetExpectingControl() const { return m_expectingControl; }
-    BreakptMgr()
-    {
-        NextInternalID = FIRST_INTERNAL_ID;
-        m_expectingControl = false;
-    }
-
-    ~BreakptMgr() { Clear(); }
+    BreakptMgr();
+    ~BreakptMgr();
 
     /**
      * @brief refresh the breakpoints marker for a given editor
@@ -167,8 +163,8 @@ public:
      * Add a breakpoint to the current debugger at the given line-number/file
      * Depending on the parameters, a temporary/ignored/conditional/commandlist bp can be created
      */
-    bool AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions = wxT(""),
-                               bool is_temp = false, bool is_disabled = false);
+    bool AddBreakpointByLineno(const wxString& file, int lineno, const wxString& conditions = "", bool is_temp = false,
+                               bool is_disabled = false);
 
     /**
      * Add a breakpoint using the 'Properties' dialog

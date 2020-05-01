@@ -258,7 +258,6 @@ void clFileSystemWorkspace::Save(bool parse)
         return;
     }
     m_settings.Save(m_filename);
-    StoreBreakpoints();
 
     // Fire 'saved' event
     clCommandEvent eventFileSave(wxEVT_FILE_SAVED);
@@ -1012,20 +1011,4 @@ void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)
         // Parse the newly added files
         Parse(false);
     }
-}
-
-void clFileSystemWorkspace::StoreBreakpoints()
-{
-    //    // Store the breakpoints
-    //    IEditor::List_t editors;
-    //    clGetManager()->GetAllEditors(editors);
-    //
-    //    // Loop over the editors and get list of breakpoints
-    //    for(auto editor : editors) {
-    //
-    //    }
-    //    wxFileName breakpointsFile(m_filename);
-    //    breakpointsFile.AppendDir(".codelite");
-    //    breakpointsFile.SetFullName("breakpoints.json");
-    //    m_breakpointsStore.Save(breakpointsFile);
 }

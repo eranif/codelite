@@ -26,9 +26,9 @@
 #ifndef CODELITE_EVENTS_H
 #define CODELITE_EVENTS_H
 
-#include "codelite_exports.h"
-#include "cl_command_event.h"
 #include "clFileSystemEvent.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 
 // ------------------------------------------------------------------------
 //
@@ -284,6 +284,16 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxComma
 
 // Notify the debugger to update the active pane
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEvent);
+
+// Breakpoints were modified programmatically
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BREAKPOINTS_UPDATED, clDebugEvent);
+
+// Breakpoints were modified by the breakpoint management panel
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BREAKPOINTS_UI_UPDATED, clDebugEvent);
+
+// Breakpoint was toggled in an editor (removed or added)
+// check the filename
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BREAKPOINTS_UI_EDITOR_UPDATED, clDebugEvent);
 
 // Instruct the debugger to update the memory
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_SET_MEMORY, clDebugEvent);

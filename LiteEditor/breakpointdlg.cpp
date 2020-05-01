@@ -35,13 +35,19 @@
 BreakpointDlg::BreakpointDlg(wxWindow* parent)
     : BreakpointTabBase(parent)
 {
+    EventNotifier::Get()->Bind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointDlg::OnBreakpointsUpdated, this);
     Initialize();
+}
+
+BreakpointDlg::~BreakpointDlg()
+{
+    EventNotifier::Get()->Unbind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointDlg::OnBreakpointsUpdated, this);
 }
 
 void BreakpointDlg::Initialize()
 {
     std::vector<clDebuggerBreakpoint> bps;
-    ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bps);
+    clGetManager()->GetAllBreakpoints(bps);
 
     // This does the display stuff
     m_dvListCtrlBreakpoints->Initialise(bps);
@@ -55,7 +61,9 @@ void BreakpointDlg::Initialize()
     }
 
     bool hasItems = !m_dvListCtrlBreakpoints->IsEmpty();
-    if(hasItems) { m_dvListCtrlBreakpoints->Select(m_dvListCtrlBreakpoints->RowToItem(0)); }
+    if(hasItems) {
+        m_dvListCtrlBreakpoints->Select(m_dvListCtrlBreakpoints->RowToItem(0));
+    }
 
     // Since any change results in Initialize() being rerun, we can do updateUI here
     m_buttonEdit->Enable(hasItems);
@@ -73,7 +81,9 @@ void BreakpointDlg::Initialize()
 void BreakpointDlg::OnDelete(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
 
     // Delete by this item's id, which was carefully stored in Initialize()
     int id = m_ids[m_dvListCtrlBreakpoints->ItemToRow(item)].GetBestId();
@@ -116,8 +126,10 @@ void BreakpointDlg::OnBreakpointActivated(wxDataViewEvent& event)
 void BreakpointDlg::OnEdit(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
-    if(!item.IsOk()) { return; }
-    
+    if(!item.IsOk()) {
+        return;
+    }
+
     int row = m_dvListCtrlBreakpoints->ItemToRow(item);
     bool bpExist;
     ManagerST::Get()->GetBreakpointsMgr()->EditBreakpoint(row, bpExist);
@@ -150,12 +162,16 @@ void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
         cols.push_back(IDs.GetIdAsString());
 
         wxString type;
-        if(iter->is_temp) { type = _("Temp. "); }
+        if(iter->is_temp) {
+            type = _("Temp. ");
+        }
         type += ((iter->bp_type == BP_type_watchpt) ? _("Watchpoint") : _("Breakpoint"));
         cols.push_back(type);
 
         wxString disabled;
-        if(!iter->is_enabled) { disabled = _("disabled"); }
+        if(!iter->is_enabled) {
+            disabled = _("disabled");
+        }
         cols.push_back(disabled);
         cols.push_back(iter->file);
         cols.push_back((wxString() << iter->lineno));
@@ -174,7 +190,9 @@ void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
         if(!extras.IsEmpty()) {
             // We don't want to try to display massive commandlist spread over several lines...
             int index = extras.Find(wxT("\\n"));
-            if(index != wxNOT_FOUND) { extras = extras.Left(index) + wxT("..."); }
+            if(index != wxNOT_FOUND) {
+                extras = extras.Left(index) + wxT("...");
+            }
         }
         cols.push_back(extras);
         AppendItem(cols);
@@ -188,7 +206,8 @@ void BreakpointDlg::OnContextMenu(wxDataViewEvent& event)
     menu.Append(XRCID("delete_breakpoint"), _("Delete Breakpoint"));
 
     int where = GetPopupMenuSelectionFromUser(menu);
-    if(where == wxID_NONE) return;
+    if(where == wxID_NONE)
+        return;
     if(where == XRCID("edit_breakpoint")) {
         wxCommandEvent dummy;
         OnEdit(event);
@@ -196,4 +215,11 @@ void BreakpointDlg::OnContextMenu(wxDataViewEvent& event)
         wxCommandEvent dummy;
         OnDelete(event);
     }
+}
+
+void BreakpointDlg::OnBreakpointsUpdated(clDebugEvent& event)
+{
+    event.Skip();
+    // Update the UI
+    Initialize();
 }

@@ -34,6 +34,18 @@
 #include "wx/regex.h"
 
 //---------------------------------------------------------
+BreakptMgr::BreakptMgr()
+{
+    NextInternalID = FIRST_INTERNAL_ID;
+    m_expectingControl = false;
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &BreakptMgr::OnWorkspaceClosed, this);
+}
+
+BreakptMgr::~BreakptMgr()
+{
+    Clear();
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &BreakptMgr::OnWorkspaceClosed, this);
+}
 
 bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
 {
@@ -44,8 +56,8 @@ bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
     return AddBreakpoint(bp);
 }
 
-bool BreakptMgr::AddBreakpointByLineno(const wxString& file, const int lineno, const wxString& conditions /*=wxT("")*/,
-                                       const bool is_temp, bool is_disabled)
+bool BreakptMgr::AddBreakpointByLineno(const wxString& file, int lineno, const wxString& conditions, bool is_temp,
+                                       bool is_disabled)
 {
     clDebuggerBreakpoint bp;
     bp.Create(file, lineno, GetNextID());
@@ -230,6 +242,10 @@ void BreakptMgr::RefreshBreakpointMarkers()
     for(size_t i = 0; i < editors.size(); i++) {
         DoRefreshFileBreakpoints(editors.at(i));
     }
+
+    // Fire wxEVT_BREAKPOINTS_UPDATED event
+    clDebugEvent event(wxEVT_BREAKPOINTS_UPDATED);
+    EventNotifier::Get()->QueueEvent(event.Clone());
 }
 
 // Delete all breakpoint markers for this file, then re-mark with the currently-correct marker
@@ -378,7 +394,6 @@ bool BreakptMgr::DelBreakpoint(double id)
     DeleteAllBreakpointMarkers();
 
     m_bps.erase(m_bps.begin() + index);
-
     RefreshBreakpointMarkers();
     return true;
 }
@@ -452,7 +467,10 @@ void BreakptMgr::DelAllBreakpoints()
     DeleteAllBreakpointMarkers();
     m_bps.clear();
     m_pendingBreakpointsList.clear(); // Delete any pending bps too
-    clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
+
+    // Fire wxEVT_BREAKPOINTS_UPDATED event
+    clDebugEvent evt(wxEVT_BREAKPOINTS_UPDATED);
+    EventNotifier::Get()->QueueEvent(evt.Clone());
 }
 
 void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
@@ -951,9 +969,10 @@ void BreakptMgr::SaveSession(SessionEntry& session) { session.SetBreakpoints(m_b
 
 void BreakptMgr::LoadSession(const SessionEntry& session)
 {
-    const std::vector<clDebuggerBreakpoint>& breakpoints = session.GetBreakpoints();
-    for(std::vector<clDebuggerBreakpoint>::const_iterator itr = breakpoints.begin(); itr != breakpoints.end(); ++itr) {
-        clDebuggerBreakpoint bp = *itr;
+    // when loading new session, clear everything before we continue
+    DelAllBreakpoints();
+
+    for(auto bp : session.GetBreakpoints()) {
         bp.internal_id = GetNextID();
         bp.origin = BO_Editor;
         AddBreakpoint(bp);
@@ -1141,4 +1160,10 @@ void BreakptMgr::GetAllMemoryBreakpoints(clDebuggerBreakpoint::Vec_t& memoryBps)
             memoryBps.push_back(bp);
         }
     }
+}
+
+void BreakptMgr::OnWorkspaceClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    DelAllBreakpoints();
 }

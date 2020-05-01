@@ -25,6 +25,7 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
+#include "BreakpointInfoArray.hpp"
 #include "archive.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "cl_standard_paths.h"
@@ -144,59 +145,6 @@ typedef std::vector<ThreadEntry> ThreadEntryArray;
 typedef std::vector<LocalVariable> LocalVariables;
 typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
 typedef std::vector<DbgRegister> DbgRegistersVec_t;
-
-/**
- * @class BreakpointInfoArray a wrapper class to allow saving and reading breakpoint array to and
- * from the disk
- * @author eran
- * @date 07/06/09
- * @file debugger.h
- * @brief
- */
-class BreakpointInfoArray : public SerializedObject
-{
-    std::vector<clDebuggerBreakpoint> m_breakpoints;
-
-public:
-    BreakpointInfoArray() {}
-
-    virtual ~BreakpointInfoArray() {}
-
-    BreakpointInfoArray& operator=(const std::vector<clDebuggerBreakpoint>& breakpoints)
-    {
-        m_breakpoints = breakpoints;
-        return *this;
-    }
-
-    void SetBreakpoints(const std::vector<clDebuggerBreakpoint>& breakpoints) { this->m_breakpoints = breakpoints; }
-    const std::vector<clDebuggerBreakpoint>& GetBreakpoints() const { return m_breakpoints; }
-
-public:
-    virtual void DeSerialize(Archive& arch)
-    {
-
-        size_t bt_count(0);
-        m_breakpoints.clear();
-        arch.Read(wxT("Count"), bt_count);
-
-        for(size_t i = 0; i < bt_count; i++) {
-            wxString name = wxString::Format(wxT("Breakpoint%u"), (unsigned int)i);
-            clDebuggerBreakpoint bkpt;
-            arch.Read(name, (SerializedObject*)&bkpt);
-            m_breakpoints.push_back(bkpt);
-        }
-    }
-
-    virtual void Serialize(Archive& arch)
-    {
-
-        arch.Write(wxT("Count"), (size_t)m_breakpoints.size());
-        for(size_t i = 0; i < m_breakpoints.size(); i++) {
-            wxString name = wxString::Format(wxT("Breakpoint%u"), (unsigned int)i);
-            arch.Write(name, (SerializedObject*)&m_breakpoints.at(i));
-        }
-    }
-};
 
 class DebuggerInformation : public SerializedObject
 {

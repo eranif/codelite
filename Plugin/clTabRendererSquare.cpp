@@ -24,7 +24,9 @@ void clTabRendererSquare::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
                                const clTabColours& colours, size_t style, eButtonState buttonState)
 {
     clTabRendererClassic::Draw(parent, dc, fontDC, tabInfo, colours, style, buttonState);
-    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style); }
+    if(tabInfo.IsActive()) {
+        DrawMarker(dc, tabInfo, colours, style);
+    }
 }
 
 void clTabRendererSquare::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,

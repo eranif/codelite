@@ -118,7 +118,9 @@ void clButtonBase::OnLeftUp(wxMouseEvent& event)
     wxRect rect = GetClientRect();
     if(rect.Contains(event.GetPosition())) {
         m_state = eButtonState::kHover;
-        PostClickEvent();
+        wxCommandEvent eventClick(wxEVT_BUTTON);
+        eventClick.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(eventClick);
     } else {
         m_state = eButtonState::kNormal;
     }

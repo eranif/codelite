@@ -4,10 +4,12 @@
 #include "codelite_exports.h"
 #include <wx/sharedptr.h>
 
+class IProcess;
 class WXDLLIMPEXP_CL clSSHAgent
 {
 private:
     int m_sshAgentPID = wxNOT_FOUND;
+    IProcess* m_process = nullptr;
 
 protected:
     void Start();

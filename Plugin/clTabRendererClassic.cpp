@@ -34,10 +34,10 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour
     colours.activeTabTextColour = c.GetItemTextColour();
     colours.activeTabBgColour = activeTabBGColour;
 
-    wxColour sysbgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-    if(DrawingUtils::IsDark(sysbgColour)) {
-        colours.activeTabBgColour = sysbgColour.ChangeLightness(90);
-    }
+//    wxColour sysbgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+//    if(DrawingUtils::IsDark(sysbgColour)) {
+//        colours.activeTabBgColour = sysbgColour.ChangeLightness(90);
+//    }
 
     colours.activeTabPenColour = c.GetBorderColour();
     colours.activeTabInnerPenColour = c.GetBgColour();

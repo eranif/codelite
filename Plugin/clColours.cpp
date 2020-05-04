@@ -22,10 +22,7 @@ void clColours::InitDefaults()
     selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }
 
-void clColours::InitDarkDefaults()
-{
-    InitFromColour(wxColour("#5F6A6A"));
-}
+void clColours::InitDarkDefaults() { InitFromColour(wxColour("#5F6A6A")); }
 
 bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)); }
 
@@ -39,6 +36,10 @@ void clColours::InitFromColour(const wxColour& baseColour)
     bool is_light = !is_dark;
     bgColour = baseColour;
     itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
+
+    if(is_dark && DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    }
 
     if(is_light) {
         alternateColour = bgColour.ChangeLightness(FACTOR_ALTROW_LIGHT);

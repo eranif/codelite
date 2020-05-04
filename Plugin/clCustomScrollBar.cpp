@@ -75,7 +75,7 @@ void clCustomScrollBar::OnPaint(wxPaintEvent& e)
 #ifdef __WXGTK__
     wxDC& dc = bdc;
 #else
-    wxGCDC dc(pdc);
+    wxGCDC dc(bdc);
 #endif
 
     wxRect rect = GetClientRect();

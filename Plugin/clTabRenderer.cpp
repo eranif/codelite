@@ -500,6 +500,8 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
             direction = wxRIGHT;
             p1 = tabInfo.GetRect().GetTopLeft();
             p2 = tabInfo.GetRect().GetBottomLeft();
+            p1.x--;
+            p2.x--;
         }
         dc.SetPen(markerPen);
         DrawMarkerLine(dc, p1, p2, direction);
@@ -514,6 +516,8 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
             direction = wxRIGHT;
             p1 = tabInfo.GetRect().GetTopLeft();
             p2 = tabInfo.GetRect().GetBottomLeft();
+            p1.x--;
+            p2.x--;
         }
         dc.SetPen(markerPen);
         DrawMarkerLine(dc, p1, p2, direction);

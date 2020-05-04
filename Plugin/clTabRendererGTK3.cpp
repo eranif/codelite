@@ -116,7 +116,9 @@ void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxR
 
 void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
 {
-    bool useDefaults = true;
+    wxUnusedVar(style);
+    wxUnusedVar(colours);
+    /*bool useDefaults = true;
     if(style & kNotebook_DynamicColours) {
         wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
         if(!globalTheme.IsEmpty()) {
@@ -143,5 +145,5 @@ void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
         colours.inactiveTabTextColour = DrawingUtils::IsDark(colours.activeTabTextColour)
                                             ? colours.activeTabTextColour.ChangeLightness(140)
                                             : colours.activeTabTextColour.ChangeLightness(60);
-    }
+    }*/
 }

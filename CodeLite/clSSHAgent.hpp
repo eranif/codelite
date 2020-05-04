@@ -8,7 +8,6 @@ class IProcess;
 class WXDLLIMPEXP_CL clSSHAgent
 {
 private:
-    int m_sshAgentPID = wxNOT_FOUND;
     IProcess* m_process = nullptr;
 
 protected:

@@ -40,6 +40,7 @@ void clThemedButton::OnThemeChanged(wxCommandEvent& event)
 
 void clThemedButton::ApplyTheme()
 {
+#if !wxUSE_NATIVE_BUTTON
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
     if(lexer->IsDark()) {
@@ -54,4 +55,5 @@ void clThemedButton::ApplyTheme()
         colours.InitFromColour(baseColour);
     }
     SetColours(colours);
+#endif
 }

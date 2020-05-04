@@ -42,6 +42,7 @@ void clThemedChoice::OnThemeChanged(wxCommandEvent& event)
 
 void clThemedChoice::ApplyTheme()
 {
+#if !wxUSE_NATIVE_CHOICE
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
     if(lexer->IsDark()) {
@@ -56,4 +57,5 @@ void clThemedChoice::ApplyTheme()
         colours.InitFromColour(baseColour);
     }
     SetColours(colours);
+#endif
 }

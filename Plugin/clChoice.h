@@ -1,14 +1,30 @@
 #ifndef CLCHOICE_H
 #define CLCHOICE_H
 
-#include <wx/choice.h>
 #include "clButtonBase.h" // Base class: clButtonBase
-#include <wx/arrstr.h>
-#include <vector>
 #include <string>
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/choice.h>
+#include "wxCustomControls.hpp"
 
+#if wxUSE_NATIVE_CHOICE
+#include <wx/choice.h>
+class WXDLLIMPEXP_SDK clChoice : public wxChoice
+{
+public:
+    clChoice();
+    clChoice(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, const wxArrayString& choices,
+             long style = 0, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxChoiceNameStr);
+    bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, const wxArrayString& choices,
+                long style = 0, const wxValidator& validator = wxDefaultValidator,
+                const wxString& name = wxChoiceNameStr);
+    virtual ~clChoice();
+    
+    void SetText(const wxString& text);
+};
+#else
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CHOICE_MENU_SHOWING, wxNotifyEvent);
-
 class WXDLLIMPEXP_SDK clChoice : public clButtonBase
 {
     std::vector<wxString> m_choices;
@@ -46,7 +62,7 @@ public:
      * @brief return true if there are not items in this control
      */
     bool IsEmpty() const { return GetCount() == 0; }
-    
+
     /**
      * @brief return the selected item index
      * @return
@@ -98,5 +114,5 @@ public:
      */
     void Set(const wxArrayString& items);
 };
-
+#endif
 #endif // CLCHOICE_H

@@ -1,4 +1,26 @@
 #include "clChoice.h"
+
+#if wxUSE_NATIVE_CHOICE
+clChoice::clChoice() {}
+
+clChoice::~clChoice() {}
+
+bool clChoice::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                      const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
+{
+    return wxChoice::Create(parent, id, pos, size, choices, style, validator, name);
+}
+
+clChoice::clChoice(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                   const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
+    : wxChoice(parent, id, pos, size, choices, style, validator, name)
+{
+}
+
+void clChoice::SetText(const wxString& text) { SetStringSelection(text); }
+
+#else
+
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
@@ -117,13 +139,14 @@ void clChoice::DoShowMenu()
         wxMenuItem* item = menu.Append(menuId, label, label, wxITEM_CHECK);
         item->Check((int)i == m_selection);
         idToIndex.insert({ menuId, i });
-        menu.Bind(wxEVT_MENU,
-                  [&](wxCommandEvent& e) {
-                      if(idToIndex.count(e.GetId())) {
-                          selectedIndex = idToIndex[e.GetId()];
-                      }
-                  },
-                  menuId);
+        menu.Bind(
+            wxEVT_MENU,
+            [&](wxCommandEvent& e) {
+                if(idToIndex.count(e.GetId())) {
+                    selectedIndex = idToIndex[e.GetId()];
+                }
+            },
+            menuId);
     }
 
     // Show the menu
@@ -174,3 +197,4 @@ void clChoice::Set(const wxArrayString& items)
     SetText("");
     Refresh();
 }
+#endif

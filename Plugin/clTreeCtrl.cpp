@@ -136,7 +136,11 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxAutoBufferedPaintDC pdc(this);
     PrepareDC(pdc);
 
+#ifdef __WXGTK__
+    wxDC& dc = pdc;
+#else
     wxGCDC dc(pdc);
+#endif
 
     // Call the parent's Render method
     Render(dc);
@@ -1085,7 +1089,9 @@ void clTreeCtrl::ScrollToRow(int firstLine)
 #endif
 
     Refresh();
+#ifndef __WXGTK3__
     wxYieldIfNeeded();
+#endif
 }
 
 void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
@@ -1122,7 +1128,9 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
     }
     EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
     Refresh();
+#ifndef __WXGTK3__
     wxYieldIfNeeded();
+#endif
     UpdateScrollBar();
 }
 

@@ -19,6 +19,5 @@ void AutoSaveDlg::OnOK(wxCommandEvent& event)
     conf.EnableFlag(AutoSaveSettings::kEnabled, m_checkBoxEnabled->IsChecked());
     conf.SetCheckInterval(m_spinCtrlInterval->GetValue());
     AutoSaveSettings::Save(conf);
-    
     EndModal(wxID_OK);
 }

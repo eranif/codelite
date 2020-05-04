@@ -14,6 +14,22 @@
 #define BUTTON_RADIUS 3.0
 #endif
 
+#if wxUSE_NATIVE_BUTTON
+clButtonBase::clButtonBase() {}
+
+clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
+                           const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+    : wxButton(parent, id, label, pos, size, style, validator, name)
+{
+}
+
+bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
+                          const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+{
+    return wxButton::Create(parent, id, label, pos, size, style, validator, name);
+}
+clButtonBase::~clButtonBase() {}
+#else
 clButtonBase::clButtonBase() {}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
@@ -43,6 +59,9 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
 
 clButtonBase::~clButtonBase() { UnBindEvents(); }
 
+#endif
+
+#if !wxUSE_NATIVE_BUTTON
 void clButtonBase::BindEvents()
 {
     Bind(wxEVT_PAINT, &clButtonBase::OnPaint, this);
@@ -390,22 +409,6 @@ size_t clButtonBase::GetDrawingFlags() const
     }
     return flags;
 }
-
-void clButtonBase::SetText(const wxString& text)
-{
-    // strip menemonics, not very efficient...
-    wxString tmp = text;
-    tmp.Replace("&&", "@@");
-    tmp.Replace("&", "");
-    tmp.Replace("@@", "&");
-    m_text = tmp;
-    SetSizeHints(GetBestSize());
-    if(GetParent() && GetParent()->GetSizer()) {
-        GetParent()->Layout();
-    }
-    Refresh();
-}
-
 void clButtonBase::SetDefault() {}
 
 void clButtonBase::OnSize(wxSizeEvent& event)
@@ -413,13 +416,6 @@ void clButtonBase::OnSize(wxSizeEvent& event)
     event.Skip();
     Refresh();
 }
-
-void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)
-{
-    m_hasDropDownMenu = hasDropDownMenu;
-    Refresh();
-}
-
 void clButtonBase::SetBitmap(const wxBitmap& bmp)
 {
     m_bitmap = bmp;
@@ -431,11 +427,20 @@ void clButtonBase::SetBitmap(const wxBitmap& bmp)
 }
 
 const wxBitmap& clButtonBase::GetBitmap() const { return m_bitmap; }
+#endif
+
+void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)
+{
+    m_hasDropDownMenu = hasDropDownMenu;
+    Refresh();
+}
 
 void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
 {
+#if !wxUSE_NATIVE_BUTTON
     SetPressed();
     Refresh();
+#endif
 
     wxPoint menuPos;
     if(point) {
@@ -447,6 +452,27 @@ void clButtonBase::ShowMenu(wxMenu& menu, wxPoint* point)
 #endif
     }
     PopupMenu(&menu, menuPos);
+#if !wxUSE_NATIVE_BUTTON
     SetNormal();
     Refresh();
+#endif
+}
+
+void clButtonBase::SetText(const wxString& text)
+{
+#if wxUSE_NATIVE_BUTTON
+    wxButton::SetLabel(text);
+#else
+    // strip menemonics, not very efficient...
+    wxString tmp = text;
+    tmp.Replace("&&", "@@");
+    tmp.Replace("&", "");
+    tmp.Replace("@@", "&");
+    m_text = tmp;
+    SetSizeHints(GetBestSize());
+    if(GetParent() && GetParent()->GetSizer()) {
+        GetParent()->Layout();
+    }
+    Refresh();
+#endif
 }

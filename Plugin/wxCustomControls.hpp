@@ -1,0 +1,12 @@
+#ifndef WXCUSTOMCONTROLS_HPP
+#define WXCUSTOMCONTROLS_HPP
+
+#ifdef __WXGTK__
+#define wxUSE_NATIVE_CHOICE 0
+#define wxUSE_NATIVE_BUTTON 0
+#else
+#define wxUSE_NATIVE_CHOICE 0
+#define wxUSE_NATIVE_BUTTON 0
+#endif
+
+#endif // WXCUSTOMCONTROLS_HPP

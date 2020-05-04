@@ -14,6 +14,4 @@ clButton::clButton(wxWindow* parent, wxWindowID id, const wxString& label, const
 {
 }
 
-clButton::~clButton()
-{
-}
+clButton::~clButton() {}

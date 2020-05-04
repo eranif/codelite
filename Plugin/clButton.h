@@ -1,8 +1,8 @@
 #ifndef CLBUTTON_H
 #define CLBUTTON_H
 
-#include "codelite_exports.h"
 #include "clButtonBase.h"
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK clButton : public clButtonBase
 {

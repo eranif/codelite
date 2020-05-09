@@ -7,6 +7,7 @@
 #include <vector>
 #include <wx/string.h>
 #include <wxStringHash.h>
+#include "asyncprocess.h"
 
 class LanguageServerEntry
 {
@@ -22,7 +23,8 @@ class LanguageServerEntry
     bool m_disaplayDiagnostics = true;
     wxString m_command;
     wxString m_initOptions;
-
+    clEnvList_t m_env;
+    
 public:
     // use 'map' to keep the items sorted by name
     typedef std::map<wxString, LanguageServerEntry> Map_t;
@@ -96,6 +98,8 @@ public:
     bool IsAutoRestart() const;
     void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
     const wxString& GetInitOptions() const { return m_initOptions; }
+    const clEnvList_t& GetEnv() const { return m_env; }
+    void SetEnv(const clEnvList_t& env) { this->m_env = env; }
 };
 
 #endif // LANGUAGESERVERENTRY_H

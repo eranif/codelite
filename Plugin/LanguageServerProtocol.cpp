@@ -20,6 +20,7 @@
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -32,7 +33,6 @@
 #include <sstream>
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
-#include "environmentconfig.h"
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
                                                IPathConverter::Ptr_t pathConverter)
@@ -161,7 +161,10 @@ bool LanguageServerProtocol::DoStart()
     info.SetConnectioString(m_connectionString);
     info.SetFlags(m_createFlags);
     try {
+        // apply global environment variables
         EnvSetter env;
+        // apply this lsp specific environment variables
+        clEnvironment localEnv(&m_env);
         m_network->Open(info);
         return true;
     } catch(clException& e) {
@@ -170,7 +173,7 @@ bool LanguageServerProtocol::DoStart()
     }
 }
 
-bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxString& initOptions,
+bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const clEnvList_t& env, const wxString& initOptions,
                                    const wxString& connectionString, const wxString& workingDirectory,
                                    const wxString& rootFolder, const wxArrayString& languages, size_t flags)
 {
@@ -186,6 +189,7 @@ bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const wxStri
     m_connectionString = connectionString;
     m_createFlags = flags;
     m_initOptions = initOptions;
+    m_env = env;
     return DoStart();
 }
 

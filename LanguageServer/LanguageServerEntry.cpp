@@ -29,6 +29,23 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
             commandDefault << " " << m_args;
         }
     }
+    
+    // read the environment variables
+    auto env = json["environment"];
+    size_t envSize = env.arraySize();
+    for(size_t i = 0; i < envSize; ++i) {
+        wxString envline = env[i].toString();
+        if(envline.IsEmpty()) {
+            continue;
+        }
+        wxString env_name = envline.BeforeFirst('=');
+        wxString env_value = envline.AfterFirst('=');
+        if(env_name.empty() || env_value.empty()) {
+            continue;
+        }
+        m_env.push_back({ env_name, env_value });
+    }
+
     m_command = json.namedObject("command").toString(commandDefault);
     m_initOptions = json["initOptions"].toString();
     m_unimplementedMethods.clear();
@@ -52,7 +69,13 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
     json.addProperty("initOptions", m_initOptions);
-
+    
+    // Write the environment variables
+    wxArrayString envArr;
+    for(const auto& env_entry : m_env) {
+        envArr.Add(env_entry.first + "=" + env_entry.second);
+    }
+    json.addProperty("environment", envArr);
     wxArrayString methods;
     methods.Alloc(m_unimplementedMethods.size());
     for(const wxString& methodName : m_unimplementedMethods) {

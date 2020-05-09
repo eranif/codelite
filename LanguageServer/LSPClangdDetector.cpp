@@ -1,5 +1,6 @@
 #include "CompilerLocatorCLANG.h"
 #include "LSPClangdDetector.hpp"
+#include "asyncprocess.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -23,6 +24,31 @@ bool LSPClangdDetector::DoLocate()
     if(clangdExe.FileExists() && clangdExe.IsFileExecutable()) {
         ConfigureFile(clangdExe);
         return true;
+    }
+#elif defined(__WXGTK__)
+    wxFileName clangdExe(clStandardPaths::Get().GetUserDataDir(), "");
+    clangdExe.AppendDir("lsp");
+    clangdExe.AppendDir("tools");
+    clangdExe.SetFullName("clangd");
+    if(clangdExe.FileExists()) {
+        ConfigureFile(clangdExe);
+        return true;
+    } else {
+        // see if we need to copy it from the installation folder
+        wxFileName toolsFile(clStandardPaths::Get().GetDataDir(), "clang-tools.tgz");
+        if(toolsFile.FileExists()) {
+            // sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz /usr/share/codelite/clang-tools.tgz -C ~/.codelite/lsp/'
+            clDEBUG() << "Running: sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz /usr/share/codelite/clang-tools.tgz -C "
+                         "~/.codelite/lsp/'"
+                      << clEndl;
+            IProcess::Ptr_t process(::CreateSyncProcess("sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz "
+                                                        "/usr/share/codelite/clang-tools.tgz -C ~/.codelite/lsp/'"));
+            if(process) {
+                wxString output;
+                process->WaitForTerminate(output);
+                clDEBUG() << output << clEndl;
+            }
+        }
     }
 #endif
 

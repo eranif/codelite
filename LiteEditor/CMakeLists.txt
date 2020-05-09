@@ -91,7 +91,7 @@ if(NOT APPLE)
     
     # extra clangd + clang-format tools
     if (UNIX)
-        install(FILES ${CL_SRC_ROOT}/tools/linux/clang-tools-10.tgz DESTINATION ${CL_PREFIX}/share/codelite)
+        install(FILES ${CL_SRC_ROOT}/tools/linux/clang-tools.tgz DESTINATION ${CL_PREFIX}/share/codelite)
     endif()
     
     ## License file

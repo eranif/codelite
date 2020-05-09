@@ -252,7 +252,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             flags |= LSPStartupInfo::kAutoStart;
         }
 
-        lsp->Start(lspCommand, entry.GetInitOptions(), entry.GetConnectionString(), entry.GetWorkingDirectory(),
+        lsp->Start(lspCommand, entry.GetEnv(), entry.GetInitOptions(), entry.GetConnectionString(), entry.GetWorkingDirectory(),
                    rootDir, entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
     }

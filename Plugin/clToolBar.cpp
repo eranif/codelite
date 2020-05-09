@@ -84,7 +84,12 @@ clToolBar::~clToolBar()
 void clToolBar::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
+#ifdef __WXOSX__
+    wxPaintDC dc(this);
+#else
     wxAutoBufferedPaintDC dc(this);
+#endif
+
     PrepareDC(dc);
     wxGCDC gcdc(dc);
 

@@ -317,11 +317,12 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar)
 {
     wxUnusedVar(miniToolbar);
-    wxRect topRect = rect;
 #ifdef __WXOSX__
-    topRect.Inflate(1);
-#endif
-
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.DrawRectangle(rect);
+#else
+    wxRect topRect = rect;
     topRect.SetHeight((rect.GetHeight() / 8) * 7);
     wxRect bottomRect = rect;
     bottomRect.SetTop(topRect.GetBottom());
@@ -335,6 +336,7 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
 
     bottomColour = bottomColour.ChangeLightness(IsDark(topColour) ? 70 : 90);
     PaintStraightGradientBox(dc, bottomRect, topColour, bottomColour, true);
+#endif
 }
 
 wxColour DrawingUtils::GetMenuBarTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT); }

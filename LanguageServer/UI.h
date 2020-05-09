@@ -91,9 +91,11 @@ protected:
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText495;
     wxNotebook* m_notebook164;
-    wxPanel* m_panel166;
+    wxPanel* m_panelCommand;
     wxStyledTextCtrl* m_stcCommand;
-    wxPanel* m_panel1661;
+    wxPanel* m_panelEnvironment;
+    wxStyledTextCtrl* m_stcEnvironment;
+    wxPanel* m_panelInitOptions;
     wxStyledTextCtrl* m_stcInitOptions;
     wxStaticText* m_staticText579;
     wxTextCtrl* m_textCtrlWD;
@@ -118,9 +120,11 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
-    wxPanel* GetPanel166() { return m_panel166; }
+    wxPanel* GetPanelCommand() { return m_panelCommand; }
+    wxStyledTextCtrl* GetStcEnvironment() { return m_stcEnvironment; }
+    wxPanel* GetPanelEnvironment() { return m_panelEnvironment; }
     wxStyledTextCtrl* GetStcInitOptions() { return m_stcInitOptions; }
-    wxPanel* GetPanel1661() { return m_panel1661; }
+    wxPanel* GetPanelInitOptions() { return m_panelInitOptions; }
     wxNotebook* GetNotebook164() { return m_notebook164; }
     wxStaticText* GetStaticText579() { return m_staticText579; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }

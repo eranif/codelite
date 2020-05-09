@@ -181,15 +181,15 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     boxSizer162->Add(m_notebook164, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel166 = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook164, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
-    m_notebook164->AddPage(m_panel166, _("Command"), true);
+    m_panelCommand = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook164, wxSize(-1, -1)),
+                                 wxTAB_TRAVERSAL);
+    m_notebook164->AddPage(m_panelCommand, _("Command"), true);
 
     wxBoxSizer* boxSizer168 = new wxBoxSizer(wxVERTICAL);
-    m_panel166->SetSizer(boxSizer168);
+    m_panelCommand->SetSizer(boxSizer168);
 
-    m_stcCommand =
-        new wxStyledTextCtrl(m_panel166, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel166, wxSize(-1, 40)), 0);
+    m_stcCommand = new wxStyledTextCtrl(m_panelCommand, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelCommand, wxSize(-1, 40)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcCommand->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcCommand->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -217,7 +217,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     m_stcCommand->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcCommand->StyleClearAll();
-    m_stcCommand->SetWrapMode(2);
+    m_stcCommand->SetWrapMode(0);
     m_stcCommand->SetIndentationGuides(0);
     m_stcCommand->SetKeyWords(0, wxT(""));
     m_stcCommand->SetKeyWords(1, wxT(""));
@@ -227,15 +227,61 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
     boxSizer168->Add(m_stcCommand, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel1661 = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook164, wxSize(-1, -1)),
-                              wxTAB_TRAVERSAL);
-    m_notebook164->AddPage(m_panel1661, _("Initialization Options"), false);
+    m_panelEnvironment = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_notebook164, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook164->AddPage(m_panelEnvironment, _("Environment"), false);
+
+    wxBoxSizer* boxSizer178 = new wxBoxSizer(wxVERTICAL);
+    m_panelEnvironment->SetSizer(boxSizer178);
+
+    m_stcEnvironment = new wxStyledTextCtrl(m_panelEnvironment, wxID_ANY, wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelEnvironment, wxSize(-1, -1)), wxBORDER_NONE);
+    // Configure the fold margin
+    m_stcEnvironment->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcEnvironment->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcEnvironment->SetMarginSensitive(4, true);
+    m_stcEnvironment->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcEnvironment->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcEnvironment->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcEnvironment->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcEnvironment->SetMarginWidth(2, 0);
+    m_stcEnvironment->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcEnvironment->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcEnvironment->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcEnvironment->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcEnvironment->SetMarginMask(3, 0);
+    m_stcEnvironment->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcEnvironment->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcEnvironment->StyleClearAll();
+    m_stcEnvironment->SetWrapMode(0);
+    m_stcEnvironment->SetIndentationGuides(0);
+    m_stcEnvironment->SetKeyWords(0, wxT(""));
+    m_stcEnvironment->SetKeyWords(1, wxT(""));
+    m_stcEnvironment->SetKeyWords(2, wxT(""));
+    m_stcEnvironment->SetKeyWords(3, wxT(""));
+    m_stcEnvironment->SetKeyWords(4, wxT(""));
+
+    boxSizer178->Add(m_stcEnvironment, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelInitOptions = new wxPanel(m_notebook164, wxID_ANY, wxDefaultPosition,
+                                     wxDLG_UNIT(m_notebook164, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook164->AddPage(m_panelInitOptions, _("Initialization Options"), false);
 
     wxBoxSizer* boxSizer1682 = new wxBoxSizer(wxVERTICAL);
-    m_panel1661->SetSizer(boxSizer1682);
+    m_panelInitOptions->SetSizer(boxSizer1682);
 
-    m_stcInitOptions =
-        new wxStyledTextCtrl(m_panel1661, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1661, wxSize(-1, 40)), 0);
+    m_stcInitOptions = new wxStyledTextCtrl(m_panelInitOptions, wxID_ANY, wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelInitOptions, wxSize(-1, 40)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcInitOptions->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcInitOptions->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -263,7 +309,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     m_stcInitOptions->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_stcInitOptions->StyleClearAll();
-    m_stcInitOptions->SetWrapMode(2);
+    m_stcInitOptions->SetWrapMode(0);
     m_stcInitOptions->SetIndentationGuides(0);
     m_stcInitOptions->SetKeyWords(0, wxT(""));
     m_stcInitOptions->SetKeyWords(1, wxT(""));

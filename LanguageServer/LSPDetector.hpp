@@ -2,6 +2,7 @@
 #define LSPDETECTOR_HPP
 
 #include "LanguageServerEntry.h"
+#include "asyncprocess.h"
 #include "wx/arrstr.h"
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -14,6 +15,7 @@ protected:
     wxArrayString m_langugaes;
     wxString m_connectionString;
     int m_priority = 50;
+    clEnvList_t m_env;
 
 public:
     typedef wxSharedPtr<LSPDetector> Ptr_t;
@@ -39,6 +41,8 @@ public:
     int GetPriority() const { return m_priority; }
     bool Locate();
     virtual void GetLanguageServerEntry(LanguageServerEntry& entry);
+    void SetEnv(const clEnvList_t& env) { this->m_env = env; }
+    const clEnvList_t& GetEnv() const { return m_env; }
 };
 
 #endif // LSPDETECTOR_HPP

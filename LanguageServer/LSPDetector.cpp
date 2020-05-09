@@ -16,6 +16,7 @@ void LSPDetector::GetLanguageServerEntry(LanguageServerEntry& entry)
     entry.SetConnectionString(GetConnectionString());
     entry.SetPriority(GetPriority());
     entry.SetName(GetName());
+    entry.SetEnv(m_env);
 }
 
 bool LSPDetector::Locate()

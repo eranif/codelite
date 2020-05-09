@@ -28,7 +28,7 @@ bool LSPClangdDetector::DoLocate()
 #elif defined(__WXGTK__)
     wxFileName clangdExe(clStandardPaths::Get().GetUserDataDir(), "");
     clangdExe.AppendDir("lsp");
-    clangdExe.AppendDir("tools");
+    clangdExe.AppendDir("clang-tools");
     clangdExe.SetFullName("clangd");
     if(clangdExe.FileExists()) {
         ConfigureFile(clangdExe);
@@ -47,6 +47,16 @@ bool LSPClangdDetector::DoLocate()
                 wxString output;
                 process->WaitForTerminate(output);
                 clDEBUG() << output << clEndl;
+
+                // Check again if clangd exists
+                if(clangdExe.FileExists()) {
+                    ConfigureFile(clangdExe);
+                    // this clangd requires LD_LIBRARY_PATH set properly
+                    clEnvList_t environment;
+                    environment.push_back({ "LD_LIBRARY_PATH", clangdExe.GetPath() });
+                    SetEnv(environment);
+                    return true;
+                }
             }
         }
     }

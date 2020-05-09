@@ -6,6 +6,7 @@
 #include <macros.h>
 #include <wx/choicdlg.h>
 #include <wx/dirdlg.h>
+#include <wx/tokenzr.h>
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
@@ -14,6 +15,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     if(lex) {
         lex->Apply(m_stcCommand);
         lex->Apply(m_stcInitOptions);
+        lex->Apply(m_stcEnvironment);
     }
     m_textCtrlName->SetValue(data.GetName());
     m_textCtrlWD->SetValue(data.GetWorkingDirectory());
@@ -26,6 +28,15 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     this->m_comboBoxConnection->SetValue(data.GetConnectionString());
     m_checkBoxDiagnostics->SetValue(data.IsDisaplayDiagnostics());
     m_sliderPriority->SetValue(data.GetPriority());
+    const auto& env = data.GetEnv();
+    if(!env.empty()) {
+        wxString envString;
+        for(const auto& env_entry : env) {
+            envString << env_entry.first << "=" << env_entry.second << "\n";
+        }
+        envString.RemoveLast();
+        m_stcEnvironment->SetText(envString);
+    }
 }
 
 LanguageServerPage::LanguageServerPage(wxWindow* parent)
@@ -52,6 +63,24 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
     d.SetInitOptions(m_stcInitOptions->GetText().Trim().Trim(false));
+    // Store the environment
+    clEnvList_t envList;
+    wxArrayString env_lines = wxStringTokenize(m_stcEnvironment->GetText(), "\n", wxTOKEN_STRTOK);
+    for(auto& line : env_lines) {
+        TrimString(line);
+        if(line.empty()) {
+            continue;
+        }
+        wxString env_name = line.BeforeFirst('=');
+        wxString env_value = line.AfterFirst('=');
+        TrimString(env_name);
+        TrimString(env_value);
+        if(env_name.empty() || env_lines.empty()) {
+            continue;
+        }
+        envList.push_back({ env_name, env_value });
+    }
+    d.SetEnv(envList);
     return d;
 }
 

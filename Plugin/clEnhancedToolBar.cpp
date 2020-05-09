@@ -60,6 +60,6 @@ void clEnhancedToolBar::SetButtonAction(wxWindowID buttonId, wxWindowID actionID
     }
     button->SetBmp(btn->bmp);
     button->SetLabel(btn->label);
-    clSYSTEM() << "toolbar button changed state to" << btn->label;
+    clDEBUG1() << "toolbar button changed state to" << btn->label;
     Refresh();
 }

@@ -31,8 +31,15 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
             return true;
         }
     }
-#else
+#elif defined(__WXMSW__)
     wxFileName fnClangFormat(clStandardPaths::Get().GetBinaryFullPath("codelite-clang-format"));
+    if(fnClangFormat.FileExists()) {
+        clangFormat = fnClangFormat.GetFullPath();
+        return true;
+    }
+#else
+    // macOS
+    wxFileName fnClangFormat(clStandardPaths::Get().GetBinaryFullPath("clang-format"));
     if(fnClangFormat.FileExists()) {
         clangFormat = fnClangFormat.GetFullPath();
         return true;

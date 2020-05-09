@@ -25,6 +25,13 @@ bool LSPClangdDetector::DoLocate()
         ConfigureFile(clangdExe);
         return true;
     }
+#elif defined(__WXOSX__)
+    // Try the installation folder first
+    wxFileName clangdExe(clStandardPaths::Get().GetBinaryFullPath("clangd"));
+    if(clangdExe.FileExists()) {
+        ConfigureFile(clangdExe);
+        return true;
+    }
 #elif defined(__WXGTK__)
     wxFileName clangdExe(clStandardPaths::Get().GetUserDataDir(), "");
     clangdExe.AppendDir("lsp");

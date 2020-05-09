@@ -102,28 +102,33 @@ void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
 void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    // Launch a thread to locate any LSP installed on this machine
-    // But do this only if we don't have any LSP defined already
+    // On Windwos, launch a thread to locate any LSP installed on this machine. On Linux/macOS, do this from the main
+    // thread But do this only if we don't have any LSP defined already
     if(LanguageServerConfig::Get().GetServers().empty()) {
         clDEBUG() << "Scanning..." << clEndl;
+#ifdef __WXMSW__
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
+#else
+        LanguageServerPlugin* plugin = this;
+#endif
                 std::vector<LSPDetector::Ptr_t> matches;
                 LSPDetectorManager detector;
-                wxString languages;
+                clDEBUG() << "***"
+                          << "Scanning for LSPs... ***" << clEndl;
                 if(detector.Scan(matches)) {
-                    // Prompt the user to configure LSP
-                    languages << "[";
-                    for(const auto& match : matches) {
-                        languages << match->GetName() << ", ";
-                    }
-                    languages.RemoveLast().RemoveLast();
-                    languages << "]";
+                    clDEBUG() << "   ******"
+                              << "found!" << clEndl;
                 }
+                clDEBUG() << "***"
+                          << "Scanning for LSPs... is done ***" << clEndl;
+                clDEBUG() << "*** Calling   ConfigureLSPs" << clEndl;
                 plugin->CallAfter(&LanguageServerPlugin::ConfigureLSPs, matches);
+#ifdef __WXMSW__
             },
             this);
         thr.detach();
+#endif
     }
 }
 
@@ -172,17 +177,24 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)
 {
+    clDEBUG() << "   ******"
+              << "ConfigureLSPs is called!" << clEndl;
     if(lsps.empty()) {
+        clDEBUG() << "ConfigureLSPs: no LSPs found. Nothing to be done here" << clEndl;
         return;
     }
+
     LanguageServerConfig& config = LanguageServerConfig::Get();
+    clDEBUG() << "ConfigureLSPs: there are currently" << config.GetServers().size() << "LSPs configured" << clEndl;
     if(config.GetServers().empty()) {
+        clDEBUG() << "No LSPs configured - auto configuring" << clEndl;
         // Only if the user did not configure LSP before, we configure it for him
         for(auto lsp : lsps) {
             LanguageServerEntry entry;
             lsp->GetLanguageServerEntry(entry);
             entry.SetEnabled(true);
             config.AddServer(entry);
+            clDEBUG() << "Adding LSP:" << entry.GetName() << clEndl;
         }
         config.SetEnabled(true);
         config.Save();

@@ -32,7 +32,7 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
         }
     }
 #elif defined(__WXMSW__)
-    wxFileName fnClangFormat(clStandardPaths::Get().GetBinaryFullPath("codelite-clang-format"));
+    wxFileName fnClangFormat(clStandardPaths::Get().GetBinaryFullPath("clang-format"));
     if(fnClangFormat.FileExists()) {
         clangFormat = fnClangFormat.GetFullPath();
         return true;

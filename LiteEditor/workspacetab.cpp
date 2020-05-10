@@ -77,19 +77,13 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
 
     m_panelCxx->Bind(wxEVT_PAINT, [&](wxPaintEvent& e) {
         wxAutoBufferedPaintDC dc(m_panelCxx);
-        dc.SetBrush(m_bgColour);
-        dc.SetPen(m_bgColour);
+        dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         dc.DrawRectangle(m_panelCxx->GetClientRect());
     });
 
-    m_bgColour = DrawingUtils::GetPanelBgColour();
-    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [&](clCommandEvent& event) {
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [&](clCommandEvent& event) {
         event.Skip();
-        bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-        m_bgColour = DrawingUtils::GetPanelBgColour();
-        if(useCustomColour) {
-            m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);
-        }
         Refresh();
         m_panelCxx->Refresh();
     });
@@ -569,8 +563,8 @@ void WorkspaceTab::OnConfigChanged(clCommandEvent& e)
 void WorkspaceTab::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(m_bgColour);
-    dc.SetPen(m_bgColour);
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     dc.DrawRectangle(GetClientRect());
 }
 

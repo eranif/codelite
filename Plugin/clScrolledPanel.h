@@ -10,8 +10,9 @@
 #include <wx/scrolbar.h>
 #include <wx/treebase.h>
 #include "clScrollBar.h"
+#include "wxCustomControls.hpp"
 
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
 typedef clScrollBar ScrollBar_t;
 #else
 typedef clCustomScrollBar ScrollBar_t;
@@ -39,7 +40,7 @@ private:
     bool m_neverShowVScrollbar = false;
     
 protected:
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     virtual void OnVScroll(wxScrollEvent& event);
     virtual void OnHScroll(wxScrollEvent& event);
 #else

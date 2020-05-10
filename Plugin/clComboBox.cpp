@@ -66,9 +66,13 @@ void clComboBox::DoCreate(const wxString& value)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND, 0);
-    m_button = new clButton(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    m_button = new clButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     m_button->SetHasDropDownMenu(true);
+#if wxUSE_NATIVE_BUTTON
+    m_button->SetText(wxT("▾")); // this will force size calculation
+#else
     m_button->SetText(""); // this will force size calculation
+#endif
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_CHAR_HOOK, &clComboBox::OnCharHook, this);

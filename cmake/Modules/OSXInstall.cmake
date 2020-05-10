@@ -243,9 +243,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
         file(COPY ${CL_SRC_ROOT}/tools/macOS/clangd 
              DESTINATION 
                   ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-                  
-        file(RENAME ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/clang-format 
-             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-clang-format)
         
         ## folders
         install(

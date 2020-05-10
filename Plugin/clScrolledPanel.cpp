@@ -30,7 +30,7 @@ void clScrolledPanel::DoInitialize()
 
     m_hsb = new ScrollBar_t(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL);
     DoPositionHScrollbar();
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     m_vsb->Bind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnVScroll, this);
     m_vsb->Bind(wxEVT_SCROLL_LINEUP, &clScrolledPanel::OnVScroll, this);
@@ -89,7 +89,7 @@ clScrolledPanel::~clScrolledPanel()
     // Destory the DCs in the reverse order of their creation
     wxDELETE(m_gcdc);
     wxDELETE(m_memDC);
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     m_vsb->Unbind(wxEVT_SCROLL_THUMBTRACK, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_LINEDOWN, &clScrolledPanel::OnVScroll, this);
     m_vsb->Unbind(wxEVT_SCROLL_LINEUP, &clScrolledPanel::OnVScroll, this);
@@ -119,7 +119,7 @@ clScrolledPanel::~clScrolledPanel()
     Unbind(wxEVT_LEAVE_WINDOW, &clScrolledPanel::OnLeaveWindow, this);
 }
 
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
 void clScrolledPanel::OnHScroll(wxScrollEvent& event)
 {
     int newColumn = wxNOT_FOUND;
@@ -186,7 +186,7 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
 }
 #endif
 
-#if CL_USE_CUSTOM_SCROLLBAR
+#if !wxUSE_NATIVE_SCROLLBAR
 void clScrolledPanel::OnVCustomScroll(clScrollEvent& event) { ScrollToRow(event.GetPosition()); }
 void clScrolledPanel::OnHCustomScroll(clScrollEvent& event) { ScollToColumn(event.GetPosition()); }
 #endif
@@ -214,7 +214,7 @@ void clScrolledPanel::UpdateVScrollBar(int position, int thumbSize, int rangeSiz
         m_vsb->Show();
     }
 
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     m_vsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_vsb->Refresh();
 #else
@@ -421,7 +421,7 @@ void clScrolledPanel::UpdateHScrollBar(int position, int thumbSize, int rangeSiz
     } else if(!should_show && m_hsb->IsShown()) {
         m_hsb->Hide();
     }
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     m_hsb->SetScrollbar(position, thumbSize, rangeSize, pageSize);
     m_hsb->Refresh();
 #else

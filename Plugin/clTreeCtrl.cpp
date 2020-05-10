@@ -1084,7 +1084,7 @@ void clTreeCtrl::ScrollToRow(int firstLine)
         }
     }
 
-#if CL_USE_NATIVE_SCROLLBAR
+#if wxUSE_NATIVE_SCROLLBAR
     UpdateScrollBar();
 #endif
 

@@ -9,7 +9,7 @@
    "debugger": "GNU gdb debugger"
   }, {
    "name": "Release",
-   "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .."], ["build", "cd  build-release && make -j8 install"], ["clean", "cd  build-release && make -j8 clean"]],
+   "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .."], ["build", "cd  build-release && make -j8"], ["clean", "cd  build-release && make -j8 clean"]],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
    "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
    "debugger": "GNU gdb debugger"

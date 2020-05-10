@@ -430,9 +430,6 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_stcCCFlags = new wxStyledTextCtrl(m_panelCodeCompletion, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
-    m_stcCCFlags->SetToolTip(_("Place your build flags one-per-line here.\nFor "
-                               "example:\n\n-I/home/eran/include\n-I/home/eran/wx/include\n-DSOME=1\n`wx-config "
-                               "--cflags`\n\nThese flags will be used by CodeLite for better\ncode completion"));
     m_stcCCFlags->SetFocus();
     // Configure the fold margin
     m_stcCCFlags->SetMarginType(4, wxSTC_MARGIN_SYMBOL);

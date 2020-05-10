@@ -9,8 +9,10 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
+#include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 
 #if USE_SFTP
@@ -227,12 +229,13 @@ void FSConfigPage::OnGenerateCompileCommands(wxCommandEvent& event)
     // - Selected compiler paths
     auto compilerOptions = m_config->GetCompilerOptions(backticks_cache);
     auto includes = m_config->ExpandUserCompletionFlags(filename.GetPath(), backticks_cache, true);
-    auto workspaceDirsArr = m_config->GetWorkspaceIncludes(true);
-    wxString compile_flags_txt;
-    for(const auto& s : workspaceDirsArr) {
-        compile_flags_txt << s << "\n";
-    }
 
+    wxString compile_flags_txt;
+    // Include the workspace path by default
+    wxString workspacePath = filename.GetPath();
+    ::WrapWithQuotes(workspacePath);
+
+    compile_flags_txt << "-I" << workspacePath << "\n";
     for(const auto& s : includes) {
         compile_flags_txt << s << "\n";
     }
@@ -252,5 +255,9 @@ void FSConfigPage::OnGenerateCompileCommands(wxCommandEvent& event)
         clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
         EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
         clDEBUG() << "File:" << fnCompileFlags << "generated" << clEndl;
+
+        wxString msg;
+        msg << _("Successfully generated file:\n") << fnCompileFlags.GetFullPath();
+        ::wxMessageBox(msg, "CodeLite");
     }
 }

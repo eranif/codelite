@@ -149,6 +149,33 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
     return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
 }
 
+static bool MSWIs64BitCompiler(CompilerPtr compiler)
+{
+    const wxArrayString& macros = compiler->GetBuiltinMacros();
+    for(const wxString& macro : macros) {
+        if(macro.Contains("_WIN64")) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static wxArrayString GetExtraFlags(CompilerPtr compiler)
+{
+    wxArrayString flags;
+#ifdef __WXMSW__
+    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+        flags.Add("-target");
+        if(MSWIs64BitCompiler(compiler)) {
+            flags.Add("x86_64-pc-windows-gnu");
+        } else {
+            flags.Add("i686-pc-windows-gnu");
+        }
+    }
+#endif
+    return flags;
+}
+
 wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::ptr_t backticks) const
 {
     wxArrayString searchPaths;
@@ -161,6 +188,11 @@ wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::p
             compilerPath.Prepend("-I");
         }
         searchPaths.insert(searchPaths.end(), compilerPaths.begin(), compilerPaths.end());
+
+        auto extraFlags = GetExtraFlags(compiler);
+        if(!extraFlags.empty()) {
+            searchPaths.insert(searchPaths.end(), extraFlags.begin(), extraFlags.end());
+        }
     }
     return searchPaths;
 }
@@ -177,7 +209,7 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
 
         wxString prefix;
         wxString suffix;
-        if(line.Index('`') != wxNOT_FOUND) {
+        if(line.Index('`') != wxString::npos) {
             prefix = line.BeforeFirst('`');
             suffix = line.AfterLast('`');
         } else {

@@ -171,6 +171,8 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="clBacktickCache.hpp"/>
+    <File Name="clBacktickCache.cpp"/>
     <File Name="clRegistery.cpp"/>
     <File Name="clRegistery.hpp"/>
     <File Name="clSnippetManager.cpp"/>

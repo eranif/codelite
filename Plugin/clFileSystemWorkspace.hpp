@@ -3,6 +3,7 @@
 
 #include "IWorkspace.h"
 #include "asyncprocess.h"
+#include "clBacktickCache.hpp"
 #include "clConsoleBase.h"
 #include "clDebuggerBreakpointStore.hpp"
 #include "clDebuggerTerminal.h"
@@ -35,6 +36,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clRemoteBuilder::Ptr_t m_remoteBuilder;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     int m_execPID = wxNOT_FOUND;
+    clBacktickCache::ptr_t m_backtickCache;
 
 protected:
     void CacheFiles(bool force = false);
@@ -115,6 +117,11 @@ public:
     /// Specific API
     ///===--------------------------
     clFileSystemWorkspaceView* GetView() { return m_view; }
+
+    /**
+     * @brief return the backticks cache used by this workspace
+     */
+    clBacktickCache::ptr_t GetBackticksCache() { return m_backtickCache; }
 
     /**
      * @brief create an empty workspace at a given folder

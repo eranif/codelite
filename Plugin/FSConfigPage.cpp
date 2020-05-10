@@ -1,8 +1,15 @@
 #include "BuildTargetDlg.h"
 #include "ColoursAndFontsManager.h"
+#include "CompileCommandsGenerator.h"
 #include "FSConfigPage.h"
 #include "build_settings_config.h"
+#include "clFileSystemWorkspace.hpp"
 #include "debuggermanager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
+#include "macromanager.h"
 #include "macros.h"
 #include <wx/tokenzr.h>
 
@@ -35,7 +42,6 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_filePickerExe->SetPath(m_config->GetExecutable());
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
-    m_checkBoxCreateCompileFlags->SetValue(m_config->ShouldCreateCompileFlags());
     const auto& targets = m_config->GetBuildTargets();
     for(const auto& vt : targets) {
         wxDataViewItem item = m_dvListCtrlTargets->AppendItem(vt.first);
@@ -109,7 +115,6 @@ void FSConfigPage::Save()
         targets.insert({ name, command });
     }
 
-    m_config->SetCreateCompileFlags(m_checkBoxCreateCompileFlags->IsChecked());
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());
@@ -208,4 +213,44 @@ void FSConfigPage::OnEnableRemoteUI(wxUpdateUIEvent& event)
 #else
     event.Enable(false);
 #endif
+}
+void FSConfigPage::OnGenerateCompileCommands(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxBusyCursor bc;
+    const wxFileName& filename = clFileSystemWorkspace::Get().GetFileName();
+    auto backticks_cache = clFileSystemWorkspace::Get().GetBackticksCache();
+
+    // Create a compile flags from the following info:
+    // - Get list of folders from the current workspace
+    // - Any command that is displayed in the text box, expand it
+    // - Selected compiler paths
+    auto compilerOptions = m_config->GetCompilerOptions(backticks_cache);
+    auto includes = m_config->ExpandUserCompletionFlags(filename.GetPath(), backticks_cache, true);
+    auto workspaceDirsArr = m_config->GetWorkspaceIncludes(true);
+    wxString compile_flags_txt;
+    for(const auto& s : workspaceDirsArr) {
+        compile_flags_txt << s << "\n";
+    }
+
+    for(const auto& s : includes) {
+        compile_flags_txt << s << "\n";
+    }
+
+    for(const auto& s : compilerOptions) {
+        compile_flags_txt << s << "\n";
+    }
+
+    if(!compile_flags_txt.empty()) {
+        // replace any placeholders
+        compile_flags_txt = MacroManager::Instance()->Expand(compile_flags_txt, nullptr, "", "");
+        wxFileName fnCompileFlags(filename);
+        fnCompileFlags.SetFullName("compile_flags.txt");
+        FileUtils::WriteFileContent(fnCompileFlags, compile_flags_txt, wxConvUTF8);
+
+        // Fire JSON Generated event
+        clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+        EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
+        clDEBUG() << "File:" << fnCompileFlags << "generated" << clEndl;
+    }
 }

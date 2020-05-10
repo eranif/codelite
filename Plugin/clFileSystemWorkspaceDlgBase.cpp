@@ -471,14 +471,20 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer22->Add(m_stcCCFlags, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxCreateCompileFlags =
-        new wxCheckBox(m_panelCodeCompletion, wxID_ANY, _("Use this content to create a compile_flags.txt file"),
-                       wxDefaultPosition, wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
-    m_checkBoxCreateCompileFlags->SetValue(true);
-    m_checkBoxCreateCompileFlags->SetToolTip(
-        _("Use this content to create a compile_flags.txt file\nThis is useful when using clangd for code completion"));
+    wxBoxSizer* boxSizer203 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer22->Add(m_checkBoxCreateCompileFlags, 0, wxALL, WXC_FROM_DIP(5));
+    boxSizer22->Add(boxSizer203, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonGenerate = new wxButton(m_panelCodeCompletion, wxID_ANY, _("Genereate"), wxDefaultPosition,
+                                    wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
+
+    boxSizer203->Add(m_buttonGenerate, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText205 =
+        new wxStaticText(m_panelCodeCompletion, wxID_ANY, _("Genereate compile_flags.txt file, suitable for clangd"),
+                         wxDefaultPosition, wxDLG_UNIT(m_panelCodeCompletion, wxSize(-1, -1)), 0);
+
+    boxSizer203->Add(m_staticText205, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_panelEnv =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -611,6 +617,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                             this);
     m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_buttonGenerate->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                              wxCommandEventHandler(FSConfigPageBase::OnGenerateCompileCommands), NULL, this);
     m_checkBoxEnableRemote->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI), NULL,
                                     this);
     m_choiceSSHAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,
@@ -638,6 +646,8 @@ FSConfigPageBase::~FSConfigPageBase()
     m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnDelete), NULL,
                                this);
     m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnDeleteUI), NULL, this);
+    m_buttonGenerate->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                 wxCommandEventHandler(FSConfigPageBase::OnGenerateCompileCommands), NULL, this);
     m_checkBoxEnableRemote->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnEnableRemoteUI),
                                        NULL, this);
     m_choiceSSHAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FSConfigPageBase::OnRemoteEnabledUI), NULL,

@@ -128,7 +128,8 @@ protected:
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
-    wxCheckBox* m_checkBoxCreateCompileFlags;
+    wxButton* m_buttonGenerate;
+    wxStaticText* m_staticText205;
     wxPanel* m_panelEnv;
     wxStaticText* m_staticText119;
     wxStyledTextCtrl* m_stcEnv;
@@ -148,6 +149,7 @@ protected:
     virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnGenerateCompileCommands(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnableRemoteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSSHAccountChoice(wxCommandEvent& event) { event.Skip(); }
@@ -176,7 +178,8 @@ public:
     wxPanel* GetPanelBuild() { return m_panelBuild; }
     wxStaticText* GetStaticText26() { return m_staticText26; }
     wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
-    wxCheckBox* GetCheckBoxCreateCompileFlags() { return m_checkBoxCreateCompileFlags; }
+    wxButton* GetButtonGenerate() { return m_buttonGenerate; }
+    wxStaticText* GetStaticText205() { return m_staticText205; }
     wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
     wxStaticText* GetStaticText119() { return m_staticText119; }
     wxStyledTextCtrl* GetStcEnv() { return m_stcEnv; }

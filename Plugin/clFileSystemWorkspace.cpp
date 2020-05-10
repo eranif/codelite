@@ -289,6 +289,15 @@ void clFileSystemWorkspace::DoOpen()
     fnFolder.AppendDir(".codelite");
     fnFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
+    // Load the backticks cache file, this needs to be done early as we can
+    // since it is used
+    if(m_backtickCache) {
+        m_backtickCache.reset(nullptr);
+    }
+
+    // load the new cache
+    m_backtickCache.reset(new clBacktickCache(GetFileName().GetPath()));
+
     // Init the view
     GetView()->Clear();
 
@@ -365,8 +374,12 @@ void clFileSystemWorkspace::DoClose()
     m_isLoaded = false;
     m_showWelcomePage = true;
 
-    wxDELETE(m_buildProcess);
+    if(m_backtickCache) {
+        m_backtickCache->Save();
+        m_backtickCache.reset(nullptr);
+    }
 
+    wxDELETE(m_buildProcess);
     GetView()->UpdateConfigs({}, wxString());
 }
 
@@ -487,24 +500,11 @@ void clFileSystemWorkspace::UpdateParserPaths()
     clEnvironment env(&envlist);
 
     // Update the parser paths
-    wxString compile_flags_txt;
-    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName(), compile_flags_txt);
+    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());
 
     // Expand any macros
     for(wxString& path : uniquePaths) {
         path = MacroManager::Instance()->Expand(path, nullptr, "", "");
-    }
-
-    if(!compile_flags_txt.empty()) {
-        compile_flags_txt = MacroManager::Instance()->Expand(compile_flags_txt, nullptr, "", "");
-        wxFileName fnCompileFlags(GetFileName());
-        fnCompileFlags.SetFullName("compile_flags.txt");
-        FileUtils::WriteFileContent(fnCompileFlags, compile_flags_txt, wxConvUTF8);
-
-        // Fire JSON Generated event
-        clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-        EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
-        clDEBUG() << "File:" << fnCompileFlags << "generated";
     }
 
     ParseThreadST::Get()->SetSearchPaths(uniquePaths, {});

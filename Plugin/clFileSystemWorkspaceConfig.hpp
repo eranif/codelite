@@ -2,6 +2,7 @@
 #define CLFILESYSTEMWORKSPACECONFIG_HPP
 
 #include "JSON.h"
+#include "clBacktickCache.hpp"
 #include "codelite_exports.h"
 #include "macros.h"
 #include <map>
@@ -13,13 +14,13 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 {
 public:
     enum {
-        kGenerateCompileFlags = (1 << 0),
+        kUnused = (1 << 0),
         kEnableRemoteSync = (1 << 1),
         kRemoteBuild = (1 << 2),
     };
 
 protected:
-    size_t m_flags = kGenerateCompileFlags;
+    size_t m_flags = 0;
     std::map<wxString, wxString> m_buildTargets;
     wxArrayString m_compileFlags;
     wxString m_fileExtensions;
@@ -68,7 +69,7 @@ public:
     const wxString& GetArgs() const { return m_args; }
     const wxString& GetEnvironment() const { return m_environment; }
     const wxString& GetExecutable() const { return m_executable; }
-    wxArrayString GetSearchPaths(const wxFileName& workspaceFile, wxString& compile_flags_txt) const;
+    wxArrayString GetSearchPaths(const wxFileName& workspaceFile) const;
     bool IsRemoteEnabled() const { return m_flags & kEnableRemoteSync; }
     void SetRemoteEnabled(bool b)
     {
@@ -82,16 +83,6 @@ public:
     const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();
     ~clFileSystemWorkspaceConfig() {}
-
-    bool ShouldCreateCompileFlags() const { return m_flags & kGenerateCompileFlags; }
-    void SetCreateCompileFlags(bool b)
-    {
-        if(b) {
-            m_flags |= kGenerateCompileFlags;
-        } else {
-            m_flags &= ~kGenerateCompileFlags;
-        }
-    }
     void SetRemoteFolder(const wxString& remoteFolder) { this->m_remoteFolder = remoteFolder; }
     const wxString& GetRemoteFolder() const { return m_remoteFolder; }
     void SetRemoteAccount(const wxString& remoteAccount) { this->m_remoteAccount = remoteAccount; }
@@ -110,6 +101,15 @@ public:
             m_flags &= ~kRemoteBuild;
         }
     }
+
+    wxArrayString ExpandUserCompletionFlags(const wxString& workingDirectory, clBacktickCache::ptr_t backticks,
+                                            bool withPrefix = false) const;
+    wxArrayString GetCompilerOptions(clBacktickCache::ptr_t backticks) const;
+    /**
+     * @brief based on the workspace directory, return list of all folders that contain
+     * C/C++ header file
+     */
+    wxArrayString GetWorkspaceIncludes(bool withPrefix = false) const;
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

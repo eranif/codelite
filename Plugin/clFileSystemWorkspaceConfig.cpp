@@ -1,10 +1,15 @@
 #include "ICompilerLocator.h"
 #include "build_settings_config.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
 #include "debuggermanager.h"
+#include "dirsaver.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
+#include "macromanager.h"
+#include "procutils.h"
 
 #define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp"
 #define WORKSPACE_TYPE "File System Workspace"
@@ -100,47 +105,15 @@ void clFileSystemWorkspaceConfig::FromJSONOld(const JSONItem& json)
     FromLocalJSON(json);
 }
 
-wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile,
-                                                          wxString& compile_flags_txt) const
+wxArrayString clFileSystemWorkspaceConfig::GetSearchPaths(const wxFileName& workspaceFile) const
 {
     // Update the parser search paths (the default compiler paths)
+    auto backticks_cache = clFileSystemWorkspace::Get().GetBackticksCache();
     wxArrayString searchPaths = TagsManagerST::Get()->GetCtagsOptions().GetParserSearchPaths();
+    wxArrayString userPaths = ExpandUserCompletionFlags(workspaceFile.GetPath(), backticks_cache, false);
 
-    // Read the user added paths
-    wxString strCompileFlags;
-    for(const wxString& l : m_compileFlags) {
-        if(!l.IsEmpty()) {
-            strCompileFlags << l << " ";
-        }
-    }
-    strCompileFlags.Trim();
-
-    // Incase we got backticks, we need to apply the environment
-    CompilerCommandLineParser cclp(strCompileFlags, workspaceFile.GetPath());
-    searchPaths.insert(searchPaths.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
-
-    wxArrayString options;
-    if(ShouldCreateCompileFlags()) {
-        // Create the compile_flags.txt file content
-        options.insert(options.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
-
-        // Add the compiler paths
-        CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler(GetCompiler());
-        if(compiler) {
-            wxArrayString compilerPaths = compiler->GetDefaultIncludePaths();
-            for(wxString& compilerPath : compilerPaths) {
-                compilerPath.Prepend("-I");
-            }
-            options.insert(options.end(), compilerPaths.begin(), compilerPaths.end());
-        }
-        options.insert(options.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
-        if(!cclp.GetStandard().empty()) {
-            options.push_back(cclp.GetStandardWithPrefix());
-        }
-        for(const wxString& opt : options) {
-            compile_flags_txt << opt << "\n";
-        }
-    }
+    // Append the lists
+    searchPaths.insert(searchPaths.end(), userPaths.begin(), userPaths.end());
 
     wxArrayString uniquePaths;
     std::unordered_set<wxString> S;
@@ -174,6 +147,119 @@ void clFileSystemWorkspaceConfig::SetCompileFlags(const wxString& compileFlags)
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
 {
     return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
+}
+
+wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::ptr_t backticks) const
+{
+    wxArrayString searchPaths;
+    wxUnusedVar(backticks);
+    // Add the compiler paths
+    CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler(GetCompiler());
+    if(compiler) {
+        wxArrayString compilerPaths = compiler->GetDefaultIncludePaths();
+        for(wxString& compilerPath : compilerPaths) {
+            compilerPath.Prepend("-I");
+        }
+        searchPaths.insert(searchPaths.end(), compilerPaths.begin(), compilerPaths.end());
+    }
+    return searchPaths;
+}
+
+wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxString& workingDirectory,
+                                                                     clBacktickCache::ptr_t backticks,
+                                                                     bool withPrefix) const
+{
+    wxArrayString searchPaths;
+    for(const auto& line : m_compileFlags) {
+        // we support up to one backtick in a line
+        wxString backtick = line.AfterFirst('`');
+        backtick = backtick.BeforeLast('`');
+
+        wxString prefix;
+        wxString suffix;
+        if(line.Index('`') != wxNOT_FOUND) {
+            prefix = line.BeforeFirst('`');
+            suffix = line.AfterLast('`');
+        } else {
+            prefix = line;
+        }
+        wxString backtick_expanded;
+        if(!backtick.empty()) {
+            if(backticks && backticks->HasCommand(backtick)) {
+                backtick_expanded = backticks->GetExpanded(backtick);
+            } else {
+                // we got backtick, expand it
+                DirSaver ds;
+
+                ::wxSetWorkingDirectory(workingDirectory);
+                // Now run the command
+                clDEBUG() << "Working directory is set to:" << workingDirectory << clEndl;
+                clDEBUG() << "Running command:" << backtick << clEndl;
+                backtick_expanded = ProcUtils::SafeExecuteCommand(backtick);
+                backtick_expanded.Trim().Trim(false);
+                // keep the result for future lookups
+                if(backticks) {
+                    backticks->SetCommand(backtick, backtick_expanded);
+                    backticks->Save();
+                }
+                clDEBUG() << "Output:" << backtick_expanded << clEndl;
+            }
+        }
+        wxString line_expanded = prefix + backtick_expanded + suffix;
+
+        // Incase we got backticks, we need to apply the environment
+        CompilerCommandLineParser cclp(line_expanded, workingDirectory);
+
+        // Get the include paths (-I)
+        if(withPrefix) {
+            searchPaths.insert(searchPaths.end(), cclp.GetIncludesWithPrefix().begin(),
+                               cclp.GetIncludesWithPrefix().end());
+        } else {
+            searchPaths.insert(searchPaths.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
+        }
+        // Get the macros (-D)
+        searchPaths.insert(searchPaths.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
+        if(!cclp.GetStandard().empty()) {
+            // -std=NNN
+            searchPaths.push_back(cclp.GetStandardWithPrefix());
+        }
+    }
+
+    // expand any macro
+    for(auto& path : searchPaths) {
+        path = MacroManager::Instance()->Expand(path, nullptr, "", "");
+    }
+    return searchPaths;
+}
+
+wxArrayString clFileSystemWorkspaceConfig::GetWorkspaceIncludes(bool withPrefix) const
+{
+    auto all_files = clFileSystemWorkspace::Get().GetFiles();
+
+    // collect list of paths from the workspace
+    wxArrayString workspaceDirsArr;
+    wxStringSet_t workspaceDirsSet;
+    for(const auto& file : all_files) {
+        if(!FileExtManager::IsCxxFile(file.GetFullName())) {
+            continue;
+        }
+        wxString path = file.GetPath();
+        if(path.Contains("/CMakeFiles")) {
+            // CMake internal folder, ignore it
+            continue;
+        }
+        if(workspaceDirsSet.count(path) == 0) {
+            workspaceDirsSet.insert(path);
+
+            wxString fixedPath;
+            if(withPrefix) {
+                fixedPath << "-I";
+            }
+            fixedPath << path;
+            workspaceDirsArr.Add(fixedPath);
+        }
+    }
+    return workspaceDirsArr;
 }
 
 ///===-------------------------------------

@@ -1029,3 +1029,49 @@ void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)
         Parse(false);
     }
 }
+
+void clFileSystemWorkspace::CreateCompileFlagsFile()
+{
+    wxBusyCursor bc;
+    const wxFileName& filename = clFileSystemWorkspace::Get().GetFileName();
+    auto backticks_cache = clFileSystemWorkspace::Get().GetBackticksCache();
+
+    auto selectedConfig = m_settings.GetSelectedConfig();
+    // Create a compile flags from the following info:
+    // - Get list of folders from the current workspace
+    // - Any command that is displayed in the text box, expand it
+    // - Selected compiler paths
+    auto compilerOptions = selectedConfig->GetCompilerOptions(backticks_cache);
+    auto includes = selectedConfig->ExpandUserCompletionFlags(filename.GetPath(), backticks_cache, true);
+
+    wxString compile_flags_txt;
+    // Include the workspace path by default
+    wxString workspacePath = filename.GetPath();
+    ::WrapWithQuotes(workspacePath);
+
+    compile_flags_txt << "-I" << workspacePath << "\n";
+    for(const auto& s : includes) {
+        compile_flags_txt << s << "\n";
+    }
+
+    for(const auto& s : compilerOptions) {
+        compile_flags_txt << s << "\n";
+    }
+
+    if(!compile_flags_txt.empty()) {
+        // replace any placeholders
+        compile_flags_txt = MacroManager::Instance()->Expand(compile_flags_txt, nullptr, "", "");
+        wxFileName fnCompileFlags(filename);
+        fnCompileFlags.SetFullName("compile_flags.txt");
+        FileUtils::WriteFileContent(fnCompileFlags, compile_flags_txt, wxConvUTF8);
+
+        // Fire JSON Generated event
+        clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+        EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
+        clDEBUG() << "File:" << fnCompileFlags << "generated" << clEndl;
+
+        wxString msg;
+        msg << _("Successfully generated file:\n") << fnCompileFlags.GetFullPath();
+        ::wxMessageBox(msg, "CodeLite");
+    }
+}

@@ -1,14 +1,13 @@
 #ifndef FSCONFIGPAGE_H
 #define FSCONFIGPAGE_H
-#include "clFileSystemWorkspaceDlgBase.h"
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clFileSystemWorkspaceDlgBase.h"
 
 class FSConfigPage : public FSConfigPageBase
 {
     clFileSystemWorkspaceConfig::Ptr_t m_config;
 
 protected:
-    virtual void OnGenerateCompileCommands(wxCommandEvent& event);
     virtual void OnEnableRemoteUI(wxUpdateUIEvent& event);
     virtual void OnSSHAccountChoice(wxCommandEvent& event);
     virtual void OnSSHBrowse(wxCommandEvent& event);

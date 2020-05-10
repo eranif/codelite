@@ -15,6 +15,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceView : public clTreeCtrlPanel
     wxArrayString m_configs;
     bool m_buildInProgress = false;
     bool m_runInProgress = false;
+    wxArrayString m_selectedFolders;
 
 protected:
     void OnFolderDropped(clCommandEvent& event);
@@ -22,6 +23,7 @@ protected:
     void OnCloseFolder(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnAddIncludePath(wxCommandEvent& event);
+    void OnCreateCompileFlagsFile(wxCommandEvent& event);
     void OnShowConfigsMenu(wxCommandEvent& event);
     void OnRefresh(wxCommandEvent& event);
     void OnBuildStarted(clBuildEvent& event);

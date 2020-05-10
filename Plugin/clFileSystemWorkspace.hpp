@@ -170,6 +170,12 @@ public:
      * Note that this method does NOT update the UI in anyways.
      */
     void FileSystemUpdated();
+
+    /**
+     * @brief create compile_flags.txt for the selected configuration
+     * and fire generation event
+     */
+    void CreateCompileFlagsFile();
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);

@@ -87,12 +87,32 @@ void clFileSystemWorkspaceView::OnFolderDropped(clCommandEvent& event)
 void clFileSystemWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
+    wxMenu* menu = event.GetMenu();
+    m_selectedFolders.clear();
+
+    // these entries are added even when not fired from our workspace view, but as along as we have an opened workspace
+    if(clFileSystemWorkspace::Get().IsOpen()) {
+        clTreeCtrlPanel* tree = dynamic_cast<clTreeCtrlPanel*>(event.GetEventObject());
+        if(tree) {
+            wxArrayString selected_files;
+            tree->GetSelections(m_selectedFolders, selected_files);
+            wxUnusedVar(selected_files);
+        }
+
+        wxMenu* cc_menu = new wxMenu;
+        if(!m_selectedFolders.empty()) {
+            cc_menu->Append(XRCID("fs_add_cc_inculde"), _("Add path to code completion"), wxEmptyString, wxITEM_NORMAL);
+            cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnAddIncludePath, this, XRCID("fs_add_cc_inculde"));
+        }
+        cc_menu->Append(XRCID("fs_create_compile_flags"), _("Generate compile_flags.txt file..."), wxEmptyString,
+                        wxITEM_NORMAL);
+        cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnCreateCompileFlagsFile, this,
+                      XRCID("fs_create_compile_flags"));
+        menu->AppendSubMenu(cc_menu, _("Code Completion"), wxEmptyString);
+    }
+
     if(event.GetEventObject() == this) {
         event.Skip(false);
-        wxMenu* menu = event.GetMenu();
-        menu->AppendSeparator();
-        menu->Append(XRCID("fs_add_cc_inculde"), _("Add path for code completion"), wxEmptyString, wxITEM_NORMAL);
-        menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnAddIncludePath, this, XRCID("fs_add_cc_inculde"));
         menu->AppendSeparator();
         menu->Append(wxID_PREFERENCES, _("Settings..."), _("Settings"), wxITEM_NORMAL);
         menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
@@ -209,12 +229,10 @@ void clFileSystemWorkspaceView::OnAddIncludePath(wxCommandEvent& event)
     wxUnusedVar(event);
 
     // get list of selected folders in the UI
-    wxArrayString selectedFolders, selectedFiles;
-    GetSelections(selectedFolders, selectedFiles);
     wxArrayString configs = clFileSystemWorkspace::Get().GetSettings().GetConfigs();
     for(const wxString& config : configs) {
         auto config_ptr = clFileSystemWorkspace::Get().GetSettings().GetConfig(config);
-        DoAddIncludePathsToConfig(config_ptr, selectedFolders);
+        DoAddIncludePathsToConfig(config_ptr, m_selectedFolders);
     }
     clFileSystemWorkspace::Get().Save(true);
 }
@@ -245,4 +263,11 @@ void clFileSystemWorkspaceView::DoAddIncludePathsToConfig(clFileSystemWorkspaceC
     wxArrayString compile_flags_arr = config->GetCompileFlags();
     compile_flags_arr.insert(compile_flags_arr.end(), pathsToAdd.begin(), pathsToAdd.end());
     config->SetCompileFlags(compile_flags_arr);
+}
+
+void clFileSystemWorkspaceView::OnCreateCompileFlagsFile(wxCommandEvent& event)
+{
+    // proxy to the workspace method
+    wxUnusedVar(event);
+    clFileSystemWorkspace::Get().CreateCompileFlagsFile();
 }

@@ -39,17 +39,31 @@ bool LSPClangdDetector::DoLocate()
     clangdExe.SetFullName("clangd");
     if(clangdExe.FileExists()) {
         ConfigureFile(clangdExe);
+        // this clangd requires LD_LIBRARY_PATH set properly
+        clEnvList_t environment;
+        environment.push_back({ "LD_LIBRARY_PATH", clangdExe.GetPath() });
+        SetEnv(environment);
         return true;
     } else {
         // see if we need to copy it from the installation folder
         wxFileName toolsFile(clStandardPaths::Get().GetDataDir(), "clang-tools.tgz");
         if(toolsFile.FileExists()) {
             wxString clang_tools_tgz = toolsFile.GetFullPath();
+            ::WrapWithQuotes(clang_tools_tgz);
+
+            wxFileName fnToolsDir(clStandardPaths::Get().GetUserDataDir(), "");
+            fnToolsDir.AppendDir("lsp");
+            wxString tools_local_folder = fnToolsDir.GetPath();
+            ::WrapWithQuotes(tools_local_folder);
+
             // sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz /usr/share/codelite/clang-tools.tgz -C ~/.codelite/lsp/'
-            clDEBUG() << "Running: sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz " << clang_tools_tgz
-                      << "-C ~/.codelite/lsp/'" << clEndl;
-            IProcess::Ptr_t process(::CreateSyncProcess("sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz " +
-                                                        clang_tools_tgz + " -C ~/.codelite/lsp/'"));
+            wxString command;
+            command << "mkdir -p " << tools_local_folder << " && tar xvfz " << clang_tools_tgz << " -C "
+                    << tools_local_folder;
+            ::WrapInShell(command);
+
+            clDEBUG() << "Running:" << command << clEndl;
+            IProcess::Ptr_t process(::CreateSyncProcess(command));
             if(process) {
                 wxString output;
                 process->WaitForTerminate(output);

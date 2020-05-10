@@ -102,11 +102,10 @@ void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
 void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    // On Windwos, launch a thread to locate any LSP installed on this machine. On Linux/macOS, do this from the main
-    // thread But do this only if we don't have any LSP defined already
+    // launch a thread to locate any LSP installed on this machine
     if(LanguageServerConfig::Get().GetServers().empty()) {
         clDEBUG() << "Scanning..." << clEndl;
-#ifdef __WXMSW__
+#if 1
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
 #else
@@ -124,7 +123,7 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
                           << "Scanning for LSPs... is done ***" << clEndl;
                 clDEBUG() << "*** Calling   ConfigureLSPs" << clEndl;
                 plugin->CallAfter(&LanguageServerPlugin::ConfigureLSPs, matches);
-#ifdef __WXMSW__
+#if 1
             },
             this);
         thr.detach();

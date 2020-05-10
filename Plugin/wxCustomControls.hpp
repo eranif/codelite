@@ -4,8 +4,8 @@
 #ifdef __WXGTK__
 
 // GTK2 & 3
-#define wxUSE_NATIVE_CHOICE 0
-#define wxUSE_NATIVE_BUTTON 0
+#define wxUSE_NATIVE_CHOICE 1
+#define wxUSE_NATIVE_BUTTON 1
 #define wxUSE_NATIVE_SCROLLBAR 0
 
 #elif defined(__WXOSX__)

@@ -132,7 +132,7 @@ else (UNIX AND NOT APPLE)
                           ${LIBSSH_LIB} 
                           ${ADDITIONAL_LIBRARIES} 
                           ${LIBUCHARDET_LIB}
-                          -lz /usr/lib/libcrypto.dylib)
+                          -lz)
 endif ( UNIX AND NOT APPLE )
 
 if (NOT MINGW)

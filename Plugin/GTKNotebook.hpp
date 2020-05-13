@@ -41,6 +41,7 @@ public:
     void GTKLeftDClick();
     void GTKMiddleDown();
     void GTKRightDown();
+    void GTKActionButtonClicked();
 
 public:
     Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,

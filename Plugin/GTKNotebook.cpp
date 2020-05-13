@@ -3,6 +3,7 @@
 #if CL_USE_NATIVEBOOK
 
 #include "clTabRenderer.h"
+#include "editor_config.h"
 #include <gtk/gtk.h>
 #include <iostream>
 #include <unordered_map>
@@ -31,6 +32,12 @@ public:
     GtkWidget* m_image;
     int m_imageIndex;
 };
+
+static void on_action_button_clicked(GtkWidget* widget, Notebook* book)
+{
+    wxUnusedVar(widget);
+    book->GTKActionButtonClicked();
+}
 
 static void on_button_clicked(GtkWidget* widget, gpointer* data)
 {
@@ -395,6 +402,12 @@ void Notebook::Initialise(long style)
     if(!(m_bookStyle & kNotebook_CloseButtonOnActiveTab)) {
         SetPadding(wxSize(5, 5));
     }
+    if(m_bookStyle & kNotebook_ShowFileListButton) {
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "▼");
+        gtk_widget_show_all(GTK_WIDGET(button));
+        g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
+        gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(button), GTK_PACK_END);
+    }
     BindEvents();
 }
 
@@ -581,5 +594,71 @@ size_t Notebook::GetAllTabs(clTabInfo::Vec_t& tabs)
         tabs.push_back(info);
     }
     return tabs.size();
+}
+
+void Notebook::GTKActionButtonClicked()
+{
+    // popup the menu here
+    if(GetPageCount() == 0)
+        return;
+
+    clTabInfo::Vec_t tabs;
+    GetAllTabs(tabs);
+
+    const int curselection = GetSelection();
+    wxMenu menu;
+    const int firstTabPageID = 13457;
+    int pageMenuID = firstTabPageID;
+
+    // Optionally make a sorted view of tabs.
+    std::vector<size_t> sortedIndexes(GetPageCount());
+    {
+        // std is C++11 at the moment, so no generalized capture.
+        size_t index = 0;
+        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+    }
+
+    if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
+        std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+                  [&](size_t i1, size_t i2) { return tabs[i1]->GetLabel().CmpNoCase(tabs[i2]->GetLabel()) < 0; });
+    }
+
+    for(auto sortedIndex : sortedIndexes) {
+        clTabInfo::Ptr_t tab = tabs[sortedIndex];
+        wxWindow* pWindow = tab->GetWindow();
+        wxString label = tab->GetLabel();
+        wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
+        menu.Append(item);
+        item->Check(tab->IsActive());
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& event) {
+                int newSelection = GetPageIndex(pWindow);
+                if(newSelection != curselection) {
+                    SetSelection(newSelection);
+                }
+            },
+            pageMenuID);
+        pageMenuID++;
+    }
+
+    // Let others handle this event as well
+    clContextMenuEvent menuEvent(wxEVT_BOOK_FILELIST_BUTTON_CLICKED);
+    menuEvent.SetMenu(&menu);
+    menuEvent.SetEventObject(this); // The Notebook
+    GetEventHandler()->ProcessEvent(menuEvent);
+
+    wxPoint pt(-1, -1);
+    wxWindow* curpage = GetCurrentPage();
+    if(curpage) {
+        pt = curpage->GetRect().GetTopRight();
+        pt.x -= 20; // approx the button size
+    }
+
+    if(pt.x != wxNOT_FOUND) {
+        PopupMenu(&menu, pt);
+    } else {
+        PopupMenu(&menu);
+    }
 }
 #endif // __WXGTK3__

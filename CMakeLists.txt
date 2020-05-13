@@ -339,14 +339,14 @@ endif()
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
-if ( USE_AUI_NOTEBOOK )
-    add_definitions( -DUSE_AUI_NOTEBOOK=1 )
-    message("-- Using Custom Notebook class")
-else ( USE_AUI_NOTEBOOK )
-    add_definitions( -DUSE_AUI_NOTEBOOK=0 )
-    message("-- Using wxAuiNotebook class is disabled")
-endif ( USE_AUI_NOTEBOOK )
-unset(USE_AUI_NOTEBOOK CACHE)
+if ( GTK_USE_NATIVEBOOK )
+    add_definitions( -DGTK_USE_NATIVEBOOK=1 )
+    message("-- Using Native Notebook class")
+else ( GTK_USE_NATIVEBOOK )
+    add_definitions( -DGTK_USE_NATIVEBOOK=0 )
+    message("-- Using custom Notebook")
+endif ( GTK_USE_NATIVEBOOK )
+unset(GTK_USE_NATIVEBOOK CACHE)
 
 #############################################
 ## Global optimizations

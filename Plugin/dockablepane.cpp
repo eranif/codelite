@@ -57,7 +57,9 @@ DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& tit
     Connect(XRCID("close_pane"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DockablePane::ClosePane));
     wxAuiPaneInfo info;
     info.Name(title).Caption(title);
-    if(initialFloat) { info.Float(); }
+    if(initialFloat) {
+        info.Float();
+    }
     clGetManager()->GetDockingManager()->AddPane(this, info);
     clGetManager()->GetDockingManager()->Update();
 
@@ -93,7 +95,7 @@ void DockablePane::ClosePane(wxCommandEvent& e)
 void DockablePane::OnPaint(wxPaintEvent& e)
 {
     wxBufferedPaintDC dc(this);
-    
+
     wxRect rect = GetClientRect();
     rect.Inflate(1);
     dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
@@ -105,7 +107,9 @@ void DockablePane::SetChildNoReparent(wxWindow* child)
 {
     m_child = child;
     wxSizer* sz = GetSizer();
-    if(!m_child->IsShown()) { m_child->Show(); }
+    if(!m_child->IsShown()) {
+        m_child->Show();
+    }
     sz->Add(m_child, 1, wxEXPAND | wxALL, 0);
     sz->Layout();
 }

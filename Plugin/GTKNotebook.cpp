@@ -113,7 +113,15 @@ int Notebook::ChangeSelection(size_t nPage)
 void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
                        const wxString& shortLabel)
 {
-    wxUnusedVar(bmp);
+    if(!page) {
+        return;
+    }
+    if(!page->IsShown()) {
+        page->Show();
+    }
+    if(page->GetParent() != this) {
+        page->Reparent(this);
+    }
     if(!wxNotebook::InsertPage(GetPageCount(), page, label, selected, wxNOT_FOUND)) {
         return;
     }
@@ -123,7 +131,15 @@ void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, con
 bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
                           const wxString& shortLabel)
 {
-    wxUnusedVar(bmp);
+    if(!page) {
+        return false;
+    }
+    if(page->GetParent() != this) {
+        page->Reparent(this);
+    }
+    if(!page->IsShown()) {
+        page->Show();
+    }
     if(!wxNotebook::InsertPage(index, page, label, selected, wxNOT_FOUND)) {
         return false;
     }
@@ -403,7 +419,7 @@ void Notebook::Initialise(long style)
         SetPadding(wxSize(5, 5));
     }
     if(m_bookStyle & kNotebook_ShowFileListButton) {
-        GtkToolItem* button = gtk_tool_button_new(nullptr, "▼");
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "⏷");
         gtk_widget_show_all(GTK_WIDGET(button));
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
         gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(button), GTK_PACK_END);
@@ -598,10 +614,6 @@ size_t Notebook::GetAllTabs(clTabInfo::Vec_t& tabs)
 
 void Notebook::GTKActionButtonClicked()
 {
-    // popup the menu here
-    if(GetPageCount() == 0)
-        return;
-
     clTabInfo::Vec_t tabs;
     GetAllTabs(tabs);
 
@@ -611,35 +623,37 @@ void Notebook::GTKActionButtonClicked()
     int pageMenuID = firstTabPageID;
 
     // Optionally make a sorted view of tabs.
-    std::vector<size_t> sortedIndexes(GetPageCount());
-    {
-        // std is C++11 at the moment, so no generalized capture.
-        size_t index = 0;
-        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
-    }
+    std::vector<size_t> sortedIndexes;
+    if(GetPageCount()) {
+        sortedIndexes.resize(GetPageCount());
+        {
+            // std is C++11 at the moment, so no generalized capture.
+            size_t index = 0;
+            std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+        }
+        if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
+            std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+                      [&](size_t i1, size_t i2) { return tabs[i1]->GetLabel().CmpNoCase(tabs[i2]->GetLabel()) < 0; });
+        }
 
-    if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
-        std::sort(sortedIndexes.begin(), sortedIndexes.end(),
-                  [&](size_t i1, size_t i2) { return tabs[i1]->GetLabel().CmpNoCase(tabs[i2]->GetLabel()) < 0; });
-    }
-
-    for(auto sortedIndex : sortedIndexes) {
-        clTabInfo::Ptr_t tab = tabs[sortedIndex];
-        wxWindow* pWindow = tab->GetWindow();
-        wxString label = tab->GetLabel();
-        wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
-        menu.Append(item);
-        item->Check(tab->IsActive());
-        menu.Bind(
-            wxEVT_MENU,
-            [=](wxCommandEvent& event) {
-                int newSelection = GetPageIndex(pWindow);
-                if(newSelection != curselection) {
-                    SetSelection(newSelection);
-                }
-            },
-            pageMenuID);
-        pageMenuID++;
+        for(auto sortedIndex : sortedIndexes) {
+            clTabInfo::Ptr_t tab = tabs[sortedIndex];
+            wxWindow* pWindow = tab->GetWindow();
+            wxString label = tab->GetLabel();
+            wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
+            menu.Append(item);
+            item->Check(tab->IsActive());
+            menu.Bind(
+                wxEVT_MENU,
+                [=](wxCommandEvent& event) {
+                    int newSelection = GetPageIndex(pWindow);
+                    if(newSelection != curselection) {
+                        SetSelection(newSelection);
+                    }
+                },
+                pageMenuID);
+            pageMenuID++;
+        }
     }
 
     // Let others handle this event as well
@@ -648,7 +662,7 @@ void Notebook::GTKActionButtonClicked()
     menuEvent.SetEventObject(this); // The Notebook
     GetEventHandler()->ProcessEvent(menuEvent);
 
-    wxPoint pt(-1, -1);
+    wxPoint pt(wxNOT_FOUND, wxNOT_FOUND);
     wxWindow* curpage = GetCurrentPage();
     if(curpage) {
         pt = curpage->GetRect().GetTopRight();

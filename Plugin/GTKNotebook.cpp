@@ -652,7 +652,7 @@ void Notebook::GTKActionButtonClicked()
     wxWindow* curpage = GetCurrentPage();
     if(curpage) {
         pt = curpage->GetRect().GetTopRight();
-        pt.x -= 20; // approx the button size
+        pt.x -= 40; // approx the button size
     }
 
     if(pt.x != wxNOT_FOUND) {

@@ -1092,20 +1092,6 @@ void clMainFrame::CreateGUIControls()
     hMenu = GetMenu(GetHWND());
 #endif
 
-    mb->Bind(wxEVT_PAINT, [mb](wxPaintEvent& event) {
-        wxBufferedPaintDC dc(mb);
-        dc.SetBackground(*wxRED);
-        dc.SetTextForeground(*wxWHITE);
-        dc.DrawRectangle(mb->GetClientRect());
-    });
-
-    mb->Bind(wxEVT_PAINT, [mb](wxPaintEvent& event) {
-        wxBufferedPaintDC dc(mb);
-        dc.SetBackground(*wxRED);
-        dc.SetTextForeground(*wxWHITE);
-        dc.DrawRectangle(mb->GetClientRect());
-    });
-
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(showMenuBar);
 
@@ -2750,7 +2736,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
 void clMainFrame::OnFileCloseAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetMainBook()->CallAfter(&MainBook::CloseAllVoid, true);
+    GetMainBook()->CloseAllVoid(true);
 }
 
 void clMainFrame::OnQuickOutline(wxCommandEvent& event)
@@ -2967,8 +2953,9 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 
 void clMainFrame::CreateWelcomePage()
 {
-    WelcomePage* welcomePage = new WelcomePage(GetMainBook());
-    GetMainBook()->RegisterWelcomePage(welcomePage);
+#if !CL_USE_NATIVEBOOK
+    GetMainBook()->RegisterWelcomePage(nullptr);
+#endif
 }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)

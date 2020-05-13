@@ -1,5 +1,7 @@
-#include "JSON.h"
 #include "Notebook.h"
+
+#if !CL_USE_NATIVEBOOK
+#include "JSON.h"
 #include "clSystemSettings.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
@@ -601,7 +603,7 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     if(activeTab) {
         static_cast<Notebook*>(GetParent())->DoChangeSelection(activeTab->GetWindow());
         // Only SetFocus if !Wayland, otherwise it hangs; see #2457
-        if (!clIsWaylandSession())
+        if(!clIsWaylandSession())
             activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
     }
 
@@ -1145,15 +1147,16 @@ void clTabCtrl::DoShowTabList()
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
-        menu.Bind(wxEVT_MENU,
-                  [=](wxCommandEvent& event) {
-                      Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
-                      int newSelection = book->GetPageIndex(pWindow);
-                      if(newSelection != curselection) {
-                          book->SetSelection(newSelection);
-                      }
-                  },
-                  pageMenuID);
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& event) {
+                Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
+                int newSelection = book->GetPageIndex(pWindow);
+                if(newSelection != curselection) {
+                    book->SetSelection(newSelection);
+                }
+            },
+            pageMenuID);
         pageMenuID++;
     }
 
@@ -1516,3 +1519,4 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
     }
     return true;
 }
+#endif

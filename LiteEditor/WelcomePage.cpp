@@ -36,6 +36,7 @@
 #include "window_locker.h"
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
+#include "cl_defs.h"
 
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
@@ -52,6 +53,9 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_cmdLnkBtnWorkspaces->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     GetSizer()->Fit(this);
     SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#if CL_USE_NATIVEBOOK
+    Show();
+#endif
 }
 
 WelcomePage::~WelcomePage()
@@ -129,7 +133,9 @@ int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArray
 
         wxBitmap bmp = loader->GetBitmapForFile("a.txt");
         wxString filename = strings.Item(i);
-        if(filename.Find("@") != wxNOT_FOUND) { filename = filename.AfterFirst('@'); }
+        if(filename.Find("@") != wxNOT_FOUND) {
+            filename = filename.AfterFirst('@');
+        }
         filename.Trim().Trim(false);
 
         // Ensure that the file exists...

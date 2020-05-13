@@ -332,7 +332,10 @@ clEditor::clEditor(wxWindow* parent)
     , m_lastEndLine(0)
     , m_lastLineCount(0)
 {
+#if !CL_USE_NATIVEBOOK
     Hide();
+#endif
+
 #ifdef __WXGTK3__
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_DEFAULT);
 #else

@@ -341,6 +341,7 @@ void Manager::OpenWorkspace(const wxString& path)
     }
 
     DoSetupWorkspace(path);
+    clGetManager()->ClosePage(_("Welcome!"));
 }
 
 void Manager::ReloadWorkspace()
@@ -354,7 +355,6 @@ void Manager::ReloadWorkspace()
     DbgStop();
     clCxxWorkspaceST::Get()->ReloadWorkspace();
     DoSetupWorkspace(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
-
     EventNotifier::Get()->NotifyWorkspaceReloadEndEvent(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
 }
 
@@ -445,7 +445,6 @@ void Manager::CloseWorkspace()
     // since we closed the workspace, we also need to set the 'LastActiveWorkspaceName' to be
     // default
     SessionManager::Get().SetLastSession(wxT("Default"));
-
     clCxxWorkspaceST::Get()->CloseWorkspace();
 
 #ifdef __WXMSW__

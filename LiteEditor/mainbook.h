@@ -27,7 +27,6 @@
 
 #include "Notebook.h"
 #include "clEditorBar.h"
-#include "clMultiBook.h"
 #include "cl_command_event.h"
 #include "editorframe.h"
 #include "filehistory.h"

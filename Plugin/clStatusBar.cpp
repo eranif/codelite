@@ -17,6 +17,7 @@
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/dcmemory.h>
 
 #define STATUSBAR_SCM_IDX 0
 #define STATUSBAR_LINE_COL_IDX 1

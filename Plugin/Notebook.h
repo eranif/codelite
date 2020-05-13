@@ -27,8 +27,9 @@
 #define NOTEBOOK_H
 
 #include "cl_defs.h"
-#include <wx/notebook.h>
-
+#if CL_USE_NATIVEBOOK
+#include "GTKNotebook.hpp"
+#else
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
@@ -39,10 +40,10 @@
 #include <wx/dcmemory.h>
 #include <wx/dnd.h>
 #include <wx/dynarray.h>
+#include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sharedptr.h>
-#include "cl_command_event.h"
 
 class Notebook;
 class wxMenu;
@@ -94,7 +95,7 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
-    
+
 protected:
     void DoChangeSelection(size_t index);
 
@@ -435,4 +436,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCt
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
+#endif // __WXGTK__
 #endif // NOTEBOOK_H

@@ -359,14 +359,14 @@ void clFileSystemWorkspace::DoClose()
     ParseThreadST::Get()->SetSearchPaths(paths, {});
     clDEBUG() << "Parser paths are now set to:" << paths;
 
-    // Notify workspace closed event
-    wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
-    EventNotifier::Get()->ProcessEvent(event);
-
     // Notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
+
+    // Notify workspace closed event
+    wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
+    EventNotifier::Get()->ProcessEvent(event);
 
     // Free the database
     TagsManagerST::Get()->CloseDatabase();

@@ -130,7 +130,9 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxS
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
+#if !CL_USE_NATIVEBOOK
     SetBestXButtonSize(tabCtrl);
+#endif
     CalculateOffsets(style);
     if(m_bitmap.IsOk()) {
         m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap);
@@ -150,12 +152,15 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
+#if !CL_USE_NATIVEBOOK
     SetBestXButtonSize(tabCtrl);
+#endif
     CalculateOffsets(0);
 }
 
 void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
 {
+#if !CL_USE_NATIVEBOOK
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
 
@@ -226,6 +231,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
         xrect = xrect.CenterIn(m_rect, wxVERTICAL);
         m_bmpCloseY = xrect.GetY();
     }
+#endif
 }
 
 void clTabInfo::CalculateOffsets(size_t style)

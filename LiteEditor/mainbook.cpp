@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
+#include "WelcomePage.h"
 #include "clAuiMainNotebookTabArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
 #include "clThemeUpdater.h"
+#include "cl_defs.h"
 #include "close_all_dlg.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
@@ -64,7 +66,10 @@ MainBook::MainBook(wxWindow* parent)
     , m_welcomePage(NULL)
     , m_findBar(NULL)
 {
+#if !CL_USE_NATIVEBOOK
     clThemeUpdater::Get().RegisterWindow(this);
+#endif
+
     CreateGuiControls();
     ConnectEvents();
 }
@@ -73,6 +78,13 @@ void MainBook::CreateGuiControls()
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
+#if CL_USE_NATIVEBOOK
+    long style = kNotebook_AllowDnD |                  // Allow tabs to move
+                 kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
+                 kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
+                 kNotebook_ShowFileListButton |        // show drop down list of all open tabs
+                 kNotebook_EnableNavigationEvent;      // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
+#else
     long style = kNotebook_AllowDnD |                  // Allow tabs to move
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
                  kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
@@ -80,13 +92,15 @@ void MainBook::CreateGuiControls()
                  kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
                  kNotebook_UnderlineActiveTab |        // Mark active tab with dedicated coloured line
                  kNotebook_DynamicColours;             // The tabs colour adjust to the editor's theme
+    style |= kNotebook_AllowForeignDnD;
+#endif
+
     if(EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style |= (kNotebook_CloseButtonOnActiveTabFireEvent | kNotebook_CloseButtonOnActiveTab);
     }
     if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
-    style |= kNotebook_AllowForeignDnD;
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -177,7 +191,6 @@ void MainBook::OnMouseDClick(wxBookCtrlEvent& e)
 void MainBook::OnPageClosing(wxBookCtrlEvent& e)
 {
     e.Skip();
-
     clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(e.GetSelection()));
     if(editor) {
         if(AskUserToSave(editor)) {
@@ -531,16 +544,19 @@ clEditor* MainBook::NewEditor()
     fileNameStr << ++fileCounter;
     wxFileName fileName(fileNameStr);
 
+#if !CL_USE_NATIVEBOOK
     // A Nice trick: hide the notebook, open the editor
     // and then show it
     bool hidden(false);
     if(m_book->GetPageCount() == 0)
         hidden = GetSizer()->Hide(m_book);
+#endif
 
     clEditor* editor = new clEditor(m_book);
     editor->SetFileName(fileName);
     AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNullBitmap, true);
 
+#if !CL_USE_NATIVEBOOK
     if(m_book->GetSizer()) {
         m_book->GetSizer()->Layout();
     }
@@ -548,6 +564,7 @@ clEditor* MainBook::NewEditor()
     // SHow the notebook
     if(hidden)
         GetSizer()->Show(m_book);
+#endif
 
     editor->SetActive();
     return editor;
@@ -621,13 +638,13 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         return NULL;
 
     } else {
-
+#if !CL_USE_NATIVEBOOK
         // A Nice trick: hide the notebook, open the editor
         // and then show it
         bool hidden(false);
         if(m_book->GetPageCount() == 0)
             hidden = GetSizer()->Hide(m_book);
-
+#endif
         editor = new clEditor(m_book);
         editor->SetEditorBitmap(bmp);
         editor->Create(projName, fileName);
@@ -647,9 +664,11 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         // mark the editor as read only if needed
         MarkEditorReadOnly(editor);
 
+#if !CL_USE_NATIVEBOOK
         // Show the notebook
         if(hidden)
             GetSizer()->Show(m_book);
+#endif
 
         if(position == wxNOT_FOUND && lineno == wxNOT_FOUND && editor->GetContext()->GetName() == wxT("C++")) {
             // try to find something interesting in the file to put the caret at
@@ -726,7 +745,7 @@ bool MainBook::SelectPage(wxWindow* win)
 {
     int index = m_book->GetPageIndex(win);
     if(index != wxNOT_FOUND && m_book->GetSelection() != index) {
-#if USE_AUI_NOTEBOOK
+#if !CL_USE_NATIVEBOOK
         m_book->ChangeSelection(index);
 #else
         m_book->SetSelection(index);
@@ -1039,8 +1058,9 @@ void MainBook::ApplyTabLabelChanges()
     // We only want to do this if there *is* a change, and it's hard to be sure
     // by looking.  So store any previous state in:
     static int previousShowParentPath = -1;
-    
-    if (previousShowParentPath < 0 || EditorConfigST::Get()->GetOptions()->IsTabShowPath() != (bool)previousShowParentPath) {
+
+    if(previousShowParentPath < 0 ||
+       EditorConfigST::Get()->GetOptions()->IsTabShowPath() != (bool)previousShowParentPath) {
         previousShowParentPath = EditorConfigST::Get()->GetOptions()->IsTabShowPath();
 
         std::vector<clEditor*> editors;
@@ -1189,6 +1209,7 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
 
 void MainBook::DoUpdateNotebookTheme()
 {
+#if !CL_USE_NATIVEBOOK
     size_t initialStyle = m_book->GetStyle();
     size_t style = m_book->GetStyle();
 
@@ -1214,6 +1235,7 @@ void MainBook::DoUpdateNotebookTheme()
     if(initialStyle != style) {
         m_book->SetStyle(style);
     }
+#endif
 }
 
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
@@ -1646,7 +1668,7 @@ void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
 
 void MainBook::OnSettingsChanged(wxCommandEvent& e)
 {
-    e.Skip(); 
+    e.Skip();
     ApplyTabLabelChanges();
 }
 
@@ -1688,60 +1710,31 @@ void MainBook::DoShowTabLabelContextMenu()
 
 void MainBook::RegisterWelcomePage(wxWindow* welcomePage)
 {
-    wxWindowUpdateLocker locker(this);
-    // Hide the current one, if any
-    DoShowWindow(m_welcomePage, false);
-    if(m_welcomePage) {
-        m_welcomePage->Destroy();
-    }
-    m_welcomePage = welcomePage;
-
-    if(!m_welcomePage)
-        return; // Nothing more to do here
-    m_welcomePage->Reparent(this);
-
-    DoShowWindow(m_welcomePage, false);
-    DoShowWindow(m_book, true);
-    if(m_book->GetSizer()) {
-        m_book->GetSizer()->Layout();
-    }
+    wxUnusedVar(welcomePage);
+    m_book->AddPage(new WelcomePage(m_book), wxT("Welcome!"), true);
 }
 
 void MainBook::DoShowWindow(wxWindow* win, bool show)
 {
-    if(!win)
-        return;
-    if(show) {
-        if(GetSizer()->GetItem(win))
-            return; // already visible
-        GetSizer()->Add(win, 1, wxEXPAND);
-        win->Show();
-    } else {
-        if(!GetSizer()->GetItem(win))
-            return;
-        GetSizer()->Detach(win);
-        win->Hide();
-    }
+    wxUnusedVar(win);
+    wxUnusedVar(show);
 }
 
 void MainBook::ShowWelcomePage(bool show)
 {
-    if(!m_welcomePage) {
-        return;
-    }
-    if(show && m_welcomePage->IsShown()) {
-        return;
-    }
-    if(!show && !m_welcomePage->IsShown()) {
-        return;
-    }
+    int where = m_book->GetPageIndex(wxT("Welcome!"));
+    if(show) {
+        GetSizer()->Show(m_book);
+        if(where == wxNOT_FOUND) {
+            m_book->AddPage(new WelcomePage(m_book), wxT("Welcome!"), true);
+        } else {
+            m_book->SetSelection(where);
+        }
 
-    wxWindowUpdateLocker locker(this);
-    DoShowWindow(m_welcomePage, show);
-    DoShowWindow(m_book, !show);
-    GetSizer()->Layout();
-    if(m_book->GetSizer()) {
-        m_book->GetSizer()->Layout();
+    } else {
+        if(where != wxNOT_FOUND) {
+            m_book->DeletePage(where, false);
+        }
     }
 }
 

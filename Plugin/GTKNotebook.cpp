@@ -89,6 +89,20 @@ bool Notebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const
     return wxNotebook::Create(parent, id, pos, size, wxBK_DEFAULT);
 }
 
+int Notebook::SetSelection(size_t nPage)
+{
+    int res = wxNotebook::SetSelection(nPage);
+    m_history->Push(GetCurrentPage());
+    return res;
+}
+
+int Notebook::ChangeSelection(size_t nPage)
+{
+    int res = wxNotebook::ChangeSelection(nPage);
+    m_history->Push(GetCurrentPage());
+    return res;
+}
+
 void Notebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
                        const wxString& shortLabel)
 {
@@ -106,7 +120,6 @@ bool Notebook::InsertPage(size_t index, wxWindow* page, const wxString& label, b
     if(!wxNotebook::InsertPage(index, page, label, selected, wxNOT_FOUND)) {
         return false;
     }
-
     DoFinaliseAddPage(page, shortLabel, bmp);
     return true;
 }
@@ -220,6 +233,7 @@ void Notebook::OnPageChanged(wxBookCtrlEvent& e)
     event.SetSelection(GetSelection());
     event.SetOldSelection(e.GetOldSelection());
     GetEventHandler()->ProcessEvent(event);
+    m_history->Push(GetCurrentPage());
 }
 
 void Notebook::OnPageChanging(wxBookCtrlEvent& e)
@@ -237,9 +251,6 @@ void Notebook::OnPageChanging(wxBookCtrlEvent& e)
     }
     // Allow changing
     e.Skip();
-    if(GetCurrentPage()) {
-        m_history->Push(GetCurrentPage());
-    }
 }
 
 wxWindow* Notebook::DoUpdateHistoryPreRemove(wxWindow* page)
@@ -394,7 +405,7 @@ void Notebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, con
     if(index == wxNOT_FOUND) {
         return;
     }
-
+    m_history->Push(page);
     if(m_userData.count(page) == 0) {
         m_userData.insert({ page, {} });
     }
@@ -571,5 +582,4 @@ size_t Notebook::GetAllTabs(clTabInfo::Vec_t& tabs)
     }
     return tabs.size();
 }
-
 #endif // __WXGTK3__

@@ -145,7 +145,7 @@ void ZoomNavigator::DoInitialize()
 
     } else {
         zoompane = new wxPanel(book);
-        book->AddPage(zoompane, ZOOM_PANE_TITLE, false);
+        book->AddPage(zoompane, ZOOM_PANE_TITLE, false, wxNullBitmap);
     }
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 

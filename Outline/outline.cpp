@@ -95,7 +95,7 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
         m_view->m_isEnabled = true; // Enabled when detached
     } else {
         m_view = new OutlineTab(book, m_mgr);
-        book->AddPage(m_view, _("Outline"), false);
+        book->AddPage(m_view, _("Outline"), false, wxNullBitmap);
     }
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
     m_mgr->AddWorkspaceTab(_("Outline"));

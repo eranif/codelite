@@ -80,6 +80,8 @@ public:
     void SetMenu(wxMenu* menu) { m_tabContextMenu = menu; }
     bool SetPageToolTip(size_t page, const wxString& tooltip);
     bool MoveActivePage(int newIndex);
+    int SetSelection(size_t nPage) override;
+    int ChangeSelection(size_t nPage) override;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);

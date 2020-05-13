@@ -419,7 +419,7 @@ void Notebook::Initialise(long style)
         SetPadding(wxSize(5, 5));
     }
     if(m_bookStyle & kNotebook_ShowFileListButton) {
-        GtkToolItem* button = gtk_tool_button_new(nullptr, "⏷");
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "▾");
         gtk_widget_show_all(GTK_WIDGET(button));
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
         gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(button), GTK_PACK_END);

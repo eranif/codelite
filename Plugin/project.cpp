@@ -1488,6 +1488,8 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     wxArrayString inclPathArr = ::wxStringTokenize(inclPathAsString, ";", wxTOKEN_STRTOK);
     for(size_t i = 0; i < inclPathArr.GetCount(); ++i) {
         wxString incl_path = inclPathArr.Item(i);
+        // Expand macros that may have been used in this include path
+        incl_path = MacroManager::Instance()->Expand(incl_path, clGetManager(), GetName(), buildConf->GetName());
         incl_path.Trim().Trim(false);
         if(incl_path.IsEmpty())
             continue;

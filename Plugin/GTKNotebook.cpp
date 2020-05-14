@@ -465,6 +465,17 @@ void Notebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, con
         // we allow tabs to be moved around
         gtk_notebook_set_tab_reorderable(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(page->GetHandle()), true);
     }
+
+    // wxNotebook does not fire wxEVT_NOTEBOOK_PAGE_CHANGED
+    // when we are inserting/adding the first page
+    // force an event here
+    if(GetPageCount() == 1) {
+        wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CHANGED);
+        event.SetEventObject(this);
+        event.SetSelection(GetSelection());
+        event.SetOldSelection(wxNOT_FOUND);
+        GetEventHandler()->ProcessEvent(event);
+    }
 }
 
 void Notebook::TabReordered()

@@ -1009,7 +1009,7 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
     return fn_tags;
 }
 
-cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool compile_flags_only) const
+cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt) const
 {
     // Build the global compiler paths, we will need this later on...
     wxStringMap_t compilersGlobalPaths;
@@ -1082,10 +1082,10 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool compile_flags_only) const
         BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
         if(buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
            buildConf->IsCompilerRequired()) {
-            iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, compile_flags_only);
+            iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, createCompileFlagsTxt);
         }
     }
-    return compile_flags_only ? nullptr : compile_commands.release();
+    return createCompileFlagsTxt ? nullptr : compile_commands.release();
 }
 
 ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }

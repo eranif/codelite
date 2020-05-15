@@ -1543,44 +1543,43 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
 }
 
 void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths,
-                                        bool compile_flags_only)
+                                        bool createCompileFlagsTxt)
 {
-    BuildConfigPtr buildConf = GetBuildConfiguration();
-    wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
-    wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
 
-    CreateCompileFlags(compilersGlobalPaths);
-    if(compile_flags_only) {
-        return;
-    }
-
-    wxString workingDirectory = m_fileName.GetPath();
-    std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
-        const wxString& fullpath = vt.second->GetFilename();
-        wxString compilePattern;
-        FileExtManager::FileType fileType = FileExtManager::GetType(fullpath);
-        if(fileType == FileExtManager::TypeSourceC) {
-            compilePattern = cFilePattern;
-        } else if(fileType == FileExtManager::TypeSourceCpp) {
-            compilePattern = cxxFilePattern;
-        } else if(fileType == FileExtManager::TypeHeader) {
-            compilePattern = cxxFilePattern;
-        }
-
-        if(!compilePattern.IsEmpty()) {
-            wxString file_name = fullpath;
-            if(file_name.Contains(" ")) {
-                file_name.Prepend("\"").Append("\"");
+    if(createCompileFlagsTxt) {
+        CreateCompileFlags(compilersGlobalPaths);
+    } else {
+        BuildConfigPtr buildConf = GetBuildConfiguration();
+        wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
+        wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
+        wxString workingDirectory = m_fileName.GetPath();
+        std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
+            const wxString& fullpath = vt.second->GetFilename();
+            wxString compilePattern;
+            FileExtManager::FileType fileType = FileExtManager::GetType(fullpath);
+            if(fileType == FileExtManager::TypeSourceC) {
+                compilePattern = cFilePattern;
+            } else if(fileType == FileExtManager::TypeSourceCpp) {
+                compilePattern = cxxFilePattern;
+            } else if(fileType == FileExtManager::TypeHeader) {
+                compilePattern = cxxFilePattern;
             }
-            compilePattern.Replace("$FileName", file_name);
 
-            JSONItem json = JSONItem::createObject();
-            json.addProperty("file", fullpath);
-            json.addProperty("directory", workingDirectory);
-            json.addProperty("command", compilePattern);
-            compile_commands.append(json);
-        }
-    });
+            if(!compilePattern.IsEmpty()) {
+                wxString file_name = fullpath;
+                if(file_name.Contains(" ")) {
+                    file_name.Prepend("\"").Append("\"");
+                }
+                compilePattern.Replace("$FileName", file_name);
+
+                JSONItem json = JSONItem::createObject();
+                json.addProperty("file", fullpath);
+                json.addProperty("directory", workingDirectory);
+                json.addProperty("command", compilePattern);
+                compile_commands.append(json);
+            }
+        });
+    }
 }
 
 BuildConfigPtr Project::GetBuildConfiguration(const wxString& configName) const

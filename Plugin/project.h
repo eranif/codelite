@@ -25,8 +25,8 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "codelite_exports.h"
 #include "JSON.h"
+#include "codelite_exports.h"
 #include "localworkspace.h"
 #include "macros.h"
 #include "optionsconfig.h"
@@ -102,7 +102,9 @@ public:
 
     ProjectItem& operator=(const ProjectItem& item)
     {
-        if(this == &item) { return *this; }
+        if(this == &item) {
+            return *this;
+        }
 
         m_key = item.m_key;
         m_displayName = item.m_displayName;
@@ -333,10 +335,10 @@ private:
     wxArrayString DoGetUnPreProcessors(bool clearCache, const wxString& cmpOptions);
 
     clProjectFolder::Ptr_t GetRootFolder();
-    
+
     /// Upgrade the project settings to match the new builder system
     void UpgradeBuildSystem();
-    
+
 public:
     /**
      * @brief return list of files that are excluded from *any* build configuration
@@ -828,7 +830,8 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths, bool compile_flags_only);
+    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths,
+                                   bool createCompileFlagsTxt);
 
     /**
      * @brief create compile_flags.txt file for this project

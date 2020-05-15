@@ -1396,22 +1396,11 @@ static void ProcessMacros(const wxArrayString& macros, wxStringSet_t& res)
     }
 }
 
-static bool MSWIs64BitCompiler(CompilerPtr compiler)
-{
-    const wxArrayString& macros = compiler->GetBuiltinMacros();
-    for(const wxString& macro : macros) {
-        if(macro.Contains("_WIN64")) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static wxString GetExtraFlags(CompilerPtr compiler)
 {
 #ifdef __WXMSW__
     if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-        if(MSWIs64BitCompiler(compiler)) {
+        if(compiler->Is64BitCompiler()) {
             return "-target x86_64-pc-windows-gnu";
         } else {
             return "-target i686-pc-windows-gnu";
@@ -1428,7 +1417,7 @@ static void GetExtraFlags(wxString& content, CompilerPtr compiler)
         if(!content.IsEmpty() && !content.EndsWith("\n")) {
             content << "\n";
         }
-        if(MSWIs64BitCompiler(compiler)) {
+        if(compiler->Is64BitCompiler()) {
             content << "-target"
                     << "\n"
                     << "x86_64-pc-windows-gnu"

@@ -845,7 +845,7 @@ bool clIsMSYSEnvironment()
             isMSYS = false;
         } else {
             out.MakeLower();
-            isMSYS = out.Contains("mingw") && out.Contains("msys");
+            isMSYS = out.Contains("mingw") || out.Contains("msys");
         }
     }
     return isMSYS;

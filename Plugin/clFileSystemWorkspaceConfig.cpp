@@ -149,24 +149,13 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
     return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
 }
 
-static bool MSWIs64BitCompiler(CompilerPtr compiler)
-{
-    const wxArrayString& macros = compiler->GetBuiltinMacros();
-    for(const wxString& macro : macros) {
-        if(macro.Contains("_WIN64")) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
     wxArrayString flags;
 #ifdef __WXMSW__
     if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
         flags.Add("-target");
-        if(MSWIs64BitCompiler(compiler)) {
+        if(compiler->Is64BitCompiler()) {
             flags.Add("x86_64-pc-windows-gnu");
         } else {
             flags.Add("i686-pc-windows-gnu");

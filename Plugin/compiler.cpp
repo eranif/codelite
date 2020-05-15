@@ -188,7 +188,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         if(GetTool("MAKE").IsEmpty()) {
             BuilderConfigPtr bldr = BuildSettingsConfigST::Get()->GetBuilderConfig("");
-            if(bldr) { SetTool("MAKE", wxString() << bldr->GetToolPath() << " -j " << bldr->GetToolJobs()); }
+            if(bldr) {
+                SetTool("MAKE", wxString() << bldr->GetToolPath() << " -j " << bldr->GetToolJobs());
+            }
         }
 
         // Default values for the assembler
@@ -200,9 +202,13 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         }
 
         // For backward compatibility, if the compiler / linker options are empty - add them
-        if(IsGnuCompatibleCompiler()) { AddDefaultGnuComplierOptions(); }
+        if(IsGnuCompatibleCompiler()) {
+            AddDefaultGnuComplierOptions();
+        }
 
-        if(IsGnuCompatibleCompiler()) { AddDefaultGnuLinkerOptions(); }
+        if(IsGnuCompatibleCompiler()) {
+            AddDefaultGnuLinkerOptions();
+        }
 
     } else {
         // Create a default compiler: g++
@@ -293,7 +299,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_objectNameIdenticalToFileName = false;
     }
 
-    if(m_generateDependeciesFile && m_dependSuffix.IsEmpty()) { m_dependSuffix = m_objectSuffix + wxT(".d"); }
+    if(m_generateDependeciesFile && m_dependSuffix.IsEmpty()) {
+        m_dependSuffix = m_objectSuffix + wxT(".d");
+    }
 
     if(!m_switches[wxT("PreprocessOnly")].IsEmpty() && m_preprocessSuffix.IsEmpty()) {
         m_preprocessSuffix = m_objectSuffix + wxT(".i");
@@ -494,7 +502,9 @@ wxXmlNode* Compiler::ToXml() const
 wxString Compiler::GetSwitch(const wxString& name) const
 {
     std::map<wxString, wxString>::const_iterator iter = m_switches.find(name);
-    if(iter == m_switches.end()) { return wxEmptyString; }
+    if(iter == m_switches.end()) {
+        return wxEmptyString;
+    }
     return iter->second;
 }
 
@@ -508,7 +518,9 @@ wxString Compiler::GetTool(const wxString& name) const
         }
         return wxEmptyString;
     }
-    if(name == wxT("CC") && iter->second.empty()) { return GetTool(wxT("CXX")); }
+    if(name == wxT("CC") && iter->second.empty()) {
+        return GetTool(wxT("CXX"));
+    }
     wxString tool = iter->second;
     tool.Replace("\\", "/");
     return tool;
@@ -517,7 +529,9 @@ wxString Compiler::GetTool(const wxString& name) const
 bool Compiler::GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo& ft)
 {
     std::map<wxString, Compiler::CmpFileTypeInfo>::iterator iter = m_fileTypes.find(extension.Lower());
-    if(iter == m_fileTypes.end()) { return false; }
+    if(iter == m_fileTypes.end()) {
+        return false;
+    }
     ft = iter->second;
     return true;
 }
@@ -526,7 +540,9 @@ void Compiler::AddCmpFileType(const wxString& extension, CmpFileKind type, const
 {
     Compiler::CmpFileTypeInfo ft;
     ft.extension = extension.Lower();
-    if(m_fileTypes.count(ft.extension)) { m_fileTypes.erase(ft.extension); }
+    if(m_fileTypes.count(ft.extension)) {
+        m_fileTypes.erase(ft.extension);
+    }
 
     ft.compilation_line = compile_line;
     ft.kind = type;
@@ -535,7 +551,9 @@ void Compiler::AddCmpFileType(const wxString& extension, CmpFileKind type, const
 
 void Compiler::SetSwitch(const wxString& switchName, const wxString& switchValue)
 {
-    if(m_switches.count(switchName)) { m_switches.erase(switchName); }
+    if(m_switches.count(switchName)) {
+        m_switches.erase(switchName);
+    }
     m_switches.insert(std::make_pair(switchName, switchValue));
 }
 
@@ -556,7 +574,9 @@ void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, 
 
 void Compiler::SetTool(const wxString& toolname, const wxString& cmd)
 {
-    if(m_tools.count(toolname)) { m_tools.erase(toolname); }
+    if(m_tools.count(toolname)) {
+        m_tools.erase(toolname);
+    }
     m_tools.insert(std::make_pair(toolname, cmd));
 }
 
@@ -631,9 +651,13 @@ wxArrayString Compiler::GetDefaultIncludePaths()
     gccCompilers.Add(COMPILER_FAMILY_GCC);
 
     // Only add the cygwin
-    if(::clIsCygwinEnvironment()) { gccCompilers.Add(COMPILER_FAMILY_CYGWIN); }
+    if(::clIsCygwinEnvironment()) {
+        gccCompilers.Add(COMPILER_FAMILY_CYGWIN);
+    }
 
-    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) { defaultPaths = POSIXGetIncludePaths(); }
+    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) {
+        defaultPaths = POSIXGetIncludePaths();
+    }
     return defaultPaths;
 }
 
@@ -645,9 +669,13 @@ wxString Compiler::GetGCCVersion() const
     command << GetTool("CXX") << " --version";
     wxArrayString out;
     ProcUtils::SafeExecuteCommand(command, out);
-    if(out.IsEmpty()) { return ""; }
+    if(out.IsEmpty()) {
+        return "";
+    }
 
-    if(reVersion.Matches(out.Item(0))) { return reVersion.GetMatch(out.Item(0)); }
+    if(reVersion.Matches(out.Item(0))) {
+        return reVersion.GetMatch(out.Item(0));
+    }
     return "";
 }
 
@@ -676,7 +704,8 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
     clDEBUG() << "Running command:" << command;
     wxString outputStr;
     IProcess::Ptr_t proc(::CreateSyncProcess(command));
-    if(proc) proc->WaitForTerminate(outputStr);
+    if(proc)
+        proc->WaitForTerminate(outputStr);
 
     clDEBUG() << "Output is:" << outputStr;
 
@@ -691,7 +720,9 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
             continue;
         }
 
-        if(outputArr[i].Contains(wxT("End of search list."))) { break; }
+        if(outputArr[i].Contains(wxT("End of search list."))) {
+            break;
+        }
 
         if(collect) {
 
@@ -708,7 +739,9 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
                 const wxString& cygdriveRoot = GetInstallationPath();
 
                 // For reasons beyond me, /usr/lib is mapped to /lib
-                if(file.StartsWith("/usr/lib")) { file.Replace("/usr/lib", "/lib"); }
+                if(file.StartsWith("/usr/lib")) {
+                    file.Replace("/usr/lib", "/lib");
+                }
                 file.Prepend(cygdriveRoot + "/");
             }
 #endif
@@ -724,7 +757,9 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 
 const wxArrayString& Compiler::GetBuiltinMacros()
 {
-    if(!m_compilerBuiltinDefinitions.IsEmpty()) { return m_compilerBuiltinDefinitions; }
+    if(!m_compilerBuiltinDefinitions.IsEmpty()) {
+        return m_compilerBuiltinDefinitions;
+    }
 
     wxArrayString definitions;
     // Command example: "echo | clang -dM -E - > /tmp/pp"
@@ -769,7 +804,9 @@ wxString Compiler::GetLinkLine(const wxString& type, bool inputFromFile) const
 {
     wxString customType = type;
     const auto& iter = m_linkerLines.find(customType);
-    if(iter == m_linkerLines.end()) { return ""; }
+    if(iter == m_linkerLines.end()) {
+        return "";
+    }
     return inputFromFile ? iter->second.lineFromFile : iter->second.line;
 }
 
@@ -785,4 +822,16 @@ void Compiler::SetLinkLine(const wxString& type, const wxString& line, bool inpu
     } else {
         where->second.line = line;
     }
+}
+
+bool Compiler::Is64BitCompiler()
+{
+    wxArrayString macros = GetBuiltinMacros();
+    for(wxString& macro : macros) {
+        macro.MakeLower();
+        if(macro.Contains("_win64") || macro.Contains("x86_64") || macro.Contains("amd64")) {
+            return true;
+        }
+    }
+    return false;
 }

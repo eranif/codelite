@@ -70,12 +70,12 @@ public:
         wxString fileNameIndex;
         wxString columnIndex;
     };
-    
+
     struct LinkLine {
         wxString lineFromFile;
         wxString line;
     };
-    
+
     enum eRegexType { kRegexVC = 0, kRegexGNU };
     typedef std::list<CmpInfoPattern> CmpListInfoPattern;
 
@@ -121,6 +121,11 @@ public:
     virtual ~Compiler();
 
     /**
+     * @brief check if this compiler is a 64 bit compiler
+     */
+    bool Is64BitCompiler();
+
+    /**
      * @brief return the compiler default include paths
      */
     wxArrayString GetDefaultIncludePaths();
@@ -146,10 +151,10 @@ public:
 
     void AddCompilerOption(const wxString& name, const wxString& desc);
     void AddLinkerOption(const wxString& name, const wxString& desc);
-    
+
     wxString GetLinkLine(const wxString& type, bool inputFromFile) const;
     void SetLinkLine(const wxString& type, const wxString& line, bool inputFromFile);
-    
+
     /**
      * @brief return list of builtin macros for this compiler instance
      * @return

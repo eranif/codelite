@@ -559,8 +559,6 @@
     <VirtualDirectory Name="Notebook">
       <File Name="clTabRendererGTK3.cpp"/>
       <File Name="clTabRendererGTK3.h"/>
-      <File Name="clMultiBook.cpp"/>
-      <File Name="clMultiBook.h"/>
       <File Name="clTab.h"/>
       <File Name="clTabHistory.cpp"/>
       <File Name="clTabHistory.h"/>

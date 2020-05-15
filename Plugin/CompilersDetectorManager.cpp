@@ -23,26 +23,26 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "CompilersDetectorManager.h"
-#include "CompilerLocatorMinGW.h"
-#include "CompilerLocatorGCC.h"
-#include "CompilerLocatorCrossGCC.h"
-#include "CompilerLocatorMSVC.h"
 #include "CompilerLocatorCLANG.h"
+#include "CompilerLocatorCrossGCC.h"
 #include "CompilerLocatorCygwin.h"
-#include <wx/utils.h>
-#include <wx/msgdlg.h>
+#include "CompilerLocatorEosCDT.h"
+#include "CompilerLocatorGCC.h"
+#include "CompilerLocatorMSVC.h"
+#include "CompilerLocatorMinGW.h"
+#include "CompilersDetectorManager.h"
+#include "JSON.h"
+#include "build_settings_config.h"
 #include "cl_config.h"
+#include "environmentconfig.h"
+#include "includepathlocator.h"
 #include "macros.h"
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
-#include "includepathlocator.h"
-#include "build_settings_config.h"
-#include "JSON.h"
+#include <wx/msgdlg.h>
 #include <wx/stream.h>
 #include <wx/url.h>
-#include "environmentconfig.h"
-#include "CompilerLocatorEosCDT.h"
+#include <wx/utils.h>
 
 CompilersDetectorManager::CompilersDetectorManager()
 {
@@ -75,15 +75,21 @@ bool CompilersDetectorManager::Locate()
     // variable (e.g. MinGW)
     EnvSetter env;
     m_compilersFound.clear();
-    ICompilerLocator::Vect_t::iterator iter = m_detectors.begin();
-    for(; iter != m_detectors.end(); ++iter) {
-        if((*iter)->Locate()) {
-            m_compilersFound.insert(
-                m_compilersFound.end(), (*iter)->GetCompilers().begin(), (*iter)->GetCompilers().end());
+    wxStringSet_t S;
+    for(auto locator : m_detectors) {
+        if(locator->Locate()) {
+            for(auto compiler : locator->GetCompilers()) {
+                wxFileName fn(compiler->GetInstallationPath(), "cxx");
+                if(S.count(fn.GetFullPath()) == 0) {
+                    S.insert(fn.GetFullPath());
+                    m_compilersFound.push_back(compiler);
+                }
+            }
         }
     }
-    for(size_t i = 0; i < m_compilersFound.size(); ++i) {
-        MSWFixClangToolChain(m_compilersFound.at(i), m_compilersFound);
+
+    for(auto compiler : m_compilersFound) {
+        MSWFixClangToolChain(compiler, m_compilersFound);
     }
     return !m_compilersFound.empty();
 }
@@ -121,8 +127,7 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
     if(!prompt ||
        ::wxMessageBox(_("Could not locate any MinGW compiler installed on your machine, would you like to "
                         "install one now?"),
-                      "CodeLite",
-                      wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION) == wxYES) {
+                      "CodeLite", wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER | wxICON_QUESTION) == wxYES) {
         // No MinGW compiler detected!, offer the user to download one
         wxStringMap_t mingwCompilers;
         wxArrayString options;
@@ -162,8 +167,7 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 
             if(options.IsEmpty()) {
                 ::wxMessageBox(_("Unable to fetch compilers list from the website\nhttp://codelite.org/compilers.json"),
-                               "CodeLite",
-                               wxOK | wxCENTER | wxICON_WARNING);
+                               "CodeLite", wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
             int sel = 0;
@@ -177,8 +181,7 @@ void CompilersDetectorManager::MSWSuggestToDownloadMinGW(bool prompt)
 
                 // Open the browser to start downloading the compiler
                 ::wxLaunchDefaultBrowser(mingwCompilers.find(selection)->second);
-                ::wxMessageBox(_("After install is completed, click the 'Scan' button"),
-                               "CodeLite",
+                ::wxMessageBox(_("After install is completed, click the 'Scan' button"), "CodeLite",
                                wxOK | wxCENTER | wxICON_INFORMATION);
             }
         }

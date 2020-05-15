@@ -94,7 +94,6 @@ bool CompilerLocatorCLANG::Locate()
         }
     }
 
-
     wxStringMap_t map;
     for(const auto& d : outputFiles) {
         if(d.flags & clFilesScanner::kIsFile) {
@@ -172,7 +171,8 @@ void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& toolnam
 
 void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxString& installFolder, const wxString& suffix)
 {
-    compiler->SetInstallationPath(installFolder);
+    // add normalize path
+    compiler->SetInstallationPath(wxFileName(installFolder, "").GetPath());
     wxFileName toolFile(installFolder, "");
 #ifdef __WXMSW__
     toolFile.SetExt("exe");

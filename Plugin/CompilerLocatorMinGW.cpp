@@ -282,7 +282,7 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
     m_locatedFolders.insert(masterPath.GetPath());
 
     if(name.IsEmpty())
-        compiler->SetName("MinGW ( " + masterPath.GetDirs().Last() + " )");
+        compiler->SetName("MinGW ( " + masterPath.GetFullPath() + " )");
     else if(!name.Lower().Contains("mingw"))
         compiler->SetName("MinGW ( " + name + " )");
     else

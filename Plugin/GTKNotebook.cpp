@@ -444,7 +444,11 @@ void Notebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, con
 
     wxGtkNotebookPage* p = GetNotebookPage(index);
     if(m_bookStyle & kNotebook_CloseButtonOnActiveTab) {
+#ifdef __WXGTK3__
         GtkToolItem* button = gtk_tool_button_new(nullptr, "✖");
+#else
+        GtkToolItem* button = gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE);
+#endif
 
         // remove the label and insert it back at the start
 

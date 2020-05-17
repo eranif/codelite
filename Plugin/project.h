@@ -326,6 +326,11 @@ private:
     wxStringSet_t m_excludeFiles;
     wxStringSet_t emptySet;
 
+    enum eGetFileBuildCmdFlags {
+        kCxxFile = (1 << 0),
+        kWrapIncludesWithSpace = (1 << 1),
+    };
+
 private:
     void DoUpdateProjectSettings();
     void DoBuildCacheFromXml();
@@ -777,7 +782,7 @@ public:
      * name which can later be replaced by the caller with the actual file name
      */
     wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
-                                      const wxString& filenamePlaceholder = "$FileName", bool cxxFile = true);
+                                      const wxString& filenamePlaceholder = "$FileName", size_t flags = kCxxFile);
 
     void ClearAllVirtDirs();
 

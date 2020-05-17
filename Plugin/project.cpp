@@ -1370,7 +1370,7 @@ static void ProcessIncludes(const wxArrayString& paths, const wxString& wd, wxSt
             fnPath.MakeAbsolute(wd);
         }
         wxString include_path = fnPath.GetPath();
-        ::WrapWithQuotes(include_path);
+        //::WrapWithQuotes(include_path);
 
         if(res.count(include_path) == 0) {
             res.insert(include_path);
@@ -1433,7 +1433,7 @@ static void GetExtraFlags(wxString& content, CompilerPtr compiler)
 }
 
 wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
-                                           const wxString& filenamePlaceholder, bool cxxFile)
+                                           const wxString& filenamePlaceholder, size_t flags)
 {
     // Return a compilation line for a CXX file
     if(!buildConf) {
@@ -1452,12 +1452,15 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     if(compilersGlobalPaths.count(compiler->GetName())) {
         const wxString& semiColonSepList = compilersGlobalPaths.find(compiler->GetName())->second;
         wxArrayString compilerPaths = ::wxStringTokenize(semiColonSepList, ";", wxTOKEN_STRTOK);
-        for(const wxString& compilerPath : compilerPaths) {
+        for(wxString& compilerPath : compilerPaths) {
+            if(flags & kWrapIncludesWithSpace) {
+                ::WrapWithQuotes(compilerPath);
+            }
             extraFlags << " -I" << compilerPath;
         }
     }
 
-    wxString compilerExe = compiler->GetTool(cxxFile ? "CXX" : "CC");
+    wxString compilerExe = compiler->GetTool(flags & kCxxFile ? "CXX" : "CC");
     commandLine << "clang "
                 << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
@@ -1483,15 +1486,15 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
         if(incl_path.IsEmpty())
             continue;
 
-        if(incl_path.Contains(" ")) {
-            incl_path.Prepend("\"").Append("\"");
+        if(flags & kWrapIncludesWithSpace) {
+            ::WrapWithQuotes(incl_path);
         }
-
         commandLine << "-I" << incl_path << " ";
     }
 
     // Get the compile options
-    wxString projectCompileOptions = cxxFile ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
+    wxString projectCompileOptions =
+        (flags & kCxxFile) ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
     wxArrayString projectCompileOptionsArr = ::wxStringTokenize(projectCompileOptions, ";", wxTOKEN_STRTOK);
     for(size_t i = 0; i < projectCompileOptionsArr.GetCount(); ++i) {
         wxString cmpOption(projectCompileOptionsArr.Item(i));
@@ -1549,9 +1552,12 @@ void Project::CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStri
     if(createCompileFlagsTxt) {
         CreateCompileFlags(compilersGlobalPaths);
     } else {
+        // generating compile_commands.json file
         BuildConfigPtr buildConf = GetBuildConfiguration();
-        wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
-        wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
+        wxString cFilePattern =
+            GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", kWrapIncludesWithSpace);
+        wxString cxxFilePattern =
+            GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", kCxxFile | kWrapIncludesWithSpace);
         wxString workingDirectory = m_fileName.GetPath();
         std::for_each(m_filesTable.begin(), m_filesTable.end(), [&](const FilesMap_t::value_type& vt) {
             const wxString& fullpath = vt.second->GetFilename();
@@ -2064,8 +2070,8 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
         ProcessMacros(tmpMacros, macroSet);
 
     } else {
-        wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", false);
-        wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", true);
+        wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", 0);
+        wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", kCxxFile);
 
         wxStringSet_t pathsSet;
 

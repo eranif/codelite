@@ -758,6 +758,7 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 const wxArrayString& Compiler::GetBuiltinMacros()
 {
     if(!m_compilerBuiltinDefinitions.IsEmpty()) {
+        clDEBUG() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
         return m_compilerBuiltinDefinitions;
     }
 
@@ -768,35 +769,35 @@ const wxArrayString& Compiler::GetBuiltinMacros()
         wxString command;
         wxString tool = GetTool("CXX");
         tool.Trim().Trim(false);
-        command << "echo | \"" << tool << "\" -dM -E - > ";
+        // incase 'tool' contains spaces, it should already wraped with double quotes so there is no need to wrap it
+        // again here
+#ifdef __WXMSW__
+        // CMD does not like "/"
+        tool.Replace("/", "\\");
+#endif
+        command << "echo | " << tool << " -dM -E - > ";
         wxString tmpFile = wxFileName::CreateTempFileName("def-macros");
         ::WrapWithQuotes(tmpFile);
         command << tmpFile;
         ::WrapInShell(command);
-        // CL_SYSTEM(command);
+        clDEBUG() << "Loading built-in macros for compiler '" << GetName() << "' :" << command << clEndl;
 
         ProcUtils::SafeExecuteCommand(command);
         wxFileName cmpMacrosFile(tmpFile);
         if(cmpMacrosFile.Exists()) {
             clDEBUG1() << "Compiler builtin macros are written into:" << cmpMacrosFile.GetFullPath();
+
             // we got our macro files
-            {
-                CxxPreProcessor pp;
-                pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
-                definitions = pp.GetDefinitions();
-            }
+            CxxPreProcessor pp;
+            pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
+            definitions = pp.GetDefinitions();
 
-            //            for(size_t i = 0; i < definitions.GetCount(); ++i) {
-            //                clDEBUG1() << "BUILTIN:" << definitions.Item(i);
-            //            }
-
-            {
-                // Delete the file
-                clRemoveFile(cmpMacrosFile.GetFullPath());
-            }
+            // Delete the file
+            ::clRemoveFile(cmpMacrosFile.GetFullPath());
         }
     }
     m_compilerBuiltinDefinitions.swap(definitions);
+    clDEBUG() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
     return m_compilerBuiltinDefinitions;
 }
 

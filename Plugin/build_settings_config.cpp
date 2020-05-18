@@ -23,20 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "build_settings_config.h"
-#include "conffilelocator.h"
-#include "xmlutils.h"
-#include <wx/ffile.h>
-#include "wx_xml_compatibility.h"
-#include "macros.h"
-#include <event_notifier.h>
-#include <cl_command_event.h>
-#include "codelite_events.h"
-#include <wx/sstream.h>
-#include <globals.h>
 #include "ICompilerLocator.h"
-#include <algorithm>
 #include "JSON.h"
+#include "build_settings_config.h"
+#include "codelite_events.h"
+#include "conffilelocator.h"
+#include "macros.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+#include <algorithm>
+#include <cl_command_event.h>
+#include <event_notifier.h>
+#include <globals.h>
+#include <wx/ffile.h>
+#include <wx/sstream.h>
 
 BuildSettingsConfig::BuildSettingsConfig()
 {
@@ -65,7 +65,9 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
         }
         m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
 
-        if(loaded) { DoUpdateCompilers(); }
+        if(loaded) {
+            DoUpdateCompilers();
+        }
     } else {
         wxFileName xmlPath(xmlFilePath);
         loaded = m_doc->Load(xmlPath.GetFullPath());
@@ -74,7 +76,9 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
             m_fileName = xmlPath;
         }
     }
-    if(loaded) { SaveXmlFile(); }
+    if(loaded) {
+        SaveXmlFile();
+    }
     return loaded;
 }
 
@@ -147,9 +151,13 @@ CompilerPtr BuildSettingsConfig::GetFirstCompiler(BuildSettingsConfigCookie& coo
 
 CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cookie)
 {
-    if(cookie.parent == NULL) { return NULL; }
+    if(cookie.parent == NULL) {
+        return NULL;
+    }
 
-    if(cookie.child == NULL) { cookie.child = cookie.parent->GetChildren(); }
+    if(cookie.child == NULL) {
+        cookie.child = cookie.parent->GetChildren();
+    }
 
     while(cookie.child) {
         if(cookie.child->GetName() == wxT("Compiler")) {
@@ -159,7 +167,9 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cook
 
             // incase we dont have more childs to iterate
             // reset the parent as well so the next call to GetNexeLexer() will fail
-            if(cookie.child == NULL) { cookie.parent = NULL; }
+            if(cookie.child == NULL) {
+                cookie.parent = NULL;
+            }
             return new Compiler(n);
         }
         cookie.child = cookie.child->GetNext();
@@ -197,7 +207,9 @@ BuilderConfigPtr BuildSettingsConfig::GetBuilderConfig(const wxString& name)
 {
     wxXmlNode* node = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("BuildSystem"),
                                                name.IsEmpty() ? GetSelectedBuildSystem() : name);
-    if(node) { return new BuilderConfig(node); }
+    if(node) {
+        return new BuilderConfig(node);
+    }
     return NULL;
 }
 
@@ -287,7 +299,9 @@ wxArrayString BuildSettingsConfig::GetAllCompilersNames() const
     if(compilersNode) {
         wxXmlNode* child = compilersNode->GetChildren();
         while(child) {
-            if(child->GetName() == "Compiler") { allCompilers.Add(XmlUtils::ReadString(child, "Name")); }
+            if(child->GetName() == "Compiler") {
+                allCompilers.Add(XmlUtils::ReadString(child, "Name"));
+            }
             child = child->GetNext();
         }
     }
@@ -306,13 +320,19 @@ void BuildSettingsConfig::DoUpdateCompilers()
 
 bool BuildSettingsConfig::SaveXmlFile()
 {
+    if(m_inTransaction) {
+        return true;
+    }
+
     // Store this information for later retrieval
     wxArrayString compilers = GetAllCompilersNames();
     JSON root(cJSON_Array);
     JSONItem e = root.toElement();
     for(size_t i = 0; i < compilers.size(); ++i) {
         CompilerPtr cmp = GetCompiler(compilers[i]);
-        if(!cmp) { continue; }
+        if(!cmp) {
+            continue;
+        }
         JSONItem o = JSONItem::createObject();
         o.addProperty("name", cmp->GetName()).addProperty("paths", cmp->GetDefaultIncludePaths());
         e.arrayAppend(o);
@@ -333,7 +353,8 @@ void BuildSettingsConfigST::Free()
 
 BuildSettingsConfig* BuildSettingsConfigST::Get()
 {
-    if(gs_buildSettingsInstance == NULL) gs_buildSettingsInstance = new BuildSettingsConfig;
+    if(gs_buildSettingsInstance == NULL)
+        gs_buildSettingsInstance = new BuildSettingsConfig;
     return gs_buildSettingsInstance;
 }
 
@@ -355,7 +376,9 @@ CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFami
                 // keep the first one, just incase
                 defaultComp = iter->second;
             }
-            if(iter->second->IsDefault()) { return iter->second; }
+            if(iter->second->IsDefault()) {
+                return iter->second;
+            }
         }
     }
     return defaultComp;
@@ -380,8 +403,18 @@ std::unordered_map<wxString, wxArrayString> BuildSettingsConfig::GetCompilersGlo
     wxArrayString compilers = GetAllCompilersNames();
     for(const wxString& name : compilers) {
         CompilerPtr cmp = GetCompiler(name);
-        if(!cmp) { continue; }
+        if(!cmp) {
+            continue;
+        }
         M.insert({ name, cmp->GetDefaultIncludePaths() });
     }
     return M;
+}
+
+void BuildSettingsConfig::BeginBatch() { m_inTransaction = true; }
+
+void BuildSettingsConfig::Flush()
+{
+    m_inTransaction = false;
+    SaveXmlFile();
 }

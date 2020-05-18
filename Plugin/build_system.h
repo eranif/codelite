@@ -25,57 +25,37 @@
 #ifndef BUILD_SYSTEM_H
 #define BUILD_SYSTEM_H
 
-#include "wx/xml/xml.h"
-#include "wx/string.h"
-#include "smart_ptr.h"
-#include "list"
 #include "codelite_exports.h"
+#include "list"
+#include "smart_ptr.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
 
-class WXDLLIMPEXP_SDK  BuilderConfig
+class WXDLLIMPEXP_SDK BuilderConfig
 {
     wxString m_name;
     wxString m_toolPath;
     wxString m_toolOptions;
     wxString m_toolJobs;
-    bool     m_isActive;
+    bool m_isActive;
 
 public:
-    BuilderConfig(wxXmlNode *node);
+    BuilderConfig(wxXmlNode* node);
     virtual ~BuilderConfig();
-    wxXmlNode *ToXml() const;
+    wxXmlNode* ToXml() const;
 
-    void SetIsActive(bool isActive) {
-        this->m_isActive = isActive;
-    }
-    bool GetIsActive() const {
-        return m_isActive;
-    }
-    const wxString &GetName() const {
-        return m_name;
-    }
-    const wxString &GetToolPath() const {
-        return m_toolPath;
-    }
-    const wxString &GetToolOptions() const {
-        return m_toolOptions;
-    }
-    const wxString &GetToolJobs() const {
-        return m_toolJobs;
-    }
-    void SetName(const wxString &name) {
-        m_name = name;
-    }
-    void SetToolPath(const wxString &path) {
-        m_toolPath = path;
-    }
-    void SetToolOptions(const wxString &options) {
-        m_toolOptions = options;
-    }
-    void SetToolJobs(const wxString &jobs) {
-        m_toolJobs = jobs;
-    }
+    void SetIsActive(bool isActive) { this->m_isActive = isActive; }
+    bool GetIsActive() const { return m_isActive; }
+    const wxString& GetName() const { return m_name; }
+    const wxString& GetToolPath() const { return m_toolPath; }
+    const wxString& GetToolOptions() const { return m_toolOptions; }
+    const wxString& GetToolJobs() const { return m_toolJobs; }
+    void SetName(const wxString& name) { m_name = name; }
+    void SetToolPath(const wxString& path) { m_toolPath = path; }
+    void SetToolOptions(const wxString& options) { m_toolOptions = options; }
+    void SetToolJobs(const wxString& jobs) { m_toolJobs = jobs; }
 };
 
-typedef SmartPtr<BuilderConfig>     BuilderConfigPtr;
+typedef SmartPtr<BuilderConfig> BuilderConfigPtr;
 
-#endif //BUILD_SYSTEM_H
+#endif // BUILD_SYSTEM_H

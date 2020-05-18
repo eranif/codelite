@@ -84,23 +84,6 @@ void BuildSettingsDialog::OnButtonOKClicked(wxCommandEvent& event)
     EndModal(wxID_OK);
 }
 
-void BuildSettingsDialog::SaveCompilers()
-{
-    std::map<wxString, std::vector<ICompilerSubPage*>>::iterator iter = m_compilerPagesMap.begin();
-    for(; iter != m_compilerPagesMap.end(); iter++) {
-        std::vector<ICompilerSubPage*> items = iter->second;
-        wxString cmpname = iter->first;
-        CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
-        if(cmp) {
-            for(size_t i = 0; i < items.size(); i++) {
-                ICompilerSubPage* p = items.at(i);
-                p->Save(cmp);
-            }
-            BuildSettingsConfigST::Get()->SetCompiler(cmp); // save changes
-        }
-    }
-}
-
 bool BuildSettingsDialog::CreateNewCompiler(const wxString& name, const wxString& copyFrom)
 {
     if(BuildSettingsConfigST::Get()->IsCompilerExist(name)) {
@@ -191,17 +174,21 @@ void BuildSettingsDialog::OnCompilersDetected(const ICompilerLocator::CompilerVe
 void BuildSettingsDialog::OnApply(wxCommandEvent& event)
 {
     // save the build page
+    BuildSettingsConfigST::Get()->BeginBatch();
     m_compilersPage->Save();
     m_buildPage->Save();
     m_buildSettings->Save();
-
     // mark all the projects as dirty
     wxArrayString projects;
     clCxxWorkspaceST::Get()->GetProjectList(projects);
     for(size_t i = 0; i < projects.size(); i++) {
         ProjectPtr proj = ManagerST::Get()->GetProject(projects.Item(i));
-        if(proj) { proj->SetModified(true); }
+        if(proj) {
+            proj->SetModified(true);
+        }
     }
+    // Now do the actual save
+    BuildSettingsConfigST::Get()->Flush();
 }
 
 void BuildSettingsDialog::OnApplyUI(wxUpdateUIEvent& event)
@@ -212,7 +199,9 @@ void BuildSettingsDialog::OnApplyUI(wxUpdateUIEvent& event)
 void BuildSettingsDialog::OnAddExistingCompiler()
 {
     wxString folder = ::wxDirSelector(_("Select the compiler folder"));
-    if(folder.IsEmpty()) { return; }
+    if(folder.IsEmpty()) {
+        return;
+    }
 
     CompilerPtr cmp = m_compilersDetector.Locate(folder);
     if(cmp) {
@@ -221,9 +210,13 @@ void BuildSettingsDialog::OnAddExistingCompiler()
         while(true) {
             wxString name =
                 ::wxGetTextFromUser(_("Set a name to the compiler"), _("New compiler found!"), cmp->GetName());
-            if(name.IsEmpty()) { return; }
+            if(name.IsEmpty()) {
+                return;
+            }
             // Add the compiler
-            if(BuildSettingsConfigST::Get()->IsCompilerExist(name)) { continue; }
+            if(BuildSettingsConfigST::Get()->IsCompilerExist(name)) {
+                continue;
+            }
             cmp->SetName(name);
             break;
         }

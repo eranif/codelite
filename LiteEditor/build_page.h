@@ -34,12 +34,11 @@
 
 #include <wx/wx.h>
 
-#include <wx/choicebk.h>
-#include "wx/panel.h"
 #include "filepicker.h"
+#include "wx/panel.h"
+#include <wx/choicebk.h>
 
 ///////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class BuildPage
@@ -47,18 +46,18 @@
 class BuildPage : public wxPanel
 {
 private:
-
 protected:
     wxStaticText* m_staticText;
     wxChoicebook* m_bookBuildSystems;
-    wxCheckBox *m_fixOnStartup;
-    wxCheckBox *m_generateAsteriskCleanTarget;
+    wxCheckBox* m_fixOnStartup;
+    wxCheckBox* m_generateAsteriskCleanTarget;
 
     void CustomInit();
-    wxPanel *CreateBuildSystemPage(const wxString &name);
+    wxPanel* CreateBuildSystemPage(const wxString& name);
 
 public:
-    BuildPage( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize( 500,300 ), int style = wxTAB_TRAVERSAL );
+    BuildPage(wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxSize(500, 300),
+              int style = wxTAB_TRAVERSAL);
     void Save();
 };
 
@@ -71,7 +70,7 @@ class BuildSystemPage : public wxPanel
     wxStaticText* m_staticText19;
 
 public:
-    BuildSystemPage(wxWindow *parent, wxString name);
+    BuildSystemPage(wxWindow* parent, wxString name);
     virtual ~BuildSystemPage() {}
 
     void Save();

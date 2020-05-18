@@ -25,20 +25,20 @@
 #ifndef BUILD_CONFIG_SETTINGS_H
 #define BUILD_CONFIG_SETTINGS_H
 
-#include <vector>
-#include "wx/string.h"
-#include "builder.h"
-#include "codelite_exports.h"
-#include "singleton.h"
-#include "compiler.h"
-#include "wx/xml/xml.h"
-#include "wx/filename.h"
-#include "build_system.h"
 #include "JSON.h"
+#include "build_system.h"
+#include "builder.h"
 #include "cl_config.h"
-#include <map>
-#include <wxStringHash.h>
+#include "codelite_exports.h"
+#include "compiler.h"
+#include "singleton.h"
+#include "wx/filename.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
 #include <macros.h>
+#include <map>
+#include <vector>
+#include <wxStringHash.h>
 
 // Cookie class for the editor to provide reentrance operations
 // on various methods (such as iteration)
@@ -68,6 +68,7 @@ class WXDLLIMPEXP_SDK BuildSettingsConfig
     wxFileName m_fileName;
     wxString m_version;
     std::unordered_map<wxString, CompilerPtr> m_compilers;
+    bool m_inTransaction = false;
 
 protected:
     wxXmlNode* GetCompilerNode(const wxString& name) const;
@@ -77,7 +78,15 @@ protected:
 public:
     BuildSettingsConfig();
     virtual ~BuildSettingsConfig();
-
+    /**
+     * @brief begin batch saving
+     * All calls to 'Save' will be ignored until Flush is called
+     */
+    void BeginBatch();
+    /**
+     * @brief flush all changes to the disk
+     */
+    void Flush();
     /**
      * @brief return a map for the available compilers and their global include paths
      */

@@ -43,8 +43,8 @@
 
 #include "build_page.h"
 #include "build_settings_config.h"
-#include "editor_config.h"
 #include "buildmanager.h"
+#include "editor_config.h"
 
 ///////////////////////////////////////////////////////////////////////////
 

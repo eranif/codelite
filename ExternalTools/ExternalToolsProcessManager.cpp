@@ -1,16 +1,17 @@
 #include "ExternalToolsProcessManager.h"
+#include "asyncprocess.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
-#include "asyncprocess.h"
 #include "macromanager.h"
-#include "environmentconfig.h"
 #include "processreaderthread.h"
 #include <algorithm>
-#include <wx/utils.h>
-#include <wx/process.h>
 #include <wx/msgdlg.h>
-#include "file_logger.h"
+#include <wx/process.h>
+#include <wx/utils.h>
 #ifndef __WXMSW__
 #include <signal.h>
 #endif
@@ -93,12 +94,10 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
     }
     working_dir = ti.GetWd();
     command = MacroManager::Instance()->Expand(
-        command,
-        clGetManager(),
+        command, clGetManager(),
         (clGetManager()->GetWorkspace() ? clGetManager()->GetWorkspace()->GetActiveProjectName() : ""));
     working_dir = MacroManager::Instance()->Expand(
-        working_dir,
-        clGetManager(),
+        working_dir, clGetManager(),
         (clGetManager()->GetWorkspace() ? clGetManager()->GetWorkspace()->GetActiveProjectName() : ""));
 
     wxString projectName;
@@ -113,16 +112,14 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 
     EnvSetter envGuard(clGetManager()->GetEnv(), NULL, projectName, configName);
     ::WrapInShell(command);
-    
+
     clDEBUG() << "Running command:" << command << clEndl;
-    
+
     int pid = wxNOT_FOUND;
     if(ti.GetCaptureOutput()) {
         IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateConsole, working_dir);
         if(!proc) {
-            ::wxMessageBox(_("Failed to launch tool\n'") + command + "'",
-                           "CodeLite",
-                           wxICON_ERROR | wxOK | wxCENTER,
+            ::wxMessageBox(_("Failed to launch tool\n'") + command + "'", "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
                            EventNotifier::Get()->TopFrame());
             return;
         }
@@ -130,9 +127,12 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
         pid = proc->GetPid();
 
     } else {
+        // Set the working directory and launch the process
+        DirSaver ds;
+        ::wxSetWorkingDirectory(working_dir);
         pid = ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new ExtToolsMyProcess());
     }
-    
+
     if(pid > 0) {
         ExternalToolItemData item(command, pid);
         m_tools.insert(std::make_pair(pid, item));
@@ -148,7 +148,7 @@ void ToolsTaskManager::ProcessTerminated(int pid)
 
 void ToolsTaskManager::StopAll()
 {
-    std::for_each(m_tools.begin(), m_tools.end(), [&](const std::pair<int, ExternalToolItemData> &p) {
+    std::for_each(m_tools.begin(), m_tools.end(), [&](const std::pair<int, ExternalToolItemData>& p) {
         ::wxKill(p.second.m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
     });
 }
@@ -165,7 +165,7 @@ ExternalToolItemData::Map_t& ToolsTaskManager::GetTools()
 #ifdef __WXOSX__
     // Check that the processes are still alive before we continue
     ExternalToolItemData::Map_t tools;
-    std::for_each(m_tools.begin(), m_tools.end(), [&](const std::pair<int, ExternalToolItemData> &p) {
+    std::for_each(m_tools.begin(), m_tools.end(), [&](const std::pair<int, ExternalToolItemData>& p) {
         if(kill(p.first, 0) == 0) {
             // alive
             tools.insert(p);

@@ -202,6 +202,7 @@
     <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
+    <File Name="clDirChanger.hpp"/>
     <File Name="wxCodeCompletionBoxEntry.hpp"/>
     <File Name="y.tab.h"/>
     <File Name="cl_process.h"/>

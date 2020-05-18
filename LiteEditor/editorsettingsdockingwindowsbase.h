@@ -92,6 +92,7 @@ protected:
     wxCheckBox* m_checkBoxShowDebugOnRun;
 
 protected:
+    virtual void OnUsingNativeBookUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnUseCustomCaptionColourUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -122,7 +123,10 @@ public:
     wxCheckBox* GetCheckBoxNavBarSortDropdown() { return m_checkBoxNavBarSortDropdown; }
     wxPanel* GetPanel12() { return m_panel12; }
     wxCheckBox* GetCheckBoxDontFoldSearchResults() { return m_checkBoxDontFoldSearchResults; }
-    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection() { return m_checkBoxDontOverrideSearchStringWithSelection; }
+    wxCheckBox* GetCheckBoxDontOverrideSearchStringWithSelection()
+    {
+        return m_checkBoxDontOverrideSearchStringWithSelection;
+    }
     wxPanel* GetPanel14() { return m_panel14; }
     wxCheckBox* GetCheckBoxHideOutputPaneOnClick() { return m_checkBoxHideOutputPaneOnClick; }
     wxCheckBox* GetCheckBoxHideOutputPaneNotIfBuild() { return m_checkBoxHideOutputPaneNotIfBuild; }
@@ -142,7 +146,8 @@ public:
     wxCheckBox* GetCheckBoxShowDebugOnRun() { return m_checkBoxShowDebugOnRun; }
     wxPanel* GetPanel16() { return m_panel16; }
     wxNotebook* GetNotebook10() { return m_notebook10; }
-    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    EditorSettingsDockingWindowsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorSettingsDockingWindowsBase();
 };
 

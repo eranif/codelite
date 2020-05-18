@@ -42,6 +42,7 @@ public:
     bool IsRestartRequired();
 
 protected:
+    virtual void OnUsingNativeBookUI(wxUpdateUIEvent& event);
     virtual void OnUseCustomCaptionColourUI(wxUpdateUIEvent& event);
     virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event);
 };

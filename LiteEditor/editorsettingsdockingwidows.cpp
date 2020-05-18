@@ -241,3 +241,12 @@ void EditorSettingsDockingWindows::OnUseCustomCaptionColourUI(wxUpdateUIEvent& e
 {
     event.Enable(m_checkBoxCustomCaptionColour->IsChecked());
 }
+
+void EditorSettingsDockingWindows::OnUsingNativeBookUI(wxUpdateUIEvent& event)
+{
+#if CL_USE_NATIVEBOOK
+    event.Enable(false);
+#else
+    event.Enable(true);
+#endif
+}

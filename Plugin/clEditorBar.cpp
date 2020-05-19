@@ -4,6 +4,7 @@
 #include "bookmark_manager.h"
 #include "clEditorBar.h"
 #include "clTabRenderer.h"
+#include "clThemeUpdater.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
@@ -27,7 +28,6 @@
 #include <wx/menu.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
-#include "clThemeUpdater.h"
 
 #define X_SPACER 10
 #define Y_SPACER 5
@@ -79,7 +79,9 @@ void clEditorBar::SetMessage(const wxString& className, const wxString& function
 void clEditorBar::DoShow(bool s)
 {
     m_shouldShow = s;
-    if(Show(s)) { GetParent()->GetSizer()->Layout(); }
+    if(Show(s)) {
+        GetParent()->GetSizer()->Layout();
+    }
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
@@ -97,19 +99,25 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_bookmarks.clear();
-    
-    if(!m_shouldShow) { return; }
-    
+
+    if(!m_shouldShow) {
+        return;
+    }
+
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
-        if(!IsShown()) { Show(); }
+        if(!IsShown()) {
+            Show();
+        }
         // Update bookmarks button
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         editor->GetFindMarkers(m_bookmarks);
 
         if(!m_bookmarks.empty()) {
             CreateBookmarksBitmap();
-            if(!m_buttonBookmarks->IsShown()) { m_buttonBookmarks->Show(); }
+            if(!m_buttonBookmarks->IsShown()) {
+                m_buttonBookmarks->Show();
+            }
             m_buttonBookmarks->SetText(_("Bookmarks"));
             m_buttonBookmarks->SetBitmap(m_bookmarksBmp);
         } else {
@@ -117,17 +125,32 @@ void clEditorBar::DoRefreshColoursAndFonts()
         }
 
         // Update file path button
-        if(!m_buttonFilePath->IsShown()) { m_buttonFilePath->Show(); }
-        m_buttonFilePath->SetText(editor->GetFileName().GetFullPath());
+        if(!m_buttonFilePath->IsShown()) {
+            m_buttonFilePath->Show();
+        }
+
+        wxString filepath;
+        const wxFileName& fn = editor->GetFileName();
+        if(fn.GetDirCount()) {
+            filepath << fn.GetDirs().Last() << wxFileName::GetPathSeparator();
+        }
+        filepath << fn.GetFullName();
+        m_buttonFilePath->SetText(filepath);
         m_filename = editor->GetFileName().GetFullPath();
 
         wxString scope;
-        if(!m_classname.IsEmpty()) { scope << m_classname << "::"; }
-        if(!m_function.IsEmpty()) { scope << m_function; }
+        if(!m_classname.IsEmpty()) {
+            scope << m_classname << "::";
+        }
+        if(!m_function.IsEmpty()) {
+            scope << m_function;
+        }
         if(scope.IsEmpty()) {
             m_buttonScope->Hide();
         } else {
-            if(!m_buttonScope->IsShown()) { m_buttonScope->Show(); }
+            if(!m_buttonScope->IsShown()) {
+                m_buttonScope->Show();
+            }
             m_buttonScope->SetText(scope);
         }
     } else {
@@ -149,7 +172,9 @@ void clEditorBar::DoRefresh() { Refresh(); }
 void clEditorBar::OnMarkerChanged(clCommandEvent& event)
 {
     event.Skip();
-    if(!IsShown()) { return; }
+    if(!IsShown()) {
+        return;
+    }
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
@@ -200,10 +225,12 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
 
     // Capture all menu items in a single callback that simply keeps the selected menu item id
     int selection = wxID_NONE;
-    menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+    menu.Bind(
+        wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
     m_buttonFilePath->ShowMenu(menu);
 
-    if(selection == wxID_NONE) return;
+    if(selection == wxID_NONE)
+        return;
 
     text.Clear();
     if(selection == idCopyFullPath->GetId()) {
@@ -229,7 +256,7 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
-    std::vector<std::pair<int, wxString> > V;
+    std::vector<std::pair<int, wxString>> V;
     if(editor && editor->GetFindMarkers(V)) {
         // Show bookmarks menu
         wxMenu menu;
@@ -242,10 +269,12 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
 
         // We got something to display
         int selection = wxID_NONE;
-        menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+        menu.Bind(
+            wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
         m_buttonBookmarks->ShowMenu(menu);
 
-        if(selection == wxID_NONE) return;
+        if(selection == wxID_NONE)
+            return;
         if(M.count(selection)) {
             int lineNumber = M[selection] - 1;
             editor->CenterLine(lineNumber);
@@ -277,10 +306,12 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
 
         // Popup the menu
         int selection = wxID_NONE;
-        menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+        menu.Bind(
+            wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
         m_buttonScope->ShowMenu(menu);
 
-        if(selection == wxID_NONE) return;
+        if(selection == wxID_NONE)
+            return;
         if(M.count(selection)) {
             // Fire selection made event
             clCommandEvent selectionEvent(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE);

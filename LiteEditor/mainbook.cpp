@@ -316,7 +316,7 @@ void MainBook::UpdateNavBar(clEditor* editor)
 {
     TagEntryPtr tag = NULL;
     if(m_navBar && m_navBar->IsShown()) {
-        if(editor && !editor->GetProject().IsEmpty()) {
+        if(editor) {
             TagEntryPtrVector_t tags;
             if(TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
                                                           clCxxFileCacheSymbols::kFunctions)) {

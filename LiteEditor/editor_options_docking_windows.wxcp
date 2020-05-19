@@ -963,14 +963,7 @@
 																	"m_label":	"Selection:",
 																	"m_value":	"2"
 																}],
-															"m_events":	[{
-																	"m_eventName":	"wxEVT_UPDATE_UI",
-																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
-																	"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event",
-																	"m_noBody":	false
-																}],
+															"m_events":	[],
 															"m_children":	[]
 														}, {
 															"m_type":	4405,
@@ -1120,14 +1113,7 @@
 																	"m_label":	"Selection:",
 																	"m_value":	"0"
 																}],
-															"m_events":	[{
-																	"m_eventName":	"wxEVT_UPDATE_UI",
-																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
-																	"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
-																	"m_description":	"Process a wxEVT_UPDATE_UI event",
-																	"m_noBody":	false
-																}],
+															"m_events":	[],
 															"m_children":	[]
 														}]
 												}, {

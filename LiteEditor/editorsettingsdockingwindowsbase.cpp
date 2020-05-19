@@ -423,10 +423,6 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
     m_colourPickerMarker->Connect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
-    m_choiceWorkspaceTabsOrientation->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
-    m_choiceOutputTabsOrientation->Connect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
     m_checkBoxShowXButton->Connect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
     m_checkBoxMouseScrollSwitchTabs->Connect(
@@ -488,10 +484,6 @@ EditorSettingsDockingWindowsBase::~EditorSettingsDockingWindowsBase()
     m_choiceTabHeight->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
     m_colourPickerMarker->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
-    m_choiceWorkspaceTabsOrientation->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
-    m_choiceOutputTabsOrientation->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);
     m_checkBoxShowXButton->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorSettingsDockingWindowsBase::OnUsingNativeBookUI), NULL, this);

@@ -86,6 +86,9 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
         // restart all language servers
         dlg.Save();
         if(m_servers) {
+            // Lets assume that we fixed something in the settings
+            // and clear all the restart counters
+            m_servers->ClearRestartCounters();
             m_servers->Reload();
         }
     }

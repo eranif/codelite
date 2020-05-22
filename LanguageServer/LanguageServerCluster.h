@@ -1,19 +1,25 @@
 #ifndef LANGUAGESERVERCLUSTER_H
 #define LANGUAGESERVERCLUSTER_H
 
-#include <wx/event.h>
-#include "LanguageServerProtocol.h"
-#include <wxStringHash.h>
-#include "cl_command_event.h"
-#include <wx/sharedptr.h>
 #include "LSP/LSPEvent.h"
-#include "LanguageServerEntry.h"
 #include "LSP/basic_types.h"
+#include "LanguageServerEntry.h"
+#include "LanguageServerProtocol.h"
+#include "cl_command_event.h"
 #include "entry.h"
+#include <wx/event.h>
+#include <wx/sharedptr.h>
+#include <wxStringHash.h>
 
 class LanguageServerCluster : public wxEvtHandler
 {
+    struct CrashInfo {
+        size_t times = 0;
+        time_t last_crash = 0;
+    };
+
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
+    std::unordered_map<wxString, CrashInfo> m_restartCounters;
 
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
@@ -25,7 +31,7 @@ protected:
     void StopAll();
     void StartAll();
     void ClearAllDiagnostics();
-    
+
     /**
      * @brief covnert LSP::SignatureHelp class to TagEntryPtrVector_t
      */
@@ -52,6 +58,7 @@ public:
     void Reload();
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
+    void ClearRestartCounters();
 };
 
 #endif // LANGUAGESERVERCLUSTER_H

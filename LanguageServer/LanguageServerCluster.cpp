@@ -163,7 +163,35 @@ void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
     server->OpenEditor(editor);
 }
 
-void LanguageServerCluster::OnRestartNeeded(LSPEvent& event) { RestartServer(event.GetServerName()); }
+void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
+{
+    // Don't keep restarting a crashing LSP
+    // We consider a "crashing LSP" as:
+    // 1. Crashed more than 10 times
+    // 2. The interval between crashes is less than 1 minute
+
+    clDEBUG() << "LSP:" << event.GetServerName() << "needs to be restarted" << clEndl;
+    auto iter = m_restartCounters.find(event.GetServerName());
+    if(iter == m_restartCounters.end()) {
+        iter = m_restartCounters.insert({ event.GetServerName(), {} }).first;
+    }
+
+    time_t curtime = time(nullptr);
+    CrashInfo& crash_info = iter->second;
+    if((curtime - crash_info.last_crash) >= 60) {
+        // if the last crash occured over 1 min ago, reset the crash counters
+        crash_info.times = 0;
+    }
+
+    crash_info.times++;              // increase the restart counter
+    crash_info.last_crash = curtime; // remember when the crash occured
+    if(crash_info.times > 10) {
+        clWARNING() << "Too many restart failures for LSP:" << event.GetServerName() << ". Will not restart it again"
+                    << clEndl;
+        return;
+    }
+    RestartServer(event.GetServerName());
+}
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxString& name)
 {
@@ -185,7 +213,7 @@ void LanguageServerCluster::RestartServer(const wxString& name)
         if(!server) {
             return;
         }
-        clDEBUG() << "Restarting LSP server:" << name;
+        clDEBUG() << "Restarting LSP server:" << name << clEndl;
         server->Stop();
 
         // Remove the old instance
@@ -252,8 +280,8 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             flags |= LSPStartupInfo::kAutoStart;
         }
 
-        lsp->Start(lspCommand, entry.GetEnv(), entry.GetInitOptions(), entry.GetConnectionString(), entry.GetWorkingDirectory(),
-                   rootDir, entry.GetLanguages(), flags);
+        lsp->Start(lspCommand, entry.GetEnv(), entry.GetInitOptions(), entry.GetConnectionString(),
+                   entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(), flags);
         m_servers.insert({ entry.GetName(), lsp });
     }
 }
@@ -363,3 +391,5 @@ void LanguageServerCluster::ClearAllDiagnostics()
         editor->DelAllCompilerMarkers();
     }
 }
+
+void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }

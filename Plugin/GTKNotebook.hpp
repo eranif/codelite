@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
+#include <gtk/gtk.h>
 
 class Notebook : public wxNotebook
 {
@@ -41,7 +42,7 @@ public:
     void GTKLeftDClick();
     void GTKMiddleDown();
     void GTKRightDown();
-    void GTKActionButtonClicked();
+    void GTKActionButtonClicked(GtkToolItem* button);
 
 public:
     Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,

@@ -36,7 +36,7 @@ public:
 static void on_action_button_clicked(GtkWidget* widget, Notebook* book)
 {
     wxUnusedVar(widget);
-    book->GTKActionButtonClicked();
+    book->GTKActionButtonClicked(GTK_TOOL_ITEM(widget));
 }
 
 static void on_button_clicked(GtkWidget* widget, gpointer* data)
@@ -626,8 +626,8 @@ size_t Notebook::GetAllTabs(clTabInfo::Vec_t& tabs)
     }
     return tabs.size();
 }
-
-void Notebook::GTKActionButtonClicked()
+#include <wx/nativewin.h>
+void Notebook::GTKActionButtonClicked(GtkToolItem* button)
 {
     clTabInfo::Vec_t tabs;
     GetAllTabs(tabs);
@@ -678,10 +678,33 @@ void Notebook::GTKActionButtonClicked()
     GetEventHandler()->ProcessEvent(menuEvent);
 
     wxPoint pt(wxNOT_FOUND, wxNOT_FOUND);
+    int width, height;
+    GtkRequisition req;
+    gtk_widget_get_preferred_size(GTK_WIDGET(button), NULL, &req);
+    width = req.width;
+    height = req.height;
+
     wxWindow* curpage = GetCurrentPage();
     if(curpage) {
-        pt = curpage->GetRect().GetTopRight();
-        pt.x -= 40; // approx the button size
+        GtkPositionType pos = gtk_notebook_get_tab_pos(GTK_NOTEBOOK(GetHandle()));
+        switch(pos) {
+        case GTK_POS_BOTTOM:
+            pt = curpage->GetRect().GetBottomRight();
+            pt.y += height;
+            pt.x -= width;
+            break;
+        case GTK_POS_LEFT:
+            pt = curpage->GetRect().GetBottomLeft();
+            pt.x -= width;
+            break;
+        case GTK_POS_RIGHT:
+            pt = curpage->GetRect().GetBottomRight();
+            break;
+        case GTK_POS_TOP:
+            pt = curpage->GetRect().GetTopRight();
+            pt.x -= width;
+            break;
+        }
     }
 
     if(pt.x != wxNOT_FOUND) {

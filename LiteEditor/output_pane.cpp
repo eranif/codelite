@@ -87,12 +87,10 @@ void OutputPane::CreateGUIControls()
         style |= kNotebook_RightTabs;
 #endif
     }
-    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        style &= ~kNotebook_LightTabs;
-        style |= kNotebook_DarkTabs;
-    }
     style |= kNotebook_UnderlineActiveTab;
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
+    }
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &OutputPane::OnOutputBookFileListMenu, this);
 
@@ -166,9 +164,12 @@ void OutputPane::OnEditorFocus(wxCommandEvent& e)
 
         // Optionally don't hide the various panes (sometimes it's irritating, you click to do something and...)
         int cursel(m_book->GetSelection());
-        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) { return; }
+        if(cursel != wxNOT_FOUND && EditorConfigST::Get()->GetPaneStickiness(m_book->GetPageText(cursel))) {
+            return;
+        }
 
-        if(m_buildInProgress) return;
+        if(m_buildInProgress)
+            return;
 
         wxAuiPaneInfo& info = PluginManager::Get()->GetDockingManager()->GetPane(wxT("Output View"));
         DockablePaneMenuManager::HackHidePane(true, info, PluginManager::Get()->GetDockingManager());
@@ -211,12 +212,15 @@ void OutputPane::ApplySavedTabOrder() const
 
     wxArrayString tabs;
     int index = -1;
-    if(!clConfig::Get().GetOutputTabOrder(tabs, index)) return;
+    if(!clConfig::Get().GetOutputTabOrder(tabs, index))
+        return;
 
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if(title.empty()) { continue; }
+        if(title.empty()) {
+            continue;
+        }
         for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
             if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
@@ -256,13 +260,6 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
-#if !USE_AUI_NOTEBOOK
-    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
-    } else {
-        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
-    }
-#endif
 }
 
 void OutputPane::OnToggleTab(clCommandEvent& event)
@@ -285,7 +282,9 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
     } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            GetNotebook()->RemovePage(where);
+        }
     }
 }
 
@@ -305,27 +304,30 @@ void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
             // Tab is visible, dont show it
             continue;
         }
-        
+
         if(hiddenTabsMenu->GetMenuItemCount() == 0) {
             // we are adding the first menu item
             menu->AppendSeparator();
         }
-        
+
         int tabId = wxXmlResource::GetXRCID(wxString() << "output_tab_" << label);
         wxMenuItem* item = new wxMenuItem(hiddenTabsMenu, tabId, label);
         hiddenTabsMenu->Append(item);
 
         // Output pane does not support "detach"
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { item->Enable(false); }
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+            item->Enable(false);
+        }
 
-        hiddenTabsMenu->Bind(wxEVT_MENU,
-                             // Use lambda by value here so we make a copy
-                             [=](wxCommandEvent& e) {
-                                 clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
-                                 eventShow.SetSelected(true).SetString(label);
-                                 EventNotifier::Get()->AddPendingEvent(eventShow);
-                             },
-                             tabId);
+        hiddenTabsMenu->Bind(
+            wxEVT_MENU,
+            // Use lambda by value here so we make a copy
+            [=](wxCommandEvent& e) {
+                clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
+                eventShow.SetSelected(true).SetString(label);
+                EventNotifier::Get()->AddPendingEvent(eventShow);
+            },
+            tabId);
     }
 
     if(hiddenTabsMenu->GetMenuItemCount() == 0) {

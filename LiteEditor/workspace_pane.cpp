@@ -101,12 +101,10 @@ void WorkspacePane::CreateGUIControls()
 #else
     long style = (kNotebook_Default | kNotebook_AllowDnD);
 #endif
-    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        style &= ~kNotebook_LightTabs;
-        style |= kNotebook_DarkTabs;
-    }
     style |= kNotebook_UnderlineActiveTab;
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) { style |= kNotebook_MouseScrollSwitchTabs; }
+    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+        style |= kNotebook_MouseScrollSwitchTabs;
+    }
 #endif
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -203,7 +201,9 @@ void WorkspacePane::CreateGUIControls()
     m_tabs.insert(std::make_pair(name, Tab(name, m_TabgroupsPane)));
     mgr->AddWorkspaceTab(name);
 
-    if(m_book->GetPageCount() > 0) { m_book->SetSelection((size_t)0); }
+    if(m_book->GetPageCount() > 0) {
+        m_book->SetSelection((size_t)0);
+    }
     m_mgr->Update();
 }
 
@@ -242,7 +242,8 @@ void WorkspacePane::ApplySavedTabOrder() const
 
     wxArrayString tabs;
     int index = -1;
-    if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index)) return;
+    if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index))
+        return;
 
     // There are (currently) 4 'standard' panes and a variable number of plugin ones
     // NB Since we're only dealing with panes currently in the notebook, this shouldn't
@@ -250,7 +251,9 @@ void WorkspacePane::ApplySavedTabOrder() const
     std::vector<tagTabInfo> vTempstore;
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
-        if(title.empty()) { continue; }
+        if(title.empty()) {
+            continue;
+        }
         for(size_t n = 0; n < m_book->GetPageCount(); ++n) {
             if(title == m_book->GetPageText(n)) {
                 tagTabInfo Tab;
@@ -308,7 +311,9 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
                 // we've got a match
                 m_book->RemovePage(i);
                 wxWindow* win = DoGetControlByName(title);
-                if(win) { win->Show(false); }
+                if(win) {
+                    win->Show(false);
+                }
                 break;
             }
         }
@@ -331,7 +336,8 @@ void WorkspacePane::DoShowTab(bool show, const wxString& title)
         wxArrayString detachedPanes;
         detachedPanes = dpi.GetPanes();
 
-        if(IS_DETACHED(title)) return;
+        if(IS_DETACHED(title))
+            return;
 
         wxWindow* win = DoGetControlByName(title);
         if(win) {
@@ -382,11 +388,14 @@ bool WorkspacePane::IsTabVisible(int flag)
         break;
     }
 
-    if(!win || title.IsEmpty()) return false;
+    if(!win || title.IsEmpty())
+        return false;
 
     // if the control exists in the notebook, return true
     for(size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        if(m_book->GetPageText(i) == title) { return true; }
+        if(m_book->GetPageText(i) == title) {
+            return true;
+        }
     }
     return win && win->IsShown();
 }
@@ -414,11 +423,6 @@ void WorkspacePane::OnSettingsChanged(wxCommandEvent& event)
 #if !USE_AUI_NOTEBOOK
     m_book->SetArt(GetNotebookRenderer());
 #endif
-    if(EditorConfigST::Get()->GetOptions()->IsTabColourDark()) {
-        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_LightTabs) | kNotebook_DarkTabs);
-    } else {
-        m_book->SetStyle((m_book->GetStyle() & ~kNotebook_DarkTabs) | kNotebook_LightTabs);
-    }
 }
 
 void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
@@ -441,7 +445,9 @@ void WorkspacePane::OnToggleWorkspaceTab(clCommandEvent& event)
     } else {
         // hide the tab
         int where = GetNotebook()->GetPageIndex(t.m_label);
-        if(where != wxNOT_FOUND) { GetNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            GetNotebook()->RemovePage(where);
+        }
     }
 }
 
@@ -474,7 +480,9 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
         hiddenTabsMenu->Append(tabId, label);
 
         // If the tab is detached, disable it's menu entry
-        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) { hiddenTabsMenu->Enable(tabId, false); }
+        if(dpi.GetPanes().Index(label) != wxNOT_FOUND) {
+            hiddenTabsMenu->Enable(tabId, false);
+        }
 
         // Bind the event
         hiddenTabsMenu->Bind(

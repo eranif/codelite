@@ -17,7 +17,7 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 
@@ -36,7 +36,13 @@ public:
 static void on_action_button_clicked(GtkWidget* widget, Notebook* book)
 {
     wxUnusedVar(widget);
-    book->GTKActionButtonClicked(GTK_TOOL_ITEM(widget));
+    book->GTKActionButtonMenuClicked(GTK_TOOL_ITEM(widget));
+}
+
+static void on_action_button_new_clicked(GtkWidget* widget, Notebook* book)
+{
+    wxUnusedVar(widget);
+    book->GTKActionButtonNewClicked(GTK_TOOL_ITEM(widget));
 }
 
 static void on_button_clicked(GtkWidget* widget, gpointer* data)
@@ -178,10 +184,7 @@ void Notebook::GTKLeftDClick()
         event.SetSelection(pos);
         GetEventHandler()->AddPendingEvent(event);
     } else if(flags & wxBK_HITTEST_NOWHERE) {
-        // No where
-        wxBookCtrlEvent event(wxEVT_BOOK_TABAREA_DCLICKED);
-        event.SetEventObject(this);
-        GetEventHandler()->AddPendingEvent(event);
+        // we do nothing
     }
 }
 
@@ -418,12 +421,31 @@ void Notebook::Initialise(long style)
     if(!(m_bookStyle & kNotebook_CloseButtonOnActiveTab)) {
         SetPadding(wxSize(5, 5));
     }
-    if(m_bookStyle & kNotebook_ShowFileListButton) {
-        GtkToolItem* button = gtk_tool_button_new(nullptr, "▾");
-        gtk_widget_show_all(GTK_WIDGET(button));
-        g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
-        gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(button), GTK_PACK_END);
+
+    GtkWidget* box = nullptr;
+    if(m_bookStyle & (kNotebook_NewButton | kNotebook_ShowFileListButton)) {
+        box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
     }
+
+    if(m_bookStyle & kNotebook_ShowFileListButton) {
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "⯆");
+        gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), false, false, 0);
+        g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
+    }
+
+    // Add the "+" button if needed
+    if(m_bookStyle & kNotebook_NewButton) {
+        GtkToolItem* button = gtk_tool_button_new_from_stock(GTK_STOCK_ADD);
+        gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), true, true, 2);
+        gtk_widget_show_all(GTK_WIDGET(button));
+        g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_new_clicked), this);
+    }
+
+    if(box) {
+        gtk_notebook_set_action_widget(GTK_NOTEBOOK(GetHandle()), GTK_WIDGET(box), GTK_PACK_END);
+        gtk_widget_show_all(box);
+    }
+
     BindEvents();
 }
 
@@ -626,11 +648,16 @@ size_t Notebook::GetAllTabs(clTabInfo::Vec_t& tabs)
     }
     return tabs.size();
 }
-#include <wx/nativewin.h>
-void Notebook::GTKActionButtonClicked(GtkToolItem* button)
+
+void Notebook::GTKActionButtonMenuClicked(GtkToolItem* button)
 {
     clTabInfo::Vec_t tabs;
     GetAllTabs(tabs);
+
+    // Do we have pages opened?
+    if(GetPageCount() == 0) {
+        return;
+    }
 
     const int curselection = GetSelection();
     wxMenu menu;
@@ -713,4 +740,13 @@ void Notebook::GTKActionButtonClicked(GtkToolItem* button)
         PopupMenu(&menu);
     }
 }
+
+void Notebook::GTKActionButtonNewClicked(GtkToolItem* button)
+{
+    wxUnusedVar(button);
+    wxBookCtrlEvent event(wxEVT_BOOK_NEW_PAGE);
+    event.SetEventObject(this);
+    GetEventHandler()->ProcessEvent(event);
+}
+
 #endif // __WXGTK3__

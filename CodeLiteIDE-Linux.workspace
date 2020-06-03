@@ -8,12 +8,6 @@
    "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
    "debugger": "GNU gdb debugger"
   }, {
-   "name": "Debug - Native Notebook",
-   "targets": [["CMake", "mkdir -p build-debug-native-book && cd build-debug-native-book && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root -DGTK_USE_NATIVEBOOK=1"], ["build", "mkdir -p build-debug-native-book && cd build-debug-native-book && make -j8 install"], ["clean", "cd build-debug-native-book && make clean"]],
-   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",
-   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-   "debugger": "GNU gdb debugger"
-  }, {
    "name": "Release",
    "targets": [["Run CMake - Release", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1"], ["build", "cd  build-release && make -j16"], ["clean", "cd  build-release && make -j16 clean"]],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp",

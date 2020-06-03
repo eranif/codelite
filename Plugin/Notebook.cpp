@@ -45,7 +45,7 @@ wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDEFINE_EVENT(wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
+wxDEFINE_EVENT(wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 wxDEFINE_EVENT(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 
@@ -1341,7 +1341,7 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     TestPoint(event.GetPosition(), realPos, tabHit, align);
     if(tabHit == wxNOT_FOUND) {
         // Fire background d-clicked event
-        wxBookCtrlEvent e(wxEVT_BOOK_TABAREA_DCLICKED);
+        wxBookCtrlEvent e(wxEVT_BOOK_NEW_PAGE);
         e.SetEventObject(GetParent());
         GetParent()->GetEventHandler()->AddPendingEvent(e);
     } else {

@@ -83,7 +83,8 @@ void MainBook::CreateGuiControls()
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
                  kNotebook_MouseMiddleClickFireEvent | // instead of closing the tab, fire an event
                  kNotebook_ShowFileListButton |        // show drop down list of all open tabs
-                 kNotebook_EnableNavigationEvent;      // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
+                 kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
+                 kNotebook_NewButton;
 #else
     long style = kNotebook_AllowDnD |                  // Allow tabs to move
                  kNotebook_MouseMiddleClickClosesTab | // Handle mouse middle button when clicked on a tab
@@ -91,7 +92,8 @@ void MainBook::CreateGuiControls()
                  kNotebook_ShowFileListButton |        // show drop down list of all open tabs
                  kNotebook_EnableNavigationEvent |     // Notify when user hit Ctrl-TAB or Ctrl-PGDN/UP
                  kNotebook_UnderlineActiveTab |        // Mark active tab with dedicated coloured line
-                 kNotebook_DynamicColours;             // The tabs colour adjust to the editor's theme
+                 kNotebook_DynamicColours |            // The tabs colour adjust to the editor's theme
+                 kNotebook_NewButton;
     style |= kNotebook_AllowForeignDnD;
 #endif
 
@@ -115,7 +117,7 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
-    m_book->Bind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
+    m_book->Bind(wxEVT_BOOK_NEW_PAGE, &MainBook::OnMouseDClick, this);
     m_book->Bind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
@@ -150,7 +152,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &MainBook::OnPageChanged, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGING, &MainBook::OnPageChanging, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CLOSE_BUTTON, &MainBook::OnClosePage, this);
-    m_book->Unbind(wxEVT_BOOK_TABAREA_DCLICKED, &MainBook::OnMouseDClick, this);
+    m_book->Unbind(wxEVT_BOOK_NEW_PAGE, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
@@ -1212,20 +1214,6 @@ void MainBook::DoUpdateNotebookTheme()
 #if !CL_USE_NATIVEBOOK
     size_t initialStyle = m_book->GetStyle();
     size_t style = m_book->GetStyle();
-
-    // Update colours
-    IEditor* editor = GetActiveEditor();
-    if(editor) {
-        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-        if(DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_DarkTabs)) {
-            style &= ~kNotebook_LightTabs;
-            style |= kNotebook_DarkTabs;
-        } else if(!DrawingUtils::IsDark(bgColour) && !(m_book->GetStyle() & kNotebook_LightTabs)) {
-            style &= ~kNotebook_DarkTabs;
-            style |= kNotebook_LightTabs;
-        }
-    }
-
     // Close button
     if(!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style &= ~(kNotebook_CloseButtonOnActiveTab | kNotebook_CloseButtonOnActiveTabFireEvent);

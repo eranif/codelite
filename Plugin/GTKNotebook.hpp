@@ -42,7 +42,8 @@ public:
     void GTKLeftDClick();
     void GTKMiddleDown();
     void GTKRightDown();
-    void GTKActionButtonClicked(GtkToolItem* button);
+    void GTKActionButtonMenuClicked(GtkToolItem* button);
+    void GTKActionButtonNewClicked(GtkToolItem* button);
 
 public:
     Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
@@ -93,7 +94,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TABAREA_DCLICKED, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
 #endif // defined(__WXGTK__) && !defined(__WXGTK20__)
 #endif // GTKNOTEBOOK_HPP

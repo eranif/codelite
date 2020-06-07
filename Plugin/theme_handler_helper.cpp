@@ -25,6 +25,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "Notebook.h"
+#include "clSystemSettings.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
@@ -43,7 +44,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>
-#include "clSystemSettings.h"
 #if USE_AUI_NOTEBOOK
 #include "clAuiMainNotebookTabArt.h"
 #include <wx/aui/tabart.h>
@@ -154,7 +154,9 @@ public:
                  wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
     {
         if(pane.active) {
-            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) {
+                dc.SetTextForeground(*wxWHITE);
+            }
         } else {
             // set the default text colour
             dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
@@ -181,7 +183,9 @@ public:
                  wxRect* outTabRect, wxRect* outButtonRect, int* xExtent)
     {
         if(pane.active) {
-            if(DrawingUtils::IsDark(m_activeTabBgColour)) { dc.SetTextForeground(*wxWHITE); }
+            if(DrawingUtils::IsDark(m_activeTabBgColour)) {
+                dc.SetTextForeground(*wxWHITE);
+            }
         } else {
             // set the default text colour
             dc.SetTextForeground(DrawingUtils::GetPanelTextColour());
@@ -198,25 +202,25 @@ public:
 #endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
-    if(!win) { return; }
-    if(dynamic_cast<Notebook*>(win)) {
-        Notebook* book = dynamic_cast<Notebook*>(win);
-        book->SetArt(clTabRenderer::CreateRenderer(book, book->GetStyle()));
-        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-        wxColour activeTabBgColuor;
-        if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
-
-        // Enable tab switching using the mouse scrollbar
-        book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
-                          EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
-    }
-    
-    wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-    while(pclNode) {
-        wxWindow* pclChild = pclNode->GetData();
-        this->DoUpdateNotebookStyle(pclChild);
-        pclNode = pclNode->GetNext();
-    }
+    // if(!win) { return; }
+    // if(dynamic_cast<Notebook*>(win)) {
+    //     Notebook* book = dynamic_cast<Notebook*>(win);
+    //     book->SetArt(clTabRenderer::CreateRenderer(book, book->GetStyle()));
+    //     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    //     wxColour activeTabBgColuor;
+    //     if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
+    //
+    //     // Enable tab switching using the mouse scrollbar
+    //     book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
+    //                       EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
+    // }
+    //
+    // wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
+    // while(pclNode) {
+    //     wxWindow* pclChild = pclNode->GetData();
+    //     this->DoUpdateNotebookStyle(pclChild);
+    //     pclNode = pclNode->GetNext();
+    // }
 }
 
 void ThemeHandlerHelper::OnPreferencesUpdated(wxCommandEvent& e)

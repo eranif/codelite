@@ -18,8 +18,10 @@
 
 #ifdef __WXMSW__
 #define PEN_STYLE wxPENSTYLE_SHORT_DASH
+#define IS_MSW 1
 #else
 #define PEN_STYLE wxPENSTYLE_DOT
+#define IS_MSW 0
 #endif
 
 #ifdef __WXMSW__
@@ -31,6 +33,7 @@ int clRowEntry::Y_SPACER = 2;
 #else
 int clRowEntry::X_SPACER = 5;
 int clRowEntry::Y_SPACER = 2;
+##else
 #endif
 
 #ifdef __WXOSX__
@@ -420,7 +423,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if(m_tree->IsNativeTheme() && !IS_OSX) {
+                if(m_tree->IsNativeTheme() && (!IS_OSX && !IS_MSW)) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) {
                         flags |= wxCONTROL_EXPANDED;

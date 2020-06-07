@@ -35,16 +35,28 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     , m_flags(flags)
 {
     // Use the active editor's font (if any)
-    //    IEditor* editor = clGetManager()->GetActiveEditor();
+    wxColour bgColour;
+    wxColour textColour;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-    m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if(editor) {
+        bgColour = editor->GetCtrl()->StyleGetBackground(0);
+        textColour = editor->GetCtrl()->StyleGetForeground(0);
+    } else {
+        bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    }
+
+    clColours colours;
+    colours.InitFromColour(bgColour.ChangeLightness(110));
+
+    SetBackgroundColour(colours.GetBorderColour());
+    m_mainPanel->SetBackgroundColour(colours.GetBorderColour());
 
     m_ccFont = lexer->GetFontForSyle(0, this);
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
+    m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
-
     m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
 
     // Calculate a suitable completion dialog width

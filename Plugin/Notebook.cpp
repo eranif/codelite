@@ -117,11 +117,6 @@ Notebook::Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
         once = true;
     }
     style = (style & ~wxWINDOW_STYLE_MASK); // filter out wxWindow styles
-
-#if CL_BUILD
-    style |= kNotebook_DynamicColours;
-#endif
-
     Bind(wxEVT_SIZE, &Notebook::OnSize, this);
     Bind(wxEVT_SIZING, &Notebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);
@@ -261,12 +256,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
+    m_colours.InitLightColours();
 
-    if(m_style & kNotebook_DarkTabs) {
-        m_colours.InitDarkColours();
-    } else {
-        m_colours.InitLightColours();
-    }
     SetStyle(m_style);
     // The history object
     m_history.reset(new clTabHistory());
@@ -899,12 +890,7 @@ void clTabCtrl::SetStyle(size_t style)
         SetSizeHints(wxSize(-1, m_nHeight));
         SetSize(-1, m_nHeight);
     }
-
-    if(style & kNotebook_DarkTabs) {
-        m_colours.InitDarkColours();
-    } else {
-        m_colours.InitLightColours();
-    }
+    m_colours.InitLightColours();
 
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
@@ -1147,16 +1133,15 @@ void clTabCtrl::DoShowTabList()
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
-        menu.Bind(
-            wxEVT_MENU,
-            [=](wxCommandEvent& event) {
-                Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
-                int newSelection = book->GetPageIndex(pWindow);
-                if(newSelection != curselection) {
-                    book->SetSelection(newSelection);
-                }
-            },
-            pageMenuID);
+        menu.Bind(wxEVT_MENU,
+                  [=](wxCommandEvent& event) {
+                      Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
+                      int newSelection = book->GetPageIndex(pWindow);
+                      if(newSelection != curselection) {
+                          book->SetSelection(newSelection);
+                      }
+                  },
+                  pageMenuID);
         pageMenuID++;
     }
 
@@ -1384,11 +1369,8 @@ void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
 {
     m_art = art;
-    if((m_style & kNotebook_DarkTabs)) {
-        m_colours.InitDarkColours();
-    } else {
-        m_colours.InitLightColours();
-    }
+    m_colours.InitLightColours();
+
     DoSetBestSize();
     Refresh();
 }

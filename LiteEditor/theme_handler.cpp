@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clSystemSettings.h"
 #include "cl_aui_tb_are.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -32,19 +33,19 @@
 #include "theme_handler.h"
 #include "workspace_pane.h"
 #include <algorithm>
+#include <queue>
 #include <wx/aui/framemanager.h>
 #include <wx/image.h>
 #include <wx/listbox.h>
 #include <wx/listctrl.h>
-#include "clSystemSettings.h"
-#include <queue>
 
 #ifdef __WXMAC__
 #include <wx/srchctrl.h>
 #endif
 
 #define CHECK_POINTER(p) \
-    if(!p) return;
+    if(!p)               \
+        return;
 
 ThemeHandler::ThemeHandler()
 {
@@ -79,35 +80,5 @@ void ThemeHandler::OnColoursChanged(clCommandEvent& e)
     CallAfter(&ThemeHandler::UpdateColours);
 }
 
-#define IS_TYPEOF(Type, Win) (dynamic_cast<Type*>(Win))
-
-void ThemeHandler::UpdateColours()
-{
-    // Collect all toolbars
-    //std::queue<wxWindow*> q;
-    //q.push(clMainFrame::Get());
-
-    //wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    //wxColour fgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-
-    MSWSetWindowDarkTheme(clMainFrame::Get());
-
-    //while(!q.empty()) {
-    //    wxWindow* w = q.front();
-    //    q.pop();
-    //    if(IS_TYPEOF(wxStaticText, w)) {
-    //        wxStaticText* st = IS_TYPEOF(wxStaticText, w);
-    //        st->SetBackgroundStyle(wxBG_STYLE_PAINT);
-    //        st->SetBackgroundColour(bgColour);
-    //        st->SetForegroundColour(fgColour);
-    //        st->Refresh();
-    //    }
-    //    wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
-    //    while(iter) {
-    //        q.push(iter->GetData());
-    //        iter = iter->GetNext();
-    //    }
-    //}
-}
-
+void ThemeHandler::UpdateColours() { MSWSetWindowDarkTheme(clMainFrame::Get()); }
 void ThemeHandler::UpdateNotebookColours(wxWindow* parent) { m_helper->UpdateNotebookColours(parent); }

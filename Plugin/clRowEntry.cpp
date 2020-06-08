@@ -33,7 +33,6 @@ int clRowEntry::Y_SPACER = 2;
 #else
 int clRowEntry::X_SPACER = 5;
 int clRowEntry::Y_SPACER = 2;
-##else
 #endif
 
 #ifdef __WXOSX__

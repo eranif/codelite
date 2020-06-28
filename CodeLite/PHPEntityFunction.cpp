@@ -98,6 +98,7 @@ bool PHPEntityFunction::Is(eEntityType type) const { return type == kEntityTypeF
 wxString PHPEntityFunction::GetDisplayName() const { return wxString() << GetShortName() << GetSignature(); }
 wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
 {
+    bool hasParams = false;
     wxString doc;
     doc << data.GetCommentBlockPrefix() << "\n"
         << " * @brief \n";
@@ -105,11 +106,15 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
     for(; iter != m_children.end(); ++iter) {
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
         if(var) {
+            hasParams = true;
             doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " "
                 << var->GetFullName() << " \n";
         }
     }
     if(!GetShortName().Matches("__construct")) {
+        if(hasParams) {
+            doc << " *\n";
+        }
         doc << " * @return " << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
     }
     doc << " */";

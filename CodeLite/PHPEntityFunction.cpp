@@ -107,15 +107,26 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
         const PHPEntityVariable* var = (*iter)->Cast<PHPEntityVariable>();
         if(var) {
             hasParams = true;
-            doc << " * @param " << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " "
-                << var->GetFullName() << " \n";
+            doc << " * @param ";
+            if (var->IsNullable() || var->GetDefaultValue().Matches("null")) {
+                doc << "?";
+            }
+            doc << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " " << var->GetFullName();
+            if (!var->GetDefaultValue().IsEmpty()) {
+                doc << " [" << var->GetDefaultValue() << "]";
+            }
+            doc << " \n";
         }
     }
     if(!GetShortName().Matches("__construct")) {
         if(hasParams) {
             doc << " *\n";
         }
-        doc << " * @return " << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
+        doc << " * @return ";
+        if (HasFlag(kFunc_ReturnNullable)) {
+            doc << "?";
+        }
+        doc << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
     }
     doc << " */";
     return doc;

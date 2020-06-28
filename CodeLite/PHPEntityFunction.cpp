@@ -110,7 +110,7 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
         }
     }
     if(!GetShortName().Matches("__construct")) {
-        doc << " * @return " << GetReturnValue() << " \n";
+        doc << " * @return " << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
     }
     doc << " */";
     return doc;

@@ -109,7 +109,9 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
                 << var->GetFullName() << " \n";
         }
     }
-    doc << " * @return " << GetReturnValue() << " \n";
+    if(!GetShortName().Matches("__construct")) {
+        doc << " * @return " << GetReturnValue() << " \n";
+    }
     doc << " */";
     return doc;
 }

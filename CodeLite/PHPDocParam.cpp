@@ -26,13 +26,20 @@ const PHPDocParam::Vec_t& PHPDocParam::Parse()
                 break;
             }
             stype = tokenizer.GetNextToken();
-            stype = m_sourceFile.MakeIdentifierAbsolute(stype);
 
             // Next comes the name
             if(!tokenizer.HasMoreTokens()) {
                 break;
             }
             sname = tokenizer.GetNextToken();
+
+            // Handle common developer mistake
+            if (stype.StartsWith('$')) {
+                sname.swap(stype);
+            }
+
+            stype = m_sourceFile.MakeIdentifierAbsolute(stype);
+
             m_params.push_back(std::make_pair(sname, stype));
         }
     }

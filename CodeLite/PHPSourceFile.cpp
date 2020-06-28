@@ -359,6 +359,15 @@ void PHPSourceFile::OnFunction()
         if(token.type == ':') {
             // PHP 7 signature type
             // function foobar(...) : RETURN_TYPE
+
+            if(!NextToken(token)) return;
+            if(token.type == '?') {
+                // PHP 7.1 nullable return
+                funcPtr->SetFlag(kFunc_ReturnNullable);
+            } else {
+                UngetToken(token);
+            }
+
             wxString returnValuetype = ReadFunctionReturnValueFromSignature();
             if(returnValuetype.IsEmpty()) return; // parse error
             func->SetReturnValue(returnValuetype);
@@ -501,6 +510,12 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
             typeHint.Clear();
             defaultValue.Clear();
             collectingDefaultValue = false;
+            break;
+        case '?':
+            if(!var) {
+                var = new PHPEntityVariable();
+            }
+            var->SetIsNullable(true);
             break;
         case kPHP_T_NS_SEPARATOR:
         case kPHP_T_IDENTIFIER:

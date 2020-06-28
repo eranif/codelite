@@ -78,6 +78,7 @@ public:
     
     // Aliases
     void SetIsReference(bool isReference) { SetFlag(kVar_Reference, isReference); }
+    void SetIsNullable(bool isNullable) { SetFlag(kVar_Nullable, isNullable); }
     bool IsMember() const { return HasFlag(kVar_Member); }
     bool IsPublic() const { return HasFlag(kVar_Public); }
     bool IsPrivate() const { return HasFlag(kVar_Private); }
@@ -85,6 +86,7 @@ public:
     bool IsFunctionArg() const { return HasFlag(kVar_FunctionArg); }
     bool IsConst() const { return HasFlag(kVar_Const); }
     bool IsReference() const { return HasFlag(kVar_Reference); }
+    bool IsNullable() const { return HasFlag(kVar_Nullable); }
     bool IsStatic() const { return HasFlag(kVar_Static); }
     bool IsDefine() const { return HasFlag(kVar_Define); }
     bool IsBoolean() const { return GetTypeHint() == "boolean" || GetTypeHint() == "bool"; }

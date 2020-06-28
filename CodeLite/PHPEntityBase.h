@@ -63,6 +63,7 @@ enum {
     kVar_FunctionArg = (1 << 7),
     kVar_Static = (1 << 8),
     kVar_Define = (1 << 9),
+    kVar_Nullable = (1 << 10),
 };
 
 // Function flags
@@ -74,6 +75,7 @@ enum {
     kFunc_Static = (1 << 5),
     kFunc_Abstract = (1 << 6),
     kFunc_ReturnReference = (1 << 7),
+    kFunc_ReturnNullable = (1 << 8),
 };
 
 // Class flags

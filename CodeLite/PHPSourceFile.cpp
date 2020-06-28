@@ -1359,16 +1359,28 @@ wxString PHPSourceFile::DoMakeIdentifierAbsolute(const wxString& type, bool exac
 
     static std::unordered_set<std::string> phpKeywords;
     if(phpKeywords.empty()) {
+        // List taken from https://www.php.net/manual/en/language.types.intro.php
+        // Native types
+        phpKeywords.insert("bool");
+        phpKeywords.insert("int");
+        phpKeywords.insert("float");
         phpKeywords.insert("string");
         phpKeywords.insert("array");
+        phpKeywords.insert("object");
+        phpKeywords.insert("iterable");
+        phpKeywords.insert("callable");
+        phpKeywords.insert("null");
         phpKeywords.insert("mixed");
-        phpKeywords.insert("bool");
-        phpKeywords.insert("integer");
-        phpKeywords.insert("boolean");
-        phpKeywords.insert("double");
-        phpKeywords.insert("float");
-        phpKeywords.insert("float");
         phpKeywords.insert("void");
+        // Types that are common in documentation
+        phpKeywords.insert("boolean");
+        phpKeywords.insert("integer");
+        phpKeywords.insert("double");
+        phpKeywords.insert("real");
+        phpKeywords.insert("binery");
+        phpKeywords.insert("resource");
+        phpKeywords.insert("number");
+        phpKeywords.insert("callback");
     }
     wxString typeWithNS(type);
     typeWithNS.Trim().Trim(false);

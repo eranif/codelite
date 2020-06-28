@@ -13,19 +13,28 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
 {
     static std::unordered_set<wxString> nativeTypes;
     if(nativeTypes.empty()) {
+        // List taken from https://www.php.net/manual/en/language.types.intro.php
+        // Native types
+        nativeTypes.insert("bool");
         nativeTypes.insert("int");
-        nativeTypes.insert("integer");
-        nativeTypes.insert("real");
-        nativeTypes.insert("double");
         nativeTypes.insert("float");
         nativeTypes.insert("string");
-        nativeTypes.insert("binary");
         nativeTypes.insert("array");
         nativeTypes.insert("object");
-        nativeTypes.insert("bool");
-        nativeTypes.insert("boolean");
-        nativeTypes.insert("mixed");
+        nativeTypes.insert("iterable");
+        nativeTypes.insert("callable");
         nativeTypes.insert("null");
+        nativeTypes.insert("mixed");
+        nativeTypes.insert("void");
+        // Types that are common in documentation
+        nativeTypes.insert("boolean");
+        nativeTypes.insert("integer");
+        nativeTypes.insert("double");
+        nativeTypes.insert("real");
+        nativeTypes.insert("binery");
+        nativeTypes.insert("resource");
+        nativeTypes.insert("number");
+        nativeTypes.insert("callback");
     }
 
     static wxRegEx reReturnStatement(wxT("@(return)[ \t]+([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));

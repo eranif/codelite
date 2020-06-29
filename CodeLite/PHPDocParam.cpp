@@ -38,6 +38,11 @@ const PHPDocParam::Vec_t& PHPDocParam::Parse()
                 sname.swap(stype);
             }
 
+            // TODO Support nullable parameters
+            if (stype.StartsWith("?")) {
+                stype.Remove(0, 1);
+            }
+
             stype = m_sourceFile.MakeIdentifierAbsolute(stype);
 
             m_params.push_back(std::make_pair(sname, stype));

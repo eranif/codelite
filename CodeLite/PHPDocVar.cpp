@@ -23,43 +23,43 @@ void PHPDocVar::Parse(PHPSourceFile& sourceFile, const wxString& doc)
 {
     wxString sname;
     wxString stype;
-    wxString word;
     m_isOk = false;
     wxStringTokenizer tokenizer(doc, " \n\r", wxTOKEN_STRTOK);
-    while(tokenizer.HasMoreTokens()) {
-        wxString word = tokenizer.GetNextToken();
-        
-        // @var Type $name
-        // @var Type
-        // @var $Name Type
-        if(word == "@var") {
-            // Next word should be the type
-            if(!tokenizer.HasMoreTokens()) { break; }
-            word = tokenizer.GetNextToken();
-            if(word[0] == '$') {
-                // Found the name
-                m_name = word;
-                // Look for the type name
-                if(!tokenizer.HasMoreTokens()) {
-                    m_name.Clear();
-                    break;
-                }
-                 word = tokenizer.GetNextToken();
-                m_type = sourceFile.MakeIdentifierAbsolute(word);
-                m_isOk = true;
-            } else {
-                // Got the type
-                m_type = sourceFile.MakeIdentifierAbsolute(word);
-                m_isOk = true;
-                
-                // Get the name (optionally)
-                if(!tokenizer.HasMoreTokens()) {
-                    break;
-                }
-                m_name = tokenizer.GetNextToken();
-            }
-        }
+
+    // @var Type $name
+    // @var Type
+    // @var $Name Type
+    if(!tokenizer.HasMoreTokens() || tokenizer.GetNextToken() != "@var") {
+        return;
     }
+
+    // Next word should be the type
+    if(!tokenizer.HasMoreTokens()) {
+        return;
+    }
+    stype = tokenizer.GetNextToken();
+
+    // Next comes the name
+    if(tokenizer.HasMoreTokens()) {
+        sname = tokenizer.GetNextToken();
+    }
+
+    // Handle common developer mistake
+    if (stype.StartsWith("$")) {
+        sname.swap(stype);
+    }
+
+    // TODO Support nullable parameters
+    if (stype.StartsWith("?")) {
+        stype.Remove(0, 1);
+    }
+
+    // Got the type
+    m_type = sourceFile.MakeIdentifierAbsolute(stype);
+    m_isOk = true;
+
+    // Found the name
+    m_name = sname;
 }
 
 void PHPDocVar::Store(wxSQLite3Database& db, wxLongLong parentDdId)

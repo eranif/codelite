@@ -65,6 +65,9 @@ wxString PHPEntityVariable::ToFuncArgString() const
 
     wxString str;
     if(!GetTypeHint().IsEmpty()) {
+        if(IsNullable()) {
+            str << "?";
+        }
         str << GetTypeHint() << " ";
     }
 

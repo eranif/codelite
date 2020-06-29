@@ -41,6 +41,13 @@ wxString PHPEntityFunction::GetSignature() const
         }
         if(strSignature.EndsWith(", ")) { strSignature.RemoveLast(2); }
         strSignature << ")";
+        if (!GetReturnValue().IsEmpty()) {
+            strSignature << ": ";
+            if (HasFlag(kFunc_ReturnNullable)) {
+                strSignature << "?";
+            }
+            strSignature << GetReturnValue();
+        }
         return strSignature;
     }
 }

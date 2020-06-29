@@ -37,9 +37,10 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         nativeTypes.insert("callback");
     }
 
-    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
+    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+(\??)([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
     if(reReturnStatement.IsValid() && reReturnStatement.Matches(m_comment)) {
-        wxString returnValue = reReturnStatement.GetMatch(m_comment, 2);
+        wxString returnNullable = reReturnStatement.GetMatch(m_comment, 2);
+        wxString returnValue = reReturnStatement.GetMatch(m_comment, 3);
         wxArrayString types = ::wxStringTokenize(returnValue, "|", wxTOKEN_STRTOK);
         if(types.size() > 1) {
             // Multiple return types, guess the best match
@@ -57,6 +58,10 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
             m_returnValue = sourceFile.MakeIdentifierAbsolute(bestMatch);
         } else if(types.size() == 1) {
             m_returnValue = sourceFile.MakeIdentifierAbsolute(types.Item(0));
+        }
+
+        if (!returnNullable.IsEmpty()) {
+            m_returnNullable = true;
         }
     }
 
@@ -105,6 +110,8 @@ const wxString& PHPDocComment::GetParam(size_t n) const
 }
 
 const wxString& PHPDocComment::GetReturn() const { return m_returnValue; }
+
+const bool PHPDocComment::IsReturnNullable() const { return m_returnNullable; }
 
 const wxString& PHPDocComment::GetVar() const { return m_varType; }
 

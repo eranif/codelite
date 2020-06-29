@@ -51,6 +51,7 @@ protected:
     std::unordered_map<wxString, wxString> m_params;
     wxArrayString m_paramsArr;
     wxString m_returnValue;
+    bool m_returnNullable;
     wxString m_varType;
     wxString m_varName;
     PHPDocComment::Property::Map_t m_properties; // @property, @property-read, @property-write
@@ -69,6 +70,7 @@ public:
 
     const wxString& GetVar() const;
     const wxString& GetReturn() const;
+    const bool IsReturnNullable() const;
     const wxString& GetParam(const wxString& name) const;
     const wxString& GetParam(size_t index) const;
     const PHPDocComment::Property::Map_t& GetProperties() const { return m_properties; }

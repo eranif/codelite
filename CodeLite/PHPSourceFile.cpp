@@ -457,6 +457,7 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
     int depth = 1;
     wxString typeHint;
     wxString defaultValue;
+    wxString name;
     PHPEntityVariable* var(NULL);
     bool collectingDefaultValue = false;
     while(NextToken(token)) {
@@ -468,15 +469,19 @@ void PHPSourceFile::ParseFunctionSignature(int startingDepth)
                 var = new PHPEntityVariable();
             }
 
-            var->SetFullName(token.Text());
+            name = token.Text();
             var->SetLine(token.lineNumber);
             var->SetFilename(m_filename);
             // Mark this variable as function argument
             var->SetFlag(kVar_FunctionArg);
-            if(typeHint.EndsWith("&")) {
+            if (name.StartsWith("&")) {
+                var->SetIsReference(true);
+                name.Remove(0, 1);
+            } else if(typeHint.EndsWith("&")) {
                 var->SetIsReference(true);
                 typeHint.RemoveLast();
             }
+            var->SetFullName(name);
             var->SetTypeHint(MakeIdentifierAbsolute(typeHint));
             break;
         case '(':

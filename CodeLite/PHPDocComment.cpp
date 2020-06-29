@@ -126,7 +126,7 @@ const wxString& PHPDocComment::GetParam(const wxString& name) const
 
 void PHPDocComment::ProcessMethods()
 {
-    // The phpdoc for method does not confirm to the PHP syntax.
+    // The phpdoc for method does not conform to the PHP syntax.
     // We need to alter the signature so we can use our parse to parse
     // the signature
     // @method syntax is:

@@ -594,28 +594,52 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     // Is this a PHP editor?
     CHECK_COND_RET(IsPHPFile(editor));
 
+    int lineNumber = editor->LineFromPos(editor->GetCurrentPosition()) + 1;
+
     // Get the text from the caret current position
     // until the end of file
-    wxString unsavedBuffer = editor->GetTextRange(editor->GetCurrentPosition(), editor->GetLength());
-    unsavedBuffer.Trim().Trim(false);
-    PHPSourceFile source("<?php " + unsavedBuffer, &m_lookupTable);
+    wxString unsavedBuffer = editor->GetTextRange(0, editor->GetLength());
+
+    // Close comment to allow parsing
+    unsavedBuffer.insert(editor->GetCurrentPosition() - 1, "/");
+
+    PHPSourceFile source(unsavedBuffer, &m_lookupTable);
     source.SetParseFunctionBody(false);
     source.Parse();
 
     PHPEntityBase::Ptr_t ns = source.Namespace();
     if(ns) {
+        PHPEntityBase::List_t parents;
+        parents.push_back(ns);
+
+        // Find all classes that may contain our target.
         const PHPEntityBase::List_t& children = ns->GetChildren();
         for(PHPEntityBase::List_t::const_iterator iter = children.begin(); iter != children.end(); ++iter) {
-            PHPEntityBase::Ptr_t match = *iter;
-            if(match->GetLine() == 0 && match->Is(kEntityTypeFunction)) {
-                e.Skip(false); // notify codelite to stop processing this event
+            PHPEntityBase::Ptr_t child = *iter;
+            if(child->GetLine() > lineNumber) {
+                break;
+            }
 
-                CommentConfigData data;
-                EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+            if(child->Is(kEntityTypeClass)) {
+                parents.push_back(child);
+            }
+        }
 
-                wxString phpdoc = match->FormatPhpDoc(data);
-                phpdoc.Trim();
-                e.SetTooltip(phpdoc);
+        for(PHPEntityBase::List_t::const_iterator iter = parents.begin(); iter != parents.end(); ++iter) {
+            PHPEntityBase::Ptr_t parent = *iter;
+            const PHPEntityBase::List_t& children = parent->GetChildren();
+            for(PHPEntityBase::List_t::const_iterator iter2 = children.begin(); iter2 != children.end(); ++iter2) {
+                PHPEntityBase::Ptr_t match = *iter2;
+                if(match->GetLine() == lineNumber && match->Is(kEntityTypeFunction)) {
+                    e.Skip(false); // notify codelite to stop processing this event
+
+                    CommentConfigData data;
+                    EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+
+                    wxString phpdoc = match->FormatPhpDoc(data);
+                    phpdoc.Trim();
+                    e.SetTooltip(phpdoc);
+                }
             }
         }
     }

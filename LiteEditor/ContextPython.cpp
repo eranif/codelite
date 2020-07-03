@@ -81,8 +81,8 @@ void ContextPython::AutoIndent(const wxChar& ch)
         wxString prevline = rCtrl.GetLine(nPrevline);
         prevline.Trim().Trim(false);
         if(prevline == COMMENT_BLOCK) {
-            // Check if the next line is a function definition
-            curline++;
+            // Check if the previous line is a function definition
+            curline--;
             int nextLinePos = rCtrl.PositionFromLine(curline);
             if(nextLinePos != wxNOT_FOUND) {
                 wxString defline = rCtrl.GetLine(curline);
@@ -100,11 +100,18 @@ void ContextPython::AutoIndent(const wxChar& ch)
                         doc << indent << COMMENT_BLOCK;
                     } else {
                         doc << indent << NEWLINE;
-                        doc << indent << "Args:" << NEWLINE;
+                        doc << indent << "Parameters" << NEWLINE;
+                        doc << indent << "----------" << NEWLINE;
                         for(wxString& param : params) {
                             param.Trim().Trim(false);
-                            doc << indent << "    " << param << ":" << NEWLINE;
+                            doc << indent << param << " : " << NEWLINE;
+                            doc << indent << "    "
+                                << "Description of " << param << NEWLINE;
                         }
+                        doc << indent << NEWLINE;
+                        doc << indent << "Returns" << NEWLINE;
+                        doc << indent << "-------" << NEWLINE;
+                        doc << NEWLINE;
                         doc << indent << COMMENT_BLOCK;
                     }
                     rCtrl.InsertText(curpos, doc);

@@ -82,7 +82,7 @@ void ContextPython::AutoIndent(const wxChar& ch)
         prevline.Trim().Trim(false);
         if(prevline == COMMENT_BLOCK) {
             // Check if the previous line is a function definition
-            curline--;
+            curline -= 2;
             int nextLinePos = rCtrl.PositionFromLine(curline);
             if(nextLinePos != wxNOT_FOUND) {
                 wxString defline = rCtrl.GetLine(curline);

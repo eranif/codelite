@@ -37,7 +37,7 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         nativeTypes.insert("callback");
     }
 
-    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+(\??)([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
+    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+(\??"")([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
     if(reReturnStatement.IsValid() && reReturnStatement.Matches(m_comment)) {
         wxString returnNullable = reReturnStatement.GetMatch(m_comment, 2);
         wxString returnValue = reReturnStatement.GetMatch(m_comment, 3);

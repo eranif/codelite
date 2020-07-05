@@ -160,6 +160,7 @@ protected:
     void OnToggleAutoUpload(wxCommandEvent& e);
     void OnStartDebuggerListener(wxCommandEvent& e);
     void OnProjectSyncCompleted(clCommandEvent& event);
+    void OnFolderChanged(clFileSystemEvent& event);
 
     // Php parser events
     void OnPhpParserStarted(clParseEvent& event);

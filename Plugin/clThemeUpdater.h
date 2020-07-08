@@ -1,11 +1,11 @@
 #ifndef CLTHEMEUPDATER_H
 #define CLTHEMEUPDATER_H
 
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+#include <unordered_set>
 #include <vector>
 #include <wx/window.h>
-#include <unordered_set>
 
 class WXDLLIMPEXP_SDK clThemeUpdater : public wxEvtHandler
 {
@@ -13,6 +13,7 @@ class WXDLLIMPEXP_SDK clThemeUpdater : public wxEvtHandler
 
 protected:
     void UpdateGlobalColours();
+    void OnWindowDestroyed(wxWindowDestroyEvent& event);
 
 public:
     clThemeUpdater();

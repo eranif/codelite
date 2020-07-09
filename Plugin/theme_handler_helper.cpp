@@ -188,8 +188,9 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
         return;
     }
     std::vector<wxWindow*> Q;
+    std::unordered_set<wxWindow*> V; // keep track of visited windows
     Q.push_back(win);
-
+    V.insert(win);
     while(!Q.empty()) {
         auto p = Q.back();
         Q.pop_back();
@@ -211,8 +212,10 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
         wxWindowList::compatibility_iterator iter = p->GetChildren().GetFirst();
         while(iter) {
             wxWindow* child = iter->GetData();
-            if(child) {
+            if(child && V.count(child) == 0) {
+                // make sure we won't visit this child again
                 Q.push_back(child);
+                V.insert(child);
             }
             iter = iter->GetNext();
         }

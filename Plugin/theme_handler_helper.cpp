@@ -118,25 +118,6 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
             }
         }
     }
-
-    //    std::for_each(toolbars.begin(), toolbars.end(), [&](wxAuiToolBar* tb) {
-    //        // Update the art if needed
-    //        CLMainAuiTBArt* art = dynamic_cast<CLMainAuiTBArt*>(tb->GetArtProvider());
-    //        if(!art) { tb->SetArtProvider(new CLMainAuiTBArt()); }
-    //
-    //#ifndef __WXOSX__
-    //        for(size_t i = 0; i < tb->GetToolCount(); ++i) {
-    //            wxAuiToolBarItem* tbItem = tb->FindToolByIndex(i);
-    //            if(tbItem->GetBitmap().IsOk() &&
-    //               (tbItem->GetKind() == wxITEM_NORMAL || tbItem->GetKind() == wxITEM_CHECK ||
-    //                tbItem->GetKind() == wxITEM_DROPDOWN || tbItem->GetKind() == wxITEM_RADIO)) {
-    //                tbItem->SetDisabledBitmap(DrawingUtils::CreateDisabledBitmap(tbItem->GetBitmap()));
-    //            }
-    //        }
-    //#endif
-    //        tb->Refresh();
-    //    });
-
     DoUpdateNotebookStyle(m_window);
 }
 
@@ -202,25 +183,41 @@ public:
 #endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
-    // if(!win) { return; }
-    // if(dynamic_cast<Notebook*>(win)) {
-    //     Notebook* book = dynamic_cast<Notebook*>(win);
-    //     book->SetArt(clTabRenderer::CreateRenderer(book, book->GetStyle()));
-    //     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    //     wxColour activeTabBgColuor;
-    //     if(lexer) { activeTabBgColuor = lexer->GetProperty(0).GetBgColour(); }
-    //
-    //     // Enable tab switching using the mouse scrollbar
-    //     book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
-    //                       EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
-    // }
-    //
-    // wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-    // while(pclNode) {
-    //     wxWindow* pclChild = pclNode->GetData();
-    //     this->DoUpdateNotebookStyle(pclChild);
-    //     pclNode = pclNode->GetNext();
-    // }
+#ifndef __WXGTK__
+    if(!win) {
+        return;
+    }
+    std::vector<wxWindow*> Q;
+    Q.push_back(win);
+
+    while(!Q.empty()) {
+        auto p = Q.back();
+        Q.pop_back();
+
+        Notebook* book = dynamic_cast<Notebook*>(p);
+        if(book) {
+            book->SetArt(clTabRenderer::CreateRenderer(book, book->GetStyle()));
+            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+            wxColour activeTabBgColuor;
+            if(lexer) {
+                activeTabBgColuor = lexer->GetProperty(0).GetBgColour();
+            }
+
+            // Enable tab switching using the mouse scrollbar
+            book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
+                              EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
+        }
+
+        wxWindowList::compatibility_iterator iter = p->GetChildren().GetFirst();
+        while(iter) {
+            wxWindow* child = iter->GetData();
+            if(child) {
+                Q.push_back(child);
+            }
+            iter = iter->GetNext();
+        }
+    }
+#endif
 }
 
 void ThemeHandlerHelper::OnPreferencesUpdated(wxCommandEvent& e)

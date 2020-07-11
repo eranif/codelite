@@ -144,35 +144,13 @@ void MSWSetWindowDarkTheme(wxWindow* win)
     }
 }
 
+#else
+void MSWSetWindowDarkTheme(wxWindow* win)
+{
+    wxUnusedVar(win);
+}
 #endif
 
-//
-//#if defined(__WXMSW__) && defined(_WIN64)
-// BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
-//{
-//    if(!IsWindow(hwnd))
-//        return TRUE;
-//    const BOOL is_darktheme = (BOOL)lparam;
-//    SetWindowTheme(hwnd, is_darktheme ? L"DarkMode_Explorer" : L"Explorer", NULL);
-//    InvalidateRect(hwnd, nullptr, TRUE);
-//    return TRUE;
-//}
-//#endif
-//
-// void MSWSetWindowDarkTheme(wxWindow* win)
-//{
-//#if defined(__WXMSW__) && defined(_WIN64)
-//    if(!win) {
-//        return;
-//    }
-//    bool b = ColoursAndFontsManager::Get().IsDarkTheme();
-//    SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explore", NULL);
-//    EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, (BOOL)b);
-//#else
-//    wxUnusedVar(win);
-//#endif
-//}
-//
 // --------------------------------------------------------
 // Internal handler to handle queuing requests...
 // --------------------------------------------------------

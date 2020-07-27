@@ -138,6 +138,8 @@ if (UNIX OR MINGW)
 "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"
              )
     else()
+        # cmake find_package() will try env var WX_CONFIG as wx-config tool path before checking its builtin hardcoded naming conbinations for wx-config tool
+        set( ENV{WX_CONFIG} ${WX_TOOL} )
         execute_process(COMMAND sh ${WX_TOOL} --version OUTPUT_VARIABLE WX_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
         string(SUBSTRING "${WX_VERSION}" "0" "1" wxMAJOR_VERSION)
         string(SUBSTRING "${WX_VERSION}" "2" "1" wxMINOR_VERSION)

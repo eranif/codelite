@@ -1875,7 +1875,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
         // now it is time to prompt user for new workspace to open
         const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|") wxT("All Files (*)|*"));
         wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL,
-                         wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE, wxDefaultPosition);
+                         wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
         if(dlg.ShowModal() == wxID_OK) {
             wspFile = dlg.GetPath();
         }

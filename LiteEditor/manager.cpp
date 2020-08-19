@@ -602,12 +602,23 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
         DirSaver ds;
         wxSetWorkingDirectory(proj->GetFileName().GetPath());
 
+        wxString workingDirectory = wxGetCwd();
         // get list of files
         std::vector<wxFileName> files;
         data.m_srcProject->GetFilesAsVectorOfFileName(files);
         for(size_t i = 0; i < files.size(); i++) {
-            wxFileName f(files.at(i));
-            wxCopyFile(f.GetFullPath(), f.GetFullName());
+            wxFileName targetFile(workingDirectory, files[i].GetFullName());
+            wxFileName sourceFile(files[i].GetFullPath());
+            if(targetFile.FileExists()) {
+                // Prompt the user
+                wxString message;
+                message << _("A file with similar name '") << targetFile.GetFullName() << _("' already exists") << "\n";
+                message << _("Overwrite it?");
+                if(wxYES != ::wxMessageBox(message, _("Warning"), wxYES_NO | wxCANCEL_DEFAULT | wxCANCEL)) {
+                    continue;
+                }
+            }
+            wxCopyFile(sourceFile.GetFullPath(), targetFile.GetFullPath());
         }
     }
 

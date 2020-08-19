@@ -419,7 +419,8 @@ void QuickFindBar::DoReplace()
 
         wxRegEx re(findwhat, re_flags);
         if(re.IsValid() && re.Matches(selectedText)) {
-            re.Replace(&selectedText, replaceWith);
+            int rc = re.Replace(&selectedText, replaceWith, 1);
+            wxUnusedVar(rc);
 
             // Keep the replacement length
             replacementLen = selectedText.length();

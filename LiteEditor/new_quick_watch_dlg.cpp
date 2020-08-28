@@ -54,6 +54,14 @@ public:
     virtual ~QWTreeData() {}
 };
 
+#if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__)
+static void DoNothing(wxShowEvent& event)
+{
+// Swallows wxEVT_SHOW, which would otherwise result in a zero clientsize due
+// to a side-effect of the 3rd fix in https://trac.wxwidgets.org/ticket/16088
+}
+#endif
+
 DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     : clResizableTooltip(parent)
     , m_debugger(NULL)
@@ -63,6 +71,9 @@ DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     Centre();
     SetName("clDebuggerEditItemDlgBase");
     m_treeCtrl->Bind(wxEVT_TREE_ITEM_MENU, &DisplayVariableDlg::OnItemMenu, this);
+#if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__) 
+    Bind(wxEVT_SHOW, DoNothing);
+#endif
 }
 
 DisplayVariableDlg::~DisplayVariableDlg()

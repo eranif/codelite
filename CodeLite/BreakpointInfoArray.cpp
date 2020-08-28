@@ -6,11 +6,10 @@ BreakpointInfoArray::~BreakpointInfoArray() {}
 
 void BreakpointInfoArray::DeSerialize(Archive& arch)
 {
-    size_t bt_count(0);
+    size_t bt_count = 0;
     m_breakpoints.clear();
-    if(!arch.Read("Count", bt_count)) {
+    if(!arch.Read("Count", bt_count))
         return;
-    }
 
     for(size_t i = 0; i < bt_count; i++) {
         wxString name;

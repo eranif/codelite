@@ -424,7 +424,11 @@ void Notebook::Initialise(long style)
 
     GtkWidget* box = nullptr;
     if(m_bookStyle & (kNotebook_NewButton | kNotebook_ShowFileListButton)) {
+#if defined(__WXGTK20__) && !defined(__WXGTK3__)
+        box = gtk_hbox_new(true, 2);
+#else
         box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 2);
+#endif
     }
 
     if(m_bookStyle & kNotebook_ShowFileListButton) {
@@ -707,7 +711,11 @@ void Notebook::GTKActionButtonMenuClicked(GtkToolItem* button)
     wxPoint pt(wxNOT_FOUND, wxNOT_FOUND);
     int width, height;
     GtkRequisition req;
+#if defined(__WXGTK20__) && !defined(__WXGTK3__)
+    gtk_widget_size_request(GTK_WIDGET(button), &req);
+#else
     gtk_widget_get_preferred_size(GTK_WIDGET(button), NULL, &req);
+#endif
     width = req.width;
     height = req.height;
 

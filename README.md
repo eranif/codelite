@@ -120,8 +120,6 @@ Git clone the sources:
  - Make sure that the project **CodeLiteIDE** is selected (the active project uses **bold** font)
  - Select the **Win_x64_Release** or **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite) and hit **F7**
  - When the compilation is over, close the workspace
- - Next, locate the workspace **codelite_utils/codelite_utils.workspce** and open it
- - Select the **Win_x64_Release** or **Win_x86_Release** (depending if you want to build a 32 or 64 bit version of CodeLite), hit **F7** and wait for the compilation to end
  - Close CodeLite
  - To update your installation with the new CodeLite, close CodeLite and from a cmd.exe window navigate to codelite-sources/Runtime/ and run the file **update64.bat** OR **update.bat** (again, depending on your selected arch).
 

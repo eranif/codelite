@@ -33,8 +33,8 @@
 #ifndef __gitSettingsDlg__
 #define __gitSettingsDlg__
 
-#include "gitui.h"
 #include "git.h"
+#include "gitui.h"
 
 class GitSettingsDlg : public GitSettingsDlgBase
 {

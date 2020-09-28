@@ -136,6 +136,8 @@ GitPlugin::GitPlugin(IManager* manager)
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
 
+    wxTheApp->Bind(wxEVT_IDLE, &GitPlugin::OnIdle, this);
+
     EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL,
@@ -155,6 +157,8 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &GitPlugin::OnAppActivated, this);
     EventNotifier::Get()->Bind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &GitPlugin::OnReplaceInFiles, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
@@ -179,7 +183,13 @@ GitPlugin::GitPlugin(IManager* manager)
     m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("git"));
 
     m_progressTimer.SetOwner(this);
+
+    clConfig conf("git.conf");
+    GitEntry data;
+    conf.ReadItem(&data);
+    m_configFlags = data.GetFlags();
 }
+
 /*******************************************************************************/
 GitPlugin::~GitPlugin() { delete m_gitBlameDlg; }
 
@@ -362,6 +372,10 @@ void GitPlugin::UnPlug()
     }
 
     EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
+    wxTheApp->Unbind(wxEVT_IDLE, &GitPlugin::OnIdle, this);
+
     /*MENU*/
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
     m_eventHandler->Disconnect(XRCID("git_set_repository"), wxEVT_MENU,
@@ -524,14 +538,20 @@ void GitPlugin::OnSettings(wxCommandEvent& e)
         clConfig conf("git.conf");
         GitEntry data;
         conf.ReadItem(&data);
+        m_configFlags = data.GetFlags();
 
         m_pathGITExecutable = data.GetGITExecutablePath();
         m_pathGITKExecutable = data.GetGITKExecutablePath();
 
         GIT_MESSAGE("git executable is now set to: %s", m_pathGITExecutable.c_str());
         GIT_MESSAGE("gitk executable is now set to: %s", m_pathGITKExecutable.c_str());
+
+        // clear any status bar information
+        clGetManager()->GetStatusBar()->SetMessage("");
         AddDefaultActions();
         ProcessGitActionQueue();
+
+        DoLoadBlameInfo(true);
     }
 }
 
@@ -978,23 +998,7 @@ void GitPlugin::OnBisectReset(wxCommandEvent& e)
 void GitPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    std::map<wxString, wxTreeItemId>::const_iterator it;
-
-    // First get an up to date map of the filepaths/treeitemids of modified files
-    // (Trying to cache these results in segfaults when the tree has been modified)
-    std::map<wxString, wxTreeItemId> modifiedIDs;
-    CreateFilesTreeIDsMap(modifiedIDs, true);
-
-    for(it = modifiedIDs.begin(); it != modifiedIDs.end(); ++it) {
-        if(!it->second.IsOk()) {
-            GIT_MESSAGE(wxT("Stored item not found in tree, rebuilding item IDs"));
-            gitAction ga(gitListAll, wxT(""));
-            m_gitActionQueue.push_back(ga);
-            break;
-        }
-        DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), it->second, OverlayTool::Bmp_Modified);
-    }
-
+    DoLoadBlameInfo(true);
     gitAction ga(gitListModified, wxT(""));
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
@@ -1067,6 +1071,12 @@ void GitPlugin::ProcessGitActionQueue()
     ::WrapWithQuotes(command);
 
     switch(ga.action) {
+    case gitBlameSummary: {
+        wxString filepath = ga.arguments;
+        ::WrapWithQuotes(filepath);
+        command << " --no-pager blame --date=short " << filepath;
+        GIT_MESSAGE1("%s", command);
+    } break;
     case gitStash:
         command << " stash";
         GIT_MESSAGE("Git repository is ditry, stashing local changes before pulling...");
@@ -1566,6 +1576,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     }
 
     switch(ga.action) {
+    case gitBlameSummary: {
+        DoUpdateBlameInfo(m_commandOutput, ga.arguments);
+    } break;
     case gitPush: {
         clSourceControlEvent evt(wxEVT_SOURCE_CONTROL_PUSHED);
         evt.SetSourceControlName("git");
@@ -2043,6 +2056,7 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
 {
     e.Skip();
     StoreWorkspaceRepoDetails();
+    m_blameMap.clear();
     WorkspaceClosed();
 }
 
@@ -2779,4 +2793,97 @@ void GitPlugin::OnReplaceInFiles(clFileSystemEvent& event)
 {
     event.Skip();
     DoRefreshView(false);
+}
+
+void GitPlugin::OnEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    // Git the basic git blame
+    clDEBUG() << "Git: active editor changed" << clEndl;
+    DoLoadBlameInfo(false);
+}
+
+void GitPlugin::DoLoadBlameInfo(bool clearCache)
+{
+    if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar)
+        return;
+
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    wxString fullpath = editor->GetFileName().GetFullPath();
+    if(m_blameMap.count(fullpath) && !clearCache) {
+        return;
+    }
+    m_blameMap.erase(fullpath);
+    gitAction ga(gitBlameSummary, fullpath);
+    m_gitActionQueue.push_back(ga);
+    ProcessGitActionQueue();
+}
+
+void GitPlugin::DoUpdateBlameInfo(const wxString& info, const wxString& fullpath)
+{
+    clDEBUG1() << info << clEndl;
+    // parse the git blame output
+    if(m_blameMap.count(fullpath)) {
+        m_blameMap.erase(fullpath);
+    }
+    m_blameMap.insert({ fullpath, {} });
+    auto& V = m_blameMap[fullpath];
+    wxArrayString lines = ::wxStringTokenize(info, "\n", wxTOKEN_RET_DELIMS);
+    V.reserve(lines.size());
+    for(wxString& line : lines) {
+        line = line.BeforeFirst(')');
+        wxArrayString parts = ::wxStringTokenize(line, "\t )(", wxTOKEN_STRTOK);
+        if(!parts.empty()) {
+            // remove the line number part of the line
+            parts.pop_back();
+        }
+        // build the line
+        wxString comment;
+        for(size_t i = 0; i < parts.size(); ++i) {
+            wxString part = parts[i];
+            if(i == (parts.size() - 1)) {
+                part.Append(")").Prepend("(");
+            } else if(i == 0) {
+                part << ":";
+            }
+            comment << part << " ";
+        }
+        V.emplace_back(comment);
+    }
+}
+
+void GitPlugin::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+    if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar) {
+        return;
+    }
+
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    wxString fullpath = editor->GetFileName().GetFullPath();
+    clDEBUG() << "Checking blame info for file:" << fullpath << clEndl;
+    auto where = m_blameMap.find(fullpath);
+
+    clGetManager()->GetStatusBar()->SetMessage("");
+    if(where == m_blameMap.end()) {
+        clDEBUG1() << "Could not get git blame for file:" << fullpath << clEndl;
+        return;
+    }
+
+    size_t lineNumber = editor->GetCurrentLine();
+    if(lineNumber < where->second.size()) {
+        clGetManager()->GetStatusBar()->SetMessage(where->second[lineNumber]);
+    }
+}
+
+void GitPlugin::OnEditorClosed(wxCommandEvent& event)
+{
+    event.Skip();
+    IEditor* editor = (IEditor*)event.GetClientData();
+    CHECK_PTR_RET(editor);
+    m_blameMap.erase(editor->GetFileName().GetFullPath());
 }

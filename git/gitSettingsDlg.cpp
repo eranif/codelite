@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "gitSettingsDlg.h"
-#include "windowattrmanager.h"
 #include "cl_config.h"
-#include "gitentry.h"
 #include "event_notifier.h"
+#include "gitSettingsDlg.h"
+#include "gitentry.h"
+#include "windowattrmanager.h"
 
 GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
     : GitSettingsDlgBase(parent)
@@ -39,23 +39,22 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
     m_pathGIT->SetPath(data.GetGITExecutablePath());
     m_pathGITK->SetPath(data.GetGITKExecutablePath());
     m_textCtrlGitShell->ChangeValue(data.GetGitShellCommand());
-    
+
     m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
     m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
-    m_checkBoxTrackTree->SetValue(data.GetFlags() & GitEntry::Git_Colour_Tree_View);
-
+    m_checkBoxShowBlameInStatusBar->SetValue(!(data.GetFlags() & GitEntry::Git_Hide_Blame_Status_Bar));
     GitEntry::GitProperties props = GitEntry::ReadGitProperties(m_localRepoPath);
 
     m_textCtrlGlobalEmail->ChangeValue(props.global_email);
     m_textCtrlGlobalName->ChangeValue(props.global_username);
     m_textCtrlLocalEmail->ChangeValue(props.local_email);
     m_textCtrlLocalName->ChangeValue(props.local_username);
-    
+
     SetName("GitSettingsDlg");
     WindowAttrManager::Load(this);
 }
 
-GitSettingsDlg::~GitSettingsDlg() {  }
+GitSettingsDlg::~GitSettingsDlg() {}
 
 void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
@@ -65,13 +64,16 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetGITExecutablePath(m_pathGIT->GetPath());
     data.SetGITKExecutablePath(m_pathGITK->GetPath());
     data.SetGitShellCommand(m_textCtrlGitShell->GetValue());
-    
+
     size_t flags = 0;
-    if(m_checkBoxLog->IsChecked()) flags |= GitEntry::Git_Verbose_Log;
+    if(m_checkBoxLog->IsChecked())
+        flags |= GitEntry::Git_Verbose_Log;
 
-    if(m_checkBoxTerminal->IsChecked()) flags |= GitEntry::Git_Show_Terminal;
+    if(m_checkBoxTerminal->IsChecked())
+        flags |= GitEntry::Git_Show_Terminal;
 
-    if(m_checkBoxTrackTree->IsChecked()) flags |= GitEntry::Git_Colour_Tree_View;
+    if(!m_checkBoxShowBlameInStatusBar->IsChecked())
+        flags |= GitEntry::Git_Hide_Blame_Status_Bar;
 
     data.SetFlags(flags);
     data.Save();

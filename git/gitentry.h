@@ -33,12 +33,12 @@
 #ifndef __gitentry__
 #define __gitentry__
 
-#include <wx/colour.h>
-#include <wx/event.h>
-#include <vector>
-#include <map>
 #include "cl_config.h"
 #include "wxStringHash.h"
+#include <map>
+#include <vector>
+#include <wx/colour.h>
+#include <wx/event.h>
 
 struct GitLabelCommand {
     GitLabelCommand() {}
@@ -102,11 +102,14 @@ public:
 
 typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
 
-
-class GitWorkspace {
+class GitWorkspace
+{
 public:
     GitWorkspace() {}
-    GitWorkspace(const wxString& name) : m_name(name) {}
+    GitWorkspace(const wxString& name)
+        : m_name(name)
+    {
+    }
 
     const wxString& GetWorkspaceName() const { return m_name; }
     void SetWorkspaceName(const wxString& name) { m_name = name; }
@@ -144,14 +147,19 @@ class GitEntry : public clConfigItem
     int m_gitCommitDlgVSashPos;
     wxArrayString m_recentCommits;
     wxString m_gitShellCommand;
-	bool m_gitBlameShowLogControls;
-	bool m_gitBlameShowParentCommit;
+    bool m_gitBlameShowLogControls;
+    bool m_gitBlameShowParentCommit;
     int m_gitBlameDlgMainSashPos;
     int m_gitBlameDlgHSashPos;
     int m_gitBlameDlgVSashPos;
 
 public:
-    enum { Git_Verbose_Log = 0x00000001, Git_Show_Terminal = 0x00000002, Git_Colour_Tree_View = 0x00000004 };
+    enum {
+        Git_Verbose_Log = (1 << 0),
+        Git_Show_Terminal = (1 << 1),
+        Git_Colour_Tree_View = (1 << 2),
+        Git_Hide_Blame_Status_Bar = (1 << 3),
+    };
 
     struct GitProperties {
         wxString global_username;
@@ -217,9 +225,15 @@ public:
     wxString GetGITKExecutablePath() const;
     void SetGitConsoleSashPos(int gitConsoleSashPos) { this->m_gitConsoleSashPos = gitConsoleSashPos; }
     int GetGitConsoleSashPos() const { return m_gitConsoleSashPos; }
-    void SetGitBlameShowLogControls(bool gitBlameShowLogControls) { this->m_gitBlameShowLogControls = gitBlameShowLogControls; }
+    void SetGitBlameShowLogControls(bool gitBlameShowLogControls)
+    {
+        this->m_gitBlameShowLogControls = gitBlameShowLogControls;
+    }
     bool GetGitBlameShowLogControls() const { return m_gitBlameShowLogControls; }
-    void SetGitBlameShowParentCommit(bool gitBlameShowParentCommit) { this->m_gitBlameShowParentCommit = gitBlameShowParentCommit; }
+    void SetGitBlameShowParentCommit(bool gitBlameShowParentCommit)
+    {
+        this->m_gitBlameShowParentCommit = gitBlameShowParentCommit;
+    }
     bool GetGitBlameShowParentCommit() const { return m_gitBlameShowParentCommit; }
     void SetGitBlameDlgMainSashPos(int MainSashPos) { this->m_gitBlameDlgMainSashPos = MainSashPos; }
     void SetGitBlameDlgHSashPos(int HSashPos) { this->m_gitBlameDlgHSashPos = HSashPos; }
@@ -234,9 +248,12 @@ public:
     void DeleteGitCommandsEntry(const wxString& entryName) { m_commandsMap.erase(entryName); }
 
     wxString GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName);
-    void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName, const wxString& lastRepoPath);
+    void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName,
+                                const wxString& lastRepoPath);
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
+
+    bool IsShowBlameInfoInStatusBar() const { return !(m_flags & Git_Hide_Blame_Status_Bar); }
 };
 #endif

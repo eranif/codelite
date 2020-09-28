@@ -58,7 +58,9 @@ GitEntry::GitEntry()
 {
     GitLocator locator;
     wxFileName gitpath;
-    if(locator.GetExecutable(gitpath)) { m_pathGIT = gitpath.GetFullPath(); }
+    if(locator.GetExecutable(gitpath)) {
+        m_pathGIT = gitpath.GetFullPath();
+    }
     locator.MSWGetGitShellCommand(m_gitShellCommand);
 }
 
@@ -108,8 +110,12 @@ void GitEntry::FromJSON(const JSONItem& json)
     }
 
     // override the colour only if it is a valid colour
-    if(!track.IsEmpty()) { m_colourTrackedFile = track; }
-    if(!diff.IsEmpty()) { m_colourDiffFile = diff; }
+    if(!track.IsEmpty()) {
+        m_colourTrackedFile = track;
+    }
+    if(!diff.IsEmpty()) {
+        m_colourDiffFile = diff;
+    }
 
     m_recentCommits = json.namedObject("m_recentCommits").toArrayString();
 
@@ -256,7 +262,9 @@ GitCommandsEntries& GitEntry::GetGitCommandsEntries(const wxString& entryName)
 
 void GitEntry::AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName)
 {
-    if(!m_commandsMap.count(entryName)) { m_commandsMap.insert(std::make_pair(entryName, entries)); }
+    if(!m_commandsMap.count(entryName)) {
+        m_commandsMap.insert(std::make_pair(entryName, entries));
+    }
     // Possible TODO: Append any novel items to the existing vector
 }
 
@@ -341,9 +349,12 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
 {
     wxString msg = commitMessage;
     msg.Trim().Trim(false);
-    if(msg.IsEmpty()) return;
+    if(msg.IsEmpty())
+        return;
 
-    if(m_recentCommits.Index(msg) == wxNOT_FOUND) { m_recentCommits.Insert(msg, 0); }
+    if(m_recentCommits.Index(msg) == wxNOT_FOUND) {
+        m_recentCommits.Insert(msg, 0);
+    }
 
     if(m_recentCommits.size() > 20) {
         m_recentCommits.RemoveAt(m_recentCommits.size() - 1); // Remove the last commit
@@ -352,13 +363,16 @@ void GitEntry::AddRecentCommit(const wxString& commitMessage)
 
 void GitEntry::DeleteEntry(const wxString& workspace)
 {
-    if(m_entries.count(workspace)) { m_entries.erase(workspace); }
+    if(m_entries.count(workspace)) {
+        m_entries.erase(workspace);
+    }
 }
 
 wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName)
 {
     wxString path;
-    if(workspaceName.empty() || projectName.empty()) return "";
+    if(workspaceName.empty() || projectName.empty())
+        return "";
 
     GitWorkspaceMap_t::iterator iter;
 
@@ -379,7 +393,8 @@ wxString GitEntry::GetProjectLastRepoPath(const wxString& workspaceName, const w
 void GitEntry::SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName,
                                       const wxString& lastRepoPath)
 {
-    if(workspaceName.empty() || projectName.empty()) return;
+    if(workspaceName.empty() || projectName.empty())
+        return;
 
     GitWorkspaceMap_t::iterator iter;
 

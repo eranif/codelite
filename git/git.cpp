@@ -833,8 +833,8 @@ void GitPlugin::OnPull(wxCommandEvent& e)
 void GitPlugin::OnResetRepository(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(wxMessageBox(_("Are you sure that you want to discard all local changes?"), _("Reset repository"), wxYES_NO,
-                    m_topWindow) == wxYES) {
+    if(wxMessageBox(_("Are you sure that you want to discard all local changes?"), _("Reset repository"),
+                    wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING, m_topWindow) == wxYES) {
         gitAction ga(gitResetRepo, wxT(""));
         m_gitActionQueue.push_back(ga);
         AddDefaultActions();

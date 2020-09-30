@@ -28,10 +28,10 @@ void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
     // draw border line
     dc.SetPen(GetPenColour());
     wxPoint bottomPt, topPt;
-    
+
     topPt = fieldRect.GetTopLeft();
     topPt.y += 2;
-    
+
     bottomPt = fieldRect.GetBottomLeft();
     bottomPt.y += 1;
     dc.DrawLine(topPt, bottomPt);
@@ -233,13 +233,12 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     SetLastArtNameUsedForPaint(m_art->GetName());
 
     // Fill the background
-    
+
     wxColour bgColour = m_art->GetBgColour();
     dc.SetBrush(bgColour);
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
 
-    
     // Calculate the fields length
     size_t totalLength = rect.GetWidth();
     size_t fieldsLength = DoGetFieldsWidth();
@@ -291,15 +290,19 @@ size_t wxCustomStatusBar::DoGetFieldsWidth()
 
 wxCustomStatusBarField::Ptr_t wxCustomStatusBar::GetField(size_t index)
 {
-    if(index >= m_fields.size()) return wxCustomStatusBarField::Ptr_t(NULL);
+    if(index >= m_fields.size())
+        return wxCustomStatusBarField::Ptr_t(NULL);
     return m_fields.at(index);
 }
 
 void wxCustomStatusBar::RemoveField(size_t index)
 {
-    if(index >= m_fields.size()) return;
+    if(index >= m_fields.size())
+        return;
     m_fields.erase(m_fields.begin() + index);
-    if(m_timer->IsRunning()) { m_timer->Stop(); }
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
     Refresh();
 }
 
@@ -322,14 +325,18 @@ void wxCustomStatusBar::OnLeftDown(wxMouseEvent& event)
 void wxCustomStatusBar::ClearText()
 {
     m_text.Clear();
-    if(m_timer->IsRunning()) { m_timer->Stop(); }
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
     Refresh();
 }
 
 void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
 {
     // Stop any timer
-    if(m_timer->IsRunning()) { m_timer->Stop(); }
+    if(m_timer->IsRunning()) {
+        m_timer->Stop();
+    }
 
     m_text = message;
     SetToolTip(message);
@@ -343,7 +350,9 @@ void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetText(m_text);
     m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
 
-    if(secondsToLive != wxNOT_FOUND) { m_timer->Start(secondsToLive * 1000, true); }
+    if(secondsToLive != wxNOT_FOUND) {
+        m_timer->Start(secondsToLive * 1000, true);
+    }
 }
 
 void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)

@@ -176,6 +176,7 @@ class GitPlugin : public IPlugin
     std::unordered_map<wxString, std::vector<wxString>>
         m_blameMap; // contains file: comment per line (extracted from the 'git blame' info)
     size_t m_configFlags = 0;
+    wxString m_lastBlameMessage;
 
 private:
     void DoCreateTreeImages();

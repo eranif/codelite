@@ -2058,6 +2058,7 @@ void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
     StoreWorkspaceRepoDetails();
     m_blameMap.clear();
     WorkspaceClosed();
+    m_lastBlameMessage.clear();
 }
 
 void GitPlugin::DoCleanup()
@@ -2078,6 +2079,10 @@ void GitPlugin::DoCleanup()
     m_mgr->GetDockingManager()->Update();
     m_filesSelected.Clear();
     m_selectedFolder.Clear();
+    // clear blame info
+    m_blameMap.clear();
+    clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
+    m_lastBlameMessage.clear();
 }
 
 void GitPlugin::DoCreateTreeImages()
@@ -2868,15 +2873,19 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
     clDEBUG() << "Checking blame info for file:" << fullpath << clEndl;
     auto where = m_blameMap.find(fullpath);
 
-    clGetManager()->GetStatusBar()->SetMessage("");
     if(where == m_blameMap.end()) {
         clDEBUG1() << "Could not get git blame for file:" << fullpath << clEndl;
+        clGetManager()->GetStatusBar()->SetMessage("");
         return;
     }
 
     size_t lineNumber = editor->GetCurrentLine();
     if(lineNumber < where->second.size()) {
-        clGetManager()->GetStatusBar()->SetMessage(where->second[lineNumber]);
+        const wxString& newmsg = where->second[lineNumber];
+        if(m_lastBlameMessage != newmsg) {
+            m_lastBlameMessage = newmsg;
+            clGetManager()->GetStatusBar()->SetMessage(newmsg);
+        }
     }
 }
 
@@ -2886,4 +2895,5 @@ void GitPlugin::OnEditorClosed(wxCommandEvent& event)
     IEditor* editor = (IEditor*)event.GetClientData();
     CHECK_PTR_RET(editor);
     m_blameMap.erase(editor->GetFileName().GetFullPath());
+    m_lastBlameMessage.clear();
 }

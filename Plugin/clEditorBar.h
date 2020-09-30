@@ -27,7 +27,7 @@ class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
     // Bookmarks button
     wxBitmap m_bookmarksBmp;
     wxRect m_bookmarksRect;
-    std::vector<std::pair<int, wxString> > m_bookmarks;
+    std::vector<std::pair<int, wxString>> m_bookmarks;
 
     bool m_shouldShow = false;
 
@@ -41,6 +41,9 @@ public:
     virtual ~clEditorBar();
     void SetMessage(const wxString& className, const wxString& function);
     void DoShow(bool s);
+    void SetLabel(const wxString& text);
+    void ClearLabel() { SetLabel(wxEmptyString); }
+    wxString GetLabel() const;
 
 protected:
     virtual void OnButtonActions(wxCommandEvent& event);

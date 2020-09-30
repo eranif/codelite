@@ -235,6 +235,7 @@ protected:
     clThemedButton* m_buttonScope;
     clThemedButton* m_buttonFilePath;
     clThemedButton* m_buttonBookmarks;
+    wxStaticText* m_labelText;
 
 protected:
     virtual void OnButtonScope(wxCommandEvent& event) { event.Skip(); }
@@ -245,6 +246,7 @@ public:
     clThemedButton* GetButtonScope() { return m_buttonScope; }
     clThemedButton* GetButtonFilePath() { return m_buttonFilePath; }
     clThemedButton* GetButtonBookmarks() { return m_buttonBookmarks; }
+    wxStaticText* GetLabelText() { return m_labelText; }
     clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~clEditorBarBase();

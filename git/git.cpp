@@ -53,6 +53,7 @@
 #include "bitmap_loader.h"
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
+#include "clEditorBar.h"
 #include "clStatusBar.h"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
@@ -547,7 +548,7 @@ void GitPlugin::OnSettings(wxCommandEvent& e)
         GIT_MESSAGE("gitk executable is now set to: %s", m_pathGITKExecutable.c_str());
 
         // clear any status bar information
-        clGetManager()->GetStatusBar()->SetMessage("");
+        clGetManager()->GetNavigationBar()->ClearLabel();
         AddDefaultActions();
         ProcessGitActionQueue();
 
@@ -2081,7 +2082,7 @@ void GitPlugin::DoCleanup()
     m_selectedFolder.Clear();
     // clear blame info
     m_blameMap.clear();
-    clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
+    clGetManager()->GetNavigationBar()->ClearLabel();
     m_lastBlameMessage.clear();
 }
 
@@ -2870,12 +2871,12 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
     CHECK_PTR_RET(editor);
 
     wxString fullpath = editor->GetFileName().GetFullPath();
-    clDEBUG() << "Checking blame info for file:" << fullpath << clEndl;
+    clDEBUG1() << "Checking blame info for file:" << fullpath << clEndl;
     auto where = m_blameMap.find(fullpath);
 
     if(where == m_blameMap.end()) {
         clDEBUG1() << "Could not get git blame for file:" << fullpath << clEndl;
-        clGetManager()->GetStatusBar()->SetMessage("");
+        clGetManager()->GetNavigationBar()->ClearLabel();
         return;
     }
 
@@ -2884,7 +2885,7 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
         const wxString& newmsg = where->second[lineNumber];
         if(m_lastBlameMessage != newmsg) {
             m_lastBlameMessage = newmsg;
-            clGetManager()->GetStatusBar()->SetMessage(newmsg);
+            clGetManager()->GetNavigationBar()->SetLabel(newmsg);
         }
     }
 }

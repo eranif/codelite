@@ -320,3 +320,7 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
         }
     }
 }
+
+void clEditorBar::SetLabel(const wxString& text) { m_labelText->SetLabel(text); }
+
+wxString clEditorBar::GetLabel() const { return m_labelText->GetLabel(); }

@@ -777,7 +777,8 @@ wxString LanguageServerProtocol::GetLanguageId(const wxFileName& fn) { return Ge
 void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {
     event.Skip();
-    // For now, until we implement the UI, disable this
+
+    // TODO:: for now, we disable this
     return;
 
     clDEBUG() << "LanguageServerProtocol::OnQuickOutline called" << clEndl;

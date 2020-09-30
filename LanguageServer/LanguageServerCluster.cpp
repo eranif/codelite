@@ -33,6 +33,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -355,7 +356,14 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
-void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event) { event.Skip(); }
+void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event)
+{
+    event.Skip();
+    clDEBUG1() << "============= LSP outline ==================" << clEndl;
+    for(const auto& var : event.GetSymbolsInformation()) {
+        clDEBUG() << var.GetName() << clEndl;
+    }
+}
 
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 {

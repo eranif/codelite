@@ -136,7 +136,7 @@ GitPlugin::GitPlugin(IManager* manager)
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
 
-    wxTheApp->Bind(wxEVT_IDLE, &GitPlugin::OnIdle, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &GitPlugin::OnUpdateNavBar, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
@@ -374,7 +374,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
-    wxTheApp->Unbind(wxEVT_IDLE, &GitPlugin::OnIdle, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &GitPlugin::OnUpdateNavBar, this);
 
     /*MENU*/
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
@@ -2854,7 +2854,7 @@ void GitPlugin::DoUpdateBlameInfo(const wxString& info, const wxString& fullpath
     }
 }
 
-void GitPlugin::OnIdle(wxIdleEvent& event)
+void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
 {
     event.Skip();
     if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar) {

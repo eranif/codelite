@@ -1365,7 +1365,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     RecalcHorizontalScrollbar();
 
     // get the current position
-    if((curLine != m_lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
+    if((curLine != m_lastLine)) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetEditor(this);
         evtUpdateNavBar.SetLineNumber(curLine);
@@ -2389,7 +2389,7 @@ void clEditor::FindAndSelectV(const wxString& _pattern, const wxString& name, in
     ClearSelections();
     strings.Add(_pattern);
     strings.Add(name);
-    DoFindAndSelectV( strings, pos);
+    DoFindAndSelectV(strings, pos);
 }
 
 void clEditor::DoFindAndSelectV(const wxArrayString& strings, int pos) // Called with CallAfter()
@@ -5925,7 +5925,8 @@ void clEditor::UpdateLineNumberMarginWidth()
     int newLineCount = GetLineCount();
     int newWidthCount = log10(newLineCount) + 2;
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers()
-        ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X")) : 0);
+                                         ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"))
+                                         : 0);
 }
 
 void clEditor::OnZoom(wxStyledTextEvent& event)

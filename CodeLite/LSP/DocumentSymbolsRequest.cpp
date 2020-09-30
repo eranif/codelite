@@ -32,6 +32,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
         if(result[0].hasNamedObject("containerName")) {
             // fire an event with all the symbols
             LSPEvent event(wxEVT_LSP_DOCUMENT_SYMBOLS);
+            event.GetSymbolsInformation().reserve(size);
             for(int i = 0; i < size; ++i) {
                 SymbolInformation si;
                 si.FromJSON(result[i], pathConverter);

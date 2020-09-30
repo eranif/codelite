@@ -261,7 +261,7 @@ private:
     void OnActiveProjectChanged(clProjectSettingsEvent& event);
     void OnFileGitBlame(wxCommandEvent& event);
     void OnAppActivated(wxCommandEvent& event);
-    void OnIdle(wxIdleEvent& event);
+    void OnUpdateNavBar(clCodeCompletionEvent& event);
     void OnEditorClosed(wxCommandEvent& event);
 #if 0
     void OnBisectStart(wxCommandEvent& e);

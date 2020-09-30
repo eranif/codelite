@@ -530,7 +530,7 @@ public:
      * @param source Source file name
      * @param tags String containing the ctags output
      */
-    void SourceToTags(const wxFileName& source, wxString& tags);
+    void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "+p");
 
     /**
      * return list of files from the database(s). The returned list is ordered
@@ -751,7 +751,7 @@ public:
      * @return stripped functions signature
      */
     wxString NormalizeFunctionSig(const wxString& sig, size_t flags = Normalize_Func_Name,
-                                  std::vector<std::pair<int, int> >* paramLen = NULL);
+                                  std::vector<std::pair<int, int>>* paramLen = NULL);
 
     /**
      * @brief return map of un-implemented methods of given scope
@@ -879,13 +879,14 @@ public:
      */
     wxString WrapLines(const wxString& str);
 
-    //    void GetVariables(const std::string& in,
-    //                      VariableList& li,
-    //                      const std::map<std::string, std::string>& ignoreMap,
-    //                      bool isUsedWithinFunc);
-    //    void GetVariables(const wxFileName& filename, wxArrayString& locals);
     void GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word,
                                 std::vector<TagEntryPtr>& tips);
+
+    /**
+     * @brief list document symbols. this is for colouring purposes
+     * this function is thread safe
+     */
+    void GetDoucmentSymbols(const TagEntryPtrVector_t& tags, const wxFileName& file);
 
     /**
      * @brief create doxygen comment from a tag

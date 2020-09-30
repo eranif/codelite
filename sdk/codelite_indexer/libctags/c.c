@@ -1277,6 +1277,19 @@ static void appendStringToReturnValue(const char* s, size_t len, tagEntryInfo* e
     *writtern += sprintf(e->return_value + *writtern, "%s ", s);
 }
 
+static void appendStringToLocalType(const char* s, size_t len, tagEntryInfo* e, size_t *writtern)
+{
+    if((len + *writtern + 2) > sizeof(e->return_value)) {
+        // we dont have enough buffer to use
+        return;
+    }
+
+    if(len == 0 || s == NULL)
+        return;
+
+    *writtern += sprintf(e->return_value + *writtern, "%s", s);
+}
+
 static void makeTag (const tokenInfo *const token,
                      const statementInfo *const st,
                      boolean isFileScope, const tagType type)
@@ -1309,32 +1322,46 @@ static void makeTag (const tokenInfo *const token,
 
         // ERAN IFRAH
         e.statementStartPos = st->token[0]->filePosition;
-        e.tagNameFilePos    = token->filePosition;
+        e.tagNameFilePos = token->filePosition;
         if(st->token[0]->keyword == KEYWORD_TEMPLATE)
             e.hasTemplate = TRUE;
         else
             e.hasTemplate = FALSE;
 
-        // If the matched tag is of type function/prototype
-        // add the return value
+        // If the matched tag is of type function/prototype/local
+        // add the return value/type
         if(e.kind == 'p' || e.kind == 'f') {
             size_t count = 0;
-            size_t i     = 0;
+            size_t i = 0;
             size_t bytes = 0;
-
+            
             if(st->tokenIndex > 2)
                 count = st->tokenIndex - 2;
 
-            for(; i<count; i++) {
+            for(; i < count; ++i) {
                 if(st->token[i]->type == TOKEN_DOUBLE_COLON)
                     appendStringToReturnValue("::", 2, &e, &bytes);
                 else
-                    appendStringToReturnValue(st->token[i]->name->buffer,             st->token[i]->name->length,             &e, &bytes);
+                    appendStringToReturnValue(st->token[i]->name->buffer, st->token[i]->name->length, &e, &bytes);
 
-                appendStringToReturnValue(st->token[i]->templateInitList->buffer, st->token[i]->templateInitList->length, &e, &bytes);
+                appendStringToReturnValue(st->token[i]->templateInitList->buffer,
+                                          st->token[i]->templateInitList->length, &e, &bytes);
+            }
+        } else if(e.kind == 'l') {
+            size_t count = st->tokenIndex - 1;
+            size_t i = 0;
+            size_t bytes = 0;
+            
+            for(; i < count; ++i) {
+                if(st->token[i]->type == TOKEN_DOUBLE_COLON)
+                    appendStringToLocalType("::", 2, &e, &bytes);
+                else
+                    appendStringToLocalType(st->token[i]->name->buffer, st->token[i]->name->length, &e, &bytes);
+
+                appendStringToLocalType(st->token[i]->templateInitList->buffer,
+                                          st->token[i]->templateInitList->length, &e, &bytes);
             }
         }
-
         // ERAN IFRAH - END
 
         makeTagEntry (&e);

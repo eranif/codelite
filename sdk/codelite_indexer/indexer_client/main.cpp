@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     files.push_back(file_name);
 
     req.setFiles(files);
-    req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p  -IwxT,_T");
+    req.setCtagOptions("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=l --C++-kinds=l  -IwxT,_T");
     for(size_t i = 0; i < 1; i++) {
         // connect to server
         if(!client.connect()) {

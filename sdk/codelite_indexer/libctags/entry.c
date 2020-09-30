@@ -767,19 +767,25 @@ static int addExtensionFields (const tagEntryInfo *const tag)
 				tag->extensionFields.signature);
 
 	// ERAN IFRAH - Add support for return value
-	if((tag->kind == 'p' || tag->kind == 'f') && tag->return_value[0] != '\0') {
-		
+    if(tag->return_value[0] != '\0') {
 		char* replaced = ctagsReplacements((char*)tag->return_value);
-		if(replaced) {
-			length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
-			free(replaced);
-			
-		} else {
-			length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, tag->return_value);
-			
-		}
-	}
-	
+        if(tag->kind == 'p' || tag->kind == 'f') {
+            if(replaced) {
+                length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, replaced);
+                free(replaced);
+            } else {
+                length +=  fprintf (TagFile.fp, "%s\treturns:%s", sep, tag->return_value);
+            }
+        } else if(tag->kind == 'l') {
+            if(replaced) {
+                length +=  fprintf (TagFile.fp, "%s\ttype:%s", sep, replaced);
+                free(replaced);
+            } else {
+                length +=  fprintf (TagFile.fp, "%s\ttype:%s", sep, tag->return_value);
+            }
+        }
+    }
+    
 //		/* tag is function (decl or impl) */
 //#if defined(__WXMSW__)||defined(__APPLE__)||defined(__FreeBSD__)
 //		int count = ((int)tag->tagNameFilePos - (int)tag->statementStartPos);

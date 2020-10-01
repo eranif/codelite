@@ -2730,17 +2730,8 @@ void TagsManager::DoParseModifiedText(const wxString& text, std::vector<TagEntry
         SourceToTags(wxFileName(fileName), tagsStr);
 
         // Create tags from the string
-        wxArrayString tagsLines = wxStringTokenize(tagsStr, wxT("\n"), wxTOKEN_STRTOK);
-        for(size_t i = 0; i < tagsLines.GetCount(); i++) {
-            wxString line = tagsLines.Item(i).Trim().Trim(false);
-            if(line.IsEmpty())
-                continue;
+        DoTagsFromText(tagsStr, tags);
 
-            TagEntryPtr tag(new TagEntry());
-            tag->FromLine(line);
-
-            tags.push_back(tag);
-        }
         // Delete the modified file
         clRemoveFile(fileName);
     }
@@ -3244,13 +3235,27 @@ void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::
     GetDatabase()->GetTagsByPartName(partialNames, tags);
 }
 
-void TagsManager::GetDoucmentSymbols(const TagEntryPtrVector_t& tags, const wxFileName& file)
+void TagsManager::GetDoucmentSymbols(const wxFileName& file, TagEntryPtrVector_t& tags)
 {
-    wxUnusedVar(tags);
-
     wxString tagsText;
     // we are interested in the locals
-    SourceToTags(file, tagsText, "l");
-    clDEBUG1() << "============ Document symbols ==============" << clEndl;
-    clDEBUG1() << tagsText << clEndl;
+    SourceToTags(file, tagsText, "lfp");
+    DoTagsFromText(tagsText, tags);
+}
+
+void TagsManager::DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>& tags)
+{
+    // Create tags from the string
+    wxArrayString tagsLines = wxStringTokenize(text, "\n", wxTOKEN_STRTOK);
+    tags.reserve(tagsLines.size());
+    for(wxString& line : tagsLines) {
+        line.Trim().Trim(false);
+        if(line.IsEmpty()) {
+            continue;
+        }
+
+        TagEntryPtr tag(new TagEntry());
+        tag->FromLine(line);
+        tags.emplace_back(tag);
+    }
 }

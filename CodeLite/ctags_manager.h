@@ -886,7 +886,7 @@ public:
      * @brief list document symbols. this is for colouring purposes
      * this function is thread safe
      */
-    void GetDoucmentSymbols(const TagEntryPtrVector_t& tags, const wxFileName& file);
+    void GetDoucmentSymbols(const wxFileName& file, TagEntryPtrVector_t& tags);
 
     /**
      * @brief create doxygen comment from a tag
@@ -896,6 +896,7 @@ public:
     DoxygenComment DoCreateDoxygenComment(TagEntryPtr tag, wxChar keyPrefix);
 
 protected:
+    void DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>& tags);
     void DoFindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags);
     void DoFilterDuplicatesByTagID(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);
     void DoFilterDuplicatesBySignature(std::vector<TagEntryPtr>& src, std::vector<TagEntryPtr>& target);

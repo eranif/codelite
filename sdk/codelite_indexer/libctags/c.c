@@ -1353,13 +1353,16 @@ static void makeTag (const tokenInfo *const token,
             size_t bytes = 0;
             
             for(; i < count; ++i) {
-                if(st->token[i]->type == TOKEN_DOUBLE_COLON)
+                switch(st->token[i]->type) {
+                case TOKEN_DOUBLE_COLON:
                     appendStringToLocalType("::", 2, &e, &bytes);
-                else
+                    break;
+                case TOKEN_NAME:
                     appendStringToLocalType(st->token[i]->name->buffer, st->token[i]->name->length, &e, &bytes);
-
-                appendStringToLocalType(st->token[i]->templateInitList->buffer,
-                                          st->token[i]->templateInitList->length, &e, &bytes);
+                    break;
+                default:
+                    break;
+                }
             }
         }
         // ERAN IFRAH - END

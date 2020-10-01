@@ -29,13 +29,13 @@
 #include <wx/treectrl.h>
 #endif
 
-#include "readtags.h"
-#include <wx/string.h>
-#include <map>
-#include <vector>
-#include "smart_ptr.h"
 #include "codelite_exports.h"
 #include "macros.h"
+#include "readtags.h"
+#include "smart_ptr.h"
+#include <map>
+#include <vector>
+#include <wx/string.h>
 
 class TagEntry;
 typedef SmartPtr<TagEntry> TagEntryPtr;
@@ -60,7 +60,7 @@ typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
  * TagEntry is a persistent object which is capable of storing and loading itself from
  * various inputs:
  * - tagEntry (ctags structure)
-  *
+ *
  * It contains all the knowledge of storing and retrieving itself from the database
  *
  * \ingroup CodeLite
@@ -72,14 +72,14 @@ typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
  */
 class WXDLLIMPEXP_CL TagEntry
 {
-    wxString m_path;           ///< Tag full path
-    wxString m_file;           ///< File this tag is found
-    int m_lineNumber;          ///< Line number
-    wxString m_pattern;        ///< A pattern that can be used to locate the tag in the file
-    wxString m_kind;           ///< Member, function, class, typedef etc.
-    wxString m_parent;         ///< Direct parent
+    wxString m_path;    ///< Tag full path
+    wxString m_file;    ///< File this tag is found
+    int m_lineNumber;   ///< Line number
+    wxString m_pattern; ///< A pattern that can be used to locate the tag in the file
+    wxString m_kind;    ///< Member, function, class, typedef etc.
+    wxString m_parent;  ///< Direct parent
 #if wxUSE_GUI
-    wxTreeItemId m_hti;        ///< Handle to tree item, not persistent item
+    wxTreeItemId m_hti; ///< Handle to tree item, not persistent item
 #endif
     wxString m_name;           ///< Tag name (short name, excluding any scope names)
     wxStringMap_t m_extFields; ///< Additional extension fields
@@ -167,6 +167,11 @@ public:
      * \param entry Tag entry
      */
     void Create(const tagEntry& entry);
+
+    /**
+     * @brief is this a local variable?
+     */
+    bool IsLocalVariable() const;
 
     /**
      * Construct a TagEntry from values.
@@ -287,6 +292,11 @@ public:
     wxString Key() const;
 
     /**
+     * @brief return the local variable type
+     */
+    wxString GetLocalType() const;
+
+    /**
      * Generate a display name for this tag to be used by the symbol tree
      * \return tag display name
      */
@@ -310,13 +320,16 @@ public:
      * \return real name or wxEmptyString
      */
     wxString TypeFromTyperef() const;
+
     //------------------------------------------
     // Extenstion fields
     //------------------------------------------
     wxString GetExtField(const wxString& extField) const
     {
-        wxStringMap_t::const_iterator iter = m_extFields.find(extField);
-        if(iter == m_extFields.end()) return wxEmptyString;
+        auto iter = m_extFields.find(extField);
+        if(iter == m_extFields.end()) {
+            return wxEmptyString;
+        }
         return iter->second;
     }
 

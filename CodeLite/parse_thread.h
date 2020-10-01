@@ -32,12 +32,12 @@
 #include "procutils.h"
 #include "singleton.h"
 #include "tag_tree.h"
+#include "tags_options_data.h"
 #include "worker_thread.h"
 #include <map>
 #include <memory>
 #include <vector>
 #include <wx/stopwatch.h>
-#include "tags_options_data.h"
 
 class ITagsStorage;
 
@@ -71,7 +71,6 @@ public:
         PR_DELETE_TAGS_OF_FILES,
         PR_PARSE_FILE_NO_INCLUDES,
         PR_PARSE_INCLUDE_STATEMENTS,
-        PR_SUGGEST_HIGHLIGHT_WORDS,
         PR_SOURCE_TO_TAGS,
     };
 
@@ -180,7 +179,6 @@ private:
     void ProcessDeleteTagsOfFiles(ParseRequest* req);
     void ProcessSimpleNoIncludes(ParseRequest* req);
     void ProcessIncludeStatements(ParseRequest* req);
-    void ProcessColourRequest(ParseRequest* req);
     void GetFileListToParse(const wxString& filename, wxArrayString& arrFiles);
     void ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db);
 

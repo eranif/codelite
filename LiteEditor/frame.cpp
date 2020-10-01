@@ -5172,10 +5172,6 @@ void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
     wxUnusedVar(e);
     GetStatusBar()->SetMessage(wxEmptyString);
 
-    if(e.GetInt() == ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS)
-        // no need to trigger another UpdateColour
-        return;
-
     clEditor* editor = GetMainBook()->GetActiveEditor();
     if(editor) {
         editor->UpdateColours();

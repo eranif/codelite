@@ -161,9 +161,6 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     case ParseRequest::PR_PARSE_INCLUDE_STATEMENTS:
         ProcessIncludeStatements(req);
         break;
-    case ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS:
-        ProcessColourRequest(req);
-        break;
     default:
     case ParseRequest::PR_FILESAVED:
         ProcessSimple(req);
@@ -693,60 +690,6 @@ void ParseThread::DoNotifyReady(wxEvtHandler* caller, int requestType)
         event.SetClientData(caller);
         event.SetInt(requestType);
         m_notifiedWindow->AddPendingEvent(event);
-    }
-}
-
-void ParseThread::ProcessColourRequest(ParseRequest* req)
-{
-    CxxTokenizer tokenizer;
-    // read the file content
-    wxString content;
-    if(FileUtils::ReadFileContent(req->getFile(), content)) {
-        wxString flatStrLocals, flatClasses;
-
-        tokenizer.Reset(content);
-
-        // lex the file and collect all tokens of type IDENTIFIER
-        wxStringSet_t tokens;
-        CxxLexerToken tok;
-        while(tokenizer.NextToken(tok)) {
-            if(tok.GetType() == T_IDENTIFIER) {
-                tokens.insert(tok.GetWXString());
-            }
-        }
-
-        std::vector<wxString> tokensArr;
-        tokensArr.reserve(tokens.size());
-        std::for_each(tokens.begin(), tokens.end(), [&](const wxString& str) { tokensArr.push_back(str); });
-        std::sort(tokensArr.begin(), tokensArr.end());
-
-        // did we find anything?
-        if(tokensArr.empty()) {
-            return;
-        }
-
-        // Open the database
-        ITagsStoragePtr db(new TagsStorageSQLite());
-        db->OpenDatabase(req->getDbfile());
-
-        std::vector<wxString> nonWorkspaceSymbols, workspaceSymbols;
-        db->RemoveNonWorkspaceSymbols(tokensArr, workspaceSymbols, nonWorkspaceSymbols);
-
-        // Convert the output to a space delimited array
-        std::for_each(workspaceSymbols.begin(), workspaceSymbols.end(),
-                      [&](const wxString& token) { flatClasses << token << " "; });
-        std::for_each(nonWorkspaceSymbols.begin(), nonWorkspaceSymbols.end(),
-                      [&](const wxString& token) { flatStrLocals << token << " "; });
-
-        if(req->_evtHandler) {
-            clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
-            wxArrayString res;
-            res.Add(flatClasses);
-            res.Add(flatStrLocals);
-            event.SetStrings(res);
-            event.SetFileName(req->getFile());
-            req->_evtHandler->AddPendingEvent(event);
-        }
     }
 }
 

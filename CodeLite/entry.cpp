@@ -23,19 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "precompiled_header.h"
 #include "ctags_manager.h"
 #include "pptable.h"
+#include "precompiled_header.h"
 
-#include "entry.h"
-#include <wx/tokenzr.h>
-#include "tokenizer.h"
-#include "language.h"
 #include "code_completion_api.h"
 #include "comment_parser.h"
-#include <wx/regex.h>
-#include "wxStringHash.h"
+#include "entry.h"
+#include "language.h"
 #include "macros.h"
+#include "tokenizer.h"
+#include "wxStringHash.h"
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 TagEntry::TagEntry(const tagEntry& entry)
     : m_isClangTag(false)
@@ -185,7 +185,8 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     }
 
     // If there is no path, path is set to name
-    if(GetPath().IsEmpty()) SetPath(GetName());
+    if(GetPath().IsEmpty())
+        SetPath(GetName());
 
     // Get the parent name
     StringTokenizer tok(GetPath(), wxT("::"));
@@ -317,7 +318,8 @@ static bool GetMacroArgList(CppScanner& scanner, wxArrayString& argList)
             isOk = true;
             depth++;
 
-            if(word.empty() == false) word << wxT("(");
+            if(word.empty() == false)
+                word << wxT("(");
 
             break;
 
@@ -391,14 +393,14 @@ wxString TagEntry::NameFromTyperef(wxString& templateInitList, bool nameIncludeT
                     pat << wxT(";");
 
                     // Remove double spaces
-                    while(pat.Replace(wxT("  "), wxT(" "))) {
-                    }
+                    while(pat.Replace(wxT("  "), wxT(" "))) {}
                 }
             }
         }
 
         wxString name;
-        if(TypedefFromPattern(pat, GetName(), name, templateInitList, nameIncludeTemplate)) return name;
+        if(TypedefFromPattern(pat, GetName(), name, templateInitList, nameIncludeTemplate))
+            return name;
     }
 
     return wxEmptyString;
@@ -443,6 +445,8 @@ wxString TagEntry::GetPattern() const
 
 void TagEntry::FromLine(const wxString& line)
 {
+    // label	C:\src\wxCustomControls\clTreeCtrl\clChoice.cpp	/^        const wxString& label = m_choices[i];$/;"
+    // local line:116	type:constwxString
     wxString pattern, kind;
     wxString strLine = line;
     long lineNumber = wxNOT_FOUND;
@@ -520,11 +524,10 @@ void TagEntry::FromLine(const wxString& line)
                         }
 
                         tmp.EndsWith(wxT("::"), &new_val);
-                        val = new_val;
+                        val.swap(new_val);
                     }
                 }
-
-                extFields[key] = val;
+                extFields.insert({ key, val });
             }
         }
     }
@@ -581,14 +584,16 @@ void TagEntry::FromLine(const wxString& line)
 
 bool TagEntry::IsConstructor() const
 {
-    if(GetKind() != wxT("function") && GetKind() != wxT("prototype")) return false;
+    if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+        return false;
 
     return GetName() == GetScope();
 }
 
 bool TagEntry::IsDestructor() const
 {
-    if(GetKind() != wxT("function") && GetKind() != wxT("prototype")) return false;
+    if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+        return false;
 
     return GetName().StartsWith(wxT("~"));
 }
@@ -761,7 +766,8 @@ wxString TagEntry::GetPatternClean() const
 
 wxString TagEntry::FormatComment()
 {
-    if(m_isCommentForamtted) return m_formattedComment;
+    if(m_isCommentForamtted)
+        return m_formattedComment;
     m_isCommentForamtted = true;
     m_formattedComment.Clear();
 
@@ -810,8 +816,7 @@ wxString TagEntry::FormatComment()
         }
 
         matchPattern.Replace(wxT("\t"), wxT(" "));
-        while(matchPattern.Replace(wxT("  "), wxT(" "))) {
-        }
+        while(matchPattern.Replace(wxT("  "), wxT(" "))) {}
 
         matchPattern.Trim().Trim(false);
 
@@ -906,3 +911,7 @@ wxString TagEntry::FormatComment()
     m_formattedComment.Trim().Trim(false);
     return m_formattedComment;
 }
+
+bool TagEntry::IsLocalVariable() const { return GetKind() == "local"; }
+
+wxString TagEntry::GetLocalType() const { return GetExtField("type"); }

@@ -29,6 +29,8 @@ PSCustomMakefileRulesPage::PSCustomMakefileRulesPage( wxWindow* parent, ProjectS
     : PSCustomMakefileBasePage( parent )
     , m_dlg(dlg)
 {
+    m_textPreBuildRule->SetUseTabs(true); // since this is a Makefile content, we only allow tabs here
+    m_textPreBuildRule->SetEOLMode(wxSTC_EOL_LF); // Only "\n"
 }
 
 void PSCustomMakefileRulesPage::OnProjectCustumBuildUI( wxUpdateUIEvent& event )
@@ -65,18 +67,16 @@ void PSCustomMakefileRulesPage::Load(BuildConfigPtr buildConf)
 void PSCustomMakefileRulesPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     //set the pre-build step
-    wxString rules = m_textPreBuildRule->GetValue();
+    wxString rules = m_textPreBuildRule->GetText();
     wxString deps = m_textDeps->GetValue();
 
-    rules = rules.Trim();
-    rules = rules.Trim(false);
-    deps = deps.Trim();
-    deps = deps.Trim(false);
+    rules.Trim().Trim(false);
+    deps.Trim().Trim(false);
 
     wxString prebuilstep;
-    prebuilstep << deps << wxT("\n");
+    prebuilstep << deps << "\n";
     prebuilstep << rules;
-    prebuilstep << wxT("\n");
+    prebuilstep << "\n";
 
     // Set the content only if there is real content to add
     wxString tmpPreBuildStep(prebuilstep);

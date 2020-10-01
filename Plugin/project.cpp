@@ -119,7 +119,7 @@ bool Project::Load(const wxString& path)
     if(!m_doc.Load(path)) {
         return false;
     }
-
+    
     // Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
     // and then set them back
     std::map<wxString, wxString> pluginsData;
@@ -2405,38 +2405,4 @@ long Project::GetVersionNumber() const
     return nVersion;
 }
 
-void Project::UpgradeBuildSystem()
-{
-#if 0
-    ProjectSettingsPtr settings = GetSettings();
-    if(!settings) { return; }
-    
-    ProjectSettingsCookie c;
-    BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(c);
-    while(bldConf) {
-        BuilderPtr builder = bldConf->GetBuilder();
-        if(builder->GetName() == "CodeLite Make Generator") {
-            // requires upgrade
-            // 1. Clear the intermediate folder value
-            bldConf->SetIntermediateDirectory("");
-    
-            // 2. Update the output file name.
-            // Since the paths are not hardcoded, we just need the file name ommit any other
-            // path
-            wxString outputFileName = bldConf->GetOutputFileName();
-            outputFileName.Replace("\\", "/");
-            while(outputFileName.Replace("//", "/")) {}
-            outputFileName = outputFileName.AfterLast('/');
-            bldConf->SetOutputFileName(outputFileName);
-    
-            if(bldConf->GetProjectType() == PROJECT_TYPE_EXECUTABLE) {
-                // 3. Set the executable to run/debug
-                wxString command;
-                command << "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
-                bldConf->SetCommand(command);
-            }
-        }
-        bldConf = settings->GetNextBuildConfiguration(c);
-    }
-#endif
-}
+void Project::UpgradeBuildSystem() {}

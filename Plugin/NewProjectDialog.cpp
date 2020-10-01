@@ -42,7 +42,7 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
         m_textCtrlName->ChangeValue(fn.GetDirs().Last());
     }
 
-    wxString lastBuildSystem = "CodeLite Make Generator";
+    wxString lastBuildSystem = "CodeLite Makefile Generator";
     wxString lastCategory;
     wxString lastType;
     wxString lastCompiler;

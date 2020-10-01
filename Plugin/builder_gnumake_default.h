@@ -37,8 +37,10 @@
  */
 class WXDLLIMPEXP_SDK BuilderGnuMake : public Builder
 {
+protected:
     size_t m_objectChunks;
     Project::FilesMap_t* m_projectFilesMetadata;
+    bool m_isWindows = false;
 
 protected:
     enum eBuildFlags {
@@ -66,6 +68,11 @@ public:
                                           const wxString& arguments, const wxString& fileName, wxString& errMsg);
     virtual wxString GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
                                          const wxString& arguments);
+
+protected:
+    virtual wxString MakeDir(const wxString& path);
+    virtual wxString GetIntermediateFolder(ProjectPtr proj, const wxString& workspacepath);
+    virtual wxString GetOutputFolder(ProjectPtr proj, BuildConfigPtr bldConf);
 
 protected:
     virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);

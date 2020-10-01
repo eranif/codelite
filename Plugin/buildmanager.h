@@ -31,6 +31,7 @@
 #include "singleton.h"
 #include "codelite_exports.h"
 #include "builder.h"
+#include "wxStringHash.h"
 
 /**
  * \ingroup SDK
@@ -47,9 +48,8 @@
  */
 class WXDLLIMPEXP_SDK BuildManager : public wxEvtHandler
 {
-
     friend class BuildManagerST;
-    std::map<wxString, BuilderPtr> m_builders;
+    std::unordered_map<wxString, BuilderPtr> m_builders;
 
 public:
     typedef std::map<wxString, BuilderPtr>::const_iterator ConstIterator;

@@ -557,7 +557,7 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
 
         // Update the build system
         bldConf->SetBuildSystem(data.m_builderName);
-        if(data.m_builderName == "CodeLite Make Generator") {
+        if(data.m_builderName == "CodeLite Make Generator" || data.m_builderName == "CodeLite Makefile Generator") {
             bldConf->SetIntermediateDirectory("");
             bldConf->SetOutputFileName("$(ProjectName)");
             bldConf->SetCommand("$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)");

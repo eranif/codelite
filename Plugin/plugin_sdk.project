@@ -361,6 +361,8 @@
     <File Name="clGotoAnythingManager.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Builders">
+    <File Name="BuilderGnuMakeMSYS.cpp"/>
+    <File Name="BuilderGnuMakeMSYS.hpp"/>
     <File Name="clRemoteBuilder.cpp"/>
     <File Name="clRemoteBuilder.hpp"/>
     <File Name="builder_gnumake_default.h"/>

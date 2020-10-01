@@ -23,17 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "build_config.h"
-#include "xmlutils.h"
-#include "wx/tokenzr.h"
+#include "build_settings_config.h"
+#include "buildmanager.h"
+#include "debuggermanager.h"
+#include "editor_config.h"
+#include "globals.h"
 #include "macros.h"
 #include "project.h"
-#include "editor_config.h"
-#include "build_settings_config.h"
-#include "debuggermanager.h"
-#include "globals.h"
+#include "wx/tokenzr.h"
 #include "wx_xml_compatibility.h"
+#include "xmlutils.h"
 #include <wx/tokenzr.h>
-#include "buildmanager.h"
 
 const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = "overwrite";
 const wxString BuildConfig::APPEND_TO_GLOBAL_SETTINGS = "append";
@@ -65,6 +65,9 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         wxXmlNode* buildSystem = XmlUtils::FindFirstByTagName(node, wxT("BuildSystem"));
         if(buildSystem) {
             m_buildSystem = XmlUtils::ReadString(buildSystem, "Name", m_buildSystem);
+            if(m_buildSystem == "CodeLite Make Generator") {
+                m_buildSystem = "CodeLite Makefile Generator";
+            }
             m_buildSystemArguments = buildSystem->GetNodeContent();
         }
 

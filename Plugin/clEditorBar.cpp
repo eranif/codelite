@@ -99,7 +99,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_bookmarks.clear();
-
+    m_labelText->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     if(!m_shouldShow) {
         return;
     }

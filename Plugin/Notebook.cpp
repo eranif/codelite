@@ -588,6 +588,9 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         clTabInfo::Ptr_t tab = m_tabs.at(i);
         tab->SetActive((i == tabIdx), GetStyle());
+        if(i == tabIdx) {
+            m_history->Push(tab->GetWindow());
+        }
     }
 
     clTabInfo::Ptr_t activeTab = GetActiveTabInfo();
@@ -597,7 +600,6 @@ int clTabCtrl::ChangeSelection(size_t tabIdx)
         if(!clIsWaylandSession())
             activeTab->GetWindow()->CallAfter(&wxWindow::SetFocus);
     }
-
     Refresh();
     return oldSelection;
 }
@@ -1133,15 +1135,16 @@ void clTabCtrl::DoShowTabList()
         wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
         menu.Append(item);
         item->Check(tab->IsActive());
-        menu.Bind(wxEVT_MENU,
-                  [=](wxCommandEvent& event) {
-                      Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
-                      int newSelection = book->GetPageIndex(pWindow);
-                      if(newSelection != curselection) {
-                          book->SetSelection(newSelection);
-                      }
-                  },
-                  pageMenuID);
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& event) {
+                Notebook* book = dynamic_cast<Notebook*>(this->GetParent());
+                int newSelection = book->GetPageIndex(pWindow);
+                if(newSelection != curselection) {
+                    book->SetSelection(newSelection);
+                }
+            },
+            pageMenuID);
         pageMenuID++;
     }
 
@@ -1202,9 +1205,6 @@ void clTabCtrl::DoChangeSelection(size_t index)
         }
     }
     ChangeSelection(index);
-
-    // Keep this page
-    m_history->Push(GetPage(index));
 
     // Fire an event
     {

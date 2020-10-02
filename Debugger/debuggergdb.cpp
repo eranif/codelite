@@ -642,7 +642,8 @@ bool DbgGdb::QueryFileLine()
 
 bool DbgGdb::QueryLocals()
 {
-    return WriteCommand(wxT("-stack-list-variables --skip-unavailable 2"), new DbgCmdHandlerLocals(m_observer));
+    return WriteCommand(wxT("-stack-list-variables --skip-unavailable --all-values"),
+                        new DbgCmdHandlerLocals(m_observer));
 }
 
 bool DbgGdb::ExecuteCmd(const wxString& cmd)

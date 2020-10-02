@@ -29,8 +29,7 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
 
     mainSizer->Add(innerSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_treeBook = new wxTreebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
-    m_treeBook->SetFocus();
+    m_treeBook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_treeBook->SetName(wxT("m_treeBook"));
 
     innerSizer->Add(m_treeBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -53,30 +52,16 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
 
     btnSizer->Add(m_applyButton, 0, wxALL, WXC_FROM_DIP(5));
 
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_treeBook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_treeBook);
-    } else {
-        wxPersistenceManager::Get().Restore(m_treeBook);
-    }
-#endif
-
     SetName(wxT("OptionsBaseDlg2"));
-    SetMinClientSize(wxSize(500, 300));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-#endif
     // Connect events
     this->Connect(wxEVT_ACTIVATE, wxActivateEventHandler(OptionsBaseDlg2::OnActivate), NULL, this);
     this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(OptionsBaseDlg2::OnInitDialog), NULL, this);

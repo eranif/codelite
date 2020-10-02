@@ -44,14 +44,7 @@ protected:
     void OnButtonApply(wxCommandEvent& event);
     void Initialize();
     void DoSave();
-    
-    template <typename T> void AddSubPage(T* ptr, wxString const& caption, bool selected = false)
-    {
-        m_treeBook->AddSubPage(ptr, caption, selected);
-        if(ptr) {
-            m_contentObjects.push_back(ptr);
-        }
-    }
+
     template <typename T> void AddPage(T* ptr, wxString const& caption, bool selected = false)
     {
         m_treeBook->AddPage(ptr, caption, selected);
@@ -64,7 +57,7 @@ public:
     /** Constructor */
     PreferencesDialog(wxWindow* parent);
     virtual ~PreferencesDialog();
-    bool restartRquired;
+    bool restartRquired = false;
 };
 
 #endif // __options_dlg2__

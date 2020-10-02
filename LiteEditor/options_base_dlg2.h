@@ -15,7 +15,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/treebook.h>
+#include <wx/notebook.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -38,7 +38,7 @@
 class OptionsBaseDlg2 : public wxDialog
 {
 protected:
-    wxTreebook* m_treeBook;
+    wxNotebook* m_treeBook;
     wxButton* m_okButton;
     wxButton* m_cancelButton;
     wxButton* m_applyButton;
@@ -51,7 +51,7 @@ protected:
     virtual void OnButtonApply(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxTreebook* GetTreeBook() { return m_treeBook; }
+    wxNotebook* GetTreeBook() { return m_treeBook; }
     wxButton* GetOkButton() { return m_okButton; }
     wxButton* GetCancelButton() { return m_cancelButton; }
     wxButton* GetApplyButton() { return m_applyButton; }

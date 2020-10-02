@@ -29,12 +29,11 @@
 #include "editoroptionsgeneralguidespanelbase.h"
 #include "treebooknodebase.h"
 
-class EditorOptionsGeneralGuidesPanel
-    : public EditorOptionsGeneralGuidesPanelBase
-    , public TreeBookNode<EditorOptionsGeneralGuidesPanel>
+class EditorOptionsGeneralGuidesPanel : public EditorOptionsGeneralGuidesPanelBase,
+                                        public TreeBookNode<EditorOptionsGeneralGuidesPanel>
 {
 public:
-    EditorOptionsGeneralGuidesPanel( wxWindow* parent );
+    EditorOptionsGeneralGuidesPanel(wxWindow* parent);
     void Save(OptionsConfigPtr options);
 };
 

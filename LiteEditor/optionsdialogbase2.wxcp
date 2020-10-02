@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	4,
+		"m_objCounter":	22,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterx2PVqnInitBitmapResources",
 		"m_bitmapsFile":	"optionsdialogbase2_liteeditor_bitmaps.cpp",
@@ -247,15 +247,15 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	"Notebook"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	"Notebook.h"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
-											"m_value":	"kNotebook_LeftTabs"
+											"m_value":	""
 										}],
 									"m_events":	[],
 									"m_children":	[]

@@ -23,28 +23,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "options_dlg2.h"
-#include "plugin.h"
+#include "editorsettingscaret.h"
 #include "editorsettingsdockingwidows.h"
 #include "editorsettingsterminal.h"
-#include "editorsettingscaret.h"
 #include "globals.h"
+#include "options_dlg2.h"
+#include "plugin.h"
 
-#include "frame.h"
 #include "editor_options_general_guides_panel.h"
 #include "editoroptionsgeneralindentationpanel.h"
 #include "editoroptionsgeneralrightmarginpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
+#include "frame.h"
 #include "globals.h"
 
+#include "EditorOptionsGeneralEdit.h"
+#include "editorsettingsbookmarkspanel.h"
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"
-#include "editorsettingsbookmarkspanel.h"
 #include "editorsettingsfolding.h"
 #include "editorsettingsmiscpanel.h"
 #include "manager.h"
 #include "windowattrmanager.h"
-#include "EditorOptionsGeneralEdit.h"
 #include <wx/persist.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
@@ -58,7 +58,6 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     Initialize();
     SetName("PreferencesDialog");
     WindowAttrManager::Load(this);
-    MSWSetNativeTheme(m_treeBook->GetTreeCtrl());
     GetSizer()->Fit(this);
     GetSizer()->Layout();
     CenterOnParent();
@@ -85,8 +84,7 @@ void PreferencesDialog::DoSave()
     // for performance reasons, we start a transaction for the configuration
     // file
     EditorConfigST::Get()->Begin();
-    typedef std::list<TreeBookNodeBase*>::iterator ContentIter;
-    for(ContentIter it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
+    for(auto it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
         if(*it) {
             TreeBookNodeBase* child = *it;
             child->Save(options);
@@ -119,9 +117,8 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
     AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows & Tabs"));
-
-    // the Terminal page should NOT be added under Windows
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
     SetMinSize(wxSize(300, 200));
+    clSetDialogBestSizeAndPosition(this);
 }

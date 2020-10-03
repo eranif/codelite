@@ -266,5 +266,11 @@ public:
      * @return true if a filepath was found
      */
     static bool FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint = wxArrayString());
+    
+    /**
+     * @brief create a temporary file *name* in a given folder with a given name prefix and an extension
+     * note that this function does not actually create the file, but only generates a name
+     */
+    static wxFileName CreateTempFileName(const wxString& folder, const wxString& prefix, const wxString& ext);
 };
 #endif // FILEUTILS_H

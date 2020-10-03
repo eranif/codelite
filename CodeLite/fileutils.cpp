@@ -736,3 +736,25 @@ bool FileUtils::FindExe(const wxString& name, wxFileName& exepath, const wxArray
     }
     return false;
 }
+
+wxFileName FileUtils::CreateTempFileName(const wxString& folder, const wxString& prefix, const wxString& ext)
+{
+    static bool srandInit = false;
+    if(!srandInit) {
+        srand(time(nullptr));
+        srandInit = true;
+    }
+
+    static const char alphanum[] = "0123456789"
+                                   "abcdefghijklmnopqrstuvwxyz"
+                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    size_t N = sizeof(alphanum) - 1;
+    wxString full_name = prefix;
+    full_name << "-";
+    for(size_t i = 0; i < 8; ++i) {
+        size_t index = rand() / (RAND_MAX / N + 1);
+        full_name += alphanum[index];
+    }
+    full_name += "." + ext;
+    return wxFileName(folder, full_name);
+}

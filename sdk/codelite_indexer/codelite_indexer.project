@@ -131,7 +131,6 @@
     <File Name="network/clindexerprotocol.h"/>
     <File Name="network/cl_indexer_macros.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Unix"/>
   <Dependencies Name="Debug_Win">
     <Project Name="indexer_client"/>
   </Dependencies>
@@ -143,6 +142,9 @@
   </Dependencies>
   <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="indexer_client"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -161,8 +163,8 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch file_list.txt tags" UseSeparateDebugArgs="yes" DebugArguments="--batch file_list.txt tags" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -204,7 +206,7 @@
       <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="C:/src/codelite/sdk/codelite_indexer/build-Debug_Win/bin/codelite_indexer.exe" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -245,7 +247,7 @@
       <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="codelite_indexer" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -288,7 +290,7 @@
       <Linker Options="$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="codelite_indexer" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -333,7 +335,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -374,7 +376,7 @@
       <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="codelite_indexer" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -417,7 +419,7 @@
       <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="codelite_indexer.exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -460,7 +462,7 @@
       <Linker Options=";-O2;$(shell wx-config --libs --unicode)" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="codelite_indexer.exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--batch C:/Development/C++/linux-source-2.6.31/cscope_file.list" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="C:/Development/C++/linux-source-2.6.31/" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

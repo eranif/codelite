@@ -5,15 +5,15 @@
 #include <vector>
 #include <wx/filename.h>
 
-class WXDLLIMPEXP_CL CTagsGenerator
+class WXDLLIMPEXP_CL CTags
 {
 protected:
     wxString WrapSpaces(const wxString& file) const;
     bool DoGenerate(const wxString& filesContent, const wxFileName& outputFile);
 
 public:
-    CTagsGenerator();
-    virtual ~CTagsGenerator();
+    CTags();
+    virtual ~CTags();
 
     /**
      * @brief give list of files, generate an output tags file

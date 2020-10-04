@@ -1,14 +1,14 @@
-#include "CTagsGenerator.hpp"
+#include "CTags.hpp"
 #include "asyncprocess.h"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
-CTagsGenerator::CTagsGenerator() {}
+CTags::CTags() {}
 
-CTagsGenerator::~CTagsGenerator() {}
+CTags::~CTags() {}
 
-bool CTagsGenerator::Generate(const std::vector<wxFileName>& files, const wxFileName& outputFile)
+bool CTags::Generate(const std::vector<wxFileName>& files, const wxFileName& outputFile)
 {
     // create a file with the list of files
     wxString filesList;
@@ -19,7 +19,7 @@ bool CTagsGenerator::Generate(const std::vector<wxFileName>& files, const wxFile
     return DoGenerate(filesList, outputFile);
 }
 
-wxString CTagsGenerator::WrapSpaces(const wxString& file) const
+wxString CTags::WrapSpaces(const wxString& file) const
 {
     wxString fixed = file;
     if(fixed.Contains(" ")) {
@@ -28,7 +28,7 @@ wxString CTagsGenerator::WrapSpaces(const wxString& file) const
     return fixed;
 }
 
-bool CTagsGenerator::DoGenerate(const wxString& filesContent, const wxFileName& outputFile)
+bool CTags::DoGenerate(const wxString& filesContent, const wxFileName& outputFile)
 {
     wxFileName fnFileList = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "file-list", "txt");
     FileUtils::WriteFileContent(fnFileList, filesContent);
@@ -45,7 +45,7 @@ bool CTagsGenerator::DoGenerate(const wxString& filesContent, const wxFileName& 
     wxString codeliteIndexer = clStandardPaths::Get().GetBinaryFullPath("codelite_indexer");
     cmd << WrapSpaces(codeliteIndexer) << " --batch " << WrapSpaces(fnFileList.GetFullPath()) << " "
         << WrapSpaces(fnTmpTags.GetFullPath());
-    clDEBUG() << "CTagsGenerator:" << cmd << clEndl;
+    clDEBUG() << "CTags:" << cmd << clEndl;
     IProcess::Ptr_t proc(::CreateSyncProcess(cmd));
     if(proc) {
         wxString dummy;
@@ -60,7 +60,7 @@ bool CTagsGenerator::DoGenerate(const wxString& filesContent, const wxFileName& 
     return true;
 }
 
-bool CTagsGenerator::Generate(const std::vector<std::string>& files, const wxFileName& outputFile)
+bool CTags::Generate(const std::vector<std::string>& files, const wxFileName& outputFile)
 {
     // create a file with the list of files
     wxString filesList;

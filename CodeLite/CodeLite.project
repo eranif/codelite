@@ -123,8 +123,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
-    <File Name="CTagsGenerator.hpp"/>
-    <File Name="CTagsGenerator.cpp"/>
+    <File Name="CTags.cpp"/>
+    <File Name="CTags.hpp"/>
     <File Name="BreakpointInfoArray.cpp"/>
     <File Name="BreakpointInfoArray.hpp"/>
     <File Name="clDebuggerBreakpointStore.cpp"/>

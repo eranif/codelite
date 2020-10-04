@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "CTagsGenerator.hpp"
+#include "CTags.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "cl_command_event.h"
@@ -433,7 +433,7 @@ void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 
 void ParseThread::ProcessParseAndStore(ParseRequest* req)
 {
-    //CTagsGenerator tg;
+    //CTags tg;
     //wxFileName fnTags(req->getDbfile());
     //fnTags.SetExt("ctags");
     //tg.Generate(req->_workspaceFiles, fnTags);
@@ -634,7 +634,7 @@ ParseThread* ParseThreadST::Get()
 
 void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 {
-    //CTagsGenerator tg;
+    //CTags tg;
     //wxFileName fnTags(req->getDbfile());
     //fnTags.SetExt("ctags");
     //tg.Generate(req->_workspaceFiles, fnTags);

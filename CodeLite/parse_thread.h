@@ -66,7 +66,6 @@ public:
 public:
     enum {
         PR_FILESAVED,
-        PR_PARSEINCLUDES,
         PR_PARSE_AND_STORE,
         PR_DELETE_TAGS_OF_FILES,
         PR_PARSE_FILE_NO_INCLUDES,
@@ -170,7 +169,7 @@ private:
      * the external database
      * @param filename
      */
-    void ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db);
+    //void ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db);
 
     void ProcessSimple(ParseRequest* req);
     void ProcessSourceToTags(ParseRequest* req);

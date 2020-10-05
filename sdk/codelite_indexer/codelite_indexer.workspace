@@ -3,7 +3,7 @@
   <Project Name="codelite_indexer" Path="codelite_indexer.project" Active="Yes"/>
   <Project Name="indexer_client" Path="indexer_client/indexer_client.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug_Unix" Selected="yes">
+    <WorkspaceConfiguration Name="Debug_Unix" Selected="no">
       <Environment/>
       <Project Name="indexer_client" ConfigName="Debug_Unix"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
@@ -13,7 +13,7 @@
       <Project Name="indexer_client" ConfigName="Release_Unix"/>
       <Project Name="codelite_indexer" ConfigName="Release_Unix"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Debug_Win" Selected="no">
+    <WorkspaceConfiguration Name="Debug_Win" Selected="yes">
       <Environment/>
       <Project Name="indexer_client" ConfigName="Debug_Win"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Win"/>

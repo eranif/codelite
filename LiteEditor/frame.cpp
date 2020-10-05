@@ -1874,8 +1874,8 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
     if(event.GetString().IsEmpty()) {
         // now it is time to prompt user for new workspace to open
         const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|") wxT("All Files (*)|*"));
-        wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL,
-                         wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+        wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                         wxDefaultPosition);
         if(dlg.ShowModal() == wxID_OK) {
             wspFile = dlg.GetPath();
         }
@@ -4899,26 +4899,9 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
     TagsManagerST::Get()->ClearAllCaches();
 
     // Send event notifying parsing completed
-    std::vector<std::string>* files = (std::vector<std::string>*)e.GetClientData();
-    if(files) {
-
-        // Print the parsing end time
-        clDEBUG() << "INFO: Retag workspace completed in" << (gStopWatch.Time() / 1000) << "seconds ("
-                  << (unsigned long)files->size() << "files were scanned)";
-        std::vector<wxFileName> taggedFiles;
-        for(size_t i = 0; i < files->size(); i++) {
-            taggedFiles.push_back(wxFileName(wxString(files->at(i).c_str(), wxConvUTF8)));
-        }
-
-        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&taggedFiles);
-        delete files;
-
-    } else {
-        clLogMessage(_("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
-    }
-
+    clLogMessage(_("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
+    
     wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
-    tagEndEvent.SetClientData(e.GetClientData()); // pass the pointer to the original caller
     EventNotifier::Get()->AddPendingEvent(tagEndEvent);
 }
 

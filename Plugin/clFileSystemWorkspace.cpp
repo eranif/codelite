@@ -455,13 +455,7 @@ void clFileSystemWorkspace::Parse(bool fullParse)
         // filter any non valid coding file
         parsingRequest->_workspaceFiles.push_back(fn.GetFullPath().ToAscii().data());
     }
-
-    parsingRequest->setType(ParseRequest::PR_PARSEINCLUDES);
-    parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-    parsingRequest->_evtHandler = this;
-    parsingRequest->_quickRetag = !fullParse;
-    ParseThreadST::Get()->Add(parsingRequest);
-    clGetManager()->SetStatusMessage(_("Scanning for files to parse..."));
+    TagsManagerST::Get()->RetagFiles(GetFiles(), TagsManager::Retag_Quick, this);
 }
 
 void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& event)

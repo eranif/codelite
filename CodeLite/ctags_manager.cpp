@@ -1299,15 +1299,18 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
     strFiles.Alloc(files.size()); // At most files.size() entries
 
     // step 1: remove all non-tags files
-    for(size_t i = 0; i < files.size(); i++) {
-        if(!IsValidCtagsFile(files.at(i).GetFullPath())) {
+    std::unordered_set<std::string> uniqueFiles;
+    uniqueFiles.reserve(files.size());
+    for(const wxFileName& fn : files) {
+        wxString strfile = fn.GetFullPath();
+        if(!IsValidCtagsFile(strfile)) {
             continue;
         }
-        strFiles.Add(files.at(i).GetFullPath());
+        uniqueFiles.insert(strfile.mb_str(wxConvUTF8).data());
     }
 
     // If there are no files to tag - send the 'end' event
-    if(strFiles.IsEmpty()) {
+    if(uniqueFiles.empty()) {
 #if wxUSE_GUI
         wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
         if(frame) {
@@ -1318,25 +1321,25 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
         return;
     }
 
-    // step 2: remove all files which do not need retag
-    if(type == Retag_Quick || type == Retag_Quick_No_Scan) {
-        DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
-    }
+    //    // step 2: remove all files which do not need retag
+    //    if(type == Retag_Quick || type == Retag_Quick_No_Scan) {
+    //        DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
+    //    }
 
-    // If there are no files to tag - send the 'end' event
-    if(strFiles.IsEmpty()) {
-#if wxUSE_GUI
-        wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
-        if(frame) {
-            wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-            frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
-        }
-#endif
-        return;
-    }
+    //    // If there are no files to tag - send the 'end' event
+    //    if(strFiles.IsEmpty()) {
+    //#if wxUSE_GUI
+    //        wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
+    //        if(frame) {
+    //            wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+    //            frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
+    //        }
+    //#endif
+    //        return;
+    //    }
 
-    // step 4: Remove tags belonging to these files
-    DeleteFilesTags(strFiles);
+    //    // step 4: Remove tags belonging to these files
+    //    DeleteFilesTags(strFiles);
 
     // step 5: build the database
     ParseRequest* req = new ParseRequest(ParseThreadST::Get()->GetNotifiedWindow());
@@ -1345,13 +1348,12 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
     }
 
     req->setDbFile(GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-
     req->setType(type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES
                                              : ParseRequest::PR_PARSE_AND_STORE);
     req->_workspaceFiles.clear();
     req->_workspaceFiles.reserve(strFiles.size());
-    for(size_t i = 0; i < strFiles.GetCount(); i++) {
-        req->_workspaceFiles.push_back(strFiles[i].mb_str(wxConvUTF8).data());
+    for(const std::string& sfile : uniqueFiles) {
+        req->_workspaceFiles.push_back(sfile);
     }
     ParseThreadST::Get()->Add(req);
 }

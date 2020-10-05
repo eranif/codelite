@@ -5,7 +5,8 @@
 CxxVariable::CxxVariable(eCxxStandard standard)
     : m_standard(standard)
     , m_isAuto(false)
-{}
+{
+}
 
 CxxVariable::~CxxVariable() {}
 
@@ -23,14 +24,11 @@ wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
     wxString str;
     str << GetTypeAsString(table);
 
-    if(!GetPointerOrReference().IsEmpty())
-        str << GetPointerOrReference();
+    if(!GetPointerOrReference().IsEmpty()) { str << GetPointerOrReference(); }
 
-    if(flags & kToString_Name)
-        str << " " << GetName();
+    if(flags & kToString_Name) { str << " " << GetName(); }
 
-    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty())
-        str << " = " << GetDefaultValue();
+    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) { str << " = " << GetDefaultValue(); }
     return str;
 }
 
@@ -47,18 +45,23 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
         if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword) return;
 
         if((!s.empty() && s.Last() == ' ') &&
-           ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')'))
+           ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
             s.RemoveLast();
+        }
 
         // Do we need to revert macros?
-        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text) && (tok.text != "std"))
+        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text) && (tok.text != "std")) {
             s << table.find(tok.text)->second;
-        else
+        } else {
             s << tok.text;
+        }
 
-        if(standard == eCxxStandard::kCxx03 && (tok.type == '>') && s.length() > 1 && s.EndsWith(">>"))
+        if(standard == eCxxStandard::kCxx03 && (tok.type == '>')) {
+            if(s.length() > 1 && s.EndsWith(">>")) {
                 s.RemoveLast(2);
                 s << "> >";
+            }
+        }
 
         switch(tok.type) {
         case T_AUTO:
@@ -83,9 +86,9 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
         case ',':
         case '>':
             s << " ";
+            break;
         }
     });
-    if(!s.empty() && s.EndsWith(" "))
-        s.RemoveLast();
+    if(!s.empty() && s.EndsWith(" ")) { s.RemoveLast(); }
     return s;
 }

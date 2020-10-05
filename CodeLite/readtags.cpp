@@ -479,15 +479,19 @@ static tagFile *initialize (const char *const filePath, tagFileInfo *const info)
 		{
 			free (result);
 			result = NULL;
-			info->status.error_number = errno;
+            if(info) {
+                info->status.error_number = errno;
+            }
 		}
 		else
 		{
 			fseek (result->fp, 0, SEEK_END);
 			result->size = ftell (result->fp);
 			rewind (result->fp);
-			readPseudoTags (result, info);
-			info->status.opened = 1;
+            if(info) {
+                readPseudoTags (result, info);
+                info->status.opened = 1;
+            }
 			result->initialized = 1;
 		}
 	}

@@ -707,7 +707,7 @@ extern void ctags_batch_parse(const char* filelist, const char* outputfile)
         if(strlen(line)) {
             list_append(l, (void*)strdup(line));
         }
-        line = strtok((char*)0, "\n");
+        line = strtok((char*)0, "\r\n");
     }
 
     list_node_t* n = l->head;

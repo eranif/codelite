@@ -205,7 +205,7 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs )" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="C:/src/codelite/sdk/codelite_indexer/build-Debug_Win/bin/codelite_indexer.exe" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="C:/src/codelite/sdk/codelite_indexer/build-Debug_Win/bin" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="C:/src/codelite/sdk/codelite_indexer/build-Debug_Win/bin/codelite_indexer.exe" CommandArguments="eran" UseSeparateDebugArgs="yes" DebugArguments="eran" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

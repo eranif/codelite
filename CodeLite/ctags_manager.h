@@ -531,6 +531,7 @@ public:
      * @param tags String containing the ctags output
      */
     void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "+p");
+    void SourceToTags(const wxArrayString& sources, wxString& tags, const wxString& kinds = "+p");
 
     /**
      * return list of files from the database(s). The returned list is ordered

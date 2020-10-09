@@ -913,9 +913,11 @@ void MainBook::ReloadExternallyModified(bool prompt)
     }
     if(filesToRetag.size() > 1) {
         TagsManagerST::Get()->RetagFiles(filesToRetag, TagsManager::Retag_Quick);
+        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
 
     } else if(filesToRetag.size() == 1) {
         ManagerST::Get()->RetagFile(filesToRetag.at(0).GetFullPath());
+        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&filesToRetag);
     }
 }
 

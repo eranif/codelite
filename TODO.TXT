@@ -7,16 +7,18 @@ Removing SQLite:
 DB format:
 
 
-files.ctags
-symbols.ctags
+files.idx
+name.idx
+symbols.data
 
-files.ctags
+files.idx
+-------------
+{file-path, [1..N]}
 
-Each entry should be in the form of:
-{file-path, [symbols]}
+name.idx
+-------------
+{name, [1...N]}
 
-symbols.ctags
-
-Each entry should be in form of:
-{name, {TagEntry}}
-
+symbols.data
+------------
+{ID, {TagEntry}}

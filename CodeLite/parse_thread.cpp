@@ -70,35 +70,35 @@ wxDEFINE_EVENT(wxEVT_PARSE_THREAD_READY, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PARSE_THREAD_SOURCE_TAGS, clCommandEvent);
 
-//static const wxString& WriteCodeLiteCCHelperFile()
-//{
-//    // Due to heavy changes to shared_ptr in GCC 7.X and later
-//    // we need to simplify the shared_ptr class
-//    // we do this by adding our own small shared_ptr class (these entries will be added to the
-//    // ones that were actuall parsed from the original std::shared_ptr class as defined by libstd++)
-//    // We might expand this hack in the future in favour of other changes
-//    static wxString buffer = "namespace std { template<typename _Tp> class shared_ptr {\n"
-//                             "    _Tp* operator->();\n"
-//                             "    void reset( Y* ptr );\n"
-//                             "    void reset( Y* ptr, Deleter d );\n"
-//                             "    void reset( Y* ptr, Deleter d, Alloc alloc );\n"
-//                             "    _T* get() const;\n"
-//                             "};\n"
-//                             "} // namespace std\n";
-//    static wxString filepath;
-//    if(filepath.IsEmpty()) {
-//        wxFileName tmpFile(clStandardPaths::Get().GetUserDataDir(), "codelite_templates.hpp");
-//        tmpFile.AppendDir("tmp");
-//        tmpFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-//        filepath = tmpFile.GetFullPath();
-//    }
-//
-//    if(wxFileName::FileExists(filepath)) {
-//        return filepath;
-//    }
-//    FileUtils::WriteFileContent(wxFileName(filepath), buffer);
-//    return filepath;
-//}
+static const wxString& WriteCodeLiteCCHelperFile()
+{
+    // Due to heavy changes to shared_ptr in GCC 7.X and later
+    // we need to simplify the shared_ptr class
+    // we do this by adding our own small shared_ptr class (these entries will be added to the
+    // ones that were actuall parsed from the original std::shared_ptr class as defined by libstd++)
+    // We might expand this hack in the future in favour of other changes
+    static wxString buffer = "namespace std { template<typename _Tp> class shared_ptr {\n"
+                             "    _Tp* operator->();\n"
+                             "    void reset( Y* ptr );\n"
+                             "    void reset( Y* ptr, Deleter d );\n"
+                             "    void reset( Y* ptr, Deleter d, Alloc alloc );\n"
+                             "    _T* get() const;\n"
+                             "};\n"
+                             "} // namespace std\n";
+    static wxString filepath;
+    if(filepath.IsEmpty()) {
+        wxFileName tmpFile(clStandardPaths::Get().GetUserDataDir(), "codelite_templates.hpp");
+        tmpFile.AppendDir("tmp");
+        tmpFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        filepath = tmpFile.GetFullPath();
+    }
+
+    if(wxFileName::FileExists(filepath)) {
+        return filepath;
+    }
+    FileUtils::WriteFileContent(wxFileName(filepath), buffer);
+    return filepath;
+}
 
 ParseThread::ParseThread()
     : WorkerThread()
@@ -147,6 +147,9 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     clDEBUG1() << "exclude paths:" << exc;
 
     switch(req->getType()) {
+    case ParseRequest::PR_PARSEINCLUDES:
+        ProcessIncludes(req);
+        break;
     case ParseRequest::PR_PARSE_AND_STORE:
         ProcessParseAndStore(req);
         break;
@@ -161,7 +164,7 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
         break;
     default:
     case ParseRequest::PR_FILESAVED:
-        ProcessSimple(req);
+        ProcessSingleFile(req);
         break;
     case ParseRequest::PR_SOURCE_TO_TAGS:
         ProcessSourceToTags(req);
@@ -170,6 +173,21 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
 
     // Always notify when ready
     DoNotifyReady(req->_evtHandler, req->getType());
+}
+
+void ParseThread::ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db)
+{
+    wxArrayString arrFiles;
+    GetFileListToParse(filename, arrFiles);
+    int initalCount = arrFiles.GetCount();
+
+    TEST_DESTROY();
+
+    DEBUG_MESSAGE(wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()));
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, db);
+    DEBUG_MESSAGE(wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()));
+
+    ParseAndStoreFiles(req, arrFiles, initalCount, db);
 }
 
 TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int& count)
@@ -241,7 +259,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
     }
 }
 
-void ParseThread::ProcessSimple(ParseRequest* req)
+void ParseThread::ProcessSingleFile(ParseRequest* req)
 {
     wxString dbfile = req->getDbfile();
     wxString file = req->getFile();
@@ -270,23 +288,18 @@ void ParseThread::ProcessSimple(ParseRequest* req)
     DoStoreTags(tags, file_name, count, db);
 
     db->Begin();
-    ///////////////////////////////////////////
     // update the file retag timestamp
-    ///////////////////////////////////////////
     db->InsertFileEntry(file, (int)time(NULL));
 
-    ////////////////////////////////////////////////
     // Parse and store the macros found in this file
-    ////////////////////////////////////////////////
     PPTable::Instance()->Clear();
     PPScan(file, true);
     db->StoreMacros(PPTable::Instance()->GetTable());
     PPTable::Instance()->Clear();
-
     db->Commit();
 
     // Parse the saved file to get a list of files to include
-    //ParseIncludeFiles(req, file, db);
+    ParseIncludeFiles(req, file, db);
 
     // If there is no event handler set to handle this comaprison
     // results, then nothing more to be done
@@ -415,10 +428,102 @@ void ParseThread::ProcessDeleteTagsOfFiles(ParseRequest* req)
 
 void ParseThread::ProcessParseAndStore(ParseRequest* req)
 {
-    wxFileName fnTags(req->getDbfile());
-    CTags::Generate(req->_workspaceFiles, fnTags.GetPath());
+    //CTags tg;
+    //wxFileName fnTags(req->getDbfile());
+    //fnTags.SetExt("ctags");
+    //tg.Generate(req->_workspaceFiles, fnTags);
+    wxString dbfile = req->getDbfile();
+
+    // convert the file to tags
+    double maxVal = (double)req->_workspaceFiles.size();
+    if(maxVal == 0.0) {
+        return;
+    }
+
+    // we report every 10%
+    double reportingPoint = maxVal / 100.0;
+    reportingPoint = ceil(reportingPoint);
+    if(reportingPoint == 0.0) {
+        reportingPoint = 1.0;
+    }
+
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase(dbfile);
+
+    // We commit every 10 files
+    db->Begin();
+    int precent(0);
+    int lastPercentageReported(0);
+
+    // Prepend our hack file to the list of files to parse
+    const wxString& hackfile = WriteCodeLiteCCHelperFile();
+    req->_workspaceFiles.insert(req->_workspaceFiles.begin(), hackfile.ToStdString());
+    PPTable::Instance()->Clear();
+
+    for(size_t i = 0; i < maxVal; i++) {
+
+        // give a shutdown request a chance
+        if(TestDestroy()) {
+            // Do an ordered shutdown:
+            // rollback any transaction
+            // and close the database
+            db->Rollback();
+            return;
+        }
+
+        wxFileName curFile(wxString(req->_workspaceFiles[i].c_str(), wxConvUTF8));
+
+        // Skip binary files
+        if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath(), m_tod)) {
+            DEBUG_MESSAGE(wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()));
+            continue;
+        }
+
+        // Send notification to the main window with our progress report
+        precent = (int)((i / maxVal) * 100);
+
+        if(req->_evtHandler && lastPercentageReported != precent) {
+            lastPercentageReported = precent;
+            wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
+            retaggingProgressEvent.SetInt((int)precent);
+            req->_evtHandler->AddPendingEvent(retaggingProgressEvent);
+        }
+
+        TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
+        PPScan(curFile.GetFullPath(), false);
+
+        db->Store(tree, wxFileName(), false);
+        if(db->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
+            db->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
+        }
+
+        if(i % 50 == 0) {
+            // Commit what we got so far
+            db->Commit();
+            // Start a new transaction
+            db->Begin();
+        }
+    }
+
+    // Process the macros
+    // PPTable::Instance()->Squeeze();
+    const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
+
+    // Store the macros
+    db->StoreMacros(table);
+
+    // Commit whats left
+    db->Commit();
+
+    // Clear the results
+    PPTable::Instance()->Clear();
+
+    /// Send notification to the main window with our progress report
     if(req->_evtHandler) {
         wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+        std::vector<std::string>* arrFiles = new std::vector<std::string>;
+        *arrFiles = req->_workspaceFiles;
+        retaggingCompletedEvent.SetClientData(arrFiles);
         req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
     }
 }
@@ -524,11 +629,30 @@ ParseThread* ParseThreadST::Get()
 
 void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
 {
-    wxFileName fnTags(req->getDbfile());
-    CTags::Generate(req->_workspaceFiles, fnTags.GetPath());
+    std::vector<std::string> files = req->_workspaceFiles;
+    wxString dbfile = req->getDbfile();
+
+    // Filter binary files
+    std::vector<std::string> filteredFiles;
+    wxArrayString filesArr;
+    filesArr.Alloc(files.size());
+    for(size_t i = 0; i < files.size(); i++) {
+        wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
+        if(TagsManagerST::Get()->IsBinaryFile(filename, m_tod))
+            continue;
+        filesArr.Add(filename);
+    }
+    // convert the file to tags
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase(dbfile);
+
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
+    ParseAndStoreFiles(req, filesArr, -1, db);
+
     if(req->_evtHandler) {
-        wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-        req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
+        wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+        e.SetClientData(NULL);
+        req->_evtHandler->AddPendingEvent(e);
     }
 }
 

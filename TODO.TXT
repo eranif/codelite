@@ -1,5 +1,22 @@
-C++ project:
+Removing SQLite:
 
-- Allow adding to the build menu custom 'Build project XXX'
-- LSP: Add Java code completion auto detection ??
-- When passing -d to in the command line, make sure that the folder exists
+- The ctags file should be updated into a single database (using a simple key/value store)
+- Saving a single file should update the database for that file
+
+
+DB format:
+
+
+files.ctags
+symbols.ctags
+
+files.ctags
+
+Each entry should be in the form of:
+{file-path, [symbols]}
+
+symbols.ctags
+
+Each entry should be in form of:
+{name, {TagEntry}}
+

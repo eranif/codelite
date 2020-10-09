@@ -172,21 +172,6 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
     DoNotifyReady(req->_evtHandler, req->getType());
 }
 
-//void ParseThread::ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db)
-//{
-//    wxArrayString arrFiles;
-//    GetFileListToParse(filename, arrFiles);
-//    int initalCount = arrFiles.GetCount();
-//
-//    TEST_DESTROY();
-//
-//    DEBUG_MESSAGE(wxString::Format(wxT("Files that need parse %u"), (unsigned int)arrFiles.GetCount()));
-//    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(arrFiles, db);
-//    DEBUG_MESSAGE(wxString::Format(wxT("Actual files that need parse %u"), (unsigned int)arrFiles.GetCount()));
-//
-//    ParseAndStoreFiles(req, arrFiles, initalCount, db);
-//}
-
 TagTreePtr ParseThread::DoTreeFromTags(const wxString& tags, int& count)
 {
     return TagsManagerST::Get()->TreeFromTags(tags, count);
@@ -436,101 +421,6 @@ void ParseThread::ProcessParseAndStore(ParseRequest* req)
         wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
         req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
     }
-
-    // wxString dbfile = req->getDbfile();
-    //
-    // // convert the file to tags
-    // double maxVal = (double)req->_workspaceFiles.size();
-    // if(maxVal == 0.0) {
-    //     return;
-    // }
-    //
-    // // we report every 10%
-    // double reportingPoint = maxVal / 100.0;
-    // reportingPoint = ceil(reportingPoint);
-    // if(reportingPoint == 0.0) {
-    //     reportingPoint = 1.0;
-    // }
-    //
-    // ITagsStoragePtr db(new TagsStorageSQLite());
-    // db->OpenDatabase(dbfile);
-    //
-    // // We commit every 10 files
-    // db->Begin();
-    // int precent(0);
-    // int lastPercentageReported(0);
-    //
-    // // Prepend our hack file to the list of files to parse
-    // const wxString& hackfile = WriteCodeLiteCCHelperFile();
-    // req->_workspaceFiles.insert(req->_workspaceFiles.begin(), hackfile.ToStdString());
-    // PPTable::Instance()->Clear();
-    //
-    // for(size_t i = 0; i < maxVal; i++) {
-    //
-    //     // give a shutdown request a chance
-    //     if(TestDestroy()) {
-    //         // Do an ordered shutdown:
-    //         // rollback any transaction
-    //         // and close the database
-    //         db->Rollback();
-    //         return;
-    //     }
-    //
-    //     wxFileName curFile(wxString(req->_workspaceFiles[i].c_str(), wxConvUTF8));
-    //
-    //     // Skip binary files
-    //     if(TagsManagerST::Get()->IsBinaryFile(curFile.GetFullPath(), m_tod)) {
-    //         DEBUG_MESSAGE(wxString::Format(wxT("Skipping binary file %s"), curFile.GetFullPath().c_str()));
-    //         continue;
-    //     }
-    //
-    //     // Send notification to the main window with our progress report
-    //     precent = (int)((i / maxVal) * 100);
-    //
-    //     if(req->_evtHandler && lastPercentageReported != precent) {
-    //         lastPercentageReported = precent;
-    //         wxCommandEvent retaggingProgressEvent(wxEVT_PARSE_THREAD_RETAGGING_PROGRESS);
-    //         retaggingProgressEvent.SetInt((int)precent);
-    //         req->_evtHandler->AddPendingEvent(retaggingProgressEvent);
-    //     }
-    //
-    //     TagTreePtr tree = TagsManagerST::Get()->ParseSourceFile(curFile);
-    //     PPScan(curFile.GetFullPath(), false);
-    //
-    //     db->Store(tree, wxFileName(), false);
-    //     if(db->InsertFileEntry(curFile.GetFullPath(), (int)time(NULL)) == TagExist) {
-    //         db->UpdateFileEntry(curFile.GetFullPath(), (int)time(NULL));
-    //     }
-    //
-    //     if(i % 50 == 0) {
-    //         // Commit what we got so far
-    //         db->Commit();
-    //         // Start a new transaction
-    //         db->Begin();
-    //     }
-    // }
-    //
-    // // Process the macros
-    // // PPTable::Instance()->Squeeze();
-    // const std::map<wxString, PPToken>& table = PPTable::Instance()->GetTable();
-    //
-    // // Store the macros
-    // db->StoreMacros(table);
-    //
-    // // Commit whats left
-    // db->Commit();
-    //
-    // // Clear the results
-    // PPTable::Instance()->Clear();
-    //
-    // /// Send notification to the main window with our progress report
-    // if(req->_evtHandler) {
-    //     wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-    //     std::vector<std::string>* arrFiles = new std::vector<std::string>;
-    //     *arrFiles = req->_workspaceFiles;
-    //     retaggingCompletedEvent.SetClientData(arrFiles);
-    //     req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
-    // }
 }
 
 void ParseThread::FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSet)
@@ -640,32 +530,6 @@ void ParseThread::ProcessSimpleNoIncludes(ParseRequest* req)
         wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
         req->_evtHandler->AddPendingEvent(retaggingCompletedEvent);
     }
-
-    // std::vector<std::string> files = req->_workspaceFiles;
-    // wxString dbfile = req->getDbfile();
-    //
-    // // Filter binary files
-    // std::vector<std::string> filteredFiles;
-    // wxArrayString filesArr;
-    // for(size_t i = 0; i < files.size(); i++) {
-    //     wxString filename = wxString(files.at(i).c_str(), wxConvUTF8);
-    //     if(TagsManagerST::Get()->IsBinaryFile(filename, m_tod))
-    //         continue;
-    //     filesArr.Add(filename);
-    // }
-    //
-    // // convert the file to tags
-    // ITagsStoragePtr db(new TagsStorageSQLite());
-    // db->OpenDatabase(dbfile);
-    //
-    // TagsManagerST::Get()->FilterNonNeededFilesForRetaging(filesArr, db);
-    // ParseAndStoreFiles(req, filesArr, -1, db);
-    //
-    // if(req->_evtHandler) {
-    //     wxCommandEvent e(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
-    //     e.SetClientData(NULL);
-    //     req->_evtHandler->AddPendingEvent(e);
-    // }
 }
 
 void ParseThread::ProcessIncludeStatements(ParseRequest* req)

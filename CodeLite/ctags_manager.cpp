@@ -414,7 +414,7 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags, const w
     // clDEBUG1() << "Tags:\n" << tags << clEndl;
 }
 
-TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
+TagTreePtr TagsManager::TreeFromTags(const wxArrayString& tags, int& count)
 {
     // Load the records and build a language tree
     TagEntry root;
@@ -422,26 +422,27 @@ TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
 
     TagTreePtr tree(new TagTree(wxT("<ROOT>"), root));
 
-    wxStringTokenizer tkz(tags, wxT("\n"));
-    while(tkz.HasMoreTokens()) {
+    for(const wxString& line : tags) {
         TagEntry tag;
-        wxString line = tkz.NextToken();
-
-        line = line.Trim();
-        line = line.Trim(false);
-        if(line.IsEmpty())
-            continue;
 
         // Construct the tag from the line
         tag.FromLine(line);
 
         // Add the tag to the tree, locals are not added to the
         // tree
-        count++;
-        if(tag.GetKind() != wxT("local"))
+        if(tag.GetKind() != wxT("local")) {
+            count++;
             tree->AddEntry(tag);
+        }
     }
     return tree;
+}
+
+TagTreePtr TagsManager::TreeFromTags(const wxString& tags, int& count)
+{
+    // Load the records and build a language tree
+    wxArrayString lines = ::wxStringTokenize(tags, "\r\n", wxTOKEN_STRTOK);
+    return TreeFromTags(lines, count);
 }
 
 bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const
@@ -1283,27 +1284,27 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles)
 
     // Put a request to the parsing thread to delete the tags for the 'projectFiles'
     ParseRequest* req = new ParseRequest(ParseThreadST::Get()->GetNotifiedWindow());
-    req->setDbFile(GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-    req->setType(ParseRequest::PR_DELETE_TAGS_OF_FILES);
-    req->_workspaceFiles.clear();
-    req->_workspaceFiles.reserve(projectFiles.size());
-    for(size_t i = 0; i < projectFiles.size(); i++) {
-        req->_workspaceFiles.push_back(projectFiles.at(i).GetFullPath().mb_str(wxConvUTF8).data());
+    req->SetDbfile(GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
+    req->SetType(ParseRequest::PR_DELETE_TAGS_OF_FILES);
+    wxArrayString files;
+    files.Alloc(projectFiles.size());
+    for(const wxFileName& fn : projectFiles) {
+        files.push_back(fn.GetFullPath());
     }
     ParseThreadST::Get()->Add(req);
 }
 
-void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb)
+void TagsManager::RetagFiles(const wxArrayString& files, RetagType type, wxEvtHandler* cb)
 {
     wxArrayString strFiles;
-    strFiles.Alloc(files.size()); // At most files.size() entries
+    strFiles.Alloc(files.size());
 
     // step 1: remove all non-tags files
-    for(size_t i = 0; i < files.size(); i++) {
-        if(!IsValidCtagsFile(files.at(i).GetFullPath())) {
+    for(const wxString& filename : files) {
+        if(!IsValidCtagsFile(filename)) {
             continue;
         }
-        strFiles.Add(files.at(i).GetFullPath());
+        strFiles.Add(filename);
     }
 
     // If there are no files to tag - send the 'end' event
@@ -1311,7 +1312,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 #if wxUSE_GUI
         wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
         if(frame) {
-            wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+            clParseThreadEvent retaggingCompletedEvent(wxPARSE_THREAD_RETAGGING_COMPLETED);
             frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
         }
 #endif
@@ -1328,7 +1329,7 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
 #if wxUSE_GUI
         wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
         if(frame) {
-            wxCommandEvent retaggingCompletedEvent(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED);
+            clParseThreadEvent retaggingCompletedEvent(wxPARSE_THREAD_RETAGGING_COMPLETED);
             frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
         }
 #endif
@@ -1341,19 +1342,38 @@ void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType typ
     // step 5: build the database
     ParseRequest* req = new ParseRequest(ParseThreadST::Get()->GetNotifiedWindow());
     if(cb) {
-        req->_evtHandler = cb; // Callback window
+        req->SetParent(cb); // Callback window
     }
 
-    req->setDbFile(GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-
-    req->setType(type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES
+    req->SetDbfile(GetDatabase()->GetDatabaseFileName().GetFullPath());
+    req->SetType(type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES
                                              : ParseRequest::PR_PARSE_AND_STORE);
-    req->_workspaceFiles.clear();
-    req->_workspaceFiles.reserve(strFiles.size());
-    for(size_t i = 0; i < strFiles.GetCount(); i++) {
-        req->_workspaceFiles.push_back(strFiles[i].mb_str(wxConvUTF8).data());
-    }
+    req->SetWorkspaceFiles(strFiles);
     ParseThreadST::Get()->Add(req);
+}
+
+void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb)
+{
+    wxArrayString strFiles;
+    strFiles.Alloc(files.size()); // At most files.size() entries
+
+    // Convert the vector<wxFileName> ==> wxArrayString
+    for(const wxFileName& fn : files) {
+        strFiles.Add(fn.GetFullPath());
+    }
+    RetagFiles(strFiles, type, cb);
+}
+
+void TagsManager::RetagFiles(const std::vector<wxString>& files, RetagType type, wxEvtHandler* cb)
+{
+    wxArrayString strFiles;
+    strFiles.Alloc(files.size()); // At most files.size() entries
+
+    // Convert the vector<wxString> ==> wxArrayString
+    for(const wxString& fn : files) {
+        strFiles.Add(fn);
+    }
+    RetagFiles(strFiles, type, cb);
 }
 
 void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)

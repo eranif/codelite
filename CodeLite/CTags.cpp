@@ -4,6 +4,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "readtags.h"
+#include <wx/tokenzr.h>
 
 CTags::CTags(const wxString& path)
 {
@@ -55,6 +56,7 @@ wxString CTags::WrapSpaces(const wxString& file)
 
 bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
 {
+    clDEBUG() << "Generating ctags files" << clEndl;
     wxFileName outputFile(path, "ctags");
     if(outputFile.GetDirCount() && outputFile.GetDirs().Last() != ".codelite") {
         outputFile.AppendDir(".codelite");
@@ -82,19 +84,21 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
         proc->WaitForTerminate(dummy);
     }
 
-    if(!wxRenameFile(fnTmpTags.GetFullPath(), outputFile.GetFullPath())) {
+    if(!::wxRenameFile(fnTmpTags.GetFullPath(), outputFile.GetFullPath())) {
+        clDEBUG() << "Generating ctags files... ended with an error" << clEndl;
         clWARNING() << "wxRename error:" << fnTmpTags << "->" << outputFile << clEndl;
         return false;
     }
     clDEBUG() << "Tags file:" << outputFile << clEndl;
+    clDEBUG() << "Generating ctags files... success" << clEndl;
     return true;
 }
 
-bool CTags::Generate(const std::vector<std::string>& files, const wxString& path)
+bool CTags::Generate(const wxArrayString& files, const wxString& path)
 {
     // create a file with the list of files
     wxString filesList;
-    for(const std::string& file : files) {
+    for(const auto& file : files) {
         filesList << file << "\n";
     }
     return DoGenerate(filesList, path);
@@ -162,4 +166,72 @@ size_t CTags::FindTags(const wxString& filter, std::vector<TagEntryPtr>& tags, s
         result = tagsFindNext(m_file, &entry);
     }
     return tags.size();
+}
+
+TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath)
+{
+    fullpath.Clear();
+    if(!IsOpened()) {
+        return nullptr;
+    }
+
+    if(!m_textFile.IsOpened()) {
+        if(!m_textFile.Open(m_ctagsfile.GetFullPath())) {
+            return nullptr;
+        }
+    }
+
+    // at eof?
+    if(m_curline == (m_textFile.GetLineCount() - 1)) {
+        return nullptr;
+    }
+
+    std::vector<TagEntry> tags;
+    tags.reserve(1000); // pre allocate memory
+    size_t i = m_curline;
+    for(; i < m_textFile.GetLineCount(); ++i) {
+        m_curline = i;
+        wxString& line = m_textFile.GetLine(i);
+        line.Trim(false).Trim();
+        if(line.empty()) {
+            continue;
+        }
+        // construct a tag from the line
+        TagEntry t;
+        t.FromLine(line);
+        // add it to the vector
+        tags.push_back(t);
+
+        if(fullpath.empty()) {
+            fullpath = tags[0].GetFile();
+        }
+
+        if(fullpath != tags.back().GetFile()) {
+            // we moved to another file, remove the last tag and leave the loop
+            tags.pop_back();
+            break;
+        }
+    }
+    if(tags.empty()) {
+        return nullptr;
+    }
+    return TreeFromTags(tags);
+}
+
+TagTreePtr CTags::TreeFromTags(std::vector<TagEntry>& tags)
+{
+    // Load the records and build a language tree
+    TagEntry root;
+    root.SetName(wxT("<ROOT>"));
+
+    TagTreePtr tree(new TagTree(wxT("<ROOT>"), root));
+
+    for(auto& tag : tags) {
+        // Add the tag to the tree, locals are not added to the
+        // tree
+        if(tag.GetKind() != wxT("local")) {
+            tree->AddEntry(tag);
+        }
+    }
+    return tree;
 }

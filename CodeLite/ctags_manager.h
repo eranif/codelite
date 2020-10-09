@@ -396,6 +396,8 @@ public:
      * @param files list of files, in absolute path, to retag
      */
     void RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb = NULL);
+    void RetagFiles(const wxArrayString& files, RetagType type, wxEvtHandler* cb = NULL);
+    void RetagFiles(const std::vector<wxString>& files, RetagType type, wxEvtHandler* cb = NULL);
 
     /**
      * Close the workspace database
@@ -531,7 +533,6 @@ public:
      * @param tags String containing the ctags output
      */
     void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "+p");
-    void SourceToTags(const wxArrayString& sources, wxString& tags, const wxString& kinds = "+p");
 
     /**
      * return list of files from the database(s). The returned list is ordered
@@ -797,7 +798,8 @@ public:
      * @param tags wxString containing the tags to parse
      * @return tag tree, must be freed by caller
      */
-    TagTreePtr TreeFromTags(const wxString& tags, int& count);
+    static TagTreePtr TreeFromTags(const wxString& tags, int& count);
+    static TagTreePtr TreeFromTags(const wxArrayString& tags, int& count);
 
     /**
      * @brief clear the underlying caching mechanism

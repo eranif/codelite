@@ -70,7 +70,6 @@ protected:
     void OnReGenerateForProject(wxCommandEvent& e);
     void OnDesignerDelete(wxCommandEvent& e);
     void OnBitmapCodeGenerationCompleted(wxCommandEvent& e);
-    void OnSourceFilesParsingDone(wxCommandEvent& e);
     void OnNewForm(wxCommandEvent& e);
     void OnOpenFile(clCommandEvent& e);
     void OnPageClosing(wxNotifyEvent& e);

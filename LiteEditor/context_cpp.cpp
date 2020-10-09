@@ -2061,14 +2061,6 @@ void ContextCpp::OnFileSaved()
         if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
             return;
         }
-#if 0
-        // Start a colour request
-        ParseRequest* parsingRequest = new ParseRequest(ManagerST::Get());
-        parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
-        parsingRequest->setType(ParseRequest::PR_SUGGEST_HIGHLIGHT_WORDS);
-        parsingRequest->setFile(GetCtrl().GetFileName().GetFullPath());
-        ParseThreadST::Get()->Add(parsingRequest);
-#endif
         std::thread thr(
             [=](const wxString& file) {
                 // try to find list of tokens to highlight
@@ -2124,7 +2116,7 @@ void ContextCpp::OnFileSaved()
 
                 // Notify the main thread
                 {
-                    clCommandEvent event(wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS);
+                    clParseThreadEvent event(wxPARSE_THREAD_SUGGEST_COLOUR_TOKENS);
                     wxArrayString res;
                     res.Add(types);
                     res.Add(locals);

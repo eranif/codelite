@@ -19,6 +19,7 @@
 #include <unordered_set>
 #include <vector>
 #include <wx/arrstr.h>
+#include "parse_thread.h"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -69,7 +70,7 @@ protected:
     void OnAllEditorsClosed(wxCommandEvent& event);
     void OnScanCompleted(clFileSystemEvent& event);
     void OnParseWorkspace(wxCommandEvent& event);
-    void OnParseThreadScanIncludeCompleted(wxCommandEvent& event);
+    void OnParseThreadScanIncludeCompleted(clParseThreadEvent& event);
     void OnBuildProcessTerminated(clProcessEvent& event);
     void OnBuildProcessOutput(clProcessEvent& event);
     void OnSaveSession(clCommandEvent& event);

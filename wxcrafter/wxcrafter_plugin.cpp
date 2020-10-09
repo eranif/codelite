@@ -271,8 +271,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     wxTheApp->Connect(XRCID("ID_SHOW_DESIGNER"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxCrafterPlugin::OnShowDesigner), NULL, (wxEvtHandler*)this);
 
-    this->Connect(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED,
-                  wxCommandEventHandler(wxCrafterPlugin::OnSourceFilesParsingDone), NULL, this);
 #if !STANDALONE_BUILD
     m_mgr->GetWorkspacePaneNotebook()->Bind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
     clKeyboardManager::Get()->AddGlobalAccelerator("ID_SHOW_DESIGNER", "Ctrl-Shift-F12",
@@ -365,8 +363,6 @@ void wxCrafterPlugin::UnPlug()
 #if !STANDALONE_BUILD
     m_mgr->GetWorkspacePaneNotebook()->Unbind(wxEVT_BOOK_PAGE_CHANGED, &wxCrafterPlugin::OnWorkspaceTabSelected, this);
 #endif
-    this->Disconnect(wxEVT_PARSE_THREAD_RETAGGING_COMPLETED,
-                     wxCommandEventHandler(wxCrafterPlugin::OnSourceFilesParsingDone), NULL, this);
     wxTheApp->Disconnect(XRCID("wxcp_new_form"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(wxCrafterPlugin::OnNewForm), NULL, this);
 
@@ -682,8 +678,6 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(eventRetag);
 #endif
 }
-
-void wxCrafterPlugin::OnSourceFilesParsingDone(wxCommandEvent& e) { e.Skip(); }
 
 wxMenu* wxCrafterPlugin::DoCreateFolderMenu()
 {

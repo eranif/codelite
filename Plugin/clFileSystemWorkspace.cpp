@@ -60,7 +60,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
-        Bind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
+        Bind(wxPARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
         // Build events
@@ -103,7 +103,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         // parsing event
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
-        Unbind(wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
+        Unbind(wxPARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
         // Build events
@@ -448,45 +448,50 @@ void clFileSystemWorkspace::Parse(bool fullParse)
     UpdateParserPaths();
 
     // Create a parsing request
-    ParseRequest* parsingRequest = new ParseRequest(EventNotifier::Get()->TopFrame());
-    parsingRequest->_workspaceFiles.reserve(m_files.GetSize());
+    ParseRequest* parsingRequest = new ParseRequest(this);
+
     // use a deep copy to endure thread safety
+    wxArrayString files;
+    files.Alloc(m_files.GetSize());
     for(const wxFileName& fn : m_files) {
         // filter any non valid coding file
-        parsingRequest->_workspaceFiles.push_back(fn.GetFullPath().ToAscii().data());
+        files.push_back(fn.GetFullPath());
     }
-
-    parsingRequest->setType(ParseRequest::PR_PARSEINCLUDES);
-    parsingRequest->setDbFile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-    parsingRequest->_evtHandler = this;
-    parsingRequest->_quickRetag = !fullParse;
+    parsingRequest->SetWorkspaceFiles(files);
+    parsingRequest->SetType(ParseRequest::PR_PARSEINCLUDES);
+    parsingRequest->SetDbfile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
+    parsingRequest->SetQuickRetag(!fullParse);
     ParseThreadST::Get()->Add(parsingRequest);
     clGetManager()->SetStatusMessage(_("Scanning for files to parse..."));
 }
 
-void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(wxCommandEvent& event)
+void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(clParseThreadEvent& event)
 {
     clGetManager()->SetStatusMessage(_("Parsing..."));
 
     wxBusyCursor busyCursor;
-    std::set<wxString>* fileSet = (std::set<wxString>*)event.GetClientData();
+    const wxArrayString& files = event.GetFiles();
+
+    wxStringSet_t S;
+    S.reserve(files.size() + m_files.GetSize());
+
+    for(const wxString& file : files) {
+        S.insert(file);
+    }
 
     // add to this set the workspace files to create a unique list of
     // files
     for(const wxFileName& fn : m_files) {
-        fileSet->insert(fn.GetFullPath());
+        S.insert(fn.GetFullPath());
     }
 
     // recreate the list in the form of vector (the API requirs vector)
-    std::vector<wxFileName> vFiles;
-    vFiles.reserve(fileSet->size());
-    vFiles.insert(vFiles.end(), fileSet->begin(), fileSet->end());
+    std::vector<wxString> vFiles;
+    vFiles.reserve(S.size());
+    vFiles.insert(vFiles.end(), S.begin(), S.end());
 
-    // -----------------------------------------------
-    // tag them
-    // -----------------------------------------------
-    TagsManagerST::Get()->RetagFiles(vFiles, event.GetInt() ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
-    wxDELETE(fileSet);
+    // tag'em
+    TagsManagerST::Get()->RetagFiles(vFiles, event.IsQuickParse() ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
 }
 
 void clFileSystemWorkspace::UpdateParserPaths()

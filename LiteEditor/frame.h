@@ -534,13 +534,13 @@ protected:
     void OnRenameSymbol(clRefactoringEvent& e);
 
     // handle symbol tree events
-    void OnParsingThreadMessage(wxCommandEvent& e);
+    void OnParsingThreadMessage(clParseThreadEvent& e);
     void OnDatabaseUpgrade(wxCommandEvent& e);
     void OnDatabaseUpgradeInternally(wxCommandEvent& e);
     void OnRefreshPerspectiveMenu(wxCommandEvent& e);
-    void OnClearTagsCache(wxCommandEvent& e);
-    void OnRetaggingCompelted(wxCommandEvent& e);
-    void OnRetaggingProgress(wxCommandEvent& e);
+    void OnClearTagsCache(clParseThreadEvent& e);
+    void OnRetaggingCompleted(clParseThreadEvent& e);
+    void OnRetaggingProgress(clParseThreadEvent& e);
 
     void OnRecentFile(wxCommandEvent& event);
     void OnRecentWorkspace(wxCommandEvent& event);
@@ -642,7 +642,7 @@ protected:
     void OnLoadPerspective(wxCommandEvent& e);
     void OnWorkspaceSettings(wxCommandEvent& e);
     void OnWorkspaceEditorPreferences(wxCommandEvent& e);
-    void OnParserThreadReady(wxCommandEvent& e);
+    void OnParserThreadReady(clParseThreadEvent& e);
 
     // Clang
     void OnPchCacheStarted(wxCommandEvent& e);

@@ -50,21 +50,21 @@ class ITagsStorage;
  */
 class WXDLLIMPEXP_CL ParseRequest : public ThreadRequest
 {
+protected:
     wxString _file;
     wxString _dbfile;
     wxString _tags;
     int _type;
     wxArrayString m_definitions;
     wxArrayString m_includePaths;
-
-public:
-    wxEvtHandler* _evtHandler;
-    std::vector<std::string> _workspaceFiles;
+    wxEvtHandler* m_parent;
+    wxArrayString _workspaceFiles;
     bool _quickRetag;
     int _uid;
 
 public:
     enum {
+        PR_INVALID = -1,
         PR_FILESAVED,
         PR_PARSEINCLUDES,
         PR_PARSE_AND_STORE,
@@ -78,7 +78,7 @@ public:
     // ctor/dtor
     ParseRequest(wxEvtHandler* handler)
         : _type(PR_FILESAVED)
-        , _evtHandler(handler)
+        , m_parent(handler)
         , _quickRetag(false)
         , _uid(-1)
     {
@@ -86,7 +86,6 @@ public:
     virtual ~ParseRequest();
 
     // accessors
-
     void SetDefinitions(const wxArrayString& definitions) { this->m_definitions = definitions; }
     void SetIncludePaths(const wxArrayString& includePaths) { this->m_includePaths = includePaths; }
     const wxArrayString& GetDefinitions() const { return m_definitions; }
@@ -96,17 +95,25 @@ public:
     void setTags(const wxString& tags);
 
     // Getters
-    const wxString& getDbfile() const { return _dbfile; }
+    void SetDbfile(const wxString& _dbfile) { this->_dbfile = _dbfile; }
+    void SetParent(wxEvtHandler* _evtHandler) { this->m_parent = _evtHandler; }
+    void SetFile(const wxString& _file) { this->_file = _file; }
+    void SetQuickRetag(bool _quickRetag) { this->_quickRetag = _quickRetag; }
+    void SetTags(const wxString& _tags) { this->_tags = _tags; }
+    void SetType(int _type) { this->_type = _type; }
+    void SetUid(int _uid) { this->_uid = _uid; }
+    void SetWorkspaceFiles(const wxArrayString& _workspaceFiles) { this->_workspaceFiles = _workspaceFiles; }
+    const wxString& GetDbfile() const { return _dbfile; }
+    wxEvtHandler* GetParent() { return m_parent; }
+    const wxString& GetFile() const { return _file; }
+    bool IsQuickRetag() const { return _quickRetag; }
+    const wxString& GetTags() const { return _tags; }
+    int GetType() const { return _type; }
+    int GetUid() const { return _uid; }
 
-    const wxString& getFile() const { return _file; }
-
-    const wxString& getTags() const { return _tags; }
-
-    void setType(int _type) { this->_type = _type; }
-    int getType() const { return _type; }
+    const wxArrayString& GetWorkspaceFiles() const { return _workspaceFiles; }
     // copy ctor
     ParseRequest(const ParseRequest& rhs);
-
     // assignment operator
     ParseRequest& operator=(const ParseRequest& rhs);
 };
@@ -150,6 +157,11 @@ private:
     ParseThread();
 
     /**
+     * @brief post message to the parent window
+     */
+    void PostStatusMessage(wxEvtHandler* parent, const wxString& message);
+
+    /**
      * Destructor.
      */
     virtual ~ParseThread();
@@ -171,18 +183,16 @@ private:
      * @param filename
      */
     void ParseIncludeFiles(ParseRequest* req, const wxString& filename, ITagsStoragePtr db);
-
+    void FilterBinaryFiles(wxArrayString& files);
     void ProcessSingleFile(ParseRequest* req);
-    void ProcessSourceToTags(ParseRequest* req);
     void ProcessIncludes(ParseRequest* req);
     void ProcessParseAndStore(ParseRequest* req);
     void ProcessDeleteTagsOfFiles(ParseRequest* req);
     void ProcessSimpleNoIncludes(ParseRequest* req);
     void ProcessIncludeStatements(ParseRequest* req);
     void GetFileListToParse(const wxString& filename, wxArrayString& arrFiles);
-    void ParseAndStoreFiles(ParseRequest* req, const wxArrayString& arrFiles, int initalCount, ITagsStoragePtr db);
-
-    void FindIncludedFiles(ParseRequest* req, std::set<wxString>* newSet);
+    void ParseAndStoreFiles(wxEvtHandler* parent, const wxArrayString& arrFiles, ITagsStoragePtr db);
+    void FindIncludedFiles(ParseRequest* req, wxArrayString& files);
 };
 
 class WXDLLIMPEXP_CL ParseThreadST
@@ -192,16 +202,52 @@ public:
     static ParseThread* Get();
 };
 
+// Parse thread event
+class WXDLLIMPEXP_CL clParseThreadEvent : public clCommandEvent
+{
+    wxArrayString m_files;
+    bool m_quickRetag = false;
+    int m_progressPercentage = 0;
+    int m_requestUID = 0;
+    wxEvtHandler* m_caller = nullptr;
+    int m_requestType = ParseRequest::PR_INVALID;
+
+private:
+    // Make GetInt private
+    int GetInt() const { return m_commandInt; }
+
+public:
+    clParseThreadEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clParseThreadEvent(const clParseThreadEvent& event);
+    clParseThreadEvent& operator=(const clParseThreadEvent& src);
+    virtual ~clParseThreadEvent();
+    virtual wxEvent* Clone() const { return new clParseThreadEvent(*this); }
+    const wxArrayString& GetFiles() const { return m_files; }
+    void SetFiles(const wxArrayString& files) { m_files = files; }
+    bool IsQuickParse() const { return m_quickRetag; }
+    void SetQuickParse(bool b) { m_quickRetag = b; }
+    int GetProgressPercentage() const { return m_progressPercentage; }
+    void SetProgressPercentage(int p) { m_progressPercentage = p; }
+    int GetRequestUID() const { return m_requestUID; }
+    void SetRequestUID(int uid) { m_requestUID = uid; }
+    void SetCaller(wxEvtHandler* caller) { m_caller = caller; }
+    wxEvtHandler* GetCaller() const { return m_caller; }
+    void SetRequestType(int requestType) { m_requestType = requestType; }
+    int GetRequestType() const { return m_requestType; }
+};
+
+typedef void (wxEvtHandler::*clParseThreadEventFunction)(clParseThreadEvent&);
+#define clParseThreadEventHandler(func) wxEVENT_HANDLER_CAST(clParseThreadEventFunction, func)
+
 // ClientData is set to wxString* which must be deleted by the handler
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_MESSAGE, wxCommandEvent);
-// ClientData is set to std::set<std::string> *newSet which must deleted by the handler
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SCAN_INCLUDES_DONE, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_READY, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SUGGEST_COLOUR_TOKENS, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PARSE_THREAD_SOURCE_TAGS, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_MESSAGE, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_SCAN_INCLUDES_DONE, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_CLEAR_TAGS_CACHE, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_RETAGGING_PROGRESS, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_RETAGGING_COMPLETED, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_INCLUDE_STATEMENTS_DONE, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_READY, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_SUGGEST_COLOUR_TOKENS, clParseThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxPARSE_THREAD_SOURCE_TAGS, clParseThreadEvent);
 
 #endif // CODELITE_PARSE_THREAD_H

@@ -71,7 +71,7 @@ protected:
     void DoBuildTree(TagEntryPtrVector_t& tags, const wxFileName& filename);
 
     wxString GetActiveEditorFile() const;
-    void OnIncludeStatements(wxCommandEvent& e);
+    void OnIncludeStatements(clParseThreadEvent& e);
     void OnCacheUpdated(clCommandEvent& e);
     void OnCacheInvalidated(clCommandEvent& e);
     virtual void OnMouseDblClick(wxMouseEvent& event);

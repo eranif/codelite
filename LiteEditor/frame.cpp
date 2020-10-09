@@ -689,15 +689,6 @@ EVT_MENU(XRCID("retag_file"), clMainFrame::OnCppContextMenu)
 EVT_HTML_LINK_CLICKED(wxID_ANY, clMainFrame::OnLinkClicked)
 EVT_MENU(XRCID("link_action"), clMainFrame::OnStartPageEvent)
 
-//-----------------------------------------------------------------
-// CodeLite-specific events
-//-----------------------------------------------------------------
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_MESSAGE, clMainFrame::OnParsingThreadMessage)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_CLEAR_TAGS_CACHE, clMainFrame::OnClearTagsCache)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_COMPLETED, clMainFrame::OnRetaggingCompelted)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, clMainFrame::OnRetaggingProgress)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_READY, clMainFrame::OnParserThreadReady)
-
 EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR, clMainFrame::OnActivateEditor)
 
 EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE, clMainFrame::OnDatabaseUpgrade)
@@ -848,6 +839,14 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
                                                    "Search::Open Shell From File Path");
     clKeyboardManager::Get()->AddGlobalAccelerator("open_file_explorer", "Ctrl-Alt-Shift-T",
                                                    "Search::Open Containing Folder");
+    //-----------------------------------------------------------------
+    // CodeLite-specific events
+    //-----------------------------------------------------------------
+    Bind(wxPARSE_THREAD_MESSAGE, &clMainFrame::OnParsingThreadMessage, this);
+    Bind(wxPARSE_THREAD_CLEAR_TAGS_CACHE, &clMainFrame::OnClearTagsCache, this);
+    Bind(wxPARSE_THREAD_RETAGGING_COMPLETED, &clMainFrame::OnRetaggingCompleted, this);
+    Bind(wxPARSE_THREAD_RETAGGING_PROGRESS, &clMainFrame::OnRetaggingProgress, this);
+    Bind(wxPARSE_THREAD_READY, &clMainFrame::OnParserThreadReady, this);
 
 #ifdef __WXGTK__
     // Try to detect if this is a Wayland session; we have some Wayland-workaround code
@@ -1874,8 +1873,8 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
     if(event.GetString().IsEmpty()) {
         // now it is time to prompt user for new workspace to open
         const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|") wxT("All Files (*)|*"));
-        wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL,
-                         wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
+        wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST,
+                         wxDefaultPosition);
         if(dlg.ShowModal() == wxID_OK) {
             wspFile = dlg.GetPath();
         }
@@ -4635,13 +4634,10 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnParsingThreadMessage(wxCommandEvent& e)
+void clMainFrame::OnParsingThreadMessage(clParseThreadEvent& e)
 {
-    wxString* msg = (wxString*)e.GetClientData();
-    if(msg) {
-        clLogMessage(*msg);
-        delete msg;
-    }
+    e.Skip();
+    clGetManager()->GetStatusBar()->SetMessage(e.GetString());
 }
 
 void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent& e)
@@ -4773,7 +4769,7 @@ void clMainFrame::SelectBestEnvSet()
     DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
 }
 
-void clMainFrame::OnClearTagsCache(wxCommandEvent& e)
+void clMainFrame::OnClearTagsCache(clParseThreadEvent& e)
 {
     e.Skip();
     TagsManagerST::Get()->ClearTagsCache();
@@ -4885,7 +4881,7 @@ void clMainFrame::UpdateAUI()
     m_mgr.Update();
 }
 
-void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
+void clMainFrame::OnRetaggingCompleted(clParseThreadEvent& e)
 {
     e.Skip();
 
@@ -4898,53 +4894,21 @@ void clMainFrame::OnRetaggingCompelted(wxCommandEvent& e)
     // Clear all cached tags now that we got our database updated
     TagsManagerST::Get()->ClearAllCaches();
 
-    // Send event notifying parsing completed
-    std::vector<std::string>* files = (std::vector<std::string>*)e.GetClientData();
-    if(files) {
-
-        // Print the parsing end time
-        clDEBUG() << "INFO: Retag workspace completed in" << (gStopWatch.Time() / 1000) << "seconds ("
-                  << (unsigned long)files->size() << "files were scanned)";
-        std::vector<wxFileName> taggedFiles;
-        for(size_t i = 0; i < files->size(); i++) {
-            taggedFiles.push_back(wxFileName(wxString(files->at(i).c_str(), wxConvUTF8)));
-        }
-
-        SendCmdEvent(wxEVT_FILE_RETAGGED, (void*)&taggedFiles);
-        delete files;
-
-    } else {
-        clLogMessage(_("INFO: Retag workspace completed in 0 seconds (No files were retagged)"));
-    }
-
     wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
-    tagEndEvent.SetClientData(e.GetClientData()); // pass the pointer to the original caller
     EventNotifier::Get()->AddPendingEvent(tagEndEvent);
 }
 
-void clMainFrame::OnRetaggingProgress(wxCommandEvent& e)
+void clMainFrame::OnRetaggingProgress(clParseThreadEvent& e)
 {
     e.Skip();
-    if(e.GetInt() == 1) {
+    if(e.GetProgressPercentage() == 1) {
         // parsing started
         gStopWatch.Start();
     }
-    GetWorkspacePane()->UpdateProgress(e.GetInt());
+    GetWorkspacePane()->UpdateProgress(e.GetProgressPercentage());
 }
 
-void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
-{
-    CHECK_SHUTDOWN();
-
-    //    // See whether we got a custom workspace open in one of the plugins
-    //    clCommandEvent e(wxEVT_CMD_IS_WORKSPACE_OPEN, GetId());
-    //    e.SetEventObject(this);
-    //    e.SetAnswer(false);
-    //    EventNotifier::Get()->ProcessEvent(e);
-    //
-    //    event.Enable((ManagerST::Get()->IsWorkspaceOpen() && !ManagerST::Get()->GetRetagInProgress()) ||
-    //    e.IsAnswer());
-}
+void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event) { CHECK_SHUTDOWN(); }
 
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
 {
@@ -5159,7 +5123,7 @@ void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
     e.Check(active.CmpNoCase(itemName) == 0);
 }
 
-void clMainFrame::OnParserThreadReady(wxCommandEvent& e)
+void clMainFrame::OnParserThreadReady(clParseThreadEvent& e)
 {
     e.Skip();
     ManagerST::Get()->SetRetagInProgress(false);

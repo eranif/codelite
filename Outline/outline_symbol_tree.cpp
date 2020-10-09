@@ -62,8 +62,8 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
     Connect(GetId(), wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(svSymbolTree::OnItemActivated));
     Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(svSymbolTree::OnMouseDblClick), NULL, this);
 
-    // Prase thread events
-    Bind(wxEVT_PARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
+    // Parse thread events
+    Bind(wxPARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, &svSymbolTree::OnCacheInvalidated, this);
 
@@ -110,7 +110,8 @@ bool svSymbolTree::DoItemActivated(wxTreeItemId item, wxEvent& event, bool notif
     // holds the key for searching the its corresponding
     // node in the m_tree data structure
     //-----------------------------------------------------
-    if(item.IsOk() == false) return false;
+    if(item.IsOk() == false)
+        return false;
 
     MyTreeItemData* itemData = static_cast<MyTreeItemData*>(GetItemData(item));
     if(!itemData) {
@@ -193,7 +194,9 @@ void svSymbolTree::CenterEditorLine()
 
 void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
 {
-    if(!force && (m_currentFile == fn.GetFullPath())) { return; } // same file
+    if(!force && (m_currentFile == fn.GetFullPath())) {
+        return;
+    } // same file
     TagEntryPtrVector_t tags;
     if(!TagsManagerST::Get()->GetFileCache()->Find(fn, tags)) {
         // Ask to generate cache entry for this file
@@ -208,7 +211,8 @@ void svSymbolTree::BuildTree(const wxFileName& fn, bool force)
 wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileOpener::Set_t& includes)
 {
     wxTreeItemId root = GetRootItem();
-    if(root.IsOk() == false) return wxTreeItemId();
+    if(root.IsOk() == false)
+        return wxTreeItemId();
 
     if(root.IsOk() && ItemHasChildren(root)) {
         wxTreeItemIdValue cookie;
@@ -224,7 +228,8 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
         }
     }
 
-    if(includes.empty()) return wxTreeItemId();
+    if(includes.empty())
+        return wxTreeItemId();
 
     wxTreeItemId item;
     if(ItemHasChildren(root)) {
@@ -244,10 +249,12 @@ wxTreeItemId svSymbolTree::DoAddIncludeFiles(const wxFileName& fn, const fcFileO
 bool svSymbolTree::IsSelectedItemIncludeFile()
 {
     wxTreeItemId item = GetSelection();
-    if(item.IsOk() == false || item == GetRootItem()) return false;
+    if(item.IsOk() == false || item == GetRootItem())
+        return false;
 
     wxTreeItemId parent = GetItemParent(item);
-    if(parent.IsOk() == false || parent == GetRootItem()) return false;
+    if(parent.IsOk() == false || parent == GetRootItem())
+        return false;
 
     return GetItemText(parent) == INCLUDE_FILES_NODE_TEXT;
 }
@@ -256,7 +263,8 @@ wxString svSymbolTree::GetSelectedIncludeFile() const
 {
     wxString included_file;
     wxTreeItemId item = GetSelection();
-    if(item.IsOk() == false || item == GetRootItem()) return wxT("");
+    if(item.IsOk() == false || item == GetRootItem())
+        return wxT("");
 
     included_file = GetItemText(item);
     included_file.Replace(wxT("\""), wxT(""));
@@ -271,12 +279,7 @@ void svSymbolTree::Clear()
     m_currentFile.Clear();
 }
 
-void svSymbolTree::OnIncludeStatements(wxCommandEvent& e)
-{
-    wxUnusedVar(e);
-    fcFileOpener::Set_t* includes = (fcFileOpener::Set_t*)e.GetClientData();
-    if(includes) { delete includes; }
-}
+void svSymbolTree::OnIncludeStatements(clParseThreadEvent& e) { e.Skip(); }
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
 
@@ -299,7 +302,9 @@ void svSymbolTree::OnCacheUpdated(clCommandEvent& e)
     }
 
     TagEntryPtrVector_t tags;
-    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) { return; }
+    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) {
+        return;
+    }
 
     // Build the tree
     DoBuildTree(tags, e.GetFileName());

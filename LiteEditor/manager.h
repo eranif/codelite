@@ -37,6 +37,7 @@
 #include "ctags_manager.h"
 #include "debuggerobserver.h"
 #include "filehistory.h"
+#include "parse_thread.h"
 #include "perspectivemanager.h"
 #include "queuecommand.h"
 #include "shell_command.h"
@@ -229,7 +230,7 @@ protected:
     void DoSetupWorkspace(const wxString& path);
 
     void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e);
-    void OnParserThreadSuggestColourTokens(clCommandEvent& event);
+    void OnParserThreadSuggestColourTokens(clParseThreadEvent& event);
     /**
      * @brief a project was renamed, reload the workspace
      */
@@ -346,7 +347,7 @@ public:
      * @brief the parser thread has completed to scan for include files to parse
      * @param event
      */
-    void OnIncludeFilesScanDone(wxCommandEvent& event);
+    void OnIncludeFilesScanDone(clParseThreadEvent& event);
     void OnDbContentCacherLoaded(wxCommandEvent& event);
 
     /**

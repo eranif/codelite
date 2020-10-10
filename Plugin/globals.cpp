@@ -809,16 +809,7 @@ bool IsFileReadOnly(const wxFileName& filename)
 void FillFromSmiColonString(wxArrayString& arr, const wxString& str)
 {
     arr.clear();
-    wxStringTokenizer tkz(str, wxT(";"));
-    while(tkz.HasMoreTokens()) {
-
-        wxString token = tkz.NextToken();
-        token.Trim().Trim(false);
-        if(token.IsEmpty()) {
-            continue;
-        }
-        arr.Add(token.Trim());
-    }
+    arr = StringUtils::BuildArgv(str);
 }
 
 wxString ArrayToSmiColonString(const wxArrayString& array)

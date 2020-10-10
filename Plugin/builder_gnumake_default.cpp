@@ -45,6 +45,7 @@
 #include "wx/tokenzr.h"
 #include <algorithm>
 #include <wx/stopwatch.h>
+#include "StringUtils.h"
 
 BuilderGnuMake::BuilderGnuMake()
     : Builder("CodeLite Makefile Generator")
@@ -1316,10 +1317,9 @@ wxString BuilderGnuMake::ParseLibPath(const wxString& paths, const wxString& pro
 wxString BuilderGnuMake::ParsePreprocessor(const wxString& prep)
 {
     wxString preprocessor(wxEmptyString);
-    wxStringTokenizer tkz(prep, wxT(";"), wxTOKEN_STRTOK);
+    wxArrayString tokens = StringUtils::BuildArgv(prep);
     // prepend each include path with libpath switch
-    while(tkz.HasMoreTokens()) {
-        wxString p(tkz.NextToken());
+    for(wxString& p : tokens) {
         p.Trim().Trim(false);
         preprocessor << wxT("$(PreprocessorSwitch)") << p << wxT(" ");
     }

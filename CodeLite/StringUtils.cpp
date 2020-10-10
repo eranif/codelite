@@ -5,11 +5,17 @@ std::string StringUtils::ToStdString(const wxString& str)
 {
     wxCharBuffer cb = str.ToAscii();
     const char* data = cb.data();
-    if(!data) { data = str.mb_str(wxConvUTF8).data(); }
-    if(!data) { data = str.To8BitData(); }
+    if(!data) {
+        data = str.mb_str(wxConvUTF8).data();
+    }
+    if(!data) {
+        data = str.To8BitData();
+    }
 
     std::string res;
-    if(!data) { return res; }
+    if(!data) {
+        return res;
+    }
     res = data;
     return res;
 }
@@ -72,7 +78,9 @@ void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbu
     StripTerminalColouring(source, output);
     if(!output.empty()) {
         modbuffer = wxString(output.c_str(), wxConvUTF8);
-        if(modbuffer.IsEmpty()) { modbuffer = wxString::From8BitData(output.c_str()); }
+        if(modbuffer.IsEmpty()) {
+            modbuffer = wxString::From8BitData(output.c_str());
+        }
     } else {
         modbuffer.Clear();
     }
@@ -115,6 +123,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
             switch(ch) {
             case ' ':
             case '\t':
+            case ';':
                 PUSH_CURTOKEN();
                 break;
             case '\'':
@@ -129,13 +138,21 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 CHANGE_STATE(ARGV_STATE_BACKTICK);
                 curstr << ch;
                 break;
+            case '\\':
+                CHANGE_STATE(ARGV_STATE_ESCAPE);
+                curstr << ch;
+                break;
             default:
                 curstr << ch;
                 break;
             }
         } break;
         case ARGV_STATE_ESCAPE: {
-            if(prev_state == ARGV_STATE_DQUOTE) {
+            if(prev_state == ARGV_STATE_NORMAL) {
+                curstr << ch;
+                RESTORE_STATE();
+                break;
+            } else if(prev_state == ARGV_STATE_DQUOTE) {
                 switch(ch) {
                 case '"':
                     curstr << "\"";
@@ -169,28 +186,28 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                     break;
                 }
             }
-            //switch(ch) {
-            //case 'n':
+            // switch(ch) {
+            // case 'n':
             //    curstr << "\n";
             //    RESTORE_STATE();
             //    break;
-            //case 'b':
+            // case 'b':
             //    curstr << "\b";
             //    RESTORE_STATE();
             //    break;
-            //case 't':
+            // case 't':
             //    curstr << "\t";
             //    RESTORE_STATE();
             //    break;
-            //case 'r':
+            // case 'r':
             //    curstr << "\r";
             //    RESTORE_STATE();
             //    break;
-            //case 'v':
+            // case 'v':
             //    curstr << "\v";
             //    RESTORE_STATE();
             //    break;
-            //default:
+            // default:
             //    curstr << "\\" << ch;
             //    RESTORE_STATE();
             //    break;
@@ -241,9 +258,13 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
         }
     }
 
-    if(!curstr.IsEmpty()) { A.push_back(curstr); }
+    if(!curstr.IsEmpty()) {
+        A.push_back(curstr);
+    }
 
-    if(A.empty()) { return nullptr; }
+    if(A.empty()) {
+        return nullptr;
+    }
 
     char** argv = new char*[A.size() + 1];
     argv[A.size()] = NULL;
@@ -273,7 +294,9 @@ wxArrayString StringUtils::BuildArgv(const wxString& str)
     FreeArgv(argv, argc);
 
     for(wxString& s : arrArgv) {
-        if((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) { s.RemoveLast().Remove(0, 1); }
+        if((s.length() > 1) && s.StartsWith("\"") && s.EndsWith("\"")) {
+            s.RemoveLast().Remove(0, 1);
+        }
     }
     return arrArgv;
 }

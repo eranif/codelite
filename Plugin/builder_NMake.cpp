@@ -46,6 +46,7 @@
 #include "cl_command_event.h"
 #include <algorithm>
 #include "macromanager.h"
+#include "StringUtils.h"
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
@@ -1401,10 +1402,9 @@ wxString BuilderNMake::ParseLibPath(const wxString& paths, const wxString& proje
 wxString BuilderNMake::ParsePreprocessor(const wxString& prep)
 {
     wxString preprocessor(wxEmptyString);
-    wxStringTokenizer tkz(prep, wxT(";"), wxTOKEN_STRTOK);
+    wxArrayString tokens = StringUtils::BuildArgv(prep);
     // prepend each include path with libpath switch
-    while(tkz.HasMoreTokens()) {
-        wxString p(tkz.NextToken());
+    for(wxString& p : tokens) {
         p.Trim().Trim(false);
         preprocessor << wxT("$(PreprocessorSwitch)") << p << wxT(" ");
     }

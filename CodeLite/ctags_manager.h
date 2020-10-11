@@ -532,7 +532,7 @@ public:
      * @param source Source file name
      * @param tags String containing the ctags output
      */
-    void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "+p");
+    void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "cdefgmnpstuv");
 
     /**
      * return list of files from the database(s). The returned list is ordered

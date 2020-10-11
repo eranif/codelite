@@ -22,11 +22,11 @@
 #include <wx/crt.h>
 
 #ifdef __WXGTK__
-#   define WX_STRING_MEMBERS_COUNT 446
-#   define CLASS_WITH_MEMBERS_COUNT 31
+#define WX_STRING_MEMBERS_COUNT 446
+#define CLASS_WITH_MEMBERS_COUNT 31
 #else
-#   define WX_STRING_MEMBERS_COUNT 453
-#   define CLASS_WITH_MEMBERS_COUNT 31
+#define WX_STRING_MEMBERS_COUNT 453
+#define CLASS_WITH_MEMBERS_COUNT 31
 #endif
 
 wxString LoadFile(const wxString& filename)
@@ -43,19 +43,28 @@ wxString LoadFile(const wxString& filename)
 class EventHandler : public wxEvtHandler
 {
 public:
-    void OnParsingDone(wxCommandEvent& e);
-    void OnParsingDoneProg(wxCommandEvent& e);
-    DECLARE_EVENT_TABLE();
+    void OnParsingDone(clParseThreadEvent& e);
+    void OnParsingDoneProg(clParseThreadEvent& e);
+
+    EventHandler()
+    {
+        Bind(wxPARSE_THREAD_RETAGGING_PROGRESS, &EventHandler::OnParsingDone, this);
+        Bind(wxPARSE_THREAD_RETAGGING_PROGRESS, &EventHandler::OnParsingDoneProg, this);
+    }
+
+    virtual ~EventHandler()
+    {
+        Unbind(wxPARSE_THREAD_RETAGGING_PROGRESS, &EventHandler::OnParsingDone, this);
+        Unbind(wxPARSE_THREAD_RETAGGING_PROGRESS, &EventHandler::OnParsingDoneProg, this);
+    }
 };
 
-BEGIN_EVENT_TABLE(EventHandler, wxEvtHandler)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, EventHandler::OnParsingDoneProg)
-EVT_COMMAND(wxID_ANY, wxEVT_PARSE_THREAD_RETAGGING_PROGRESS, EventHandler::OnParsingDone)
-END_EVENT_TABLE()
+void EventHandler::OnParsingDone(clParseThreadEvent& e) { wxPrintf(wxT("Parsing completed\n")); }
 
-void EventHandler::OnParsingDone(wxCommandEvent& e) { wxPrintf(wxT("Parsing completed\n")); }
-
-void EventHandler::OnParsingDoneProg(wxCommandEvent& e) { wxPrintf(wxT("[%%%d] completed\n"), e.GetInt()); }
+void EventHandler::OnParsingDoneProg(clParseThreadEvent& e)
+{
+    wxPrintf(wxT("[%%%d] completed\n"), e.GetProgressPercentage());
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Code Completion test cases
@@ -569,15 +578,15 @@ int main(int argc, char** argv)
 {
     // Initialize the wxWidgets library
     wxInitializer initializer;
-// #ifdef __WXMSW__
-//     TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
-//     TagsManagerST::Get()->StartCodeLiteIndexer();
-//     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
-//                                                                  "    short_apple,"
-//                                                                  "    short_banana,"
-//                                                                  "    short_orange,"
-//                                                                  "};");
-// #endif
+    // #ifdef __WXMSW__
+    //     TagsManagerST::Get()->SetCodeLiteIndexerPath("C:/Program Files/CodeLite/codelite_indexer.exe");
+    //     TagsManagerST::Get()->StartCodeLiteIndexer();
+    //     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer("enum class FooShort : short {"
+    //                                                                  "    short_apple,"
+    //                                                                  "    short_banana,"
+    //                                                                  "    short_orange,"
+    //                                                                  "};");
+    // #endif
 
     testCC();
     TagsManagerST::Free();

@@ -2,6 +2,7 @@
 #include "DbViewerPanel.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 DbExplorerFrame::DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxString& label, DbViewerPanel* viewer)
     : DbExplorerFrameBase(parent, wxID_ANY, label, wxDefaultPosition, wxSize(500, 500),
@@ -15,10 +16,10 @@ DbExplorerFrame::DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxStrin
     Bind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this);
 
     // If this instance does not exists, set the default size
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(parent) {
         CentreOnParent();
     }
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
 DbExplorerFrame::~DbExplorerFrame() { Unbind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this); }

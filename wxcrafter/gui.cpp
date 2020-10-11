@@ -192,7 +192,9 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     SetName(wxT("MainFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxHORIZONTAL);
     } else {
@@ -722,7 +724,9 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("GUICraftMainPanelBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_mainBook->Connect(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,
                         wxBookCtrlEventHandler(GUICraftMainPanelBase::OnPageChanged), NULL, this);
@@ -790,7 +794,9 @@ PropertiesSheetBase::PropertiesSheetBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("PropertiesSheetBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 PropertiesSheetBase::~PropertiesSheetBase() {}
@@ -871,7 +877,9 @@ EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("EnterStringsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -924,7 +932,9 @@ ColorPaletteDlgBase::ColorPaletteDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("ColorPaletteDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1025,7 +1035,9 @@ ColourPickerDlgbase::ColourPickerDlgbase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("ColourPickerDlgbase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1170,7 +1182,9 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("wxcSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -1208,7 +1222,9 @@ CaptionBarBase::CaptionBarBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     SetName(wxT("CaptionBarBase"));
     SetSize(wxDLG_UNIT(this, wxSize(150, 24)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_PAINT, wxPaintEventHandler(CaptionBarBase::OnPaint), NULL, this);
     this->Connect(wxEVT_ERASE_BACKGROUND, wxEraseEventHandler(CaptionBarBase::OnEraseBG), NULL, this);
@@ -1322,7 +1338,9 @@ FreeTrialVersionDlgBase::FreeTrialVersionDlgBase(wxWindow* parent, wxWindowID id
 
     SetName(wxT("FreeTrialVersionDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

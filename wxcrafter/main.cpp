@@ -26,7 +26,9 @@
 
 #define CHECK_IF_FOCUS_ON_READONLY_STC()    \
     wxStyledTextCtrl* stc = GetActiveSTC(); \
-    if(stc) { return; }
+    if(stc) {                               \
+        return;                             \
+    }
 
 #if STANDALONE_BUILD
 
@@ -59,7 +61,9 @@ bool wxcApp::OnInit()
     wxCmdLineParser parser;
     parser.SetDesc(cmdLineDesc);
     parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
-    if(parser.Parse() != 0) { return false; }
+    if(parser.Parse() != 0) {
+        return false;
+    }
 
     if(parser.Found(wxT("h"))) {
         // print usage
@@ -98,7 +102,9 @@ bool wxcApp::OnInit()
     HINSTANCE m_user32Dll = LoadLibrary(L"User32.dll");
     if(m_user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(m_user32Dll, "SetProcessDPIAware");
-        if(pFunc) { pFunc(); }
+        if(pFunc) {
+            pFunc();
+        }
         FreeLibrary(m_user32Dll);
         m_user32Dll = NULL;
     }
@@ -171,7 +177,7 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     , m_findReplaceDialog(NULL)
     , m_exiting(false)
 {
-    if(hidden) { Hide(); }
+    // if(hidden) { Hide(); }
 
     EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_EXIT, &MainFrame::OnNetCommandExit, this);
     EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_SHOW_DESIGNER, &MainFrame::OnNetShowDesigner, this);
@@ -341,12 +347,8 @@ void MainFrame::OnCloseFrame(wxCloseEvent& event)
     wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
     if(mainFrame) {
         mainFrame->Raise();
-        if(mainFrame->IsIconized()) {
-            mainFrame->Maximize(false); // Only make sure its not minimize
-        }
-
-        // and hide ourself
-        Hide();
+        // minimize to the task bar
+        this->Iconize();
     }
 #endif
 }
@@ -446,11 +448,15 @@ void MainFrame::OnCopy(wxCommandEvent& event)
     wxStyledTextCtrl* stc = GetActiveSTC();
     if(text) {
         event.StopPropagation();
-        if(text->CanCopy()) { text->Copy(); }
+        if(text->CanCopy()) {
+            text->Copy();
+        }
 
     } else if(stc) {
         event.StopPropagation();
-        if(stc->CanCopy()) { stc->Copy(); }
+        if(stc->CanCopy()) {
+            stc->Copy();
+        }
 
     } else {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, ID_COPY);
@@ -466,7 +472,9 @@ void MainFrame::OnCut(wxCommandEvent& event)
     if(text) {
 
         event.StopPropagation();
-        if(text->CanCut()) { text->Cut(); }
+        if(text->CanCut()) {
+            text->Cut();
+        }
     } else {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, ID_CUT);
         m_wxcView->GetEventHandler()->AddPendingEvent(evt);
@@ -480,7 +488,9 @@ void MainFrame::OnPaste(wxCommandEvent& event)
     wxTextCtrl* text = GetActiveTextCtrl();
     if(text) {
         event.StopPropagation();
-        if(text->CanPaste()) { text->Paste(); }
+        if(text->CanPaste()) {
+            text->Paste();
+        }
 
     } else {
 
@@ -495,7 +505,9 @@ void MainFrame::OnRedo(wxCommandEvent& event)
     wxTextCtrl* text = GetActiveTextCtrl();
     if(text) {
         event.StopPropagation();
-        if(text->CanRedo()) { text->Redo(); }
+        if(text->CanRedo()) {
+            text->Redo();
+        }
 
     } else {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, wxID_REDO);
@@ -526,7 +538,9 @@ void MainFrame::OnUndo(wxCommandEvent& event)
     wxTextCtrl* text = GetActiveTextCtrl();
     if(text) {
         event.StopPropagation();
-        if(text->CanUndo()) { text->Undo(); }
+        if(text->CanUndo()) {
+            text->Undo();
+        }
 
     } else {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, wxID_UNDO);
@@ -588,7 +602,9 @@ void MainFrame::OnRename(wxCommandEvent& event)
 wxTextCtrl* MainFrame::GetActiveTextCtrl()
 {
     wxWindow* focusWin = wxWindow::FindFocus();
-    if(focusWin) { return dynamic_cast<wxTextCtrl*>(focusWin); }
+    if(focusWin) {
+        return dynamic_cast<wxTextCtrl*>(focusWin);
+    }
     return NULL;
 }
 void MainFrame::OnImportFB(wxCommandEvent& event)
@@ -636,19 +652,10 @@ void MainFrame::DisplayDesigner()
 {
     if(!IsShown()) {
         Show();
-
-        if(IsIconized()) {
-            Maximize(false); // Maximize it
-        }
-
-    } else {
-        // the window is shown
-        if(IsIconized()) {
-            Maximize(false); // Restore
-        }
     }
-
-    Raise();
+    if(IsIconized()) {
+        Restore();
+    }
 }
 
 void MainFrame::OnProjectClosed(wxCommandEvent& event)
@@ -684,7 +691,8 @@ void MainFrame::OnNewProject(wxCommandEvent& event)
 
     wxString wxcpFile = ::wxFileSelector(_("Create an empty wxCrafter project"), wxEmptyString, title, wxEmptyString,
                                          "wxCrafter Project (*.wxcp)|*.wxcp", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if(wxcpFile.IsEmpty()) return;
+    if(wxcpFile.IsEmpty())
+        return;
 
     wxFFile fp(wxcpFile, wxT("w+b"));
     if(fp.IsOpened()) {
@@ -777,7 +785,9 @@ void MainFrame::DoUpdateTitle()
 wxStyledTextCtrl* MainFrame::GetActiveSTC()
 {
     wxWindow* focusWin = wxWindow::FindFocus();
-    if(focusWin) { return dynamic_cast<wxStyledTextCtrl*>(focusWin); }
+    if(focusWin) {
+        return dynamic_cast<wxStyledTextCtrl*>(focusWin);
+    }
     return NULL;
 }
 
@@ -897,9 +907,11 @@ bool MainFrame::DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, 
     int flags = frd.GetFlags();
     int stcSearchFlags = 0;
 
-    if(flags & wxFR_MATCHCASE) stcSearchFlags |= wxSTC_FIND_MATCHCASE;
+    if(flags & wxFR_MATCHCASE)
+        stcSearchFlags |= wxSTC_FIND_MATCHCASE;
 
-    if(flags & wxFR_WHOLEWORD) stcSearchFlags |= wxSTC_FIND_WHOLEWORD;
+    if(flags & wxFR_WHOLEWORD)
+        stcSearchFlags |= wxSTC_FIND_WHOLEWORD;
 
     int where = stc->FindText(startPos, endPos, frd.GetFindString(), stcSearchFlags);
     if(where != wxNOT_FOUND) {
@@ -980,7 +992,9 @@ void MainFrame::EnsureVisibile() { DisplayDesigner(); }
 void MainFrame::OnRestoreFrame(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(!IsShown()) { Show(); }
+    if(!IsShown()) {
+        Show();
+    }
     Raise();
 }
 
@@ -1017,11 +1031,14 @@ void MainFrame::OnFileOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
 void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history)
 {
     history = wxcSettings::Get().GetHistory();
-    if(history.IsEmpty()) return;
+    if(history.IsEmpty())
+        return;
 
     wxArrayString tmpHistory;
     for(size_t i = 0; i < history.GetCount(); ++i) {
-        if(wxFileName(history.Item(i)).Exists()) { tmpHistory.Add(history.Item(i)); }
+        if(wxFileName(history.Item(i)).Exists()) {
+            tmpHistory.Add(history.Item(i));
+        }
     }
 
     history.swap(tmpHistory);
@@ -1038,5 +1055,7 @@ void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history)
 
 void MainFrame::SetStatusMessage(const wxString& message)
 {
-    if(GetStatusBar()) { GetStatusBar()->SetStatusText(message, 0); }
+    if(GetStatusBar()) {
+        GetStatusBar()->SetStatusText(message, 0);
+    }
 }

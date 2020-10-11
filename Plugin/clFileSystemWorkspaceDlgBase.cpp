@@ -373,6 +373,32 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer33->Add(m_textCtrlExcludeFiles, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText207 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Exclude paths:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer33->Add(m_staticText207, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer209 = new wxBoxSizer(wxHORIZONTAL);
+
+    flexGridSizer33->Add(boxSizer209, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlExcludePaths = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlExcludePaths->SetToolTip(
+        _("Add here list of paths to be ignored.\nThe path is expected to be relative to the root folder of the "
+          "workspace\nIgnored paths will still be visible in the tree, but they will not be\nused in workspace "
+          "operations (find in files, code completion etc)"));
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlExcludePaths->SetHint(wxT(""));
+#endif
+
+    boxSizer209->Add(m_textCtrlExcludePaths, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_button213 = new wxButton(m_panelGeneral, wxID_ANY, _("Edit"), wxDefaultPosition,
+                               wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    boxSizer209->Add(m_button213, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_panelBuild =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelBuild, _("Build"), false);
@@ -589,6 +615,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
+    m_button213->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditExcludePaths),
+                         NULL, this);
     m_dvListCtrlTargets->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                  wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
     m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,
@@ -616,6 +644,8 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
 FSConfigPageBase::~FSConfigPageBase()
 {
+    m_button213->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnEditExcludePaths),
+                            NULL, this);
     m_dvListCtrlTargets->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                                     wxDataViewEventHandler(FSConfigPageBase::OnTargetActivated), NULL, this);
     m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FSConfigPageBase::OnNewTarget), NULL,

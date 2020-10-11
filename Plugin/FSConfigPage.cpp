@@ -1,7 +1,9 @@
 #include "BuildTargetDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "CompileCommandsGenerator.h"
+#include "EditDlg.h"
 #include "FSConfigPage.h"
+#include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "debuggermanager.h"
@@ -62,6 +64,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
     m_choiceDebuggers->SetStringSelection(config->GetDebugger());
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
+    m_textCtrlExcludePaths->ChangeValue(config->GetExecludePaths());
     m_dirPickerWD->SetPath(config->GetWorkingDirectory());
 }
 
@@ -130,6 +133,7 @@ void FSConfigPage::Save()
     m_config->SetRemoteAccount(m_choiceSSHAccount->GetStringSelection());
     m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
+    m_config->SetExcludePaths(m_textCtrlExcludePaths->GetValue());
     m_config->SetWorkingDirectory(m_dirPickerWD->GetPath());
 }
 
@@ -215,4 +219,21 @@ void FSConfigPage::OnEnableRemoteUI(wxUpdateUIEvent& event)
 #else
     event.Enable(false);
 #endif
+}
+
+void FSConfigPage::OnEditExcludePaths(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    wxArrayString paths = StringUtils::BuildArgv(m_textCtrlExcludePaths->GetValue());
+    wxString value;
+    if(!paths.IsEmpty()) {
+        value = wxJoin(paths, '\n');
+    }
+    value = ::clGetStringFromUser(value, wxGetTopLevelParent(this));
+    if(!value.IsEmpty()) {
+        wxArrayString lines = ::wxStringTokenize(value, "\n", wxTOKEN_STRTOK);
+        value = wxJoin(lines, ';');
+        m_textCtrlExcludePaths->ChangeValue(value);
+    }
 }

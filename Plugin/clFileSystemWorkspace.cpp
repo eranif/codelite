@@ -1,6 +1,7 @@
 #include "CompileCommandsGenerator.h"
 #include "JSON.h"
 #include "NewFileSystemWorkspaceDialog.h"
+#include "StringUtils.h"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "clConsoleBase.h"
@@ -189,11 +190,26 @@ void clFileSystemWorkspace::CacheFiles(bool force)
             wxStringSet_t excludeFolders = { ".git", ".svn", ".codelite" };
             fs.Scan(rootFolder, files, GetFilesMask(), "", excludeFolders);
 
+            wxString excludePaths = GetExcludeFolders();
+            wxArrayString paths = StringUtils::BuildArgv(excludePaths);
+            if(!paths.IsEmpty()) {
+                for(wxString& excludePath : paths) {
+                    excludePath.Trim().Trim(false);
+                    if(excludePath.EndsWith("/") || excludePath.EndsWith("\\")) {
+                        excludePath.RemoveLast();
+                    }
+                    if(excludePath.IsEmpty()) {
+                        continue;
+                    }
+                    excludeFolders.insert(excludePath);
+                }
+            }
+            fs.Scan(rootFolder, files, GetFilesMask(), "", excludeFolders);
             clFileSystemEvent event(wxEVT_FS_SCAN_COMPLETED);
             wxArrayString arrfiles;
             arrfiles.Alloc(files.size());
-            for(const wxString& f : files) {
-                arrfiles.Add(f);
+            for(const wxFileName& f : files) {
+                arrfiles.Add(f.GetFullPath());
             }
             event.SetPaths(arrfiles);
             EventNotifier::Get()->QueueEvent(event.Clone());
@@ -1079,4 +1095,13 @@ void clFileSystemWorkspace::CreateCompileFlagsFile()
         msg << _("Successfully generated file:\n") << fnCompileFlags.GetFullPath();
         ::wxMessageBox(msg, "CodeLite");
     }
+}
+
+wxString clFileSystemWorkspace::GetExcludeFolders() const
+{
+    clFileSystemWorkspaceConfig::Ptr_t conf = m_settings.GetSelectedConfig();
+    if(conf) {
+        return conf->GetExecludePaths();
+    }
+    return wxEmptyString;
 }

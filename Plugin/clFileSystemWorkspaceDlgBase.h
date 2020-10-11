@@ -120,6 +120,9 @@ protected:
     wxTextCtrl* m_textCtrlFileExt;
     wxStaticText* m_staticText187;
     wxTextCtrl* m_textCtrlExcludeFiles;
+    wxStaticText* m_staticText207;
+    wxTextCtrl* m_textCtrlExcludePaths;
+    wxButton* m_button213;
     wxPanel* m_panelBuild;
     clThemedListCtrl* m_dvListCtrlTargets;
     wxButton* m_buttonNew;
@@ -141,6 +144,7 @@ protected:
     wxCheckBox* m_checkBoxRemoteBuild;
 
 protected:
+    virtual void OnEditExcludePaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
@@ -167,6 +171,9 @@ public:
     wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
     wxStaticText* GetStaticText187() { return m_staticText187; }
     wxTextCtrl* GetTextCtrlExcludeFiles() { return m_textCtrlExcludeFiles; }
+    wxStaticText* GetStaticText207() { return m_staticText207; }
+    wxTextCtrl* GetTextCtrlExcludePaths() { return m_textCtrlExcludePaths; }
+    wxButton* GetButton213() { return m_button213; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
     wxButton* GetButtonNew() { return m_buttonNew; }

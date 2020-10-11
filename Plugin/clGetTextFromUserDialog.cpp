@@ -1,8 +1,9 @@
 #include "clGetTextFromUserDialog.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 
-clGetTextFromUserDialog::clGetTextFromUserDialog(
-    wxWindow* parent, const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect)
+clGetTextFromUserDialog::clGetTextFromUserDialog(wxWindow* parent, const wxString& title, const wxString& message,
+                                                 const wxString& initialValue, int charsToSelect)
     : clGetTextFromUserBaseDialog(parent)
 {
     SetTitle(title);
@@ -13,9 +14,10 @@ clGetTextFromUserDialog::clGetTextFromUserDialog(
     } else {
         m_textCtrl->SelectAll();
     }
-    //WindowAttrManager::Load(this);
+    // WindowAttrManager::Load(this);
     CenterOnParent();
     SetName("clGetTextFromUserDialog");
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 clGetTextFromUserDialog::~clGetTextFromUserDialog() {}

@@ -34,6 +34,7 @@ protected:
     wxString m_debugger;
     wxString m_excludeFilesPattern;
     wxString m_workingDirectory;
+    wxString m_excludePaths;
 
 public:
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
@@ -92,6 +93,8 @@ public:
     const wxString& GetDebugger() const { return m_debugger; }
     void SetWorkingDirectory(const wxString& workingDirectory) { this->m_workingDirectory = workingDirectory; }
     const wxString& GetWorkingDirectory() const { return m_workingDirectory; }
+    void SetExcludePaths(const wxString& paths) { m_excludePaths = paths; }
+    const wxString& GetExecludePaths() const { return m_excludePaths; }
     bool IsRemoteBuild() const { return m_flags & kRemoteBuild; }
     void SetRemoteBuild(bool b)
     {

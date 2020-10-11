@@ -101,6 +101,7 @@ public:
     virtual wxString GetActiveProjectName() const;
     virtual wxFileName GetFileName() const;
     virtual wxString GetFilesMask() const;
+    virtual wxString GetExcludeFolders() const;
     virtual wxFileName GetProjectFileName(const wxString& projectName) const;
     virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
     virtual wxString GetProjectFromFile(const wxFileName& filename) const;

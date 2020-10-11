@@ -3438,6 +3438,8 @@ void clMainFrame::CompleteInitialization()
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
+    e.Skip();
+    return;
     if(m_theFrame && e.GetActive()) {
 
         // if workspace or project was modified, don't prompt for

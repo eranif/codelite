@@ -2,10 +2,10 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include <queue>
+#include <vector>
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
-#include <vector>
 
 clFilesScanner::clFilesScanner() {}
 
@@ -32,7 +32,9 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
         Q.pop();
 
         wxDir dir(dirpath);
-        if(!dir.IsOpened()) { continue; }
+        if(!dir.IsOpened()) {
+            continue;
+        }
 
         wxString filename;
         bool cont = dir.GetFirst(&filename);
@@ -61,6 +63,16 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
     return filesOutput.size();
 }
 
+static bool IsStringContainsSpec(const wxString& str, const wxStringSet_t& specSet)
+{
+    for(const wxString& spec : specSet) {
+        if(str.Contains(spec)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec,
                             const wxString& excludeFilespec, const wxStringSet_t& excludeFolders)
 {
@@ -80,7 +92,9 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
         Q.pop();
 
         wxDir dir(dirpath);
-        if(!dir.IsOpened()) { continue; }
+        if(!dir.IsOpened()) {
+            continue;
+        }
 
         wxString filename;
         bool cont = dir.GetFirst(&filename);
@@ -91,12 +105,14 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
             bool isDirectory = wxFileName::DirExists(fullpath);
             // Use FileUtils::RealPath() here to cope with symlinks on Linux
             bool isExcludeDir =
+                isDirectory &&
+                (
 #if defined(__FreeBSD__)
-                ((FileUtils::IsSymlink(fullpath) && excludeFolders.count(FileUtils::RealPath(fullpath)))
+                    ((FileUtils::IsSymlink(fullpath) && excludeFolders.count(FileUtils::RealPath(fullpath)))
 #else
-                (excludeFolders.count(FileUtils::RealPath(fullpath))
+                    (excludeFolders.count(FileUtils::RealPath(fullpath))
 #endif
-                    || excludeFolders.count(filename));
+                     || IsStringContainsSpec(fullpath, excludeFolders)));
             if(isDirectory && !isExcludeDir) {
                 // Traverse into this folder
                 Q.push(fullpath);
@@ -140,8 +156,12 @@ size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner:
             } else {
                 ed.flags |= kIsFile;
             }
-            if(FileUtils::IsSymlink(fullpath)) { ed.flags |= kIsSymlink; }
-            if(FileUtils::IsHidden(fullpath)) { ed.flags |= kIsHidden; }
+            if(FileUtils::IsSymlink(fullpath)) {
+                ed.flags |= kIsSymlink;
+            }
+            if(FileUtils::IsHidden(fullpath)) {
+                ed.flags |= kIsHidden;
+            }
             ed.fullpath = fullpath;
             results.push_back(ed);
         }

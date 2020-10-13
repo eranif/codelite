@@ -25,7 +25,7 @@ wxCodeCompletionBoxBase::wxCodeCompletionBoxBase(wxWindow* parent, long style)
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(mainSizer);
 
-    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, 200)), wxTAB_TRAVERSAL);
+    m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     mainSizer->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(0));
 

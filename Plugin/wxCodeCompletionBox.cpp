@@ -53,6 +53,10 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_mainPanel->SetBackgroundColour(colours.GetBorderColour());
 
     m_ccFont = lexer->GetFontForSyle(0, this);
+#if wxCHECK_VERSION(3, 1, 2)
+    m_ccFont.SetFractionalPointSize(m_ccFont.GetFractionalPointSize() * 0.8);
+#endif
+
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
@@ -67,6 +71,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
         wxGCDC gcdc(memDC);
         gcdc.SetFont(m_ccFont);
         wxSize textSize = gcdc.GetTextExtent(wxString('X', 70));
+        SetSizeHints(textSize.GetWidth(), (textSize.GetHeight() * 10));
         SetSize(textSize.GetWidth(), (textSize.GetHeight() * 10));
     }
 

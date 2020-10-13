@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ColoursAndFontsManager.h"
+#include "GitDiffOutputParser.h"
 #include "clSingleChoiceDialog.h"
 #include "editor_config.h"
 #include "git.h"
@@ -34,7 +35,6 @@
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
-#include "GitDiffOutputParser.h"
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
     : GitCommitDlgBase(parent)
@@ -51,7 +51,9 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_splitterMain->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgVSashPos(), true);
 
     LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
-    if(diffLexer) { diffLexer->Apply(m_stcDiff); }
+    if(diffLexer) {
+        diffLexer->Apply(m_stcDiff);
+    }
 
     m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), clGetManager()->GetStdIcons()->LoadBitmap("check-all"));
     m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"),
@@ -107,7 +109,9 @@ wxArrayString GitCommitDlg::GetSelectedFiles()
     wxArrayString ret;
     for(size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrlFiles->RowToItem(i);
-        if(m_dvListCtrlFiles->IsItemChecked(item, 0)) { ret.Add(m_dvListCtrlFiles->GetItemText(item, 0)); }
+        if(m_dvListCtrlFiles->IsItemChecked(item, 0)) {
+            ret.Add(m_dvListCtrlFiles->GetItemText(item, 0));
+        }
     }
     return ret;
 }
@@ -151,13 +155,16 @@ void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
 {
     clSingleChoiceDialog dlg(this, m_history);
     dlg.SetLabel(_("Choose a commit"));
-    if(dlg.ShowModal() != wxID_OK) return;
+    if(dlg.ShowModal() != wxID_OK)
+        return;
 
     wxString commitHash = dlg.GetSelection().BeforeFirst(' ');
     if(!commitHash.empty()) {
         wxString selectedCommit;
         m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, m_workingDir, selectedCommit);
-        if(!selectedCommit.empty()) { m_stcCommitMessage->SetText(selectedCommit); }
+        if(!selectedCommit.empty()) {
+            m_stcCommitMessage->SetText(selectedCommit);
+        }
     }
 }
 
@@ -171,6 +178,8 @@ void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
             m_stcCommitMessage->SetText(m_previousCommitMessage);
         }
     } else {
-        if(!m_stashedMessage.empty()) { m_stcCommitMessage->SetText(m_stashedMessage); }
+        if(!m_stashedMessage.empty()) {
+            m_stcCommitMessage->SetText(m_stashedMessage);
+        }
     }
 }

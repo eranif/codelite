@@ -12,12 +12,17 @@
 #else
 #define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #endif
-
-clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+static bool SortFunc(clRowEntry* a, clRowEntry* b)
+{
+    const wxString& label_a = a->GetLabel();
+    const wxString& label_b = b->GetLabel();
+    return (label_b.CmpNoCase(label_a) < 0);
+}
+clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
     : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE))
 {
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
-    SetSortFunction(nullptr);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
     SetNativeTheme(true);
     ApplyTheme();
 
@@ -25,19 +30,19 @@ clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoin
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }
 
-clThemedListCtrl::~clThemedListCtrl()
+clThemedListCtrlBase::~clThemedListCtrlBase()
 {
     m_keyboard.reset(nullptr);
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrl::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
 }
 
-void clThemedListCtrl::OnThemeChanged(wxCommandEvent& event)
+void clThemedListCtrlBase::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     ApplyTheme();
 }
 
-void clThemedListCtrl::ApplyTheme()
+void clThemedListCtrlBase::ApplyTheme()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
@@ -72,4 +77,27 @@ void clThemedListCtrl::ApplyTheme()
     // When using custom bg colour, don't use native drawings
     this->SetNativeTheme(!useCustomColour);
     this->SetColours(colours);
+}
+
+clThemedListCtrl::~clThemedListCtrl() {}
+
+clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : clThemedListCtrlBase(parent, id, pos, size, (style | LIST_STYLE))
+{
+    SetSortFunction(nullptr);
+}
+
+clThemedOrderedListCtrl::~clThemedOrderedListCtrl() {}
+
+clThemedOrderedListCtrl::clThemedOrderedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                                                 const wxSize& size, long style)
+    : clThemedListCtrlBase(parent, id, pos, size, (style | LIST_STYLE))
+{
+    // auto sort_func = [this](clRowEntry* a, clRowEntry* b) {
+    //     size_t column = this->GetSortedColumn();
+    //     const wxString& label_a = a->GetLabel(column);
+    //     const wxString& label_b = a->GetLabel(column);
+    //     return (label_b.CmpNoCase(label_a) < 0);
+    // };
+    SetSortFunction(nullptr);
 }

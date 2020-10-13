@@ -68,6 +68,7 @@
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
+#include <unordered_set>
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -1789,10 +1790,8 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     wxString tmpOutput = output;
     tmpOutput.Trim().Trim(false);
     tmpOutput.MakeLower();
-
-    if(ga.action != gitDiffRepoCommit && ga.action != gitDiffFile && ga.action != gitCommitList &&
-       ga.action != gitDiffRepoShow && ga.action != gitBlame && ga.action != gitRevlist)
-
+    static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList, gitDiffRepoShow, gitBlame, gitRevlist, gitBlameSummary}; 
+    if(exclude_commands.count(ga.action) == 0)
     {
         if(tmpOutput.Contains("username for")) {
             // username is required

@@ -1,3 +1,4 @@
+#include "StringUtils.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceDlg.h"
 #include "clFileSystemWorkspaceView.hpp"
@@ -109,6 +110,9 @@ void clFileSystemWorkspaceView::OnContextMenu(clContextMenuEvent& event)
         cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnCreateCompileFlagsFile, this,
                       XRCID("fs_create_compile_flags"));
         menu->AppendSubMenu(cc_menu, _("Code Completion"), wxEmptyString);
+        menu->AppendSeparator();
+        menu->Append(XRCID("fs_exclude_path"), _("Exclude this folder"), wxEmptyString, wxITEM_NORMAL);
+        menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnExcludePath, this, XRCID("fs_exclude_path"));
     }
 
     if(event.GetEventObject() == this) {
@@ -143,13 +147,14 @@ void clFileSystemWorkspaceView::OnShowConfigsMenu(wxCommandEvent& event)
     for(const wxString& config : m_configs) {
         int menuItemid = wxXmlResource::GetXRCID(config);
         menu.Append(menuItemid, config, config, wxITEM_NORMAL);
-        menu.Bind(wxEVT_MENU,
-                  [=](wxCommandEvent& menuEvent) {
-                      m_buttonConfigs->SetText(config);
-                      clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
-                      clFileSystemWorkspace::Get().Save(true);
-                  },
-                  menuItemid);
+        menu.Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& menuEvent) {
+                m_buttonConfigs->SetText(config);
+                clFileSystemWorkspace::Get().GetSettings().SetSelectedConfig(config);
+                clFileSystemWorkspace::Get().Save(true);
+            },
+            menuItemid);
     }
     m_buttonConfigs->ShowMenu(menu);
 }
@@ -270,4 +275,33 @@ void clFileSystemWorkspaceView::OnCreateCompileFlagsFile(wxCommandEvent& event)
     // proxy to the workspace method
     wxUnusedVar(event);
     clFileSystemWorkspace::Get().CreateCompileFlagsFile();
+}
+
+void clFileSystemWorkspaceView::OnExcludePath(wxCommandEvent& event)
+{
+    // add the selected folders to the exclude path
+    // get list of selected folders in the UI
+    wxArrayString configs = clFileSystemWorkspace::Get().GetSettings().GetConfigs();
+    for(const wxString& config : configs) {
+        auto config_ptr = clFileSystemWorkspace::Get().GetSettings().GetConfig(config);
+
+        // get the list of exclude paths and convert them into a SET to avoid duplications
+        // next, we add each selected folder to the exclude list
+        wxStringSet_t S;
+        wxArrayString excludePathsArr = StringUtils::BuildArgv(config_ptr->GetExecludePaths());
+        S.reserve(excludePathsArr.size());
+        S.insert(excludePathsArr.begin(), excludePathsArr.end());
+        for(wxString folder : m_selectedFolders) {
+            // Make it relative to the workspace
+            wxFileName fn(folder, "dummy");
+            fn.MakeRelativeTo(clFileSystemWorkspace::Get().GetFileName().GetPath());
+            folder = fn.GetPath();
+            if(S.count(folder) == 0) {
+                S.insert(folder);
+                excludePathsArr.Add(folder);
+            }
+        }
+        config_ptr->SetExcludePaths(::wxJoin(excludePathsArr, ';'));
+    }
+    clFileSystemWorkspace::Get().Save(true);
 }

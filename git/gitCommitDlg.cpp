@@ -89,13 +89,21 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
     m_dvListCtrlFiles->DeleteAllItems();
     wxVector<wxVariant> cols;
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
+    std::vector<wxString> names;
+    names.reserve(m_diffMap.size());
     for(const wxStringMap_t::value_type& vt : m_diffMap) {
+        names.push_back(vt.first);
+    }
+
+    std::sort(names.begin(), names.end(), [](const wxString& a, const wxString& b) { return a.CmpNoCase(b) < 0; });
+
+    for(const wxString& filename : names) {
         cols.clear();
-        cols.push_back(::MakeCheckboxVariant(vt.first, true, bitmaps->GetMimeImageId(vt.first)));
+        cols.push_back(::MakeCheckboxVariant(filename, true, bitmaps->GetMimeImageId(filename)));
         m_dvListCtrlFiles->AppendItem(cols);
     }
 
-    if(!m_diffMap.empty()) {
+    if(!names.empty()) {
         m_dvListCtrlFiles->Select(m_dvListCtrlFiles->RowToItem(0));
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_stcDiff->SetText((*it).second);

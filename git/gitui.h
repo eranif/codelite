@@ -133,7 +133,7 @@ protected:
     wxPanel* m_panel3;
     clThemedSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
-    clThemedListCtrl* m_dvListCtrlFiles;
+    clThemedOrderedListCtrl* m_dvListCtrlFiles;
     wxPanel* m_panel2;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
@@ -149,7 +149,7 @@ protected:
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clThemedListCtrl* GetDvListCtrlFiles() { return m_dvListCtrlFiles; }
+    clThemedOrderedListCtrl* GetDvListCtrlFiles() { return m_dvListCtrlFiles; }
     wxPanel* GetPanel1() { return m_panel1; }
     wxStyledTextCtrl* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
@@ -438,9 +438,9 @@ protected:
     wxPanel* m_splitterPage737;
     Notebook* m_notebookChanges;
     wxPanel* m_panel674;
-    clThemedListCtrl* m_dvListCtrl;
+    clThemedOrderedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
-    clThemedListCtrl* m_dvListCtrlUnversioned;
+    clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPage741;
     Notebook* m_notebookLog;
     wxPanel* m_panel_log;
@@ -456,9 +456,9 @@ protected:
 
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
-    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedOrderedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
-    clThemedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    clThemedOrderedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     Notebook* GetNotebookChanges() { return m_notebookChanges; }
     wxPanel* GetSplitterPage737() { return m_splitterPage737; }
@@ -469,7 +469,7 @@ public:
     clThemedSplitterWindow* GetSplitter733() { return m_splitter733; }
     wxGauge* GetGauge() { return m_gauge; }
     GitConsoleBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~GitConsoleBase();
 };
 

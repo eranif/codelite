@@ -268,8 +268,8 @@ GitCommitDlgBase::GitCommitDlgBase(wxWindow* parent, wxWindowID id, const wxStri
     m_panel1->SetSizer(bSizer11);
 
     m_dvListCtrlFiles =
-        new clThemedListCtrl(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
-                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+        new clThemedOrderedListCtrl(m_panel1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
+                                    wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
     bSizer11->Add(m_dvListCtrlFiles, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1522,8 +1522,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxVERTICAL);
     m_panel674->SetSizer(boxSizer678);
 
-    m_dvListCtrl = new clThemedListCtrl(m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
-                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrl =
+        new clThemedOrderedListCtrl(m_panel674, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
+                                    wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer678->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1538,9 +1539,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer680 = new wxBoxSizer(wxVERTICAL);
     m_panelUnversioned->SetSizer(boxSizer680);
 
-    m_dvListCtrlUnversioned = new clThemedListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
-                                                   wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
-                                                   wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
+    m_dvListCtrlUnversioned = new clThemedOrderedListCtrl(m_panelUnversioned, wxID_ANY, wxDefaultPosition,
+                                                          wxDLG_UNIT(m_panelUnversioned, wxSize(-1, -1)),
+                                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer680->Add(m_dvListCtrlUnversioned, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1613,7 +1614,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     boxSizer36->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("GitConsoleBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }

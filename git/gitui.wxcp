@@ -2711,7 +2711,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	"clThemedListCtrl"
+																					"m_value":	"clThemedOrderedListCtrl"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
@@ -11525,7 +11525,7 @@
 			"m_properties":	[{
 					"type":	"string",
 					"m_label":	"Size:",
-					"m_value":	"-1,-1"
+					"m_value":	"500,300"
 				}, {
 					"type":	"string",
 					"m_label":	"Minimum Size:",
@@ -12116,7 +12116,7 @@
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Class Name:",
-																							"m_value":	"clThemedListCtrl"
+																							"m_value":	"clThemedOrderedListCtrl"
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Include File:",
@@ -12399,7 +12399,7 @@
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Class Name:",
-																							"m_value":	"clThemedListCtrl"
+																							"m_value":	"clThemedOrderedListCtrl"
 																						}, {
 																							"type":	"string",
 																							"m_label":	"Include File:",

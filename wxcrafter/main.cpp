@@ -583,12 +583,8 @@ void MainFrame::OnSwitchToCodelite(wxCommandEvent& event)
         wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
         if(mainFrame) {
             mainFrame->Raise();
-            if(mainFrame->IsIconized()) {
-                mainFrame->Maximize(false); // Only make sure its not minimize
-            }
-
-            // and hide ourself
-            Hide();
+            // minimize to the task bar
+            this->Iconize();
         }
     }
 }

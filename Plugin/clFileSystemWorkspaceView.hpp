@@ -33,6 +33,7 @@ protected:
     void OnBuildActiveProjectDropdown(wxCommandEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
+    void OnExcludePath(wxCommandEvent& event);
 
 protected:
     void DoAddIncludePathsToConfig(clFileSystemWorkspaceConfig::Ptr_t config, const wxArrayString& paths);

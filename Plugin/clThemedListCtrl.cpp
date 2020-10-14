@@ -12,12 +12,16 @@
 #else
 #define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #endif
+
+#if 0
 static bool SortFunc(clRowEntry* a, clRowEntry* b)
 {
     const wxString& label_a = a->GetLabel();
     const wxString& label_b = b->GetLabel();
     return (label_b.CmpNoCase(label_a) < 0);
 }
+#endif
+
 clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                            long style)
     : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE))

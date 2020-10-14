@@ -281,9 +281,12 @@ private:
     void OnFolderStashPop(wxCommandEvent& event);
     void OnFolderGitBash(wxCommandEvent& event);
 
+    // Respond to local events
+    void OnGitActionDone(clSourceControlEvent& event);
+    
 public:
     GitPlugin(IManager* manager);
-    ~GitPlugin();
+    virtual ~GitPlugin();
 
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();

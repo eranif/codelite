@@ -64,11 +64,11 @@
 #include "icons/icon_git.xpm"
 #include "overlaytool.h"
 #include "project.h"
+#include <unordered_set>
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
 #include <wx/utils.h>
-#include <unordered_set>
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -177,6 +177,12 @@ GitPlugin::GitPlugin(IManager* manager)
     m_eventHandler->Connect(XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected),
                             NULL, this);
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
+
+    // Respond to our own events
+    EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PUSHED, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PULLED, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     // Add the console
     m_console = new GitConsole(m_mgr->GetOutputPaneNotebook(), this);
@@ -377,6 +383,11 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &GitPlugin::OnUpdateNavBar, this);
+
+    EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PUSHED, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PULLED, &GitPlugin::OnGitActionDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     /*MENU*/
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
@@ -1790,9 +1801,9 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     wxString tmpOutput = output;
     tmpOutput.Trim().Trim(false);
     tmpOutput.MakeLower();
-    static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList, gitDiffRepoShow, gitBlame, gitRevlist, gitBlameSummary}; 
-    if(exclude_commands.count(ga.action) == 0)
-    {
+    static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList,  gitDiffRepoShow,
+                                                        gitBlame,          gitRevlist,  gitBlameSummary };
+    if(exclude_commands.count(ga.action) == 0) {
         if(tmpOutput.Contains("username for")) {
             // username is required
             wxString username = ::wxGetTextFromUser(output);
@@ -2896,4 +2907,15 @@ void GitPlugin::OnEditorClosed(wxCommandEvent& event)
     CHECK_PTR_RET(editor);
     m_blameMap.erase(editor->GetFileName().GetFullPath());
     m_lastBlameMessage.clear();
+}
+
+void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
+{
+    // whenever a git action is performed, we clear the blame info
+    // and reload it for the current file
+    event.Skip();
+    clDEBUG() << "Clearing blame info" << clEndl;
+    m_blameMap.clear();
+    m_lastBlameMessage.clear();
+    DoLoadBlameInfo(false);
 }

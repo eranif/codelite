@@ -112,7 +112,6 @@ Source: "{#CODELITE_ROOT}\Runtime\debuggers\DebuggerGDB.dll"; DestDir: "{app}\de
 
 ; Copy the plugins (by name)
 Source: "{#CODELITE_ROOT}\Runtime\plugins\abbreviation.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime\plugins\CallGraph.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CodeFormatter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\ContinuousBuild.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Copyright.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 

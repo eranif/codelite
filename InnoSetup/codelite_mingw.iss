@@ -106,7 +106,6 @@ Source: "{#CODELITE_ROOT}\Runtime\lexers\*.json"; DestDir: "{app}\lexers\"; Flag
 ; Copy the plugins (by name)
 Source: "{#CODELITE_ROOT}\Runtime32\debuggers\DebuggerGDB.dll"; DestDir: "{app}\debuggers"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime32\plugins\abbreviation.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
-Source: "{#CODELITE_ROOT}\Runtime32\plugins\CallGraph.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime32\plugins\CodeFormatter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime32\plugins\ContinuousBuild.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime32\plugins\Copyright.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ; 

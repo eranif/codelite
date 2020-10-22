@@ -758,3 +758,17 @@ wxFileName FileUtils::CreateTempFileName(const wxString& folder, const wxString&
     full_name += "." + ext;
     return wxFileName(folder, full_name);
 }
+
+size_t FileUtils::FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions,
+                              std::vector<wxFileName>& vout)
+{
+    wxFileName fn(filename);
+    vout.reserve(extensions.size());
+    for(const wxString& ext : extensions) {
+        fn.SetExt(ext);
+        if(fn.FileExists()) {
+            vout.emplace_back(fn);
+        }
+    }
+    return vout.size();
+}

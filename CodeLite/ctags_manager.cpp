@@ -3074,7 +3074,7 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
     words.Add("xor_eq");
 }
 
-TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename)
+TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
     if(!m_codeliteIndexerProcess) {
         return TagEntryPtrVector_t();
@@ -3089,7 +3089,7 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
     fp.Close();
 
     wxString tags;
-    SourceToTags(tmpfilename, tags);
+    SourceToTags(tmpfilename, tags, kinds);
 
     {
         wxLogNull noLog;
@@ -3098,8 +3098,9 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
 
     TagEntryPtrVector_t tagsVec;
     wxArrayString lines = ::wxStringTokenize(tags, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
-        wxString& line = lines.Item(i);
+    tagsVec.reserve(lines.size());
+
+    for(wxString& line : lines) {
         line.Trim().Trim(false);
         if(line.IsEmpty())
             continue;
@@ -3113,7 +3114,7 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
         }
 
         if(tag->GetKind() != "local") {
-            tagsVec.push_back(tag);
+            tagsVec.emplace_back(tag);
         }
     }
     return tagsVec;

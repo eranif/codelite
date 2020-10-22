@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "AddFunctionsImpDlg.h"
+#include "CTags.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
@@ -53,6 +54,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "fileview.h"
 #include "findusagetab.h"
 #include "frame.h"
@@ -1083,41 +1085,46 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
     wxFileName otherFile(rhs);
 
     wxString ext = rhs.GetExt();
-    wxArrayString exts;
+    std::vector<wxString> exts;
 
     // replace the file extension
     if(IsSource(ext)) {
         // try to find a header file
-        exts.Add("h");
-        exts.Add("hpp");
-        exts.Add("hxx");
-        exts.Add("h++");
+        exts.push_back("h");
+        exts.push_back("hpp");
+        exts.push_back("hxx");
+        exts.push_back("h++");
 
     } else {
         // try to find a implementation file
-        exts.Add("cpp");
-        exts.Add("cxx");
-        exts.Add("cc");
-        exts.Add("c++");
-        exts.Add("c");
+        exts.push_back("cpp");
+        exts.push_back("cxx");
+        exts.push_back("cc");
+        exts.push_back("c++");
+        exts.push_back("c");
     }
 
     std::vector<wxFileName> files;
-    ManagerST::Get()->GetWorkspaceFiles(files, true);
+    // try to locate it on the current folder
+    size_t nMatches = FileUtils::FindSimilar(rhs, exts, files);
+    if(nMatches) {
+        // we return the first match
+        lhs = files[0].GetFullPath();
+        return true;
+    } else {
+        std::unordered_set<wxString> extensionsHash;
+        extensionsHash.reserve(exts.size());
+        extensionsHash.insert(exts.begin(), exts.end());
 
-    for(size_t j = 0; j < exts.GetCount(); j++) {
-        otherFile.SetExt(exts.Item(j));
-
-        if(otherFile.FileExists()) {
-            // we got a match
-            lhs = otherFile.GetFullPath();
-            return true;
-        }
-
-        for(size_t i = 0; i < files.size(); i++) {
-            if(files.at(i).GetFullName() == otherFile.GetFullName()) {
-                lhs = files.at(i).GetFullPath();
-                return true;
+        std::vector<wxFileName> workspaceFiles;
+        ManagerST::Get()->GetWorkspaceFiles(workspaceFiles, true);
+        for(const wxString& ext : exts) {
+            for(const wxFileName& workspaceFile : workspaceFiles) {
+                if(workspaceFile.GetFullName() == otherFile.GetFullName() &&
+                   extensionsHash.count(workspaceFile.GetExt())) {
+                    lhs = workspaceFile.GetFullPath();
+                    return true;
+                }
             }
         }
     }
@@ -1855,6 +1862,38 @@ void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
     clMainFrame::Get()->GetMainBook()->OpenFile(GetCtrl().GetFileName().GetFullPath());
 }
 
+size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes,
+                                                std::vector<TagEntryPtr>& functions, wxString& otherfile)
+{
+    clEditor& rCtrl = GetCtrl();
+    prototypes.clear();
+    functions.clear();
+    prototypes = TagsManagerST::Get()->ParseBuffer(rCtrl.GetEditorText(), wxEmptyString, "p");
+    // locate the c++ file
+
+    if(!FindSwappedFile(rCtrl.GetFileName(), otherfile)) {
+        wxMessageBox(_("Could not locate implementation file!"), "CodeLite", wxICON_WARNING | wxOK);
+        return 0;
+    }
+
+    // Find the implementatin file and read all it's content
+    // if the file is opened in an editor, take the content from the open editor, otherwise,
+    // read it from the file system
+    auto editor = clGetManager()->FindEditor(otherfile);
+    wxString implContent;
+    if(editor) {
+        implContent = editor->GetEditorText();
+    } else {
+        // read it from the file system
+        if(!FileUtils::ReadFileContent(otherfile, implContent)) {
+            wxMessageBox(_("Could not read file: ") + otherfile, "CodeLite", wxICON_WARNING | wxOK);
+            return 0;
+        }
+    }
+    functions = TagsManagerST::Get()->ParseBuffer(implContent, wxEmptyString, "f");
+    return prototypes.size();
+}
+
 void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
 {
     CHECK_JS_RETURN_VOID();
@@ -1863,10 +1902,17 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
-    // get the text from the file start point until the current position
+    std::vector<TagEntryPtr> prototypes;
+    std::vector<TagEntryPtr> functions;
+    wxString otherfile;
+    if(DoGetEntriesForHeaderAndImpl(prototypes, functions, otherfile) == 0) {
+        wxMessageBox(_("No prototypes were found"), "CodeLite", wxICON_INFORMATION | wxOK);
+        return;
+    }
+
+    // Get the text from the file start point until the current position
     int pos = rCtrl.GetCurrentPos();
     wxString context = rCtrl.GetTextRange(0, pos);
-
     wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
     if(scopeName.IsEmpty() || scopeName == wxT("<global>")) {
         wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + wxT(")"),
@@ -1874,43 +1920,44 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
         return;
     }
 
-    // get map of all unimlpemented methods
-    std::map<wxString, TagEntryPtr> protos;
-    TagsManagerST::Get()->GetUnImplementedFunctions(scopeName, protos);
+    wxStringSet_t implHash;
+    for(auto t : functions) {
+        if(scopeName == t->GetScope()) {
+            implHash.insert(t->GetPath());
+        }
+    }
 
-    if(protos.empty()) {
-        ::wxMessageBox(_("All your functions seems to have an implementation!"));
+    std::vector<TagEntryPtr> unimplPrototypes;
+    for(auto t : prototypes) {
+        if(scopeName == t->GetScope()) {
+            if(implHash.count(t->GetPath()) == 0) {
+                // this prototype does not have an implementation
+                unimplPrototypes.push_back(t);
+            }
+        }
+    }
+
+    if(unimplPrototypes.empty()) {
+        wxMessageBox(_("No un-implemented functions found"), "CodeLite", wxICON_INFORMATION | wxOK);
         return;
     }
 
-    TagEntryPtrVector_t tags;
-    std::map<wxString, TagEntryPtr>::const_iterator iter = protos.begin();
-    for(; iter != protos.end(); ++iter) {
-        tags.push_back(iter->second);
-    }
-
-    // Sort the functions according to their line number (asc)
-    std::sort(tags.begin(), tags.end(), [&](TagEntryPtr a, TagEntryPtr b) { return (a->GetLine() < b->GetLine()); });
-
-    wxString targetFile;
-    FindSwappedFile(rCtrl.GetFileName(), targetFile);
-
-    AddFunctionsImpDlg dlg(wxTheApp->GetTopWindow(), tags, targetFile);
+    AddFunctionsImpDlg dlg(wxTheApp->GetTopWindow(), unimplPrototypes, otherfile);
     if(dlg.ShowModal() == wxID_OK) {
         // get the updated data
-        targetFile = dlg.GetFileName();
+        otherfile = dlg.GetFileName();
         wxString body = dlg.GetText();
         int insertedLine = wxNOT_FOUND;
 
         // Open the C++ file
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile, wxEmptyString, 0);
+        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(otherfile, wxEmptyString, 0);
         if(!editor) {
             return;
         }
 
         // Inser the new functions at the proper location
         wxString sourceContent = editor->GetText();
-        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
+        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, otherfile, sourceContent, insertedLine);
 
         {
             clEditorStateLocker locker(editor->GetCtrl());

@@ -58,6 +58,8 @@ private:
     bool DoCodeComplete(long pos);
     void DoCreateFile(const wxFileName& fn);
     void DoUpdateCalltipHighlight();
+    size_t DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes, std::vector<TagEntryPtr>& functions,
+                                        wxString& otherfile);
 
 public:
     virtual void ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr);
@@ -172,7 +174,6 @@ private:
      */
     bool FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others);
     bool FindSwappedFile(const wxFileName& rhs, wxString& lhs);
-
 
     /**
      * @brief format editor

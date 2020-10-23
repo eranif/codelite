@@ -145,10 +145,7 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 }
 
 #else
-void MSWSetWindowDarkTheme(wxWindow* win)
-{
-    wxUnusedVar(win);
-}
+void MSWSetWindowDarkTheme(wxWindow* win) { wxUnusedVar(win); }
 #endif
 
 // --------------------------------------------------------
@@ -2022,9 +2019,7 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
     ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
-    const char* sudo_path;
-
-    sudo_path = "/usr/bin/sudo";
+    const char* sudo_path = "/usr/bin/sudo";
     if(!wxFileName::Exists(sudo_path)) {
         sudo_path = "/usr/local/bin/sudo";
     }

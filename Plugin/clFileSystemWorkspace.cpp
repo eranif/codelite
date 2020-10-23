@@ -675,7 +675,7 @@ void clFileSystemWorkspace::OnStopExecute(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
     if(m_execPID != wxNOT_FOUND) {
-        ::clKill(m_execPID, wxSIGTERM);
+        ::clKill(m_execPID, wxSIGTERM, true);
         m_execPID = wxNOT_FOUND;
     }
 }

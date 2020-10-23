@@ -368,7 +368,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
         clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
         if(editor && result.GetLen() >= 0) {
             // Update the destination position if there have been subsequent changes in the editor
-            int position = result.GetPosition();
+            int position = editor->PositionFromLine(result.GetLineNumber() - 1) + result.GetColumn();
             std::vector<int> changes;
             editor->GetChanges(changes);
             unsigned int changesTotal = changes.size();

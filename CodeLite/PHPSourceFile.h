@@ -26,11 +26,11 @@
 #ifndef PHPPARSER_H
 #define PHPPARSER_H
 
-#include "codelite_exports.h"
-#include <wx/filename.h>
-#include "PhpLexerAPI.h"
 #include "PHPEntityBase.h"
+#include "PhpLexerAPI.h"
+#include "codelite_exports.h"
 #include <vector>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_CL PHPLookupTable;
 
@@ -48,8 +48,9 @@ class WXDLLIMPEXP_CL PHPSourceFile
     bool m_reachedEOF;
     // aliases defined by the 'use' operator
     std::map<wxString, wxString> m_aliases;
-    PHPSourceFile* m_converter;
-    PHPLookupTable* m_lookup;
+    PHPSourceFile* m_converter = nullptr;
+    PHPLookupTable* m_lookup = nullptr;
+    PHPEntityBase::List_t m_allMatchesInorder;
 
 public:
     typedef wxSharedPtr<PHPSourceFile> Ptr_t;
@@ -233,6 +234,12 @@ public:
     PHPSourceFile(const wxString& content, PHPLookupTable* lookup);
 
     virtual ~PHPSourceFile();
+
+    /**
+     * @brief return a serialized list of all entries found in this source file
+     * sorted by line number
+     */
+    const PHPEntityBase::List_t& GetAllMatchesInOrder();
 
     /**
      * @brief use a different PHPSourceFile class for converting types to their

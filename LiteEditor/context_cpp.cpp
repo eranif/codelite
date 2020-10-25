@@ -1112,19 +1112,19 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
         lhs = files[0].GetFullPath();
         return true;
     } else {
+        // creat a hash table with all the extensions
         std::unordered_set<wxString> extensionsHash;
         extensionsHash.reserve(exts.size());
         extensionsHash.insert(exts.begin(), exts.end());
 
         std::vector<wxFileName> workspaceFiles;
         ManagerST::Get()->GetWorkspaceFiles(workspaceFiles, true);
-        for(const wxString& ext : exts) {
-            for(const wxFileName& workspaceFile : workspaceFiles) {
-                if(workspaceFile.GetFullName() == otherFile.GetFullName() &&
-                   extensionsHash.count(workspaceFile.GetExt())) {
-                    lhs = workspaceFile.GetFullPath();
-                    return true;
-                }
+        for(const wxFileName& workspaceFile : workspaceFiles) {
+            if((workspaceFile.GetFullName() == otherFile.GetFullName()) &&
+               (extensionsHash.count(workspaceFile.GetExt()))) {
+                // the same file name with the proper extension, this is our "swapped" file
+                lhs = workspaceFile.GetFullPath();
+                return true;
             }
         }
     }

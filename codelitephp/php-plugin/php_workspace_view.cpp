@@ -559,20 +559,23 @@ void PHPWorkspaceView::OnNewFolder(wxCommandEvent& e)
 
     // Create the folder on the file system
     if(wxFileName::Mkdir(newfolder.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL)) {
-        proj->FolderAdded(newfolder.GetPath());
-
-        // Update the UI
-        wxWindowUpdateLocker locker(m_treeCtrlView);
-
         // Add folder to the tree view
         ItemData* itemData = new ItemData(ItemData::Kind_Folder);
         itemData->SetFolderName(name);
         itemData->SetFolderPath(newfolder.GetPath());
         itemData->SetProjectName(proj->GetName());
+        int imgId = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+        int imgIdExpanded = m_mgr->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+
+        wxTreeItemId newFolderItem = m_treeCtrlView->AppendItem(parent, name, imgId, imgIdExpanded, itemData);
+        proj->FolderAdded(newfolder.GetPath());
         // Expand the node
         if(!m_treeCtrlView->IsExpanded(parent)) {
             m_treeCtrlView->Expand(parent);
         }
+
+        // select the newly added folder
+        m_treeCtrlView->SelectItem(newFolderItem);
     }
 }
 

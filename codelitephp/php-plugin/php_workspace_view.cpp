@@ -7,6 +7,7 @@
 #include "clFileSystemEvent.h"
 #include "clWorkspaceView.h"
 #include "cl_aui_tool_stickness.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "new_file_dlg.h"
@@ -1371,12 +1372,9 @@ void PHPWorkspaceView::DoGetSelectedFolders(wxArrayString& paths)
 
 void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
 {
-    wxArrayString paths;
-    DoGetSelectedFolders(paths);
-    CHECK_COND_RET(!paths.IsEmpty());
-
+    m_fifFromContextMenu = true;
     // Open the find in files dialg for the folder path
-    m_mgr->OpenFindInFileForPaths(paths);
+    m_mgr->OpenFindInFileForPaths({});
 }
 
 void PHPWorkspaceView::OnOpenWithDefaultApp(wxCommandEvent& e)
@@ -1522,29 +1520,44 @@ void PHPWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& e)
         return;
 
     // Mask is always loaded from the configuration
-    wxString mask = "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sql";
-    e.SetFileMask(clConfig::Get().Read("FindInFiles/PHP/Mask", mask));
+    const wxString defaultMask =
+        "*.php;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.json;*.xml;*.ini;*.md;*.txt;*.text;.htaccess;*.sql";
+    const wxString defaultLookIn = "<Entire Workspace>\n-*vendor*";
 
-    if(m_treeCtrlView->IsShownOnScreen() && m_treeCtrlView->HasFocus()) {
-        // Get list of selected folders
-        wxArrayString folders;
-        DoGetSelectedFolders(folders);
-        if(folders.IsEmpty()) {
-            return;
-        }
-
-        wxString paths;
-        for(size_t i = 0; i < folders.size(); ++i) {
-            paths << folders.Item(i) << "\n";
-        }
-        paths.Trim();
-        e.SetTransientPaths(paths);
-    } else {
-        wxString lookIn;
-        lookIn << "<Entire Workspace>\n"
-               << "-*vendor*";
-        e.SetPaths(clConfig::Get().Read("FindInFiles/PHP/LookIn", lookIn));
+    wxString mask = clConfig::Get().Read("FindInFiles/PHP/Mask", wxString(""));
+    wxString lookIn = clConfig::Get().Read("FindInFiles/PHP/LookIn", wxString(""));
+    if(lookIn.empty()) {
+        // first time
+        lookIn = defaultLookIn;
     }
+
+    if(mask.empty()) {
+        // first time
+        mask = defaultMask;
+    }
+
+    wxArrayString folders;
+    if(m_fifFromContextMenu) {
+        m_fifFromContextMenu = false;
+        // the trigger was from the context menu
+        // use the selected folders from the workspace tree view to override the 'look-in'
+        wxArrayTreeItemIds items;
+        DoGetSelectedItems(items);
+        if(!items.IsEmpty()) {
+            for(size_t i = 0; i < items.GetCount(); ++i) {
+                const wxTreeItemId& item = items.Item(i);
+                ItemData* itemData = DoGetItemData(item);
+                if(itemData->IsFolder()) {
+                    folders.Add(itemData->GetFolderPath());
+                }
+            }
+        }
+        // replace the 'look-in'
+        lookIn = wxJoin(folders, '\n');
+    }
+
+    e.SetFileMask(mask);
+    e.SetPaths(lookIn);
 }
 
 void PHPWorkspaceView::OnWorkspaceSyncStart(clCommandEvent& event)

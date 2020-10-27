@@ -47,6 +47,7 @@ class PHPWorkspaceView : public PHPWorkspaceViewBase
     bool m_scanInProgress;
     std::unordered_set<wxString> m_pendingSync;
     wxArrayString m_draggedFiles;
+    bool m_fifFromContextMenu = false;
 
 private:
     enum {

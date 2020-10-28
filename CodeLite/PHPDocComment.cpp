@@ -3,13 +3,14 @@
 #include "PHPDocProperty.h"
 #include "PHPDocVar.h"
 #include "wxStringHash.h"
+#include <algorithm>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
-#include <algorithm>
 
 PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     : m_sourceFile(sourceFile)
     , m_comment(comment)
+    , m_returnNullable(false)
 {
     static std::unordered_set<wxString> nativeTypes;
     if(nativeTypes.empty()) {
@@ -37,10 +38,14 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         nativeTypes.insert("callback");
     }
 
-    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+(\??"")([\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
+    static wxRegEx reReturnStatement(wxT("@(return)[ \t]+([\\?\\a-zA-Z_]{1}[\\|\\a-zA-Z0-9_]*)"));
     if(reReturnStatement.IsValid() && reReturnStatement.Matches(m_comment)) {
-        wxString returnNullable = reReturnStatement.GetMatch(m_comment, 2);
-        wxString returnValue = reReturnStatement.GetMatch(m_comment, 3);
+        wxString returnValue = reReturnStatement.GetMatch(m_comment, 2);
+        if(returnValue.StartsWith("?")) {
+            returnValue.Remove(0, 1);
+            m_returnNullable = true;
+        }
+
         wxArrayString types = ::wxStringTokenize(returnValue, "|", wxTOKEN_STRTOK);
         if(types.size() > 1) {
             // Multiple return types, guess the best match
@@ -58,10 +63,6 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
             m_returnValue = sourceFile.MakeIdentifierAbsolute(bestMatch);
         } else if(types.size() == 1) {
             m_returnValue = sourceFile.MakeIdentifierAbsolute(types.Item(0));
-        }
-
-        if (!returnNullable.IsEmpty()) {
-            m_returnNullable = true;
         }
     }
 
@@ -142,7 +143,9 @@ void PHPDocComment::ProcessMethods()
 
         wxString strBuffer;
         strBuffer << "<?php function " << methodName << signature;
-        if(!returnType.IsEmpty()) { strBuffer << " : " << returnType << " "; }
+        if(!returnType.IsEmpty()) {
+            strBuffer << " : " << returnType << " ";
+        }
         strBuffer << " {} ";
 
         PHPSourceFile buffer(strBuffer, NULL);
@@ -152,7 +155,9 @@ void PHPDocComment::ProcessMethods()
         if(!buffer.CurrentScope()->GetChildren().empty()) {
             PHPEntityBase::Ptr_t func = *buffer.CurrentScope()->GetChildren().begin();
             if(func && func->Is(kEntityTypeFunction)) {
-                if(func->Parent()) { func->Parent()->RemoveChild(func); }
+                if(func->Parent()) {
+                    func->Parent()->RemoveChild(func);
+                }
                 m_methods.push_back(func);
             }
         }

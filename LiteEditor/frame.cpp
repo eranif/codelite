@@ -27,6 +27,7 @@
 #include "CompilersFoundDlg.h"
 #include "DebuggerToolBar.h"
 #include "ServiceProviderManager.h"
+#include "SwitchToWorkspaceDlg.h"
 #include "WelcomePage.h"
 #include "app.h"
 #include "autoversion.h"
@@ -1868,22 +1869,27 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
     wxString wspFile;
     const wxString WSP_EXT = "workspace";
 
-    // Is it an internal command? (usually the workspace file name to load is set in the
-    // event.SetString() )
+    // if the event does not contain the workspace filename, prompt the user
     if(event.GetString().IsEmpty()) {
-        // now it is time to prompt user for new workspace to open
-        const wxString ALL(wxT("CodeLite Workspace files (*.workspace)|*.workspace|") wxT("All Files (*)|*"));
-        wxFileDialog dlg(this, _("Open Workspace"), wxEmptyString, wxEmptyString, ALL, wxFD_OPEN | wxFD_FILE_MUST_EXIST,
-                         wxDefaultPosition);
-        if(dlg.ShowModal() == wxID_OK) {
-            wspFile = dlg.GetPath();
+        SwitchToWorkspaceDlg dlg(this);
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
         }
+        wspFile = dlg.GetPath();
     } else {
         wspFile = event.GetString();
     }
 
     if(wspFile.IsEmpty())
         return;
+
+    // Check if a workspace is opened and close it if needed
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        // Close the workspace first
+        wxCommandEvent evtClose(wxEVT_MENU, XRCID("close_workspace"));
+        evtClose.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(evtClose);
+    }
 
     // Let the plugins a chance of handling this workspace first
     clCommandEvent e(wxEVT_CMD_OPEN_WORKSPACE, GetId());
@@ -5418,7 +5424,8 @@ void clMainFrame::OnOpenFileExplorerFromFilePath(wxCommandEvent& e)
 void clMainFrame::OnSwitchWorkspaceUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
+    // event.Enable(!clWorkspaceManager::Get().IsWorkspaceOpened());
+    event.Enable(true);
 }
 
 void clMainFrame::OnSplitSelection(wxCommandEvent& event)

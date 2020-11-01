@@ -172,6 +172,12 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="SwitchToWorkspaceDlg.h"/>
+    <File Name="SwitchToWorkspaceDlg.cpp"/>
+    <File Name="SwitchToWorkspaceBase_plugin_bitmaps.cpp"/>
+    <File Name="SwitchToWorkspaceBase.wxcp"/>
+    <File Name="SwitchToWorkspaceBase.h"/>
+    <File Name="SwitchToWorkspaceBase.cpp"/>
     <File Name="clBacktickCache.hpp"/>
     <File Name="clBacktickCache.cpp"/>
     <File Name="clRegistery.cpp"/>

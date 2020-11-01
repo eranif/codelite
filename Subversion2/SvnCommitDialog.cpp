@@ -58,12 +58,6 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
     , m_plugin(plugin)
     , m_process(NULL)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommitDialog::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommitDialog::OnProcessTerminatd, this);
-
-    m_stcDiff->SetReadOnly(true);
-    m_checkListFiles->Clear();
-
     // Hide the bug tracker ID
     m_textCtrlBugID->Clear();
     m_textCtrlBugID->Hide();
@@ -75,18 +69,7 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, Subversion2* plugin)
 
     m_checkListFiles->Disable();
     m_panel1->Disable();
-
-    int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
-
-    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if(textLexer) { textLexer->Apply(m_stcMessage); }
-
-    // These two classes will allow copy / paste etc using the keyboard on the STC classes
-    m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
-    m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
-    DoCreateToolbar();
-    ::clSetTLWindowBestSizeAndPosition(this);
+    DoCommonInit();
 }
 
 SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,
@@ -97,33 +80,44 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
     , m_repoPath(repoPath)
     , m_process(NULL)
 {
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommitDialog::OnProcessOutput, this);
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommitDialog::OnProcessTerminatd, this);
-
-    m_stcDiff->SetReadOnly(true);
     wxString title = GetTitle();
-    title << wxT(" - ") << url;
-    SetTitle(title);
-
-    for(size_t i = 0; i < paths.GetCount(); i++) {
-        int index = m_checkListFiles->Append(paths.Item(i));
-        m_checkListFiles->Check((unsigned int)index);
+    if(!url.empty()) {
+        title << wxT(" - ") << url;
     }
+    SetTitle(title);
+    DoCommonInit();
 
-    if(!paths.IsEmpty()) {
+    if(!paths.empty()) {
+        for(size_t i = 0; i < paths.GetCount(); ++i) {
+            int index = m_checkListFiles->Append(paths.Item(i));
+            m_checkListFiles->Check((unsigned int)index);
+        }
+
         m_checkListFiles->Select(0);
         DoShowDiff(0);
     }
+}
 
-    SetName("SvnCommitDialog");
+void SvnCommitDialog::DoCommonInit()
+{
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnCommitDialog::OnProcessOutput, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnCommitDialog::OnProcessTerminatd, this);
+    m_stcDiff->SetReadOnly(true);
+    m_checkListFiles->Clear();
+
+    // These two classes will allow copy / paste etc using the keyboard on the STC classes
+    m_stcMessageHelper.Reset(new clEditEventsHandler(m_stcMessage));
+    m_stcDiffHelper.Reset(new clEditEventsHandler(m_stcDiff));
     DoCreateToolbar();
-
-    WindowAttrManager::Load(this);
     int sashPos = m_plugin->GetSettings().GetCommitDlgSashPos();
-    if(sashPos != wxNOT_FOUND) { m_splitterH->SetSashPosition(sashPos); }
+    if(sashPos != wxNOT_FOUND) {
+        m_splitterH->SetSashPosition(sashPos);
+    }
 
     int sashHPos = m_plugin->GetSettings().GetCommitDlgHSashPos();
-    if(sashHPos != wxNOT_FOUND) { m_splitterV->SetSashPosition(sashHPos); }
+    if(sashHPos != wxNOT_FOUND) {
+        m_splitterV->SetSashPosition(sashHPos);
+    }
 
     LexerConf::Ptr_t diffLexer = EditorConfigST::Get()->GetLexer("Diff");
     if(diffLexer) {
@@ -132,7 +126,9 @@ SvnCommitDialog::SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, c
     }
 
     LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
-    if(textLexer) { textLexer->Apply(m_stcMessage); }
+    if(textLexer) {
+        textLexer->Apply(m_stcMessage);
+    }
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 
@@ -170,7 +166,8 @@ wxString SvnCommitDialog::GetMesasge()
             for(size_t i = 0; i < bugs.size(); i++) {
 
                 bugs[i].Trim().Trim(false);
-                if(bugs[i].IsEmpty()) continue;
+                if(bugs[i].IsEmpty())
+                    continue;
 
                 wxString tmpMsg = bugTrackerMsg;
                 wxString tmpUrl = bugTrackerUrl;
@@ -196,7 +193,8 @@ wxString SvnCommitDialog::GetMesasge()
             for(size_t i = 0; i < frs.size(); i++) {
 
                 frs[i].Trim().Trim(false);
-                if(frs[i].IsEmpty()) continue;
+                if(frs[i].IsEmpty())
+                    continue;
 
                 wxString tmpMsg = frTrackerMsg;
                 wxString tmpUrl = frTrackerUrl;
@@ -227,7 +225,9 @@ wxArrayString SvnCommitDialog::GetPaths()
 {
     wxArrayString paths;
     for(size_t i = 0; i < m_checkListFiles->GetCount(); i++) {
-        if(m_checkListFiles->IsChecked(i)) { paths.Add(m_checkListFiles->GetString(i)); }
+        if(m_checkListFiles->IsChecked(i)) {
+            paths.Add(m_checkListFiles->GetString(i));
+        }
     }
     return paths;
 }
@@ -243,18 +243,21 @@ void SvnCommitDialog::OnProcessTerminatd(clProcessEvent& e)
     m_stcDiff->SetText(m_output);
     m_stcDiff->SetReadOnly(true);
 
-    m_checkListFiles->Enable(true);
+    // m_checkListFiles->Enable(true);
     m_currentFile.Clear();
     wxDELETE(m_process);
 }
 
 void SvnCommitDialog::DoShowDiff(int selection)
 {
-    if(m_repoPath.IsEmpty()) return;
+    if(m_repoPath.IsEmpty())
+        return;
 
     wxString filename = m_checkListFiles->GetString(selection);
 
-    if(filename.Contains(" ")) { filename.Prepend("\"").Append("\""); }
+    if(filename.Contains(" ")) {
+        filename.Prepend("\"").Append("\"");
+    }
 
     if(m_cache.count(filename)) {
         m_stcDiff->SetReadOnly(false);
@@ -263,20 +266,24 @@ void SvnCommitDialog::DoShowDiff(int selection)
         return;
     }
 
-    m_checkListFiles->Enable(false); // disable user interaction with this control until the diff process will terminate
+    // m_checkListFiles->Enable(false); // disable user interaction with this control until the diff process will
+    // terminate
     wxString cmd;
-    cmd << "svn diff " << filename;
+    cmd << m_plugin->GetSvnExeNameNoConfigDir() << " diff " << filename;
+    clDEBUG() << "Creating diff:" << cmd << clEndl;
     m_currentFile = filename;
     m_output.Clear();
     m_process = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_repoPath);
 }
+
 void SvnCommitDialog::OnShowCommitHistory(wxCommandEvent& event)
 {
     wxArrayString lastMessages, previews;
     m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
     clSingleChoiceDialog dlg(this, lastMessages);
     dlg.SetLabel(_("Choose a commit"));
-    if(dlg.ShowModal() != wxID_OK) return;
+    if(dlg.ShowModal() != wxID_OK)
+        return;
     m_stcMessage->SetText(dlg.GetSelection());
 }
 
@@ -322,7 +329,9 @@ void SvnCommitDialog::OnShowCommitHistoryDropDown(wxCommandEvent& event)
         [&](wxCommandEvent& event) {
             wxArrayString lastMessages, previews;
             m_plugin->GetCommitMessagesCache().GetMessages(lastMessages, previews);
-            if(!lastMessages.empty()) { m_stcMessage->SetText(lastMessages.Item(0)); }
+            if(!lastMessages.empty()) {
+                m_stcMessage->SetText(lastMessages.Item(0));
+            }
         },
         XRCID("commit-history-last-message"));
     m_toolbar->ShowMenuForButton(event.GetId(), &menu);

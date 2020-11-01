@@ -29,13 +29,14 @@
 #include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
 #include "macros.h"
+#include "svnsettingsdata.h"
 #include "wxcrafter.h"
 
 class Subversion2;
 class IProcess;
 class SvnCommitDialog : public SvnCommitDialogBaseClass
 {
-    Subversion2* m_plugin;
+    Subversion2* m_plugin = nullptr;
     wxString m_url;
     wxString m_repoPath;
     IProcess* m_process;
@@ -65,7 +66,8 @@ protected:
     virtual void OnShowCommitHistoryUI(wxUpdateUIEvent& event);
     void DoShowDiff(int selection);
     void DoCreateToolbar();
-    
+    void DoCommonInit();
+
 protected:
     virtual void OnFileSelected(wxCommandEvent& event);
     void OnProcessOutput(clProcessEvent& e);

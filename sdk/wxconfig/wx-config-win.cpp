@@ -1048,7 +1048,7 @@ public:
         + addLib("version") + addLib("shlwapi") + addLib("ole32") + addLib("oleaut32"); po["libs"] += addLib("uuid") +
         addLib("rpcrt4") + addLib("advapi32") + addLib("wsock32") + addLib("odbc32");
         */
-        po["rcflags"] = addFlag("--use-temp-file") + addResDefine("__WXMSW__") + po["__WXUNIV_DEFINE_p_1"];
+        po["rcflags"] = addResDefine("__WXMSW__") + po["__WXUNIV_DEFINE_p_1"];
         po["rcflags"] += po["__DEBUG_DEFINE_p_1"] + po["__EXCEPTIONS_DEFINE_p_1"];
         po["rcflags"] += po["__RTTI_DEFINE_p_1"] + po["__THREAD_DEFINE_p_1"] + po["__UNICODE_DEFINE_p_1"];
         po["rcflags"] += po["__MSLU_DEFINE_p_1"] + po["__GFXCTX_DEFINE_p_1"] + addResIncludeDir(po["SETUPHDIR"]);

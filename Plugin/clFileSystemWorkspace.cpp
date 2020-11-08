@@ -299,6 +299,9 @@ void clFileSystemWorkspace::RestoreSession()
 
 void clFileSystemWorkspace::DoOpen()
 {
+    // set the working directory to the workspace view
+    ::wxSetWorkingDirectory(GetFileName().GetPath());
+
     // Create the symbols db file
     wxFileName fnFolder(GetFileName());
     fnFolder.SetExt("db");

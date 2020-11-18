@@ -45,7 +45,7 @@ SwitchToWorkspaceBaseDlg::SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID 
     flexGridSizer4->Add(m_staticText6, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_filePicker = new wxFilePickerCtrl(m_panel12, wxID_ANY, wxEmptyString, _("Select a file"),
-                                        wxT("CodeLite Workspace files (*.workspace)|*.workspace|"), wxDefaultPosition,
+                                        wxT("CodeLite Workspace files (*.workspace)|*.workspace"), wxDefaultPosition,
                                         wxDLG_UNIT(m_panel12, wxSize(-1, -1)),
                                         wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
 

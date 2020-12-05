@@ -973,11 +973,15 @@ public:
      */
     void PasteLineAbove();
 
+    /**
+     * @brief update editor options based on the global + workspace settings
+     */
+    void UpdateOptions();
+
 private:
     void UpdateLineNumberMarginWidth();
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
-    void DoUpdateOptions();
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
     /**
      * @brief return number of whitespace characters in the beginning of the line
@@ -1011,7 +1015,7 @@ private:
 
     wxFontEncoding DetectEncoding(const wxString& filename);
     void DoToggleFold(int line, const wxString& textTag);
-    
+
     // Line numbers drawings
     void DoUpdateRelativeLineNumbers();
     void DoUpdateLineNumbers();

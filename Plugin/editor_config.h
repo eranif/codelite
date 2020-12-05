@@ -25,17 +25,17 @@
 #ifndef LITEEDITOR_EDITOR_CONFIG_H
 #define LITEEDITOR_EDITOR_CONFIG_H
 
-#include "singleton.h"
-#include <wx/filename.h>
-#include <vector>
-#include "wx/xml/xml.h"
-#include "lexer_configuration.h"
-#include "optionsconfig.h"
-#include "map"
-#include "serialized_object.h"
-#include "plugin.h"
-#include "codelite_exports.h"
 #include "cl_config.h"
+#include "codelite_exports.h"
+#include "lexer_configuration.h"
+#include "map"
+#include "optionsconfig.h"
+#include "plugin.h"
+#include "serialized_object.h"
+#include "singleton.h"
+#include "wx/xml/xml.h"
+#include <vector>
+#include <wx/filename.h>
 
 enum {
     View_Show_Workspace_Tab = 0x00000001,

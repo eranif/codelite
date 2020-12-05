@@ -374,7 +374,7 @@ clEditor::clEditor(wxWindow* parent)
     Bind(wxEVT_FRD_CLEARBOOKMARKS, &clEditor::OnFindDialog, this);
     Bind(wxCMD_EVENT_REMOVE_MATCH_INDICATOR, &clEditor::OnRemoveMatchInidicator, this);
     Bind(wxEVT_STC_ZOOM, &clEditor::OnZoom, this);
-    DoUpdateOptions();
+    UpdateOptions();
     PreferencesChanged();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clEditor::OnEditorConfigChanged, this);
     m_commandsProcessor.SetParent(this);
@@ -426,7 +426,7 @@ clEditor::clEditor(wxWindow* parent)
     // Notify that this instance is being instantiated
     clCommandEvent initEvent(wxEVT_EDITOR_INITIALIZING);
     initEvent.SetEventObject(this);
-    EventNotifier::Get()->AddPendingEvent(initEvent);
+    EventNotifier::Get()->ProcessEvent(initEvent);
 }
 
 clEditor::~clEditor()
@@ -878,8 +878,12 @@ void clEditor::SetProperties()
     // when using Makefile we _must_ use the TABS
     SetUseTabs((GetContext()->GetName().Lower() == "makefile") ? true : options->GetIndentUsesTabs());
 
-    SetTabWidth(options->GetTabWidth());
-    SetIndent(options->GetIndentWidth());
+    size_t tabWidth = options->GetTabWidth();
+    SetTabWidth(tabWidth);
+
+    size_t indentWidth = options->GetIndentWidth();
+    SetIndent(indentWidth);
+
     SetIndentationGuides(options->GetShowIndentationGuidelines() ? 3 : 0);
 
     size_t frame_flags = clMainFrame::Get()->GetFrameGeneralInfo().GetFlags();
@@ -3183,7 +3187,7 @@ void clEditor::OpenFile()
     GetCommandsProcessor().Reset();
 
     // Update the editor properties
-    DoUpdateOptions();
+    UpdateOptions();
     SetProperties();
     UpdateLineNumberMarginWidth();
     UpdateColours();
@@ -4869,7 +4873,7 @@ wxMenu* clEditor::DoCreateDebuggerWatchMenu(const wxString& word)
     return menu;
 }
 
-void clEditor::DoUpdateOptions()
+void clEditor::UpdateOptions()
 {
     // Start by getting the global settings
     m_options = EditorConfigST::Get()->GetOptions();
@@ -5411,7 +5415,7 @@ void clEditor::CenterLine(int line, int col)
 void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
 {
     event.Skip();
-    DoUpdateOptions();
+    UpdateOptions();
     SetProperties();
     UpdateLineNumbers();
 }
@@ -5807,6 +5811,9 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
 
     m_modifyTime = GetFileLastModifiedTime();
     SetSavePoint();
+
+    UpdateOptions();
+    SetProperties();
 
     if(!keepUndoHistory) {
         EmptyUndoBuffer();

@@ -31,6 +31,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "precompiled_header.h"
+#include "workspace.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
 #include <wx/ffile.h>
@@ -71,7 +72,9 @@ bool EditorConfig::DoLoadDefaultSettings()
     m_fileName = wxFileName(m_installDir + wxT("/config/codelite.xml.default"));
     m_fileName.MakeAbsolute();
 
-    if(!m_fileName.FileExists()) { return false; }
+    if(!m_fileName.FileExists()) {
+        return false;
+    }
 
     return m_doc->Load(m_fileName.GetFullPath());
 }
@@ -108,14 +111,18 @@ bool EditorConfig::Load()
         loadSuccess = m_doc->Load(m_fileName.GetFullPath());
     }
 
-    if(!loadSuccess) { return false; }
+    if(!loadSuccess) {
+        return false;
+    }
 
     // Check the codelite-version for this file
     wxString version;
     bool found = m_doc->GetRoot()->GetPropVal(wxT("Version"), &version);
     if(userSettingsLoaded) {
         if(!found || (found && version != this->m_version)) {
-            if(DoLoadDefaultSettings() == false) { return false; }
+            if(DoLoadDefaultSettings() == false) {
+                return false;
+            }
         }
     }
 
@@ -132,7 +139,9 @@ void EditorConfig::SaveLexers() { ColoursAndFontsManager::Get().Save(); }
 wxXmlNode* EditorConfig::GetLexerNode(const wxString& lexerName)
 {
     wxXmlNode* lexersNode = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), wxT("Lexers"));
-    if(lexersNode) { return XmlUtils::FindNodeByName(lexersNode, wxT("Lexer"), lexerName); }
+    if(lexersNode) {
+        return XmlUtils::FindNodeByName(lexersNode, wxT("Lexer"), lexerName);
+    }
     return NULL;
 }
 
@@ -165,8 +174,16 @@ OptionsConfigPtr EditorConfig::GetOptions() const
 
     // import legacy tab-width setting into opts
     long tabWidth = const_cast<EditorConfig*>(this)->GetInteger(wxT("EditorTabWidth"), -1);
-    if(tabWidth != -1) { opts->SetTabWidth(tabWidth); }
-    return opts;
+    if(tabWidth != -1) {
+        opts->SetTabWidth(tabWidth);
+    }
+
+    OptionsConfigPtr confOptions(opts);
+    // Now let any local preferences overwrite the global equivalent
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(confOptions, wxEmptyString);
+    }
+    return confOptions;
 }
 
 void EditorConfig::SetOptions(OptionsConfigPtr opts)
@@ -231,7 +248,9 @@ int clSortStringsFunc(const wxString& first, const wxString& second)
 
 void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName)
 {
-    if(nodeName.IsEmpty()) { return; }
+    if(nodeName.IsEmpty()) {
+        return;
+    }
 
     if(m_cacheRecentItems.count(nodeName)) {
         files = m_cacheRecentItems.find(nodeName)->second;
@@ -247,7 +266,8 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
             if(child->GetName() == wxT("File")) {
                 wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
                 // wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-                if(wxFileExists(fileName)) files.Insert(fileName, 0);
+                if(wxFileExists(fileName))
+                    files.Insert(fileName, 0);
             }
             child = child->GetNext();
         }
@@ -257,7 +277,9 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
 
 void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& nodeName)
 {
-    if(nodeName.IsEmpty()) { return; }
+    if(nodeName.IsEmpty()) {
+        return;
+    }
 
     // find the root node
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
@@ -276,7 +298,9 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
     }
 
     // Update the cache
-    if(m_cacheRecentItems.count(nodeName)) { m_cacheRecentItems.erase(nodeName); }
+    if(m_cacheRecentItems.count(nodeName)) {
+        m_cacheRecentItems.erase(nodeName);
+    }
     m_cacheRecentItems.insert(std::make_pair(nodeName, files));
 
     // save the data to disk
@@ -288,7 +312,8 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
 
 bool EditorConfig::WriteObject(const wxString& name, SerializedObject* obj)
 {
-    if(!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj)) return false;
+    if(!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj))
+        return false;
 
     // save the archive
     bool res = DoSave();
@@ -312,7 +337,9 @@ wxString EditorConfig::GetRevision() const
 void EditorConfig::SetRevision(const wxString& rev)
 {
     wxXmlNode* root = m_doc->GetRoot();
-    if(!root) { return; }
+    if(!root) {
+        return;
+    }
 
     XmlUtils::UpdateProperty(root, wxT("Revision"), rev);
     DoSave();
@@ -330,10 +357,13 @@ long EditorConfig::GetInteger(const wxString& name, long defaultValue)
 {
     // Check the cache first
     std::map<wxString, long>::iterator iter = m_cacheLongValues.find(name);
-    if(iter != m_cacheLongValues.end()) return iter->second;
+    if(iter != m_cacheLongValues.end())
+        return iter->second;
 
     SimpleLongValue data;
-    if(!ReadObject(name, &data)) { return defaultValue; }
+    if(!ReadObject(name, &data)) {
+        return defaultValue;
+    }
 
     // update the cache
     m_cacheLongValues[name] = data.GetValue();
@@ -344,10 +374,13 @@ wxString EditorConfig::GetString(const wxString& key, const wxString& defaultVal
 {
     // Check the cache first
     std::map<wxString, wxString>::iterator iter = m_cacheStringValues.find(key);
-    if(iter != m_cacheStringValues.end()) return iter->second;
+    if(iter != m_cacheStringValues.end())
+        return iter->second;
 
     SimpleStringValue data;
-    if(!ReadObject(key, &data)) { return defaultValue; }
+    if(!ReadObject(key, &data)) {
+        return defaultValue;
+    }
 
     m_cacheStringValues[key] = data.GetValue();
     return data.GetValue();
@@ -372,7 +405,9 @@ void EditorConfig::Save()
 
 bool EditorConfig::DoSave() const
 {
-    if(m_transcation) { return true; }
+    if(m_transcation) {
+        return true;
+    }
 
     // Notify that the editor configuration was modified
     wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
@@ -494,6 +529,8 @@ void EditorConfigST::Free()
 
 EditorConfig* EditorConfigST::Get()
 {
-    if(gs_EditorConfig == NULL) { gs_EditorConfig = new EditorConfig; }
+    if(gs_EditorConfig == NULL) {
+        gs_EditorConfig = new EditorConfig;
+    }
     return gs_EditorConfig;
 }

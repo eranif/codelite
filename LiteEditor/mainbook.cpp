@@ -1048,6 +1048,11 @@ void MainBook::SetPageTitle(wxWindow* page, const wxString& name)
 void MainBook::ApplySettingsChanges()
 {
     DoUpdateEditorsThemes();
+    clEditor::Vec_t allEditors;
+    GetAllEditors(allEditors, MainBook::kGetAll_IncludeDetached);
+    for(auto editor : allEditors) {
+        editor->UpdateOptions();
+    }
 
     clMainFrame::Get()->UpdateAUI();
     clMainFrame::Get()->ShowOrHideCaptions();

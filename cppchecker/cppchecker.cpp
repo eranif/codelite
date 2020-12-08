@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "Notebook.h"
+#include "clKeyboardManager.h"
 #include "cl_process.h"
 #include "cppchecker.h"
 #include "cppcheckreportpage.h"
@@ -58,7 +59,9 @@ static CppCheckPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new CppCheckPlugin(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new CppCheckPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -138,6 +141,11 @@ void CppCheckPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
+    menu->Append(XRCID("cppcheck_editor_item"), _("Check current file"));
+    menu->Append(XRCID("cppcheck_project_item"), _("Check current file's project"));
+    menu->Append(XRCID("cppcheck_workspace_item"), _("Check workspace"));
+    menu->AppendSeparator();
+
     wxMenuItem* item =
         new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -274,11 +282,8 @@ void CppCheckPlugin::OnCheckFileEditorItem(wxCommandEvent& e)
         return;
     }
 
-    ProjectPtr proj;
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor) {
-        wxString projectName = editor->GetProjectName();
-        if(!projectName.IsEmpty()) { proj = clCxxWorkspaceST::Get()->GetProject(projectName); }
         m_filelist.Add(editor->GetFileName().GetFullPath());
     }
 
@@ -312,7 +317,9 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
         return;
     }
 
-    if(!m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen()) { return; }
+    if(!m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen()) {
+        return;
+    }
 
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_itemType == ProjectItem::TypeWorkspace) {
@@ -325,7 +332,9 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
 
         for(size_t i = 0; i < projects.GetCount(); i++) {
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-            if(proj) { proj->GetFilesAsVectorOfFileName(tmpfiles); }
+            if(proj) {
+                proj->GetFilesAsVectorOfFileName(tmpfiles);
+            }
         }
 
         // only C/C++ files
@@ -343,7 +352,9 @@ ProjectPtr CppCheckPlugin::FindSelectedProject()
 {
     ProjectPtr proj = NULL;
 
-    if(!m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen()) { return proj; }
+    if(!m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen()) {
+        return proj;
+    }
 
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_itemType == ProjectItem::TypeProject) {
@@ -362,8 +373,24 @@ void CppCheckPlugin::OnCheckProjectItem(wxCommandEvent& e)
         return;
     }
 
+    if(!m_mgr->GetWorkspace() || !m_mgr->IsWorkspaceOpen()) {
+        return;
+    }
+
     ProjectPtr proj = FindSelectedProject();
-    if(!proj) { return; }
+    if(!proj) {
+        // try the current editor's project
+        auto activeEditor = clGetManager()->GetActiveEditor();
+        if(activeEditor) {
+            wxString projectName = clGetManager()->GetProjectNameByFile(activeEditor->GetFileName().GetFullPath());
+            proj = m_mgr->GetWorkspace()->GetProject(projectName);
+        }
+
+        // if we are still null, return
+        if(!proj) {
+            return;
+        }
+    }
 
     // retrieve complete list of source files of the workspace
     std::vector<wxFileName> tmpfiles;
@@ -402,7 +429,9 @@ void CppCheckPlugin::DoSettingsItem(ProjectPtr project /*= NULL*/)
     // Find the default path for the CppCheckSettingsDialog's wxFileDialog
     wxString defaultpath;
     IEditor* ed = m_mgr->GetActiveEditor();
-    if(ed && ed->GetFileName().IsOk()) { defaultpath = ed->GetFileName().GetPath(); }
+    if(ed && ed->GetFileName().IsOk()) {
+        defaultpath = ed->GetFileName().GetPath();
+    }
 
     // If there's an active project, first load any project-specific settings: definitions and undefines
     // (We couldn't do that with the rest of the settings as the workspace hadn't yet been loaded)
@@ -570,7 +599,8 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     ::WrapWithQuotes(path);
 
     wxString fileList = DoGenerateFileList();
-    if(fileList.IsEmpty()) return wxT("");
+    if(fileList.IsEmpty())
+        return wxT("");
 
     // build the command
     cmd << path << " ";

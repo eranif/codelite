@@ -67,22 +67,32 @@ void AccelTableDlg::PopulateTable(const wxString& filter)
         filteredMap = m_accelMap;
     } else {
         for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
-            if(!IsMatchesFilter(filter, iter->second)) continue;
+            if(!IsMatchesFilter(filter, iter->second))
+                continue;
             filteredMap.insert(std::make_pair(iter->first, iter->second));
         }
     }
 
-    if(filteredMap.empty()) { return; }
+    if(filteredMap.empty()) {
+        return;
+    }
 
     // Add core entries
-    std::vector<std::tuple<wxString, wxString, AccelItemData*> > V;
+    std::vector<std::tuple<wxString, wxString, AccelItemData*>> V;
     for(MenuItemDataMap_t::const_iterator iter = filteredMap.begin(); iter != filteredMap.end(); ++iter) {
         const MenuItemData& mid = iter->second;
 
-        wxString desc = mid.parentMenu.BeforeFirst(':');
-        if(desc.IsEmpty()) { desc << "Global Accelerator"; }
-        desc << " | ";
-        desc << mid.action.AfterLast(':');
+        wxString desc;
+        wxArrayString parts = wxStringTokenize(mid.parentMenu, ":", wxTOKEN_STRTOK);
+
+        if(parts.empty()) {
+            desc << "Global Accelerator | ";
+        } else {
+            for(const wxString& word : parts) {
+                desc << word << " | ";
+            }
+        }
+        desc << mid.action;
         V.push_back(std::make_tuple(desc, mid.accel, new AccelItemData(mid)));
     }
 
@@ -130,7 +140,8 @@ void AccelTableDlg::DoItemActivated()
     CHECK_ITEM_RET(sel);
 
     AccelItemData* itemData = DoGetItemData(sel);
-    if(!itemData) return;
+    if(!itemData)
+        return;
 
     // build the selected entry
     MenuItemData mid = itemData->m_menuItemData;
@@ -138,7 +149,9 @@ void AccelTableDlg::DoItemActivated()
         // search the list for similar accelerator
         MenuItemData who;
         if(HasAccelerator(mid.accel, who)) {
-            if(who.action == mid.action) { return; }
+            if(who.action == mid.action) {
+                return;
+            }
             if(wxMessageBox(wxString::Format(_("'%s' is already assigned to: '%s'\nWould you like to replace it?"),
                                              mid.accel, who.action),
                             _("CodeLite"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) != wxYES) {
@@ -167,12 +180,15 @@ void AccelTableDlg::DoItemActivated()
 
         // Update the UI
         int row = m_dvListCtrl->ItemToRow(sel);
-        if(row == wxNOT_FOUND) return;
+        if(row == wxNOT_FOUND)
+            return;
         m_dvListCtrl->SetValue(mid.accel, row, 0);
 
         // and update the map
         MenuItemDataMap_t::iterator iter = m_accelMap.find(itemData->m_menuItemData.resourceID);
-        if(iter != m_accelMap.end()) { iter->second.accel = itemData->m_menuItemData.accel; }
+        if(iter != m_accelMap.end()) {
+            iter->second.accel = itemData->m_menuItemData.accel;
+        }
     }
 }
 
@@ -196,7 +212,8 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
 {
     wxString lcFilter = filter.Lower();
     lcFilter.Trim().Trim(false);
-    if(lcFilter.IsEmpty()) return true;
+    if(lcFilter.IsEmpty())
+        return true;
 
     wxString parentMenu = item.parentMenu;
 
@@ -207,7 +224,8 @@ bool AccelTableDlg::IsMatchesFilter(const wxString& filter, const MenuItemData& 
 
 bool AccelTableDlg::HasAccelerator(const wxString& accel, MenuItemData& who)
 {
-    if(accel.IsEmpty()) return false;
+    if(accel.IsEmpty())
+        return false;
     for(MenuItemDataMap_t::iterator iter = m_accelMap.begin(); iter != m_accelMap.end(); ++iter) {
         if(iter->second.accel == accel) {
             who = iter->second;
@@ -226,10 +244,12 @@ wxDataViewItem AccelTableDlg::FindAccel(const MenuItemData& mid)
 {
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
-        if(!item.IsOk()) continue;
+        if(!item.IsOk())
+            continue;
 
         AccelItemData* cd = DoGetItemData(item);
-        if(cd && cd->m_menuItemData.accel == mid.accel) return item;
+        if(cd && cd->m_menuItemData.accel == mid.accel)
+            return item;
     }
     return wxDataViewItem();
 }

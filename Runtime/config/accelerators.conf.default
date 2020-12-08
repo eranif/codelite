@@ -146,6 +146,9 @@ svn_options|Plugins::Subversion|Options...|
 copyrights_options|Plugins::Copyright|Insert Copyright Block|
 insert_copyrights|Plugins::Copyright|Batch Insert of Copyright Block|
 batch_insert_copyrights|Plugins::Copyright|Settings...|
+cppcheck_editor_item|Plugins::CppCheck|Check current file|
+cppcheck_project_item|Plugins::CppCheck|Check current file's project|
+cppcheck_workspace_item|Plugins::CppCheck|Check workspace|
 options|Settings|Global Editor Preferences...|Alt-O
 synatx_highlight|Settings|Syntax Highlight & Fonts...|
 configure_accelerators|Settings|Configure accelerators...|

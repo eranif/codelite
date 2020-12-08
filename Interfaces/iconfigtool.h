@@ -41,7 +41,7 @@
  * read/write its own values
  * @sa SerializedObject
  */
-class IConfigTool : public wxEvtHandler
+class IConfigTool
 {
 public:
     IConfigTool() {}

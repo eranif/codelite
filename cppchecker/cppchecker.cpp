@@ -321,28 +321,24 @@ void CppCheckPlugin::OnCheckWorkspaceItem(wxCommandEvent& e)
         return;
     }
 
-    TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_itemType == ProjectItem::TypeWorkspace) {
+    // retrieve complete list of source files of the workspace
+    wxArrayString projects;
+    wxString err_msg;
+    std::vector<wxFileName> tmpfiles;
+    m_mgr->GetWorkspace()->GetProjectList(projects);
 
-        // retrieve complete list of source files of the workspace
-        wxArrayString projects;
-        wxString err_msg;
-        std::vector<wxFileName> tmpfiles;
-        m_mgr->GetWorkspace()->GetProjectList(projects);
-
-        for(size_t i = 0; i < projects.GetCount(); i++) {
-            ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-            if(proj) {
-                proj->GetFilesAsVectorOfFileName(tmpfiles);
-            }
+    for(size_t i = 0; i < projects.GetCount(); i++) {
+        ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
+        if(proj) {
+            proj->GetFilesAsVectorOfFileName(tmpfiles);
         }
+    }
 
-        // only C/C++ files
-        for(size_t i = 0; i < tmpfiles.size(); i++) {
-            if(FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceC ||
-               FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceCpp) {
-                m_filelist.Add(tmpfiles.at(i).GetFullPath());
-            }
+    // only C/C++ files
+    for(size_t i = 0; i < tmpfiles.size(); i++) {
+        if(FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceC ||
+           FileExtManager::GetType(tmpfiles.at(i).GetFullPath()) == FileExtManager::TypeSourceCpp) {
+            m_filelist.Add(tmpfiles.at(i).GetFullPath());
         }
     }
     DoStartTest();

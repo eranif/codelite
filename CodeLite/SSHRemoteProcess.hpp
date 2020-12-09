@@ -3,22 +3,25 @@
 
 #if USE_SFTP
 #include "asyncprocess.h" // Base class: IProcess
+#include "clSSHChannel.h"
 #include "cl_ssh.h"
 #include "codelite_exports.h"
-#include "clSSHChannel.h"
+#include "ssh_account_info.h"
 
 class WXDLLIMPEXP_CL SSHRemoteProcess : public IProcess
 {
     clSSHChannel::Ptr_t m_channel;
     wxEvtHandler* m_owner = nullptr;
     wxString m_pty;
+    clSSH::Ptr_t m_ssh;
 
 public:
     SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type);
     virtual ~SSHRemoteProcess();
 
     static IProcess* Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, bool interactive);
-
+    static IProcess* Create(wxEvtHandler* owner, const SSHAccountInfo& account, const wxString& command,
+                            bool interactive);
     wxEvtHandler* GetOwner() { return m_owner; }
 
     void SetPty(const wxString& pty) { this->m_pty = pty; }

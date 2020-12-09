@@ -31,7 +31,7 @@
 #include <vector>
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK SSHAccountInfo : public clConfigItem
+class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
 {
     wxString m_accountName;
     wxString m_username;

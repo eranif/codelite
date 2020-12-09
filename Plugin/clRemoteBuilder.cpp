@@ -42,19 +42,17 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
                        wxICON_WARNING | wxCENTER);
         return;
     }
+
+    clSSH::Ptr_t ssh(new clSSH());
     try {
-        if(m_ssh) {
-            m_ssh->Close();
-        }
-        m_ssh.reset(new clSSH());
 
         // Establish SSH connection and launch the build
-        m_ssh->SetUsername(account.GetUsername());
-        m_ssh->SetPassword(account.GetPassword());
-        m_ssh->SetHost(account.GetHost());
-        m_ssh->SetPort(account.GetPort());
-        m_ssh->Connect();
-        m_ssh->Login();
+        ssh->SetUsername(account.GetUsername());
+        ssh->SetPassword(account.GetPassword());
+        ssh->SetHost(account.GetHost());
+        ssh->SetPort(account.GetPort());
+        ssh->Connect();
+        ssh->Login();
 
     } catch(clException& e) {
         clERROR() << e.What();
@@ -72,7 +70,7 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
-    m_remoteProcess = SSHRemoteProcess::Create(this, m_ssh, cmd, false);
+    m_remoteProcess = SSHRemoteProcess::Create(this, ssh, cmd, false);
 
     clBuildEvent eventStart(wxEVT_BUILD_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);
@@ -96,10 +94,6 @@ void clRemoteBuilder::OnProcessTerminated(clProcessEvent& event)
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventStopped);
-
-#if USE_SFTP
-    m_ssh.reset(nullptr);
-#endif
 }
 
 void clRemoteBuilder::Stop() { m_remoteProcess->Terminate(); }

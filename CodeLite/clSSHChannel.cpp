@@ -70,7 +70,9 @@ public:
     {
         while(!TestDestroy()) {
             // First, poll the channel
-            if(!ReadChannel(false) || !ReadChannel(true)) { break; }
+            if(!ReadChannel(false) || !ReadChannel(true)) {
+                break;
+            }
         }
         return NULL;
     }
@@ -148,8 +150,10 @@ public:
     void* Entry()
     {
         while(!TestDestroy()) {
-            if(!ReadChannel(false) || !ReadChannel(true)) { break; }
-            
+            if(!ReadChannel(false) || !ReadChannel(true)) {
+                break;
+            }
+
             // Check if we got something to write
             wxString message;
             bool write_error = false;
@@ -164,7 +168,9 @@ public:
                     break;
                 }
             }
-            if(write_error) { break; }
+            if(write_error) {
+                break;
+            }
         }
         return NULL;
     }
@@ -197,10 +203,16 @@ clSSHChannel::~clSSHChannel()
 
 void clSSHChannel::Open()
 {
-    if(IsOpen()) { return; }
-    if(!m_ssh) { throw clException("ssh session is not opened"); }
+    if(IsOpen()) {
+        return;
+    }
+    if(!m_ssh) {
+        throw clException("ssh session is not opened");
+    }
     m_channel = ssh_channel_new(m_ssh->GetSession());
-    if(!m_channel) { throw clException(BuildError("Failed to allocte ssh channel")); }
+    if(!m_channel) {
+        throw clException(BuildError("Failed to allocte ssh channel"));
+    }
 
     int rc = ssh_channel_open_session(m_channel);
     if(rc != SSH_OK) {
@@ -260,8 +272,12 @@ void clSSHChannel::Execute(const wxString& command)
 
     } else {
         // Sanity
-        if(m_thread) { throw clException("Channel is busy"); }
-        if(!IsOpen()) { throw clException("Channel is not opened"); }
+        if(m_thread) {
+            throw clException("Channel is busy");
+        }
+        if(!IsOpen()) {
+            throw clException("Channel is not opened");
+        }
         int rc = ssh_channel_request_exec(m_channel, command.mb_str(wxConvUTF8).data());
         if(rc != SSH_OK) {
             Close();
@@ -274,21 +290,29 @@ void clSSHChannel::Execute(const wxString& command)
 
 wxString clSSHChannel::BuildError(const wxString& prefix) const
 {
-    if(!m_ssh) { return prefix; }
+    if(!m_ssh) {
+        return prefix;
+    }
     wxString errmsg = ssh_get_error(m_ssh->GetSession());
     return wxString() << prefix << ". " << errmsg;
 }
 
 void clSSHChannel::Write(const wxString& message)
 {
-    if(IsInteractive()) { throw clException("Write is only available for interactive ssh channels"); }
-    if(!IsOpen()) { throw clException("Channel is not opened"); }
+    if(IsInteractive()) {
+        throw clException("Write is only available for interactive ssh channels");
+    }
+    if(!IsOpen()) {
+        throw clException("Channel is not opened");
+    }
     DoWrite(message);
 }
 
 void clSSHChannel::DoWrite(const wxString& buffer)
 {
-    if(IsInteractive()) { throw clException("Write is only available for interactive ssh channels"); }
+    if(IsInteractive()) {
+        throw clException("Write is only available for interactive ssh channels");
+    }
     m_Queue.Post(buffer);
 }
 
@@ -312,8 +336,12 @@ void clSSHChannel::OnChannelPty(clCommandEvent& event) { m_owner->AddPendingEven
 
 void clSSHChannel::SendSignal(wxSignal sig)
 {
-    if(!m_ssh) { throw clException("ssh session is not opened"); }
-    if(!m_channel) { throw clException("ssh channel is not opened"); }
+    if(!m_ssh) {
+        throw clException("ssh session is not opened");
+    }
+    if(!m_channel) {
+        throw clException("ssh channel is not opened");
+    }
 
     const char* prefix = nullptr;
     switch(sig) {
@@ -353,8 +381,12 @@ void clSSHChannel::SendSignal(wxSignal sig)
     default:
         break;
     }
-    if(!prefix) { throw clException("Requested to send an unknown signal"); }
+    if(!prefix) {
+        throw clException("Requested to send an unknown signal");
+    }
     int rc = ssh_channel_request_send_signal(m_channel, prefix);
-    if(rc != SSH_OK) { throw clException(BuildError("Failed to send signal")); }
+    if(rc != SSH_OK) {
+        throw clException(BuildError("Failed to send signal"));
+    }
 }
 #endif

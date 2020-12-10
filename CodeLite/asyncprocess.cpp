@@ -25,8 +25,15 @@
 
 class wxEvtHandler;
 class IProcess;
-#include <wx/string.h>
+
+#if USE_SFTP
+#include "SSHRemoteProcess.hpp"
+#endif
+
+#include "file_logger.h"
 #include "macros.h"
+#include "ssh_account_info.h"
+#include <wx/string.h>
 
 #ifdef __WXMSW__
 #include "winprocess_impl.h"
@@ -35,8 +42,25 @@ class IProcess;
 #endif
 
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
-                             const clEnvList_t* env)
+                             const clEnvList_t* env, wxUIntPtr clientData)
 {
+#if USE_SFTP
+    if(flags & IProcessCreateSSH) {
+        if(!clientData) {
+            clERROR() << "Requested to create async process over SSH, but no client data provided!" << clEndl;
+            return nullptr;
+        }
+
+        SSHAccountInfo* accountInfo = reinterpret_cast<SSHAccountInfo*>(clientData);
+        if(!accountInfo) {
+            clERROR() << "Requested to create async process over SSH, but client data is not of type SSHAccountInfo"
+                      << clEndl;
+            return nullptr;
+        }
+        return SSHRemoteProcess::Create(parent, *accountInfo, cmd, flags & IProcessInteractiveSSH);
+    }
+#endif
+
     clEnvironment e(env);
 #ifdef __WXMSW__
     wxString errMsg;
@@ -92,7 +116,9 @@ void IProcess::WaitForTerminate(wxString& output)
         wxString buffErr;
         while(Read(buff, buffErr)) {
             output << buff;
-            if(!buff.IsEmpty() && !buffErr.IsEmpty()) { output << "\n"; }
+            if(!buff.IsEmpty() && !buffErr.IsEmpty()) {
+                output << "\n";
+            }
             output << buffErr;
         }
     } else {

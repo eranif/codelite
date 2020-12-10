@@ -27,15 +27,15 @@
 #define I_PROCESS_H
 
 #include "codelite_exports.h"
+#include "macros.h"
 #include <map>
+#include <vector>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
-#include <vector>
-#include "macros.h"
 #include <wx/utils.h>
 
-typedef std::vector<std::pair<wxString, wxString> > clEnvList_t;
+typedef std::vector<std::pair<wxString, wxString>> clEnvList_t;
 enum IProcessCreateFlags {
     IProcessCreateDefault = (1 << 0),           // Default: create process with no console window
     IProcessCreateConsole = (1 << 1),           // Create with console window shown
@@ -47,6 +47,8 @@ enum IProcessCreateFlags {
     IProcessStderrEvent = (1 << 6), // fire a separate event for stderr output
     IProcessRawOutput = (1 << 7),   // return the process output as is, don't strip anything. By default CodeLite strips
                                     // terminal colours escape sequences
+    IProcessCreateSSH = (1 << 8),   // Create a remote process, over SSH
+    IProcessInteractiveSSH = (1 << 9),
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -68,7 +70,9 @@ public:
                 wxString oldValue;
                 // If an environment variable with this name already exists, keep its old value
                 // as we want to restore it later
-                if(::wxGetEnv(name, &oldValue)) { m_oldEnv.insert({ name, oldValue }); }
+                if(::wxGetEnv(name, &oldValue)) {
+                    m_oldEnv.insert({ name, oldValue });
+                }
                 // set the new value
                 ::wxSetEnv(name, value);
             }
@@ -89,7 +93,6 @@ public:
         m_oldEnv.clear();
     }
 };
-
 
 class WXDLLIMPEXP_CL IProcessCallback : public wxEvtHandler
 {
@@ -188,7 +191,7 @@ public:
     void SetHardKill(bool hardKill) { this->m_hardKill = hardKill; }
     bool GetHardKill() const { return m_hardKill; }
     IProcessCallback* GetCallback() { return m_callback; }
-    
+
     /**
      * @brief send signal to the process
      */
@@ -212,7 +215,7 @@ public:
 WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
-                                            const clEnvList_t* env = nullptr);
+                                            const clEnvList_t* env = nullptr, wxUIntPtr clientData = 0);
 
 /**
  * @brief create synchronus process

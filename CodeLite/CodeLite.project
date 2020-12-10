@@ -406,6 +406,8 @@
     <File Name="cl_standard_paths.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="ssh">
+    <File Name="ssh_account_info.h"/>
+    <File Name="ssh_account_info.cpp"/>
     <File Name="clSSHAgent.cpp"/>
     <File Name="clSSHAgent.hpp"/>
     <File Name="SFTPClientData.cpp"/>

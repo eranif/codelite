@@ -750,8 +750,6 @@
     <File Name="SFTPBrowserDlg.h"/>
     <File Name="sftptreemodel.cpp"/>
     <File Name="sftptreemodel.h"/>
-    <File Name="ssh_account_info.cpp"/>
-    <File Name="ssh_account_info.h"/>
     <File Name="SSHAccountManagerDlg.cpp"/>
     <File Name="SSHAccountManagerDlg.h"/>
     <File Name="sftp_settings.cpp"/>

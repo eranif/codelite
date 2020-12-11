@@ -37,6 +37,7 @@
 #include "globals.h"
 #include "processreaderthread.h"
 #include "procutils.h"
+#include "ssh_account_info.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
 #include "wx/tokenzr.h"
@@ -238,66 +239,93 @@ void DbgGdb::EmptyQueue()
 
 bool DbgGdb::Start(const DebugSessionInfo& si)
 {
-    // set the environment variables
-    EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
+    if(si.isSSHDebugging) {
 
-    wxString dbgExeName;
-    if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {
-        return false;
-    }
+        if(!si.accountInfo) {
+            clERROR() << "Failed to start gdb over ssh: account info not provided" << clEndl;
+            return false;
+        }
+        wxString dbgExeName = "gdb"; // it's up to the server machine to have gdb in the path
+        wxString cmd = "gdb --interpreter=mi ";
+        cmd << si.exeName;
+        m_debuggeePid = wxNOT_FOUND;
+        m_attachedMode = false;
 
-    wxString cmd;
+        m_observer->UpdateAddLine(wxString()
+                                  << _("Debugging over SSH, using account: ") << si.accountInfo->GetAccountName());
+        m_observer->UpdateAddLine(wxString() << _("Current working dir: ") << wxGetCwd());
+        m_observer->UpdateAddLine(wxString() << _("Launching gdb from : ") << si.cwd);
+        m_observer->UpdateAddLine(wxString() << _("Starting debugger  : ") << cmd);
+
+        // Launch gdb
+        m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH | IProcessInteractiveSSH, si.cwd, nullptr,
+                                            (wxUIntPtr)si.accountInfo);
+        if(!m_gdbProcess) {
+            return false;
+        }
+
+    } else {
+        // set the environment variables
+        EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
+
+        wxString dbgExeName;
+        if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {
+            return false;
+        }
+
+        wxString cmd;
 #if defined(__WXGTK__) || defined(__WXMAC__)
-    cmd << dbgExeName;
-    if(!si.ttyName.IsEmpty()) {
-        cmd << wxT(" --tty=") << si.ttyName;
-    }
-    cmd << wxT(" --interpreter=mi ") << si.exeName;
+        cmd << dbgExeName;
+        if(!si.ttyName.IsEmpty()) {
+            cmd << wxT(" --tty=") << si.ttyName;
+        }
+        cmd << wxT(" --interpreter=mi ") << si.exeName;
 #else
-    cmd << dbgExeName << wxT(" --interpreter=mi ") << si.exeName;
+        cmd << dbgExeName << wxT(" --interpreter=mi ") << si.exeName;
 #endif
 
-    m_debuggeePid = wxNOT_FOUND;
-    m_attachedMode = false;
+        m_debuggeePid = wxNOT_FOUND;
+        m_attachedMode = false;
 
-    m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
-    m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), si.cwd.c_str()));
-    m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
+        m_observer->UpdateAddLine(wxString::Format(wxT("Current working dir: %s"), wxGetCwd().c_str()));
+        m_observer->UpdateAddLine(wxString::Format(wxT("Launching gdb from : %s"), si.cwd.c_str()));
+        m_observer->UpdateAddLine(wxString::Format(wxT("Starting debugger  : %s"), cmd.c_str()));
 
 #ifdef __WXMSW__
-    // When using remote debugging on Windows we need a console window, as this is the only
-    // mechanism to send a Ctrl-C event and signal a SIGINT to interrupt the target.
-    bool needs_console = GetIsRemoteDebugging() || m_info.showTerminal;
+        // When using remote debugging on Windows we need a console window, as this is the only
+        // mechanism to send a Ctrl-C event and signal a SIGINT to interrupt the target.
+        bool needs_console = GetIsRemoteDebugging() || m_info.showTerminal;
 #else
-    bool needs_console = m_info.showTerminal;
+        bool needs_console = m_info.showTerminal;
 #endif
 
-    size_t flags = needs_console ? IProcessCreateConsole : IProcessCreateDefault;
-    if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
-        flags |= IProcessCreateAsSuperuser;
-    }
+        size_t flags = needs_console ? IProcessCreateConsole : IProcessCreateDefault;
+        if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+            flags |= IProcessCreateAsSuperuser;
+        }
 
-    m_gdbProcess = CreateAsyncProcess(this, cmd, flags, si.cwd);
-    if(!m_gdbProcess) {
-        return false;
-    }
+        m_gdbProcess = ::CreateAsyncProcess(this, cmd, flags, si.cwd);
+        if(!m_gdbProcess) {
+            return false;
+        }
 
 #ifdef __WXMSW__
-    if(GetIsRemoteDebugging()) {
-        // This doesn't really make sense, but AttachConsole fails without it...
-        wxMilliSleep(1000);
+        if(GetIsRemoteDebugging()) {
+            // This doesn't really make sense, but AttachConsole fails without it...
+            wxMilliSleep(1000);
 
-        if(!AttachConsole(m_gdbProcess->GetPid()))
-            m_observer->UpdateAddLine(wxString::Format(wxT("AttachConsole returned error %d"), GetLastError()));
+            if(!AttachConsole(m_gdbProcess->GetPid()))
+                m_observer->UpdateAddLine(wxString::Format(wxT("AttachConsole returned error %d"), GetLastError()));
 
-        // We can at least make the window invisible if the user doesn't want to see it.
-        if(!m_info.showTerminal)
-            SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
+            // We can at least make the window invisible if the user doesn't want to see it.
+            if(!m_info.showTerminal)
+                SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
 
-        // Finally we ignore SIGINT so we don't get killed by our own signal
-        SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, TRUE);
-    }
+            // Finally we ignore SIGINT so we don't get killed by our own signal
+            SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, TRUE);
+        }
 #endif
+    }
     m_gdbProcess->SetHardKill(true);
     DoInitializeGdb(si);
     return true;
@@ -1087,11 +1115,13 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 {
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
-#ifdef __WXMSW__
-    ExecuteCmd(wxT("set  new-console on"));
-#endif
-    ExecuteCmd(wxT("set unwindonsignal on"));
 
+    if(!sessionInfo.isSSHDebugging) {
+#ifdef __WXMSW__
+        ExecuteCmd(wxT("set  new-console on"));
+#endif
+    }
+    ExecuteCmd(wxT("set unwindonsignal on"));
     wxString breakinsertcmd(wxT("-break-insert "));
 
     if(m_info.enablePendingBreakpoints) {
@@ -1100,18 +1130,16 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     }
 
     if(m_info.catchThrow) {
-#ifdef __WXMSW__
-        WriteCommand("-break-insert -f __cxa_throw", NULL);
-#else
         ExecuteCmd(wxT("catch throw"));
-#endif
     }
 
+    if(!sessionInfo.isSSHDebugging) {
 #ifdef __WXMSW__
-    if(m_info.debugAsserts) {
-        ExecuteCmd(wxT("break assert"));
-    }
+        if(m_info.debugAsserts) {
+            ExecuteCmd(wxT("break assert"));
+        }
 #endif
+    }
 
     if(!(m_info.flags & DebuggerInformation::kPrintObjectOff)) {
         ExecuteCmd("set print object on");

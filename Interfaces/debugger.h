@@ -311,23 +311,22 @@ public:
 
 /// This structure contains the information needed
 /// by the debugger to start a debug session
+class SSHAccountInfo;
 class DebugSessionInfo
 {
 public:
     wxString debuggerPath;                    /// The debugger to use
     wxString exeName;                         /// Executable to debug
-    int PID;                                  /// Process ID to attach
+    int PID = wxNOT_FOUND;                    /// Process ID to attach
     wxString cwd;                             /// Working directory
     std::vector<clDebuggerBreakpoint> bpList; /// Breakpoint list
     wxArrayString cmds;                       /// Startup commands
     wxString ttyName;                         /// TTY to use
     wxArrayString searchPaths;                /// Additional search paths to pass to the debugger
-    bool enablePrettyPrinting;                /// Should we enable pretty printing?
-    DebugSessionInfo()
-        : PID(wxNOT_FOUND)
-        , enablePrettyPrinting(false)
-    {
-    }
+    bool enablePrettyPrinting = true;         /// Should we enable pretty printing?
+    bool isSSHDebugging = false;              /// Debugging over SSH
+    SSHAccountInfo* accountInfo =
+        nullptr; /// When isSSHDebugging is set true, this will hold the account details to login into
 };
 
 class IDebuggerObserver;

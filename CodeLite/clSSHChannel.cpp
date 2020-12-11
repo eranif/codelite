@@ -299,7 +299,7 @@ wxString clSSHChannel::BuildError(const wxString& prefix) const
 
 void clSSHChannel::Write(const wxString& message)
 {
-    if(IsInteractive()) {
+    if(!IsInteractive()) {
         throw clException("Write is only available for interactive ssh channels");
     }
     if(!IsOpen()) {
@@ -310,7 +310,7 @@ void clSSHChannel::Write(const wxString& message)
 
 void clSSHChannel::DoWrite(const wxString& buffer)
 {
-    if(IsInteractive()) {
+    if(!IsInteractive()) {
         throw clException("Write is only available for interactive ssh channels");
     }
     m_Queue.Post(buffer);

@@ -113,6 +113,7 @@ IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, const SSHAccountInfo& ac
         }
         return process;
     } catch(clException& e) {
+        clERROR() << "Failed to start remote process." << e.What() << clEndl;
         return NULL;
     }
 }

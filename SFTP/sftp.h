@@ -98,6 +98,9 @@ protected:
     // e.GetRemoteFile() -> the file to be deleted
     void OnDeleteFile(clSFTPEvent& e);
 
+    // Open a remote file
+    void OnOpenFile(clSFTPEvent& e);
+
 private:
     bool IsCxxWorkspaceMirrorEnabled() const;
     void DoFileDeleted(const wxString& filepath);

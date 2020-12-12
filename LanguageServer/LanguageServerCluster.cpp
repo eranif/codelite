@@ -3,6 +3,7 @@
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
+#include "clSFTPEvent.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
 #include "cl_standard_paths.h"
@@ -83,21 +84,29 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxFi
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 {
     const LSP::Location& location = event.GetLocation();
-    wxFileName fn(location.GetUri());
-    clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
-              << location.GetRange().GetStart().GetCharacter() << ")";
+    if(location.IsTrySSH()) {
+        // the file does not exist on the current machine, lets try and open it with ssh
+        clSFTPEvent openEvent(wxEVT_SFTP_OPEN_FILE);
+        openEvent.SetRemoteFile(location.GetUri());
+        openEvent.SetLineNumber(location.GetRange().GetStart().GetLine());
+        EventNotifier::Get()->AddPendingEvent(openEvent);
+    } else {
+        wxFileName fn(location.GetUri());
+        clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
+                  << location.GetRange().GetStart().GetCharacter() << ")";
 
-    // Manage the browser (BACK and FORWARD) ourself
-    BrowseRecord from;
-    IEditor* oldEditor = clGetManager()->GetActiveEditor();
-    if(oldEditor) {
-        from = oldEditor->CreateBrowseRecord();
-    }
-    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
-    if(editor) {
-        editor->SelectRange(location.GetRange());
+        // Manage the browser (BACK and FORWARD) ourself
+        BrowseRecord from;
+        IEditor* oldEditor = clGetManager()->GetActiveEditor();
         if(oldEditor) {
-            NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord());
+            from = oldEditor->CreateBrowseRecord();
+        }
+        IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
+        if(editor) {
+            editor->SelectRange(location.GetRange());
+            if(oldEditor) {
+                NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord());
+            }
         }
     }
 }

@@ -116,6 +116,7 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
+    EventNotifier::Get()->Bind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
 
     // Add the "SFTP" page to the workspace pane
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
@@ -246,6 +247,7 @@ void SFTP::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_SFTP_SAVE_FILE, &SFTP::OnSaveFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_RENAME_FILE, &SFTP::OnRenameFile, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_DELETE_FILE, &SFTP::OnDeleteFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_SFTP_OPEN_FILE, &SFTP::OnOpenFile, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &SFTP::OnInitDone, this);
     m_tabToggler.reset(NULL);
 
@@ -610,3 +612,9 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
 }
 
 void SFTP::OnInitDone(wxCommandEvent& event) { event.Skip(); }
+
+void SFTP::OnOpenFile(clSFTPEvent& e)
+{
+    e.Skip();
+    OpenFile(e.GetRemoteFile(), e.GetLineNumber());
+}

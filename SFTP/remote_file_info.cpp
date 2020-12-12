@@ -38,18 +38,7 @@ RemoteFileInfo::~RemoteFileInfo() {}
 void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
 {
     this->m_remoteFile = remoteFile;
-
-    // Generate a temporary file location
-    wxFileName fnRemoteFile(m_remoteFile);
-    wxFileName localFile(clSFTP::GetDefaultDownloadFolder(), fnRemoteFile.GetFullName());
-    const wxArrayString& dirs = fnRemoteFile.GetDirs();
-    for(size_t i = 0; i < dirs.GetCount(); ++i) {
-        localFile.AppendDir(dirs.Item(i));
-    }
-
-    // Ensure that the path to the sftp temp folder exists
-    localFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    m_localFile = localFile.GetFullPath();
+    this->m_localFile = clSFTP::GetLocalFileName(remoteFile, true).GetFullPath();
 }
 
 wxString RemoteFileInfo::GetTempFolder() { return clSFTP::GetDefaultDownloadFolder(); }

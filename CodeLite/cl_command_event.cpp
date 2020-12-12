@@ -218,6 +218,8 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_memoryAddress = other.m_memoryAddress;
     m_memoryBlockValue = other.m_memoryBlockValue;
     m_breakpoints = other.m_breakpoints;
+    m_isSSHDebugging = other.m_isSSHDebugging;
+    m_sshAccount = other.m_sshAccount;
     return *this;
 }
 

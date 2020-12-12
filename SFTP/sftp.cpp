@@ -250,7 +250,7 @@ void SFTP::UnPlug()
     m_tabToggler.reset(NULL);
 
     // Delete the temporary files
-    wxFileName::Rmdir(clSFTP::GetDefaultDownloadFolder(), wxPATH_RMDIR_RECURSIVE);
+    wxFileName::Rmdir(clSFTP::GetDefaultDownloadFolder({}), wxPATH_RMDIR_RECURSIVE);
 }
 
 void SFTP::OnAccountManager(wxCommandEvent& e)

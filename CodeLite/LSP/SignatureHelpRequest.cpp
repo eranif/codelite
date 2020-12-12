@@ -8,7 +8,7 @@ LSP::SignatureHelpRequest::SignatureHelpRequest(const wxFileName& filename, size
 {
     SetMethod("textDocument/signatureHelp");
     m_params.reset(new TextDocumentPositionParams());
-    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
+    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
@@ -17,7 +17,9 @@ LSP::SignatureHelpRequest::~SignatureHelpRequest() {}
 void LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
                                            IPathConverter::Ptr_t pathConverter)
 {
-    if(!response.Has("result")) { return; }
+    if(!response.Has("result")) {
+        return;
+    }
     JSONItem res = response.Get("result");
     LSP::SignatureHelp sh;
     sh.FromJSON(res, pathConverter);

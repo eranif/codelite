@@ -274,10 +274,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDING, clDebugEvent);
 // clientData is NULL
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDED, clDebugEvent);
 
-// set when the editor gains or loses
-// the control over the debugger
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxCommandEvent);
+// Debugger is requesting to open a file and set the marker at a given position
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_SET_FILELINE, clDebugEvent);
 
 // Notify the debugger to update the active pane
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEvent);
@@ -302,6 +300,16 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_SHOWING, clDebugE
 // Quick debug dialog is dismissed. Use this event to persist any setting the user might have
 // updated in the UI
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_QUICK_DEBUG_DLG_DISMISSED_OK, clDebugEvent);
+
+//-------------------------------------------------------------------------------------
+///
+// set when the editor gains or loses
+// the control over the debugger
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_LOST_CONTROL, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxCommandEvent);
+
+//-------------------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------

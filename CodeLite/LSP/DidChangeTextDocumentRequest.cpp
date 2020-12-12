@@ -10,7 +10,7 @@ LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxFileName
 
     VersionedTextDocumentIdentifier id;
     id.SetVersion(++counter);
-    id.SetFilename(filename);
+    id.SetFilename(filename.GetFullPath());
     m_params->As<DidChangeTextDocumentParams>()->SetTextDocument(id);
 
     TextDocumentContentChangeEvent changeEvent;

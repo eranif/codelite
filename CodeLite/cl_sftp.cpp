@@ -470,19 +470,22 @@ void clSFTP::Chmod(const wxString& remotePath, size_t permissions)
     }
 }
 
-wxString clSFTP::GetDefaultDownloadFolder()
+wxString clSFTP::GetDefaultDownloadFolder(const SSHAccountInfo& accountInfo)
 {
     wxFileName path(clStandardPaths::Get().GetUserDataDir(), "");
     path.AppendDir("sftp");
-    path.AppendDir("tmp");
+    path.AppendDir("download");
+    if(!accountInfo.GetHost().empty()) {
+        path.AppendDir(accountInfo.GetHost());
+    }
     return path.GetPath();
 }
 
-wxFileName clSFTP::GetLocalFileName(const wxString& remotePath, bool mkdirRecrusive)
+wxFileName clSFTP::GetLocalFileName(const SSHAccountInfo& accountInfo, const wxString& remotePath, bool mkdirRecrusive)
 {
     // Generate a temporary file location
     wxFileName fnRemoteFile(remotePath);
-    wxFileName localFile(GetDefaultDownloadFolder(), fnRemoteFile.GetFullName());
+    wxFileName localFile(GetDefaultDownloadFolder(accountInfo), fnRemoteFile.GetFullName());
     const wxArrayString& dirs = fnRemoteFile.GetDirs();
     for(size_t i = 0; i < dirs.GetCount(); ++i) {
         localFile.AppendDir(dirs.Item(i));

@@ -65,24 +65,24 @@ public:
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
 {
-    wxFileName m_filename;
+    wxString m_filename;
 
 public:
     virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
     virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
 
     TextDocumentIdentifier() {}
-    TextDocumentIdentifier(const wxFileName& filename)
+    TextDocumentIdentifier(const wxString& filename)
         : m_filename(filename)
     {
     }
     virtual ~TextDocumentIdentifier() {}
-    TextDocumentIdentifier& SetFilename(const wxFileName& filename)
+    TextDocumentIdentifier& SetFilename(const wxString& filename)
     {
         this->m_filename = filename;
         return *this;
     }
-    const wxFileName& GetFilename() const { return m_filename; }
+    const wxString& GetFilename() const { return m_filename; }
 };
 
 //===----------------------------------------------------------------------------------
@@ -203,6 +203,7 @@ class WXDLLIMPEXP_CL Location : public Serializable
 {
     wxString m_uri;
     Range m_range;
+    bool m_trySSH = false;
 
 public:
     virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
@@ -227,6 +228,9 @@ public:
     }
     const Range& GetRange() const { return m_range; }
     const wxString& GetUri() const { return m_uri; }
+
+    void SetTrySSH(bool trySSH) { this->m_trySSH = trySSH; }
+    bool IsTrySSH() const { return m_trySSH; }
 };
 
 //===----------------------------------------------------------------------------------
@@ -234,7 +238,7 @@ public:
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
 {
-    wxFileName m_uri;
+    wxString m_uri;
     wxString m_languageId;
     std::string m_text;
     int m_version = 1;
@@ -243,7 +247,7 @@ public:
     virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
     virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
 
-    TextDocumentItem(const wxFileName& uri, const wxString& langId, const std::string& text, int version = 1)
+    TextDocumentItem(const wxString& uri, const wxString& langId, const std::string& text, int version = 1)
         : m_uri(uri)
         , m_languageId(langId)
         , m_text(text)
@@ -262,7 +266,7 @@ public:
         this->m_text = text;
         return *this;
     }
-    TextDocumentItem& SetUri(const wxFileName& uri)
+    TextDocumentItem& SetUri(const wxString& uri)
     {
         this->m_uri = uri;
         return *this;
@@ -274,7 +278,7 @@ public:
     }
     const wxString& GetLanguageId() const { return m_languageId; }
     const std::string& GetText() const { return m_text; }
-    const wxFileName& GetUri() const { return m_uri; }
+    const wxString& GetUri() const { return m_uri; }
     int GetVersion() const { return m_version; }
 };
 

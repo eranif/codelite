@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ssh_account_info.h"
-#if USE_SFTP
 #include "xor_string.h"
 
 SSHAccountInfo::SSHAccountInfo()
@@ -37,7 +36,8 @@ SSHAccountInfo::~SSHAccountInfo() {}
 
 SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
 {
-    if(&other == this) return *this;
+    if(&other == this)
+        return *this;
 
     m_accountName = other.m_accountName;
     m_username = other.m_username;
@@ -82,5 +82,3 @@ void SSHAccountInfo::AddBookmark(const wxString& location)
         m_bookmarks.Add(location);
     }
 }
-
-#endif // USE_SFTP

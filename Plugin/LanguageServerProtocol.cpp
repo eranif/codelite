@@ -385,8 +385,8 @@ void LanguageServerProtocol::SendSaveRequest(const wxFileName& filename, const s
 void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
 {
     if(ShouldHandleFile(filename)) {
-        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
+        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::CompletionRequest(
+            LSP::TextDocumentIdentifier(filename.GetFullPath()), LSP::Position(line, column)));
         QueueMessage(req);
     }
 }

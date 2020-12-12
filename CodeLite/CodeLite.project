@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/FilePath.cpp"/>
+    <File Name="LSP/FilePath.hpp"/>
     <File Name="LSP/InitializedNotification.cpp"/>
     <File Name="LSP/InitializedNotification.hpp"/>
     <File Name="LSP/DocumentSymbolsRequest.cpp"/>

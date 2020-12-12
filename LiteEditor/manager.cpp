@@ -227,6 +227,7 @@ Manager::Manager(void)
     EventNotifier::Get()->Bind(wxEVT_TOOLTIP_DESTROY, &Manager::OnHideGdbTooltip, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDING, &Manager::OnDebuggerStopping, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &Manager::OnDebuggerStopped, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_SET_FILELINE, &Manager::OnDebuggerAtFileLine, this);
     // Add new workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clCxxWorkspace());
 
@@ -254,6 +255,7 @@ Manager::~Manager(void)
     EventNotifier::Get()->Unbind(wxEVT_DEBUGGER_SET_MEMORY, &Manager::OnDebuggerSetMemory, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDING, &Manager::OnDebuggerStopping, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &Manager::OnDebuggerStopped, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_SET_FILELINE, &Manager::OnDebuggerAtFileLine, this);
 
     // stop background processes
     IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
@@ -2338,6 +2340,7 @@ void Manager::OnDebuggerStopping(clDebugEvent& event)
     event.Skip();
     clDEBUG() << "Debugger stopping..." << clEndl;
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    wxUnusedVar(dbgr);
     // Store the current layout as "Debug" layout
     GetPerspectiveManager().SavePerspective(DEBUG_LAYOUT);
 }
@@ -2509,22 +2512,6 @@ void Manager::UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn /*=
     }
 
     DebugMessage(line + wxT("\n"));
-}
-
-void Manager::UpdateFileLine(const wxString& filename, int lineno, bool repositionEditor)
-{
-    wxString fileName = filename;
-    long lineNumber = lineno;
-    if(m_frameLineno != wxNOT_FOUND) {
-        lineNumber = m_frameLineno;
-        m_frameLineno = wxNOT_FOUND;
-    }
-
-    if(repositionEditor) {
-        DbgMarkDebuggerLine(fileName, lineNumber);
-    }
-
-    UpdateDebuggerPane();
 }
 
 void Manager::UpdateGotControl(const DebuggerEventData& e)
@@ -3069,17 +3056,6 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
 
     case DBG_UR_LOST_CONTROL:
         UpdateLostControl();
-        break;
-
-    case DBG_UR_FILE_LINE:
-        // in some cases we don't physically reposition the file+line position, such as during updates made by user
-        // actions (like add watch)
-        // but since this app uses a debugger refresh to update newly added watch values, it automatically
-        // repositions the editor always. this isn't always desirable behavior, so we pass a parameter indicating
-        // for certain operations if an override was used
-        UpdateFileLine(event.m_file, event.m_line, true);
-        // raise the flag for the next call, as this "override" is only used once per consumption
-        ManagerST::Get()->SetRepositionEditor(true);
         break;
 
     case DBG_UR_FRAMEDEPTH: {
@@ -3867,4 +3843,19 @@ void Manager::OnFindInFilesShowing(clFindInFilesEvent& event)
                                                         "*.xml;*.json;*.sql;*.txt;*.plist;CMakeLists.txt;*.rc;*.iss")));
         event.SetPaths(clConfig::Get().Read("FindInFiles/CXX/LookIn", wxString("<Entire Workspace>")));
     }
+}
+
+void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
+{
+    event.Skip();
+    const wxString& fileName = event.GetFileName();
+    long lineNumber = event.GetLineNumber();
+    if(m_frameLineno != wxNOT_FOUND) {
+        lineNumber = m_frameLineno;
+        m_frameLineno = wxNOT_FOUND;
+    }
+
+    DbgMarkDebuggerLine(fileName, lineNumber);
+    UpdateDebuggerPane();
+    SetRepositionEditor(true);
 }

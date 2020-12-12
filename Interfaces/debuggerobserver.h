@@ -25,9 +25,9 @@
 #ifndef DEBUGGER_OBSERVER_H
 #define DEBUGGER_OBSERVER_H
 
-#include "wx/treectrl.h"
-#include "tree_node.h"
 #include "debugger.h"
+#include "tree_node.h"
+#include "wx/treectrl.h"
 #include <wx/sharedptr.h>
 
 struct NodeData {
@@ -57,7 +57,6 @@ enum DebuggerUpdateReason {
     DBG_UR_INVALID = -1,            // Invalid
     DBG_UR_GOT_CONTROL,             // Application gains the control back from the debugger
     DBG_UR_LOST_CONTROL,            // Appliecation lost control to the debugge, and it can not interact (atm) with it
-    DBG_UR_FILE_LINE,               // The debugger is at file / line
     DBG_UR_ADD_LINE,                // Log line
     DBG_UR_BP_ADDED,                // Breakpoint was added
     DBG_UR_STOPPED,                 // Debugger stopped
@@ -78,56 +77,55 @@ enum DebuggerUpdateReason {
     DBG_UR_VAROBJUPDATE,            // An update to variable object
     DBG_UR_FRAMEDEPTH,              // Frame information
     DBG_UR_VARIABLEOBJUPDATEERR,    // Variable object update error
-    DBG_UR_FUNCTIONFINISHED,        // Function execution finished, there might be a return value to display in the Locals view
-    DBG_UR_DEBUGGER_PID_VALID       // The debugger's pid is now known, so it's possible e.g. to interrupt it. Used for disabling bps
+    DBG_UR_FUNCTIONFINISHED, // Function execution finished, there might be a return value to display in the Locals view
+    DBG_UR_DEBUGGER_PID_VALID // The debugger's pid is now known, so it's possible e.g. to interrupt it. Used for
+                              // disabling bps
 };
 
-enum UserReason {
-    DBG_USERR_QUICKWACTH = 0,
-    DBG_USERR_WATCHTABLE,
-    DBG_USERR_LOCALS,
-    DBG_USERR_LOCALS_INLINE
-};
+enum UserReason { DBG_USERR_QUICKWACTH = 0, DBG_USERR_WATCHTABLE, DBG_USERR_LOCALS, DBG_USERR_LOCALS_INLINE };
 
-class DebuggerEventData : public wxClientData {
+class DebuggerEventData : public wxClientData
+{
 public:
-    DebuggerUpdateReason          m_updateReason;     // Event reason - the reason why this event was sent
+    DebuggerUpdateReason m_updateReason; // Event reason - the reason why this event was sent
     // ==================================================
     // Available when the following UpdateReason are set:
     // ==================================================
-    DebuggerReasons               m_controlReason;    // DBG_UR_GOT_CONTROL
-    wxString                      m_file;             // DBG_UR_FILE_LINE
-    int                           m_line;             // DBG_UR_FILE_LINE
-    wxString                      m_text;             // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
-    int                           m_bpInternalId;     // DBG_UR_BP_ADDED
-    int                           m_bpDebuggerId;     // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
-    LocalVariables                m_locals;           // DBG_UR_LOCALS
-    wxString                      m_expression;       // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY, DBG_UR_VARIABLEOBJ
+    DebuggerReasons m_controlReason; // DBG_UR_GOT_CONTROL
+    wxString m_file;                 //
+    int m_line;                      //
+    wxString m_text;                 // DBG_UR_ADD_LINE, DBG_UR_REMOTE_TARGET_CONNECTED, DBG_UR_ASCII_VIEWER
+    int m_bpInternalId;              // DBG_UR_BP_ADDED
+    int m_bpDebuggerId;              // DBG_UR_BP_ADDED, DBG_UR_BP_HIT
+    LocalVariables m_locals;         // DBG_UR_LOCALS
+    wxString m_expression; // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_ASCII_VIEWER, DBG_UR_WATCHMEMORY,
+                           // DBG_UR_VARIABLEOBJ
     // DBG_UR_EVALVARIABLEOBJ, DBG_UR_FUNCTIONFINISHED
-    wxString                      m_evaluated;        // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
-    StackEntryArray               m_stack;            // DBG_UR_UPDATE_STACK_LIST
-    std::vector<clDebuggerBreakpoint>   m_bpInfoList;       // DBG_UR_RECONCILE_BPTS
-    bool                          m_onlyIfLogging;    // DBG_UR_ADD_LINE
-    ThreadEntryArray              m_threads;          // DBG_UR_LISTTHRAEDS
-    VariableObjChildren           m_varObjChildren;   // DBG_UR_LISTCHILDREN
-    VariableObject                m_variableObject;   // DBG_UR_VARIABLEOBJ
-    int                           m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
-    StackEntry                    m_frameInfo;        // DBG_UR_FRAMEINFO
-    VariableObjectUpdateInfo      m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
-    DisassembleEntryVec_t         m_disassembleLines; // None
-    DbgRegistersVec_t             m_registers;        // Sent with event wxEVT_DEBUGGER_LIST_REGISTERS
+    wxString m_evaluated;    // DBG_UR_EXPRESSION, DBG_UR_TYPE_RESOLVED, DBG_UR_WATCHMEMORY, DBG_UR_EVALVARIABLEOBJ
+    StackEntryArray m_stack; // DBG_UR_UPDATE_STACK_LIST
+    std::vector<clDebuggerBreakpoint> m_bpInfoList; // DBG_UR_RECONCILE_BPTS
+    bool m_onlyIfLogging;                           // DBG_UR_ADD_LINE
+    ThreadEntryArray m_threads;                     // DBG_UR_LISTTHRAEDS
+    VariableObjChildren m_varObjChildren;           // DBG_UR_LISTCHILDREN
+    VariableObject m_variableObject;                // DBG_UR_VARIABLEOBJ
+    int m_userReason;       // User reason as provided in the calling API which triggered the DebuggerUpdate call
+    StackEntry m_frameInfo; // DBG_UR_FRAMEINFO
+    VariableObjectUpdateInfo m_varObjUpdateInfo; // DBG_UR_VAROBJUPDATE
+    DisassembleEntryVec_t m_disassembleLines;    // None
+    DbgRegistersVec_t m_registers;               // Sent with event wxEVT_DEBUGGER_LIST_REGISTERS
     DebuggerEventData()
-        : m_updateReason  (DBG_UR_INVALID)
-        , m_controlReason (DBG_UNKNOWN   )
-        , m_file          (wxEmptyString )
-        , m_line          (wxNOT_FOUND   )
-        , m_text          (wxEmptyString )
-        , m_bpInternalId  (wxNOT_FOUND   )
-        , m_bpDebuggerId  (wxNOT_FOUND   )
-        , m_expression    (wxEmptyString )
-        , m_evaluated     (wxEmptyString )
-        , m_onlyIfLogging (false         )
-        , m_userReason    (wxNOT_FOUND   ) {
+        : m_updateReason(DBG_UR_INVALID)
+        , m_controlReason(DBG_UNKNOWN)
+        , m_file(wxEmptyString)
+        , m_line(wxNOT_FOUND)
+        , m_text(wxEmptyString)
+        , m_bpInternalId(wxNOT_FOUND)
+        , m_bpDebuggerId(wxNOT_FOUND)
+        , m_expression(wxEmptyString)
+        , m_evaluated(wxEmptyString)
+        , m_onlyIfLogging(false)
+        , m_userReason(wxNOT_FOUND)
+    {
         m_stack.clear();
         m_bpInfoList.clear();
         m_threads.clear();
@@ -145,14 +143,14 @@ public:
 class IDebuggerObserver
 {
 public:
-    IDebuggerObserver() {};
-    virtual ~IDebuggerObserver() {};
+    IDebuggerObserver(){};
+    virtual ~IDebuggerObserver(){};
 
     /**
      * @brief the reporting method of the debugger. Must be implemented by any 'DebuggerObserver'
      * @param event struct containing the update reason along with additional information per update type
      */
-    virtual void DebuggerUpdate( const DebuggerEventData &event ) = 0;
+    virtual void DebuggerUpdate(const DebuggerEventData& event) = 0;
 
 public:
     // For convinience
@@ -161,91 +159,85 @@ public:
      * @param reason the reason why the debugger gave the control to the plugin.
      * @sa DebuggerReasons
      */
-    void UpdateGotControl(DebuggerReasons reason, const wxString &func = wxEmptyString) {
+    void UpdateGotControl(DebuggerReasons reason, const wxString& func = wxEmptyString)
+    {
         DebuggerEventData e;
-        e.m_updateReason  = DBG_UR_GOT_CONTROL;
+        e.m_updateReason = DBG_UR_GOT_CONTROL;
         e.m_controlReason = reason;
         e.m_frameInfo.function = func;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief this function is called when the debugger plugin loses the control.
      */
-    void UpdateLostControl() {
+    void UpdateLostControl()
+    {
         DebuggerEventData e;
-        e.m_updateReason  = DBG_UR_LOST_CONTROL;
-        DebuggerUpdate( e );
-    }
-
-    /**
-     * @brief update the view to file and line number
-     * @param file full path to the current file
-     * @param lineno the line number
-     */
-    void UpdateFileLine(const wxString &file, int lineno) {
-        DebuggerEventData e;
-        e.m_updateReason  = DBG_UR_FILE_LINE;
-        e.m_file = file;
-        e.m_line = lineno;
-        DebuggerUpdate( e );
+        e.m_updateReason = DBG_UR_LOST_CONTROL;
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief tells the observer to add line to the log view
      * @param line message to log
      */
-    void UpdateAddLine(const wxString &line, const bool OnlyIfLoggingOn = false) {
+    void UpdateAddLine(const wxString& line, const bool OnlyIfLoggingOn = false)
+    {
         DebuggerEventData e;
-        e.m_updateReason  = DBG_UR_ADD_LINE;
+        e.m_updateReason = DBG_UR_ADD_LINE;
         e.m_text = line;
         e.m_onlyIfLogging = OnlyIfLoggingOn;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief notify the caller of the added breakpoint's debugger_id
      * @param the breakpoint's ids: internal and debugger
      */
-    void UpdateBpAdded(const int internal_id, const int debugger_id) {
+    void UpdateBpAdded(const int internal_id, const int debugger_id)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_BP_ADDED;
         e.m_bpInternalId = internal_id;
         e.m_bpDebuggerId = debugger_id;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief notify that the debugger is stopped (not used)
      */
-    void UpdateStopped() {
+    void UpdateStopped()
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_STOPPED;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief update the locals view
      * @param array containing the local variable
      */
-    void UpdateLocals(const LocalVariables &locals) {
+    void UpdateLocals(const LocalVariables& locals)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_LOCALS;
-        e.m_userReason   = DBG_USERR_LOCALS;
+        e.m_userReason = DBG_USERR_LOCALS;
         e.m_locals = locals;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief update the locals view
      * @param array containing the function arguments
      */
-    void UpdateFunctionArguments(const LocalVariables &args) {
+    void UpdateFunctionArguments(const LocalVariables& args)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_FUNC_ARGS;
-        e.m_userReason   = DBG_USERR_LOCALS;
+        e.m_userReason = DBG_USERR_LOCALS;
         e.m_locals = args;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
@@ -253,54 +245,59 @@ public:
      * @param expression the expression that the debugger was requested to evaluate
      * @param evaluated evaluated expression as string
      */
-    void UpdateExpression(const wxString &expression, const wxString &evaluated) {
+    void UpdateExpression(const wxString& expression, const wxString& evaluated)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_EXPRESSION;
         e.m_expression = expression;
-        e.m_evaluated= evaluated;
-        DebuggerUpdate( e );
+        e.m_evaluated = evaluated;
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief debugger connected to the remote target sucessfully
      * @param line debugger output
      */
-    void UpdateRemoteTargetConnected(const wxString &line) {
+    void UpdateRemoteTargetConnected(const wxString& line)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_REMOTE_TARGET_CONNECTED;
         e.m_text = line;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief Update the breakpoints-manager's info with what the debugger really contains
      * @param vector of breakpoints acquired from -break-list
      */
-    void ReconcileBreakpoints(std::vector<clDebuggerBreakpoint>& li) {
+    void ReconcileBreakpoints(std::vector<clDebuggerBreakpoint>& li)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_RECONCILE_BPTS;
         e.m_bpInfoList = li;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief Tell the manager that the debugger is now interruptable
      */
-    void DebuggerPidValid() {
+    void DebuggerPidValid()
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_DEBUGGER_PID_VALID;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
      * @brief Tells the breakpoints-manager which breakpoint was just hit
      * @param The breakpoint's ID
      */
-    void UpdateBpHit(int id) {
+    void UpdateBpHit(int id)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_BP_HIT;
         e.m_bpDebuggerId = id;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 
     /**
@@ -308,13 +305,14 @@ public:
      * @param expression
      * @param tip
      */
-    void UpdateAsciiViewer (const wxString &expression, const wxString &tip) {
+    void UpdateAsciiViewer(const wxString& expression, const wxString& tip)
+    {
         DebuggerEventData e;
         e.m_updateReason = DBG_UR_ASCII_VIEWER;
         e.m_expression = expression;
         e.m_text = tip;
-        DebuggerUpdate( e );
+        DebuggerUpdate(e);
     }
 };
 
-#endif //DEBUGGER_OBSERVER_H
+#endif // DEBUGGER_OBSERVER_H

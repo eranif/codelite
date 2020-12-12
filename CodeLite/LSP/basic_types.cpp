@@ -15,13 +15,15 @@ namespace LSP
 void TextDocumentIdentifier::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
     wxString uri = json.namedObject("uri").toString();
-    m_filename = pathConverter->ConvertFrom(uri);
+    auto path = pathConverter->ConvertFrom(uri);
+    m_filename = path.GetPath();
 }
 
 JSONItem TextDocumentIdentifier::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", pathConverter->ConvertTo(m_filename.GetFullPath()));
+    auto path = pathConverter->ConvertTo(m_filename);
+    json.addProperty("uri", path.GetPath());
     return json;
 }
 
@@ -63,8 +65,9 @@ JSONItem Position::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConver
 //===----------------------------------------------------------------------------------
 void TextDocumentItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    m_uri = pathConverter->ConvertFrom(json.namedObject("uri").toString());
-    m_uri.Normalize();
+    auto path = pathConverter->ConvertFrom(json.namedObject("uri").toString());
+    m_uri = path.GetPath();
+
     m_languageId = json.namedObject("languageId").toString();
     m_version = json.namedObject("version").toInt();
     m_text = json.namedObject("text").toString();
@@ -73,7 +76,8 @@ void TextDocumentItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t path
 JSONItem TextDocumentItem::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", pathConverter->ConvertTo(GetUri().GetFullPath()))
+    auto path = pathConverter->ConvertTo(GetUri());
+    json.addProperty("uri", path.GetPath())
         .addProperty("languageId", GetLanguageId())
         .addProperty("version", GetVersion())
         .addProperty("text", GetText());
@@ -110,16 +114,17 @@ JSONItem Range::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter
 
 void Location::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
 {
-    wxFileName fn = pathConverter->ConvertFrom(json.namedObject("uri").toString());
-    fn.Normalize();
-    m_uri = fn.GetFullPath();
+    auto path = pathConverter->ConvertFrom(json.namedObject("uri").toString());
+    m_trySSH = path.IsRemoteFile();
+    m_uri = path.GetPath();
     m_range.FromJSON(json.namedObject("range"), pathConverter);
 }
 
 JSONItem Location::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.addProperty("uri", pathConverter->ConvertTo(m_uri));
+    auto path = pathConverter->ConvertTo(m_uri);
+    json.addProperty("uri", path.GetPath());
     json.append(m_range.ToJSON("range", pathConverter));
     return json;
 }

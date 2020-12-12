@@ -34,6 +34,7 @@
 #include "codelite_exports.h"
 #include <wx/buffer.h>
 #include <wx/filename.h>
+#include "ssh_account_info.h"
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_session_struct;
@@ -61,13 +62,14 @@ public:
     /**
      * @brief return the default download folder
      */
-    static wxString GetDefaultDownloadFolder();
+    static wxString GetDefaultDownloadFolder(const SSHAccountInfo& accountInfo);
 
     /**
      * @brief given a remote file path, return the path to the local
      * file used by SFTP
      */
-    static wxFileName GetLocalFileName(const wxString& remotePath, bool mkdirRecrusive = false);
+    static wxFileName GetLocalFileName(const SSHAccountInfo& accountInfo, const wxString& remotePath,
+                                       bool mkdirRecrusive = false);
 
     /**
      * @brief return the underlying ssh session

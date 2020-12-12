@@ -25,13 +25,14 @@
 #ifndef DBGINTERFACE_H
 #define DBGINTERFACE_H
 
-#include "wx/string.h"
-#include "wx/event.h"
-#include "list"
-#include "debugger.h"
-#include <wx/hashmap.h>
-#include "consolefinder.h"
 #include "cl_command_event.h"
+#include "consolefinder.h"
+#include "debugger.h"
+#include "list"
+#include "ssh_account_info.h"
+#include "wx/event.h"
+#include "wx/string.h"
+#include <wx/hashmap.h>
 
 #ifdef MSVC_VER
 // declare the debugger function creation
@@ -71,6 +72,8 @@ class DbgGdb : public wxEvtHandler, public IDebugger
     bool m_reverseDebugging;
     wxStringSet_t m_reversableCommands;
     bool m_isRecording;
+    bool m_isSSHDebugging = false;
+    SSHAccountInfo m_sshAccount;
 
 public:
     int m_internalBpId;
@@ -108,6 +111,9 @@ public:
 
     void SetIsRecording(bool isRecording) { this->m_isRecording = isRecording; }
     bool IsRecording() const { return m_isRecording; }
+
+    bool IsSSHDebugging() const { return m_isSSHDebugging; }
+    const SSHAccountInfo& GetSshAccount() const { return m_sshAccount; }
 
 public:
     DbgGdb();
@@ -162,7 +168,7 @@ public:
     virtual void EnableReverseDebugging(bool b);
     virtual void EnableRecording(bool b);
     virtual bool IsReverseDebuggingEnabled() const;
-    
+
     /**
      * @brief restart the debugger (execute 'run')
      * @return true on success, false otherwise

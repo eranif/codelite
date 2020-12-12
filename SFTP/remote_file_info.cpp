@@ -38,7 +38,5 @@ RemoteFileInfo::~RemoteFileInfo() {}
 void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
 {
     this->m_remoteFile = remoteFile;
-    this->m_localFile = clSFTP::GetLocalFileName(remoteFile, true).GetFullPath();
+    this->m_localFile = clSFTP::GetLocalFileName(m_account, remoteFile, true).GetFullPath();
 }
-
-wxString RemoteFileInfo::GetTempFolder() { return clSFTP::GetDefaultDownloadFolder(); }

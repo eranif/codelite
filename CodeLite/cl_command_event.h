@@ -32,6 +32,7 @@
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
 #include "entry.h"
+#include "ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 #include <vector>
 #include <wx/arrstr.h>
@@ -394,6 +395,8 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_memoryBlockValue; // wxEVT_DEBUGGER_SET_MEMORY
     size_t m_memoryBlockSize;    // wxEVT_DEBUGGER_SET_MEMORY
     clDebuggerBreakpoint::Vec_t m_breakpoints;
+    bool m_isSSHDebugging = false;
+    SSHAccountInfo m_sshAccount;
 
 public:
     // Special features not available by all the debuggers
@@ -415,6 +418,10 @@ public:
     virtual ~clDebugEvent();
     virtual wxEvent* Clone() const { return new clDebugEvent(*this); };
 
+    void SetSshAccount(const SSHAccountInfo& sshAccount) { this->m_sshAccount = sshAccount; }
+    const SSHAccountInfo& GetSshAccount() const { return m_sshAccount; }
+    void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }
+    bool IsSSHDebugging() const { return m_isSSHDebugging; }
     void SetFeatures(size_t features) { m_features = features; }
     size_t GetFeatures() const { return m_features; }
     void SetDebuggerName(const wxString& debuggerName) { this->m_debuggerName = debuggerName; }

@@ -6,7 +6,7 @@ LSP::GotoImplementationRequest::GotoImplementationRequest(const wxFileName& file
 {
     SetMethod("textDocument/implementation");
     m_params.reset(new TextDocumentPositionParams());
-    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
+    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
@@ -16,7 +16,9 @@ void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& resp
                                                 IPathConverter::Ptr_t pathConverter)
 {
     JSONItem result = response.Get("result");
-    if(!result.isOk()) { return; }
+    if(!result.isOk()) {
+        return;
+    }
     LSP::Location loc;
     if(result.isArray()) {
         loc.FromJSON(result.arrayItem(0), pathConverter);

@@ -8,7 +8,7 @@ LSP::GotoDeclarationRequest::GotoDeclarationRequest(const wxFileName& filename, 
 {
     SetMethod("textDocument/declaration");
     m_params.reset(new TextDocumentPositionParams());
-    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
+    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
@@ -18,7 +18,10 @@ void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& respons
                                              IPathConverter::Ptr_t pathConverter)
 {
     JSONItem result = response.Get("result");
-    if(!result.isOk()) { return; }
+    if(!result.isOk()) {
+        return;
+    }
+
     LSP::Location loc;
     if(result.isArray()) {
         loc.FromJSON(result.arrayItem(0), pathConverter);

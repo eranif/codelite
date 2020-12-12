@@ -6,8 +6,8 @@
 class PathConverterDefault : public IPathConverter
 {
 public:
-    virtual wxString ConvertFrom(const wxString& path) const;
-    virtual wxString ConvertTo(const wxString& path) const;
+    virtual LSP::FilePath ConvertFrom(const wxString& path) const;
+    virtual LSP::FilePath ConvertTo(const wxString& path) const;
     PathConverterDefault() {}
     virtual ~PathConverterDefault() {}
 };

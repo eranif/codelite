@@ -455,7 +455,7 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
 
     // by default, use full paths for the file name when setting breakpoints
     wxString tmpfileName(fn.GetFullPath());
-    if(m_info.useRelativeFilePaths) {
+    if(m_info.useRelativeFilePaths || m_isSSHDebugging) {
         // user set the option to use relative paths (file name w/o the full path)
         tmpfileName = fn.GetFullName();
     }
@@ -623,37 +623,43 @@ bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
 
 bool DbgGdb::Interrupt()
 {
-    if(m_debuggeePid > 0) {
-        m_observer->UpdateAddLine(wxString::Format(wxT("Interrupting debugee process: %ld"), m_debuggeePid));
+    if(m_isSSHDebugging) {
+        // send SIGINT to gdb
+        m_gdbProcess->Signal(wxSIGINT);
+        return true;
+    } else {
+        if(m_debuggeePid > 0) {
+            m_observer->UpdateAddLine(wxString::Format(wxT("Interrupting debugee process: %ld"), m_debuggeePid));
 
 #ifdef __WXMSW__
-        if(!GetIsRemoteDebugging() && DebugBreakProcessFunc) {
-            // we have DebugBreakProcess
-            HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
-            BOOL res = DebugBreakProcessFunc(process);
-            CloseHandle(process);
-            return res == TRUE;
-        }
+            if(!GetIsRemoteDebugging() && DebugBreakProcessFunc) {
+                // we have DebugBreakProcess
+                HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
+                BOOL res = DebugBreakProcessFunc(process);
+                CloseHandle(process);
+                return res == TRUE;
+            }
 
-        if(GetIsRemoteDebugging()) {
-            // We need to send GDB a Ctrl-C event.  Using DebugBreakProcess just leaves
-            // it unresponsive.
-            return GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-        }
+            if(GetIsRemoteDebugging()) {
+                // We need to send GDB a Ctrl-C event.  Using DebugBreakProcess just leaves
+                // it unresponsive.
+                return GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+            }
 
-        // on Windows version < XP we need to find a solution for interrupting the
-        // debuggee process
-        return false;
+            // on Windows version < XP we need to find a solution for interrupting the
+            // debuggee process
+            return false;
 #else
-        // Send SIGINT to the process to interrupt it
-        clKill((int)m_debuggeePid, wxSIGINT, false, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
-        // kill(m_debuggeePid, SIGINT);
-        return true;
+            // Send SIGINT to the process to interrupt it
+            clKill((int)m_debuggeePid, wxSIGINT, false, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
+            // kill(m_debuggeePid, SIGINT);
+            return true;
 #endif
-    } else {
-        ::wxMessageBox(_("Can't interrupt debuggee process: I don't know its PID!"), wxT("CodeLite"));
+        } else {
+            ::wxMessageBox(_("Can't interrupt debuggee process: I don't know its PID!"), wxT("CodeLite"));
+        }
+        return false;
     }
-    return false;
 }
 
 bool DbgGdb::QueryFileLine()
@@ -1113,12 +1119,14 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 // Initialization stage
 bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 {
+    m_isSSHDebugging = sessionInfo.isSSHDebugging;
+    m_sshAccount = sessionInfo.accountInfo == nullptr ? SSHAccountInfo() : *(sessionInfo.accountInfo);
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
 
-    if(!sessionInfo.isSSHDebugging) {
+    if(!m_isSSHDebugging) {
 #ifdef __WXMSW__
-        ExecuteCmd(wxT("set  new-console on"));
+        ExecuteCmd(wxT("set new-console on"));
 #endif
     }
     ExecuteCmd(wxT("set unwindonsignal on"));
@@ -1133,7 +1141,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
         ExecuteCmd(wxT("catch throw"));
     }
 
-    if(!sessionInfo.isSSHDebugging) {
+    if(!m_isSSHDebugging) {
 #ifdef __WXMSW__
         if(m_info.debugAsserts) {
             ExecuteCmd(wxT("break assert"));
@@ -1145,8 +1153,9 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
         ExecuteCmd("set print object on");
     }
 
-    ExecuteCmd(wxT("set width 0"));
-    ExecuteCmd(wxT("set height 0"));
+    ExecuteCmd("set width 0");
+    ExecuteCmd("set height 0");
+    ExecuteCmd("set pagingation off");
 
     // Number of elements to show for arrays (including strings)
     wxString sizeCommand;

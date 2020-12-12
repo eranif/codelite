@@ -8,7 +8,7 @@ LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxFileName& filename)
     SetMethod("textDocument/documentSymbol");
     // set the params
     m_params.reset(new DocumentSymbolParams());
-    m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename));
+    m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
 }
 
 LSP::DocumentSymbolsRequest::~DocumentSymbolsRequest() {}

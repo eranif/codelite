@@ -152,6 +152,7 @@ public:
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnUpdateDebuggerActiveView(clDebugEvent& event);
+    void OnDebuggerAtFileLine(clDebugEvent& event);
     void OnDebuggerSetMemory(clDebugEvent& event);
     void OnDebuggerStopped(clDebugEvent& event);
     void OnDebuggerStopping(clDebugEvent& event);

@@ -6,6 +6,13 @@ if (UNIX)
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
+                     /usr/lib/llvm-12/lib
+                     /usr/lib/llvm-11/lib
+                     /usr/lib/llvm-10/lib
+                     /usr/lib/llvm-9/lib
+                     /usr/lib/llvm-8/lib
+                     /usr/lib/llvm-7/lib
+                     /usr/lib/llvm-6/lib
                      /usr/lib/llvm-12.0/lib
                      /usr/lib/llvm-11.0/lib
                      /usr/lib/llvm-10.0/lib

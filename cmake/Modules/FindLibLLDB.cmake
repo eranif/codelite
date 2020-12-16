@@ -38,6 +38,11 @@ if (UNIX)
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
                   HINTS 
+                  /usr/lib/llvm-12/include
+                  /usr/lib/llvm-11/include
+                  /usr/lib/llvm-10/include
+                  /usr/lib/llvm-9/include
+                  /usr/lib/llvm-8/include
                   /usr/lib/llvm-12.0/include
                   /usr/lib/llvm-11.0/include
                   /usr/lib/llvm-10.0/include

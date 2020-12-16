@@ -57,11 +57,12 @@ protected:
     void DoDisplayEntriesForPath(const wxString& path = "");
     void ClearView();
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
-	void DoBrowse();
-	
+    void DoBrowse();
+
 public:
     SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter,
-                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
+                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
+                   const wxString& selectedAccount = wxEmptyString);
     virtual ~SFTPBrowserDlg();
 
     void Initialize(const wxString& account, const wxString& path);

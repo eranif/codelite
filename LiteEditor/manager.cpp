@@ -67,6 +67,8 @@
 #include "clFileSystemWorkspace.hpp"
 #include "clKeyboardManager.h"
 #include "clProfileHandler.h"
+#include "clSFTPEvent.h"
+#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "cl_command_event.h"
@@ -3848,14 +3850,31 @@ void Manager::OnFindInFilesShowing(clFindInFilesEvent& event)
 void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
 {
     event.Skip();
-    const wxString& fileName = event.GetFileName();
-    long lineNumber = event.GetLineNumber();
-    if(m_frameLineno != wxNOT_FOUND) {
-        lineNumber = m_frameLineno;
-        m_frameLineno = wxNOT_FOUND;
-    }
+    if(event.IsSSHDebugging()) {
+        DbgUnMarkDebuggerLine();
+        if(event.GetLineNumber() < 0) {
+            return;
+        }
+        // Open the file using ssh
+        auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), event.GetSshAccount());
+        if(editor) {
+            clEditor* cl_editor = dynamic_cast<clEditor*>(editor);
+            if(cl_editor) {
+                cl_editor->HighlightLine(event.GetLineNumber());
+                cl_editor->SetEnsureCaretIsVisible(cl_editor->PositionFromLine(event.GetLineNumber() - 1), false);
+            }
+        }
 
-    DbgMarkDebuggerLine(fileName, lineNumber);
-    UpdateDebuggerPane();
-    SetRepositionEditor(true);
+    } else {
+        const wxString& fileName = event.GetFileName();
+        long lineNumber = event.GetLineNumber();
+        if(m_frameLineno != wxNOT_FOUND) {
+            lineNumber = m_frameLineno;
+            m_frameLineno = wxNOT_FOUND;
+        }
+
+        DbgMarkDebuggerLine(fileName, lineNumber);
+        UpdateDebuggerPane();
+        SetRepositionEditor(true);
+    }
 }

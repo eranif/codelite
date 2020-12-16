@@ -245,7 +245,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
     fullName.Replace(wxT("\\\\"), wxT("\\"));
     fullName.Trim().Trim(false);
 
-    if(fullName.StartsWith(wxT("/"))) {
+    if(fullName.StartsWith(wxT("/")) && !m_gdb->IsSSHDebugging()) {
         // fallback to use file="<..>"
         filename = filename.AfterFirst(wxT('"'));
         filename = filename.BeforeLast(wxT('"'));

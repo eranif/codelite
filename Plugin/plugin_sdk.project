@@ -741,6 +741,8 @@
     <File Name="GotoAnythingBaseUI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
+    <File Name="clSFTPManager.cpp"/>
+    <File Name="clSFTPManager.hpp"/>
     <File Name="SFTPSessionInfo.cpp"/>
     <File Name="SFTPSessionInfo.h"/>
     <File Name="AddSSHAcountDlg.cpp"/>

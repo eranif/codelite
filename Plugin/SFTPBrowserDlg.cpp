@@ -33,10 +33,10 @@
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
 #include "windowattrmanager.h"
+#include <wx/app.h>
+#include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
-#include <wx/busyinfo.h>
-#include <wx/app.h>
 
 // ================================================================================
 // ================================================================================
@@ -75,7 +75,8 @@ public:
 // ================================================================================
 // ================================================================================
 
-SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter, size_t flags)
+SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter, size_t flags,
+                               const wxString& selectedAccount)
     : SFTPBrowserBaseDlg(parent)
     , m_sftp(NULL)
     , m_filter(filter)
@@ -86,8 +87,12 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     settings.Load();
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
+    int selection = wxNOT_FOUND;
     for(const auto& account : accounts) {
-        m_choiceAccount->Append(account.GetAccountName());
+        int index = m_choiceAccount->Append(account.GetAccountName());
+        if(!selectedAccount.empty() && selectedAccount == account.GetAccountName()) {
+            selection = index;
+        }
     }
 
     m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
@@ -99,7 +104,12 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnCdUpUI, this, XRCID("ID_CD_UP"));
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnSSHAccountManager, this, XRCID("ID_SSH_ACCOUNT_MANAGER"));
 
-    if(!m_choiceAccount->IsEmpty()) { m_choiceAccount->SetSelection(0); }
+    if(selection != wxNOT_FOUND) {
+        m_choiceAccount->SetSelection(selection);
+        m_choiceAccount->Enable(false); // don't allow the user to change the account selection
+    } else if(!m_choiceAccount->IsEmpty()) {
+        m_choiceAccount->SetSelection(0);
+    }
     SetName("SFTPBrowserDlg");
     WindowAttrManager::Load(this);
 }
@@ -122,7 +132,9 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
         SFTPAttribute::List_t attributes;
         if(path.IsEmpty()) {
             folder = m_textCtrlRemoteFolder->GetValue();
-            if(folder.IsEmpty()) { folder = "/"; }
+            if(folder.IsEmpty()) {
+                folder = "/";
+            }
             attributes = m_sftp->List(folder, m_flags, m_filter);
 
         } else if(path == "..") {
@@ -224,7 +236,9 @@ void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 
 SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& item) const
 {
-    if(!item.IsOk()) { return NULL; }
+    if(!item.IsOk()) {
+        return NULL;
+    }
     SFTPBrowserEntryClientData* cd = reinterpret_cast<SFTPBrowserEntryClientData*>(m_dataview->GetItemData(item));
     return cd;
 }
@@ -234,7 +248,9 @@ wxString SFTPBrowserDlg::GetPath() const { return m_textCtrlRemoteFolder->GetVal
 void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
 {
     SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->GetSelection());
-    if(cd) { m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath()); }
+    if(cd) {
+        m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
+    }
 }
 
 wxString SFTPBrowserDlg::GetAccount() const { return m_choiceAccount->GetStringSelection(); }
@@ -243,7 +259,9 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
     m_textCtrlRemoteFolder->ChangeValue(path);
     int where = m_choiceAccount->FindString(account);
-    if(where != wxNOT_FOUND) { m_choiceAccount->SetSelection(where); }
+    if(where != wxNOT_FOUND) {
+        m_choiceAccount->SetSelection(where);
+    }
 }
 
 void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
@@ -278,7 +296,9 @@ void SFTPBrowserDlg::OnInlineSearch()
 void SFTPBrowserDlg::OnInlineSearchEnter()
 {
     wxDataViewItem item = m_dataview->GetSelection();
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
 
     SFTPBrowserEntryClientData* cd = DoGetItemData(item);
     if(cd && cd->GetAttribute()->IsFolder()) {

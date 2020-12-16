@@ -27,16 +27,20 @@
 #define __quickdebugdlg__
 
 #include "quickdebugbase.h"
+#include "quickdebuginfo.h"
 
 class QuickDebugDlg : public QuickDebugBase
 {
 protected:
+    virtual void OnDebuggerChanged(wxCommandEvent& event);
+    virtual void OnDebugOverSshUI(wxUpdateUIEvent& event);
     virtual void OnSelectAlternateDebugger(wxCommandEvent& event);
     void OnButtonBrowseExe(wxCommandEvent& event);
     void OnButtonDebug(wxCommandEvent& event);
     void OnButtonCancel(wxCommandEvent& event);
     void OnButtonBrowseWD(wxCommandEvent& event);
     void Initialize();
+    void UpdateDebuggerExecutable(const QuickDebugInfo& info);
 
 public:
     QuickDebugDlg(wxWindow* parent);

@@ -397,6 +397,7 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     clDebuggerBreakpoint::Vec_t m_breakpoints;
     bool m_isSSHDebugging = false;
     SSHAccountInfo m_sshAccount;
+    wxString m_alternateDebuggerPath; // Holds the path to an alternate debugger executable
 
 public:
     // Special features not available by all the debuggers
@@ -418,6 +419,11 @@ public:
     virtual ~clDebugEvent();
     virtual wxEvent* Clone() const { return new clDebugEvent(*this); };
 
+    void SetAlternateDebuggerPath(const wxString& alternateDebuggerPath)
+    {
+        this->m_alternateDebuggerPath = alternateDebuggerPath;
+    }
+    const wxString& GetAlternateDebuggerPath() const { return m_alternateDebuggerPath; }
     void SetSshAccount(const SSHAccountInfo& sshAccount) { this->m_sshAccount = sshAccount; }
     const SSHAccountInfo& GetSshAccount() const { return m_sshAccount; }
     void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }

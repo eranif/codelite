@@ -33,20 +33,24 @@ QuickDebugInfo::~QuickDebugInfo() {}
 
 void QuickDebugInfo::DeSerialize(Archive& arch)
 {
-    arch.Read(wxT("m_arguments"), m_arguments);
-    arch.Read(wxT("m_exeFilepaths"), m_exeFilepaths);
-    arch.Read(wxT("m_selectedDbg"), m_selectedDbg);
-    arch.Read(wxT("m_startCmds"), m_startCmds);
-    arch.Read(wxT("m_wds"), m_wds);
-    arch.Read(wxT("m_alternateDebuggerExec"), m_alternateDebuggerExec);
+    arch.Read("m_arguments", m_arguments);
+    arch.Read("m_exeFilepaths", m_exeFilepaths);
+    arch.Read("m_selectedDbg", m_selectedDbg);
+    arch.Read("m_startCmds", m_startCmds);
+    arch.Read("m_wds", m_wds);
+    arch.Read("m_alternateDebuggerExec", m_alternateDebuggerExec);
+    arch.Read("debugOverSSH", m_debugOverSSH);
+    arch.Read("sshAccount", m_sshAccount);
 }
 
 void QuickDebugInfo::Serialize(Archive& arch)
 {
-    arch.Write(wxT("m_arguments"), m_arguments);
-    arch.Write(wxT("m_exeFilepaths"), m_exeFilepaths);
-    arch.Write(wxT("m_selectedDbg"), m_selectedDbg);
-    arch.Write(wxT("m_startCmds"), m_startCmds);
-    arch.Write(wxT("m_wds"), m_wds);
-    arch.Write(wxT("m_alternateDebuggerExec"), m_alternateDebuggerExec);
+    arch.Write("m_arguments", m_arguments);
+    arch.Write("m_exeFilepaths", m_exeFilepaths);
+    arch.Write("m_selectedDbg", m_selectedDbg);
+    arch.Write("m_startCmds", m_startCmds);
+    arch.Write("m_wds", m_wds);
+    arch.Write("m_alternateDebuggerExec", m_alternateDebuggerExec);
+    arch.Write("debugOverSSH", m_debugOverSSH);
+    arch.Write("sshAccount", m_sshAccount);
 }

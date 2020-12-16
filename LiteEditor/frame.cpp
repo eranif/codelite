@@ -822,7 +822,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
-
+    EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -933,6 +933,7 @@ clMainFrame::~clMainFrame(void)
 
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
 
     // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
     // on the stack of clMainFrame)
@@ -4118,103 +4119,103 @@ void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
     m_themeHandler.CallAfter(&ThemeHandler::UpdateNotebookColours, this);
 }
 
+void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
+{
+    e.Skip();
+
+    bool bStartedInDebugMode = GetTheApp()->IsStartedInDebuggerMode();
+    // Disable the 'StartedInDebuggerMode' flag - so this will only happen once
+    GetTheApp()->SetStartedInDebuggerMode(false);
+
+    // Set the selected debugger
+    DebuggerMgr::Get().SetActiveDebugger(e.GetDebuggerName());
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+
+    if(dbgr && !dbgr->IsRunning()) {
+
+        wxString exepath = bStartedInDebugMode ? GetTheApp()->GetExeToDebug() : e.GetExecutableName();
+        wxString wd = bStartedInDebugMode ? GetTheApp()->GetDebuggerWorkingDirectory() : e.GetWorkingDirectory();
+        wxArrayString cmds =
+            bStartedInDebugMode ? wxArrayString() : wxStringTokenize(e.GetStartupCommands(), "\n", wxTOKEN_STRTOK);
+
+        // update the debugger information
+        DebuggerInformation dinfo;
+        DebuggerMgr::Get().GetDebuggerInformation(e.GetDebuggerName(), dinfo);
+        dinfo.breakAtWinMain = true;
+
+        // Allow the quick debug to replace the debugger executable
+        if(!bStartedInDebugMode && !e.GetAlternateDebuggerPath().IsEmpty()) {
+            dinfo.path = e.GetAlternateDebuggerPath();
+        }
+
+        // read the console command
+        dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
+
+        wxString dbgname = dinfo.path;
+        dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname, true);
+
+        // launch the debugger
+        dbgr->SetObserver(ManagerST::Get());
+        dbgr->SetDebuggerInformation(dinfo);
+
+        DebuggerStartupInfo startup_info;
+        startup_info.debugger = dbgr;
+
+        // notify plugins that we're about to start debugging
+        clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
+        eventStarting.SetClientData(&startup_info);
+        if(EventNotifier::Get()->ProcessEvent(eventStarting))
+            return;
+
+        clDebuggerBreakpoint::Vec_t bpList;
+        ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
+        if(!eventStarting.GetBreakpoints().empty()) {
+            // one or some plugins sent us list of breakpoints, use them instead
+            bpList.swap(eventStarting.GetBreakpoints());
+        }
+
+        wxString tty;
+#ifndef __WXMSW__
+        if(!ManagerST::Get()->StartTTY(
+               clDebuggerTerminalPOSIX::MakeExeTitle(
+                   exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments())),
+               tty)) {
+            wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
+        }
+#endif
+
+        dbgr->SetIsRemoteDebugging(false);
+
+        // Start the debugger
+        DebugSessionInfo si;
+        si.debuggerPath = dbgname;
+        si.exeName = exepath;
+        si.cwd = wd;
+        si.cmds = cmds;
+        si.bpList = bpList;
+        si.ttyName = tty;
+        si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+        si.isSSHDebugging = e.IsSSHDebugging();
+        si.accountInfo = const_cast<SSHAccountInfo*>(&e.GetSshAccount());
+        dbgr->Start(si);
+
+        // notify plugins that the debugger just started
+        {
+            clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+            eventStarted.SetClientData(&startup_info);
+            EventNotifier::Get()->ProcessEvent(eventStarted);
+        }
+        dbgr->Run(bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : e.GetArguments(), wxEmptyString);
+    } else if(!dbgr && !bStartedInDebugMode) {
+        e.Skip(false); // let other plugins process this
+    }
+}
+
 void clMainFrame::OnQuickDebug(wxCommandEvent& e)
 {
     // launch the debugger
     QuickDebugDlg dlg(this);
-    bool bStartedInDebugMode = GetTheApp()->IsStartedInDebuggerMode();
-    if(bStartedInDebugMode || (dlg.ShowModal() == wxID_OK)) {
-        // Disable the 'StartedInDebuggerMode' flag - so this will only happen once
-        GetTheApp()->SetStartedInDebuggerMode(false);
-        DebuggerMgr::Get().SetActiveDebugger(dlg.GetDebuggerName());
-        IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-
-        if(dbgr && !dbgr->IsRunning()) {
-
-            wxString exepath = bStartedInDebugMode ? GetTheApp()->GetExeToDebug() : dlg.GetExe();
-            wxString wd = bStartedInDebugMode ? GetTheApp()->GetDebuggerWorkingDirectory() : dlg.GetWorkingDirectory();
-            wxArrayString cmds = bStartedInDebugMode ? wxArrayString() : dlg.GetStartupCmds();
-
-            // update the debugger information
-            DebuggerInformation dinfo;
-            DebuggerMgr::Get().GetDebuggerInformation(dlg.GetDebuggerName(), dinfo);
-            dinfo.breakAtWinMain = true;
-
-            // Allow the quick debug to replace the debugger executable
-            if(!bStartedInDebugMode && !dlg.GetAlternateDebuggerExe().IsEmpty()) {
-                dinfo.path = dlg.GetAlternateDebuggerExe();
-            }
-
-            // read the console command
-            dinfo.consoleCommand = EditorConfigST::Get()->GetOptions()->GetProgramConsoleCommand();
-
-            wxString dbgname = dinfo.path;
-            dbgname = EnvironmentConfig::Instance()->ExpandVariables(dbgname, true);
-
-            // launch the debugger
-            dbgr->SetObserver(ManagerST::Get());
-            dbgr->SetDebuggerInformation(dinfo);
-
-            DebuggerStartupInfo startup_info;
-            startup_info.debugger = dbgr;
-
-            // notify plugins that we're about to start debugging
-            clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
-            eventStarting.SetClientData(&startup_info);
-            if(EventNotifier::Get()->ProcessEvent(eventStarting))
-                return;
-
-            clDebuggerBreakpoint::Vec_t bpList;
-            ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints(bpList);
-            if(!eventStarting.GetBreakpoints().empty()) {
-                // one or some plugins sent us list of breakpoints, use them instead
-                bpList.swap(eventStarting.GetBreakpoints());
-            }
-
-            wxString tty;
-#ifndef __WXMSW__
-            if(!ManagerST::Get()->StartTTY(
-                   clDebuggerTerminalPOSIX::MakeExeTitle(
-                       exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments())),
-                   tty)) {
-                wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"),
-                             wxOK | wxCENTER | wxICON_ERROR);
-            }
-#endif
-
-            dbgr->SetIsRemoteDebugging(false);
-
-            // Start the debugger
-            DebugSessionInfo si;
-            si.debuggerPath = dbgname;
-            si.exeName = exepath;
-            si.cwd = wd;
-            si.cmds = cmds;
-            si.bpList = bpList;
-            si.ttyName = tty;
-            si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
-
-            dbgr->Start(si);
-
-            // notify plugins that the debugger just started
-            {
-                clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-                eventStarted.SetClientData(&startup_info);
-                EventNotifier::Get()->ProcessEvent(eventStarted);
-            }
-            dbgr->Run(bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments(), wxEmptyString);
-        } else if(!dbgr && !bStartedInDebugMode) {
-
-            // Fire an event, maybe a plugin wants to process this
-            clDebugEvent event(wxEVT_DBG_UI_QUICK_DEBUG);
-            event.SetDebuggerName(dlg.GetDebuggerName());
-            event.SetExecutableName(dlg.GetExe());
-            event.SetWorkingDirectory(dlg.GetWorkingDirectory());
-            event.SetStartupCommands(wxJoin(dlg.GetStartupCmds(), '\n'));
-            event.SetArguments(dlg.GetArguments());
-            EventNotifier::Get()->AddPendingEvent(event);
-        }
-    }
+    dlg.ShowModal();
 }
 
 void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)

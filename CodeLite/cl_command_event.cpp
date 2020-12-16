@@ -220,6 +220,7 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_breakpoints = other.m_breakpoints;
     m_isSSHDebugging = other.m_isSSHDebugging;
     m_sshAccount = other.m_sshAccount;
+    m_alternateDebuggerPath = other.m_alternateDebuggerPath;
     return *this;
 }
 

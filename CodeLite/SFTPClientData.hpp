@@ -11,6 +11,7 @@ class WXDLLIMPEXP_CL SFTPClientData : public wxClientData
     wxString remotePath;
     size_t permissions = 0;
     int lineNumber = wxNOT_FOUND;
+    wxString accountName;
 
 public:
     SFTPClientData();
@@ -24,6 +25,8 @@ public:
     size_t GetPermissions() const { return permissions; }
     void SetLineNumber(int lineNumber) { this->lineNumber = lineNumber; }
     int GetLineNumber() const { return lineNumber; }
+    void SetAccountName(const wxString& accountName) { this->accountName = accountName; }
+    const wxString& GetAccountName() const { return accountName; }
 };
 
 #endif // SFTPCLIENTDATA_HPP

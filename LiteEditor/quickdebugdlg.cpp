@@ -23,18 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "windowattrmanager.h"
-#include "quickdebuginfo.h"
-#include <wx/tokenzr.h>
-#include "editor_config.h"
-#include <wx/filedlg.h>
-#include <wx/dirdlg.h>
-#include <wx/display.h>
+#include "SFTPBrowserDlg.h"
+#include "cl_sftp.h"
+#include "codelite_events.h"
 #include "debuggermanager.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "quickdebugdlg.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
+#include "quickdebuginfo.h"
+#include "sftp_settings.h"
+#include "windowattrmanager.h"
+#include <wx/dirdlg.h>
+#include <wx/display.h>
+#include <wx/filedlg.h>
+#include <wx/tokenzr.h>
 
 QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     : QuickDebugBase(parent)
@@ -43,15 +46,25 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     Initialize();
     SetName("QuickDebugDlg");
 
+#if !USE_SFTP
+    m_checkBoxDebugOverSSH->SetValue(false);
+    m_checkBoxDebugOverSSH->Enable(false);
+#endif
+
     // Let the plugins override the values
     clDebugEvent eventShowing(wxEVT_QUICK_DEBUG_DLG_SHOWING);
     if(EventNotifier::Get()->ProcessEvent(eventShowing)) {
         if(!eventShowing.GetExecutableName().IsEmpty()) {
             m_ExeFilepath->ChangeValue(eventShowing.GetExecutableName());
         }
-        if(!eventShowing.GetArguments().IsEmpty()) { m_textCtrlArgs->ChangeValue(eventShowing.GetArguments()); }
-        if(!eventShowing.GetWorkingDirectory().IsEmpty()) { m_WD->SetValue(eventShowing.GetWorkingDirectory()); }
+        if(!eventShowing.GetArguments().IsEmpty()) {
+            m_textCtrlArgs->ChangeValue(eventShowing.GetArguments());
+        }
+        if(!eventShowing.GetWorkingDirectory().IsEmpty()) {
+            m_WD->SetValue(eventShowing.GetWorkingDirectory());
+        }
     }
+
     ::clSetDialogBestSizeAndPosition(this);
 }
 
@@ -63,48 +76,92 @@ void QuickDebugDlg::Initialize()
     EditorConfigST::Get()->ReadObject(wxT("QuickDebugDlg"), &info);
 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
-    if(m_choiceDebuggers->GetCount()) { m_choiceDebuggers->SetSelection(0); }
+    if(m_choiceDebuggers->GetCount()) {
+        m_choiceDebuggers->SetSelection(0);
+    }
     if(m_choiceDebuggers->GetCount() > (unsigned int)info.GetSelectedDbg()) {
         m_choiceDebuggers->SetSelection(info.GetSelectedDbg());
     }
 
     m_ExeFilepath->Append(info.GetExeFilepaths());
-    if(m_ExeFilepath->GetCount() > 0) { m_ExeFilepath->SetSelection(0); }
+    if(m_ExeFilepath->GetCount() > 0) {
+        m_ExeFilepath->SetSelection(0);
+    }
 
     wxArrayString wds = info.GetWds();
     wxString homeDir = wxStandardPaths::Get().GetUserConfigDir();
-    if(wds.Index(homeDir) == wxNOT_FOUND) { wds.Add(homeDir); }
+    if(wds.Index(homeDir) == wxNOT_FOUND) {
+        wds.Add(homeDir);
+    }
 
     m_WD->Append(wds);
-    if(m_WD->GetCount() > 0) { m_WD->SetSelection(0); }
+    if(m_WD->GetCount() > 0) {
+        m_WD->SetSelection(0);
+    }
     m_textCtrlArgs->ChangeValue(info.GetArguments());
 
     wxString startupCmds;
     for(size_t i = 0; i < info.GetStartCmds().GetCount(); i++) {
         startupCmds << info.GetStartCmds().Item(i) << wxT("\n");
     }
+
     m_textCtrlCmds->ChangeValue(startupCmds);
-    m_textCtrlDebuggerExec->ChangeValue(info.GetAlternateDebuggerExec());
+    UpdateDebuggerExecutable(info);
+
+#if USE_SFTP
+    SFTPSettings settings;
+    settings.Load();
+
+    wxString selectedAccount = info.GetSshAccount();
+    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
+    int selection = wxNOT_FOUND;
+    for(const auto& account : accounts) {
+        int index = m_choiceSshAccounts->Append(account.GetAccountName());
+        if(account.GetAccountName() == selectedAccount) {
+            selection = index;
+        }
+    }
+
+    if(selection != wxNOT_FOUND) {
+        m_choiceSshAccounts->SetSelection(selection);
+    } else if(!m_choiceSshAccounts->IsEmpty()) {
+        m_choiceSshAccounts->SetSelection(0);
+    }
+
+    m_checkBoxDebugOverSSH->SetValue(info.IsDebugOverSSH());
+#endif
 }
 
 void QuickDebugDlg::OnButtonBrowseExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    wxString path, ans;
-    wxFileName fn(GetExe());
-    if(fn.FileExists()) {
-        // Use the serialised path as the wxFileSelector default path
-        path = fn.GetPath();
+    if(m_checkBoxDebugOverSSH->IsChecked()) {
+#if USE_SFTP
+        // Open a remote folder browser
+        SFTPBrowserDlg dlg(this, _("Select executable to debug"), wxEmptyString,
+                           clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
+                           m_choiceSshAccounts->GetStringSelection());
+        if(dlg.ShowModal() == wxID_OK) {
+            m_ExeFilepath->Insert(dlg.GetPath(), 0);
+            m_ExeFilepath->SetSelection(0);
+        }
+#endif
     } else {
-        // Otherwise use any working dir entry, which might just have been altered
-        path = wxStandardPaths::Get().GetUserConfigDir();
-    }
+        wxString path, ans;
+        wxFileName fn(GetExe());
+        if(fn.FileExists()) {
+            // Use the serialised path as the wxFileSelector default path
+            path = fn.GetPath();
+        } else {
+            // Otherwise use any working dir entry, which might just have been altered
+            path = wxStandardPaths::Get().GetUserConfigDir();
+        }
 
-    ans = wxFileSelector(_("Select file:"), path);
-    if(!ans.empty()) {
-        m_ExeFilepath->Insert(ans, 0);
-        m_ExeFilepath->SetSelection(0);
+        ans = wxFileSelector(_("Select file:"), path);
+        if(!ans.empty()) {
+            m_ExeFilepath->Insert(ans, 0);
+            m_ExeFilepath->SetSelection(0);
+        }
     }
 }
 
@@ -121,6 +178,8 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     info.SetStartCmds(GetStartupCmds());
     info.SetArguments(m_textCtrlArgs->GetValue());
     info.SetAlternateDebuggerExec(m_textCtrlDebuggerExec->GetValue());
+    info.SetDebugOverSSH(m_checkBoxDebugOverSSH->IsChecked());
+    info.SetSshAccount(m_choiceSshAccounts->GetStringSelection());
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
     // Let the plugins persist the data
@@ -129,6 +188,24 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     eventDismissed.SetArguments(m_textCtrlArgs->GetValue());
     eventDismissed.SetWorkingDirectory(m_WD->GetValue());
     EventNotifier::Get()->ProcessEvent(eventDismissed);
+
+    // Notify that a debug session is starting
+    clDebugEvent eventQuickDebug(wxEVT_QUICK_DEBUG);
+    eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlDebuggerExec->GetValue());
+    eventQuickDebug.SetDebuggerName(m_choiceDebuggers->GetStringSelection());
+    eventQuickDebug.SetExecutableName(m_ExeFilepath->GetStringSelection());
+    eventQuickDebug.SetWorkingDirectory(m_WD->GetStringSelection());
+    eventQuickDebug.SetArguments(m_textCtrlArgs->GetValue());
+    eventQuickDebug.SetStartupCommands(wxJoin(GetStartupCmds(), '\n'));
+#if USE_SFTP
+    SFTPSettings settings;
+    settings.Load();
+    SSHAccountInfo sshAccount;
+    settings.GetAccount(m_choiceSshAccounts->GetStringSelection(), sshAccount);
+    eventQuickDebug.SetIsSSHDebugging(m_checkBoxDebugOverSSH->IsChecked());
+    eventQuickDebug.SetSshAccount(sshAccount);
+#endif
+    EventNotifier::Get()->AddPendingEvent(eventQuickDebug);
     EndModal(wxID_OK);
 }
 
@@ -159,18 +236,59 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    wxString ans, path(GetWorkingDirectory());
-    if(!wxFileName::DirExists(path)) { path = wxStandardPaths::Get().GetUserConfigDir(); }
+    if(m_checkBoxDebugOverSSH->IsChecked()) {
+#if USE_SFTP
+        // Open a remote folder browser
+        SFTPBrowserDlg dlg(this, _("Select working directory"), wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS,
+                           m_choiceSshAccounts->GetStringSelection());
+        if(dlg.ShowModal() == wxID_OK) {
+            m_WD->Insert(dlg.GetPath(), 0);
+            m_WD->SetSelection(0);
+        }
+#endif
+    } else {
+        wxString ans, path(GetWorkingDirectory());
+        if(!wxFileName::DirExists(path)) {
+            path = wxStandardPaths::Get().GetUserConfigDir();
+        }
 
-    ans = wxDirSelector(_("Select working directory:"), path);
-    if(!ans.empty()) {
-        m_WD->Insert(ans, 0);
-        m_WD->SetSelection(0);
+        ans = wxDirSelector(_("Select working directory:"), path);
+        if(!ans.empty()) {
+            m_WD->Insert(ans, 0);
+            m_WD->SetSelection(0);
+        }
     }
 }
 void QuickDebugDlg::OnSelectAlternateDebugger(wxCommandEvent& event)
 {
     wxString debuggerPath = ::wxFileSelector(_("Choose debugger:"), wxStandardPaths::Get().GetUserConfigDir());
-    if(debuggerPath.IsEmpty()) return;
+    if(debuggerPath.IsEmpty())
+        return;
     m_textCtrlDebuggerExec->ChangeValue(debuggerPath);
+}
+
+void QuickDebugDlg::OnDebugOverSshUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxDebugOverSSH->IsChecked()); }
+
+void QuickDebugDlg::OnDebuggerChanged(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(!m_checkBoxDebugOverSSH->IsChecked()) {
+        QuickDebugInfo info;
+        EditorConfigST::Get()->ReadObject("QuickDebugDlg", &info);
+        UpdateDebuggerExecutable(info);
+    }
+}
+
+void QuickDebugDlg::UpdateDebuggerExecutable(const QuickDebugInfo& info)
+{
+    // set the default debugger executable
+    DebuggerInformation debuggerInfo;
+    if(DebuggerMgr::Get().GetDebuggerInformation(m_choiceDebuggers->GetStringSelection(), debuggerInfo)) {
+        m_textCtrlDebuggerExec->ChangeValue(debuggerInfo.path);
+    }
+
+    // Check to see if got alternate value stored
+    if(!info.GetAlternateDebuggerExec().empty()) {
+        m_textCtrlDebuggerExec->ChangeValue(info.GetAlternateDebuggerExec());
+    }
 }

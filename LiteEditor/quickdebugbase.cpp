@@ -6,150 +6,219 @@
 
 #include "quickdebugbase.h"
 
-
 // Declare the bitmap loading function
 extern void wxCrafterSFKMcrInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                               const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterSFKMcrInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
+
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
-    
-    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 3, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
-    fgSizer1->AddGrowableCol(1);
-    
-    bSizer3->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Select executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_ExeFilepathArr;
-    m_ExeFilepath = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_ExeFilepathArr, 0);
-    m_ExeFilepath->SetToolTip(_("Enter the filepath to the program that you want to debug.\nAlternatively, if you enter the path below, putting just the filename here will suffice."));
-    m_ExeFilepath->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
-    m_ExeFilepath->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_ExeFilepath, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonBrowseExe = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    m_buttonBrowseExe->SetToolTip(_("Select executale to debug"));
-    
-    fgSizer1->Add(m_buttonBrowseExe, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText5, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    wxArrayString m_WDArr;
-    m_WD = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_WDArr, 0);
-    m_WD->SetToolTip(_("Optionally, enter the path where the program that you want to debug can be found"));
-    #if wxVERSION_NUMBER >= 3000
-    m_WD->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_WD, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonBrowseWD = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1, -1), wxBU_EXACTFIT);
-    m_buttonBrowseWD->SetToolTip(_("Browse for working directory"));
-    
-    fgSizer1->Add(m_buttonBrowseWD, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Program arguments:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlArgs = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlArgs->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlArgs, 0, wxALL|wxEXPAND, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Select debugger:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    bSizer1->Add(bSizer3, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer18 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Debugger:")), wxVERTICAL);
+
+    bSizer3->Add(staticBoxSizer18, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer20 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer20->SetFlexibleDirection(wxBOTH);
+    flexGridSizer20->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer20->AddGrowableCol(1);
+
+    staticBoxSizer18->Add(flexGridSizer20, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText3 =
+        new wxStaticText(this, wxID_ANY, _("Select debugger:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer20->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceDebuggersArr;
-    m_choiceDebuggers = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceDebuggersArr, 0);
-    
-    fgSizer1->Add(m_choiceDebuggers, 0, wxALL|wxEXPAND, 5);
-    
-    fgSizer1->Add(0, 0, 1, wxALL, 5);
-    
-    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Alternate debugger executable:"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    fgSizer1->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlDebuggerExec = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_textCtrlDebuggerExec->SetToolTip(_("Provide an alternate debugger executable to use.\nThis is currently only supported for GDB"));
-    #if wxVERSION_NUMBER >= 3000
+    m_choiceDebuggers =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceDebuggersArr, 0);
+
+    flexGridSizer20->Add(m_choiceDebuggers, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer20->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Debugger executable:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer20->Add(m_staticText12, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlDebuggerExec =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_textCtrlDebuggerExec->SetToolTip(_("Provide an alternate debugger executable to use.\nThis is currently only "
+                                         "supported for GDB\nLeave empty to use the default"));
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlDebuggerExec->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlDebuggerExec, 0, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_buttonBrowseDebugger = new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxSize(-1,-1), wxBU_EXACTFIT);
+#endif
+
+    flexGridSizer20->Add(m_textCtrlDebuggerExec, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonBrowseDebugger =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
     m_buttonBrowseDebugger->SetToolTip(_("Select debugger executable"));
-    
-    fgSizer1->Add(m_buttonBrowseDebugger, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_staticText6 = new wxStaticText(this, wxID_ANY, _("Startup commands:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_staticText6, 0, wxALL, 5);
-    
-    m_textCtrlCmds = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
+
+    flexGridSizer20->Add(m_buttonBrowseDebugger, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer22 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Debuggee:")), wxVERTICAL);
+
+    bSizer3->Add(staticBoxSizer22, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer24 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer24->SetFlexibleDirection(wxBOTH);
+    flexGridSizer24->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer24->AddGrowableCol(1);
+
+    staticBoxSizer22->Add(flexGridSizer24, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Select executable:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer24->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_ExeFilepathArr;
+    m_ExeFilepath = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                   m_ExeFilepathArr, 0);
+    m_ExeFilepath->SetToolTip(_("Enter the filepath to the program that you want to debug.\nAlternatively, if you "
+                                "enter the path below, putting just the filename here will suffice."));
+    m_ExeFilepath->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_ExeFilepath->SetHint(wxT(""));
+#endif
+
+    flexGridSizer24->Add(m_ExeFilepath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonBrowseExe =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_buttonBrowseExe->SetToolTip(_("Select executale to debug"));
+
+    flexGridSizer24->Add(m_buttonBrowseExe, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Working directory:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer24->Add(m_staticText5, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_WDArr;
+    m_WD = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_WDArr, 0);
+    m_WD->SetToolTip(_("Optionally, enter the path where the program that you want to debug can be found"));
+#if wxVERSION_NUMBER >= 3000
+    m_WD->SetHint(wxT(""));
+#endif
+
+    flexGridSizer24->Add(m_WD, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonBrowseWD =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_buttonBrowseWD->SetToolTip(_("Browse for working directory"));
+
+    flexGridSizer24->Add(m_buttonBrowseWD, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Program arguments:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer24->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlArgs = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlArgs->SetHint(wxT(""));
+#endif
+
+    flexGridSizer24->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer24->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer30 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Debug over SSH:")), wxVERTICAL);
+
+    bSizer3->Add(staticBoxSizer30, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer37 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer37->SetFlexibleDirection(wxBOTH);
+    flexGridSizer37->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer37->AddGrowableCol(1);
+
+    staticBoxSizer30->Add(flexGridSizer37, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer37->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxDebugOverSSH = new wxCheckBox(this, wxID_ANY, _("Enable debugging over SSH"), wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxDebugOverSSH->SetValue(false);
+
+    flexGridSizer37->Add(m_checkBoxDebugOverSSH, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
+    m_staticText41 =
+        new wxStaticText(this, wxID_ANY, _("Select account:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer37->Add(m_staticText41, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceSshAccountsArr;
+    m_choiceSshAccounts =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSshAccountsArr, 0);
+
+    flexGridSizer37->Add(m_choiceSshAccounts, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer37->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer26 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Startup commands:")), wxVERTICAL);
+
+    bSizer3->Add(staticBoxSizer26, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer28 = new wxBoxSizer(wxVERTICAL);
+
+    staticBoxSizer26->Add(boxSizer28, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlCmds = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                    wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_MULTILINE);
+#ifdef __WXMSW__
+    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
+    // wxFONTFAMILY_TELETYPE
     wxFont m_textCtrlCmdsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_textCtrlCmdsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
+#else
     wxFont m_textCtrlCmdsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
     m_textCtrlCmdsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
+#endif
     m_textCtrlCmds->SetFont(m_textCtrlCmdsFont);
-    
-    bSizer3->Add(m_textCtrlCmds, 1, wxALL|wxEXPAND, 5);
-    m_textCtrlCmds->SetMinSize(wxSize(-1,150));
-    
+
+    boxSizer28->Add(m_textCtrlCmds, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_textCtrlCmds->SetMinSize(wxSize(-1, 150));
+
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
-    
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 10);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer1->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
-    
-    m_buttonCancel1 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonCancel1 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer2->AddButton(m_buttonCancel1);
     m_stdBtnSizer2->Realize();
-    
+
     SetName(wxT("QuickDebugBase"));
-    SetMinClientSize(wxSize(500,400));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetMinClientSize(wxSize(500, 400));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -164,20 +233,36 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     }
 #endif
     // Connect events
-    m_buttonBrowseExe->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
-    m_buttonBrowseWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD), NULL, this);
-    m_buttonBrowseDebugger->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
+    m_choiceDebuggers->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(QuickDebugBase::OnDebuggerChanged),
+                               NULL, this);
+    m_buttonBrowseDebugger->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                    wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
+    m_buttonBrowseExe->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe),
+                               NULL, this);
+    m_buttonBrowseWD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD),
+                              NULL, this);
+    m_staticText41->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickDebugBase::OnDebugOverSshUI), NULL, this);
+    m_choiceSshAccounts->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickDebugBase::OnDebugOverSshUI), NULL, this);
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonDebug), NULL, this);
-    m_buttonCancel1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel), NULL, this);
-    
+    m_buttonCancel1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel), NULL,
+                             this);
 }
 
 QuickDebugBase::~QuickDebugBase()
 {
-    m_buttonBrowseExe->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
-    m_buttonBrowseWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD), NULL, this);
-    m_buttonBrowseDebugger->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonDebug), NULL, this);
-    m_buttonCancel1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel), NULL, this);
-    
+    m_choiceDebuggers->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                  wxCommandEventHandler(QuickDebugBase::OnDebuggerChanged), NULL, this);
+    m_buttonBrowseDebugger->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                       wxCommandEventHandler(QuickDebugBase::OnSelectAlternateDebugger), NULL, this);
+    m_buttonBrowseExe->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                  wxCommandEventHandler(QuickDebugBase::OnButtonBrowseExe), NULL, this);
+    m_buttonBrowseWD->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonBrowseWD),
+                                 NULL, this);
+    m_staticText41->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickDebugBase::OnDebugOverSshUI), NULL, this);
+    m_choiceSshAccounts->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(QuickDebugBase::OnDebugOverSshUI), NULL,
+                                    this);
+    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonDebug), NULL,
+                           this);
+    m_buttonCancel1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QuickDebugBase::OnButtonCancel),
+                                NULL, this);
 }

@@ -26,10 +26,10 @@
 #ifndef __quickdebuginfo__
 #define __quickdebuginfo__
 
+#include "codelite_exports.h"
+#include "serialized_object.h"
 #include <wx/arrstr.h>
 #include <wx/string.h>
-#include "serialized_object.h"
-#include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 {
@@ -38,8 +38,10 @@ class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
     wxArrayString m_wds;
     wxString m_arguments;
     wxArrayString m_startCmds;
-    int m_selectedDbg;
+    int m_selectedDbg = 0;
     wxString m_alternateDebuggerExec;
+    bool m_debugOverSSH = false;
+    wxString m_sshAccount;
 
 public:
     QuickDebugInfo();
@@ -65,5 +67,9 @@ public:
         this->m_alternateDebuggerExec = alternateDebuggerExec;
     }
     const wxString& GetAlternateDebuggerExec() const { return m_alternateDebuggerExec; }
+    void SetDebugOverSSH(bool debugOverSSH) { this->m_debugOverSSH = debugOverSSH; }
+    void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
+    bool IsDebugOverSSH() const { return m_debugOverSSH; }
+    const wxString& GetSshAccount() const { return m_sshAccount; }
 };
 #endif // __quickdebuginfo__

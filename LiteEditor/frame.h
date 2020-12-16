@@ -518,6 +518,7 @@ protected:
     void OnMarkEditorReadonlyUI(wxUpdateUIEvent& e);
     void OnDetachEditorUI(wxUpdateUIEvent& e);
     void OnQuickDebug(wxCommandEvent& e);
+    void OnStartQuickDebug(clDebugEvent& e);
     void OnQuickDebugUI(wxUpdateUIEvent& e);
     void OnDebugCoreDump(wxCommandEvent& e);
     void OnNextFiFMatch(wxCommandEvent& e);

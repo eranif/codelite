@@ -4178,7 +4178,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
 #ifndef __WXMSW__
         if(!ManagerST::Get()->StartTTY(
                clDebuggerTerminalPOSIX::MakeExeTitle(
-                   exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : dlg.GetArguments())),
+                   exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : e.GetArguments())),
                tty)) {
             wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
         }

@@ -21,6 +21,7 @@ protected:
 protected:
     void OnDebugEnded(clDebugEvent& event);
     void OnDebugStarted(clDebugEvent& event);
+    void OnFileSaved(clCommandEvent& event);
     SFTPClientData* GetSFTPClientData(IEditor* editor);
 
 public:

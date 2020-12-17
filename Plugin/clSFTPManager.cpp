@@ -14,12 +14,14 @@ clSFTPManager::clSFTPManager()
 {
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clSFTPManager::OnDebugEnded, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clSFTPManager::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
 }
 
 clSFTPManager::~clSFTPManager()
 {
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clSFTPManager::OnDebugEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clSFTPManager::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -126,7 +128,12 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     cd->SetLineNumber(wxNOT_FOUND);
     cd->SetAccountName(accountName);
 
-    auto editor = clGetManager()->OpenFile(localPath.GetFullPath());
+    wxString tooltip;
+    tooltip << "Local: " << cd->GetLocalPath() << "\n"
+            << "Remote: " << cd->GetRemotePath();
+
+    wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("download");
+    auto editor = clGetManager()->OpenFile(localPath.GetFullPath(), bmp, tooltip);
     editor->SetClientData("sftp", cd);
     return editor;
 }
@@ -161,5 +168,34 @@ SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
         return nullptr;
     }
     return dynamic_cast<SFTPClientData*>(clientData);
+}
+
+void clSFTPManager::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    const wxString& filename = event.GetString();
+    auto editor = clGetManager()->FindEditor(filename);
+    CHECK_PTR_RET(editor);
+
+    auto cd = GetSFTPClientData(editor);
+    CHECK_PTR_RET(cd);
+
+    auto conn_info = GetConnection(cd->GetAccountName());
+    CHECK_PTR_RET(conn_info.second);
+
+    auto conn = conn_info.second;
+    auto account = conn_info.first;
+
+    wxString message;
+    message << _("Uploading file: ") << cd->GetLocalPath() << " -> " << cd->GetAccountName() << "@"
+            << cd->GetRemotePath();
+    clGetManager()->SetStatusMessage(message, 3);
+    try {
+        conn->Write(cd->GetLocalPath(), cd->GetRemotePath());
+
+    } catch(clException& e) {
+        wxMessageBox(_("Failed to write file: ") + cd->GetRemotePath() + _("\n") + e.What(), "CodeLite",
+                     wxICON_ERROR | wxCENTER);
+    }
 }
 #endif

@@ -1,6 +1,7 @@
 #ifndef CLSFTPMANAGER_HPP
 #define CLSFTPMANAGER_HPP
 
+#if USE_SFTP
 #include "cl_command_event.h"
 #include "cl_sftp.h"
 #include "codelite_exports.h"
@@ -37,5 +38,5 @@ public:
     IEditor* OpenFile(const wxString& path, const wxString& accountName);
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
 };
-
+#endif
 #endif // CLSFTPMANAGER_HPP

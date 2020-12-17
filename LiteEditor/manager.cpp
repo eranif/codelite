@@ -3851,6 +3851,7 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
 {
     event.Skip();
     if(event.IsSSHDebugging()) {
+#if USE_SFTP
         DbgUnMarkDebuggerLine();
         if(event.GetLineNumber() < 0) {
             return;
@@ -3864,7 +3865,7 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
                 cl_editor->SetEnsureCaretIsVisible(cl_editor->PositionFromLine(event.GetLineNumber() - 1), false);
             }
         }
-
+#endif
     } else {
         const wxString& fileName = event.GetFileName();
         long lineNumber = event.GetLineNumber();

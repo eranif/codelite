@@ -1,3 +1,4 @@
+#if USE_SFTP
 #include "SFTPClientData.hpp"
 #include "clSFTPManager.hpp"
 #include "codelite_events.h"
@@ -161,3 +162,4 @@ SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
     }
     return dynamic_cast<SFTPClientData*>(clientData);
 }
+#endif

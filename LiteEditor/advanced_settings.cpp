@@ -163,11 +163,9 @@ void BuildSettingsDialog::OnCompilersDetected(const ICompilerLocator::CompilerVe
 
         // update the code completion search paths
         clMainFrame::Get()->CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-
-        // Dismiss this dialog and reload it
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("advance_settings"));
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
-        EndModal(wxID_OK);
+        
+        // update the compilers view
+        LoadCompilers();
     }
 }
 

@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "LLDBSettingDialog.h"
 #include "LLDBProtocol/LLDBSettings.h"
+#include "LLDBSettingDialog.h"
 #include "windowattrmanager.h"
 
 LLDBSettingDialog::LLDBSettingDialog(wxWindow* parent)
@@ -33,6 +33,9 @@ LLDBSettingDialog::LLDBSettingDialog(wxWindow* parent)
 {
     LLDBSettings settings;
     settings.Load();
+
+    // keep the full path
+    m_pgPropDebugServer->SetAttribute("ShowFullPath", 1);
 
     m_pgPropArraySize->SetValue((int)settings.GetMaxArrayElements());
     m_pgPropCallStackSize->SetValue((int)settings.GetMaxCallstackFrames());

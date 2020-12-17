@@ -135,8 +135,8 @@ void QuickDebugDlg::Initialize()
 void QuickDebugDlg::OnButtonBrowseExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_checkBoxDebugOverSSH->IsChecked()) {
 #if USE_SFTP
+    if(m_checkBoxDebugOverSSH->IsChecked()) {
         // Open a remote folder browser
         SFTPBrowserDlg dlg(this, _("Select executable to debug"), wxEmptyString,
                            clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
@@ -145,23 +145,23 @@ void QuickDebugDlg::OnButtonBrowseExe(wxCommandEvent& event)
             m_ExeFilepath->Insert(dlg.GetPath(), 0);
             m_ExeFilepath->SetSelection(0);
         }
+        return;
+    }
 #endif
+    wxString path, ans;
+    wxFileName fn(GetExe());
+    if(fn.FileExists()) {
+        // Use the serialised path as the wxFileSelector default path
+        path = fn.GetPath();
     } else {
-        wxString path, ans;
-        wxFileName fn(GetExe());
-        if(fn.FileExists()) {
-            // Use the serialised path as the wxFileSelector default path
-            path = fn.GetPath();
-        } else {
-            // Otherwise use any working dir entry, which might just have been altered
-            path = wxStandardPaths::Get().GetUserConfigDir();
-        }
+        // Otherwise use any working dir entry, which might just have been altered
+        path = wxStandardPaths::Get().GetUserConfigDir();
+    }
 
-        ans = wxFileSelector(_("Select file:"), path);
-        if(!ans.empty()) {
-            m_ExeFilepath->Insert(ans, 0);
-            m_ExeFilepath->SetSelection(0);
-        }
+    ans = wxFileSelector(_("Select file:"), path);
+    if(!ans.empty()) {
+        m_ExeFilepath->Insert(ans, 0);
+        m_ExeFilepath->SetSelection(0);
     }
 }
 
@@ -261,6 +261,17 @@ void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 }
 void QuickDebugDlg::OnSelectAlternateDebugger(wxCommandEvent& event)
 {
+#if USE_SFTP
+    if(m_checkBoxDebugOverSSH->IsChecked()) {
+        SFTPBrowserDlg dlg(this, _("Select gdb"), wxEmptyString,
+                           clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
+                           m_choiceSshAccounts->GetStringSelection());
+        if(dlg.ShowModal() == wxID_OK) {
+            m_textCtrlDebuggerExec->ChangeValue(dlg.GetPath());
+        }
+        return;
+    }
+#endif
     wxString debuggerPath = ::wxFileSelector(_("Choose debugger:"), wxStandardPaths::Get().GetUserConfigDir());
     if(debuggerPath.IsEmpty())
         return;

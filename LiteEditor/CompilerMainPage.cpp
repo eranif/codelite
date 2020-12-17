@@ -589,6 +589,7 @@ void CompilerMainPage::Initialize()
 
 void CompilerMainPage::Save()
 {
+    CHECK_PTR_RET(m_compiler);
     SaveTools();
     SavePatterns();
     SaveSwitches();
